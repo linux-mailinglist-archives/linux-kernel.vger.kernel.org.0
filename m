@@ -2,217 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5ECBC0161
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF19C016A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbfI0Imt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:42:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbfI0Imt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:42:49 -0400
-Received: from oasis.local.home (unknown [65.39.69.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4EDD2075D;
-        Fri, 27 Sep 2019 08:42:44 +0000 (UTC)
-Date:   Fri, 27 Sep 2019 04:42:39 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-pm@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] PM / Domains: Add tracepoints
-Message-ID: <20190927044239.589e7c4c@oasis.local.home>
-In-Reply-To: <20190926150406.v1.1.I07a769ad7b00376777c9815fb169322cde7b9171@changeid>
-References: <20190926150406.v1.1.I07a769ad7b00376777c9815fb169322cde7b9171@changeid>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726339AbfI0IrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:47:18 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50613 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfI0IrR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 04:47:17 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iDluC-000704-Fy; Fri, 27 Sep 2019 10:47:12 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iDluB-0007Up-0M; Fri, 27 Sep 2019 10:47:11 +0200
+Date:   Fri, 27 Sep 2019 10:47:10 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        ckeepax@opensource.cirrus.com, LKML <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Subject: Re: [PATCH 1/3] regulator: core: fix boot-on regulators use_count
+ usage
+Message-ID: <20190927084710.mt42454vsrjm3yh3@pengutronix.de>
+References: <20190917154021.14693-1-m.felsch@pengutronix.de>
+ <20190917154021.14693-2-m.felsch@pengutronix.de>
+ <CAD=FV=W7M8mwQqnPyU9vsK5VAdqqJdQdyxcoe9FRRGTY8zjnFw@mail.gmail.com>
+ <20190923181431.GU2036@sirena.org.uk>
+ <CAD=FV=WVGj8xzKFFxsjpeuqtVzSvv22cHmWBRJtTbH00eC=E9w@mail.gmail.com>
+ <20190923184907.GY2036@sirena.org.uk>
+ <CAD=FV=VkaXDn034EFnJWYvWwyLgvq7ajfgMRm9mbhQeRKmPDRQ@mail.gmail.com>
+ <20190924182758.GC2036@sirena.org.uk>
+ <CAD=FV=WZSy6nHjsY2pvjcoR4iy64b35OPGEb3EPSSc5vpeTTuA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WZSy6nHjsY2pvjcoR4iy64b35OPGEb3EPSSc5vpeTTuA@mail.gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 10:33:10 up 132 days, 14:51, 84 users,  load average: 0.00, 0.10,
+ 0.12
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Sep 2019 15:04:38 -0700
-Matthias Kaehlcke <mka@chromium.org> wrote:
+Hi Doug, Mark,
 
-> Define genpd_power_on/off and genpd_set_performance_state
-> tracepoints and use them.
+sorry for the delay..
 
-I agree with Greg about adding a "why" you need this. But, in case
-there's a good reason to have this, I have comments about the code
-below.
-
+On 19-09-26 12:44, Doug Anderson wrote:
+> Hi,
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
+> On Tue, Sep 24, 2019 at 11:28 AM Mark Brown <broonie@kernel.org> wrote:
+> > On Mon, Sep 23, 2019 at 03:40:09PM -0700, Doug Anderson wrote:
+> > > On Mon, Sep 23, 2019 at 11:49 AM Mark Brown <broonie@kernel.org> wrote:
+> > > > On Mon, Sep 23, 2019 at 11:36:11AM -0700, Doug Anderson wrote:
+> >
+> > > > > 1. Would it be valid to say that it's always incorrect to set this
+> > > > > property if there is a way to read the status back from the regulator?
+> >
+> > > > As originally intended, yes.  I'm now not 100% sure that it won't
+> > > > break any existing systems though :/
+> >
+> > > Should I change the bindings doc to say that?
+> >
+> > Sure.
 > 
->  drivers/base/power/domain.c  | 27 +++++++++++++++++---
->  include/trace/events/power.h | 49 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 72 insertions(+), 4 deletions(-)
+> Sent ("regulator: Document "regulator-boot-on" binding more thoroughly").
 > 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index cc85e87eaf05..aee988c112e5 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -21,6 +21,7 @@
->  #include <linux/suspend.h>
->  #include <linux/export.h>
->  #include <linux/cpu.h>
-> +#include <trace/events/power.h>
->  
->  #include "power.h"
->  
-> @@ -329,6 +330,9 @@ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
->  		goto err;
->  
->  	genpd->performance_state = state;
-> +
-> +	trace_genpd_set_performance_state(genpd);
-> +
->  	return 0;
->  
->  err:
-> @@ -418,14 +422,21 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
->  	if (!genpd->power_on)
->  		return 0;
->  
-> -	if (!timed)
-> -		return genpd->power_on(genpd);
-> +	if (!timed) {
-> +		ret = genpd->power_on(genpd);
-> +		if (!ret)
-> +			trace_genpd_power_on(genpd);
-> +
-> +		return ret;
-> +	}
->  
->  	time_start = ktime_get();
->  	ret = genpd->power_on(genpd);
->  	if (ret)
->  		return ret;
->  
-> +	trace_genpd_power_on(genpd);
-> +
->  	elapsed_ns = ktime_to_ns(ktime_sub(ktime_get(), time_start));
->  	if (elapsed_ns <= genpd->states[state_idx].power_on_latency_ns)
->  		return ret;
-> @@ -448,14 +459,22 @@ static int _genpd_power_off(struct generic_pm_domain *genpd, bool timed)
->  	if (!genpd->power_off)
->  		return 0;
->  
-> -	if (!timed)
-> -		return genpd->power_off(genpd);
-> +	if (!timed) {
-> +		ret = genpd->power_off(genpd);
-> +		if (!ret)
+> https://lore.kernel.org/r/20190926124115.1.Ice34ad5970a375c3c03cb15c3859b3ee501561bf@changeid
 
-Here
+Yes, I saw it and thanks for it =)
 
-> +			trace_genpd_power_off(genpd);
-> +
-> +		return ret;
-> +	}
->  
->  	time_start = ktime_get();
->  	ret = genpd->power_off(genpd);
->  	if (ret)
->  		return ret;
->  
-> +	if (!ret)
+> > > > It should be possible to do a regulator_disable() though I'm not
+> > > > sure anyone actually uses that.  The pattern for a regular
+> > > > consumer should be the normal enable/disable pair to handle
+> > > > shared usage, only an exclusive consumer should be able to use
+> > > > just a straight disable.
 
-And here add a conditional branch for only a tracepoint. To eliminate
-the branch when tracepoints are not enabled, please do it this way
-instead:
+In my case it is a regulator-fixed which uses the enable/disable pair.
+But as my descriptions says this will not work currently because boot-on
+marked regulators can't be disabled right now (using the same logic as
+always-on regulators).
 
-	if (trace_genpd_power_off_enabled() && !ret)
+> > > Ah, I see, I wasn't aware of the "exclusive" special case!  Marco: is
+> > > this working for you?  I wonder if we need to match
+> > > "regulator->enable_count" to "rdev->use_count" at the end of
+> > > _regulator_get() in the exclusive case...
 
-The above is a static branch (nop when disabled, and jmp when enabled),
-and the above should move the conditional branch on !ret into the
-section that is only called when the tracepoint is enabled.
+So my fix isn't correct to fix this in general?
 
+> > Yes, I think that case has been missed when adding the enable
+> > counts - I've never actually had a system myself that made any
+> > use of this stuff.  It probably needs an audit of the users to
+> > make sure nobody's relying on the current behaviour though I
+> > can't think how they would.
+> 
+> Marco: I'm going to assume you'll tackle this since I don't actually
+> have any use cases that need this.
 
-> +		trace_genpd_power_off(genpd);
-> +
+My use case is a simple regulator-fixed which is turned on by the
+bootloader or to be more precise by the pmic-rom. To map that correctly
+I marked this regulator as boot-on. Unfortunately as I pointed out above
+this is handeld the same way as always-on.
 
--- Steve
+Regards,
+  Marco
 
->  	elapsed_ns = ktime_to_ns(ktime_sub(ktime_get(), time_start));
->  	if (elapsed_ns <= genpd->states[state_idx].power_off_latency_ns)
->  		return 0;
-> diff --git a/include/trace/events/power.h b/include/trace/events/power.h
-> index 7457e238e1b7..de56cd1e8d0d 100644
-> --- a/include/trace/events/power.h
-> +++ b/include/trace/events/power.h
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/cpufreq.h>
->  #include <linux/ktime.h>
-> +#include <linux/pm_domain.h>
->  #include <linux/pm_qos.h>
->  #include <linux/tracepoint.h>
->  #include <linux/trace_events.h>
-> @@ -525,6 +526,54 @@ DEFINE_EVENT(dev_pm_qos_request, dev_pm_qos_remove_request,
->  
->  	TP_ARGS(name, type, new_value)
->  );
-> +
-> +#ifdef CONFIG_PM_GENERIC_DOMAINS
-> +DECLARE_EVENT_CLASS(genpd_power_on_off,
-> +	TP_PROTO(struct generic_pm_domain *genpd),
-> +
-> +	TP_ARGS(genpd),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(name, genpd->name)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(name, genpd->name);
-> +	),
-> +
-> +	TP_printk("name=%s", __get_str(name))
-> +);
-> +
-> +DEFINE_EVENT(genpd_power_on_off, genpd_power_on,
-> +	TP_PROTO(struct generic_pm_domain *genpd),
-> +
-> +	TP_ARGS(genpd)
-> +);
-> +
-> +DEFINE_EVENT(genpd_power_on_off, genpd_power_off,
-> +	TP_PROTO(struct generic_pm_domain *genpd),
-> +
-> +	TP_ARGS(genpd)
-> +);
-> +
-> +TRACE_EVENT(genpd_set_performance_state,
-> +	TP_PROTO(struct generic_pm_domain *genpd),
-> +
-> +	TP_ARGS(genpd),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(name, genpd->name)
-> +		__field(unsigned int, state)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(name, genpd->name);
-> +		__entry->state = genpd->performance_state;
-> +	),
-> +
-> +	TP_printk("name=%s state=%u", __get_str(name), __entry->state)
-> +);
-> +#endif /* CONFIG_PM_GENERIC_DOMAINS */
->  #endif /* _TRACE_POWER_H */
->  
->  /* This part must be outside protection */
+> -Doug
+> 
 
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
