@@ -2,129 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3370BFC4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 02:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7993DBFC6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 02:32:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfI0AZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 20:25:21 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33271 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728003AbfI0AZO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 20:25:14 -0400
-Received: by mail-oi1-f195.google.com with SMTP id e18so3767601oii.0;
-        Thu, 26 Sep 2019 17:25:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KvE1OjQp2Eo5TOhHCna2F9pDoURrQBiIlsatoh/ojtA=;
-        b=KqYGlp4pnmNRkjgrtDJgECRHf1rpz2lNXLgnDrdZTmWoQOC+25/QKZtUkGcGBZ2MuG
-         +1x0fm1hlBsfW5UNwdciNVoIxhvFoLj0slGnorylKWqjR960G+fgqUfylYBaBtnLrEK8
-         BvA59sYp08yFmC61qmHiujPvI4aGdJVivsF9vnZVGiqLtWYG3zATyAsQwn8JPze4b1hS
-         4tKA94mxv/Vvpk32tlwmP1JpQnKx5PpNRlnHP5/TnMfxIaHNZ4RaOqo0JBU8AdntxtTn
-         hNXqTSnwdep+F+QLxG4vFvSPHt3XQerAcY+9zpnPZ84CFKIdzhyQPDxSXGViljO2oB6b
-         85aQ==
-X-Gm-Message-State: APjAAAXIHkETXzCMwxGJlQpNnmK+FX7+eCBnqF/zKARK2svJyUm2/YtN
-        QPEXH1JaPw0RNhjzMgz3OPEqBrs=
-X-Google-Smtp-Source: APXvYqymzzkGngPSfklXZDXctIqAbqktZ7y7sWXPpqKuwMptW/o1ke/+OGivC0alJNA1OSSWMEbpfg==
-X-Received: by 2002:a05:6808:b0d:: with SMTP id s13mr4936115oij.52.1569543912890;
-        Thu, 26 Sep 2019 17:25:12 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id j11sm339866otk.80.2019.09.26.17.25.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 17:25:12 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Oza Pawandeep <oza.oza@broadcom.com>
-Subject: [PATCH 11/11] of/address: Fix of_pci_range_parser_one translation of DMA addresses
-Date:   Thu, 26 Sep 2019 19:24:55 -0500
-Message-Id: <20190927002455.13169-12-robh@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190927002455.13169-1-robh@kernel.org>
-References: <20190927002455.13169-1-robh@kernel.org>
+        id S1727305AbfI0AcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 20:32:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbfI0AcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 20:32:13 -0400
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38C2D2086A;
+        Fri, 27 Sep 2019 00:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569544332;
+        bh=QsUnjBuZAwrux95SfvML5iv3eEepq0UgtdPVb2bTlH0=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=GQyhnFVk6d9XHgaR0X3hVLxVGCnaC3zpdwphghs/tN4/9/SwERAX3RPMRIu5vBsJD
+         2/lbU5vI22OUqrCZNdAOJYpXGnmtCfcUxmwmQkxW1A6d/NNIdgT4WHLMofWIYhXKjR
+         7yGQp3eOHriItW/HzdMRbdCb1SjfWbKcJIHGQcQ4=
+Date:   Thu, 26 Sep 2019 17:32:11 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid data corruption by
+ forbidding SSR overwrite
+Message-ID: <20190927003211.GA36793@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190816030334.81035-1-yuchao0@huawei.com>
+ <20190926203755.GA142676@gmail.com>
+ <20190926214653.GA29685@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190926214653.GA29685@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_pci_range_parser_one() has a bug when parsing dma-ranges. When it
-translates the parent address (aka cpu address in the code), 'ranges' is
-always being used. This happens to work because most users are just 1:1
-translation.
+On 09/26, Jaegeuk Kim wrote:
+> On 09/26, Eric Biggers wrote:
+> > On Fri, Aug 16, 2019 at 11:03:34AM +0800, Chao Yu wrote:
+> > > There is one case can cause data corruption.
+> > > 
+> > > - write 4k to fileA
+> > > - fsync fileA, 4k data is writebacked to lbaA
+> > > - write 4k to fileA
+> > > - kworker flushs 4k to lbaB; dnode contain lbaB didn't be persisted yet
+> > > - write 4k to fileB
+> > > - kworker flush 4k to lbaA due to SSR
+> > > - SPOR -> dnode with lbaA will be recovered, however lbaA contains fileB's
+> > > data
+> > > 
+> > > One solution is tracking all fsynced file's block history, and disallow
+> > > SSR overwrite on newly invalidated block on that file.
+> > > 
+> > > However, during recovery, no matter the dnode is flushed or fsynced, all
+> > > previous dnodes until last fsynced one in node chain can be recovered,
+> > > that means we need to record all block change in flushed dnode, which
+> > > will cause heavy cost, so let's just use simple fix by forbidding SSR
+> > > overwrite directly.
+> > > 
+> > > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > > ---
+> > >  fs/f2fs/segment.c | 8 +++++---
+> > >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > index 9d9d9a050d59..69b3b553ee6b 100644
+> > > --- a/fs/f2fs/segment.c
+> > > +++ b/fs/f2fs/segment.c
+> > > @@ -2205,9 +2205,11 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+> > >  		if (!f2fs_test_and_set_bit(offset, se->discard_map))
+> > >  			sbi->discard_blks--;
+> > >  
+> > > -		/* don't overwrite by SSR to keep node chain */
+> > > -		if (IS_NODESEG(se->type) &&
+> > > -				!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
+> > > +		/*
+> > > +		 * SSR should never reuse block which is checkpointed
+> > > +		 * or newly invalidated.
+> > > +		 */
+> > > +		if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
+> > >  			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
+> > >  				se->ckpt_valid_blocks++;
+> > >  		}
+> > > -- 
+> > 
+> > FYI, this commit caused xfstests generic/064 to start failing:
+> 
+> Yup, I was looking at this.
 
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+It seems fcollapse couldn't allocate blocks sequential when rewriting blocks.
+
+We need to adjust like this:
 ---
- drivers/of/address.c       | 15 ++++++++++++---
- include/linux/of_address.h |  1 +
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ tests/generic/064 | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index 5b835d332709..54011a355b81 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -243,6 +243,7 @@ static int parser_init(struct of_pci_range_parser *parser,
- 	parser->node = node;
- 	parser->pna = of_n_addr_cells(node);
- 	parser->np = parser->pna + na + ns;
-+	parser->dma = !strcmp(name, "dma-ranges");
+diff --git a/tests/generic/064 b/tests/generic/064
+index 1ace14b6..058258d5 100755
+--- a/tests/generic/064
++++ b/tests/generic/064
+@@ -72,7 +72,9 @@ done
  
- 	parser->range = of_get_property(node, name, &rlen);
- 	if (parser->range == NULL)
-@@ -281,7 +282,11 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
- 	range->pci_space = be32_to_cpup(parser->range);
- 	range->flags = of_bus_pci_get_flags(parser->range);
- 	range->pci_addr = of_read_number(parser->range + 1, ns);
--	range->cpu_addr = of_translate_address(parser->node,
-+	if (parser->dma)
-+		range->cpu_addr = of_translate_dma_address(parser->node,
-+				parser->range + na);
-+	else
-+		range->cpu_addr = of_translate_address(parser->node,
- 				parser->range + na);
- 	range->size = of_read_number(parser->range + parser->pna + na, ns);
+ extent_after=`_count_extents $dest`
+ if [ $extent_before -ne $extent_after ]; then
+-	echo "extents mismatched before = $extent_before after = $extent_after"
++	if [ "$FSTYP" != "f2fs" ] || [ $extent_before -ne 1 ] || [ $extent_after -ne 50 ]; then
++		echo "extents mismatched before = $extent_before after = $extent_after"
++	fi
+ fi
  
-@@ -294,8 +299,12 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
- 
- 		flags = of_bus_pci_get_flags(parser->range);
- 		pci_addr = of_read_number(parser->range + 1, ns);
--		cpu_addr = of_translate_address(parser->node,
--				parser->range + na);
-+		if (parser->dma)
-+			cpu_addr = of_translate_dma_address(parser->node,
-+					parser->range + na);
-+		else
-+			cpu_addr = of_translate_address(parser->node,
-+					parser->range + na);
- 		size = of_read_number(parser->range + parser->pna + na, ns);
- 
- 		if (flags != range->flags)
-diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-index ddda3936039c..eac7ab109df4 100644
---- a/include/linux/of_address.h
-+++ b/include/linux/of_address.h
-@@ -12,6 +12,7 @@ struct of_pci_range_parser {
- 	const __be32 *end;
- 	int np;
- 	int pna;
-+	bool dma;
- };
- 
- struct of_pci_range {
+ # compare original file and test file.
 -- 
-2.20.1
+2.19.0.605.g01d371f741-goog
 
