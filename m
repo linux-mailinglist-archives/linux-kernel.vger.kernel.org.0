@@ -2,112 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD9DC078C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 16:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 574A1C0791
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 16:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfI0O2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 10:28:44 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:49234 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbfI0O2n (ORCPT
+        id S1727791AbfI0O3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 10:29:34 -0400
+Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:32830 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727120AbfI0O3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 10:28:43 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8REOIZF190898;
-        Fri, 27 Sep 2019 14:27:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=Rz1WKelrhXx/CX8CfO1Ki+c8gnklPMpb9zMgJPDFb08=;
- b=fkktZQXAnJ5jRf9NfvPe73M8qlAx3rnCqZhbmta/wD/sexw4ILyBAHwrID5c9OMu3POJ
- G2/nsxeGCnBAu2ExYHdtETIwNVnqGFagyeochWDiGTBQcq0xr6ILDHMrCgoIbZ943lI+
- 0fw1YGQXNwI/J5UnKbwMZCofKL7OsowuGxep9hSW1YFXKc6lo2S8+PDPej5l9refK4rb
- nJ7hywdJGSl6ErksGW5YpA9C926H5GsrVR7X3fxAd4wQIVf5lIe87iXU2hiK7aTj1ehe
- lpkUFzVNa499m7gO2UvezmYdedHRxDuLYiwQYlcyb9nIl/JErP1xMiksycZlPDeFjMcL Og== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2v5btqjm9u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 14:27:49 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8RENX6P019009;
-        Fri, 27 Sep 2019 14:27:48 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2v9m3f0adv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 14:27:48 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8RERi3U019336;
-        Fri, 27 Sep 2019 14:27:45 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 27 Sep 2019 07:27:44 -0700
-Date:   Fri, 27 Sep 2019 17:27:36 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: amd: acp3x: clean up an indentation issue
-Message-ID: <20190927142552.GH27389@kadam>
-References: <20190927103858.631-1-colin.king@canonical.com>
- <729ae953-b78a-9452-e8b3-3583a21a1295@canonical.com>
+        Fri, 27 Sep 2019 10:29:34 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 6482B182CF668;
+        Fri, 27 Sep 2019 14:29:33 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 90,9,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:800:960:966:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1801:2196:2199:2393:2553:2559:2562:2692:2828:3138:3139:3140:3141:3142:3354:3622:3653:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4385:4605:5007:6119:7901:7903:10004:10400:10848:11026:11232:11233:11473:11658:11914:12043:12050:12297:12438:12740:12760:12895:13141:13230:13439:14181:14659:14721:21080:21433:21451:21611:21627:21740:21741:21819:30022:30054:30070:30090:30091,0,RBL:113.161.34.234:@perches.com:.lbl8.mailshell.net-62.14.241.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: lunch41_5320358922011
+X-Filterd-Recvd-Size: 3127
+Received: from XPS-9350 (unknown [113.161.34.234])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 27 Sep 2019 14:29:30 +0000 (UTC)
+Message-ID: <7672dd2f651bfdcdb1615ab739e36a381b2535b1.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Warn if DT bindings are not in schema format
+From:   Joe Perches <joe@perches.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Whitcroft <apw@canonical.com>
+Date:   Fri, 27 Sep 2019 07:29:28 -0700
+In-Reply-To: <CAL_JsqLtEM9+LK=3YDLnoZbC1v09R9-qfFNEH-gTWj94FAjnyg@mail.gmail.com>
+References: <20190913211349.28245-1-robh@kernel.org>
+         <713b2e5bbab16ddf850245ae1d92be66d9730e02.camel@perches.com>
+         <CAL_JsqLtEM9+LK=3YDLnoZbC1v09R9-qfFNEH-gTWj94FAjnyg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <729ae953-b78a-9452-e8b3-3583a21a1295@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9393 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909270134
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9393 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909270134
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 11:43:31AM +0100, Colin Ian King wrote:
-> On 27/09/2019 11:38, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
+On Fri, 2019-09-27 at 09:02 -0500, Rob Herring wrote:
+> On Fri, Sep 13, 2019 at 4:48 PM Joe Perches <joe@perches.com> wrote:
+> > On Fri, 2019-09-13 at 16:13 -0500, Rob Herring wrote:
+> > > DT bindings are moving to using a json-schema based schema format
+> > > instead of freeform text. Add a checkpatch.pl check to encourage using
+> > > the schema for new bindings. It's not yet a requirement, but is
+> > > progressively being required by some maintainers.
+> > []
+> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > []
+> > > @@ -2822,6 +2822,14 @@ sub process {
+> > >                            "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
+> > >               }
+> > > 
+> > > +# Check for adding new DT bindings not in schema format
+> > > +             if (!$in_commit_log &&
+> > > +                 ($line =~ /^new file mode\s*\d+\s*$/) &&
+> > > +                 ($realfile =~ m@^Documentation/devicetree/bindings/.*\.txt$@)) {
+> > > +                     WARN("DT_SCHEMA_BINDING_PATCH",
+> > > +                          "DT bindings should be in DT schema format. See: Documentation/devicetree/writing-schema.rst\n");
+> > > +             }
+> > > +
 > > 
-> > There is a return statement that is indented too deeply, remove
-> > the extraneous tab.
+> > As this already seems to be git dependent, perhaps
+> 
+> It's quite rare to see a non git generated diff these days.
+> 
+> > it's easier to read with a single line test like:
 > > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  sound/soc/amd/raven/acp3x-pcm-dma.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-> > index bc4dfafdfcd1..ea57088d50ce 100644
-> > --- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-> > +++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-> > @@ -631,7 +631,7 @@ static int acp3x_audio_probe(struct platform_device *pdev)
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >  	if (!res) {
-> >  		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
-> > -			return -ENODEV;
-> > +		return -ENODEV;
-> >  	}
-> >  
-> >  	adata = devm_kzalloc(&pdev->dev, sizeof(*adata), GFP_KERNEL);
-> > 
-> Oops, I've sent this fix before. ignore. apologies.
+> >                 if ($line =~ m{^\s*create mode\s*\d+\s*Documentation/devicetree/bindings/.*\.txt$}) {
+> >                         etc...
+> >                 }
+> 
+> I frequently do 'git show $commit | scripts/checkpatch.pl' and this
+> doesn't work with that. I really should have a '--pretty=email' in
+> there, but I just ignore the commit msg warnings. In any case, that
+> still doesn't help because there's no diffstat. There's probably some
+> way to turn that on or just use git-format-patch, but really we want
+> this to work with any git diff.
 
-Haha.  I used to do this all the time.  Now my QC script searches my
-outbox.  I still send duplicates sometimes if I'm travelling and forget
-to copy my outbox over.
+I don't understand your argument against what I proposed at all.
 
-regards,
-dan carpenter
+and btw:
+
+$ git format-patch -1 --stdout <commit> | ./scripts/checkpatch.pl
+
 
