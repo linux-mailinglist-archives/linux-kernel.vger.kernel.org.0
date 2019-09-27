@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17931BFF3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F69ABFF46
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726205AbfI0Gip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 02:38:45 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41657 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfI0Gio (ORCPT
+        id S1726295AbfI0Gkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 02:40:47 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52051 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfI0Gkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 02:38:44 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h7so1319572wrw.8
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 23:38:41 -0700 (PDT)
+        Fri, 27 Sep 2019 02:40:47 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 7so5243940wme.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 23:40:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=N6VkM0z841Krtrga1vgaL7l4TlcDiW87cgB/wBSnoMk=;
-        b=Yz0WTVat1qj/a9+OixcTrwffInyf88Kjh0F1MX2RlJiFUruMsgivM+3vFPwRTbbeIF
-         uYYqolDY8Pmx4rKIRR54uiKKYRoCnVWP1ljsct6nzVs/WSpNHWkydn3/YprqNooFySH8
-         j8lRbWr6HDeJbA4gG/+0OWW/YFkGrYM7QVTich0gVq5yLCBdkdxFYEDXOUJ1sRw85yt9
-         /V/zWLJXY/cLiGEJ6IQJKWo7KIw56eDjls1bt+jHZW8XOVukTo9YeuqgalhPFp69uKyk
-         G5x6WZAHF3IaB/SnwpMjuyyu9L59Fr/HbvX1JvauV8gaPB60vzXOLVgqoxJUcjAMspD2
-         3adg==
+        bh=PHQhF1Uf8xVr36GTPK8xxc4d83dA9hQ4yXimfprGDGg=;
+        b=2FvSir+M/YgOB6XuiiX0hGFMFd7J0eZGu7Vn8aKrTBZL9HnCouMYPDJ4jixL8qOZK2
+         2gCkqC9nMOjvuLTY0HiX+bRdo6Ppf/b00kMNZPauq86C3FWMjrdtwIFtC269p323iE+9
+         Kf6KAKpSwzJk6goXM9wiM7lOk1nGjJ1rkaXgza/LITKDdRv3gBSscxHx+ra5+TsykBCj
+         Dx0nTfkDL5KEqTqIhwRXFo3IoEJbUJLjQryiddtDBKaIinWXgegwP5f+lL+EB0+uluuL
+         ZhHS47bNp6A7JTdUhzxTxsAOsJK/rDkdBlzoYgCXg9FLlQzkv7M2ZZfJVJRt/X+MZ66X
+         uZnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=N6VkM0z841Krtrga1vgaL7l4TlcDiW87cgB/wBSnoMk=;
-        b=skIP1vONkyUQFhshcfvoGlyMfTfFX8l2c4JtHnccrQc8qalE22VctAeli/2BnDr0gy
-         xAAhewrjd5ZMyVYceMMQdxb5msO2NQtQtABZH74K6J6MwBuRn8IHFAmc3qAi/GHLwshj
-         mQ/U2KyV132tJEVRPJ8UvkrtNkFwvXIrhthhUc31HidFKNqKqV6Z7J8hVzyGnE4FoSdd
-         j1xOdxqyQKEn+nlA4UC4eTpEPZlqKvybHrVEBWGybIyC2s8Yc6cesVW6GbY/6mTPvdKk
-         /kOhsaojh4AXTtoGUzt70vc1067ctNg5m3J0Msos75GDwHBomWMxhP4NLWnVBZx797xp
-         iwgg==
-X-Gm-Message-State: APjAAAW+DH9sawT5JhHF/Dvx9ICVChaCKam1gkQ7Ch27yFFRHKFndUag
-        OzQ+hCZVCVhiw+1uPQPo83gd7A4vRQaQzw==
-X-Google-Smtp-Source: APXvYqx0GDUQYgnlvt5Lm1MkwLuh2nfKL2JPfnUqkt12rNqDJAooiNxb+tKqKlGXb/Wa2z9ty/mf+Q==
-X-Received: by 2002:a5d:63c6:: with SMTP id c6mr1575616wrw.117.1569566320128;
-        Thu, 26 Sep 2019 23:38:40 -0700 (PDT)
+        bh=PHQhF1Uf8xVr36GTPK8xxc4d83dA9hQ4yXimfprGDGg=;
+        b=lyR9FXMLP5ce2tDocyW2zgYjQvjP8i0GOGRcveIg2+czorLMNYWZagNNxa1OVn9Y55
+         PUU9HxtLun50mev21dSloaGr1Yqd+o09ussvKOs3mXyhZdfq+p+k8Txk8B6AhPwdG/fr
+         ht+fZI3l9DnRtLV9NygmGdKWCyRe/BTdmz6dABO5tt7kHXZRd9uuSAB6fd8kbG1wARca
+         X6lPJaeB0pDpFxN8L+BWF9I2N2Hxyc0Cdow4Pp6cE/qFFcvEDndHncsGST10uf62wkyD
+         j7i+M0cHTEmVU1uf8bv6mKgU5jON394JTHS7QwCxw+gPfRceYkKiH0FE68lsu21ZhnTy
+         g2hw==
+X-Gm-Message-State: APjAAAUyomeYvUTu0BvmI6/9vE8DEuU8ts6dKu3Qychj5GAjiI0pIEoW
+        VCYF/Zz0ufjLPhV/Dh3mQtk0EjjC/x7HQw==
+X-Google-Smtp-Source: APXvYqzO7faOpfYkbitY0KwoI/cYZPPeFot3uk06M2C/f11Z4QbBMv/OBs42MToBEijbBQTE/4anzQ==
+X-Received: by 2002:a1c:f30d:: with SMTP id q13mr5364119wmq.60.1569566443678;
+        Thu, 26 Sep 2019 23:40:43 -0700 (PDT)
 Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id z125sm8980853wme.37.2019.09.26.23.38.39
+        by smtp.gmail.com with ESMTPSA id a18sm3299443wrh.25.2019.09.26.23.40.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Sep 2019 23:38:39 -0700 (PDT)
-Subject: Re: [PATCH RFC 0/2] clk: meson: g12a: handle clock hw changes while
- in suspend
-To:     Kevin Hilman <khilman@baylibre.com>, sboyd@kernel.org,
-        jbrunet@baylibre.com, mturquette@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        Thu, 26 Sep 2019 23:40:43 -0700 (PDT)
+Subject: Re: [PATCH RFC 1/2] clk: introduce clk_invalidate_rate()
+To:     Stephen Boyd <sboyd@kernel.org>, jbrunet@baylibre.com,
+        mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20190919102518.25126-1-narmstrong@baylibre.com>
- <7htv8ykcpm.fsf@baylibre.com>
+ <20190919102518.25126-2-narmstrong@baylibre.com>
+ <20190927001425.DFDC7207FF@mail.kernel.org>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -107,12 +107,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <3cf0a406-eb06-fe30-823f-cd2965646e10@baylibre.com>
-Date:   Fri, 27 Sep 2019 08:38:38 +0200
+Message-ID: <8486dec0-8aea-ea39-2a52-7347a01c5c40@baylibre.com>
+Date:   Fri, 27 Sep 2019 08:40:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <7htv8ykcpm.fsf@baylibre.com>
+In-Reply-To: <20190927001425.DFDC7207FF@mail.kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -121,34 +121,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/09/2019 22:46, Kevin Hilman wrote:
-> Neil Armstrong <narmstrong@baylibre.com> writes:
-> 
->> This serie aime to support when the suspend/resume firmware alters the
->> clock tree, leading to an incorrect representation of the clock tree
->> after a resume from suspend-to-mem.
+On 27/09/2019 02:14, Stephen Boyd wrote:
+> Quoting Neil Armstrong (2019-09-19 03:25:17)
+>> This introduces the clk_invalidate_rate() call used to recalculate the
+>> rate and parent tree of a particular clock if it's known that the
+>> underlying registers set has been altered by the firmware, like from
+>> a suspend/resume handler running in trusted cpu mode.
 >>
->> For the Amlogic G12A/G12B/SM1 case, the SCPI firmware handling suspend
->> alters the CPU clock tree in various ways.
+>> The call refreshes the actual parent and when changed, instructs CCF
+>> the parent has changed. Finally the call will recalculate the rate of
+>> each part of the tree to make sure the CCF cached tree is in sync with
+>> the hardware.
 >>
->> Since we know which part of the tree is possibly altered, we introduce here
->> the clk_invalidate_rate() function that will rebuild the tree from the
->> hardware registers in case parents and dividers have changed.
->>
->> Finally we call clk_invalidate_rate() from a new resume callback to refresh
->> the CPU clock tree after a resume.
->>
->> With the clock tree refreshed, CCF can now handle the new clock tree
->> configuration and avoid crashing the system on further DVFS set_rates.
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
 > 
-> For clarification, does this series work without the other proposed
-> fixes[1]?  or is this dependent on that?
-> 
-> Kevin
-> 
-> [1] https://lore.kernel.org/linux-amlogic/20190919093627.21245-1-narmstrong@baylibre.com/
+> The knee-jerk reaction to these patches is that it shouldn't be a
+> consumer API (i.e. taking a struct clk) but a provider API (i.e. taking
+> a struct clk_hw). I haven't looked in any more detail but just know that
+> it's a non-starter to be a consumer based API because we don't want
+> random consumers out there to be telling the CCF or provider drivers
+> that some clk has lost state and needs to be "refreshed".
 > 
 
-These are independent, but you'll need both to have suspend/resume fully working.
+Totally agree, I hesitated and obviously did the wrong choice, but
+this is a nit, the main algorithm is not tied to the API level.
+
+Should I resend it with clk_hw ? the difference will be small and
+the main subject is the resync algorithm.
 
 Neil
