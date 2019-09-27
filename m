@@ -2,95 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16AD2C0548
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 14:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA191C0541
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 14:36:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfI0MiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 08:38:10 -0400
-Received: from mga11.intel.com ([192.55.52.93]:63036 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfI0MiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 08:38:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 05:38:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,555,1559545200"; 
-   d="scan'208";a="391148068"
-Received: from kmsmsx155.gar.corp.intel.com ([172.21.73.106])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Sep 2019 05:38:06 -0700
-Received: from pgsmsx108.gar.corp.intel.com ([169.254.8.138]) by
- KMSMSX155.gar.corp.intel.com ([169.254.15.100]) with mapi id 14.03.0439.000;
- Fri, 27 Sep 2019 20:34:33 +0800
-From:   "Lu, Brent" <brent.lu@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-CC:     "Rojewski, Cezary" <cezary.rojewski@intel.com>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yang.jie@linux.intel.com" <yang.jie@linux.intel.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "liam.r.girdwood@linux.intel.com" <liam.r.girdwood@linux.intel.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Subject: RE: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
- support
-Thread-Topic: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
- support
-Thread-Index: AQHVZFJP8PyrEMjcjUeZpcb0xW/mNqceLbmAgASxdDCAAEEEgIABJDyggAAwUICAAuppgIAAJ+iAgBgJ7jA=
-Date:   Fri, 27 Sep 2019 12:34:32 +0000
-Message-ID: <CF33C36214C39B4496568E5578BE70C7402EABB2@PGSMSX108.gar.corp.intel.com>
-References: <1567733058-9561-1-git-send-email-brent.lu@intel.com>
- <391e8f6c-7e35-deb4-4f4d-c39396b778ba@linux.intel.com>
- <CF33C36214C39B4496568E5578BE70C7402C9EA2@PGSMSX108.gar.corp.intel.com>
- <29b9fd4e-3d78-b4a3-e61a-c066bf24995a@linux.intel.com>
- <CF33C36214C39B4496568E5578BE70C7402CB9AC@PGSMSX108.gar.corp.intel.com>
- <99769525-779a-59aa-96da-da96f8f09a8a@linux.intel.com>
- <CF33C36214C39B4496568E5578BE70C7402DBB9B@PGSMSX108.gar.corp.intel.com>
- <34604b9a-f479-3f92-7917-84f295a82fd8@linux.intel.com>
-In-Reply-To: <34604b9a-f479-3f92-7917-84f295a82fd8@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2I2MGNkZDAtNGE0ZC00MTkwLTlkMGMtNjEwNmUyZTA2NjEwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidzBOK0ZiUmJcL3A3QWtVOHptV2ZMbGdRcnViU0pvSXVsdEdWR0ltS1diaDhlUU9uZWVoN2ZGWm9QU2d3RHBhZjEifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727076AbfI0MgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 08:36:22 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45018 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfI0MgW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 08:36:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id i18so2518471wru.11
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 05:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VRuu/jOQ4Zp+zYJZfIF9hFDwWbv4EjPC9iKOvfai/Ug=;
+        b=ujDS9k2OFc0WreqK2y/fe3R6tAVOaH4UfeF+TiT42v8swDKFwVKCk6zo4b9m6X2ZT3
+         oSCGFDePMAAvuxW/GcldxxlJNycLBYIKPzBg5kyUBHv5TAg4ydQJM5TGuDGiXigA1AOD
+         zPOmFNnzjOL2vDIMvtZIty3Uoq1A3Al6TZ75BjLi91HdQIPMOlf0l6EHW6MjwxftMhq9
+         S0W5MQPBlcFgCSpub7F21j9+GhnXqS9sLn3TEpPuBpAqCqhmJ9Tl3vgzGn8c6Z7Y1Ctk
+         kwP/lIrLn1T3o1A7/a0SeLZ4v2XrOLsg7VG1UZZs6I5tLFLaGR8cbBmMZ/l/zt9ecSBM
+         9UWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VRuu/jOQ4Zp+zYJZfIF9hFDwWbv4EjPC9iKOvfai/Ug=;
+        b=cxFADLIrH3bPuUB86mj+sapK6zzJJFnJVjmjA99Z1Cc4Iup2E3G4r+ztrWMiMUfA64
+         +GyvB81cIX/TvJngwWGKvK+MAQ6aXhqdZmWzSgqqrQk4gQ68aOMKokGwL4NI/jeVUxZK
+         b67RVHAGUD/GYZiAknfoqzHg2NkeKjgyHSiGsHRNpe9JOHsJkZBZ00U8nS2cinEyxU7S
+         N7+huOyTqsc7TBMzOAiuWjqWeuGWcrC7LNR6/RnU5/fb5c0eMEijbqn0ZKV/WmUahDuG
+         GALUpSJ0VHEW1mgW1dXqKbaYByKviUsxq4EoUmefUy1fjn4qqXO+aO2eWtNLx8ZDnz+2
+         qtMA==
+X-Gm-Message-State: APjAAAWgLOP5hQpP3lBNmnm7aBV2QsMIpaLfiDWwZfIHOzZT61dcQXJo
+        BOX5TTIlzXU1Ee4WgR5Sae9v5g==
+X-Google-Smtp-Source: APXvYqzDMuORRfaJT68JEBTRTG1lWRYGgATP795TJZ2KXH3TNeSmXRYq3cFVQH1OjTDUF8q8NYoLWQ==
+X-Received: by 2002:a05:6000:14b:: with SMTP id r11mr2584070wrx.58.1569587777681;
+        Fri, 27 Sep 2019 05:36:17 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
+        by smtp.gmail.com with ESMTPSA id d9sm4077030wrc.44.2019.09.27.05.36.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2019 05:36:16 -0700 (PDT)
+Date:   Fri, 27 Sep 2019 13:36:13 +0100
+From:   Matthias Maennich <maennich@google.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] module: avoid code duplication in
+ include/linux/export.h
+Message-ID: <20190927123613.GD259443@google.com>
+References: <20190927093603.9140-1-yamada.masahiro@socionext.com>
+ <20190927093603.9140-5-yamada.masahiro@socionext.com>
+ <f2e28d6b-77c5-5fe2-0bc4-b24955de9954@rasmusvillemoes.dk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <f2e28d6b-77c5-5fe2-0bc4-b24955de9954@rasmusvillemoes.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+DQo+ID4gSXQncyBub3Qgb25seSB0aGUgbWlzbWF0Y2ggYnV0IGFsc28gdGhlIGRlc2lnbiBs
-aW1pdGF0aW9uLiBBY2NvcmRpbmcNCj4gPiB0byB0aGUgaW5mb3JtYXRpb24gZnJvbSBnb29nbGUs
-IHRoZSBib2FyZCAoc2FtdXMpIG9ubHkgdXNlcyB0d28NCj4gPiBtaWNyb3Bob25lIHNvDQo+ID4g
-MyBvciA0IGNoYW5uZWwgcmVjb3JkaW5nIGFyZSBub3Qgc3VwcG9ydGVkLiBUaGF0J3MgdGhlIHJl
-YXNvbiB3ZQ0KPiA+IGxldmVyYWdlIHRoZSBjb25zdHJhaW50IGZyb20gb3RoZXIgbWFjaGluZSBk
-cml2ZXIgKGxpa2UNCj4gPiBrYmxfZGE3MjE5X21heDk4MzU3YS5jKSB0byByZW1vdmUgdGhlIDMg
-YW5kIDQgY2hhbm5lbCByZWNvcmRpbmcgb3B0aW9uLg0KPiANCj4gVGhlIGRlc2lnbiBsaW1pdGF0
-aW9uIGlzIGFscmVhZHkgaGFuZGxlZCBieSB0aGUgZmFjdCB0aGF0IHRoZSBTU1Agb3BlcmF0ZXMg
-aW4NCj4gMmNoIG1vZGUsIHNvIGl0J3MgYSBkaWZmZXJlbnQgY2FzZSBmcm9tIEtCTCB3aGVyZSBp
-bmRlZWQgdGhlIERNSUMtYmFzZWQNCj4gYmFjay1lbmQgY2FuIHN1cHBvcnQgNCBjaGFubmVscy4N
-Cj4gDQo+ID4NCj4gPiBUaGUgZGlmZmVyZW5jZSBhZnRlciB0aGUgY29uc3RyYWludCBpcyBpbXBs
-ZW1lbnRlZCBpcyB0aGF0IHRoZQ0KPiA+IHNuZF9wY21faHdfcGFyYW1zX3NldF9jaGFubmVscygp
-IGZ1bmN0aW9uIHdpbGwgcmV0dXJuIGVycm9yIChJbnZhbGlkDQo+ID4gYXJndW1lbnQpIHdoZW4g
-Y2hhbm5lbCBudW1iZXIgaXMgMyBvciA0IHNvIHRoZSBhcHBsaWNhdGlvbiBrbm93cyB0aGUNCj4g
-PiBjb25maWd1cmF0aW9uIGlzIG5vdCBzdXBwb3J0ZWQuDQo+IA0KPiBJIGdldCB0aGUgZXJyb3Is
-IEkgYW0ganVzdCB3b25kZXJpbmcgaWYgdGhlIGZpeCBpcyBhdCB0aGUgcmlnaHQgbG9jYXRpb24u
-IEknbGwgbG9vaw0KPiBpbnRvIGl0LCBnaXZlIG1lIHVudGlsIHRvbW9ycm93Lg0KDQpJIHRoaW5r
-IEkgZ290IHlvdXIgcG9pbnQuIEkgY2hlcnJ5LXBpY2sgdGhlc2UgY29tbWl0cyBiYWNrIHRvIHYz
-LjE0IGJyYW5jaCB0byBmaXgNCnRoZSBGRS9CRSBtaXNtYXRjaCB3aXRob3V0IGFkZGluZyBjb25z
-dHJhaW50IGluIG1hY2hpbmUgZHJpdmVyLiBUaGFua3MuDQoNCmIwNzNlZDRlIEFTb0M6IHNvYy1w
-Y206IERQQ00gY2FyZXMgQkUgZm9ybWF0DQpmNGMyNzdiOCBBU29DOiBzb2MtcGNtOiBEUENNIGNh
-cmVzIEJFIGNoYW5uZWwgY29uc3RyYWludA0KNGYyYmQxOGIgQVNvQzogZHBjbTogZXh0ZW5kIGNo
-YW5uZWwgbWVyZ2luZyB0byB0aGUgYmFja2VuZCBjcHUgZGFpDQo0MzVmZmI3NiBBU29DOiBkcGNt
-OiByZXdvcmsgcnVudGltZSBzdHJlYW0gbWVyZ2UNCmJhYWNkOGQxIEFTb0M6IGRwY206IGFkZCBy
-YXRlIG1lcmdlIHRvIHRoZSBCRSBzdHJlYW0gbWVyZ2UNCg0K
+On Fri, Sep 27, 2019 at 01:07:33PM +0200, Rasmus Villemoes wrote:
+>On 27/09/2019 11.36, Masahiro Yamada wrote:
+>> include/linux/export.h has lots of code duplication between
+>> EXPORT_SYMBOL and EXPORT_SYMBOL_NS.
+>>
+>> To improve the maintainability and readability, unify the
+>> implementation.
+>>
+>> When the symbol has no namespace, pass the empty string "" to
+>> the 'ns' parameter.
+>>
+>> The drawback of this change is, it grows the code size.
+>> When the symbol has no namespace, sym->namespace was previously
+>> NULL, but it is now am empty string "". So, it increases 1 byte
+>> for every no namespace EXPORT_SYMBOL.
+>>
+>> A typical kernel configuration has 10K exported symbols, so it
+>> increases 10KB in rough estimation.
+>>
+>> I did not come up with a good idea to refactor it without increasing
+>> the code size.
+>
+>Can't we put the "aMS" flags on the __ksymtab_strings section? That
+>would make the empty strings free, and would also deduplicate the
+>USB_STORAGE string. And while almost per definition we don't have exact
+>duplicates among the names of exported symbols, we might have both a foo
+>and __foo, so that could save even more.
+
+I was not aware of this possibility and I was a bit bothered that I was
+not able to deduplicate the namespace strings in the PREL case. So, at
+least I tried to avoid having the redundant empty strings in it. If this
+approach solves the deduplication problem _and_ reduces the complexity
+of the code, I am very much for it. I will only be able to look into
+this next week.
+
+>I don't know if we have it already, but we'd need each arch to tell us
+>what symbol to use for @ in @progbits (e.g. % for arm). It seems most
+>are fine with @, so maybe a generic version could be
+>
+>#ifndef ARCH_SECTION_TYPE_CHAR
+>#define ARCH_SECTION_TYPE_CHAR "@"
+>#endif
+>
+>and then it would be
+>section("__ksymtab_strings,\"aMS\","ARCH_SECTION_TYPE_CHAR"progbits,1")
+>
+>But I don't know if any tooling relies on the strings not being
+>deduplicated.
+
+Matthias
+Cheers,
+
+>Rasmus
