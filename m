@@ -2,255 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F04DBFE52
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 06:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9560DBFE4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 06:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbfI0E5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 00:57:33 -0400
-Received: from mga05.intel.com ([192.55.52.43]:28040 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbfI0E5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 00:57:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 21:57:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,554,1559545200"; 
-   d="scan'208";a="341687563"
-Received: from dpdk-virtio-tbie-2.sh.intel.com (HELO ___) ([10.67.104.73])
-  by orsmga004.jf.intel.com with ESMTP; 26 Sep 2019 21:57:26 -0700
-Date:   Fri, 27 Sep 2019 12:54:39 +0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, alex.williamson@redhat.com,
-        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        lingshan.zhu@intel.com
-Subject: Re: [PATCH] vhost: introduce mdev based hardware backend
-Message-ID: <20190927045438.GA17152@___>
-References: <20190926045427.4973-1-tiwei.bie@intel.com>
- <1b4b8891-8c14-1c85-1d6a-2eed1c90bcde@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1b4b8891-8c14-1c85-1d6a-2eed1c90bcde@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728752AbfI0Ezg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 00:55:36 -0400
+Received: from cmccmta3.chinamobile.com ([221.176.66.81]:2635 "EHLO
+        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbfI0Ezg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 00:55:36 -0400
+X-Greylist: delayed 10069 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Sep 2019 00:55:34 EDT
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.3]) by rmmx-syy-dmz-app12-12012 (RichMail) with SMTP id 2eec5d8d962fe12-3aa7a; Fri, 27 Sep 2019 12:55:13 +0800 (CST)
+X-RM-TRANSID: 2eec5d8d962fe12-3aa7a
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost (unknown[223.105.0.241])
+        by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee25d8d963016f-a2662;
+        Fri, 27 Sep 2019 12:55:13 +0800 (CST)
+X-RM-TRANSID: 2ee25d8d963016f-a2662
+From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+To:     Julian Anastasov <ja@ssi.bg>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Subject: [PATCH v2 0/2] ipvs: speedup ipvs netns dismantle
+Date:   Fri, 27 Sep 2019 12:54:49 +0800
+Message-Id: <1569560091-20553-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 11:46:06AM +0800, Jason Wang wrote:
-> On 2019/9/26 下午12:54, Tiwei Bie wrote:
-> > +
-> > +static long vhost_mdev_start(struct vhost_mdev *m)
-> > +{
-> > +	struct mdev_device *mdev = m->mdev;
-> > +	const struct virtio_mdev_device_ops *ops = mdev_get_dev_ops(mdev);
-> > +	struct virtio_mdev_callback cb;
-> > +	struct vhost_virtqueue *vq;
-> > +	int idx;
-> > +
-> > +	ops->set_features(mdev, m->acked_features);
-> > +
-> > +	mdev_add_status(mdev, VIRTIO_CONFIG_S_FEATURES_OK);
-> > +	if (!(mdev_get_status(mdev) & VIRTIO_CONFIG_S_FEATURES_OK))
-> > +		goto reset;
-> > +
-> > +	for (idx = 0; idx < m->nvqs; idx++) {
-> > +		vq = &m->vqs[idx];
-> > +
-> > +		if (!vq->desc || !vq->avail || !vq->used)
-> > +			break;
-> > +
-> > +		if (ops->set_vq_state(mdev, idx, vq->last_avail_idx))
-> > +			goto reset;
-> 
-> 
-> If we do set_vq_state() in SET_VRING_BASE, we won't need this step here.
+Implement exit_batch() method to dismantle more ipvs netns
+per round.
 
-Yeah, I plan to do it in the next version.
+Tested:
+$  cat add_del_unshare.sh
+#!/bin/bash
 
-> 
-> 
-> > +
-> > +		/*
-> > +		 * In vhost-mdev, userspace should pass ring addresses
-> > +		 * in guest physical addresses when IOMMU is disabled or
-> > +		 * IOVAs when IOMMU is enabled.
-> > +		 */
-> 
-> 
-> A question here, consider we're using noiommu mode. If guest physical
-> address is passed here, how can a device use that?
-> 
-> I believe you meant "host physical address" here? And it also have the
-> implication that the HPA should be continuous (e.g using hugetlbfs).
+for i in `seq 1 100`
+    do
+     (for j in `seq 1 40` ; do  unshare -n ipvsadm -A -t 172.16.$i.$j:80 >/dev/null ; done) &
+    done
+wait; grep net_namespace /proc/slabinfo
 
-The comment is talking about the virtual IOMMU (i.e. iotlb in vhost).
-It should be rephrased to cover the noiommu case as well. Thanks for
-spotting this.
+Befor patch:
+$  time sh add_del_unshare.sh
+net_namespace       4020   4020   4736    6    8 : tunables    0    0    0 : slabdata    670    670      0
+
+real    0m8.086s
+user    0m2.025s
+sys     0m36.956s
+
+After patch:
+$  time sh add_del_unshare.sh
+net_namespace       4020   4020   4736    6    8 : tunables    0    0    0 : slabdata    670    670      0
+
+real    0m7.623s
+user    0m2.003s
+sys     0m32.935s
+
+Haishuang Yan (2):
+  ipvs: batch __ip_vs_cleanup
+  ipvs: batch __ip_vs_dev_cleanup
+
+ include/net/ip_vs.h             |  2 +-
+ net/netfilter/ipvs/ip_vs_core.c | 47 ++++++++++++++++++++++++-----------------
+ net/netfilter/ipvs/ip_vs_ctl.c  | 12 ++++++++---
+ 3 files changed, 38 insertions(+), 23 deletions(-)
+
+-- 
+1.8.3.1
 
 
-> > +
-> > +	switch (cmd) {
-> > +	case VHOST_MDEV_SET_STATE:
-> > +		r = vhost_set_state(m, argp);
-> > +		break;
-> > +	case VHOST_GET_FEATURES:
-> > +		r = vhost_get_features(m, argp);
-> > +		break;
-> > +	case VHOST_SET_FEATURES:
-> > +		r = vhost_set_features(m, argp);
-> > +		break;
-> > +	case VHOST_GET_VRING_BASE:
-> > +		r = vhost_get_vring_base(m, argp);
-> > +		break;
-> 
-> 
-> Does it mean the SET_VRING_BASE may only take affect after
-> VHOST_MEV_SET_STATE?
 
-Yeah, in this version, SET_VRING_BASE won't set the base to the
-device directly. But I plan to not delay this anymore in the next
-version to support the SET_STATUS.
-
-> 
-> 
-> > +	default:
-> > +		r = vhost_dev_ioctl(&m->dev, cmd, argp);
-> > +		if (r == -ENOIOCTLCMD)
-> > +			r = vhost_vring_ioctl(&m->dev, cmd, argp);
-> > +	}
-> > +
-> > +	mutex_unlock(&m->mutex);
-> > +	return r;
-> > +}
-> > +
-> > +static const struct vfio_device_ops vfio_vhost_mdev_dev_ops = {
-> > +	.name		= "vfio-vhost-mdev",
-> > +	.open		= vhost_mdev_open,
-> > +	.release	= vhost_mdev_release,
-> > +	.ioctl		= vhost_mdev_unlocked_ioctl,
-> > +};
-> > +
-> > +static int vhost_mdev_probe(struct device *dev)
-> > +{
-> > +	struct mdev_device *mdev = mdev_from_dev(dev);
-> > +	const struct virtio_mdev_device_ops *ops = mdev_get_dev_ops(mdev);
-> > +	struct vhost_mdev *m;
-> > +	int nvqs, r;
-> > +
-> > +	m = kzalloc(sizeof(*m), GFP_KERNEL | __GFP_RETRY_MAYFAIL);
-> > +	if (!m)
-> > +		return -ENOMEM;
-> > +
-> > +	mutex_init(&m->mutex);
-> > +
-> > +	nvqs = ops->get_queue_max(mdev);
-> > +	m->nvqs = nvqs;
-> 
-> 
-> The name could be confusing, get_queue_max() is to get the maximum number of
-> entries for a virtqueue supported by this device.
-
-OK. It might be better to rename it to something like:
-
-	get_vq_num_max()
-
-which is more consistent with the set_vq_num().
-
-> 
-> It looks to me that we need another API to query the maximum number of
-> virtqueues supported by the device.
-
-Yeah.
-
-Thanks,
-Tiwei
-
-
-> 
-> Thanks
-> 
-> 
-> > +
-> > +	m->vqs = kmalloc_array(nvqs, sizeof(struct vhost_virtqueue),
-> > +			       GFP_KERNEL);
-> > +	if (!m->vqs) {
-> > +		r = -ENOMEM;
-> > +		goto err;
-> > +	}
-> > +
-> > +	r = vfio_add_group_dev(dev, &vfio_vhost_mdev_dev_ops, m);
-> > +	if (r)
-> > +		goto err;
-> > +
-> > +	m->features = ops->get_features(mdev);
-> > +	m->mdev = mdev;
-> > +	return 0;
-> > +
-> > +err:
-> > +	kfree(m->vqs);
-> > +	kfree(m);
-> > +	return r;
-> > +}
-> > +
-> > +static void vhost_mdev_remove(struct device *dev)
-> > +{
-> > +	struct vhost_mdev *m;
-> > +
-> > +	m = vfio_del_group_dev(dev);
-> > +	mutex_destroy(&m->mutex);
-> > +	kfree(m->vqs);
-> > +	kfree(m);
-> > +}
-> > +
-> > +static struct mdev_class_id id_table[] = {
-> > +	{ MDEV_ID_VHOST },
-> > +	{ 0 },
-> > +};
-> > +
-> > +static struct mdev_driver vhost_mdev_driver = {
-> > +	.name	= "vhost_mdev",
-> > +	.probe	= vhost_mdev_probe,
-> > +	.remove	= vhost_mdev_remove,
-> > +	.id_table = id_table,
-> > +};
-> > +
-> > +static int __init vhost_mdev_init(void)
-> > +{
-> > +	return mdev_register_driver(&vhost_mdev_driver, THIS_MODULE);
-> > +}
-> > +module_init(vhost_mdev_init);
-> > +
-> > +static void __exit vhost_mdev_exit(void)
-> > +{
-> > +	mdev_unregister_driver(&vhost_mdev_driver);
-> > +}
-> > +module_exit(vhost_mdev_exit);
-> > +
-> > +MODULE_VERSION("0.0.1");
-> > +MODULE_LICENSE("GPL v2");
-> > +MODULE_DESCRIPTION("Mediated device based accelerator for virtio");
-> > diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> > index 40d028eed645..5afbc2f08fa3 100644
-> > --- a/include/uapi/linux/vhost.h
-> > +++ b/include/uapi/linux/vhost.h
-> > @@ -116,4 +116,12 @@
-> >   #define VHOST_VSOCK_SET_GUEST_CID	_IOW(VHOST_VIRTIO, 0x60, __u64)
-> >   #define VHOST_VSOCK_SET_RUNNING		_IOW(VHOST_VIRTIO, 0x61, int)
-> > +/* VHOST_MDEV specific defines */
-> > +
-> > +#define VHOST_MDEV_SET_STATE	_IOW(VHOST_VIRTIO, 0x70, __u64)
-> > +
-> > +#define VHOST_MDEV_S_STOPPED	0
-> > +#define VHOST_MDEV_S_RUNNING	1
-> > +#define VHOST_MDEV_S_MAX	2
-> > +
-> >   #endif
