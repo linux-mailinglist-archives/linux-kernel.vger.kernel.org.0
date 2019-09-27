@@ -2,184 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD444C006F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 09:53:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 964FAC0079
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 09:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfI0HxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 03:53:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:31305 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbfI0HxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 03:53:11 -0400
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E7969C05AA52
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 07:53:10 +0000 (UTC)
-Received: by mail-io1-f71.google.com with SMTP id w8so10669022iod.21
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 00:53:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+z967OGKFyzsipkAMvwKR90NL+oBP6ClqcqeupYnwJM=;
-        b=C6RwmpEjkaWECYOp1TJeL+CsFzrIr0zgH2PuhzEMTW77i+VoPUuFC8aA65Abhz4h5F
-         CDTWIGUQMprzt7IZ2B1z4JFaBjvfnkDjzMsE4kmuJMzR3AE1x7rEfLL6A+NhtHEd2hP6
-         HM0Y194EUmcSVed2hhPCUoLDyXjbPcsCp/oidCm+gtfyPRj5ak6S+tXVqS+CPEEiLa8a
-         5puVcpEVhIUBmLBP3JfsrpJpGssbGQvuQ2h+aL+WumaidAQMylL881vdDRnVnbAv5y+E
-         gIpF/pQzQuCL0inaFiw65/HlubaheI5ac+JLkh9GKFi8/sd8XqGNTuoLcPUsS7qYclKO
-         oY9Q==
-X-Gm-Message-State: APjAAAUSDFi3SP2t8b71oKmplu6WsFB5Jin0oasoL9vE2NMn05iiLxVh
-        66fYD427hoCrc4EFepqNv3h2nILo+/AfERDwE3tH0zL3ZbuUwOssDZ+QnyjElbKNpydJL4Sh8VN
-        omsjm5Iszq0wLr1DPbAIgyTVa4xmglZmYAeZeLBuc
-X-Received: by 2002:a92:5c13:: with SMTP id q19mr3296382ilb.249.1569570790131;
-        Fri, 27 Sep 2019 00:53:10 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyQAC9ocy3CrD0E1lT+wFbJDvNy6gND2zhgtJZP9qoxiBZjNnVGhEx653IsvSSXH18WtvDnbJSa8TQZbQj7HiU=
-X-Received: by 2002:a92:5c13:: with SMTP id q19mr3296358ilb.249.1569570789810;
- Fri, 27 Sep 2019 00:53:09 -0700 (PDT)
+        id S1726676AbfI0HzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 03:55:24 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43554 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfI0HzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 03:55:24 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8R7tHv2065733;
+        Fri, 27 Sep 2019 02:55:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569570917;
+        bh=tRDmuFTcml9/vkcUAcgHfVDQw97SRNjv+W5LESjr7XI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=huDKGiiTuQoxMrSKLQ4HaZZ0bHxCorwA5fVfKJKSbv4nwI4rPsuKgRB4f+rS0wWTV
+         qZEAZeYx7sUl0PlkbiZwlmuBI8cWIH/o7zEJQFcDZbSibeUbJH0HzX4AUhMKoy1GRd
+         LZeuRRobiubmw8KKEE2V9ZkUv1I6R8kLV7AthT/M=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8R7tHgD077317
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 27 Sep 2019 02:55:17 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 27
+ Sep 2019 02:55:16 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 27 Sep 2019 02:55:09 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8R7tE5K122558;
+        Fri, 27 Sep 2019 02:55:14 -0500
+Subject: Re: [PATCH] drm/omap: Migrate minimum FCK/PCK ratio from Kconfig to
+ dts
+To:     Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>
+CC:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        Adam Ford <adam.ford@logicpd.com>,
+        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190510194229.20628-1-aford173@gmail.com>
+ <af325707-3e42-493d-e858-77878ef06138@ti.com>
+ <CAHCN7xLzoCNW6q5yDCsqMHeNvdNegkGhd0N+q9+Gd8JUGbG=_g@mail.gmail.com>
+ <7ada0752-6f65-2906-cb29-a47c9490fd57@ti.com>
+ <CAHCN7xJexJvh71vyb31ETgo=n_y_CupHH-AZwVK9mZe3GzJfEQ@mail.gmail.com>
+ <845055e2-8182-de74-2077-629fdf50ac6c@ti.com>
+ <CAHCN7xJFrTLOnbqrnH2W_T2whR8Xji0EMNR_cy8GYkDV-JDodQ@mail.gmail.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <854f6130-c8a8-81cb-aa76-4830f218ae54@ti.com>
+Date:   Fri, 27 Sep 2019 10:55:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190910151341.14986-1-kasong@redhat.com> <20190910151341.14986-3-kasong@redhat.com>
- <20190911055618.GA104115@gmail.com> <CACPcB9eZUZ1fCsc1GZs9MJnoqLK9Ld5KEx0_emx8J44Mjcy3WA@mail.gmail.com>
- <20190927054208.GA13426@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190927054208.GA13426@dhcp-128-65.nay.redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Fri, 27 Sep 2019 15:52:58 +0800
-Message-ID: <CACPcB9d+5idm-0r69Qeh3GyGF-wuyie_w1jBL5GRsnxq40Gs6w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] x86/kdump: Reserve extra memory when SME or SEV is active
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHCN7xJFrTLOnbqrnH2W_T2whR8Xji0EMNR_cy8GYkDV-JDodQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 1:42 PM Dave Young <dyoung@redhat.com> wrote:
->
-> On 09/25/19 at 06:36pm, Kairui Song wrote:
-> > On Wed, Sep 11, 2019 at 1:56 PM Ingo Molnar <mingo@kernel.org> wrote:
-> > > * Kairui Song <kasong@redhat.com> wrote:
-> > >
-> > > > Since commit c7753208a94c ("x86, swiotlb: Add memory encryption support"),
-> > > > SWIOTLB will be enabled even if there is less than 4G of memory when SME
-> > > > is active, to support DMA of devices that not support address with the
-> > > > encrypt bit.
-> > > >
-> > > > And commit aba2d9a6385a ("iommu/amd: Do not disable SWIOTLB if SME is
-> > > > active") make the kernel keep SWIOTLB enabled even if there is an IOMMU.
-> > > >
-> > > > Then commit d7b417fa08d1 ("x86/mm: Add DMA support for SEV memory
-> > > > encryption") will always force SWIOTLB to be enabled when SEV is active
-> > > > in all cases.
-> > > >
-> > > > Now, when either SME or SEV is active, SWIOTLB will be force enabled,
-> > > > and this is also true for kdump kernel. As a result kdump kernel will
-> > > > run out of already scarce pre-reserved memory easily.
-> > > >
-> > > > So when SME/SEV is active, reserve extra memory for SWIOTLB to ensure
-> > > > kdump kernel have enough memory, except when "crashkernel=size[KMG],high"
-> > > > is specified or any offset is used. As for the high reservation case, an
-> > > > extra low memory region will always be reserved and that is enough for
-> > > > SWIOTLB. Else if the offset format is used, user should be fully aware
-> > > > of any possible kdump kernel memory requirement and have to organize the
-> > > > memory usage carefully.
-> > > >
-> > > > Signed-off-by: Kairui Song <kasong@redhat.com>
-> > > > ---
-> > > >  arch/x86/kernel/setup.c | 20 +++++++++++++++++---
-> > > >  1 file changed, 17 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> > > > index 71f20bb18cb0..ee6a2f1e2226 100644
-> > > > --- a/arch/x86/kernel/setup.c
-> > > > +++ b/arch/x86/kernel/setup.c
-> > > > @@ -530,7 +530,7 @@ static int __init crashkernel_find_region(unsigned long long *crash_base,
-> > > >                                         unsigned long long *crash_size,
-> > > >                                         bool high)
-> > > >  {
-> > > > -     unsigned long long base, size;
-> > > > +     unsigned long long base, size, mem_enc_req = 0;
-> > > >
-> > > >       base = *crash_base;
-> > > >       size = *crash_size;
-> > > > @@ -561,11 +561,25 @@ static int __init crashkernel_find_region(unsigned long long *crash_base,
-> > > >       if (high)
-> > > >               goto high_reserve;
-> > > >
-> > > > +     /*
-> > > > +      * When SME/SEV is active and not using high reserve,
-> > > > +      * it will always required an extra SWIOTLB region.
-> > > > +      */
-> > > > +     if (mem_encrypt_active())
-> > > > +             mem_enc_req = ALIGN(swiotlb_size_or_default(), SZ_1M);
-> > > > +
-> > > >       base = memblock_find_in_range(CRASH_ALIGN,
-> > > > -                                   CRASH_ADDR_LOW_MAX, size,
-> > > > +                                   CRASH_ADDR_LOW_MAX,
-> > > > +                                   size + mem_enc_req,
-> > > >                                     CRASH_ALIGN);
-> > >
-> >
-> > Hi Ingo,
-> >
-> > I re-read my previous reply, it's long and tedious, let me try to make
-> > a more effective reply:
-> >
-> > > What sizes are we talking about here?
-> >
-> > The size here is how much memory will be reserved for kdump kernel, to
-> > ensure kdump kernel and userspace can run without OOM.
-> >
-> > >
-> > > - What is the possible size range of swiotlb_size_or_default()
-> >
-> > swiotlb_size_or_default() returns the swiotlb size, it's specified by
-> > user using swiotlb=<size>, or default size (64MB)
-> >
-> > >
-> > > - What is the size of CRASH_ADDR_LOW_MAX (the old limit)?
-> >
-> > It's 4G.
-> >
-> > >
-> > > - Why do we replace one fixed limit with another fixed limit instead of
-> > >   accurately sizing the area, with each required feature adding its own
-> > >   requirement to the reservation size?
-> >
-> > It's quite hard to "accurately sizing the area".
-> >
-> > No way to tell the exact amount of memory kdump needs, we can only estimate.
-> > Kdump kernel use different cmdline, drivers and components will have
-> > special handling for kdump, and userspace is totally different.
->
-> Agreed about your above, but specific this the problem in this patch
-> There should be other ways.
->
-> First thought about doing generic handling in swiotlb part, and do
-> something like kdump_memory_reserve(size) Ingo suggested,  but according
-> to you swiotlb init is late, so it can not increase the size, OTOH if
-> reserve another region for kdump in swiotlb will cause other issues.
->
-> So let's think about other improvement, for example to see if you can
-> call kdump_memory_reserve(size) in AMD SME init path, for example in
-> mem_encrypt_init(), is it before crashkernel reservation?
+(dropping folks who're probably not interested...)
 
-Yes, mem_encrypt_init is before the crashkernel reservation.
-I think this is a good idea. Will make a V4 patch based on this.
+On 26/09/2019 17:12, Adam Ford wrote:
+> On Thu, Sep 26, 2019 at 1:55 AM Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+>>
+>> On 25/09/2019 23:51, Adam Ford wrote:
+>>
+>>>> Has anyone debugged why the hang is happening?
+>>> I started to debug this, but I got distracted when I noticed the LCD
+>>> did't work at all on modern kernels.  I have that fixed now, so I can
+>>> go back to investigating this.
 
->
-> If doable it will be at least cleaner than the code in this patch.
->
-> Thanks
-> Dave
+I dont' have the same board, but I was testing with omap3 beagle xm. I 
+can reproduce rather similar issue, although I don't get a hang but 
+instead sync lost and underflow flood (which makes the device unusable).
+
+It looks like a bug in omap clock handling.
+
+DSS uses dss1_alwon_fck_3430es2 as fclk. dss1_alwon_fck_3430es2 comes 
+from dpll4_ck, and there's a divider after the PLL, dpll4_m4_ck.
+
+When the DSS driver sets dss1_alwon_fck_3430es2 rate to 27000000 or 
+27870967, which can be created with m4 dividers 32 and 31, it looks like 
+the divider goes to bypass, or to a very small value. DSS gets a very 
+high clock rate and breaks down.
+
+  Tomi
 
 -- 
-Best Regards,
-Kairui Song
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
