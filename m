@@ -2,258 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC79BBFD2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 04:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11717BFD2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 04:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbfI0CYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 22:24:24 -0400
-Received: from mail-eopbgr130077.outbound.protection.outlook.com ([40.107.13.77]:64587
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727631AbfI0CYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 22:24:24 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hMqRyMlvVwRmhMJCnv/hohaPFBqQMoeKMpudn4RpfxJ5Qz1VAVMPKsw0oOFqMFSbHMC+86ni6TV+1qk4BXHFapKliVZx8iTXcSR9SwFi23zzhI+Vb8CUXHIDYqxpzOtjWyRUfI3IAnkNfcY1Q07xlZ6Je7FPUpTPpDSggYAqs5Gw/4YtCRj2Pi+UQ4/oRJ/G6huN0xh0G+/3EsQBl/dbwwTos0WZlZuALfMVqr1bLmn/38mx/bfcEFL+/qlULQXrC49JCL8vJUhaGcDWDGgVKgoK72fnFhA+NCDLmXEBLh/r9I0JXYYZcAKLHsFbQaKRSQR9h7/8038bisTJ64Yeng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xccQNTD57IXyhSef/plRJ/zrUfYyV5oWPiMYwMx27dg=;
- b=TBLDN6tsANlE8BM5AFx3HaUXtDK0TUFwDXPSf88jumPz/RjmDDDToZZ39HzLmebLLWQP1sLV0lqCBV1ISuZ2WA1PQQXVykJr+DF0HgxY7wDklrfKm/u3z6Grtc3csyaYlVQ+Ht9iGYVq0NLfFMfvXjz0msS+RUg0amM+jLWpv5e++eApXltKk1v5xfMpXpUbGzp5+lLaMQ0IBUjlw2mttT9CPps/DIuwc/EbEY4gtFyTaskk/aOIfO7l0DKzCm5rCB0/r7LfKG+40m7GspWq5bvwPsDlAC2b5eU8Ly4tAHiLfGqcit6cjMynnko8ojYZm3Z9NLLg6cppXlq10z/S2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xccQNTD57IXyhSef/plRJ/zrUfYyV5oWPiMYwMx27dg=;
- b=HpFZ6ppOZ7hsG4DCOuoJN4eMByJrDlgiW74J9hDyN8Y5yvqnGwtdrBtDBZbk1i68WecPhWGrtrLgH9U13TibANubGcgODQvq5OIOsXvw+dT1aAsx3iZg/nOeDDl99zc5vURQSkSEukkNtiAQssnRF8K8iJe4lF0fUBYBIWp3TL4=
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
- DB7PR04MB5338.eurprd04.prod.outlook.com (52.135.128.33) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.20; Fri, 27 Sep 2019 02:23:44 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::4427:96f2:f651:6dfa]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::4427:96f2:f651:6dfa%5]) with mapi id 15.20.2284.023; Fri, 27 Sep 2019
- 02:23:44 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 2/2] nvmem: imx: scu: support write
-Thread-Topic: [PATCH V2 2/2] nvmem: imx: scu: support write
-Thread-Index: AQHVdNqWV3bDbWXLM0C9Hq/ux+/f2Q==
-Date:   Fri, 27 Sep 2019 02:23:44 +0000
-Message-ID: <1569550913-10176-2-git-send-email-peng.fan@nxp.com>
-References: <1569550913-10176-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1569550913-10176-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR0401CA0021.apcprd04.prod.outlook.com
- (2603:1096:202:2::31) To DB7PR04MB4490.eurprd04.prod.outlook.com
- (2603:10a6:5:36::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ed95b29c-9f14-4c8d-49dc-08d742f1b888
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB5338;
-x-ms-traffictypediagnostic: DB7PR04MB5338:|DB7PR04MB5338:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB533899A5D77BC63B5D4B85A788810@DB7PR04MB5338.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0173C6D4D5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39860400002)(136003)(396003)(346002)(199004)(189003)(54906003)(6436002)(110136005)(6486002)(81166006)(81156014)(50226002)(8676002)(2501003)(64756008)(8936002)(2201001)(66446008)(186003)(66556008)(66476007)(6512007)(6506007)(52116002)(478600001)(386003)(99286004)(4326008)(6116002)(86362001)(26005)(102836004)(256004)(14444005)(446003)(44832011)(7736002)(5660300002)(305945005)(36756003)(66946007)(3846002)(316002)(2616005)(76176011)(14454004)(486006)(2906002)(11346002)(66066001)(476003)(71190400001)(71200400001)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5338;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gCujlQzd4+7VoFPuc2ZiuLhrZJW+46k1YscePlrm0WAQmA2jzX/3GPdyq1Ek9LkXnqz6hmynUT5XQvicNl1dOV2YHJrjKJ3D35hNh/CH20AqEM/aduVSbVKkRKFGKM071FBS24le1PaUG2Lr0LWxdUdlWpyjWue011AVzzhjFuzjAGap3/OIvwxgNs0U9V9CKKFhlZx+64wKgbvVNXI/JMF+qDOGqvda1CZ8xYRzCtdDPpAvRDHTwWRFvm9YzRqwN/HtDXz9Djw1Usnm9QW/dzpyr8wB4vZAi/SIID//+8EHbEtuXgx/Fo6RWkQOIuk9FMTErp7etVVOHvuP/atX6Y5bwnu+ERAYbDuGuMmH4uW0tvJt0fG+Q0l0i/zxQUnSnWVVa5lT96gHmSS2yXNauHQa7kxLUC+MYMTjCsb+EWE=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1728523AbfI0C0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 22:26:51 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36566 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbfI0C0v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 22:26:51 -0400
+Received: by mail-io1-f67.google.com with SMTP id b136so12295942iof.3;
+        Thu, 26 Sep 2019 19:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=J+nWDXgsaBZmvMaavFN8h6cOxrOj2KF3ILHKLIPO34A=;
+        b=JV+juN59ZPmDpNQQVwV9fNjDwZNgGQkJrE+FskTjP4/yLYblFCQ8crGR2KH9/UavpQ
+         8UWVi99lmbiCXWTbvuQLcCzx+/7aSKDs+DxOMfmysiIWaDWaSyvjha97wFTrxHuel5iv
+         XX0LjeHToZfIC22nz0lL7jtaAThdXPR+JbL9AuWcadDU/xPFSX0Lcp6max3OsW/O39zW
+         LZGctE5D28CrQ09RAYeXHERwv/kMoxa3UrsO0B40XX/05jP4vkmtR0YsPxx4s+wBNDLx
+         q9Kz+kRAwGu3jaAJNVOuCb2+RqchXh82/TTj4kLgRbVpCYlcc/31FpcTkfTR1WJxvLQs
+         o16Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J+nWDXgsaBZmvMaavFN8h6cOxrOj2KF3ILHKLIPO34A=;
+        b=csl4YsNYZkaE94xt6dVQQ5VEwVcGtfF4PkMb/3FaR/XKLNsEuMk5c4mZ64viMQfjHE
+         rmTfICpb5Znl4YlkGggnOdQG9T3bt85mGn1B3xMiMCsZ4ckh89jNum/PsDQec1FEFpH4
+         bjMZK8ojU1GvoeQbVIeInfrShb70I2CKUfNlzsEg86sLIu9PJ8mO8NH/1j2BR2QtqEI7
+         rxUfLnFKoU/G/TVv6eu6sAZ4RrFPT5yxmXl7U5Yyez1nz3c0ASujukEoVtlgMGVaOi7i
+         VU6We8ZOCF/PxuNFtKUd+L99l3ivbIVfiIbmb5LAbAKImnQlkglHQbYMTMJuQQqrw/GJ
+         NNZA==
+X-Gm-Message-State: APjAAAXtPiNnE2IoIxIQr3g5X718EUblffJuDAgbtV3BLkCaakBdYkpJ
+        XKenbqHcbOVZIAxB+4UYDEk=
+X-Google-Smtp-Source: APXvYqyoAakGX8Luwy1IiwMejmdpn88lbSaWc7uYSTk6Gkq85Z5M4KT6sRybkLzNVx9+598g06YZWA==
+X-Received: by 2002:a5e:8216:: with SMTP id l22mr6394174iom.252.1569551210117;
+        Thu, 26 Sep 2019 19:26:50 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.gmail.com with ESMTPSA id o8sm657890ild.55.2019.09.26.19.26.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Sep 2019 19:26:49 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 21:26:47 -0500
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        "David S. Miller" <davem@davemloft.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        John Hurley <john.hurley@netronome.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        oss-drivers@netronome.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: flow_offload: fix memory leak in
+ nfp_abm_u32_knode_replace
+Message-ID: <20190927022647.GC22969@cs-dulles.cs.umn.edu>
+References: <20190925182846.69a261e8@cakuba.netronome.com>
+ <20190926022240.3789-1-navid.emamdoost@gmail.com>
+ <20190925215314.10cf291d@cakuba.netronome.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed95b29c-9f14-4c8d-49dc-08d742f1b888
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2019 02:23:44.8254
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ozf6TbbjPxs41FdgzUPe9CteAxzfDPpEHZC5TpBOrZYsR57nUw1c/2npXz6Pxo4W71emE10/0OOZMnQisf1Row==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5338
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925215314.10cf291d@cakuba.netronome.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Wed, Sep 25, 2019 at 09:53:14PM -0700, Jakub Kicinski wrote:
+> On Wed, 25 Sep 2019 21:22:35 -0500, Navid Emamdoost wrote:
+> > In nfp_abm_u32_knode_replace if the allocation for match fails it should
+> > go to the error handling instead of returning.
+> > 
+> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> > ---
+> > Changes in v2:
+> > 	- Reused err variable for erorr value returning.
+> 
+> Thanks, there's another goto up top. And I think subject prefix could
+> be "nfp: abm:", perhaps?
+> 
+Thanks, v3 was sent which fixes this.
 
-The fuse programming from non-secure world is blocked, so we could
-only use Arm Trusted Firmware SIP call to let ATF program fuse.
-
-Because there is ECC region that could only be programmed once,
-so add a heler in_ecc to check the ecc region.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-
-V2:
- Rebased on Latest linux-next
-
- drivers/nvmem/imx-ocotp-scu.c | 73 +++++++++++++++++++++++++++++++++++++++=
-+++-
- 1 file changed, 72 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvmem/imx-ocotp-scu.c b/drivers/nvmem/imx-ocotp-scu.c
-index 030e27ba4dfb..03f1ab23ad51 100644
---- a/drivers/nvmem/imx-ocotp-scu.c
-+++ b/drivers/nvmem/imx-ocotp-scu.c
-@@ -7,6 +7,7 @@
-  * Peng Fan <peng.fan@nxp.com>
-  */
-=20
-+#include <linux/arm-smccc.h>
- #include <linux/firmware/imx/sci.h>
- #include <linux/module.h>
- #include <linux/nvmem-provider.h>
-@@ -14,6 +15,9 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-=20
-+#define IMX_SIP_OTP			0xC200000A
-+#define IMX_SIP_OTP_WRITE		0x2
-+
- enum ocotp_devtype {
- 	IMX8QXP,
- 	IMX8QM,
-@@ -46,6 +50,8 @@ struct imx_sc_msg_misc_fuse_read {
- 	u32 word;
- } __packed;
-=20
-+static DEFINE_MUTEX(scu_ocotp_mutex);
-+
- static struct ocotp_devtype_data imx8qxp_data =3D {
- 	.devtype =3D IMX8QXP,
- 	.nregs =3D 800,
-@@ -84,6 +90,23 @@ static bool in_hole(void *context, u32 index)
- 	return false;
- }
-=20
-+static bool in_ecc(void *context, u32 index)
-+{
-+	struct ocotp_priv *priv =3D context;
-+	const struct ocotp_devtype_data *data =3D priv->data;
-+	int i;
-+
-+	for (i =3D 0; i < data->num_region; i++) {
-+		if (data->region[i].flag & ECC_REGION) {
-+			if ((index >=3D data->region[i].start) &&
-+			    (index <=3D data->region[i].end))
-+				return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
- static int imx_sc_misc_otp_fuse_read(struct imx_sc_ipc *ipc, u32 word,
- 				     u32 *val)
- {
-@@ -127,6 +150,8 @@ static int imx_scu_ocotp_read(void *context, unsigned i=
-nt offset,
- 	if (!p)
- 		return -ENOMEM;
-=20
-+	mutex_lock(&scu_ocotp_mutex);
-+
- 	buf =3D p;
-=20
- 	for (i =3D index; i < (index + count); i++) {
-@@ -137,6 +162,7 @@ static int imx_scu_ocotp_read(void *context, unsigned i=
-nt offset,
-=20
- 		ret =3D imx_sc_misc_otp_fuse_read(priv->nvmem_ipc, i, buf);
- 		if (ret) {
-+			mutex_unlock(&scu_ocotp_mutex);
- 			kfree(p);
- 			return ret;
- 		}
-@@ -145,18 +171,63 @@ static int imx_scu_ocotp_read(void *context, unsigned=
- int offset,
-=20
- 	memcpy(val, (u8 *)p + offset % 4, bytes);
-=20
-+	mutex_unlock(&scu_ocotp_mutex);
-+
- 	kfree(p);
-=20
- 	return 0;
- }
-=20
-+static int imx_scu_ocotp_write(void *context, unsigned int offset,
-+			       void *val, size_t bytes)
-+{
-+	struct ocotp_priv *priv =3D context;
-+	struct arm_smccc_res res;
-+	u32 *buf =3D val;
-+	u32 tmp;
-+	u32 index;
-+	int ret;
-+
-+	/* allow only writing one complete OTP word at a time */
-+	if ((bytes !=3D 4) || (offset % 4))
-+		return -EINVAL;
-+
-+	index =3D offset >> 2;
-+
-+	if (in_hole(context, index))
-+		return -EINVAL;
-+
-+	if (in_ecc(context, index)) {
-+		pr_warn("ECC region, only program once\n");
-+		mutex_lock(&scu_ocotp_mutex);
-+		ret =3D imx_sc_misc_otp_fuse_read(priv->nvmem_ipc, index, &tmp);
-+		mutex_unlock(&scu_ocotp_mutex);
-+		if (ret)
-+			return ret;
-+		if (tmp) {
-+			pr_warn("ECC region, already has value: %x\n", tmp);
-+			return -EIO;
-+		}
-+	}
-+
-+	mutex_lock(&scu_ocotp_mutex);
-+
-+	arm_smccc_smc(IMX_SIP_OTP, IMX_SIP_OTP_WRITE, index, *buf,
-+		      0, 0, 0, 0, &res);
-+
-+	mutex_unlock(&scu_ocotp_mutex);
-+
-+	return res.a0;
-+}
-+
- static struct nvmem_config imx_scu_ocotp_nvmem_config =3D {
- 	.name =3D "imx-scu-ocotp",
--	.read_only =3D true,
-+	.read_only =3D false,
- 	.word_size =3D 4,
- 	.stride =3D 1,
- 	.owner =3D THIS_MODULE,
- 	.reg_read =3D imx_scu_ocotp_read,
-+	.reg_write =3D imx_scu_ocotp_write,
- };
-=20
- static const struct of_device_id imx_scu_ocotp_dt_ids[] =3D {
---=20
-2.16.4
-
+Navid.
+> >  drivers/net/ethernet/netronome/nfp/abm/cls.c | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/netronome/nfp/abm/cls.c b/drivers/net/ethernet/netronome/nfp/abm/cls.c
+> > index 23ebddfb9532..b0cb9d201f7d 100644
+> > --- a/drivers/net/ethernet/netronome/nfp/abm/cls.c
+> > +++ b/drivers/net/ethernet/netronome/nfp/abm/cls.c
+> > @@ -198,14 +198,18 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+> >  		if ((iter->val & cmask) == (val & cmask) &&
+> >  		    iter->band != knode->res->classid) {
+> >  			NL_SET_ERR_MSG_MOD(extack, "conflict with already offloaded filter");
+> > +			err = -EOPNOTSUPP;
+> >  			goto err_delete;
+> >  		}
+> >  	}
+> >  
+> >  	if (!match) {
+> >  		match = kzalloc(sizeof(*match), GFP_KERNEL);
+> > -		if (!match)
+> > -			return -ENOMEM;
+> > +		if (!match) {
+> > +			err = -ENOMEM;
+> > +			goto err_delete;
+> > +		}
+> > +
+> >  		list_add(&match->list, &alink->dscp_map);
+> >  	}
+> >  	match->handle = knode->handle;
+> > @@ -221,7 +225,7 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+> >  
+> >  err_delete:
+> >  	nfp_abm_u32_knode_delete(alink, knode);
+> > -	return -EOPNOTSUPP;
+> > +	return err;
+> >  }
+> >  
+> >  static int nfp_abm_setup_tc_block_cb(enum tc_setup_type type,
+> 
