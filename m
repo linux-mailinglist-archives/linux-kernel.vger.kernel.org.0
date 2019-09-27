@@ -2,199 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8EAC05FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64FBBC0606
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfI0NHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 09:07:39 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36120 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbfI0NHj (ORCPT
+        id S1727472AbfI0NIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 09:08:51 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36191 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbfI0NIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 09:07:39 -0400
-Received: by mail-qk1-f193.google.com with SMTP id y189so1874278qkc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 06:07:38 -0700 (PDT)
+        Fri, 27 Sep 2019 09:08:51 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h2so2287725edn.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 06:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KFGrykQPVrfrF/RCxAyujZ2hxx3LnFuQxZYE85jjQVw=;
-        b=eCGU90/xZEVHkKCXyCx9dXZYOtfiWFMq7pEiL6sVql5nIOuzUZmap6FW0TUmXa8+PU
-         W7QjgFFyd0b7aGdzPj7JWFAaCxxkWHiLoAbcLFEFqS/5ZZWYoKcTAaAWkUAHhbeUW1FR
-         kx/2TVbuRs9rN+dyRdEJw/yO/C/kppDIKK1TIs7Y2hIspTSWOLca0dGiNdfPh1ytEa0t
-         tgfvgh7hlc9wXM1pdjaDWdUEQRj7Q+Yf8araXc0PrH+FuFKSfGxMA51kOFodqv3P89X3
-         ClaMNs+Rr9x6+jwHltu3agDcuMkJqn+LiYWQhxmIonMqgaCA+H/rdfPLRojuTZgYyNZ0
-         eSPw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t798kdQUcfAYE/1V829ZixveOdeFQG/DTCItAoKM464=;
+        b=hEQoZA6oVCySqYsY84lMoejfdPlNCU6Tyqp7nB7qv+lkAPFbm+kumHNEMsMrvHueRA
+         NZa1WZXKEJfxfif3wtPhRljiZiRinlKfEOflojVnW6/fj9CrN+nTgcVZNsQswpiJ5eh0
+         s0gLBo0j3th/2gQl+HUuKFNUeKRSy/NGxA+kc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KFGrykQPVrfrF/RCxAyujZ2hxx3LnFuQxZYE85jjQVw=;
-        b=mk0Ji5LRlm+oy7rGHTkfiPLpboCn4dpfD1o27TGybXKHKPYHDqqrryn3LiI/GM+xrg
-         0bauqhtkOMcFUjwBcDEELXCxPi6Gg9v5jl76KtjlZtmyFRvJoLhCfa44Cey1+3KCZBck
-         jVjjoS+zalEjDU8x2O8Nz2zTCCLnrve3pMgWOvoIQp2L6yc8w/00rAnsaXTybDfh80Q2
-         5SZjhcz8uPZtFHR4RqqTfIemyW+yFpPQWBBgI5U6PNWw3IQv/z6zN5eAJjDoBHQMZmW7
-         fKuEN8IX1O2ESKSTmdfWMnLifYwHlXEcnQqW5YzsKpJtvVBMQsvHRGqDnwcSvZTZMSIv
-         ItWA==
-X-Gm-Message-State: APjAAAUGtD6+hPe7Zdwqyx/Qx2g/SPX9HraYIFNLTiflm5umBz7ZYaM1
-        YVT9zvjBB/Js+TM102xwj4Xql4jpMAU5cxcTcToZVQ==
-X-Google-Smtp-Source: APXvYqxSbPuLXB+yACgf7+ApwenZVI+V5HXnmMTKT9MisInSMbZ2ml/YIzKWfIjHD4YHiq/qrRKp5M1XDxBptaLE7RY=
-X-Received: by 2002:a37:9202:: with SMTP id u2mr4399020qkd.8.1569589657502;
- Fri, 27 Sep 2019 06:07:37 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t798kdQUcfAYE/1V829ZixveOdeFQG/DTCItAoKM464=;
+        b=N40ED7xY+p+LuwO0zkQLvJtv59MeZ4XKXIVEredub2SzLhhtra41qhjf/QVCWt+VV4
+         l0E4zscybeLp0xqlMFk2EsxN8TxlKTFNFxlFNqQh4PL9GrAVxqAeWXm2yvAgwTmOcB0j
+         yUMURKKtJz06+dBJR6C1n6wS0iPeAOlWaaKyn7QXR+wOzi5plXs2JWt0maY8dq7yPWDE
+         rCIaOJyemdd2mPsI5AgIsWsvDvSHN2JClXwYKEi3L0Qhz9udoWFLY58vaJr+ftqOWcuT
+         bS33H96sBJ+/vtaqbw5SpEobQD7PgZBHEWQB15IbR/GJ5ait/SuB8hD4GnJ/MU5eVTxP
+         QnTQ==
+X-Gm-Message-State: APjAAAUGXxZo/apV7WIs18435E+xnxZAGwUbAc6rKMOUEpaGDwn4N/RP
+        rOeMBySRTSVQfasQUbPxzkxufI7u5gU=
+X-Google-Smtp-Source: APXvYqx1o2fwr7rmR9/LEX6BQ4fNBvguKPIdJVPGN4IfoNucEfqZIrUtHHJOD7+hbZQOXBTflpFs+Q==
+X-Received: by 2002:a17:906:d797:: with SMTP id pj23mr7805635ejb.70.1569589728925;
+        Fri, 27 Sep 2019 06:08:48 -0700 (PDT)
+Received: from kpsingh-kernel.localdomain ([2620:0:105f:fd00:440a:66a5:a253:2909])
+        by smtp.gmail.com with ESMTPSA id g19sm567727eje.0.2019.09.27.06.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2019 06:08:48 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Cc:     Anton Protopopov <a.s.protopopov@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Florent Revest <revest@chromium.org>
+Subject: [PATCH] tools: libbpf: Add bpf_object__open_buffer_xattr
+Date:   Fri, 27 Sep 2019 15:08:34 +0200
+Message-Id: <20190927130834.18829-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190927034338.15813-1-walter-zh.wu@mediatek.com>
-In-Reply-To: <20190927034338.15813-1-walter-zh.wu@mediatek.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 27 Sep 2019 15:07:25 +0200
-Message-ID: <CACT4Y+Zxz+R=qQxSMoipXoLjRqyApD3O0eYpK0nyrfGHE4NNPw@mail.gmail.com>
-Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy
- with CONFIG_KASAN_GENERIC=y
-To:     Walter Wu <walter-zh.wu@mediatek.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        wsd_upstream <wsd_upstream@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 5:43 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
->
-> memmove() and memcpy() have missing underflow issues.
-> When -7 <= size < 0, then KASAN will miss to catch the underflow issue.
-> It looks like shadow start address and shadow end address is the same,
-> so it does not actually check anything.
->
-> The following test is indeed not caught by KASAN:
->
->         char *p = kmalloc(64, GFP_KERNEL);
->         memset((char *)p, 0, 64);
->         memmove((char *)p, (char *)p + 4, -2);
->         kfree((char*)p);
->
-> It should be checked here:
->
-> void *memmove(void *dest, const void *src, size_t len)
-> {
->         check_memory_region((unsigned long)src, len, false, _RET_IP_);
->         check_memory_region((unsigned long)dest, len, true, _RET_IP_);
->
->         return __memmove(dest, src, len);
-> }
->
-> We fix the shadow end address which is calculated, then generic KASAN
-> get the right shadow end address and detect this underflow issue.
->
-> [1] https://bugzilla.kernel.org/show_bug.cgi?id=199341
->
-> Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
-> Reported-by: Dmitry Vyukov <dvyukov@google.com>
-> ---
->  lib/test_kasan.c   | 36 ++++++++++++++++++++++++++++++++++++
->  mm/kasan/generic.c |  8 ++++++--
->  2 files changed, 42 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-> index b63b367a94e8..8bd014852556 100644
-> --- a/lib/test_kasan.c
-> +++ b/lib/test_kasan.c
-> @@ -280,6 +280,40 @@ static noinline void __init kmalloc_oob_in_memset(void)
->         kfree(ptr);
->  }
->
-> +static noinline void __init kmalloc_oob_in_memmove_underflow(void)
-> +{
-> +       char *ptr;
-> +       size_t size = 64;
-> +
-> +       pr_info("underflow out-of-bounds in memmove\n");
-> +       ptr = kmalloc(size, GFP_KERNEL);
-> +       if (!ptr) {
-> +               pr_err("Allocation failed\n");
-> +               return;
-> +       }
-> +
-> +       memset((char *)ptr, 0, 64);
-> +       memmove((char *)ptr, (char *)ptr + 4, -2);
-> +       kfree(ptr);
-> +}
-> +
-> +static noinline void __init kmalloc_oob_in_memmove_overflow(void)
-> +{
-> +       char *ptr;
-> +       size_t size = 64;
-> +
-> +       pr_info("overflow out-of-bounds in memmove\n");
-> +       ptr = kmalloc(size, GFP_KERNEL);
-> +       if (!ptr) {
-> +               pr_err("Allocation failed\n");
-> +               return;
-> +       }
-> +
-> +       memset((char *)ptr, 0, 64);
-> +       memmove((char *)ptr + size, (char *)ptr, 2);
-> +       kfree(ptr);
-> +}
-> +
->  static noinline void __init kmalloc_uaf(void)
->  {
->         char *ptr;
-> @@ -734,6 +768,8 @@ static int __init kmalloc_tests_init(void)
->         kmalloc_oob_memset_4();
->         kmalloc_oob_memset_8();
->         kmalloc_oob_memset_16();
-> +       kmalloc_oob_in_memmove_underflow();
-> +       kmalloc_oob_in_memmove_overflow();
->         kmalloc_uaf();
->         kmalloc_uaf_memset();
->         kmalloc_uaf2();
-> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-> index 616f9dd82d12..34ca23d59e67 100644
-> --- a/mm/kasan/generic.c
-> +++ b/mm/kasan/generic.c
-> @@ -131,9 +131,13 @@ static __always_inline bool memory_is_poisoned_n(unsigned long addr,
->                                                 size_t size)
->  {
->         unsigned long ret;
-> +       void *shadow_start = kasan_mem_to_shadow((void *)addr);
-> +       void *shadow_end = kasan_mem_to_shadow((void *)addr + size - 1) + 1;
->
-> -       ret = memory_is_nonzero(kasan_mem_to_shadow((void *)addr),
-> -                       kasan_mem_to_shadow((void *)addr + size - 1) + 1);
-> +       if ((long)size < 0)
-> +               shadow_end = kasan_mem_to_shadow((void *)addr + size);
+From: KP Singh <kpsingh@google.com>
 
-Hi Walter,
+Introduce struct bpf_object_open_buffer_attr and an API function,
+bpf_object__open_xattr, as the existing API, bpf_object__open_buffer,
+doesn't provide a way to specify neither the "needs_kver" nor
+the "flags" parameter to the internal call to the
+__bpf_object__open which makes it inconvenient for loading BPF
+objects that do not require a kernel version from a buffer.
 
-Thanks for working on this.
+The flags attribute in the bpf_object_open_buffer_attr is set
+to MAPS_RELAX_COMPAT when used in bpf_object__open_buffer to
+maintain backward compatibility as this was added to load objects
+with non-compat map definitions in:
 
-If size<0, does it make sense to continue at all? We will still check
-1PB of shadow memory? What happens when we pass such huge range to
-memory_is_nonzero?
-Perhaps it's better to produce an error and bail out immediately if size<0?
-Also, what's the failure mode of the tests? Didn't they badly corrupt
-memory? We tried to keep tests such that they produce the KASAN
-reports, but don't badly corrupt memory b/c/ we need to run all of
-them.
+commit c034a177d3c8 ("bpf: bpftool, add flag to allow non-compat map
+		      definitions")
 
+and bpf_object__open_buffer was called with this flag enabled (as a
+boolean true value).
 
+The existing "bpf_object__open_xattr" cannot be modified to
+maintain API compatibility.
 
+Reported-by: Anton Protopopov <a.s.protopopov@gmail.com>
+Signed-off-by: KP Singh <kpsingh@google.com>
+---
+ tools/lib/bpf/libbpf.c   | 39 ++++++++++++++++++++++++++++-----------
+ tools/lib/bpf/libbpf.h   | 10 ++++++++++
+ tools/lib/bpf/libbpf.map |  5 +++++
+ 3 files changed, 43 insertions(+), 11 deletions(-)
 
-> +       ret = memory_is_nonzero(shadow_start, shadow_end);
->
->         if (unlikely(ret)) {
->                 unsigned long last_byte = addr + size - 1;
-> --
-> 2.18.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20190927034338.15813-1-walter-zh.wu%40mediatek.com.
+This patch is assimilates the feedback from:
+
+  https://lore.kernel.org/bpf/20190815000330.12044-1-a.s.protopopov@gmail.com/
+
+I have added a "Reported-by:" tag, but please feel free to update to
+"Co-developed-by" if it's more appropriate from an attribution perspective.
+
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 2b57d7ea7836..1f1f2e92832b 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2752,25 +2752,42 @@ struct bpf_object *bpf_object__open(const char *path)
+ 	return bpf_object__open_xattr(&attr);
+ }
+ 
+-struct bpf_object *bpf_object__open_buffer(void *obj_buf,
+-					   size_t obj_buf_sz,
+-					   const char *name)
++struct bpf_object *
++bpf_object__open_buffer_xattr(struct bpf_object_open_buffer_attr *attr)
+ {
+ 	char tmp_name[64];
+ 
+ 	/* param validation */
+-	if (!obj_buf || obj_buf_sz <= 0)
+-		return NULL;
++	if (!attr || !attr->obj_buf || !(attr->obj_buf_sz <= 0))
++		return ERR_PTR(-EINVAL);
+ 
+-	if (!name) {
++	if (!attr->obj_name) {
+ 		snprintf(tmp_name, sizeof(tmp_name), "%lx-%lx",
+-			 (unsigned long)obj_buf,
+-			 (unsigned long)obj_buf_sz);
+-		name = tmp_name;
++			 (unsigned long)attr->obj_buf,
++			 (unsigned long)attr->obj_buf_sz);
++		attr->obj_name = tmp_name;
+ 	}
+-	pr_debug("loading object '%s' from buffer\n", name);
++	pr_debug("loading object '%s' from buffer\n", attr->obj_name);
++
++	return __bpf_object__open(attr->obj_name, attr->obj_buf,
++				  attr->obj_buf_sz,
++				  bpf_prog_type__needs_kver(attr->prog_type),
++				  attr->flags);
++}
++
++struct bpf_object *bpf_object__open_buffer(void *obj_buf,
++					   size_t obj_buf_sz,
++					   const char *name)
++{
++	struct bpf_object_open_buffer_attr attr = {
++		.obj_name	= name,
++		.obj_buf	= obj_buf,
++		.obj_buf_sz	= obj_buf_sz,
++		.prog_type	= BPF_PROG_TYPE_UNSPEC,
++		.flags		=  MAPS_RELAX_COMPAT,
++	};
+ 
+-	return __bpf_object__open(name, obj_buf, obj_buf_sz, true, true);
++	return bpf_object__open_buffer_xattr(&attr);
+ }
+ 
+ int bpf_object__unload(struct bpf_object *obj)
+diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+index 5cbf459ece0b..ad0f5a263594 100644
+--- a/tools/lib/bpf/libbpf.h
++++ b/tools/lib/bpf/libbpf.h
+@@ -67,6 +67,14 @@ struct bpf_object_open_attr {
+ 	enum bpf_prog_type prog_type;
+ };
+ 
++struct bpf_object_open_buffer_attr {
++	const char *obj_name;
++	void *obj_buf;
++	size_t obj_buf_sz;
++	enum bpf_prog_type prog_type;
++	int flags;
++};
++
+ LIBBPF_API struct bpf_object *bpf_object__open(const char *path);
+ LIBBPF_API struct bpf_object *
+ bpf_object__open_xattr(struct bpf_object_open_attr *attr);
+@@ -75,6 +83,8 @@ struct bpf_object *__bpf_object__open_xattr(struct bpf_object_open_attr *attr,
+ LIBBPF_API struct bpf_object *bpf_object__open_buffer(void *obj_buf,
+ 						      size_t obj_buf_sz,
+ 						      const char *name);
++LIBBPF_API struct bpf_object *
++bpf_object__open_buffer_xattr(struct bpf_object_open_buffer_attr *attr);
+ int bpf_object__section_size(const struct bpf_object *obj, const char *name,
+ 			     __u32 *size);
+ int bpf_object__variable_offset(const struct bpf_object *obj, const char *name,
+diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+index f9d316e873d8..4d5dcc58c73d 100644
+--- a/tools/lib/bpf/libbpf.map
++++ b/tools/lib/bpf/libbpf.map
+@@ -184,3 +184,8 @@ LIBBPF_0.0.4 {
+ 		perf_buffer__new_raw;
+ 		perf_buffer__poll;
+ } LIBBPF_0.0.3;
++
++LIBBPF_0.0.5 {
++	global:
++		bpf_object__open_buffer_xattr;
++} LIBBPF_0.0.4;
+-- 
+2.20.1
+
