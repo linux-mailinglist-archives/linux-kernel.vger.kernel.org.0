@@ -2,240 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D15BFF42
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56DE4BFF2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:36:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbfI0Gjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 02:39:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725804AbfI0Gjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 02:39:47 -0400
-Received: from localhost (unknown [62.119.166.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A844206B7;
-        Fri, 27 Sep 2019 06:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569566385;
-        bh=D1fbue6fRZB4ayd5BBQrUrBpjiNtGLlHZOZwf77w/QY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o5x4AK5F1vZEOrfezH4jbc39hpNYS3BguZvxXn5MskTlAY9SqfxueebW5k+EGSxH3
-         YYpPwP/5Ln+Z639khcl4bSucKK5SAhYOuc8PbKtvFFTAblbe8pi6pEydPO+u++I1eB
-         eKwdM+Qw9U/gKaevIo4aTwihv4jM93b02Fcy3zkg=
-Date:   Fri, 27 Sep 2019 08:35:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Akinobu Mita <akinobu.mita@gmail.com>
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 1/1] leds: remove PAGE_SIZE limit of
- /sys/class/leds/<led>/trigger
-Message-ID: <20190927063547.GA1786569@kroah.com>
-References: <1568387004-3802-1-git-send-email-akinobu.mita@gmail.com>
- <1568387004-3802-2-git-send-email-akinobu.mita@gmail.com>
+        id S1726054AbfI0Ggw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 02:36:52 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:43934 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfI0Ggv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 02:36:51 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190927063649euoutp02e53a8a86ab801302dff3f4b085b80a44~IOCblUjux1208212082euoutp02O
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 06:36:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190927063649euoutp02e53a8a86ab801302dff3f4b085b80a44~IOCblUjux1208212082euoutp02O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569566209;
+        bh=1ndUXvyG/naqx4bDD64mUQ+qbfWxe/FYI+t9bA24Nf0=;
+        h=Subject:To:From:Date:In-Reply-To:References:From;
+        b=i0whF4F3IhfAOxyGT81YkPZzeDYX08Zj8j5OApNndlgrRpBRhxfptQ/YB52s7ah9t
+         eIVkhaIpNlaZyVk1vG8/rTP/KN1tHWqSt4lV6+Mi/fosfLXUaHCi8qJqigA9qJGYg+
+         0W0CDUFc4DuFTHZLZSgEnlB1ZOE/aRTnut6a3rbw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190927063649eucas1p2c1c02493b856e394c1c8a44b4e14779b~IOCbAX__J1903919039eucas1p2z;
+        Fri, 27 Sep 2019 06:36:49 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 35.76.04469.10EAD8D5; Fri, 27
+        Sep 2019 07:36:49 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190927063648eucas1p2e19d5c88d5300b7f6c2ac86144534e0c~IOCasiJR_0925109251eucas1p2v;
+        Fri, 27 Sep 2019 06:36:48 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190927063648eusmtrp268e0857240f5443511ac67d136686427~IOCar2bd60211602116eusmtrp2J;
+        Fri, 27 Sep 2019 06:36:48 +0000 (GMT)
+X-AuditID: cbfec7f2-569ff70000001175-7c-5d8dae01e8a8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 95.D4.04117.00EAD8D5; Fri, 27
+        Sep 2019 07:36:48 +0100 (BST)
+Received: from [106.120.51.15] (unknown [106.120.51.15]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190927063648eusmtip17292d6dcec28ac022351e078da49f1fc~IOCaLZ4AD1038210382eusmtip1U;
+        Fri, 27 Sep 2019 06:36:48 +0000 (GMT)
+Subject: Re: [PATCH] dt-bindings: timer: Use defines instead of numbers in
+ Exynos MCT examples
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <fc0809b0-1e6a-0564-75d9-0ccb14d2826c@samsung.com>
+Date:   Fri, 27 Sep 2019 08:36:47 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1568387004-3802-2-git-send-email-akinobu.mita@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20190926183643.7118-1-krzk@kernel.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju29nOjsPJcWp7Me0yMDJKE/xxIjGj24js8rPL0qknFd2UzZmX
+        IrtSw8okcy51SkYqXmpTU1PDaQ4TZjo0CdE5F6Q2oSzRqGzb0fLf8z7v87zv+3x8BCbo4PgT
+        yfIMWiGXpopwHrulb9m8GzXck+yxt3Cp8oVAStdr5lAPpucwanDwBZfST49yKEt7KU5pBrtY
+        1LMPQyzqVmcvlzLoi7AonriuvA6J9bV3cfH4aAcunjebuWJD1VXxgn7zKfwsLyKBTk3OpBWh
+        kbG8pCb1NXa6Lihr2WhDecgKauRBABkOn3SFuBrxCAFZjaBu6iFiiu8I2kqacZdKQC44OwUs
+        NSLcjt9jOYzmOYKX9YZVgwNB9eIScol8yFgofBzu4n3JeRZU2Bcx1yCcDAO1Q+0eyicjoV39
+        iO3CbDIIZlfG3NiPlMDEkgljNN7QX2J38x7Oxe1dIxwXxsgt8MpRijFYCB/tOpZrGZBGLnwp
+        K0ZMtkPwVaNlMdgHZk1NXAYHwErbmuEGgilzPZcp8hFYrmtW3fugxzTEccXByGBobA9l6AMw
+        6ehGzFN4wZjDmznCCwpbijGG5sOd2wJGvR20poZ/a7vfD2MMFsNESxu3AG3TroupXRdNuy6a
+        9v8NFYhdi4S0SilLpJVhcvpSiFIqU6rkiSHxaTI9cv6pgT+mb63ox3CcEZEEEnnyNbX5EgFH
+        mqnMlhkREJjIlx99xknxE6TZObQiLUahSqWVRrSJYIuE/NwN1nMCMlGaQafQdDqtWOuyCA//
+        PLQx+elMFjTvwizoSo8h6nRglclva5/tTU3A4YC3kycH+LO+8RcrJWTwiWHVuxn1wYjqmyky
+        5DhedPl+zdxkLGgaG2It1qbcC77jWnbFsbJ6Gx5xZEdn/v6eypjbTwxxcX0jr+0jrUejhaHF
+        cT/FnrrPXvpBnWrBdr56b/8v3CpiK5OkYTsxhVL6F4Qi7uVPAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7oM63pjDb6907eY91nWYv6Rc6wW
+        /Y9fM1ucP7+B3WLT42usFpd3zWGzmHF+H5PF0usXmSxa9x5ht9i8aSqzA5fHmnlrGD02repk
+        87hzbQ+bx7tz59g9Ni+p9/i8SS6ALUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzW
+        yshUSd/OJiU1J7MstUjfLkEvY0tXI0vBfNWKn4ceMTYwPpDoYuTgkBAwkfh7o6qLkYtDSGAp
+        o8TcB7/Yuhg5geIyEienNbBC2MISf651sUEUvWaUWNN5lB2kWVggQWLSNBOQuIjAOyaJN8/X
+        skMUtTNKdLcfZwbpZhMwlOh62wU2lVfATmJX1xQWEJtFQFXi1f8bLCCDRAViJTbtNYMoEZQ4
+        OfMJWAkn0HG79l0FO4JZwExi3uaHzBC2vMT2t3OgbHGJW0/mM01gFJyFpH0WkpZZSFpmIWlZ
+        wMiyilEktbQ4Nz232EivODG3uDQvXS85P3cTIzD+th37uWUHY9e74EOMAhyMSjy8M1b1xAqx
+        JpYVV+YeYpTgYFYS4fWNBArxpiRWVqUW5ccXleakFh9iNAX6bSKzlGhyPjA15JXEG5oamltY
+        GpobmxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYLT+uvp65tuEKV8+ZH38lN+58tI3
+        jdMlRgU3N8a3n/z29ens/z03f4mkh7Qud9w1P3f/bL2UBSenn6gLfV/W3LD1VWMwa/bqSacf
+        PHp3bufZmzG8ykkW5/6pece9Fv+WOCN5NbvKwjnCJw279F5tY0kwjOmviHDwsq06kDjd0HxK
+        4q1NXw/Y6wYrsRRnJBpqMRcVJwIAF+K3JdUCAAA=
+X-CMS-MailID: 20190927063648eucas1p2e19d5c88d5300b7f6c2ac86144534e0c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190926183707epcas3p350fe17bc738540b37f1130d967c31a62
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190926183707epcas3p350fe17bc738540b37f1130d967c31a62
+References: <CGME20190926183707epcas3p350fe17bc738540b37f1130d967c31a62@epcas3p3.samsung.com>
+        <20190926183643.7118-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 14, 2019 at 12:03:24AM +0900, Akinobu Mita wrote:
-> Reading /sys/class/leds/<led>/trigger returns all available LED triggers.
-> However, the size of this file is limited to PAGE_SIZE because of the
-> limitation for sysfs attribute.
-> 
-> Enabling LED CPU trigger on systems with thousands of CPUs easily hits
-> PAGE_SIZE limit, and makes it impossible to see all available LED triggers
-> and which trigger is currently activated.
-> 
-> We work around it here by converting /sys/class/leds/<led>/trigger to
-> binary attribute, which is not limited by length. This is _not_ good
-> design, do not copy it.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Dan Murphy <dmurphy@ti.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Hi Krzysztof,
+
+On 26.09.2019 20:36, Krzysztof Kozlowski wrote:
+> Make the examples in Exynos Multi Core Timer bindings more readable and
+> bring them closer to real DTS by using defines for interrupt flags.
+>
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
 > ---
->  drivers/leds/led-class.c    |  8 ++--
->  drivers/leds/led-triggers.c | 90 ++++++++++++++++++++++++++++++++++-----------
->  drivers/leds/leds.h         |  6 +++
->  include/linux/leds.h        |  5 ---
->  4 files changed, 79 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 4793e77..8b5a1d1 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -73,13 +73,13 @@ static ssize_t max_brightness_show(struct device *dev,
->  static DEVICE_ATTR_RO(max_brightness);
->  
->  #ifdef CONFIG_LEDS_TRIGGERS
-> -static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
-> -static struct attribute *led_trigger_attrs[] = {
-> -	&dev_attr_trigger.attr,
-> +static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write, 0);
-> +static struct bin_attribute *led_trigger_bin_attrs[] = {
-> +	&bin_attr_trigger,
->  	NULL,
->  };
->  static const struct attribute_group led_trigger_group = {
-> -	.attrs = led_trigger_attrs,
-> +	.bin_attrs = led_trigger_bin_attrs,
->  };
->  #endif
->  
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index 8d11a5e..ed5a311 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -16,6 +16,7 @@
->  #include <linux/rwsem.h>
->  #include <linux/leds.h>
->  #include <linux/slab.h>
-> +#include <linux/mm.h>
->  #include "leds.h"
->  
->  /*
-> @@ -26,9 +27,11 @@ LIST_HEAD(trigger_list);
->  
->   /* Used by LED Class */
->  
-> -ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
-> -		const char *buf, size_t count)
-> +ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
-> +			  struct bin_attribute *bin_attr, char *buf,
-> +			  loff_t pos, size_t count)
->  {
-> +	struct device *dev = kobj_to_dev(kobj);
->  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
->  	struct led_trigger *trig;
->  	int ret = count;
-> @@ -64,39 +67,84 @@ ssize_t led_trigger_store(struct device *dev, struct device_attribute *attr,
->  	mutex_unlock(&led_cdev->led_access);
->  	return ret;
->  }
-> -EXPORT_SYMBOL_GPL(led_trigger_store);
-> +EXPORT_SYMBOL_GPL(led_trigger_write);
->  
-> -ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
-> -		char *buf)
-> +__printf(4, 5)
-> +static int led_trigger_snprintf(char *buf, size_t size, bool query,
-> +				const char *fmt, ...)
-> +{
-> +	va_list args;
-> +	int i;
-> +
-> +	va_start(args, fmt);
-> +	if (query)
-> +		i = vsnprintf(NULL, 0, fmt, args);
-> +	else
-> +		i = vscnprintf(buf, size, fmt, args);
-> +	va_end(args);
-> +
-> +	return i;
-> +}
+>
+> Rebased on top of:
+> https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=177667&state=*
+> ---
+>   .../timer/samsung,exynos4210-mct.yaml         | 37 ++++++++++++++-----
+>   1 file changed, 27 insertions(+), 10 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> index bff3f54a398f..c4d152009f76 100644
+> --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> @@ -75,51 +75,68 @@ examples:
+>       // In this example, the IP contains two local timers, using separate
+>       // interrupts, so two local timer interrupts have been specified,
+>       // in addition to four global timer interrupts.
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   
+>       timer@10050000 {
+>           compatible = "samsung,exynos4210-mct";
+>           reg = <0x10050000 0x800>;
+> -        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> -                     <0 42 0>, <0 48 0>;
+> +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+>       };
+>   
+>     - |
+>       // In this example, the timer interrupts are connected to two separate
+>       // interrupt controllers. Hence, an interrupts-extended is needed.
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   
+>       timer@101c0000 {
+>           compatible = "samsung,exynos4210-mct";
+>           reg = <0x101C0000 0x800>;
+> -        interrupts-extended = <&gic 0 57 0>,
+> -                              <&gic 0 69 0>,
+> +        interrupts-extended = <&gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+> +                              <&gic GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+>                                 <&combiner 12 6>,
+>                                 <&combiner 12 7>,
+> -                              <&gic 0 42 0>,
+> -                              <&gic 0 48 0>;
+> +                              <&gic GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> +                              <&gic GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+>       };
+>   
+>     - |
+>       // In this example, the IP contains four local timers, but using
+>       // a per-processor interrupt to handle them. Only one first local
+>       // interrupt is specified.
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   
+>       timer@10050000 {
+>           compatible = "samsung,exynos4412-mct";
+>           reg = <0x10050000 0x800>;
+>   
+> -        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> -                     <0 42 0>;
+> +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
 
-You only call this in one place, why is it needed like this?  The "old"
-code open-coded this, what is this helping with here?
+the last one should be GIC_PPI
 
-And what does "query" mean here?  I have no idea how that variable
-matters, or what it does.  Why not just test if buf is NULL or not if
-you don't want to use it?
+>       };
+>   
+>     - |
+>       // In this example, the IP contains four local timers, but using
+>       // a per-processor interrupt to handle them. All the local timer
+>       // interrupts are specified.
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   
+>       timer@10050000 {
+>           compatible = "samsung,exynos4412-mct";
+>           reg = <0x10050000 0x800>;
+>   
+> -        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> -                     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
+> +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
 
-Ah, you are trying to see how "long" the buffer is going to be.  That
-makes more sense, but just trigger off of the NULL buffer or not, making
-this a bit more "obvious" what you are doing and not tieing two
-parameters to each other (meaning one always reflects the other one).
+again, last 4 entries should use GIC_PPI
 
-> +static int led_trigger_format(char *buf, size_t size, bool query,
-> +			      struct led_classdev *led_cdev)
->  {
-> -	struct led_classdev *led_cdev = dev_get_drvdata(dev);
->  	struct led_trigger *trig;
-> -	int len = 0;
-> +	int len = led_trigger_snprintf(buf, size, query, "%s",
-> +				       led_cdev->trigger ? "none" : "[none]");
-> +
-> +	list_for_each_entry(trig, &trigger_list, next_trig) {
-> +		bool hit = led_cdev->trigger &&
-> +			!strcmp(led_cdev->trigger->name, trig->name);
-> +
-> +		len += led_trigger_snprintf(buf + len, size - len, query,
-> +					    " %s%s%s", hit ? "[" : "",
-> +					    trig->name, hit ? "]" : "");
-> +	}
-> +
-> +	len += led_trigger_snprintf(buf + len, size - len, query, "\n");
-> +
-> +	return len;
-> +}
-> +
-> +/*
-> + * It was stupid to create 10000 cpu triggers, but we are stuck with it now.
-> + * Don't make that mistake again. We work around it here by creating binary
-> + * attribute, which is not limited by length. This is _not_ good design, do not
-> + * copy it.
-> + */
-> +ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
-> +			struct bin_attribute *attr, char *buf,
-> +			loff_t pos, size_t count)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	void *data;
-> +	int len;
->  
->  	down_read(&triggers_list_lock);
->  	down_read(&led_cdev->trigger_lock);
->  
-> -	if (!led_cdev->trigger)
-> -		len += scnprintf(buf+len, PAGE_SIZE - len, "[none] ");
-> +	len = led_trigger_format(NULL, 0, true, led_cdev);
-> +	data = kvmalloc(len + 1, GFP_KERNEL);
 
-Why kvmalloc() and not just kmalloc()?  How big is this buffer you are
-expecting to have here?
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-> +	if (data)
-> +		len = led_trigger_format(data, len + 1, false, led_cdev);
->  	else
-> -		len += scnprintf(buf+len, PAGE_SIZE - len, "none ");
-> +		len = -ENOMEM;
->  
-> -	list_for_each_entry(trig, &trigger_list, next_trig) {
-> -		if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
-> -							trig->name))
-> -			len += scnprintf(buf+len, PAGE_SIZE - len, "[%s] ",
-> -					 trig->name);
-> -		else
-> -			len += scnprintf(buf+len, PAGE_SIZE - len, "%s ",
-> -					 trig->name);
-> -	}
->  	up_read(&led_cdev->trigger_lock);
->  	up_read(&triggers_list_lock);
-
-Two locks?  Why not 3?  5?  How about just 1?  :)
-
->  
-> -	len += scnprintf(len+buf, PAGE_SIZE - len, "\n");
-> +	if (len < 0)
-> +		return len;
-
-You just leaked data if led_trigger_format() returned an error :(
-
-Just return -ENOMEM above if !data, which makes this much simpler.
-
-thanks,
-
-greg k-h
