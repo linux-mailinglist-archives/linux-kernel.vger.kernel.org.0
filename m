@@ -2,192 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 386D5BFC27
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 02:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ECAFBFC20
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 02:09:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbfI0AJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 20:09:40 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59630 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfI0AJk (ORCPT
+        id S1726299AbfI0AJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 20:09:26 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:38047 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfI0AJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 20:09:40 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8R04N8W109662;
-        Fri, 27 Sep 2019 00:08:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2019-08-05; bh=lETXaTrfnoYe7AySdKj47hrTKIRb4jx9j0xKM7xYN5g=;
- b=TPKht4s0rPNMFskB+itbn4zMS2mWeI5URRQSxx+D5vAF8LpYG2MsGd1DeGiughY5FWGV
- 33NNVkSxk6AW84wJZbYXoam5nC+8YtaRvvlbixp/Sl0KjPkCIbZp9eqmPfxvOesDSN4S
- HeX72EXISsbULNDUdfuOBxBT50/kguqHia5GQPpEPLO8TdTXEU8fD/f555Bq3FYhVsi4
- oc/CFpEQj+REf7YD08VY9SC4tF2qWriSFeUmcJO/2GbIyXxeZMoyR0g5YIJzS61xet6i
- QzJZraV1W1FvXKXB7o32xRWx9LXHw86SnVKVRUeJeWgxmsKhlfDKmLnDzDgagBGHGKOX Hw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2v5btqew25-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 00:08:10 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QNx06X167582;
-        Fri, 27 Sep 2019 00:06:09 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2v8yjxgw1v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 00:06:09 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8R066cN017670;
-        Fri, 27 Sep 2019 00:06:06 GMT
-Received: from [192.168.14.112] (/79.179.213.143)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 26 Sep 2019 17:06:06 -0700
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
-Subject: Re: [PATCH 1/2] KVM: nVMX: Always write vmcs02.GUEST_CR3 during
- nested VM-Enter
-From:   Liran Alon <liran.alon@oracle.com>
-In-Reply-To: <20190926214302.21990-2-sean.j.christopherson@intel.com>
-Date:   Fri, 27 Sep 2019 03:06:02 +0300
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <68340081-0094-4A74-9B33-3431F39659AA@oracle.com>
-References: <20190926214302.21990-1-sean.j.christopherson@intel.com>
- <20190926214302.21990-2-sean.j.christopherson@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-X-Mailer: Apple Mail (2.3445.4.7)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909260191
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909260192
+        Thu, 26 Sep 2019 20:09:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1569542987; x=1601078987;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=s8wencevRmeMDEGXC4oPCf69aZsPiCihnU+edmEPkWw=;
+  b=Ej7e0p2aEbWVXAsiilTlTU+D0X/cIIOIIjZbJO9DaDH4BrDlwCKrcInw
+   r+giZM579t717orVxTyTbQzsq4V/9+tx3CQqEDGVBOXCnX0/B+ZFBdo9p
+   Wy0wcnlGwXa5zStQ6qxyOT98NBmEp4mxzqHPilLIcvEzJeFFRFqn9G0mo
+   1rlJ2o6Z7y65gvjbSolCPG1wTbEh/K7UYQXkUjEtpoMwYJ/pb4PZCdqsq
+   Z1I2uy4gSNpHMt3s9yUlsgJUKuozMoJfqF5iBxJ6dLIX+VBtjvQAmbNXw
+   1810aLRghtfYObQYaEShpcWH8qZJVd0kVYh2RJsoMC8uJP+SjjmlTnZ5z
+   A==;
+IronPort-SDR: hiueuz5vIpbAgMw++JQJQGVPQB+OGa7P2eMSBl1mqi0YPS7k4mCe+ZVfO2AxeZV4DdtDWGuBFv
+ Uv+D7t873M0aVxV8whPGui/vInVPdSzZTvZlqIffBVstjUheTLTVnTVPRAjNVe0LSKFxstfIRW
+ 7qIIBpsoFctIXGk4VwYWpAvA5ZPph03RTHu71GPEVkdypV/GU3yu3GKbSxRQmolJiBmPtGIT9o
+ Mpo/4VoTYG6nOPn/EUZbih7uj3l02KE6+bY1SaT5hY8kjr8gBBPvH4KQeumZPr3MimDf8B3E7e
+ dO4=
+X-IronPort-AV: E=Sophos;i="5.64,553,1559491200"; 
+   d="scan'208";a="220096732"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Sep 2019 08:09:45 +0800
+IronPort-SDR: 8Yj5RDTQbH6D1JaWmeOYjj2sU1NhrtzL74OSNqBXhIJ++CufH4ZSdKVje7LPt9fQKci4N2k4N0
+ JF1LKnUXExZHSeJAWtzLlR5nP1ZtnhZvd+/ZgJGR0uuH8Vk4tGNkYsr4LAe7klyTV671Mi0bb7
+ sb+yTfgpZzlj3o0rUG9g8YvQNBdnzdMCjt4iS8saHVltLmeo6+HwCrWfdRDnrATwp3KvSSBrXJ
+ Do+n56/tS5R+I9XXu4mRb3y1EP0jYb9Mj6tcJ+WxFFLRnGVVAkYSQRfnPZoAFUfRYUpL8z753K
+ uJdYJ2rq2Ff7KLEfR9ncCpD7
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 17:05:45 -0700
+IronPort-SDR: T01SUBszgnCFFTpYhAutlE/F0IhOeeTfpSKFyhZjg4LICu9Mvq8KbW/RSMGwTOz4weUwIa+U+2
+ 43KU9rdSbkurKSoj5OJZKqdeCoSNyVuew2CNR10B2W6uLePqS1TAOgAJpV+5/qU3VvsiwY3zm4
+ BVB677+W3j0uE0iCNAZUiOKM///VB5QXiEwBT/MI3DhWhTOkjVpelMQbxgZgXvr60ToiHjuOUg
+ WooKN/v+KeFPwlWv6CWkN4Btgt53KdeLVhRyk2wlt6UTdyehcKt8tpslx0z+oV5EN7JR+edF/f
+ WzA=
+WDCIronportException: Internal
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 26 Sep 2019 17:09:24 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Allison Randal <allison@lohutok.net>,
+        Anup Patel <anup@brainfault.org>, Gary Guo <gary@garyguo.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-riscv@lists.infradead.org,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2 0/3] Add support for SBI v0.2 
+Date:   Thu, 26 Sep 2019 17:09:12 -0700
+Message-Id: <20190927000915.31781-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Supervisor Binary Interface(SBI) specification[1] now defines a
+base extension that provides extendability to add future extensions
+while maintaining backward compatibility with previous versions.
+The new version is defined as 0.2 and older version is marked as 0.1.
 
+This series adds support v0.2 and a unified calling convention
+implementation between 0.1 and 0.2. It also adds minimal SBI functions
+from 0.2 as well to keep the series lean. 
 
-> On 27 Sep 2019, at 0:43, Sean Christopherson =
-<sean.j.christopherson@intel.com> wrote:
->=20
-> Write the desired L2 CR3 into vmcs02.GUEST_CR3 during nested VM-Enter
-> isntead of deferring the VMWRITE until vmx_set_cr3().  If the VMWRITE
-> is deferred, then KVM can consume a stale vmcs02.GUEST_CR3 when it
-> refreshes vmcs12->guest_cr3 during nested_vmx_vmexit() if the emulated
-> VM-Exit occurs without actually entering L2, e.g. if the nested run
-> is squashed because L2 is being put into HLT.
+[1] https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
 
-I would rephrase to =E2=80=9CIf an emulated VMEntry is squashed because =
-L1 sets vmcs12->guest_activity_state to HLT=E2=80=9D.
-I think it=E2=80=99s a bit more explicit.
+The SBI v0.2 support for OpenSBI is already available at
 
->=20
-> In an ideal world where EPT *requires* unrestricted guest (and vice
-> versa), VMX could handle CR3 similar to how it handles RSP and RIP,
-> e.g. mark CR3 dirty and conditionally load it at vmx_vcpu_run().  But
-> the unrestricted guest silliness complicates the dirty tracking logic
-> to the point that explicitly handling vmcs02.GUEST_CR3 during nested
-> VM-Enter is a simpler overall implementation.
->=20
-> Cc: stable@vger.kernel.org
-> Reported-by: Reto Buerki <reet@codelabs.ch>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
-> arch/x86/kvm/vmx/nested.c | 8 ++++++++
-> arch/x86/kvm/vmx/vmx.c    | 9 ++++++---
-> 2 files changed, 14 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 41abc62c9a8a..971a24134081 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -2418,6 +2418,14 @@ static int prepare_vmcs02(struct kvm_vcpu =
-*vcpu, struct vmcs12 *vmcs12,
-> 				entry_failure_code))
-> 		return -EINVAL;
->=20
-> +	/*
-> +	 * Immediately write vmcs02.GUEST_CR3.  It will be propagated to =
-vmcs12
-> +	 * on nested VM-Exit, which can occur without actually running =
-L2, e.g.
-> +	 * if L2 is entering HLT state, and thus without hitting =
-vmx_set_cr3().
-> +	 */
+https://github.com/atishp04/opensbi/tree/sbi_v0.2_2
+and in the OpenSBI mailing list.
 
-If I understand correctly, it=E2=80=99s not exactly if L2 is entering =
-HLT state in general.
-(E.g. issue doesn=E2=80=99t occur if L2 runs HLT directly which is not =
-configured to be intercepted by vmcs12).
-It=E2=80=99s specifically when L1 enters L2 with a HLT =
-guest-activity-state. I suggest rephrasing comment.
+Tested on both BBL, OpenSBI with/without the above patch series. 
 
-> +	if (enable_ept)
-> +		vmcs_writel(GUEST_CR3, vmcs12->guest_cr3);
-> +
-> 	/* Late preparation of GUEST_PDPTRs now that EFER and CRs are =
-set. */
-> 	if (load_guest_pdptrs_vmcs12 && nested_cpu_has_ept(vmcs12) &&
-> 	    is_pae_paging(vcpu)) {
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index d4575ffb3cec..b530950a9c2b 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2985,6 +2985,7 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned =
-long cr3)
-> {
-> 	struct kvm *kvm =3D vcpu->kvm;
-> 	unsigned long guest_cr3;
-> +	bool skip_cr3 =3D false;
-> 	u64 eptp;
->=20
-> 	guest_cr3 =3D cr3;
-> @@ -3000,15 +3001,17 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, =
-unsigned long cr3)
-> 			spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
-> 		}
->=20
-> -		if (enable_unrestricted_guest || is_paging(vcpu) ||
-> -		    is_guest_mode(vcpu))
-> +		if (is_guest_mode(vcpu))
-> +			skip_cr3 =3D true;
-> +		else if (enable_unrestricted_guest || is_paging(vcpu))
-> 			guest_cr3 =3D kvm_read_cr3(vcpu);
-> 		else
-> 			guest_cr3 =3D =
-to_kvm_vmx(kvm)->ept_identity_map_addr;
-> 		ept_load_pdptrs(vcpu);
-> 	}
->=20
-> -	vmcs_writel(GUEST_CR3, guest_cr3);
-> +	if (!skip_cr3)
+Changes from v1->v2
+1. Removed the legacy calling convention.
+2. Moved all SBI related calls to sbi.c.
+3. Moved all SBI related macros to uapi.
 
-Nit: It=E2=80=99s a matter of taste, but I prefer positive conditions. =
-i.e. =E2=80=9Cbool write_guest_cr3=E2=80=9D.
+Atish Patra (3):
+RISC-V: Mark existing SBI as 0.1 SBI.
+RISC-V: Add basic support for SBI v0.2
+RISC-V: Move SBI related macros under uapi.
 
-Anyway, code seems valid to me. Nice catch.
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
+arch/riscv/include/asm/sbi.h      | 109 +++++---------
+arch/riscv/include/uapi/asm/sbi.h |  48 ++++++
+arch/riscv/kernel/Makefile        |   1 +
+arch/riscv/kernel/sbi.c           | 241 ++++++++++++++++++++++++++++++
+arch/riscv/kernel/setup.c         |   2 +
+5 files changed, 328 insertions(+), 73 deletions(-)
+create mode 100644 arch/riscv/include/uapi/asm/sbi.h
+create mode 100644 arch/riscv/kernel/sbi.c
 
--Liran
-
-> +		vmcs_writel(GUEST_CR3, guest_cr3);
-> }
->=20
-> int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
-> --=20
-> 2.22.0
->=20
+--
+2.21.0
 
