@@ -2,157 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85FFFC0AB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 19:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E37CAC0AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 19:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfI0R7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 13:59:45 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42255 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfI0R7p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 13:59:45 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q12so2002895pff.9
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 10:59:45 -0700 (PDT)
+        id S1727824AbfI0R5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 13:57:14 -0400
+Received: from mail-eopbgr750054.outbound.protection.outlook.com ([40.107.75.54]:48558
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726385AbfI0R5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 13:57:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PJtjOKxhhHnoQ38PyMJoBc3+NssEe3E+n1WvS3/Mj4DaPG1POD1XsGwyiltcXWZB5bjTj7ZRD46fh5Yt5suPlbgXS2+7fNkcZdPl5v1klqddUBmhEtpnxqopBYUmzXX83IAVXnDuqY8njSr7M7zE4bWDv6wte2xWRCAs5oPA4V6N4KVbqY2qPNMfZd/zvEV4ezT+k6NJO0/XMKW9oY2CmjKvK6QwYmoQwOlwkPn1iRKAD6rrXWEzl9n6QmPBbSEiXcFiBZH2Ps+IVLEg7LQa6V6Vd2NWBBTy8qW+Wwp8XPkIVtJ/KwlueMOgLhoVj37ZjQFXtBRTZEsUxCJa1Wyx6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zLK3fU9R3QqMYsmbtnfy5E1MjCmBw3cMeaUakLjq418=;
+ b=ERNTx4zUq5FcKmwkPM6/GGOPsAWD8aqg/YLB89TBgA4OijfxyKSCZZUS4maTiDStu8HjRk6x923bphwpP6m52p6Twi8TI3E69sg3adqEBHdb5dCKaEaEeug6FWu0A0L2Q5hW01XjbOLWmkiFcr6Gv6mAf6pilE+MKJ0EmoYFsjNZt+hT028VhPulbZZFvgZq0CzPF+7AVdWTh+jSgQE86gtXOlKaPFWK0qm7Yl5sYpy7Aq7BnoNSnnl1IHLzUIXYxpccDk9s+eBQa6NgNM6rIX6dVsupv+0tOC3MCo7MhwOlFQgzyJ278S/iZ5CBdvxU89tfDZVN/Gr5XhGnJLx2hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qmaYsyRcatgzXQsy0tcn1VuhcXwzjzV5wqW3owNkQCI=;
-        b=OGg+TwHVpitznJ+6fsRfw+2/ZLEYfePM3aO42uWqzOSJqUb3CyecEISYJ+GK46A0L8
-         ti0lV0hbEmE8VeN/gh/eAm6eTAwmA3CDfKZfsCeGhv5sJscyFhaaSL+GIJ6pK8UTt4GF
-         +nOgcyUtYkF5sWmV+vgWDTdhRUwX7VKhheT4viYW9xUodXY+MsvcQYWg99m1WJ+V/vfq
-         HVMrVtTD/KL3AtzQYCm6NvtoQFEcJXCEX6oy74wBITWu4XtcdgKOIDJyY0CBA6il5KZo
-         ehyf3sTzM0FxXIoFN37tsak33QDEBqvHzcKMSFq6fvCAyAApX0vc2ITA+f6c3gCxb9R1
-         cKrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qmaYsyRcatgzXQsy0tcn1VuhcXwzjzV5wqW3owNkQCI=;
-        b=EEm0uMW3uaMgxQod3NYyY20dP84HWEK7Z6dT+fAjKauDj7k3PIs4Q0ihyRXe1nJ1wz
-         cXP7tMbi6D1khDqmkz3ZcM2AdfrGc2l0OyU5s1YT2ulJIHqOndgI/IapAefomF5UIBYd
-         24b0leFCqR0h8TFfYmmwlBfa6pwXlm/VSamUTfPT/4WEWk0CgfQK6WlSVzYu80wjd8sy
-         yOOervNR0wgoUtUDDmcpVKZ6hcnvNj8NRpFvkJWqCUtq5t7M11PCNTn1MvLBwLinELBX
-         1ab2ZcAhMaAshMnUBIrl+7rTQb57ItUdU6O1JUnFtPuA3Z98dMuPjKWUE/XhSJ8Ycl6j
-         9ong==
-X-Gm-Message-State: APjAAAVNR6wY4F4aTEEHWS1V+T8jjIMo8Pe+z7wDCzg9m1ceVc81ZSLN
-        /ncRcT5cju4IDxAAo9kqR/k=
-X-Google-Smtp-Source: APXvYqyL6hQg8YCTJ/JWdhqO1gaWRVn4NASQyDC6NLWOACIuLkh7fCXxqhSPOvKGsxRX2KNYsPTm+A==
-X-Received: by 2002:a62:190f:: with SMTP id 15mr5922269pfz.172.1569607184260;
-        Fri, 27 Sep 2019 10:59:44 -0700 (PDT)
-Received: from iclxps.lan (155-97-232-235.usahousing.utah.edu. [155.97.232.235])
-        by smtp.googlemail.com with ESMTPSA id z12sm3582206pfj.41.2019.09.27.10.59.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2019 10:59:43 -0700 (PDT)
-From:   Tuowen Zhao <ztuowen@gmail.com>
-To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc:     andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
-        acelan.kao@canonical.com, bhelgaas@google.com,
-        kai.heng.feng@canonical.com, Tuowen Zhao <ztuowen@gmail.com>
-Subject: [PATCH] mfd: intel-lpss: use devm_ioremap_uc for mmio
-Date:   Fri, 27 Sep 2019 11:55:13 -0600
-Message-Id: <20190927175513.31054-1-ztuowen@gmail.com>
-X-Mailer: git-send-email 2.23.0
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zLK3fU9R3QqMYsmbtnfy5E1MjCmBw3cMeaUakLjq418=;
+ b=BOCZwWk6Sw/i0xgItgHGdcKQKY0l4O3kkEhNlu8hwkWBZbXIyu8refM6b9PE+PNuEWFl7CNkfqVIhJzATDIvkWCGg9hXGfoI+17IPKP/eVWvTs45CSqKXmrcAjrDtWkEOctcKG3/zhnNdW6VHrdnZFq607bCHhm14Txu4R0QycM=
+Received: from CY4PR1201MB0230.namprd12.prod.outlook.com (10.172.79.7) by
+ CY4PR1201MB0181.namprd12.prod.outlook.com (10.172.79.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.26; Fri, 27 Sep 2019 17:56:30 +0000
+Received: from CY4PR1201MB0230.namprd12.prod.outlook.com
+ ([fe80::708e:c826:5b05:e3f0]) by CY4PR1201MB0230.namprd12.prod.outlook.com
+ ([fe80::708e:c826:5b05:e3f0%11]) with mapi id 15.20.2284.023; Fri, 27 Sep
+ 2019 17:56:30 +0000
+From:   Harry Wentland <hwentlan@amd.com>
+To:     Lyude Paul <lyude@redhat.com>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+CC:     "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "Zuo, Jerry" <Jerry.Zuo@amd.com>, Thomas Lim <Thomas.Lim@amd.com>,
+        "Francis, David" <David.Francis@amd.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] drm/amdgpu/dm/mst: Use ->atomic_best_encoder
+Thread-Topic: [PATCH 3/6] drm/amdgpu/dm/mst: Use ->atomic_best_encoder
+Thread-Index: AQHVdL0FUxqHHzKn0EmCiHXueawBm6c/0EsA
+Date:   Fri, 27 Sep 2019 17:56:30 +0000
+Message-ID: <6129c0a5-9a8a-8a05-4dd9-db3204dcbfd8@amd.com>
+References: <20190926225122.31455-1-lyude@redhat.com>
+ <20190926225122.31455-4-lyude@redhat.com>
+In-Reply-To: <20190926225122.31455-4-lyude@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [165.204.55.251]
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
+x-clientproxiedby: YTOPR0101CA0059.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b00:14::36) To CY4PR1201MB0230.namprd12.prod.outlook.com
+ (2603:10b6:910:1e::7)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Harry.Wentland@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f9e2c36d-9bf0-43e8-6454-08d7437406b3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR1201MB0181;
+x-ms-traffictypediagnostic: CY4PR1201MB0181:
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY4PR1201MB01818DFCDF12965DC9DDCCE58C810@CY4PR1201MB0181.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:144;
+x-forefront-prvs: 0173C6D4D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(346002)(39860400002)(136003)(366004)(199004)(189003)(2501003)(65956001)(31686004)(52116002)(486006)(2906002)(110136005)(4326008)(54906003)(58126008)(65806001)(8676002)(446003)(316002)(5660300002)(3846002)(186003)(99286004)(71190400001)(71200400001)(36756003)(11346002)(8936002)(76176011)(476003)(26005)(2616005)(6116002)(386003)(53546011)(6506007)(102836004)(7736002)(256004)(66476007)(25786009)(31696002)(6436002)(6486002)(229853002)(66556008)(66446008)(64756008)(14454004)(81156014)(66066001)(81166006)(6246003)(66946007)(6512007)(305945005)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR1201MB0181;H:CY4PR1201MB0230.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: HpJToeaH0+njwtJW7ZkNTNfsgmpPjmTBV7nURk3ZaLu9PBWDS4+y5e2ug014F6abZwgHrxRoDrWr/w2CaQZYpxkZovhyVvLAwLg1+I7F3p6i3oNzcZ5tl0LvOrTxCyneYqJtGCfLw7snb6bmQa1UFhWswD/wpeRceXTRV1tI+BaO4XxdjxUrvo2dXL9JUHh8cuBhhRAQea21YclnsC+k4O47L1A6KIf8i9Jt/sm2G160vcVtKCp+ve5b5Wp2bGrnWiDewkfroDSh7D86V28xv/Kkiome4Po98bp+Wd9U2hBrokac+0ShNQBHkoFwmyipuWYG256r/XMGA5MBcpwLiqHkB2kenGXUHCPf4Cu3VWmnwDAiTh6UqtuYylLjC5BWtDvwIRZFXZLMHTbmzRR44QNDTDwzpGJNOBJm32T8fec=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <934D761988E133448EB5E1019A400C28@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9e2c36d-9bf0-43e8-6454-08d7437406b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2019 17:56:30.6740
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wUXFvAIMvELfCASJeQ2ok+TCvP6hiyaE44x/VTPajJzpmTN/qmMrHSOQUx7XDwFFbvm96ISUnM9V56DBhJCxBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Write-combining BAR for intel-lpss-pci in MTRR causes system hangs
-during boot.
-
-This patch adds devm_ioremap_uc as a new managed wrapper to ioremap_uc
-and with it forces the use of strongly uncachable mmio in intel-lpss.
-
-This bahavior is seen on Dell XPS 13 7390 2-in-1:
-
-[    0.001734]   5 base 4000000000 mask 6000000000 write-combining
-
-4000000000-7fffffffff : PCI Bus 0000:00
-  4000000000-400fffffff : 0000:00:02.0 (i915)
-  4010000000-4010000fff : 0000:00:15.0 (intel-lpss-pci)
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203485
-Signed-off-by: Tuowen Zhao <ztuowen@gmail.com>
----
- drivers/mfd/intel-lpss.c |  2 +-
- include/linux/io.h       |  2 ++
- lib/devres.c             | 19 +++++++++++++++++++
- 3 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
-index 277f48f1cc1c..06106c9320bb 100644
---- a/drivers/mfd/intel-lpss.c
-+++ b/drivers/mfd/intel-lpss.c
-@@ -395,7 +395,7 @@ int intel_lpss_probe(struct device *dev,
- 	if (!lpss)
- 		return -ENOMEM;
- 
--	lpss->priv = devm_ioremap(dev, info->mem->start + LPSS_PRIV_OFFSET,
-+	lpss->priv = devm_ioremap_uc(dev, info->mem->start + LPSS_PRIV_OFFSET,
- 				  LPSS_PRIV_SIZE);
- 	if (!lpss->priv)
- 		return -ENOMEM;
-diff --git a/include/linux/io.h b/include/linux/io.h
-index accac822336a..a59834bc0a11 100644
---- a/include/linux/io.h
-+++ b/include/linux/io.h
-@@ -64,6 +64,8 @@ static inline void devm_ioport_unmap(struct device *dev, void __iomem *addr)
- 
- void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
- 			   resource_size_t size);
-+void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-+				   resource_size_t size);
- void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
- 				   resource_size_t size);
- void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
-diff --git a/lib/devres.c b/lib/devres.c
-index 6a0e9bd6524a..beb0a064b891 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -9,6 +9,7 @@
- enum devm_ioremap_type {
- 	DEVM_IOREMAP = 0,
- 	DEVM_IOREMAP_NC,
-+	DEVM_IOREMAP_UC,
- 	DEVM_IOREMAP_WC,
- };
- 
-@@ -39,6 +40,9 @@ static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
- 	case DEVM_IOREMAP_NC:
- 		addr = ioremap_nocache(offset, size);
- 		break;
-+	case DEVM_IOREMAP_UC:
-+		addr = ioremap_uc(offset, size);
-+		break;
- 	case DEVM_IOREMAP_WC:
- 		addr = ioremap_wc(offset, size);
- 		break;
-@@ -68,6 +72,21 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
- }
- EXPORT_SYMBOL(devm_ioremap);
- 
-+/**
-+ * devm_ioremap_uc - Managed ioremap_uc()
-+ * @dev: Generic device to remap IO address for
-+ * @offset: Resource address to map
-+ * @size: Size of map
-+ *
-+ * Managed ioremap_uc().  Map is automatically unmapped on driver detach.
-+ */
-+void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-+			      resource_size_t size)
-+{
-+	return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_UC);
-+}
-+EXPORT_SYMBOL(devm_ioremap_uc);
-+
- /**
-  * devm_ioremap_nocache - Managed ioremap_nocache()
-  * @dev: Generic device to remap IO address for
--- 
-2.23.0
-
+T24gMjAxOS0wOS0yNiA2OjUxIHAubS4sIEx5dWRlIFBhdWwgd3JvdGU6DQo+IFdlIGFyZSBzdXBw
+b3NlZCB0byBiZSBhdG9taWMgYWZ0ZXIgYWxsLiBXZSdsbCBuZWVkIHRoaXMgaW4gYSBtb21lbnQg
+Zm9yDQo+IHRoZSBuZXh0IGNvbW1pdC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEx5dWRlIFBhdWwg
+PGx5dWRlQHJlZGhhdC5jb20+DQoNClJldmlld2VkLWJ5OiBIYXJyeSBXZW50bGFuZCA8aGFycnku
+d2VudGxhbmRAYW1kLmNvbT4NCg0KSGFycnkNCg0KPiAtLS0NCj4gIC4uLi9kcm0vYW1kL2Rpc3Bs
+YXkvYW1kZ3B1X2RtL2FtZGdwdV9kbV9tc3RfdHlwZXMuYyAgICB8IDEwICsrKysrLS0tLS0NCj4g
+IDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2FtZGdwdV9kbS9hbWRncHVf
+ZG1fbXN0X3R5cGVzLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvYW1kZ3B1X2RtL2Ft
+ZGdwdV9kbV9tc3RfdHlwZXMuYw0KPiBpbmRleCBhMzk4ZGRkMWYzMDYuLmQ5MTEzY2UwYmUwOSAx
+MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2FtZGdwdV9kbS9hbWRn
+cHVfZG1fbXN0X3R5cGVzLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9kaXNwbGF5L2Ft
+ZGdwdV9kbS9hbWRncHVfZG1fbXN0X3R5cGVzLmMNCj4gQEAgLTI0MywxNyArMjQzLDE3IEBAIHN0
+YXRpYyBpbnQgZG1fZHBfbXN0X2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVj
+dG9yKQ0KPiAgCXJldHVybiByZXQ7DQo+ICB9DQo+ICANCj4gLXN0YXRpYyBzdHJ1Y3QgZHJtX2Vu
+Y29kZXIgKmRtX21zdF9iZXN0X2VuY29kZXIoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3Rv
+cikNCj4gK3N0YXRpYyBzdHJ1Y3QgZHJtX2VuY29kZXIgKg0KPiArZG1fbXN0X2F0b21pY19iZXN0
+X2VuY29kZXIoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwNCj4gKwkJCSAgIHN0cnVj
+dCBkcm1fY29ubmVjdG9yX3N0YXRlICpjb25uZWN0b3Jfc3RhdGUpDQo+ICB7DQo+IC0Jc3RydWN0
+IGFtZGdwdV9kbV9jb25uZWN0b3IgKmFtZGdwdV9kbV9jb25uZWN0b3IgPSB0b19hbWRncHVfZG1f
+Y29ubmVjdG9yKGNvbm5lY3Rvcik7DQo+IC0NCj4gLQlyZXR1cm4gJmFtZGdwdV9kbV9jb25uZWN0
+b3ItPm1zdF9lbmNvZGVyLT5iYXNlOw0KPiArCXJldHVybiAmdG9fYW1kZ3B1X2RtX2Nvbm5lY3Rv
+cihjb25uZWN0b3IpLT5tc3RfZW5jb2Rlci0+YmFzZTsNCj4gIH0NCj4gIA0KPiAgc3RhdGljIGNv
+bnN0IHN0cnVjdCBkcm1fY29ubmVjdG9yX2hlbHBlcl9mdW5jcyBkbV9kcF9tc3RfY29ubmVjdG9y
+X2hlbHBlcl9mdW5jcyA9IHsNCj4gIAkuZ2V0X21vZGVzID0gZG1fZHBfbXN0X2dldF9tb2RlcywN
+Cj4gIAkubW9kZV92YWxpZCA9IGFtZGdwdV9kbV9jb25uZWN0b3JfbW9kZV92YWxpZCwNCj4gLQku
+YmVzdF9lbmNvZGVyID0gZG1fbXN0X2Jlc3RfZW5jb2RlciwNCj4gKwkuYXRvbWljX2Jlc3RfZW5j
+b2RlciA9IGRtX21zdF9hdG9taWNfYmVzdF9lbmNvZGVyLA0KPiAgfTsNCj4gIA0KPiAgc3RhdGlj
+IHZvaWQgYW1kZ3B1X2RtX2VuY29kZXJfZGVzdHJveShzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29k
+ZXIpDQo+IA0K
