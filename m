@@ -2,323 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B55BFD77
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 05:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DEC6BFD6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 05:02:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbfI0DIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 23:08:07 -0400
-Received: from lucky1.263xmail.com ([211.157.147.132]:41158 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728552AbfI0DIG (ORCPT
+        id S1728702AbfI0DCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 23:02:41 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38486 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727794AbfI0DCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 23:08:06 -0400
-Received: from localhost (unknown [192.168.167.138])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 876FA5CF59;
-        Fri, 27 Sep 2019 11:01:17 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P20920T140646948005632S1569553274502940_;
-        Fri, 27 Sep 2019 11:01:16 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <b623b4ff587c8a9c03bc708a4945eab9>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 5/5] clk: rockchip: support pll setting by auto
-Date:   Fri, 27 Sep 2019 11:01:24 +0800
-Message-Id: <1569553284-3232-1-git-send-email-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1569553244-3165-1-git-send-email-zhangqing@rock-chips.com>
-References: <1569553244-3165-1-git-send-email-zhangqing@rock-chips.com>
+        Thu, 26 Sep 2019 23:02:41 -0400
+Received: by mail-io1-f65.google.com with SMTP id u8so12429259iom.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 20:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DqS8CKCqfS3uYwo6fxsB/vgYneWRSmUgNFHzOxBj8mM=;
+        b=Buf3XKlV1Z0TVnpHyRzpBbKhxwUyFCGd4dJdxoIzFfC2g50ozH8DfZVOTvGKUc2BJr
+         LQiir9PETDZL8OPe1Rbxr/2J9mWpe9awhNpXnHzlmuoj2COyTngzOyVXy5fQ7gbOOz1o
+         OaOvdSwPfrc6Fv30W2ZEWZ1ac+kRysl6AZuJP/tHgnuXnn0AFY9yKN5XvA7f7T9IdtA2
+         3lRh5HsR8Y+JbfNpKyMxO52OOrDVnKfs1RiuQBIlwMdrc5dZkCNW61UyZPmHLGwBjQge
+         Ahe5YJhhnwf2utnAPXwHtTtWIL88B8sVvamDl5I2oFjji1CK0SswqM+RI+Y0CCAope1m
+         +r4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DqS8CKCqfS3uYwo6fxsB/vgYneWRSmUgNFHzOxBj8mM=;
+        b=XcwtuG2urSn/mn5woKSvzbU3BDu93cM9/YeWvd53HMNT1LZxMHQ2ha6AXOlKzQKxXB
+         uvrd+vsz4jY/GSPdOoug1LZW2XJkydRCov6MSsJ0LjNk2B3URCIbRR7D6jH2WGcEkF/C
+         H03lqq5E0bofJjPMeddeY3eUXpkZPc/NbycpsEWdoSIDe27o8k6WtBIkOy+ayuriod9e
+         wbC0UBNRQHBkP3pSUqrCugXsDJz0ikqlZOiu8Xz/T0y6YvQ9AnUdYGDe1s2/OinGxPy8
+         fD6AMFdDe5Ahf8qE8UKzeFiNqKO+seyYEGXiv6lhrwTpqxLBMw5mmTDS2rIhQQBEUTg3
+         jbGw==
+X-Gm-Message-State: APjAAAWSaakfsLyz1mh/7tg1FP1xHfbR1K16WmfrGDycfAQiDgkJw5EW
+        nYIsA2fSce025A/0qXohzVw=
+X-Google-Smtp-Source: APXvYqx1L9qjRJEsHT9X9uAKY7IMnjTAX1C2jDv6tKBrvtWeToTP7J9LfCDR/j0zbh+AloLmUdyxeQ==
+X-Received: by 2002:a92:af52:: with SMTP id n79mr2529870ili.4.1569553359998;
+        Thu, 26 Sep 2019 20:02:39 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.gmail.com with ESMTPSA id y7sm1775136ior.45.2019.09.26.20.02.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Sep 2019 20:02:39 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 22:02:37 -0500
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>,
+        emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] udf: prevent memory leak in udf_new_inode
+Message-ID: <20190927030237.GE22969@cs-dulles.cs.umn.edu>
+References: <20190925213904.12128-1-navid.emamdoost@gmail.com>
+ <20190925222408.GN26530@ZenIV.linux.org.uk>
+ <20190926080031.GB12013@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190926080031.GB12013@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If setting freq is not support in rockchip_pll_rate_table,
-It can calculate and set pll params by auto.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-pll.c | 215 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 200 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 390e9473807a..ac8c62c531f0 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -14,6 +14,7 @@
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
- #include <linux/clk.h>
-+#include <linux/gcd.h>
- #include "clk.h"
- 
- #define PLL_MODE_MASK		0x3
-@@ -46,6 +47,198 @@ struct rockchip_clk_pll {
- #define to_rockchip_clk_pll_nb(nb) \
- 			container_of(nb, struct rockchip_clk_pll, clk_nb)
- 
-+#define MHZ			(1000UL * 1000UL)
-+#define KHZ			(1000UL)
-+
-+/* CLK_PLL_TYPE_RK3066_AUTO type ops */
-+#define PLL_FREF_MIN		(269 * KHZ)
-+#define PLL_FREF_MAX		(2200 * MHZ)
-+
-+#define PLL_FVCO_MIN		(440 * MHZ)
-+#define PLL_FVCO_MAX		(2200 * MHZ)
-+
-+#define PLL_FOUT_MIN		(27500 * KHZ)
-+#define PLL_FOUT_MAX		(2200 * MHZ)
-+
-+#define PLL_NF_MAX		(4096)
-+#define PLL_NR_MAX		(64)
-+#define PLL_NO_MAX		(16)
-+
-+/* CLK_PLL_TYPE_RK3036/3366/3399_AUTO type ops */
-+#define MIN_FOUTVCO_FREQ	(800 * MHZ)
-+#define MAX_FOUTVCO_FREQ	(2000 * MHZ)
-+
-+static struct rockchip_pll_rate_table auto_table;
-+
-+static struct rockchip_pll_rate_table *rk_pll_rate_table_get(void)
-+{
-+	return &auto_table;
-+}
-+
-+static int rockchip_pll_clk_set_postdiv(unsigned long fout_hz,
-+					u32 *postdiv1,
-+					u32 *postdiv2,
-+					u32 *foutvco)
-+{
-+	unsigned long freq;
-+
-+	if (fout_hz < MIN_FOUTVCO_FREQ) {
-+		for (*postdiv1 = 1; *postdiv1 <= 7; (*postdiv1)++) {
-+			for (*postdiv2 = 1; *postdiv2 <= 7; (*postdiv2)++) {
-+				freq = fout_hz * (*postdiv1) * (*postdiv2);
-+				if (freq >= MIN_FOUTVCO_FREQ &&
-+				    freq <= MAX_FOUTVCO_FREQ) {
-+					*foutvco = freq;
-+					return 0;
-+				}
-+			}
-+		}
-+		pr_err("CANNOT FIND postdiv1/2 to make fout in range from 800M to 2000M,fout = %lu\n",
-+		       fout_hz);
-+	} else {
-+		*postdiv1 = 1;
-+		*postdiv2 = 1;
-+	}
-+	return 0;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+			     unsigned long fin_hz,
-+			     unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	/* FIXME set postdiv1/2 always 1*/
-+	u32 foutvco = fout_hz;
-+	u64 fin_64, frac_64;
-+	u32 f_frac, postdiv1, postdiv2;
-+	unsigned long clk_gcd = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	rockchip_pll_clk_set_postdiv(fout_hz, &postdiv1, &postdiv2, &foutvco);
-+	rate_table->postdiv1 = postdiv1;
-+	rate_table->postdiv2 = postdiv2;
-+	rate_table->dsmpd = 1;
-+
-+	if (fin_hz / MHZ * MHZ == fin_hz && fout_hz / MHZ * MHZ == fout_hz) {
-+		fin_hz /= MHZ;
-+		foutvco /= MHZ;
-+		clk_gcd = gcd(fin_hz, foutvco);
-+		rate_table->refdiv = fin_hz / clk_gcd;
-+		rate_table->fbdiv = foutvco / clk_gcd;
-+
-+		rate_table->frac = 0;
-+
-+		pr_debug("fin = %lu, fout = %lu, clk_gcd = %lu, refdiv = %u, fbdiv = %u, postdiv1 = %u, postdiv2 = %u, frac = %u\n",
-+			 fin_hz, fout_hz, clk_gcd, rate_table->refdiv,
-+			 rate_table->fbdiv, rate_table->postdiv1,
-+			 rate_table->postdiv2, rate_table->frac);
-+	} else {
-+		pr_debug("frac div running, fin_hz = %lu, fout_hz = %lu, fin_INT_mhz = %lu, fout_INT_mhz = %lu\n",
-+			 fin_hz, fout_hz,
-+			 fin_hz / MHZ * MHZ,
-+			 fout_hz / MHZ * MHZ);
-+		pr_debug("frac get postdiv1 = %u,  postdiv2 = %u, foutvco = %u\n",
-+			 rate_table->postdiv1, rate_table->postdiv2, foutvco);
-+		clk_gcd = gcd(fin_hz / MHZ, foutvco / MHZ);
-+		rate_table->refdiv = fin_hz / MHZ / clk_gcd;
-+		rate_table->fbdiv = foutvco / MHZ / clk_gcd;
-+		pr_debug("frac get refdiv = %u,  fbdiv = %u\n",
-+			 rate_table->refdiv, rate_table->fbdiv);
-+
-+		rate_table->frac = 0;
-+
-+		f_frac = (foutvco % MHZ);
-+		fin_64 = fin_hz;
-+		do_div(fin_64, (u64)rate_table->refdiv);
-+		frac_64 = (u64)f_frac << 24;
-+		do_div(frac_64, fin_64);
-+		rate_table->frac = (u32)frac_64;
-+		if (rate_table->frac > 0)
-+			rate_table->dsmpd = 0;
-+		pr_debug("frac = %x\n", rate_table->frac);
-+	}
-+	return rate_table;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_rk3066_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+				    unsigned long fin_hz,
-+				    unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	u32 nr, nf, no, nonr;
-+	u32 nr_out, nf_out, no_out;
-+	u32 n;
-+	u32 numerator, denominator;
-+	u64 fref, fvco, fout;
-+	unsigned long clk_gcd = 0;
-+
-+	nr_out = PLL_NR_MAX + 1;
-+	no_out = 0;
-+	nf_out = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	clk_gcd = gcd(fin_hz, fout_hz);
-+
-+	numerator = fout_hz / clk_gcd;
-+	denominator = fin_hz / clk_gcd;
-+
-+	for (n = 1;; n++) {
-+		nf = numerator * n;
-+		nonr = denominator * n;
-+		if (nf > PLL_NF_MAX || nonr > (PLL_NO_MAX * PLL_NR_MAX))
-+			break;
-+
-+		for (no = 1; no <= PLL_NO_MAX; no++) {
-+			if (!(no == 1 || !(no % 2)))
-+				continue;
-+
-+			if (nonr % no)
-+				continue;
-+			nr = nonr / no;
-+
-+			if (nr > PLL_NR_MAX)
-+				continue;
-+
-+			fref = fin_hz / nr;
-+			if (fref < PLL_FREF_MIN || fref > PLL_FREF_MAX)
-+				continue;
-+
-+			fvco = fref * nf;
-+			if (fvco < PLL_FVCO_MIN || fvco > PLL_FVCO_MAX)
-+				continue;
-+
-+			fout = fvco / no;
-+			if (fout < PLL_FOUT_MIN || fout > PLL_FOUT_MAX)
-+				continue;
-+
-+			/* select the best from all available PLL settings */
-+			if ((no > no_out) ||
-+			    ((no == no_out) && (nr < nr_out))) {
-+				nr_out = nr;
-+				nf_out = nf;
-+				no_out = no;
-+			}
-+		}
-+	}
-+
-+	/* output the best PLL setting */
-+	if ((nr_out <= PLL_NR_MAX) && (no_out > 0)) {
-+		rate_table->nr = nr_out;
-+		rate_table->nf = nf_out;
-+		rate_table->no = no_out;
-+	} else {
-+		return NULL;
-+	}
-+
-+	return rate_table;
-+}
-+
- static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			    struct rockchip_clk_pll *pll, unsigned long rate)
- {
-@@ -57,24 +250,16 @@ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			return &rate_table[i];
- 	}
- 
--	return NULL;
-+	if (pll->type == pll_rk3066)
-+		return rockchip_rk3066_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
-+	else
-+		return rockchip_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
- }
- 
- static long rockchip_pll_round_rate(struct clk_hw *hw,
- 			    unsigned long drate, unsigned long *prate)
- {
--	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
--	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
--	int i;
--
--	/* Assumming rate_table is in descending order */
--	for (i = 0; i < pll->rate_count; i++) {
--		if (drate >= rate_table[i].rate)
--			return rate_table[i].rate;
--	}
--
--	/* return minimum supported value */
--	return rate_table[i - 1].rate;
-+	return drate;
- }
- 
- /*
-@@ -154,7 +339,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	struct rockchip_pll_rate_table cur;
--	u64 rate64 = prate;
-+	u64 rate64 = prate, frac_rate64 = prate;
- 
- 	rockchip_rk3036_pll_get_params(pll, &cur);
- 
-@@ -163,7 +348,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
- 
- 	if (cur.dsmpd == 0) {
- 		/* fractional mode */
--		u64 frac_rate64 = prate * cur.frac;
-+		frac_rate64 *= cur.frac;
- 
- 		do_div(frac_rate64, cur.refdiv);
- 		rate64 += frac_rate64 >> 24;
--- 
-1.9.1
-
-
-
+On Thu, Sep 26, 2019 at 10:00:31AM +0200, Jan Kara wrote:
+> On Wed 25-09-19 23:24:08, Al Viro wrote:
+> > On Wed, Sep 25, 2019 at 04:39:03PM -0500, Navid Emamdoost wrote:
+> > > In udf_new_inode if either udf_new_block or insert_inode_locked fials
+> > > the allocated memory for iinfo->i_ext.i_data should be released.
+> > 
+> > "... because of such-and-such reasons" part appears to be missing.
+> > Why should it be released there?
+> > 
+> > > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> > > ---
+> > >  fs/udf/ialloc.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/fs/udf/ialloc.c b/fs/udf/ialloc.c
+> > > index 0adb40718a5d..b8ab3acab6b6 100644
+> > > --- a/fs/udf/ialloc.c
+> > > +++ b/fs/udf/ialloc.c
+> > > @@ -86,6 +86,7 @@ struct inode *udf_new_inode(struct inode *dir, umode_t mode)
+> > >  			      dinfo->i_location.partitionReferenceNum,
+> > >  			      start, &err);
+> > >  	if (err) {
+> > > +		kfree(iinfo->i_ext.i_data);
+> > >  		iput(inode);
+> > >  		return ERR_PTR(err);
+> > >  	}
+> > 
+> > Have you tested that?  Because it has all earmarks of double-free;
+> > normal eviction pathway ought to free the damn thing.  <greps around
+> > a bit>
+> > 
+> > Mind explaining what's to stop ->evict_inode (== udf_evict_inode) from
+> > hitting
+> >         kfree(iinfo->i_ext.i_data);
+> > considering that this call of kfree() appears to be unconditional there?
+> 
+> Exactly. udf_evict_inode() is responsible for freeing iinfo->i_ext.i_data
+> so the patch would result in double free.
+> 
+> 								Honza
+Thanks for clarification.
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
