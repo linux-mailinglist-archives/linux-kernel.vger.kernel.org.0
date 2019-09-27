@@ -2,168 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 672CAC026A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 11:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5D1C027A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 11:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726205AbfI0JdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 05:33:20 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40854 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfI0JdT (ORCPT
+        id S1727079AbfI0JhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 05:37:05 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:33063 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbfI0JhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 05:33:19 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 7so1816775ljw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 02:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iBKBSoCXyPsaFcR3Bk4+exS1wpAq9IzVjY6FOFa5Qus=;
-        b=rbx4msmhxYJrSCYeNkekKBwHoxx5KbgI9AAebr77wDShVXeXn9yKVTm5T+zxZQtib/
-         preBoc0nFg9dtEimugwYKTuM+TJP7koWNzuUqtUApTY2zAqPYPOHhE7WC9EZomYOkVE6
-         pM9qNFLCvNMj4fkvSFkm+6L3luXxl0XI4LRmq5nxwqnv9RjCNTi5FJQ10Rt3NlYtSCrn
-         4J06yKorKbpOuKUcVXNU2yamj9bU3/GF9ar2lh8wxUAgmwJa+lrowGvxi6xmBfIT/De6
-         GHgzJwjvnWmbDOPb6pyObvfrBTOmCdDhfSu3CyPIyxO1Jw94U4N8kM8RKbYYHjnavDNg
-         V/JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iBKBSoCXyPsaFcR3Bk4+exS1wpAq9IzVjY6FOFa5Qus=;
-        b=Mvt12vH1sdz5fKH38Ngy67vsmZ2DckISaQDXRMj+HCCxS+iDqNcEkpDPyu12OniQr7
-         mdlrUsjjAzvjQVQsnPF04+7HheBDS/diqfgnyKgUIpX2XuK7mRXAxCy2Ro3kqCMb1Pjr
-         0kNPigI1lyLDvwB7QfRDS8SlAhcYXy/RRzwa8Mk7dyJHI2HAcZBEL1EGEguoZx8B9ZAt
-         gu8GfWFIH8wDouAAn6o8vb5u1XrCCxVgTJjfKz4IDm5skcK8+qFOOd0lucdJ5AuZXyjo
-         7Z/r2o9VB91EAX9vu3PWGad24XJcGiMUt78Zo67tIsJ5OaYpoVESWjp30S1bnbL4v9FD
-         WIPg==
-X-Gm-Message-State: APjAAAUF01cvdTviQrFTfGWjfSxu4ESsUFYgB03/uW4nFkh5yZulgaSU
-        sj8peHFTNTgPrBQZ9m0dOXHJzc1/LSZ6vjorP5GiUw==
-X-Google-Smtp-Source: APXvYqy7L+6YwETGDEt884ftynzvaDxKyXbsDYw6nDNqTSb7EWD9E/kQch7+pjdA05qvNdug0nMMAelxl/qkUUtJN5g=
-X-Received: by 2002:a2e:85d2:: with SMTP id h18mr2032854ljj.18.1569576795305;
- Fri, 27 Sep 2019 02:33:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1568864712.git.baolin.wang@linaro.org> <CAMz4kuKFYCcY_Wh4mntwoSNgk5=QQvkV7zC-RpAWgdJpM2-4HA@mail.gmail.com>
- <f6f147df-510b-f1ec-0745-a9c7eed67b84@intel.com>
-In-Reply-To: <f6f147df-510b-f1ec-0745-a9c7eed67b84@intel.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 27 Sep 2019 17:33:03 +0800
-Message-ID: <CAMz4kuLGUybpYfESCerYo3DuzhK+WjjbuZ7XwCyeh=S7vxBh9A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] Add MMC software queue support
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 27 Sep 2019 05:37:02 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x8R9a5ua001372;
+        Fri, 27 Sep 2019 18:36:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x8R9a5ua001372
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1569576966;
+        bh=NubrWdGxwILdsgYPKpZXMtIIghZ8qkysvaem1tsWivY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eg05f9tMuAuD/pnsUnutQl1cHe5TH453NlcgA89lXELzQXJ4zxi3qMriodWdwHLQX
+         HDbvTSaLlEAUUlGykgYRX6hzYQudLwSEUxImwpYlruGJUzLDko/SM5Om0HI1JgDeRo
+         YjzdSbQyTLUVMjTIkXr43jFMmN/sOEDJ0iqBd3z+gEni4XgKXCw4/pUelErhX0737B
+         VhlGJUW0m0P8KaYVHrZGjzjW+EnWpReAHq4r7gasF7lV1Ux4c3gMB720cFosda1mDR
+         Stlgnwo2GpYnef7jQhAg0Ubod+x29d/jNsE4GSQrcRuEupUzTfs50mppy9HDEmdqz1
+         1mOaYQoiHu4rg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Matthias Maennich <maennich@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Will Deacon <will@kernel.org>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] module: various bug-fixes and clean-ups for module namespace
+Date:   Fri, 27 Sep 2019 18:35:56 +0900
+Message-Id: <20190927093603.9140-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Sep 2019 at 20:08, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 26/09/19 12:43 PM, Baolin Wang wrote:
-> > Hi Adrian and Ulf,
-> >
-> > On Thu, 19 Sep 2019 at 13:59, Baolin Wang <baolin.wang@linaro.org> wrote:
-> >>
-> >> Hi All,
-> >>
-> >> Now the MMC read/write stack will always wait for previous request is
-> >> completed by mmc_blk_rw_wait(), before sending a new request to hardware,
-> >> or queue a work to complete request, that will bring context switching
-> >> overhead, especially for high I/O per second rates, to affect the IO
-> >> performance.
-> >>
-> >> Thus this patch set will introduce the MMC software command queue support
-> >> based on command queue engine's interfaces, and set the queue depth as 2,
-> >> that means we do not need wait for previous request is completed and can
-> >> queue 2 requests in flight. It is enough to let the irq handler always
-> >> trigger the next request without a context switch and then ask the blk_mq
-> >> layer for the next one to get queued, as well as avoiding a long latency.
-> >>
-> >> Moreover we can expand the MMC software queue interface to support
-> >> MMC packed request or packed command instead of adding new interfaces,
-> >> according to previosus discussion.
-> >>
-> >> Below are some comparison data with fio tool. The fio command I used
-> >> is like below with changing the '--rw' parameter and enabling the direct
-> >> IO flag to measure the actual hardware transfer speed in 4K block size.
-> >>
-> >> ./fio --filename=/dev/mmcblk0p30 --direct=1 --iodepth=20 --rw=read --bs=4K --size=512M --group_reporting --numjobs=20 --name=test_read
-> >>
-> >> My eMMC card working at HS400 Enhanced strobe mode:
-> >> [    2.229856] mmc0: new HS400 Enhanced strobe MMC card at address 0001
-> >> [    2.237566] mmcblk0: mmc0:0001 HBG4a2 29.1 GiB
-> >> [    2.242621] mmcblk0boot0: mmc0:0001 HBG4a2 partition 1 4.00 MiB
-> >> [    2.249110] mmcblk0boot1: mmc0:0001 HBG4a2 partition 2 4.00 MiB
-> >> [    2.255307] mmcblk0rpmb: mmc0:0001 HBG4a2 partition 3 4.00 MiB, chardev (248:0)
-> >>
-> >> 1. Without MMC software queue
-> >> I tested 3 times for each case and output a average speed.
-> >>
-> >> 1) Sequential read:
-> >> Speed: 28.9MiB/s, 26.4MiB/s, 30.9MiB/s
-> >> Average speed: 28.7MiB/s
-> >>
-> >> 2) Random read:
-> >> Speed: 18.2MiB/s, 8.9MiB/s, 15.8MiB/s
-> >> Average speed: 14.3MiB/s
-> >>
-> >> 3) Sequential write:
-> >> Speed: 21.1MiB/s, 27.9MiB/s, 25MiB/s
-> >> Average speed: 24.7MiB/s
-> >>
-> >> 4) Random write:
-> >> Speed: 21.5MiB/s, 18.1MiB/s, 18.1MiB/s
-> >> Average speed: 19.2MiB/s
-> >>
-> >> 2. With MMC software queue
-> >> I tested 3 times for each case and output a average speed.
-> >>
-> >> 1) Sequential read:
-> >> Speed: 44.1MiB/s, 42.3MiB/s, 44.4MiB/s
-> >> Average speed: 43.6MiB/s
-> >>
-> >> 2) Random read:
-> >> Speed: 30.6MiB/s, 30.9MiB/s, 30.5MiB/s
-> >> Average speed: 30.6MiB/s
-> >>
-> >> 3) Sequential write:
-> >> Speed: 44.1MiB/s, 45.9MiB/s, 44.2MiB/s
-> >> Average speed: 44.7MiB/s
-> >>
-> >> 4) Random write:
-> >> Speed: 45.1MiB/s, 43.3MiB/s, 42.4MiB/s
-> >> Average speed: 43.6MiB/s
-> >>
-> >> Form above data, we can see the MMC software queue can help to improve the
-> >> performance obviously.
-> >>
-> >> Any comments are welcome. Thanks a lot.
-> >>
-> >> Changes from v2:
-> >>  - Remove reference to 'struct cqhci_host' and 'struct cqhci_slot',
-> >>  instead adding 'struct sqhci_host', which is only used by software queue.
-> >>
-> >> Changes from v1:
-> >>  - Add request_done ops for sdhci_ops.
-> >>  - Replace virtual command queue with software queue for functions and
-> >>  variables.
-> >>  - Rename the software queue file and add sqhci.h header file.
-> >
-> > Do you have any comments for this patch set except the random config
-> > building issue that will be fixed in the next version? Thanks.
->
-> Pedantically, swhci is not a host controller interface, so the name still
-> seems inappropriate. Otherwise I haven't had time to look at it, sorry.
 
-OK. I will talk with Ulf to think about a good name. Thanks.
+I was hit by some problems caused by the module namespace feature
+that was merged recently. At least, the breakage of
+external module builds is a fatal one. I just took a look at the code
+closer, and I noticed some more issues and improvements.
+
+I hope these patches are mostly OK.
+The 4th patch might have room for argument since it is a trade-off
+of "cleaner implermentation" vs "code size".
+
+
+
+Masahiro Yamada (7):
+  modpost: fix broken sym->namespace for external module builds
+  module: swap the order of symbol.namespace
+  module: rename __kstrtab_ns_* to __kstrtabns_* to avoid symbol
+    conflict
+  module: avoid code duplication in include/linux/export.h
+  kbuild: fix build error of 'make nsdeps' in clean tree
+  nsdeps: fix hashbang of scripts/nsdeps
+  nsdeps: make generated patches independent of locale
+
+ Makefile               |   2 +-
+ include/linux/export.h | 104 ++++++++++++++---------------------------
+ kernel/module.c        |   2 +-
+ scripts/mod/modpost.c  |  20 ++++----
+ scripts/nsdeps         |   4 +-
+ 5 files changed, 47 insertions(+), 85 deletions(-)
 
 -- 
-Baolin Wang
-Best Regards
+2.17.1
+
