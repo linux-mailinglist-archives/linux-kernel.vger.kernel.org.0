@@ -2,79 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5228C0E54
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2019 01:30:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E365C0E59
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2019 01:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfI0Xaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 19:30:55 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24604 "EHLO mga14.intel.com"
+        id S1728275AbfI0Xfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 19:35:51 -0400
+Received: from mga18.intel.com ([134.134.136.126]:23074 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbfI0Xaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 19:30:55 -0400
+        id S1727718AbfI0Xfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 19:35:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 16:30:55 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 16:35:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,557,1559545200"; 
-   d="scan'208";a="180675357"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by orsmga007.jf.intel.com with ESMTP; 27 Sep 2019 16:30:55 -0700
-Received: from orsmsx124.amr.corp.intel.com (10.22.240.120) by
- ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 27 Sep 2019 16:30:54 -0700
-Received: from orsmsx121.amr.corp.intel.com ([169.254.10.190]) by
- ORSMSX124.amr.corp.intel.com ([169.254.2.164]) with mapi id 14.03.0439.000;
- Fri, 27 Sep 2019 16:30:54 -0700
-From:   "Keller, Jacob E" <jacob.e.keller@intel.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-CC:     "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: RE: [PATCH] namespace: fix namespace.pl script to support relative
- paths
-Thread-Topic: [PATCH] namespace: fix namespace.pl script to support relative
- paths
-Thread-Index: AQHVdYkISHS3XNGT0kCKyhZHN6EY9KdALBNA
-Date:   Fri, 27 Sep 2019 23:30:54 +0000
-Message-ID: <02874ECE860811409154E81DA85FBB58968DBE54@ORSMSX121.amr.corp.intel.com>
-References: <20190129204319.15238-1-jacob.e.keller@intel.com>
- <7b26e6cc-10ce-5df2-6375-1f95bc4da04e@infradead.org>
-In-Reply-To: <7b26e6cc-10ce-5df2-6375-1f95bc4da04e@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODE0ZDVjODgtYjQ4Yi00OTg5LTgyYTQtMTQ5NGI4MzFlNzhmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicExlNWJQK3Rmb0xrMDlYSkoycForT2lFdVlicDZzVnlaQ1M3QmpyeURzTXVjNE9MTld5Z3NvQ0VvM2ZMSlwvUEEifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+   d="scan'208";a="204280294"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Sep 2019 16:35:50 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id F3397301B06; Fri, 27 Sep 2019 16:35:49 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH 1/3] perf script brstackinsn: Fix recovery from LBR/binary mismatch
+Date:   Fri, 27 Sep 2019 16:35:44 -0700
+Message-Id: <20190927233546.11533-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYW5keSBEdW5sYXAgW21haWx0
-bzpyZHVubGFwQGluZnJhZGVhZC5vcmddDQo+IFNlbnQ6IEZyaWRheSwgU2VwdGVtYmVyIDI3LCAy
-MDE5IDQ6MTIgUE0NCj4gVG86IEtlbGxlciwgSmFjb2IgRSA8amFjb2IuZS5rZWxsZXJAaW50ZWwu
-Y29tPg0KPiBDYzogaW50ZWwtd2lyZWQtbGFuQGxpc3RzLm9zdW9zbC5vcmc7IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtidWlsZCA8bGludXgtDQo+IGtidWlsZEB2Z2VyLmtl
-cm5lbC5vcmc+OyBNYXNhaGlybyBZYW1hZGEgPHlhbWFkYS5tYXNhaGlyb0Bzb2Npb25leHQuY29t
-Pg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBuYW1lc3BhY2U6IGZpeCBuYW1lc3BhY2UucGwgc2Ny
-aXB0IHRvIHN1cHBvcnQgcmVsYXRpdmUgcGF0aHMNCj4gDQo+IA0KPiByZTogaHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvbGttbC8yMDE5MDEyOTIwNDMxOS4xNTIzOC0xLWphY29iLmUua2VsbGVyQGlu
-dGVsLmNvbS8NCj4gDQo+IERpZCBhbnl0aGluZyBoYXBwZW4gd2l0aCB0aGlzIHBhdGNoPw0KPiAN
-Cj4gUGxlYXNlIHNlbmQgaXQgdG8gbGludXgta2J1aWxkQHZnZXIua2VybmVsLm9yZyBhbmQNCj4g
-Q2M6IE1hc2FoaXJvIFlhbWFkYSA8eWFtYWRhLm1hc2FoaXJvQHNvY2lvbmV4dC5jb20+DQo+IA0K
-PiBZb3UgY2FuIGFsc28gYWRkOg0KPiBBY2tlZC1ieTogUmFuZHkgRHVubGFwIDxyZHVubGFwQGlu
-ZnJhZGVhZC5vcmc+DQo+IFRlc3RlZC1ieTogUmFuZHkgRHVubGFwIDxyZHVubGFwQGluZnJhZGVh
-ZC5vcmc+DQo+IA0KPiANCj4gSSB3YXMganVzdCBhYm91dCB0byBmaXggdGhpcyBzY3JpcHQgYnV0
-IEkgZGVjaWRlZCB0byBmaXJzdCBzZWUgaWYgYW55b25lIGVsc2UNCj4gaGFkIGFscmVhZHkgZG9u
-ZSBzby4gIFRoYW5rcy4NCj4gDQo+IC0tDQo+IH5SYW5keQ0KDQpEb25lLCB0aGFua3MuDQoNClJl
-Z2FyZHMsDQpKYWtlDQo=
+From: Andi Kleen <ak@linux.intel.com>
+
+When the LBR data and the instructions in a binary do not match the
+loop printing instructions could get confused and print a long
+stream of bogus <bad> instructions.
+
+The problem was that if the instruction decoder cannot decode an
+instruction it ilen wasn't initialized, so the loop going through
+the basic block would continue with the previous value.
+
+Harden the code to avoid such problems:
+- Make sure ilen is always freshly initialized and is 0 for bad
+instructions.
+- Do not overrun the code buffer while printing instructions
+- Print a warning message if the final jump is not on an
+instruction boundary.
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ tools/perf/builtin-script.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index e079b34201f2..32b17d51c982 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1061,7 +1061,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 			continue;
+ 
+ 		insn = 0;
+-		for (off = 0;; off += ilen) {
++		for (off = 0; off < (unsigned)len; off += ilen) {
+ 			uint64_t ip = start + off;
+ 
+ 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+@@ -1072,6 +1072,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 					printed += print_srccode(thread, x.cpumode, ip);
+ 				break;
+ 			} else {
++				ilen = 0;
+ 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
+ 						   dump_insn(&x, ip, buffer + off, len - off, &ilen));
+ 				if (ilen == 0)
+@@ -1081,6 +1082,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 				insn++;
+ 			}
+ 		}
++		if (off != (unsigned)len)
++			printed += fprintf(fp, "\tmismatch of LBR data and executable\n");
+ 	}
+ 
+ 	/*
+@@ -1121,6 +1124,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 		goto out;
+ 	}
+ 	for (off = 0; off <= end - start; off += ilen) {
++		ilen = 0;
+ 		printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", start + off,
+ 				   dump_insn(&x, start + off, buffer + off, len - off, &ilen));
+ 		if (ilen == 0)
+-- 
+2.21.0
+
