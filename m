@@ -2,47 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E155CC00C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1439BC00C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfI0ILI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:11:08 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45275 "EHLO
+        id S1727076AbfI0ILR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:11:17 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45313 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbfI0ILF (ORCPT
+        with ESMTP id S1727061AbfI0ILP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:11:05 -0400
+        Fri, 27 Sep 2019 04:11:15 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iDlKv-0005ef-H6; Fri, 27 Sep 2019 10:10:45 +0200
+        id 1iDlL8-0005mg-AD; Fri, 27 Sep 2019 10:10:58 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 348561C0744;
-        Fri, 27 Sep 2019 10:10:44 +0200 (CEST)
-Date:   Fri, 27 Sep 2019 08:10:44 -0000
-From:   "tip-bot2 for Eric W. Biederman" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EE9E01C073C;
+        Fri, 27 Sep 2019 10:10:57 +0200 (CEST)
+Date:   Fri, 27 Sep 2019 08:10:57 -0000
+From:   "tip-bot2 for Wei Yang" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] tasks, sched/core: RCUify the assignment of rq->curr
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Kirill Tkhai <tkhai@yandex.ru>,
+Subject: [tip: x86/mm] x86/mm: Fix function name typo in pmd_read_atomic() comment
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Russell King - ARM Linux admin" <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190903200603.GW2349@hirez.programming.kicks-ass.net>
-References: <20190903200603.GW2349@hirez.programming.kicks-ass.net>
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20190925014453.20236-1-richardw.yang@linux.intel.com>
+References: <20190925014453.20236-1-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <156957184417.9866.5061690782234958008.tip-bot2@tip-bot2>
+Message-ID: <156957185789.9866.15298763161487547551.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -56,125 +52,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/urgent branch of tip:
+The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     5311a98fef7d0dc2e8040ae0e18f5568d6d1dd5a
-Gitweb:        https://git.kernel.org/tip/5311a98fef7d0dc2e8040ae0e18f5568d6d1dd5a
-Author:        Eric W. Biederman <ebiederm@xmission.com>
-AuthorDate:    Sat, 14 Sep 2019 07:35:02 -05:00
+Commit-ID:     a2f7a0bfcaaa3928e4876d15edd4dfdc09e139b6
+Gitweb:        https://git.kernel.org/tip/a2f7a0bfcaaa3928e4876d15edd4dfdc09e139b6
+Author:        Wei Yang <richardw.yang@linux.intel.com>
+AuthorDate:    Wed, 25 Sep 2019 09:44:53 +08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 25 Sep 2019 17:42:29 +02:00
+CommitterDate: Wed, 25 Sep 2019 08:40:19 +02:00
 
-tasks, sched/core: RCUify the assignment of rq->curr
+x86/mm: Fix function name typo in pmd_read_atomic() comment
 
-The current task on the runqueue is currently read with rcu_dereference().
+The function involved should be pte_offset_map_lock() and we never have
+function pmd_offset_map_lock defined.
 
-To obtain ordinary RCU semantics for an rcu_dereference() of rq->curr it needs
-to be paired with rcu_assign_pointer() of rq->curr.  Which provides the
-memory barrier necessary to order assignments to the task_struct
-and the assignment to rq->curr.
-
-Unfortunately the assignment of rq->curr in __schedule is a hot path,
-and it has already been show that additional barriers in that code
-will reduce the performance of the scheduler.  So I will attempt to
-describe below why you can effectively have ordinary RCU semantics
-without any additional barriers.
-
-The assignment of rq->curr in init_idle is a slow path called once
-per cpu and that can use rcu_assign_pointer() without any concerns.
-
-As I write this there are effectively two users of rcu_dereference() on
-rq->curr.  There is the membarrier code in kernel/sched/membarrier.c
-that only looks at "->mm" after the rcu_dereference().  Then there is
-task_numa_compare() in kernel/sched/fair.c.  My best reading of the
-code shows that task_numa_compare only access: "->flags",
-"->cpus_ptr", "->numa_group", "->numa_faults[]",
-"->total_numa_faults", and "->se.cfs_rq".
-
-The code in __schedule() essentially does:
-	rq_lock(...);
-	smp_mb__after_spinlock();
-
-	next = pick_next_task(...);
-	rq->curr = next;
-
-	context_switch(prev, next);
-
-At the start of the function the rq_lock/smp_mb__after_spinlock
-pair provides a full memory barrier.  Further there is a full memory barrier
-in context_switch().
-
-This means that any task that has already run and modified itself (the
-common case) has already seen two memory barriers before __schedule()
-runs and begins executing.  A task that modifies itself then sees a
-third full memory barrier pair with the rq_lock();
-
-For a brand new task that is enqueued with wake_up_new_task() there
-are the memory barriers present from the taking and release the
-pi_lock and the rq_lock as the processes is enqueued as well as the
-full memory barrier at the start of __schedule() assuming __schedule()
-happens on the same cpu.
-
-This means that by the time we reach the assignment of rq->curr
-except for values on the task struct modified in pick_next_task
-the code has the same guarantees as if it used rcu_assign_pointer().
-
-Reading through all of the implementations of pick_next_task it
-appears pick_next_task is limited to modifying the task_struct fields
-"->se", "->rt", "->dl".  These fields are the sched_entity structures
-of the varies schedulers.
-
-Further "->se.cfs_rq" is only changed in cgroup attach/move operations
-initialized by userspace.
-
-Unless I have missed something this means that in practice that the
-users of "rcu_dereference(rq->curr)" get normal RCU semantics of
-rcu_dereference() for the fields the care about, despite the
-assignment of rq->curr in __schedule() ot using rcu_assign_pointer.
-
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Chris Metcalf <cmetcalf@ezchip.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Kirill Tkhai <tkhai@yandex.ru>
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20190903200603.GW2349@hirez.programming.kicks-ass.net
+Link: https://lkml.kernel.org/r/20190925014453.20236-1-richardw.yang@linux.intel.com
+[ Minor edits. ]
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/core.c |  9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable-3level.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5e5fefb..84c7116 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4033,7 +4033,11 @@ static void __sched notrace __schedule(bool preempt)
- 
- 	if (likely(prev != next)) {
- 		rq->nr_switches++;
--		rq->curr = next;
-+		/*
-+		 * RCU users of rcu_dereference(rq->curr) may not see
-+		 * changes to task_struct made by pick_next_task().
-+		 */
-+		RCU_INIT_POINTER(rq->curr, next);
- 		/*
- 		 * The membarrier system call requires each architecture
- 		 * to have a full memory barrier after updating
-@@ -6060,7 +6064,8 @@ void init_idle(struct task_struct *idle, int cpu)
- 	__set_task_cpu(idle, cpu);
- 	rcu_read_unlock();
- 
--	rq->curr = rq->idle = idle;
-+	rq->idle = idle;
-+	rcu_assign_pointer(rq->curr, idle);
- 	idle->on_rq = TASK_ON_RQ_QUEUED;
- #ifdef CONFIG_SMP
- 	idle->on_cpu = 1;
+diff --git a/arch/x86/include/asm/pgtable-3level.h b/arch/x86/include/asm/pgtable-3level.h
+index e363379..1796462 100644
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -44,10 +44,10 @@ static inline void native_set_pte(pte_t *ptep, pte_t pte)
+  * pmd_populate rightfully does a set_64bit, but if we're reading the
+  * pmd_t with a "*pmdp" on the mincore side, a SMP race can happen
+  * because gcc will not read the 64bit of the pmd atomically. To fix
+- * this all places running pmd_offset_map_lock() while holding the
++ * this all places running pte_offset_map_lock() while holding the
+  * mmap_sem in read mode, shall read the pmdp pointer using this
+  * function to know if the pmd is null nor not, and in turn to know if
+- * they can run pmd_offset_map_lock or pmd_trans_huge or other pmd
++ * they can run pte_offset_map_lock() or pmd_trans_huge() or other pmd
+  * operations.
+  *
+  * Without THP if the mmap_sem is hold for reading, the pmd can only
