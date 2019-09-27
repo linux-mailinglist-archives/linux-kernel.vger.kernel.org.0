@@ -2,162 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05E8BC0D8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 23:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E90B5C0D9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 23:48:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbfI0Vpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 17:45:34 -0400
-Received: from mga12.intel.com ([192.55.52.136]:45957 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728559AbfI0Vp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 17:45:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 14:45:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,557,1559545200"; 
-   d="scan'208";a="196852082"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Sep 2019 14:45:27 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v2 8/8] KVM: x86: Fold decache_cr3() into cache_reg()
-Date:   Fri, 27 Sep 2019 14:45:23 -0700
-Message-Id: <20190927214523.3376-9-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190927214523.3376-1-sean.j.christopherson@intel.com>
-References: <20190927214523.3376-1-sean.j.christopherson@intel.com>
+        id S1727346AbfI0VsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 17:48:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55570 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725815AbfI0VsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 17:48:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 36BC2ADFE;
+        Fri, 27 Sep 2019 21:48:02 +0000 (UTC)
+From:   Thomas Renninger <trenn@suse.de>
+To:     " Natarajan, Janakarajan " <Janakarajan.Natarajan@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Pu Wen <puwen@hygon.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        Richard Fontana <rfontana@redhat.com>,
+        Thomas Renninger <trenn@suse.com>, Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH 1/2] Modify cpupower to schedule itself on cores it is reading MSRs from
+Date:   Fri, 27 Sep 2019 23:48:16 +0200
+Message-ID: <4340017.MFpoU6RDpq@c100>
+In-Reply-To: <9f94bb60-4be2-4303-54de-f50bdd7cb3e6@amd.com>
+References: <20190918163445.129103-1-Janakarajan.Natarajan@amd.com> <9f94bb60-4be2-4303-54de-f50bdd7cb3e6@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Handle caching CR3 (from VMX's VMCS) into struct kvm_vcpu via the common
-cache_reg() callback and drop the dedicated decache_cr3().  The name
-decache_cr3() is somewhat confusing as the caching behavior of CR3
-follows that of GPRs, RFLAGS and PDPTRs, (handled via cache_reg()), and
-has nothing in common with the caching behavior of CR0/CR4 (whose
-decache_cr{0,4}_guest_bits() likely provided the 'decache' verbiage).
+On Friday, September 27, 2019 6:07:56 PM CEST  Natarajan, Janakarajan  wrote:
+> On 9/18/2019 11:34 AM, Natarajan, Janakarajan wrote:
 
-Note, this effectively adds a BUG() if KVM attempts to cache CR3 on SVM.
-Opportunistically add a WARN_ON_ONCE() in VMX to provide an equivalent
-check.
+> > This is advantageous because an IPI is not generated when a read_msr() is
+> > executed on the local logical CPU thereby reducing the chance of having
+> > APERF and MPERF being out of sync.
+> > +	if (sched_setaffinity(getpid(), sizeof(set), &set) == -1) {
+> > +		dprint("Could not migrate to cpu: %d\n", cpu);
+> > +		return 1;
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/include/asm/kvm_host.h |  1 -
- arch/x86/kvm/kvm_cache_regs.h   |  2 +-
- arch/x86/kvm/svm.c              |  5 -----
- arch/x86/kvm/vmx/vmx.c          | 15 ++++++---------
- 4 files changed, 7 insertions(+), 16 deletions(-)
+On a 80 core cpu the process would be pushed around through the
+system quite a lot. 
+This might affect what you are measuring or the other measure values?
+Otherwise it's the kernel's MSR read only, not the whole cpupower process,
+right? No idea about the exact overhead, though. Others in CC list should
+know.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index a27f7f6b6b7a..0411dc0a27b0 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1040,7 +1040,6 @@ struct kvm_x86_ops {
- 			    struct kvm_segment *var, int seg);
- 	void (*get_cs_db_l_bits)(struct kvm_vcpu *vcpu, int *db, int *l);
- 	void (*decache_cr0_guest_bits)(struct kvm_vcpu *vcpu);
--	void (*decache_cr3)(struct kvm_vcpu *vcpu);
- 	void (*decache_cr4_guest_bits)(struct kvm_vcpu *vcpu);
- 	void (*set_cr0)(struct kvm_vcpu *vcpu, unsigned long cr0);
- 	void (*set_cr3)(struct kvm_vcpu *vcpu, unsigned long cr3);
-diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
-index 9c2bc528800b..f18177cd0030 100644
---- a/arch/x86/kvm/kvm_cache_regs.h
-+++ b/arch/x86/kvm/kvm_cache_regs.h
-@@ -145,7 +145,7 @@ static inline ulong kvm_read_cr4_bits(struct kvm_vcpu *vcpu, ulong mask)
- static inline ulong kvm_read_cr3(struct kvm_vcpu *vcpu)
- {
- 	if (!kvm_register_is_available(vcpu, VCPU_EXREG_CR3))
--		kvm_x86_ops->decache_cr3(vcpu);
-+		kvm_x86_ops->cache_reg(vcpu, VCPU_EXREG_CR3);
- 	return vcpu->arch.cr3;
- }
- 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index f8ecb6df5106..3102c44c12c6 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2517,10 +2517,6 @@ static void svm_decache_cr0_guest_bits(struct kvm_vcpu *vcpu)
- {
- }
- 
--static void svm_decache_cr3(struct kvm_vcpu *vcpu)
--{
--}
--
- static void svm_decache_cr4_guest_bits(struct kvm_vcpu *vcpu)
- {
- }
-@@ -7208,7 +7204,6 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.get_cpl = svm_get_cpl,
- 	.get_cs_db_l_bits = kvm_get_cs_db_l_bits,
- 	.decache_cr0_guest_bits = svm_decache_cr0_guest_bits,
--	.decache_cr3 = svm_decache_cr3,
- 	.decache_cr4_guest_bits = svm_decache_cr4_guest_bits,
- 	.set_cr0 = svm_set_cr0,
- 	.set_cr3 = svm_set_cr3,
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index ed03d0cd1cc8..c84798026e85 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2188,7 +2188,12 @@ static void vmx_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg)
- 		if (enable_ept)
- 			ept_save_pdptrs(vcpu);
- 		break;
-+	case VCPU_EXREG_CR3:
-+		if (enable_unrestricted_guest || (enable_ept && is_paging(vcpu)))
-+			vcpu->arch.cr3 = vmcs_readl(GUEST_CR3);
-+		break;
- 	default:
-+		WARN_ON_ONCE(1);
- 		break;
- 	}
- }
-@@ -2859,13 +2864,6 @@ static void vmx_decache_cr0_guest_bits(struct kvm_vcpu *vcpu)
- 	vcpu->arch.cr0 |= vmcs_readl(GUEST_CR0) & cr0_guest_owned_bits;
- }
- 
--static void vmx_decache_cr3(struct kvm_vcpu *vcpu)
--{
--	if (enable_unrestricted_guest || (enable_ept && is_paging(vcpu)))
--		vcpu->arch.cr3 = vmcs_readl(GUEST_CR3);
--	kvm_register_mark_available(vcpu, VCPU_EXREG_CR3);
--}
--
- static void vmx_decache_cr4_guest_bits(struct kvm_vcpu *vcpu)
- {
- 	ulong cr4_guest_owned_bits = vcpu->arch.cr4_guest_owned_bits;
-@@ -2910,7 +2908,7 @@ static void ept_update_paging_mode_cr0(unsigned long *hw_cr0,
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 
- 	if (!kvm_register_is_available(vcpu, VCPU_EXREG_CR3))
--		vmx_decache_cr3(vcpu);
-+		vmx_cache_reg(vcpu, VCPU_EXREG_CR3);
- 	if (!(cr0 & X86_CR0_PG)) {
- 		/* From paging/starting to nonpaging */
- 		exec_controls_setbit(vmx, CPU_BASED_CR3_LOAD_EXITING |
-@@ -7792,7 +7790,6 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.get_cpl = vmx_get_cpl,
- 	.get_cs_db_l_bits = vmx_get_cs_db_l_bits,
- 	.decache_cr0_guest_bits = vmx_decache_cr0_guest_bits,
--	.decache_cr3 = vmx_decache_cr3,
- 	.decache_cr4_guest_bits = vmx_decache_cr4_guest_bits,
- 	.set_cr0 = vmx_set_cr0,
- 	.set_cr3 = vmx_set_cr3,
--- 
-2.22.0
+Afaik msr reads through msr module should be avoided anyway?
+Those which are worth it are abstracted through sysfs nowadays?
+
+For aperf/mperf it might make sense to define a sysfs file where you
+can read both, as this is what you always need?
+
+It would take a while, but could be a longterm solution which is also
+usable in secure boot or without msr module case.
+
+      Thomas
+
+
 
