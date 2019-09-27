@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98636C00B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3373C00B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfI0ILB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:11:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45228 "EHLO
+        id S1726678AbfI0IKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:10:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45156 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbfI0IK7 (ORCPT
+        with ESMTP id S1725842AbfI0IKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:10:59 -0400
+        Fri, 27 Sep 2019 04:10:50 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iDlKr-0005aR-Ev; Fri, 27 Sep 2019 10:10:41 +0200
+        id 1iDlKr-0005aT-Oi; Fri, 27 Sep 2019 10:10:41 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 04AF81C0440;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3C0C91C073C;
         Fri, 27 Sep 2019 10:10:41 +0200 (CEST)
-Date:   Fri, 27 Sep 2019 08:10:40 -0000
-From:   "tip-bot2 for Quentin Perret" <tip-bot2@linutronix.de>
+Date:   Fri, 27 Sep 2019 08:10:41 -0000
+From:   "tip-bot2 for Valentin Schneider" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/fair: Avoid redundant EAS calculation
-Cc:     Pavan Kondeti <pkondeti@codeaurora.org>,
-        Quentin Perret <qperret@qperret.net>,
+Subject: [tip: sched/urgent] sched/core: Remove double update_max_interval()
+ call on CPU startup
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, dietmar.eggemann@arm.com,
-        juri.lelli@redhat.com, morten.rasmussen@arm.com,
-        qais.yousef@arm.com, rjw@rjwysocki.net, tkjos@google.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190920094115.GA11503@qperret.net>
-References: <20190920094115.GA11503@qperret.net>
+In-Reply-To: <20190923093017.11755-1-valentin.schneider@arm.com>
+References: <20190923093017.11755-1-valentin.schneider@arm.com>
 MIME-Version: 1.0
-Message-ID: <156957184084.9866.11941365250682911830.tip-bot2@tip-bot2>
+Message-ID: <156957184120.9866.12838336712837668803.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,55 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/urgent branch of tip:
 
-Commit-ID:     4892f51ad54ddff2883a60b6ad4323c1f632a9d6
-Gitweb:        https://git.kernel.org/tip/4892f51ad54ddff2883a60b6ad4323c1f632a9d6
-Author:        Quentin Perret <qperret@qperret.net>
-AuthorDate:    Fri, 20 Sep 2019 11:41:15 +02:00
+Commit-ID:     9fc41acc89e58262c917b4be89ef00a87485804f
+Gitweb:        https://git.kernel.org/tip/9fc41acc89e58262c917b4be89ef00a87485804f
+Author:        Valentin Schneider <valentin.schneider@arm.com>
+AuthorDate:    Mon, 23 Sep 2019 10:30:17 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Wed, 25 Sep 2019 17:42:32 +02:00
 
-sched/fair: Avoid redundant EAS calculation
+sched/core: Remove double update_max_interval() call on CPU startup
 
-The EAS wake-up path computes the system energy for several CPU
-candidates: the CPU with maximum spare capacity in each performance
-domain, and the prev_cpu. However, if prev_cpu also happens to be the
-CPU with maximum spare capacity in its performance domain, the energy
-calculation is still done twice, unnecessarily.
+update_max_interval() is called in both CPUHP_AP_SCHED_STARTING's startup
+and teardown callbacks, but it turns out it's also called at the end of
+the startup callback of CPUHP_AP_ACTIVE (which is further down the
+startup sequence).
 
-Add a condition to filter out this corner case before doing the energy
-calculation.
+There's no point in repeating this interval update in the startup sequence
+since the CPU will remain online until it goes down the teardown path.
 
-Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Quentin Perret <qperret@qperret.net>
+Remove the redundant call in sched_cpu_activate() (CPUHP_AP_ACTIVE).
+
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: dietmar.eggemann@arm.com
 Cc: juri.lelli@redhat.com
-Cc: morten.rasmussen@arm.com
-Cc: qais.yousef@arm.com
-Cc: rjw@rjwysocki.net
-Cc: tkjos@google.com
-Cc: valentin.schneider@arm.com
 Cc: vincent.guittot@linaro.org
-Fixes: eb92692b2544 ("sched/fair: Speed-up energy-aware wake-ups")
-Link: https://lkml.kernel.org/r/20190920094115.GA11503@qperret.net
+Link: https://lkml.kernel.org/r/20190923093017.11755-1-valentin.schneider@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index dfdac90..83ab35e 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6389,7 +6389,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- 		}
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 00ef44c..1b61cf4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6425,8 +6425,6 @@ int sched_cpu_activate(unsigned int cpu)
+ 	}
+ 	rq_unlock_irqrestore(rq, &rf);
  
- 		/* Evaluate the energy impact of using this CPU. */
--		if (max_spare_cap_cpu >= 0) {
-+		if (max_spare_cap_cpu >= 0 && max_spare_cap_cpu != prev_cpu) {
- 			cur_delta = compute_energy(p, max_spare_cap_cpu, pd);
- 			cur_delta -= base_energy_pd;
- 			if (cur_delta < best_delta) {
+-	update_max_interval();
+-
+ 	return 0;
+ }
+ 
