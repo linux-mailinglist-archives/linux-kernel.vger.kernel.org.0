@@ -2,106 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 795EBC0D11
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 23:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2A1C0D14
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 23:13:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfI0VLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 17:11:36 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:44658 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfI0VLg (ORCPT
+        id S1728252AbfI0VMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 17:12:35 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41094 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbfI0VMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 17:11:36 -0400
-Received: by mail-ot1-f51.google.com with SMTP id 21so3444415otj.11;
-        Fri, 27 Sep 2019 14:11:34 -0700 (PDT)
+        Fri, 27 Sep 2019 17:12:35 -0400
+Received: by mail-pg1-f194.google.com with SMTP id s1so4102392pgv.8
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 14:12:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OdrnlXF7ll9nhKDDCSUT7rto1+XDC1kH4OvzeUF8jTs=;
-        b=t7Qen9PedVNhaDwldOy8u5nlalsssPS2bZgQgmMmjIn4oRLdvSvlaNommHqsQWvFqj
-         vgAYuLnXs36Fe2i10PsqAk7ePg5RtaCozxKDTzqJlpM6GfQAQ4x/cQF5wTWJyIn4aZeU
-         RrS0f6mQo5U8ibRMn1Di+OPC/BMxc3oucSP0ipdP96mdMWDf499aIorjpN06/x/GWe6v
-         CcdN194au1sIDNRport+QTQp+RZDJBvIK2JGLbh4LpI39VsBch0u2hW1UC6tkJyex3Wy
-         AbAJAjDJ1H3XwQIy1QKpOGh6eNksXt2xmfBIFxkYWIMp5Xtc/X3xEssxuwlZXNKT10Y1
-         onXQ==
+        bh=MT3rEIfaJgpzvHmFM2pWeqN2XOEfjsN3Ht7YF+hthq8=;
+        b=HWrjXwmyGQrWIktNn2lCfS/WWNp3jM0GJkqLaICHIq/FPWxfdSodtSpyQmZZZSqYKl
+         gLWJ5uiWHrbfp7XRrlbm5tcLBi0mF8wxUQGVBvHdC+YrHRlTUWjnN/4obhqljgrPTG3A
+         RZtBAyLun1kMIfwj+XzanCaE7pfz5X+1U1DEEWl4a0HFqU4UC+8fia7u1zVDsy87zqmM
+         aCnZO4WYMlXyBvwTDY5YzycIIMk8vbQav6mKwEUaLZN6qC6Wase6y5kT8waFE/KYHjR2
+         sI+xNuy9ZVIQOG/d3gqTWFx/1AYoGsrnH4KQyKPBRTWgKQPqX7caUSWi/ZiuXFXkwHDR
+         u2xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OdrnlXF7ll9nhKDDCSUT7rto1+XDC1kH4OvzeUF8jTs=;
-        b=s5sAofFHUK47uALFTBVrzMDGTeV6qFFsluGEOqVSUa/cBrNQ9kscwrdOihHXiU/iw/
-         bPrRTV3Mg5b/sPmwCreIcnF/Vgyn2Ex7zubjCFgb2Q7ldO7Adk1osHqaetusIZn2Y997
-         6ffNbMYJ/P4giZE1tIKyX2KF+BhLgnhfV5H065Fztn8cr8VglAdqQPVsDphvcJyocNGL
-         hCQ/6C06Ua69khjfBemsjhUl1fs22GZknndSTVDc0xISysMEk8WsuKQ7n6h92oinLQrH
-         3R1IHYpDAVgJrh+1d84DzDex2txSe3s5yFFUoSWlQp8KzZJkFyENlW6fqby5jjDG8Aa+
-         ZijQ==
-X-Gm-Message-State: APjAAAW4IU275uCnbfXCKPZSHkDK5kowDlVS+Z/Ad1xFBwvpaUm9rBvE
-        hOzDypKQjxnmpGzb+Sm4rqFZ+e2k07OF4xQQJ3k=
-X-Google-Smtp-Source: APXvYqyl/IlPX3yrWAEVaBCeSNI1h/ZVb+mels+W83OPsNfbzYGmCwGfdE+aXOmQzGGkhPscUlrm3P6M0oFPKbxL+2c=
-X-Received: by 2002:a9d:7a48:: with SMTP id z8mr4928395otm.274.1569618693794;
- Fri, 27 Sep 2019 14:11:33 -0700 (PDT)
+        bh=MT3rEIfaJgpzvHmFM2pWeqN2XOEfjsN3Ht7YF+hthq8=;
+        b=WfoEWlqBdThbPJxcvlekfMQLedP81HHLaobtt9JzOZObgVg2p9xVHex97o6+KXCl/X
+         3hEokENMjocfot70XiF0jitrjKDZXVgw95aZJNPCQwEZDPbis4jmIm/KSCVN3HSH5YBS
+         cNVkaj+R4XE07gk4K7yrkpWO20rTJyCT1Rp8CE8Q1BlPqQ5dcM8mBnisKWSIHdbvDE8a
+         +L6kJTXzAOixfm2g39G8A93XJaXf8lE+5YE2LmPTqNMq/r+p+evsxQnwlmmlSPXuj26x
+         76RgZP2U7TNZUx6PYZn7BSSORu4p6LtnfD0nz/cDTIe519+NJfV/9kCGBcbKPofARYK6
+         Re5Q==
+X-Gm-Message-State: APjAAAXFpfslCETWyR4LeMSdtQU9gZWpUZ4MSIdHItL/DuVXJ1KXCRq9
+        jlhnnqRoIePTjFh8DSNUqfJP8aZStgNx+ywQ11fC2Q==
+X-Google-Smtp-Source: APXvYqy8O3KoXcSTxHqiytQM1iXWb+WWT9oKskcwqzyLQpgWA96K2vO/7MEIdTwZ75zGDyeYqjyajaWRaH5XxPonWcc=
+X-Received: by 2002:a62:798e:: with SMTP id u136mr6912504pfc.3.1569618754157;
+ Fri, 27 Sep 2019 14:12:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190927184722.31989-1-bparrot@ti.com> <20190927184722.31989-9-bparrot@ti.com>
-In-Reply-To: <20190927184722.31989-9-bparrot@ti.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Fri, 27 Sep 2019 22:11:07 +0100
-Message-ID: <CA+V-a8v0nqLaYUTMVYpacBEKNaxaZFyivVwdaRZ4M-HEBYJ4zg@mail.gmail.com>
-Subject: Re: [Patch v4 8/8] media: i2c: ov2659: Switch to SPDX Licensing
-To:     Benoit Parrot <bparrot@ti.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <cover.1569569778.git.Jose.Abreu@synopsys.com> <80dd26ecf7fc82c88dc378d78210df5dd4138812.1569569778.git.Jose.Abreu@synopsys.com>
+In-Reply-To: <80dd26ecf7fc82c88dc378d78210df5dd4138812.1569569778.git.Jose.Abreu@synopsys.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 27 Sep 2019 14:12:23 -0700
+Message-ID: <CAKwvOdntD5HNb4Gg04YN7iZwvK3CB4enq4ZPhUM-Bd3huvR2pw@mail.gmail.com>
+Subject: Re: [PATCH net 8/8] net: stmmac: xgmac: Fix RSS not writing all Keys
+ to HW
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     Network Development <netdev@vger.kernel.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 7:46 PM Benoit Parrot <bparrot@ti.com> wrote:
+On Fri, Sep 27, 2019 at 12:49 AM Jose Abreu <Jose.Abreu@synopsys.com> wrote:
 >
-> Switch to SPDX licensing and drop the redundant GPL text.
+> The sizeof(cfg->key) is != ARRAY_SIZE(cfg->key). Fix it.
+
+I think the warning was from -Wsizeof-array-div.
+
 >
-> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+
+I may have reported the kbuild link, but scanning my email, there's
+also a report from
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+
+> Fixes: 76067459c686 ("net: stmmac: Implement RSS and enable it in XGMAC core")
+> Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+>
 > ---
->  drivers/media/i2c/ov2659.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
+> Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> Cc: Jose Abreu <joabreu@synopsys.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-
-Cheers,
---Prabhakar Lad
-
-> diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
-> index 720310e0725d..e6da23d3a555 100644
-> --- a/drivers/media/i2c/ov2659.c
-> +++ b/drivers/media/i2c/ov2659.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->  /*
->   * Omnivision OV2659 CMOS Image Sensor driver
->   *
-> @@ -5,19 +6,6 @@
->   *
->   * Benoit Parrot <bparrot@ti.com>
->   * Lad, Prabhakar <prabhakar.csengg@gmail.com>
-> - *
-> - * This program is free software; you may redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; version 2 of the License.
-> - *
-> - * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> - * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-> - * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> - * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-> - * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-> - * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-> - * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-> - * SOFTWARE.
->   */
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+> index 6d8ac2ef4fc2..4a1f52474dbc 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+> @@ -533,7 +533,7 @@ static int dwxgmac2_rss_configure(struct mac_device_info *hw,
+>                 return 0;
+>         }
 >
->  #include <linux/clk.h>
+> -       for (i = 0; i < (sizeof(cfg->key) / sizeof(u32)); i++) {
+> +       for (i = 0; i < (ARRAY_SIZE(cfg->key) / sizeof(u32)); i++) {
+
+cfg is an instance of struct stmmac_rss, which looks like:
+125 struct stmmac_rss {
+126   int enable;
+127   u8 key[STMMAC_RSS_HASH_KEY_SIZE];
+128   u32 table[STMMAC_RSS_MAX_TABLE_SIZE];
+129 };
+
+yep, LGTM. Thanks for the patch.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+
+>                 ret = dwxgmac2_rss_write_reg(ioaddr, true, i, cfg->key[i]);
+>                 if (ret)
+>                         return ret;
 > --
-> 2.17.1
+> 2.7.4
 >
+
+
+--
+Thanks,
+~Nick Desaulniers
