@@ -2,104 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19779C089A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 17:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D1FC08AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 17:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbfI0P3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 11:29:45 -0400
-Received: from mga17.intel.com ([192.55.52.151]:51055 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727140AbfI0P3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 11:29:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 08:29:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,555,1559545200"; 
-   d="scan'208";a="365194486"
-Received: from mdauner2-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.39.118])
-  by orsmga005.jf.intel.com with ESMTP; 27 Sep 2019 08:29:39 -0700
-Date:   Fri, 27 Sep 2019 18:29:38 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Jones <pjones@redhat.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Lyude Paul <lyude@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Bartosz Szczepanek <bsz@semihalf.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] efi+tpm: Don't access event->count when it isn't
- mapped.
-Message-ID: <20190927152938.GB10545@linux.intel.com>
-References: <20190925101622.31457-1-jarkko.sakkinen@linux.intel.com>
- <CAKv+Gu9xLXWj8e70rs6Oy3aT_+qvemMJqtOETQG+7z==Nf_RcQ@mail.gmail.com>
- <20190925145011.GC23867@linux.intel.com>
- <20190925151616.3glkehdrmuwtosn3@cantor>
- <20190925164133.nmzzhwgagpqvwclu@cantor>
+        id S1727741AbfI0Peq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 11:34:46 -0400
+Received: from 16.mo1.mail-out.ovh.net ([178.33.104.224]:40659 "EHLO
+        16.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbfI0Pep (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 11:34:45 -0400
+X-Greylist: delayed 2209 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Sep 2019 11:34:45 EDT
+Received: from player758.ha.ovh.net (unknown [10.108.54.9])
+        by mo1.mail-out.ovh.net (Postfix) with ESMTP id 8197E1918A9
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 16:57:55 +0200 (CEST)
+Received: from sk2.org (unknown [65.39.69.237])
+        (Authenticated sender: steve@sk2.org)
+        by player758.ha.ovh.net (Postfix) with ESMTPSA id 032C7A59A1F3;
+        Fri, 27 Sep 2019 14:57:47 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Tero Kristo <t-kristo@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] clk/ti/adpll: allocate room for terminating null
+Date:   Fri, 27 Sep 2019 16:57:37 +0200
+Message-Id: <20190927145737.7832-1-steve@sk2.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925164133.nmzzhwgagpqvwclu@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 2554385417407385031
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrfeeigdekudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 09:41:33AM -0700, Jerry Snitselaar wrote:
-> On Wed Sep 25 19, Jerry Snitselaar wrote:
-> > On Wed Sep 25 19, Jarkko Sakkinen wrote:
-> > > On Wed, Sep 25, 2019 at 12:25:05PM +0200, Ard Biesheuvel wrote:
-> > > > On Wed, 25 Sep 2019 at 12:16, Jarkko Sakkinen
-> > > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > > 
-> > > > > From: Peter Jones <pjones@redhat.com>
-> > > > > 
-> > > > > Some machines generate a lot of event log entries.  When we're
-> > > > > iterating over them, the code removes the old mapping and adds a
-> > > > > new one, so once we cross the page boundary we're unmapping the page
-> > > > > with the count on it.  Hilarity ensues.
-> > > > > 
-> > > > > This patch keeps the info from the header in local variables so we don't
-> > > > > need to access that page again or keep track of if it's mapped.
-> > > > > 
-> > > > > Fixes: 44038bc514a2 ("tpm: Abstract crypto agile event size calculations")
-> > > > > Cc: linux-efi@vger.kernel.org
-> > > > > Cc: linux-integrity@vger.kernel.org
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Signed-off-by: Peter Jones <pjones@redhat.com>
-> > > > > Tested-by: Lyude Paul <lyude@redhat.com>
-> > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > Acked-by: Matthew Garrett <mjg59@google.com>
-> > > > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > 
-> > > > Thanks Jarkko.
-> > > > 
-> > > > Shall I take these through the EFI tree?
-> > > 
-> > > Would be great, if you could because I already sent one PR with fixes for
-> > > v5.4-rc1 yesterday.
-> > > 
-> > > /Jarkko
-> > 
-> > My patch collides with this, so I will submit a v3 that applies on top of
-> > these once I've run a test with all 3 applied on this t480s.
-> 
-> Tested with Peter's patches, and that was the root cause on this 480s.
-> 
-> I think there should still be a check for tbl_size to make sure we
-> aren't sticking -1 into efi_tpm_final_log_size though, which will be
-> the case right now if it fails to parse an event.
+The buffer allocated in ti_adpll_clk_get_name doesn't account for the
+terminating null. This patch adds the extra byte, and switches to
+snprintf to avoid overflowing.
 
-You could sent a follow up patch for that I think. The current
-ones are kind of already "went through the process" and do right
-things but I do agree that a sanity check would make sense just
-in case.
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ drivers/clk/ti/adpll.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-/Jarkko
+diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+index fdfb90058504..27933c4e8a27 100644
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -196,12 +196,13 @@ static const char *ti_adpll_clk_get_name(struct ti_adpll_data *d,
+ 	} else {
+ 		const char *base_name = "adpll";
+ 		char *buf;
++		size_t size = 8 + 1 + strlen(base_name) + 1 +
++			      strlen(postfix) + 1;
+ 
+-		buf = devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) + 1 +
+-				    strlen(postfix), GFP_KERNEL);
++		buf = devm_kzalloc(d->dev, size, GFP_KERNEL);
+ 		if (!buf)
+ 			return NULL;
+-		sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
++		snprintf(buf, size, "%08lx.%s.%s", d->pa, base_name, postfix);
+ 		name = buf;
+ 	}
+ 
+-- 
+2.20.1
+
