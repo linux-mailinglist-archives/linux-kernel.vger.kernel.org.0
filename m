@@ -2,104 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD819C0CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 22:59:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB61C0D04
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 23:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbfI0U7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 16:59:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726470AbfI0U7W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 16:59:22 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8RKl4s0036112;
-        Fri, 27 Sep 2019 16:58:57 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2v9qrgkr13-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Sep 2019 16:58:57 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8RKjFAi016492;
-        Fri, 27 Sep 2019 20:58:56 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma02wdc.us.ibm.com with ESMTP id 2v5bg7u7qp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Sep 2019 20:58:55 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8RKwtJB58196426
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 20:58:55 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1745A6E054;
-        Fri, 27 Sep 2019 20:58:55 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5FA466E04C;
-        Fri, 27 Sep 2019 20:58:54 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.179.222])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Sep 2019 20:58:54 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        andrew@aj.id.au, joel@jms.id.au, mark.rutland@arm.com,
-        robh+dt@kernel.org, maz@kernel.org, jason@lakedaemon.net,
-        tglx@linutronix.de, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH v2 4/4] ARM: dts: aspeed: ast2600: Add SCU interrupt controllers
-Date:   Fri, 27 Sep 2019 15:58:49 -0500
-Message-Id: <1569617929-29055-5-git-send-email-eajames@linux.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1569617929-29055-1-git-send-email-eajames@linux.ibm.com>
-References: <1569617929-29055-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-27_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=633 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909270173
+        id S1727046AbfI0VCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 17:02:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35342 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725306AbfI0VCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 17:02:24 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C58B2053B;
+        Fri, 27 Sep 2019 21:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569618143;
+        bh=zX6oPbM0fW6APYZ3FsSQjJtIVUWT7o+JdPoDwv7x/WI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=y3NNiz6ca+F2wYq7ZqsgVlamYJXTCg2YPWBTdZoEasLCv5IP0PDKN1oC/6rMoJkFF
+         s+e0C1UMhePT257z8zfdcgwVkIcLX3LWyUNQAmrPmjavMtScKVvHKg6t9Gs9aK9M5p
+         6X1/IaJuTSeG4ZAgzuoscFgUV329FLKcuGjSF98E=
+Date:   Fri, 27 Sep 2019 14:02:22 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, linux-s390@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: fix a crash in free_pages_prepare()
+Message-Id: <20190927140222.6f7d0a41b9e734053ee911b9@linux-foundation.org>
+In-Reply-To: <1569613623-16820-1-git-send-email-cai@lca.pw>
+References: <1569613623-16820-1-git-send-email-cai@lca.pw>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add nodes for the interrupt controllers provided by the SCU.
+On Fri, 27 Sep 2019 15:47:03 -0400 Qian Cai <cai@lca.pw> wrote:
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- arch/arm/boot/dts/aspeed-g6.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+> On architectures like s390, arch_free_page() could mark the page unused
+> (set_page_unused()) and any access later would trigger a kernel panic.
+> Fix it by moving arch_free_page() after all possible accessing calls.
+> 
+>  Hardware name: IBM 2964 N96 400 (z/VM 6.4.0)
+>  Krnl PSW : 0404e00180000000 0000000026c2b96e
+> (__free_pages_ok+0x34e/0x5d8)
+>             R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+>  Krnl GPRS: 0000000088d43af7 0000000000484000 000000000000007c
+>  000000000000000f
+>             000003d080012100 000003d080013fc0 0000000000000000
+>  0000000000100000
+>             00000000275cca48 0000000000000100 0000000000000008
+>  000003d080010000
+>             00000000000001d0 000003d000000000 0000000026c2b78a
+>  000000002717fdb0
+>  Krnl Code: 0000000026c2b95c: ec1100b30659 risbgn %r1,%r1,0,179,6
+>             0000000026c2b962: e32014000036 pfd 2,1024(%r1)
+>            #0000000026c2b968: d7ff10001000 xc 0(256,%r1),0(%r1)
+>            >0000000026c2b96e: 41101100  la %r1,256(%r1)
+>             0000000026c2b972: a737fff8  brctg %r3,26c2b962
+>             0000000026c2b976: d7ff10001000 xc 0(256,%r1),0(%r1)
+>             0000000026c2b97c: e31003400004 lg %r1,832
+>             0000000026c2b982: ebff1430016a asi 5168(%r1),-1
+>  Call Trace:
+>  __free_pages_ok+0x16a/0x5d8)
+>  memblock_free_all+0x206/0x290
+>  mem_init+0x58/0x120
+>  start_kernel+0x2b0/0x570
+>  startup_continue+0x6a/0xc0
+>  INFO: lockdep is turned off.
+>  Last Breaking-Event-Address:
+>  __free_pages_ok+0x372/0x5d8
+>  Kernel panic - not syncing: Fatal exception: panic_on_oops
+> 00: HCPGIR450W CP entered; disabled wait PSW 00020001 80000000 00000000
+> 26A2379C
+> 
+> ...
+>
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1175,11 +1175,11 @@ static __always_inline bool free_pages_prepare(struct page *page,
+>  		debug_check_no_obj_freed(page_address(page),
+>  					   PAGE_SIZE << order);
+>  	}
+> -	arch_free_page(page, order);
+>  	if (want_init_on_free())
+>  		kernel_init_free_pages(page, 1 << order);
+>  
+>  	kernel_poison_pages(page, 1 << order, 0);
+> +	arch_free_page(page, order);
+>  	if (debug_pagealloc_enabled())
+>  		kernel_map_pages(page, 1 << order, 0);
 
-diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
-index 3a1422f..d89f1e6 100644
---- a/arch/arm/boot/dts/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g6.dtsi
-@@ -159,6 +159,24 @@
- 					compatible = "aspeed,ast2600-smpmem";
- 					reg = <0x180 0x40>;
- 				};
-+
-+				scu_ic0: interrupt-controller@0 {
-+					#interrupt-cells = <1>;
-+					compatible = "aspeed,ast2600-scu-ic0";
-+					reg = <0x560 0x4>;
-+					interrupt-parent = <&gic>;
-+					interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+					interrupt-controller;
-+				};
-+
-+				scu_ic1: interrupt-controller@1 {
-+					#interrupt-cells = <1>;
-+					compatible = "aspeed,ast2600-scu-ic1";
-+					reg = <0x570 0x4>;
-+					interrupt-parent = <&gic>;
-+					interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+					interrupt-controller;
-+				};
- 			};
- 
- 			rng: hwrng@1e6e2524 {
--- 
-1.8.3.1
+AFAICT the meticulously undocumented s390 set_page_unused() will cause
+there to be a fault if anyone tries to access the page contents, yes?
 
+So I think you've moved the arch_free_page() to be after the final
+thing which can access page contents, yes?  If so, we should have a
+comment in free_pages_prepare() to attmept to prevent this problem from
+reoccurring as the code evolves?
