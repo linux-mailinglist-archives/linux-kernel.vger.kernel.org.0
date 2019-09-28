@@ -2,100 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39893C1176
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2019 19:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BAC3C1181
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2019 19:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbfI1RSA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Sep 2019 13:18:00 -0400
-Received: from mail-ed1-f43.google.com ([209.85.208.43]:39353 "EHLO
-        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfI1RR7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Sep 2019 13:17:59 -0400
-Received: by mail-ed1-f43.google.com with SMTP id a15so4987457edt.6
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2019 10:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=7u/X3ZsFh4QCXB1aDRlTZlN8LRgGRgqAHEMfX3+HruA=;
-        b=bTV6VuwqQqIF1Ma73g7wCouckooUqmlm9owfdFD4H6eYXsBN0Rb/vG/+TRh+BprT9p
-         OnZakAH4YHab3eGQt1mh894EwjNMSYHtUYMxdNFysuETUzHj5NXIx/3ekY1M4VgMUCCC
-         6ENAGFIdIeNzZAtB+L33z3vstoYkwuyU6Kkic=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7u/X3ZsFh4QCXB1aDRlTZlN8LRgGRgqAHEMfX3+HruA=;
-        b=s+oOLyNvJQ3Bg7LMP0vALMbkKokoAAm7lYdDTZ/vvEuBaBkotSC9774HoIwnjHpTu4
-         4Wae+DxUbIBVz01X1vpC5mopYmYpe85AyVTDqqz2IDtIJgUL4duoXTFWyeM4f+3+3G/D
-         L1IPPDHYTJ/oqUYZr4qgCRWXAV8lBd5/AT9T8u1eK0Ski8MsszxPOXi7MZtqXwnU7Tmh
-         Hrbgrfd+1eTI36+v+k2ZJNStJLi4/CdEZLIdktVTNy2GhILNvPq/Y+yKJM3/q4RDegMq
-         N+E3W0fKSRMt+kG5aXLawRKj+oH6wLoZ61ziPhoW38IiAHjIn+FigV/NjSg7oFRjCs8s
-         o3wQ==
-X-Gm-Message-State: APjAAAUNafknvVd+TLzWTaww3Jl06ubZqsug6W8MR7NUpwc+im/lqsGe
-        DFlapyBPgz9KkaK/JODXDQHRkSVWdhcycw==
-X-Google-Smtp-Source: APXvYqw+SpalO7sAbvtGJvVtIWcpz59QxBPqlFkoTeUF/LM8oiWaxPgeFBYFFhgb5EUoOH6JNPH3Gw==
-X-Received: by 2002:a17:906:b84c:: with SMTP id ga12mr12894606ejb.0.1569691077724;
-        Sat, 28 Sep 2019 10:17:57 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id p4sm1309608edc.38.2019.09.28.10.17.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 28 Sep 2019 10:17:57 -0700 (PDT)
-Subject: Re: x86/purgatory: undefined symbol __stack_chk_fail
-To:     Andreas Smas <andreas@lonelycoder.com>,
-        linux-kernel@vger.kernel.org
-References: <CAObFT-SqdcM2Xo7P3FqgwTABao5uoWrb+A3bXy9vKt5rBffSwA@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <fc900727-b79f-b22a-4ae5-8774c2feab84@rasmusvillemoes.dk>
-Date:   Sat, 28 Sep 2019 19:17:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728759AbfI1RXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Sep 2019 13:23:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33720 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725897AbfI1RXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Sep 2019 13:23:24 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 82B6690B0A;
+        Sat, 28 Sep 2019 17:23:24 +0000 (UTC)
+Received: from mail (ovpn-125-159.rdu2.redhat.com [10.10.125.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 48291261B8;
+        Sat, 28 Sep 2019 17:23:24 +0000 (UTC)
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH 00/14] KVM monolithic v2
+Date:   Sat, 28 Sep 2019 13:23:09 -0400
+Message-Id: <20190928172323.14663-1-aarcange@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAObFT-SqdcM2Xo7P3FqgwTABao5uoWrb+A3bXy9vKt5rBffSwA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sat, 28 Sep 2019 17:23:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2019 17.50, Andreas Smas wrote:
-> Hi,
-> 
-> For me, kernels built including this commit
-> b059f801a937 (x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS)
-> 
-> results in kexec() failing to load the kernel:
-> 
-> kexec: Undefined symbol: __stack_chk_fail
-> kexec-bzImage64: Loading purgatory failed
-> 
-> Can be seen:
-> 
-> $ readelf -a arch/x86/purgatory/purgatory.ro | grep UND
->      0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
->     51: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND __stack_chk_fail
-> 
-> Using: gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1)
+Hello,
 
-Ubuntu's gcc has -fstack-protector enabled by default, so this happens
-if one doesn't pass -fno-stack-protector (which I guess is implied by
--ffreestanding) explicitly.
+as usual the last 4 patches could be splitted off but I did more
+measurements in that area and I altered the commit headers. They're
+fairly small commits compared to the previous part so I kept it
+considering they're needed to benchmark the previous part.
 
-> Adding -ffreestanding or -fno-stack-protector to ccflags-y in
-> arch/x86/purgatory/Makefile
-> fixes the problem. Not sure which would be preferred.
+The KVM monolithic enhancement is easy to identify checking the word
+"monolithic" in the subject so there's no confusion about where that
+work stops.
 
-Probably -fno-stack-protector, guarded by
-CONFIG_CC_HAS_STACKPROTECTOR_NONE (because not all gccs understand
--fno-stack-protector), so
+This renames all functions in place mixed up in whatever location they
+existed in svm.c or vmx.c. If they require an inline call they're
+defined now as extern before the kvm_x86_ops structure.
 
-ifdef CONFIG_CC_HAS_STACKPROTECTOR_NONE
-ccflags-y += -fno-stack-protector
-endif
+Converting those small kvm_x86 functions to inlines requires more
+Makefile work and header restructuring so it's left for later.
 
-Rasmus
+The removal of kvm_x86_ops is also left for later because that
+requires lots of logic changes in the code scattered all over the
+place in KVM code. This patchset tries to do the conversion with as
+few logic changes as possible, so the code works the same and this
+only improves the implementation and the performance.
 
+Doing the conversion plus the logic changes at the same time would
+pose the risk of not being able to identify through bisection if any
+regression is caused by a bug in the conversion or in one small commit
+to alter the logic and to remove the need of one more pointer to
+function.
+
+It's best if each single removal of any pointer to functional change
+is done through a separate small commit. After all those small commits
+done incrementally with this patchset, the kvm_x86_ops structure can
+be deleted.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/log/?h=kvm-mono2
+
+Thanks,
+Andrea
+
+Andrea Arcangeli (14):
+  KVM: monolithic: x86: remove kvm.ko
+  KVM: monolithic: x86: disable linking vmx and svm at the same time
+    into the kernel
+  KVM: monolithic: x86: convert the kvm_x86_ops and kvm_pmu_ops methods
+    to external functions
+  KVM: monolithic: x86: handle the request_immediate_exit variation
+  KVM: monolithic: add more section prefixes in the KVM common code
+  KVM: monolithic: x86: remove __exit section prefix from
+    machine_unsetup
+  KVM: monolithic: x86: remove __init section prefix from
+    kvm_x86_cpu_has_kvm_support
+  KVM: monolithic: x86: remove exports
+  KVM: monolithic: remove exports from KVM common code
+  KVM: monolithic: x86: drop the kvm_pmu_ops structure
+  KVM: x86: optimize more exit handlers in vmx.c
+  KVM: retpolines: x86: eliminate retpoline from vmx.c exit handlers
+  KVM: retpolines: x86: eliminate retpoline from svm.c exit handlers
+  x86: retpolines: eliminate retpoline from msr event handlers
+
+ arch/x86/events/intel/core.c    |  11 +
+ arch/x86/include/asm/kvm_host.h | 205 +++++++-
+ arch/x86/kvm/Kconfig            |  24 +-
+ arch/x86/kvm/Makefile           |   5 +-
+ arch/x86/kvm/cpuid.c            |  27 +-
+ arch/x86/kvm/hyperv.c           |   8 +-
+ arch/x86/kvm/irq.c              |   4 -
+ arch/x86/kvm/irq_comm.c         |   2 -
+ arch/x86/kvm/kvm_cache_regs.h   |  10 +-
+ arch/x86/kvm/lapic.c            |  46 +-
+ arch/x86/kvm/mmu.c              |  50 +-
+ arch/x86/kvm/mmu.h              |   4 +-
+ arch/x86/kvm/mtrr.c             |   2 -
+ arch/x86/kvm/pmu.c              |  27 +-
+ arch/x86/kvm/pmu.h              |  37 +-
+ arch/x86/kvm/pmu_amd.c          |  43 +-
+ arch/x86/kvm/svm.c              | 682 ++++++++++++++++-----------
+ arch/x86/kvm/trace.h            |   4 +-
+ arch/x86/kvm/vmx/nested.c       |  84 ++--
+ arch/x86/kvm/vmx/pmu_intel.c    |  46 +-
+ arch/x86/kvm/vmx/vmx.c          | 795 ++++++++++++++++++--------------
+ arch/x86/kvm/vmx/vmx.h          |  39 +-
+ arch/x86/kvm/x86.c              | 418 +++++++----------
+ arch/x86/kvm/x86.h              |   2 +-
+ include/linux/kvm_host.h        |   4 +-
+ virt/kvm/eventfd.c              |   1 -
+ virt/kvm/kvm_main.c             |  71 +--
+ 27 files changed, 1413 insertions(+), 1238 deletions(-)
