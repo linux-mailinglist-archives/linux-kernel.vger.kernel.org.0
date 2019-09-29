@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 503CAC1474
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 14:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9252C1475
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 14:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbfI2McA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 08:32:00 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46142 "EHLO huawei.com"
+        id S1728920AbfI2Mdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 08:33:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43932 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725937AbfI2McA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 08:32:00 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 71EBBF3A29CA4E61AEAA;
-        Sun, 29 Sep 2019 20:31:57 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Sun, 29 Sep 2019
- 20:31:49 +0800
+        id S1725937AbfI2Mdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 08:33:32 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E1906D8485D84484684B;
+        Sun, 29 Sep 2019 20:33:29 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Sun, 29 Sep 2019
+ 20:33:22 +0800
 From:   yu kuai <yukuai3@huawei.com>
 To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
         <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
 CC:     <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
         <yi.zhang@huawei.com>, <amd-gfx@lists.freedesktop.org>,
         <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/amdgpu: remove set but not used variable 'pipe'
-Date:   Sun, 29 Sep 2019 20:38:43 +0800
-Message-ID: <1569760723-119944-1-git-send-email-yukuai3@huawei.com>
+Subject: [PATCH V2] drm/amdgpu: remove set but not used variable 'pipe'
+Date:   Sun, 29 Sep 2019 20:40:16 +0800
+Message-ID: <1569760816-60192-1-git-send-email-yukuai3@huawei.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="y"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.90.53.225]
 X-CFilter-Loop: Reflected
