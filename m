@@ -2,74 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71119C1416
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 11:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 337A5C1417
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 11:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfI2JgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 05:36:13 -0400
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:29212 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfI2JgN (ORCPT
+        id S1728962AbfI2Ji0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 05:38:26 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:45889 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfI2JiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 05:36:13 -0400
-Date:   Sun, 29 Sep 2019 09:36:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1569749770;
-        bh=IDh1aCORRR7BR61BPB9FjlGFkCxpJJlXin0QDhvxleo=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=LzFyDU+kWm8XFhrNNIcS4Wvi70MuGNOUk+kBY9nrqQWfFZTYvXULaeuxuMWIcHxAN
-         Z8onUk6fb0xgulf+LRc1QVGSZ1IJl7Wgx/ZsyOWc7OIgGVDsavxns8vJnHqye5bmJ4
-         OdePuvh6sWijNgUxFyTI0LQArg6dAhQB5cT8OeSs=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Cider Factor (cont: Fair Trade O.S.)
-Message-ID: <leiR2NzkvAYSjXTZ91isv87KxlPG9w1HwPNrgbBDxyhsim5mgF62Ag8Q0BKjvOnu_2ZYgcEivAlXwqmO1LDw19F3ruY-_-WzLfZdtWjuGRc=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Sun, 29 Sep 2019 05:38:25 -0400
+Received: by mail-vk1-f195.google.com with SMTP id q192so780706vka.12
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2019 02:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B5BtJyTNxtGZ22G3Jb6zuE0W1lHhxTdTz0pWDkvdX1M=;
+        b=FVNWQPg370SVPwPIhCA60F46R5OG3O8jvNY8nYdoN6TpByRuFFCtTcrJdCVA3L0CrX
+         agZ//n/120inZFpESF8rZwPHjoB680/AyQhIZRRLz9g3/U9uHVFtktqiksEkWz08xAfG
+         fDuGlZhphQLzjBixqDj45SJLII0Xw4rcdMkxBVl+1B/vlFkLmMRLn+qESTi+KpAoDTEA
+         Hq0q6qGzj5B7veYOOoH5RJmY7wJN2SB0IIGI36ri9dYTkKPGDjMYQ8E5BfIxDxBLSSPd
+         ghHmRFxiHoGRgWyXytxwVidfpNrf9ZbW2tllmSI/MKlZ5hjc/jEoSnqNJoNcCO2LuB9x
+         B7ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B5BtJyTNxtGZ22G3Jb6zuE0W1lHhxTdTz0pWDkvdX1M=;
+        b=UfGUBdEz0n/zncRFYuT2xnYv2ek40S3QDwhiok8PxVQ9VG90SLODS3q6SIBAL3BB9t
+         w9GUPvSAY+pF/QDkhnA/D0f48W0yiPvvhTRgad2LvL2M2yw2fgLOhPNbViS7tm0INMuQ
+         wbUBPa9mnpv12Sf3vCK5cMNBgBbchYn50B/TT2/yW4YfQgQSC6EOYBwKNkrtMJE6bJAq
+         R/PslDn5l4Mv+4J06xmnOAHtS/NwGiuqIJWC6s4GKGTifl+WN82c+3vSWwXaSmntZfjF
+         EVBouMnU6jnxvhJxd9AnngZYabKK4EPWXPh3LEM2PBtRvQJy1D1QmWF9MwH3es5ILWwK
+         pFCw==
+X-Gm-Message-State: APjAAAW+OaNmj8Ba1C9F0vwTUOLiGDwj0jfTGyj6FZZnA4TOmH/0kDBH
+        PjbN2E4ofkX1g/GFC3kjBz5Vv9Vp0/8e33+/XkY=
+X-Google-Smtp-Source: APXvYqxYOpjf9JSynR+k9EGNKJJyQ6YGSPWcoaqsSVq+QDMRmL24WXxaoHv4dYNJYlvibotKx3YIjITOC14Xa1ixooQ=
+X-Received: by 2002:a1f:3251:: with SMTP id y78mr2593821vky.68.1569749904456;
+ Sun, 29 Sep 2019 02:38:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+References: <20190928041804.41656-1-yuehaibing@huawei.com>
+In-Reply-To: <20190928041804.41656-1-yuehaibing@huawei.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Sun, 29 Sep 2019 12:37:59 +0300
+Message-ID: <CAFCwf101qKdfNtYEpb4PGw8CA02R+t80FKx-Lq9taff69L08bQ@mail.gmail.com>
+Subject: Re: [PATCH -next] habanalabs: remove set but not used variable 'ctx'
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+On Sat, Sep 28, 2019 at 7:18 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/misc/habanalabs/device.c: In function hpriv_release:
+> drivers/misc/habanalabs/device.c:45:17: warning: variable ctx set but not used [-Wunused-but-set-variable]
+>
+> It is never used since commit eb7caf84b029 ("habanalabs:
+> maintain a list of file private data objects")
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/misc/habanalabs/device.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+> index 459fee7..2f5a4da 100644
+> --- a/drivers/misc/habanalabs/device.c
+> +++ b/drivers/misc/habanalabs/device.c
+> @@ -42,12 +42,10 @@ static void hpriv_release(struct kref *ref)
+>  {
+>         struct hl_fpriv *hpriv;
+>         struct hl_device *hdev;
+> -       struct hl_ctx *ctx;
+>
+>         hpriv = container_of(ref, struct hl_fpriv, refcount);
+>
+>         hdev = hpriv->hdev;
+> -       ctx = hpriv->ctx;
+>
+>         put_pid(hpriv->taskpid);
+>
+> --
+> 2.7.4
+>
+>
 
-I suggested a Fair Trade BSD derivative, integrating online currency, for t=
-hose with netjob skills.
-
-Meaning finely presented file news, where content creators can upload their=
- media, set attributes for re-use and not, and get royalites automatically,=
- and everyone potentially could be part of this, and be content creators.
-
-With a well indexed file directory for all files published:
-
-:UMMX/Category/Subcategory/Country/13.000 km2 zone/Person/Groupings
-
-(Here one really sees inner-loop optimization for all=C2=A0network flow cle=
-arly, ridding oneself of buffer bloat and latency)
-
-With pop statistics pr. folder, file title, with commentary option, neatly =
-presented. Device Root can point to other connected devices aswell. UA01 fo=
-r audio device for instance.
-
-Now also with "Cider Factor" attribute -high,med,low.
-I think then all files should go where they should, making the best of the =
-internet economy, for cider enthusiast to muslim. Which also really solves =
-the nuisance of the uneconomic "acid" god quite well, by replacing it with =
-cider as much as possible. Fixing behaviour problems aswell. While The arab=
-ic Al-Ghod is perfectly fine with me.
-
-Supporting 4K (8K subpixel precise), small form factor, 24bit audio, low-ji=
-tter I/O (180uS max OS jitter).
-
-Peace.
-Ywe C=C3=A6rlyn
-Lead Philosophy,
-UMMX Data Matrix System!
-https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
+This patch is:
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Applied to -next.
+Thanks,
+Oded
