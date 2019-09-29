@@ -2,71 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B01CDC198D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 23:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC48AC1993
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 23:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfI2VQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 17:16:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34032 "EHLO mail.kernel.org"
+        id S1729195AbfI2VVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 17:21:55 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:45862 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726390AbfI2VQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 17:16:30 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D61E217F5;
-        Sun, 29 Sep 2019 21:16:28 +0000 (UTC)
-Date:   Sun, 29 Sep 2019 17:16:27 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
-        mingo@redhat.com, linux@rasmusvillemoes.dk
-Subject: Re: [PATCH] Make is_signed_type() simpler
-Message-ID: <20190929171627.1b854409@gandalf.local.home>
-In-Reply-To: <20190929204424.GA14565@avx2>
-References: <20190929200619.GA12851@avx2>
-        <20190929161531.727da348@gandalf.local.home>
-        <20190929204424.GA14565@avx2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726360AbfI2VVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 17:21:55 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iEgdL-0001at-6x; Sun, 29 Sep 2019 23:21:35 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Levin Du <djw@t-chip.com.cn>, Akash Gajjar <akash@openedev.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Da Xue <da@lessconfused.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH 1/6] arm64: dts: rockchip: Fix rk3399-roc-pc pwm2 pin
+Date:   Sun, 29 Sep 2019 23:21:34 +0200
+Message-ID: <6797961.eJj5WIFbM9@phil>
+In-Reply-To: <20190919052822.10403-2-jagan@amarulasolutions.com>
+References: <20190919052822.10403-1-jagan@amarulasolutions.com> <20190919052822.10403-2-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 29 Sep 2019 23:44:24 +0300
-Alexey Dobriyan <adobriyan@gmail.com> wrote:
+Hi Jagan,
 
-> On Sun, Sep 29, 2019 at 04:15:31PM -0400, Steven Rostedt wrote:
-> > On Sun, 29 Sep 2019 23:06:19 +0300
-> > Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >   
-> > > * Simply compare -1 with 0,
-> > > * Drop unnecessary parenthesis sets
-> > > 
-> > > New macro leaves pointer as "unsigned type" but gives a warning,
-> > > which should be fine because asking whether a pointer is signed is
-> > > strange question.
-> > > 
-> > > I'm not sure what's going on in the i915 driver, it is shipping kernel
-> > > pointers to userspace.  
-> > 
-> > This tells us what the patch does, not why.  
+Am Donnerstag, 19. September 2019, 07:28:17 CEST schrieb Jagan Teki:
+> ROC-PC is not able to boot linux console if PWM2_d is
+> unattached to any pinctrl logic.
 > 
-> Check the subject line.
+> To be precise the linux boot hang with last logs as,
+> ...
+> .....
+> [    0.003367] Console: colour dummy device 80x25
+> [    0.003788] printk: console [tty0] enabled
+> [    0.004178] printk: bootconsole [uart8250] disabled
+> 
+> In ROC-PC the PWM2_d pin is connected to LOG_DVS_PWM of
+> VDD_LOG. So, for normal working operations this needs to
+> active and pull-down.
+> 
+> This patch fix, by attaching pinctrl active and pull-down
+> the pwm2.
 
-I don't see how it's simpler.
+This looks highly dubious on first glance. The pwm subsystem nor
+the Rockchip pwm driver do not do any pinctrl handling.
 
--#define is_signed_type(type)	(((type)(-1)) < (type)1)
-+#define is_signed_type(type)	((type)-1 < 0)
- 
+So I don't really see where that "active" pinctrl state is supposed
+to come from.
 
-Requires more rational that "make it simpler". Rewriting futex or tty
-layer code would be something I would love to see, but just replacing
-"(type)1" with "0" isn't worth the churn.
+Comparing with the pwm driver in the vendor tree I see that there
+is such a state defined there. But that code there also looks strange
+as that driver never again leaves this active state after entering it.
 
--- Steve
+Also for example all the Gru devices run with quite a number of pwm-
+regulators without needing additional fiddling with the pwm itself, so
+I don't really see why that should be different here.
+
+Heiko
+
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+> index 19f7732d728c..c53f3d571620 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
+> @@ -548,6 +548,8 @@
+>  };
+>  
+>  &pwm2 {
+> +	pinctrl-names = "active";
+> +	pinctrl-0 = <&pwm2_pin_pull_down>;
+>  	status = "okay";
+>  };
+>  
+> 
+
+
+
+
