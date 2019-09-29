@@ -2,32 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B89C1964
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 22:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C11C1960
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 22:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbfI2UII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 16:08:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59414 "EHLO mail.kernel.org"
+        id S1729292AbfI2UHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 16:07:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729086AbfI2UHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729098AbfI2UHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 29 Sep 2019 16:07:50 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 996D221925;
+        by mail.kernel.org (Postfix) with ESMTPSA id C83F521882;
         Sun, 29 Sep 2019 20:07:49 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iEfTw-00082j-Qm; Sun, 29 Sep 2019 16:07:48 -0400
-Message-Id: <20190929200748.716201915@goodmis.org>
+        id 1iEfTw-00083D-Vi; Sun, 29 Sep 2019 16:07:48 -0400
+Message-Id: <20190929200748.870881831@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 29 Sep 2019 16:06:46 -0400
+Date:   Sun, 29 Sep 2019 16:06:47 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>
-Subject: [for-linus][PATCH 4/5] mm, tracing: Print symbol name for call_site in trace events
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 5/5] selftests/ftrace: Fix same probe error test
 References: <20190929200642.036511084@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -36,54 +35,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Changbin Du <changbin.du@gmail.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-To improve the readability of raw slab trace points, print the call_site ip
-using '%pS'. Then we can grep events with function names.
+The "same probe" selftest that tests that adding the same probe fails
+doesn't add the same probe and passes, which fails the test.
 
-[002] ....   808.188897: kmem_cache_free: call_site=putname+0x47/0x50 ptr=00000000cef40c80
-[002] ....   808.188898: kfree: call_site=security_cred_free+0x42/0x50 ptr=0000000062400820
-[002] ....   808.188904: kmem_cache_free: call_site=put_cred_rcu+0x88/0xa0 ptr=0000000058d74ef8
-[002] ....   808.188913: kmem_cache_alloc: call_site=prepare_creds+0x26/0x100 ptr=0000000058d74ef8 bytes_req=168 bytes_alloc=576 gfp_flags=GFP_KERNEL
-[002] ....   808.188917: kmalloc: call_site=security_prepare_creds+0x77/0xa0 ptr=0000000062400820 bytes_req=8 bytes_alloc=336 gfp_flags=GFP_KERNEL|__GFP_ZERO
-[002] ....   808.188920: kmem_cache_alloc: call_site=getname_flags+0x4f/0x1e0 ptr=00000000cef40c80 bytes_req=4096 bytes_alloc=4480 gfp_flags=GFP_KERNEL
-[002] ....   808.188925: kmem_cache_free: call_site=putname+0x47/0x50 ptr=00000000cef40c80
-[002] ....   808.188926: kfree: call_site=security_cred_free+0x42/0x50 ptr=0000000062400820
-[002] ....   808.188931: kmem_cache_free: call_site=put_cred_rcu+0x88/0xa0 ptr=0000000058d74ef8
-
-Link: http://lkml.kernel.org/r/20190914103215.23301-1-changbin.du@gmail.com
-
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Fixes: b78b94b82122 ("selftests/ftrace: Update kprobe event error testcase")
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/trace/events/kmem.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index eb57e3037deb..69e8bb8963db 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -35,8 +35,8 @@ DECLARE_EVENT_CLASS(kmem_alloc,
- 		__entry->gfp_flags	= gfp_flags;
- 	),
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+index 8a4025e912cb..ef1e9bafb098 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+@@ -95,7 +95,7 @@ echo 'p:kprobes/testevent _do_fork abcd=\1' > kprobe_events
+ check_error 'p:kprobes/testevent _do_fork ^bcd=\1'	# DIFF_ARG_TYPE
+ check_error 'p:kprobes/testevent _do_fork ^abcd=\1:u8'	# DIFF_ARG_TYPE
+ check_error 'p:kprobes/testevent _do_fork ^abcd=\"foo"'	# DIFF_ARG_TYPE
+-check_error '^p:kprobes/testevent _do_fork'	# SAME_PROBE
++check_error '^p:kprobes/testevent _do_fork abcd=\1'	# SAME_PROBE
+ fi
  
--	TP_printk("call_site=%lx ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
--		__entry->call_site,
-+	TP_printk("call_site=%pS ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
-+		(void *)__entry->call_site,
- 		__entry->ptr,
- 		__entry->bytes_req,
- 		__entry->bytes_alloc,
-@@ -131,7 +131,8 @@ DECLARE_EVENT_CLASS(kmem_free,
- 		__entry->ptr		= ptr;
- 	),
- 
--	TP_printk("call_site=%lx ptr=%p", __entry->call_site, __entry->ptr)
-+	TP_printk("call_site=%pS ptr=%p",
-+		  (void *)__entry->call_site, __entry->ptr)
- );
- 
- DEFINE_EVENT(kmem_free, kfree,
+ exit 0
 -- 
 2.20.1
 
