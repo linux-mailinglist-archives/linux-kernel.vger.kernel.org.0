@@ -2,73 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3868AC1441
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 12:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5E2AC144C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 13:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729005AbfI2Kxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 06:53:55 -0400
-Received: from mail-sz.amlogic.com ([211.162.65.117]:6100 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfI2Kxz (ORCPT
+        id S1729047AbfI2LHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 07:07:23 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:60859 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbfI2LHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 06:53:55 -0400
-Received: from droid12-sz.software.amlogic (10.28.8.22) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Sun, 29 Sep 2019
- 18:53:53 +0800
-From:   Xingyu Chen <xingyu.chen@amlogic.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Xingyu Chen <xingyu.chen@amlogic.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-watchdog@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] watchdog: meson: Fix the wrong value of left time
-Date:   Sun, 29 Sep 2019 18:53:49 +0800
-Message-ID: <1569754429-17287-1-git-send-email-xingyu.chen@amlogic.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 29 Sep 2019 07:07:23 -0400
+X-Originating-IP: 93.158.25.216
+Received: from nexussix (93-158-25-216.subs.ibrowse.com [93.158.25.216])
+        (Authenticated sender: cengiz@kernel.wtf)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 57ED5240004;
+        Sun, 29 Sep 2019 11:07:19 +0000 (UTC)
+Message-ID: <2a3f9ec1955e8b785888994e2a9b7cc0d5800a71.camel@kernel.wtf>
+Subject: Re: [PATCH] i2c: pca954x: Add property to skip disabling PCA954x
+ MUX device
+From:   Cengiz Can <cengiz@kernel.wtf>
+Reply-To: cengiz@kernel.wtf
+To:     Biwen Li <biwen.li@nxp.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peda@axentia.se, leoyang.li@nxp.com,
+        Wolfram Sang <wsa@the-dreams.de>
+Date:   Sun, 29 Sep 2019 14:07:19 +0300
+In-Reply-To: <20190929103638.46038-1-biwen.li@nxp.com>
+References: <20190929103638.46038-1-biwen.li@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.0 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.28.8.22]
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The left time value is wrong when we get it by sysfs. The left time value
-should be equal to preset timeout value minus elapsed time value. According
-to the Meson-GXB/GXL datasheets which can be found at [0], the timeout value
-is saved to BIT[0-15] of the WATCHDOG_TCNT, and elapsed time value is saved
-to BIT[16-31] of the WATCHDOG_TCNT.
+Hello Biwen,
 
-[0]: http://linux-meson.com
+> +       /* Errata ID E-00013 on board LS2088ARDB and LS2088ARDB:
+> +        * The point here is that you must not disable a mux if there
+> +        * are no pullups on the input or you mess up the I2C. This
+> +        * needs to be put into the DTS really as the kernel cannot
+> +        * know this otherwise.
+> +        */
 
-Fixes: 683fa50f0e18 ("watchdog: Add Meson GXBB Watchdog Driver")
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
----
- drivers/watchdog/meson_gxbb_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Can you please explain what a "mess up" is?
 
-diff --git a/drivers/watchdog/meson_gxbb_wdt.c b/drivers/watchdog/meson_gxbb_wdt.c
-index d17c1a6..5a9ca10 100644
---- a/drivers/watchdog/meson_gxbb_wdt.c
-+++ b/drivers/watchdog/meson_gxbb_wdt.c
-@@ -89,8 +89,8 @@ static unsigned int meson_gxbb_wdt_get_timeleft(struct watchdog_device *wdt_dev)
- 
- 	reg = readl(data->reg_base + GXBB_WDT_TCNT_REG);
- 
--	return ((reg >> GXBB_WDT_TCNT_CNT_SHIFT) -
--		(reg & GXBB_WDT_TCNT_SETUP_MASK)) / 1000;
-+	return ((reg & GXBB_WDT_TCNT_SETUP_MASK) -
-+		(reg >> GXBB_WDT_TCNT_CNT_SHIFT)) / 1000;
- }
- 
- static const struct watchdog_ops meson_gxbb_wdt_ops = {
+And also, should we put this new DTS property in related default
+bindings? 
+
+If not, are you planning a documentation update for the users to notify
+them about this?
+
 -- 
-2.7.4
+Cengiz Can <cengiz@kernel.wtf>
 
