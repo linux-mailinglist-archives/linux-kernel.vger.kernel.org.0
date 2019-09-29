@@ -2,136 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87BB2C1900
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 20:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D71AC190F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 21:03:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbfI2SfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 14:35:11 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40623 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729010AbfI2SfK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 14:35:10 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d17so5355592lfa.7
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2019 11:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=eegWp7OFuS9LfQMo/vUVdK64OvhifJQIxUvnCVGZlUo=;
-        b=q9lW7VSfebtJhrUCh4TZPVaH9uP5MtEamWEMd5YVMSWIype0GOEU2KXB5qqWXd3M40
-         uo2mB2UoilHqqBlyomgwdM2GQDIfN57U0oKK7qXoOTBIyh9PJ6lPMczovH13t6K6jp58
-         NNGWAwqAlzz1kp8wzZgMVN9DEC+iKdjSA1HJtfvriOaQHXuRP33p9f0uHmlZt4EfI/vt
-         dpjLj9VkvAYm9sFaWhaGdS+jGjZ0kjN90X0KpOpNYNvzYgxpuBR09KIpTs0wE7kGmqEI
-         7eE2YmQca7fsAGOHUvIjWgqGijI3kfkYQxBoLb7QpjOtq96PBwdvj3UuJMzgwObHdwy/
-         5z8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=eegWp7OFuS9LfQMo/vUVdK64OvhifJQIxUvnCVGZlUo=;
-        b=ZPQNdxUwywyv/ziYVyYVY8RRfam3Ca6MF7BnAQ3T/TXsv5QYKRWQ9QlKPawga/hjR+
-         zFBpUVnuZv2Rztp9wu4WoevvHEzBfmWgSroNsPpQ1xcGoMfeETdga+QfdrzcM3gngi+b
-         hayU2NcUSj4cgC150lV9AJ3FT0e6e3nD5LH+2AI0ve5E1uiYwP4Nu9usRej3cOlKgFph
-         unKZ7TwhleMGN5mnfgrfB+kJYKHTnpW21UAOjcPbuGGHMtyZDMwePFLbIbSRuc3ApxRI
-         3mTm8jA7WkQKMLNhI3AvmvJR4dH8ZA655S7PpHE/b9cooSwApjLHlIWFJ1iTc61dn4Mh
-         a7/A==
-X-Gm-Message-State: APjAAAXyzBB1NxOWAG34T/2Nec0fKjPxSFZau2BhMKkACS5Z+MUtaRCd
-        bX+yfNHqTTSOelN5Up9YUndUow==
-X-Google-Smtp-Source: APXvYqxLIowMztRfR1dwrzcJ3kM/Z0abdPF1JMvF+WJPFzakdRu7lRiZ4dAJM5JPAOP62XeXjoB28g==
-X-Received: by 2002:ac2:5633:: with SMTP id b19mr8939251lff.103.1569782107368;
-        Sun, 29 Sep 2019 11:35:07 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id t8sm3041717ljd.18.2019.09.29.11.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Sep 2019 11:35:05 -0700 (PDT)
-Date:   Sun, 29 Sep 2019 11:34:53 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     torvalds@linux-foundation.org
-Cc:     olof@lixom.net, arm@kernel.org, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: SoC fixes
-Message-ID: <20190929183453.4sehzgovw3ouatdj@localhost>
+        id S1729285AbfI2TDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 15:03:43 -0400
+Received: from twin.jikos.cz ([91.219.245.39]:38805 "EHLO twin.jikos.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728755AbfI2TDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 15:03:43 -0400
+X-Greylist: delayed 1939 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Sep 2019 15:03:42 EDT
+Received: from twin.jikos.cz (dave@[127.0.0.1])
+        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id x8TIVIpX003182
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sun, 29 Sep 2019 20:31:19 +0200
+Received: (from dave@localhost)
+        by twin.jikos.cz (8.13.6/8.13.6/Submit) id x8TIVI2x003181;
+        Sun, 29 Sep 2019 20:31:18 +0200
+Date:   Sun, 29 Sep 2019 20:31:17 +0200
+From:   David Sterba <dave@jikos.cz>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     WireGuard mailing list <wireguard@lists.zx2c4.com>,
+        Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: WireGuard to port to existing Crypto API
+Message-ID: <20190929183117.GJ7005@twin.jikos.cz>
+Reply-To: dave@jikos.cz
+Mail-Followup-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        WireGuard mailing list <wireguard@lists.zx2c4.com>,
+        Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <CAHmME9pmfZAp5zd9BDLFc2fWUhtzZcjYZc2atTPTyNFFmEdHLg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAHmME9pmfZAp5zd9BDLFc2fWUhtzZcjYZc2atTPTyNFFmEdHLg@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-The following changes since commit 4d856f72c10ecb060868ed10ff1b1453943fc6c8:
+On Wed, Sep 25, 2019 at 10:29:45AM +0200, Jason A. Donenfeld wrote:
+> I've long resisted the idea of porting to the existing crypto API,
+> because I think there are serious problems with it, in terms of
+> primitives, API, performance, and overall safety. I didn't want to
+> ship WireGuard in a form that I thought was sub-optimal from a
+> security perspective, since WireGuard is a security-focused project.
+> 
+> But it seems like with or without us, WireGuard will get ported to the
+> existing crypto API. So it's probably better that we just fully
+> embrace it, and afterwards work evolutionarily to get Zinc into Linux
+> piecemeal. I've ported WireGuard already several times as a PoC to the
+> API and have a decent idea of the ways it can go wrong and generally
+> how to do it in the least-bad way.
+> 
+> I realize this kind of compromise might come as a disappointment for
+> some folks. But it's probably better that as a project we remain
+> intimately involved with our Linux kernel users and the security of
+> the implementation, rather than slinking away in protest because we
+> couldn't get it all in at once. So we'll work with upstream, port to
+> the crypto API, and get the process moving again. We'll pick up the
+> Zinc work after that's done.
+> 
+> I also understand there might be interested folks out there who enjoy
+> working with the crypto API quite a bit and would be happy to work on
+> the WireGuard port. Please do get in touch if you'd like to
+> collaborate.
 
-  Linux 5.3 (2019-09-15 14:19:32 -0700)
+I have some WIP code to port WG to the crypto API, more to get an idea how hard
+it would be, though I read you've ported it to the api already. My other
+project (btrfs) is going to use blake2 in kernel and for that I'm about to
+submit the code, that's where it's also of interest for wg.
 
-are available in the Git repository at:
+My work is at 'github.com/kdave/WireGuard branch lkca-1'. I tried to find a way
+how to minimize the impact on current wg code but make it possible to
+iteratively extend it to the crypto API.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
+So, there's some config-time ifdefery to select which crypto functions are
+using kernel or zinc api.  See wg.git/src/crypto/Kbuild.include at the top,
+plus some source ifdefs.  I made an example of blake2s port, but only compile
+tested.
 
-for you to fetch changes up to 9bfd7319e8d353b8b81c4cfd4d7eced71adbfbb5:
+There are several problems in general that need to be solved on the kernel side
+first, before wireguard can work inside the kernel code base:
 
-  Merge tag 'fixes-5.4-merge-window' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into arm/fixes (2019-09-29 11:20:48 -0700)
+* missing crypto functions in kernel
+  * blake2
+  * curve25519 (missing completely)
 
-----------------------------------------------------------------
-ARM: SoC fixes
+* missing generic crypto API callback to use blake_init_key, it's possible to
+  use only the no-key variant (I have a patch for that, it's really easy but
+  it's change in API so ...)
 
-A few fixes that have trickled in through the merge window:
+The known problem is the cumbersome way to use the crypto functions, eg. for
+chacha/poly, I understand the pain and perhaps the reasons to start a fresh
+crypto library. I'm afraid the first implementation with current state of
+crypto API will be slow, until the API is extended to provide simple ways to
+transform buffers without scatterlists, request allocations, locking tfm
+context and whatnot.
 
- - Video fixes for OMAP due to panel-dpi driver removal
- - Clock fixes for OMAP that broke no-idle quirks + nfsroot on DRA7
- - Fixing arch version on ASpeed ast2500
- - Two fixes for reset handling on ARM SCMI
+Feel free to reuse anything from the code if you think it's going the right
+direction. I'm not sure if I'll have time to continue with the port but at
+least you can consider blake2 on the way upstream.
 
-----------------------------------------------------------------
-Adam Ford (4):
-      ARM: omap2plus_defconfig: Fix missing video
-      ARM: dts: logicpd-torpedo-baseboard: Fix missing video
-      ARM: dts: am3517-evm: Fix missing video
-      ARM: dts: logicpd-som-lv: Fix i2c2 and i2c3 Pin mux
-
-Arnd Bergmann (1):
-      ARM: aspeed: ast2500 is ARMv6K
-
-Olof Johansson (2):
-      Merge tag 'scmi-fixes-5.4' of git://git.kernel.org/.../sudeep.holla/linux into arm/fixes
-      Merge tag 'fixes-5.4-merge-window' of git://git.kernel.org/.../tmlind/linux-omap into arm/fixes
-
-Sudeep Holla (2):
-      firmware: arm_scmi: reset: fix reset_state assignment in scmi_domain_reset
-      reset: reset-scmi: add missing handle initialisation
-
-Tony Lindgren (3):
-      bus: ti-sysc: Fix clock handling for no-idle quirks
-      bus: ti-sysc: Fix handling of invalid clocks
-      bus: ti-sysc: Remove unpaired sysc_clkdm_deny_idle()
-
- Documentation/devicetree/bindings/arm/arm,scmi.txt |  17 +
- MAINTAINERS                                        |   1 +
- arch/arm/boot/dts/am3517-evm.dts                   |  23 +-
- arch/arm/boot/dts/logicpd-som-lv.dtsi              |  26 +-
- arch/arm/boot/dts/logicpd-torpedo-baseboard.dtsi   |  37 +--
- arch/arm/configs/omap2plus_defconfig               |   1 +
- arch/arm/mach-aspeed/Kconfig                       |   1 -
- arch/arm/mach-omap2/pdata-quirks.c                 |   4 +-
- drivers/bus/ti-sysc.c                              |  52 ++-
- drivers/clk/clk-scmi.c                             |   2 +-
- drivers/firmware/arm_scmi/Makefile                 |   2 +-
- drivers/firmware/arm_scmi/base.c                   |   2 +-
- drivers/firmware/arm_scmi/clock.c                  |  33 +-
- drivers/firmware/arm_scmi/common.h                 |  18 +-
- drivers/firmware/arm_scmi/driver.c                 | 366 +++++++++++++--------
- drivers/firmware/arm_scmi/perf.c                   | 264 ++++++++++++++-
- drivers/firmware/arm_scmi/power.c                  |   6 +-
- drivers/firmware/arm_scmi/reset.c                  | 231 +++++++++++++
- drivers/firmware/arm_scmi/sensors.c                |  57 ++--
- drivers/hwmon/scmi-hwmon.c                         |   2 +-
- drivers/reset/Kconfig                              |  11 +
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-scmi.c                         | 125 +++++++
- include/linux/scmi_protocol.h                      |  46 ++-
- 24 files changed, 1046 insertions(+), 282 deletions(-)
- create mode 100644 drivers/firmware/arm_scmi/reset.c
- create mode 100644 drivers/reset/reset-scmi.c
+d.
