@@ -2,85 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBAE3C12E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 05:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4520DC12EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 05:22:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728905AbfI2DG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Sep 2019 23:06:27 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43636 "EHLO
+        id S1728935AbfI2DWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Sep 2019 23:22:38 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45625 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728569AbfI2DG1 (ORCPT
+        with ESMTP id S1728853AbfI2DWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Sep 2019 23:06:27 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c3so12397372qtv.10
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2019 20:06:26 -0700 (PDT)
+        Sat, 28 Sep 2019 23:22:37 -0400
+Received: by mail-qt1-f193.google.com with SMTP id c21so12398133qtj.12;
+        Sat, 28 Sep 2019 20:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
-        b=WfTtdWZZmkE3Zy6z7C3HeoK1XMBhd2ko+g7oRIAQkLftWyrEhDagz9Z8e6pvRFL1sD
-         kKxjhbLusT0QOb4z3DlQ0c3niZltf0+rZ1Pn5o9YlPTrhNkmDkDjATeAdcsAAOVmVFho
-         1pqw8l8//cyy2eyB29mNsvcsu6ngzrJR4LZ8PA63s+KZtWPvmxv3P3fqPa1cn+6Riime
-         WPtKs2ss40nxeCjJZK2/JaPjgEnTXWwvlWH5DPVhhDz8JaEIYU7nh/zZ7xXeOONEnNZR
-         rBUmE9ZD4QP0ltCf48/YBwbYOpR9F95CPbMKGmgIr46znuHex446DZx4qWnxnFYzNbSb
-         bkwg==
+        h=from:to:cc:subject:date:message-id;
+        bh=cmgjUEReW2xgJs09ruxsgF5mBs1jh3iGvI+ApLc1M98=;
+        b=DDn481rcaHW2wEdm6rTXaOSklaJ3ldJqF4LS4udfLf2riCgFkUp71wRYXePgR0SaR1
+         U7keGNoAqVdPPLmLH8rQNF3Zq6rt5gMXUYUobgqyJL6zcHp6+J6ZsowVaWChCCH3Ijb/
+         VRSuLKluiRv8egd0xKZ2Drl2ljt8G8a7B7oNb1cgebYyCivO5JLoCljr7lFWZWBzG9gb
+         D1b9cMw3+bcmzolCe10vmTGQAeqF+2k4C2bp7DBskRSl9gX5MXJixAOi2J9fcqnIDAmq
+         8cZU0tPHAgP/jQGKlp7ckdZOTz+srH47d13OAqL2huJOEXiyBrO4cbRCqOC2TQ+rI+nP
+         90XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
-        b=qb5dJRxHtvPXxo60ggI/Y1h8dJr5r8O488BWTS3uzhh3x+zIlFHgSZwUGQIAwHrhu7
-         q+VS348uziW0T7bj6VkvEE1AZN39n8cDnNK2KCfpfszBsDKvmbSG0qkMR0ke2l97j+3X
-         r10mzeQqfxXIdSKqKC4MeFs5SEfw1OcH+gg6hvFAKrc8L9ZGcei0dq2b5nYQNhC9HCSp
-         c+zl/4BFvDl5+EAYj4o1RdzP6klHi7tdIEYHxxZoxDaaZOzQCaoGBkIAWTmc9KsqzFfi
-         Y0fl6LBy6uCpuorFj8St7unHdukvRJkoZMUtOYaXyqZ0fHbaVLSJc8HXA9hBbFXjZwC9
-         eZYQ==
-X-Gm-Message-State: APjAAAViJXSdas7Pjkm8v1ACoHJOSbptIcLRUCOTAeiZrSj72POKmjDB
-        fNc6Jt8U5H8dy1gMZ7MeeOayDjwiqvQGAl6v5Dc=
-X-Google-Smtp-Source: APXvYqw2MGEQZccSNHwyX5ZJKsDAvOSTDBiVKusptMLwCX6RShZepoJ+X8G2rdrXgrigFRpxGVXpJhjnpZ+UVmQ800Q=
-X-Received: by 2002:ac8:78c:: with SMTP id l12mr18645424qth.132.1569726386329;
- Sat, 28 Sep 2019 20:06:26 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac8:6e89:0:0:0:0:0 with HTTP; Sat, 28 Sep 2019 20:06:25
- -0700 (PDT)
-Reply-To: agaddafi077@gmail.com
-From:   Mrs A Gaddafi <aishagaddafi42@gmail.com>
-Date:   Sat, 28 Sep 2019 20:06:25 -0700
-Message-ID: <CAPJzYcWOJCjLPPVoTD4ZcnPWFaiR56wzyzm1-MSgMhuffx7x8g@mail.gmail.com>
-Subject: GREETINGS MY DEAR,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cmgjUEReW2xgJs09ruxsgF5mBs1jh3iGvI+ApLc1M98=;
+        b=FlbkIDNSVTWkFPP4YYGwdlfPoOGLJ1tFYxkXsZvjB8OZhrWiCddItIxgDQJtPKrBCj
+         WCpZbqIwVlTvU4UZdMKBx14WOJGCq72vQo0hUqujpSsx8y1OA58vRVFeMx/kJRQAl6dJ
+         HaPFdZ/oDAiqHzyYAziquoxi3duaBHwF3i7ZwgQZVPxri3qAs12YkPQ1vJEmtAY93yfV
+         kgsY7eiEMNQWP4Xo7pufM9tmh0uwbl8kvn9flur0Yy59ntQ6hS+tvbpeXFpdWDF18lm5
+         7O+C9i9lszRYO4KvORFHvg7P70EtYLOBN10UTGvNmUBvz0DxDVSuQuQC/ZXzeYnVsvu1
+         bLjQ==
+X-Gm-Message-State: APjAAAWQqd6YZtf5B0lFVsG5hQJYvf8NZftQS3/fiO46swfkwjdap7/z
+        VIMkNdIEBVJz+WEdFkP2bcw=
+X-Google-Smtp-Source: APXvYqxUMzBmTKXxdHnKbBW/2lvalxXZXzJo0LqFLfXYxRG7wIaRk/3MJ4PaeHYHDvAc01DDxBLC5w==
+X-Received: by 2002:ac8:6982:: with SMTP id o2mr18722488qtq.143.1569727356636;
+        Sat, 28 Sep 2019 20:22:36 -0700 (PDT)
+Received: from localhost.localdomain (ool-457857f8.dyn.optonline.net. [69.120.87.248])
+        by smtp.googlemail.com with ESMTPSA id y58sm5086733qta.1.2019.09.28.20.22.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2019 20:22:36 -0700 (PDT)
+From:   Vivek Unune <npcomplete13@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
+        ezequiel@collabora.com, vicencb@gmail.com, akash@openedev.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Vivek Unune <npcomplete13@gmail.com>
+Subject: [PATCH] arm64: dts: rockchip: Fix usb-c on Hugsun X99 TV Box
+Date:   Sat, 28 Sep 2019 23:22:30 -0400
+Message-Id: <20190929032230.24628-1-npcomplete13@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Fix usb-c on X99 TV Box. Tested with armbian w/ kernel 5.3
 
-I came across your e-mail contact prior a private search whilst in
-need of your partnership for investment assistance in your country. I
-am opportune to use this medium to exhibit my legal intentions towards
-investing to your country under your management. I am fully convinced
-that you will really be of help as a business partner.
+Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-My name is Aisha  Gaddafi a single Mother and a Widow and i have three
-Children. I am the only biological Daughter of late Libyan President
-(Late Colonel Muammar Gaddafi).
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+index 0d1f5f9a0de9..c133e8d64b2a 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+@@ -644,7 +644,7 @@
+ 	status = "okay";
+ 
+ 	u2phy0_host: host-port {
+-		phy-supply = <&vcc5v0_host>;
++		phy-supply = <&vcc5v0_typec>;
+ 		status = "okay";
+ 	};
+ 
+@@ -712,7 +712,7 @@
+ 
+ &usbdrd_dwc3_0 {
+ 	status = "okay";
+-	dr_mode = "otg";
++	dr_mode = "host";
+ };
+ 
+ &usbdrd3_1 {
+-- 
+2.17.1
 
-I have investment funds worth Twenty Seven Million Five Hundred
-Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
-investment Manager/Partner.  I am planning to go into investment
-projects in your country of origin or present country of Location to
-assist me establish the investments project.
-
- I am willing to negotiate investment/business profit sharing ratio
-with you base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply
-urgent to enable me provide you tell you more details about myself and
-more information about the release of the investment funds.
-
-I appreciate Your Urgent Reply to my email address:
-
-Best Regards
-Mrs Aisha Gaddafi
