@@ -2,53 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B38C6C18A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27BCBC18A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:50:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbfI2RuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 13:50:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35856 "EHLO mail.kernel.org"
+        id S1729311AbfI2RuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 13:50:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729197AbfI2RuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:50:23 -0400
-Subject: Re: [GIT PULL] Thermal-SoC management changes for v5.4-rc1
+        id S1729197AbfI2RuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:50:24 -0400
+Subject: Re: [GIT PULL] libnvdimm fixes for v5.4-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569779422;
-        bh=bHXIm8Z3qU0UO34CYscDkvZ0mPCZy0QUZD2hU22CW5c=;
+        s=default; t=1569779423;
+        bh=sLpBK98JGjYLJeeMKeMxZXtgz3IbLinnFUJWoo1RwjE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=k6uf60Sq/6j5t12+qKwBc8d9ZI7mmwmj3V59MX7ZlVmy0mgosZyv6qRFDrTvsGT1x
-         Mo4ksvI05dIA2/XrIE5RByLLOjVgGBry58RndIhHwQq1rqp1m+qgfzQOPt9I0NFb3o
-         7B9N3XzeHQvsdvO3IieAk7MUyHjSvm2iXdgJML0E=
+        b=S2FmXA27bktlnMH3emqurNob0egawmtiVT06arsVQPs65bcvb6jDvRzV6tR2k1x4d
+         TZxuckVZTADTqO73grBvrAdyjVEreHwvqdvQsViA5PEgxFS3eCY1zYAQ4Dcws6cIry
+         jeAD7YNIQvWgz4CDWZnneUAoM3x5w7tvn5pfPVwY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190928231236.GD7360@localhost.localdomain>
-References: <20190928231236.GD7360@localhost.localdomain>
+In-Reply-To: <CAPcyv4jJjjkXXSYpYNC3y2r2YJrcSYw=tZ9p=KyA8BS46kfFuA@mail.gmail.com>
+References: <CAPcyv4jJjjkXXSYpYNC3y2r2YJrcSYw=tZ9p=KyA8BS46kfFuA@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190928231236.GD7360@localhost.localdomain>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
- linus
-X-PR-Tracked-Commit-Id: 6c375eccded41df8033ed55a1b785531b304fc67
+X-PR-Tracked-Message-Id: <CAPcyv4jJjjkXXSYpYNC3y2r2YJrcSYw=tZ9p=KyA8BS46kfFuA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+ tags/libnvdimm-fixes-5.4-rc1
+X-PR-Tracked-Commit-Id: 4c806b897d6075bfa5067e524fb058c57ab64e7b
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 939ca9f1751d1d65424f80b9284b6c18e78c7f4e
-Message-Id: <156977942273.28081.7573269007324807343.pr-tracker-bot@kernel.org>
-Date:   Sun, 29 Sep 2019 17:50:22 +0000
-To:     Eduardo Valentin <edubezval@gmail.com>
+X-PR-Merge-Commit-Id: a3c0e7b1fe1fc62bba5f591c4bc404eea96823b8
+Message-Id: <156977942385.28081.14590936149544081114.pr-tracker-bot@kernel.org>
+Date:   Sun, 29 Sep 2019 17:50:23 +0000
+To:     Dan Williams <dan.j.williams@intel.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 28 Sep 2019 16:12:36 -0700:
+The pull request you sent on Sat, 28 Sep 2019 18:44:17 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/libnvdimm-fixes-5.4-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/939ca9f1751d1d65424f80b9284b6c18e78c7f4e
+https://git.kernel.org/torvalds/c/a3c0e7b1fe1fc62bba5f591c4bc404eea96823b8
 
 Thank you!
 
