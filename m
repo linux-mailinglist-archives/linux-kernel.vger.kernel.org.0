@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D156FC1704
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BDA2C1705
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:35:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbfI2Rew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 13:34:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46696 "EHLO mail.kernel.org"
+        id S1729398AbfI2Re5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 13:34:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729236AbfI2Rek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:34:40 -0400
+        id S1730403AbfI2Rer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:34:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C19EE21D7A;
-        Sun, 29 Sep 2019 17:34:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28D2F21906;
+        Sun, 29 Sep 2019 17:34:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778479;
-        bh=28EPEBeuVuP6Khqm6zlfvXCAwy4C7eBB7QJBK6lTiqQ=;
+        s=default; t=1569778487;
+        bh=hfNg8Nm40zRI8TDF/Icp+MSffb6Vg+BWyaWKFeR4cw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SFg7/nZQU19uettwodGd+pBvIjhjy0wvcoZaOQJBt9RSXMG8Wvtb2xq2WoibZhgs4
-         sIZwyX4qTEG2fq+Bu9HV/vubJWQFliCxNDTqN26/1Hr5c9SZtEy+2W+zRmprvevHlw
-         miRaTz4CYDaK0XtKRRG+YBiNLae9Xsajy5OcdvpU=
+        b=Du8iy/6GEEtRWtci+gq2PvK9oHbQDKivOlbOh7hbHXFvSdD34eGufx12vxD1GdGLI
+         XxNxhqX8tIRhgiUIILaoQSdIc+LA5H9rP5wNn2X7TPlcDFKU/vvny3fLuLj6hTLJwH
+         AEGCogaAWzA1GrW+kYVCI1uflBUZfR9jKGmz3ci8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, live-patching@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 08/33] livepatch: Nullify obj->mod in klp_module_coming()'s error path
-Date:   Sun, 29 Sep 2019 13:33:56 -0400
-Message-Id: <20190929173424.9361-8-sashal@kernel.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 11/33] ARM: 8875/1: Kconfig: default to AEABI w/ Clang
+Date:   Sun, 29 Sep 2019 13:33:59 -0400
+Message-Id: <20190929173424.9361-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190929173424.9361-1-sashal@kernel.org>
 References: <20190929173424.9361-1-sashal@kernel.org>
@@ -43,39 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miroslav Benes <mbenes@suse.cz>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-[ Upstream commit 4ff96fb52c6964ad42e0a878be8f86a2e8052ddd ]
+[ Upstream commit a05b9608456e0d4464c6f7ca8572324ace57a3f4 ]
 
-klp_module_coming() is called for every module appearing in the system.
-It sets obj->mod to a patched module for klp_object obj. Unfortunately
-it leaves it set even if an error happens later in the function and the
-patched module is not allowed to be loaded.
+Clang produces references to __aeabi_uidivmod and __aeabi_idivmod for
+arm-linux-gnueabi and arm-linux-gnueabihf targets incorrectly when AEABI
+is not selected (such as when OABI_COMPAT is selected).
 
-klp_is_object_loaded() uses obj->mod variable and could currently give a
-wrong return value. The bug is probably harmless as of now.
+While this means that OABI userspaces wont be able to upgraded to
+kernels built with Clang, it means that boards that don't enable AEABI
+like s3c2410_defconfig will stop failing to link in KernelCI when built
+with Clang.
 
-Signed-off-by: Miroslav Benes <mbenes@suse.cz>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/482
+Link: https://groups.google.com/forum/#!msg/clang-built-linux/yydsAAux5hk/GxjqJSW-AQAJ
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/livepatch/core.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 722c27c40e5b3..a1250ad591c1d 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -1027,6 +1027,7 @@ int klp_module_coming(struct module *mod)
- 	pr_warn("patch '%s' failed for module '%s', refusing to load module '%s'\n",
- 		patch->mod->name, obj->mod->name, obj->mod->name);
- 	mod->klp_alive = false;
-+	obj->mod = NULL;
- 	klp_cleanup_module_patches_limited(mod, patch);
- 	mutex_unlock(&klp_mutex);
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 51794c7fa6d5b..185e552f14610 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1586,8 +1586,9 @@ config ARM_PATCH_IDIV
+ 	  code to do integer division.
  
+ config AEABI
+-	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && !CPU_V7M && !CPU_V6 && !CPU_V6K
+-	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K
++	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && \
++		!CPU_V7M && !CPU_V6 && !CPU_V6K && !CC_IS_CLANG
++	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K || CC_IS_CLANG
+ 	help
+ 	  This option allows for the kernel to be compiled using the latest
+ 	  ARM ABI (aka EABI).  This is only useful if you are using a user
 -- 
 2.20.1
 
