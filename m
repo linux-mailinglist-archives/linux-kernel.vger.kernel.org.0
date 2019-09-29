@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496DFC170C
+	by mail.lfdr.de (Postfix) with ESMTP id BB7EBC170D
 	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbfI2RfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 13:35:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47282 "EHLO mail.kernel.org"
+        id S1730554AbfI2RfU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 13:35:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729362AbfI2RfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:35:06 -0400
+        id S1729564AbfI2RfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:35:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F74F21925;
-        Sun, 29 Sep 2019 17:35:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93DDC21906;
+        Sun, 29 Sep 2019 17:35:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778505;
-        bh=BN/UoRKBV+sw1VEV1yj7fUb/TE6RODNCU0K+r99yFyo=;
+        s=default; t=1569778508;
+        bh=NW/m6R8uPelyLkG1YSOb/QZBuuaoEuyf1FdlJras63U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VNB+Yr2KKH1kwS4q0fQ0xbloPr7KsrY+rhpo0JhwNYKhqLYO6WEmuT0vQq/H7VhFs
-         QxJhKTqeP0FTDSaKs0RFiGVMWjo6Lwn2+6sUEgxcKZILVoAxrhgHSwDdm9N2KRU9Am
-         7rtMXHdxglG+Duc+beAZiPDH7pcIZY7Gdj76xEuU=
+        b=NamSCZ84Hd9zsbXnde9LEbwlU8xxPBEKjKtQ3mw59VYk2F8A8dUeBR517gOReUKKL
+         P9Ss2W5HYJSm40izXJBdXdAptbt22/2Wk3UdRwSfnCuh+AA/Ia5IWCe/BeMSWG3Ik2
+         /pEuRNfpZZ9CVbjDztjsEicIm/He5D8qpTVb4CdE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Jan Stancek <jstancek@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     David Howells <dhowells@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 23/33] fat: work around race with userspace's read via blockdev while mounting
-Date:   Sun, 29 Sep 2019 13:34:11 -0400
-Message-Id: <20190929173424.9361-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 25/33] hypfs: Fix error number left in struct pointer member
+Date:   Sun, 29 Sep 2019 13:34:13 -0400
+Message-Id: <20190929173424.9361-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190929173424.9361-1-sashal@kernel.org>
 References: <20190929173424.9361-1-sashal@kernel.org>
@@ -45,107 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 07bfa4415ab607e459b69bd86aa7e7602ce10b4f ]
+[ Upstream commit b54c64f7adeb241423cd46598f458b5486b0375e ]
 
-If userspace reads the buffer via blockdev while mounting,
-sb_getblk()+modify can race with buffer read via blockdev.
+In hypfs_fill_super(), if hypfs_create_update_file() fails,
+sbi->update_file is left holding an error number.  This is passed to
+hypfs_kill_super() which doesn't check for this.
 
-For example,
+Fix this by not setting sbi->update_value until after we've checked for
+error.
 
-            FS                               userspace
-    bh = sb_getblk()
-    modify bh->b_data
-                                  read
-				    ll_rw_block(bh)
-				      fill bh->b_data by on-disk data
-				      /* lost modified data by FS */
-				      set_buffer_uptodate(bh)
-    set_buffer_uptodate(bh)
-
-Userspace should not use the blockdev while mounting though, the udev
-seems to be already doing this.  Although I think the udev should try to
-avoid this, workaround the race by small overhead.
-
-Link: http://lkml.kernel.org/r/87pnk7l3sw.fsf_-_@mail.parknet.co.jp
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Reported-by: Jan Stancek <jstancek@redhat.com>
-Tested-by: Jan Stancek <jstancek@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 24bbb1faf3f0 ("[PATCH] s390_hypfs filesystem")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+cc: linux-s390@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fat/dir.c    | 13 +++++++++++--
- fs/fat/fatent.c |  3 +++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ arch/s390/hypfs/inode.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index 7f5f3699fc6c0..de60c05c0ca1d 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -1097,8 +1097,11 @@ static int fat_zeroed_cluster(struct inode *dir, sector_t blknr, int nr_used,
- 			err = -ENOMEM;
- 			goto error;
- 		}
-+		/* Avoid race with userspace read via bdev */
-+		lock_buffer(bhs[n]);
- 		memset(bhs[n]->b_data, 0, sb->s_blocksize);
- 		set_buffer_uptodate(bhs[n]);
-+		unlock_buffer(bhs[n]);
- 		mark_buffer_dirty_inode(bhs[n], dir);
+diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
+index c681329fdeec6..e4d17d9ea93d8 100644
+--- a/arch/s390/hypfs/inode.c
++++ b/arch/s390/hypfs/inode.c
+@@ -269,7 +269,7 @@ static int hypfs_show_options(struct seq_file *s, struct dentry *root)
+ static int hypfs_fill_super(struct super_block *sb, void *data, int silent)
+ {
+ 	struct inode *root_inode;
+-	struct dentry *root_dentry;
++	struct dentry *root_dentry, *update_file;
+ 	int rc = 0;
+ 	struct hypfs_sb_info *sbi;
  
- 		n++;
-@@ -1155,6 +1158,8 @@ int fat_alloc_new_dir(struct inode *dir, struct timespec64 *ts)
- 	fat_time_unix2fat(sbi, ts, &time, &date, &time_cs);
- 
- 	de = (struct msdos_dir_entry *)bhs[0]->b_data;
-+	/* Avoid race with userspace read via bdev */
-+	lock_buffer(bhs[0]);
- 	/* filling the new directory slots ("." and ".." entries) */
- 	memcpy(de[0].name, MSDOS_DOT, MSDOS_NAME);
- 	memcpy(de[1].name, MSDOS_DOTDOT, MSDOS_NAME);
-@@ -1177,6 +1182,7 @@ int fat_alloc_new_dir(struct inode *dir, struct timespec64 *ts)
- 	de[0].size = de[1].size = 0;
- 	memset(de + 2, 0, sb->s_blocksize - 2 * sizeof(*de));
- 	set_buffer_uptodate(bhs[0]);
-+	unlock_buffer(bhs[0]);
- 	mark_buffer_dirty_inode(bhs[0], dir);
- 
- 	err = fat_zeroed_cluster(dir, blknr, 1, bhs, MAX_BUF_PER_PAGE);
-@@ -1234,11 +1240,14 @@ static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
- 
- 			/* fill the directory entry */
- 			copy = min(size, sb->s_blocksize);
-+			/* Avoid race with userspace read via bdev */
-+			lock_buffer(bhs[n]);
- 			memcpy(bhs[n]->b_data, slots, copy);
--			slots += copy;
--			size -= copy;
- 			set_buffer_uptodate(bhs[n]);
-+			unlock_buffer(bhs[n]);
- 			mark_buffer_dirty_inode(bhs[n], dir);
-+			slots += copy;
-+			size -= copy;
- 			if (!size)
- 				break;
- 			n++;
-diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-index f58c0cacc531d..4c6c635bc8aaa 100644
---- a/fs/fat/fatent.c
-+++ b/fs/fat/fatent.c
-@@ -390,8 +390,11 @@ static int fat_mirror_bhs(struct super_block *sb, struct buffer_head **bhs,
- 				err = -ENOMEM;
- 				goto error;
- 			}
-+			/* Avoid race with userspace read via bdev */
-+			lock_buffer(c_bh);
- 			memcpy(c_bh->b_data, bhs[n]->b_data, sb->s_blocksize);
- 			set_buffer_uptodate(c_bh);
-+			unlock_buffer(c_bh);
- 			mark_buffer_dirty_inode(c_bh, sbi->fat_inode);
- 			if (sb->s_flags & SB_SYNCHRONOUS)
- 				err = sync_dirty_buffer(c_bh);
+@@ -300,9 +300,10 @@ static int hypfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		rc = hypfs_diag_create_files(root_dentry);
+ 	if (rc)
+ 		return rc;
+-	sbi->update_file = hypfs_create_update_file(root_dentry);
+-	if (IS_ERR(sbi->update_file))
+-		return PTR_ERR(sbi->update_file);
++	update_file = hypfs_create_update_file(root_dentry);
++	if (IS_ERR(update_file))
++		return PTR_ERR(update_file);
++	sbi->update_file = update_file;
+ 	hypfs_update_update(sb);
+ 	pr_info("Hypervisor filesystem mounted\n");
+ 	return 0;
 -- 
 2.20.1
 
