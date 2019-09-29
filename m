@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFF8C1547
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F987C155F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730244AbfI2OCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 10:02:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45262 "EHLO mail.kernel.org"
+        id S1730370AbfI2ODg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 10:03:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730220AbfI2OCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 10:02:31 -0400
+        id S1728809AbfI2ODe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 10:03:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A06682082F;
-        Sun, 29 Sep 2019 14:02:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9AE32082F;
+        Sun, 29 Sep 2019 14:03:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569765751;
-        bh=M3/SmVArOA7JBk5QAHOoRMcoDkCTQfWxfBebZbq2kkQ=;
+        s=default; t=1569765813;
+        bh=xiOUHBKHsvXvkss4dduRDk/CwAhsptPTvK2WdmB5jcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n643buitx5JwcLqG1egBPsXuca7rvCDU4dzb7TcgvgdfK/LM1J4uB4HDToWrOVuYC
-         VNONK/wtfFBfCxuflEGZSVe5XKHGmHnoFZ5/87ogMyaNB2pJmMIkA2Cghmzz3UyK3i
-         6lw+jk0i1HH28COAmvPqqtVhnr6bzyA1to6plLPk=
+        b=IAhAv2bAM2YbGLyWj/LEfzDeDWmaCBY5LR2jvy7LLZBKGucIHDZxKCqcg0vdxKBY6
+         wRD6yDdOGmIhqJYe3OqbknvXWLVFmfej8lw670CdKgKa580MtugAj7Nkaqapx8Pn+1
+         yh5qXBe4uKj6ZgP23ksNmiVzmdl4L0i+1gyLxBUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilia Mirkin <imirkin@alum.mit.edu>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 39/45] drm/nouveau/disp/nv50-: fix center/aspect-corrected scaling
-Date:   Sun, 29 Sep 2019 15:56:07 +0200
-Message-Id: <20190929135033.149716277@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Francis <david.francis@amd.com>
+Subject: [PATCH 5.3 05/25] drm/amd/display: Skip determining update type for async updates
+Date:   Sun, 29 Sep 2019 15:56:08 +0200
+Message-Id: <20190929135010.311865952@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190929135024.387033930@linuxfoundation.org>
-References: <20190929135024.387033930@linuxfoundation.org>
+In-Reply-To: <20190929135006.127269625@linuxfoundation.org>
+References: <20190929135006.127269625@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilia Mirkin <imirkin@alum.mit.edu>
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-[ Upstream commit 533f4752407543f488a9118d817b8c504352b6fb ]
+commit 43d10d30df156f7834fa91aecb69614fefc8bb0a upstream.
 
-Previously center scaling would get scaling applied to it (when it was
-only supposed to center the image), and aspect-corrected scaling did not
-always correctly pick whether to reduce width or height for a particular
-combination of inputs/outputs.
+[Why]
+By passing through the dm_determine_update_type_for_commit for atomic
+commits that can be done asynchronously we are incurring a
+performance penalty by locking access to the global private object
+and holding that access until the end of the programming sequence.
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=110660
-Signed-off-by: Ilia Mirkin <imirkin@alum.mit.edu>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This is also allocating a new large dc_state on every access in addition
+to retaining all the references on each stream and plane until the end
+of the programming sequence.
+
+[How]
+Shift the determination for async update before validation. Return early
+if it's going to be an async update.
+
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: David Francis <david.francis@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/nouveau/dispnv50/head.c | 28 +++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |   27 ++++++++++++++++------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/head.c b/drivers/gpu/drm/nouveau/dispnv50/head.c
-index 06ee23823a689..acfafc4bda0e1 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/head.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/head.c
-@@ -169,14 +169,34 @@ nv50_head_atomic_check_view(struct nv50_head_atom *armh,
- 	 */
- 	switch (mode) {
- 	case DRM_MODE_SCALE_CENTER:
--		asyh->view.oW = min((u16)umode->hdisplay, asyh->view.oW);
--		asyh->view.oH = min((u16)umode_vdisplay, asyh->view.oH);
--		/* fall-through */
-+		/* NOTE: This will cause scaling when the input is
-+		 * larger than the output.
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -7274,6 +7274,26 @@ static int amdgpu_dm_atomic_check(struct
+ 	if (ret)
+ 		goto fail;
+ 
++	if (state->legacy_cursor_update) {
++		/*
++		 * This is a fast cursor update coming from the plane update
++		 * helper, check if it can be done asynchronously for better
++		 * performance.
 +		 */
-+		asyh->view.oW = min(asyh->view.iW, asyh->view.oW);
-+		asyh->view.oH = min(asyh->view.iH, asyh->view.oH);
-+		break;
- 	case DRM_MODE_SCALE_ASPECT:
--		if (asyh->view.oH < asyh->view.oW) {
-+		/* Determine whether the scaling should be on width or on
-+		 * height. This is done by comparing the aspect ratios of the
-+		 * sizes. If the output AR is larger than input AR, that means
-+		 * we want to change the width (letterboxed on the
-+		 * left/right), otherwise on the height (letterboxed on the
-+		 * top/bottom).
-+		 *
-+		 * E.g. 4:3 (1.333) AR image displayed on a 16:10 (1.6) AR
-+		 * screen will have letterboxes on the left/right. However a
-+		 * 16:9 (1.777) AR image on that same screen will have
-+		 * letterboxes on the top/bottom.
-+		 *
-+		 * inputAR = iW / iH; outputAR = oW / oH
-+		 * outputAR > inputAR is equivalent to oW * iH > iW * oH
++		state->async_update =
++			!drm_atomic_helper_async_check(dev, state);
++
++		/*
++		 * Skip the remaining global validation if this is an async
++		 * update. Cursor updates can be done without affecting
++		 * state or bandwidth calcs and this avoids the performance
++		 * penalty of locking the private state object and
++		 * allocating a new dc_state.
 +		 */
-+		if (asyh->view.oW * asyh->view.iH > asyh->view.iW * asyh->view.oH) {
-+			/* Recompute output width, i.e. left/right letterbox */
- 			u32 r = (asyh->view.iW << 19) / asyh->view.iH;
- 			asyh->view.oW = ((asyh->view.oH * r) + (r / 2)) >> 19;
- 		} else {
-+			/* Recompute output height, i.e. top/bottom letterbox */
- 			u32 r = (asyh->view.iH << 19) / asyh->view.iW;
- 			asyh->view.oH = ((asyh->view.oW * r) + (r / 2)) >> 19;
++		if (state->async_update)
++			return 0;
++	}
++
+ 	/* Check scaling and underscan changes*/
+ 	/* TODO Removed scaling changes validation due to inability to commit
+ 	 * new stream into context w\o causing full reset. Need to
+@@ -7326,13 +7346,6 @@ static int amdgpu_dm_atomic_check(struct
+ 			ret = -EINVAL;
+ 			goto fail;
  		}
--- 
-2.20.1
-
+-	} else if (state->legacy_cursor_update) {
+-		/*
+-		 * This is a fast cursor update coming from the plane update
+-		 * helper, check if it can be done asynchronously for better
+-		 * performance.
+-		 */
+-		state->async_update = !drm_atomic_helper_async_check(dev, state);
+ 	}
+ 
+ 	/* Must be success */
 
 
