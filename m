@@ -2,64 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3C11C1960
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 22:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD472C1968
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 22:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbfI2UHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 16:07:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729098AbfI2UHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 16:07:50 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C83F521882;
-        Sun, 29 Sep 2019 20:07:49 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1iEfTw-00083D-Vi; Sun, 29 Sep 2019 16:07:48 -0400
-Message-Id: <20190929200748.870881831@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Sun, 29 Sep 2019 16:06:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-linus][PATCH 5/5] selftests/ftrace: Fix same probe error test
-References: <20190929200642.036511084@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+        id S1729380AbfI2UJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 16:09:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58202 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725948AbfI2UJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 16:09:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0506AC67;
+        Sun, 29 Sep 2019 20:09:36 +0000 (UTC)
+From:   Mian Yousaf Kaukab <ykaukab@suse.de>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        Mian Yousaf Kaukab <ykaukab@suse.de>
+Subject: [PATCH] arm64: tegra: only map accessible sysram
+Date:   Sun, 29 Sep 2019 22:08:51 +0200
+Message-Id: <20190929200851.14228-1-ykaukab@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Most of the SysRAM is secure and only accessible by TF-A.
+Don't map this inaccessible memory in kernel. Only map pages
+used by bpmp driver.
 
-The "same probe" selftest that tests that adding the same probe fails
-doesn't add the same probe and passes, which fails the test.
-
-Fixes: b78b94b82122 ("selftests/ftrace: Update kprobe event error testcase")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
 ---
- .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc      | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Only tegra186 is tested. Tested on Jetson TX2.
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-index 8a4025e912cb..ef1e9bafb098 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-@@ -95,7 +95,7 @@ echo 'p:kprobes/testevent _do_fork abcd=\1' > kprobe_events
- check_error 'p:kprobes/testevent _do_fork ^bcd=\1'	# DIFF_ARG_TYPE
- check_error 'p:kprobes/testevent _do_fork ^abcd=\1:u8'	# DIFF_ARG_TYPE
- check_error 'p:kprobes/testevent _do_fork ^abcd=\"foo"'	# DIFF_ARG_TYPE
--check_error '^p:kprobes/testevent _do_fork'	# SAME_PROBE
-+check_error '^p:kprobes/testevent _do_fork abcd=\1'	# SAME_PROBE
- fi
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 14 +++++++-------
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 14 +++++++-------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 47cd831fcf44..a861f46125fd 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1174,23 +1174,23 @@
+ 		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_GPU>;
+ 	};
  
- exit 0
+-	sysram@30000000 {
++	sysram@3004e000 {
+ 		compatible = "nvidia,tegra186-sysram", "mmio-sram";
+-		reg = <0x0 0x30000000 0x0 0x50000>;
++		reg = <0x0 0x3004e000 0x0 0x2000>;
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+-		ranges = <0 0x0 0x0 0x30000000 0x0 0x50000>;
++		ranges = <0 0x0 0x0 0x3004e000 0x0 0x2000>;
+ 
+-		cpu_bpmp_tx: shmem@4e000 {
++		cpu_bpmp_tx: shmem@e000 {
+ 			compatible = "nvidia,tegra186-bpmp-shmem";
+-			reg = <0x0 0x4e000 0x0 0x1000>;
++			reg = <0x0 0x0 0x0 0x1000>;
+ 			label = "cpu-bpmp-tx";
+ 			pool;
+ 		};
+ 
+-		cpu_bpmp_rx: shmem@4f000 {
++		cpu_bpmp_rx: shmem@f000 {
+ 			compatible = "nvidia,tegra186-bpmp-shmem";
+-			reg = <0x0 0x4f000 0x0 0x1000>;
++			reg = <0x0 0x1000 0x0 0x1000>;
+ 			label = "cpu-bpmp-rx";
+ 			pool;
+ 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 3c0cf54f0aab..98b9399d6b7f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -1430,23 +1430,23 @@
+ 			  0x82000000 0x0  0x40000000 0x1f 0x40000000 0x0 0xc0000000>; /* non-prefetchable memory (3GB) */
+ 	};
+ 
+-	sysram@40000000 {
++	sysram@4004e000 {
+ 		compatible = "nvidia,tegra194-sysram", "mmio-sram";
+-		reg = <0x0 0x40000000 0x0 0x50000>;
++		reg = <0x0 0x4004e000 0x0 0x2000>;
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		ranges = <0x0 0x0 0x40000000 0x50000>;
++		ranges = <0x0 0x0 0x4004e000 0x2000>;
+ 
+-		cpu_bpmp_tx: shmem@4e000 {
++		cpu_bpmp_tx: shmem@e000 {
+ 			compatible = "nvidia,tegra194-bpmp-shmem";
+-			reg = <0x4e000 0x1000>;
++			reg = <0x0 0x1000>;
+ 			label = "cpu-bpmp-tx";
+ 			pool;
+ 		};
+ 
+-		cpu_bpmp_rx: shmem@4f000 {
++		cpu_bpmp_rx: shmem@f000 {
+ 			compatible = "nvidia,tegra194-bpmp-shmem";
+-			reg = <0x4f000 0x1000>;
++			reg = <0x1000 0x1000>;
+ 			label = "cpu-bpmp-rx";
+ 			pool;
+ 		};
 -- 
-2.20.1
-
+2.16.4
 
