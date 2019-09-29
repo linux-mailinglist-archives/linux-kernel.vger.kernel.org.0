@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE4CC14D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E96EC15A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbfI2N63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 09:58:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39122 "EHLO mail.kernel.org"
+        id S1729307AbfI2N5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 09:57:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729484AbfI2N60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 09:58:26 -0400
+        id S1729278AbfI2N5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 09:57:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCB7F2082F;
-        Sun, 29 Sep 2019 13:58:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 631E821835;
+        Sun, 29 Sep 2019 13:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569765505;
-        bh=+zBkcUkYtt3pOXMW0GqJj/HYBp0SzBX7UyGOcQgPo0c=;
+        s=default; t=1569765459;
+        bh=XFCC5U/nFhnPJcTciLk9XGgt1eSD5qy65Ge/nfC+bzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RvSY1M+EesNBE/cAIIkCYgukdlDgWdFKvDurbGfYWJjkhroyg153048DN9/LT1T8T
-         4LYSMGseLsRlJMHTwdKkja1o8cxfKd2aKv6fA8K09+TmyJSMsjRh+VcgZsQNC1ORFv
-         qzUSPWtMcDjp3TjUpbMrDuFjxxVoi6omvCOjf1Tg=
+        b=NVeJaoBu796l3VM7LADwlUTiOwt3zn77wyq322fyktHMglBK2FA0p3gieIUi5Xmsl
+         3of82rWwPqWUf6hxT4XtJ/arHBzcBkDr6Jy59JF4x9YZjCS7SlTDdMkntr3qgbiDG4
+         pbxWBndpLOSBjbLcpbdRz5vs3A2VGw/3qq/kxlBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 24/63] media: tvp5150: fix switch exit in set control handler
-Date:   Sun, 29 Sep 2019 15:53:57 +0200
-Message-Id: <20190929135036.802291906@linuxfoundation.org>
+        stable@vger.kernel.org, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 26/63] ASoC: fsl: Fix of-node refcount unbalance in fsl_ssi_probe_from_dt()
+Date:   Sun, 29 Sep 2019 15:53:59 +0200
+Message-Id: <20190929135037.014754864@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190929135031.382429403@linuxfoundation.org>
 References: <20190929135031.382429403@linuxfoundation.org>
@@ -43,39 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Felsch <m.felsch@pengutronix.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 2d29bcc8c237874795175b2930fa9a45a115175a upstream.
+commit 2757970f6d0d0a112247600b23d38c0c728ceeb3 upstream.
 
-The function only consists of a single switch case block without a
-default case. Unsupported control requests are indicated by the -EINVAL
-return code trough the last return statement at the end of the function. So
-exiting just the switch case block returns the -EINVAL error code but the
-hue control is supported and a zero should be returned instead.
+The node obtained from of_find_node_by_path() has to be unreferenced
+after the use, but we forgot it for the root node.
 
-Replace the break by a 'return 0' to fix this behaviour.
-
-Fixes: d183e4efcae8 ("[media] v4l: tvp5150: Add missing break in set
-control handler")
-
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: f0fba2ad1b6b ("ASoC: multi-component - ASoC Multi-Component Support")
+Cc: Timur Tabi <timur@kernel.org>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/tvp5150.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/fsl/fsl_ssi.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -828,7 +828,7 @@ static int tvp5150_s_ctrl(struct v4l2_ct
- 		return 0;
- 	case V4L2_CID_HUE:
- 		tvp5150_write(sd, TVP5150_HUE_CTL, ctrl->val);
--		break;
-+		return 0;
- 	case V4L2_CID_TEST_PATTERN:
- 		decoder->enable = ctrl->val ? false : true;
- 		tvp5150_selmux(sd);
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@ -1439,8 +1439,10 @@ static int fsl_ssi_probe_from_dt(struct
+ 	 * different name to register the device.
+ 	 */
+ 	if (!ssi->card_name[0] && of_get_property(np, "codec-handle", NULL)) {
+-		sprop = of_get_property(of_find_node_by_path("/"),
+-					"compatible", NULL);
++		struct device_node *root = of_find_node_by_path("/");
++
++		sprop = of_get_property(root, "compatible", NULL);
++		of_node_put(root);
+ 		/* Strip "fsl," in the compatible name if applicable */
+ 		p = strrchr(sprop, ',');
+ 		if (p)
 
 
