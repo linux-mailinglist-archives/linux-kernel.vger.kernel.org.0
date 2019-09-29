@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A42DC186C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60210C1836
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbfI2RnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 13:43:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42272 "EHLO mail.kernel.org"
+        id S1729482AbfI2Rbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 13:31:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729417AbfI2Rbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:31:44 -0400
+        id S1729443AbfI2Rbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:31:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6208221D71;
-        Sun, 29 Sep 2019 17:31:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B59021925;
+        Sun, 29 Sep 2019 17:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778303;
-        bh=IMFn1tzxwb26dMf9wGqGPU6excEbDGy+Ynd8rhWb8Kc=;
+        s=default; t=1569778306;
+        bh=9T7/eaUJAeVaHklqNckNEqYtv7SCBRVS9WgcTLmyNp4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kQBCfKWWfKLDeFRBW58iECTh2eMdyjKU0NpYkBFRQ5t5M9CIOP4eINrWF1NxRb/wu
-         H67JCkHIGjdw3SAwaN60QlBUftz+IomCETtBIKrrv4Ty4y8J+Qed9Wsoub8Uxj8wWw
-         ga3igSLJG4eCbCmWz/gr91gNCh9DPqpiSjHGDeQQ=
+        b=Roe9f3WQO5UWgeC99mVva5nP6r4X6p6oi/VDBxZ6drPVm9gFdm81IGtbONmnxNM+W
+         iJa/buD41uvOpBRhD7Ua/P8RL7SPVF5EiqSXavZNpk6+rsnTTkVKb/JJX0NZs4vB/T
+         ghdSUhqV5aB2nX4YD8O1gbckLxCoVC0d2udhNh8o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Romain Izard <romain.izard.pro@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 23/49] power: supply: register HWMON devices with valid names
-Date:   Sun, 29 Sep 2019 13:30:23 -0400
-Message-Id: <20190929173053.8400-23-sashal@kernel.org>
+Cc:     Krzysztof Wilczynski <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 25/49] PCI: Add pci_info_ratelimited() to ratelimit PCI separately
+Date:   Sun, 29 Sep 2019 13:30:25 -0400
+Message-Id: <20190929173053.8400-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190929173053.8400-1-sashal@kernel.org>
 References: <20190929173053.8400-1-sashal@kernel.org>
@@ -44,73 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Romain Izard <romain.izard.pro@gmail.com>
+From: Krzysztof Wilczynski <kw@linux.com>
 
-[ Upstream commit f1b937cc86bedf94dbc3478c2c0dc79471081fff ]
+[ Upstream commit 7f1c62c443a453deb6eb3515e3c05650ffe0dcf0 ]
 
-With the introduction of the HWMON compatibility layer to the power
-supply framework in Linux 5.3, all power supply devices' names can be
-used directly to create HWMON devices with the same names.
+Do not use printk_ratelimit() in drivers/pci/pci.c as it shares the rate
+limiting state with all other callers to the printk_ratelimit().
 
-But HWMON has rules on allowable names that are different from those
-used in the power supply framework. The dash character is forbidden, as
-it is used by the libsensors library in userspace as a separator,
-whereas this character is used in the device names in more than half of
-the existing power supply drivers. This last case is consistent with the
-typical naming usage with MFD and Device Tree.
+Add pci_info_ratelimited() (similar to pci_notice_ratelimited() added in
+the commit a88a7b3eb076 ("vfio: Use dev_printk() when possible")) and use
+it instead of printk_ratelimit() + pci_info().
 
-This leads to warnings in the kernel log, with the format:
-
-power_supply gpio-charger: hwmon: \
-	'gpio-charger' is not a valid name attribute, please fix
-
-Add a protection to power_supply_add_hwmon_sysfs() that replaces any
-dash in the device name with an underscore when registering with the
-HWMON framework. Other forbidden characters (star, slash, space, tab,
-newline) are not replaced, as they are not in common use.
-
-Fixes: e67d4dfc9ff1 ("power: supply: Add HWMON compatibility layer")
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Link: https://lore.kernel.org/r/20190825224616.8021-1-kw@linux.com
+Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/supply/power_supply_hwmon.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/pci/pci.c   | 4 ++--
+ include/linux/pci.h | 3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/supply/power_supply_hwmon.c
-index 51fe60440d125..75cf861ba492d 100644
---- a/drivers/power/supply/power_supply_hwmon.c
-+++ b/drivers/power/supply/power_supply_hwmon.c
-@@ -284,6 +284,7 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
- 	struct device *dev = &psy->dev;
- 	struct device *hwmon;
- 	int ret, i;
-+	const char *name;
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 1b27b5af3d552..1f17da3dfeac5 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -890,8 +890,8 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
  
- 	if (!devres_open_group(dev, power_supply_add_hwmon_sysfs,
- 			       GFP_KERNEL))
-@@ -334,7 +335,19 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
- 		}
- 	}
+ 	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+ 	dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
+-	if (dev->current_state != state && printk_ratelimit())
+-		pci_info(dev, "Refused to change power state, currently in D%d\n",
++	if (dev->current_state != state)
++		pci_info_ratelimited(dev, "Refused to change power state, currently in D%d\n",
+ 			 dev->current_state);
  
--	hwmon = devm_hwmon_device_register_with_info(dev, psy->desc->name,
-+	name = psy->desc->name;
-+	if (strchr(name, '-')) {
-+		char *new_name;
+ 	/*
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 82e4cd1b7ac3c..ac8a6c4e17923 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2435,4 +2435,7 @@ void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result err_type);
+ #define pci_notice_ratelimited(pdev, fmt, arg...) \
+ 	dev_notice_ratelimited(&(pdev)->dev, fmt, ##arg)
+ 
++#define pci_info_ratelimited(pdev, fmt, arg...) \
++	dev_info_ratelimited(&(pdev)->dev, fmt, ##arg)
 +
-+		new_name = devm_kstrdup(dev, name, GFP_KERNEL);
-+		if (!new_name) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
-+		strreplace(new_name, '-', '_');
-+		name = new_name;
-+	}
-+	hwmon = devm_hwmon_device_register_with_info(dev, name,
- 						psyhw,
- 						&power_supply_hwmon_chip_info,
- 						NULL);
+ #endif /* LINUX_PCI_H */
 -- 
 2.20.1
 
