@@ -2,43 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 505F1C185C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3366FC1827
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:41:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730333AbfI2RmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 13:42:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44308 "EHLO mail.kernel.org"
+        id S1730631AbfI2Rly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 13:41:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729925AbfI2RdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:33:09 -0400
+        id S1729996AbfI2RdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:33:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0CC721835;
-        Sun, 29 Sep 2019 17:33:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CF3121925;
+        Sun, 29 Sep 2019 17:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778389;
-        bh=qa0mUQv2VHTLNbiFSyncuiRPcluh1c6Y3izKC1A5WRY=;
+        s=default; t=1569778401;
+        bh=082BMeEI5De5r+ZXqfTJEGduL6z/t1hEjdp/Pelq80c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JIL2nbMY9LzekjLJPQKLtPmXxDjpkfgLpZnziDG71+8ksYe7etnldgcQuavmO/VR5
-         C6KvGGnRBvoRgwHT6qqLbbJS709njK0s3zjUv69EHT+rdxgVJiG6PdfjGvmMOcNylz
-         9gSiRSeKO1PQ18ZDr0rsvZTkbDpidz7V74zulpCU=
+        b=gvy2H6vM6nHC7uOBAYNirAyT5zaKkUCCOKhoTCyNBvV0Xpgqwh0II/qvAJH9LWpk1
+         dxllfUB71gJz114OLIvLcLzrDNG44DUFxYcmrPvRvUE7GrpMwxM0zcNyi0jwhveE69
+         4BKBw6UjmIex5/ymh0uoH19bPfSyXl6Ae7vU5Aw4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jake Oshins <jakeo@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH AUTOSEL 5.2 10/42] PCI: pci-hyperv: Fix build errors on non-SYSFS config
-Date:   Sun, 29 Sep 2019 13:32:09 -0400
-Message-Id: <20190929173244.8918-10-sashal@kernel.org>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 15/42] soundwire: intel: fix channel number reported by hardware
+Date:   Sun, 29 Sep 2019 13:32:14 -0400
+Message-Id: <20190929173244.8918-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190929173244.8918-1-sashal@kernel.org>
 References: <20190929173244.8918-1-sashal@kernel.org>
@@ -51,56 +42,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-[ Upstream commit f58ba5e3f6863ea4486952698898848a6db726c2 ]
+[ Upstream commit 18046335643de6d21327f5ae034c8fb8463f6715 ]
 
-Fix build errors when building almost-allmodconfig but with SYSFS
-not set (not enabled). Fixes these build errors:
+On all released Intel controllers (CNL/CML/ICL), PDI2 reports an
+invalid count, force the correct hardware-supported value
 
-ERROR: "pci_destroy_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
-ERROR: "pci_create_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
+This may have to be revisited with platform-specific values if the
+hardware changes, but for now this is good enough.
 
-drivers/pci/slot.o is only built when SYSFS is enabled, so
-pci-hyperv.o has an implicit dependency on SYSFS.
-Make that explicit.
-
-Also, depending on X86 && X86_64 is not needed, so just change that
-to depend on X86_64.
-
-Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jake Oshins <jakeo@microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-hyperv@vger.kernel.org
-Cc: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20190806005522.22642-3-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soundwire/intel.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index 2ab92409210af..297bf928d6522 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -181,7 +181,7 @@ config PCI_LABEL
+diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+index 60293a00a14ee..8a670bc86c0ce 100644
+--- a/drivers/soundwire/intel.c
++++ b/drivers/soundwire/intel.c
+@@ -283,6 +283,16 @@ intel_pdi_get_ch_cap(struct sdw_intel *sdw, unsigned int pdi_num, bool pcm)
  
- config PCI_HYPERV
-         tristate "Hyper-V PCI Frontend"
--        depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
-+        depends on X86_64 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && SYSFS
-         help
-           The PCI device frontend driver allows the kernel to import arbitrary
-           PCI devices from a PCI backend to support PCI driver domains.
+ 	if (pcm) {
+ 		count = intel_readw(shim, SDW_SHIM_PCMSYCHC(link_id, pdi_num));
++
++		/*
++		 * WORKAROUND: on all existing Intel controllers, pdi
++		 * number 2 reports channel count as 1 even though it
++		 * supports 8 channels. Performing hardcoding for pdi
++		 * number 2.
++		 */
++		if (pdi_num == 2)
++			count = 7;
++
+ 	} else {
+ 		count = intel_readw(shim, SDW_SHIM_PDMSCAP(link_id));
+ 		count = ((count & SDW_SHIM_PDMSCAP_CPSS) >>
 -- 
 2.20.1
 
