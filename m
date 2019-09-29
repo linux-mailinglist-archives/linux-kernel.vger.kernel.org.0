@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DE0C16A8
+	by mail.lfdr.de (Postfix) with ESMTP id 8806AC16A9
 	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:34:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbfI2Rb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 13:31:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42606 "EHLO mail.kernel.org"
+        id S1729592AbfI2RcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 13:32:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729547AbfI2Rb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:31:56 -0400
+        id S1729547AbfI2RcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:32:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3539C21D7C;
-        Sun, 29 Sep 2019 17:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6A7D2086A;
+        Sun, 29 Sep 2019 17:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778316;
-        bh=kZEPCmBzfnruGMTP4vMPzELIRnJc++Rbxcjejt8mrIU=;
+        s=default; t=1569778319;
+        bh=jgjxV17hWXr5NUkzNmqQV2rMGWVCCgrhAuf9KnqIIKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FLHYu64U6DklqKKxtnl8uwnXg930oS2e/YaIw1h785cK8qm0Z3USup6pnzWuoVLnn
-         SKLR5bQ+/1pmHregJGU5PpvOt0I1rHq5SUj5Fv80svTXUucynrFuP64TVjRa/NffRI
-         n3CjITuhUxQA+R39OTC5VPHC05O8IqS9z/Emws3U=
+        b=yFPyVk/ha/Bar+m+aEs5FKNKHc13e5Ffhb0Wjz7OmaQ/8T2fehECSdRVSevxWeuOj
+         AuriVI6qwVpSGykB8OD4jTCUfoFOCfsgpQJwSgtuW0+lsqMMDaLAXyLyRfU3n2TQSa
+         4tG+bEhvNEQDLKsbi6mgN4okepV7Zi6lZYJ8w+lM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Krzysztof Wilczynski <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 32/49] PCI: Use static const struct, not const static struct
-Date:   Sun, 29 Sep 2019 13:30:32 -0400
-Message-Id: <20190929173053.8400-32-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 5.3 33/49] ARM: 8905/1: Emit __gnu_mcount_nc when using Clang 10.0.0 or newer
+Date:   Sun, 29 Sep 2019 13:30:33 -0400
+Message-Id: <20190929173053.8400-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190929173053.8400-1-sashal@kernel.org>
 References: <20190929173053.8400-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,55 +47,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Wilczynski <kw@linux.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 8050f3f6645ae0f7e4c1304593f6f7eb2ee7d85c ]
+[ Upstream commit b0fe66cf095016e0b238374c10ae366e1f087d11 ]
 
-Move the static keyword to the front of declarations of pci_regs_behavior[]
-and pcie_cap_regs_behavior[], which resolves compiler warnings when
-building with "W=1":
+Currently, multi_v7_defconfig + CONFIG_FUNCTION_TRACER fails to build
+with clang:
 
-  drivers/pci/pci-bridge-emul.c:41:1: warning: ‘static’ is not at beginning of
-  declaration [-Wold-style-declaration]
-   const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
-   ^
-  drivers/pci/pci-bridge-emul.c:176:1: warning: ‘static’ is not at beginning of
-  declaration [-Wold-style-declaration]
-   const static struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
-   ^
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `_local_bh_enable':
+softirq.c:(.text+0x504): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `__local_bh_enable_ip':
+softirq.c:(.text+0x58c): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `do_softirq':
+softirq.c:(.text+0x6c8): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_enter':
+softirq.c:(.text+0x75c): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_exit':
+softirq.c:(.text+0x840): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o:softirq.c:(.text+0xa50): more undefined references to `mcount' follow
 
-Link: https://lore.kernel.org/r/20190826151436.4672-1-kw@linux.com
-Link: https://lore.kernel.org/r/20190828131733.5817-1-kw@linux.com
-Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+clang can emit a working mcount symbol, __gnu_mcount_nc, when
+'-meabi gnu' is passed to it. Until r369147 in LLVM, this was
+broken and caused the kernel not to boot with '-pg' because the
+calling convention was not correct. Always build with '-meabi gnu'
+when using clang but ensure that '-pg' (which is added with
+CONFIG_FUNCTION_TRACER and its prereq CONFIG_HAVE_FUNCTION_TRACER)
+cannot be added with it unless this is fixed (which means using
+clang 10.0.0 and newer).
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/35
+Link: https://bugs.llvm.org/show_bug.cgi?id=33845
+Link: https://github.com/llvm/llvm-project/commit/16fa8b09702378bacfa3d07081afe6b353b99e60
+
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci-bridge-emul.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/Kconfig  | 2 +-
+ arch/arm/Makefile | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/pci-bridge-emul.c b/drivers/pci/pci-bridge-emul.c
-index 06083b86d4f45..5fd90105510d9 100644
---- a/drivers/pci/pci-bridge-emul.c
-+++ b/drivers/pci/pci-bridge-emul.c
-@@ -38,7 +38,7 @@ struct pci_bridge_reg_behavior {
- 	u32 rsvd;
- };
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 5e2c68e9dd6e2..b587a3b3939ab 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -82,7 +82,7 @@ config ARM
+ 	select HAVE_FAST_GUP if ARM_LPAE
+ 	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
+ 	select HAVE_FUNCTION_GRAPH_TRACER if !THUMB2_KERNEL && !CC_IS_CLANG
+-	select HAVE_FUNCTION_TRACER if !XIP_KERNEL
++	select HAVE_FUNCTION_TRACER if !XIP_KERNEL && (CC_IS_GCC || CLANG_VERSION >= 100000)
+ 	select HAVE_GCC_PLUGINS
+ 	select HAVE_HW_BREAKPOINT if PERF_EVENTS && (CPU_V6 || CPU_V6K || CPU_V7)
+ 	select HAVE_IDE if PCI || ISA || PCMCIA
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index c3624ca6c0bca..9b3d4deca9e4e 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -112,6 +112,10 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
+ CFLAGS_ABI	+=-funwind-tables
+ endif
  
--const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
-+static const struct pci_bridge_reg_behavior pci_regs_behavior[] = {
- 	[PCI_VENDOR_ID / 4] = { .ro = ~0 },
- 	[PCI_COMMAND / 4] = {
- 		.rw = (PCI_COMMAND_IO | PCI_COMMAND_MEMORY |
-@@ -173,7 +173,7 @@ const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
- 	},
- };
++ifeq ($(CONFIG_CC_IS_CLANG),y)
++CFLAGS_ABI	+= -meabi gnu
++endif
++
+ # Accept old syntax despite ".syntax unified"
+ AFLAGS_NOWARN	:=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
  
--const static struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
-+static const struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
- 	[PCI_CAP_LIST_ID / 4] = {
- 		/*
- 		 * Capability ID, Next Capability Pointer and
 -- 
 2.20.1
 
