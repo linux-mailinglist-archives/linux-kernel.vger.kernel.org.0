@@ -2,109 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE12C22B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5C3DC22B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:08:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731632AbfI3OIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:08:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44366 "EHLO mail.kernel.org"
+        id S1731642AbfI3OIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:08:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731375AbfI3OIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:08:19 -0400
+        id S1731375AbfI3OIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:08:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8014E20842;
-        Mon, 30 Sep 2019 14:08:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39150218DE;
+        Mon, 30 Sep 2019 14:08:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569852499;
-        bh=/FN2WQ9yzMV8JVSSKNjmVUodL+U57Yr79DhmFiMtLXE=;
+        s=default; t=1569852501;
+        bh=2mc2WJAfFNYLm+JXii+VJzzTASUubxbZlUcpObv3R/0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=x498d0ztV1PSGakfabzcFv5iQVtrVtv1i2BNWuF3s9XYZWaqstVm9Fv799vLB+iKT
-         Pr4XV9Nvg9o2hPIfwOTbL+SmF74EhbPNgPPUCx2Shn0p6FmH8430+sCxmv0447hcLQ
-         uJORmsSWEebFukSlO+7zMWPNFF1mwfrc1Ux6Imzs=
-Date:   Sun, 29 Sep 2019 16:58:30 +0200
+        b=qGe3PHGQHW6M6wxHHWog/8+TUBx86qRsirrn3uYoGLop4V0MiGFBFkXPvt71++Bjr
+         E07YsWeIqZAfoxGpFFMYOX/X5K30rZE+WRBxh2LMcF7gMOukh0ChjDeBoVI/0z31Jd
+         7aM/Uu5+giWQANAKciJ6rWENkmlF7iR7NCXHQvWA=
+Date:   Sun, 29 Sep 2019 16:59:26 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Jesse Barton <jessebarton95@gmail.com>
 Cc:     valdis.kletnieks@vt.edu, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] Staging: exfat: exfat_super.c: fixed multiple coding
- style issues with camelcase and parentheses
-Message-ID: <20190929145830.GB2017443@kroah.com>
-References: <20190929145229.38561-1-jessebarton95@gmail.com>
+Subject: Re: [PATCH 3/3] Staging: exfat: exfat_super.c Fixed coding style
+ issues.
+Message-ID: <20190929145926.GC2017443@kroah.com>
+References: <20190929145245.38816-1-jessebarton95@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190929145229.38561-1-jessebarton95@gmail.com>
+In-Reply-To: <20190929145245.38816-1-jessebarton95@gmail.com>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 09:52:29AM -0500, Jesse Barton wrote:
-> Changed Function Names:
-> ffsGetVolInfo -> ffs_get_vol_info
-> ffsLookupFile -> ffs_lookup_file
-> ffsCreateFile -> ffs_create_file
-> ffsReadFile -> ffs_read_file
-> ffsWriteFile -> ffs_write_file
-> ffsTruncateFile -> ffs_truncate_file
-> ffsRemoveFile -> ffs_remove_file
-> ffsMoveFile -> ffs_move_file
-> ffsSetAttr -> ffs_set_attr
-> ffsReadStat -> ffs_read_stat
-> ffsWriteStat -> ffs_write_stat
-> ffsMapCluster -> ffs_map_cluster
-> 
-> Removed BUG_ON() and added WARN_ON().
-> Removed unnecessary parentheses:
-> *(dir_entry->Name) - > *dir_entry->Name
-> 
-> Switched to lowercase o in these enums
-> Opt_uid
-> Opt_gid
-> Opt_umask
-> Opt_dmask
-> Opt_fmask
-> Opt_allow_utime
-> Opt_codepage
-> Opt_charset
-> Opt_namecase
-> Opt_debug
-> Opt_err_cont
-> Opt_err_panic
-> Opt_err_ro
-> Opt_utf8_hack
-> Opt_err
+On Sun, Sep 29, 2019 at 09:52:45AM -0500, Jesse Barton wrote:
+> Removed function argument wrapping to new line.
 
+I don't think you "removed" anything here :(
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- Your patch did many different things all at once, making it difficult
-  to review.  All Linux kernel patches need to only do one thing at a
-  time.  If you need to do multiple things (such as clean up all coding
-  style issues in a file/driver), do it in a sequence of patches, each
-  one doing only one thing.  This will make it easier to review the
-  patches to ensure that they are correct, and to help alleviate any
-  merge issues that larger patches can cause.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+Writing the changelog is usually harder than writing the patch in the
+first place, welcome to programming!  :)
 
 thanks,
 
-greg k-h's patch email bot
+greg k-h
