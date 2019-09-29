@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3AD7C1844
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3BCC184A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 19:43:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbfI2RcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 13:32:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42810 "EHLO mail.kernel.org"
+        id S1729678AbfI2RcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 13:32:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729591AbfI2RcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:32:05 -0400
+        id S1729617AbfI2RcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:32:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7BBD2196E;
-        Sun, 29 Sep 2019 17:32:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E5972086A;
+        Sun, 29 Sep 2019 17:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778324;
-        bh=1gC8dF8dzfLCl1x3XsU1+O9RnKWeN/KhwwtSk3TzVcw=;
+        s=default; t=1569778329;
+        bh=9DqCLIXw3OgaPQz/yyOp5nMdkQ0mojVShjTJc+3CrmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZndgS7LGHCSTDfbGS3wn6hSE2Da4e9AM9WUn36W1B2dqVreCDN/qWG+5eBNVGf8d6
-         AiaTNwnzRZSPUly4GSozkTXbmdtwBH4bCgXofX3qrcstGp82oV40Plg5B+WiPkZfrH
-         7wHWxZoEouid+7JCBcvEY/d53YMrL80gidYFUk6I=
+        b=ihDZQ4LngJV25XTuAHl1rtq0iL0u2d9jVXlaGGdtSyRGmvxe3NjL7kpru7aee63HA
+         rjnGBEyXL2ZmxbRMPu3Fi5pH6lmc4EqmGVQfpYUs9KE60dzRWT0mBNBg/CvuQtG/v2
+         KnkTN20604j7K3JvUYcKQCrCRNiqDfFJ2Iu+qFxc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 36/49] block, bfq: push up injection only after setting service time
-Date:   Sun, 29 Sep 2019 13:30:36 -0400
-Message-Id: <20190929173053.8400-36-sashal@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 39/49] hypfs: Fix error number left in struct pointer member
+Date:   Sun, 29 Sep 2019 13:30:39 -0400
+Message-Id: <20190929173053.8400-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190929173053.8400-1-sashal@kernel.org>
 References: <20190929173053.8400-1-sashal@kernel.org>
@@ -44,48 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 58494c980f40274c465ebfdece02d401def088bf ]
+[ Upstream commit b54c64f7adeb241423cd46598f458b5486b0375e ]
 
-If equal to 0, the injection limit for a bfq_queue is pushed to 1
-after a first sample of the total service time of the I/O requests of
-the queue is computed (to allow injection to start). Yet, because of a
-mistake in the branch that performs this action, the push may happen
-also in some other case. This commit fixes this issue.
+In hypfs_fill_super(), if hypfs_create_update_file() fails,
+sbi->update_file is left holding an error number.  This is passed to
+hypfs_kill_super() which doesn't check for this.
 
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fix this by not setting sbi->update_value until after we've checked for
+error.
+
+Fixes: 24bbb1faf3f0 ("[PATCH] s390_hypfs filesystem")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+cc: linux-s390@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bfq-iosched.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/s390/hypfs/inode.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index b33be928d164f..70bcbd02edcb1 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -5809,12 +5809,14 @@ static void bfq_update_inject_limit(struct bfq_data *bfqd,
- 	 */
- 	if ((bfqq->last_serv_time_ns == 0 && bfqd->rq_in_driver == 1) ||
- 	    tot_time_ns < bfqq->last_serv_time_ns) {
-+		if (bfqq->last_serv_time_ns == 0) {
-+			/*
-+			 * Now we certainly have a base value: make sure we
-+			 * start trying injection.
-+			 */
-+			bfqq->inject_limit = max_t(unsigned int, 1, old_limit);
-+		}
- 		bfqq->last_serv_time_ns = tot_time_ns;
--		/*
--		 * Now we certainly have a base value: make sure we
--		 * start trying injection.
--		 */
--		bfqq->inject_limit = max_t(unsigned int, 1, old_limit);
- 	} else if (!bfqd->rqs_injected && bfqd->rq_in_driver == 1)
- 		/*
- 		 * No I/O injected and no request still in service in
+diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
+index ccad1398abd40..b5cfcad953c2e 100644
+--- a/arch/s390/hypfs/inode.c
++++ b/arch/s390/hypfs/inode.c
+@@ -269,7 +269,7 @@ static int hypfs_show_options(struct seq_file *s, struct dentry *root)
+ static int hypfs_fill_super(struct super_block *sb, void *data, int silent)
+ {
+ 	struct inode *root_inode;
+-	struct dentry *root_dentry;
++	struct dentry *root_dentry, *update_file;
+ 	int rc = 0;
+ 	struct hypfs_sb_info *sbi;
+ 
+@@ -300,9 +300,10 @@ static int hypfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		rc = hypfs_diag_create_files(root_dentry);
+ 	if (rc)
+ 		return rc;
+-	sbi->update_file = hypfs_create_update_file(root_dentry);
+-	if (IS_ERR(sbi->update_file))
+-		return PTR_ERR(sbi->update_file);
++	update_file = hypfs_create_update_file(root_dentry);
++	if (IS_ERR(update_file))
++		return PTR_ERR(update_file);
++	sbi->update_file = update_file;
+ 	hypfs_update_update(sb);
+ 	pr_info("Hypervisor filesystem mounted\n");
+ 	return 0;
 -- 
 2.20.1
 
