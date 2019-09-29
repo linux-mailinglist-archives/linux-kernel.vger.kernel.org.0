@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F50C153A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:02:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ACA6C1541
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfI2OCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 10:02:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44712 "EHLO mail.kernel.org"
+        id S1730206AbfI2OCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 10:02:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729534AbfI2OCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 10:02:12 -0400
+        id S1730194AbfI2OCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 10:02:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C03D2086A;
-        Sun, 29 Sep 2019 14:02:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A73221835;
+        Sun, 29 Sep 2019 14:02:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569765731;
-        bh=WteolVlV8xZa6ogzKxdo9wnP8h81ZVK+QRa798z6MtE=;
+        s=default; t=1569765741;
+        bh=cRcNa+IPSu9O6oUe7TD+cvUBa7ZY+zVpPPKdob/HPKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OtJLO1y+U6my/hKETjqVV+nEJBtysQLhovBJF9Eby1LBpiBrSEw/Nq2rkU+PXdA+b
-         h70I5YXrY/JlbJg1yzZd2ZhcFf73V7G84YkhXmlDmH4v7G19ttpsp8wzNotbUieRge
-         4VTLQ6wnj6aKbJZm3LKkLjKysCiwwzo8Yw6UmWeo=
+        b=nsuAVLN4A6omUDmL93oM5csYoTId3VEr9MY+UGnuY03qWbSgbSXN6EbwemHFG1S1A
+         YWgArlM9WhhN7gsLKE+VGdh56P+K4yLuojq/miOucAFp5Zs8F3ihe0EVxew66pCl16
+         FQX3yyAqdhZLZag21jUHGkN//umdLRmLm+2MxBmk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S." <david@majinbuu.com>,
-        Peteris Rudzusiks <peteris.rudzusiks@gmail.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Sasha Levin <sashal@kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 5.2 35/45] drm/dp: Add DP_DPCD_QUIRK_NO_SINK_COUNT
-Date:   Sun, 29 Sep 2019 15:56:03 +0200
-Message-Id: <20190929135032.577766771@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 36/45] net: dont warn in inet diag when IPV6 is disabled
+Date:   Sun, 29 Sep 2019 15:56:04 +0200
+Message-Id: <20190929135032.777210777@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190929135024.387033930@linuxfoundation.org>
 References: <20190929135024.387033930@linuxfoundation.org>
@@ -46,60 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 7974033e527a5dd12d96126d09d4cff4f9b65c69 ]
+[ Upstream commit 1e64d7cbfdce4887008314d5b367209582223f27 ]
 
-CH7511 eDP->LVDS bridge doesn't seem to set SINK_COUNT properly
-causing i915 to detect it as disconnected. Add a quirk to ignore
-SINK_COUNT on these devices.
+If IPV6 was disabled, then ss command would cause a kernel warning
+because the command was attempting to dump IPV6 socket information.
+The fix is to just remove the warning.
 
-Cc: David S. <david@majinbuu.com>
-Cc: Peteris Rudzusiks <peteris.rudzusiks@gmail.com>
-Tested-by: Peteris Rudzusiks <peteris.rudzusiks@gmail.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105406
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190528140650.19230-1-ville.syrjala@linux.intel.com
-Acked-by: Jani Nikula <jani.nikula@intel.com> #irc
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202249
+Fixes: 432490f9d455 ("net: ip, diag -- Add diag interface for raw sockets")
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_dp_helper.c | 4 +++-
- include/drm/drm_dp_helper.h     | 7 +++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ net/ipv4/raw_diag.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index 54a6414c5d961..429c58ce56ced 100644
---- a/drivers/gpu/drm/drm_dp_helper.c
-+++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -1278,7 +1278,9 @@ static const struct dpcd_quirk dpcd_quirk_list[] = {
- 	/* LG LP140WF6-SPM1 eDP panel */
- 	{ OUI(0x00, 0x22, 0xb9), DEVICE_ID('s', 'i', 'v', 'a', 'r', 'T'), false, BIT(DP_DPCD_QUIRK_CONSTANT_N) },
- 	/* Apple panels need some additional handling to support PSR */
--	{ OUI(0x00, 0x10, 0xfa), DEVICE_ID_ANY, false, BIT(DP_DPCD_QUIRK_NO_PSR) }
-+	{ OUI(0x00, 0x10, 0xfa), DEVICE_ID_ANY, false, BIT(DP_DPCD_QUIRK_NO_PSR) },
-+	/* CH7511 seems to leave SINK_COUNT zeroed */
-+	{ OUI(0x00, 0x00, 0x00), DEVICE_ID('C', 'H', '7', '5', '1', '1'), false, BIT(DP_DPCD_QUIRK_NO_SINK_COUNT) },
- };
- 
- #undef OUI
-diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-index 97ce790a5b5aa..d6c89cbe127a3 100644
---- a/include/drm/drm_dp_helper.h
-+++ b/include/drm/drm_dp_helper.h
-@@ -1401,6 +1401,13 @@ enum drm_dp_quirk {
- 	 * driver still need to implement proper handling for such device.
- 	 */
- 	DP_DPCD_QUIRK_NO_PSR,
-+	/**
-+	 * @DP_DPCD_QUIRK_NO_SINK_COUNT:
-+	 *
-+	 * The device does not set SINK_COUNT to a non-zero value.
-+	 * The driver should ignore SINK_COUNT during detection.
-+	 */
-+	DP_DPCD_QUIRK_NO_SINK_COUNT,
- };
- 
- /**
+diff --git a/net/ipv4/raw_diag.c b/net/ipv4/raw_diag.c
+index 899e34ceb5602..e35736b993003 100644
+--- a/net/ipv4/raw_diag.c
++++ b/net/ipv4/raw_diag.c
+@@ -24,9 +24,6 @@ raw_get_hashinfo(const struct inet_diag_req_v2 *r)
+ 		return &raw_v6_hashinfo;
+ #endif
+ 	} else {
+-		pr_warn_once("Unexpected inet family %d\n",
+-			     r->sdiag_family);
+-		WARN_ON_ONCE(1);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ }
 -- 
 2.20.1
 
