@@ -2,148 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1054BC1434
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 12:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE23C143E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 12:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbfI2KYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 06:24:35 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38223 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfI2KYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 06:24:34 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 3so9647266wmi.3
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2019 03:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:cc:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=3hP7uG+9EHpW+fJgEuzdYOoEFGxgLjWCOaNYKY6K2pk=;
-        b=R6k+IuHh0gRSegIuiT0hMwL+K3vAe9e5Wwvl96aNU9EysAIdFVlr6wl9EbJBfqMmyH
-         u8eAb8kmODEskCtvSxwdJmwJqYZEaa0TyZQ7NwZwAfNBcT2CkyZK/7qFGy1PY3ZKWmtv
-         DrPikXDleJ3vvbApVCWZ7nLB6OAyGLUtad6gVGKk+EDOcl/Dhr46ScYDARCe7aSJNWlC
-         DAzc15aI3RsmRsibnlUK6TrMzEOs56mQVXXv5dW0VYo8o+Ku/RVvD8iz3zpACkSLUIOB
-         e7TxLKzKKuHsGbWMeNdjfi/77awvfDJG6uqp7JJbSVAbiAgCimPVOVd4vPCxeew7Ywhe
-         IPKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=3hP7uG+9EHpW+fJgEuzdYOoEFGxgLjWCOaNYKY6K2pk=;
-        b=DsKDkjkx3Rm9Gg7IvTc69KWMHkPvl5eNydjvIUvI+4y3dlp/owbLTzqdNseXD8bjfj
-         s9pp/iSGnIVvQ941FDxA3Cp2H65a8U7KSDo9ffHPpumKju/2VtiBHZSHEi0aZ0zoQTe8
-         jRHRJaNpce8GSD35a8JuvT+hdBZ4iCrxGawX/itARemHRxVBtshd8QF7nMDd4gQi2Rt2
-         19/CXFoHGb6aVe4uZwPLtftyZLMmQPqWCcNYQg2UffYLeTVETV1VJxQ9KfUN0KRQpG6a
-         nzyouRNtzN0/7jatsdiSl3XvsBEtrNcixCzZJOSBGfcpAo8VDsElgtJeVSWmzBRcK3O3
-         E3wQ==
-X-Gm-Message-State: APjAAAXbDEHJQfg1zk5N/cQ4itVMxZploXV+51EvJThwfyaYBUSOhx9z
-        c7f6Zl5uFw38BPilsNAx0kFAUQ==
-X-Google-Smtp-Source: APXvYqyDykjrrgNwcUTNoVacUKBlMgPiC7NhPSgDkEgKRQWJJky9JAB/CUbVgFUcmXiY0vR0bVcgNg==
-X-Received: by 2002:a05:600c:24ce:: with SMTP id 14mr13013085wmu.71.1569752673470;
-        Sun, 29 Sep 2019 03:24:33 -0700 (PDT)
-Received: from linux-2.fritz.box (p200300D997073100A232ACDA09636D2D.dip0.t-ipconnect.de. [2003:d9:9707:3100:a232:acda:963:6d2d])
-        by smtp.googlemail.com with ESMTPSA id z189sm32449238wmc.25.2019.09.29.03.24.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Sep 2019 03:24:32 -0700 (PDT)
-Subject: Re: [PATCH] ipc/sem: Fix race between to-be-woken task and waker
-To:     Waiman Long <longman@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20190920155402.28996-1-longman () redhat ! com>
-From:   Manfred Spraul <manfred@colorfullife.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        1vier1@web.de
-Message-ID: <d89b622a-2acf-b0a9-021d-c1c521a731f5@colorfullife.com>
-Date:   Sun, 29 Sep 2019 12:24:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
-MIME-Version: 1.0
-In-Reply-To: <20190920155402.28996-1-longman () redhat ! com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1728962AbfI2KrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 06:47:21 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50862 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbfI2KrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 06:47:21 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 185221A019F;
+        Sun, 29 Sep 2019 12:47:18 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 811E61A0179;
+        Sun, 29 Sep 2019 12:47:15 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E42CA4029A;
+        Sun, 29 Sep 2019 18:47:11 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     peda@axentia.se, leoyang.li@nxp.com
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biwen Li <biwen.li@nxp.com>
+Subject: [PATCH] i2c: pca954x: Add property to skip disabling PCA954x MUX device
+Date:   Sun, 29 Sep 2019 18:36:38 +0800
+Message-Id: <20190929103638.46038-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Waiman,
+On some Layerscape boards like LS2085ARDB and LS2088ARDB,
+input pull-up resistors on PCA954x MUX device are missing on board,
+So, if MUX are disabled after powered-on, input lines will float
+leading to incorrect functionality.
 
-I have now written the mail 3 times:
-Twice I thought that I found a race, but during further analysis, it 
-always turns out that the spin_lock() is sufficient.
+Hence, PCA954x MUX device should never be turned-off after
+power-on.
 
-First, to avoid any obvious things: Until the series with e.g. 
-27d7be1801a4824e, there was a race inside sem_lock().
+Add property to skip disabling PCA954x MUX device
+if device tree contains "i2c-mux-never-disable"
+for PCA954x device node.
 
-Thus it was possible that multiple threads were operating on the same 
-semaphore array, with obviously arbitrary impact.
+Errata ID: E-00013 on board LS2085ARDB and LS2088ARDB
+(Board revision found on Rev.B, Rev.C and Rev.D)
 
-On 9/20/19 5:54 PM, Waiman Long wrote:
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+ drivers/i2c/muxes/i2c-mux-pca954x.c | 33 +++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
->   
-> +		/*
-> +		 * A spurious wakeup at the right moment can cause race
-> +		 * between the to-be-woken task and the waker leading to
-> +		 * missed wakeup. Setting state back to TASK_INTERRUPTIBLE
-> +		 * before checking queue.status will ensure that the race
-> +		 * won't happen.
-> +		 *
-> +		 *	CPU0				CPU1
-> +		 *
-> +		 *  <spurious wakeup>		wake_up_sem_queue_prepare():
-> +		 *  state = TASK_INTERRUPTIBLE    status = error
-> +		 *				try_to_wake_up():
-> +		 *  smp_mb()			  smp_mb()
-> +		 *  if (status == -EINTR)	  if (!(p->state & state))
-> +		 *    schedule()		    goto out
-> +		 */
-> +		set_current_state(TASK_INTERRUPTIBLE);
-> +
-
-So the the hypothesis is that we have a race due to the optimization 
-within try_to_wake_up():
-If the status is already TASK_RUNNING, then the wakeup is a nop.
-
-Correct?
-
-The waker wants to use:
-
-     lock();
-     set_conditions();
-     unlock();
-
-as the wake_q is a shared list, completely asynchroneously this will happen:
-
-     smp_mb(); //// ***1
-     if (current->state = TASK_INTERRUPTIBLE) current->state=TASK_RUNNING;
-
-The only guarantee is that this will happen after lock(), it may happen 
-before set_conditions().
-
-The task that goes to sleep uses:
-
-     lock();
-     check_conditions();
-     __set_current_state();
-     unlock(); //// ***2
-     schedule();
-
-You propose to change that to:
-
-     lock();
-     set_current_state();
-     check_conditions();
-     unlock();
-     schedule();
-
-I don't see a race anymore, and I don't see how the proposed change will 
-help.
-e.g.: __set_current_state() and smp_mb() have paired memory barriers 
-***1 and ***2 above.
-
---
-
-     Manfred
+diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2c-mux-pca954x.c
+index 923aa3a5a3dc..ea8aca54d572 100644
+--- a/drivers/i2c/muxes/i2c-mux-pca954x.c
++++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
+@@ -93,6 +93,7 @@ struct pca954x {
+ 	struct irq_domain *irq;
+ 	unsigned int irq_mask;
+ 	raw_spinlock_t lock;
++	u8 disable_mux;		/* do not disable mux if val not 0 */
+ };
+ 
+ /* Provide specs for the PCA954x types we know about */
+@@ -258,6 +259,11 @@ static int pca954x_deselect_mux(struct i2c_mux_core *muxc, u32 chan)
+ 	struct i2c_client *client = data->client;
+ 	s8 idle_state;
+ 
++	if (data->disable_mux != 0) {
++		data->last_chan = data->chip->nchans;
++		return pca954x_reg_write(muxc->parent, client, data->disable_mux);
++	}
++
+ 	idle_state = READ_ONCE(data->idle_state);
+ 	if (idle_state >= 0)
+ 		/* Set the mux back to a predetermined channel */
+@@ -462,16 +468,32 @@ static int pca954x_probe(struct i2c_client *client,
+ 		}
+ 	}
+ 
++	/* Errata ID E-00013 on board LS2088ARDB and LS2088ARDB:
++	 * The point here is that you must not disable a mux if there
++	 * are no pullups on the input or you mess up the I2C. This
++	 * needs to be put into the DTS really as the kernel cannot
++	 * know this otherwise.
++	 */
++
++	data->disable_mux = np &&
++		of_property_read_bool(np, "i2c-mux-never-disable") &&
++		data->chip->muxtype == pca954x_ismux ?
++		data->chip->enable : 0;
++
+ 	/* Write the mux register at addr to verify
+ 	 * that the mux is in fact present. This also
+ 	 * initializes the mux to disconnected state.
+ 	 */
+-	if (i2c_smbus_write_byte(client, 0) < 0) {
++	if (i2c_smbus_write_byte(client, data->disable_mux) < 0) {
+ 		dev_warn(dev, "probe failed\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	data->last_chan = 0;		   /* force the first selection */
++	if (data->disable_mux != 0)
++		data->last_chan = data->chip->nchans;
++	else
++		data->last_chan = 0;               /* force the first selection */
++
+ 	data->idle_state = MUX_IDLE_AS_IS;
+ 
+ 	idle_disconnect_dt = np &&
+@@ -531,8 +553,11 @@ static int pca954x_resume(struct device *dev)
+ 	struct i2c_mux_core *muxc = i2c_get_clientdata(client);
+ 	struct pca954x *data = i2c_mux_priv(muxc);
+ 
+-	data->last_chan = 0;
+-	return i2c_smbus_write_byte(client, 0);
++	if (data->disable_mux != 0)
++		data->last_chan = data->chip->nchans;
++	else
++		data->last_chan = 0;
++	return i2c_smbus_write_byte(client, data->disable_mux);
+ }
+ #endif
+ 
+-- 
+2.17.1
 
