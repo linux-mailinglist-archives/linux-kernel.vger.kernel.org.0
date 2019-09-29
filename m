@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 345DAC1566
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D636C153C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 16:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbfI2ODu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 10:03:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46940 "EHLO mail.kernel.org"
+        id S1729451AbfI2OCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 10:02:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbfI2ODo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 10:03:44 -0400
+        id S1730172AbfI2OCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 10:02:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 257A82082F;
-        Sun, 29 Sep 2019 14:03:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73C1A2082F;
+        Sun, 29 Sep 2019 14:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569765823;
-        bh=oJ1DAPC6i1yD3poQaOwZoOjZyJqHHxMJuBpIZsKKyd8=;
+        s=default; t=1569765735;
+        bh=h7aXqYbuaeCQa/Wtp9rWH6rdp8pPeonuM38BRTgkl0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t0TfsCGa2+VWo2DrhAu7S6ynGWA/b43Bko8QQZE8jwqd6gh1orgmdbpF/EYs7YQwu
-         rdS8+hvMMM23SV/fBaJ6aIsbtDfrZI3YYwLzjha4rgkd/IUbFszSJChzKOErFghJHJ
-         jeF4vcwUdu/nM/QwjEg+NR4p9Wmt1NO6wTJKU7Yc=
+        b=jPcGluhmxr1nldyCNHKX/CsAd5r4pd1dQycW+9W6IxprEpeQ+Po/GMouinWYj4+Cv
+         vdvGYX/v2xHQMcjtfyuNe9R/jl9Bct7x0d1MqrssLgs1WBsRiNLqaRMMx/hEcUpmao
+         FWD17cdmrQnZIubalRjsiKkSto0CP0mkeG4a5rTc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.3 08/25] powerpc/xive: Fix bogus error code returned by OPAL
-Date:   Sun, 29 Sep 2019 15:56:11 +0200
-Message-Id: <20190929135012.097592839@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 44/45] net_sched: check cops->tcf_block in tc_bind_tclass()
+Date:   Sun, 29 Sep 2019 15:56:12 +0200
+Message-Id: <20190929135034.757719891@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190929135006.127269625@linuxfoundation.org>
-References: <20190929135006.127269625@linuxfoundation.org>
+In-Reply-To: <20190929135024.387033930@linuxfoundation.org>
+References: <20190929135024.387033930@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,81 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kurz <groug@kaod.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 6ccb4ac2bf8a35c694ead92f8ac5530a16e8f2c8 upstream.
+[ Upstream commit 8b142a00edcf8422ca48b8de88d286efb500cb53 ]
 
-There's a bug in skiboot that causes the OPAL_XIVE_ALLOCATE_IRQ call
-to return the 32-bit value 0xffffffff when OPAL has run out of IRQs.
-Unfortunatelty, OPAL return values are signed 64-bit entities and
-errors are supposed to be negative. If that happens, the linux code
-confusingly treats 0xffffffff as a valid IRQ number and panics at some
-point.
+At least sch_red and sch_tbf don't implement ->tcf_block()
+while still have a non-zero tc "class".
 
-A fix was recently merged in skiboot:
+Instead of adding nop implementations to each of such qdisc's,
+we can just relax the check of cops->tcf_block() in
+tc_bind_tclass(). They don't support TC filter anyway.
 
-e97391ae2bb5 ("xive: fix return value of opal_xive_allocate_irq()")
-
-but we need a workaround anyway to support older skiboots already
-in the field.
-
-Internally convert 0xffffffff to OPAL_RESOURCE which is the usual error
-returned upon resource exhaustion.
-
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Greg Kurz <groug@kaod.org>
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/156821713818.1985334.14123187368108582810.stgit@bahia.lan
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: syzbot+21b29db13c065852f64b@syzkaller.appspotmail.com
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/opal.h            |    2 +-
- arch/powerpc/platforms/powernv/opal-call.c |    2 +-
- arch/powerpc/sysdev/xive/native.c          |   11 +++++++++++
- 3 files changed, 13 insertions(+), 2 deletions(-)
+ net/sched/sch_api.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/powerpc/include/asm/opal.h
-+++ b/arch/powerpc/include/asm/opal.h
-@@ -272,7 +272,7 @@ int64_t opal_xive_get_vp_info(uint64_t v
- int64_t opal_xive_set_vp_info(uint64_t vp,
- 			      uint64_t flags,
- 			      uint64_t report_cl_pair);
--int64_t opal_xive_allocate_irq(uint32_t chip_id);
-+int64_t opal_xive_allocate_irq_raw(uint32_t chip_id);
- int64_t opal_xive_free_irq(uint32_t girq);
- int64_t opal_xive_sync(uint32_t type, uint32_t id);
- int64_t opal_xive_dump(uint32_t type, uint32_t id);
---- a/arch/powerpc/platforms/powernv/opal-call.c
-+++ b/arch/powerpc/platforms/powernv/opal-call.c
-@@ -257,7 +257,7 @@ OPAL_CALL(opal_xive_set_queue_info,		OPA
- OPAL_CALL(opal_xive_donate_page,		OPAL_XIVE_DONATE_PAGE);
- OPAL_CALL(opal_xive_alloc_vp_block,		OPAL_XIVE_ALLOCATE_VP_BLOCK);
- OPAL_CALL(opal_xive_free_vp_block,		OPAL_XIVE_FREE_VP_BLOCK);
--OPAL_CALL(opal_xive_allocate_irq,		OPAL_XIVE_ALLOCATE_IRQ);
-+OPAL_CALL(opal_xive_allocate_irq_raw,		OPAL_XIVE_ALLOCATE_IRQ);
- OPAL_CALL(opal_xive_free_irq,			OPAL_XIVE_FREE_IRQ);
- OPAL_CALL(opal_xive_get_vp_info,		OPAL_XIVE_GET_VP_INFO);
- OPAL_CALL(opal_xive_set_vp_info,		OPAL_XIVE_SET_VP_INFO);
---- a/arch/powerpc/sysdev/xive/native.c
-+++ b/arch/powerpc/sysdev/xive/native.c
-@@ -231,6 +231,17 @@ static bool xive_native_match(struct dev
- 	return of_device_is_compatible(node, "ibm,opal-xive-vc");
- }
- 
-+static s64 opal_xive_allocate_irq(u32 chip_id)
-+{
-+	s64 irq = opal_xive_allocate_irq_raw(chip_id);
-+
-+	/*
-+	 * Old versions of skiboot can incorrectly return 0xffffffff to
-+	 * indicate no space, fix it up here.
-+	 */
-+	return irq == 0xffffffff ? OPAL_RESOURCE : irq;
-+}
-+
- #ifdef CONFIG_SMP
- static int xive_native_get_ipi(unsigned int cpu, struct xive_cpu *xc)
- {
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index 04faee7ccbce6..1047825d9f48d 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -1920,6 +1920,8 @@ static void tc_bind_tclass(struct Qdisc *q, u32 portid, u32 clid,
+ 	cl = cops->find(q, portid);
+ 	if (!cl)
+ 		return;
++	if (!cops->tcf_block)
++		return;
+ 	block = cops->tcf_block(q, cl, NULL);
+ 	if (!block)
+ 		return;
+-- 
+2.20.1
+
 
 
