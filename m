@@ -2,91 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9469CC19C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 01:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B56AC19C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 01:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbfI2XdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 19:33:05 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35295 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729010AbfI2XdF (ORCPT
+        id S1729210AbfI2XqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 19:46:21 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39539 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfI2XqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 19:33:05 -0400
-Received: by mail-io1-f68.google.com with SMTP id q10so33405038iop.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2019 16:33:03 -0700 (PDT)
+        Sun, 29 Sep 2019 19:46:20 -0400
+Received: by mail-qt1-f195.google.com with SMTP id n7so14704800qtb.6;
+        Sun, 29 Sep 2019 16:46:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=PGZFOXK76wFT4F+gu6vLCCXEDDpP4gV6DuBHAIMM9Kt3aMi9ddX5I/udaE9nofQSKM
-         EgAu7mo/3JS+++FOaXYcjrUzNLRfpEAajksGEVNpMceIb4Vfntgdngrfxny8tAnVT2ll
-         qxlk0Bh8TsjVJ2B6b0l3aeVhqHXO5PIEDjZTjJ7vyxum8db3bDX8898mj96eNN099I9Y
-         MEFFyyfZb2I/iVXmfTeUVfdgA2yRMM0ql0jSvghzOBpa+ymHZNhWmUmbc2WAqEgUcnhG
-         u8KxOFi4bmurcTq7GN4Wp7+piv6gRA/hXdknf4jiJj/TEgnkQXW4qX0/jJ8kfWejsA1s
-         Ybkw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=9IjuVXfjyC+Q3EgkfLoZRHzj7hful0PTkZcBqQey3BU=;
+        b=WgOkqUXG/IOsCK1v46IkgYuvCCXlWivbA0/c8I3P1LW9SLM09h//IDxsINvCoNLie1
+         d2uDzX0BimZmK66AyDUtq4ykya65Xw7IM43b5alZxJ6Bj4GSCxD/hznZReZ+zKZKcjnW
+         32ER5J6DTGckGj+qW2ka0ox7QFqlyfL11PLQ6onHceTt7/mxI6u6G7ArnYeq9ad3PyZG
+         fTePApuiq8DXfLot28KFYxlHH/PoJ4FZSJzGQPl5+gejE1YAeeSNrfgue6W8MbxenL3w
+         0YHyQ/tlYHv2h/6F+e+b8mDM6hZXe+sEJBwENssePuU7yxUAt54Pmic+/221kiWZY6iy
+         oUZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=NTFVIiTWyqt7P1xq2c21hsJyuFaYo3g6XzwA6cqxKEIB0mYSW2MahMtb/Y/eWLz1X7
-         51YTBh5/35JKbVQl+Dw1Vw/RdxUaZxfS6rlSHq88hdVN8oaRx47egz2OPzRQ6sWgqyN+
-         E4Q9fHYh7LXO81Cb7L8WCZg0sTwPdgBAETNYQkeoXnfZ3hQqgqmx2f5pDgsjs1XDLnCD
-         9nSKgD4lK/y20fsXzQGSwRP5c3V2poOTeH+4td3Ig309S1dAaq3dIhuBd4Eg5m+RWjV2
-         4kVGMMapE5zJ3HI1gY+nEIZsuxU2YjuO6SR8pzUFRJ3/tve1M0p9BWCKiu6hHoYezKkv
-         rHqg==
-X-Gm-Message-State: APjAAAUe12Kgl9cu/+hbfMD8qQv1rja0rdu2MEqGSP3TmZA7f8GEVFGx
-        lPVOf8w5TY9GsmAPz6aOTtcKFb7ct8daIP4YYVA=
-X-Google-Smtp-Source: APXvYqy83uAvgqmsm9QOCZGsOs2A12jFbLLNzX4iHT/4fsxGu+Q/jP5q/zLwoDoQK9fYJDgz99iXoSHQ7M6Ylbx0VRg=
-X-Received: by 2002:a6b:7102:: with SMTP id q2mr17364359iog.154.1569799982824;
- Sun, 29 Sep 2019 16:33:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=9IjuVXfjyC+Q3EgkfLoZRHzj7hful0PTkZcBqQey3BU=;
+        b=QYalZ82IQlTBOHYDrnrUPjrw7d2jCG+T7F1ARTCC4KfMtd3fsQQ/V6YK1YY60L01Wj
+         eX0ZO5LV84JoE/5qhyN5+lWRlDHFc5XA9NeJOIk7kjSXzSKBFOocPThUWJi11cWTjxtr
+         asucc3jBAwqIE18RIC086HPp+7SRQI+ypJps1EMFUi8HJjNcGaZ6aa7Y9XMRe6KuThXc
+         x0LQcmdIgfjqtrcsmf/6PxmFw4wPBFZqNb9q/MlXOtix9A3VZffqciqVJhQHU8GE4XhN
+         DnXcQndICANHUxqcMDaqoSiSKoJoB45pz8hLTLsBw99dpByUBoc96uNKhRVbuKn5nLG2
+         NcJw==
+X-Gm-Message-State: APjAAAWstWj7o94+EhvGKXkgdthMT63+/MOnCHEaPP/KA3uvgEiz3/6e
+        JbpNdedSAZ24E4XXwz8ai/E=
+X-Google-Smtp-Source: APXvYqxVMoPmFYQFR1uQ9s3WqrOhj1kuaz6jaF1gAqCSFqi7agIMTQouJhYavwt4z9geiH7wAvaCbg==
+X-Received: by 2002:a0c:c48e:: with SMTP id u14mr18611626qvi.37.1569800779344;
+        Sun, 29 Sep 2019 16:46:19 -0700 (PDT)
+Received: from vivek-desktop (ool-457857f8.dyn.optonline.net. [69.120.87.248])
+        by smtp.gmail.com with ESMTPSA id m14sm4585875qki.27.2019.09.29.16.46.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 29 Sep 2019 16:46:18 -0700 (PDT)
+Date:   Sun, 29 Sep 2019 19:46:15 -0400
+From:   Vivek Unune <npcomplete13@gmail.com>
+To:     Vicente Bergas <vicencb@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
+        ezequiel@collabora.com, akash@openedev.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Roger Quadros <rogerq@ti.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix usb-c on Hugsun X99 TV Box
+Message-ID: <20190929234615.GA5355@vivek-desktop>
+References: <20190929032230.24628-1-npcomplete13@gmail.com>
+ <54c67ca8-8428-48ee-9a96-e1216ba02839@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:2886:0:0:0:0:0 with HTTP; Sun, 29 Sep 2019 16:33:02
- -0700 (PDT)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <kouevigathk@gmail.com>
-Date:   Mon, 30 Sep 2019 01:33:02 +0200
-Message-ID: <CAMpCND0TE-w5n46qqwDWp9EaLsfbCnm1eNxhpzbSkaf5w=RnbA@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <54c67ca8-8428-48ee-9a96-e1216ba02839@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Sun, Sep 29, 2019 at 01:22:17PM +0200, Vicente Bergas wrote:
+> On Sunday, September 29, 2019 5:22:30 AM CEST, Vivek Unune wrote:
+> > Fix usb-c on X99 TV Box. Tested with armbian w/ kernel 5.3
+> > 
+> > Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+> > b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+> > index 0d1f5f9a0de9..c133e8d64b2a 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
+> > @@ -644,7 +644,7 @@
+> >  	status = "okay";
+> >  	u2phy0_host: host-port {
+> > -		phy-supply = <&vcc5v0_host>;
+> > +		phy-supply = <&vcc5v0_typec>;
+> >  		status = "okay";
+> >  	};
+> > @@ -712,7 +712,7 @@
+> >  &usbdrd_dwc3_0 {
+> >  	status = "okay";
+> > -	dr_mode = "otg";
+> > +	dr_mode = "host";
+> >  };
+> >  &usbdrd3_1 {
+> 
+> Hi Vivek,
+> 
+> which is the relationship of your patch and this commit:
+> 
+> e1d9149e8389f1690cdd4e4056766dd26488a0fe
+> arm64: dts: rockchip: Fix USB3 Type-C on rk3399-sapphire
+> 
+> with respect to this other commit:
+> 
+> c09b73cfac2a9317f1104169045c519c6021aa1d
+> usb: dwc3: don't set gadget->is_otg flag
+> 
+> ?
+> 
+> I did not test reverting e1d9149e since c09b73cf was applied.
+> 
+> Regards,
+>  Vicenç.
+> 
 
-My name is Joe Akaba I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
+Hi Vicenç,
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:joeakaba00@gmail.com
+Indeed, I was motivated by e1d9149e ("arm64: dts: rockchip: Fix USB3 
+Type-C on rk3399-sapphire"). X99 TV box showed exact same symptoms
+with usb-c port. After applying the fix, it worked.
 
-Many thanks in advance,
-Mr.Joe Akaba
+I was not aware of c09b73cf ("usb: dwc3: don't set gadget->is_otg
+ flag") and it will be interesting to test it. This might render
+my fix unecessary.
 
+Thanks,
 
-Hallo
+Vivek
 
-Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8.5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
-
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: joeakaba00@gmail.com
-
-Vielen Dank im Voraus,
-Mr.Joe Akaba
