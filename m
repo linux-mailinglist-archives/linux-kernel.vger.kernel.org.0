@@ -2,115 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27778C190D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 21:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 201ADC191E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2019 21:34:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfI2TAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 15:00:35 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52640 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729179AbfI2TAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 15:00:35 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r19so10885198wmh.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2019 12:00:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=dq1noghuki3s05Ms2hjQ2tq/heCYmToBu8e3a/R//7k=;
-        b=Z5LKGHGid/K7epxcforaYglsNnSUaV8lnCarCN9CdgBD4Qatjnn9cnsZytP9ky59ba
-         qB9zPJu0h2qcPHVPL/J+51KdrPOytzAmwLR1/kHWJoyMCVPB8zGLrGdrLha1im3vXMSg
-         bz56XJ9ykAdYr6o6krDqocZlt6CEkWarxKRKRuII1wjLcsvSHgzpq/DNx7NukuC9vPB/
-         dv1II0TaVlwLAYf8Tw/YP0Tp8ELv6SYSj12mFGgXU0mFgLiMgzMTqQHzlzxPunwLBWiY
-         NH3/sEHN0XioDah1YTnGvYnNKb+j73/N9L1sP5/Xjuoa2FyGy2aPWuRGUKIDs6fpHKwn
-         sHuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=dq1noghuki3s05Ms2hjQ2tq/heCYmToBu8e3a/R//7k=;
-        b=a2Bc4Fmz0LmgMAvxSKPDgEz98gMa92s/J0SbEpDfdQSFKbnT//6lVDXEATiW1cFYhT
-         swoRoZkoZGKIfKgV00d3h1AYXGaEXqjufxWgTBfeCh1SdUyB+KAMyT7zBSWVStxQe2B8
-         ly8T2bQIUXFI4fluaYYsAFpyHPg0YLjvsIlzA3Ro4LJ6LzUxAzwnWFUmTrV2NRvS8rZV
-         sdLRPBxOleT6jesCz/uA12N/Q56SfBi+tGwY3M+TuNgsf8qjQuPT7gUGQYN0QhnoV87f
-         TyubIBn3unGjE6C7gFz/16Ft0hyfLU01X2L/4dFHD9J8liMGc7MzQu9niTb1F4YPFOl4
-         X0rw==
-X-Gm-Message-State: APjAAAXJDiewPv2z7g1ItzweuuMm6fEa8Id9Wl5r9n/wWdn35EDGc3jl
-        7DjqmOw+4kqBxF1H9KQR01x7Cw==
-X-Google-Smtp-Source: APXvYqyFtlLEZu69YPYh3aY2ZYV4LXZ+eLcytsMIjpAYY/55CwRALUe4eIvg9U+aZQRlgfBnYgDa2g==
-X-Received: by 2002:a05:600c:d4:: with SMTP id u20mr15397343wmm.66.1569783631912;
-        Sun, 29 Sep 2019 12:00:31 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id o9sm26711912wrh.46.2019.09.29.12.00.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Sep 2019 12:00:31 -0700 (PDT)
-Message-ID: <5d90ff4f.1c69fb81.12517.7d4b@mx.google.com>
-Date:   Sun, 29 Sep 2019 12:00:31 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1729276AbfI2TeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 15:34:17 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:45272 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729098AbfI2TeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 15:34:16 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iEexA-0001BS-Tj; Sun, 29 Sep 2019 21:33:56 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: let init callback return an error code
+Date:   Sun, 29 Sep 2019 21:33:53 +0200
+Message-ID: <7697352.nLdc4jJAoa@phil>
+In-Reply-To: <20190924123954.31561-3-jbrunet@baylibre.com>
+References: <20190924123954.31561-1-jbrunet@baylibre.com> <20190924123954.31561-3-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.19.75-64-gb52c75f7b978
-X-Kernelci-Branch: linux-4.19.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20190929135031.382429403@linuxfoundation.org>
-References: <20190929135031.382429403@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 00/63] 4.19.76-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 80 boots: 1 failed, 78 passed with 1 conflict =
-(v4.19.75-64-gb52c75f7b978)
+Am Dienstag, 24. September 2019, 14:39:53 CEST schrieb Jerome Brunet:
+> If the init callback is allowed to request resources, it needs a return
+> value to report the outcome of such a request.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+[...]
+>  drivers/clk/rockchip/clk-pll.c        | 28 ++++++++++++++++-----------
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.75-64-gb52c75f7b978/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.75-64-gb52c75f7b978/
+for the Rockchip part
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.75-64-gb52c75f7b978
-Git Commit: b52c75f7b9785d0d0e6bf145787ed2fc99f5483c
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 43 unique boards, 15 SoC families, 13 builds out of 206
 
-Boot Regressions Detected:
-
-arm:
-
-    tegra_defconfig:
-        gcc-8:
-          tegra124-nyan-big:
-              lab-collabora: new failure (last pass: v4.19.75-33-gdab8e08e7=
-087)
-
-Boot Failure Detected:
-
-arm:
-    tegra_defconfig:
-        gcc-8:
-            tegra124-nyan-big: 1 failed lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-    exynos_defconfig:
-        exynos5422-odroidxu3:
-            lab-collabora: PASS (gcc-8)
-            lab-baylibre: FAIL (gcc-8)
-
----
-For more info write to <info@kernelci.org>
