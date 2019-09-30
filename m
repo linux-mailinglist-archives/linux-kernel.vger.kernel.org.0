@@ -2,140 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 868D6C236E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E39C2363
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731750AbfI3OhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:37:01 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58450 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730780AbfI3OhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:37:00 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5BFA948E40CC6B5FE5AE;
-        Mon, 30 Sep 2019 22:36:58 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 30 Sep 2019 22:36:50 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <lorenzo.pieralisi@arm.com>, <guohanjun@huawei.com>,
-        <sudeep.holla@arm.com>, <robin.murphy@arm.com>,
-        <mark.rutland@arm.com>, <will@kernel.org>
-CC:     <shameerali.kolothum.thodi@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <nleeder@codeaurora.org>,
-        <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>
-Subject: [RFC PATCH 6/6] ACPI/IORT: Drop code to set the PMCG software-defined model
-Date:   Mon, 30 Sep 2019 22:33:51 +0800
-Message-ID: <1569854031-237636-7-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
-References: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
+        id S1731555AbfI3OgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:36:15 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41984 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730809AbfI3OgP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:36:15 -0400
+Received: by mail-ot1-f68.google.com with SMTP id c10so8488993otd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 07:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RRmAIt8Bb7hxPg1Z/NX9GRGwvPP3410MbXYQc+FgXoM=;
+        b=TJ/QYoNNELeDyFXlkdZI7w+5tyl1AhAET7lb7WvOvrCWjdFE8a0pq1eUfcN97AWOsb
+         /aagxcGmIvRinHIeY335E9ZxUdfg4Ezn8CcSA8D4tMAW8NQy/bOZPee8/kbIVpTi3Bsh
+         4kwg0W6GL/z411qlIjGYNE5OxmcxnBuCoo77A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RRmAIt8Bb7hxPg1Z/NX9GRGwvPP3410MbXYQc+FgXoM=;
+        b=euT2MYagj6lz0Ed6H9BbmzDqDlWEs9EyS0UCjng+pDg4lyJHByTiDXHRbd1CctS1fK
+         LkRzGqKrZtTvioJ9VP13iF2QA+5b+ITeL4PzhicUYxf6Us3jSzQTiwvjINcY0rv2gUDO
+         vU39gVTlOtUzofH5KoaXU1kdmhIUDVdL6EdXje8ljL0a++vXuYy9ML5cWmSOiQY2Ywdu
+         JFY1ovehU7uKI5ZcYex5mm4b9JqjSgIOu9MSArKTktvuWbpsBx6p1GzggkP9iVAVtDe4
+         iBA+AXQYMQvLwQVt/8jZ1TfzGmg1nAPOQAL+qSmtAwJbmnQ/kznCJsPRLFTLInnwtPF7
+         guiw==
+X-Gm-Message-State: APjAAAXP4bHSp6/BLRUd/wO2YX+rJgM6Oaf/tQSpli10l6C3nn/3RpY/
+        dQH+7rk/BLOwk0bFJdIUmSKkZXxY9GWfhZo9R6Qcbg==
+X-Google-Smtp-Source: APXvYqyiMFZO7bG7Q699PZEtKotl908L9Y0kiFSAkokDSu2kpp5UuGPDZ/fvq9aR+4FK4VUX5subFkoXCD88ILhU48E=
+X-Received: by 2002:a9d:19cf:: with SMTP id k73mr13760457otk.237.1569854173938;
+ Mon, 30 Sep 2019 07:36:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+References: <20190726152101.GA27884@sinkpad> <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
+ <20190802153715.GA18075@sinkpad> <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com>
+ <69cd9bca-da28-1d35-3913-1efefe0c1c22@linux.intel.com> <fab8eabb-1cfa-9bf6-02af-3afdff3f955d@linux.intel.com>
+ <20190911140204.GA52872@aaronlu> <7b001860-05b4-4308-df0e-8b60037b8000@linux.intel.com>
+ <20190912120400.GA16200@aaronlu> <CAERHkrsrszO4hJqVy=g7P74h9d_YJzW7GY4ptPKykTX-mc9Mdg@mail.gmail.com>
+ <20190915141402.GA1349@aaronlu> <CAERHkrs9u24NrcNUwHq8mTW922Ffhy9rPkBGVN_afm1RBhabsQ@mail.gmail.com>
+ <ade66e6d-cc52-4575-2f8f-e4d96c07a33c@linux.intel.com> <CAERHkrsW8conSUNbbmAD7AHyRTGy=80QUiJAsx_LaJDNQoZ35g@mail.gmail.com>
+In-Reply-To: <CAERHkrsW8conSUNbbmAD7AHyRTGy=80QUiJAsx_LaJDNQoZ35g@mail.gmail.com>
+From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Date:   Mon, 30 Sep 2019 10:36:03 -0400
+Message-ID: <CANaguZDLa4C4z+y=K7=mD6m5C0J2fVqt-DSde_WCrWnMnk4dGw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+To:     Aubrey Li <aubrey.intel@gmail.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Aaron Lu <aaron.lu@linux.alibaba.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we can identify a PMCG implementation from the parent SMMUv3
-IIDR, drop all the code to match based on the ACPI OEM ID.
+On Wed, Sep 18, 2019 at 6:16 PM Aubrey Li <aubrey.intel@gmail.com> wrote:
+>
+> On Thu, Sep 19, 2019 at 4:41 AM Tim Chen <tim.c.chen@linux.intel.com> wrote:
+> >
+> > On 9/17/19 6:33 PM, Aubrey Li wrote:
+> > > On Sun, Sep 15, 2019 at 10:14 PM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
+> >
+> > >>
+> > >> And I have pushed Tim's branch to:
+> > >> https://github.com/aaronlu/linux coresched-v3-v5.1.5-test-tim
+> > >>
+> > >> Mine:
+> > >> https://github.com/aaronlu/linux coresched-v3-v5.1.5-test-core_vruntime
+> >
+> >
+> > Aubrey,
+> >
+> > Thanks for testing with your set up.
+> >
+> > I think the test that's of interest is to see my load balancing added on top
+> > of Aaron's fairness patch, instead of using my previous version of
+> > forced idle approach in coresched-v3-v5.1.5-test-tim branch.
+> >
+>
+> I'm trying to figure out a way to solve fairness only(not include task
+> placement),
+> So @Vineeth - if everyone is okay with Aaron's fairness patch, maybe
+> we should have a v4?
+>
+Yes, I think we can move to v4 with Aaron's fairness fix and potentially
+Tim's load balancing fixes. I am working on some improvements to Aaron's
+fixes and shall post the changes after some testing. Basically, what I am
+trying to do is to propagate the min_vruntime change down to all the cf_rq
+and individual se when we update the cfs_rq(rq->core)->min_vrutime. So,
+we can make sure that the rq stays in sync and starvation do not happen.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/acpi/arm64/iort.c | 35 +----------------------------------
- include/linux/acpi_iort.h |  8 --------
- 2 files changed, 1 insertion(+), 42 deletions(-)
+If everything goes well, we shall also post the v4 towards the end of this
+week. We would be testing Tim's load balancing patches in an
+over-committed VM scenario to observe the effect of the fix.
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 0b687520c3e7..d04888cb8cff 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -1377,27 +1377,6 @@ static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
- 				       ACPI_EDGE_SENSITIVE, &res[2]);
- }
- 
--static struct acpi_platform_list pmcg_plat_info[] __initdata = {
--	/* HiSilicon Hip08 Platform */
--	{"HISI  ", "HIP08   ", 0, ACPI_SIG_IORT, greater_than_or_equal,
--	 "Erratum #162001800", IORT_SMMU_V3_PMCG_HISI_HIP08},
--	{ }
--};
--
--static int __init arm_smmu_v3_pmcg_add_platdata(struct platform_device *pdev)
--{
--	u32 model;
--	int idx;
--
--	idx = acpi_match_platform_list(pmcg_plat_info);
--	if (idx >= 0)
--		model = pmcg_plat_info[idx].data;
--	else
--		model = IORT_SMMU_V3_PMCG_GENERIC;
--
--	return platform_device_add_data(pdev, &model, sizeof(model));
--}
--
- struct iort_dev_config {
- 	const char *name;
- 	int (*dev_init)(struct acpi_iort_node *node);
-@@ -1408,7 +1387,6 @@ struct iort_dev_config {
- 				     struct acpi_iort_node *node);
- 	int (*dev_set_proximity)(struct device *dev,
- 				    struct acpi_iort_node *node);
--	int (*dev_add_platdata)(struct platform_device *pdev);
- };
- 
- static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
-@@ -1430,7 +1408,6 @@ static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
- 	.name = "arm-smmu-v3-pmcg",
- 	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
- 	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
--	.dev_add_platdata = arm_smmu_v3_pmcg_add_platdata,
- };
- 
- static __init const struct iort_dev_config *iort_get_dev_cfg(
-@@ -1494,17 +1471,7 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 	if (ret)
- 		goto dev_put;
- 
--	/*
--	 * Platform devices based on PMCG nodes uses platform_data to
--	 * pass the hardware model info to the driver. For others, add
--	 * a copy of IORT node pointer to platform_data to be used to
--	 * retrieve IORT data information.
--	 */
--	if (ops->dev_add_platdata)
--		ret = ops->dev_add_platdata(pdev);
--	else
--		ret = platform_device_add_data(pdev, &node, sizeof(node));
--
-+	ret = platform_device_add_data(pdev, &node, sizeof(node));
- 	if (ret)
- 		goto dev_put;
- 
-diff --git a/include/linux/acpi_iort.h b/include/linux/acpi_iort.h
-index 8e7e2ec37f1b..7a8961e6a8bb 100644
---- a/include/linux/acpi_iort.h
-+++ b/include/linux/acpi_iort.h
-@@ -14,14 +14,6 @@
- #define IORT_IRQ_MASK(irq)		(irq & 0xffffffffULL)
- #define IORT_IRQ_TRIGGER_MASK(irq)	((irq >> 32) & 0xffffffffULL)
- 
--/*
-- * PMCG model identifiers for use in smmu pmu driver. Please note
-- * that this is purely for the use of software and has nothing to
-- * do with hardware or with IORT specification.
-- */
--#define IORT_SMMU_V3_PMCG_GENERIC        0x00000000 /* Generic SMMUv3 PMCG */
--#define IORT_SMMU_V3_PMCG_HISI_HIP08     0x00000001 /* HiSilicon HIP08 PMCG */
--
- int iort_register_domain_token(int trans_id, phys_addr_t base,
- 			       struct fwnode_handle *fw_node);
- void iort_deregister_domain_token(int trans_id);
--- 
-2.17.1
-
+Thanks,
+Vineeth
