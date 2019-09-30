@@ -2,107 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5AAC23F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41704C2403
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:12:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731896AbfI3PKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 11:10:24 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35110 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731867AbfI3PKX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:10:23 -0400
-Received: by mail-io1-f67.google.com with SMTP id q10so39311096iop.2;
-        Mon, 30 Sep 2019 08:10:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pDc8+7cL7Y/4C0a6+07Pf5UoiAcCuQN9j9naZA92m/0=;
-        b=XAxgqcVCJ0KTsEs61oTy/OJohBiI9uvP3rdzYsBtljp2uXLIhWrCfKkri/Tu5Wl+Wr
-         BaRtLcYL7krs2ngV78Nkhx6J8pM/8T1eofwTwlgYcg6rheQnSzc9IASx3Fm4mkFvIUG2
-         Lo2Gn/siHlqy+GFLeYsW3+m1RYN+O2WSyflAEtRyXDs+9xQuCvZUUOcjRsONfB81CuZT
-         FnY1zzPD7jtNJWcLhLUps8URe4kC+hK4GvFY/C8F1d+yLgMutc0q6Nxd61Obgu1tGIpT
-         psffbZDtzaaf7lUDzIdZeoevfZxGTm6B3IBZW2QrS1x9P6/W10IsX6W4vbDcXN/Zszbt
-         6wCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pDc8+7cL7Y/4C0a6+07Pf5UoiAcCuQN9j9naZA92m/0=;
-        b=nDkpsZYx0Dtm0UrjjEiED9SW5aucuepE5E6SWMZ9jAqc13vwlvp8/ATQ6Bc3ZKTZhm
-         yAU2vCzqQiHP0P8IF0o6+8lDZAQCqtZHT7B80xMV9Dgg/3yqwctLzS/SEm4l0bhDs5aS
-         3VZDIaD1YGgGWZnfcgnj6aCUdqcxtE4X//wFEZzBFQhpAnGvzxKOwIjjtbMmnikgIU1o
-         gTtJrANhWoYB5tnS9rRJVPLvlwa6F6nkU7dz+pcubKPB77jrqx/hMhItvyFw3vTe8af2
-         eZZHetbrfi1B9+Y8z9WQNVNv6wXGCDPWImUsoHc1ij4C+cbfoIzBoFOzN5sFEOrSiwS7
-         bdcA==
-X-Gm-Message-State: APjAAAW5ScqRWFwJPxqwpEKQy7Pj9LHg0nwLoRoESbLBmCSK1B3XfgM/
-        GdI6kNj008NdKrgmA/ExF+Pfmdwywsh8/oWL4Ko=
-X-Google-Smtp-Source: APXvYqyzDMlPXrOMXU8uR89U0O8jpXzWwYfcO5kKUr3rMEw1nkiaNwzvwL+uFQHt7SWZhkPxpu0e2/wrwcUd0IP2oeU=
-X-Received: by 2002:a6b:b213:: with SMTP id b19mr823617iof.58.1569856222518;
- Mon, 30 Sep 2019 08:10:22 -0700 (PDT)
+        id S1731867AbfI3PMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 11:12:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40412 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731276AbfI3PMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 11:12:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 168C9AF7E;
+        Mon, 30 Sep 2019 15:12:36 +0000 (UTC)
+Date:   Mon, 30 Sep 2019 17:12:34 +0200
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Tejun Heo <tj@kernel.org>, Mike Kravetz <mike.kravetz@oracle.com>,
+        Greg Thelen <gthelen@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Shakeel Butt <shakeelb@google.com>, shuah <shuah@kernel.org>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>,
+        khalid.aziz@oracle.com, cgroups@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 0/7] hugetlb_cgroup: Add hugetlb_cgroup reservation
+ limits
+Message-ID: <20190930151233.GH6694@blackbody.suse.cz>
+References: <20190919222421.27408-1-almasrymina@google.com>
+ <3c73d2b7-f8d0-16bf-b0f0-86673c3e9ce3@oracle.com>
+ <CAHS8izOj2AT4tX-+Hcb8LB2TOUKJDHScDtJ80u4M6OWpwktq0g@mail.gmail.com>
+ <a8e9c533-1593-35ee-e65d-1f2fc2b0fb48@oracle.com>
+ <CAHS8izPfKQA8qTndyzWSm9fR_xJ=X-xmE+4P4K+ZFdxrYNuLBA@mail.gmail.com>
+ <alpine.DEB.2.21.1909261220150.39830@chino.kir.corp.google.com>
+ <8f7db4f1-9c16-def5-79dc-d38d6b9d150e@oracle.com>
+ <CAHS8izM3=ZDNukx5xhWmeJT+78Ekfff9J4s5Vqkqpx-DtH=C-A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190510194229.20628-1-aford173@gmail.com> <7ada0752-6f65-2906-cb29-a47c9490fd57@ti.com>
- <CAHCN7xJexJvh71vyb31ETgo=n_y_CupHH-AZwVK9mZe3GzJfEQ@mail.gmail.com>
- <845055e2-8182-de74-2077-629fdf50ac6c@ti.com> <CAHCN7xJFrTLOnbqrnH2W_T2whR8Xji0EMNR_cy8GYkDV-JDodQ@mail.gmail.com>
- <854f6130-c8a8-81cb-aa76-4830f218ae54@ti.com> <CAHCN7xKocdiWOdmoWQV3POr84qte6WNt0QbQRAwxKSvU8COB_w@mail.gmail.com>
- <0473526e-df0a-94a5-5c22-debd0084ab16@ti.com> <36369388-e9c8-22cd-8c19-e2bdf2d0389b@ti.com>
- <eb2eb1f6-3c9b-7ecb-667e-819033af9c14@ti.com> <23eba53a-9304-2ceb-d97e-01891ec0b3ed@ti.com>
- <cb028b1e-05ca-9b22-be5d-c63f5fd56cc4@ti.com> <F3335195-6EB7-4D44-B884-2F29D9238011@goldelico.com>
- <CAHCN7xL9bFxO=2i1DzmRj6A3XwUNdt=DZeJ2a0EZ0f9gcFTy6g@mail.gmail.com>
- <CAHCN7x+vCfPTRE+zzYUwAXdbBzRotTP2hSOgsHB0FdgBhZV5zA@mail.gmail.com>
- <CAHCN7xJDV=R9Ysjhff7=mEXdciwPP_5LQbHwaUT8KvhSkLKw8A@mail.gmail.com>
- <04306a5e-f9be-35a4-1aa1-5795d780e289@ti.com> <3777f1b1-2d9a-334b-b9e7-99dfda2ae29b@ti.com>
-In-Reply-To: <3777f1b1-2d9a-334b-b9e7-99dfda2ae29b@ti.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 30 Sep 2019 10:10:11 -0500
-Message-ID: <CAHCN7xJNJca8W_yw5nNY3AmKDSPoLzJ8voPmR1HS3bNcU8uQGg@mail.gmail.com>
-Subject: Re: [PATCH] drm/omap: Migrate minimum FCK/PCK ratio from Kconfig to dts
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YhFoJY/gx7awiIuK"
+Content-Disposition: inline
+In-Reply-To: <CAHS8izM3=ZDNukx5xhWmeJT+78Ekfff9J4s5Vqkqpx-DtH=C-A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 9:27 AM Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
->
-> On 30/09/2019 17:20, Tomi Valkeinen wrote:
->
-> > Let's see what Tero says, but yeah, something is odd here. I expected
-> > the max divider to be 16 with Tero's patch, but I don't see it having
-> > that effect. I can get the div to 31.
-> >
-> > You can see this from the clock register 0x48004e40 (CM_CLKSEL_DSS). The
-> > lowest bits are the divider, 5 to 0. The TRM says max div is 32.
-> >
-> > Tero said for him the dividers > 16 didn't "stick" to the register. I'm
-> > now wondering if he has an old beagleboard with OMAP34xx, which has max
-> > div 16.
->
-> So testing a bit more here, I can see the DSS working fine and fps as
-> expected when I write values directly to CM_CLKSEL_DSS:5:0, with
-> dividers up to 31. With 32, DSS breaks. The TRM (AM/DM37x) says value 32
-> is valid.
 
-I wonder if it's somehow being masked with bits 4:0 instead of 5:0
-which could potentially make the divider 0 and that value doesn't
-appear to be valid.
+--YhFoJY/gx7awiIuK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-adam
+Hi.
 
->
->   Tomi
->
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+On Thu, Sep 26, 2019 at 05:55:29PM -0700, Mina Almasry <almasrymina@google.com> wrote:
+> My guess is that a new controller needs to support cgroups-v2, which
+> is fine. But can a new controller also support v1? Or is there a
+> requirement that new controllers support *only* v2? I need whatever
+> solution here to work on v1.
+Here is my view of important criteria:
+
+	1) stability, v1 APIs and semantics should not be changed,
+	2) futureproofness, v1 uses should be convertible to v2 uses,
+	3) maintainability, the less (similar) code the better.
+
+And here is my braindump of some approaches:
+
+A) new controller, v2 only
+- 1) ok
+- 2) may be ok
+- 3) separate v1 and v2 implementations
+- exclusion must be ensured on hybrid hierarchies
+
+B) new controller, version oblivious (see e.g. pid)
+- 1) sort of ok
+- 2) partially ok
+- 3) two v1 implementations
+- exclusion must be ensured even on pure v1 hierarchies
+
+C) extending the existing controller, w/out v2 counterpart
+- 1) ok with workarounds (new option switching behavior)
+- 2) not ok
+- 3) likely OK
+
+D) extending the existing controller, with v2 counterpart
+- 1) ok with workarounds (new option switching behavior, see cpuset)
+- 2) may be ok
+- 3) likely OK
+
+AFAIU, the current patchset is variation of C). Personally, I think
+something like D) could work, I'm not convinced about A) and B) based on
+the breakdown above. But it may induce some other ideas.
+
+
+My two cents,
+Michal
+
+--YhFoJY/gx7awiIuK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAl2SG14ACgkQia1+riC5
+qShedQ/8DyEdvjT0PcRMLE3EjsjDi32g8BDv8aIV1H1UVciQZIM+BFvPycHsjJ9N
+XwYn3bspedb10o6wm1Luj6LhXjVht5dglPSrmhTWp4E5YrLqP2AqKPt8p5ZL4pTq
+L64SrAHXo5qFq85CDnSQkFgYXmuPEkM9NCdLN3Dt30P1/zr6mrt0vhPbLNwJkgdT
+xsTp2UObM12TuEJxsnb2F6nirZLa6RHQ3utUjDZUsLbPOgnb+WbTgLyCNwHFnqUk
+bInSN/vrHcn52yYefxWuHW1VdXXV2vpjqcQG5CdYjXEzpKQxnysI+IiYxpv4kw6Q
+FQpT5nQtCVVr2EHj9LEsk9vgks2Hcfsb87psTIL0rxA4HvxiutPcDHBHqhcs/52o
+2ozl8p7G0WXGYQ+bSeTBJ35O/qtTGibw1YELSkpVhG742SrzMj9SxdhtFO7dsdeY
+uk/HdATsAPl3kAX1fOhUSmIcnOL9ECAO0pgcRnmsyPdXEDUWwaiji0tK9Q0yP6Wu
+jnFTX3MY/Nq5FhJzZ3QYvCUxc1n1LgzW9STMUU5MuTN9NYXC4AlZnZhMqduDH5HK
+l0seBNntlNnaI4lQhbWl2OR0cXTDN88Nv2bF84LBI01F4N2D/NL97p69jCMYxgUx
+5EiC89zRH0RUxb8RX+NeMG/OMd0qxTNFELjONXX1D5fpzLqg5Ao=
+=ksZu
+-----END PGP SIGNATURE-----
+
+--YhFoJY/gx7awiIuK--
