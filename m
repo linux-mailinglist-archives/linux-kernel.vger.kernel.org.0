@@ -2,60 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12502C26F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 447F9C26D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbfI3Unh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:43:37 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:41306 "EHLO honk.sigxcpu.org"
+        id S1731375AbfI3Uky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:40:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729179AbfI3Ung (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:43:36 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 8F9A1FB02;
-        Mon, 30 Sep 2019 22:26:04 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id YmdQpU_p0ZnW; Mon, 30 Sep 2019 22:26:03 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id DCDC348868; Mon, 30 Sep 2019 22:26:01 +0200 (CEST)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: bd718x7: Add MODULE_ALIAS()
-Date:   Mon, 30 Sep 2019 22:26:01 +0200
-Message-Id: <e1d01b68cdf7dbff9bdd03bab953f828431ad292.1569875042.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <cover.1569875042.git.agx@sigxcpu.org>
-References: <cover.1569875042.git.agx@sigxcpu.org>
+        id S1729180AbfI3Uky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:40:54 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D12E224D2;
+        Mon, 30 Sep 2019 20:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569875651;
+        bh=Ia/sE7OsRwGmDutroMOdVbd3eXtqQ6ome2j9iwgAtQM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=W8TiKyqeBZc6pJ4n/x3zNcBQ+zNVfG5Jqyt7GuWexVjswNJ94IS4AZhlWNK6HpKgZ
+         hmJOu7FoPUwtNXAkVc6swG5WbDsCADl2YqGyc0VeWk4EYwJ43MW0EUgjrMfxUZhkUR
+         c7xsmMQIRDIEynQWykeEtOGczMovqRvvNWA8y03E=
+Date:   Mon, 30 Sep 2019 15:34:10 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     George Cherian <george.cherian@marvell.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shannon.zhao@linux.alibaba.com" <shannon.zhao@linux.alibaba.com>,
+        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        George Cherian <gcherian@marvell.com>,
+        Vadim Lomovtsev <Vadim.Lomovtsev@marvell.com>,
+        Manish Jaggi <mjaggi@caviumnetworks.com>
+Subject: Re: [PATCH] PCI: Enhance the ACS quirk for Cavium devices
+Message-ID: <20190930203409.GA195851@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919024319.GA8792@dc5-eodlnx05.marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes device probing when built as a module.
+[+cc Vadim, Manish]
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/clk/clk-bd718x7.c | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Sep 19, 2019 at 02:43:34AM +0000, George Cherian wrote:
+> Enhance the ACS quirk for Cavium Processors. Add the root port
+> vendor ID's in an array and use the same in match function.
+> For newer devices add the vendor ID's in the array so that the
+> match function is simpler.
+> 
+> Signed-off-by: George Cherian <george.cherian@marvell.com>
+> ---
+>  drivers/pci/quirks.c | 28 +++++++++++++++++++---------
+>  1 file changed, 19 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 44c4ae1abd00..64deeaddd51c 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -4241,17 +4241,27 @@ static int pci_quirk_amd_sb_acs(struct pci_dev *dev, u16 acs_flags)
+>  #endif
+>  }
+>  
+> +static const u16 pci_quirk_cavium_acs_ids[] = {
+> +	/* CN88xx family of devices */
+> +	0xa180, 0xa170,
+> +	/* CN99xx family of devices */
+> +	0xaf84,
+> +	/* CN11xxx family of devices */
+> +	0xb884,
+> +};
+> +
+>  static bool pci_quirk_cavium_acs_match(struct pci_dev *dev)
+>  {
+> -	/*
+> -	 * Effectively selects all downstream ports for whole ThunderX 1
+> -	 * family by 0xf800 mask (which represents 8 SoCs), while the lower
+> -	 * bits of device ID are used to indicate which subdevice is used
+> -	 * within the SoC.
+> -	 */
+> -	return (pci_is_pcie(dev) &&
+> -		(pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) &&
+> -		((dev->device & 0xf800) == 0xa000));
+> +	int i;
+> +
+> +	if (!pci_is_pcie(dev) || pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
+> +		return false;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(pci_quirk_cavium_acs_ids); i++)
+> +		if (pci_quirk_cavium_acs_ids[i] == dev->device)
 
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-index ae6e5baee330..00926c587390 100644
---- a/drivers/clk/clk-bd718x7.c
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -133,3 +133,4 @@ module_platform_driver(bd71837_clk);
- MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
- MODULE_DESCRIPTION("BD71837/BD71847/BD70528 chip clk driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:bd718xx-clk");
--- 
-2.23.0.rc1
+I'm a little skeptical of this because the previous test:
 
+  (dev->device & 0xf800) == 0xa000
+
+could match *many* devices, but of those, the new code only matches two
+(0xa180, 0xa170).
+
+And the comment says the new code matches the CN99xx and CN11xxx
+*families*, but it only matches a single device ID for each, which
+makes me think there may be more devices to come.
+
+Maybe this is all what you want, but please confirm.
+
+The commit log should be explicit that this adds CN99xx and CN11xxx,
+which previously were not matched.
+
+This looks like stable material?
+
+> +			return true;
+> +
+> +	return false;
+>  }
+>  
+>  static int pci_quirk_cavium_acs(struct pci_dev *dev, u16 acs_flags)
+> -- 
+> 2.17.1
+> 
