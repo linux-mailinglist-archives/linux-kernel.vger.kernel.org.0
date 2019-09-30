@@ -2,136 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 757F3C274C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3376EC275D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732047AbfI3UwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:52:14 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33248 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729503AbfI3UwO (ORCPT
+        id S1731632AbfI3Uxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:53:49 -0400
+Received: from vsmx009.vodafonemail.xion.oxcs.net ([153.92.174.87]:59256 "EHLO
+        vsmx009.vodafonemail.xion.oxcs.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730456AbfI3Uxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:52:14 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r17so913807wme.0;
-        Mon, 30 Sep 2019 13:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8sM3A81f9Xr+CTFcU63aM7o+IniBWRXvgW3hT44K4eA=;
-        b=jvDjmTcZjLLO+pN8Q1nrG5NdUzZ7C3elxPwuszgqv6ffhIYeDSyzB+cNFypKp6ojkY
-         Ip9+9SdRMLaVo3rKmzS4qGiUmX1dpde/iZRp00GftPSUtWdc7UEwCt99SHIZLDRJ01nh
-         nFjG7pSuMSN0GmBwdQ8RiZtlNaJfwx+6psftsPmzQ24LkTDqFzF0XlLqgz8dWhivsxdJ
-         VmFy0qem9usbqvWtNXcqtVFOCaUFyDn6dyh4euwR60erq1H+T2JuE/Hi4HFK7izpUm3P
-         X24MITNb4YlGf2Sa29bkEBTt58qUZpX5venmw+TqTxn0N5a17VXUGuPr+SvX/cZUdH2D
-         XunA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8sM3A81f9Xr+CTFcU63aM7o+IniBWRXvgW3hT44K4eA=;
-        b=bFyG+XvSsWxDSm3pVOrzv6qKRJSOFDM2u6Eyb3LqSiJYagg9oP+7zJlAsAjQbG/JEu
-         zJ1f1F0ZtmCoTv21Rg5nob5DrWI5OjoL44xsqOyK96Il9DrXlWtJMVznSW83QnIhhTiy
-         BilGC9AoGpUtHYOiR0DW8Q7oC/gMVY29l3GA8dTIP0tllfW0JmwIklFSGGLznm3ATgXS
-         aERzH6sIpnHnkopFdD6Flxf6ciaTz9i2xZ//T3s4qb6h0W41qnm9qZ9vT5iqfJSyBCHk
-         HsDU/xIH02OUZX5bqqo8g1AzJn4g4/yMOLGU4QLz09oBrDrvhL3XUXEqowkl2xte79so
-         +mYg==
-X-Gm-Message-State: APjAAAVXVk5tNPXQT24y2JCcYIyaBRG6npiCw+veUbSuG3Mz+zP33qJE
-        RvUfrRGct5OIBg1ebFfC7vyUJICV
-X-Google-Smtp-Source: APXvYqwyglTDIXFxcjpQPfFoYe0m/+FVKdJ9ImPfKTXtX45DEZK/eGEvy1588/8hMk1iORJ40W2J7w==
-X-Received: by 2002:a1c:9d52:: with SMTP id g79mr370084wme.91.1569867578764;
-        Mon, 30 Sep 2019 11:19:38 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8f26:6400:542:c9fe:c835:31f1? (p200300EA8F2664000542C9FEC83531F1.dip0.t-ipconnect.de. [2003:ea:8f26:6400:542:c9fe:c835:31f1])
-        by smtp.googlemail.com with ESMTPSA id l9sm168955wme.45.2019.09.30.11.19.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Sep 2019 11:19:38 -0700 (PDT)
-Subject: Re: [PATCH v1] net: phy: at803x: add ar9331 support
-To:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190930092710.32739-1-o.rempel@pengutronix.de>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <142d584d-e3b1-a544-fd78-ea93a02b594f@gmail.com>
-Date:   Mon, 30 Sep 2019 20:19:30 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 30 Sep 2019 16:53:49 -0400
+Received: from vsmx001.vodafonemail.xion.oxcs.net (unknown [192.168.75.191])
+        by mta-5-out.mta.xion.oxcs.net (Postfix) with ESMTP id 63EAA15A24F9;
+        Mon, 30 Sep 2019 18:25:17 +0000 (UTC)
+Received: from lazy.lzy (unknown [87.157.113.162])
+        by mta-5-out.mta.xion.oxcs.net (Postfix) with ESMTPA id D280E15A246E;
+        Mon, 30 Sep 2019 18:25:02 +0000 (UTC)
+Received: from lazy.lzy (localhost [127.0.0.1])
+        by lazy.lzy (8.15.2/8.14.5) with ESMTPS id x8UIP1RR004076
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 30 Sep 2019 20:25:01 +0200
+Received: (from red@localhost)
+        by lazy.lzy (8.15.2/8.15.2/Submit) id x8UIP1GA004075;
+        Mon, 30 Sep 2019 20:25:01 +0200
+Date:   Mon, 30 Sep 2019 20:25:01 +0200
+From:   Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: reeze while write on external usb 3.0 hard disk [Bug 204095]
+Message-ID: <20190930182501.GA4043@lazy.lzy>
+References: <20190929201332.GA3099@lazy.lzy>
+ <Pine.LNX.4.44L0.1909292056230.5908-100000@netrider.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20190930092710.32739-1-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1909292056230.5908-100000@netrider.rowland.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-VADE-STATUS: LEGIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.09.2019 11:27, Oleksij Rempel wrote:
-> Mostly this hardware can work with generic PHY driver, but this change
-> is needed to provided interrupt handling support.
-> Tested with dsa ar9331-switch driver.
+On Sun, Sep 29, 2019 at 09:01:48PM -0400, Alan Stern wrote:
+> On Sun, 29 Sep 2019, Piergiorgio Sartor wrote:
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  drivers/net/phy/at803x.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> > On Wed, Sep 25, 2019 at 02:31:58PM -0400, Alan Stern wrote:
+> > > On Wed, 25 Sep 2019, Piergiorgio Sartor wrote:
+> > > 
+> > > > On Mon, Aug 26, 2019 at 07:38:33PM +0200, Piergiorgio Sartor wrote:
+> > > > > On Tue, Aug 20, 2019 at 06:37:22PM +0200, Piergiorgio Sartor wrote:
+> > > > > > On Tue, Aug 20, 2019 at 09:23:26AM +0200, Christoph Hellwig wrote:
+> > > > > > > On Mon, Aug 19, 2019 at 10:14:25AM -0400, Alan Stern wrote:
+> > > > > > > > Let's bring this to the attention of some more people.
+> > > > > > > > 
+> > > > > > > > It looks like the bug that was supposed to be fixed by commit
+> > > > > > > > d74ffae8b8dd ("usb-storage: Add a limitation for
+> > > > > > > > blk_queue_max_hw_sectors()"), which is part of 5.2.5, but apparently
+> > > > > > > > the bug still occurs.
+> > > > > > > 
+> > > > > > > Piergiorgio,
+> > > > > > > 
+> > > > > > > can you dump the content of max_hw_sectors_kb file for your USB storage
+> > > > > > > device and send that to this thread?
+> > > > > > 
+> > > > > > Hi all,
+> > > > > > 
+> > > > > > for both kernels, 5.1.20 (working) and 5.2.8 (not working),
+> > > > > > the content of /sys/dev/x:y/queue/max_hw_sectors_kb is 512
+> > > > > > for USB storage devices (2.0 and 3.0).
+> > > > > > 
+> > > > > > This is for the PC showing the issue.
+> > > > > > 
+> > > > > > In an other PC, which does not show the issus at the moment,
+> > > > > > the values are 120, for USB2.0, and 256, for USB3.0.
 > 
-> diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
-> index 6ad8b1c63c34..d62a77adb8e7 100644
-> --- a/drivers/net/phy/at803x.c
-> +++ b/drivers/net/phy/at803x.c
-> @@ -53,6 +53,7 @@
->  #define AT803X_DEBUG_REG_5			0x05
->  #define AT803X_DEBUG_TX_CLK_DLY_EN		BIT(8)
->  
-> +#define AR9331_PHY_ID 0x004dd041
->  #define ATH8030_PHY_ID 0x004dd076
->  #define ATH8031_PHY_ID 0x004dd074
->  #define ATH8035_PHY_ID 0x004dd072
-> @@ -406,11 +407,24 @@ static struct phy_driver at803x_driver[] = {
->  	.aneg_done		= at803x_aneg_done,
->  	.ack_interrupt		= &at803x_ack_interrupt,
->  	.config_intr		= &at803x_config_intr,
-> +}, {
-> +	/* ATHEROS AR9331 */
-> +	.phy_id			= AR9331_PHY_ID,
-> +	.name			= "Atheros AR9331 built-in PHY",
-> +	.phy_id_mask		= AT803X_PHY_ID_MASK,
-
-The ID mask of 0xffffffef is quite strange, it ignores the last
-bit of the model number and requires exact match of the revision
-number. Unfortunately the original commit doesn't explain why
-this mask was chosen. It would only make sense if there are
-functionally identical PHY's with e.g. id 0x004dd051.
-If in doubt I'd suggest you use macro PHY_ID_MATCH_EXACT.
-
-> +	.probe			= at803x_probe,
-
-After 5c5f626bcace ("net: phy: improve handling link_change_notify
-callback") struct at803x_priv isn't used any longer and the probe
-callback could be removed. I didn't do that as part of this commit
-because I could compile-test the change only.
-
-> +	.config_init		= at803x_config_init,
-> +	.suspend		= at803x_suspend,
-> +	.resume			= at803x_resume,
-> +	/* PHY_BASIC_FEATURES */
-> +	.ack_interrupt		= &at803x_ack_interrupt,
-> +	.config_intr		= &at803x_config_intr,
->  } };
->  
->  module_phy_driver(at803x_driver);
->  
->  static struct mdio_device_id __maybe_unused atheros_tbl[] = {
-> +	{ AR9331_PHY_ID, AT803X_PHY_ID_MASK },
-
-See comment above regarding the id mask.
-
->  	{ ATH8030_PHY_ID, AT803X_PHY_ID_MASK },
->  	{ ATH8031_PHY_ID, AT803X_PHY_ID_MASK },
->  	{ ATH8035_PHY_ID, AT803X_PHY_ID_MASK },
+> > > One thing you can try is git bisect from 5.1.20 (or maybe just 5.1.0)  
+> > > to 5.2.8.  If you can identify a particular commit which caused the
+> > > problem to start, that would help.
+> > 
+> > OK, I tried a bisect (2 days compilations...).
+> > Assuming I've done everything correctly (how to
+> > test this? How to remove the guilty patch?), this
+> > was the result:
+> > 
+> > 09324d32d2a0843e66652a087da6f77924358e62 is the first bad commit
+> > commit 09324d32d2a0843e66652a087da6f77924358e62
+> > Author: Christoph Hellwig <hch@lst.de>
+> > Date:   Tue May 21 09:01:41 2019 +0200
+> > 
+> >     block: force an unlimited segment size on queues with a virt boundary
+> > 
+> >     We currently fail to update the front/back segment size in the bio when
+> >     deciding to allow an otherwise gappy segement to a device with a
+> >     virt boundary.  The reason why this did not cause problems is that
+> >     devices with a virt boundary fundamentally don't use segments as we
+> >     know it and thus don't care.  Make that assumption formal by forcing
+> >     an unlimited segement size in this case.
+> > 
+> >     Fixes: f6970f83ef79 ("block: don't check if adjacent bvecs in one bio can be mergeable")
+> >     Signed-off-by: Christoph Hellwig <hch@lst.de>
+> >     Reviewed-by: Ming Lei <ming.lei@redhat.com>
+> >     Reviewed-by: Hannes Reinecke <hare@suse.com>
+> >     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > 
+> > :040000 040000 57ba04a02f948022c0f6ba24bfa36f3b565b2440 8c925f71ce75042529c001bf244b30565d19ebf3 M      block
+> > 
+> > What to do now?
 > 
-Heiner
+> Here's how to verify that the bisection got a correct result.  First, 
+> do a git checkout of commit 09324d32d2a0, build the kernel, and make 
+> sure that it exhibits the problem.
+> 
+> Next, have git write out the contents of that commit in the form of a
+> patch (git show commit-id >patchfile), and revert it (git apply -R
+> patchfile).  Build the kernel from that tree, and make sure that it
+> does not exhibit the problem.  If it doesn't, you have definitely shown
+> that this commit is the cause (or at least, is _one_ of the causes).
+
+I tried as suggested, i.e. jumping to commit
+09324d32d2a0843e66652a087da6f77924358e62, testing,
+removing the patch, testing.
+The result was as expected.
+I was able to reproduce the issue with the commit,
+I was not able to reproduce it without.
+It seems this patch / commit is causing the problem.
+Directly or indirectly.
+
+What are the next steps?
+
+Thanks!
+
+bye,
+
+-- 
+
+piergiorgio
