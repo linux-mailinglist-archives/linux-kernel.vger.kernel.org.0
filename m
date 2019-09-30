@@ -2,118 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD4AC275B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:54:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8453C2753
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbfI3Uxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:53:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40497 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbfI3Uxe (ORCPT
+        id S1731256AbfI3UxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:53:01 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38099 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbfI3UxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:53:34 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l3so12871572wru.7;
-        Mon, 30 Sep 2019 13:53:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2bu9cH1o0BJVB5OrcwUaFnQDN3/Qtc1RkyhexAVVqx4=;
-        b=kv2pXOlpBCugCOp5kxNT6RU4VJx+nuADmtSd3uIY9Tq/kk0a9OGH6UofFKYovMfMj0
-         zePnSFNrBHEOtmetNUOFxvHMQW+2WHAvlSk6o6gV9Ag1apQD3hybdfzs2J5VgTAWszT4
-         kG/D4wglRiLRUmcnP9n8KYXoYxB9UMGElJLhdcILGwmYi3qNrg+vFT1UxlnX0CeOO+bo
-         x9gOdXmNNKgVOsgDKjq/KnlY0rhZX7cryVc28OGZUIzTKZ9CXvTGwcUOfdNhGeICmART
-         CP4pntQ2lYOTe3vvtBa50KYLAMXKw5ZLscyfBIOtD970bSMg0aB42khvPG14sqIfvLlV
-         wcXQ==
+        Mon, 30 Sep 2019 16:53:00 -0400
+Received: by mail-ot1-f65.google.com with SMTP id e11so9605204otl.5;
+        Mon, 30 Sep 2019 13:53:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2bu9cH1o0BJVB5OrcwUaFnQDN3/Qtc1RkyhexAVVqx4=;
-        b=OYoqx648SsI1ZLfP4b8qItU7BPMgdySgKHSFzq0e7YajXvTSfTbuA9mtQJl6e100Si
-         EblmvYqYtQ0c5twfZlhO95XPfzvLLIDyB2hcjI6wWdEBmD9PUokDDQn7kngsYWtbgGBQ
-         GkhrcLf9G6/8Ma/fqv16mso5mlhvybjGlEoBUXW8TCVSs8H1gSSNFxdTnnVtap627Ncg
-         fJLevg7YWJJoXkirpErbLNaW1TApAPaetbfgPJwS6fz5Jm2lTg9jT93l/kPKbzukyIq1
-         k06gjojclJp0prEpr9XqjtlyyxY3SvknFQUBIjKJH1jeJSkk30yMYMiSDtL7N4KI36in
-         /pwA==
-X-Gm-Message-State: APjAAAUarCoZ4IcGNCIqRGUGDPRqQEdJtni6zCmhkYJz+To1KmeXK6WB
-        FuM8QV2RUDVqZyYRucz3mIB/sLcbo7I=
-X-Google-Smtp-Source: APXvYqwaVxrPgUfy7StzNR3apPF8IB6CDqSnpQNMobiPcxZb4DsGDLK7k/zF4nLBjsKYQzSSNFlRjw==
-X-Received: by 2002:adf:e791:: with SMTP id n17mr10943405wrm.388.1569869743740;
-        Mon, 30 Sep 2019 11:55:43 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.142.9])
-        by smtp.gmail.com with ESMTPSA id u83sm1131184wme.0.2019.09.30.11.55.42
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qttcrBHS0kIn8DMgwWljur1/ogNYEuQG7wPRDTGlx3M=;
+        b=Muxh408k0X9cXxPp2LPXLtbDx5bTsAE2n+l+7TzUT76+8ZvhR+RZyJKO1VLGABMME7
+         BanJUeAT86GhLqc+xMrYmJ2efriH0qtl0FYwuwCuDyklNU07Ujn2bRxeYROl3gZ0/oFl
+         79/T7i0lWn8YQy4yN/6h7cRKoC7222y5loj+Fi2+9FYUpr+OYNpISWApr6DerqTrSCRL
+         ukADVYWQgA1mNx0MLZA2rufk7DLn0vcCBXbwysu6PU0eZ2hbmzNC84WZGZCt8kwqj+zD
+         8UZiyjJZ8tjI6xCUlMLY6adYmsNgMCrhqz0PLFBgT+qKHJM7BWhoMVz9atahKt8Leuzx
+         SccQ==
+X-Gm-Message-State: APjAAAXEMmyZzPG5eYfbKYINZkEWFszBctdYY9KdkfqsDkmWGOY0rs0S
+        LaVAjVPOM53/s2R5H3MYXfOXoEQ=
+X-Google-Smtp-Source: APXvYqxBaCMEenuVO/TLEa22+nQKS8epFGf8JVek9VBh07i8c+Qw+sc7bz02Xq20jisGQ0FY5ulbtA==
+X-Received: by 2002:a9d:6084:: with SMTP id m4mr14638230otj.6.1569869959652;
+        Mon, 30 Sep 2019 11:59:19 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 5sm4127490otp.20.2019.09.30.11.59.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 11:55:43 -0700 (PDT)
-From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v2 2/2] blk-mq: Embed counters into struct mq_inflight
-Date:   Mon, 30 Sep 2019 21:55:34 +0300
-Message-Id: <6f3392cd20e00cc1d6060bada86ca3db540de585.1569868094.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1569868094.git.asml.silence@gmail.com>
-References: <cover.1569868094.git.asml.silence@gmail.com>
+        Mon, 30 Sep 2019 11:59:19 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 13:59:18 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Eddie James <eajames@linux.ibm.com>
+Cc:     linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        brendanhiggins@google.com, joel@jms.id.au, andrew@aj.id.au,
+        mark.rutland@arm.com, benh@kernel.crashing.org
+Subject: Re: [PATCH 2/2] dt-bindings: i2c: Aspeed: Add AST2600 compatible
+Message-ID: <20190930185918.GA18431@bogus>
+References: <1568392510-866-1-git-send-email-eajames@linux.ibm.com>
+ <1568392510-866-3-git-send-email-eajames@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568392510-866-3-git-send-email-eajames@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Fri, Sep 13, 2019 at 11:35:10AM -0500, Eddie James wrote:
+> Document the AST2600 I2C bus compatible string.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-aspeed.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt b/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
+> index 8fbd863..b47f6cc 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
+> @@ -1,4 +1,4 @@
+> -Device tree configuration for the I2C busses on the AST24XX and AST25XX SoCs.
+> +Device tree configuration for the I2C busses on the AST24XX, AST25XX, and AST26XX SoCs.
 
-Store inflight counters immediately in struct mq_inflight.
-That's type-safer and removes extra indirection.
+Perhaps s/buses/busses/ while you're here.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- block/blk-mq.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 3359a0b6c398..d97181d9a3ec 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -93,7 +93,7 @@ static void blk_mq_hctx_clear_pending(struct blk_mq_hw_ctx *hctx,
- 
- struct mq_inflight {
- 	struct hd_struct *part;
--	unsigned int *inflight;
-+	unsigned int inflight[2];
- };
- 
- static bool blk_mq_check_inflight(struct blk_mq_hw_ctx *hctx,
-@@ -110,22 +110,21 @@ static bool blk_mq_check_inflight(struct blk_mq_hw_ctx *hctx,
- 
- unsigned int blk_mq_in_flight(struct request_queue *q, struct hd_struct *part)
- {
--	unsigned inflight[2];
--	struct mq_inflight mi = { .part = part, .inflight = inflight, };
-+	struct mq_inflight mi = { .part = part };
- 
--	inflight[0] = inflight[1] = 0;
- 	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
- 
--	return inflight[0] + inflight[1];
-+	return mi.inflight[0] + mi.inflight[1];
- }
- 
- void blk_mq_in_flight_rw(struct request_queue *q, struct hd_struct *part,
- 			 unsigned int inflight[2])
- {
--	struct mq_inflight mi = { .part = part, .inflight = inflight, };
-+	struct mq_inflight mi = { .part = part };
- 
--	inflight[0] = inflight[1] = 0;
- 	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
-+	inflight[0] = mi.inflight[0];
-+	inflight[1] = mi.inflight[1];
- }
- 
- void blk_freeze_queue_start(struct request_queue *q)
--- 
-2.23.0
-
+>  
+>  Required Properties:
+>  - #address-cells	: should be 1
+> @@ -6,6 +6,7 @@ Required Properties:
+>  - reg			: address offset and range of bus
+>  - compatible		: should be "aspeed,ast2400-i2c-bus"
+>  			  or "aspeed,ast2500-i2c-bus"
+> +			  or "aspeed,ast2600-i2c-bus"
+>  - clocks		: root clock of bus, should reference the APB
+>  			  clock in the second cell
+>  - resets		: phandle to reset controller with the reset number in
+> -- 
+> 1.8.3.1
+> 
