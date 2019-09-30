@@ -2,144 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86A88C26FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA7B3C270C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731441AbfI3UoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:44:17 -0400
-Received: from mail-eopbgr1300137.outbound.protection.outlook.com ([40.107.130.137]:5032
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        id S1731413AbfI3UpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:45:18 -0400
+Received: from mail-eopbgr810049.outbound.protection.outlook.com ([40.107.81.49]:12860
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729158AbfI3UoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:44:16 -0400
+        id S1727508AbfI3UpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:45:17 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=h/CtkMee/6Rj3Hcony3w6FFUBfiTPWnfkrRwRte+LzqBLXwiCdfIter663Je1a/OgUMoADR/m7rzJpKeZ4gU+FTtZgzjK0Rw7bAn57MvD+jYtdKv5kZYDJS3mPu0FByBG6mz4rFvMVDCGY1wiF+GJFHtpe47l/tkVZ32uq17E4ZdYUFCMPMPnjB3HctB9IOuXF7e0XggyirAeX8Ak6IrZFyB6753/WwQxUxJ/iPxJ7s25bZLpB/pWBXp5/Jsvwiw99sDGRMx4gxrbnaxmOChmtB40lYoFSEkHYPvpkR5BicfVBbt0nJkgKJvA3ax2Qc6rReFEDuR9bMlW1E6wYe+HA==
+ b=BBEY8BqneKM/iBwfjZXN25Bz0dua9bv+sHLm2zVrt5P6EJobVVvzwuxNLyYqKfY/g67QitwgmmAlY96WGoCrY1IBHYX+NGr5jrOoweXrZ9CpYZTFEVYNi6BG8flbayjx6Lo4gA0AImLc9xenlSSXih97+CCVUQpEsvr4mWZkGy5O3njTMButrNgsrPTZOEQT33kIPr7O+zVOAdAJV1bmaxSx0NYMalcy56kTJpRCKqSRB2iPta3R+zJKCA+uqzoJD31P6gGgDuDNPu9zklgDxNAZ/5xuKUsebnknPjGEEhe8iXhqbMrKgG6U0nbMMPZhZCv9jqrVwqNiV0BsDU+4fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y7TT+kyzC8pC5j2sJkhcpA9ZFEYCfHh0UaNuv91qNf4=;
- b=JLzCdqORpfLt21o1/zvptkgbxABHSCbtKW4kb2ag7Nx9CTRANbk6qd0umvYbylXAqMm2rSsyv7ay6AN1hG4SENhCiqzBBd12d/k0lGAUDZ9AWP/ZcXNPu7kWNKYOa690Gxmz/E8wdcrhWyQgxolZNErOEhqvANIYf1Dj30gs3pELBM8FceQvFBjdriI0c10tQFs6WObHOfMEY4inWdud9huGyuhGwhQtQRUZVWRSSK2TOYAMbXf8Mgya4zxDXl1tojpFv7ExZ5M+joX1r+ErRES/zYyqjimBJVFxP1CA5y4Bym22ssCMQuUdwBloIAYnFyRGXPIwqOs+CdsHLcdpVA==
+ bh=vPIbVktKM/JIpADJbjiLRJKgympdn7C6CMrqlVdZTYs=;
+ b=RflDtPO9KsbkOl/z1eXK5TbIbSE6sb46qL30xvQhJX4+6VuWEACjSKZV5R6RxNuH2Cr3QXtRsbxrelRLuo+W6C1r55HMlXF4it6Y8YOTvn1ox9OMnItHZe9mWBkDthdrOStcYjlIC/SzNJeZF5m0GC1OcjC+GAjHBe79FpGPrvTR/t9YUQvbMawd0Lbp3CERBn9JOXZNXZ4ivp3EnGl30KlTNxNhIPhJB6UgOFvI9nlVc+LPGXJDTXWtwEjijMxbMrnWQUWNvruzZax2EwiOAtqP8BocDlHltPF2H5LAmUpjf34wX2Wgh+PoSC5lmHq7nNx5PP12y5R3+NFGE2IJhQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ smtp.mailfrom=verimatrix.com; dmarc=pass action=none
+ header.from=verimatrix.com; dkim=pass header.d=verimatrix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verimatrix.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y7TT+kyzC8pC5j2sJkhcpA9ZFEYCfHh0UaNuv91qNf4=;
- b=SfDxHizdWUflTqzyYVg6yoVqEFsZMo43YFbP5konigU5RWQVN6UxIXDgzizguKEJ+krZMmt/9rj0SVPMJKNa5FBTeFm2pHysaYkIBtSvOokv/5xqiZmJXOFwdS6R0i47aZgRSZXf59K/6+2JWA96VtWLW15LYdzQdRpHb70Nk4I=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0187.APCP153.PROD.OUTLOOK.COM (10.170.188.151) with Microsoft SMTP
+ bh=vPIbVktKM/JIpADJbjiLRJKgympdn7C6CMrqlVdZTYs=;
+ b=sUMnUVh6V+LTQZF1Zqh80tzDqEWzvZe51bYUz+98DMzRmrg+EpDS2cA5P/5jInA8BvfL1UAcVcNkaSfVQ0tz7p7PMDyp0BI0Qp/SpmP2YsEhNlkpjeSmC44scR8VzFBz2VPZ4rNejfYPviF6QqSat6zRtIE7Nx0Jb5TnK3xv1Y8=
+Received: from CH2PR20MB2968.namprd20.prod.outlook.com (10.255.156.33) by
+ CH2PR20MB2934.namprd20.prod.outlook.com (10.255.156.91) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.3; Mon, 30 Sep 2019 18:49:33 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::fc44:a784:73e6:c1c2]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::fc44:a784:73e6:c1c2%7]) with mapi id 15.20.2327.009; Mon, 30 Sep 2019
- 18:49:33 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     vkuznets <vkuznets@redhat.com>
-CC:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, KY Srinivasan <kys@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: RE: [PATCH v5 1/3] x86/hyper-v: Suspend/resume the hypercall page for
- hibernation
-Thread-Topic: [PATCH v5 1/3] x86/hyper-v: Suspend/resume the hypercall page
- for hibernation
-Thread-Index: AQHVdFddc0vkIIkGmEOkqRoIHJJIFqc/CHEAgAA0RQCABVkvEA==
-Date:   Mon, 30 Sep 2019 18:49:33 +0000
-Message-ID: <PU1P153MB0169804D32B95E0A145CD0B9BF820@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <1567723581-29088-1-git-send-email-decui@microsoft.com>
- <1567723581-29088-2-git-send-email-decui@microsoft.com>
- <87ef0372wv.fsf@vitty.brq.redhat.com>
- <PU1P153MB01695A159E9843B4E1EC13AEBF810@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <877e5u6re3.fsf@vitty.brq.redhat.com>
-In-Reply-To: <877e5u6re3.fsf@vitty.brq.redhat.com>
+ 15.20.2305.20; Mon, 30 Sep 2019 18:50:45 +0000
+Received: from CH2PR20MB2968.namprd20.prod.outlook.com
+ ([fe80::e8b0:cb5f:268e:e3ae]) by CH2PR20MB2968.namprd20.prod.outlook.com
+ ([fe80::e8b0:cb5f:268e:e3ae%5]) with mapi id 15.20.2305.017; Mon, 30 Sep 2019
+ 18:50:44 +0000
+From:   Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     Pascal van Leeuwen <pascalvanl@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/3] crypto: inside-secure - Fix a maybe-uninitialized
+ warning
+Thread-Topic: [PATCH 1/3] crypto: inside-secure - Fix a maybe-uninitialized
+ warning
+Thread-Index: AQHVd4jI0FLkks7xkkmieh+BnXbyw6dEj6DA
+Date:   Mon, 30 Sep 2019 18:50:44 +0000
+Message-ID: <CH2PR20MB29689C8C08D524BA05573EE9CA820@CH2PR20MB2968.namprd20.prod.outlook.com>
+References: <20190930121520.1388317-1-arnd@arndb.de>
+In-Reply-To: <20190930121520.1388317-1-arnd@arndb.de>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-30T18:49:30.9074667Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=d3e7ddcd-9ddb-4e60-9369-b0af671a3cae;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:2:d492:e91a:5e0:dd92]
+ smtp.mailfrom=pvanleeuwen@verimatrix.com; 
+x-originating-ip: [188.204.2.113]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 178f43f5-62cb-430c-c11f-08d745d6ef61
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: PU1P153MB0187:|PU1P153MB0187:|PU1P153MB0187:
-x-ms-exchange-transport-forked: True
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <PU1P153MB0187C0D3EE6EC3B4AB2932DDBF820@PU1P153MB0187.APCP153.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-office365-filtering-correlation-id: 1113a9f0-262c-48a3-e4d7-08d745d719b7
+x-ms-traffictypediagnostic: CH2PR20MB2934:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <CH2PR20MB29340330782B095C36FE17D8CA820@CH2PR20MB2934.namprd20.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:345;
 x-forefront-prvs: 01762B0D64
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(396003)(136003)(346002)(39860400002)(366004)(189003)(199004)(316002)(102836004)(476003)(486006)(46003)(7696005)(186003)(6436002)(9686003)(10290500003)(14454004)(76176011)(55016002)(53546011)(6116002)(99286004)(8990500004)(10090500001)(5660300002)(52536014)(22452003)(8936002)(6506007)(6916009)(7416002)(8676002)(71190400001)(81156014)(81166006)(71200400001)(446003)(11346002)(54906003)(86362001)(2906002)(4744005)(256004)(66476007)(66556008)(64756008)(478600001)(33656002)(14444005)(229853002)(107886003)(25786009)(76116006)(66946007)(6246003)(74316002)(305945005)(7736002)(66446008)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0187;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(39850400004)(136003)(376002)(13464003)(199004)(189003)(11346002)(102836004)(53546011)(6506007)(6116002)(3846002)(26005)(229853002)(446003)(33656002)(2906002)(5660300002)(99286004)(7736002)(305945005)(486006)(52536014)(54906003)(6436002)(76176011)(186003)(71190400001)(71200400001)(476003)(7696005)(316002)(8936002)(110136005)(55016002)(81166006)(8676002)(9686003)(25786009)(86362001)(81156014)(74316002)(15974865002)(66556008)(66066001)(6246003)(66476007)(256004)(66446008)(14444005)(64756008)(76116006)(478600001)(66946007)(14454004)(4326008)(18886075002);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR20MB2934;H:CH2PR20MB2968.namprd20.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: verimatrix.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: P1cTnrr60EXWZdug3y36Nrug6T/QeGlYVDK/09Tyj1Pz6dQs+2kk9VjpW5MhnnbjLZGrLRtuuHwlSilC6f5/3XxomitwKJ9MLUfROwXjZeOMSZxZw0M74DoaUe1t1f0/0BydJ0kn7PcAGOBiIO3y+lOc8mAsS9HqQh9NW2XIQawP5vQwFkg6RupOSNgXS28Axr+jjJsofmNiYnV8I1Z9CgMGsM5F1ZtKCEYiklBs7+VycGm9fXMSEFv1/K9IKvs+4C8cmb+eGFEtZjtHX3Mzq0jYWjJvktg7nLZxhAuvHOEvZwQT0D6dfmL6MHrm02AuxjVL5KEaJCycULYdhlWXVT60YP16dwm02NGcaQ8F1c8PlGHLue3siUJ5Nf6Oy0QTCB0piR/mQIVMzjMaxFHb18VcHhucpOPoiNxxY3RBkbE=
-Content-Type: text/plain; charset="us-ascii"
+x-microsoft-antispam-message-info: 28l2+VgICUBpCc+RpmlYwHHvFVX61rMs4ghLffNkdJ5OcNFG540Yln6Dpj8uGjezaIof8tS3nB2snGZX6LTdKj9wmp2uAzalMQQrM3hSWWRR1SesDXUpsLVKn3hYdICFI2iOVRdybQy8ILkZuATcwWjCT/wjwZQs+qFx18mnpPcQ/cxMJKw0LWtET2NEx47EWM/J6fbNQZNFLVvMmAMgvo33eo41i+0WRZcFXRTBEnQbESKKXUp0S+AbZ000tUVewOBwz0OPRxb+jYvicZs5mv6qA24Z/IphKVwUWWCMoiebZ0lMTApNFxdy7+8qdE8C+SPKfw4Th4e9jnh9n/+9/2FLUBQ93ZHlv6+bblsqpzRctfSWsrcRSJbhspbCg84Rtuy0E021Z6EmecGg+BwezoblA6lqDGZLCUfnMdLgElk=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 178f43f5-62cb-430c-c11f-08d745d6ef61
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 18:49:33.3935
+X-OriginatorOrg: verimatrix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1113a9f0-262c-48a3-e4d7-08d745d719b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 18:50:44.5213
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-id: dcb260f9-022d-4495-8602-eae51035a0d0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +J46sI8EARYq6eRD+9qksQ7dIPIoEibkNwyiB9dhCePxY39U+nKuWIbPuBJWDp7cuwvDehHE9lwoDcy1OockZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0187
+X-MS-Exchange-CrossTenant-userprincipalname: BJlPPiBYvaSDO3gnHWC9czdtR8HsWh1t/eFX/0fWTDUuJTj+2HdiXOtUIEdfm95wNlwuhGxkoDZj/hI09zsx3nMVp92vfMMXmnMXllc55XU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR20MB2934
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Sent: Friday, September 27, 2019 2:05 AM
-> To: Dexuan Cui <decui@microsoft.com>
+> -----Original Message-----
+> From: Arnd Bergmann <arnd@arndb.de>
+> Sent: Monday, September 30, 2019 2:15 PM
+> To: Antoine Tenart <antoine.tenart@bootlin.com>; Herbert Xu <herbert@gond=
+or.apana.org.au>;
+> David S. Miller <davem@davemloft.net>
+> Cc: Arnd Bergmann <arnd@arndb.de>; Pascal Van Leeuwen <pvanleeuwen@verima=
+trix.com>; Pascal van
+> Leeuwen <pascalvanl@gmail.com>; linux-crypto@vger.kernel.org; linux-kerne=
+l@vger.kernel.org
+> Subject: [PATCH 1/3] crypto: inside-secure - Fix a maybe-uninitialized wa=
+rning
 >=20
-> Dexuan Cui <decui@microsoft.com> writes:
-> ...
-> > So, I'm pretty sure no IPI can happen between hv_suspend() and
-> hv_resume().
-> > self-IPI is not supposed to happen either, since interrupts are disable=
-d.
-> >
-> > IMO TLB flush should not be an issue either, unless the kernel changes =
-page
-> > tables between hv_suspend() and hv_resume(), which is not the case as I
-> > checked the related code, but it looks in theory that might happen, say=
-, in
-> > the future, so if you insist we should save the variable "hv_hypercall_=
-pg"
-> > to a temporary variable and set the "hv_hypercall_pg" to NULL before we
-> > disable the hypercall page
+> A previous fixup avoided an unused variable warning but replaced
+> it with a slightly scarier warning:
 >=20
-> Let's do it as a future proof so we can keep relying on !hv_hypercall_pg
-> everywhere we need. No need to change this patch IMO, a follow-up would
-> do.
-> Vitaly
+> drivers/crypto/inside-secure/safexcel.c:1100:6: error: variable 'irq' is =
+used uninitialized
+> whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+>=20
+> This is harmless as it is impossible to get into this case, but
+> the compiler has no way of knowing that. Add an explicit error
+> handling case to make it obvious to both compilers and humans
+> reading the source.
+>=20
+> Fixes: 212ef6f29e5b ("crypto: inside-secure - Fix unused variable warning=
+ when CONFIG_PCI=3Dn")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/crypto/inside-secure/safexcel.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/ins=
+ide-secure/safexcel.c
+> index 4ab1bde8dd9b..311bf60df39f 100644
+> --- a/drivers/crypto/inside-secure/safexcel.c
+> +++ b/drivers/crypto/inside-secure/safexcel.c
+> @@ -1120,6 +1120,8 @@ static int safexcel_request_ring_irq(void *pdev, in=
+t irqid,
+>  				irq_name, irq);
+>  			return irq;
+>  		}
+> +	} else {
+> +		return -ENXIO;
+>  	}
+>=20
+>  	ret =3D devm_request_threaded_irq(dev, irq, handler,
+> --
+> 2.20.0
 
-Now I think it would be better to do it in this patch. :-)
-I'll post a v6 to follow your suggestion.
+Ok, this won't hurt in any way I guess, so fine by me (assuming that error
+code makes sense).
 
-Thanks,
--- Dexuan
+Acked-by: Pascal van Leeuwen <pvanleeuwen@verimatrix.com>
+
+
+Regards,
+Pascal van Leeuwen
+Silicon IP Architect, Multi-Protocol Engines @ Verimatrix
+www.insidesecure.com
+
