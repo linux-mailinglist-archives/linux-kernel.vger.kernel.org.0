@@ -2,116 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26A37C2377
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B168C2387
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731844AbfI3OiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:38:07 -0400
-Received: from mail-pl1-f178.google.com ([209.85.214.178]:35876 "EHLO
-        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731190AbfI3OiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:38:07 -0400
-Received: by mail-pl1-f178.google.com with SMTP id j11so685787plk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 07:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Nrz2IUrj33GgmjR54VOTYEGCWrGtCKIOTHnB+tuTggE=;
-        b=hYj0BxkMzOSWJ9qVG8vivY1DSijQIWTGFXbIQWMbX+pNT41Z5s6jkWEJvrgidKkzvv
-         RNXqHQnayMrkzoofHJMcvvTaOllLoBrxR/h6HyUKAYBi85HWU46baPupGOhXRkjPJHwc
-         T7OEYoKNyYJcBXdI+oDlWOa5Cr47BJGKbdIurNzZrXlvfX3iP0eZGQ5wJz7Tq2iMHB+Y
-         CYL04F8RkQlMKN103zwWEJqiAUZ16IAgmDTuj1v+fOgDvCSde9nSeBnXxW/zn2eVQxAA
-         HdWux0STYn29vaw08s9SjYM3pzigxha9XKRkpmEVvNUDjPs5+2ZqzgONwS+vGFmNN5Rv
-         a/vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Nrz2IUrj33GgmjR54VOTYEGCWrGtCKIOTHnB+tuTggE=;
-        b=OmT52dCKRxioNo2i/NTpd+4ZM0LxiR7jQ4SJLZUZ75mvVc5Ivja3D46HQbh9n9hRS6
-         u1SAeIhFw2r3G2WZMLr3VV8ez22vGB+PJkgrZnfdHIOacu9fSy993SqiVIpjw/LW6E7I
-         1pECn73CEUWlbdGIBxyKlj4ZxHTE9pomjVjea0R0YDHPRNyZUE6Wc3ACTdjLmc1Oxnkl
-         eMWl2eMeBPeiAOVKrEISu2Iqq2509UvNhlaQMcRRz8Ninsqkh1M00BayTijESyTcj6Y5
-         R3F9TmoQWBOl7tAPSJqYBD6Ue6IEGtOzPC0bAOBxig6ivikAXevpiWhsSlmg84uUb30Z
-         qwUg==
-X-Gm-Message-State: APjAAAXleL1MRYxK0ua2CeSbKN3SEzHj/YpPzuPW5PHJyz/fr0k1EfVb
-        vS3LgEv1TNZQc9KuAZI4JoNZ0K+bwb8=
-X-Google-Smtp-Source: APXvYqxMnYoEle8gh3tPSix9AK1DfPpkhRwiOw/aa3JW9SasNolyTF+mD3FLzd0+Lqg0Cr1/wwHAqg==
-X-Received: by 2002:a17:902:b209:: with SMTP id t9mr5103408plr.116.1569854286323;
-        Mon, 30 Sep 2019 07:38:06 -0700 (PDT)
-Received: from Slackware ([103.231.91.38])
-        by smtp.gmail.com with ESMTPSA id e4sm11103665pff.22.2019.09.30.07.38.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 07:38:05 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 20:07:56 +0530
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     LinuxKernel <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] remove dead mutt url and add active mutt url
-Message-ID: <20190930143756.GB30066@Slackware>
-References: <20190928151300.GA18122@debian>
- <20190930081310.7e3b9c52@lwn.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
-Content-Disposition: inline
-In-Reply-To: <20190930081310.7e3b9c52@lwn.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1731763AbfI3On1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:43:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48436 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730809AbfI3On1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:43:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9E6D4AE2A;
+        Mon, 30 Sep 2019 14:43:24 +0000 (UTC)
+Message-ID: <1569853679.2639.4.camel@suse.com>
+Subject: Re: WARNING in _chaoskey_fill/usb_submit_urb
+From:   Oliver Neukum <oneukum@suse.com>
+To:     syzbot <syzbot+f5349b421c6213d34ce2@syzkaller.appspotmail.com>,
+        gustavo@embeddedor.com, andreyknvl@google.com,
+        syzkaller-bugs@googlegroups.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Date:   Mon, 30 Sep 2019 16:27:59 +0200
+In-Reply-To: <000000000000488dd305933945d2@google.com>
+References: <000000000000488dd305933945d2@google.com>
+Content-Type: multipart/mixed; boundary="=-pDbKljJr9HUl0bviT/pC"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---xgyAXRrhYN0wYx8y
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+--=-pDbKljJr9HUl0bviT/pC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-On 08:13 Mon 30 Sep 2019, Jonathan Corbet wrote:
->On Sat, 28 Sep 2019 20:43:03 +0530
->Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
->
->> The following changes since commit 4e4327891fe2a2a4db342985bff4d4c48703c707:
->>
->>   replace dead mutt url with active one. (2019-09-28 20:11:00 +0530)
->>
->>   are available in the Git repository at:
->
->Bhaskar, I'm not going to take a pull request for a change like this.  If
->you would like to make this change (and it seems like a useful change to
->make), please send me a patch that is:
->
-> - based on docs-next
-> - properly changelogged
-> - demonstrated to build properly with sphinx
->
+Am Montag, den 23.09.2019, 07:31 -0700 schrieb syzbot:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    e0bd8d79 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1452c6a1600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8847e5384a16f66a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f5349b421c6213d34ce2
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16342d45600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166769b1600000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+f5349b421c6213d34ce2@syzkaller.appspotmail.com
 
-Will follow your words, Jon. Hopefully ,next one will be alright.Sorry
-for the bugging.
+#syz test: https://github.com/google/kasan.git e0bd8d79
+
+--=-pDbKljJr9HUl0bviT/pC
+Content-Disposition: attachment; filename="0001-USB-chaoskey-fix-error-case-of-a-timeout.patch"
+Content-Transfer-Encoding: base64
+Content-Type: text/x-patch; name="0001-USB-chaoskey-fix-error-case-of-a-timeout.patch";
+	charset="UTF-8"
+
+RnJvbSBiODBiMzlhMjU2NWE4MGYxNmNlMDA3OTgyYmFiZTc1M2UyMjVlYTgzIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgpEYXRl
+OiBNb24sIDMwIFNlcCAyMDE5IDE1OjE5OjEzICswMjAwClN1YmplY3Q6IFtQQVRDSF0gVVNCOiBj
+aGFvc2tleTogZml4IGVycm9yIGNhc2Ugb2YgYSB0aW1lb3V0CgpJbiBjYXNlIG9mIGEgdGltZW91
+dCBjb21tdW5pY2F0aW9uIHdpdGggdGhlIGRldmljZSBuZWVkcyB0byBiZSBlbmRlZApmcm9tIHRo
+ZSBob3N0IHNpZGUsIGxlc3Qgd2Ugb3ZlcndyaXRlIGFuIGFjdGl2ZSBVUkIKClNpZ25lZC1vZmYt
+Ynk6IE9saXZlciBOZXVrdW0gPG9uZXVrdW1Ac3VzZS5kZT4KLS0tCiBkcml2ZXJzL3VzYi9taXNj
+L2NoYW9za2V5LmMgfCAxNyArKysrKysrKysrKysrKy0tLQogMSBmaWxlIGNoYW5nZWQsIDE0IGlu
+c2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvbWlz
+Yy9jaGFvc2tleS5jIGIvZHJpdmVycy91c2IvbWlzYy9jaGFvc2tleS5jCmluZGV4IGNmNTgyOGNl
+OTI3YS4uM2NiN2UxYjdkNDU0IDEwMDY0NAotLS0gYS9kcml2ZXJzL3VzYi9taXNjL2NoYW9za2V5
+LmMKKysrIGIvZHJpdmVycy91c2IvbWlzYy9jaGFvc2tleS5jCkBAIC0zODMsMTMgKzM4MywxNyBA
+QCBzdGF0aWMgaW50IF9jaGFvc2tleV9maWxsKHN0cnVjdCBjaGFvc2tleSAqZGV2KQogCQkhZGV2
+LT5yZWFkaW5nLAogCQkoc3RhcnRlZCA/IE5BS19USU1FT1VUIDogQUxFQV9GSVJTVF9USU1FT1VU
+KSApOwogCi0JaWYgKHJlc3VsdCA8IDApCisJaWYgKHJlc3VsdCA8IDApIHsKKwkJdXNiX2tpbGxf
+dXJiKGRldi0+dXJiKTsKIAkJZ290byBvdXQ7CisJfQogCi0JaWYgKHJlc3VsdCA9PSAwKQorCWlm
+IChyZXN1bHQgPT0gMCkgewogCQlyZXN1bHQgPSAtRVRJTUVET1VUOwotCWVsc2UKKwkJdXNiX2tp
+bGxfdXJiKGRldi0+dXJiKTsKKwl9IGVsc2UgewogCQlyZXN1bHQgPSBkZXYtPnZhbGlkOworCX0K
+IG91dDoKIAkvKiBMZXQgdGhlIGRldmljZSBnbyBiYWNrIHRvIHNsZWVwIGV2ZW50dWFsbHkgKi8K
+IAl1c2JfYXV0b3BtX3B1dF9pbnRlcmZhY2UoZGV2LT5pbnRlcmZhY2UpOwpAQCAtNTI1LDcgKzUy
+OSwxNCBAQCBzdGF0aWMgaW50IGNoYW9za2V5X3N1c3BlbmQoc3RydWN0IHVzYl9pbnRlcmZhY2Ug
+KmludGVyZmFjZSwKIAogc3RhdGljIGludCBjaGFvc2tleV9yZXN1bWUoc3RydWN0IHVzYl9pbnRl
+cmZhY2UgKmludGVyZmFjZSkKIHsKKwlzdHJ1Y3QgY2hhb3NrZXkgKmRldjsKKwlzdHJ1Y3QgdXNi
+X2RldmljZSAqdWRldiA9IGludGVyZmFjZV90b191c2JkZXYoaW50ZXJmYWNlKTsKKwogCXVzYl9k
+YmcoaW50ZXJmYWNlLCAicmVzdW1lIik7CisJZGV2ID0gdXNiX2dldF9pbnRmZGF0YShpbnRlcmZh
+Y2UpOworCWlmIChsZTE2X3RvX2NwdSh1ZGV2LT5kZXNjcmlwdG9yLmlkVmVuZG9yKSA9PSBBTEVB
+X1ZFTkRPUl9JRCkKKwkJZGV2LT5yZWFkc19zdGFydGVkID0gZmFsc2U7CisKIAlyZXR1cm4gMDsK
+IH0KICNlbHNlCi0tIAoyLjE2LjQKCg==
 
 
->Thanks,
->
->jon
+--=-pDbKljJr9HUl0bviT/pC--
 
-Thanks,
-Bhaskar
-
---xgyAXRrhYN0wYx8y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl2SEz4ACgkQsjqdtxFL
-KRXp1Qf+I8whd598TaGIF5lt7Gb9g3W138oZuA4MJHb31FwC7fKpLozuuh7qtA8f
-E/pnQgKSv3UqXcw3UEfBon6J88dMkxRkxR7D5nLD0XHKvVKgDtK04JTqrfbYuSTE
-REPTvbe8hDRQsLBKF1CSgfsENb0nojAgPFwVZISf6x8lcSGHAl8NuVz0uxtRleLn
-BpFUwjCLiZ7FEwnm9srnXBBfi6VbHz69u8kSBvAql+z+iX96DrYjV9I4h7oeO7gv
-x8ah4674EwAxEcae3nJHSBJd72CiJV2FrZmSApImnc/5+z8TpljL/ZH9W02lVeCJ
-SzIHwvovBu7+3crSl1KHWzVPFPn6lg==
-=affU
------END PGP SIGNATURE-----
-
---xgyAXRrhYN0wYx8y--
