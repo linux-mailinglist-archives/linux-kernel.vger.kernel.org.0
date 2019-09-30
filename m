@@ -2,97 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562B5C295F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 00:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0490EC2968
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 00:22:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732369AbfI3WUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 18:20:23 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44126 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfI3WUW (ORCPT
+        id S1731728AbfI3WWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 18:22:24 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41607 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbfI3WWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 18:20:22 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 21so9769659otj.11;
-        Mon, 30 Sep 2019 15:20:22 -0700 (PDT)
+        Mon, 30 Sep 2019 18:22:23 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w17so12608437oiw.8;
+        Mon, 30 Sep 2019 15:22:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=F7EuIouiHhXnI+Mf2IJX0I4I3pBr8z7vl6hhtN/rydc=;
-        b=nanYkIa88zdOcBjfYJinBCYrY35jvSz2AVXYvp9G2XcgAkEu3fzBFxpJo5neLokxRN
-         dlxdoWvCNz+rI7kgcLGCJxL+Fo2bYc5T0hoW3X1E57CnXdYCqEsi5jYAM6dwbX8In+8/
-         cq/MCKlh3jD1AkgLTlJ715FWF05TC8Iuz9m8DaYEppH9PYvGmiUHBVbtgWUWLhWUgmXc
-         uBDCWMXF8zI4EvCXoSs/t+12/nuf4gNN/j1rnS1A/Uhmfp30RhMvbjk5Dc6wDc88grLX
-         vWd2FdVbhvq6Vz6HDBfx1BgNtfWR5ICBL95TGVGFN7uI6KjgKsK8v86OYum+OMtjYYKv
-         2D5w==
-X-Gm-Message-State: APjAAAVDi1wWxKcOwfwZjad7SZJEo91xV3NDxemY5+5lyAoBRKKFSUhi
-        rrkMabGU6j7lThacGUQPYw==
-X-Google-Smtp-Source: APXvYqwlTz51SdwLtiYS/F6mSjvwoCRn1JCMaKGRrqHAekh5UT3CgLba9X+2enyJqSphfurQyQWK4A==
-X-Received: by 2002:a9d:7844:: with SMTP id c4mr577304otm.273.1569882021729;
-        Mon, 30 Sep 2019 15:20:21 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3gV+N2q4c7xBEndHGGNd7K/X6ylfrBjCj+XYgXjqaaA=;
+        b=Wns2nT6l/0DkBpdTMWZ6/sMZEVB6orNisApsbrrPoj+xQEfjPDtaxkb1u+pmx6XKk9
+         hH3rPZORYwVqnEx9tIbqCIqEu+rUTPyiQhtGpd6JVllmalf1Sv3vNffOZrAdLtd0OSiI
+         9XqBiFFdHAIJ8DsVS0y8m/qzL0/SXunvevbzNBVSOHzjM0Cm4L12Rlnbi9eLo5r/xjZH
+         3YchIqw5DJXsFqpbqQdFloiMNTybV+yKFgHqjUC9dpqH5ssdCwFN/k9f6BOk2inAo7D2
+         BbRrybKB0b2dgT2qbCNK9NqnspmAkKPHxbhEmW7vbCK0E1Z6g0u6ioDOK9596RBfJohN
+         1RzA==
+X-Gm-Message-State: APjAAAXFT8gBI6t3OByehkaxleBIJa4/T3LhpLd5tXNA1Vsq8Ik+UNzQ
+        1UMjqj5VdNBJ/NOxIHlh2g==
+X-Google-Smtp-Source: APXvYqxVlkZ7EqGOYTrAdHZlOQJmcXo93WrERqOQtRgYQpwCMDU3zVOggGVnVmoHHdYMkoNNmQkgxA==
+X-Received: by 2002:aca:3387:: with SMTP id z129mr1221964oiz.65.1569882142647;
+        Mon, 30 Sep 2019 15:22:22 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v10sm4017054otk.17.2019.09.30.15.20.21
+        by smtp.gmail.com with ESMTPSA id t82sm4686884oie.12.2019.09.30.15.22.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 15:20:21 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 17:20:20 -0500
+        Mon, 30 Sep 2019 15:22:22 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 17:22:21 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <aford173@gmail.com>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>
-Subject: Re: [PATCH 2/7] hwrng: omap3-rom - Fix missing clock by probing with
- device tree
-Message-ID: <20190930222020.GA13078@bogus>
-References: <20190914210300.15836-1-tony@atomide.com>
- <20190914210300.15836-3-tony@atomide.com>
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Cc:     Zhiqiang.Hou@nxp.com, bhelgaas@google.com, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, Minghuan.Lian@nxp.com,
+        andrew.murray@arm.com, mingkai.hu@nxp.com,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] dt-bindings: Add DT binding for PCIE GEN4 EP of the
+ layerscape
+Message-ID: <20190930222221.GA13251@bogus>
+References: <20190916021742.22844-1-xiaowei.bao@nxp.com>
+ <20190916021742.22844-3-xiaowei.bao@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190914210300.15836-3-tony@atomide.com>
+In-Reply-To: <20190916021742.22844-3-xiaowei.bao@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 14 Sep 2019 14:02:55 -0700, Tony Lindgren wrote:
-> Commit 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
-> removed old omap3 clock framework aliases but caused omap3-rom-rng to
-> stop working with clock not found error.
+On Mon, Sep 16, 2019 at 10:17:38AM +0800, Xiaowei Bao wrote:
+> Add the documentation for the Device Tree binding of the layerscape
+> PCIe GEN4 controller with EP mode.
 > 
-> Based on discussions on the mailing list it was requested by Tero Kristo
-> that it would be best to fix this issue by probing omap3-rom-rng using
-> device tree to provide a proper clk property. The other option would be
-> to add back the missing clock alias, but that does not help moving things
-> forward with removing old legacy platform_data.
-> 
-> Let's also add a proper device tree binding and keep it together with
-> the fix.
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Cc: Adam Ford <aford173@gmail.com>
-> Cc: Pali Rohár <pali.rohar@gmail.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
-> Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
 > ---
->  .../devicetree/bindings/rng/omap3_rom_rng.txt | 27 +++++++++++++++++++
->  arch/arm/boot/dts/omap3-n900.dts              |  6 +++++
->  arch/arm/mach-omap2/pdata-quirks.c            | 12 +--------
->  drivers/char/hw_random/omap3-rom-rng.c        | 17 ++++++++++--
->  4 files changed, 49 insertions(+), 13 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/rng/omap3_rom_rng.txt
+>  .../bindings/pci/layerscape-pcie-gen4.txt          | 28 +++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt b/Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+> index b40fb5d..414a86c 100644
+> --- a/Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+> +++ b/Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+> @@ -3,6 +3,8 @@ NXP Layerscape PCIe Gen4 controller
+>  This PCIe controller is based on the Mobiveil PCIe IP and thus inherits all
+>  the common properties defined in mobiveil-pcie.txt.
+>  
+> +HOST MODE
+> +=========
+>  Required properties:
+>  - compatible: should contain the platform identifier such as:
+>    "fsl,lx2160a-pcie"
+> @@ -23,7 +25,20 @@ Required properties:
+>  - msi-parent : See the generic MSI binding described in
+>    Documentation/devicetree/bindings/interrupt-controller/msi.txt.
+>  
+> -Example:
+> +DEVICE MODE
+> +=========
+> +Required properties:
+> +- compatible: should contain the platform identifier such as:
+> +  "fsl,lx2160a-pcie-ep"
+> +- reg: base addresses and lengths of the PCIe controller register blocks.
+> +  "regs": PCIe controller registers.
+> +  "addr_space" EP device CPU address.
+> +- apio-wins: number of requested apio outbound windows.
+> +
+> +Optional Property:
+> +- max-functions: Maximum number of functions that can be configured (default 1).
+> +
+> +RC Example:
+>  
+>  	pcie@3400000 {
+>  		compatible = "fsl,lx2160a-pcie";
+> @@ -50,3 +65,14 @@ Example:
+>  				<0000 0 0 3 &gic 0 0 GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
+>  				<0000 0 0 4 &gic 0 0 GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+>  	};
+> +
+> +EP Example:
+> +
+> +	pcie_ep@3400000 {
 
-Acked-by: Rob Herring <robh@kernel.org>
+pcie-endpoint@...
+
+> +		compatible = "fsl,lx2160a-pcie-ep";
+> +		reg = <0x00 0x03400000 0x0 0x00100000
+> +		       0x80 0x00000000 0x8 0x00000000>;
+> +		reg-names = "regs", "addr_space";
+> +		apio-wins = <8>;
+> +		status = "disabled";
+
+Don't show status in examples.
+
+> +	};
+> -- 
+> 2.9.5
+> 
