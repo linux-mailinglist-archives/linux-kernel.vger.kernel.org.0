@@ -2,51 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A19C217F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1318C2185
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:12:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731081AbfI3NJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:09:54 -0400
-Received: from ms.lwn.net ([45.79.88.28]:48838 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730296AbfI3NJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:09:53 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 63129740;
-        Mon, 30 Sep 2019 13:09:53 +0000 (UTC)
-Date:   Mon, 30 Sep 2019 07:09:52 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Subject: Re: [GIT PULL] Thermal management updates for v5.4-rc1
-Message-ID: <20190930070939.706c9dfa@lwn.net>
-In-Reply-To: <64d13484950cab570e5f2691d7cdeca292882d95.camel@redhat.com>
-References: <a9e8e68f34139d5a9abb7f8b7d3fe64ff82c6d96.camel@intel.com>
-        <CAHk-=whua2XSTLd3gtqVHfq5HtGnjhRUv7vA6SUfkbVUebqWJQ@mail.gmail.com>
-        <64d13484950cab570e5f2691d7cdeca292882d95.camel@redhat.com>
-Organization: LWN.net
+        id S1731113AbfI3NLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:11:33 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36213 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfI3NLd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:11:33 -0400
+Received: by mail-qk1-f196.google.com with SMTP id y189so7682169qkc.3;
+        Mon, 30 Sep 2019 06:11:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yvTBruD6zaxn4sjv75YBQD/wvJnGfoapWmbizXNwOe4=;
+        b=QTle/f5DLXEhlyP1XuY4qJyszbl+i54AIelwGPscZpbMgfqMw00kTq+pYnVQWNwW0O
+         LNcKarv2fWT9nJ+6OulbjshHCe3MpGGMIClpjW0OOWCMD1TBFi077e7hLSOk8uzICPds
+         3CP03cvDfD+71dy2XUx1rXKbEVZYln3lKaruP3oW+83OfdMuEGcXoswDjeLww0VrQajD
+         1+nYF3nIsHj562Fu5xuxIEDIwXcvbcWKb8MRTL0L1D+PubjlOb3dquDi2F+LZ4qfPaVl
+         TEEeFIKrzK9K9diCjx4FXCJVuYxXvGb77tN4juHjx2GeYPSU5QAKsUgjcc04rZwfI/se
+         E+ww==
+X-Gm-Message-State: APjAAAVPBo5ijoyMdXycwEYgLgQBalEFehoBccaoxfQxais/64PI3C50
+        2V6aGzoA9gyhKi53wTlhPJjHtgcRpboqCQVXoJvSdpUm
+X-Google-Smtp-Source: APXvYqxTTAYfkhCHkzMgXzRRscqOu03R0zgUehRs/wbuLHGGTGki2kNYI5vG0oUjtCDGe/Os6ctHOkQ9bUK6AsOCYAI=
+X-Received: by 2002:ae9:ef8c:: with SMTP id d134mr18891406qkg.286.1569849091986;
+ Mon, 30 Sep 2019 06:11:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+References: <cover.1569831228.git.Jose.Abreu@synopsys.com> <8879f74a8cc5dffdb14d553c321d64c63ea9fe2d.1569831229.git.Jose.Abreu@synopsys.com>
+In-Reply-To: <8879f74a8cc5dffdb14d553c321d64c63ea9fe2d.1569831229.git.Jose.Abreu@synopsys.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 30 Sep 2019 15:11:15 +0200
+Message-ID: <CAK8P3a0Fzvy=PGDKf-K_xSCpuboSJTVY5voYMFJTNhWHkTw-DA@mail.gmail.com>
+Subject: Re: [PATCH v2 net 9/9] net: stmmac: xgmac: Fix RSS writing wrong keys
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     Networking <netdev@vger.kernel.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Sep 2019 15:29:47 -0400
-Doug Ledford <dledford@redhat.com> wrote:
+On Mon, Sep 30, 2019 at 10:19 AM Jose Abreu <Jose.Abreu@synopsys.com> wrote:
+>
+> Commit b6b6cc9acd7b, changed the call to dwxgmac2_rss_write_reg()
+> passing it the variable cfg->key[i].
+>
+> As key is an u8 but we write 32 bits at a time we need to cast it into
+> an u32 so that the correct key values are written. Notice that the for
+> loop already takes this into account so we don't try to write past the
+> keys size.
 
-> If you are doing linux kernel development, and you are doing a rebase,
-> please read Documentation/When_Not_To_Rebase.rst before rebasing your
-> code and sending it to Linus.  You've been warned.
+Right, sorry about my mistake.
 
-For anybody following along at home, the proper spelling for that is
-Documentation/maintainer/rebasing-and-merging.txt or
-https://www.kernel.org/doc/html/latest/maintainer/rebasing-and-merging.html
+> Fixes: b6b6cc9acd7b ("net: stmmac: selftest: avoid large stack usage")
+> Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
 
-jon
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
