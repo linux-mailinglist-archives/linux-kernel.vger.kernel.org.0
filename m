@@ -2,138 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96C1CC26CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D11DBC26C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732098AbfI3UkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:40:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:33889 "EHLO mga07.intel.com"
+        id S1731293AbfI3Uju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:39:50 -0400
+Received: from mga03.intel.com ([134.134.136.65]:62104 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731113AbfI3UkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:40:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1730539AbfI3Uju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:39:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 11:18:32 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 11:18:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,568,1559545200"; 
-   d="scan'208";a="204894825"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Sep 2019 11:18:31 -0700
-Received: from [10.251.2.197] (kliang2-mobl.ccr.corp.intel.com [10.251.2.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id E8BCA5803DA;
-        Mon, 30 Sep 2019 11:18:30 -0700 (PDT)
-Subject: Re: [PATCH V4 08/14] perf/x86/intel: Support per thread RDPMC TopDown
- metrics
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+   d="scan'208";a="197617751"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by FMSMGA003.fm.intel.com with ESMTP; 30 Sep 2019 11:18:31 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 33B14301B07; Mon, 30 Sep 2019 11:18:31 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 11:18:31 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, acme@kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH V4 07/14] perf/x86/intel: Support hardware TopDown metrics
+Message-ID: <20190930181831.GC8560@tassilo.jf.intel.com>
 References: <20190916134128.18120-1-kan.liang@linux.intel.com>
- <20190916134128.18120-9-kan.liang@linux.intel.com>
- <20190930155244.GP4553@hirez.programming.kicks-ass.net>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <74485793-b7a8-4c34-cdde-1f452b7b359f@linux.intel.com>
-Date:   Mon, 30 Sep 2019 14:18:29 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ <20190916134128.18120-8-kan.liang@linux.intel.com>
+ <20190930130615.GN4553@hirez.programming.kicks-ass.net>
+ <20190930140755.GE4581@hirez.programming.kicks-ass.net>
+ <20190930145321.GF4581@hirez.programming.kicks-ass.net>
+ <06e16f73-f6af-5019-3d85-bc33740e0c8f@linux.intel.com>
+ <20190930162153.GG4519@hirez.programming.kicks-ass.net>
+ <8d255708-6b8d-c18d-1491-cb19e3c6be4d@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190930155244.GP4553@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d255708-6b8d-c18d-1491-cb19e3c6be4d@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> Andi, what do you think? Will it be a problem for RDPMC users?
 
+Should be fine.
 
-On 9/30/2019 11:52 AM, Peter Zijlstra wrote:
-> On Mon, Sep 16, 2019 at 06:41:22AM -0700, kan.liang@linux.intel.com wrote:
->> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->> index 71f3086a8adc..7ec0f350d2ac 100644
->> --- a/arch/x86/events/intel/core.c
->> +++ b/arch/x86/events/intel/core.c
->> @@ -2262,6 +2262,11 @@ static int icl_set_topdown_event_period(struct perf_event *event)
->>   		local64_set(&hwc->period_left, 0);
->>   	}
->>   
->> +	if ((hwc->saved_slots) && is_first_topdown_event_in_group(event)) {
->> +		wrmsrl(MSR_CORE_PERF_FIXED_CTR3, hwc->saved_slots);
->> +		wrmsrl(MSR_PERF_METRICS, hwc->saved_metric);
->> +	}
-> 
->> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->> index 61448c19a132..c125068f2e16 100644
->> --- a/include/linux/perf_event.h
->> +++ b/include/linux/perf_event.h
->> @@ -133,6 +133,9 @@ struct hw_perf_event {
->>   
->>   			struct hw_perf_event_extra extra_reg;
->>   			struct hw_perf_event_extra branch_reg;
->> +
->> +			u64		saved_slots;
->> +			u64		saved_metric;
->>   		};
->>   		struct { /* software */
->>   			struct hrtimer	hrtimer;
-> 
-> Normal counters save their counter value in hwc->period_left, why does
-> slots need a new word for that?
-> 
+RDPMC users only need slots anyways, as they managed RDPMC on their own.
 
-We have two values which have to be stored. Only period_left is not enough.
+We can document it in the documentation. And they will see an 
+error if they only enable a metrics event.
 
-> And since using METRIC means non-sampling, why can't we stick that
-> saved_metric field in one of the unused sampling fields?
->
-
-Yes, I think we can re-use last_period and period_left for saved_metric 
-and saved_slots. I will change it in V5.
-
-
-@@ -202,17 +199,26 @@ struct hw_perf_event {
-  	 */
-  	u64				sample_period;
-
--	/*
--	 * The period we started this sample with.
--	 */
--	u64				last_period;
-+	union {
-+		struct { /* Sampling */
-
--	/*
--	 * However much is left of the current period; note that this is
--	 * a full 64bit value and allows for generation of periods longer
--	 * than hardware might allow.
--	 */
--	local64_t			period_left;
-+			/*
-+			 * The period we started this sample with.
-+			 */
-+			u64				last_period;
-+
-+			/*
-+			 * However much is left of the current period; note that this is
-+			 * a full 64bit value and allows for generation of periods longer
-+			 * than hardware might allow.
-+			 */
-+			local64_t			period_left;
-+		};
-+		struct { /* Topdown events counting for context switch*/
-+			u64				saved_metric;
-+			u64				saved_slots;
-+		};
-+	};
-
-
-Thanks,
-Kan
-
-> ISTR asking this before...
->
-
+-Andi
