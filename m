@@ -2,115 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C21BBC2174
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:06:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D95AC214B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731190AbfI3NGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:06:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54314 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729738AbfI3NGb (ORCPT
+        id S1731250AbfI3NEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:04:44 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:48830 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730929AbfI3NEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:06:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pDlR6fcxsnEYOQQvqNeC6vIfQZfiRjpLnLs2afm8Kcg=; b=RVYRTwHKqnwbzOMCE8dTEk1Sa
-        zvoURh70HF1vAzOo70H/9xE1NCdsIrGp1liocyEP6VnJmo8glv1UgYkkSgrohBhBZqeVNt21Mfhlq
-        u3T0l4/n8fK9hnuKeGIJQ5/OZYmEsmKwSr5lODbkvlomV9FKvo8xSGFBOgSO/kWVY2L+JVyKbVAFl
-        3q77p6vjgKcC8rCw7vsu64bW2022H16PC1MdrBc1rFI5dT7v/c96QpkOuxFPfCSOoN2Thwhy6AjuK
-        +NNbl+5y5RWJaeT602S5giuXS9DdANkQtFr29ME+agp38yBWGhw14qZmLwVmUg8RBA57m2cfiBa9D
-        nkp4ZDcGA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iEvNa-0002KN-Gf; Mon, 30 Sep 2019 13:06:18 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 89DF7301B59;
-        Mon, 30 Sep 2019 15:05:27 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 886C525D6479C; Mon, 30 Sep 2019 15:06:15 +0200 (CEST)
-Date:   Mon, 30 Sep 2019 15:06:15 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com
-Subject: Re: [PATCH V4 07/14] perf/x86/intel: Support hardware TopDown metrics
-Message-ID: <20190930130615.GN4553@hirez.programming.kicks-ass.net>
-References: <20190916134128.18120-1-kan.liang@linux.intel.com>
- <20190916134128.18120-8-kan.liang@linux.intel.com>
+        Mon, 30 Sep 2019 09:04:42 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8UD4ZaX122607;
+        Mon, 30 Sep 2019 08:04:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569848675;
+        bh=zwY7tkc6pjGZm1I+Zym1So/oOC+v+j8jYGLvEWDqUEY=;
+        h=From:To:CC:Subject:Date;
+        b=NXhXmJLqH3O4wVskkag7bbWB62tPiol5+9EgURbnsL0UiHE2+uidWwJK8sP+HKY4J
+         W/9zTjy9LfFvzhMVQUvpDGVqJV8oBUpc70BsGMhMzjcIWtrc5WKpCQLmlFd0r5Assb
+         dcpzrniWqJ1gdeTFSwo3v4nfv3BOUTY2wmCQvpfU=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8UD4Z0Z057319;
+        Mon, 30 Sep 2019 08:04:35 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 30
+ Sep 2019 08:04:25 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 30 Sep 2019 08:04:25 -0500
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8UD4Zif115624;
+        Mon, 30 Sep 2019 08:04:35 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v5 0/8] media: i2c: ov2659: maintenance series
+Date:   Mon, 30 Sep 2019 08:06:36 -0500
+Message-ID: <20190930130644.8704-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916134128.18120-8-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 06:41:21AM -0700, kan.liang@linux.intel.com wrote:
-> Reset
-> ======
-> 
-> Both PERF_METRICS and fixed counter 3 are required to start from zero.
+This patch series is a collection of patches we have been carrying for a
+while.
 
-explain *why*, also in the comments.
+It includes a few sensor register fixes which would cause visual
+artifacts at lower resolution and also at 720p.
 
-> However, current perf has -max_period as default initial value.
-> The patch force initial value as 0 for topdown and slots event counting.
-> 
-> Additionally, for certain scenarios that involve counting metrics at
-> high rates, SW is required to periodically clear both MSRs in order to
-> maintain accurate measurements. In this patch, both PERF_METRICS and
-> Fixed counter 3 are reset for each read.
+Also on some board the 'powerdown' and /or 'reset' pins are not tied so
+we need to add support for optional gpios to handle these.
 
-That forgoes all the good details again :/ 
+Since these camera are removable on some board we also need the driver
+to actually fail when there is no hardware present so the driver is
+actually removed.
 
+Also added a patch to check and propagate errors on s_stream invocation.
 
-> Originally-by: Andi Kleen <ak@linux.intel.com>
+Finally, we update the licensing statement to use SPDX licensing.
 
-This is of dubius value here and in that other patch. In that other
-patch I've written more lines than Andi has and here you have pretty
-much rewritten everything since v1 or so.
+Changes since v4:
+- Changes the s_ctrl "power" access method to use pm runtime API
+- Fix an issue with "streaming" vairable left on in error case.
+- Added Acked-by from Prabhakar
+- Added Reviwed-by from Rob
 
-> +static bool is_first_topdown_event_in_group(struct perf_event *event)
-> +{
-> +	struct perf_event *first = NULL;
-> +
-> +	if (is_topdown_event(event->group_leader))
-> +		first = event->group_leader;
-> +	else {
-> +		for_each_sibling_event(first, event->group_leader)
-> +			if (is_topdown_event(first))
-> +				break;
-> +	}
-> +
-> +	if (event == first)
-> +		return true;
-> +
-> +	return false;
-> +}
+Changes since v3:
+- Addressed review comment from Sakari about s_ctrl i2c access whne
+  powered off
 
-> +static u64 icl_update_topdown_event(struct perf_event *event)
-> +{
-> +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-> +	struct perf_event *other;
-> +	u64 slots, metrics;
-> +	int idx;
-> +
-> +	/*
-> +	 * Only need to update all events for the first
-> +	 * slots/metrics event in a group
-> +	 */
-> +	if (event && !is_first_topdown_event_in_group(event))
-> +		return 0;
+Changes since v2:
+- Addressed review comment from Sakari
+- Reworked the "media: i2c: ov2659: Add powerdown/reset gpio handling"
+  to use pm_runtime if it is available but not to make it depend on it.
+- Cleaned up the gpio related calls to remove the unnecessary NULL check
 
-This is pretty crap and approaches O(n^2); let me think if there's
-anything saner to do here.
+Changes since v1:
+- Addressed review comment from Prabhakar
+- Added support for reset-gpios
+- Rework the power setting to use pm_runtime instead of s_power
+  as based on discussion with Sakari it would be the prefered method
+- Added a patch to reduce the number explicit include files to the
+  minimum necessary instead of the previous kitchen sink approach
+
+Benoit Parrot (8):
+  media: i2c: ov2659: Fix for image wrap-around in lower resolution
+  media: i2c: ov2659: Fix sensor detection to actually fail when device
+    is not present
+  media: i2c: ov2659: Cleanup include file list
+  media: i2c: ov2659: fix s_stream return value
+  media: dt-bindings: ov2659: add powerdown/reset-gpios optional
+    property
+  media: i2c: ov2659: Add powerdown/reset gpio handling
+  media: i2c: ov2659: Fix missing 720p register config
+  media: i2c: ov2659: Switch to SPDX Licensing
+
+ .../devicetree/bindings/media/i2c/ov2659.txt  |   9 ++
+ drivers/media/i2c/Kconfig                     |   2 +-
+ drivers/media/i2c/ov2659.c                    | 139 +++++++++++++-----
+ 3 files changed, 112 insertions(+), 38 deletions(-)
+
+-- 
+2.17.1
 
