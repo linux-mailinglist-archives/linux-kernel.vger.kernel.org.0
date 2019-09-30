@@ -2,91 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6588EC2699
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9797EC271F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbfI3UiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:38:08 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41461 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730105AbfI3UiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:38:07 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f5so10926716ljg.8;
-        Mon, 30 Sep 2019 13:38:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Gek2awizC19DRqdsGkSxiDjzH45dJ2a6h+V1E8hcFPc=;
-        b=m5DZh/v+bR7He87gdSFPGLVJrrQjpD045RxFCvuUDYQgF1aEnzS+4GHh9Fx6HEG4mh
-         Zh694ML65wXDvqCojVyghpo+7cJJzJ/dFwz1T+vS53V9wxTLZyTLPg6ECSNSyShebO9p
-         SwMtDQ8B9RvJHmLifzOfjbzYUjpunHAF43uBhO4/hKlElXJV4DoacquPRsDa37EvuQd1
-         HBZamqQUZ3+1o0guEHwwGMiQm2kRZgbd23sCBpxXt7vHIkGN5DiGNt7KLN9pOcgtmA8o
-         Ed1FaVTjFX5CORqe0SI8428h8Oiwn3zgkN8LncGrHIXmEJ9IpQVMFgXtCDhjz3qtPj5m
-         dPZQ==
-X-Gm-Message-State: APjAAAVNph/TJ5wtEMujXwXIPp/bnlr6iNn58X6MpwOSQa6ODp7IWRaj
-        QcBnZIs+ohTEGsVy2hc21ksVG1Zv
-X-Google-Smtp-Source: APXvYqxbquIAk6jQ5ZvzBUZ4ucsaWt3KPUV0l4rJzJHZx8ghqG80pGGYdJnDeItjHrVrSB0aln7Dvw==
-X-Received: by 2002:a2e:63da:: with SMTP id s87mr13106787lje.79.1569875513862;
-        Mon, 30 Sep 2019 13:31:53 -0700 (PDT)
-Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.googlemail.com with ESMTPSA id j84sm3548526ljb.91.2019.09.30.13.31.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 13:31:53 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Denis Efremov <efremov@linux.com>,
-        Pontus Fuchs <pontus.fuchs@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Laight <David.Laight@ACULAB.COM>, stable@vger.kernel.org
-Subject: [PATCH v2] ar5523: check NULL before memcpy() in ar5523_cmd()
-Date:   Mon, 30 Sep 2019 23:31:47 +0300
-Message-Id: <20190930203147.10140-1-efremov@linux.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190930140207.28638-1-efremov@linux.com>
-References: <20190930140207.28638-1-efremov@linux.com>
+        id S1731313AbfI3Uq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:46:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53663 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729415AbfI3Uq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:46:26 -0400
+Received: from carbon-x1.hos.anvin.org ([IPv6:2601:646:8600:3281:e7ea:4585:74bd:2ff0])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x8UHInd2638716
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Mon, 30 Sep 2019 10:18:50 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x8UHInd2638716
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019091901; t=1569863931;
+        bh=JwI2GQe8WUKNFB035wz5DGW06YwngGprr3IkNYS8u5s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=rV8UhWMixJHKEtVPswnXhC5wV2tSbK7P8eCTnYvcEq41sjRTGe8jMaEPr7PEIU4JV
+         2RIJkJSEzJXzQNj1RLVLOA0ZI4R5mAcHFC2q+hxdPfyTvAtjnSgCwQyVVH11R9fmWP
+         shlcPmdLSUojAoshDzRB4O7RHsR36RymdOPBnkALI022g/sMM/4IUxgnufAeT9ML75
+         U/hgjswu3UA5WoUIf/T5uc/MF0rW0bh5sV+fQqcfTV9HANRijbN9ARnqO+DS4PFfaR
+         OSnyYlaGTZ+kb3fLEz4IFMs1dQMDy5DWNQXo76yPDDy4dBwr3/v6Ppf9pjuX2rxVrl
+         J+B0X9vBw70xw==
+Subject: Re: [PATCH v2 1/3] x86/boot: Introduce the kernel_info
+To:     Daniel Kiper <daniel.kiper@oracle.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, bp@alien8.de, corbet@lwn.net,
+        dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
+        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, ross.philipson@oracle.com, tglx@linutronix.de
+References: <20190704163612.14311-1-daniel.kiper@oracle.com>
+ <20190704163612.14311-2-daniel.kiper@oracle.com>
+ <5633066F-01BE-437D-A564-150FD48B6D92@zytor.com>
+ <20190930150110.ekir52wu3w67v2fk@tomti.i.net-space.pl>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <c9eb5a39-ced5-b35d-616d-6ffbe15c1396@zytor.com>
+Date:   Mon, 30 Sep 2019 10:18:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190930150110.ekir52wu3w67v2fk@tomti.i.net-space.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-memcpy() call with "idata == NULL && ilen == 0" results in undefined
-behavior in ar5523_cmd(). For example, NULL is passed in callchain
-"ar5523_stat_work() -> ar5523_cmd_write() -> ar5523_cmd()". This patch
-adds ilen check before memcpy() call in ar5523_cmd() to prevent an
-undefined behavior.
+On 2019-09-30 08:01, Daniel Kiper wrote:
+> 
+> OK.
+> 
+>> field for the entire .kernel_info section, thus ensuring it is a
+>> single self-contained blob.
+> 
+> .rodata.kernel_info contains its total size immediately behind the
+> "InfO" header. Do you suggest that we should add the size of
+> .rodata.kernel_info into setup_header too?
+> 
 
-Cc: Pontus Fuchs <pontus.fuchs@gmail.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
-V2: check ilen instead of idata as suggested by David Laight.
+No, what I want is a chunked architecture for kernel_info.
 
- drivers/net/wireless/ath/ar5523/ar5523.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+That is:
 
-diff --git a/drivers/net/wireless/ath/ar5523/ar5523.c b/drivers/net/wireless/ath/ar5523/ar5523.c
-index b94759daeacc..da2d179430ca 100644
---- a/drivers/net/wireless/ath/ar5523/ar5523.c
-+++ b/drivers/net/wireless/ath/ar5523/ar5523.c
-@@ -255,7 +255,8 @@ static int ar5523_cmd(struct ar5523 *ar, u32 code, const void *idata,
- 
- 	if (flags & AR5523_CMD_FLAG_MAGIC)
- 		hdr->magic = cpu_to_be32(1 << 24);
--	memcpy(hdr + 1, idata, ilen);
-+	if (ilen)
-+		memcpy(hdr + 1, idata, ilen);
- 
- 	cmd->odata = odata;
- 	cmd->olen = olen;
--- 
-2.21.0
+/* Common chunk header */
+struct kernel_info_header {
+	uint32_t magic;
+	uint32_t len;
+};
+
+/* Top-level chunk, always first */
+#define KERNEL_INFO_MAGIC 0x45fdbe4f
+
+struct kernel_info {
+	struct kernel_info_header hdr;
+	uint32_t total_size;		/* Total size of all chunks */
+
+	/* Various fixed-sized data objects, OR offsets to other chunks */
+};
+
+Also "InfO" is a pretty hideous magic. In general, all-ASCII magics have much
+higher risk of collision than *RANDOM* binary numbers. However, for a chunked
+architecture they do have the advantage that they can be used also as a human
+name or file name for the chunk, e.,g. in sysfs, so maybe something like
+"LnuX" or even "LToP" for the top-level chunk might make sense.
+
+How does that sound?
+
+	-hpa
 
