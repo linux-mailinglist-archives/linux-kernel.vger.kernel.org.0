@@ -2,125 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 942ECC233F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A0AC2346
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbfI3O3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:29:11 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35473 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfI3O3K (ORCPT
+        id S1731790AbfI3O3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:29:20 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33793 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731686AbfI3O3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:29:10 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iEwfl-0006uw-0T; Mon, 30 Sep 2019 16:29:09 +0200
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iEwfj-0006TF-S1; Mon, 30 Sep 2019 16:29:07 +0200
-Date:   Mon, 30 Sep 2019 16:29:07 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Jay Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v1] net: ag71xx: fix mdio subnode support
-Message-ID: <20190930142907.wo3tahtg7g7mvfmp@pengutronix.de>
-References: <20190930093310.10762-1-o.rempel@pengutronix.de>
- <20190930134209.GB14745@lunn.ch>
+        Mon, 30 Sep 2019 10:29:18 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r22so7224125lfm.1;
+        Mon, 30 Sep 2019 07:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/cUHoUaqss8qI6KXUvCsZN8O0fRZQEbP5/fl3QSwh1o=;
+        b=a0TGinOg0c8hiInPfRkFhKcAI/pPy0nuNaJobXF+ErQ72uXQF0IISRHdV5KIfRKiC7
+         glTMDeFvH8GoZxUb3rhz6SyfDHaoaiboEpIPcOGNUpnV3XFCSAlKJu/+HZDGetm93Q1n
+         9M6z+TW3AAe/z4CeBn5/Enmwy5Gm6qRIKGSlbdIkCA3P8uOYoXX8QPBtlH3e4pXZBMdn
+         EJrq0Mb008YwZ/t8h50HYz3DbR8exEIK0ouyE1uxF+8J3MRRiEWeyEkjJY5rGjpUlX9e
+         QV83BlJtHyG4EjL0WVvijHCD0IxkNYSqD8+4T91bZIAA5wmo1Qp6pD0PPXD6aknBflsf
+         U8+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/cUHoUaqss8qI6KXUvCsZN8O0fRZQEbP5/fl3QSwh1o=;
+        b=gEOdt+7eN4z0Ha40/HaGdsDzrbtkI2VUJHufnSBz7dXASQ0G8dr/1T58nh5xs80bC3
+         M9tfVAw0o5VlwcPz8DhMFjJtXtVbqHE0jrlAb64CCPRZpTOt8zO7K+CYF3uQOuIYK+mC
+         S9iyhePhG3NmCoZpP9miyucT474m9lUV9QFqrjdYS5K5mK3/yf58kmvxCZj6VLo/WHYX
+         zrTsvdcAMbJUioEqYjDEdrDT9hGe8yhMjzFy79+aiH6DawhJcH77stQ4Kzo/wH6yVUVt
+         oJ0+LrBLQ2nXRQdp6ZYefNgvAmKhFNh5K0u43ceH5poZiTDQBbQZ9VJsxc4OxI/Qw6bu
+         60BQ==
+X-Gm-Message-State: APjAAAV7dDyZNF6uoN3SV3b5jPJzxM8xtU/0djF/45q2YaoJLaRxuf08
+        J8Jzn6pcfhw940Q/YsbiRdzQ8M5F
+X-Google-Smtp-Source: APXvYqwFjlepUlfhs1IaHhMZu4sLyNS0YVja8fQhsmG6txfhULFCIZsY4a893MARc0PIh4ARbcSTUw==
+X-Received: by 2002:ac2:5586:: with SMTP id v6mr11431654lfg.180.1569853755403;
+        Mon, 30 Sep 2019 07:29:15 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-32-67.pppoe.spdop.ru. [94.29.32.67])
+        by smtp.googlemail.com with ESMTPSA id w17sm3252756lfl.43.2019.09.30.07.29.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2019 07:29:14 -0700 (PDT)
+Subject: Re: [PATCH v5 08/14] ARM: tegra: Make outer_disable() open-coded
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190929175952.22690-1-digetx@gmail.com>
+ <20190929175952.22690-9-digetx@gmail.com> <20190930080511.GE1518582@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a23edc5b-97c6-9dae-589e-b71d07069b0c@gmail.com>
+Date:   Mon, 30 Sep 2019 17:29:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
+In-Reply-To: <20190930080511.GE1518582@ulmo>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190930134209.GB14745@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 16:18:43 up 135 days, 20:36, 87 users,  load average: 0.00, 0.02,
- 0.00
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 03:42:09PM +0200, Andrew Lunn wrote:
-> On Mon, Sep 30, 2019 at 11:33:10AM +0200, Oleksij Rempel wrote:
-> > The driver was working with fixed phy without any noticeable issues. This bug
-> > was uncovered by introducing dsa ar9331-switch driver.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >  drivers/net/ethernet/atheros/ag71xx.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-> > index 6703960c7cf5..d1101eea15c2 100644
-> > --- a/drivers/net/ethernet/atheros/ag71xx.c
-> > +++ b/drivers/net/ethernet/atheros/ag71xx.c
-> > @@ -526,7 +526,7 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
-> >  	struct device *dev = &ag->pdev->dev;
-> >  	struct net_device *ndev = ag->ndev;
-> >  	static struct mii_bus *mii_bus;
-> > -	struct device_node *np;
-> > +	struct device_node *np, *mnp;
-> >  	int err;
-> >  
-> >  	np = dev->of_node;
-> > @@ -571,7 +571,9 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
-> >  		msleep(200);
-> >  	}
-> >  
-> > -	err = of_mdiobus_register(mii_bus, np);
-> > +	mnp = of_get_child_by_name(np, "mdio");
-> > +	err = of_mdiobus_register(mii_bus, mnp);
-> > +	of_node_put(mnp);
-> >  	if (err)
-> >  		goto mdio_err_put_clk;
+30.09.2019 11:05, Thierry Reding пишет:
+> On Sun, Sep 29, 2019 at 08:59:46PM +0300, Dmitry Osipenko wrote:
+>> The outer_disable() of Tegra's suspend code is open-coded now since
+>> that helper produces spurious warning message about secondary CPUs being
+>> online. The secondaries are actually halted by the cpuidle driver on
+>> entering into LP2 idle-state. This fixes a storm of warnings once LP2
+>> idling state is enabled on Tegra30.
 > 
-> Hi Oleksij
-> 
-> You need to keep backwards compatibility here. If you find an mdio
-> node, use it, but if not, you need to still register np.
-> 
-> This is also extending the driver binding, so you need to update the
-> binding documentation.
+> If the cpuidle driver halts the secondaries, shouldn't it set it offline
+> then so that outer_disable() can still work correctly?
 
-Hi Andrew,
+No.. how would you know what CPU's should be resumed?
 
-Normally i would agree. But in this case:
-- this driver is freshly added to the kernel and is different to OpenWrt
-  implementation any way. No users from this side.
-- Devicetree binding says:
-  Documentation/devicetree/bindings/net/qca,ar71xx.txt
-|Optional properties:
-|- phy-handle : phandle to the PHY device connected to this device.
-|- fixed-link : Assume a fixed link. See fixed-link.txt in the same directory.
-|  Use instead of phy-handle.
-|
-|Optional subnodes:
-|- mdio : specifies the mdio bus, used as a container for phy nodes
-|  according to phy.txt in the same directory
+AFAIK, the online status should be only changed by the hotplug code and
+nothing else. I don't think that it's a good idea to manually touch the
+online mask.
 
-So, it is driver bug ...ooOO (my personal bug :D)
+It looks to me that the only purpose of outer_disable() checking for the
+num_online_cpus is to prevent people from doing wrong things by
+disabling L2 in a random places in their code. Hence it should be
+absolutely fine to open code when you know what you're doing, which is
+the case here.
 
-I would say: if some one already started to use this driver, didn't used
-documentation and didn't reported this bug, can't really blame any one
-here :)
+We can check the rail status in tegra_sleep_cpu():
 
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+if (trusted_foundations_registered() && outer_cache.disable) {
+	if (WARN_ON(!tegra_cpu_rail_off_ready()))
+		return -EBUSY;
+
+	outer_cache.disable();
+}
+
+Which is equal to the check for num_online_cpus. Does it sound good?
