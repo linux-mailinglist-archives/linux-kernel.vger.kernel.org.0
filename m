@@ -2,102 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D300CC1C3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 09:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF939C1C3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 09:45:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbfI3Hor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 03:44:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36796 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726121AbfI3Hor (ORCPT
+        id S1729757AbfI3HpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 03:45:01 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33127 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfI3HpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 03:44:47 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8U7glWl041126
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 03:44:44 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vbadrpxe8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 03:44:44 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Mon, 30 Sep 2019 08:44:42 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 30 Sep 2019 08:44:40 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8U7icjS53673992
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Sep 2019 07:44:39 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB8404203F;
-        Mon, 30 Sep 2019 07:44:38 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A1A342041;
-        Mon, 30 Sep 2019 07:44:38 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.201])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 30 Sep 2019 07:44:38 +0000 (GMT)
-Date:   Mon, 30 Sep 2019 09:44:37 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Qian Cai <cai@lca.pw>, Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, linux-s390@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: fix a crash in free_pages_prepare()
-References: <1569613623-16820-1-git-send-email-cai@lca.pw>
- <20190927134859.95a2f4908bdcea30df0184ed@linux-foundation.org>
- <1569618908.5576.240.camel@lca.pw>
+        Mon, 30 Sep 2019 03:45:00 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a22so8372545ljd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 00:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AKsJKdSG5R8dGV+DIPEx5nlyGaSi4dLBqBkbszm5F9M=;
+        b=fDhmfO1ekIhNvjKsqu2BsmStSF9nq0Zinum0JZkMIVnBK74vRI2OHnevK7Po77juxo
+         wZNaqHXYAw0hfKDmBaM7F4RixYxIKCWaBO0mNC8iziTCWZK+uS4QHO4rXZDXiaEfLygH
+         6dtTyf6tCdnC6iQInJWYB4tipgjNHLEjgX5SShutOLWDwlxB9t32yJrBytP2ps2TTFZn
+         UUYqdQp9IKvyJ1o301IuR30H6QOSG3r3NYoOvnSRrk5OZep8gRjNYNPGhe6823CjLpoz
+         CHZgYarv+oRpDsXMfjjM7ER0e9znBwxZs421i309nrrMRj3E+iyOBEbnkcJzkC3gxlQu
+         ETQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AKsJKdSG5R8dGV+DIPEx5nlyGaSi4dLBqBkbszm5F9M=;
+        b=CSBy0Ez898UmJHtHaUN8dP09nKgPhg/PTSecsBIM0zqyks/o4XWbN3HxZT0WgsBgfN
+         4S9Xs7TR7wYBmCCn0awB5HTHIfkOxmz2LsX+AlXTeXrftiFdCh3IFZ4S7132s4ArvEJn
+         VZlw3tMnQGnWd1lstGubGjKjOeLjuH3To9d904VBYEHJoeA39sLjQ3Gegu7LYqqSNyvm
+         Y9CryAM1TSGV4B+n+8B9nySes+Fs0fNV7/LxZHd5f9NX27Bkng4UoEoaiuQUJV+k6/t4
+         nZ1QvjQmL7ALLa0ZLfKV7DOYCHcaWEYcHjeGpGBPXpozqloZxfvH5In+0KdxUT6Hvvww
+         AGDA==
+X-Gm-Message-State: APjAAAVXloC3s+WP3IRumM6PDZxMy+FKNamZ/BhU7d3QB6NBgk+sz3Ik
+        tePQRHkX6PIzMgMLUeKjMw20FRl/TJyKrqN8FPrU8Q==
+X-Google-Smtp-Source: APXvYqz1Eg/5CGuw4YGRcxqrRnPjjwX9NIiAoCcTMqWdBd7jpUR2FZkjOzSXb2LWVZZL+SGbi62rZYK8jzIfAczEbXU=
+X-Received: by 2002:a2e:42c9:: with SMTP id h70mr10772967ljf.88.1569829499004;
+ Mon, 30 Sep 2019 00:44:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1569618908.5576.240.camel@lca.pw>
-X-TM-AS-GCONF: 00
-x-cbid: 19093007-0008-0000-0000-0000031C541A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19093007-0009-0000-0000-00004A3AF916
-Message-Id: <20190930074437.GB5604@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-30_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=84 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909300082
+References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
+ <1568878421-12301-5-git-send-email-vincent.guittot@linaro.org> <df9fc32955789e7fcd01623433faba8d2f446b6e.camel@surriel.com>
+In-Reply-To: <df9fc32955789e7fcd01623433faba8d2f446b6e.camel@surriel.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 30 Sep 2019 09:44:47 +0200
+Message-ID: <CAKfTPtD2_ZHUv5Kz3R2qV33RxrGNC=y+7-4jCdvj9Deo=7A77Q@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] sched/fair: rework load_balance
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 05:15:08PM -0400, Qian Cai wrote:
-> On Fri, 2019-09-27 at 13:48 -0700, Andrew Morton wrote:
-> > On Fri, 27 Sep 2019 15:47:03 -0400 Qian Cai <cai@lca.pw> wrote:
-> > > --- a/mm/page_alloc.c
-> > > +++ b/mm/page_alloc.c
-> > > @@ -1175,11 +1175,11 @@ static __always_inline bool free_pages_prepare(struct page *page,
-> > >  		debug_check_no_obj_freed(page_address(page),
-> > >  					   PAGE_SIZE << order);
-> > >  	}
-> > > -	arch_free_page(page, order);
-> > >  	if (want_init_on_free())
-> > >  		kernel_init_free_pages(page, 1 << order);
-> > >  
-> > >  	kernel_poison_pages(page, 1 << order, 0);
-> > > +	arch_free_page(page, order);
-> > >  	if (debug_pagealloc_enabled())
-> > >  		kernel_map_pages(page, 1 << order, 0);
-> > 
-> > This is all fairly mature code, isn't it?  What happened to make this
-> > problem pop up now?
-> 
-> In the past, there is only kernel_poison_pages() would trigger it but it needs
-> "page_poison=on" kernel cmdline, and I suspect nobody tested that on s390 in the
-> past.
+On Mon, 30 Sep 2019 at 03:13, Rik van Riel <riel@surriel.com> wrote:
+>
+> On Thu, 2019-09-19 at 09:33 +0200, Vincent Guittot wrote:
+> >
+> > Also the load balance decisions have been consolidated in the 3
+> > functions
+> > below after removing the few bypasses and hacks of the current code:
+> > - update_sd_pick_busiest() select the busiest sched_group.
+> > - find_busiest_group() checks if there is an imbalance between local
+> > and
+> >   busiest group.
+> > - calculate_imbalance() decides what have to be moved.
+>
+> I really like the direction this series is going.
 
-Yes. Peter Oberparleiter reported this also before my short vacation,
-but I didn't have time to look into this. Thanks for fixing!
+Thanks
 
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+>
+> However, I suppose I should run these patches for
+> a few days with some of our test workloads before
+> I send out an ack for this patch :)
 
+Yes more tests on different platform are welcome
+
+>
+> --
+> All Rights Reversed.
