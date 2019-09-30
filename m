@@ -2,197 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2ED0C250D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 18:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 624A6C2526
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 18:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732282AbfI3QY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 12:24:59 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47756 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbfI3QY7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 12:24:59 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8UGOs7B065864;
-        Mon, 30 Sep 2019 11:24:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569860694;
-        bh=wt9eupa3af5TmswlMTWdT2xVqakUqx25n6+llMGJxyg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=V1uGL/vzVjuj4PqbfYbDpawt+M+cd2UGX6Zvdnm2H725qHc49a+ySjmP5imeaiSEv
-         lOXaebhE4kdpAKZvuqSSqgRHG7m1MDLERNfzbrWR6x6VIZb0LdqF/uM2zgNaHV45P7
-         Yv8nRq2XQw2Dst9oORdj/Dqcib3/R7j1j0Jh0qSY=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8UGOs0U013641
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Sep 2019 11:24:54 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 30
- Sep 2019 11:24:44 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 30 Sep 2019 11:24:53 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8UGOrPM117830;
-        Mon, 30 Sep 2019 11:24:53 -0500
-Subject: Re: [PATCH v9 13/15] leds: lp55xx: Update the lp55xx to use the multi
- color framework
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190925174616.3714-1-dmurphy@ti.com>
- <20190925174616.3714-14-dmurphy@ti.com>
- <59e58ccf-84fb-5db7-5008-20afc7436d35@gmail.com>
- <64d00aab-501c-d709-94af-4747a27df098@ti.com>
- <35e25398-81de-3755-7979-72638a119c77@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <74099f4d-5a90-3241-9c40-47ca6f0c9521@ti.com>
-Date:   Mon, 30 Sep 2019 11:31:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732309AbfI3QaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 12:30:07 -0400
+Received: from mga09.intel.com ([134.134.136.24]:28178 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732308AbfI3QaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 12:30:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 09:30:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,567,1559545200"; 
+   d="scan'208";a="204868102"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 30 Sep 2019 09:30:02 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 30 Sep 2019 19:30:01 +0300
+Date:   Mon, 30 Sep 2019 19:30:01 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH] pci: prevent putting pcie devices into lower device
+ states on certain intel bridges
+Message-ID: <20190930163001.GX2714@lahna.fi.intel.com>
+References: <20190927144421.22608-1-kherbst@redhat.com>
+ <20190927214252.GA65801@google.com>
+ <CACO55tuaY1jFXpJPeC9M4PoWEDyy547_tE8MpLaTDb+C+ffsbg@mail.gmail.com>
+ <20190930080534.GS2714@lahna.fi.intel.com>
+ <CACO55tuMo1aAA7meGtEey6J6sOS-ZA0ebZeL52i2zfkWtPqe_g@mail.gmail.com>
+ <20190930092934.GT2714@lahna.fi.intel.com>
+ <CACO55tu9M8_TWu2MxNe_NROit+d+rHJP5_Tb+t73q5vr19sd1w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <35e25398-81de-3755-7979-72638a119c77@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACO55tu9M8_TWu2MxNe_NROit+d+rHJP5_Tb+t73q5vr19sd1w@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+On Mon, Sep 30, 2019 at 06:05:14PM +0200, Karol Herbst wrote:
+> still happens with your patch applied. The machine simply gets shut down.
+> 
+> dmesg can be found here:
+> https://gist.githubusercontent.com/karolherbst/40eb091c7b7b33ef993525de660f1a3b/raw/2380e31f566e93e5ba7c87ef545420965d4c492c/gistfile1.txt
 
-On 9/29/19 8:01 AM, Jacek Anaszewski wrote:
-> Dan,
->
-> On 9/26/19 2:02 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 9/25/19 5:00 PM, Jacek Anaszewski wrote:
->>> Dan,
->>>
->>> On 9/25/19 7:46 PM, Dan Murphy wrote:
->>>> Update the lp5523 to allow the use of the multi color framework.
->>>>
->>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>> ---
->>>>    drivers/leds/Kconfig                      |   1 +
->>>>    drivers/leds/leds-lp5523.c                |  13 ++
->>>>    drivers/leds/leds-lp55xx-common.c         | 150 ++++++++++++++++++----
->>>>    drivers/leds/leds-lp55xx-common.h         |  11 ++
->>>>    include/linux/platform_data/leds-lp55xx.h |   6 +
->>>>    5 files changed, 157 insertions(+), 24 deletions(-)
->>>>
->>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>> index 84f60e35c5ee..dc3d9f2194cd 100644
->>>> --- a/drivers/leds/Kconfig
->>>> +++ b/drivers/leds/Kconfig
->>>> @@ -377,6 +377,7 @@ config LEDS_LP50XX
->>>>    config LEDS_LP55XX_COMMON
->>>>        tristate "Common Driver for TI/National
->>>> LP5521/5523/55231/5562/8501"
->>>>        depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 ||
->>>> LEDS_LP8501
->>>> +    depends on LEDS_CLASS_MULTI_COLOR && OF
->>>>        select FW_LOADER
->>>>        select FW_LOADER_USER_HELPER
->>>>        help
->>>> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
->>>> index d0b931a136b9..8b2cdb98fed6 100644
->>>> --- a/drivers/leds/leds-lp5523.c
->>>> +++ b/drivers/leds/leds-lp5523.c
->>>> @@ -791,6 +791,18 @@ static ssize_t store_master_fader_leds(struct
->>>> device *dev,
->>>>        return ret;
->>>>    }
->>>>    +static int lp5523_led_intensity(struct lp55xx_led *led, int chan_num)
->>> Why do we need this function? brightness op will not suffice?
->> I looked at this before sending it in.  This API adds the chan_num to
->> write to.
->>
->> The brightness_fn does not it takes it from the led structure.
->>
->>>> +{
->>>> +    struct lp55xx_chip *chip = led->chip;
->>>> +    int ret;
->>>> +
->>>> +    mutex_lock(&chip->lock);
->>>> +    ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + chan_num,
->>>> +             led->brightness);
->>>> +    mutex_unlock(&chip->lock);
->>>> +    return ret;
->>>> +}
->>>> +
->>>>    static int lp5523_led_brightness(struct lp55xx_led *led)
->>>>    {
->>>>        struct lp55xx_chip *chip = led->chip;
->>>> @@ -857,6 +869,7 @@ static struct lp55xx_device_config lp5523_cfg = {
->>>>        .max_channel  = LP5523_MAX_LEDS,
->>>>        .post_init_device   = lp5523_post_init_device,
->>>>        .brightness_fn      = lp5523_led_brightness,
->>>> +    .color_intensity_fn = lp5523_led_intensity,
->>>>        .set_led_current    = lp5523_set_led_current,
->>>>        .firmware_cb        = lp5523_firmware_loaded,
->>>>        .run_engine         = lp5523_run_engine,
->>>> diff --git a/drivers/leds/leds-lp55xx-common.c
->>>> b/drivers/leds/leds-lp55xx-common.c
->>>> index 44ced02b49f9..0e4b3a9d3047 100644
->>>> --- a/drivers/leds/leds-lp55xx-common.c
->>>> +++ b/drivers/leds/leds-lp55xx-common.c
->>>> @@ -136,9 +136,26 @@ static int lp55xx_set_brightness(struct
->>>> led_classdev *cdev,
->>>>    {
->>>>        struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
->>>>        struct lp55xx_device_config *cfg = led->chip->cfg;
->>>> +    int brightness_val[LP55XX_MAX_GROUPED_CHAN];
->>>> +    int ret;
->>>> +    int i;
->>>> +
->>>> +    if (led->mc_cdev.num_leds > 1) {
->>>> +        led_mc_calc_brightness(&led->mc_cdev,
->>>> +                       brightness, brightness_val);
->>>> +        for (i = 0; i < led->mc_cdev.num_leds; i++) {
->>>> +            led->brightness = brightness_val[i];
->>>> +            ret = cfg->color_intensity_fn(led,
->>>> +                              led->grouped_channels[i]);
->>> Now we will have three separate calls for each color component
->>> (and possibly sleeping on mutex on contention).
->>>
->>> Probably LED mc class use case will need a bit different design.
->>>
->>> Also, instead of grouped_channels we could possibly have
->>>
->>> led_mc_get_color_id(&led->mc_dev, i)
->> color_id and grouped_channels are not a 1:1 mapping
-> OK, they're channel numbers.
->
->>> which would map entry position index to color_id.
->>>
->>> I will stop reviewing here and will continue after taking
->>> deeper look at this lp55xx design.
-> I've analyzed that design in greater detail and have started
-> to wonder why you can't pass two arrays to the new op:
-> channel numbers and corresponding calculated channel intensities?
+Looking your dmesg:
 
+Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: DCB version 4.1
+Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: MM: using COPY for buffer copies
+Sep 30 17:24:27 kernel: [drm] Initialized nouveau 1.3.1 20120801 for 0000:01:00.0 on minor 1
 
-OK so I coded this up.  And there is not a clean way to do this since 
-the channels and colors are not correlated between two structures.  In 
-order to do this we would have to expand the grouped_channel and 
-channel_color arrays in the lp55xx_led to LED_COLOR_ID_MAX and put the 
-channel and color_component value in the position in the array that is 
-associated with the color ID. Then the driver can loop through the 
-available colors from the MC class and get the channel and 
-color_component information.
+I would assume it runtime suspends here. Then it wakes up because of PCI
+access from userspace:
 
-Beyond that in coding this and thinking about the design it is better to 
-have the lp55xx_common code to do all the heavy lifting and the children 
-to just perform the action on the device itself. So doing the loop in 
-the common code like we have now and calling the intensity_fn based on x 
-number of LEDs.  The child subscriber to the common code should have to 
-worry about the color it should only care about the channel and the value.
+Sep 30 17:24:42 kernel: pci_raw_set_power_state: 56 callbacks suppressed
+ 
+and for some reason it does not get resumed properly. There are also few
+warnings from ACPI that might be relevant:
 
-Dan
+Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.GFX0._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
+Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.PEG0.PEGP._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
 
-
+This seems to be Dell XPS 9560 which I think has been around some time
+already so I wonder why we only see issues now. Has it ever worked for
+you or maybe there is a regression that causes it to happen now?
