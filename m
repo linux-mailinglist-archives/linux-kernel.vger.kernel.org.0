@@ -2,82 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCFAC2315
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:21:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B043BC2321
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731667AbfI3OVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:21:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729738AbfI3OVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:21:14 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0AF3215EA;
-        Mon, 30 Sep 2019 14:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569853273;
-        bh=6yoAIqG6hzy/d8bd7DXLZXV/MdLd77qxmf5UP8tY4bc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A1PXmtM1yeRrqnIzd0YbtRtXiOabHe11LfWnRmlafiXfQZYHNbyEtYvT5FSZAmWTD
-         EzI+Sd9B+UkLch9hx5VNM1eXqy+yTd0wcrJczKXUz9nQBC8AMl96TD+bLNA/TD3B0r
-         0h7ctJ1OIW0jhzXr7N+rVmFXuMyU2uA4n0AWX/J0=
-Date:   Mon, 30 Sep 2019 16:21:10 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] arm64: dts: allwinner: a64: sopine-baseboard: Add PHY
- regulator delay
-Message-ID: <20190930142110.vscmnupg6lqrbmuy@gilmour>
-References: <20190929085259.76462-1-jernej.skrabec@siol.net>
+        id S1731678AbfI3OYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:24:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35556 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731030AbfI3OYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:24:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A8522B176;
+        Mon, 30 Sep 2019 14:24:52 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id CA8E1DA88C; Mon, 30 Sep 2019 16:25:10 +0200 (CEST)
+From:   David Sterba <dsterba@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 5.4-rc2
+Date:   Mon, 30 Sep 2019 16:25:08 +0200
+Message-Id: <cover.1569852875.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="quermkw47rmscx7x"
-Content-Disposition: inline
-In-Reply-To: <20190929085259.76462-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---quermkw47rmscx7x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+a bunch of fixes that accumulated in recent weeks, mostly material for
+stable.
 
-On Sun, Sep 29, 2019 at 10:52:59AM +0200, Jernej Skrabec wrote:
-> It turns out that sopine-baseboard needs same fix as pine64-plus
-> for ethernet PHY. Here too Realtek ethernet PHY chip needs additional
-> power on delay to properly initialize. Datasheet mentions that chip
-> needs 30 ms to be properly powered on and that it needs some more time
-> to be initialized.
->
-> Fix that by adding 100ms ramp delay to regulator responsible for
-> powering PHY.
->
-> Note that issue was found out and fix tested on pine64-lts, but it's
-> basically the same as sopine-baseboard, only layout and connectors
-> differ.
->
-> Fixes: bdfe4cebea11 ("arm64: allwinner: a64: add Ethernet PHY regulator for several boards")
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Summary:
 
-Applied as a fix for 5.4, thanks!
-Maxime
+- fix for regression from 5.3 that prevents to use balance convert with
+  single profile
 
---quermkw47rmscx7x
-Content-Type: application/pgp-signature; name="signature.asc"
+- qgroup fixes: rescan race, accounting leak with multiple writers,
+  potential leak after io failure recovery
 
------BEGIN PGP SIGNATURE-----
+- fix for use after free in relocation (reported by KASAN)
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZIPVgAKCRDj7w1vZxhR
-xVgqAQCDfcX+A/qtKjlld5IAr3fEdXZnqTWyYKgCOlqsd8Kl7gEA8JWPsQEWWnH9
-gsSbLYjkSKUkUMavqHDbIgZ6r9D58wg=
-=PU/D
------END PGP SIGNATURE-----
+- other error handling fixups
 
---quermkw47rmscx7x--
+Please pull, thanks.
+
+----------------------------------------------------------------
+The following changes since commit 6af112b11a4bc1b560f60a618ac9c1dcefe9836e:
+
+  btrfs: Relinquish CPUs in btrfs_compare_trees (2019-09-09 14:59:20 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4-rc1-tag
+
+for you to fetch changes up to d4e204948fe3e0dc8e1fbf3f8f3290c9c2823be3:
+
+  btrfs: qgroup: Fix reserved data space leak if we have multiple reserve calls (2019-09-27 15:24:34 +0200)
+
+----------------------------------------------------------------
+Dennis Zhou (1):
+      btrfs: adjust dirty_metadata_bytes after writeback failure of extent buffer
+
+Filipe Manana (3):
+      Btrfs: fix selftests failure due to uninitialized i_mode in test inodes
+      Btrfs: fix missing error return if writeback for extent buffer never started
+      Btrfs: fix race setting up and completing qgroup rescan workers
+
+Qu Wenruo (4):
+      btrfs: relocation: fix use-after-free on dead relocation roots
+      btrfs: Fix a regression which we can't convert to SINGLE profile
+      btrfs: qgroup: Fix the wrong target io_tree when freeing reserved data space
+      btrfs: qgroup: Fix reserved data space leak if we have multiple reserve calls
+
+ fs/btrfs/extent_io.c         | 13 +++++++++++++
+ fs/btrfs/qgroup.c            | 38 +++++++++++++++++++++++---------------
+ fs/btrfs/relocation.c        |  9 ++++++++-
+ fs/btrfs/tests/btrfs-tests.c |  8 +++++++-
+ fs/btrfs/volumes.c           |  8 +++++++-
+ 5 files changed, 58 insertions(+), 18 deletions(-)
