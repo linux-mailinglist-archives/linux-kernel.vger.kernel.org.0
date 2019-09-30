@@ -2,358 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D965CC1E01
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:32:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB3F7C1E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbfI3JcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 05:32:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:21087 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727469AbfI3JcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 05:32:09 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 91002C049D7C
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 09:32:08 +0000 (UTC)
-Received: by mail-wm1-f72.google.com with SMTP id n3so5682432wmf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 02:32:08 -0700 (PDT)
+        id S1730444AbfI3Jci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 05:32:38 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35643 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbfI3Jch (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 05:32:37 -0400
+Received: by mail-ed1-f66.google.com with SMTP id v8so8007668eds.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 02:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/NIG45wRzSSQZGZMC2ZYbWOSNJZUGz087s/DaB8OSlU=;
+        b=x91S8slwG0o9H8Ulvo2sIbq8o59knZIf5NKCDlSMrONoWMIkHRJFQmayDWhMzHjPwS
+         rb3qQNPx5vp56bIvPxjd/PDq9+78jmT6MgTXCEMOpxq7+NJM4baRY5tKffN9KkztKMd9
+         L4lQcDIzDwXISgWsyiY9uZxBX10dEAh6nFoWIlqh+C5Y6u3mi8B15R+BjUT+Nfyp4FHi
+         XwTgQ8n+n+YjUL7iuMoGHMeGb5w24b37TEdprFIu6/74B4KXUn4mhbdMr5nssCpt0/58
+         wKJ3gV2suDmr/gxwUYuFakGfgmjvaEoq664xxE/Sk+ujLtQpggzHh78ZiRo754VitCUp
+         gOFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=Q4nd1VqrkexVmRSFg81KtZVU3uZrT/qwjUj46akeywA=;
-        b=FT06DC6RGIBGV23DqR6GRpHlKKXn8ff+NYuBN+RUuhAXPwFzRaZp+bAybZxYe/WWfm
-         BwXEjslt9u356ZVXYjQqrcuwbN8GracFGr62S+TqNzfiY52k0xAT7FSfrw4XQMKWAcGi
-         VqeBGaEJWMrIxMC369WxPjbxLZpthgk38W1igP2/umvdzbXFqD9IX2K0xZBet4HTjlBt
-         m3m4+2iDqMWZpAkv9haq6q/V2t9IXZZt1OpDSljSutLAo/vo/xOGAJJtgPhjKMP1FOiD
-         h6lUwy4Eanc0Z/GUO9M7QB0TSjoQWdK3a/NUeXlgCQtMEsevKtfoCUOHskGQcuxYHGS3
-         /5Mw==
-X-Gm-Message-State: APjAAAWjzQ9HZ4FpLdzvm6VTdzaDCdY8eIP4TdPPcyyEOOwu/Lguqtnh
-        UWY10lbl/BWeLwDituc8LhFK4Bl2jgmLN3I5Lqhl8x9Vzqgah6pgHMeC60nSo7+x6vimQtKh9Yv
-        OXahlX5oPJ732BlRIeC2WQ5Js
-X-Received: by 2002:a1c:c789:: with SMTP id x131mr15947062wmf.20.1569835927234;
-        Mon, 30 Sep 2019 02:32:07 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxMRvwaVSglCh7k1HHTC/fBshrNu99FMxoNh6Q3o9JGUW29VMIvW/NcpH+SRIzTuX/yHmzeEQ==
-X-Received: by 2002:a1c:c789:: with SMTP id x131mr15947044wmf.20.1569835926933;
-        Mon, 30 Sep 2019 02:32:06 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id x5sm10520373wrt.75.2019.09.30.02.32.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 02:32:06 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH v2 7/8] KVM: x86: Add helpers to test/mark reg availability and dirtiness
-In-Reply-To: <20190927214523.3376-8-sean.j.christopherson@intel.com>
-References: <20190927214523.3376-1-sean.j.christopherson@intel.com> <20190927214523.3376-8-sean.j.christopherson@intel.com>
-Date:   Mon, 30 Sep 2019 11:32:05 +0200
-Message-ID: <87d0fi3zai.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/NIG45wRzSSQZGZMC2ZYbWOSNJZUGz087s/DaB8OSlU=;
+        b=igknL7Zxe+5WOHHdGDuixD+3WxijGg9p2GY0BuUAwJzvr3XIMd9yJg9/+WvY4OmEgS
+         qyR0UPb6zSTpYYQSgvDhrW45B5PFSo6lV5j8tU0eVzDoAdqT+vs13l6oWRBG/UH5liVx
+         JHjiB82bzVzcCEXIfHezHQ4n/5xaQTFLZtjwBz+ud2EGC/6GgZcNFRlR8SdYtXZupymE
+         VtOEWxSi3H6ZaiyiVWRv/6TgBDFqgbS57o8FMYa5RifQgIZq7tCmP+0hhLuuuyCAFuWV
+         f/lZjMl9/c/Op4/cAJHUzJcd77yW509g83lrj699w/1AGH0SAJ5QNHBNxFg4ukR6P6z+
+         EgeQ==
+X-Gm-Message-State: APjAAAVMNme9X/XRiIBuJ/nt63lVia+MWNSqR2pHb0M6soyUu7ygBngu
+        sJycWYF07iBV1wzPMlUG9QphOQ==
+X-Google-Smtp-Source: APXvYqxYESSztSbQdFehvlYRwQ7ZtyQatlQP7EBvkF43mdhJrM5sORhaK1vk4DnKcR72sGXiIkij2w==
+X-Received: by 2002:a50:886d:: with SMTP id c42mr18545157edc.24.1569835955026;
+        Mon, 30 Sep 2019 02:32:35 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id bq13sm1395366ejb.25.2019.09.30.02.32.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Sep 2019 02:32:34 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 2E70010204E; Mon, 30 Sep 2019 12:32:33 +0300 (+03)
+Date:   Mon, 30 Sep 2019 12:32:33 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-btrfs@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
+ kmalloc(power-of-two)
+Message-ID: <20190930093233.jlypzgmkf4pplgso@box.shutemov.name>
+References: <20190826111627.7505-1-vbabka@suse.cz>
+ <20190826111627.7505-3-vbabka@suse.cz>
+ <df8d1cf4-ff8f-1ee1-12fb-cfec39131b32@suse.cz>
+ <20190930092334.GA25306@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190930092334.GA25306@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Mon, Sep 30, 2019 at 11:23:34AM +0200, Michal Hocko wrote:
+> On Mon 23-09-19 18:36:32, Vlastimil Babka wrote:
+> > On 8/26/19 1:16 PM, Vlastimil Babka wrote:
+> > > In most configurations, kmalloc() happens to return naturally aligned (i.e.
+> > > aligned to the block size itself) blocks for power of two sizes. That means
+> > > some kmalloc() users might unknowingly rely on that alignment, until stuff
+> > > breaks when the kernel is built with e.g.  CONFIG_SLUB_DEBUG or CONFIG_SLOB,
+> > > and blocks stop being aligned. Then developers have to devise workaround such
+> > > as own kmem caches with specified alignment [1], which is not always practical,
+> > > as recently evidenced in [2].
+> > > 
+> > > The topic has been discussed at LSF/MM 2019 [3]. Adding a 'kmalloc_aligned()'
+> > > variant would not help with code unknowingly relying on the implicit alignment.
+> > > For slab implementations it would either require creating more kmalloc caches,
+> > > or allocate a larger size and only give back part of it. That would be
+> > > wasteful, especially with a generic alignment parameter (in contrast with a
+> > > fixed alignment to size).
+> > > 
+> > > Ideally we should provide to mm users what they need without difficult
+> > > workarounds or own reimplementations, so let's make the kmalloc() alignment to
+> > > size explicitly guaranteed for power-of-two sizes under all configurations.
+> > > What this means for the three available allocators?
+> > > 
+> > > * SLAB object layout happens to be mostly unchanged by the patch. The
+> > >   implicitly provided alignment could be compromised with CONFIG_DEBUG_SLAB due
+> > >   to redzoning, however SLAB disables redzoning for caches with alignment
+> > >   larger than unsigned long long. Practically on at least x86 this includes
+> > >   kmalloc caches as they use cache line alignment, which is larger than that.
+> > >   Still, this patch ensures alignment on all arches and cache sizes.
+> > > 
+> > > * SLUB layout is also unchanged unless redzoning is enabled through
+> > >   CONFIG_SLUB_DEBUG and boot parameter for the particular kmalloc cache. With
+> > >   this patch, explicit alignment is guaranteed with redzoning as well. This
+> > >   will result in more memory being wasted, but that should be acceptable in a
+> > >   debugging scenario.
+> > > 
+> > > * SLOB has no implicit alignment so this patch adds it explicitly for
+> > >   kmalloc(). The potential downside is increased fragmentation. While
+> > >   pathological allocation scenarios are certainly possible, in my testing,
+> > >   after booting a x86_64 kernel+userspace with virtme, around 16MB memory
+> > >   was consumed by slab pages both before and after the patch, with difference
+> > >   in the noise.
+> > > 
+> > > [1] https://lore.kernel.org/linux-btrfs/c3157c8e8e0e7588312b40c853f65c02fe6c957a.1566399731.git.christophe.leroy@c-s.fr/
+> > > [2] https://lore.kernel.org/linux-fsdevel/20190225040904.5557-1-ming.lei@redhat.com/
+> > > [3] https://lwn.net/Articles/787740/
+> > > 
+> > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> > 
+> > So if anyone thinks this is a good idea, please express it (preferably
+> > in a formal way such as Acked-by), otherwise it seems the patch will be
+> > dropped (due to a private NACK, apparently).
+> 
+> Sigh.
+> 
+> An existing code to workaround the lack of alignment guarantee just show
+> that this is necessary. And there wasn't any real technical argument
+> against except for a highly theoretical optimizations/new allocator that
+> would be tight by the guarantee.
+> 
+> Therefore
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-> Add helpers to prettify code that tests and/or marks whether or not a
-> register is available and/or dirty.
->
-> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/kvm_cache_regs.h | 45 +++++++++++++++++++++++++----------
->  arch/x86/kvm/vmx/nested.c     |  4 ++--
->  arch/x86/kvm/vmx/vmx.c        | 29 ++++++++++------------
->  arch/x86/kvm/x86.c            | 13 ++++------
->  4 files changed, 53 insertions(+), 38 deletions(-)
->
-> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
-> index b85fc4b4e04f..9c2bc528800b 100644
-> --- a/arch/x86/kvm/kvm_cache_regs.h
-> +++ b/arch/x86/kvm/kvm_cache_regs.h
-> @@ -37,12 +37,37 @@ BUILD_KVM_GPR_ACCESSORS(r14, R14)
->  BUILD_KVM_GPR_ACCESSORS(r15, R15)
->  #endif
->  
-> +static inline bool kvm_register_is_available(struct kvm_vcpu *vcpu,
-> +					     enum kvm_reg reg)
-> +{
-> +	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
-> +}
-> +
+Agreed.
 
-(Interestingly enough, all call sites use !kvm_register_is_available()
-but kvm_register_is_unavailable() sounds weird. So I'd prefer to keep it
-as-is).
-
-> +static inline bool kvm_register_is_dirty(struct kvm_vcpu *vcpu,
-> +					 enum kvm_reg reg)
-> +{
-> +	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
-> +}
-> +
-> +static inline void kvm_register_mark_available(struct kvm_vcpu *vcpu,
-> +					       enum kvm_reg reg)
-> +{
-> +	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
-> +}
-> +
-> +static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
-> +					   enum kvm_reg reg)
-> +{
-> +	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
-> +	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
-> +}
-> +
-
-Personal preference again, but I would've named this
-"kvm_register_mark_avail_dirty" to indicate what we're actually doing
-(and maybe even shortened 'kvm_register_' to 'kvm_reg_' everywhere as I
-can't see how 'reg' could be misread).
-
->  static inline unsigned long kvm_register_read(struct kvm_vcpu *vcpu, int reg)
->  {
->  	if (WARN_ON_ONCE((unsigned int)reg >= NR_VCPU_REGS))
->  		return 0;
->  
-> -	if (!test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail))
-> +	if (!kvm_register_is_available(vcpu, reg))
->  		kvm_x86_ops->cache_reg(vcpu, reg);
->  
->  	return vcpu->arch.regs[reg];
-> @@ -55,13 +80,12 @@ static inline void kvm_register_write(struct kvm_vcpu *vcpu, int reg,
->  		return;
->  
->  	vcpu->arch.regs[reg] = val;
-> -	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
-> -	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_dirty(vcpu, reg);
->  }
->  
->  static inline unsigned long kvm_rip_read(struct kvm_vcpu *vcpu)
->  {
-> -	if (!test_bit(VCPU_REGS_RIP, (unsigned long *)&vcpu->arch.regs_avail))
-> +	if (!kvm_register_is_available(vcpu, VCPU_REGS_RIP))
->  		kvm_x86_ops->cache_reg(vcpu, VCPU_REGS_RIP);
->  
->  	return vcpu->arch.regs[VCPU_REGS_RIP];
-> @@ -70,13 +94,12 @@ static inline unsigned long kvm_rip_read(struct kvm_vcpu *vcpu)
->  static inline void kvm_rip_write(struct kvm_vcpu *vcpu, unsigned long val)
->  {
->  	vcpu->arch.regs[VCPU_REGS_RIP] = val;
-> -	__set_bit(VCPU_REGS_RIP, (unsigned long *)&vcpu->arch.regs_dirty);
-> -	__set_bit(VCPU_REGS_RIP, (unsigned long *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_dirty(vcpu, VCPU_REGS_RIP);
->  }
->  
->  static inline unsigned long kvm_rsp_read(struct kvm_vcpu *vcpu)
->  {
-> -	if (!test_bit(VCPU_REGS_RSP, (unsigned long *)&vcpu->arch.regs_avail))
-> +	if (!kvm_register_is_available(vcpu, VCPU_REGS_RSP))
->  		kvm_x86_ops->cache_reg(vcpu, VCPU_REGS_RSP);
->  
->  	return vcpu->arch.regs[VCPU_REGS_RSP];
-> @@ -85,16 +108,14 @@ static inline unsigned long kvm_rsp_read(struct kvm_vcpu *vcpu)
->  static inline void kvm_rsp_write(struct kvm_vcpu *vcpu, unsigned long val)
->  {
->  	vcpu->arch.regs[VCPU_REGS_RSP] = val;
-> -	__set_bit(VCPU_REGS_RSP, (unsigned long *)&vcpu->arch.regs_dirty);
-> -	__set_bit(VCPU_REGS_RSP, (unsigned long *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_dirty(vcpu, VCPU_REGS_RSP);
->  }
->  
->  static inline u64 kvm_pdptr_read(struct kvm_vcpu *vcpu, int index)
->  {
->  	might_sleep();  /* on svm */
->  
-> -	if (!test_bit(VCPU_EXREG_PDPTR,
-> -		      (unsigned long *)&vcpu->arch.regs_avail))
-> +	if (!kvm_register_is_available(vcpu, VCPU_EXREG_PDPTR))
->  		kvm_x86_ops->cache_reg(vcpu, VCPU_EXREG_PDPTR);
->  
->  	return vcpu->arch.walk_mmu->pdptrs[index];
-> @@ -123,7 +144,7 @@ static inline ulong kvm_read_cr4_bits(struct kvm_vcpu *vcpu, ulong mask)
->  
->  static inline ulong kvm_read_cr3(struct kvm_vcpu *vcpu)
->  {
-> -	if (!test_bit(VCPU_EXREG_CR3, (ulong *)&vcpu->arch.regs_avail))
-> +	if (!kvm_register_is_available(vcpu, VCPU_EXREG_CR3))
->  		kvm_x86_ops->decache_cr3(vcpu);
->  	return vcpu->arch.cr3;
->  }
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index b72a00b53e4a..8946f11c574c 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -1012,7 +1012,7 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
->  		kvm_mmu_new_cr3(vcpu, cr3, false);
->  
->  	vcpu->arch.cr3 = cr3;
-> -	__set_bit(VCPU_EXREG_CR3, (ulong *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_available(vcpu, VCPU_EXREG_CR3);
->  
->  	kvm_init_mmu(vcpu, false);
->  
-> @@ -3986,7 +3986,7 @@ static void nested_vmx_restore_host_state(struct kvm_vcpu *vcpu)
->  
->  	nested_ept_uninit_mmu_context(vcpu);
->  	vcpu->arch.cr3 = vmcs_readl(GUEST_CR3);
-> -	__set_bit(VCPU_EXREG_CR3, (ulong *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_available(vcpu, VCPU_EXREG_CR3);
->  
->  	/*
->  	 * Use ept_save_pdptrs(vcpu) to load the MMU's cached PDPTRs
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 814d3e6d0264..ed03d0cd1cc8 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -721,8 +721,8 @@ static bool vmx_segment_cache_test_set(struct vcpu_vmx *vmx, unsigned seg,
->  	bool ret;
->  	u32 mask = 1 << (seg * SEG_FIELD_NR + field);
->  
-> -	if (!(vmx->vcpu.arch.regs_avail & (1 << VCPU_EXREG_SEGMENTS))) {
-> -		vmx->vcpu.arch.regs_avail |= (1 << VCPU_EXREG_SEGMENTS);
-> +	if (!kvm_register_is_available(&vmx->vcpu, VCPU_EXREG_SEGMENTS)) {
-> +		kvm_register_mark_available(&vmx->vcpu, VCPU_EXREG_SEGMENTS);
->  		vmx->segment_cache.bitmask = 0;
->  	}
->  	ret = vmx->segment_cache.bitmask & mask;
-> @@ -1410,8 +1410,8 @@ unsigned long vmx_get_rflags(struct kvm_vcpu *vcpu)
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->  	unsigned long rflags, save_rflags;
->  
-> -	if (!test_bit(VCPU_EXREG_RFLAGS, (ulong *)&vcpu->arch.regs_avail)) {
-> -		__set_bit(VCPU_EXREG_RFLAGS, (ulong *)&vcpu->arch.regs_avail);
-> +	if (!kvm_register_is_available(vcpu, VCPU_EXREG_RFLAGS)) {
-> +		kvm_register_mark_available(vcpu, VCPU_EXREG_RFLAGS);
->  		rflags = vmcs_readl(GUEST_RFLAGS);
->  		if (vmx->rmode.vm86_active) {
->  			rflags &= RMODE_GUEST_OWNED_EFLAGS_BITS;
-> @@ -1429,7 +1429,7 @@ void vmx_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags)
->  	unsigned long old_rflags;
->  
->  	if (enable_unrestricted_guest) {
-> -		__set_bit(VCPU_EXREG_RFLAGS, (ulong *)&vcpu->arch.regs_avail);
-> +		kvm_register_mark_available(vcpu, VCPU_EXREG_RFLAGS);
->  
->  		vmx->rflags = rflags;
->  		vmcs_writel(GUEST_RFLAGS, rflags);
-> @@ -2175,7 +2175,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  
->  static void vmx_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg)
->  {
-> -	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_available(vcpu, reg);
-> +
->  	switch (reg) {
->  	case VCPU_REGS_RSP:
->  		vcpu->arch.regs[VCPU_REGS_RSP] = vmcs_readl(GUEST_RSP);
-> @@ -2862,7 +2863,7 @@ static void vmx_decache_cr3(struct kvm_vcpu *vcpu)
->  {
->  	if (enable_unrestricted_guest || (enable_ept && is_paging(vcpu)))
->  		vcpu->arch.cr3 = vmcs_readl(GUEST_CR3);
-> -	__set_bit(VCPU_EXREG_CR3, (ulong *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_available(vcpu, VCPU_EXREG_CR3);
->  }
->  
->  static void vmx_decache_cr4_guest_bits(struct kvm_vcpu *vcpu)
-> @@ -2877,8 +2878,7 @@ static void ept_load_pdptrs(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
->  
-> -	if (!test_bit(VCPU_EXREG_PDPTR,
-> -		      (unsigned long *)&vcpu->arch.regs_dirty))
-> +	if (!kvm_register_is_dirty(vcpu, VCPU_EXREG_PDPTR))
->  		return;
->  
->  	if (is_pae_paging(vcpu)) {
-> @@ -2900,10 +2900,7 @@ void ept_save_pdptrs(struct kvm_vcpu *vcpu)
->  		mmu->pdptrs[3] = vmcs_read64(GUEST_PDPTR3);
->  	}
->  
-> -	__set_bit(VCPU_EXREG_PDPTR,
-> -		  (unsigned long *)&vcpu->arch.regs_avail);
-> -	__set_bit(VCPU_EXREG_PDPTR,
-> -		  (unsigned long *)&vcpu->arch.regs_dirty);
-> +	kvm_register_mark_dirty(vcpu, VCPU_EXREG_PDPTR);
->  }
->  
->  static void ept_update_paging_mode_cr0(unsigned long *hw_cr0,
-> @@ -2912,7 +2909,7 @@ static void ept_update_paging_mode_cr0(unsigned long *hw_cr0,
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->  
-> -	if (!test_bit(VCPU_EXREG_CR3, (ulong *)&vcpu->arch.regs_avail))
-> +	if (!kvm_register_is_available(vcpu, VCPU_EXREG_CR3))
->  		vmx_decache_cr3(vcpu);
->  	if (!(cr0 & X86_CR0_PG)) {
->  		/* From paging/starting to nonpaging */
-> @@ -6528,9 +6525,9 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
->  	if (vmx->nested.need_vmcs12_to_shadow_sync)
->  		nested_sync_vmcs12_to_shadow(vcpu);
->  
-> -	if (test_bit(VCPU_REGS_RSP, (unsigned long *)&vcpu->arch.regs_dirty))
-> +	if (kvm_register_is_dirty(vcpu, VCPU_REGS_RSP))
->  		vmcs_writel(GUEST_RSP, vcpu->arch.regs[VCPU_REGS_RSP]);
-> -	if (test_bit(VCPU_REGS_RIP, (unsigned long *)&vcpu->arch.regs_dirty))
-> +	if (kvm_register_is_dirty(vcpu, VCPU_REGS_RIP))
->  		vmcs_writel(GUEST_RIP, vcpu->arch.regs[VCPU_REGS_RIP]);
->  
->  	cr3 = __get_current_cr3_fast();
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 0ed07d8d2caa..cd6bd7991c39 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -709,10 +709,8 @@ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
->  	ret = 1;
->  
->  	memcpy(mmu->pdptrs, pdpte, sizeof(mmu->pdptrs));
-> -	__set_bit(VCPU_EXREG_PDPTR,
-> -		  (unsigned long *)&vcpu->arch.regs_avail);
-> -	__set_bit(VCPU_EXREG_PDPTR,
-> -		  (unsigned long *)&vcpu->arch.regs_dirty);
-> +	kvm_register_mark_dirty(vcpu, VCPU_EXREG_PDPTR);
-> +
->  out:
->  
->  	return ret;
-> @@ -730,8 +728,7 @@ bool pdptrs_changed(struct kvm_vcpu *vcpu)
->  	if (!is_pae_paging(vcpu))
->  		return false;
->  
-> -	if (!test_bit(VCPU_EXREG_PDPTR,
-> -		      (unsigned long *)&vcpu->arch.regs_avail))
-> +	if (!kvm_register_is_available(vcpu, VCPU_EXREG_PDPTR))
->  		return true;
->  
->  	gfn = (kvm_read_cr3(vcpu) & 0xffffffe0ul) >> PAGE_SHIFT;
-> @@ -976,7 +973,7 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
->  
->  	kvm_mmu_new_cr3(vcpu, cr3, skip_tlb_flush);
->  	vcpu->arch.cr3 = cr3;
-> -	__set_bit(VCPU_EXREG_CR3, (ulong *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_available(vcpu, VCPU_EXREG_CR3);
->  
->  	return 0;
->  }
-> @@ -8766,7 +8763,7 @@ static int __set_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
->  	vcpu->arch.cr2 = sregs->cr2;
->  	mmu_reset_needed |= kvm_read_cr3(vcpu) != sregs->cr3;
->  	vcpu->arch.cr3 = sregs->cr3;
-> -	__set_bit(VCPU_EXREG_CR3, (ulong *)&vcpu->arch.regs_avail);
-> +	kvm_register_mark_available(vcpu, VCPU_EXREG_CR3);
->  
->  	kvm_set_cr8(vcpu, sregs->cr8);
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
 -- 
-Vitaly
+ Kirill A. Shutemov
