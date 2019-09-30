@@ -2,74 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F9AC1D01
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1EEC1D11
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbfI3IU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 04:20:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43008 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbfI3IU5 (ORCPT
+        id S1729979AbfI3IWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 04:22:37 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53292 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726425AbfI3IWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 04:20:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=If3yq1ODv3mmckOcV5bip4UCF3kVbPW2FQhUrotgaDI=; b=AN6E2r5+esnTrZkRBItKdRjse
-        DHWl6KMtx8uvrMrd6Rm3NccrVdj8sgohG5IhvUu7yiSapvzR4zG/bp79mucxPjSJszkOKVpH8j+Tx
-        2LjUq3ltPhxUC0kfPwVvE/2+q38SwH4IotQGcGmUr4Up6EtdRTQiZ0wvN21iKY4deDJKGwH+Nv2Il
-        5HZKNU7KLYBypju4ygZ+GcaHczmiCKoY912aV98rRbc4Dnuh4t7KU3uSDZtsZ0InOTzuzjs+hLISZ
-        5jXl5ucrYxXR2QxMdaSLYGmnw9DWtFeZwFoRF8dgR6/P6gEdioEZk6JQsrYYRYqhTGEevN4Kgr3OW
-        yvuEbI6JA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iEqvP-000835-Nr; Mon, 30 Sep 2019 08:20:55 +0000
-Date:   Mon, 30 Sep 2019 01:20:55 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Rob Herring <robh@kernel.org>, DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Oza Pawandeep <oza.oza@broadcom.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 00/11] of: dma-ranges fixes and improvements
-Message-ID: <20190930082055.GA21971@infradead.org>
-References: <20190927002455.13169-1-robh@kernel.org>
- <CAK8P3a0oct0EOMi5t4BmpgdkiBM+LjC+2pTST4hcvNCa3MGLmw@mail.gmail.com>
+        Mon, 30 Sep 2019 04:22:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1569831755;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OB4a4DU8FxkQuyLNjFZrUcXOBJkZw3SxcwXDPI6uKnI=;
+        b=cixpPgmflyzsrT+vQ4lDcMsFj8mq/MKt+0YQnkoWMvGNMLqXE5AIe2Fl1NxNMNfBu1oQqc
+        k4TtYhChMpW/19uNadP2rFcVg2//M39fNf9+zsdGUhJQpEhhcwpeqWZJi+ECvsSOxH6kCW
+        gAaUbULUZ7OtjnWTOT5jKoK/QecXV2g=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-204-VrHjIw2LPDak5taYXsPcmg-1; Mon, 30 Sep 2019 04:22:33 -0400
+Received: by mail-ed1-f69.google.com with SMTP id 34so5800322edf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 01:22:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FtSsOprUbHxPPZB9JS+/sPQLDrAgamZY39moikk7rIY=;
+        b=qmO1649CNjVuH/zXgdILYKoi/5Wi3/qoqfL1TZFY8DIFXv5zG2Vdp+IjF0asFwiqak
+         xYmP0QJe2T4+94ZlAU2bdNCtFFunoY+f98AXIrXGiZR9JtRcT2TaejZoSlHUYmIh/T2q
+         eg1Z+VwzG3m4sgCM1QUS1T0lLBXDCbz6kmB1qaoMem9NjW45ddSNIkhyeMBuaRDDXepQ
+         68NWHmEfnimDGBo5EkMDI1byGawkAoFODkMKcxJCEATr2+3WkXvCRFzu/bPQQYOcS5ZR
+         QYsOzxxa9ERSioDgfR2qCSLqOnNsAbZv8C+jGC1mt/md1w/Zu7DywakD9KzfSoVFvrpC
+         M8nQ==
+X-Gm-Message-State: APjAAAUukk/DUaCbgf+vajBSTwljAOyD7NFWkMfu3ShbJwG+VM/bWPyb
+        P90TmNzjpv+UK+RXeCZgqPqkYrSFYyCX4Qsz8ytbPSKvEx1gEpyWiAnnwqpDM1/VhoS5uvyW5Xf
+        Hufup2aVGQPY9h4VhNyg0oJlU
+X-Received: by 2002:aa7:c897:: with SMTP id p23mr18325397eds.199.1569831752191;
+        Mon, 30 Sep 2019 01:22:32 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqw86cFPiizinkZHr+F9ZnGV7u8wkgCwOhKZOul1R40hK3W0O5KlN39caDguQJGY8rFqL1h5yQ==
+X-Received: by 2002:aa7:c897:: with SMTP id p23mr18325382eds.199.1569831752020;
+        Mon, 30 Sep 2019 01:22:32 -0700 (PDT)
+Received: from shalem.localdomain (2001-1c00-0c14-2800-ec23-a060-24d5-2453.cable.dynamic.v6.ziggo.nl. [2001:1c00:c14:2800:ec23:a060:24d5:2453])
+        by smtp.gmail.com with ESMTPSA id gs24sm1380129ejb.5.2019.09.30.01.22.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2019 01:22:31 -0700 (PDT)
+Subject: Re: [PATCH] virt: vbox: fix memory leak in
+ hgcm_call_preprocess_linaddr
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     Navid Emamdoost <emamd001@umn.edu>, kjlu@umn.edu,
+        Stephen McCamant <smccaman@umn.edu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20190927230421.20837-1-navid.emamdoost@gmail.com>
+ <3b5913e3-856a-db81-7708-929e62ee53d4@redhat.com>
+ <CAEkB2ER7xVU3vzK4ohj7f9=b=ZpNx++dyNrtLhOieeDgyeVBDg@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <664aab6a-37c9-7239-a817-25dfbab00c7f@redhat.com>
+Date:   Mon, 30 Sep 2019 10:22:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0oct0EOMi5t4BmpgdkiBM+LjC+2pTST4hcvNCa3MGLmw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAEkB2ER7xVU3vzK4ohj7f9=b=ZpNx++dyNrtLhOieeDgyeVBDg@mail.gmail.com>
+Content-Language: en-US
+X-MC-Unique: VrHjIw2LPDak5taYXsPcmg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 01:16:20PM +0200, Arnd Bergmann wrote:
-> On a semi-related note, Thierry asked about one aspect of the dma-ranges
-> property recently, which is the behavior of dma_set_mask() and related
-> functions when a driver sets a mask that is larger than the memory
-> area in the bus-ranges but smaller than the available physical RAM.
-> As I understood Thierry's problem and the current code, the generic
-> dma_set_mask() will either reject the new mask entirely or override
-> the mask set by of_dma_configure, but it fails to set a correct mask
-> within the limitations of the parent bus in this case.
+Hi,
 
-There days dma_set_mask will only reject a mask if it is too small
-to be supported by the hardware.  Larger than required masks are now
-always accepted.
+On 30-09-2019 04:22, Navid Emamdoost wrote:
+> It is a neat fix now, thank you.
+
+Can you submit a new version of your patch with the fix I proposed please ?
+
+Regards,
+
+Hans
+
+
+>=20
+>=20
+> On Sat, Sep 28, 2019 at 4:54 AM Hans de Goede <hdegoede@redhat.com> wrote=
+:
+>>
+>> Hi,
+>>
+>> On 28-09-2019 01:04, Navid Emamdoost wrote:
+>>> In hgcm_call_preprocess_linaddr memory is allocated for bounce_buf but
+>>> is not released if copy_form_user fails. The release is added.
+>>>
+>>> Fixes: 579db9d45cb4 ("virt: Add vboxguest VMMDEV communication code")
+>>>
+>>> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+>>
+>> Thank you for catching this, I agree this is a bug, but I think we
+>> can fix it in a cleaner way (see below).
+>>
+>>> ---
+>>>    drivers/virt/vboxguest/vboxguest_utils.c | 4 +++-
+>>>    1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vb=
+oxguest/vboxguest_utils.c
+>>> index 75fd140b02ff..7965885a50fa 100644
+>>> --- a/drivers/virt/vboxguest/vboxguest_utils.c
+>>> +++ b/drivers/virt/vboxguest/vboxguest_utils.c
+>>> @@ -222,8 +222,10 @@ static int hgcm_call_preprocess_linaddr(
+>>>
+>>>        if (copy_in) {
+>>>                ret =3D copy_from_user(bounce_buf, (void __user *)buf, l=
+en);
+>>> -             if (ret)
+>>> +             if (ret) {
+>>> +                     kvfree(bounce_buf);
+>>>                        return -EFAULT;
+>>> +             }
+>>>        } else {
+>>>                memset(bounce_buf, 0, len);
+>>>        }
+>>>
+>>
+>> First let me quote some more of the function, pre leak fix, for context:
+>>
+>>          bounce_buf =3D kvmalloc(len, GFP_KERNEL);
+>>          if (!bounce_buf)
+>>                  return -ENOMEM;
+>>
+>>          if (copy_in) {
+>>                  ret =3D copy_from_user(bounce_buf, (void __user *)buf, =
+len);
+>>                  if (ret)
+>>                          return -EFAULT;
+>>          } else {
+>>                  memset(bounce_buf, 0, len);
+>>          }
+>>
+>>          *bounce_buf_ret =3D bounce_buf;
+>>
+>> This function gets called repeatedly by hgcm_call_preprocess(), and the
+>> caller of hgcm_call_preprocess() already takes care of freeing the
+>> bounce bufs both on a (later) error and on success:
+>>
+>>          ret =3D hgcm_call_preprocess(parms, parm_count, &bounce_bufs, &=
+size);
+>>          if (ret) {
+>>                  /* Even on error bounce bufs may still have been alloca=
+ted */
+>>                  goto free_bounce_bufs;
+>>          }
+>>
+>>          ...
+>>
+>> free_bounce_bufs:
+>>          if (bounce_bufs) {
+>>                  for (i =3D 0; i < parm_count; i++)
+>>                          kvfree(bounce_bufs[i]);
+>>                  kfree(bounce_bufs);
+>>          }
+>>
+>> So we are already taking care of freeing bounce-bufs allocated for previ=
+ous
+>> parameters to the call (which me must do anyways), so a cleaner fix woul=
+d
+>> be to store the allocated bounce_buf in the bounce_bufs array before
+>> doing the copy_from_user, then if copy_from_user fails it will be cleane=
+d
+>> up by the code at the free_bounce_bufs label.
+>>
+>> IOW I believe it is better to fix this by changing the part of
+>> hgcm_call_preprocess_linaddr I quoted to:
+>>
+>>          bounce_buf =3D kvmalloc(len, GFP_KERNEL);
+>>          if (!bounce_buf)
+>>                  return -ENOMEM;
+>>
+>>          *bounce_buf_ret =3D bounce_buf;
+>>
+>>          if (copy_in) {
+>>                  ret =3D copy_from_user(bounce_buf, (void __user *)buf, =
+len);
+>>                  if (ret)
+>>                          return -EFAULT;
+>>          } else {
+>>                  memset(bounce_buf, 0, len);
+>>          }
+>>
+>> This should also fix the leak in IMHO is a clear way of doing so.
+>>
+>> Regards,
+>>
+>> Hans
+>>
+>>
+>>
+>>
+>>
+>=20
+>=20
+
