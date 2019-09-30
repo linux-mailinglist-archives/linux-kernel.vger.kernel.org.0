@@ -2,88 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B52B4C2732
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2599DC2717
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730958AbfI3UtR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Sep 2019 16:49:17 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42236 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfI3UtR (ORCPT
+        id S1731060AbfI3UqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:46:12 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16170 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729066AbfI3UqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:49:17 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e5so4351458pls.9;
-        Mon, 30 Sep 2019 13:49:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UmfTonvoYn/sz7KFi8ddR6otlUnEOyJ4JIchPng5apk=;
-        b=tM+kEN5Q+0P1culpTLFOtBmWg2yeAiVDO9IyeMqvDlse3rsa7YGmoTHPG+PrxxjzA/
-         Qalb9ctomHYT3uNkvDIQuPPCvkYH89A8AaRPOHXIHG7ldQC932HXs4E4q7s8JYBGduKq
-         yqKUJU6Xd5HVozyWAXc99hAoJ/ft75dpnLuXhN4s8NgtCmL+fe8FzJtelJjtAxdUDd3w
-         td90e+DTLan6kRwuiMSQ1ehhE58IH7uFNAeIgdocNqo24f0s7XIXTIfL0Nd1bJm8xFAx
-         euy1OAYcgoTTc6hpw9flYSc5lzEknM+k3xwf+Fq/CSqvbsxUtWGGF6JZYxG3zqT89s1S
-         rrvw==
-X-Gm-Message-State: APjAAAXib+8zCjdcONf4A4WyJmQmgTK10ZMfN8GCAGurttF5VKZRj88c
-        aLQ3cE6YUufW4KfKwhC0jNvm9hZd
-X-Google-Smtp-Source: APXvYqzbrSXpsKliVwn/NaAkhG1dBCmQeIWrM1t1mWJH2RQEgJUdDCSsZ6p1pPQ+4rLLp3sAiSHCnw==
-X-Received: by 2002:a17:902:bd88:: with SMTP id q8mr22421320pls.288.1569873208094;
-        Mon, 30 Sep 2019 12:53:28 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:fb9c:664d:d2ad:c9b5? ([2620:15c:2c1:200:fb9c:664d:d2ad:c9b5])
-        by smtp.gmail.com with ESMTPSA id w27sm9598997pfq.32.2019.09.30.12.53.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2019 12:53:27 -0700 (PDT)
-Subject: Re: [PATCH v2 1/1] blk-mq: Inline request status checkers
-To:     "Pavel Begunkov (Silence)" <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        linux-nvme@lists.infradead.org
-References: <1cd320dad54bd78cb6721f7fe8dd2e197b9fbfa2.1569830796.git.asml.silence@gmail.com>
- <e6fc239412811140c83de906b75689530661f65d.1569872122.git.asml.silence@gmail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <e4d452ad-da24-a1a9-7e2d-f9cd5d0733da@acm.org>
-Date:   Mon, 30 Sep 2019 12:53:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 30 Sep 2019 16:46:11 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d925dc40000>; Mon, 30 Sep 2019 12:55:48 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 30 Sep 2019 12:55:40 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 30 Sep 2019 12:55:40 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 30 Sep
+ 2019 19:55:40 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 30 Sep 2019 19:55:40 +0000
+Received: from rcampbell-dev.nvidia.com (Not Verified[10.110.48.66]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d925dbc0000>; Mon, 30 Sep 2019 12:55:40 -0700
+From:   Ralph Campbell <rcampbell@nvidia.com>
+To:     <linux-mm@kvack.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: [PATCH] mm/thp: make set_huge_zero_page() return void
+Date:   Mon, 30 Sep 2019 12:55:28 -0700
+Message-ID: <20190930195528.32553-1-rcampbell@nvidia.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <e6fc239412811140c83de906b75689530661f65d.1569872122.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1569873348; bh=5H2qPyiWDn47uqy9zIJy1yaJpC2vjsTK5L+ez/p+EZU=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=nDTe8mCyf7ivJABZxIQxgN9Ejhl/rQe7zR0VTSvcPw/K+jzPlmq9K/DY0JidJl41p
+         BmzxlD1v+LyEOqAVBSTWDVza3cyvfCDZyzBQwLdh3jx0Ln1ecmZ4n583SP3oiw9wch
+         Rs4TyF4bS7OpLQbbADfry5Ygno6sMPsjSx6PPEI8l5HusFr0zzS52wMK2J9C0jxxvN
+         1PqIwWdU/rbUjTjDNEheKeiSfduVs/wg51T2z1/GckxhBz4/1OyeWMjNVnm+llMjwn
+         lBjxCsLN4RZ/5lja7DiT8R6P9Pzu3ZJUNULM2pA+6FjM0reolqCYL89GUYfZLQYGtO
+         3r+tu58B8w83g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/30/19 12:43 PM, Pavel Begunkov (Silence) wrote:
-> @@ -282,7 +282,7 @@ static bool bt_tags_iter(struct sbitmap *bitmap, unsigned int bitnr, void *data)
->  	 * test and set the bit before assining ->rqs[].
->  	 */
->  	rq = tags->rqs[bitnr];
-> -	if (rq && blk_mq_request_started(rq))
-> +	if (rq && blk_mq_rq_state(rq) != MQ_RQ_IDLE)
->  		return iter_data->fn(rq, iter_data->data, reserved);
->  
->  	return true>
-> @@ -360,7 +360,7 @@ static bool blk_mq_tagset_count_completed_rqs(struct request *rq,
->  {
->  	unsigned *count = data;
->  
-> -	if (blk_mq_request_completed(rq))
-> +	if (blk_mq_rq_state(rq) == MQ_RQ_COMPLETE)
->  		(*count)++;
->  	return true;
->  }
+The return value from set_huge_zero_page() is never checked so simplify
+the code by making it return void.
 
-Changes like the above significantly reduce readability of the code in
-the block layer core. I don't like this. I think this patch is a step
-backwards instead of a step forwards.
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+---
+ mm/huge_memory.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Bart.
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index c5cb6dcd6c69..6cf0ee65538d 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -686,20 +686,18 @@ static inline gfp_t alloc_hugepage_direct_gfpmask(str=
+uct vm_area_struct *vma)
+ }
+=20
+ /* Caller must hold page table lock. */
+-static bool set_huge_zero_page(pgtable_t pgtable, struct mm_struct *mm,
++static void set_huge_zero_page(pgtable_t pgtable, struct mm_struct *mm,
+ 		struct vm_area_struct *vma, unsigned long haddr, pmd_t *pmd,
+ 		struct page *zero_page)
+ {
+ 	pmd_t entry;
+-	if (!pmd_none(*pmd))
+-		return false;
++
+ 	entry =3D mk_pmd(zero_page, vma->vm_page_prot);
+ 	entry =3D pmd_mkhuge(entry);
+ 	if (pgtable)
+ 		pgtable_trans_huge_deposit(mm, pmd, pgtable);
+ 	set_pmd_at(mm, haddr, pmd, entry);
+ 	mm_inc_nr_ptes(mm);
+-	return true;
+ }
+=20
+ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+--=20
+2.20.1
 
