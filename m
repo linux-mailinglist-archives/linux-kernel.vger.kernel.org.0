@@ -2,133 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC19DC2730
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C16C2786
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730708AbfI3UtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:49:04 -0400
-Received: from mail-eopbgr760120.outbound.protection.outlook.com ([40.107.76.120]:8782
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727469AbfI3UtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:49:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oLgBwCW56VrnKooQzekHc7FMQxl+CM7fvgrhYcHqT9OynmPDAe7bvQYdJLLLavpXMyKX8c6yfpyaeLVjhOSrHeo/+9EUPVzCXQ3G2Ui6KaaHZC5u2GyGvPwZjue6HEjGR7LvJ0+MZJVsl9IKP/0HgSjSK8G74/d6+bkx4ltIzYdx4qGzi23Q0ZmFaPyVaYqNJKKjkTsICmVv5a5SFDUqY1Ct7SNXIDALOcfWKxk0SmZ8whS1HpYBelkCXWORbMVxkR0kDdvkaUTO+8R5QHwznQoGjDVQqEsBHlYczkUcgxkn9uuF3/np8MAtv3IXJ5Xo0EEQFIFtmBnOEsRfVYS6rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JjqskgLXrbiANBgP+BTnluUb8GpYlHpwEUgWARo6x2g=;
- b=CXXOVel4sEpnRoDmqOqiysgo0JBnaRK7g8ez+AA91KxZMgM4AIckinZE8hiyCfpNygEaP/rmuLWIb63nm+QNXYRLFgkjrywZiAsXScgHJUQOx8CRS48dBNgBWe+EKA/YIibjn6HAihCfo13TiZrl6TzsMjJ8z4yjBncIj2beI4yicRnZPaGqlsXN7p9T5sjE+nJVvkxW66TashP7eVpjpVECsRUPFIJ+qpHZMH5K4pb5yj7kyc9i07M3KHcW4WAGsP0rdoqT+7tywx+EkiUIKlZPrviNXqs3jTPPScXhAemcrMqCUGL1ha8z3TRP6cMGurRpejvwGwuIkfLuwJB6Cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JjqskgLXrbiANBgP+BTnluUb8GpYlHpwEUgWARo6x2g=;
- b=A4s4TX9TmmG1mc4Ng+duvyAW6sZUmWl7jSk5vSscEO9txr3eTIvFmVE9D2gXdW5lvVElnvCsjHIEUHNpHjrCOWHkJDpvSt1r7/T4OKucanLcVicXVjB/dOu/2H+VmtinCBWJOFwNpw9upjEAoZuPazZhvey4KpgNxlhQsDg6Iz8=
-Received: from BN8PR21MB1362.namprd21.prod.outlook.com (20.179.76.155) by
- BN8PR21MB1171.namprd21.prod.outlook.com (20.179.73.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.6; Mon, 30 Sep 2019 20:49:01 +0000
-Received: from BN8PR21MB1362.namprd21.prod.outlook.com
- ([fe80::6cea:8074:a394:f20d]) by BN8PR21MB1362.namprd21.prod.outlook.com
- ([fe80::6cea:8074:a394:f20d%9]) with mapi id 15.20.2327.004; Mon, 30 Sep 2019
- 20:49:01 +0000
-From:   Steve MacLean <Steve.MacLean@microsoft.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-CC:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        John Keeping <john@metanate.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Leo Yan <leo.yan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Brian Robbins <brianrob@microsoft.com>,
-        Tom McDonald <Thomas.McDonald@microsoft.com>,
-        John Salem <josalem@microsoft.com>,
-        Stephane Eranian <eranian@google.com>
-Subject: RE: [PATCH 3/4] perf inject --jit: Remove //anon mmap events
-Thread-Topic: [PATCH 3/4] perf inject --jit: Remove //anon mmap events
-Thread-Index: AdV1ng9CnlECXJYCQw+p/SiDI/4npABPJ12AAD1CyvA=
-Date:   Mon, 30 Sep 2019 20:49:00 +0000
-Message-ID: <BN8PR21MB136251826C3C22C6BCCF17B5F7820@BN8PR21MB1362.namprd21.prod.outlook.com>
-References: <BN8PR21MB13625F8AD3E9C67C0918A750F7800@BN8PR21MB1362.namprd21.prod.outlook.com>
- <20190929152721.GB16309@krava>
-In-Reply-To: <20190929152721.GB16309@krava>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=stmaclea@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-30T20:48:59.3555872Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=5cab8ff7-ab20-48f9-9122-1d4582162d5a;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Steve.MacLean@microsoft.com; 
-x-originating-ip: [24.163.126.65]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 578c9ae9-a580-4fe8-e871-08d745e79f73
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: BN8PR21MB1171:|BN8PR21MB1171:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR21MB1171479ED28880C271A26BC7F7820@BN8PR21MB1171.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01762B0D64
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(136003)(366004)(39860400002)(346002)(396003)(199004)(189003)(8936002)(86362001)(6116002)(3846002)(7416002)(11346002)(14454004)(10290500003)(76116006)(6916009)(5660300002)(8676002)(7736002)(81156014)(81166006)(2906002)(8990500004)(66556008)(71200400001)(6436002)(6506007)(186003)(66446008)(4744005)(7696005)(55016002)(14444005)(9686003)(4326008)(71190400001)(229853002)(76176011)(26005)(102836004)(74316002)(99286004)(66476007)(52536014)(54906003)(6246003)(476003)(25786009)(478600001)(22452003)(316002)(33656002)(10090500001)(305945005)(66066001)(446003)(64756008)(256004)(66946007)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR21MB1171;H:BN8PR21MB1362.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: IVESkVkUKTWC1jBQZ3TsN/pbtLq4lSuQK9ScFr3HpOXFLIgf245JMkC3jAaJrtvj5Bru642nen0Yo39YSAGCtC53rMzKX0lRJR0dSXgDLvfZYXpkjW+QiS3UZO7k6ZxAScMrUwZbfrE9TONwDH67TEM1zZswwTD9bFESP606mijMZcAhlokFNuCzeO8/uE1cZHCAvV4YD+pF+fvOlBHCLaguBxbfGw7QHs5upKgoG9+lAuPD3LdbbrkwLDI+lldRkLsZNMGQuoEVnVQtG7g2iYOxqG9bOgAyPgoQyyn7BhPhTk6FawL9jMBbH6R00Nb5Xe840fH0rgptm7tC7Ui4GH5eQpNRRvTdYZIEUii4BZ6OzjN1TGB7eWmk52vdHuidJUk1fVywC5mhGvKFF06VX0yv4kH7trVLsuEeO9jlw3U=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1731985AbfI3U6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:58:47 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59095 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727720AbfI3U6q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:58:46 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7F4998039B; Mon, 30 Sep 2019 19:22:25 +0200 (CEST)
+Date:   Mon, 30 Sep 2019 19:22:39 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Guru Das Srinagesh <gurus@codeaurora.org>,
+        linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-kernel@vger.kernel.org,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+Subject: Re: [PATCH 1/2] leds: Add flag to keep trigger always
+Message-ID: <20190930172239.GA26107@amd>
+References: <1565398367-11811-1-git-send-email-gurus@codeaurora.org>
+ <20190810071322.GA13760@amd>
+ <20190930133902.GA2249614@kroah.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 578c9ae9-a580-4fe8-e871-08d745e79f73
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 20:49:00.8901
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lNSwQNESowS4B6DmkGcIkRvIsw8D13qtzcK9ehFplYRaiTQversiKu5P1ALxgZiKWHNw2erdTzex6J5Hy3PU3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR21MB1171
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
+Content-Disposition: inline
+In-Reply-To: <20190930133902.GA2249614@kroah.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SNIP
 
-> I can't apply this one:
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> patching file builtin-inject.c
-> Hunk #1 FAILED at 263.
-> 1 out of 1 hunk FAILED -- saving rejects to file builtin-inject.c.rej=20
+On Mon 2019-09-30 15:39:02, Greg KH wrote:
+> On Sat, Aug 10, 2019 at 09:13:22AM +0200, Pavel Machek wrote:
+> > On Fri 2019-08-09 17:52:46, Guru Das Srinagesh wrote:
+> > > From: Subbaraman Narayanamurthy <subbaram@codeaurora.org>
+> > >=20
+> > > Commit 0013b23d66a2768f5babbb0ea9f03ab067a990d8 ("leds: disable trigg=
+ers
+> > > on brightness set") removes the trigger on an LED class device when
+> > > brightness is set to 0. However, there are some LED class devices whi=
+ch
+> > > need the trigger not to be removed. In a use case like camera flash,
+> > > camera flash driver passes in a trigger device to LED class driver. If
+> > > the trigger is removed when the brightness is set to 0, this will aff=
+ect
+> > > the clients using those triggers. Hence add a flag to always keep the
+> > > trigger even when brightness is set to 0.
+> >=20
+> > No.
+> >=20
+> > Yes, it would affect those clients. Don't do it, then. It is
+> > root-only operation.
+>=20
+> I don't understand.  The original commit broke userspace operations.
+> Shouldn't it be reverted, or fixed this way in order to have userspace
+> work properly again?
 
-I assume this is because I based my patches on the wrong tip.
+So, what it is exactly that is not working? :-). Yes, root can
+disconnect LED from v4l2 interface; he can also connect it
+back. Documentation says that happens.
 
-> patching file util/jitdump.c
-> patch: **** malformed patch at line 236: btree, node);
+Yes, root can do stupid things.
 
-This doesn't make sense to me.  The patch doesn't try to inject near line 2=
-36. There aren't 236 lines in the e-mail....
+Commit 0013b23d66a2768f5babbb0ea9f03ab067a990d8 is from 2008. I'd
+prefer we did not apply it in 2008, but...
 
-Looking at the MAINTAINERS file, it looks like I should have based my chang=
-es on:
-	git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+Best regards,
 
-I'll rebase the patch and resend.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl2SOd8ACgkQMOfwapXb+vJoOgCdHKr+waTJVpku+UyfUeLaPdZK
+xtUAoI4RZXK+j08cnq5Vo90aQXCmUM3J
+=Styd
+-----END PGP SIGNATURE-----
+
+--6c2NcOVqGQ03X4Wi--
