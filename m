@@ -2,69 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89032C1DDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3267BC1DD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730419AbfI3JX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 05:23:56 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37952 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730310AbfI3JX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 05:23:56 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 628432D5867C3BFCA32F;
-        Mon, 30 Sep 2019 17:23:53 +0800 (CST)
-Received: from localhost.localdomain (10.67.165.24) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 30 Sep 2019 17:23:47 +0800
-From:   Zaibo Xu <xuzaibo@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linuxarm@huawei.com>, <forest.zhouchang@huawei.com>,
-        Zaibo Xu <xuzaibo@huawei.com>
-Subject: [PATCH 5/5] MAINTAINERS: Add maintainer for HiSilicon HPRE driver
-Date:   Mon, 30 Sep 2019 17:20:09 +0800
-Message-ID: <1569835209-44326-6-git-send-email-xuzaibo@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1569835209-44326-1-git-send-email-xuzaibo@huawei.com>
-References: <1569835209-44326-1-git-send-email-xuzaibo@huawei.com>
+        id S1730380AbfI3JUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 05:20:23 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44347 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfI3JUX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 05:20:23 -0400
+Received: by mail-lf1-f68.google.com with SMTP id q11so6435596lfc.11;
+        Mon, 30 Sep 2019 02:20:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Kdnzn0WNSmL6++6Rls+QgBKInuNxmVCJP2RucyIQe4g=;
+        b=XpjBVUwCY82RHb11yRMVfN+csUZwMGRamq8xY4dNdcZsTHjwiT+G7jhvi7AriT4myd
+         J3LQGGSLGnKbVSSTjDnWNUFMlE87Z6p6JqzHyjmQjiowKB0kIWMpeorsGQSF+vnmth0G
+         CtWa5x9QknSVx+UftCbcmI36aKAozljWgDkEs/s9WhECL5gOL6FF5Wrgh909FTkL81Q+
+         m5U6nTPth3jSPNcp7N5jv9Y1K9pEJai9NycLSUOJJsa6yDTxRmmxA17VLfmAvZXEwULc
+         V9UpnpCfAxcnuVW9p0OSZavRhjL4sSA3ymIHIFuHuc6AIQC7Gke82EIuMTbsxQVWXyAs
+         rUsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Kdnzn0WNSmL6++6Rls+QgBKInuNxmVCJP2RucyIQe4g=;
+        b=uPgqrVOYcVk1gfM262olly9aUK5E/AA2yQYyWVJG1f1eQIO9MZRfRijABrwMX0J93v
+         TP1x0eHyN4XuUTKaxH2GmzbcGNHG5froIkWUo3EC3DS1CJTwSEpzrt9UV3NuXESaZoga
+         6njSkEcf9Sk2mMZi8Q26y9Gl4KuoQEbXKYlSrF0pGI37j9dG05HwXyjeozIF2XKRChLU
+         XHsYYVdQ+TZ0+Z7lTu/dwZSMK20VjD4za+HGKzeQQ7bQl9zlXm5cubiu+foFBGNAhDtc
+         ZQki0rmFkMfs26Gqma0hHwyTJhrj4ADgNfnRs8nsy7LFaWGITljcru/HeAmPvdho8I2n
+         h3og==
+X-Gm-Message-State: APjAAAVjxLiLCaoCisUIinpj00ro7mTghAzRg+K0CURIAXx45vFl+7rn
+        PpgD30Nx9l55vu9gpG8BQyCjiay8rqQ=
+X-Google-Smtp-Source: APXvYqwfvtwMv55fxzgK/QzZWF47pMokhrIop+AuLH33tqI+rn2riwwvcmVrgzmNPkaMIr2bVBTmFA==
+X-Received: by 2002:a19:f111:: with SMTP id p17mr10874635lfh.187.1569835220507;
+        Mon, 30 Sep 2019 02:20:20 -0700 (PDT)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id 202sm3189547ljf.75.2019.09.30.02.20.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Sep 2019 02:20:20 -0700 (PDT)
+Subject: Re: [PATCH 1/1] blk-mq: reuse code in blk_mq_check_inflight*()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <11ebb046bf422facf6e438672799306b80038173.1569830385.git.asml.silence@gmail.com>
+ <20190930083324.GA24152@infradead.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <97498865-bb36-7367-4cf3-de6d812b23cb@gmail.com>
+Date:   Mon, 30 Sep 2019 12:20:18 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.165.24]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190930083324.GA24152@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here adds maintainer information for high performance RSA
-engine (HPRE) driver.
+On 9/30/2019 11:33 AM, Christoph Hellwig wrote:
+> On Mon, Sep 30, 2019 at 11:27:32AM +0300, Pavel Begunkov (Silence) wrote:
+>> From: Pavel Begunkov <asml.silence@gmail.com>
+>>
+>> 1. Reuse the same walker callback for both blk_mq_in_flight() and
+>> blk_mq_in_flight_rw().
+>>
+>> 2. Store inflight counters immediately in struct mq_inflight.
+>> It's type-safer and removes extra indirection.
+> 
+> You really want to split this into two patches.  Part 2 looks very
 
-Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Good point, diff is peculiarly aligned indeed. I will resend it.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8671e1e..37a73ff 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7364,6 +7364,15 @@ F:	include/uapi/linux/if_hippi.h
- F:	net/802/hippi.c
- F:	drivers/net/hippi/
- 
-+HISILICON HIGH PERFORMANCE RSA ENGINE DRIVER (HPRE)
-+M:	Zaibo Xu <xuzaibo@huawei.com>
-+L:	linux-crypto@vger.kernel.org
-+S:	Maintained
-+F:	drivers/crypto/hisilicon/hpre/hpre_crypto.c
-+F:	drivers/crypto/hisilicon/hpre/hpre_main.c
-+F:	drivers/crypto/hisilicon/hpre/hpre.h
-+F:	Documentation/ABI/testing/debugfs-hisi-hpre
-+
- HISILICON NETWORK SUBSYSTEM 3 DRIVER (HNS3)
- M:	Yisen Zhuang <yisen.zhuang@huawei.com>
- M:	Salil Mehta <salil.mehta@huawei.com>
+> sensible to me, but I don't really see how 1 is qn equivalent
+> transformation right now.  Splitting it out and writing a non-trivial
+> changelog might help understanding it if you think it really is
+> equivalent as-is.
+> 
+
+blk_mq_check_inflight() increments only inflight[0].
+blk_mq_check_inflight_rw() increments inflight[0] or inflight[1]
+depending on a flag, so summing them gives what the first function returns.
+
 -- 
-2.8.1
-
+Yours sincerely,
+Pavel Begunkov
