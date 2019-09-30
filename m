@@ -2,113 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34E0C1DD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B80C1DE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730332AbfI3JXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 05:23:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40786 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726008AbfI3JXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 05:23:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 84FC5B161;
-        Mon, 30 Sep 2019 09:23:35 +0000 (UTC)
-Date:   Mon, 30 Sep 2019 11:23:34 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-btrfs@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
- kmalloc(power-of-two)
-Message-ID: <20190930092334.GA25306@dhcp22.suse.cz>
-References: <20190826111627.7505-1-vbabka@suse.cz>
- <20190826111627.7505-3-vbabka@suse.cz>
- <df8d1cf4-ff8f-1ee1-12fb-cfec39131b32@suse.cz>
+        id S1730453AbfI3JYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 05:24:03 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:58711 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730421AbfI3JX6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 05:23:58 -0400
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iEruN-0001uK-8b; Mon, 30 Sep 2019 11:23:55 +0200
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 31/35] irqchip/gic-v4.1: Eagerly vmap vPEs
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df8d1cf4-ff8f-1ee1-12fb-cfec39131b32@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 30 Sep 2019 10:23:55 +0100
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+In-Reply-To: <82576f6e-3736-8069-bbf2-7744fbea9ed2@huawei.com>
+References: <20190923182606.32100-1-maz@kernel.org>
+ <20190923182606.32100-32-maz@kernel.org>
+ <82576f6e-3736-8069-bbf2-7744fbea9ed2@huawei.com>
+Message-ID: <ce8d5af19b6c62985bdfc9d57ac659f2@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-09-19 18:36:32, Vlastimil Babka wrote:
-> On 8/26/19 1:16 PM, Vlastimil Babka wrote:
-> > In most configurations, kmalloc() happens to return naturally aligned (i.e.
-> > aligned to the block size itself) blocks for power of two sizes. That means
-> > some kmalloc() users might unknowingly rely on that alignment, until stuff
-> > breaks when the kernel is built with e.g.  CONFIG_SLUB_DEBUG or CONFIG_SLOB,
-> > and blocks stop being aligned. Then developers have to devise workaround such
-> > as own kmem caches with specified alignment [1], which is not always practical,
-> > as recently evidenced in [2].
-> > 
-> > The topic has been discussed at LSF/MM 2019 [3]. Adding a 'kmalloc_aligned()'
-> > variant would not help with code unknowingly relying on the implicit alignment.
-> > For slab implementations it would either require creating more kmalloc caches,
-> > or allocate a larger size and only give back part of it. That would be
-> > wasteful, especially with a generic alignment parameter (in contrast with a
-> > fixed alignment to size).
-> > 
-> > Ideally we should provide to mm users what they need without difficult
-> > workarounds or own reimplementations, so let's make the kmalloc() alignment to
-> > size explicitly guaranteed for power-of-two sizes under all configurations.
-> > What this means for the three available allocators?
-> > 
-> > * SLAB object layout happens to be mostly unchanged by the patch. The
-> >   implicitly provided alignment could be compromised with CONFIG_DEBUG_SLAB due
-> >   to redzoning, however SLAB disables redzoning for caches with alignment
-> >   larger than unsigned long long. Practically on at least x86 this includes
-> >   kmalloc caches as they use cache line alignment, which is larger than that.
-> >   Still, this patch ensures alignment on all arches and cache sizes.
-> > 
-> > * SLUB layout is also unchanged unless redzoning is enabled through
-> >   CONFIG_SLUB_DEBUG and boot parameter for the particular kmalloc cache. With
-> >   this patch, explicit alignment is guaranteed with redzoning as well. This
-> >   will result in more memory being wasted, but that should be acceptable in a
-> >   debugging scenario.
-> > 
-> > * SLOB has no implicit alignment so this patch adds it explicitly for
-> >   kmalloc(). The potential downside is increased fragmentation. While
-> >   pathological allocation scenarios are certainly possible, in my testing,
-> >   after booting a x86_64 kernel+userspace with virtme, around 16MB memory
-> >   was consumed by slab pages both before and after the patch, with difference
-> >   in the noise.
-> > 
-> > [1] https://lore.kernel.org/linux-btrfs/c3157c8e8e0e7588312b40c853f65c02fe6c957a.1566399731.git.christophe.leroy@c-s.fr/
-> > [2] https://lore.kernel.org/linux-fsdevel/20190225040904.5557-1-ming.lei@redhat.com/
-> > [3] https://lwn.net/Articles/787740/
-> > 
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> So if anyone thinks this is a good idea, please express it (preferably
-> in a formal way such as Acked-by), otherwise it seems the patch will be
-> dropped (due to a private NACK, apparently).
+On 2019-09-28 04:11, Zenghui Yu wrote:
+> On 2019/9/24 2:26, Marc Zyngier wrote:
+>> Now that we have HW-accelerated SGIs being delivered to VPEs, it
+>> becomes required to map the VPEs on all ITSs instead of relying
+>> on the lazy approach that we would use when using the ITS-list
+>> mechanism.
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>> ---
+>>   drivers/irqchip/irq-gic-v3-its.c | 39 
+>> +++++++++++++++++++++++++-------
+>>   1 file changed, 31 insertions(+), 8 deletions(-)
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+>> b/drivers/irqchip/irq-gic-v3-its.c
+>> index 4aae9582182b..a1e8c4c2598a 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -1417,12 +1417,31 @@ static int its_irq_set_irqchip_state(struct 
+>> irq_data *d,
+>>   	return 0;
+>>   }
+>>   +/*
+>> + * Two favourable cases:
+>> + *
+>> + * (a) Either we have a GICv4.1, and all vPEs have to be mapped at 
+>> all times
+>> + *     for vSGI delivery
+>> + *
+>> + * (b) Or the ITSs do not use a list map, meaning that VMOVP is 
+>> cheap enough
+>> + *     and we're better off mapping all VPEs always
+>> + *
+>> + * If neither (a) nor (b) is true, then we map VLPIs on demand.
+>                                                  ^^^^^
+> vPEs
 
-Sigh.
+Yes, well caught.
 
-An existing code to workaround the lack of alignment guarantee just show
-that this is necessary. And there wasn't any real technical argument
-against except for a highly theoretical optimizations/new allocator that
-would be tight by the guarantee.
+Thanks,
 
-Therefore
-Acked-by: Michal Hocko <mhocko@suse.com>
-
+         M.
 -- 
-Michal Hocko
-SUSE Labs
+Jazz is not dead. It just smells funny...
