@@ -2,113 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E729BC2441
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D839C244B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732001AbfI3P2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 11:28:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51862 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731127AbfI3P2L (ORCPT
+        id S1732020AbfI3P2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 11:28:52 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40264 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731868AbfI3P2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:28:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SR36eAXn6tsu3lDOH6AbvvqfE8WVsaSDMysCUnlEijg=; b=JXpc/5HW48o0GU9HxeSBelFTI
-        pCLWZE7bhFrbMog+qIpxi3LLElE1ah/5A2yV6IcirW4q8GJR6SODjwzFx4ASgOxtBMm5HiTqb66/h
-        moI6nlQboIV7fKF15uRa/543fasCXP9efTAf6I8X1Y68qGdkIYcCheHNHE5K2s/8asGDFW/+enClA
-        dKPiY5TxSZpPo3Uu9Agzpa2luhz82OelrpmEirPnYAh5GvCHHv83m1t1R3s10/5k5J5HNOckCq9hV
-        1hz5YRU4XTvFFhP581xC+8FdAIiJ/5W+9Y7O2xaB9AGUnfUxbIw6cI77x0BDTh3arbpwuHh4YWtdR
-        gDQpwjfQg==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iExat-0004jy-6x; Mon, 30 Sep 2019 15:28:11 +0000
-Subject: Re: [GIT PULL] remove dead mutt url and add active mutt url
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     LinuxKernel <linux-kernel@vger.kernel.org>
-References: <20190928151300.GA18122@debian> <20190930081310.7e3b9c52@lwn.net>
- <20190930152607.GA27688@Slackware>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a1d80b29-4cd8-2ffc-1b55-3a806fca1a06@infradead.org>
-Date:   Mon, 30 Sep 2019 08:28:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 30 Sep 2019 11:28:52 -0400
+Received: by mail-wr1-f66.google.com with SMTP id l3so11840872wru.7
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 08:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nKNYJ+YfKpvtJJY2vQQUQXqOjR+zsvfM3h1aXu/ISL4=;
+        b=H0TYWQ03EdNmCsa24PTRi/DaCpOIJ2BI1utBui9MEd6CPIO/n5FgXT5QaM7G8Byflr
+         IjsUq8JljCgaDgVaAzD8uiJnP7WloIUMKN3Yd5GolIFvfw42I7kWeQ7msUUyIHgOoxmT
+         qeUrgV6e8QoColLYaPZ/uWYidkmbwcECRLvj5XlCZ0prajHp0UTdR+4boOIhRHPLDq9o
+         eI824KIalBfpNDFfEvSm74rwpvE1rV4I603AEVMf/nzPzkTM2snjOj9N/Ljknq6V3HMf
+         EzAsVE3O+DX/VeOsQ2BL9njgaV5cZo/FxQolaudcPZx++VjdnnlQNQcuc+vizfk+Urhx
+         Nb2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nKNYJ+YfKpvtJJY2vQQUQXqOjR+zsvfM3h1aXu/ISL4=;
+        b=h7AyX6QL/2RT6EuN8uoiiFry/eFnDNTVM55tZs+bPli2LS9/8MwyMEoTlG64KWgSNg
+         HNRy6kP20qcjpsUlThQByNWs0HMR1VR/ORf0ghJgxiMEN6KTLRpqnqv2sAGr1Ck5n0NX
+         rbznxmQpg/AS4AA5dgBSje+XFzpeZgshGRIL4rh/XB9Ltf8+cr2wBVbvqCeBZMCYi2vt
+         HdmS6OUV6fBmwtinUsPl1gQR154AuS5CeLrcqu7PS6eiVY7ItgpoifQS0IA6/uI2TEiZ
+         CrxeXj2yiiAVIiIH7Uyn8pozrpvRMsOkCq/eJgvqBNa4VnXr+LLNsp80rgukLQXFEUha
+         XRHA==
+X-Gm-Message-State: APjAAAWr6sxiM3Bp5OSD4aq6dtL2jLbrXZPX0hbw7RBqXRKJ5tTNlF0D
+        NeIEB/H9+j9FO/EF9TMwOc+Dxw==
+X-Google-Smtp-Source: APXvYqzP1+989rANQG2Lck5S3rwS82kAY9NARdWl/o2qRDBdRfMkejnRZIf/tpixmscYbkuO/ufQZA==
+X-Received: by 2002:a5d:6a06:: with SMTP id m6mr13698975wru.190.1569857329714;
+        Mon, 30 Sep 2019 08:28:49 -0700 (PDT)
+Received: from radium.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id o19sm12420949wro.50.2019.09.30.08.28.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 08:28:48 -0700 (PDT)
+From:   Fabien Parent <fparent@baylibre.com>
+To:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     matthias.bgg@gmail.com, wsa@the-dreams.de, qii.wang@mediatek.com,
+        drinkcat@chromium.org, hsinyi@chromium.org, tglx@linutronix.de,
+        Fabien Parent <fparent@baylibre.com>
+Subject: [PATCH v2] i2c: i2c-mt65xx: fix NULL ptr dereference
+Date:   Mon, 30 Sep 2019 17:28:46 +0200
+Message-Id: <20190930152846.5062-1-fparent@baylibre.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20190930152607.GA27688@Slackware>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/30/19 8:26 AM, Bhaskar Chowdhury wrote:
-> On 08:13 Mon 30 Sep 2019, Jonathan Corbet wrote:
->> On Sat, 28 Sep 2019 20:43:03 +0530
->> Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
->>
->>> The following changes since commit 4e4327891fe2a2a4db342985bff4d4c48703c707:
->>>
->>>   replace dead mutt url with active one. (2019-09-28 20:11:00 +0530)
->>>
->>>   are available in the Git repository at:
->>
->> Bhaskar, I'm not going to take a pull request for a change like this.  If
->> you would like to make this change (and it seems like a useful change to
->> make), please send me a patch that is:
->>
->> - based on docs-next
-> I have no clue where do I found out "docs-next" Jon. But I have
-> stumbled over these places..
-> 
-> https://github.com/torvalds/linux/commit/81a84ad3cb5711cec79f4dd53a4ce026b092c432
-> 
-> and this:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/rdunlap/linux-docs.git/
-> 
-> Now, do you want me to make changes there and sent a patch?? I am
-> absolutely not sure .
-> 
-> Kindly shed some light.
->> - properly changelogged
->> - demonstrated to build properly with sphinx
->>
->> Thanks,
->>
->> jon
-> 
-> Thanks,
-> Bhaskar
+Since commit abf4923e97c3 ("i2c: mediatek: disable zero-length transfers
+for mt8183"), there is a NULL pointer dereference for all the SoCs
+that don't have any quirk. mtk_i2c_functionality is not checking that
+the quirks pointer is not NULL before starting to use it.
 
-Hi,
-The kernel MAINTAINERS file says:
+This commit add a call to i2c_check_quirks which will check whether
+the quirks pointer is set, and if so will check if the IP has the
+NO_ZERO_LEN quirk.
 
-DOCUMENTATION
-M:	Jonathan Corbet <corbet@lwn.net>
-L:	linux-doc@vger.kernel.org
-S:	Maintained
-F:	Documentation/
-F:	scripts/documentation-file-ref-check
-F:	scripts/kernel-doc
-F:	scripts/sphinx-pre-install
-X:	Documentation/ABI/
-X:	Documentation/firmware-guide/acpi/
-X:	Documentation/devicetree/
-X:	Documentation/i2c/
-X:	Documentation/media/
-X:	Documentation/power/
-X:	Documentation/spi/
-T:	git git://git.lwn.net/linux.git docs-next
+Fixes: abf4923e97c3 ("i2c: mediatek: disable zero-length transfers for mt8183")
+Signed-off-by: Fabien Parent <fparent@baylibre.com>
+---
 
-that ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+v2:
+	* use i2c_check_quirks to check the quirks
 
+---
+ drivers/i2c/busses/i2c-mt65xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
+index 29eae1bf4f86..2152ec5f535c 100644
+--- a/drivers/i2c/busses/i2c-mt65xx.c
++++ b/drivers/i2c/busses/i2c-mt65xx.c
+@@ -875,7 +875,7 @@ static irqreturn_t mtk_i2c_irq(int irqno, void *dev_id)
+ 
+ static u32 mtk_i2c_functionality(struct i2c_adapter *adap)
+ {
+-	if (adap->quirks->flags & I2C_AQ_NO_ZERO_LEN)
++	if (i2c_check_quirks(adap, I2C_AQ_NO_ZERO_LEN))
+ 		return I2C_FUNC_I2C |
+ 			(I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+ 	else
 -- 
-~Randy
+2.23.0
+
