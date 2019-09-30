@@ -2,85 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EABC6C2017
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 13:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 676F4C2021
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 13:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfI3Lpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 07:45:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42548 "EHLO mail.kernel.org"
+        id S1729283AbfI3Lu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 07:50:59 -0400
+Received: from mga01.intel.com ([192.55.52.88]:8975 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726504AbfI3Lpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 07:45:47 -0400
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97087216F4;
-        Mon, 30 Sep 2019 11:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569843946;
-        bh=iv/Dtkavbg/c29QLGURU+cPsjlv6mILK2Etm2RWqlsg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=0SYpXQ7z0QqoDRun4j/lbd+Nx36/8rnMBqY1n7l6Y4BBOg6z5T4r6JtXfDJGLvQQr
-         dcVxK9jQDZFTsjWZbuJCCNAP+8uqw3xcoyqeX9kSfNfU9Th0kgCph02Y2BHC1OSk3F
-         da3X7DvTVSE0cKe9gbaWg3qLY9bKfNv/RYIiA1FE=
-From:   Will Deacon <will@kernel.org>
-To:     torvalds@linux-foundation.org, yamada.masahiro@socionext.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] Partially revert "compiler: enable CONFIG_OPTIMIZE_INLINING forcibly"
-Date:   Mon, 30 Sep 2019 12:45:40 +0100
-Message-Id: <20190930114540.27498-1-will@kernel.org>
-X-Mailer: git-send-email 2.11.0
+        id S1726784AbfI3Lu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 07:50:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 04:50:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,567,1559545200"; 
+   d="scan'208";a="194151889"
+Received: from um.fi.intel.com (HELO localhost) ([10.237.72.57])
+  by orsmga003.jf.intel.com with ESMTP; 30 Sep 2019 04:50:56 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH v1 4/6] perf: Allow using AUX data in perf samples
+In-Reply-To: <20190926144450.GC4519@hirez.programming.kicks-ass.net>
+References: <20180612075117.65420-1-alexander.shishkin@linux.intel.com> <20180612075117.65420-5-alexander.shishkin@linux.intel.com> <20180614202022.GC12217@hirez.programming.kicks-ass.net> <20180619104725.bqvs7uwzhb4ihyxy@um.fi.intel.com> <20180621201632.GE27616@hirez.programming.kicks-ass.net> <87lfw234ew.fsf@ashishki-desk.ger.corp.intel.com> <20190926144450.GC4519@hirez.programming.kicks-ass.net>
+Date:   Mon, 30 Sep 2019 14:50:55 +0300
+Message-ID: <878sq657fk.fsf@ashishki-desk.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit ac7c3e4ff401b304489a031938dbeaab585bfe0a for ARM and
-arm64.
+Peter Zijlstra <peterz@infradead.org> writes:
 
-Building an arm64 kernel with CONFIG_OPTIMIZE_INLINING=y has been shown
-to violate fixed register allocations of local variables passed to
-inline assembly with GCC prior to version 9 which can lead to subtle
-failures at runtime:
+> On Fri, Aug 09, 2019 at 03:32:39PM +0300, Alexander Shishkin wrote:
+>> The other problem is sampling SW events, that would require a ctx->lock
+>> to prevent racing with event_function_call()s from other cpus, resulting
+>> in somewhat cringy "if (!in_nmi()) raw_spin_lock(...)", but I don't have
+>> better idea as to how to handle that.
+>
+>> +int perf_pmu_aux_sample_output(struct perf_event *event,
+>> +			       struct perf_output_handle *handle,
+>> +			       unsigned long size)
+>> +{
+>> +	unsigned long flags;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * NMI vs IRQ
+>> +	 *
+>> +	 * Normal ->start()/->stop() callbacks run in IRQ mode in scheduler
+>> +	 * paths. If we start calling them in NMI context, they may race with
+>> +	 * the IRQ ones, that is, for example, re-starting an event that's just
+>> +	 * been stopped.
+>> +	 */
+>> +	if (!in_nmi())
+>> +		raw_spin_lock_irqsave(&event->ctx->lock, flags);
+>> +
+>> +	ret = event->pmu->snapshot_aux(event, handle, size);
+>> +
+>> +	if (!in_nmi())
+>> +		raw_spin_unlock_irqrestore(&event->ctx->lock, flags);
+>> +
+>> +	return ret;
+>> +}
+>
+> I'm confused... would not something like:
+>
+> 	unsigned long flags;
+>
+> 	local_irq_save(flags);
+> 	ret = event->pmu->snapshot_aux(...);
+> 	local_irq_restore(flags);
+>
+> 	return ret;
+>
+> Be sufficient? By disabling IRQs we already hold off remote
+> event_function_call()s.
+>
+> Or am I misunderstanding the race here?
 
-  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91111
+No, you're right, disabling IRQs covers our bases.
 
-A very similar has been reported for 32-bit ARM as well:
-
-  https://lkml.kernel.org/r/f5c221f5749e5768c9f0d909175a14910d349456.camel@suse.de
-
-Although GCC 9.1 appears to work for the specific case in the bugzilla
-above, the exact issue has not been root-caused so play safe and disable
-the option for now on these architectures.
-
-Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will@kernel.org>
----
- lib/Kconfig.debug | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 93d97f9b0157..c37c72adaeff 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -312,6 +312,7 @@ config HEADERS_CHECK
- 
- config OPTIMIZE_INLINING
- 	def_bool y
-+	depends on !(ARM || ARM64) # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91111
- 	help
- 	  This option determines if the kernel forces gcc to inline the functions
- 	  developers have marked 'inline'. Doing so takes away freedom from gcc to
--- 
-2.23.0.444.g18eeb5a265-goog
-
+Thanks,
+--
+Alex
