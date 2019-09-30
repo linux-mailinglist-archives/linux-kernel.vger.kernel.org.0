@@ -2,238 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CF0CC28C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD75C28B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:21:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732118AbfI3V1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:27:23 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:55860 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729964AbfI3V1W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:27:22 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0TdsL5-O_1569871543;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TdsL5-O_1569871543)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 01 Oct 2019 03:25:50 +0800
-Subject: Re: [mm] 87eaceb3fa: stress-ng.madvise.ops_per_sec -19.6% regression
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        David Rientjes <rientjes@google.com>, Qian Cai <cai@lca.pw>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-References: <20190930084604.GC17687@shao2-debian>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <d30b1358-fb6b-2658-e675-ceff3bc465ab@linux.alibaba.com>
-Date:   Mon, 30 Sep 2019 12:25:39 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S1732501AbfI3VVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:21:21 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36466 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732356AbfI3VVV (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 17:21:21 -0400
+Received: by mail-qt1-f195.google.com with SMTP id o12so18962160qtf.3
+        for <Linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 14:21:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MXa+hRiK3mVnZ1zzAHzBL3wtL/tQLnl/R24YjxSzj6s=;
+        b=e58SeKlcPK2ZHO32YRNNUJHRWaZVuk9zNF1q2DORNk7Yuy10HzLkjvjn7kFdi6QYGn
+         KqO/yr5mcunOoeU/pSjZl7aX6mDVjyM5YioEquxYncIch5poeS9yRK4pYA/2OjbjrJLS
+         D4BdMR7uvPJ3tJqzyzzY0eIRt2+DI4C0noM5CimGKFNLT25fzLSN7tRrZVzyzVJFZpnW
+         l/fPRI+5izXTYEczQb1ONHw8GQ0ichYKmAwujJPsKf8F1teFMuquTpuwso+JyonfeZBy
+         5mUYjbIeLG1eEVAeasn2mxgrvcyrOpMZyDUE4/iCtJcj9yHWkm7iZdhM2VNS5slhmp2k
+         dLbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MXa+hRiK3mVnZ1zzAHzBL3wtL/tQLnl/R24YjxSzj6s=;
+        b=HkiqOnoEtDK2hpawYjWeC8ptPFG6OSQQ2zKxZUmp5omoDbM3r2qZx+WGyAng/LBWcJ
+         TmGfCPk9W+aMpd/MVATVGRXWodWRf5CnL8ag/ZL6ea1r7k5GzQlYfP2rUAenZ0vHuzSq
+         88wEGN+0cj1zkGIwsmjJV4ClxII3BdvQPq/i9mAoXo8VcJ4AKt43w7SNkiONG66T0rlj
+         LhAhAbR+WHx3jmT9D+e2I4Fyuqi8uJdcNlyuYtGr5QI+J9H7dcNTuyK4C5T6zVvcxpvX
+         EkVp9dzdyXKow6n87aOEkOl3p6ZFihQEleU2tuk6NJEavU8AHHbgcVEKSTRBExn7LToR
+         XedA==
+X-Gm-Message-State: APjAAAXaAJ8JDFCFlXU/CMeuGpnLrJe48z7vheqeNjCIdua9hzTjpiCa
+        OSrUF4DXNcvDfFiBu0jROemN2vuE
+X-Google-Smtp-Source: APXvYqzJ96kHgoLxlaLwercaKOqIZyx6puqMEoozkw+hMDHeZ113iyABtIi2UqWSip2dD8uWIe6OJw==
+X-Received: by 2002:ac8:1e1a:: with SMTP id n26mr27160024qtl.357.1569871684328;
+        Mon, 30 Sep 2019 12:28:04 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([177.195.208.35])
+        by smtp.gmail.com with ESMTPSA id t32sm9456493qtb.64.2019.09.30.12.28.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 12:28:03 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 2522240DA4; Mon, 30 Sep 2019 16:28:00 -0300 (-03)
+Date:   Mon, 30 Sep 2019 16:28:00 -0300
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Jin Yao <yao.jin@linux.intel.com>,
+        jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 0/2] perf stat: Support --all-kernel and --all-user
+Message-ID: <20190930192800.GA13904@kernel.org>
+References: <20190925020218.8288-1-yao.jin@linux.intel.com>
+ <20190929151022.GA16309@krava>
+ <20190930182136.GD8560@tassilo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190930084604.GC17687@shao2-debian>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190930182136.GD8560@tassilo.jf.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Mon, Sep 30, 2019 at 11:21:36AM -0700, Andi Kleen escreveu:
+> On Sun, Sep 29, 2019 at 05:29:13PM +0200, Jiri Olsa wrote:
+> > On Wed, Sep 25, 2019 at 10:02:16AM +0800, Jin Yao wrote:
+> > > This patch series supports the new options "--all-kernel" and "--all-user"
+> > > in perf-stat.
+
+> > > For example,
+
+> > > root@kbl:~# perf stat -e cycles,instructions --all-kernel --all-user -a -- sleep 1
+
+> > >  Performance counter stats for 'system wide':
+
+> > >         19,156,665      cycles:k
+> > >          7,265,342      instructions:k            #    0.38  insn per cycle
+> > >      4,511,186,293      cycles:u
+> > >        121,881,436      instructions:u            #    0.03  insn per cycle
+
+> > I think we should follow --all-kernel/--all-user behaviour from record
+> > command, adding extra events seems like unnecesary complexity to me
+ 
+> I think it's useful. Makes it easy to do kernel/user break downs.
+> perf record should support the same.
+
+Don't we have this already with:
+
+[root@quaco ~]# perf stat -e cycles:u,instructions:u,cycles:k,instructions:k -a -- sleep 1
+
+ Performance counter stats for 'system wide':
+
+        69,937,445      cycles:u
+        23,459,595      instructions:u            #    0.34  insn per cycle
+        51,040,704      cycles:k
+        11,368,152      instructions:k            #    0.22  insn per cycle
+
+       1.002887417 seconds time elapsed
+
+[root@quaco ~]# perf record -e cycles:u,instructions:u,cycles:k,instructions:k -a -- sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 1.340 MB perf.data (927 samples) ]
+[root@quaco ~]# perf evlist
+cycles:u
+instructions:u
+cycles:k
+instructions:k
+[root@quaco ~]#
+
+To make it shorter we could have:
+
+diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+index 7469497cd28e..7df28b0e9682 100644
+--- a/tools/perf/util/parse-events.l
++++ b/tools/perf/util/parse-events.l
+@@ -313,11 +313,11 @@ aux-output		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT); }
+ <<EOF>>			{ BEGIN(INITIAL); }
+ }
+ 
+-cpu-cycles|cycles				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES); }
++cpu-cycles|cycles|cyc				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES); }
+ stalled-cycles-frontend|idle-cycles-frontend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
+ stalled-cycles-backend|idle-cycles-backend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
+-instructions					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS); }
++instructions|insn|ins				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS); }
+ cache-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES); }
+ branch-instructions|branches			{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
+ branch-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES); }
+
+And another thing that comes to mind is to make -M metrics be accepted
+as -e arg, as someone suggested recently (Andi?), and also make it set
+its events honouring the :k or :u modifiers:
+
+[root@quaco ~]# perf stat -M ipc
+^C
+ Performance counter stats for 'system wide':
+
+        15,030,011      inst_retired.any          #      0.3 IPC
+        54,449,797      cpu_clk_unhalted.thread
+
+       1.186531715 seconds time elapsed
 
 
-On 9/30/19 1:46 AM, kernel test robot wrote:
-> Greeting,
->
-> FYI, we noticed a -19.6% regression of stress-ng.madvise.ops_per_sec due to commit:
->
->
-> commit: 87eaceb3faa59b9b4d940ec9554ce251325d83fe ("mm: thp: make deferred split shrinker memcg aware")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> in testcase: stress-ng
-> on test machine: 72 threads Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz with 192G memory
-> with following parameters:
->
-> 	nr_threads: 100%
-> 	disk: 1HDD
-> 	testtime: 1s
-> 	class: vm
-> 	ucode: 0x200005e
-> 	cpufreq_governor: performance
+[root@quaco ~]# perf stat -M ipc:k,ipc:u
+Cannot find metric or group `ipc:k'
 
-Thanks for reporting the case. I did the same test on my VM (24 threads, 
-48GB), I saw average ~3% degradation. The test itself may have 15% 
-variation in the same environment according to my test, so I compared 
-the average result within 10 runs.
+ Usage: perf stat [<options>] [<command>]
 
-In 5.3 the deferred split queue is per node, currently it is per memcg. 
-If the test is run in default memcg configuration (just one root memcg), 
-the lock contention may get worse (two locks -> one lock).
+    -M, --metrics <metric/metric group list>
+                          monitor specified metrics or metric groups (separated by ,)
+[root@quaco ~]#
 
-Actually, I already noticed this issue in a different way. The patch 
-changed its NUMA awareness. The global kswapd may end up reclaiming THPs 
-from a different node.
 
-I already came up with a patch which moves deferred split queue to 
-memcg->nodeinfo[] to restore NUMA awareness and keep it memcg aware at 
-the mean time. The same test shows average ~4% improvement and slightly 
-better than 5.3 with this patch.
-
-I'm going to post the patch to the mailing list soon.
-
->
->
->
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <rong.a.chen@intel.com>
->
->
-> Details are as below:
-> -------------------------------------------------------------------------------------------------->
->
->
-> To reproduce:
->
->          git clone https://github.com/intel/lkp-tests.git
->          cd lkp-tests
->          bin/lkp install job.yaml  # job file is attached in this email
->          bin/lkp run     job.yaml
->
-> =========================================================================================
-> class/compiler/cpufreq_governor/disk/kconfig/nr_threads/rootfs/tbox_group/testcase/testtime/ucode:
->    vm/gcc-7/performance/1HDD/x86_64-rhel-7.6/100%/debian-x86_64-2019-05-14.cgz/lkp-skl-2sp8/stress-ng/1s/0x200005e
->
-> commit:
->    0a432dcbeb ("mm: shrinker: make shrinker not depend on memcg kmem")
->    87eaceb3fa ("mm: thp: make deferred split shrinker memcg aware")
->
-> 0a432dcbeb32edcd 87eaceb3faa59b9b4d940ec9554
-> ---------------- ---------------------------
->           %stddev     %change         %stddev
->               \          |                \
->        6457           -19.5%       5198        stress-ng.madvise.ops
->        6409           -19.6%       5154        stress-ng.madvise.ops_per_sec
->        3575           -26.8%       2618 ±  6%  stress-ng.mremap.ops
->        3575           -26.9%       2613 ±  6%  stress-ng.mremap.ops_per_sec
->       15.77            -5.8%      14.85 ±  2%  iostat.cpu.user
->     3427944 ±  4%      -9.3%    3109984        meminfo.AnonPages
->       33658 ± 22%  +69791.3%   23524535 ±165%  sched_debug.cfs_rq:/.load.max
->       19951 ±  7%     +13.3%      22611 ±  3%  softirqs.CPU54.TIMER
->      109.94            -4.1%     105.41        turbostat.RAMWatt
->        5.89 ± 62%      -3.1        2.78 ±173%  perf-profile.calltrace.cycles-pp.page_fault
->        3.39 ±101%      -0.6        2.78 ±173%  perf-profile.calltrace.cycles-pp.do_page_fault.page_fault
->        3.39 ±101%      -0.6        2.78 ±173%  perf-profile.calltrace.cycles-pp.__do_page_fault.do_page_fault.page_fault
->        5.28 ±100%      -5.3        0.00        perf-profile.children.cycles-pp.___might_sleep
->        5.28 ±100%      -5.3        0.00        perf-profile.self.cycles-pp.___might_sleep
->      885704 ±  5%     -11.0%     787888 ±  6%  proc-vmstat.nr_anon_pages
->   1.742e+08 ±  5%      -9.6%  1.576e+08 ±  2%  proc-vmstat.pgalloc_normal
->   1.741e+08 ±  5%      -9.6%  1.575e+08 ±  2%  proc-vmstat.pgfree
->      375505           -19.4%     302688        proc-vmstat.pglazyfree
->       55236 ± 38%     -55.5%      24552 ± 41%  proc-vmstat.thp_deferred_split_page
->       55234 ± 38%     -55.6%      24543 ± 41%  proc-vmstat.thp_fault_alloc
->        3218           -19.4%       2595        proc-vmstat.thp_split_page
->       12163 ±  7%     -22.1%       9473 ± 12%  proc-vmstat.thp_split_pmd
->     8193516            +3.2%    8459146        proc-vmstat.unevictable_pgs_scanned
->       79085 ± 10%      -7.8%      72890        interrupts.CAL:Function_call_interrupts
->        1139 ±  9%     -10.7%       1018 ±  3%  interrupts.CPU0.CAL:Function_call_interrupts
->        3596 ±  3%     -13.8%       3100 ±  8%  interrupts.CPU20.TLB:TLB_shootdowns
->        3602 ±  4%     -12.6%       3149 ± 10%  interrupts.CPU23.TLB:TLB_shootdowns
->        3512 ±  5%      -9.9%       3163 ±  9%  interrupts.CPU25.TLB:TLB_shootdowns
->        3512 ±  3%     -12.1%       3088 ±  9%  interrupts.CPU26.TLB:TLB_shootdowns
->        3610 ±  5%     -13.2%       3134 ±  5%  interrupts.CPU29.TLB:TLB_shootdowns
->        3602 ±  5%     -17.4%       2973 ±  8%  interrupts.CPU31.TLB:TLB_shootdowns
->        3548 ±  4%     -12.7%       3098 ±  6%  interrupts.CPU32.TLB:TLB_shootdowns
->        3637 ±  5%     -15.2%       3085 ±  7%  interrupts.CPU35.TLB:TLB_shootdowns
->        3588 ±  3%     -12.7%       3131 ±  9%  interrupts.CPU56.TLB:TLB_shootdowns
->        3664 ±  5%     -14.3%       3142 ± 10%  interrupts.CPU59.TLB:TLB_shootdowns
->        3542 ±  6%     -13.0%       3082 ±  5%  interrupts.CPU64.TLB:TLB_shootdowns
->        3539 ±  5%     +12.4%       3977 ± 11%  interrupts.CPU7.TLB:TLB_shootdowns
->        3485 ±  5%     -13.0%       3033 ± 10%  interrupts.CPU70.TLB:TLB_shootdowns
->        3651 ±  4%     -16.1%       3062 ±  9%  interrupts.CPU71.TLB:TLB_shootdowns
->   1.557e+10 ±  2%      -8.1%  1.431e+10 ±  3%  perf-stat.i.branch-instructions
->   1.887e+08 ±  9%     -21.4%  1.484e+08        perf-stat.i.cache-misses
->   5.026e+08 ±  2%      -8.6%  4.595e+08 ±  4%  perf-stat.i.cache-references
->        2609 ±  3%      +6.0%       2766        perf-stat.i.cycles-between-cache-misses
->   7.344e+09            -6.6%  6.861e+09 ±  3%  perf-stat.i.dTLB-stores
->   6.969e+10            -7.6%   6.44e+10 ±  3%  perf-stat.i.instructions
->        0.37 ±  2%      -7.2%       0.34        perf-stat.i.ipc
->       43.29 ±  5%      +3.7       46.94 ±  4%  perf-stat.i.node-load-miss-rate%
->    15474576 ±  8%     -23.9%   11782653 ± 13%  perf-stat.i.node-load-misses
->       28.50 ±  6%      +3.2       31.74 ±  3%  perf-stat.i.node-store-miss-rate%
->    26447212 ±  5%     -11.6%   23382361 ±  4%  perf-stat.i.node-stores
->        0.61            +0.0        0.65        perf-stat.overall.branch-miss-rate%
->       37.58 ±  8%      -5.2       32.39 ±  4%  perf-stat.overall.cache-miss-rate%
->        2.91 ±  2%      +3.4%       3.00        perf-stat.overall.cpi
->        1091 ± 10%     +19.5%       1303 ±  3%  perf-stat.overall.cycles-between-cache-misses
->        0.17            +0.0        0.18 ±  3%  perf-stat.overall.dTLB-store-miss-rate%
->        5922            -6.6%       5533 ±  2%  perf-stat.overall.instructions-per-iTLB-miss
->        0.34 ±  2%      -3.3%       0.33        perf-stat.overall.ipc
->   1.462e+10 ±  2%      -5.3%  1.384e+10 ±  3%  perf-stat.ps.branch-instructions
->   1.765e+08 ± 10%     -18.7%  1.435e+08        perf-stat.ps.cache-misses
->   6.926e+09            -4.0%  6.648e+09 ±  3%  perf-stat.ps.dTLB-stores
->   6.555e+10            -5.0%  6.229e+10 ±  3%  perf-stat.ps.instructions
->    14736035 ±  8%     -21.6%   11547658 ± 14%  perf-stat.ps.node-load-misses
->   2.703e+12            -4.4%  2.585e+12 ±  2%  perf-stat.total.instructions
->
->
->                                                                                  
->                                 stress-ng.madvise.ops
->                                                                                  
->    7000 +-+------------------------------------------------------------------+
->    6800 +-+                          +                                       |
->         |                            :                                       |
->    6600 +-+.+  ++.+  +.+ ++   + ++. : :+.+  +.  ++ .++  +. ++    + +.   +    |
->    6400 +-+  ++    ++   +  +.+ +   ++ +   ++  + : +   ++  +  ++.+ +  ++ :+.++|
->         |                                      +                       +     |
->    6200 +-+                                                                  |
->    6000 +-+                                                                  |
->    5800 +-+                                                                  |
->         |                                                                    |
->    5600 +-+                                                                  |
->    5400 +-+                                                                  |
->         OO   OOO  O  O   O    O     O  O O O  O      O                       |
->    5200 +-O O   O  OO  OO OO O OOO O OO   O O  OOOO O O                      |
->    5000 +-+------------------------------------------------------------------+
->                                                                                  
->                                                                                                                                                                  
->                             stress-ng.madvise.ops_per_sec
->                                                                                  
->    7000 +-+------------------------------------------------------------------+
->    6800 +-+                          +                                       |
->         |                            :                                       |
->    6600 +-+                         : :                                      |
->    6400 +-+.+++++.++++.+++++.+++++.++ ++.++++.+ +++.+++++.+++++.++++.++ ++.++|
->         |                                      +                       +     |
->    6200 +-+                                                                  |
->    6000 +-+                                                                  |
->    5800 +-+                                                                  |
->         |                                                                    |
->    5600 +-+                                                                  |
->    5400 +-+                                                                  |
->         |O   O    O  O   O                           O                       |
->    5200 O-O O OOO  O   OO OO OOOOO OOOOO OOOO OO  O O O                      |
->    5000 +-+---------O---------------------------OO---------------------------+
->                                                                                  
->                                                                                  
-> [*] bisect-good sample
-> [O] bisect-bad  sample
->
->
->
-> Disclaimer:
-> Results have been estimated based on internal Intel analysis and are provided
-> for informational purposes only. Any difference in system hardware or software
-> design or configuration may affect actual performance.
->
->
-> Thanks,
-> Rong Chen
->
-
+- Arnaldo
