@@ -2,76 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FBC3C1BB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 08:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE36AC1BC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 08:53:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbfI3Gqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 02:46:35 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40066 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729022AbfI3Gqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 02:46:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Sep 2019 23:46:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,565,1559545200"; 
-   d="scan'208";a="220553529"
-Received: from oamoreno-mobl.ccr.corp.intel.com ([10.252.17.131])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Sep 2019 23:46:31 -0700
-Message-ID: <dbf90ac06b27395dc2d19fbc37e47877785b8d52.camel@intel.com>
-Subject: Re: [PATCH] iwlwifi: dvm: excessive if in rs_bt_update_lq()
-From:   Luciano Coelho <luciano.coelho@intel.com>
-To:     Denis Efremov <efremov@linux.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 30 Sep 2019 09:46:31 +0300
-In-Reply-To: <20190925204935.27118-1-efremov@linux.com>
-References: <20190925204935.27118-1-efremov@linux.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1729394AbfI3GxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 02:53:13 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45977 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbfI3GxN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 02:53:13 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q64so8162783ljb.12
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2019 23:53:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yATsTcqOqIzZMV98qWIAPWwEMjMrM8gXIgA2HND81Xc=;
+        b=FtkhRbMuAFq9oBu9QY8Qq4PUBi7P8wG9pwBBI5gh9ZFAP1uE5Z8owLiNoz//UjqGYQ
+         fQhndMyHQ1hPRQnD6ur2p6trxwMyp46wm3Vcw6Fyrpl81AW00cOdQytunyp/2v8lQemU
+         SaOycOu6xeFMyUosNLzTevrP3MKyY/e5X/5NM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yATsTcqOqIzZMV98qWIAPWwEMjMrM8gXIgA2HND81Xc=;
+        b=CDEdqbFG+zaT+ZxtAV3XUPntNAsGTW4x1Cmaw3ymXLUfgyqEtdgoOJrJTXZypVT4YI
+         MVGuPZeIAC1n5PxgGDxD4zpHNqvWs8RJXOuWVJNyQ6/PA3q18UiKdkJ+0/a6j548qi1T
+         /fxcV5YEQGfyBrv1XlhXsaILjiPgH5k9t4M8ZaZGkFVtwFCQhGkmDu9iZMZFtkiAa9H9
+         vH6xZh80EVWICH2QboHC5TUkSjYp+vKJV445bGe3GLSnf/EuGVdLrjidMpu5qZcBa2wL
+         AWrQcTDYWZTJA5CpkNB77BtydB2Fvu3ZfcXQDKOvYUXY+SS9v+3daPmEt1lt0UvHL93d
+         SIoQ==
+X-Gm-Message-State: APjAAAVwsqOOohTMzh3ZPW4QEUDRhXRWGVt3a6l4nL8yzaPeqU1HVEzC
+        eDRdpQEEkKRWhWa9xDE5anfKfZDKBWu+4OYdl70H3Q==
+X-Google-Smtp-Source: APXvYqziLiuF94ED9ic8k7xqYKDkQNdzt1q3xAbH4DhKGFt+OHhSfqDtzXLbca2sgZAoi7etyCT/7Lt0hhqj6DqlfRM=
+X-Received: by 2002:a2e:1246:: with SMTP id t67mr11165358lje.174.1569826390743;
+ Sun, 29 Sep 2019 23:53:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <1569472808-15284-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+ <20190928181910.GB12219@kunai>
+In-Reply-To: <20190928181910.GB12219@kunai>
+From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Date:   Mon, 30 Sep 2019 12:22:59 +0530
+Message-ID: <CAHO=5PHj1PQUGi3EYBPVNUsRHsEo9WxU6CsvR=9+bP4n6z-cMA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] i2c: iproc: Add i2c repeated start capability
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Michael Cheng <ccheng@broadcom.com>,
+        Shreesha Rajashekar <shreesha.rajashekar@broadcom.com>,
+        Lori Hikichi <lori.hikichi@broadcom.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Icarus Chau <icarus.chau@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Shivaraj Shetty <sshetty1@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-09-25 at 23:49 +0300, Denis Efremov wrote:
-> There is no need to check 'priv->bt_ant_couple_ok' twice in
-> rs_bt_update_lq(). The second check is always true. Thus, the
-> expression can be simplified.
-> 
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-> ---
->  drivers/net/wireless/intel/iwlwifi/dvm/rs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/rs.c b/drivers/net/wireless/intel/iwlwifi/dvm/rs.c
-> index 74229fcb63a9..226165db7dfd 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/dvm/rs.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/dvm/rs.c
-> @@ -851,7 +851,7 @@ static void rs_bt_update_lq(struct iwl_priv *priv, struct iwl_rxon_context *ctx,
->  		 * Is there a need to switch between
->  		 * full concurrency and 3-wire?
->  		 */
-> -		if (priv->bt_ci_compliance && priv->bt_ant_couple_ok)
-> +		if (priv->bt_ci_compliance)
->  			full_concurrent = true;
->  		else
->  			full_concurrent = false;
+On Sat, Sep 28, 2019 at 11:53 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+> On Thu, Sep 26, 2019 at 10:10:08AM +0530, Rayagonda Kokatanur wrote:
+> > From: Lori Hikichi <lori.hikichi@broadcom.com>
+> >
+> > Enable handling of i2c repeated start. The current code
+> > handles a multi msg i2c transfer as separate i2c bus
+> > transactions. This change will now handle this case
+> > using the i2c repeated start protocol. The number of msgs
+> > in a transfer is limited to two, and must be a write
+> > followed by a read.
+> >
+> > Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
+> > Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+> > Signed-off-by: Icarus Chau <icarus.chau@broadcom.com>
+> > Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> > Signed-off-by: Shivaraj Shetty <sshetty1@broadcom.com>
+> > ---
+> > changes from v1:
+> >  - Address code review comment from Wolfram Sang
+>
+> No, sorry, this is not a proper changelog. I review so many patches, I
+> can't recall what I suggested to do for every patch. Please describe
+> what changes you actually made. It is also better when digging through
+> mail archives.
+>
+Sorry for inconvenience, I updated the changelog and resent the patch.
+I have kept the patch version as v2 only. Hope that is fine.
 
-Thanks, Denis! I have applied this to our internal tree and it will
-reach the mainline following our usual upstreaming process.
-
---
-Cheers,
-Luca.
-
+Best regards,
+Rayagonda
