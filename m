@@ -2,143 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1B50C275E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22918C2774
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:58:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731665AbfI3Uxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:53:51 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:55610 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730456AbfI3Uxu (ORCPT
+        id S1731788AbfI3U5N convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Sep 2019 16:57:13 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41881 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730751AbfI3U5M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:53:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eeuwhcBg0/unot9yWRfZ0iTRvvETLH1N0h7aGRGzozM=; b=Ib9TrnUBuSEP/SHSV5oxODafF
-        zAF9LlKsABuY/ZLU9bFCCprcSYkNYQAO/x11zo9yhH8mNZUkjYmE5+duixfEiFscs5YTVenyV4a7t
-        J9OFOTFiPlSfzB/8QL58Ozm8fcyObEjAiV4MTcF6p9sgjdKdjTkyfDRiDrfHXUlCnc9RRUt1HRkEL
-        eQOTvgtKNErEKXDaSIZ6aiThkDGM6cm99b45BgH2IAT7ATDCjdq9NJ2ySnnmpwxvDhoo2/ReJm0ws
-        +EU2l4+M9nPkAOeJoZqVtg632ouEf2lUBXJKAEDXy+X3gBedYt0vg0Ehjx5eQwkfAruxxMPzyPCVo
-        DnyoJ5YKg==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:45960)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iEzoM-0005uI-Ud; Mon, 30 Sep 2019 18:50:15 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iEzoH-0007R6-5U; Mon, 30 Sep 2019 18:50:09 +0100
-Date:   Mon, 30 Sep 2019 18:50:09 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Stefan Agner <stefan@agner.ch>, linux-kernel@vger.kernel.org,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: Re: [PATCH] ARM: fix __get_user_check() in case uaccess_* calls are
- not inlined
-Message-ID: <20190930175009.GH25745@shell.armlinux.org.uk>
-References: <20190930055925.25842-1-yamada.masahiro@socionext.com>
+        Mon, 30 Sep 2019 16:57:12 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1iEzqk-00015W-B5; Mon, 30 Sep 2019 19:52:42 +0200
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1iEzqi-0004zx-TB; Mon, 30 Sep 2019 19:52:40 +0200
+Date:   Mon, 30 Sep 2019 19:52:40 +0200
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Jay Cliburn <jcliburn@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v1] net: ag71xx: fix mdio subnode support
+Message-ID: <20190930175240.hfujxyst475wftzt@pengutronix.de>
+References: <20190930093310.10762-1-o.rempel@pengutronix.de>
+ <20190930134209.GB14745@lunn.ch>
+ <20190930142907.wo3tahtg7g7mvfmp@pengutronix.de>
+ <20190930162557.GB15343@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190930055925.25842-1-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190930162557.GB15343@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 19:52:14 up 136 days, 10 min, 87 users,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 02:59:25PM +0900, Masahiro Yamada wrote:
-> KernelCI reports that bcm2835_defconfig is no longer booting since
-> commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-> forcibly"):
+On Mon, Sep 30, 2019 at 06:25:57PM +0200, Andrew Lunn wrote:
+> On Mon, Sep 30, 2019 at 04:29:07PM +0200, Oleksij Rempel wrote:
+> > On Mon, Sep 30, 2019 at 03:42:09PM +0200, Andrew Lunn wrote:
+> > > On Mon, Sep 30, 2019 at 11:33:10AM +0200, Oleksij Rempel wrote:
+> > > > The driver was working with fixed phy without any noticeable issues. This bug
+> > > > was uncovered by introducing dsa ar9331-switch driver.
+> > > > 
+> > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > > ---
+> > > >  drivers/net/ethernet/atheros/ag71xx.c | 6 ++++--
+> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+> > > > index 6703960c7cf5..d1101eea15c2 100644
+> > > > --- a/drivers/net/ethernet/atheros/ag71xx.c
+> > > > +++ b/drivers/net/ethernet/atheros/ag71xx.c
+> > > > @@ -526,7 +526,7 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+> > > >  	struct device *dev = &ag->pdev->dev;
+> > > >  	struct net_device *ndev = ag->ndev;
+> > > >  	static struct mii_bus *mii_bus;
+> > > > -	struct device_node *np;
+> > > > +	struct device_node *np, *mnp;
+> > > >  	int err;
+> > > >  
+> > > >  	np = dev->of_node;
+> > > > @@ -571,7 +571,9 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+> > > >  		msleep(200);
+> > > >  	}
+> > > >  
+> > > > -	err = of_mdiobus_register(mii_bus, np);
+> > > > +	mnp = of_get_child_by_name(np, "mdio");
+> > > > +	err = of_mdiobus_register(mii_bus, mnp);
+> > > > +	of_node_put(mnp);
+> > > >  	if (err)
+> > > >  		goto mdio_err_put_clk;
+> > > 
+> > > Hi Oleksij
+> > > 
+> > > You need to keep backwards compatibility here. If you find an mdio
+> > > node, use it, but if not, you need to still register np.
+> > > 
+> > > This is also extending the driver binding, so you need to update the
+> > > binding documentation.
+> > 
+> > Hi Andrew,
+> > 
+> > Normally i would agree. But in this case:
+> > - this driver is freshly added to the kernel and is different to OpenWrt
+> >   implementation any way. No users from this side.
+> > - Devicetree binding says:
+> >   Documentation/devicetree/bindings/net/qca,ar71xx.txt
+> > |Optional properties:
+> > |- phy-handle : phandle to the PHY device connected to this device.
+> > |- fixed-link : Assume a fixed link. See fixed-link.txt in the same directory.
+> > |  Use instead of phy-handle.
+> > |
+> > |Optional subnodes:
+> > |- mdio : specifies the mdio bus, used as a container for phy nodes
+> > |  according to phy.txt in the same directory
+> > 
+> > So, it is driver bug ...ooOO (my personal bug :D)
 > 
->   https://lkml.org/lkml/2019/9/26/825
+> Hi Oleksij
 > 
-> I also received a regression report from Nicolas Saenz Julienne:
+> Ah, O.K. You should of explained that in the commit message.
 > 
->   https://lkml.org/lkml/2019/9/27/263
+> Is the mdio support just in -rc, or is it older?
 > 
-> This problem has cropped up on arch/arm/config/bcm2835_defconfig
-> because it enables CONFIG_CC_OPTIMIZE_FOR_SIZE. The compiler tends
-> to prefer not inlining functions with -Os. I was able to reproduce
-> it with other boards and defconfig files by manually enabling
-> CONFIG_CC_OPTIMIZE_FOR_SIZE.
+> You need to add a Fixes: tag.
 > 
-> The __get_user_check() specifically uses r0, r1, r2 registers.
-> So, uaccess_save_and_enable() and uaccess_restore() must be inlined
-> in order to avoid those registers being overwritten in the callees.
+> The patch subject should be [PATCH net] to indicate this is a fix to
+> the net tree
 > 
-> Prior to commit 9012d011660e ("compiler: allow all arches to enable
-> CONFIG_OPTIMIZE_INLINING"), the 'inline' marker was always enough for
-> inlining functions, except on x86.
-> 
-> Since that commit, all architectures can enable CONFIG_OPTIMIZE_INLINING.
-> So, __always_inline is now the only guaranteed way of forcible inlining.
-> 
-> I want to keep as much compiler's freedom as possible about the inlining
-> decision. So, I changed the function call order instead of adding
-> __always_inline around.
-> 
-> Call uaccess_save_and_enable() before assigning the __p ("r0"), and
-> uaccess_restore() after evacuating the __e ("r0").
-> 
-> Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Reported-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  arch/arm/include/asm/uaccess.h | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-> index 303248e5b990..559f252d7e3c 100644
-> --- a/arch/arm/include/asm/uaccess.h
-> +++ b/arch/arm/include/asm/uaccess.h
-> @@ -191,11 +191,12 @@ extern int __get_user_64t_4(void *);
->  #define __get_user_check(x, p)						\
->  	({								\
->  		unsigned long __limit = current_thread_info()->addr_limit - 1; \
-> +		unsigned int __ua_flags = uaccess_save_and_enable();	\
+> The patch should be against net, not next-next.
 
-If the compiler is moving uaccess_save_and_enable(), that's something
-we really don't want - the idea is to _minimise_ the number of kernel
-memory accesses between enabling userspace access and performing the
-actual access.
-
-Fixing it in this way widens the window for the kernel to be doing
-something it shoulding in userspace.
-
-So, the right solution is to ensure that the compiler always inlines
-the uaccess_*() helpers - which should be nothing more than four
-instructions for uaccess_save_and_enable() and two for the
-restore.
-
-I.O.W. it should look something like this:
-
-     144:       ee134f10        mrc     15, 0, r4, cr3, cr0, {0}
-     148:       e3c4200c        bic     r2, r4, #12
-     14c:       e24e1001        sub     r1, lr, #1
-     150:       e3822004        orr     r2, r2, #4
-     154:       ee032f10        mcr     15, 0, r2, cr3, cr0, {0}
-     158:       f57ff06f        isb     sy
-     15c:       ebfffffe        bl      0 <__get_user_4>
-     160:       ee034f10        mcr     15, 0, r4, cr3, cr0, {0}
-     164:       f57ff06f        isb     sy
+Ok. thx! i'll fix it.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
