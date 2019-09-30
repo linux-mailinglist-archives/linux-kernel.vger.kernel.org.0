@@ -2,118 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF2CC1DCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD6BC1DE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 11:24:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730365AbfI3JUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 05:20:11 -0400
-Received: from inca-roads.misterjones.org ([213.251.177.50]:54925 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727106AbfI3JUL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 05:20:11 -0400
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iErqf-0001rF-5T; Mon, 30 Sep 2019 11:20:05 +0200
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH 20/35] irqchip/gic-v4.1: Allow direct invalidation of  VLPIs
-X-PHP-Originating-Script: 0:main.inc
+        id S1730407AbfI3JX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 05:23:56 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37958 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726008AbfI3JX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 05:23:56 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 66995D6A81E2A7737D46;
+        Mon, 30 Sep 2019 17:23:53 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 30 Sep 2019 17:23:45 +0800
+From:   Zaibo Xu <xuzaibo@huawei.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linuxarm@huawei.com>, <forest.zhouchang@huawei.com>,
+        Zaibo Xu <xuzaibo@huawei.com>
+Subject: [PATCH 0/5] crypto: hisilicon - add HPRE support
+Date:   Mon, 30 Sep 2019 17:20:04 +0800
+Message-ID: <1569835209-44326-1-git-send-email-xuzaibo@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 30 Sep 2019 10:20:05 +0100
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-In-Reply-To: <db01f956-bc53-b8a5-9406-15b889d717f0@huawei.com>
-References: <20190923182606.32100-1-maz@kernel.org>
- <20190923182606.32100-21-maz@kernel.org>
- <db01f956-bc53-b8a5-9406-15b889d717f0@huawei.com>
-Message-ID: <1c96d38da22a97b1fda94a940b60e345@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com, jason@lakedaemon.net, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-09-28 03:02, Zenghui Yu wrote:
-> On 2019/9/24 2:25, Marc Zyngier wrote:
->> Just like for INVALL, GICv4.1 has grown a VPE-aware INVLPI register.
->> Let's plumb it in and make use of the DirectLPI code in that case.
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>   drivers/irqchip/irq-gic-v3-its.c   | 19 +++++++++++++++++--
->>   include/linux/irqchip/arm-gic-v3.h |  1 +
->>   2 files changed, 18 insertions(+), 2 deletions(-)
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index b791c9beddf2..34595a7fcccb 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -1200,13 +1200,27 @@ static void wait_for_syncr(void __iomem 
->> *rdbase)
->>   static void direct_lpi_inv(struct irq_data *d)
->>   {
->> +	struct its_vlpi_map *map = get_vlpi_map(d);
->>   	struct its_collection *col;
->>   	void __iomem *rdbase;
->> +	u64 val;
->> +
->> +	if (map) {
->> +		struct its_device *its_dev = irq_data_get_irq_chip_data(d);
->> +
->> +		WARN_ON(!is_v4_1(its_dev->its));
->> +
->> +		val  = GICR_INVLPIR_V;
->> +		val |= FIELD_PREP(GICR_INVLPIR_VPEID, map->vpe->vpe_id);
->> +		val |= FIELD_PREP(GICR_INVLPIR_INTID, map->vintid);
->> +	} else {
->> +		val = d->hwirq;
->> +	}
->>
->>   	/* Target the redistributor this LPI is currently routed to */
->>   	col = irq_to_col(d);
->
-> I think irq_to_col() may not work when GICv4.1 VLPIs are involved in.
->
-> irq_to_col() gives us col_map[event] as the target redistributor,
-> but the correct one for VLPIs should be 
-> vlpi_maps[event]->vpe->col_idx.
-> These two are not always pointing to the same physical RD.
-> For example, if guest issues a MOVI against a VLPI, we will update 
-> the
-> corresponding vlpi_map->vpe and issue a VMOVI on ITS... but leave the
-> col_map[event] unchanged.
->
-> col_map[event] usually describes the physical LPI's CPU affinity, but
-> when this physical LPI serves as something which the VLPI is backed 
-> by,
-> we take really little care of it.  Did I miss something here?
+This series adds HiSilicon high performance RSA engine(HPRE) driver
+in crypto subsystem. HPRE driver provides PCIe hardware device initiation
+with RSA and DH algorithms registered to Crypto. Meanwhile, some debug
+supporting of DebugFS is given.
 
-You didn't miss anything, and this is indeed another pretty bad bug.
-The collection mapping is completely unused when the LPI becomes a
-VLPI, and it is only the vpe->col_id that matters (which gets updated
-on VMOVP).
+Zaibo Xu (5):
+  crypto: hisilicon - add HiSilicon HPRE accelerator
+  crypto: hisilicon - add SRIOV support for HPRE
+  Documentation: Add debugfs doc for hisi_hpre
+  crypto: hisilicon: Add debugfs for HPRE
+  MAINTAINERS: Add maintainer for HiSilicon HPRE driver
 
-This shows that irq_to_col() is the wrong abstraction, and what we're
-interested is something that is more like 'irq to cpuid', allowing us
-to directly point to the right distributor.
+ Documentation/ABI/testing/debugfs-hisi-hpre |   57 ++
+ MAINTAINERS                                 |    9 +
+ drivers/crypto/hisilicon/Kconfig            |   11 +
+ drivers/crypto/hisilicon/Makefile           |    1 +
+ drivers/crypto/hisilicon/hpre/Makefile      |    2 +
+ drivers/crypto/hisilicon/hpre/hpre.h        |   83 ++
+ drivers/crypto/hisilicon/hpre/hpre_crypto.c | 1137 +++++++++++++++++++++++++++
+ drivers/crypto/hisilicon/hpre/hpre_main.c   | 1052 +++++++++++++++++++++++++
+ 8 files changed, 2352 insertions(+)
+ create mode 100644 Documentation/ABI/testing/debugfs-hisi-hpre
+ create mode 100644 drivers/crypto/hisilicon/hpre/Makefile
+ create mode 100644 drivers/crypto/hisilicon/hpre/hpre.h
+ create mode 100644 drivers/crypto/hisilicon/hpre/hpre_crypto.c
+ create mode 100644 drivers/crypto/hisilicon/hpre/hpre_main.c
 
-Please see the patch I just pushed[1], which does that.
-
-Thanks,
-
-         M.
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/gic-v4.1-devel&id=aff363113eb26b6840136b69c2c7db2ea691db20
 -- 
-Jazz is not dead. It just smells funny...
+2.8.1
+
