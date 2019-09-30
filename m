@@ -2,108 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5200C287D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:16:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C8A0C2856
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732331AbfI3VQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:16:34 -0400
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:45720 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732140AbfI3VQe (ORCPT
+        id S1732658AbfI3VLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:11:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41505 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731678AbfI3VLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:16:34 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id E7E6E3F549;
-        Mon, 30 Sep 2019 19:38:39 +0200 (CEST)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=GpvpfTgb;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hnuYuafil-f7; Mon, 30 Sep 2019 19:38:34 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id B96B63F4B6;
-        Mon, 30 Sep 2019 19:38:31 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 789ED36016A;
-        Mon, 30 Sep 2019 19:38:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1569865111; bh=Mbv8I+Cf9qo+4r4AR1GScXQE/ojfy18469i5KoNwfsg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GpvpfTgbFXewp0ygt6YF4cirkWGlnK74clrVKSVTm7q9qX01w4J2Ic0CkUN2QlXEh
-         +TpoCVtuKvm2+5ivSMPVfSI3bB7XtpBXGdQ3y5+le76vg9tOoWSTvPeiNJaMXZZUcT
-         GQoa1J9ueiuw5NeMW0Doyyjpevc85q+KbNJq298s=
-Subject: Re: Ack to merge through DRM? WAS Re: [PATCH v2 1/5] mm: Add
- write-protect and clean utilities for address space ranges
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20190926115548.44000-1-thomas_os@shipmail.org>
- <20190926115548.44000-2-thomas_os@shipmail.org>
- <85e31bcf-d3c8-2fcf-e659-2c9f82ebedc7@shipmail.org>
- <CAHk-=wifjLeeMEtMPytiMAKiWkqPorjf1P4PbB3dj17Y3Jcqag@mail.gmail.com>
- <a48a93d2-03e9-40d3-3b4c-a301632d3121@shipmail.org>
- <CAHk-=whwN+CvaorsmczZRwFhSV+1x98xg-zajVD1qKmN=9JhBQ@mail.gmail.com>
- <20190927121754.kn46qh2crvsnw5z2@box>
- <CAHk-=whfriLqivyRtyjDPzeNr_Y3UYkC9g123Yi_yB5c8Gcmiw@mail.gmail.com>
- <20190930130357.ye3zlkbka2jtd56a@box>
- <CAHk-=wigUfYXiizFH6tBCH0Na=L+c=k7CgXGoZjwKg4K1rNJ2Q@mail.gmail.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <2788e6e6-6916-5f95-51f5-336b8edaee2f@shipmail.org>
-Date:   Mon, 30 Sep 2019 19:38:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wigUfYXiizFH6tBCH0Na=L+c=k7CgXGoZjwKg4K1rNJ2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Mon, 30 Sep 2019 17:11:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h7so12939710wrw.8;
+        Mon, 30 Sep 2019 14:11:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Km4VVTEePyhHsFimVMjuG3mAp67V52rIi2SimlK34MU=;
+        b=F2+krCW9h4/vWnl412e0O5+BiYynOmqsu1GTfc8j8T1hPDRh/+RAH2TS+9oShSfFht
+         +DRLSK6QkQUf/q9kVU0q0Wjwa/b7b9EPcbkMCthJ69y2UmK0Q9ohogmqOrjvF3Faovgn
+         +c+DRShui0gK74MGaLgAd+Mf6ouSNMGaMZtUGB974GaAdsw7mHblL4mtYB9yIaygJ98L
+         wHtVcQy0rnKX+4Eg8KQdFXrAf+QZ225nTNmyyTIW9Y+3Tcwls5KigSdvTnen9WScAozr
+         V1YfI0PzPyhC3A2E1YaljJhKI3DQ0gqiXoBGXQvDawlO+2yHbso2owB0J6vnmQjBJ596
+         HWuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Km4VVTEePyhHsFimVMjuG3mAp67V52rIi2SimlK34MU=;
+        b=hdUmpW5NtPz1aEE3eSuI2QLkdaVczahFRDjXhBwb/rUkcdAtjXpRhYxiLPDgnwn2FI
+         OU8hYZxAncPCf1OHFMAlrVAUT2D0ybUl3pacMk0W46ONaJ530s+eSJsSA+3+XA+oFWjN
+         OYHupB1OOnD+iiojEt4elJI0EJvnKHLhY1UCCE3aGzz5jmOfIjFcZY/y3QXc2ta3nmMk
+         5LO1AU4b1KsUz1WqpzwV87IalgNml3xqsI3sYO0JAcrSy6oM434tmvXDyyWGJoNRCyq1
+         t3E+8nqCwJc6PkagwONvC8lSV29Zv91uTPsxLoglBBeKak4cP3sfMIYjkPsQ/UorVJJY
+         sSFw==
+X-Gm-Message-State: APjAAAVrPRZ4XK7Ii0ZU3Cvc68xKIanmjtwhWDx3lW/fE3JPCWxZC8w/
+        43XhK0HOhE8S5cfYzpoIRLgteVmFj/Cm7Q==
+X-Google-Smtp-Source: APXvYqzy7y5NjgWswAUhrWkzobKoCPCU2cj3zemHxu/pZIy6qbKJmrWtc0rOICC1+bZexktMTIyuxA==
+X-Received: by 2002:a5d:4d8c:: with SMTP id b12mr14184701wru.198.1569867973583;
+        Mon, 30 Sep 2019 11:26:13 -0700 (PDT)
+Received: from scw-93ddc8.cloud.online.net ([2001:bc8:4400:2400::302d])
+        by smtp.googlemail.com with ESMTPSA id r20sm15672256wrg.61.2019.09.30.11.26.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 30 Sep 2019 11:26:13 -0700 (PDT)
+From:   Matias Ezequiel Vara Larsen <matiasevara@gmail.com>
+To:     stefanha@redhat.com
+Cc:     davem@davemloft.net, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, matiasevara@gmail.com,
+        sgarzare@redhat.com, eric.dumazet@gmail.com
+Subject: [PATCH net-next v2] vsock/virtio: add support for MSG_PEEK
+Date:   Mon, 30 Sep 2019 18:25:23 +0000
+Message-Id: <1569867923-28200-1-git-send-email-matiasevara@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/30/19 7:12 PM, Linus Torvalds wrote:
-> On Mon, Sep 30, 2019 at 6:04 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->> Have you seen page_vma_mapped_walk()? I made it specifically for rmap code
->> to cover cases when a THP is mapped with PTEs. To me it's not a big
->> stretch to make it cover multiple pages too.
-> I agree that is closer, but it does make for calling that big complex
-> function for every iteration step.
->
-> Of course, you are right that the callback approach is problematic
-> too, now that we have retpoline issues, making those very expensive.
-> But at least that hopefully gets fixed some day and gets to be a rare
-> problem.
->
-> Matter ot taste, I guess.
->
->                Linus
+This patch adds support for MSG_PEEK. In such a case, packets are not
+removed from the rx_queue and credit updates are not sent.
 
-Matthew Wilcox suggested something similar before the pagewalk.c rewrite:
+Signed-off-by: Matias Ezequiel Vara Larsen <matiasevara@gmail.com>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Tested-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ net/vmw_vsock/virtio_transport_common.c | 55 +++++++++++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 3 deletions(-)
 
-https://lore.kernel.org/lkml/20190806190937.GD30179@bombadil.infradead.org/
-
-Still, In this case I'd opt for using the pagewalk code: In the dirty 
-helpers we don't ever use a struct page, but only deal with PTE entries, 
-same as the pagewalk code does, but not page_vma_mapped_walk(). The 
-underlying memory may well be IO memory.
-
-/Thomas
-
+diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+index 94cc0fa..cf15751 100644
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -264,6 +264,55 @@ static int virtio_transport_send_credit_update(struct vsock_sock *vsk,
+ }
+ 
+ static ssize_t
++virtio_transport_stream_do_peek(struct vsock_sock *vsk,
++				struct msghdr *msg,
++				size_t len)
++{
++	struct virtio_vsock_sock *vvs = vsk->trans;
++	struct virtio_vsock_pkt *pkt;
++	size_t bytes, total = 0, off;
++	int err = -EFAULT;
++
++	spin_lock_bh(&vvs->rx_lock);
++
++	list_for_each_entry(pkt, &vvs->rx_queue, list) {
++		off = pkt->off;
++
++		if (total == len)
++			break;
++
++		while (total < len && off < pkt->len) {
++			bytes = len - total;
++			if (bytes > pkt->len - off)
++				bytes = pkt->len - off;
++
++			/* sk_lock is held by caller so no one else can dequeue.
++			 * Unlock rx_lock since memcpy_to_msg() may sleep.
++			 */
++			spin_unlock_bh(&vvs->rx_lock);
++
++			err = memcpy_to_msg(msg, pkt->buf + off, bytes);
++			if (err)
++				goto out;
++
++			spin_lock_bh(&vvs->rx_lock);
++
++			total += bytes;
++			off += bytes;
++		}
++	}
++
++	spin_unlock_bh(&vvs->rx_lock);
++
++	return total;
++
++out:
++	if (total)
++		err = total;
++	return err;
++}
++
++static ssize_t
+ virtio_transport_stream_do_dequeue(struct vsock_sock *vsk,
+ 				   struct msghdr *msg,
+ 				   size_t len)
+@@ -330,9 +379,9 @@ virtio_transport_stream_dequeue(struct vsock_sock *vsk,
+ 				size_t len, int flags)
+ {
+ 	if (flags & MSG_PEEK)
+-		return -EOPNOTSUPP;
+-
+-	return virtio_transport_stream_do_dequeue(vsk, msg, len);
++		return virtio_transport_stream_do_peek(vsk, msg, len);
++	else
++		return virtio_transport_stream_do_dequeue(vsk, msg, len);
+ }
+ EXPORT_SYMBOL_GPL(virtio_transport_stream_dequeue);
+ 
+-- 
+2.7.4
 
