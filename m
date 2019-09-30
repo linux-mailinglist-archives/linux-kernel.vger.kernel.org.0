@@ -2,85 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D8C9C1E8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 12:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 675FEC1EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 12:09:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730510AbfI3KAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 06:00:07 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:37136 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727025AbfI3KAG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 06:00:06 -0400
-X-UUID: 58f3b47440eb4673a4332262ebe6a910-20190930
-X-UUID: 58f3b47440eb4673a4332262ebe6a910-20190930
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1474856802; Mon, 30 Sep 2019 18:00:01 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 30 Sep 2019 17:59:58 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 30 Sep 2019 17:59:57 +0800
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sam Shih <sam.shih@mediatek.com>
-Subject: [PATCH 1/1] arm: dts: mediatek: add mt7629 pwm support
-Date:   Mon, 30 Sep 2019 17:59:45 +0800
-Message-ID: <1569837585-13247-2-git-send-email-sam.shih@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1569837585-13247-1-git-send-email-sam.shih@mediatek.com>
-References: <1569837585-13247-1-git-send-email-sam.shih@mediatek.com>
+        id S1730553AbfI3KIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 06:08:54 -0400
+Received: from mail-bo1ind01hn2021.outbound.protection.outlook.com ([52.103.201.21]:33529
+        "EHLO IND01-BO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727497AbfI3KIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 06:08:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DGaARyUicUU1h9ssMw/XpfwapUDRwBsyMYBGcqePl1Gv9v7GhDji0v7rdhiZdJzXHoVj8ekrF40DutsA6P/1EkSgVeW1CvKq2MA6hTJE9INxLEK15QYfMLyljb2zxBb4xCv17SH9msmhqJZ0npc0rn6pqqNkZuB5brt9xQs14+/PMUjCaGVoO9UkdVIpLvC7fms2yF449/Dzm80Jc1p88nBHgyAqPdiXX1hRNshZGbUz1DH3pcwjNcu7nwBD5ris2FHJeM3+/knkweM4sLV1xdM3fRxHTYOM1i9qB9rPPVZiz4NpXr4xz1V3ktiREiGXds+8CkDawRr0XDAfcBZM7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PcZnUrw3zYry0Z5sedFDqSXc4fmr6Ho1+pPY+jZ3CV4=;
+ b=UlNeZJNXUAmPo940bgS3U6LbwApLX9raPtZCg+9NYzVlFp/cvZshoGYYSREg/eEh3Eo43fJfbvOV1Tk+WxAU5LNLuDIL62o3OVmnTgdwuKU+VSUT6QFk7g/ZTrMuKSCkI1de5V7NRBQAvNUPAVtBDqWKdzy94+3a4qRECZw+ZlTRh6sxDA9M6AUdQCCszd0neokagqpGFrlyncGoqu/WdiIMsJDEF4oC/llyB1Ap/9QU+EG3TWb6HyvzImvpCbu9utC3WbAY3xA4uChB1zaX9tGhDJgIUkvTObwOIcBAzNpdw3TlCU4Bm9m2eH9UGmiaRBotETU/y36F27mkPZvung==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nuv.ac.in; dmarc=pass action=none header.from=nuv.ac.in;
+ dkim=pass header.d=nuv.ac.in; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=nuvuniversity.onmicrosoft.com; s=selector2-nuvuniversity-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PcZnUrw3zYry0Z5sedFDqSXc4fmr6Ho1+pPY+jZ3CV4=;
+ b=gUz9DB25xIyOk8nN4b95RAtLPzS+qat3GnVy+6qu2prnMFv5Mdti9lALCGB+9ZSQvio7IQP0uBvhRitO3mmfLJABaGDQk2rqE9oxGkqCfMNioPK0WmJvH7wb6ewYV3+kcWUAINoVFQxl25S5zCh0lXPDMnyaW7UDDSSeM5CguGk=
+Received: from PN1PR0101MB1742.INDPRD01.PROD.OUTLOOK.COM (52.134.160.10) by
+ PN1PR0101MB1534.INDPRD01.PROD.OUTLOOK.COM (52.134.165.142) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.20; Mon, 30 Sep 2019 10:08:48 +0000
+Received: from PN1PR0101MB1742.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::dda9:cf77:9046:cd7e]) by PN1PR0101MB1742.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::dda9:cf77:9046:cd7e%9]) with mapi id 15.20.2305.017; Mon, 30 Sep 2019
+ 10:08:48 +0000
+From:   18163082 <18163082@nuv.ac.in>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Urgent Response
+Thread-Topic: Urgent Response
+Thread-Index: AQHVd3GmRsX6UP8MdEKDEX/RWGgJTA==
+Date:   Mon, 30 Sep 2019 09:30:08 +0000
+Message-ID: <PN1PR0101MB1742F3F5ED8F570401AFC7A295820@PN1PR0101MB1742.INDPRD01.PROD.OUTLOOK.COM>
+Reply-To: "mr.johnharold@yahoo.ca" <mr.johnharold@yahoo.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CH2PR19CA0006.namprd19.prod.outlook.com
+ (2603:10b6:610:4d::16) To PN1PR0101MB1742.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c00:10::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=18163082@nuv.ac.in; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [172.93.201.160]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6367eb24-a0df-456c-95c8-08d74588c8ac
+x-ms-traffictypediagnostic: PN1PR0101MB1534:
+x-microsoft-antispam-prvs: <PN1PR0101MB1534CFA23319E34950C9817195820@PN1PR0101MB1534.INDPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:1122;
+x-forefront-prvs: 01762B0D64
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(396003)(39850400004)(136003)(199004)(189003)(7116003)(4270600006)(5640700003)(55016002)(6436002)(6666004)(6246003)(508600001)(25786009)(2501003)(9686003)(7736002)(305945005)(33656002)(74316002)(2351001)(2906002)(6916009)(14454004)(8676002)(66066001)(81156014)(81166006)(8936002)(8796002)(221733001)(3846002)(6116002)(316002)(786003)(43066004)(52536014)(558084003)(476003)(486006)(14444005)(186003)(2860700004)(26005)(5660300002)(5003540100004)(256004)(52116002)(7696005)(71190400001)(71200400001)(99286004)(86362001)(66476007)(66556008)(64756008)(66946007)(102836004)(3480700005)(386003)(229853002)(66806009)(6506007)(66446008)(89113002)(80872003)(81782002)(81742002);DIR:OUT;SFP:1501;SCL:1;SRVR:PN1PR0101MB1534;H:PN1PR0101MB1742.INDPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nuv.ac.in does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: cAkSi6I9Cu1lwjEAvTUX5ad6WszCX5Y9tkW4BOuV0+A2/XEmBI069fmb1fIldd8EzSocuIuZwwxSqkGZI3DbXsfZJvf3ese5d6w8YaGKGGXmpOzEhM7EBH61omGfFDvmnPRcurax2jTh9vPmG57uQvCGENdyl0XEf9L45crKIh9zp5iorr/l8WJxWhcNHR8NYVP+zafhysnDnyOUm0xFkJNcZ1Td2gq83qmZ9iYe83mhTkYvl1Pys9HrZh7zp+mF8+dOkzPFdAj2bFymhwevJ9cSE4jzcxqiqDPGXShd/kfofdxfz+4rDgKAt9Cdk5+BcGpm/NRo0qQ+k//7RCHGACKB8FWabbhzkqcvW9bX+YfD7xy3asj0uiBT1hNH9RXY9ITEXlm2438w4ayQ/Kq5MIKP8fuoYP+twO52gfGMxGI=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <DDC53130D99C2A49AC444B8F7B7C1293@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-OriginatorOrg: nuv.ac.in
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6367eb24-a0df-456c-95c8-08d74588c8ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 09:30:08.2006
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d1b99a31-59dc-4039-b9c4-f6166b6bf0a4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: r8YqFx52CeZvC9IVOZMQ4L1A7dobtBDdaJ5mBfzZXhULitM7xTldx5QQViP2GqyQP/PTXulO5l8M8rH2Qoa7oQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN1PR0101MB1534
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds pwm support for MT7629.
-Used:
-https://patchwork.kernel.org/patch/11160851/
 
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
----
- arch/arm/boot/dts/mt7629.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mt7629.dtsi b/arch/arm/boot/dts/mt7629.dtsi
-index 9608bc2ccb3f..24375fc5f936 100644
---- a/arch/arm/boot/dts/mt7629.dtsi
-+++ b/arch/arm/boot/dts/mt7629.dtsi
-@@ -241,6 +241,21 @@
- 			status = "disabled";
- 		};
- 
-+		pwm: pwm@11006000 {
-+			compatible = "mediatek,mt7629-pwm";
-+			reg = <0x11006000 0x1000>;
-+			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_PWM_SEL>,
-+				 <&pericfg CLK_PERI_PWM_PD>,
-+				 <&pericfg CLK_PERI_PWM1_PD>;
-+			clock-names = "top", "main", "pwm1";
-+			assigned-clocks = <&topckgen CLK_TOP_PWM_SEL>;
-+			assigned-clock-parents =
-+					<&topckgen CLK_TOP_UNIVPLL2_D4>;
-+			num-pwms = <1>;
-+			status = "disabled";
-+		};
-+
- 		i2c: i2c@11007000 {
- 			compatible = "mediatek,mt7629-i2c",
- 				     "mediatek,mt2712-i2c";
--- 
-2.17.1
+Greetings.. pls get back to me i have an important information to share.
 
