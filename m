@@ -2,63 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FCA2C1A5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 05:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74992C1A5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 05:37:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbfI3Dfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Sep 2019 23:35:44 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:37980 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729022AbfI3Dfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Sep 2019 23:35:44 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 30A001A0C10;
-        Mon, 30 Sep 2019 05:35:42 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7D3621A07D2;
-        Mon, 30 Sep 2019 05:35:38 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 89FD840318;
-        Mon, 30 Sep 2019 11:35:33 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
-Subject: [v2,2/2] dt-bindings: i2c-mux-pca954x: Add optional property i2c-mux-never-disable
-Date:   Mon, 30 Sep 2019 11:25:03 +0800
-Message-Id: <20190930032503.44425-2-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190930032503.44425-1-biwen.li@nxp.com>
-References: <20190930032503.44425-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729512AbfI3Dhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Sep 2019 23:37:38 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39508 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728853AbfI3Dhh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Sep 2019 23:37:37 -0400
+Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x8U3b6k9005328
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 29 Sep 2019 23:37:07 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id C158C42014C; Sun, 29 Sep 2019 23:37:06 -0400 (EDT)
+Date:   Sun, 29 Sep 2019 23:37:06 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@opentech.at>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: x86/random: Speculation to the rescue
+Message-ID: <20190930033706.GD4994@mit.edu>
+References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
+ <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
+ <CAHk-=wi0vxLmwEBn2Xgu7hZ0U8z2kN4sgCax+57ZJMVo3huDaQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi0vxLmwEBn2Xgu7hZ0U8z2kN4sgCax+57ZJMVo3huDaQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch adds an optional property i2c-mux-never-disable
+On Sun, Sep 29, 2019 at 06:16:33PM -0700, Linus Torvalds wrote:
+> 
+>  - or just say "hey, a lot of people find jitter entropy reasonable,
+> so let's just try this".
+> 
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
-Change in v2:
-	- update documentation
+I'm OK with this as a starting point.  If a jitter entropy system
+allow us to get pass this logjam, let's do it.  At least for the x86
+architecture, it will be security through obscurity.  And if the
+alternative is potentially failing where the adversary can attack the
+CRNG, it's my preference.  It's certainly better than nothing.
 
- Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt | 1 +
- 1 file changed, 1 insertion(+)
+That being said, I'd very much like to see someone do an analysis of
+how well these jitter schemes work on an RISC-V iplementation (you
+know, the ones that were so simplistic and didn't have any speculation
+so they weren't vulnerable to Specture/Meltdown).  If jitter
+approaches turn out not to work that well on RISC-V, perhaps that will
+be a goad for future RISC-V chips to include the crypto extension to
+their ISA.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
-index 30ac6a60f041..71b73d0fdb62 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
-@@ -34,6 +34,7 @@ Optional Properties:
-     - first cell is the pin number
-     - second cell is used to specify flags.
-     See also Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+  - i2c-mux-never-disable: always forces mux to be enabled.
- 
- Example:
- 
--- 
-2.17.1
+In the long term (not in time for the 5.4 merge window), I'm convinced
+that we should be trying as many ways of getting entropy as possible.
+If we're using UEFI, we should be trying to get it from UEFI's secure
+random number generator; if there is a TPM, we should be trying to get
+random numbers from the RPM, and mix them in, and so on.
 
+After all, the reason why lived with getrandom(0) blocking for five
+years was because for the vast majority of x86 platforms, it simply
+wasn't problem in practice.  We need to get back to that place where
+in practice, we've harvested as much uncertainty from hardware as
+possible, so most folks are comfortable that attacking the CRNG is no
+longer the simplest way to crack system security.
+
+       	     	     	      	     - Ted
