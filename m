@@ -2,125 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B7E4C2147
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:04:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C2BC2158
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731206AbfI3NEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:04:39 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45268 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730929AbfI3NEi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:04:38 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q64so9351391ljb.12
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 06:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=antmicro-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=VeoaIKGJb/61Ov+yB9zveHlqXZTEnNdTJ6NCEWY/+7A=;
-        b=l3Nvt/bLf/BeU5VnuKN3QrlxayW110zSMz+Omal6lVqbPWnUZ1gRvteEndYHlv2K/e
-         Kt3vk2g0TTVpySFJrFfaPyDMKae3t7mIxwR5n/squlLevrTksNW0QJc0ir09lNHPybw5
-         SXTt4gUX4NFBfK0zokhPR5vmrQifykB4nWgNQ7gxUFf7DyfUsH90kPo/mOcLeLDIEz9a
-         GbW5XtcelR6sery85SAAw3Anqvk3tl4QfkY+ZP/fP2svUAtwuo8p09zZ2M62j4LfwjSA
-         F/19QdNEJiKEqb0lF8viBvdZCw68BsKCLR76s4aSOygoEHfomgBJ0XvbbY9f/r3bQz8V
-         RziA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=VeoaIKGJb/61Ov+yB9zveHlqXZTEnNdTJ6NCEWY/+7A=;
-        b=p6nYJODU/P0IUIadaCss8vaRBqacWrOsP9rDzYWOHuwO2ywsyfvFDLT3Wmxg8V3ztg
-         FT+JhlL9UA3NyGBRjbp0C2T3TxF9BRejk7vY/SpILaday+7SOis7m7sYtrGRMXTRDR+y
-         4w+jeMq+weCNCXRQCroL+OE3ivvNwgd9UWOxrnnwqsl3Vtw5VyI2RltFmsTpo2SYeyI2
-         p+fXEg1w/KCSnZ5atq4+46sx4Rh/xXJPNYP9oeFLOv7F6O/qzBJ1IdKimRpI+vy64hWe
-         SKHHiF2ecaMRw2q3akjURUuoIDWik0eh99Nit1jlfGKtJQRlh1Jr9fLS/KTytVq7SgDC
-         etOQ==
-X-Gm-Message-State: APjAAAV7Qy7AYwwHK+7WX/D44KurJuHagMkP2rRoVor0R6EcHh63RxTT
-        r6wqQg0q5gxaaebvE0pDzS5HYQ==
-X-Google-Smtp-Source: APXvYqyCjXJY28l2+1mzvUJg1TYUmquAGr+sqV9Av/SyxGcE7N9rRX4Pr7ENgnIqoNmODxGr7QRqsQ==
-X-Received: by 2002:a2e:42c9:: with SMTP id h70mr11803035ljf.88.1569848676849;
-        Mon, 30 Sep 2019 06:04:36 -0700 (PDT)
-Received: from localhost.localdomain (d79-196.icpnet.pl. [77.65.79.196])
-        by smtp.gmail.com with ESMTPSA id b15sm3220379lfj.84.2019.09.30.06.04.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 06:04:36 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 15:04:30 +0200
-From:   Mateusz Holenko <mholenko@antmicro.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        id S1731240AbfI3NEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:04:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731208AbfI3NEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:04:41 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4930F218AC;
+        Mon, 30 Sep 2019 13:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569848680;
+        bh=vlABKpVJxCoTy7HHvfFk0K5uGHtb528XjiDo33yIN0o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=r27qHyc+txDJIDpG2+55icHIxn1J/2AzXA5ncveAboHqBRVIDdVHaXsB1rokmXxEl
+         RrBe2C7Uv++1mlL8KdeJQY2f5UG51yxZuByStSwfO/VB0ovLtC/As+VDurRfahdSuw
+         VQxiV7AAWTABHIXD5KO/54gs3wQ9ZLLk8D3On860=
+Date:   Mon, 30 Sep 2019 08:04:38 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH 2/3] dt-bindings: serial: document LiteUART bindings
-Message-ID: <20190930130430.GA9080@localhost.localdomain>
+        Pascal van Leeuwen <pvanleeuwen@verimatrix.com>,
+        Pascal van Leeuwen <pascalvanl@gmail.com>,
+        Kelsey Skunberg <skunberg.kelsey@gmail.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 3/3] crypto: inside-secure - Remove #ifdef checks
+Message-ID: <20190930130438.GA147884@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190930121520.1388317-3-arnd@arndb.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filip Kokosinski <fkokosinski@internships.antmicro.com>
+On Mon, Sep 30, 2019 at 02:14:35PM +0200, Arnd Bergmann wrote:
+> When both PCI and OF are disabled, no drivers are registered, and
+> we get some unused-function warnings:
+> 
+> drivers/crypto/inside-secure/safexcel.c:1221:13: error: unused function 'safexcel_unregister_algorithms' [-Werror,-Wunused-function]
+> static void safexcel_unregister_algorithms(struct safexcel_crypto_priv *priv)
+> drivers/crypto/inside-secure/safexcel.c:1307:12: error: unused function 'safexcel_probe_generic' [-Werror,-Wunused-function]
+> static int safexcel_probe_generic(void *pdev,
+> drivers/crypto/inside-secure/safexcel.c:1531:13: error: unused function 'safexcel_hw_reset_rings' [-Werror,-Wunused-function]
+> static void safexcel_hw_reset_rings(struct safexcel_crypto_priv *priv)
+> 
+> It's better to make the compiler see what is going on and remove
+> such ifdef checks completely. In case of PCI, this is trivial since
+> pci_register_driver() is defined to an empty function that makes the
+> compiler subsequently drop all unused code silently.
+> 
+> The global pcireg_rc/ofreg_rc variables are not actually needed here
+> since the driver registration does not fail in ways that would make
+> it helpful.
+> 
+> For CONFIG_OF, an IS_ENABLED() check is still required, since platform
+> drivers can exist both with and without it.
+> 
+> A little change to linux/pci.h is needed to ensure that
+> pcim_enable_device() is visible to the driver. Moving the declaration
+> outside of ifdef would be sufficient here, but for consistency with the
+> rest of the file, adding an inline helper is probably best.
+> 
+> Fixes: 212ef6f29e5b ("crypto: inside-secure - Fix unused variable warning when CONFIG_PCI=n")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/crypto/inside-secure/safexcel.c | 49 ++++++-------------------
+>  include/linux/pci.h                     |  1 +
+>  2 files changed, 13 insertions(+), 37 deletions(-)
+> ... 
 
-Add documentation for LiteUART devicetree bindings.
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index f9088c89a534..1a6cf19eac2d 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1686,6 +1686,7 @@ static inline struct pci_dev *pci_get_class(unsigned int class,
+>  static inline void pci_set_master(struct pci_dev *dev) { }
+>  static inline int pci_enable_device(struct pci_dev *dev) { return -EIO; }
+>  static inline void pci_disable_device(struct pci_dev *dev) { }
+> +static inline int pcim_enable_device(struct pci_dev *pdev) { return -EIO; }
 
-Signed-off-by: Filip Kokosinski <fkokosinski@internships.antmicro.com>
-Signed-off-by: Mateusz Holenko <mholenko@antmicro.com>
----
- .../devicetree/bindings/serial/litex,liteuart.txt    | 12 ++++++++++++
- MAINTAINERS                                          |  6 ++++++
- 2 files changed, 18 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/serial/litex,liteuart.txt
+I would have used "dev" here to match surrounding stubs, but either
+way:
 
-diff --git a/Documentation/devicetree/bindings/serial/litex,liteuart.txt b/Documentation/devicetree/bindings/serial/litex,liteuart.txt
-new file mode 100644
-index 000000000..13c71a0c9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/litex,liteuart.txt
-@@ -0,0 +1,12 @@
-+LiteUART serial controller
-+
-+Required properties:
-+- compatible: should be "litex,liteuart"
-+- reg: base address and length of the register set for this device
-+
-+Example:
-+
-+uart0: serial@f0001000 {
-+	compatible = "litex,liteuart";
-+	reg = <0xe0001800 0x100>;
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b2326dece..65a6cf296 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9462,6 +9462,12 @@ F:	Documentation/misc-devices/lis3lv02d.rst
- F:	drivers/misc/lis3lv02d/
- F:	drivers/platform/x86/hp_accel.c
- 
-+LITEX PLATFORM
-+M:	Karol Gugala <kgugala@antmicro.com>
-+M:	Mateusz Holenko <mholenko@antmicro.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/serial/litex,liteuart.txt
-+
- LIVE PATCHING
- M:	Josh Poimboeuf <jpoimboe@redhat.com>
- M:	Jiri Kosina <jikos@kernel.org>
--- 
-2.23.0
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci.h
 
+>  static inline int pci_assign_resource(struct pci_dev *dev, int i)
+>  { return -EBUSY; }
+>  static inline int __pci_register_driver(struct pci_driver *drv,
+> -- 
+> 2.20.0
+> 
