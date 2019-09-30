@@ -2,122 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447F9C26D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F33C1C26EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731375AbfI3Uky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:40:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729180AbfI3Uky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:40:54 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D12E224D2;
-        Mon, 30 Sep 2019 20:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569875651;
-        bh=Ia/sE7OsRwGmDutroMOdVbd3eXtqQ6ome2j9iwgAtQM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=W8TiKyqeBZc6pJ4n/x3zNcBQ+zNVfG5Jqyt7GuWexVjswNJ94IS4AZhlWNK6HpKgZ
-         hmJOu7FoPUwtNXAkVc6swG5WbDsCADl2YqGyc0VeWk4EYwJ43MW0EUgjrMfxUZhkUR
-         c7xsmMQIRDIEynQWykeEtOGczMovqRvvNWA8y03E=
-Date:   Mon, 30 Sep 2019 15:34:10 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     George Cherian <george.cherian@marvell.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shannon.zhao@linux.alibaba.com" <shannon.zhao@linux.alibaba.com>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
-        George Cherian <gcherian@marvell.com>,
-        Vadim Lomovtsev <Vadim.Lomovtsev@marvell.com>,
-        Manish Jaggi <mjaggi@caviumnetworks.com>
-Subject: Re: [PATCH] PCI: Enhance the ACS quirk for Cavium devices
-Message-ID: <20190930203409.GA195851@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190919024319.GA8792@dc5-eodlnx05.marvell.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731025AbfI3Umk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:42:40 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:46433 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfI3Umj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:42:39 -0400
+Received: by mail-io1-f66.google.com with SMTP id c6so41817108ioo.13
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 13:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=KWTH9RQWAwgqAE8mTADMNkSdUpgrcvjdoE7K2RsU6wA=;
+        b=e5PMBtxFilz/D0V//+TdmtLnY3XB7td2pd0d4/rF0mRGhMB0tLHh+PjD16jk3NlSp5
+         l/CRpTZCsozkonNGNBKwcQAX9BRQss9XMK4Q3WXDWvAR9rN5Gs9aYABC7/uux289ZYgA
+         ZylsWkWrSfEX9liAyQ8Nq4H2dUN8dIs/TNgwliYA7zcDfdeInaCMhIGmMcg/exkaNriG
+         5IZVYXB/MKOqO/SInCtfSfHBESdZ/wI3RVgJJtvbXkMEHW/REqQYIykzofhZJaboELwN
+         ZDoECHBmWZWjNIY7mvKn4hucEGpkSJmHOhX7Meiu2OIgBl01eBVwghNZXMoAGfqyCif/
+         KLbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=KWTH9RQWAwgqAE8mTADMNkSdUpgrcvjdoE7K2RsU6wA=;
+        b=j9u5oPPl9j5cVNCgxKF43gzsxniUPmXZw2XvKZJS8PdbB2T8dy54oiM9ArDWB8MBxE
+         ZoQk5bwud4VfnYFSeQ/maYgU/HFQyL1LwnvKb4/X3wi6f4B1l2XE7h2qUhEgIOlh/zsc
+         v+3rZlxoerV6VYwVm+AcGLi4ogcQHEBhFwmtCKYQNMf9HNbHux909Oygn4xFSHrEPHcG
+         A1Cc8X+Ze+57ne6iQhUbpfgChP5ByKVBsBWr5tTfjfbuqg8eIq0srfQ8f5bbnn84p6P/
+         BdynascJ8+TIzKhzUst8vHj9R0+TbTx8/KASpimO4cT+Q3RSPTyTKU7PUgvnIQXws9/p
+         I2UA==
+X-Gm-Message-State: APjAAAVZEjh//vnR2YP75F+31LJ0mIpnb7A49YHA0oQzfJtZkiK4Jc6B
+        xGnMj11Dn8xDNHAE5sxC/30=
+X-Google-Smtp-Source: APXvYqwDg0GcDXvOBELidr7GWUuBx//IQgunC73Mdby23owP5CQs0PklzLdJY58qT8lpv73O66X0Gg==
+X-Received: by 2002:a05:6e02:550:: with SMTP id i16mr21456043ils.214.1569876159323;
+        Mon, 30 Sep 2019 13:42:39 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id s11sm5858042ioc.79.2019.09.30.13.42.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 13:42:38 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     hdegoede@redhat.com
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] virt: vbox: fix memory leak in hgcm_call_preprocess_linaddr
+Date:   Mon, 30 Sep 2019 15:42:22 -0500
+Message-Id: <20190930204223.3660-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <664aab6a-37c9-7239-a817-25dfbab00c7f@redhat.com>
+References: <664aab6a-37c9-7239-a817-25dfbab00c7f@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Vadim, Manish]
+In hgcm_call_preprocess_linaddr memory is allocated for bounce_buf but
+is not released if copy_form_user fails. In order to prevent memory leak
+in case of failure, the assignment to bounce_buf_ret is moved before the
+error check. This way the allocated bounce_buf will be released by the
+caller.
 
-On Thu, Sep 19, 2019 at 02:43:34AM +0000, George Cherian wrote:
-> Enhance the ACS quirk for Cavium Processors. Add the root port
-> vendor ID's in an array and use the same in match function.
-> For newer devices add the vendor ID's in the array so that the
-> match function is simpler.
-> 
-> Signed-off-by: George Cherian <george.cherian@marvell.com>
-> ---
->  drivers/pci/quirks.c | 28 +++++++++++++++++++---------
->  1 file changed, 19 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 44c4ae1abd00..64deeaddd51c 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -4241,17 +4241,27 @@ static int pci_quirk_amd_sb_acs(struct pci_dev *dev, u16 acs_flags)
->  #endif
->  }
->  
-> +static const u16 pci_quirk_cavium_acs_ids[] = {
-> +	/* CN88xx family of devices */
-> +	0xa180, 0xa170,
-> +	/* CN99xx family of devices */
-> +	0xaf84,
-> +	/* CN11xxx family of devices */
-> +	0xb884,
-> +};
-> +
->  static bool pci_quirk_cavium_acs_match(struct pci_dev *dev)
->  {
-> -	/*
-> -	 * Effectively selects all downstream ports for whole ThunderX 1
-> -	 * family by 0xf800 mask (which represents 8 SoCs), while the lower
-> -	 * bits of device ID are used to indicate which subdevice is used
-> -	 * within the SoC.
-> -	 */
-> -	return (pci_is_pcie(dev) &&
-> -		(pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) &&
-> -		((dev->device & 0xf800) == 0xa000));
-> +	int i;
-> +
-> +	if (!pci_is_pcie(dev) || pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
-> +		return false;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pci_quirk_cavium_acs_ids); i++)
-> +		if (pci_quirk_cavium_acs_ids[i] == dev->device)
+Fixes: 579db9d45cb4 ("virt: Add vboxguest VMMDEV communication code")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/virt/vboxguest/vboxguest_utils.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I'm a little skeptical of this because the previous test:
+diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vboxguest/vboxguest_utils.c
+index 75fd140b02ff..43c391626a00 100644
+--- a/drivers/virt/vboxguest/vboxguest_utils.c
++++ b/drivers/virt/vboxguest/vboxguest_utils.c
+@@ -220,6 +220,8 @@ static int hgcm_call_preprocess_linaddr(
+ 	if (!bounce_buf)
+ 		return -ENOMEM;
+ 
++	*bounce_buf_ret = bounce_buf;
++
+ 	if (copy_in) {
+ 		ret = copy_from_user(bounce_buf, (void __user *)buf, len);
+ 		if (ret)
+@@ -228,7 +230,6 @@ static int hgcm_call_preprocess_linaddr(
+ 		memset(bounce_buf, 0, len);
+ 	}
+ 
+-	*bounce_buf_ret = bounce_buf;
+ 	hgcm_call_add_pagelist_size(bounce_buf, len, extra);
+ 	return 0;
+ }
+-- 
+2.17.1
 
-  (dev->device & 0xf800) == 0xa000
-
-could match *many* devices, but of those, the new code only matches two
-(0xa180, 0xa170).
-
-And the comment says the new code matches the CN99xx and CN11xxx
-*families*, but it only matches a single device ID for each, which
-makes me think there may be more devices to come.
-
-Maybe this is all what you want, but please confirm.
-
-The commit log should be explicit that this adds CN99xx and CN11xxx,
-which previously were not matched.
-
-This looks like stable material?
-
-> +			return true;
-> +
-> +	return false;
->  }
->  
->  static int pci_quirk_cavium_acs(struct pci_dev *dev, u16 acs_flags)
-> -- 
-> 2.17.1
-> 
