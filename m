@@ -2,71 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3AFBC270A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C112DC26B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbfI3UpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:45:08 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40966 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbfI3UpH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:45:07 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w17so12386357oiw.8;
-        Mon, 30 Sep 2019 13:45:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BHeCpN2463mRdVd4Een2eG9NLKq6PLofbIreirL6ULM=;
-        b=WeNIIIj60biT8hJrNvDwy832Ruk6fDeCQTb05GLVlZMMjedjLGn/KINSo1Vje802HB
-         jO4i98jSvdqR+ukfJh19+EClMyRhtBJMhkvbwKzq4gr3sp582okXRbvcLgFO7FBY988C
-         /2PMOI3ORCav3OTa2nBqTEEp5bSVyZZ1ubdasNUCx6XOLiAbi3EhARhUhKh4UmVxZ4/A
-         lXS+nes8QYc2ix8QIPDlR4IZdP6Hi1Jw+1UDVOFfU4D/f2+mjSmj3bgjxyetQUeMeFOw
-         HJdRuP+8XXVCpbicg4/CK66st/FgpAKn+WRUwScr0r3ZnfG/9qTN30Ch/dZWPC5GuVoD
-         QDYg==
-X-Gm-Message-State: APjAAAWAYvYvgxaMOu/D4vsbR0vT14e2C8f4OrvIz1evoeEm+g1kjdlo
-        czwd0fyhWRvDn/Bdu5USp3ulriI=
-X-Google-Smtp-Source: APXvYqwwR+as++oOAeBfzG/uIVrhnm3yF5hx+JyUgYRKMiH7ZEmlrV6X71etrsLz0P1tGpDCcgNPZQ==
-X-Received: by 2002:aca:d846:: with SMTP id p67mr550811oig.144.1569869862328;
-        Mon, 30 Sep 2019 11:57:42 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b5sm4531019oia.20.2019.09.30.11.57.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 11:57:41 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 13:57:41 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] ASoC: fsl_mqs: add DT binding documentation
-Message-ID: <20190930185741.GA18160@bogus>
-References: <65e1f035aea2951aacda54aa3a751bc244f72f6a.1568367274.git.shengjiu.wang@nxp.com>
+        id S1732151AbfI3Uje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:39:34 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:40674 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729636AbfI3Ujd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:39:33 -0400
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id x8UJ8Nek011621;
+        Mon, 30 Sep 2019 22:08:24 +0300
+Date:   Mon, 30 Sep 2019 22:08:23 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+cc:     "David S. Miller" <davem@davemloft.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v2 0/2] ipvs: speedup ipvs netns dismantle
+In-Reply-To: <1569560091-20553-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+Message-ID: <alpine.LFD.2.21.1909302205360.2706@ja.home.ssi.bg>
+References: <1569560091-20553-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <65e1f035aea2951aacda54aa3a751bc244f72f6a.1568367274.git.shengjiu.wang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Sep 2019 17:42:13 +0800, Shengjiu Wang wrote:
-> Add the DT binding documentation for NXP MQS driver
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
-> Changes in v2
-> -refine the comments for properties
-> 
->  .../devicetree/bindings/sound/fsl,mqs.txt     | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/fsl,mqs.txt
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+	Hello,
+
+On Fri, 27 Sep 2019, Haishuang Yan wrote:
+
+> Implement exit_batch() method to dismantle more ipvs netns
+> per round.
+> 
+> Tested:
+> $  cat add_del_unshare.sh
+> #!/bin/bash
+> 
+> for i in `seq 1 100`
+>     do
+>      (for j in `seq 1 40` ; do  unshare -n ipvsadm -A -t 172.16.$i.$j:80 >/dev/null ; done) &
+>     done
+> wait; grep net_namespace /proc/slabinfo
+> 
+> Befor patch:
+> $  time sh add_del_unshare.sh
+> net_namespace       4020   4020   4736    6    8 : tunables    0    0    0 : slabdata    670    670      0
+> 
+> real    0m8.086s
+> user    0m2.025s
+> sys     0m36.956s
+> 
+> After patch:
+> $  time sh add_del_unshare.sh
+> net_namespace       4020   4020   4736    6    8 : tunables    0    0    0 : slabdata    670    670      0
+> 
+> real    0m7.623s
+> user    0m2.003s
+> sys     0m32.935s
+> 
+> Haishuang Yan (2):
+>   ipvs: batch __ip_vs_cleanup
+>   ipvs: batch __ip_vs_dev_cleanup
+> 
+>  include/net/ip_vs.h             |  2 +-
+>  net/netfilter/ipvs/ip_vs_core.c | 47 ++++++++++++++++++++++++-----------------
+>  net/netfilter/ipvs/ip_vs_ctl.c  | 12 ++++++++---
+>  3 files changed, 38 insertions(+), 23 deletions(-)
+
+	Both patches in v2 look good to me, thanks!
+
+Acked-by: Julian Anastasov <ja@ssi.bg>
+
+	This is for the -next kernels...
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
