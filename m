@@ -2,212 +2,380 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3950EC2216
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 471D0C222B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731381AbfI3NfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:35:17 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33126 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730378AbfI3NfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:35:17 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b9so11397790wrs.0;
-        Mon, 30 Sep 2019 06:35:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rCh9Vg6T3ECTbDQgHWwysJLgIuSC72Toh4hrLGUo0Bk=;
-        b=n9au9sjSarhcP7II2+oFukloZx60NI/ERC8OA8/6fimP7XAipI5S46BL25nzyQEbEN
-         GAKGnuw8oY0tosxi3dW1pZcsgAgUqfHkVDU4sJxAjMa42wl8oPicooJzzQ+9sijsQBYO
-         ntbCzicwOuwQSl9QK9G7pDWOh0FLXg7silYY4Kh4nFbuJreda7TEtnRyF7Tz4SZi6wmC
-         m+oKtTABWR7VfYadfVMqrWYMmFgRUQ3QOTzt72Td0Dmbcd8G43UsCXA2Bh2jVKkqF0TQ
-         0jb5E3s4k0RCPRim4MbLWh9cfTZLYoiBffTs0M72hQAzdwCJ4TGVPnUI99388ZGU5KKv
-         1qwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rCh9Vg6T3ECTbDQgHWwysJLgIuSC72Toh4hrLGUo0Bk=;
-        b=W5NyYkaASpOlO7bRzCMFJVrpBYnFHGimGnLIJO0dG1PN7Oqk4qBvU0UZUtQMJ24ajj
-         tID8sdiAQwly5XaqzYKz13ym6iTy1RxTdFVheBEZ2ZY5qWlCSuJ0MU7e2s0pslVkNtOB
-         ptvxjMuXkwxiWkKlwdw25rQkGhuCzzbblpsoaYhbdk4uICeUaJGa3x1S9T1IqtcSVO1o
-         aBprbJY4oAG2lgzIcTVYxkaTDKplBH0T9o0im2NHj1FQfMGyxaifV4+/zpp8KCxhrho9
-         m4iN24J3YWEwR8fBRCDctHPDUkpA3VpLmUwyCP4rKVJ9hNbEbAMGOnC/QA+0er5V5qQM
-         tbpA==
-X-Gm-Message-State: APjAAAWqwwgqZqgJZ6NwKXIOdmo8MR69HoW6mEYgSy4dENe55P3YnkfW
-        +z6CQWPXJeN932RzBlOzbKs=
-X-Google-Smtp-Source: APXvYqwCoEkIeUPUex7gm7yypx/Bk+yuJECPCl9vC7K4SCIvaHSR56H/Pse4DnUPKIyEDhRpI7tuDw==
-X-Received: by 2002:a05:6000:1281:: with SMTP id f1mr13741018wrx.247.1569850513451;
-        Mon, 30 Sep 2019 06:35:13 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id v2sm24055733wmf.18.2019.09.30.06.35.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 06:35:11 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 15:35:10 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        id S1731427AbfI3Nf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:35:56 -0400
+Received: from mail-eopbgr60075.outbound.protection.outlook.com ([40.107.6.75]:39005
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730411AbfI3Nfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:35:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n5jmlvwPkuFbr0EWMejam7XNhucxB12IcTSM91PwwgU=;
+ b=Bg9pmEQugvcdriWPvMUlO2f5MO3meeztGrkVz/SOultGYEhtv02uY0KRd9jvWcBl/OgRt23/Lhtpm54/ckM2zSEP1Cxb5t2kAEyQAvSTV2qTR/RJthvSBiMFPZZlmnH03nl4AEQG24EQwMi3PPjDhhsm8YepsBuEuRRyynEBVak=
+Received: from VI1PR08CA0225.eurprd08.prod.outlook.com (2603:10a6:802:15::34)
+ by DB6PR0802MB2533.eurprd08.prod.outlook.com (2603:10a6:4:a0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2305.20; Mon, 30 Sep
+ 2019 13:35:41 +0000
+Received: from VE1EUR03FT052.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::202) by VI1PR08CA0225.outlook.office365.com
+ (2603:10a6:802:15::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2305.17 via Frontend
+ Transport; Mon, 30 Sep 2019 13:35:41 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT052.mail.protection.outlook.com (10.152.19.173) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.15 via Frontend Transport; Mon, 30 Sep 2019 13:35:39 +0000
+Received: ("Tessian outbound 081de437afc7:v33"); Mon, 30 Sep 2019 13:35:31 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: a9e45afd18e2b331
+X-CR-MTA-TID: 64aa7808
+Received: from 7731501daa42.3 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.4.52])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 439C5BA4-82AF-42B8-944A-F8B927D84136.1;
+        Mon, 30 Sep 2019 13:35:26 +0000
+Received: from EUR02-AM5-obe.outbound.protection.outlook.com (mail-am5eur02lp2052.outbound.protection.outlook.com [104.47.4.52])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 7731501daa42.3
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384);
+    Mon, 30 Sep 2019 13:35:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UQYO4ehsxVlyRmfxZLIOmyP/cdJ7TQak0BgTwkWvJQGVRPKBn5pNThGqY2/G34NfQ3FE0KAYD76lePdSWhbidEVqqtbjFNORXQ3cLzO8enQnU0+6NELIeWR7bYfMLHecjcaNC+UoOkYMmH4wLtUlWqicHk0sknm431w826ESs5HGCQLb9KNAM7ZKub4EaPBVa6ufFQSZa0NHXcN2LZOUwtGYDhXXfyhMLflLGU74xAYXdvAAgqsOJnPlLyLl5lwNG1KLYlx31d3pZ/llhmM8Mv9BLLbNhZWOHPRo0tN/WB0A215RwXxe5i6m3670RcMoLHx7QereMIksCtm43kYdbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n5jmlvwPkuFbr0EWMejam7XNhucxB12IcTSM91PwwgU=;
+ b=Sn5tLSooqiJZmmwE4HSk9xBOiDvTvYHSiw102vCW3896uCkYS135fkPHtdNQjyOXVVqOohuwplJ9DPfLpm/ulq7CQz/KPJeOVc/bi3dMiPU1YngkBk6bOimTNB+agKEZwaZGaa9WqRGrFGAFjH/qGp9d5pDw/iNDg0i8yDv+RxIar1/e7TTQapI644EYtU1hBUM32Bu9T74Z+eYroXKLyniIw6UXewgByTaXm3yshD5h2SVLXfh/cNnqSHglasY7OyF5T84/H2QX3oieWN14GMUdW+oXyVoHh1bKeq37zSGTJoFrpoDTWTcvDE8trVxmQEYFBxfJIKU+twaj3bCpsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n5jmlvwPkuFbr0EWMejam7XNhucxB12IcTSM91PwwgU=;
+ b=Bg9pmEQugvcdriWPvMUlO2f5MO3meeztGrkVz/SOultGYEhtv02uY0KRd9jvWcBl/OgRt23/Lhtpm54/ckM2zSEP1Cxb5t2kAEyQAvSTV2qTR/RJthvSBiMFPZZlmnH03nl4AEQG24EQwMi3PPjDhhsm8YepsBuEuRRyynEBVak=
+Received: from DB8PR08MB5354.eurprd08.prod.outlook.com (52.133.240.216) by
+ DB8PR08MB5194.eurprd08.prod.outlook.com (10.255.18.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.20; Mon, 30 Sep 2019 13:35:23 +0000
+Received: from DB8PR08MB5354.eurprd08.prod.outlook.com
+ ([fe80::14ad:d417:d811:387]) by DB8PR08MB5354.eurprd08.prod.outlook.com
+ ([fe80::14ad:d417:d811:387%2]) with mapi id 15.20.2305.017; Mon, 30 Sep 2019
+ 13:35:23 +0000
+From:   Ayan Halder <Ayan.Halder@arm.com>
+To:     Qiang Yu <yuq825@gmail.com>
+CC:     Daniel Vetter <daniel@ffwll.ch>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Raymond Smith <Raymond.Smith@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Oza Pawandeep <oza.oza@broadcom.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 00/11] of: dma-ranges fixes and improvements
-Message-ID: <20190930133510.GA1904140@ulmo>
-References: <20190927002455.13169-1-robh@kernel.org>
- <CAK8P3a0oct0EOMi5t4BmpgdkiBM+LjC+2pTST4hcvNCa3MGLmw@mail.gmail.com>
- <20190930082055.GA21971@infradead.org>
- <20190930085606.GG1518582@ulmo>
- <89e33aae-bc96-53c3-2a4e-e879e9a3c73e@arm.com>
+        "malidp@foss.arm.com" <malidp@foss.arm.com>, nd <nd@arm.com>
+Subject: Re: [PATCH] drm/fourcc: Add Arm 16x16 block modifier
+Thread-Topic: [PATCH] drm/fourcc: Add Arm 16x16 block modifier
+Thread-Index: AQHVKBsKBvRwqAaS30eXmbt21cTJQqamO1MAgART94CAAAdigIAAF3uAgAOs2ACAhgdkgIAQdTcA
+Date:   Mon, 30 Sep 2019 13:35:23 +0000
+Message-ID: <20190930133522.GA16273@arm.com>
+References: <1561112433-5308-1-git-send-email-raymond.smith@arm.com>
+ <CAKMK7uEjh+GrSy5AgbVLVQd1S5oJ8KFiWEUmxtMMVdcMSBtdCQ@mail.gmail.com>
+ <20190624093233.73f3tcshewlbogli@DESKTOP-E1NTVVP.localdomain>
+ <CAKMK7uG02qAqH8MMpE6kzRO99HTjnadTFDrY1vVr9RmAiFPvJA@mail.gmail.com>
+ <20190624112301.dmczf2vofxnpzqqi@DESKTOP-E1NTVVP.localdomain>
+ <CAKMK7uEotYyRaa4WqNKRGc0nfwcyGccRpX2YzZmETrPdgXkAKA@mail.gmail.com>
+ <CAKGbVbvLv6MDYapr5Oo5ZvJh+GV3-LU_ok2a8tpYGWOpw8hBBA@mail.gmail.com>
+In-Reply-To: <CAKGbVbvLv6MDYapr5Oo5ZvJh+GV3-LU_ok2a8tpYGWOpw8hBBA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0171.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a::15) To DB8PR08MB5354.eurprd08.prod.outlook.com
+ (2603:10a6:10:114::24)
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [217.140.106.50]
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: e229654d-2a12-49ff-623e-08d745ab1570
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-TrafficTypeDiagnostic: DB8PR08MB5194:|DB8PR08MB5194:|DB6PR0802MB2533:
+X-MS-Exchange-PUrlCount: 1
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <DB6PR0802MB2533903EE169A00FF25FF179E4820@DB6PR0802MB2533.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:3513;OLM:3513;
+x-forefront-prvs: 01762B0D64
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(346002)(396003)(39860400002)(136003)(199004)(189003)(6486002)(486006)(6916009)(11346002)(33656002)(76176011)(476003)(66066001)(446003)(6436002)(6246003)(3846002)(6116002)(256004)(53546011)(44832011)(386003)(229853002)(6506007)(71200400001)(71190400001)(2616005)(8676002)(81156014)(4326008)(14444005)(1411001)(478600001)(99286004)(966005)(64756008)(36756003)(8936002)(25786009)(6306002)(86362001)(2906002)(316002)(587094005)(5660300002)(6512007)(54906003)(7736002)(66476007)(66446008)(102836004)(66946007)(52116002)(66556008)(186003)(305945005)(81166006)(14454004)(26005)(1076003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB8PR08MB5194;H:DB8PR08MB5354.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: MutUI6imcE5FVN8TMhmfMR97lJgr9oUH6ATZDGDZAHbOQc4wKHmJCrFGrqXwonDtTw6nQc7ImR/K8QxMW9e0nbrQb5Evd0LJ6QCdQbNBGuxCEggyxELBUI1onGE+GFRn9DMyFq8jn4bcewWnl6dqG67IwHUyOQhwpof4+NSxyGY3M2OzpchuCA15WyEe2jA3nXCjYcrxdJzmbE6V04WLWJioUYVEAN4LHLBDvSQ7r7/12picu8ekZHwdCObVO1dnVLa/90+l69qN8/OgKXNLUrEqrymxPW266ElAd8lxp2S6VSR0YC5bRm7JXqSg2mA873VVmPDqfo8z4rRDuypw2BwxsC9zb5t4Yf+mOwbs6wr9fqJhXBUSvqw9LGRc5P2GiAYtZ1fs+V3o9qyt85ZFzVNhLYWRORXe9SsYLx16J79bA7LfwPpfGkaGbPVkxD0NS1dAPUDatItsaUMRvGqFyQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C7887580DC92394C923CCB570263C67D@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
-Content-Disposition: inline
-In-Reply-To: <89e33aae-bc96-53c3-2a4e-e879e9a3c73e@arm.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5194
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT052.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39860400002)(396003)(136003)(189003)(199004)(25786009)(36756003)(966005)(26826003)(23726003)(1076003)(6116002)(3846002)(478600001)(6862004)(6306002)(2906002)(6512007)(5660300002)(4326008)(7736002)(305945005)(587094005)(76130400001)(6486002)(229853002)(33656002)(70206006)(70586007)(356004)(6246003)(1411001)(8676002)(26005)(186003)(8936002)(53546011)(11346002)(446003)(486006)(47776003)(99286004)(54906003)(126002)(336012)(36906005)(316002)(81156014)(81166006)(476003)(76176011)(86362001)(2616005)(22756006)(8746002)(14454004)(63350400001)(97756001)(50466002)(386003)(14444005)(6506007)(102836004)(66066001)(46406003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0802MB2533;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 7b3d0998-0288-4549-80f0-08d745ab0b69
+NoDisclaimer: True
+X-Forefront-PRVS: 01762B0D64
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: gA74ZRy3ynND3z/758D8HZy6W/zlniN4qT8oOPEDYVFeHHHi4JO5mDMsrvp21OvYypjpiZtflkesL/0pSOl+jB1eswIEa8w8osqm+DsKyFNxfaD5CB3rMm4vwtjBVzCOsMrn7UvqA5Yxt8kEP4R6m/YkoMW6YfSAboqqF53brGcjfMvEFKw3fHJv76RObz/qmj9WUZDnrCo5rgzRuzN6MW3AOLBrh73XWKvWdJyr/LB8nScfyW/X40MREYmwGpRFLc+Od+3X0Pw/PuH0cjsQkTr5PSNyWGNF1Qn+3v8XfiTGubsl5cEShHRe8jp9zCPhW29Zg1soIkKpGtBKpjPFz6+COsDPQeEwJsHH36o+TxJgUGUEotzJGX9Truqmy/M1PUk37ql/BPkjU9TNH0ry9dHiuJ3bZtYyMud6zsdxsKPq8AR/6lMSAjnTGbVhjpP6q5WFUo1D4ib2NjgKuI+6iQ==
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2019 13:35:39.6304
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e229654d-2a12-49ff-623e-08d745ab1570
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2533
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---dDRMvlgZJXvWKvBx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 30, 2019 at 10:55:15AM +0100, Robin Murphy wrote:
-> On 2019-09-30 9:56 am, Thierry Reding wrote:
-> > On Mon, Sep 30, 2019 at 01:20:55AM -0700, Christoph Hellwig wrote:
-> > > On Sun, Sep 29, 2019 at 01:16:20PM +0200, Arnd Bergmann wrote:
-> > > > On a semi-related note, Thierry asked about one aspect of the dma-r=
-anges
-> > > > property recently, which is the behavior of dma_set_mask() and rela=
-ted
-> > > > functions when a driver sets a mask that is larger than the memory
-> > > > area in the bus-ranges but smaller than the available physical RAM.
-> > > > As I understood Thierry's problem and the current code, the generic
-> > > > dma_set_mask() will either reject the new mask entirely or override
-> > > > the mask set by of_dma_configure, but it fails to set a correct mask
-> > > > within the limitations of the parent bus in this case.
-> > >=20
-> > > There days dma_set_mask will only reject a mask if it is too small
-> > > to be supported by the hardware.  Larger than required masks are now
-> > > always accepted.
-> >=20
-> > Summarizing why this came up: the memory subsystem on Tegra194 has a
-> > mechanism controlled by bit 39 of physical addresses. This is used to
-> > support two variants of sector ordering for block linear formats. The
-> > GPU uses a slightly different ordering than other MSS clients, so the
-> > drivers have to set this bit depending on who they interoperate with.
-> >=20
-> > I was running into this as I was adding support for IOMMU support for
-> > the Ethernet controller on Tegra194. The controller has a HW feature
-> > register that contains how many address bits it supports. This is 40
-> > for Tegra194, corresponding to the number of address bits to the MSS.
-> > Without IOMMU support that's not a problem because there are no systems
-> > with 40 bits of system memory. However, if we enable IOMMU support, the
-> > DMA/IOMMU code will allocate from the top of a 48-bit (constrained to
-> > 40 bits via the DMA mask) input address space. This causes bit 39 to be
-> > set, which in turn will make the MSS reorder sectors and break network
-> > communications.
-> >=20
-> > Since this reordering takes place at the MSS level, this applies to all
-> > MSS clients. Most of these clients always want bit 39 to be 0, whereas
-> > the clients that can and want to make use of the reordering always want
-> > bit 39 to be under their control, so they can control in a fine-grained
-> > way when to set it.
-> >=20
-> > This means that effectively all MSS clients can only address 39 bits, so
-> > instead of hard-coding that for each driver I thought it'd make sense to
-> > have a central place to configure this, so that all devices by default
-> > are restricted to 39-bit addressing. However, with the current DMA API
-> > implementation this causes a problem because the default 39-bit DMA mask
-> > would get overwritten by the driver (as in the example of the Ethernet
-> > controller setting a 40-bit DMA mask because that's what the hardware
-> > supports).
-> >=20
-> > I realize that this is somewhat exotic. On one hand it is correct for a
-> > driver to say that the hardware supports 40-bit addressing (i.e. the
-> > Ethernet controller can address bit 39), but from a system integration
-> > point of view, using bit 39 is wrong, except in a very restricted set of
-> > cases.
-> >=20
-> > If I understand correctly, describing this with a dma-ranges property is
-> > the right thing to do, but it wouldn't work with the current
-> > implementation because drivers can still override a lower DMA mask with
-> > a higher one.
+On Fri, Sep 20, 2019 at 10:15:41AM +0800, Qiang Yu wrote:
+> Hi guys,
 >=20
-> But that sounds like exactly the situation for which we introduced
-> bus_dma_mask. If "dma-ranges" is found, then we should initialise that to
-> reflect the limitation. Drivers may subsequently set a larger mask based =
-on
-> what the device is natively capable of, but the DMA API internals should
-> quietly clamp that down to the bus mask wherever it matters.
+> I'd like to know the status of this patch? I expect a v2 adding some
+> comments/macros about the high bit plan would be enough?
 >=20
-> Since that change, the initial value of dma_mask and coherent_dma_mask
-> doesn't really matter much, as we expect drivers to reset them anyway (and
-> in general they have to be able to enlarge them from a 32-bit default
-> value).
+> @Raymond & @Brian do you still need another long process to send out a
+> v2 patch? If so, I can help to prepare a v2 patch according to your
+> previous mail.
+
+Apologies for the long wait.
+@Raymond has left the company, so now I will be looking into it. I
+will respin the patch in a day or two.
+=20
+> Thanks,
+> Qiang
 >=20
-> As far as I'm aware this has been working fine (albeit in equivalent ACPI
-> form) for at least one SoC with 64-bit device masks, a 48-bit IOMMU, and a
-> 44-bit interconnect in between - indeed if I avoid distraction long enough
-> to set up the big new box under my desk, the sending of future emails will
-> depend on it ;)
-
-After applying this series it does indeed seem to be working. The only
-thing I had to do was add a dma-ranges property to the DMA parent. I
-ended up doing that via an interconnects property because the default
-DMA parent on Tegra194 is /cbb which restricts #address-cells =3D <1> and
-#size-cells =3D <1>, so it can't actually translate anything beyond 32
-bits of system memory.
-
-So I basically ended up making the memory controller an interconnect
-provider, increasing #address-cells =3D <2> and #size-cells =3D <2> again
-and then using a dma-ranges property like this:
-
-	dma-ranges =3D <0x0 0x0 0x0 0x80 0x0>;
-
-to specify that only 39 bits should be used for addressing, leaving the
-special bit 39 up to the driver to set as required.
-
-Coincidentally making the memory controller an interconnect provider is
-something that I was planning to do anyway in order to support memory
-frequency scaling, so this all actually fits together pretty elegantly.
-
-Thierry
-
---dDRMvlgZJXvWKvBx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2SBIwACgkQ3SOs138+
-s6GQ0w/+M5DX25F5EvacUJzXP9QLMg2vdsP8El3gsecwnqovP1oSoUKnZyz98KUl
-ABB5ViyBPyNXg7XSmlJrrGoeA95AWyZiaXCQANS2ps24cOCd81sJR90NN/mQhQ6b
-WlRDS1XdpSoLYEodeHKXS2chYdSGAIWMDsxouW2JDG/wugk3yCarpm0DQzUmsip/
-FwI2OAKJJP0cJ0l0bFB7RuijyI/Gs/pRG1gNrLuzB5GX0t2dZLzfcKggzY44hi4Q
-MIGxkRcFT2csNs3t+Qp4yy90SjEiDi77zGVqcKNreNa+0J5dcCmn8iXE8alV+9oN
-XLVfb/8/e4Gdjm3hthjKrLQQ8GtZ04RjPujBEe2BFfERdfVb+CM+lIgZa6dI+KIp
-7IYWxp5ehMclUc6u0UfkpRklyBfoK/eBr9+lJfzgd5+5D28RxMYgdpGVlQiTuL++
-r+sS4cUaCD3KDNmj6j7GdxCl98jfxzXgzdJ5hkm3exZRHM3JcyiNSmsf6WoiGAJh
-beh65vgHal5X5xFh38HV05lM2gYjh97GwzKecmY0q3xGw36R0jPxi4tMfKylnuKh
-sp0kdAq2amwxR7Z0FBJ2t26SB41rVlA4Wu6Rc09m3bIblxnW45hgJhHsfqtPLB9A
-dw9MG+gJVyffkh5BaZ3Td4raeptslyoappih5w2nWFYznD2kJQM=
-=5SOJ
------END PGP SIGNATURE-----
-
---dDRMvlgZJXvWKvBx--
+> On Thu, Jun 27, 2019 at 3:30 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Mon, Jun 24, 2019 at 1:23 PM Brian Starkey <Brian.Starkey@arm.com> w=
+rote:
+> > >
+> > > On Mon, Jun 24, 2019 at 11:58:59AM +0200, Daniel Vetter wrote:
+> > > > On Mon, Jun 24, 2019 at 11:32 AM Brian Starkey <Brian.Starkey@arm.c=
+om> wrote:
+> > > > >
+> > > > > Hi Daniel,
+> > > > >
+> > > > > On Fri, Jun 21, 2019 at 05:27:00PM +0200, Daniel Vetter wrote:
+> > > > > > On Fri, Jun 21, 2019 at 12:21 PM Raymond Smith <Raymond.Smith@a=
+rm.com> wrote:
+> > > > > > >
+> > > > > > > Add the DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED modifier=
+ to
+> > > > > > > denote the 16x16 block u-interleaved format used in Arm Utgar=
+d and
+> > > > > > > Midgard GPUs.
+> > > > > > >
+> > > > > > > Signed-off-by: Raymond Smith <raymond.smith@arm.com>
+> > > > > > > ---
+> > > > > > >  include/uapi/drm/drm_fourcc.h | 10 ++++++++++
+> > > > > > >  1 file changed, 10 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm=
+/drm_fourcc.h
+> > > > > > > index 3feeaa3..8ed7ecf 100644
+> > > > > > > --- a/include/uapi/drm/drm_fourcc.h
+> > > > > > > +++ b/include/uapi/drm/drm_fourcc.h
+> > > > > > > @@ -743,6 +743,16 @@ extern "C" {
+> > > > > > >  #define AFBC_FORMAT_MOD_BCH     (1ULL << 11)
+> > > > > > >
+> > > > > > >  /*
+> > > > > > > + * Arm 16x16 Block U-Interleaved modifier
+> > > > > > > + *
+> > > > > > > + * This is used by Arm Mali Utgard and Midgard GPUs. It divi=
+des the image
+> > > > > > > + * into 16x16 pixel blocks. Blocks are stored linearly in or=
+der, but pixels
+> > > > > > > + * in the block are reordered.
+> > > > > > > + */
+> > > > > > > +#define DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED \
+> > > > > > > +       fourcc_mod_code(ARM, ((1ULL << 55) | 1))
+> > > > > >
+> > > > > > This seems to be an extremely random pick for a new number. Wha=
+t's the
+> > > > > > thinking here? Aside from "doesnt match any of the afbc combos"=
+ ofc.
+> > > > > > If you're already up to having thrown away 55bits, then it's no=
+t going
+> > > > > > to last long really :-)
+> > > > > >
+> > > > > > I think a good idea would be to reserve a bunch of the high bit=
+s as
+> > > > > > some form of index (afbc would get index 0 for backwards compat=
+). And
+> > > > > > then the lower bits would be for free use for a given index/mod=
+e. And
+> > > > > > the first mode is probably an enumeration, where possible modes=
+ simple
+> > > > > > get enumerated without further flags or anything.
+> > > > >
+> > > > > Yup, that's the plan:
+> > > > >
+> > > > >         (0 << 55): AFBC
+> > > > >         (1 << 55): This "non-category" for U-Interleaved
+> > > > >         (1 << 54): Whatever the next category is
+> > > > >         (3 << 54): Whatever comes after that
+> > > > >         (1 << 53): Maybe we'll get here someday
+> > > >
+> > > > Uh, so the index would be encoded with least-significant bit first,
+> > > > starting from bit55 downwards?
+> > >
+> > > Yeah.
+> > >
+> > > > Clever idea, but I think this needs a
+> > > > macro (or at least a comment). Not sure there's a ready-made bitmas=
+k
+> > > > mirror function for this stuff, works case we can hand-code it and
+> > > > extend every time we need one more bit encoded. Something like:
+> > > >
+> > > > MIRROR_U32((u & (BIT(0)) << 31 | (u & BIT(1) << 30 | ...)
+> > > >
+> > >
+> > > Is it really worth it? People can just use the definitions as written
+> > > in drm_fourcc.h. I agree that we should have the high bits described
+> > > in a comment though.
+> > >
+> > > > And then shift that to the correct place. Probably want an
+> > > >
+> > > > ARM_MODIFIER_ENCODE(space_idx, flags) macro which assembles everyth=
+ing.
+> > > >
+> > > > >         ...
+> > > > >
+> > > > > I didn't want to explicitly reserve some high bits, because we've=
+ no
+> > > > > idea how many to reserve. This way, we can assign exactly as many
+> > > > > high bits as we need, when we need them. If any of the "modes" st=
+art
+> > > > > encroaching towards the high bits, we'll have to make a decision =
+at
+> > > > > that point.
+> > > > >
+> > > > > Also, this is the only U-Interleaved format (that I know of), so =
+it's
+> > > > > not worth calling bit 55 "The U-Interleaved bit" because that wou=
+ld be
+> > > > > a waste of space. It's more like the "misc" bit, but that's not a
+> > > > > useful name to enshrine in UAPI.
+> > > >
+> > > > Yeah that's what I meant. Also better to explicitly reserve this, i=
+.e.
+> > > >
+> > > > #define ARM_FBC_MODIFIER_SPACE 0
+> > > > #define ARM_MISC_MODIFIER_SPACE 1
+> > > >
+> > > > and then encode with the mirror trickery.
+> > > >
+> > >
+> > > I don't really see the value in that either, it's just giving
+> > > userspace the opportunity to depend on more stuff: more future
+> > > headaches. So long as the 64-bit values are stable, that should be
+> > > enough.
+> >
+> > If you think you need to save the few bits this potentially saves you
+> > over just encoding 8bit enum like in Qiang's original patch I think
+> > you get to type a few macros and comments ...
+> >
+> > > > > Note that isn't the same as the "not-AFBC bit", because we may we=
+ll
+> > > > > have something in the future which is neither AFBC nor "misc".
+> > > > >
+> > > > > We've been very careful in our code to enforce all
+> > > > > undefined/unrecognised bits to be zero, to ensure that this works=
+.
+> > > > >
+> > > > > >
+> > > > > > The other bit: Would be real good to define the format a bit mo=
+re
+> > > > > > precisely, including the layout within the tile.
+> > > > >
+> > > > > It's U-Interleaved, obviously ;-)
+> > > >
+> > > > :-) I mean full code exists in panfrost/lima, so this won't change
+> > > > anything really ...
+> > >
+> > > Yeah, so for us to provide a more detailed description would require
+> > > another lengthy loop through our legal approval process, and I'm not
+> > > sure we can make a strong business case (which is what we need) for
+> > > why this is needed.
+> > >
+> > > Of course, if someone happens to know the layout and wants to
+> > > contribute to this file... Then I don't know how ack/r-b would work i=
+n
+> > > that case, but I imagine the subsystem maintainer(s) might take issue
+> > > with us attempting to block that contribution.
+> >
+> > Well can't really take a modifier without knowing what it's for, I
+> > guess this is up to lima/panfrost folks then to figure out :-P
+> > -Daniel
+> >
+> > >
+> > > Thanks,
+> > > -Brian
+> > >
+> > > >
+> > > > Cheers, Daniel
+> > > >
+> > > > >
+> > > > > -Brian
+> > > > >
+> > > > > >
+> > > > > > Also ofc needs acks from lima/panfrost people since I assume th=
+ey'll
+> > > > > > be using this, too.
+> > > > > >
+> > > > > > Thanks, Daniel
+> > > > > >
+> > > > > > > +
+> > > > > > > +/*
+> > > > > > >   * Allwinner tiled modifier
+> > > > > > >   *
+> > > > > > >   * This tiling mode is implemented by the VPU found on all A=
+llwinner platforms,
+> > > > > > > --
+> > > > > > > 2.7.4
+> > > > > > >
+> > > > > >
+> > > > > >
+> > > > > > --
+> > > > > > Daniel Vetter
+> > > > > > Software Engineer, Intel Corporation
+> > > > > > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> > > >
+> > > >
+> > > >
+> > > > --
+> > > > Daniel Vetter
+> > > > Software Engineer, Intel Corporation
+> > > > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> >
+> >
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
