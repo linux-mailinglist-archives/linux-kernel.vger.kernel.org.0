@@ -2,97 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C3D2C290C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F95BC2916
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbfI3Vpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:45:42 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36367 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfI3Vpm (ORCPT
+        id S1732351AbfI3Vqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:46:45 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:35273 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731898AbfI3Vqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:45:42 -0400
-Received: by mail-pl1-f193.google.com with SMTP id j11so1097196plk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 14:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8ruDqNKuGSU2nVlbiXjG0y95FwzvT0teQMa8Utr4bjY=;
-        b=mz2RyE2T1EEgFtF2UoSk0GlId6YYMtxfaH0WZSz1pBxbMFDcZJgaudo+MEtEnhYd47
-         kpdtaTObWcCO5VnWRUNVW6cbxu9RyElOZc7C7kZx2scjX/MBTERcMog61yB/thr8wR0e
-         gZbmsHTqrvMCEE/LZfgDFzGnE/5BLJT3GzjBw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8ruDqNKuGSU2nVlbiXjG0y95FwzvT0teQMa8Utr4bjY=;
-        b=ZYGO+eaJ5Cxp8TVVXnLCUxum0QfS7TaFI9hoBnUY9CI4/UPzzBtOLS0/q7Ml5snCsa
-         0YcROp8VnenoeXviOHWA5DueCvZbzXp9YAZ4j8VhTXcIscB9fFbmZ6avMK7ZVwwXK7JP
-         Ww/rpIadYt7GP4qPXMgLgM6gzsM6euBM5aZMV83kfPDrNdu8bZYpcQ9nR8zCKmjcrr0j
-         ifHAUfcuJizblrgj8M6k//VyV2jx28r/lnGEN74nPPaD9Yy9iSTys73B4S5tILYUbozT
-         W9ZNOalxhe7DYNSwEzSro1WGKB+cuhvONJxcOccF4RicRzdGbZdf4QgBjKmwy25eMPvc
-         oo8A==
-X-Gm-Message-State: APjAAAUo7wQHfEQA1qtU/xYIZ03ghlkAnsRzurw9cA66R/cDkwN4aFNa
-        9OgsnNxTtErKMROQGuogp85xQQ==
-X-Google-Smtp-Source: APXvYqxnFdaDxDxYpbu8HAxNuStIYedtTAtZN+OLvOJowJsm2okX8LAbs9bA+tVGyBnqbwGoCdrzDg==
-X-Received: by 2002:a17:902:9684:: with SMTP id n4mr23179781plp.14.1569879940623;
-        Mon, 30 Sep 2019 14:45:40 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id r185sm13893394pfr.68.2019.09.30.14.45.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 14:45:39 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Hung-Te Lin <hungte@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        stable@vger.kernel.org, Guenter Roeck <groeck@chromium.org>
-Subject: [PATCH] firmware: google: increment VPD key_len properly
-Date:   Mon, 30 Sep 2019 14:45:22 -0700
-Message-Id: <20190930214522.240680-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
+        Mon, 30 Sep 2019 17:46:45 -0400
+Received: from webmail.gandi.net (webmail21.sd4.0x35.net [10.200.201.21])
+        (Authenticated sender: cengiz@kernel.wtf)
+        by relay10.mail.gandi.net (Postfix) with ESMTPA id 78A55240003;
+        Mon, 30 Sep 2019 21:46:40 +0000 (UTC)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date:   Tue, 01 Oct 2019 00:46:40 +0300
+From:   Cengiz Can <cengiz@kernel.wtf>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     linux@roeck-us.net, clang-built-linux@googlegroups.com,
+        jdelvare@suse.com,
+        =?UTF-8?Q?Tomasz_Pawe=C5=82_Gajc?= <tpgxyz@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon-owner@vger.kernel.org
+Subject: Re: [PATCH v2] hwmon: (applesmc) fix UB and udelay overflow
+In-Reply-To: <20190924174728.201464-1-ndesaulniers@google.com>
+References: <CAKwvOd=GVdHhsdHOMpuhEKkWMssW37keqX5c59+6fiEgLs+Q1g@mail.gmail.com>
+ <20190924174728.201464-1-ndesaulniers@google.com>
+Message-ID: <e37463661a4568332bb9625eb777c5d9@kernel.wtf>
+X-Sender: cengiz@kernel.wtf
+User-Agent: Roundcube Webmail/1.3.8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 4b708b7b1a2c ("firmware: google: check if size is valid when
-decoding VPD data") adds length checks, but the new vpd_decode_entry()
-function botched the logic -- it adds the key length twice, instead of
-adding the key and value lengths separately.
+I spent quite some time to rewrite applesmc but I couldn't finish.
 
-On my local system, this means vpd.c's vpd_section_create_attribs() hits
-an error case after the first attribute it parses, since it's no longer
-looking at the correct offset. With this patch, I'm back to seeing all
-the correct attributes in /sys/firmware/vpd/...
+Thanks for the loop fix. I did my reviewing part, if that matters.
 
-Fixes: 4b708b7b1a2c ("firmware: google: check if size is valid when decoding VPD data")
-Cc: <stable@vger.kernel.org>
-Cc: Hung-Te Lin <hungte@chromium.org>
-Cc: Guenter Roeck <groeck@chromium.org>
-Cc: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/firmware/google/vpd_decode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Reported-by: Tomasz Paweł Gajc <tpgxyz@gmail.com>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/678
+> Debugged-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> Build-tested-by: Nathan Chancellor <natechancellor@gmail.com>
 
-diff --git a/drivers/firmware/google/vpd_decode.c b/drivers/firmware/google/vpd_decode.c
-index dda525c0f968..5c6f2a74f104 100644
---- a/drivers/firmware/google/vpd_decode.c
-+++ b/drivers/firmware/google/vpd_decode.c
-@@ -52,7 +52,7 @@ static int vpd_decode_entry(const u32 max_len, const u8 *input_buf,
- 	if (max_len - consumed < *entry_len)
- 		return VPD_FAIL;
- 
--	consumed += decoded_len;
-+	consumed += *entry_len;
- 	*_consumed = consumed;
- 	return VPD_OK;
- }
--- 
-2.23.0.444.g18eeb5a265-goog
-
+Reviewed-by: Cengiz Can <cengiz@kernel.wtf>
