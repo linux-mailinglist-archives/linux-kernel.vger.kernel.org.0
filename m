@@ -2,229 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A76DC2348
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1D3C231D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:24:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731714AbfI3OaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:30:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45900 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731417AbfI3OaB (ORCPT
+        id S1731470AbfI3OYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:24:44 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:45330 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730378AbfI3OYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:30:01 -0400
-Received: by mail-qt1-f194.google.com with SMTP id c21so17236983qtj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 07:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sjn2J1X49Pi46tSFkNPgKivYUAqzgU4dvUWvnLT/A+k=;
-        b=l1I5R6RItUb8JBSLMy2KjEKywL+N5KRy2KecVolnRM5Ue9kSrk+uZPBKH3waMz9HZC
-         FaAcBM16VuGym3aAiw4UIxd6i/mG2L4vbxAekrkhGm4MeFvH/hxGLuCOsFKSE0Uh2Dtn
-         XP+TMDF8+ggFz3idHPkP3Alr5WbqAQCWHQdDhC8m4Mz4bf4wgFu5iGFhbwu+qeLUMCjG
-         i+hi3oZFSLmCZyZYXIxRoLn9eLh0RuZGfeNxxP91Zw69fFfxb2lEc/o7mZ7hBZY/1om8
-         XH7AfkwibVGvu/e943yOQ4XYxgwAmYKGL2aralp9u1cFWhrxoqRTusZUfL2taH6zev1r
-         vxKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sjn2J1X49Pi46tSFkNPgKivYUAqzgU4dvUWvnLT/A+k=;
-        b=TRppucHeqnMw19LNnM7IUYn12tS1Ixe9+nV9/WcDJGVt8DU+bQ0xesX/XFG/h+DjD4
-         2aw+u30c5jxdMoM4VtCqpoB9s+t8gxW186G7HvkT6vtYYid9EP1Srw+BHIkOC2qdyHTo
-         wTFSPHk0Asc52Nb98TNQ1BnixSttvUefpr10uWRWC75N+5SLIdS0BaLy0HLLmH15BUvS
-         iuKX4tapkPCuHmJkEMYVSbjWLW2T5tIrA6Bc2mCnjmYU2VviDCnwbJGAQs7NUX7s6jzp
-         iJTYn4xOfomCf+wS8jHV24yLRanp8H+i7tTHAlVCxEbre5crSaswLPnBEednbwSplAmu
-         ao2w==
-X-Gm-Message-State: APjAAAX1/l4TFq0DUn5WJInYhaQQSb6nswVhNfYY2DD7Uw92hCBPTGAy
-        KQiNT8HTx3pVul4LyLywmWriAds=
-X-Google-Smtp-Source: APXvYqzOU34ghWr479mTCLLTpxF5tE/I2chBuQeakRJgM9cBvbC2TUcba3xwVWC4DZajZd/OTARrzQ==
-X-Received: by 2002:a0c:b068:: with SMTP id l37mr20801495qvc.36.1569853799300;
-        Mon, 30 Sep 2019 07:29:59 -0700 (PDT)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id g192sm5504351qke.52.2019.09.30.07.29.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Sep 2019 07:29:58 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 10:29:53 -0400
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Dave Martin <Dave.Martin@arm.com>,
-        Julien Grall <julien.grall@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64/sve: Fix wrong free for task->thread.sve_state
-Message-ID: <20190930142952.7zwbucjvh2wxbzis@gabell>
-References: <20190927153949.29870-1-msys.mizuma@gmail.com>
- <b3dba44e-216c-f060-be8e-1c44bdc61576@arm.com>
- <20190930130244.GT27757@arm.com>
+        Mon, 30 Sep 2019 10:24:43 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8UEOgPs064508;
+        Mon, 30 Sep 2019 09:24:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569853482;
+        bh=Q++4+W+xo4Pr6ly1SOnOWLFFQ+MsIQZKvmW9IrDJ/9g=;
+        h=From:To:CC:Subject:Date;
+        b=kMWr25EA0mJP761xMSptJuMIBZFJNXq32J+QSNRtVrlwn3QtOJKXhtFCsndUN0G1x
+         hs3XEaetjTYgEZEij7C8DjhM5VmsAELJfhMZ+L+L34wRb9NbbP0LYP2qYvLhy0Cunz
+         6Rh5dbf2C5Zg9vgblGRAMIp+pqH9GttIXpUglmYE=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8UEOgY2068175
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Sep 2019 09:24:42 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 30
+ Sep 2019 09:24:32 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 30 Sep 2019 09:24:32 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8UEOfP8100297;
+        Mon, 30 Sep 2019 09:24:41 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <sre@kernel.org>, <linux-pm@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH 1/3] power_supply: Add additional health properties to the header
+Date:   Mon, 30 Sep 2019 09:31:35 -0500
+Message-ID: <20190930143137.21624-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190930130244.GT27757@arm.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julien and Dave,
+Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
 
-On Mon, Sep 30, 2019 at 02:02:46PM +0100, Dave Martin wrote:
-> On Mon, Sep 30, 2019 at 01:23:18PM +0100, Julien Grall wrote:
-> > Hi,
-> > 
-> > On 27/09/2019 16:39, Masayoshi Mizuma wrote:
-> > >From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> > >
-> > >The system which has SVE feature crashed because of
-> > >the memory pointed by task->thread.sve_state was destroyed
-> > >by someone.
-> > >
-> > >That is because sve_state is freed while the forking the
-> > >child process. The child process has the pointer of sve_state
-> > >which is same as the parent's because the child's task_struct
-> > >is copied from the parent's one. If the copy_process()
-> > >fails as an error on somewhere, for example, copy_creds(),
-> > >then the sve_state is freed even if the parent is alive.
-> > >The flow is as follows.
-> > >
-> > >copy_process
-> > >         p = dup_task_struct
-> > >             => arch_dup_task_struct
-> > >                 *dst = *src;  // copy the entire region.
-> > >:
-> > >         retval = copy_creds
-> > >         if (retval < 0)
-> > >                 goto bad_fork_free;
-> > >:
-> > >bad_fork_free:
-> > >...
-> > >         delayed_free_task(p);
-> > >           => free_task
-> > >              => arch_release_task_struct
-> > >                 => fpsimd_release_task
-> > >                    => __sve_free
-> > >                       => kfree(task->thread.sve_state);
-> > >                          // free the parent's sve_state
-> > >
-> > >Move child's sve_state = NULL and clearing TIF_SVE flag
-> > >to arch_dup_task_struct() so that the child doesn't free the
-> > >parent's one.
-> > >
-> > >Cc: stable@vger.kernel.org
-> > >Fixes: bc0ee4760364 ("arm64/sve: Core task context handling")
-> > 
-> > Looking at the log, it looks like THREAD_INFO_IN_TASK was selected before
-> > the bc0ee4760364. So it should be fine to backport for all the Linux tree
-> > contain this commit.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ include/linux/power_supply.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I think this patch is needed for the kernel has SVE support.
-I'll add the Cc tag as Dave said:
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 28413f737e7d..bd0d3225f245 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -61,6 +61,9 @@ enum {
+ 	POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE,
+ 	POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE,
+ 	POWER_SUPPLY_HEALTH_OVERCURRENT,
++	POWER_SUPPLY_HEALTH_WARM,
++	POWER_SUPPLY_HEALTH_COOL,
++	POWER_SUPPLY_HEALTH_HOT,
+ };
+ 
+ enum {
+-- 
+2.22.0.214.g8dca754b1e
 
-Cc: stable@vger.kernel.org # 4.15+
-
-So, I suppose this patch will be backported to stables 5.3.X,
-5.2.X and longterm 4.19.X.
-Does this make sense?
-
-> > 
-> > >Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> > >Reported-by: Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
-> > >Suggested-by: Dave Martin <Dave.Martin@arm.com>
-> > 
-> > I have tested the patch and can confirm that double-free disappeared after
-> > the patch is applied:
-> > 
-> > Tested-by: Julien Grall <julien.grall@arm.com>
-
-Thank you so much!
-
-> 
-> Good to have that confirmed -- thanks for verifying.
-> 
-> [...]
-> 
-> > >---
-> > >  arch/arm64/kernel/process.c | 21 ++++-----------------
-> > >  1 file changed, 4 insertions(+), 17 deletions(-)
-> > >
-> > >diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> > >index f674f28df..6937f5935 100644
-> > >--- a/arch/arm64/kernel/process.c
-> > >+++ b/arch/arm64/kernel/process.c
-> > >@@ -323,22 +323,16 @@ void arch_release_task_struct(struct task_struct *tsk)
-> > >  	fpsimd_release_task(tsk);
-> > >  }
-> > >-/*
-> > >- * src and dst may temporarily have aliased sve_state after task_struct
-> > >- * is copied.  We cannot fix this properly here, because src may have
-> > >- * live SVE state and dst's thread_info may not exist yet, so tweaking
-> > >- * either src's or dst's TIF_SVE is not safe.
-> > >- *
-> > >- * The unaliasing is done in copy_thread() instead.  This works because
-> > >- * dst is not schedulable or traceable until both of these functions
-> > >- * have been called.
-> > >- */
-> > 
-> > It would be good to explain in the commit message why tweaking "dst" in
-> > arch_dup_task_struct() is fine.
-> > 
-> > From my understanding, Arm64 used to have thread_info on the stack. So it
-> > would not be possible to clear TIF_SVE until the stack is initialized.
-> > 
-> > Now that the thread_info is part of the task, it should be valid to modify
-> > the flag from arch_dup_task_struct().
-> > 
-> > Note that technically, TIF_SVE does not need to be cleared from
-> > arch_dup_task_struct(). It could also be done from copy_thread(). But it is
-> > easier to keep the both changes together.
-
-Thanks, let me add some comments to the commit log.
-
-> > 
-> > >  int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
-> > >  {
-> > >  	if (current->mm)
-> > >  		fpsimd_preserve_current_state();
-> > >  	*dst = *src;
-> 
-> Ack, some more explanation would be a good idea here.
-> 
-> Maybe the following comments are sufficient?
-> 
-> 	/* We rely on the above assingment to initialise dst's thread_flags: */
-
-Thanks, I'll add this comment.
-
-> 
-> > >+	BUILD_BUG_ON(!IS_ENABLED(CONFIG_THREAD_INFO_IN_TASK));
-> > 
-> 
-> and
-> 
-> 	/*
-> 	 * Detach src's sve_state (if any) from dst so that it does not
-> 	 * get erroneously used or freed prematurely.  dst's sve_state
-> 	 * will be allocated on demand later on if dst uses SVE.
-> 	 * For consistency, also clear TIF_SVE here: this could be done
-> 	 * later in copy_process(), but to avoid tripping up future
-> 	 * maintainers it is best not to leave TIF_SVE and sve_state in
-> 	 * an inconsistent state, even temporarily.
-> 	 */
-
-I'll add this comments.
-
-> 
-> > >+	dst->thread.sve_state = NULL;
-> > >+	clear_tsk_thread_flag(dst, TIF_SVE);
-> 
-> (TIF_SVE should not usually be set in the first place of course, since
-> we are in a fork() or clone() syscall in src.  This may not be true if
-> a task is created using kernel_thread() while running in the context of
-> some user task that entered the kernel due to a trap or syscall --
-> though probably nobody should be doing that.)
-
-Thanks!
-Masa
