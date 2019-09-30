@@ -2,101 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9890C22CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2579C22B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:08:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731731AbfI3OJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:09:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730902AbfI3OJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:09:08 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1731587AbfI3OIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:08:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34528 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731375AbfI3OIF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:08:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nGO+/P6co1PNfbFpn0HhRpkobXLdDQLgOo3vkL3dnQU=; b=oFwm9wuVRUCMkpFfxrj3rlfM7
+        ZEKCLh6YFrBA9TGoGPtQDHYApGIwbO5PvQap4FsTkpTSzJlUzXhgle2IRp1X3JilvmqNZu7/E7Owc
+        BmsBAbClveVoI0SGB+RLmWkmJitP8HDDbrNNiNdAhKQWRkq2ptZUbMz+hpX56oKpqk8/80/6BvObg
+        z61df8lkf9tXS44l53L/9AXHLyiOA+SHVtBy8dM8YAgDSaWnX3eaVQTEUECVkiNQEges+reDs6j8m
+        9ibDKdcHBcYIGuzDOkiIY8E1Y1iN8+RDlxkF75BvcVMMeSaMeLSKVwnc+8LtRira2yDfaufgufSl1
+        mZMkfC7Wg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iEwLF-0003xH-FO; Mon, 30 Sep 2019 14:07:57 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D443A215EA;
-        Mon, 30 Sep 2019 14:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569852547;
-        bh=/U2mWnQ3hZWiS3jNT4z8EXf/IrTBXAj8SVOnPY2H9Fg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qiVFE8ticxpzKPSnioikiMP00UpPTIt5REBJv1PmqF/QjCF2BIh8/oNsn1nkKQpgd
-         R1WSbs+aNYHzXa4UJr0nQj7SWa37bkKJtRYYz2OpYWuNWi+yGYj1uzRXWVWkutlrpU
-         9kJhymmzPgf/9n12vu80Ap9XS3WlllqKkZ5SrAaA=
-Date:   Mon, 30 Sep 2019 16:07:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Enrico Weigelt <lkml@metux.net>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        jan.kiszka@siemens.com, Frank Iwanitz <friw@hms-networks.de>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v1 4/5] staging: fieldbus core: add support for FL-NET
- devices
-Message-ID: <20190930140714.GC2280096@kroah.com>
-References: <20190918183552.28959-1-TheSven73@gmail.com>
- <20190918183552.28959-5-TheSven73@gmail.com>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3EAAC305DE2;
+        Mon, 30 Sep 2019 16:07:07 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3E3B520FE307C; Mon, 30 Sep 2019 16:07:55 +0200 (CEST)
+Date:   Mon, 30 Sep 2019 16:07:55 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [PATCH V4 07/14] perf/x86/intel: Support hardware TopDown metrics
+Message-ID: <20190930140755.GE4581@hirez.programming.kicks-ass.net>
+References: <20190916134128.18120-1-kan.liang@linux.intel.com>
+ <20190916134128.18120-8-kan.liang@linux.intel.com>
+ <20190930130615.GN4553@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190918183552.28959-5-TheSven73@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20190930130615.GN4553@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 02:35:51PM -0400, Sven Van Asbroeck wrote:
-> Add the FL-NET device type to the fieldbus core.
+On Mon, Sep 30, 2019 at 03:06:15PM +0200, Peter Zijlstra wrote:
+> On Mon, Sep 16, 2019 at 06:41:21AM -0700, kan.liang@linux.intel.com wrote:
 
-What does this mean?
-
+> > +static bool is_first_topdown_event_in_group(struct perf_event *event)
+> > +{
+> > +	struct perf_event *first = NULL;
+> > +
+> > +	if (is_topdown_event(event->group_leader))
+> > +		first = event->group_leader;
+> > +	else {
+> > +		for_each_sibling_event(first, event->group_leader)
+> > +			if (is_topdown_event(first))
+> > +				break;
+> > +	}
+> > +
+> > +	if (event == first)
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
 > 
-> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-> ---
->  .../fieldbus/Documentation/ABI/sysfs-class-fieldbus-dev        | 1 +
->  drivers/staging/fieldbus/dev_core.c                            | 3 +++
->  drivers/staging/fieldbus/fieldbus_dev.h                        | 1 +
->  3 files changed, 5 insertions(+)
+> > +static u64 icl_update_topdown_event(struct perf_event *event)
+> > +{
+> > +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+> > +	struct perf_event *other;
+> > +	u64 slots, metrics;
+> > +	int idx;
+> > +
+> > +	/*
+> > +	 * Only need to update all events for the first
+> > +	 * slots/metrics event in a group
+> > +	 */
+> > +	if (event && !is_first_topdown_event_in_group(event))
+> > +		return 0;
 > 
-> diff --git a/drivers/staging/fieldbus/Documentation/ABI/sysfs-class-fieldbus-dev b/drivers/staging/fieldbus/Documentation/ABI/sysfs-class-fieldbus-dev
-> index 439f14d33c3b..233c418016aa 100644
-> --- a/drivers/staging/fieldbus/Documentation/ABI/sysfs-class-fieldbus-dev
-> +++ b/drivers/staging/fieldbus/Documentation/ABI/sysfs-class-fieldbus-dev
-> @@ -12,6 +12,7 @@ Description:
->  		Possible values:
->  			'unknown'
->  			'profinet'
-> +			'flnet'
->  
->  What:		/sys/class/fieldbus_dev/fieldbus_devX/fieldbus_id
->  KernelVersion:	5.1 (staging)
-> diff --git a/drivers/staging/fieldbus/dev_core.c b/drivers/staging/fieldbus/dev_core.c
-> index 9903c4f3cba9..7e9405e52f19 100644
-> --- a/drivers/staging/fieldbus/dev_core.c
-> +++ b/drivers/staging/fieldbus/dev_core.c
-> @@ -113,6 +113,9 @@ static ssize_t fieldbus_type_show(struct device *dev,
->  	case FIELDBUS_DEV_TYPE_PROFINET:
->  		t = "profinet";
->  		break;
-> +	case FIELDBUS_DEV_TYPE_FLNET:
-> +		t = "flnet";
-> +		break;
->  	default:
->  		t = "unknown";
->  		break;
-> diff --git a/drivers/staging/fieldbus/fieldbus_dev.h b/drivers/staging/fieldbus/fieldbus_dev.h
-> index 3b00315600e5..f775546b3404 100644
-> --- a/drivers/staging/fieldbus/fieldbus_dev.h
-> +++ b/drivers/staging/fieldbus/fieldbus_dev.h
-> @@ -15,6 +15,7 @@ struct fieldbus_dev_config;
->  enum fieldbus_dev_type {
->  	FIELDBUS_DEV_TYPE_UNKNOWN = 0,
->  	FIELDBUS_DEV_TYPE_PROFINET,
-> +	FIELDBUS_DEV_TYPE_FLNET
+> This is pretty crap and approaches O(n^2); let me think if there's
+> anything saner to do here.
 
-You add an unspecified enumerated type and suddenly new hardware starts
-working?  That feels really wrong to me...
+This is also really complicated in the case where we do
+perf_remove_from_context() in the 'wrong' order.
 
-greg k-h
+In that case we get detached events that are not up-to-date (and never
+will be). It doesn't look like that matters, but it is weird.
