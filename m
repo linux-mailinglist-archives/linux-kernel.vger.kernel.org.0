@@ -2,157 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95EFBC33C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ADBCC3398
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:00:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387581AbfJAME6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 08:04:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:39764 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732057AbfJAME6 (ORCPT
+        id S1726550AbfJAMAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 08:00:45 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50692 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfJAMAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 08:04:58 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91C48LR172799;
-        Tue, 1 Oct 2019 12:04:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=tmIzy72qo+rS2sy4J+XBqwA5jvB3VFv9TPhVygdVa7Y=;
- b=VRQJMsQlWcHI5cDsMpqi7PVWUkLh7ENNobf1T6yRegfa6GD84cj467aaVWfXAj0j6peJ
- CHV9NWR9xl2/4WAdR9bpH13oLwS1okn4u+I0c39dTkJaOXhBR+nDGNqCDHMr+d6vSCAN
- KNI0u3KjqD7S5MVByVumius9whOs2g9HjOAvUuyUsn2u6lRvxIhBfNIqt8QlElck2OCa
- 4lSSnpeARZVjLNh7Rq9MH3MfXwpxds68teDFmrlf7BlERa5Vohv81HCyhEvZlmkmu0Ba
- /u9hzQfhgcD9My2kvb+YCVYXUtRGiQWrpYbGSX5k6H6r9mwkxU5S7eqLF8MbLF8o76ss Xg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2v9xxunbrf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 12:04:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91C3OGK157533;
-        Tue, 1 Oct 2019 12:04:29 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2vbnqcs9n8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 12:04:29 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x91C4SRe010289;
-        Tue, 1 Oct 2019 12:04:28 GMT
-Received: from z2.cn.oracle.com (/10.182.71.205)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Oct 2019 05:04:27 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     vkuznets@redhat.com, linux-hyperv@vger.kernel.org,
-        kvm@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v2 4/4] x86/hyperv: Mark "hv_nopvspin" parameter obsolete and map it to "nopvspin"
-Date:   Mon, 30 Sep 2019 20:09:00 +0800
-Message-Id: <1569845340-11884-5-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1569845340-11884-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1569845340-11884-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910010112
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010112
+        Tue, 1 Oct 2019 08:00:45 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8UKMWaj121399;
+        Mon, 30 Sep 2019 15:22:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569874952;
+        bh=/ubZdApPBnsXOwica/+pxmLmIFznLxE+d34pdI5c1JY=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=jURCmzfyYxoJwybgfhe2AQ8cgH2bRRhMutFF1AeKG8pW8kURB5xlVa4Mai1gWRbJW
+         O39iVxJrgLITaQskttlECqj2ONDqprRUOKcUj5EN8CyGII2oQQTDVhe6+N+/P+7aEN
+         SMKnEoC6z6HCVqSPahuPOJ3ssXAKZ2H12rexWnCU=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8UKMWDM001356
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Sep 2019 15:22:32 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 30
+ Sep 2019 15:22:22 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 30 Sep 2019 15:22:32 -0500
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with SMTP id x8UKMWe8020400;
+        Mon, 30 Sep 2019 15:22:32 -0500
+Date:   Mon, 30 Sep 2019 15:24:43 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch 16/16] media: ti-vpe: vpe: don't rely on colorspace
+ member for conversion
+Message-ID: <20190930202443.tvu4htu7w5sv33ee@ti.com>
+References: <20190927183650.31345-1-bparrot@ti.com>
+ <20190927183650.31345-17-bparrot@ti.com>
+ <263b7b22-b867-3f73-bcaf-8978f9e3b415@xs4all.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <263b7b22-b867-3f73-bcaf-8978f9e3b415@xs4all.nl>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Includes asm/hypervisor.h in order to reference x86_hyper_type.
+Hans Verkuil <hverkuil@xs4all.nl> wrote on Mon [2019-Sep-30 11:05:13 +0200]:
+> On 9/27/19 8:36 PM, Benoit Parrot wrote:
+> > Up to now VPE was relying on the colorspace value of struct v4l2_format
+> > as an indication to perform color space conversion from YUV to RGB or
+> > not.
+> > 
+> > Instead we should used the source/destination fourcc codes as a more
+> > reliable indication to perform color space conversion or not.
+> > 
+> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> > ---
+> >  drivers/media/platform/ti-vpe/vpe.c | 41 ++++++++++++++++++++++-------
+> >  1 file changed, 32 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
+> > index e30981cd3e8f..d002adc6263f 100644
+> > --- a/drivers/media/platform/ti-vpe/vpe.c
+> > +++ b/drivers/media/platform/ti-vpe/vpe.c
+> > @@ -353,6 +353,32 @@ enum {
+> >  	Q_DATA_DST = 1,
+> >  };
+> >  
+> > +static bool is_fmt_rgb(u32 fourcc)
+> > +{
+> > +	if (fourcc == V4L2_PIX_FMT_RGB24 ||
+> > +	    fourcc == V4L2_PIX_FMT_BGR24 ||
+> > +	    fourcc == V4L2_PIX_FMT_RGB32 ||
+> > +	    fourcc == V4L2_PIX_FMT_BGR32 ||
+> > +	    fourcc == V4L2_PIX_FMT_RGB565 ||
+> > +	    fourcc == V4L2_PIX_FMT_RGB555)
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+> 
+> Why not add a 'bool is_rgb' to struct vpe_fmt?
+> 
+> It is all too easy to forget to update this function if a new RGB format is
+> added to the vpe_formats array in the future.
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 6 +++++-
- arch/x86/hyperv/hv_spinlock.c                   | 9 +++++----
- 2 files changed, 10 insertions(+), 5 deletions(-)
+Yeah I debate going that route also.
+I can change it easily enough.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1f0a62f..43f922c 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1436,6 +1436,10 @@
- 	hv_nopvspin	[X86,HYPER_V] Disables the paravirt spinlock optimizations
- 				      which allow the hypervisor to 'idle' the
- 				      guest on lock contention.
-+				      This parameter is obsoleted by "nopvspin"
-+				      parameter, which has equivalent effect for
-+				      HYPER_V platform.
-+
- 
- 	keep_bootcon	[KNL]
- 			Do not unregister boot console at start. This is only
-@@ -5331,7 +5335,7 @@
- 			as generic guest with no PV drivers. Currently support
- 			XEN HVM, KVM, HYPER_V and VMWARE guest.
- 
--	nopvspin	[X86,XEN,KVM] Disables the qspinlock slow path
-+	nopvspin	[X86,XEN,KVM,HYPER_V] Disables the qspinlock slow path
- 			using PV optimizations which allow the hypervisor to
- 			'idle' the guest on lock contention.
- 
-diff --git a/arch/x86/hyperv/hv_spinlock.c b/arch/x86/hyperv/hv_spinlock.c
-index 07f21a0..e00e319 100644
---- a/arch/x86/hyperv/hv_spinlock.c
-+++ b/arch/x86/hyperv/hv_spinlock.c
-@@ -12,12 +12,11 @@
- 
- #include <linux/spinlock.h>
- 
-+#include <asm/hypervisor.h>
- #include <asm/mshyperv.h>
- #include <asm/paravirt.h>
- #include <asm/apic.h>
- 
--static bool __initdata hv_pvspin = true;
--
- static void hv_qlock_kick(int cpu)
- {
- 	apic->send_IPI(cpu, X86_PLATFORM_IPI_VECTOR);
-@@ -64,7 +63,7 @@ __visible bool hv_vcpu_is_preempted(int vcpu)
- 
- void __init hv_init_spinlocks(void)
- {
--	if (!hv_pvspin || !apic ||
-+	if (!pvspin || !apic ||
- 	    !(ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) ||
- 	    !(ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)) {
- 		pr_info("PV spinlocks disabled\n");
-@@ -82,7 +81,9 @@ void __init hv_init_spinlocks(void)
- 
- static __init int hv_parse_nopvspin(char *arg)
- {
--	hv_pvspin = false;
-+	pr_notice("\"hv_nopvspin\" is deprecated, please use \"nopvspin\" instead\n");
-+	if (x86_hyper_type == X86_HYPER_MS_HYPERV)
-+		pvspin = false;
- 	return 0;
- }
- early_param("hv_nopvspin", hv_parse_nopvspin);
--- 
-1.8.3.1
+Although, depending on the further changes required below this may be moot.
+We'll see.
 
+> 
+> > +
+> > +/*
+> > + * This helper is only used to setup the color space converter
+> > + * the actual value returned is only to broadly differentiate between
+> > + * RGB and YUV
+> > + */
+> > +static enum  v4l2_colorspace fourcc_to_colorspace(u32 fourcc)
+> 
+> double space after enum.
+
+Arrg, I'll fix that.
+
+> 
+> > +{
+> > +	if (is_fmt_rgb(fourcc))
+> > +		return V4L2_COLORSPACE_SRGB;
+> > +
+> > +	return V4L2_COLORSPACE_SMPTE170M;
+> > +}
+> 
+> This is highly confusing. RGB or YUV conversion does not change the colorspace
+> at all.
+> 
+
+Well I see here that I am missing some understanding.
+But as you saw all I am trying to get to is this: do we need to setup YUV
+to RGB conversion or not.
+
+Regarding csc_set_coeff() I was not trying to re-write it but use the
+pixel_formats as hint. I understand that this might not be as flexible as
+it needs to be (meaning handling colorspace, xfer_func, ycbr_encoding or
+quantization in a sane way) but to at least get the correct direction of the
+conversion. At the moment VPE driver only handles YUV to RGB conversion.
+
+
+> There are four colorimetry related fields: colorspace, xfer_func, ycbcr_enc and
+> quantization. Most hardware (including this one AFAICT) have a 3x3 matrix + a
+> vector to do the conversion. This only allows you to convert between different
+> ycbcr encodings and quantization ranges. The colorspace and xfer_func parameters
+> stay unchanged (you need gamma tables and two other 3x3 matrices for that).
+> 
+> So if you want to set up the 3x3 matrix + vector correctly, then you need to
+> provide the ycbcr_enc value + quantization value of the source to your function.
+> ycbcr_enc is only valid of YUV pixelformats, of course, and you can use
+> V4L2_MAP_COLORSPACE_DEFAULT, V4L2_MAP_YCBCR_ENC_DEFAULT and V4L2_MAP_QUANTIZATION_DEFAULT
+> if one or more of these values as set by userspace are 0.
+> 
+> Since the V4L2 API does not (yet) support setting ycbcr_enc and quantization for the
+> capture queue you have to provide that information yourself:
+> 
+> For RGB ycbcr_enc is of course ignored, and quantization should be full range.
+> For YUV it depends: the quantization is always limited range, but for the ycbcr_enc
+> you have a choice: if the source was YUV, then you can decide to just copy the
+> ycbcr_enc value. Alternatively, you can convert to 601 for SDTV and 709 for anything
+> else. The latter is also the recommended choice if the source was RGB.
+> 
+> In any case, please do not use enum v4l2_colorspace in the csc_set_coeff function:
+> it's misleading.
+
+But I guess I can rewrite the csc_set_coeff() module API to use at least
+pixel_format instead of enum_colorspace at least as a first step.
+
+Full color space parameters support (meaning all 4 of them) would probably
+be better done as its own future patch series.
+
+Benoit
+
+> 
+> https://hverkuil.home.xs4all.nl/spec/uapi/v4l/colorspaces.html and the following two
+> sections contain a lot of information about how colorspaces work.
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > +
+> >  /* find our format description corresponding to the passed v4l2_format */
+> >  static struct vpe_fmt *__find_format(u32 fourcc)
+> >  {
+> > @@ -764,11 +790,10 @@ static void set_src_registers(struct vpe_ctx *ctx)
+> >  static void set_dst_registers(struct vpe_ctx *ctx)
+> >  {
+> >  	struct vpe_mmr_adb *mmr_adb = ctx->mmr_adb.addr;
+> > -	enum v4l2_colorspace clrspc = ctx->q_data[Q_DATA_DST].colorspace;
+> >  	struct vpe_fmt *fmt = ctx->q_data[Q_DATA_DST].fmt;
+> >  	u32 val = 0;
+> >  
+> > -	if (clrspc == V4L2_COLORSPACE_SRGB) {
+> > +	if (is_fmt_rgb(fmt->fourcc)) {
+> >  		val |= VPE_RGB_OUT_SELECT;
+> >  		vpdma_set_bg_color(ctx->dev->vpdma,
+> >  			(struct vpdma_data_format *)fmt->vpdma_fmt[0], 0xff);
+> > @@ -912,7 +937,8 @@ static int set_srcdst_params(struct vpe_ctx *ctx)
+> >  	set_dei_regs(ctx);
+> >  
+> >  	csc_set_coeff(ctx->dev->csc, &mmr_adb->csc_regs[0],
+> > -		s_q_data->colorspace, d_q_data->colorspace);
+> > +		      fourcc_to_colorspace(s_q_data->fmt->fourcc),
+> > +		      fourcc_to_colorspace(d_q_data->fmt->fourcc));
+> >  
+> >  	sc_set_hs_coeffs(ctx->dev->sc, ctx->sc_coeff_h.addr, src_w, dst_w);
+> >  	sc_set_vs_coeffs(ctx->dev->sc, ctx->sc_coeff_v.addr, src_h, dst_h);
+> > @@ -1285,7 +1311,7 @@ static void device_run(void *priv)
+> >  	if (ctx->deinterlacing)
+> >  		add_out_dtd(ctx, VPE_PORT_MV_OUT);
+> >  
+> > -	if (d_q_data->colorspace == V4L2_COLORSPACE_SRGB) {
+> > +	if (is_fmt_rgb(d_q_data->fmt->fourcc)) {
+> >  		add_out_dtd(ctx, VPE_PORT_RGB_OUT);
+> >  	} else {
+> >  		add_out_dtd(ctx, VPE_PORT_LUMA_OUT);
+> > @@ -1327,7 +1353,7 @@ static void device_run(void *priv)
+> >  	}
+> >  
+> >  	/* sync on channel control descriptors for output ports */
+> > -	if (d_q_data->colorspace == V4L2_COLORSPACE_SRGB) {
+> > +	if (is_fmt_rgb(d_q_data->fmt->fourcc)) {
+> >  		vpdma_add_sync_on_channel_ctd(&ctx->desc_list,
+> >  			VPE_CHAN_RGB_OUT);
+> >  	} else {
+> > @@ -1682,10 +1708,7 @@ static int __vpe_try_fmt(struct vpe_ctx *ctx, struct v4l2_format *f,
+> >  		height = pix->height;
+> >  
+> >  	if (!pix->colorspace) {
+> > -		if (fmt->fourcc == V4L2_PIX_FMT_RGB24 ||
+> > -				fmt->fourcc == V4L2_PIX_FMT_BGR24 ||
+> > -				fmt->fourcc == V4L2_PIX_FMT_RGB32 ||
+> > -				fmt->fourcc == V4L2_PIX_FMT_BGR32) {
+> > +		if (is_fmt_rgb(fmt->fourcc)) {
+> >  			pix->colorspace = V4L2_COLORSPACE_SRGB;
+> >  		} else {
+> >  			if (height > 1280)	/* HD */
+> > 
+> 
