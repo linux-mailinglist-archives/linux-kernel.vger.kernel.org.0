@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D486EC2A46
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 01:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39F8EC2A49
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 01:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbfI3XIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 19:08:19 -0400
+        id S1732446AbfI3XIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 19:08:25 -0400
 Received: from mail-eopbgr710105.outbound.protection.outlook.com ([40.107.71.105]:33459
         "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732018AbfI3XIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 19:08:18 -0400
+        id S1732301AbfI3XIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 19:08:22 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cl+Fd7JwP3EPA3BYzGPPubbIffr28ZHNVPXKgXy+hQnsqjGgvKRoXc+2gupOlhDNCkuwWLlAZqS02wS/q+0uN9yuB63i5S8OFtz5livjNz/dUEvzrrYlFpt62zYHRPQ9hJWNfXjcPYnAjBN2fjmKA4eQ3JxOx4SqexLYUmaPLm7U1bV9RK6L6kX5/8XTmEJB/gM/T0/bp7lsVEpiB1uX1g4PulHARpXXY9DtuBCYLk3tcueaiJsGHNXdrxwXB6/a/gkqoe18Ga0TjIH+amLBgNBmXTHm95BVxlDRqrBIF3KeNytnEaeXTkaA6kPxC83a6dXQD59O3ryrfIgtPD2xTQ==
+ b=J9yoKIqH+QohUvMOgVTcmIogDgYZMeArd7GUChxv2d8xbqZJZLzfaa3KCxkJruDcD+1Yg9rmCWo+lgA+A2SpuIFgwOt+oi4JzxWCnUpve8fTkTZlKsMENTZgo7zo7mRGkv/2NI5eOp/NBiIXifsi9tg4VCdXrnJimM/HbjFS82QBLFni7j8BMCwRwEFi4InWIH/cFF2DQImOIjO/cXBiPMtegLA9okaxmMSJ/b7YCvd4qvsPA/RfXS0/y83t8Z3ca5Y1+wmLWyF9slP5gwNi9IWpo5ae5DewEywY3g8j19lli7JmxrlJFL9W+qdZaDHD3mGxwF+KGgnViEaRj/qRkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IllcbHu49UnIzLg2B1vxZlSaLf4pVPVKbtzaaUYQwSg=;
- b=X8DGjc27eSe5jw3PfkiW0MR40mwpoFn/Z9W4cEbFSR2HHTHDeu5wiCnShJ3fReHQAX/08y8iGvqD3vvc2BmIIXYE+BCSL2rlNZR5XBjtY8fLCGroGM6P4QvtHZE5ZK/ScA1dk3cECscikuv+prL66CFrtpgmbSGh5Uym42lL7UHue2jd/74B8PWRaFK+YXh3thFxU5OM9rMWWd5JPE+JewAL0xxt/GwzIoZ+23ThP+pudjb8KWOxiHnF3EVg1G7vZRrwtWug8CU4E5HlTa1Qa/xP8z5cVM4AXA/aKaAtY7eCpDZ6IaWRUWe46NEqH5ni0x23L8BIwdl9UXlTk4jycA==
+ bh=BrqnYEjdQEijKACbW1P8uI4u8aL+ZvFCd0DStIFNSws=;
+ b=BU7VyWy3VglB+R5znueEOt9WWQkUUOS+DdSAjdI0SFb7vK4lt9XR4e+imf0fimwxvFv1wbWq7v4QD23GgcK6WeRzx8abWhLZVP9wf/q6p+YUv03+1Zl4hncWDwHVEp3MYO1vEhxTgYMAChPvm6vcI4odPavgAsokvL54YUOceuJornYdNKe0vy0iGB9eiRauz1VezuhpaLSjfNAs0JOZ9KsfnPd98WarVxe3bFW0GKDjqDBfuKFs2c7dUj0FlKGbK5qEyyuwej9tUg/vAAeRGCU2G25XC51clrReiG/ccY5lAams6SzK9y9ihlI/uhIyc3C2oiSiUfYeGh1HcfONnw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
  dkim=pass header.d=mips.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IllcbHu49UnIzLg2B1vxZlSaLf4pVPVKbtzaaUYQwSg=;
- b=P1V+7VW3cariwhBs9S90N+uTqIEoXfblO1DhUPcAH0HyqM8a1dW+8V/YyXy0jB7uuBVmXOJAQ1Pci4XwG6gAzb3h06++SWtDXjYqIgKyi/KcKi0Eny6vrqk/77RfIfr56KaGPCFgMXkCgvrDk2ys4uh1VaPvR/yt1n5hmHnwQ7Q=
+ bh=BrqnYEjdQEijKACbW1P8uI4u8aL+ZvFCd0DStIFNSws=;
+ b=OX1gPlU+VoPFTSPITy0s1PSctNddHJ19pAGYnMsgGrmWa/Ab3QcXgruOW/40plFOMM7H9MYAYLE2EMQRxC7DqHBeuVkQTfD6dhF0t2U4YFO90JhaRxkq5NdKINhSmvD/nRbBeUNzeo+zWapPit51WoAdT91ZKKnxMG7L6I6Jly4=
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
  MWHPR2201MB1709.namprd22.prod.outlook.com (10.164.206.151) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.20; Mon, 30 Sep 2019 23:08:15 +0000
+ 15.20.2305.20; Mon, 30 Sep 2019 23:08:20 +0000
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::498b:c2cd:e816:1481]) by MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::498b:c2cd:e816:1481%2]) with mapi id 15.20.2305.017; Mon, 30 Sep 2019
- 23:08:15 +0000
+ 23:08:20 +0000
 From:   Paul Burton <paul.burton@mips.com>
 To:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
 CC:     Huacai Chen <chenhc@lemote.com>,
         Jiaxun Yang <jiaxun.yang@flygoat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Paul Burton <pburton@wavecomp.com>
-Subject: [PATCH 01/37] MIPS: Unify sc beqz definition
-Thread-Topic: [PATCH 01/37] MIPS: Unify sc beqz definition
-Thread-Index: AQHVd+Pwc/PZwTOkWk+5nsJHrv9cbQ==
-Date:   Mon, 30 Sep 2019 23:08:15 +0000
-Message-ID: <20190930230806.2940505-2-paul.burton@mips.com>
+Subject: [PATCH 06/37] MIPS: barrier: Remove fast_mb() Octeon #ifdef'ery
+Thread-Topic: [PATCH 06/37] MIPS: barrier: Remove fast_mb() Octeon #ifdef'ery
+Thread-Index: AQHVd+PzeVq9kAt290WIqEOScOBiuA==
+Date:   Mon, 30 Sep 2019 23:08:19 +0000
+Message-ID: <20190930230806.2940505-7-paul.burton@mips.com>
 References: <20190930230806.2940505-1-paul.burton@mips.com>
 In-Reply-To: <20190930230806.2940505-1-paul.burton@mips.com>
 Accept-Language: en-US
@@ -61,246 +61,69 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.23.0
 x-originating-ip: [12.94.197.246]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0e672a2c-5249-42c0-2cfe-08d745fb12b8
+x-ms-office365-filtering-correlation-id: 462dc3b8-25f4-48af-bdd4-08d745fb1577
 x-ms-traffictypediagnostic: MWHPR2201MB1709:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB1709D168920EF55CCA0276ECC1820@MWHPR2201MB1709.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-microsoft-antispam-prvs: <MWHPR2201MB1709B6DE1A5B9C3C05A8E77AC1820@MWHPR2201MB1709.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
 x-forefront-prvs: 01762B0D64
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(376002)(346002)(396003)(136003)(199004)(189003)(2351001)(66476007)(66556008)(66946007)(64756008)(66446008)(107886003)(99286004)(6486002)(52116002)(5640700003)(6436002)(25786009)(478600001)(14454004)(76176011)(26005)(6512007)(5660300002)(71200400001)(71190400001)(1076003)(4326008)(186003)(42882007)(6506007)(11346002)(256004)(486006)(44832011)(476003)(2616005)(14444005)(446003)(54906003)(316002)(7736002)(305945005)(6116002)(2906002)(3846002)(81156014)(81166006)(102836004)(50226002)(6916009)(386003)(36756003)(8676002)(8936002)(66066001)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1709;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(376002)(346002)(396003)(136003)(199004)(189003)(2351001)(66476007)(66556008)(66946007)(64756008)(66446008)(107886003)(99286004)(6486002)(52116002)(5640700003)(6436002)(25786009)(478600001)(14454004)(76176011)(26005)(6512007)(5660300002)(71200400001)(71190400001)(4744005)(1076003)(4326008)(186003)(42882007)(6506007)(11346002)(256004)(486006)(44832011)(476003)(2616005)(446003)(54906003)(316002)(7736002)(305945005)(6116002)(2906002)(3846002)(81156014)(81166006)(102836004)(50226002)(6916009)(386003)(36756003)(8676002)(8936002)(66066001)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1709;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: wavecomp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: uxSaKN6eGf5LXd2MClFbFUKaY+bL0243GdcLdGY10favhYSiEYs+X6sPh48KNtcVRcwfmKZkdF7XdEeGz8gTfqACE8g4Eu65n7xPSTb2XE0JGK66+W/k8x4d0ViTgT8rBojZ4MBbVnEyXixHKqkdqqy3gwUzLCvN+WpOaTfGsvex0z3hLcnRDOn7quIqZveQKsBklfSyEXfMWQ1hcCBtbpku9LzVrp+lRMW7aofnGYoycxCWlGFyyUEvM5xKPaoEfEoXnX9d4gwhHozfr+iPyFeLcdp7HjVaLT0SUwacxLaQ4tWvpn4HCvUd7s9KcT5qSdv/JNCTfaSIYYOaRqm2CdwEaWczHC2gUVfOQA3JcEt2fzk1TzZ+SsF1VZAvNdW/FeEPkAG4duXTHqpA8qsfYRjvxRKfPkuNJkvVnL6xoHY=
+x-microsoft-antispam-message-info: TSeAAwVMTDamfjnekE9MTVrove26oLUakIo5xAuoKaBWInpICqpP3a8Ys+9f9glKYQiYWEd/7du97Rof814MR1Z/VFh6gpD2VTRqp8rFQOmB/CmV3vQt2CeQp+qWw9PRLFpggsMIuf3Uyx9bncynMCjSwGPrUPIpliEPXMc5YrluY4RkDeSnfkC1KNbbwxmvdl1CIPshtTirZxQJBIB1DFvJgvDAF/TCZAaE3L5GNWhysLMQN+EpQJU3BcOKw1EEfVvxVfeAn7tQssK3jUJFpxzvACLmloMGSRtBAqB7j9MxtONiwzsxjEZ25uJpHwWTrUO36/pQnBhVBGcnFTA3IR173g2YM0Igl4o0Rh+Tv8eNlWAbTKeM17DFZcUiHGoWrw0Se2sghaZfARZkAA2RVzNrWRF4sP2i2VEmdlUfZuQ=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e672a2c-5249-42c0-2cfe-08d745fb12b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 23:08:15.1661
+X-MS-Exchange-CrossTenant-Network-Message-Id: 462dc3b8-25f4-48af-bdd4-08d745fb1577
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 23:08:19.7620
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: a2vXDTOHSXPvOWdjRUlkP0jpNnHxVeSwWleMAjarmzfT/WsrQqd57nGZaHHQMT85vA9yn9Eujku0l9D8Lo2Ogw==
+X-MS-Exchange-CrossTenant-userprincipalname: 8PV6JSwNSgI4qL2LsuPVaFLYMKTCXuK40B6WD3joP1tW5s3Fj06rvk95ZjrXOz5K1e+FOYeEbl6nB96+dobpCw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1709
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We currently duplicate the definition of __scbeqz in asm/atomic.h &
-asm/cmpxchg.h. Move it to asm/llsc.h & rename it to __SC_BEQZ to fit
-better with the existing __SC macro provided there.
-
-We include a tab in the string in order to avoid the need for users to
-indent code any further to include whitespace of their own after the
-instruction mnemonic.
+The definition of fast_mb() is the same in both the Octeon & non-Octeon
+cases, so remove the duplication & define it only once.
 
 Signed-off-by: Paul Burton <paul.burton@mips.com>
 ---
 
- arch/mips/include/asm/atomic.h  | 28 +++++++++-------------------
- arch/mips/include/asm/cmpxchg.h | 20 ++++----------------
- arch/mips/include/asm/llsc.h    | 11 +++++++++++
- 3 files changed, 24 insertions(+), 35 deletions(-)
+ arch/mips/include/asm/barrier.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/include/asm/atomic.h b/arch/mips/include/asm/atomic.=
-h
-index bb8658cc7f12..7578c807ef98 100644
---- a/arch/mips/include/asm/atomic.h
-+++ b/arch/mips/include/asm/atomic.h
-@@ -20,19 +20,9 @@
- #include <asm/compiler.h>
- #include <asm/cpu-features.h>
- #include <asm/cmpxchg.h>
-+#include <asm/llsc.h>
- #include <asm/war.h>
+diff --git a/arch/mips/include/asm/barrier.h b/arch/mips/include/asm/barrie=
+r.h
+index 8a5abc1c85a6..657ec01120a4 100644
+--- a/arch/mips/include/asm/barrier.h
++++ b/arch/mips/include/asm/barrier.h
+@@ -38,6 +38,8 @@ static inline void wmb(void)
+ }
+ #define wmb wmb
 =20
--/*
-- * Using a branch-likely instruction to check the result of an sc instruct=
-ion
-- * works around a bug present in R10000 CPUs prior to revision 3.0 that co=
-uld
-- * cause ll-sc sequences to execute non-atomically.
-- */
--#if R10000_LLSC_WAR
--# define __scbeqz "beqzl"
--#else
--# define __scbeqz "beqz"
--#endif
--
- #define ATOMIC_INIT(i)	  { (i) }
-=20
- /*
-@@ -65,7 +55,7 @@ static __inline__ void atomic_##op(int i, atomic_t * v)		=
-	      \
- 		"1:	ll	%0, %1		# atomic_" #op "	\n"   \
- 		"	" #asm_op " %0, %2				\n"   \
- 		"	sc	%0, %1					\n"   \
--		"\t" __scbeqz "	%0, 1b					\n"   \
-+		"\t" __SC_BEQZ "%0, 1b					\n"   \
- 		"	.set	pop					\n"   \
- 		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (v->counter)	      \
- 		: "Ir" (i) : __LLSC_CLOBBER);				      \
-@@ -93,7 +83,7 @@ static __inline__ int atomic_##op##_return_relaxed(int i,=
- atomic_t * v)	      \
- 		"1:	ll	%1, %2		# atomic_" #op "_return	\n"   \
- 		"	" #asm_op " %0, %1, %3				\n"   \
- 		"	sc	%0, %2					\n"   \
--		"\t" __scbeqz "	%0, 1b					\n"   \
-+		"\t" __SC_BEQZ "%0, 1b					\n"   \
- 		"	" #asm_op " %0, %1, %3				\n"   \
- 		"	.set	pop					\n"   \
- 		: "=3D&r" (result), "=3D&r" (temp),				      \
-@@ -127,7 +117,7 @@ static __inline__ int atomic_fetch_##op##_relaxed(int i=
-, atomic_t * v)	      \
- 		"1:	ll	%1, %2		# atomic_fetch_" #op "	\n"   \
- 		"	" #asm_op " %0, %1, %3				\n"   \
- 		"	sc	%0, %2					\n"   \
--		"\t" __scbeqz "	%0, 1b					\n"   \
-+		"\t" __SC_BEQZ "%0, 1b					\n"   \
- 		"	.set	pop					\n"   \
- 		"	move	%0, %1					\n"   \
- 		: "=3D&r" (result), "=3D&r" (temp),				      \
-@@ -205,7 +195,7 @@ static __inline__ int atomic_sub_if_positive(int i, ato=
-mic_t * v)
- 		"	.set	push					\n"
- 		"	.set	"MIPS_ISA_LEVEL"			\n"
- 		"	sc	%1, %2					\n"
--		"\t" __scbeqz "	%1, 1b					\n"
-+		"\t" __SC_BEQZ "%1, 1b					\n"
- 		"2:							\n"
- 		"	.set	pop					\n"
- 		: "=3D&r" (result), "=3D&r" (temp),
-@@ -267,7 +257,7 @@ static __inline__ void atomic64_##op(s64 i, atomic64_t =
-* v)		      \
- 		"1:	lld	%0, %1		# atomic64_" #op "	\n"   \
- 		"	" #asm_op " %0, %2				\n"   \
- 		"	scd	%0, %1					\n"   \
--		"\t" __scbeqz "	%0, 1b					\n"   \
-+		"\t" __SC_BEQZ "%0, 1b					\n"   \
- 		"	.set	pop					\n"   \
- 		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (v->counter)	      \
- 		: "Ir" (i) : __LLSC_CLOBBER);				      \
-@@ -295,7 +285,7 @@ static __inline__ s64 atomic64_##op##_return_relaxed(s6=
-4 i, atomic64_t * v)   \
- 		"1:	lld	%1, %2		# atomic64_" #op "_return\n"  \
- 		"	" #asm_op " %0, %1, %3				\n"   \
- 		"	scd	%0, %2					\n"   \
--		"\t" __scbeqz "	%0, 1b					\n"   \
-+		"\t" __SC_BEQZ "%0, 1b					\n"   \
- 		"	" #asm_op " %0, %1, %3				\n"   \
- 		"	.set	pop					\n"   \
- 		: "=3D&r" (result), "=3D&r" (temp),				      \
-@@ -329,7 +319,7 @@ static __inline__ s64 atomic64_fetch_##op##_relaxed(s64=
- i, atomic64_t * v)    \
- 		"1:	lld	%1, %2		# atomic64_fetch_" #op "\n"   \
- 		"	" #asm_op " %0, %1, %3				\n"   \
- 		"	scd	%0, %2					\n"   \
--		"\t" __scbeqz "	%0, 1b					\n"   \
-+		"\t" __SC_BEQZ "%0, 1b					\n"   \
- 		"	move	%0, %1					\n"   \
- 		"	.set	pop					\n"   \
- 		: "=3D&r" (result), "=3D&r" (temp),				      \
-@@ -404,7 +394,7 @@ static __inline__ s64 atomic64_sub_if_positive(s64 i, a=
-tomic64_t * v)
- 		"	move	%1, %0					\n"
- 		"	bltz	%0, 1f					\n"
- 		"	scd	%1, %2					\n"
--		"\t" __scbeqz "	%1, 1b					\n"
-+		"\t" __SC_BEQZ "%1, 1b					\n"
- 		"1:							\n"
- 		"	.set	pop					\n"
- 		: "=3D&r" (result), "=3D&r" (temp),
-diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpxch=
-g.h
-index 79bf34efbc04..5d3f0e3513b4 100644
---- a/arch/mips/include/asm/cmpxchg.h
-+++ b/arch/mips/include/asm/cmpxchg.h
-@@ -11,19 +11,9 @@
- #include <linux/bug.h>
- #include <linux/irqflags.h>
- #include <asm/compiler.h>
-+#include <asm/llsc.h>
- #include <asm/war.h>
-=20
--/*
-- * Using a branch-likely instruction to check the result of an sc instruct=
-ion
-- * works around a bug present in R10000 CPUs prior to revision 3.0 that co=
-uld
-- * cause ll-sc sequences to execute non-atomically.
-- */
--#if R10000_LLSC_WAR
--# define __scbeqz "beqzl"
--#else
--# define __scbeqz "beqz"
--#endif
--
- /*
-  * These functions doesn't exist, so if they are called you'll either:
-  *
-@@ -57,7 +47,7 @@ extern unsigned long __xchg_called_with_bad_pointer(void)
- 		"	move	$1, %z3				\n"	\
- 		"	.set	" MIPS_ISA_ARCH_LEVEL "		\n"	\
- 		"	" st "	$1, %1				\n"	\
--		"\t" __scbeqz "	$1, 1b				\n"	\
-+		"\t" __SC_BEQZ	"$1, 1b				\n"	\
- 		"	.set	pop				\n"	\
- 		: "=3D&r" (__ret), "=3D" GCC_OFF_SMALL_ASM() (*m)		\
- 		: GCC_OFF_SMALL_ASM() (*m), "Jr" (val)			\
-@@ -130,7 +120,7 @@ static inline unsigned long __xchg(volatile void *ptr, =
-unsigned long x,
- 		"	move	$1, %z4				\n"	\
- 		"	.set	"MIPS_ISA_ARCH_LEVEL"		\n"	\
- 		"	" st "	$1, %1				\n"	\
--		"\t" __scbeqz "	$1, 1b				\n"	\
-+		"\t" __SC_BEQZ	"$1, 1b				\n"	\
- 		"	.set	pop				\n"	\
- 		"2:						\n"	\
- 		: "=3D&r" (__ret), "=3D" GCC_OFF_SMALL_ASM() (*m)		\
-@@ -268,7 +258,7 @@ static inline unsigned long __cmpxchg64(volatile void *=
-ptr,
- 	/* Attempt to store new at ptr */
- 	"	scd	%L1, %2				\n"
- 	/* If we failed, loop! */
--	"\t" __scbeqz "	%L1, 1b				\n"
-+	"\t" __SC_BEQZ "%L1, 1b				\n"
- 	"	.set	pop				\n"
- 	"2:						\n"
- 	: "=3D&r"(ret),
-@@ -311,6 +301,4 @@ static inline unsigned long __cmpxchg64(volatile void *=
-ptr,
- # endif /* !CONFIG_SMP */
- #endif /* !CONFIG_64BIT */
-=20
--#undef __scbeqz
--
- #endif /* __ASM_CMPXCHG_H */
-diff --git a/arch/mips/include/asm/llsc.h b/arch/mips/include/asm/llsc.h
-index c6d17d171147..9b19f38562ac 100644
---- a/arch/mips/include/asm/llsc.h
-+++ b/arch/mips/include/asm/llsc.h
-@@ -25,4 +25,15 @@
- #define __EXT		"dext	"
- #endif
-=20
-+/*
-+ * Using a branch-likely instruction to check the result of an sc instruct=
-ion
-+ * works around a bug present in R10000 CPUs prior to revision 3.0 that co=
-uld
-+ * cause ll-sc sequences to execute non-atomically.
-+ */
-+#if R10000_LLSC_WAR
-+# define __SC_BEQZ "beqzl	"
-+#else
-+# define __SC_BEQZ "beqz	"
-+#endif
++#define fast_mb()	__sync()
 +
- #endif /* __ASM_LLSC_H  */
+ #define __fast_iob()				\
+ 	__asm__ __volatile__(			\
+ 		".set	push\n\t"		\
+@@ -49,10 +51,8 @@ static inline void wmb(void)
+ 		: "m" (*(int *)CKSEG1)		\
+ 		: "memory")
+ #ifdef CONFIG_CPU_CAVIUM_OCTEON
+-# define fast_mb()	__sync()
+ # define fast_iob()	do { } while (0)
+ #else /* ! CONFIG_CPU_CAVIUM_OCTEON */
+-# define fast_mb()	__sync()
+ # ifdef CONFIG_SGI_IP28
+ #  define fast_iob()				\
+ 	__asm__ __volatile__(			\
 --=20
 2.23.0
 
