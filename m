@@ -2,104 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4812C283A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC180C2832
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:06:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbfI3VGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:06:52 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37008 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730886AbfI3VGw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:06:52 -0400
-Received: by mail-oi1-f194.google.com with SMTP id i16so12457760oie.4;
-        Mon, 30 Sep 2019 14:06:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R+ScOBn956KzGEkg9VCnHI1hFy+s6fYadz+MoOpEicw=;
-        b=pjMhvLmNowUPj7raJGbALN8qwn2QitiKVSbnhv+BIlTh+Rmd/0WCVMGtPBDmoI4sPz
-         aahwHYHCakYIrFFOEND1JFsPVLyPItHuoEYhUg2HQ8RpAmpfYYZABFe+8JPQjWDI+APO
-         Q1KthcPJ7n43F9YoLZTjU52JVkOjUvcErYOxzX0CI6YUMn45XMfv9GjwdEJb4vtUpb+e
-         FJeONc84A3EtJUXFrCZFzLaZgUvmybymJbJf9zQlS/JTWnSQbHQdHHeSxmBLP4EGgHb3
-         NHfz1ki50qt/LP18hQXOSq7p5bIBCxvb6+O8AXa/Iv6RWZmBClHkfvbhzV5ReWwEZ/D4
-         kFKA==
-X-Gm-Message-State: APjAAAWqkvhoApMoy1CGuFKaNYJkkGTzgBbc11R4y74q5tntO9csSean
-        8a/YnCy1LNW52qxrJd0vlF/xeZM=
-X-Google-Smtp-Source: APXvYqxJdj7UgIetkxyOJuuB+3gPijhJfnPX8rakxTFVB90F9LrBkIwQZ2VZisQ5soTIpdHmL7I2rw==
-X-Received: by 2002:aca:50ca:: with SMTP id e193mr643865oib.110.1569870350475;
-        Mon, 30 Sep 2019 12:05:50 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e61sm4090614ote.24.2019.09.30.12.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 12:05:49 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 14:05:49 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:BROADCOM BMIPS MIPS ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:BROADCOM BMIPS MIPS ARCHITECTURE" 
-        <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: Document brcm,irq-can-wake for
- brcm,bcm7038-l1-intc.txt
-Message-ID: <20190930190549.GA21236@bogus>
-References: <20190913191542.9908-1-f.fainelli@gmail.com>
- <20190913191542.9908-3-f.fainelli@gmail.com>
+        id S1732560AbfI3VGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:06:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731976AbfI3VFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 17:05:55 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 000C6224F0;
+        Mon, 30 Sep 2019 19:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569872852;
+        bh=RglR3ukwElynROQk+l4tg76X5Ve88igj5T4s3Uya3V4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=AyhBGW2BD8aoBuP8uHPkEU0pNoy10LWHB1/Mi7A+TITCzHVAlpX8Lj3Dlm63Y1V34
+         6GGm/gY/wdQwWVAs00lQOhTGcoWnItLl9B2B+/x89Udz2h7QquvnhFoawikAOeCFB2
+         riwbdSExN2h7g1dZIQFBR2OsETDegxL6VHjmzQuI=
+Date:   Mon, 30 Sep 2019 14:47:24 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Denis Efremov <efremov@linux.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-s390@vger.kernel.org,
+        Sebastian Ott <sebott@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Subject: Re: [PATCH v3 06/26] s390/pci: Use PCI_STD_NUM_BARS
+Message-ID: <20190930194724.GA188464@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190913191542.9908-3-f.fainelli@gmail.com>
+In-Reply-To: <20190918085805.GY9720@e119886-lin.cambridge.arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 12:15:39PM -0700, Florian Fainelli wrote:
-> The BCM7038 L1 interrupt controller can be used as a wake-up interrupt
-> controller on MIPS and ARM-based systems, document the brcm,irq-can-wake
-> which has been "standardized" across Broadcom interrupt controllers.
-
-Not clear that that got much review...
-
-We have a defined way to indicate wakeup sources (which maybe didn't 
-exist in 2014), why can't that be used? If a device can wakeup the 
-system, I'd think we can just assume that the parent interrupt 
-controller(s) can support that.
-
-In any case, I'm not going to stand in the way of this:
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  .../bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt   | 5 +++++
->  1 file changed, 5 insertions(+)
+On Wed, Sep 18, 2019 at 09:58:06AM +0100, Andrew Murray wrote:
+> On Mon, Sep 16, 2019 at 11:41:38PM +0300, Denis Efremov wrote:
+> > Remove local definition PCI_BAR_COUNT for the number of PCI BARs and use
+> > global one PCI_STD_NUM_BARS instead.
+> > 
+> > Acked-by: Sebastian Ott <sebott@linux.ibm.com>
+> > Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+> > Signed-off-by: Denis Efremov <efremov@linux.com>
+> > ---
+> >  arch/s390/include/asm/pci.h     |  5 +----
+> >  arch/s390/include/asm/pci_clp.h |  6 +++---
+> >  arch/s390/pci/pci.c             | 16 ++++++++--------
+> >  arch/s390/pci/pci_clp.c         |  6 +++---
+> >  4 files changed, 15 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+> > index a2399eff84ca..3a06c264ea53 100644
+> > --- a/arch/s390/include/asm/pci.h
+> > +++ b/arch/s390/include/asm/pci.h
+> > @@ -2,9 +2,6 @@
+> >  #ifndef __ASM_S390_PCI_H
+> >  #define __ASM_S390_PCI_H
+> >  
+> > -/* must be set before including pci_clp.h */
+> > -#define PCI_BAR_COUNT	6
+> > -
+> >  #include <linux/pci.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/iommu.h>
+> > @@ -138,7 +135,7 @@ struct zpci_dev {
+> >  
+> >  	char res_name[16];
+> >  	bool mio_capable;
+> > -	struct zpci_bar_struct bars[PCI_BAR_COUNT];
+> > +	struct zpci_bar_struct bars[PCI_STD_NUM_BARS];
+> >  
+> >  	u64		start_dma;	/* Start of available DMA addresses */
+> >  	u64		end_dma;	/* End of available DMA addresses */
+> > diff --git a/arch/s390/include/asm/pci_clp.h b/arch/s390/include/asm/pci_clp.h
+> > index 50359172cc48..bd2cb4ea7d93 100644
+> > --- a/arch/s390/include/asm/pci_clp.h
+> > +++ b/arch/s390/include/asm/pci_clp.h
+> > @@ -77,7 +77,7 @@ struct mio_info {
+> >  	struct {
+> >  		u64 wb;
+> >  		u64 wt;
+> > -	} addr[PCI_BAR_COUNT];
+> > +	} addr[PCI_STD_NUM_BARS];
+> >  	u32 reserved[6];
+> >  } __packed;
+> >  
+> > @@ -98,9 +98,9 @@ struct clp_rsp_query_pci {
+> >  	u16 util_str_avail	:  1;	/* utility string available? */
+> >  	u16 pfgid		:  8;	/* pci function group id */
+> >  	u32 fid;			/* pci function id */
+> > -	u8 bar_size[PCI_BAR_COUNT];
+> > +	u8 bar_size[PCI_STD_NUM_BARS];
+> >  	u16 pchid;
+> > -	__le32 bar[PCI_BAR_COUNT];
+> > +	__le32 bar[PCI_STD_NUM_BARS];
+> >  	u8 pfip[CLP_PFIP_NR_SEGMENTS];	/* pci function internal path */
+> >  	u32			: 16;
+> >  	u8 fmb_len;
+> > diff --git a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
+> > index b0e3b9a0e488..aca372c8e34f 100644
+> > --- a/arch/s390/pci/pci.c
+> > +++ b/arch/s390/pci/pci.c
+> > @@ -43,7 +43,7 @@ static DECLARE_BITMAP(zpci_domain, ZPCI_NR_DEVICES);
+> >  static DEFINE_SPINLOCK(zpci_domain_lock);
+> >  
+> >  #define ZPCI_IOMAP_ENTRIES						\
+> > -	min(((unsigned long) ZPCI_NR_DEVICES * PCI_BAR_COUNT / 2),	\
+> > +	min(((unsigned long) ZPCI_NR_DEVICES * PCI_STD_NUM_BARS / 2),	\
+> >  	    ZPCI_IOMAP_MAX_ENTRIES)
+> >  
+> >  static DEFINE_SPINLOCK(zpci_iomap_lock);
+> > @@ -294,7 +294,7 @@ static void __iomem *pci_iomap_range_mio(struct pci_dev *pdev, int bar,
+> >  void __iomem *pci_iomap_range(struct pci_dev *pdev, int bar,
+> >  			      unsigned long offset, unsigned long max)
+> >  {
+> > -	if (!pci_resource_len(pdev, bar) || bar >= PCI_BAR_COUNT)
+> > +	if (bar >= PCI_STD_NUM_BARS || !pci_resource_len(pdev, bar))
+> >  		return NULL;
+> >  
+> >  	if (static_branch_likely(&have_mio))
+> > @@ -324,7 +324,7 @@ static void __iomem *pci_iomap_wc_range_mio(struct pci_dev *pdev, int bar,
+> >  void __iomem *pci_iomap_wc_range(struct pci_dev *pdev, int bar,
+> >  				 unsigned long offset, unsigned long max)
+> >  {
+> > -	if (!pci_resource_len(pdev, bar) || bar >= PCI_BAR_COUNT)
+> > +	if (bar >= PCI_STD_NUM_BARS || !pci_resource_len(pdev, bar))
+> >  		return NULL;
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt
-> index 2117d4ac1ae5..4eb043270f5b 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm7038-l1-intc.txt
-> @@ -31,6 +31,11 @@ Required properties:
->  - interrupts: specifies the interrupt line(s) in the interrupt-parent controller
->    node; valid values depend on the type of parent interrupt controller
->  
-> +Optional properties:
-> +
-> +- brcm,irq-can-wake: If present, this means the L1 controller can be used as a
-> +  wakeup source for system suspend/resume.
-> +
->  If multiple reg ranges and interrupt-parent entries are present on an SMP
->  system, the driver will allow IRQ SMP affinity to be set up through the
->  /proc/irq/ interface.  In the simplest possible configuration, only one
-> -- 
-> 2.17.1
-> 
+> This looks like a latent bug fix here. If 'bar' is out of range we return
+> NULL instead accessing an invalid item of an array. Should this not be
+> a separate patch and tagged as stable?
+
+Sharp eyes!  I didn't think of this as accessing an invalid item, but
+indeed it does (if 'bar' is out of range).  But I doubt it's worth the
+hassle of a separate patch, since we return failure anyway.
