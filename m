@@ -2,144 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1349C1F15
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 12:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D984C1F48
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 12:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbfI3KhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 06:37:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730332AbfI3KhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 06:37:00 -0400
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDC321855;
-        Mon, 30 Sep 2019 10:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569839818;
-        bh=Wo5z/Lo2MwuY2XoYEMUTOqsjpMQBIxXOoOM3zyLHIA4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cPYjw/IsA9612Z0eYOJIc0tWM9I/XDAW5lY2LK8tKBQZcWx4bVb08Bf6gcIbYi/Ry
-         l3KCqnYmcmSCQr4oNYrWpLfHb2FpE2fD9oOxTo2mxoj0VTvGFCaVZTymMslG/tX+5/
-         o51QX/5XpUFPH43g4YwnwvqyjSbRv6t+zkzWcnXw=
-Received: by mail-wr1-f47.google.com with SMTP id h7so10676055wrw.8;
-        Mon, 30 Sep 2019 03:36:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAUfcexawMD1y2jNpaVBioa5B5LfJUgZORwsDs83KJr3SR7LVuXm
-        ZO+/cSNEIUHv1n9l7UCPKhjPAggDK4kKEvTDPis=
-X-Google-Smtp-Source: APXvYqx0RhuEPqG3vhjBu2ugnclHJxAT1cGcUuXuL2TyU30xlF8X7oiIT3P9zzKTZlcF3tJP6SX0uH+eQ+zlwIH6guI=
-X-Received: by 2002:adf:fac3:: with SMTP id a3mr9954344wrs.24.1569839817054;
- Mon, 30 Sep 2019 03:36:57 -0700 (PDT)
+        id S1730792AbfI3KjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 06:39:14 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42825 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729094AbfI3KjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 06:39:14 -0400
+Received: by mail-qk1-f194.google.com with SMTP id f16so7263107qkl.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 03:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XBde5jtGNQGf5FDnC74YETW24H484BN+1GZRFzjDJVg=;
+        b=Q2qEyqRTLBbGm3kR40LUTPz2cJOyHmy6d12t+6VvxRon5SIPux+pqGDySLtS6RMUIP
+         fLY21pPCjBYu8ytftpjq3JbFWOI+og7lG9j+j/HWfR5RKNlGmLeNnnFFqoM5lgnAFEyd
+         l2UiAmlB8qXpSJ/goRDlGOQIC88RQdNlKrEDx5Z0KROT3t72U9gCbdlLmMOTV0e+CYVp
+         2MlI/ZUHGE3isPxEUH523azBbB6e5+wTM9pOrSpSF5g6piXbRcSjY+Mvk9h+5TcYMiIm
+         vDt83pJFO66XPuZWwTUGcFMHBJr8c706rLnYxm5KXT0CLvACmfo/vzGZSzxxuKApu8+I
+         BFkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XBde5jtGNQGf5FDnC74YETW24H484BN+1GZRFzjDJVg=;
+        b=Auwo43ooGB6jGzaTvpO39a6Y03/TQ3aMqYeHZpJ9IyoMCEGJNj36L6m8g1IYMyXVrJ
+         CMsYfpnQln+GMOvnYXtlxzgPKjK9sdFYCwsGUOuV/7PODy+L5YvK2G8kSxB8n5MpMRNI
+         SkcD7grf7+rXUwvOLn2TKPJR9kjGUNwrRhXZy8Ei14IfpEurKYgcluljEQrDl50wmJ52
+         H20Yw8KcZnFmDnfuBAStqOlThj8cWgeUs/bdabqjvdnU7YLTkClDyM8iwtR+sbo/nwAs
+         adI/sn6eyj+6kjHVQ9VxinyEAi1HvMLAUviJjsEm9yo23ECcut0z1NhmM3esyRpiupNs
+         D8Gw==
+X-Gm-Message-State: APjAAAXKwW2WfsK85WZCRsHmJkKnP5A4BzAAeuza+srNbAKNCqte6bMt
+        BJZvYY4kfgYTmCw+6RaOif7atC8z
+X-Google-Smtp-Source: APXvYqxqJNFmjeFZj3pa0wT9Rr5Ps3MWfX3ZrfXnW0CvcZZf01bU8wJakVK/k9Q3nybtg9IvohkjKA==
+X-Received: by 2002:a37:a604:: with SMTP id p4mr17126922qke.58.1569839952995;
+        Mon, 30 Sep 2019 03:39:12 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id w2sm8064369qtc.59.2019.09.30.03.39.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 03:39:11 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 5A3E640396; Mon, 30 Sep 2019 07:39:09 -0300 (-03)
+Date:   Mon, 30 Sep 2019 07:39:09 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Ian Rogers <irogers@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v2] perf tools: avoid sample_reg_masks being const + weak
+Message-ID: <20190930103909.GA9622@kernel.org>
+References: <20190927211005.147176-1-irogers@google.com>
+ <20190927214341.170683-1-irogers@google.com>
+ <20190929210514.GC602@krava>
 MIME-Version: 1.0
-References: <1569839484-28170-1-git-send-email-guoren@kernel.org>
-In-Reply-To: <1569839484-28170-1-git-send-email-guoren@kernel.org>
-From:   Guo Ren <guoren@kernel.org>
-Date:   Mon, 30 Sep 2019 18:36:45 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTQ3i7FtEtgprNEAGSYPn=H8NjFxk5ekXz40Vov4j2XUOQ@mail.gmail.com>
-Message-ID: <CAJF2gTQ3i7FtEtgprNEAGSYPn=H8NjFxk5ekXz40Vov4j2XUOQ@mail.gmail.com>
-Subject: Re: [GIT PULL] csky changes for v5.3-rc1
-To:     torvalds@linux-foundation.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-csky@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190929210514.GC602@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Abandoned
+Em Sun, Sep 29, 2019 at 11:05:14PM +0200, Jiri Olsa escreveu:
+> On Fri, Sep 27, 2019 at 02:43:41PM -0700, Ian Rogers wrote:
+> > Being const + weak breaks with some compilers that constant-propagate
+> > from the weak symbol. This behavior is outside of the specification, but
+> > in LLVM is chosen to match GCC's behavior.
+> > 
+> > LLVM's implementation was set in this patch:
+> > https://github.com/llvm/llvm-project/commit/f49573d1eedcf1e44893d5a062ac1b72c8419646
+> > A const + weak symbol is set to be weak_odr:
+> > https://llvm.org/docs/LangRef.html
+> > ODR is one definition rule, and given there is one constant definition
+> > constant-propagation is possible. It is possible to get this code to
+> > miscompile with LLVM when applying link time optimization. As compilers
+> > become more aggressive, this is likely to break in more instances.
+> > 
+> > Move the definition of sample_reg_masks to the conditional part of
+> > perf_regs.h and guard usage with HAVE_PERF_REGS_SUPPORT. This avoids the
+> > weak symbol.
+> > 
+> > Fix an issue when HAVE_PERF_REGS_SUPPORT isn't defined from patch v1.
+> > 
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Sorry for wrong tile, please Ignore this email.
+Thanks, applied.
 
-On Mon, Sep 30, 2019 at 6:31 PM <guoren@kernel.org> wrote:
->
-> Hi Linus,
->
-> The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
->
->   Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
->
-> are available in the git repository at:
->
->   https://github.com/c-sky/csky-linux.git tags/csky-for-linus-5.4-rc1
->
-> for you to fetch changes up to 9af032a30172e119a5935f802b066631f8ded2d6:
->
->   csky: Move static keyword to the front of declaration (2019-09-30 11:50:49 +0800)
->
-> ----------------------------------------------------------------
-> csky-for-linus-5.4-rc1: arch/csky patches for 5.4-rc1
->
-> This round of csky subsystem just some fixups.
->
-> Fixup:
->  - Fixup mb() synchronization problem
->  - Fixup dma_alloc_coherent with PAGE_SO attribute
->  - Fixup cache_op failed when cross memory ZONEs
->  - Optimize arch_sync_dma_for_cpu/device with dma_inv_range
->  - Fixup ioremap function losing
->  - Fixup arch_get_unmapped_area() implementation
->  - Fixup defer cache flush for 610
->  - Support kernel non-aligned access
->  - Fixup 610 vipt cache flush mechanism
->  - Fixup add zero_fp fixup perf backtrace panic
->  - Move static keyword to the front of declaration
->  - Fixup csky_pmu.max_period assignment
->  - Use generic free_initrd_mem()
->  - entry: Remove unneeded need_resched() loop
->
-> CI-Tested: https://gitlab.com/c-sky/buildroot/pipelines/77689888
->
-> ----------------------------------------------------------------
-> Guo Ren (10):
->       csky: Fixup mb() synchronization problem
->       csky: Fixup dma_alloc_coherent with PAGE_SO attribute
->       csky/dma: Fixup cache_op failed when cross memory ZONEs
->       csky: Optimize arch_sync_dma_for_cpu/device with dma_inv_range
->       csky: Fixup ioremap function losing
->       csky: Fixup arch_get_unmapped_area() implementation
->       csky: Fixup defer cache flush for 610
->       csky: Support kernel non-aligned access
->       csky: Fixup 610 vipt cache flush mechanism
->       csky: Fixup add zero_fp fixup perf backtrace panic
->
-> Krzysztof Wilczynski (1):
->       csky: Move static keyword to the front of declaration
->
-> Mao Han (1):
->       csky: Fixup csky_pmu.max_period assignment
->
-> Mike Rapoport (1):
->       csky: Use generic free_initrd_mem()
->
-> Valentin Schneider (1):
->       csky: entry: Remove unneeded need_resched() loop
->
->  arch/csky/abiv1/alignment.c          | 62 +++++++++++++++++++++--------
->  arch/csky/abiv1/cacheflush.c         | 70 ++++++++++++++++++++++-----------
->  arch/csky/abiv1/inc/abi/cacheflush.h | 45 ++++++++++++++-------
->  arch/csky/abiv1/inc/abi/page.h       |  5 ++-
->  arch/csky/abiv1/mmap.c               | 75 ++++++++++++++++++-----------------
->  arch/csky/include/asm/barrier.h      | 15 ++++---
->  arch/csky/include/asm/cache.h        |  1 +
->  arch/csky/include/asm/io.h           | 23 +++++------
->  arch/csky/include/asm/pgtable.h      | 10 +++++
->  arch/csky/kernel/entry.S             | 54 +++++++++++++------------
->  arch/csky/kernel/perf_event.c        |  4 +-
->  arch/csky/kernel/process.c           |  2 +-
->  arch/csky/mm/cachev1.c               |  7 +++-
->  arch/csky/mm/cachev2.c               | 11 +++++-
->  arch/csky/mm/dma-mapping.c           | 76 +++++++++++++-----------------------
->  arch/csky/mm/init.c                  | 16 --------
->  arch/csky/mm/ioremap.c               | 27 ++++++++-----
->  17 files changed, 291 insertions(+), 212 deletions(-)
-
-
-
--- 
-Best Regards
- Guo Ren
-
-ML: https://lore.kernel.org/linux-csky/
+- Arnaldo
