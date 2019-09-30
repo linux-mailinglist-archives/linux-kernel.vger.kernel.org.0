@@ -2,134 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EE8C227C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A781C227F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:53:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731454AbfI3NxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:53:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37084 "EHLO mx1.redhat.com"
+        id S1731467AbfI3Nx5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Sep 2019 09:53:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730378AbfI3NxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:53:14 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730378AbfI3Nx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:53:57 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC31E30833C1;
-        Mon, 30 Sep 2019 13:53:13 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-122-104.rdu2.redhat.com [10.10.122.104])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 22AED60A9D;
-        Mon, 30 Sep 2019 13:53:12 +0000 (UTC)
-Subject: Re: [PATCH] ipc/sem: Fix race between to-be-woken task and waker
-To:     Manfred Spraul <manfred@colorfullife.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        1vier1@web.de
-References: <20190920155402.28996-1-longman () redhat ! com>
- <d89b622a-2acf-b0a9-021d-c1c521a731f5@colorfullife.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <268f8125-1d60-a1fa-bfec-2c2763de3e55@redhat.com>
-Date:   Mon, 30 Sep 2019 09:53:12 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        by mail.kernel.org (Postfix) with ESMTPSA id 90C6520842;
+        Mon, 30 Sep 2019 13:53:56 +0000 (UTC)
+Date:   Mon, 30 Sep 2019 09:53:54 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sodagudi Prasad <psodagud@codeaurora.org>
+Cc:     pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: Time stamp value in printk records
+Message-ID: <20190930095354.08fa0d80@gandalf.local.home>
+In-Reply-To: <7d1aee8505b91c460fee347ed4204b9a@codeaurora.org>
+References: <7d1aee8505b91c460fee347ed4204b9a@codeaurora.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <d89b622a-2acf-b0a9-021d-c1c521a731f5@colorfullife.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 30 Sep 2019 13:53:14 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/29/19 6:24 AM, Manfred Spraul wrote:
-> Hi Waiman,
->
-> I have now written the mail 3 times:
-> Twice I thought that I found a race, but during further analysis, it
-> always turns out that the spin_lock() is sufficient.
->
-> First, to avoid any obvious things: Until the series with e.g.
-> 27d7be1801a4824e, there was a race inside sem_lock().
->
-> Thus it was possible that multiple threads were operating on the same
-> semaphore array, with obviously arbitrary impact.
->
-I was saying that there was a race. It was just that my initial analysis
-of the code seems to indicate a race was possible.
+On Mon, 30 Sep 2019 06:33:42 -0700
+Sodagudi Prasad <psodagud@codeaurora.org> wrote:
 
+> Hi All,
+> 
+>  From Qualcomm side, we would like to check with upstream team about 
+> adding Raw time stamp value to printk records. On Qualcomm soc, there 
+> are various DSPs subsystems are there - for example audio, video and 
+> modem DSPs.
+> Adding raw timer value(along with sched_clock()) in the printk record 
+> helps in the following use cases –
+> 1)	To find out which subsystem  crashed first  -  Whether application 
+> processor crashed first or DSP subsystem?
+> 2)	If there are any system stability issues on the DSP side, what is the 
+> activity on the APPS processor side during that time?
+> 
+> Initially during the device boot up, printk shed_clock value can be 
+> matched with timer raw value used on the dsp subsystem, but after APPS 
+> processor suspends several times, we don’t have way to correlate the 
+> time stamp  value on the DSP and APPS processor. All timers(both apps 
+> processor timer and dsp timers) are derived from globally always on 
+> timer on Qualcomm soc, So keeping global timer raw values in printk 
+> records and dsp logs help to correlate the activity of all the 
+> processors in SoC.
+> 
+> It would be great if upstream team adds common solution this problem if 
+> all soc vendors would get benefit by adding raw timer value to  printk 
+> 
 
-> On 9/20/19 5:54 PM, Waiman Long wrote:
->
->>   +        /*
->> +         * A spurious wakeup at the right moment can cause race
->> +         * between the to-be-woken task and the waker leading to
->> +         * missed wakeup. Setting state back to TASK_INTERRUPTIBLE
->> +         * before checking queue.status will ensure that the race
->> +         * won't happen.
->> +         *
->> +         *    CPU0                CPU1
->> +         *
->> +         *  <spurious wakeup>        wake_up_sem_queue_prepare():
->> +         *  state = TASK_INTERRUPTIBLE    status = error
->> +         *                try_to_wake_up():
->> +         *  smp_mb()              smp_mb()
->> +         *  if (status == -EINTR)      if (!(p->state & state))
->> +         *    schedule()            goto out
->> +         */
->> +        set_current_state(TASK_INTERRUPTIBLE);
->> +
->
-> So the the hypothesis is that we have a race due to the optimization
-> within try_to_wake_up():
-> If the status is already TASK_RUNNING, then the wakeup is a nop.
->
-> Correct?
->
-> The waker wants to use:
->
->     lock();
->     set_conditions();
->     unlock();
->
-> as the wake_q is a shared list, completely asynchroneously this will
-> happen:
->
->     smp_mb(); //// ***1
->     if (current->state = TASK_INTERRUPTIBLE) current->state=TASK_RUNNING;
->
-> The only guarantee is that this will happen after lock(), it may
-> happen before set_conditions().
->
-> The task that goes to sleep uses:
->
->     lock();
->     check_conditions();
->     __set_current_state();
->     unlock(); //// ***2
->     schedule();
->
-> You propose to change that to:
->
->     lock();
->     set_current_state();
->     check_conditions();
->     unlock();
->     schedule();
->
-> I don't see a race anymore, and I don't see how the proposed change
-> will help.
-> e.g.: __set_current_state() and smp_mb() have paired memory barriers
-> ***1 and ***2 above. 
+Hi Prasad,
 
-Now that I had taken a second look at it. I agreed that the current code
-should be fine. My only comment is that we should probably add extra
-comments to clarify the situation so that it won't get messed up in the
-future.
+If you or someone you know would like to present patches for exactly
+what you would like to see, that would go a long way.
 
-Cheers,
-Longman
-
+-- Steve
