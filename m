@@ -2,142 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C31C24B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F960C24BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732118AbfI3Pzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 11:55:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37948 "EHLO mx1.redhat.com"
+        id S1732153AbfI3P6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 11:58:25 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:4456 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730780AbfI3Pzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:55:45 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B289986662
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 15:55:44 +0000 (UTC)
-Received: by mail-wm1-f71.google.com with SMTP id z205so5652wmb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 08:55:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=+BD2ycFwWQSQrKNqGIpv6fduC0ZBdWw0d4zJAy9l8wA=;
-        b=bAIZcVmIQUQ7MKiMIFE+35y4CFyHyg9XCxyhyr/jKA4MM6ys7MKDCvnGQ3va5KAaSh
-         Pc69SV2l5iv53EtPnQ0ukAQtBHZ+C6tFuh+b+LUS+ZtqmozMVMQExD+3oWXOj3CChLd+
-         bkC5rin7ctjdXjqoColeltZIOwj2r1LKFHqlto4p8jgD5x9Rncn8n3jWacCg/K+67mCN
-         0b6VVH6F00zNAW9RP5BWMcilnR+Va4hYVtBRrASqbhgQRJGvxQuEqHdgRSjmkQ2nac3o
-         FT6OV8FaL9O8C89yp8UoSxajca6Lk9hnFzHancRtDpZx85m0s/5lfqTp0mg73UH3XiYT
-         IUzQ==
-X-Gm-Message-State: APjAAAWIJs2zAyowXKKJBtDBT7D7dFVzcPq7JzW7bfV92odfvowPofkf
-        0oCmUQWXjD2r8Vwb7rUVkF+9Ghmw0PBEzvl7xCBIRAgQllfkwnBSgSUUoT7Hrbr3Ku4Du1qhpak
-        DbMf07buxWGMqTbY1z3Cm2sMR
-X-Received: by 2002:a1c:4946:: with SMTP id w67mr17840239wma.131.1569858943192;
-        Mon, 30 Sep 2019 08:55:43 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqybxKRnfhyeednrZhdUQjOiY96vN6kardd7AnGk13SqJ/2yQMIotgeHWc21k6F9JFkOSvQkwA==
-X-Received: by 2002:a1c:4946:: with SMTP id w67mr17840224wma.131.1569858942970;
-        Mon, 30 Sep 2019 08:55:42 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id x2sm17584453wrn.81.2019.09.30.08.55.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 08:55:42 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH v2 4/8] KVM: VMX: Optimize vmx_set_rflags() for unrestricted guest
-In-Reply-To: <20190930151945.GB14693@linux.intel.com>
-References: <20190927214523.3376-1-sean.j.christopherson@intel.com> <20190927214523.3376-5-sean.j.christopherson@intel.com> <87muem40wi.fsf@vitty.brq.redhat.com> <20190930151945.GB14693@linux.intel.com>
-Date:   Mon, 30 Sep 2019 17:55:41 +0200
-Message-ID: <87k19p3hj6.fsf@vitty.brq.redhat.com>
+        id S1731919AbfI3P6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 11:58:25 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 46hn7s5yWPz2J;
+        Mon, 30 Sep 2019 17:56:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1569858988; bh=SM910taOzVBeIz8sDiWoqtsSpZFNnnEfHCLXVlJL+OE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=W5XI/oK4TO+8usSOpDLLwIUD8EOfNsMD0XE8ds9ESj4IQs+D9zTxF9VT7DVuPZHVl
+         9/AEZ4r7OVtdbseLYth+b7RMiIuY4oF0124m2klhObq/VnGS+5a7s4aYffBd2yL0Vb
+         kdRZbmtDylWd8qGQpAsWP3LHRweacre6kmH+RX5Pt6+N3noLu+Vxv5Ti+Z0vPoKllq
+         SB3g/Dlvj0Hm1X5luO32G8DQcoAGN+pkecnMYSBCY/vEpq+Z/YL7COPcPcBE5+nLW0
+         z5Ljz3xu91ZoG3GdWQHa1K5LIdHE9xNwaqmAImLvdCdKAu08yv516uMZdQJxmh2vzb
+         sBzrIyWPZ1LmA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+Date:   Mon, 30 Sep 2019 17:58:19 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     codrin.ciubotariu@microchip.com, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] ASoC: atmel: Fix build error
+Message-ID: <20190930155818.GA32237@qmqm.qmqm.pl>
+References: <20190928081641.44232-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190928081641.44232-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+On Sat, Sep 28, 2019 at 04:16:41PM +0800, YueHaibing wrote:
+> when do randbuilding, I got this error:
+> 
+> sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
+> (.text+0x12f6): undefined reference to `atmel_pcm_pdc_platform_register'
+> 
+> This is because SND_ATMEL_SOC_SSC_DMA=y, SND_ATMEL_SOC_SSC=y,
+> but SND_ATMEL_SOC_SSC_PDC=m. Fix it bt reintroducing the default Kconfig.
 
-> On Mon, Sep 30, 2019 at 10:57:17AM +0200, Vitaly Kuznetsov wrote:
->> Sean Christopherson <sean.j.christopherson@intel.com> writes:
->> 
->> > Rework vmx_set_rflags() to avoid the extra code need to handle emulation
->> > of real mode and invalid state when unrestricted guest is disabled.  The
->> > primary reason for doing so is to avoid the call to vmx_get_rflags(),
->> > which will incur a VMREAD when RFLAGS is not already available.  When
->> > running nested VMs, the majority of calls to vmx_set_rflags() will occur
->> > without an associated vmx_get_rflags(), i.e. when stuffing GUEST_RFLAGS
->> > during transitions between vmcs01 and vmcs02.
->> >
->> > Note, vmx_get_rflags() guarantees RFLAGS is marked available.
->> >
->> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> > ---
->> >  arch/x86/kvm/vmx/vmx.c | 28 ++++++++++++++++++----------
->> >  1 file changed, 18 insertions(+), 10 deletions(-)
->> >
->> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
->> > index 83fe8b02b732..814d3e6d0264 100644
->> > --- a/arch/x86/kvm/vmx/vmx.c
->> > +++ b/arch/x86/kvm/vmx/vmx.c
->> > @@ -1426,18 +1426,26 @@ unsigned long vmx_get_rflags(struct kvm_vcpu *vcpu)
->> >  void vmx_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags)
->> >  {
->> >  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->> > -	unsigned long old_rflags = vmx_get_rflags(vcpu);
->> > +	unsigned long old_rflags;
->> >  
->> > -	__set_bit(VCPU_EXREG_RFLAGS, (ulong *)&vcpu->arch.regs_avail);
->> > -	vmx->rflags = rflags;
->> > -	if (vmx->rmode.vm86_active) {
->> > -		vmx->rmode.save_rflags = rflags;
->> > -		rflags |= X86_EFLAGS_IOPL | X86_EFLAGS_VM;
->> > +	if (enable_unrestricted_guest) {
->> > +		__set_bit(VCPU_EXREG_RFLAGS, (ulong *)&vcpu->arch.regs_avail);
->> > +
->> > +		vmx->rflags = rflags;
->> > +		vmcs_writel(GUEST_RFLAGS, rflags);
->> > +	} else {
->> > +		old_rflags = vmx_get_rflags(vcpu);
->> > +
->> > +		vmx->rflags = rflags;
->> > +		if (vmx->rmode.vm86_active) {
->> > +			vmx->rmode.save_rflags = rflags;
->> > +			rflags |= X86_EFLAGS_IOPL | X86_EFLAGS_VM;
->> > +		}
->> > +		vmcs_writel(GUEST_RFLAGS, rflags);
->> > +
->> > +		if ((old_rflags ^ vmx->rflags) & X86_EFLAGS_VM)
->> > +			vmx->emulation_required = emulation_required(vcpu);
->> >  	}
->> > -	vmcs_writel(GUEST_RFLAGS, rflags);
->> 
->> We're doing vmcs_writel() in both branches so it could've stayed here, right?
->
-> Yes, but the resulting code is a bit ugly.  emulation_required() consumes
-> vmcs.GUEST_RFLAGS, i.e. the if statement that reads old_rflags would also
-> need to be outside of the else{} case.  
->
-> This isn't too bad:
->
-> 	if (!enable_unrestricted_guest && 
-> 	    ((old_rflags ^ vmx->rflags) & X86_EFLAGS_VM))
-> 		vmx->emulation_required = emulation_required(vcpu);
->
-> but gcc isn't smart enough to understand old_rflags won't be used if
-> enable_unrestricted_guest, so old_rflags either needs to be tagged with
-> uninitialized_var() or explicitly initialized in the if(){} case.
->
-> Duplicating a small amount of code felt like the lesser of two evils.
->
+Defaults won't forbid the invalid configuration. Can you try following:
 
-I see, thanks for these additional details!
-
--- 
-Vitaly
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index f118c229ed82..461f023c5635 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -12,10 +12,12 @@ if SND_ATMEL_SOC
+ config SND_ATMEL_SOC_PDC
+ 	tristate
+ 	depends on HAS_DMA
++	select SND_ATMEL_SOC_SSC
+ 
+ config SND_ATMEL_SOC_DMA
+ 	tristate
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
++	select SND_ATMEL_SOC_SSC
+ 
+ config SND_ATMEL_SOC_SSC
+ 	tristate
+@@ -24,7 +26,6 @@ config SND_ATMEL_SOC_SSC_PDC
+ 	tristate "SoC PCM DAI support for AT91 SSC controller using PDC"
+ 	depends on ATMEL_SSC
+ 	select SND_ATMEL_SOC_PDC
+-	select SND_ATMEL_SOC_SSC
+ 	help
+ 	  Say Y or M if you want to add support for Atmel SSC interface
+ 	  in PDC mode configured using audio-graph-card in device-tree.
+@@ -33,7 +34,6 @@ config SND_ATMEL_SOC_SSC_DMA
+ 	tristate "SoC PCM DAI support for AT91 SSC controller using DMA"
+ 	depends on ATMEL_SSC
+ 	select SND_ATMEL_SOC_DMA
+-	select SND_ATMEL_SOC_SSC
+ 	help
+ 	  Say Y or M if you want to add support for Atmel SSC interface
+ 	  in DMA mode configured using audio-graph-card in device-tree.
