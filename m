@@ -2,170 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8EBC2221
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4D3FC222F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:37:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731417AbfI3Nfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:35:52 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41209 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbfI3Nfv (ORCPT
+        id S1731432AbfI3Ngb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:36:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58784 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730266AbfI3Nga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:35:51 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w17so11092680oiw.8;
-        Mon, 30 Sep 2019 06:35:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a9jR1BNKDDZGZvIL5lhodG0XnQTe5HRm6UzcjXJdIrE=;
-        b=ZD7c2trCFm35L1fJ3YCTdHFNIz4hNjr0XpWFhv6sMWPJmeW9jUypB8uY1phogYFYYR
-         Yxao9vB+AzeCkrlrUWru6uTI0LLRcdF3OKffHhxQi5WVwnLNlOZhFk8WDFdsgqKaXL2Q
-         vQ+j2McWcD6KEnzru760G6bj0fbu/RXrw1pgO5BpiX0xpuybyo+TMEvwQdoT3bMLdstk
-         0QkNVpc2kDTDRkrGdUsi80FiLA8YWtINJFWLGhJlYL550XcBWnDPHkvk7nAL9pexQ4+D
-         wKg+Nqk2+7u8gYKUuVTSFtMKEwm9DfCYi6l6lswnlUfQ5crYKOgGzJDYOZRTdl9WjloI
-         yqtw==
-X-Gm-Message-State: APjAAAU3P2tCiM+zB4jDTS3uk+++9DXQF4GSCugrSf4ev3rqUDI7Ywq+
-        8VGfvuO2nOnSh1+FhKVZVw==
-X-Google-Smtp-Source: APXvYqz7v38Yb3gdAuwcC3Pdow5jowdh8vbv74h20x1h3izlQLTP8SfiZeKSqNctH5OMmF/elaB/Rg==
-X-Received: by 2002:aca:cf13:: with SMTP id f19mr17629022oig.154.1569850549773;
-        Mon, 30 Sep 2019 06:35:49 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 11sm3864751otg.62.2019.09.30.06.35.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 06:35:49 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 08:35:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Roger Lu <roger.lu@mediatek.com>
-Cc:     Kevin Hilman <khilman@kernel.org>,
-        Nicolas Boichat <drinkcat@google.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Fan Chen <fan.chen@mediatek.com>,
-        HenryC Chen <HenryC.Chen@mediatek.com>, yt.lee@mediatek.com,
-        Angus Lin <Angus.Lin@mediatek.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nishanth Menon <nm@ti.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: soc: add mtk svs dt-bindings
-Message-ID: <20190930133548.GA24574@bogus>
-References: <20190906100514.30803-1-roger.lu@mediatek.com>
- <20190906100514.30803-2-roger.lu@mediatek.com>
+        Mon, 30 Sep 2019 09:36:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RCTV04raDkkKxz4YfrxK2di9zmQ5xBd+idZOcERAO2c=; b=mwWxPsDSKJ2eCW+r/wgaUxNTy
+        C8UW2Qf27DuQBkhjrUCoc31xyeiErGedJMwNHL9jUw91SOVwxmfzYgQwhgUoeJ72I5km5jdk/p6Hh
+        uD9rQvu04Sg5pPW83+EoRvaF4Rr+QPXW11sut0PxOH2yDldqx6v9Pq+mEnzCYvly1Au8taLL4N/EY
+        CJq/gbHv7Jbatcv9eXhcO5eDAkzJ0TcCtjiFlBaecjc2p4rYDSegzHw7UqCjCBpR6RsAbDLNkQvzM
+        B6FS6dVdSv1TwGjdHcz3CkKH9DDxlHaKB41ENgAma7BudhfpOoY7djtI/OTIUJZCyZRCpF75VLekX
+        EonLkXcPA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iEvqk-0002AQ-LY; Mon, 30 Sep 2019 13:36:26 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2D878301B59;
+        Mon, 30 Sep 2019 15:35:36 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 239DA265261B4; Mon, 30 Sep 2019 15:36:24 +0200 (CEST)
+Date:   Mon, 30 Sep 2019 15:36:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [PATCH V4 07/14] perf/x86/intel: Support hardware TopDown metrics
+Message-ID: <20190930133624.GO4553@hirez.programming.kicks-ass.net>
+References: <20190916134128.18120-1-kan.liang@linux.intel.com>
+ <20190916134128.18120-8-kan.liang@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190906100514.30803-2-roger.lu@mediatek.com>
+In-Reply-To: <20190916134128.18120-8-kan.liang@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 06:05:13PM +0800, Roger Lu wrote:
-> Document the binding for enabling mtk svs on MediaTek SoC.
-> 
-> Signed-off-by: Roger Lu <roger.lu@mediatek.com>
-> ---
->  .../devicetree/bindings/power/mtk-svs.txt     | 88 +++++++++++++++++++
->  1 file changed, 88 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/mtk-svs.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/power/mtk-svs.txt b/Documentation/devicetree/bindings/power/mtk-svs.txt
-> new file mode 100644
-> index 000000000000..6a71992ef162
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/mtk-svs.txt
-> @@ -0,0 +1,88 @@
-> +* Mediatek Smart Voltage Scaling (MTK SVS)
+On Mon, Sep 16, 2019 at 06:41:21AM -0700, kan.liang@linux.intel.com wrote:
+> +static int add_nr_metric_event(struct cpu_hw_events *cpuc,
+> +			       struct perf_event *event,
+> +			       int *max_count)
+> +{
+> +	/* There are 4 TopDown metrics events. */
+> +	if (is_metric_event(event) && (++cpuc->n_metric_event > 4))
+> +		return -EINVAL;
 > +
-> +This describes the device tree binding for the MTK SVS controller (bank)
-> +which helps provide the optimized CPU/GPU/CCI voltages. This device also
-> +needs thermal data to calculate thermal slope for accurately compensate
-> +the voltages when temperature change.
-> +
-> +Required properties:
-> +- compatible:
-> +  - "mediatek,mt8183-svs" : For MT8183 family of SoCs
-> +- reg: Address range of the MTK SVS controller.
-> +- interrupts: IRQ for the MTK SVS controller.
-> +- clocks, clock-names: Clocks needed for the svs controller. required
-> +                       clocks are:
-> +		       "main_clk": Main clock needed for register access
+> +	*max_count += cpuc->n_metric_event;
 
-'_clk' is redundant.
+That's busted; it would increment with 1,2,3,4 for a total of 10.
 
-> +- nvmem-cells: Phandle to the calibration data provided by a nvmem device.
-> +- nvmem-cell-names: Should be "svs-calibration-data" and "calibration-data"
 > +
-> +Subnodes:
-> +- svs_cpu_little: SVS bank device node of little CPU
-> +  compatible: "mediatek,mt8183-svs-cpu-little"
-> +  operating-points-v2: OPP table hooked by SVS little CPU bank.
-> +		       SVS will optimze this OPP table voltage part.
-> +  vcpu-little-supply: PMIC buck of little CPU
-> +- svs_cpu_big: SVS bank device node of big CPU
-> +  compatible: "mediatek,mt8183-svs-cpu-big"
-> +  operating-points-v2: OPP table hooked by SVS big CPU bank.
-> +		       SVS will optimze this OPP table voltage part.
-> +  vcpu-big-supply: PMIC buck of big CPU
-> +- svs_cci: SVS bank device node of CCI
-> +  compatible: "mediatek,mt8183-svs-cci"
-> +  operating-points-v2: OPP table hooked by SVS CCI bank.
-> +		       SVS will optimze this OPP table voltage part.
-> +  vcci-supply: PMIC buck of CCI
-> +- svs_gpu: SVS bank device node of GPU
-> +  compatible: "mediatek,mt8183-svs-gpu"
-> +  operating-points-v2: OPP table hooked by SVS GPU bank.
-> +		       SVS will optimze this OPP table voltage part.
-> +  vgpu-spply: PMIC buck of GPU
-> +
-> +Example:
-> +
-> +	svs: svs@1100b000 {
-> +		compatible = "mediatek,mt8183-svs";
-> +		reg = <0 0x1100b000 0 0x1000>;
-> +		interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_LOW 0>;
-
-GIC interrupts are 3 cells, you have 4.
-
-> +		clocks = <&infracfg CLK_INFRA_THERM>;
-> +		clock-names = "main_clk";
-> +		nvmem-cells = <&svs_calibration>, <&thermal_calibration>;
-> +		nvmem-cell-names = "svs-calibration-data", "calibration-data";
-> +
-> +		svs_cpu_little: svs_cpu_little {
-
-Don't use '_' in node names.
-
-> +			compatible = "mediatek,mt8183-svs-cpu-little";
-> +			operating-points-v2 = <&cluster0_opp>;
-> +		};
-> +
-> +		svs_cpu_big: svs_cpu_big {
-> +			compatible = "mediatek,mt8183-svs-cpu-big";
-> +			operating-points-v2 = <&cluster1_opp>;
-> +		};
-> +
-> +		svs_cci: svs_cci {
-> +			compatible = "mediatek,mt8183-svs-cci";
-> +			operating-points-v2 = <&cci_opp>;
-> +		};
-> +
-> +		svs_gpu: svs_gpu {
-> +			compatible = "mediatek,mt8183-svs-gpu";
-> +			power-domains = <&scpsys MT8183_POWER_DOMAIN_MFG_2D>;
-> +			operating-points-v2 = <&gpu_opp_table>;
-> +		};
-> +	};
-> +
-> +	&svs_cpu_little {
-> +		vcpu-little-supply = <&mt6358_vproc12_reg>;
-
-It's already defined to have OPP and supply in the cpu nodes. Parse them
-to get this information rather than duplicating it here.
-
-The same should apply to the CCI and GPU.
-
-Rob
+> +	return 0;
+> +}
