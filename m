@@ -2,227 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74554C1D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCF4DC1D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbfI3I13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 04:27:29 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44495 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729254AbfI3I13 (ORCPT
+        id S1730085AbfI3I1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 04:27:47 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53831 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729254AbfI3I1r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 04:27:29 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iEr1b-0003WF-As; Mon, 30 Sep 2019 10:27:19 +0200
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iEr1X-0002ak-4t; Mon, 30 Sep 2019 10:27:15 +0200
-Date:   Mon, 30 Sep 2019 10:27:15 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, manivannan.sadhasivam@linaro.org,
-        andrew.smirnov@gmail.com, marex@denx.de, angus@akkea.ca,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, j.neuschaefer@gmx.net,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH 1/3] ARM: dts: add Netronix E60K02 board common file
-Message-ID: <20190930082715.mplf5ra35ikqmbyr@pengutronix.de>
-References: <20190927061423.17278-1-andreas@kemnade.info>
- <20190927061423.17278-2-andreas@kemnade.info>
- <20190927094721.w26ggnli4f5a64uv@pengutronix.de>
- <20190927210807.26439a94@aktux>
+        Mon, 30 Sep 2019 04:27:47 -0400
+Received: by mail-wm1-f66.google.com with SMTP id i16so12301788wmd.3;
+        Mon, 30 Sep 2019 01:27:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oiTcmPDYabLVsrG/rT8p2yH7iyQnfMv9x4MrXjPTSFE=;
+        b=MS9HhO+7iOI0ANTzC8eeXY69uqbX1ZKLieUihRJGY0Y92z2C9Jq59TiCvRLWY4uwLi
+         YihCYfDy+xEY0VWxZ+3gI9PD/KzSM8UF4K2v7H893+PDlEAt6npoWumkmVhspT+RQsvR
+         6BXwzHzgRxzjvGWUyC9MYB5WNBBzZSOjg+Au0fQW5uv91CAUCnf7LGhQgoi8MsAU1xpO
+         uKKel+QMc03610cTRPHI8gcq6Hz0XZZ9FRMYfhXtjXXv5u/5hpq1+OIU9nPrxq6YOqKT
+         JikolwjVLwinF2EoPzTmLn6phRIFmxrbS0hsH0ga5owmYp/mGYhGIJd2mpSI3jvw7cZc
+         lgdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oiTcmPDYabLVsrG/rT8p2yH7iyQnfMv9x4MrXjPTSFE=;
+        b=WE/+pjo7Zua7jh7lNNFPt3o+2lUpS9LzHL5mb/DOOmz9LCJHlUJ2XNUJo+IFhFG2VC
+         hsI7YM5rUCch3Cj/fwSOsWOFrVejZOIWsuSILZopw+5jm6XQbXdiwydrG131Msuk4kZP
+         eaVZAAlfY4m61DgQtX3RQVqOFA8GO5D8AehDXF8l93L2antZy/VVQ1jQoCp2D8zxIXvp
+         BQ7d9vab+stiKlmuRPxiC2vihdDozcRMWd/6bYEmrjw9XRQe1gqriAF6hOXQx6xjhvUb
+         Mn808rNZp0QmW2c0pWVTN6HBIg+KgOSWq4bmc0dqtjoJpgL4pXC+LwjCAMRYE39rCcaX
+         dPpw==
+X-Gm-Message-State: APjAAAU53nc20m9VENkbFOGj4FE61Y00Qq0gQsk0LwoosMX3MXBrvoqc
+        hXFyf8GWWK8TviBr53p6rECph9JTSsc=
+X-Google-Smtp-Source: APXvYqyIX+qV44kxnRmjcwfsgERt//xfxYJStkbqIEyO3d9ltGMOK7DBOWf2ZLkHQOI4XNjgQsqLfg==
+X-Received: by 2002:a1c:4485:: with SMTP id r127mr15324789wma.59.1569832065145;
+        Mon, 30 Sep 2019 01:27:45 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.142.9])
+        by smtp.gmail.com with ESMTPSA id u22sm15076664wru.72.2019.09.30.01.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 01:27:44 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH 1/1] blk-mq: reuse code in blk_mq_check_inflight*()
+Date:   Mon, 30 Sep 2019 11:27:32 +0300
+Message-Id: <11ebb046bf422facf6e438672799306b80038173.1569830385.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190927210807.26439a94@aktux>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 10:22:57 up 135 days, 14:41, 87 users,  load average: 0.02, 0.05,
- 0.11
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-On 19-09-27 21:08, Andreas Kemnade wrote:
-> Hi Marco,
-> 
-> On Fri, 27 Sep 2019 11:47:21 +0200
-> Marco Felsch <m.felsch@pengutronix.de> wrote:
-> 
-> > Hi Andreas,
-> > 
-> > thanks for the patch.
-> > 
-> thanks for the quick review. Most of your comments are clear.
-> 
-> [...]
-> > > +	wifi_pwrseq: wifi_pwrseq {
-> > > +		compatible = "mmc-pwrseq-simple";
-> > > +		post-power-on-delay-ms = <20>;
-> > > +		reset-gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;  
-> > 
-> > Can you add a pinctrl-entry here please? The general rule is to mux
-> > things where you use it.
-> > 
-> yes, there are many places in my patch where they are added to some
-> parent devices.
-> I will fix that.
-> [...]
-> > > +	leds {
-> > > +		compatible = "gpio-leds";
-> > > +		pinctrl-names = "default";
-> > > +		pinctrl-0 = <&pinctrl_led>;  
-> > 
-> > Please move all muxing you made here into this file or add phandles so
-> > the dts file need to add only the muxing stuff. This applies to all
-> > pinctrl you made here.
-> > 
-> so you disagree with this pattern:
-> in .dtsi
->  some_device {
->    pinctrl-0 = <&pinctrl_some_device>;
->  };
-> 
-> and in .dts (one I sent with this patch series and the tolino/mx6sl one
-> is not ready-cooked yet, will be part of a later series)
-> &iomuxc {
->    pinctrl_some_device: some_devicegrp {
->    	fsl,pins = <...>;
->    };
-> };
-> 
-> ?
+1. Reuse the same walker callback for both blk_mq_in_flight() and
+blk_mq_in_flight_rw().
 
-Yes, because IMHO a dtsi is self contained as well as a dts. If it is
-common for all boards you can move the muxing into the dtsi else it
-should be done within the dts.
+2. Store inflight counters immediately in struct mq_inflight.
+It's type-safer and removes extra indirection.
 
-> > > +
-> > > +		GLED {
-> > > +			gpios = <&gpio5 7 GPIO_ACTIVE_LOW>;
-> > > +			linux,default-trigger = "timer";
-> > > +		};
-> > > +	};
-> > > +
-> > > +	gpio-keys {
-> > > +		compatible = "gpio-keys";
-> > > +		pinctrl-names = "default";
-> > > +		pinctrl-0 = <&pinctrl_gpio_keys>;
-> > > +		power {
-> > > +			label = "Power";
-> > > +			gpios = <&gpio5 8 GPIO_ACTIVE_LOW>;
-> > > +			linux,code = <KEY_POWER>;  
-> > 
-> > Add missing header: dt-bindings/input/input.h to use this.
-> > 
-> I am doing this in the .dts but it is probably better to do it here
-> because it is used here.
-> 
-> > > +			gpio-key,wakeup;
-> > > +		};
-> > > +		cover {
-> > > +			label = "Cover";
-> > > +			gpios = <&gpio5 12 GPIO_ACTIVE_LOW>;
-> > > +			linux,code = <SW_LID>;
-> > > +			linux,input-type = <0x05>;    /* EV_SW */  
-> > 
-> > In the header above EV_SW is also specified so please use it here.
-> > 
-> This pattern is in many files. I took one as an example. It seems that
-> 50% of devicetree files have this pattern, the other 50% do have the
-> pattern you proposed (which I like more). So probably EV_SW was not
-> available in former times?
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ block/blk-mq.c | 32 ++++++++------------------------
+ 1 file changed, 8 insertions(+), 24 deletions(-)
 
-I don't know, checking the git history should bring the answer ;)
-Anyway, if it is available we should use it.
-
-> > > +			gpio-key,wakeup;
-> > > +		};
-> > > +	};
-> > > +
-> > > +};
-> > > +
-> > > +
-> > > +  
-> > 
-> > Whitespaces
-> > 
-> > > +&audmux {
-> > > +	pinctrl-names = "default";
-> > > +	status = "disabled";  
-> > 
-> > Why you mentioned a pinctrl-names here without the mux? Do we need the
-> > status line here? The common case is that such devices are off by
-> > default/the base dt.
-> > 
-> yes, that things can be removed.
-> > > +};
-> > > +
-> > > +&snvs_rtc {
-> > > +	status = "disabled";  
-> > 
-> > Same applies here.
-> > 
-> 
-> No, seems to be an exception, it does not have a status = "disabled" in
-> imx6sll.dtsi.
-
-Did you mean 6sll or 6ull?
-
-Okay, is this baseboard only used with a 6ull?
-
-Regards,
-  Marco
-
-> > > +};
-> > > +
-> > > +&i2c1 {
-> > > +	clock-frequency = <100000>;
-> > > +	pinctrl-names = "default","sleep";
-> > > +	pinctrl-0 = <&pinctrl_i2c1 &pinctrl_lm3630a_bl_gpio>;  
-> > 
-> > The &pinctrl_lm3630a_bl_gpio should be moved into the lm3630a node.
-> > 
-> > > +	pinctrl-1 = <&pinctrl_i2c1_sleep>;
-> > > +	status = "okay";
-> > > +
-> > > +	lm3630a: lm3630a-i2c@36 {  
-> > 
-> > please name it backlight@36
-> > 
-> > > +		reg = <0x36>;
-> > > +		status = "ok";  
-> > 
-> > status lines are always be the last and if it is okay you can drop it
-> > because the default is okay.
-> > 
-> well, I added it because the driver was not loaded but later I found out
-> that the real reason is that module aliases were broken and forgot to
-> remove that "ok".
-> 
-> Regards,
-> Andreas
-> 
-
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index c4e5070c2ecd..d97181d9a3ec 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -93,7 +93,7 @@ static void blk_mq_hctx_clear_pending(struct blk_mq_hw_ctx *hctx,
+ 
+ struct mq_inflight {
+ 	struct hd_struct *part;
+-	unsigned int *inflight;
++	unsigned int inflight[2];
+ };
+ 
+ static bool blk_mq_check_inflight(struct blk_mq_hw_ctx *hctx,
+@@ -102,45 +102,29 @@ static bool blk_mq_check_inflight(struct blk_mq_hw_ctx *hctx,
+ {
+ 	struct mq_inflight *mi = priv;
+ 
+-	/*
+-	 * index[0] counts the specific partition that was asked for.
+-	 */
+ 	if (rq->part == mi->part)
+-		mi->inflight[0]++;
++		mi->inflight[rq_data_dir(rq)]++;
+ 
+ 	return true;
+ }
+ 
+ unsigned int blk_mq_in_flight(struct request_queue *q, struct hd_struct *part)
+ {
+-	unsigned inflight[2];
+-	struct mq_inflight mi = { .part = part, .inflight = inflight, };
++	struct mq_inflight mi = { .part = part };
+ 
+-	inflight[0] = inflight[1] = 0;
+ 	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
+ 
+-	return inflight[0];
+-}
+-
+-static bool blk_mq_check_inflight_rw(struct blk_mq_hw_ctx *hctx,
+-				     struct request *rq, void *priv,
+-				     bool reserved)
+-{
+-	struct mq_inflight *mi = priv;
+-
+-	if (rq->part == mi->part)
+-		mi->inflight[rq_data_dir(rq)]++;
+-
+-	return true;
++	return mi.inflight[0] + mi.inflight[1];
+ }
+ 
+ void blk_mq_in_flight_rw(struct request_queue *q, struct hd_struct *part,
+ 			 unsigned int inflight[2])
+ {
+-	struct mq_inflight mi = { .part = part, .inflight = inflight, };
++	struct mq_inflight mi = { .part = part };
+ 
+-	inflight[0] = inflight[1] = 0;
+-	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight_rw, &mi);
++	blk_mq_queue_tag_busy_iter(q, blk_mq_check_inflight, &mi);
++	inflight[0] = mi.inflight[0];
++	inflight[1] = mi.inflight[1];
+ }
+ 
+ void blk_freeze_queue_start(struct request_queue *q)
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.23.0
+
