@@ -2,156 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA6EC1C9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7939FC1CAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbfI3IOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 04:14:38 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44529 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfI3IOi (ORCPT
+        id S1729968AbfI3IO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 04:14:59 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39313 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfI3IO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 04:14:38 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iEqpI-00012w-AU; Mon, 30 Sep 2019 10:14:36 +0200
-Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1iEqpG-0002Dx-6y; Mon, 30 Sep 2019 10:14:34 +0200
-Date:   Mon, 30 Sep 2019 10:14:34 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] firmware: imx: Skip return value check for some special
- SCU firmware APIs
-Message-ID: <20190930081434.qrrv3yqczzxihntm@pengutronix.de>
-References: <1569406066-16626-1-git-send-email-Anson.Huang@nxp.com>
- <20190926075914.i7tsd3cbpitrqe4q@pengutronix.de>
- <DB3PR0402MB391683202692BEAE4D2CD9C1F5860@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <20190926100558.egils3ds37m3s5wo@pengutronix.de>
- <VI1PR04MB702336F648EA1BF0E4AC584BEE860@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <DB3PR0402MB391675F9BF6FCA315B124BEBF5810@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <VI1PR04MB702322F2F020A527AD2F8DDEEE820@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <DB3PR0402MB39169BC7E8DB3525A309034EF5820@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        Mon, 30 Sep 2019 04:14:59 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so10120853wrj.6;
+        Mon, 30 Sep 2019 01:14:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3CTmC1GsXW7IrK97J31Tmt/kV7wvmrOZDcAwkkYqHXE=;
+        b=rKxBO4ANQyjrCebLxTCoUiINFwdhJyfZXJBgm5OYg2r+uPGFcyfOdZRCDRAQUVdEco
+         kwdvCdz4DpN7UKSFyEVNJ6Bj9VIPgI4p8HNRLb2NEULOH3W+zW9TRmldDjAtsTBLqbKl
+         trTYuv+qEJbG9MwV2nb7GZMcxGEbfY4i/n+EnMoFx5orTsJOyQhMfxhHaEPZACqXD3mq
+         qzfm96/CyUKoCW3QTDeIt9iwha3LYV+Ls6j+LqW7YX5MzR8ZRCa6nkC1lVH8oYJ6iHuJ
+         X6Uy1y9A/wbcR+8R4OILpWeQWsg0CqS1JHZmK4MVeiOdsqb8PuDgGXoQnmrhF2ZsjojC
+         fYWA==
+X-Gm-Message-State: APjAAAXXH5e0CUHf2Z/qAmIA6ZfUnKA/jopA5cIS9WjmMqlse8/hGzn4
+        mevDmdNeT8VIxfGC4bTioC0=
+X-Google-Smtp-Source: APXvYqyf7LPtms1O8Jjd41VwHzPvoRICODDhTRieA6rYEiMiQODMkzZphFr+TqX/l6nwc1iXKYA+Wg==
+X-Received: by 2002:adf:ec44:: with SMTP id w4mr11667063wrn.251.1569831295653;
+        Mon, 30 Sep 2019 01:14:55 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id x2sm15727586wrn.81.2019.09.30.01.14.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 01:14:54 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 10:14:52 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH v4 1/8] dt-bindings: timer: Convert Exynos MCT bindings
+ to json-schema
+Message-ID: <20190930081452.GB23709@pi3>
+References: <20190923161411.9236-1-krzk@kernel.org>
+ <20190927170701.GA27397@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB39169BC7E8DB3525A309034EF5820@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:49:54 up 135 days, 14:08, 87 users,  load average: 0.01, 0.02,
- 0.07
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190927170701.GA27397@bogus>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson, Leonard,
-
-On 19-09-30 07:42, Anson Huang wrote:
-> Hi, Leonard
-> 
-> > On 2019-09-27 4:20 AM, Anson Huang wrote:
-> > >> On 2019-09-26 1:06 PM, Marco Felsch wrote:
-> > >>> On 19-09-26 08:03, Anson Huang wrote:
-> > >>>>> On 19-09-25 18:07, Anson Huang wrote:
-> > >>>>>> The SCU firmware does NOT always have return value stored in
-> > >>>>>> message header's function element even the API has response data,
-> > >>>>>> those special APIs are defined as void function in SCU firmware,
-> > >>>>>> so they should be treated as return success always.
-> > >>>>>>
-> > >>>>>> +static const struct imx_sc_rpc_msg whitelist[] = {
-> > >>>>>> +	{ .svc = IMX_SC_RPC_SVC_MISC, .func =
-> > >>>>> IMX_SC_MISC_FUNC_UNIQUE_ID },
-> > >>>>>> +	{ .svc = IMX_SC_RPC_SVC_MISC, .func =
-> > >>>>>> +IMX_SC_MISC_FUNC_GET_BUTTON_STATUS }, };
-> > >>>>>
-> > >>>>> Is this going to be extended in the near future? I see some
-> > >>>>> upcoming problems here if someone uses a different scu-fw<->kernel
-> > >>>>> combination as nxp would suggest.
-> > >>>>
-> > >>>> Could be, but I checked the current APIs, ONLY these 2 will be used
-> > >>>> in Linux kernel, so I ONLY add these 2 APIs for now.
-> > >>>
-> > >>> Okay.
-> > >>>
-> > >>>> However, after rethink, maybe we should add another imx_sc_rpc API
-> > >>>> for those special APIs? To avoid checking it for all the APIs
-> > >>>> called which
-> > >> may impact some performance.
-> > >>>> Still under discussion, if you have better idea, please advise, thanks!
-> > >>
-> > >> My suggestion is to refactor the code and add a new API for the this
-> > >> "no error value" convention. Internally they can call a common
-> > >> function with flags.
-> > >
-> > > If I understand your point correctly, that means the loop check of
-> > > whether the API is with "no error value" for every API still NOT be
-> > > skipped, it is just refactoring the code, right?
+On Fri, Sep 27, 2019 at 12:07:01PM -0500, Rob Herring wrote:
+> On Mon, Sep 23, 2019 at 06:14:04PM +0200, Krzysztof Kozlowski wrote:
+> > Convert Samsung Exynos Soc Multi Core Timer bindings to DT schema format
+> > using json-schema.
 > > 
-> > There would be no "loop" anywhere: the responsibility would fall on the call
-> > to call the right RPC function. In the current layering scheme (drivers -> RPC ->
-> > mailbox) the RPC layer treats all calls the same and it's up the the caller to
-> > provide information about calling convention.
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > > 
-> > An example implementation:
-> > * Rename imx_sc_rpc_call to __imx_sc_rpc_call_flags
-> > * Make a tiny imx_sc_rpc_call wrapper which just converts resp/noresp to a
-> > flag
-> > * Make get button status call __imx_sc_rpc_call_flags with the
-> > _IMX_SC_RPC_NOERROR flag
+> > ---
 > > 
-> > Hope this makes my suggestion clearer? Pushing this to the caller is a bit ugly
-> > but I think it's worth preserving the fact that the imx rpc core treats services
-> > in an uniform way.
+> > Changes since v3:
+> > 1. Use interrupts-extended instead of interrupts-map.
 > 
-> It is clear now, so essentially it is same as 2 separate APIs, still need to change the
-> button driver and uid driver to use the special flag, meanwhile, need to change the
-> third parament of imx_sc_rpc_call() from bool to u32.
+> This is a binding change. You should mention it in the commit.
+
+The interrupts-map was never a part of binding. It was only mentioned in
+the example to show how to route interrupts to different controllers.
+
+The bindings are not changed. Only example.
+
 > 
-> If no one opposes this approach, I will redo the patch together with the button driver
-> and uid driver after holiday.
-
-As Ansons said that are two approaches and in both ways the caller needs
-to know if the error code is valid. Extending the flags seems better to
-me but it looks still not that good. One question, does the scu-fw set
-the error-msg to something? If not than why should we specify a flag or
-a other api? Nowadays the caller needs to know that the error-msg-field isn't
-set so if the caller sets the msg-packet to zero and fills the rpc-id
-the error-msg-field shouldn't be touched by the firmware. So it should
-be zero.
-
-Regards,
-  Marco
-
-> Anson
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > 
+> > Changes since v1:
+> > 1. Indent example with four spaces (more readable),
+> > 2. Rename nodes in example to timer,
+> > 3. Remove mct-map subnode.
+> > ---
+> >  .../bindings/timer/samsung,exynos4210-mct.txt |  88 ------------
+> >  .../timer/samsung,exynos4210-mct.yaml         | 125 ++++++++++++++++++
+> >  2 files changed, 125 insertions(+), 88 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> >  create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > deleted file mode 100644
+> > index 8f78640ad64c..000000000000
+> > --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > +++ /dev/null
+> > @@ -1,88 +0,0 @@
+> > -Samsung's Multi Core Timer (MCT)
+> > -
+> > -The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > -global timer and CPU local timers. The global timer is a 64-bit free running
+> > -up-counter and can generate 4 interrupts when the counter reaches one of the
+> > -four preset counter values. The CPU local timers are 32-bit free running
+> > -down-counters and generate an interrupt when the counter expires. There is
+> > -one CPU local timer instantiated in MCT for every CPU in the system.
+> > -
+> > -Required properties:
+> > -
+> > -- compatible: should be "samsung,exynos4210-mct".
+> > -  (a) "samsung,exynos4210-mct", for mct compatible with Exynos4210 mct.
+> > -  (b) "samsung,exynos4412-mct", for mct compatible with Exynos4412 mct.
+> > -
+> > -- reg: base address of the mct controller and length of the address space
+> > -  it occupies.
+> > -
+> > -- interrupts: the list of interrupts generated by the controller. The following
+> > -  should be the order of the interrupts specified. The local timer interrupts
+> > -  should be specified after the four global timer interrupts have been
+> > -  specified.
+> > -
+> > -	0: Global Timer Interrupt 0
+> > -	1: Global Timer Interrupt 1
+> > -	2: Global Timer Interrupt 2
+> > -	3: Global Timer Interrupt 3
+> > -	4: Local Timer Interrupt 0
+> > -	5: Local Timer Interrupt 1
+> > -	6: ..
+> > -	7: ..
+> > -	i: Local Timer Interrupt n
+> > -
+> > -  For MCT block that uses a per-processor interrupt for local timers, such
+> > -  as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > -  interrupt might be specified, meaning that all local timers use the same
+> > -  per processor interrupt.
+> > -
+> > -Example 1: In this example, the IP contains two local timers, using separate
+> > -	   interrupts, so two local timer interrupts have been specified,
+> > -	   in addition to four global timer interrupts.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 48 0>;
+> > -	};
+> > -
+> > -Example 2: In this example, the timer interrupts are connected to two separate
+> > -	   interrupt controllers. Hence, an interrupt-map is created to map
+> > -	   the interrupts to the respective interrupt controllers.
+> > -
+> > -	mct@101c0000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x101C0000 0x800>;
+> > -		interrupt-parent = <&mct_map>;
+> > -		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+> > -
+> > -		mct_map: mct-map {
+> > -			#interrupt-cells = <1>;
+> > -			#address-cells = <0>;
+> > -			#size-cells = <0>;
+> > -			interrupt-map = <0 &gic 0 57 0>,
+> > -					<1 &gic 0 69 0>,
+> > -					<2 &combiner 12 6>,
+> > -					<3 &combiner 12 7>,
+> > -					<4 &gic 0 42 0>,
+> > -					<5 &gic 0 48 0>;
+> > -		};
+> > -	};
+> > -
+> > -Example 3: In this example, the IP contains four local timers, but using
+> > -	   a per-processor interrupt to handle them. Either all the local
+> > -	   timer interrupts can be specified, with the same interrupt specifier
+> > -	   value or just the first one.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4412-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -
+> > -		/* Both ways are possible in this case. Either: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>;
+> > -		/* or: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
+> > -	};
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > new file mode 100644
+> > index 000000000000..bff3f54a398f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > @@ -0,0 +1,125 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos SoC Multi Core Timer (MCT)
+> > +
+> > +maintainers:
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +
+> > +description: |+
+> > +  The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > +  global timer and CPU local timers. The global timer is a 64-bit free running
+> > +  up-counter and can generate 4 interrupts when the counter reaches one of the
+> > +  four preset counter values. The CPU local timers are 32-bit free running
+> > +  down-counters and generate an interrupt when the counter expires. There is
+> > +  one CPU local timer instantiated in MCT for every CPU in the system.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynos4210-mct
+> > +      - samsung,exynos4412-mct
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    description: |
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +      interrupts should be specified after the four global timer interrupts
+> > +      have been specified:
+> > +      0: Global Timer Interrupt 0
+> > +      1: Global Timer Interrupt 1
+> > +      2: Global Timer Interrupt 2
+> > +      3: Global Timer Interrupt 3
+> > +      4: Local Timer Interrupt 0
+> > +      5: Local Timer Interrupt 1
+> > +      6: ..
+> > +      7: ..
+> > +      i: Local Timer Interrupt n
+> > +      For MCT block that uses a per-processor interrupt for local timers, such
+> > +      as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > +      interrupt might be specified, meaning that all local timers use the same
+> > +      per processor interrupt.
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +  interrupts-extended:
 > 
+> No need for this. Just document 'interrupts' and the tooling takes care 
+> of supporting 'interrupts-extended' too.
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+OK.
+
+> 
+> > +    description: |
+> > +      If interrupts are coming from different controllers, this property
+> > +      can be used instead of regular "interrupts" property.
+> > +      The format is exactly the same as with "interrupts".
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +required:
+> > +  - compatible
+> > +  - interrupts
+> > +  - reg
+> > +
+> > +allOf:
+> > +  - if:
+> > +      not:
+> > +        required:
+> > +          - interrupts
+> > +    then:
+> > +      required:
+> > +        - interrupts-extended
+> 
+> And this is taken care of too.
+
+Sure, thanks!
+
+Best regards,
+Krzysztof
+
