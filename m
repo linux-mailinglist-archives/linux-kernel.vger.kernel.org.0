@@ -2,175 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A664C295B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 00:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 948ECC2964
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 00:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731281AbfI3WTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 18:19:21 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46569 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfI3WTU (ORCPT
+        id S1732438AbfI3WU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 18:20:28 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42985 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfI3WU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 18:19:20 -0400
-Received: by mail-pl1-f196.google.com with SMTP id q24so4427948plr.13
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 15:19:20 -0700 (PDT)
+        Mon, 30 Sep 2019 18:20:28 -0400
+Received: by mail-io1-f67.google.com with SMTP id n197so42538771iod.9;
+        Mon, 30 Sep 2019 15:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3oWqyfWTP37SD+PlmYVges0YN8RxVQW6vfcfcw8zHDs=;
-        b=QhV0HmO5jThUuDSONZ0Gwfst06GK/Tanlz1FJWN+f/CZoc4LkISoHqY9JE4hw0FxO2
-         jC4+tsOfh3HBlM98oTJ9p9UOVH79DzzJa5gUTmKsYr+bbD42dNJuGwEOer03aaUmpaLw
-         eoEY23iP1sQUj0A9W6zq2Oo/l/T9Ollwslh4bpuHOkH2NDTTK4NmPGwfkvz0tixLyfpQ
-         9I4RmNXA6ZEe1B1kcOrZAyvXu5dzrUONSF2taIHHTGZtSEnSA3bA/38q95WfzCv8gncV
-         FcxJ270m3K35a2clJLUZdXxOd9zDP/4IQOoV7c3/ZVJOqMB6Xo9UbRFUUhEjs65NL/8V
-         mvXA==
+        bh=eZx7FrxWnk9gZ+ux4zZK+PaCVpHhMuAm8pC5a4sXjxE=;
+        b=BKXc0564vtSldNkfJz18QSdtma0oJcBNDLeux0zcrflLIl5rLL22s/mVj/xfu7RkYr
+         Cpz4G5OoYu7qySxW/j0ZeZi+lMXVHHpwSnuKCoAguZt+fDkD5cs1f8BYqflWdryQsSjx
+         zqy1FON+ZpzmeuPPEInX0xM5V5FOa21naL5jhesnZJT6nmbq4BykPd4xj8cBhApj28Hm
+         9jMoepXtx1khl6h2WVy8qgQ+S5bi6reSLqiMUs9KZDchXT2mU5MJ0k7rvntO0ddR4gv8
+         Vv5IaJM9PTaULVBsMhxFlGnOTiJP8zpHSRITVaPsEUW3fC8pEi3ukViHVBvZ5s85MS+x
+         GbFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3oWqyfWTP37SD+PlmYVges0YN8RxVQW6vfcfcw8zHDs=;
-        b=mLTJifgtYliceFPIv/tTLfMbnPgCV8oNElV2ty3CAdif2gzOiBSTLuJ0mDpOd97mb3
-         /jbZkLi5h6+ZkK6JUT9Gmk8jF3JQF/NS8aGem4XaqYo/zfXEhXOzx5Ag18KNYk5utaX+
-         8oilhquo2luEmHW0vro7qYBftdF+XDNFtN3CFnD1AWDfK5M+nFj+gAQSinxOEVDVV4cK
-         4wDxCnJfsuu6KNgP6a+pHZ0GXpANlk0BcoFsYokj/xq3CVEoBjFqfhwziGZqyrPecikx
-         un8t/X+RlERqRjcuSDlYRbXrLSzuAp2himsXCUPOsQA0MtofGcfPXr3SA4kIjjAs9BjN
-         OVcg==
-X-Gm-Message-State: APjAAAVEYlry3ddWn9R2DgYjahDyMJ/odDpjnYTq9/IIEaGiGrw7wbqL
-        K9zF/oGtyJXV2hUmg3btPUk4/dLMu1UWrFEIaZcqrA==
-X-Google-Smtp-Source: APXvYqyG+eTU5eoURz3A6I1Oi2WUYBcxtn/xMioYPodkxhQPxLm0cWZlBIGnlKCfDVHIastd7l/4gdZrcllqpZUussM=
-X-Received: by 2002:a17:902:820e:: with SMTP id x14mr22386750pln.223.1569881959520;
- Mon, 30 Sep 2019 15:19:19 -0700 (PDT)
+        bh=eZx7FrxWnk9gZ+ux4zZK+PaCVpHhMuAm8pC5a4sXjxE=;
+        b=AeuRq/ZTR47fR+uX1qX+Q8HbyQ2ftr5dkM386OSG2xW7TzkGDTcc8tpSg98g/Munlm
+         i/EkouxDZGnMDbPDZftRR9VAFFzXSQvz8imuEC4Rm2RWzRbZZirM32JKN3DOz7GD0WZF
+         6pOw62zPPnJt6B0UHptviyMeS5UT5rGY73s74cw3h8V0j9TlDFgQ+SrgXYn1sDsx+tJN
+         wbMotEThqri3ZdJ7SAT26fiZxtLMd17sLz6a6YPskFJcMSU8P+N8IdUJI1sVRdMNSrwf
+         Dqgm+Tr2RovALVQkI15QeH9VqLVnlYexhe4pENSY6ds/d28DFAGAa8dHjq8MGErRQzx5
+         2RVQ==
+X-Gm-Message-State: APjAAAXcPihmYri48UZl0ezuP37mD57D6GHadj7gdUVM18bzmp39kh+b
+        I9lxyghIvm5lhVJtm8jOjaTSBZ6QkB9cGc7TRpc=
+X-Google-Smtp-Source: APXvYqxULtiRa/HTx9aPpOZT9V8yRuI/FyY4SP5XWd9VZ82JtRdYlIdKOqHYkC+5+ReMhF372RQ/yCwoLHTlSv8B3tU=
+X-Received: by 2002:a92:5e1b:: with SMTP id s27mr22666872ilb.178.1569882026899;
+ Mon, 30 Sep 2019 15:20:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190930055925.25842-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190930055925.25842-1-yamada.masahiro@socionext.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 30 Sep 2019 15:19:08 -0700
-Message-ID: <CAKwvOdk4VKK-Z0ZRKb0aV9yH=jtqVp0aYaqMaL7dOq7-jaGX4A@mail.gmail.com>
-Subject: Re: [PATCH] ARM: fix __get_user_check() in case uaccess_* calls are
- not inlined
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <cover.1558430617.git.amit.kucheria@linaro.org> <49cf5d94beb9af9ef4e78d4c52f3b0ad20b7c63f.1558430617.git.amit.kucheria@linaro.org>
+In-Reply-To: <49cf5d94beb9af9ef4e78d4c52f3b0ad20b7c63f.1558430617.git.amit.kucheria@linaro.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Mon, 30 Sep 2019 16:20:15 -0600
+Message-ID: <CAOCk7NptTHPOdyEkCAofjTPuDQ5dsnPMQgfC0R8=7cp05xKQiA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] arm64: dts: qcom: msm8998: Add PSCI cpuidle low
+ power states
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Sibi Sankar <sibis@codeaurora.org>, daniel.lezcano@linaro.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        DTML <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 11:00 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> KernelCI reports that bcm2835_defconfig is no longer booting since
-> commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-> forcibly"):
->
->   https://lkml.org/lkml/2019/9/26/825
->
-> I also received a regression report from Nicolas Saenz Julienne:
->
->   https://lkml.org/lkml/2019/9/27/263
->
-> This problem has cropped up on arch/arm/config/bcm2835_defconfig
-> because it enables CONFIG_CC_OPTIMIZE_FOR_SIZE. The compiler tends
-> to prefer not inlining functions with -Os. I was able to reproduce
-> it with other boards and defconfig files by manually enabling
-> CONFIG_CC_OPTIMIZE_FOR_SIZE.
->
-> The __get_user_check() specifically uses r0, r1, r2 registers.
+Amit, the merged version of the below change causes a boot failure
+(nasty hang, sometimes with RCU stalls) on the msm8998 laptops.  Oddly
+enough, it seems to be resolved if I remove the cpu-idle-states
+property from one of the cpu nodes.
 
-Yep, that part is obvious, but...
+I see no issues with the msm8998 MTP.
 
-> So, uaccess_save_and_enable() and uaccess_restore() must be inlined
-> in order to avoid those registers being overwritten in the callees.
+Do you have any suggestions on how we might debug this?
 
-Right, r0, r1, r2 are caller saved, meaning that __get_user_check must
-save/restore them when making function calls. So
-uaccess_save_and_enable() and uaccess_restore() should either be made
-into macros (macros and typecheck (see include/linux/typecheck.h) are
-peanut butter and chocolate), or occur at different points in the
-function when those register variables are no longer in use.
-
+On Tue, May 21, 2019 at 3:38 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
 >
-> Prior to commit 9012d011660e ("compiler: allow all arches to enable
-> CONFIG_OPTIMIZE_INLINING"), the 'inline' marker was always enough for
-> inlining functions, except on x86.
+> Add device bindings for cpuidle states for cpu devices.
 >
-> Since that commit, all architectures can enable CONFIG_OPTIMIZE_INLINING.
-> So, __always_inline is now the only guaranteed way of forcible inlining.
->
-> I want to keep as much compiler's freedom as possible about the inlining
-> decision. So, I changed the function call order instead of adding
-> __always_inline around.
->
-> Call uaccess_save_and_enable() before assigning the __p ("r0"), and
-> uaccess_restore() after evacuating the __e ("r0").
->
-> Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Reported-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > ---
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi | 50 +++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
 >
->  arch/arm/include/asm/uaccess.h | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> index 3fd0769fe648..54810980fcf9 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> @@ -78,6 +78,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x0>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&LITTLE_CPU_SLEEP_0 &LITTLE_CPU_SLEEP_1>;
+>                         efficiency = <1024>;
+>                         next-level-cache = <&L2_0>;
+>                         L2_0: l2-cache {
+> @@ -97,6 +98,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x1>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&LITTLE_CPU_SLEEP_0 &LITTLE_CPU_SLEEP_1>;
+>                         efficiency = <1024>;
+>                         next-level-cache = <&L2_0>;
+>                         L1_I_1: l1-icache {
+> @@ -112,6 +114,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x2>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&LITTLE_CPU_SLEEP_0 &LITTLE_CPU_SLEEP_1>;
+>                         efficiency = <1024>;
+>                         next-level-cache = <&L2_0>;
+>                         L1_I_2: l1-icache {
+> @@ -127,6 +130,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x3>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&LITTLE_CPU_SLEEP_0 &LITTLE_CPU_SLEEP_1>;
+>                         efficiency = <1024>;
+>                         next-level-cache = <&L2_0>;
+>                         L1_I_3: l1-icache {
+> @@ -142,6 +146,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x100>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&BIG_CPU_SLEEP_0 &BIG_CPU_SLEEP_1>;
+>                         efficiency = <1536>;
+>                         next-level-cache = <&L2_1>;
+>                         L2_1: l2-cache {
+> @@ -161,6 +166,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x101>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&BIG_CPU_SLEEP_0 &BIG_CPU_SLEEP_1>;
+>                         efficiency = <1536>;
+>                         next-level-cache = <&L2_1>;
+>                         L1_I_101: l1-icache {
+> @@ -176,6 +182,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x102>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&BIG_CPU_SLEEP_0 &BIG_CPU_SLEEP_1>;
+>                         efficiency = <1536>;
+>                         next-level-cache = <&L2_1>;
+>                         L1_I_102: l1-icache {
+> @@ -191,6 +198,7 @@
+>                         compatible = "arm,armv8";
+>                         reg = <0x0 0x103>;
+>                         enable-method = "psci";
+> +                       cpu-idle-states = <&BIG_CPU_SLEEP_0 &BIG_CPU_SLEEP_1>;
+>                         efficiency = <1536>;
+>                         next-level-cache = <&L2_1>;
+>                         L1_I_103: l1-icache {
+> @@ -238,6 +246,48 @@
+>                                 };
+>                         };
+>                 };
+> +
+> +               idle-states {
+> +                       entry-method = "psci";
+> +
+> +                       LITTLE_CPU_SLEEP_0: cpu-sleep-0-0 {
+> +                               compatible = "arm,idle-state";
+> +                               idle-state-name = "little-retention";
+> +                               arm,psci-suspend-param = <0x00000002>;
+> +                               entry-latency-us = <43>;
+> +                               exit-latency-us = <86>;
+> +                               min-residency-us = <200>;
+> +                       };
+> +
+> +                       LITTLE_CPU_SLEEP_1: cpu-sleep-0-1 {
+> +                               compatible = "arm,idle-state";
+> +                               idle-state-name = "little-power-collapse";
+> +                               arm,psci-suspend-param = <0x00000003>;
+> +                               entry-latency-us = <100>;
+> +                               exit-latency-us = <612>;
+> +                               min-residency-us = <1000>;
+> +                               local-timer-stop;
+> +                       };
+> +
+> +                       BIG_CPU_SLEEP_0: cpu-sleep-1-0 {
+> +                               compatible = "arm,idle-state";
+> +                               idle-state-name = "big-retention";
+> +                               arm,psci-suspend-param = <0x00000002>;
+> +                               entry-latency-us = <41>;
+> +                               exit-latency-us = <82>;
+> +                               min-residency-us = <200>;
+> +                       };
+> +
+> +                       BIG_CPU_SLEEP_1: cpu-sleep-1-1 {
+> +                               compatible = "arm,idle-state";
+> +                               idle-state-name = "big-power-collapse";
+> +                               arm,psci-suspend-param = <0x00000003>;
+> +                               entry-latency-us = <100>;
+> +                               exit-latency-us = <525>;
+> +                               min-residency-us = <1000>;
+> +                               local-timer-stop;
+> +                       };
+> +               };
+>         };
 >
-> diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-> index 303248e5b990..559f252d7e3c 100644
-> --- a/arch/arm/include/asm/uaccess.h
-> +++ b/arch/arm/include/asm/uaccess.h
-> @@ -191,11 +191,12 @@ extern int __get_user_64t_4(void *);
->  #define __get_user_check(x, p)                                         \
->         ({                                                              \
->                 unsigned long __limit = current_thread_info()->addr_limit - 1; \
-> +               unsigned int __ua_flags = uaccess_save_and_enable();    \
->                 register typeof(*(p)) __user *__p asm("r0") = (p);      \
->                 register __inttype(x) __r2 asm("r2");                   \
->                 register unsigned long __l asm("r1") = __limit;         \
->                 register int __e asm("r0");                             \
-
-What does it mean for there to be two different local variables pinned
-to the same register? Ie. it looks like __e and __p are defined to
-exist in r0.  Would having one variable and an explicit cast result in
-differing storage?
-
-> -               unsigned int __ua_flags = uaccess_save_and_enable();    \
-> +               unsigned int __err;                                     \
->                 switch (sizeof(*(__p))) {                               \
->                 case 1:                                                 \
->                         if (sizeof((x)) >= 8)                           \
-> @@ -223,9 +224,10 @@ extern int __get_user_64t_4(void *);
->                         break;                                          \
->                 default: __e = __get_user_bad(); break;                 \
-
-^ I think this assignment to __e should be replaced with an assignment
-to __err?  We no longer need the register at this point and could skip
-the assignment of x.
-
->                 }                                                       \
-> -               uaccess_restore(__ua_flags);                            \
-> +               __err = __e;                                            \
->                 x = (typeof(*(p))) __r2;                                \
-> -               __e;                                                    \
-> +               uaccess_restore(__ua_flags);                            \
-> +               __err;                                                  \
->         })
->
->  #define get_user(x, p)                                                 \
+>         firmware {
 > --
 > 2.17.1
 >
-
-
--- 
-Thanks,
-~Nick Desaulniers
