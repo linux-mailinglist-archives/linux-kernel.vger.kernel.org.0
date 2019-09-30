@@ -2,91 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D67C24F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 18:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC5AC24F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 18:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732263AbfI3QND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 12:13:03 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39099 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732198AbfI3QNA (ORCPT
+        id S1732217AbfI3QQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 12:16:16 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42977 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731996AbfI3QQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 12:13:00 -0400
-Received: by mail-lf1-f65.google.com with SMTP id 72so7482353lfh.6;
-        Mon, 30 Sep 2019 09:12:58 -0700 (PDT)
+        Mon, 30 Sep 2019 12:16:16 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y23so10101757lje.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 09:16:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HJzNXlibyUtJI8ckm37bPQTIdCVqgMO9qTi0/pkY+ds=;
+        b=EEfrV2PjBToGLxf7td7dDlHl0akRG2maraRMZTiYLJrAEnYn6KB45JRJIRioKaKqdx
+         7IjY3d2lHVMRjX6VRZYq3Va/L7TTRvo7auRqyWvTUF+XoK53mCZv7Z5fPhyxF0bxN7vg
+         tRxyx27cdMmNBCLNEuU66LcOdR4J9aeiWZVy4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KXfl4ww2DrWF3pEnl8LcNO7G+susED8wh9HsxIg0JQw=;
-        b=M4uQ+uA3fD0ziLfOUH7Zf0ikcuehxgwFrpIjo7/66z67aCaCQhxJNpiHA1R3MZ6lld
-         Pc4yaYkk28A2czKYX24Z+32tyuOb64T1DnbHDh4LgOCj77hqo2hKp6UcZDzCYG03049Z
-         H0NvdmFo6PGKtM66IPfVXELySp758/4qp0IIAMaEJx5yMr0pI/d4lQar6szpW8vQ0wtf
-         e9lyYdDYX97spZnasNnNdYjVFVO0ga9JFlRk39lWjMzGOnuMBrDRzwykbjBZnXlOyqmp
-         VgNAf0O+RAp/3Hsfl3iMCP2PxYyjaWsYdx/WykhnL33lH1oBZsP5dL1SwOwM9gqQgC9l
-         ttoQ==
-X-Gm-Message-State: APjAAAVg1c9QTOizr7iadxGj2ow96aUiADt7WpaXJgY1EXEo7R5b89Gw
-        C0Q74ITIscWYz8JyKxwUG04=
-X-Google-Smtp-Source: APXvYqwrLdfKkzjvjreL0RNH/iUPmuMtOzANmSTvmM0nPK7ujkTyEPLdzjwvfColyZhp8/frTUwJ/Q==
-X-Received: by 2002:ac2:5504:: with SMTP id j4mr12388515lfk.186.1569859977680;
-        Mon, 30 Sep 2019 09:12:57 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id t16sm3457875ljj.29.2019.09.30.09.12.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Sep 2019 09:12:55 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iEyIG-0004ue-EZ; Mon, 30 Sep 2019 18:13:00 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Pete Zaitcev <zaitcev@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>
-Subject: [PATCH 4/4] media: stkwebcam: fix runtime PM after driver unbind
-Date:   Mon, 30 Sep 2019 18:12:05 +0200
-Message-Id: <20190930161205.18803-5-johan@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190930161205.18803-1-johan@kernel.org>
-References: <20190930161205.18803-1-johan@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HJzNXlibyUtJI8ckm37bPQTIdCVqgMO9qTi0/pkY+ds=;
+        b=hFYn7UEKguk4msx4DuvbUU5fg8+fyGsfg0hqwFaZDuNrJo0u19hhLL8gf9MByk4D7n
+         Q2LH526WrApiMQCge+vePbC98XfmZRzsP5aprszVirD/etkGI4/OemAtTd2S3YmnJImK
+         M6EWNes1hneyCEdZ/mqGXXZjILoj6RuyIkuumpyNDNPqr2VP9AEvNKh+/6zk41evO0Qt
+         QJCFrOJhkD5O/MYLpTHkIim+dP+L437+GqypOCOPp81dp+LJfzYM5CUihfpFTywdu44b
+         XQUEVdKZLocgHki3nxpMxnBdmhenSv4JPFee4IcuDn0Rgd4jV0WpnyueG/2+XCWDaMq3
+         d61w==
+X-Gm-Message-State: APjAAAXIqxcWHuqqM+Iy4j7dZBmV1i/bMhVEvm0MwhKN3kG/OPOR6U38
+        At72AFhHqSAWVS6GpN1Z0OjdJVc0VCw=
+X-Google-Smtp-Source: APXvYqyGZm7GL2bi2K2dwaiTQrUfBiHljxQcN4ijeK08gqHBEUT8+js2r42QDHMAT/N4rWvzWc+8nA==
+X-Received: by 2002:a2e:7a04:: with SMTP id v4mr12721236ljc.237.1569860173100;
+        Mon, 30 Sep 2019 09:16:13 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id t82sm3198726lff.58.2019.09.30.09.16.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2019 09:16:12 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id y3so10128848ljj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 09:16:11 -0700 (PDT)
+X-Received: by 2002:a2e:3015:: with SMTP id w21mr12784608ljw.165.1569860171571;
+ Mon, 30 Sep 2019 09:16:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
+ <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
+ <CAHk-=wi0vxLmwEBn2Xgu7hZ0U8z2kN4sgCax+57ZJMVo3huDaQ@mail.gmail.com>
+ <20190930033706.GD4994@mit.edu> <20190930131639.GF4994@mit.edu>
+In-Reply-To: <20190930131639.GF4994@mit.edu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 30 Sep 2019 09:15:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg7YAx_+CDe6fUqApPD_ghP18H9sPnJWWUg32pQ4pU82g@mail.gmail.com>
+Message-ID: <CAHk-=wg7YAx_+CDe6fUqApPD_ghP18H9sPnJWWUg32pQ4pU82g@mail.gmail.com>
+Subject: Re: x86/random: Speculation to the rescue
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@opentech.at>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
-interface PM usage counter") USB drivers must always balance their
-runtime PM gets and puts, including when the driver has already been
-unbound from the interface.
+On Mon, Sep 30, 2019 at 6:16 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> Which is to say, I'm still worried that people with deep access to the
+> implementation details of a CPU might be able to reverse engineer what
+> a jitter entropy scheme produces.  This is why I'd be curious to see
+> the results when someone tries to attack a jitter scheme on a fully
+> open, simple architecture such as RISC-V.
 
-Leaving the interface with a positive PM usage counter would prevent a
-later bound driver from suspending the device.
+Oh, I agree.
 
-Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/media/usb/stkwebcam/stk-webcam.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+One of the reasons I didn't like some of the other jitter entropy
+things was that they seemed to rely _entirely_ on just purely
+low-level CPU unpredictability. I think that exists, but I think it
+makes for problems for really simple cores.
 
-diff --git a/drivers/media/usb/stkwebcam/stk-webcam.c b/drivers/media/usb/stkwebcam/stk-webcam.c
-index be8041e3e6b8..b0cfa4c1f8cc 100644
---- a/drivers/media/usb/stkwebcam/stk-webcam.c
-+++ b/drivers/media/usb/stkwebcam/stk-webcam.c
-@@ -643,8 +643,7 @@ static int v4l_stk_release(struct file *fp)
- 		dev->owner = NULL;
- 	}
- 
--	if (is_present(dev))
--		usb_autopm_put_interface(dev->interface);
-+	usb_autopm_put_interface(dev->interface);
- 	mutex_unlock(&dev->lock);
- 	return v4l2_fh_release(fp);
- }
--- 
-2.23.0
+Timing over a bigger thing and an actual interrupt (even if it's
+"just" a timer interrupt, which is arguably much closer to the CPU and
+has a much higher likelihood of having common frequency domains with
+the cycle counter etc) means that I'm pretty damn convinced that a big
+complex CPU will absolutely see issues, even if it has big caches.
 
+But it _also_ means that if you have a small and excessively stupid
+in-order CPU, I can almost guarantee that you will at least have cache
+misses likely all the way out to memory. So a CPU-only loop like the
+LFSR thing that Thomas reports generates entropy even on its own would
+likely generate nothing at all on a simple in-order core - but I do
+think that with timers and real cache misses etc, it's going to be
+really really hard to try to figure out cycle counters even if you're
+a CPU expert.
+
+But the embedded market with small cores and 100% identical machines
+and 100% identical system images is always going to be a potential
+huge problem.
+
+If somebody has connections to RISC-V hw people, maybe they could
+bring this issue up with them?
+
+                  Linus
