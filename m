@@ -2,73 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9346DC28BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 550D2C28C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732515AbfI3VWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:22:20 -0400
-Received: from ozlabs.org ([203.11.71.1]:46017 "EHLO ozlabs.org"
+        id S1732573AbfI3VYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:24:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730183AbfI3VWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:22:20 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1727469AbfI3VYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 17:24:34 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46hwMs3Vh2z9sNF;
-        Tue,  1 Oct 2019 07:22:17 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1569878537;
-        bh=+E6UBVAGUlRHpC9tpa+7aDAC5lzlHWAv40u3WQwxZ88=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hXQyVZe6c8fyLPHlXMFiLRlbr+zTWV7zFXeBFVS6mhpKATTkqf13WBFmft3iYN0yZ
-         oYTKnusjjZs07j53xsWs4KK+FsHwcOhG63CsjxbWYCb9nlJ6kmQ94NNPi/1ZIZaQKC
-         K120TgZWfSi8usCZPs2Ura2ohY4nPIgWBVbIk6cc9UMV6pEpnFLerQTk5LC565ZzEa
-         XQT9obprrZuGX/PQr/Tb/VnD/o8RPTa+CgLI+0HpxYBqQCZSwZeQ+zKxbjB2ETpmQQ
-         A8g2v4F/owcImaJ5A7Rj8mDpVDp3yBF96oFxvI3W0W7VNnvpjz1gQcaHvD9dwlOiey
-         1cOn3ZhDw+xIw==
-Date:   Tue, 1 Oct 2019 07:22:16 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: bad update of the v4l-dvb-next tree
-Message-ID: <20191001072216.473e0eee@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 690E721920;
+        Mon, 30 Sep 2019 21:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569878672;
+        bh=O0YTj2vhvn3cLJ9bXhjvMPrKFz9pub2mp+NyxMOgLgY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XbxRSBb5GzUwqvHLEh5933b2ncHabYYcy1H+PGoWAURC6L6OdvUSkMXSuI0Iao+qZ
+         0/XMhv/X8S8fJpHTkfs7dgHQrJiQtHY7DLVpLSN5KbV0sqXQhr4XPG2Cj2rZnridY7
+         w1jj9r+Rs3EGC9eEA/lZ15W3yzaU9R0022RF1Dto=
+Received: by mail-qt1-f177.google.com with SMTP id 3so18976777qta.1;
+        Mon, 30 Sep 2019 14:24:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAXAshFanHEZgU5iZwlV8eAxuby5/lsuknWOk8eiTQuBJlikpRMh
+        vdfvLeuBnE+lnknRZiRQaqqByPZDb6CuLwWPoQ==
+X-Google-Smtp-Source: APXvYqwkGA20wZuKhUgCITJW9BMQhvKkz+h0oBRgQSxYR0zNJnVmKMOzb61pAR/bwav/Kg6q4m9o5OuCzIMOKst9NO8=
+X-Received: by 2002:ac8:31b3:: with SMTP id h48mr28091603qte.300.1569878671519;
+ Mon, 30 Sep 2019 14:24:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/R5z//8fMhC0wRrxI5SXIcXa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190927002455.13169-1-robh@kernel.org> <20190927002455.13169-6-robh@kernel.org>
+ <20190930125752.GD12051@infradead.org> <95f8dabea99f104336491281b88c04b58d462258.camel@suse.de>
+In-Reply-To: <95f8dabea99f104336491281b88c04b58d462258.camel@suse.de>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 30 Sep 2019 16:24:20 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLnKxuQRR3sGGtXF3nwwDx7DOONPPYz37ROk7u_+cxRug@mail.gmail.com>
+Message-ID: <CAL_JsqLnKxuQRR3sGGtXF3nwwDx7DOONPPYz37ROk7u_+cxRug@mail.gmail.com>
+Subject: Re: [PATCH 05/11] of: Ratify of_dma_configure() interface
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Frank Rowand <frowand.list@gmail.com>,
+        PCI <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Oza Pawandeep <oza.oza@broadcom.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/R5z//8fMhC0wRrxI5SXIcXa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 30, 2019 at 8:32 AM Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> On Mon, 2019-09-30 at 05:57 -0700, Christoph Hellwig wrote:
+> > On Thu, Sep 26, 2019 at 07:24:49PM -0500, Rob Herring wrote:
+> > > -int of_dma_configure(struct device *dev, struct device_node *np, bool
+> > > force_dma)
+> > > +int of_dma_configure(struct device *dev, struct device_node *parent, bool
+> > > force_dma)
+> >
+> > This creates a > 80 char line.
+> >
+> > >  {
+> > >     u64 dma_addr, paddr, size = 0;
+> > >     int ret;
+> > >     bool coherent;
+> > >     unsigned long offset;
+> > >     const struct iommu_ops *iommu;
+> > > +   struct device_node *np;
+> > >     u64 mask;
+> > >
+> > > +   np = dev->of_node;
+> > > +   if (!np)
+> > > +           np = parent;
+> > > +   if (!np)
+> > > +           return -ENODEV;
+> >
+> > I have to say I find the older calling convention simpler to understand.
+> > If we want to enforce the invariant I'd rather do that explicitly:
+> >
+> >       if (dev->of_node && np != dev->of_node)
+> >               return -EINVAL;
+>
+> As is, this would break Freescale Layerscape fsl-mc bus' dma_configure():
 
-Hi all,
+This may break PCI too for devices that have a DT node.
 
-The v4l-dvb-next tree appears to have been reset to point to a commit
-from early 2014 ...
+> static int fsl_mc_dma_configure(struct device *dev)
+> {
+>         struct device *dma_dev = dev;
+>
+>         while (dev_is_fsl_mc(dma_dev))
+>                 dma_dev = dma_dev->parent;
+>
+>         return of_dma_configure(dev, dma_dev->of_node, 0);
+> }
+>
+> But I think that with this series, given the fact that we now treat the lack of
+> dma-ranges as a 1:1 mapping instead of an error, we could rewrite the function
+> like this:
 
---=20
-Cheers,
-Stephen Rothwell
+Now, I'm reconsidering allowing this abuse... It's better if the code
+which understands the bus structure in DT for a specific bus passes in
+the right thing. Maybe I should go back to Robin's version (below).
+OTOH, the existing assumption that 'dma-ranges' was in the immediate
+parent was an assumption on the bus structure which maybe doesn't
+always apply.
 
---Sig_/R5z//8fMhC0wRrxI5SXIcXa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/drivers/of/device.c b/drivers/of/device.c
+index a45261e21144..6951450bb8f3 100644
+--- a/drivers/of/device.c
++++ b/drivers/of/device.c
+@@ -98,12 +98,15 @@ int of_dma_configure(struct device *dev, struct
+device_node *parent, bool force_
+        u64 mask;
 
------BEGIN PGP SIGNATURE-----
+        np = dev->of_node;
+-       if (!np)
+-               np = parent;
++       if (np)
++               parent = of_get_dma_parent(np);
++       else
++               np = of_node_get(parent);
+        if (!np)
+                return -ENODEV;
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2ScggACgkQAVBC80lX
-0Gw0Dwf/dEn/ewhUH1mYIBk0gF3VnwC5/TxS74S8p1rhns7zSWdn/IWYVEPFNmtN
-/+9MM9FxScONK4GXI5brRdeJdO8IEQxW15CARBNCLNMz8erwJpBhbUqxDP/4/f0v
-5z1EGe+YklblzIPWIA4/zU4qstlnKOzEtyLAANWD7N5+gS1YJSO45Tdbm/zTN+mv
-f8PzMTMgkvRle8Pxk2VHuxflCwmeLQQ4uOHo8h3wI63S/U/2KtPgao24anI+g+Zt
-MJv1g+rsnjAftesigXW1w59SYvsql8LW52lfk56fjCmjnO5XSkDv4MTYToazn1mP
-V1k4LlGOdLsihNaXmQYVOTU0jDjI+Q==
-=XMNv
------END PGP SIGNATURE-----
-
---Sig_/R5z//8fMhC0wRrxI5SXIcXa--
+-       ret = of_dma_get_range(np, &dma_addr, &paddr, &size);
++       ret = of_dma_get_range(parent, &dma_addr, &paddr, &size);
++       of_node_put(parent);
+        if (ret < 0) {
+                /*
+                 * For legacy reasons, we have to assume some devices need
