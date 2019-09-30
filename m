@@ -2,89 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A92B9C2705
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44DD9C26F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbfI3UpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:45:01 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41035 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbfI3UpA (ORCPT
+        id S1729740AbfI3Un1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:43:27 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33774 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfI3Un0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:45:00 -0400
-Received: by mail-qt1-f195.google.com with SMTP id n1so18799490qtp.8
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 13:45:00 -0700 (PDT)
+        Mon, 30 Sep 2019 16:43:26 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q10so6275662pfl.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 13:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1dwBvieRM+vKXZ4KLxwbvrNPVV9nPlESTVr4TgXHT9c=;
-        b=aKjqbywHKeBLuug1dtqF0XkdHMigPjUAxw3BlPnJjAjdAx5lkTdY7/HB6DEFlEzwpg
-         AhdjS/kmkFWrj8YIGf/HcC3mSsAsOSf/Qn0ZfQzBhgZr3BzVaxd6bu1VuiA1PM8LTOHH
-         FqNNFeJmYKO2QIZMxewOPXGVvgW2vbRcZZXn8=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ej+NLOn65SqylH82xQqCy7VCcHeNjBUvrxVEbfvpBwo=;
+        b=nRXpD4f7KWqFbQyFMyCsm1kAi0MDUjJ/OzE5NbdzsMl7Npj1TDqhnMyaNMO76wTz4P
+         kalwczUBiqPNefZ098dmk6+zMm8OhNWOKBFu/zxZcPg9u+XvivmZiqk66jmAjeK1y98J
+         UkOoc8VX83B/EWiMfrD3mzJeuVixZ9PKtJCdk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1dwBvieRM+vKXZ4KLxwbvrNPVV9nPlESTVr4TgXHT9c=;
-        b=iu/BNvOGq+bOmBFfkayLq6/tNVdM2UGBEwfJE6vaYzt7p5RIID7q1rr6PyxUzyCK9A
-         x834xoXYlS2GLQLc0xJA0qDc0CBCpEXmy7anEsH106RlPpA6XzoVg9XIh6UjNC+cjpwG
-         C0NW9AfIBaaOGUWA14b/20AIKGRAKSgTxk4Ggavm34T5nw78CCBvccIOarnTHEwsa+yx
-         BvE6nQt9BJEsu7VzQY/19XHAtrbcnK1YVvyqBe6xqXnFcbVtFS+iwiTz6IHB8jY4bsgS
-         uj95ZPnIqWx3ffRYNBgF2IXIwyEabAhfv5/eu0q9jOGgiQiHivEs4c85Lzq6M3HpWiVO
-         vNag==
-X-Gm-Message-State: APjAAAWzs9HGNaZm3ozdCRzXJigur2WoirbAzD28d0DTzaviptzVAa9b
-        0QI7Y/nhp40mg1uTICY9P4G8dGH+qBk=
-X-Google-Smtp-Source: APXvYqxk3NZEibZ7+/VO5i5PFtNsFhkXGQFI0W+IiPDN0q29fCBgPUPrtv8hutsjM4/XczJf2Xdn9w==
-X-Received: by 2002:a63:c148:: with SMTP id p8mr26335812pgi.282.1569874374266;
-        Mon, 30 Sep 2019 13:12:54 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id t125sm12921894pfc.80.2019.09.30.13.12.52
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ej+NLOn65SqylH82xQqCy7VCcHeNjBUvrxVEbfvpBwo=;
+        b=SX7mw6KQz2LoXXOwT1OSGEan2YaXM+V9bISE0y8pgyBisFjo+wpZ1TDQ82kiZnlHtG
+         MMuXwMuWkKcQ3Isgflo9qL6DyduQKvE57/Szr9ayCxNAKCwZaywWqsyweBkMsSZv8Pf8
+         MuCAgyOfgf2lzXU0teXTnak6rWsTwcWY5+Z7fhjpRm/cBgK2G9SzrlJl1aHzqoS/hUHX
+         OuUET+E31AiNWiIggLRCAtvmXbK09DjWZD2JcNmGK3RiSdzxBZhA4Nq9fVrNQCgTj1Ji
+         VH2kjhPK3uu/e6YycAZHirHU5Zl8CCy+OtYsWa09liGOc8qHCYmA5wIHNfyn5UM4eI/r
+         7XOQ==
+X-Gm-Message-State: APjAAAVwTaDgNzKUi3etgcbs3+xp8wotbZM7zaspA5pyOFokS/+gbMut
+        HbkRCQ97ePbDfK77KMVlAVLTrg==
+X-Google-Smtp-Source: APXvYqy7dW2o3ZI1PqcNwk7CVJMuSg+Y4R9Ba2CAdv/Lg7XCe/An85hWd/2CXf4MDHUcB/SJzu1KbA==
+X-Received: by 2002:a17:90a:8c15:: with SMTP id a21mr1083385pjo.99.1569874585032;
+        Mon, 30 Sep 2019 13:16:25 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id h2sm22067824pfq.108.2019.09.30.13.16.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 13:12:53 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Martijn Coenen <maco@android.com>,
-        Todd Kjos <tkjos@android.com>
-Subject: [PATCH] binder: Fix comment headers on binder_alloc_prepare_to_free()
-Date:   Mon, 30 Sep 2019 16:12:50 -0400
-Message-Id: <20190930201250.139554-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
+        Mon, 30 Sep 2019 13:16:24 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 16:16:23 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        kernel-team@lge.com, Byungchul Park <byungchul.park@lge.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        max.byungchul.park@gmail.com,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Rao Shoaib <rao.shoaib@oracle.com>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v4 1/2] rcu/tree: Add basic support for kfree_rcu()
+ batching
+Message-ID: <20190930201623.GA134859@google.com>
+References: <20190814160411.58591-1-joel@joelfernandes.org>
+ <20190918095811.GA25821@pc636>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918095811.GA25821@pc636>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-binder_alloc_buffer_lookup() doesn't exist and is named
-"binder_alloc_prepare_to_free()". Correct the code comments to reflect
-this.
+On Wed, Sep 18, 2019 at 11:58:11AM +0200, Uladzislau Rezki wrote:
+> > Recently a discussion about stability and performance of a system
+> > involving a high rate of kfree_rcu() calls surfaced on the list [1]
+> > which led to another discussion how to prepare for this situation.
+> > 
+> > This patch adds basic batching support for kfree_rcu(). It is "basic"
+> > because we do none of the slab management, dynamic allocation, code
+> > moving or any of the other things, some of which previous attempts did
+> > [2]. These fancier improvements can be follow-up patches and there are
+> > different ideas being discussed in those regards. This is an effort to
+> > start simple, and build up from there. In the future, an extension to
+> > use kfree_bulk and possibly per-slab batching could be done to further
+> > improve performance due to cache-locality and slab-specific bulk free
+> > optimizations. By using an array of pointers, the worker thread
+> > processing the work would need to read lesser data since it does not
+> > need to deal with large rcu_head(s) any longer.
+> > 
+> > Torture tests follow in the next patch and show improvements of around
+> > 5x reduction in number of  grace periods on a 16 CPU system. More
+> > details and test data are in that patch.
+> > 
+> > There is an implication with rcu_barrier() with this patch. Since the
+> > kfree_rcu() calls can be batched, and may not be handed yet to the RCU
+> > machinery in fact, the monitor may not have even run yet to do the
+> > queue_rcu_work(), there seems no easy way of implementing rcu_barrier()
+> > to wait for those kfree_rcu()s that are already made. So this means a
+> > kfree_rcu() followed by an rcu_barrier() does not imply that memory will
+> > be freed once rcu_barrier() returns.
+> > 
+> > Another implication is higher active memory usage (although not
+> > run-away..) until the kfree_rcu() flooding ends, in comparison to
+> > without batching. More details about this are in the second patch which
+> > adds an rcuperf test.
+> > 
+> > Finally, in the near future we will get rid of kfree_rcu() special casing
+> > within RCU such as in rcu_do_batch and switch everything to just
+> > batching. Currently we don't do that since timer subsystem is not yet up
+> > and we cannot schedule the kfree_rcu() monitor as the timer subsystem's
+> > lock are not initialized. That would also mean getting rid of
+> > kfree_call_rcu_nobatch() entirely.
+> > 
+> Hello, Joel.
+> 
+> First of all thank you for improving it. I also noticed a high pressure
+> on RCU-machinery during performing some vmalloc tests when kfree_rcu()
+> flood occurred. Therefore i got rid of using kfree_rcu() there.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Replying a bit late due to overseas conference travel and vacation.
 
----
- drivers/android/binder_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+When you say 'high pressure', do you mean memory pressure or just system
+load?
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 6d79a1b0d446..d42a8b2f636a 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -156,7 +156,7 @@ static struct binder_buffer *binder_alloc_prepare_to_free_locked(
- }
- 
- /**
-- * binder_alloc_buffer_lookup() - get buffer given user ptr
-+ * binder_alloc_prepare_to_free() - get buffer given user ptr
-  * @alloc:	binder_alloc for this proc
-  * @user_ptr:	User pointer to buffer data
-  *
--- 
-2.23.0.444.g18eeb5a265-goog
+Memory pressure slightly increases with the kfree_rcu() rework with the
+benefit of much fewer grace periods.
+
+> I have just a small question related to workloads and performance evaluation.
+> Are you aware of any specific workloads which benefit from it for example
+> mobile area, etc? I am asking because i think about backporting of it and
+> reuse it on our kernel. 
+
+I am not aware of a mobile usecase that benefits but there are server
+workloads that make system more stable in the face of a kfree_rcu() flood.
+
+For the KVA allocator work, I see it is quite similar to the way binder
+allocates blocks. See function: binder_alloc_new_buf_locked(). Is there are
+any chance to reuse any code? For one thing, binder also has an rbtree for
+allocated blocks for fast lookup of allocated blocks. Does the KVA allocator
+not have the need for that?
+
+And, nice LPC presentation! I was there ;)
+
+thanks,
+
+ - Joel
 
