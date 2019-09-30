@@ -2,121 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52E39C2363
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A37C2377
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:38:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbfI3OgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:36:15 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41984 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730809AbfI3OgP (ORCPT
+        id S1731844AbfI3OiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:38:07 -0400
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:35876 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731190AbfI3OiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:36:15 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c10so8488993otd.9
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 07:36:14 -0700 (PDT)
+        Mon, 30 Sep 2019 10:38:07 -0400
+Received: by mail-pl1-f178.google.com with SMTP id j11so685787plk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 07:38:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RRmAIt8Bb7hxPg1Z/NX9GRGwvPP3410MbXYQc+FgXoM=;
-        b=TJ/QYoNNELeDyFXlkdZI7w+5tyl1AhAET7lb7WvOvrCWjdFE8a0pq1eUfcN97AWOsb
-         /aagxcGmIvRinHIeY335E9ZxUdfg4Ezn8CcSA8D4tMAW8NQy/bOZPee8/kbIVpTi3Bsh
-         4kwg0W6GL/z411qlIjGYNE5OxmcxnBuCoo77A=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Nrz2IUrj33GgmjR54VOTYEGCWrGtCKIOTHnB+tuTggE=;
+        b=hYj0BxkMzOSWJ9qVG8vivY1DSijQIWTGFXbIQWMbX+pNT41Z5s6jkWEJvrgidKkzvv
+         RNXqHQnayMrkzoofHJMcvvTaOllLoBrxR/h6HyUKAYBi85HWU46baPupGOhXRkjPJHwc
+         T7OEYoKNyYJcBXdI+oDlWOa5Cr47BJGKbdIurNzZrXlvfX3iP0eZGQ5wJz7Tq2iMHB+Y
+         CYL04F8RkQlMKN103zwWEJqiAUZ16IAgmDTuj1v+fOgDvCSde9nSeBnXxW/zn2eVQxAA
+         HdWux0STYn29vaw08s9SjYM3pzigxha9XKRkpmEVvNUDjPs5+2ZqzgONwS+vGFmNN5Rv
+         a/vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RRmAIt8Bb7hxPg1Z/NX9GRGwvPP3410MbXYQc+FgXoM=;
-        b=euT2MYagj6lz0Ed6H9BbmzDqDlWEs9EyS0UCjng+pDg4lyJHByTiDXHRbd1CctS1fK
-         LkRzGqKrZtTvioJ9VP13iF2QA+5b+ITeL4PzhicUYxf6Us3jSzQTiwvjINcY0rv2gUDO
-         vU39gVTlOtUzofH5KoaXU1kdmhIUDVdL6EdXje8ljL0a++vXuYy9ML5cWmSOiQY2Ywdu
-         JFY1ovehU7uKI5ZcYex5mm4b9JqjSgIOu9MSArKTktvuWbpsBx6p1GzggkP9iVAVtDe4
-         iBA+AXQYMQvLwQVt/8jZ1TfzGmg1nAPOQAL+qSmtAwJbmnQ/kznCJsPRLFTLInnwtPF7
-         guiw==
-X-Gm-Message-State: APjAAAXP4bHSp6/BLRUd/wO2YX+rJgM6Oaf/tQSpli10l6C3nn/3RpY/
-        dQH+7rk/BLOwk0bFJdIUmSKkZXxY9GWfhZo9R6Qcbg==
-X-Google-Smtp-Source: APXvYqyiMFZO7bG7Q699PZEtKotl908L9Y0kiFSAkokDSu2kpp5UuGPDZ/fvq9aR+4FK4VUX5subFkoXCD88ILhU48E=
-X-Received: by 2002:a9d:19cf:: with SMTP id k73mr13760457otk.237.1569854173938;
- Mon, 30 Sep 2019 07:36:13 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Nrz2IUrj33GgmjR54VOTYEGCWrGtCKIOTHnB+tuTggE=;
+        b=OmT52dCKRxioNo2i/NTpd+4ZM0LxiR7jQ4SJLZUZ75mvVc5Ivja3D46HQbh9n9hRS6
+         u1SAeIhFw2r3G2WZMLr3VV8ez22vGB+PJkgrZnfdHIOacu9fSy993SqiVIpjw/LW6E7I
+         1pECn73CEUWlbdGIBxyKlj4ZxHTE9pomjVjea0R0YDHPRNyZUE6Wc3ACTdjLmc1Oxnkl
+         eMWl2eMeBPeiAOVKrEISu2Iqq2509UvNhlaQMcRRz8Ninsqkh1M00BayTijESyTcj6Y5
+         R3F9TmoQWBOl7tAPSJqYBD6Ue6IEGtOzPC0bAOBxig6ivikAXevpiWhsSlmg84uUb30Z
+         qwUg==
+X-Gm-Message-State: APjAAAXleL1MRYxK0ua2CeSbKN3SEzHj/YpPzuPW5PHJyz/fr0k1EfVb
+        vS3LgEv1TNZQc9KuAZI4JoNZ0K+bwb8=
+X-Google-Smtp-Source: APXvYqxMnYoEle8gh3tPSix9AK1DfPpkhRwiOw/aa3JW9SasNolyTF+mD3FLzd0+Lqg0Cr1/wwHAqg==
+X-Received: by 2002:a17:902:b209:: with SMTP id t9mr5103408plr.116.1569854286323;
+        Mon, 30 Sep 2019 07:38:06 -0700 (PDT)
+Received: from Slackware ([103.231.91.38])
+        by smtp.gmail.com with ESMTPSA id e4sm11103665pff.22.2019.09.30.07.38.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 07:38:05 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 20:07:56 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     LinuxKernel <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] remove dead mutt url and add active mutt url
+Message-ID: <20190930143756.GB30066@Slackware>
+References: <20190928151300.GA18122@debian>
+ <20190930081310.7e3b9c52@lwn.net>
 MIME-Version: 1.0
-References: <20190726152101.GA27884@sinkpad> <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
- <20190802153715.GA18075@sinkpad> <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com>
- <69cd9bca-da28-1d35-3913-1efefe0c1c22@linux.intel.com> <fab8eabb-1cfa-9bf6-02af-3afdff3f955d@linux.intel.com>
- <20190911140204.GA52872@aaronlu> <7b001860-05b4-4308-df0e-8b60037b8000@linux.intel.com>
- <20190912120400.GA16200@aaronlu> <CAERHkrsrszO4hJqVy=g7P74h9d_YJzW7GY4ptPKykTX-mc9Mdg@mail.gmail.com>
- <20190915141402.GA1349@aaronlu> <CAERHkrs9u24NrcNUwHq8mTW922Ffhy9rPkBGVN_afm1RBhabsQ@mail.gmail.com>
- <ade66e6d-cc52-4575-2f8f-e4d96c07a33c@linux.intel.com> <CAERHkrsW8conSUNbbmAD7AHyRTGy=80QUiJAsx_LaJDNQoZ35g@mail.gmail.com>
-In-Reply-To: <CAERHkrsW8conSUNbbmAD7AHyRTGy=80QUiJAsx_LaJDNQoZ35g@mail.gmail.com>
-From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Date:   Mon, 30 Sep 2019 10:36:03 -0400
-Message-ID: <CANaguZDLa4C4z+y=K7=mD6m5C0J2fVqt-DSde_WCrWnMnk4dGw@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-To:     Aubrey Li <aubrey.intel@gmail.com>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Aaron Lu <aaron.lu@linux.alibaba.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Dario Faggioli <dfaggioli@suse.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
+Content-Disposition: inline
+In-Reply-To: <20190930081310.7e3b9c52@lwn.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 6:16 PM Aubrey Li <aubrey.intel@gmail.com> wrote:
->
-> On Thu, Sep 19, 2019 at 4:41 AM Tim Chen <tim.c.chen@linux.intel.com> wrote:
-> >
-> > On 9/17/19 6:33 PM, Aubrey Li wrote:
-> > > On Sun, Sep 15, 2019 at 10:14 PM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
-> >
-> > >>
-> > >> And I have pushed Tim's branch to:
-> > >> https://github.com/aaronlu/linux coresched-v3-v5.1.5-test-tim
-> > >>
-> > >> Mine:
-> > >> https://github.com/aaronlu/linux coresched-v3-v5.1.5-test-core_vruntime
-> >
-> >
-> > Aubrey,
-> >
-> > Thanks for testing with your set up.
-> >
-> > I think the test that's of interest is to see my load balancing added on top
-> > of Aaron's fairness patch, instead of using my previous version of
-> > forced idle approach in coresched-v3-v5.1.5-test-tim branch.
-> >
->
-> I'm trying to figure out a way to solve fairness only(not include task
-> placement),
-> So @Vineeth - if everyone is okay with Aaron's fairness patch, maybe
-> we should have a v4?
->
-Yes, I think we can move to v4 with Aaron's fairness fix and potentially
-Tim's load balancing fixes. I am working on some improvements to Aaron's
-fixes and shall post the changes after some testing. Basically, what I am
-trying to do is to propagate the min_vruntime change down to all the cf_rq
-and individual se when we update the cfs_rq(rq->core)->min_vrutime. So,
-we can make sure that the rq stays in sync and starvation do not happen.
 
-If everything goes well, we shall also post the v4 towards the end of this
-week. We would be testing Tim's load balancing patches in an
-over-committed VM scenario to observe the effect of the fix.
+--xgyAXRrhYN0wYx8y
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+
+On 08:13 Mon 30 Sep 2019, Jonathan Corbet wrote:
+>On Sat, 28 Sep 2019 20:43:03 +0530
+>Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
+>
+>> The following changes since commit 4e4327891fe2a2a4db342985bff4d4c48703c707:
+>>
+>>   replace dead mutt url with active one. (2019-09-28 20:11:00 +0530)
+>>
+>>   are available in the Git repository at:
+>
+>Bhaskar, I'm not going to take a pull request for a change like this.  If
+>you would like to make this change (and it seems like a useful change to
+>make), please send me a patch that is:
+>
+> - based on docs-next
+> - properly changelogged
+> - demonstrated to build properly with sphinx
+>
+
+Will follow your words, Jon. Hopefully ,next one will be alright.Sorry
+for the bugging.
+
+
+>Thanks,
+>
+>jon
 
 Thanks,
-Vineeth
+Bhaskar
+
+--xgyAXRrhYN0wYx8y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl2SEz4ACgkQsjqdtxFL
+KRXp1Qf+I8whd598TaGIF5lt7Gb9g3W138oZuA4MJHb31FwC7fKpLozuuh7qtA8f
+E/pnQgKSv3UqXcw3UEfBon6J88dMkxRkxR7D5nLD0XHKvVKgDtK04JTqrfbYuSTE
+REPTvbe8hDRQsLBKF1CSgfsENb0nojAgPFwVZISf6x8lcSGHAl8NuVz0uxtRleLn
+BpFUwjCLiZ7FEwnm9srnXBBfi6VbHz69u8kSBvAql+z+iX96DrYjV9I4h7oeO7gv
+x8ah4674EwAxEcae3nJHSBJd72CiJV2FrZmSApImnc/5+z8TpljL/ZH9W02lVeCJ
+SzIHwvovBu7+3crSl1KHWzVPFPn6lg==
+=affU
+-----END PGP SIGNATURE-----
+
+--xgyAXRrhYN0wYx8y--
