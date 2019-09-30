@@ -2,122 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D822C2385
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE12C2393
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731632AbfI3OmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:42:08 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40422 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731190AbfI3OmH (ORCPT
+        id S1731731AbfI3OqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:46:13 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57900 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730809AbfI3OqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:42:07 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k9so11313632oib.7;
-        Mon, 30 Sep 2019 07:42:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EYSKNqzhWZ5pBYySik+qJ+6jR/qzoTuoas9JM4Wu8F8=;
-        b=pD/WFvJzTeQ75IM0qSoU/zoj0oyNc55V9h2o5gf6+VxQZyvRTpVUIZ5kkCLYLALTdf
-         Jil0VAMrjmjkELoI8H7u0dUiVhHcslE5HaE+lJ96CYlag7/3K2dCpQ37WAWEhDWlcI6I
-         Iso4P0SXDE5SuTKU40gbfeLLruqkxAkrGIa8kjI4hBLZzZm89Vhn2WHDPQiDNY1IXXRt
-         hEHzNcdjCsuR6FTjfvkAjREkHOtq0w3mobpM4RhP7QGmPF55Oc9NDjxLJ33kD5xKBk3m
-         A4FjlI5Bx7eZlo5sfd8bSS6YPz6eQ+4+A7Z81g6a8SR2zULYEMrM5t6/7tmRynJINB/q
-         a41Q==
-X-Gm-Message-State: APjAAAU22yfYSKVMBngCO18ym0VGVibZyPA8UTH9XnoCpszSwo6Z9Ao6
-        92fyubusjCzhHS4BXSuB4w==
-X-Google-Smtp-Source: APXvYqwX8v05lHHK67LEiARr1bwtyadlGwKRScnVJBehvPR1uH/YfAs2RwR6L1jOvqsZkjnT81Z0uA==
-X-Received: by 2002:aca:d9c4:: with SMTP id q187mr18629684oig.45.1569854526386;
-        Mon, 30 Sep 2019 07:42:06 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 34sm3825189otf.55.2019.09.30.07.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 07:42:05 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 09:42:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     edubezval@gmail.com, rui.zhang@intel.com, ulf.hansson@linaro.org,
-        daniel.lezcano@linaro.org, bjorn.andersson@linaro.org,
-        agross@kernel.org, amit.kucheria@verdurent.com,
-        mark.rutland@arm.com, rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] dt-bindings: thermal: Add generic power domain
- warming device binding
-Message-ID: <20190930144205.GA11539@bogus>
-References: <1568135676-9328-1-git-send-email-thara.gopinath@linaro.org>
- <1568135676-9328-4-git-send-email-thara.gopinath@linaro.org>
+        Mon, 30 Sep 2019 10:46:13 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8UEfUkC017751;
+        Mon, 30 Sep 2019 16:45:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=u7ckPEielE0COPIH48zXj6aZ3G/8patmlJ6fYKZv6f8=;
+ b=zdodmSE9H3b/b7Xd/OA5GtPen95vb0u77yQMhu0ifkJ0pEYPUCTJ0xEgUBfCGRzrVlQB
+ lonjHgT+wu83yBAPJahKOiap0EJTyk7PQS2jffjJy49t5zbhphiLUmVeeMGo9TY1DAhf
+ 0XBcso5YZg3qeCSh4cv7VIHFHQXpzhtY+uLCaRV41eHEPKJxZXTgXab4CAuj3Vl4G2+E
+ Bj/6ewts6HTpreJlaHvflTbY63hWkWHE+0QfjZJ0QQZZ0qHfMOv7b8RnaHrY57IXspSJ
+ iikOB5/zEo4aDJi+6c3i4VFU1uBWtNMukhduCsh6LNq1p+NQyT+n68YajRdyI+smKt5u YQ== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2v9w00ut72-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 30 Sep 2019 16:45:58 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C2C4D4D;
+        Mon, 30 Sep 2019 14:45:53 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 793062D0559;
+        Mon, 30 Sep 2019 16:45:53 +0200 (CEST)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 30 Sep
+ 2019 16:45:53 +0200
+Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 30 Sep 2019 16:45:52
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Subject: [PATCH] ARM: dts: stm32: add focaltech touchscreen on stm32mp157c-dk2 board
+Date:   Mon, 30 Sep 2019 16:45:51 +0200
+Message-ID: <1569854751-22337-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1568135676-9328-4-git-send-email-thara.gopinath@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.23.97]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-09-30_09:2019-09-25,2019-09-30 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 01:14:34PM -0400, Thara Gopinath wrote:
-> Add binding to define power domains as thermal warming
-> devices.
-> 
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
->  .../bindings/thermal/pwr-domain-warming.txt        | 32 ++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/pwr-domain-warming.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/pwr-domain-warming.txt b/Documentation/devicetree/bindings/thermal/pwr-domain-warming.txt
-> new file mode 100644
-> index 0000000..25fc568
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/pwr-domain-warming.txt
-> @@ -0,0 +1,32 @@
-> +* Generic power domain based thermal warming device.
-> +
-> +This binding describes the power domains that can be used as a
-> +thermal warming device.
+Enable focaltech ft6236 touchscreen on STM32MP157C-DK2 board.
+This device supports 2 different addresses (0x2a and 0x38)
+depending on the display  board version (MB1407).
 
-This looks like just a gathering of properties and way to instantiate 
-some driver.
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c-dk2.dts | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-I think this all belongs in the power domain provider. Make it a cooling 
-device and you should know which domains are relevant based on the 
-compatible (though perhaps we could consider a list in DT). If you want 
-to instantiate a separate driver to handle this, then make the power 
-domain driver do that.
+diff --git a/arch/arm/boot/dts/stm32mp157c-dk2.dts b/arch/arm/boot/dts/stm32mp157c-dk2.dts
+index 20ea601..527bb75 100644
+--- a/arch/arm/boot/dts/stm32mp157c-dk2.dts
++++ b/arch/arm/boot/dts/stm32mp157c-dk2.dts
+@@ -61,6 +61,29 @@
+ 	};
+ };
+ 
++&i2c1 {
++	touchscreen@2a {
++		compatible = "focaltech,ft6236";
++		reg = <0x2a>;
++		interrupts = <2 2>;
++		interrupt-parent = <&gpiof>;
++		interrupt-controller;
++		touchscreen-size-x = <480>;
++		touchscreen-size-y = <800>;
++		status = "okay";
++	};
++	touchscreen@38 {
++		compatible = "focaltech,ft6236";
++		reg = <0x38>;
++		interrupts = <2 2>;
++		interrupt-parent = <&gpiof>;
++		interrupt-controller;
++		touchscreen-size-x = <480>;
++		touchscreen-size-y = <800>;
++		status = "okay";
++	};
++};
++
+ &ltdc {
+ 	status = "okay";
+ 
+-- 
+2.7.4
 
-Rob
-
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be "thermal-power-domain-wdev"
-> +
-> +- #temp-reg-cells:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: Must be 2
-> +
-> +- power-domains:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to power-domains that match power-domain-names
-> +
-> +- power-domain-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: The power-domains that can behave as warming devices
-> +
-> +Example 1
-> +thermal_wdev: rpmhpd_mx_wdev {
-> +		compatible = "thermal-power-domain-wdev";
-> +		#cooling-cells = <2>;
-> +		power-domains =  <&rpmhpd SDM845_MX>;
-> +		power-domain-names = "mx";
-> +	};
-> -- 
-> 2.1.4
-> 
