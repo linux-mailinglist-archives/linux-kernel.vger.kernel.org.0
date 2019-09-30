@@ -2,71 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CACAC2260
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:47:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40BF7C2268
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731306AbfI3Nqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:46:49 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:54488 "EHLO vps0.lunn.ch"
+        id S1731366AbfI3NtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:49:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731062AbfI3Nqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:46:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=MwogyXtzP30qqSg8Krvf2WUMszyfL/MxA1RY0E6lYWM=; b=SIA99rrSZ7/5jFcId9jm+tB4Ta
-        UH0JlYISGTAI1X2cSwOelq1gC/zGtisKMx7hgPzSwnBzVYvMpzUBMr5xNBJgNXXFqLR24WFobTfJK
-        g1ZwDhHexUChlsXzFesb/yOdT/6EfuuOjfl5/TQZbrfxKCQfWKBU6R+pziqgbAYtHk8M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iEw0j-0003x0-G5; Mon, 30 Sep 2019 15:46:45 +0200
-Date:   Mon, 30 Sep 2019 15:46:45 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH net] net: dsa: qca8k: Use up to 7 ports for all operations
-Message-ID: <20190930134645.GD14745@lunn.ch>
-References: <1569488357-31415-1-git-send-email-michal.vokac@ysoft.com>
- <07dda3c6-696c-928f-b007-8cda9744b624@ysoft.com>
+        id S1730693AbfI3NtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:49:03 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 551602086A;
+        Mon, 30 Sep 2019 13:49:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569851342;
+        bh=FCh5P+PLkf8Fy6u6DVHDWSyXy5Kb48cMb9OwoT818PQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nw3vrRnoJ/wyKkOghJGAhrfUjB4HUOGPzCULFD4Kr3iQLmw7IAL1yY1IbWzMPK4da
+         eWbi6TE0ysvXKKMXYG8TK4x25jKiw/UAo+8HKTHiQZ8fv8/6pjbdMTDnYfvnQhdogc
+         3egyNZeMKQN7sD0n38+1a4P88VMa2muNcfOChcBU=
+Date:   Mon, 30 Sep 2019 14:48:57 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     arnd@arndb.de, nsekhar@ti.com, olof@lixom.net, t-kristo@ti.com,
+        catalin.marinas@arm.com, tony@atomide.com, s-anna@ti.com,
+        hch@lst.de, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 linux-next 4/4] arm64: configs: defconfig: Change
+ CONFIG_REMOTEPROC from m to y
+Message-ID: <20190930134856.umdoeq7k6ukmajij@willie-the-truck>
+References: <20190920075946.13282-1-j-keerthy@ti.com>
+ <20190920075946.13282-5-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <07dda3c6-696c-928f-b007-8cda9744b624@ysoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190920075946.13282-5-j-keerthy@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 03:34:31PM +0200, Michal Vokáč wrote:
-> On 26. 09. 19 10:59, Michal Vokáč wrote:
-> > The QCA8K family supports up to 7 ports. So use the existing
-> > QCA8K_NUM_PORTS define to allocate the switch structure and limit all
-> > operations with the switch ports.
-> > 
-> > This was not an issue until commit 0394a63acfe2 ("net: dsa: enable and
-> > disable all ports") disabled all unused ports. Since the unused ports 7-11
-> > are outside of the correct register range on this switch some registers
-> > were rewritten with invalid content.
-> > 
-> > Fixes: 6b93fb46480a ("net-next: dsa: add new driver for qca8xxx family")
-> > Fixes: a0c02161ecfc ("net: dsa: variable number of ports")
-> > Fixes: 0394a63acfe2 ("net: dsa: enable and disable all ports")
-> > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+On Fri, Sep 20, 2019 at 01:29:46PM +0530, Keerthy wrote:
+> Commit 6334150e9a36 ("remoteproc: don't allow modular build")
+> changes CONFIG_REMOTEPROC to a boolean from a tristate config
+> option which inhibits all defconfigs marking CONFIG_REMOTEPROC as
+> a module in compiling the remoteproc and dependent config options.
 > 
-> More recent patches on the list are getting attention.
-> Is this one falling through the cracks?
+> So fix the defconfig to have CONFIG_REMOTEPROC built in.
+> 
+> Fixes: 6334150e9a36 ("remoteproc: don't allow modular build")
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  arch/arm64/configs/defconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 8e05c39eab08..c9a867ac32d4 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -723,7 +723,7 @@ CONFIG_TEGRA_IOMMU_SMMU=y
+>  CONFIG_ARM_SMMU=y
+>  CONFIG_ARM_SMMU_V3=y
+>  CONFIG_QCOM_IOMMU=y
+> -CONFIG_REMOTEPROC=m
+> +CONFIG_REMOTEPROC=y
+>  CONFIG_QCOM_Q6V5_MSS=m
+>  CONFIG_QCOM_Q6V5_PAS=m
+>  CONFIG_QCOM_SYSMON=m
 
-Probably not, it is missing a review-by, from somebody David trusts.
+Acked-by: Will Deacon <will@kernel.org>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This fixes the following annoying warning from "make defconfig" on arm64:
 
-    Andrew
+  arch/arm64/configs/defconfig:726:warning: symbol value 'm' invalid for REMOTEPROC
+
+I'm assuming the fix will go via arm-soc, but I can take it otherwise
+(please just let me know).
+
+Will
