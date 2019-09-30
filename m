@@ -2,82 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6DFFC28E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E07C28D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731123AbfI3Vg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:36:28 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44423 "EHLO
+        id S1730543AbfI3VcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:32:03 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35066 "EHLO
         mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbfI3Vg2 (ORCPT
+        with ESMTP id S1727118AbfI3VcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:36:28 -0400
-Received: by mail-io1-f65.google.com with SMTP id w12so14211806iol.11;
-        Mon, 30 Sep 2019 14:36:26 -0700 (PDT)
+        Mon, 30 Sep 2019 17:32:03 -0400
+Received: by mail-io1-f65.google.com with SMTP id q10so42386084iop.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 14:32:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+3MdKnUABv25IAdSiEwkkMJWrh9wQQENbXR7LVZp6NM=;
-        b=rwTk7DUuEf/bOD3IPt3jYtXeL1pQVj2ohRY0XQ3AP0tOsJ2BWC4TpFnBHSZxJlkjCl
-         c5Ok3/FsUTSTbvM9nvy4HDAgMyLpyXgvo573qakp28AvJJ+IsWa8U74mtP47qXa6u61P
-         QfR/8D/Qn3GweP1WeG0/ssbQK4o/paBjxJ+K+Er238HR+5b9Oh/fz3ygumwP01VRrjvV
-         DRfy/m6IsXHBoAggbnaA/ThYlpLFrU8tzqsEHlgZAsG046cnwUFUd2WHCC3x0xRo9gO5
-         KiIvBknb0aY767m5Qkr1Dui4ZgM/vV0x0quzcKzLuv/ewYKhnqOWH0UsIQYIayerMHHF
-         CktQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w11mGwXAGqSILDThqsqkwSrlbLeSz5QPbtHcgogaejo=;
+        b=RZCiuXFesadeX9FL8sHaWkzlZ7rJdatezLvrAW3j8IXocXNwZNcvwbc9gbkFv7m00J
+         yTs613PwBpXWB+EmspKI4MmgPD8FBe3nWCCPkQvXyIai51+rFRgxjSpOb4ZQXFXbAa1r
+         agIuKthIg+b0uobf/MtFfUioYrMfzhHHJooi4jgBmjjYM9lxhA3WrFrgyp/nLCE9uqqV
+         0iioVO7IKFmCNkMIBz5nxHMuGGyfzpcO34EXgoRupNQpmWcNE8sUsTwOCObICiRPDX6N
+         l/L0VxTTmRmjY28pVhvL8NsStSqPs96JUudPS2t4SFBOLtjqI2d4+SKRtkFW4DKmIZmf
+         Fcyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+3MdKnUABv25IAdSiEwkkMJWrh9wQQENbXR7LVZp6NM=;
-        b=ezeQCQT7MrelrOr35wldBfZMfmtzxktrJzCbRadf45uDEFejWif2IokZ53Dan+Xnfy
-         8fyGRmeHjn8hN7bwyvBctH/PZs4gFFmIhqQo6QAtqAo1jdeQ8xprLZUFKFKas4nO9/p3
-         tYa/UHy22kOu6/pixzp85ABrzcWW5X7ZTB3ck6UsBTOyuCaTWzibDqlH16eIhIiOCr74
-         UIhjmu2qgLe1d0RI/Qlz8ZFtrj5qA8scZnGwMHGGYFkm98EkfeO6AeZGgJmXSYYpU5Zu
-         SXiyPV/spkMLPT1fNAboY7FIY8pm4h5tST821qBo/KVtqxb+tifSIN5+JoymYeHr2EwP
-         xwxg==
-X-Gm-Message-State: APjAAAXQaZZm7KSfCeTSI5G6Geb7fUNCuuAeJ58Q7T3C7N/4pIiplJie
-        d0Xz2M2Rn7EA8/GlJH+XWTOyNMkW
-X-Google-Smtp-Source: APXvYqz0E4xOhwB939Y2K1wFzwpGWnKp5rCshUvniErBXZsosyGQiMGXlEU8rwrkx/i8InQ1QJKhbw==
-X-Received: by 2002:a63:e812:: with SMTP id s18mr24809098pgh.291.1569868216516;
-        Mon, 30 Sep 2019 11:30:16 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id z25sm12300003pfn.7.2019.09.30.11.30.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Sep 2019 11:30:15 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 11:30:15 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.3 00/25] 5.3.2-stable review
-Message-ID: <20190930183015.GB22096@roeck-us.net>
-References: <20190929135006.127269625@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w11mGwXAGqSILDThqsqkwSrlbLeSz5QPbtHcgogaejo=;
+        b=Y3qIOF4eyWx2uf7JrUq6f6pjt13MRUpmG67ApYeLyE52ldgcZ21Y2VnLwMFYRg3Uft
+         P0FqTndxZXu0KznkHWjM3K2Z8xEkLZo2iCjJQINPE/94EvQbVeMajupBRLIhUbP627+8
+         wVnz8oR/cbUVP33YGeD4mLwQkUwtpYgre4WojQ9B0Rnv696bGCrB5SzKbTflyhqskLzS
+         xOiidG+qGnJplvpnJI99BfFe643Ot1zDO+HFNcrXep9qCuDQ4MFhoH5oM2TZo2GQhc8M
+         Fqnhb5+LqTx5Ni/C5Ny6R5MPLTIOpyyMknlbR8q3/I6jmqmTLRkYmn3mnG5nXO8pfkoI
+         xSJA==
+X-Gm-Message-State: APjAAAVFEVi5EbQbQXXKPIE4RlmYGRbQU9xkrlX5BEFHIb0r8SMHjFIl
+        lt59KGee6FTBWBNEPccOu7AjrRtitRfofOxY4mY=
+X-Google-Smtp-Source: APXvYqxO56M3+g2NqwZT4JBLOZ9EjcM/IWK+zeqrzDyjaGItXiwH7jlRd5Jd3Gi4fjetcDWqMUgpWWwYj92aLRLyxcI=
+X-Received: by 2002:a92:c90b:: with SMTP id t11mr23674682ilp.227.1569879122078;
+ Mon, 30 Sep 2019 14:32:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190929135006.127269625@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <7bab24ff-ded7-9f76-ba25-efd07cdd30dd@amd.com> <20190918190529.17298-1-navid.emamdoost@gmail.com>
+ <88fc639a-32ed-b6c6-f930-552083d5887d@amd.com>
+In-Reply-To: <88fc639a-32ed-b6c6-f930-552083d5887d@amd.com>
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Date:   Mon, 30 Sep 2019 16:31:51 -0500
+Message-ID: <CAEkB2EREjd9BbOeMmk9VWg+UB4ujieMz13Pj7hoAPpE2PGh3hQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/amdgpu: fix multiple memory leaks
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     "emamd001@umn.edu" <emamd001@umn.edu>,
+        "smccaman@umn.edu" <smccaman@umn.edu>,
+        "kjlu@umn.edu" <kjlu@umn.edu>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Rex Zhu <Rex.Zhu@amd.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 03:56:03PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.2 release.
-> There are 25 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 01 Oct 2019 01:47:47 PM UTC.
-> Anything received after that time might be too late.
-> 
+On Thu, Sep 19, 2019 at 3:03 AM Koenig, Christian
+<Christian.Koenig@amd.com> wrote:
+>
+> Am 18.09.19 um 21:05 schrieb Navid Emamdoost:
+> > In acp_hw_init there are some allocations that needs to be released in
+> > case of failure:
+> >
+> > 1- adev->acp.acp_genpd should be released if any allocation attemp for
+> > adev->acp.acp_cell, adev->acp.acp_res or i2s_pdata fails.
+> > 2- all of those allocations should be released if pm_genpd_add_device
+> > fails.
+> >
+> > v2: moved the released into goto error handlings
+> >
+> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c | 30 +++++++++++++++++--------
+> >   1 file changed, 21 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
+> > index eba42c752bca..c0db75b71859 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
+> > @@ -184,7 +184,7 @@ static struct device *get_mfd_cell_dev(const char *device_name, int r)
+> >    */
+> >   static int acp_hw_init(void *handle)
+> >   {
+> > -     int r, i;
+> > +     int r, i, ret;
+> >       uint64_t acp_base;
+> >       u32 val = 0;
+> >       u32 count = 0;
+> > @@ -231,20 +231,21 @@ static int acp_hw_init(void *handle)
+> >       adev->acp.acp_cell = kcalloc(ACP_DEVS, sizeof(struct mfd_cell),
+> >                                                       GFP_KERNEL);
+> >
+> > -     if (adev->acp.acp_cell == NULL)
+> > -             return -ENOMEM;
+> > +     if (adev->acp.acp_cell == NULL) {
+> > +             ret = -ENOMEM;
+> > +             goto out1;
+> > +     }
+> >
+> >       adev->acp.acp_res = kcalloc(5, sizeof(struct resource), GFP_KERNEL);
+> >       if (adev->acp.acp_res == NULL) {
+> > -             kfree(adev->acp.acp_cell);
+> > -             return -ENOMEM;
+> > +             ret = -ENOMEM;
+> > +             goto out2;
+> >       }
+> >
+> >       i2s_pdata = kcalloc(3, sizeof(struct i2s_platform_data), GFP_KERNEL);
+> >       if (i2s_pdata == NULL) {
+> > -             kfree(adev->acp.acp_res);
+> > -             kfree(adev->acp.acp_cell);
+> > -             return -ENOMEM;
+> > +             ret = -ENOMEM;
+> > +             goto out3;
+> >       }
+> >
+> >       switch (adev->asic_type) {
+> > @@ -348,7 +349,8 @@ static int acp_hw_init(void *handle)
+> >               r = pm_genpd_add_device(&adev->acp.acp_genpd->gpd, dev);
+> >               if (r) {
+> >                       dev_err(dev, "Failed to add dev to genpd\n");
+> > -                     return r;
+> > +                     ret = r;
+> > +                     goto out4;
+> >               }
+> >       }
+> >
+> > @@ -393,6 +395,16 @@ static int acp_hw_init(void *handle)
+> >       val &= ~ACP_SOFT_RESET__SoftResetAud_MASK;
+> >       cgs_write_register(adev->acp.cgs_device, mmACP_SOFT_RESET, val);
+> >       return 0;
+> > +
+> > +out4:
+> > +     kfree(i2s_pdata);
+> > +out3:
+> > +     kfree(adev->acp.acp_res);
+> > +out2:
+> > +     kfree(adev->acp.acp_cell);
+> > +out1:
+> > +     kfree(adev->acp.acp_genpd);
+>
+> kfree on a NULL pointer is harmless, so a single error label should be
+> sufficient.
+>
+I fixed this by just using failure label.
 
-Build results:
-	total: 158 pass: 158 fail: 0
-Qemu test results:
-	total: 391 pass: 391 fail: 0
+> Christian.
+>
+> > +     return ret;
+> >   }
+> >
+> >   /**
+>
 
-Guenter
+In addition to previous cases, I covered 3 more error handling cases
+that seemed need to goto failure. One where mfd_add_hotplug_devices
+fails and the other two cases where time out values expire.
+
+
+-- 
+Navid.
