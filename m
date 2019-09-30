@@ -2,127 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6BBDC28BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B87CC28A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732522AbfI3VXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:23:34 -0400
-Received: from marmot.wormnet.eu ([188.246.204.87]:42046 "EHLO
-        marmot.wormnet.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfI3VXd (ORCPT
+        id S1732441AbfI3VU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:20:26 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:47562 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729855AbfI3VU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:23:33 -0400
-X-Greylist: delayed 1800 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Sep 2019 17:23:32 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lentin.co.uk; s=budgerigar; h=Content-Type:MIME-Version:References:
-        Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wwO3LKMH46pvv0bC8x8eV217XsJBNp2LC9T/6N0lajk=; b=SPTGolhEBz8cT6g6z06+BIWKo
-        s5GIK38N9GfBmNBfGFXPuuHBKRonTencUPiNWCQeZXIQtNcFcnQwPpoGcxa2ByNfUzSCO0jPnilmj
-        2xoeIKa0bg5jEuljsq/C7QOLv2x9y7fcdLcopucWoexdaLaAT7ZeO0AwLTCu4hqjgaDLs=;
-Received: from [31.146.104.22] (helo=[192.168.0.100])
-        by marmot.wormnet.eu with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.2)
-        (envelope-from <jm@lentin.co.uk>)
-        id 1iF1ZW-0006jM-GN; Mon, 30 Sep 2019 20:43:02 +0100
-Date:   Mon, 30 Sep 2019 20:42:53 +0100 (BST)
-From:   Jamie Lentin <jm@lentin.co.uk>
-X-X-Sender: lentinj@clifford.vandergast.wormnet.eu
-To:     Andrew Lunn <andrew@lunn.ch>
-cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 0/2] This patch introduces a feature to force gpio-poweroff
- module
-In-Reply-To: <20190930163203.GC15343@lunn.ch>
-Message-ID: <alpine.DEB.2.21.1909301909360.6576@clifford.vandergast.wormnet.eu>
-References: <20190930103531.13764-1-oleksandr.suvorov@toradex.com> <20190930121440.GC13301@lunn.ch> <CAGgjyvEx_F0C2XHDGxf3F0Z8iHF1vQZkoPft3_ZbTswVFv=SJA@mail.gmail.com> <20190930163203.GC15343@lunn.ch>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 30 Sep 2019 17:20:26 -0400
+X-Greylist: delayed 2444 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Sep 2019 17:20:25 EDT
+Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id D3F613A9B4F
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 20:08:11 +0000 (UTC)
+X-Originating-IP: 86.202.229.42
+Received: from localhost (lfbn-lyo-1-146-42.w86-202.abo.wanadoo.fr [86.202.229.42])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 2EA4840002;
+        Mon, 30 Sep 2019 20:08:10 +0000 (UTC)
+Date:   Mon, 30 Sep 2019 22:08:09 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v1 1/4] lib/vsprintf: Print time64_t in human readable
+ format
+Message-ID: <20190930200809.GK3913@piout.net>
+References: <20190104193009.30907-1-andriy.shevchenko@linux.intel.com>
+ <20190108152528.utr3a5huran52gsf@pathway.suse.cz>
+ <20190110215858.GG2362@piout.net>
+ <20190726132037.GX9224@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726132037.GX9224@smile.fi.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Sep 2019, Andrew Lunn wrote:
+On 26/07/2019 16:20:37+0300, Andy Shevchenko wrote:
+> On Thu, Jan 10, 2019 at 10:58:58PM +0100, Alexandre Belloni wrote:
+> > On 08/01/2019 16:25:28+0100, Petr Mladek wrote:
+> > > On Fri 2019-01-04 21:30:06, Andy Shevchenko wrote:
+> > > > There are users which print time and date represented by content of
+> > > > time64_t type in human readable format.
+> > > > 
+> > > > Instead of open coding that each time introduce %ptT[dt][r] specifier.
+> > > > 
+> > > > Few test cases for %ptT specifier has been added as well.
+> 
+> > > > +void time64_to_rtc_time(time64_t time, struct rtc_time *rtc_time)
+> > > > +{
+> > > > +#ifdef CONFIG_RTC_LIB
+> > > > +	rtc_time64_to_tm(time, rtc_time);
+> 
+> > > I wonder if the conversion between struct tm and rtc_time
+> > > might be useful in general.
+> > >
+> > > It might make sense to de-duplicate time64_to_tm() and
+> > > rtc_time64_to_tm() implementations.
+> 
+> > Looking at 57f1f0874f42, this seemed to be the plan at the time
+> > time_to_tm was introduced but this was never done. Seeing that tm and
+> > rtc_time are quite similar, we could probably always use time64_to_tm as
+> > it is more accurate than rtc_time64_to_tm as the latter assumes a
+> > specific year range.
+> 
+> So, do I understand correctly that dropping #ifdef along with
+> rtc_time64_to_tm() call is sufficient for now?
+> 
 
-> On Mon, Sep 30, 2019 at 02:11:59PM +0000, Oleksandr Suvorov wrote:
->> Hi Andrew,
->>
->> On Mon, Sep 30, 2019 at 3:16 PM Andrew Lunn <andrew@lunn.ch> wrote:
->>>
->>> On Mon, Sep 30, 2019 at 10:35:36AM +0000, Oleksandr Suvorov wrote:
->>>> to register its own pm_power_off handler even if someone has registered
->>>> this handler earlier.
->>>> Useful to change a way to power off the system using DT files.
->>>
->>> Hi Oleksandr
->>>
->>> I'm not sure this is a good idea. What happens when there are two
->>> drivers using forced mode? You then get which ever is register last.
->>> Non deterministic behaviour.
->>
->> You're right, we have to handle a case when gpio-poweroff fails to
->> power the system off. Please look at the
->> 2nd version of the patchset.
->>
->> There are 3 only drivers that forcibly register its own pm_power_off
->> handler even if it has been registered before.
->>
->> drivers/firmware/efi/reboot.c - supports chained call of next
->> pm_power_off handler if its own handler fails.
->>
->> arch/x86/platform/iris/iris.c, drivers/char/ipmi/ipmi_poweroff.c -
->> don't support calling of next pm_power_off handler.
->> Looks like these drivers should be fixed too.
->>
->> All other drivers don't change already initialized pm_power_off handler.
->>
->>> What is the other driver which is causing you problems? How is it
->>> getting probed? DT?
->>
->> There are several PMUs, RTCs, watchdogs that register their own pm_power_off.
->> Most of them, probably not all, are probed from DT.
->
-> And which specific one is causing you problems.
->
-> I don't like this forced parameter. No other driver is using it.
->
-> Maybe we should change this driver to support chained pm_power_off
-> handlers?
+I'd be fine with that.
 
-There's still scope for non-deterministic behaviour though, as the 
-chaining would take place depending on the probe ordering. Admittedly if 
-the gpio-poweroff works it's unlikely to be a problem, but still seems 
-messy.
+> > Maybe be rtc_str should take a struct tm instead of an rtc_time so
+> > time64_to_rtc_time always uses time64_to_tm.
+> 
+> Because this one, while sounding plausible, maybe too invasive on current
+> state of affairs.
+> 
 
-Without knowing specifics, disabling the devices that can't turn the 
-device off seems like a better bet. If they'd be otherwise useful, I see 
-there's a of_device_is_system_power_controller(), see:
+Well, if the kernel struct tm had an int tm_year instead of long
+tm_year, then you could simply cast a struct rtc_time to a struct tm.
+I'm not sure was was the rationale to have a long, especially since
+userspace has an int.
 
-/Documentation/devicetree/bindings/power/power-controller.txt
-https://elixir.bootlin.com/linux/latest/source/drivers/mfd/max77620.c#L566
-
-...maybe that can be added to the devices getting in the way?
-
-Cheers,
-
-[0] https://elixir.bootlin.com/linux/latest/source/drivers/watchdog/bcm2835_wdt.c#L152
-(chosen at random)
-
-
->
->   Andrew
->
 
 -- 
-Jamie Lentin
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
