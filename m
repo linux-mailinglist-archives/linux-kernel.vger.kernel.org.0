@@ -2,69 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD42C26EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8357C26C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731564AbfI3UnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:43:08 -0400
-Received: from mga01.intel.com ([192.55.52.88]:52977 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731030AbfI3UnE (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:43:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 11:21:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,568,1559545200"; 
-   d="scan'208";a="190343416"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Sep 2019 11:21:36 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id A0E73301B07; Mon, 30 Sep 2019 11:21:36 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 11:21:36 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jin Yao <yao.jin@linux.intel.com>, acme@kernel.org,
-        jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v1 0/2] perf stat: Support --all-kernel and --all-user
-Message-ID: <20190930182136.GD8560@tassilo.jf.intel.com>
-References: <20190925020218.8288-1-yao.jin@linux.intel.com>
- <20190929151022.GA16309@krava>
+        id S1732415AbfI3UkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:40:05 -0400
+Received: from www62.your-server.de ([213.133.104.62]:60488 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730607AbfI3UkE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:40:04 -0400
+Received: from 15.248.197.178.dynamic.dsl-lte-bonding.zhbmb00p-msn.res.cust.swisscom.ch ([178.197.248.15] helo=localhost)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1iF0KT-0000xK-7e; Mon, 30 Sep 2019 20:23:25 +0200
+Date:   Mon, 30 Sep 2019 20:23:24 +0200
+From:   Daniel Borkmann <daniel@iogearbox.net>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     ast@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] tools: bpf: Use !building_out_of_srctree to determine
+ srctree
+Message-ID: <20190930182324.GA20613@pc-63.home>
+References: <20190927011344.4695-1-skhan@linuxfoundation.org>
+ <20190930085815.GA7249@pc-66.home>
+ <ea108769-1b3e-42f8-de9c-50b4a563be57@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190929151022.GA16309@krava>
+In-Reply-To: <ea108769-1b3e-42f8-de9c-50b4a563be57@linuxfoundation.org>
 User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25588/Mon Sep 30 10:25:56 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 05:29:13PM +0200, Jiri Olsa wrote:
-> On Wed, Sep 25, 2019 at 10:02:16AM +0800, Jin Yao wrote:
-> > This patch series supports the new options "--all-kernel" and "--all-user"
-> > in perf-stat.
+On Mon, Sep 30, 2019 at 08:16:55AM -0600, Shuah Khan wrote:
+> On 9/30/19 2:58 AM, Daniel Borkmann wrote:
+> > On Thu, Sep 26, 2019 at 07:13:44PM -0600, Shuah Khan wrote:
+> > > make TARGETS=bpf kselftest fails with:
+> > > 
+> > > Makefile:127: tools/build/Makefile.include: No such file or directory
+> > > 
+> > > When the bpf tool make is invoked from tools Makefile, srctree is
+> > > cleared and the current logic check for srctree equals to empty
+> > > string to determine srctree location from CURDIR.
+> > > 
+> > > When the build in invoked from selftests/bpf Makefile, the srctree
+> > > is set to "." and the same logic used for srctree equals to empty is
+> > > needed to determine srctree.
+> > > 
+> > > Check building_out_of_srctree undefined as the condition for both
+> > > cases to fix "make TARGETS=bpf kselftest" build failure.
+> > > 
+> > > Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 > > 
-> > For example,
-> > 
-> > root@kbl:~# perf stat -e cycles,instructions --all-kernel --all-user -a -- sleep 1
-> > 
-> >  Performance counter stats for 'system wide':
-> > 
-> >         19,156,665      cycles:k
-> >          7,265,342      instructions:k            #    0.38  insn per cycle
-> >      4,511,186,293      cycles:u
-> >        121,881,436      instructions:u            #    0.03  insn per cycle
+> > Applied, thanks!
 > 
-> hi,
-> I think we should follow --all-kernel/--all-user behaviour from record
-> command, adding extra events seems like unnecesary complexity to me
+> Hi Daniel!
+> 
+> Is the tree the patch went into included in the linux-next?
 
-I think it's useful. Makes it easy to do kernel/user break downs.
-perf record should support the same.
+Yes, both bpf and bpf-next are included in linux-next.
 
--Andi
+Thanks,
+Daniel
