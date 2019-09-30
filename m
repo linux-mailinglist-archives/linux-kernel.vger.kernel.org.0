@@ -2,156 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6ECFC2078
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:17:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9752FC206A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730740AbfI3MRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 08:17:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43684 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730659AbfI3MRJ (ORCPT
+        id S1730488AbfI3MPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 08:15:48 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:52461 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfI3MPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 08:17:09 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8UC8qaq186198;
-        Mon, 30 Sep 2019 12:16:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=DdvgNs3YLQV/F83keoo2cERFaPN8mZU/K79AWrQUSyE=;
- b=cs4gH8ZrIfbujWSfT4CMbrCzSOmqoIW73qfCtZO1mzgj/etvb8+f4FZJ8XURrYNuBHOk
- bCCvkD2ontOJ815nwDAJBuah88y6o0djgBC4wShckR+t2RXpYTwNUYgND2mSxivuZ3sd
- ScdzBLltZhlg20Z4JCMXpeXmeu7W3EDXhr/zs+A3rrCosJmsH/aI7PjCvbFRno0viFzD
- NqtVwJ90Lo4ZeGOh4BrZaiZZn7cwwUIxKyHowdiBxjl2qeOtA9nZv7UuCsVwM4V0f4ZW
- G/oD9evV1Qv0Erp0A40k8MaaO6Aq3h/sce8vDcws26s6jJ09LS1WCuptYG0kh/UyOdvu kA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2va05renyc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Sep 2019 12:16:38 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8UC8jHo131773;
-        Mon, 30 Sep 2019 12:16:37 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2vah085mew-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Sep 2019 12:16:37 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8UCGZFm023638;
-        Mon, 30 Sep 2019 12:16:35 GMT
-Received: from z2.cn.oracle.com (/10.182.71.205)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Sep 2019 05:16:35 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 3/3] x86/hyperv: Mark "hv_nopvspin" parameter obsolete and map it to "nopvspin"
-Date:   Sun, 29 Sep 2019 20:21:06 +0800
-Message-Id: <1569759666-26904-4-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1569759666-26904-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1569759666-26904-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9395 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909300130
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9395 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909300130
+        Mon, 30 Sep 2019 08:15:47 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MqapC-1hjvMD2Xwm-00meW0; Mon, 30 Sep 2019 14:15:25 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Pascal van Leeuwen <pvanleeuwen@verimatrix.com>,
+        Pascal van Leeuwen <pascalvanl@gmail.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] crypto: inside-secure - Fix a maybe-uninitialized warning
+Date:   Mon, 30 Sep 2019 14:14:33 +0200
+Message-Id: <20190930121520.1388317-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:LInyj3Ud0A8wB1lffm2V4xf1mZe/8J3moJ6KlLFoXVopMJiU/KM
+ KxE4gKuqXvHz5qvY0skfX00Qf9wBYigW3dERcUECUQk5t+w48wwHyk5tQnjQRvHg1s9vw1H
+ cZ/9oBe3xJSdpS21GHrrqvAXp6zEoKW/PvheWvOURr3TQe8FHkaIuu0vfdLDy+QlRH18qie
+ mrXaPorGX3+Eyn5xcLY5w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:U0vHL9TV2yo=:DiIHi5HDqbjDn+66lvh3os
+ nzMF3Fp3UmCEhUte/68ClyljDSx7vzyaqqEWEK3TFQFqaUO2OKOiHG0v6QQruDYfewn3wNCFb
+ u0efen0ljbb7ev/Hvu+rImGYZJ7aqaKAzCjzkZy68VBBUBnNE0DdNP9vrnIGYW5wDTDCMjqDg
+ 0ZqHMVq/Fy6f2gXJdK1aQNMCWlldAia81jFNbJhs4IaHSpci+Gj4N5ERBVQqNYAUJnssRxxei
+ 3+NaFM59fS8mxFIts/r+X3tzUFBalDZdjaaXLcHp5qL+EbwGiouWMl7AxfbJxN4FsJwBLpZVt
+ j5n5Mpvh4AQijN+RYpzFl+hdyCfnL8vLJZLMGAgK9NZidxC1ItinGxHu/0SpprSCPSOxvc/i2
+ 7o1VYme52Tde7KRHrfjkztgJO5MFe3LZbwe/iud14AEaAa59E4zgopDXjsAb5bz4H3d+LFwnL
+ ICLYRkOIgrUuL1mTHukqdBtvE/9Lx6vABqUHymuQwwrshX9eDV/7FhAKiDh5NjOh0Mj+nTsVN
+ JR2pmX9WvGVGppUySihKW8s1qDKKKedwhkHJyjaNDTiXxWd77ljwYX49JM8YwQf8Mp6qSWB/4
+ DQjNrWV11MDtCBBywbalwJl1VQ7UoVTItdfE1+PaVrsOpEB6x5cSyHMQgJu5T+ZP5ubybNd9J
+ A0rOoVnBkAThUKeVo1NAgWtYKh6zi3bfHTyag29X2COSv1jLQzo6+CtD0791oNuOKo0ZLMtcb
+ J1chSZt5iADXu6VIZoNlrC7b8UpGYQX8w1opW9fD8t5bhta/o9Kf3TjexUzssMFRtWKH1Qf0e
+ tMk1goSf9Lb6jP/p+i6aXWyDLSf2kN5TD0VGDF8yUnptoPoMyijB7YRj2d+1zBN67mm10fYhJ
+ EQZdIIA3eBVUy4Js3uXQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Included asm/hypervisor.h in order to reference x86_hyper_type.
+A previous fixup avoided an unused variable warning but replaced
+it with a slightly scarier warning:
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+drivers/crypto/inside-secure/safexcel.c:1100:6: error: variable 'irq' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+
+This is harmless as it is impossible to get into this case, but
+the compiler has no way of knowing that. Add an explicit error
+handling case to make it obvious to both compilers and humans
+reading the source.
+
+Fixes: 212ef6f29e5b ("crypto: inside-secure - Fix unused variable warning when CONFIG_PCI=n")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 6 +++++-
- arch/x86/hyperv/hv_spinlock.c                   | 9 +++++----
- 2 files changed, 10 insertions(+), 5 deletions(-)
+ drivers/crypto/inside-secure/safexcel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1f0a62f..43f922c 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1436,6 +1436,10 @@
- 	hv_nopvspin	[X86,HYPER_V] Disables the paravirt spinlock optimizations
- 				      which allow the hypervisor to 'idle' the
- 				      guest on lock contention.
-+				      This parameter is obsoleted by "nopvspin"
-+				      parameter, which has equivalent effect for
-+				      HYPER_V platform.
-+
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index 4ab1bde8dd9b..311bf60df39f 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -1120,6 +1120,8 @@ static int safexcel_request_ring_irq(void *pdev, int irqid,
+ 				irq_name, irq);
+ 			return irq;
+ 		}
++	} else {
++		return -ENXIO;
+ 	}
  
- 	keep_bootcon	[KNL]
- 			Do not unregister boot console at start. This is only
-@@ -5331,7 +5335,7 @@
- 			as generic guest with no PV drivers. Currently support
- 			XEN HVM, KVM, HYPER_V and VMWARE guest.
- 
--	nopvspin	[X86,XEN,KVM] Disables the qspinlock slow path
-+	nopvspin	[X86,XEN,KVM,HYPER_V] Disables the qspinlock slow path
- 			using PV optimizations which allow the hypervisor to
- 			'idle' the guest on lock contention.
- 
-diff --git a/arch/x86/hyperv/hv_spinlock.c b/arch/x86/hyperv/hv_spinlock.c
-index 07f21a0..00c2902 100644
---- a/arch/x86/hyperv/hv_spinlock.c
-+++ b/arch/x86/hyperv/hv_spinlock.c
-@@ -12,12 +12,11 @@
- 
- #include <linux/spinlock.h>
- 
-+#include <asm/hypervisor.h>
- #include <asm/mshyperv.h>
- #include <asm/paravirt.h>
- #include <asm/apic.h>
- 
--static bool __initdata hv_pvspin = true;
--
- static void hv_qlock_kick(int cpu)
- {
- 	apic->send_IPI(cpu, X86_PLATFORM_IPI_VECTOR);
-@@ -64,7 +63,7 @@ __visible bool hv_vcpu_is_preempted(int vcpu)
- 
- void __init hv_init_spinlocks(void)
- {
--	if (!hv_pvspin || !apic ||
-+	if (!pvspin || !apic ||
- 	    !(ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) ||
- 	    !(ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)) {
- 		pr_info("PV spinlocks disabled\n");
-@@ -82,7 +81,9 @@ void __init hv_init_spinlocks(void)
- 
- static __init int hv_parse_nopvspin(char *arg)
- {
--	hv_pvspin = false;
-+	pr_notice("\"hv_nopvspin\" is deprecated, please use \"nopvspin\" instead\n");
-+	if (x86_hyper_type != X86_HYPER_MS_HYPERV)
-+		pvspin = false;
- 	return 0;
- }
- early_param("hv_nopvspin", hv_parse_nopvspin);
+ 	ret = devm_request_threaded_irq(dev, irq, handler,
 -- 
-1.8.3.1
+2.20.0
 
