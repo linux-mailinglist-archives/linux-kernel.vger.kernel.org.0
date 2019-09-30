@@ -2,112 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82129C213E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:04:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88F70C2146
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731174AbfI3NEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:04:01 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38758 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730802AbfI3NEA (ORCPT
+        id S1731199AbfI3NEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:04:20 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36271 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731177AbfI3NET (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:04:00 -0400
-Received: by mail-ed1-f68.google.com with SMTP id l21so8557501edr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 06:03:59 -0700 (PDT)
+        Mon, 30 Sep 2019 09:04:19 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v24so9391724ljj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 06:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X92OS/YmMaYZnmIebA59VUdwEwr03gpB8PIctXgbJZ4=;
-        b=cJY93XdHuqF+imwwh62tcdky9RZEwqCQpzVJai8K40Gou9OtqAcoT7MhKJQ6O5Cc/A
-         LjXpPigLgUd03NnABftRxqMgDJuRqWC40hRxzdmit4MTcsraNw3RQuiNTWzh+FIcITZG
-         1ty/HtNKR+IyYN6Wb47vn6iIVymFi08uQ/8gC1i7u5vjh/U8gbBs1OsiYyWW0EDD9R6w
-         52sqJtJlSwFRHLc02izDHy/P3KZF38xTMZ5jeCIyG7+C/R369yWNWcpIhXrrPL7hEFxw
-         VS0GMqx8XiuLt9dflM3IPCNeRygSUUlKdWEqNxtWdjkg96I3mY84D+bSsiq+qjp6XJPB
-         m8Bw==
+        d=antmicro-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=wAmsq1ZRjAy0Dy4hMBe94TXzxJb/3I02Gi7CAmHEC18=;
+        b=GJHOt5ZJCob5AOYOFNDmBvLuTGz/01PKndvnW99jFT5LG3Mu4ZEwEvy1cY+IH2VlYn
+         1fmK9jIFvISsCbyqjM+faIdSgGrvb7pkaX0f3NWmkvy0BPTadP2fXoq5Yh+BmEUZZmHj
+         RnFNykhxCz2HcEuxOGjC/KKnM2cmU/jPE6JPbsUiiP6N3X5FnMw0bLK5ww/mSrEfR2X5
+         IildYAvxuvySKj1xNFidFzuUZ1YuZuFkUKuBxq7PBJzahHh/OMUwRkpcEfNgcnotXOKR
+         dfQkBKh5jXoS/t0Vni55ey+QO7Pvbj5lu7HI5aFX+1jRC5XuP6zn9Vmr8oX/sSRC/lsK
+         1qzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X92OS/YmMaYZnmIebA59VUdwEwr03gpB8PIctXgbJZ4=;
-        b=sdFlCp9xCWXtEB5ZKuPT794yYy118t1A1PX6PPVA3UHX9whMpxBc4fwZotmsVi9yAs
-         19fmWJ+kakhmv1mz4GrEkQYLTHQmXh4zcf/cBXTjBWzYhLKQz6QHPAbA4E3UASqMy3zW
-         csfRLs8yVeTCdijk4ULga8lBYrWMJk588iSokiwWXIGs+Xcuaigsewe+1szwR1Wkv/Jd
-         4GEgnmdJ3cIGpBP2cNb4GHCccqKHEium9PYjajhe7uLh18kxFHlzJM7O/6HzLatMRVr1
-         xdW/Phh+G5o70ZA+z7kMXRScuSNyyENAUSwYhnnhJF1yi/11CdZ61wQmC+RxRsBwqJul
-         fvEA==
-X-Gm-Message-State: APjAAAWIMf4gBnxnuTrVdqRvErluvmbnEkEZSNRRpdNQj5UNndCoPSx7
-        rJWaSBBPDEIJb4lBFeDd5EENK2FTIS0=
-X-Google-Smtp-Source: APXvYqzelB36HojuzAqNfWSyrjONv3COCBUzGnQRje/uJA4lFQXG93gbJIZP+wzSdnBe8CIKycKesw==
-X-Received: by 2002:a50:ab83:: with SMTP id u3mr19213587edc.228.1569848639143;
-        Mon, 30 Sep 2019 06:03:59 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id a50sm2437505eda.25.2019.09.30.06.03.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Sep 2019 06:03:58 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 3569C1020E6; Mon, 30 Sep 2019 16:03:57 +0300 (+03)
-Date:   Mon, 30 Sep 2019 16:03:57 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: Ack to merge through DRM? WAS Re: [PATCH v2 1/5] mm: Add
- write-protect and clean utilities for address space ranges
-Message-ID: <20190930130357.ye3zlkbka2jtd56a@box>
-References: <20190926115548.44000-1-thomas_os@shipmail.org>
- <20190926115548.44000-2-thomas_os@shipmail.org>
- <85e31bcf-d3c8-2fcf-e659-2c9f82ebedc7@shipmail.org>
- <CAHk-=wifjLeeMEtMPytiMAKiWkqPorjf1P4PbB3dj17Y3Jcqag@mail.gmail.com>
- <a48a93d2-03e9-40d3-3b4c-a301632d3121@shipmail.org>
- <CAHk-=whwN+CvaorsmczZRwFhSV+1x98xg-zajVD1qKmN=9JhBQ@mail.gmail.com>
- <20190927121754.kn46qh2crvsnw5z2@box>
- <CAHk-=whfriLqivyRtyjDPzeNr_Y3UYkC9g123Yi_yB5c8Gcmiw@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=wAmsq1ZRjAy0Dy4hMBe94TXzxJb/3I02Gi7CAmHEC18=;
+        b=X4fjAVlLHeGGzIwuw5Y7ITZayk0CTOJ0w4ZaCer/0kSBDQTEZwrGVEgX2F+eGYHLba
+         Ju1T7SFLMRgp3Oi7lJfMJkVm20996Mdh5+zjbBYoRlTmjU4L0baI0roaV6HUun9mdkRm
+         KfmvLm87djze/Q5SEobTfR9WsEQ7V/pQnQ+dl1YMnffw0E625AAyAs49uVTgnRDgXZ5/
+         E+kiExpbiGcAfjkyvFSo/rOP+k50UaZWoA0oBblWzBiL/a+VVWd5wVeL+s5jNGT/Kgh0
+         bxD3t5XOjeVUf2HOGZ5HOV+QA8L8pizFNpfukiJHO+cfS/89SVm3KRkNRMwg1zNZx/bj
+         vrjA==
+X-Gm-Message-State: APjAAAVOPSzkkRMNVQxNtyCXBogVWVZ3ugNp1z8j6QTpjDvXQjvfwpOl
+        C/SqqhqsjegKOtgTkpB5ew8uuA==
+X-Google-Smtp-Source: APXvYqw0uKUhs9OxqzC42P/Kf2Rn9e00fau/7D2/YvGAN+Wkv+FMrYaUf5TyMdwJRcNlVDlswQdmtg==
+X-Received: by 2002:a2e:a0cd:: with SMTP id f13mr11973026ljm.93.1569848657561;
+        Mon, 30 Sep 2019 06:04:17 -0700 (PDT)
+Received: from localhost.localdomain (d79-196.icpnet.pl. [77.65.79.196])
+        by smtp.gmail.com with ESMTPSA id s26sm3060394lfc.60.2019.09.30.06.04.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 06:04:16 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 15:04:11 +0200
+From:   Mateusz Holenko <mholenko@antmicro.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH 1/3] dt-bindings: vendor: add vendor prefix for LiteX
+Message-ID: <20190930130411.GA8312@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whfriLqivyRtyjDPzeNr_Y3UYkC9g123Yi_yB5c8Gcmiw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 09:39:48AM -0700, Linus Torvalds wrote:
-> On Fri, Sep 27, 2019 at 5:17 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >
-> > > Call it "walk_page_mapping()". And talk extensively about how the
-> > > locking differs a lot from the usual "walk_page_vma()" things.
-> >
-> > Walking mappings of a page is what rmap does. This code thas to be
-> > integrated there.
-> 
-> Well, that's very questionable.
-> 
-> The rmap code mainly does the "page -> virtual" mapping.  One page at a time.
-> 
-> The page walker code does the "virtual -> pte" mapping. Always a whole
-> range at a time.
+From: Filip Kokosinski <fkokosinski@internships.antmicro.com>
 
-Have you seen page_vma_mapped_walk()? I made it specifically for rmap code
-to cover cases when a THP is mapped with PTEs. To me it's not a big
-stretch to make it cover multiple pages too.
+Add vendor prefix for LiteX SoC builder.
 
-> So I think conceptually, mm/memory.c and unmap_mapping_range() is
-> closest but I don't think it's practical to share code.
-> 
-> And between mm/pagewalk.c and mm/rmap.c, I think the page walking has
-> way more of actual practical code sharing, and is also conceptually
-> closer because most of the code is about walking a range, not looking
-> up the mapping of one page.
+Signed-off-by: Filip Kokosinski <fkokosinski@internships.antmicro.com>
+Signed-off-by: Mateusz Holenko <mholenko@antmicro.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I guess it's matter of personal preferences, but page table walkers based
-on callback always felt wrong to me.
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 329b668da..4143c52a8 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -533,6 +533,8 @@ patternProperties:
+     description: Linux-specific binding
+   "^linx,.*":
+     description: Linx Technologies
++  "^litex,.*":
++    description: LiteX SoC builder
+   "^lltc,.*":
+     description: Linear Technology Corporation
+   "^logicpd,.*":
 -- 
- Kirill A. Shutemov
+2.23.0
+
