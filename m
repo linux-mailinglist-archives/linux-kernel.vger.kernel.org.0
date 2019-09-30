@@ -2,100 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9090C1EAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 12:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5BE8C1EB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 12:09:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730690AbfI3KHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 06:07:01 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41055 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfI3KGy (ORCPT
+        id S1730652AbfI3KJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 06:09:18 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:54024 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727497AbfI3KJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 06:06:54 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r2so6535991lfn.8;
-        Mon, 30 Sep 2019 03:06:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=b2dEZ5VveeCRyXH+CovRffyZBiPh0RcTQuJCALACFyo=;
-        b=USnb21lLGcxxi7sMxBUvqaT0mG2c6IZTH8m8YWUST4l8Y7Gch8wCwioZAFe/gCXF7R
-         i4jX+8czmB4aVV5VezTeQrxCQOhmfnYqFFFswxOgxAdlAjrAovd+0VLKXa/JglLJh04d
-         Tpn+J8sxMsu2ECN6fIp5fsT8kZv2F1ybjUSGUgTJGTY4WULtExhasUCra5cUZZRSSCOA
-         llUZIpUngW7EVPJCc41gRA4nVnnCB+UpvMK25mJNrG+e9TL2NKe0Jkp3dAaVFYB8ziMa
-         p/T1q8QHACKgn1YQFfeVNqV/EhAVks8P6PLW5QaJZmpFrNfNWZ6b/tHHhm6p5zR9aEn1
-         vbYQ==
-X-Gm-Message-State: APjAAAWoFp2q25xzMqJlZIwFHklD1k07mMBL941Jiy1eI4/kpNOxy76o
-        uTyIkFuzsEaaXF8yklO0GyM=
-X-Google-Smtp-Source: APXvYqzGJJ+ZwN/HRp10IThFkho3TT0C0+ycqJo+yYCne7gcqlwwyGtmdZaN1zlJqWsj5tH/1O60Gg==
-X-Received: by 2002:a05:6512:75:: with SMTP id i21mr10789844lfo.95.1569838012486;
-        Mon, 30 Sep 2019 03:06:52 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id z72sm3091580ljb.98.2019.09.30.03.06.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 03:06:51 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: [PATCH v7 8/8] media: imx214: Add new control with V4L2_CID_UNIT_CELL_SIZE
-Date:   Mon, 30 Sep 2019 12:06:36 +0200
-Message-Id: <20190930100636.18318-9-ribalda@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190930100636.18318-1-ribalda@kernel.org>
-References: <20190930100636.18318-1-ribalda@kernel.org>
+        Mon, 30 Sep 2019 06:09:18 -0400
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x8UA9DMs010492;
+        Mon, 30 Sep 2019 19:09:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x8UA9DMs010492
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1569838154;
+        bh=iaDDjC8hHZpVFgq2CJOu6EYHGdxV8rPxTu4uf6BUBog=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OTlCHB7lO+DstBFqU5d2cY94CAPzLxbpP99N7Beo9QK623Oop++YX2Z1nrOXAvY5Q
+         nmiys7rcClh9waPuh/CCVLNSpJ3mpCqg9+SqI3LXLInm1Yf70HT/aWjuWYB+mZ89kX
+         wUWMDNmWDWe75a+C8w/Gnzd0XzCgiq9FAE49zqlwLMZZZ1rAbG8h5a/iewHdujXpy0
+         nJCnJ0aqNgmeR8DSRKXGVaz1wAGVaXco5r9KP/KGapT0kR83RuFhAQaZgg0Ah9qg6n
+         zttFTA9HCeFvHvVfcCHQT4E/Q/uGXV5YbWkuAj/1ctDDf7bmpR21q2B9xuBW1DMZNd
+         jJZlbufu6BcMg==
+X-Nifty-SrcIP: [209.85.222.49]
+Received: by mail-ua1-f49.google.com with SMTP id k24so3951576uag.10;
+        Mon, 30 Sep 2019 03:09:14 -0700 (PDT)
+X-Gm-Message-State: APjAAAVMBYGC0vT7oB69FKgyMYdzM8Mq3LJyv/keAlY2U90GZrDfMqFd
+        Pye3at6wMKB5g2jJRnoUAyaoKQqA0OulLqKGicQ=
+X-Google-Smtp-Source: APXvYqyZJJCYX3hmXFimzZ2U79EXnnP54ieVt9Stvz2IMg9sMJn5C60iZr+yfiNH8QyoZTpacNn9efknNCXvfY7r6E8=
+X-Received: by 2002:ab0:6355:: with SMTP id f21mr522856uap.40.1569838152792;
+ Mon, 30 Sep 2019 03:09:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190723113036.14576-1-yamada.masahiro@socionext.com> <87o91fpp29.wl-ysato@users.sourceforge.jp>
+In-Reply-To: <87o91fpp29.wl-ysato@users.sourceforge.jp>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 30 Sep 2019 19:08:36 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATpUhRiYy_f9FaAVRhMR-h2anoA8Z46soenxGw1saC4Ug@mail.gmail.com>
+Message-ID: <CAK7LNATpUhRiYy_f9FaAVRhMR-h2anoA8Z46soenxGw1saC4Ug@mail.gmail.com>
+Subject: Re: [PATCH] sh: remove unneeded uapi asm-generic wrappers
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the product brief, the unit cell size is 1120 nanometers^2.
+Hi Sato-san,
 
-https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
+On Sat, Jul 27, 2019 at 10:47 PM Yoshinori Sato
+<ysato@users.sourceforge.jp> wrote:
+>
+> On Tue, 23 Jul 2019 20:30:36 +0900,
+> Masahiro Yamada wrote:
+> >
+> > These are listed in include/uapi/asm-generic/Kbuild, so Kbuild will
+> > automatically generate them.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  arch/sh/include/uapi/asm/setup.h | 2 --
+> >  arch/sh/include/uapi/asm/types.h | 2 --
+> >  2 files changed, 4 deletions(-)
+> >  delete mode 100644 arch/sh/include/uapi/asm/setup.h
+> >  delete mode 100644 arch/sh/include/uapi/asm/types.h
+> >
+> > diff --git a/arch/sh/include/uapi/asm/setup.h b/arch/sh/include/uapi/asm/setup.h
+> > deleted file mode 100644
+> > index 4bd19f80f9b0..000000000000
+> > --- a/arch/sh/include/uapi/asm/setup.h
+> > +++ /dev/null
+> > @@ -1,2 +0,0 @@
+> > -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > -#include <asm-generic/setup.h>
+> > diff --git a/arch/sh/include/uapi/asm/types.h b/arch/sh/include/uapi/asm/types.h
+> > deleted file mode 100644
+> > index 68100e108ea6..000000000000
+> > --- a/arch/sh/include/uapi/asm/types.h
+> > +++ /dev/null
+> > @@ -1,2 +0,0 @@
+> > -/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > -#include <asm-generic/types.h>
+> > --
+> > 2.17.1
+> >
+>
+> Applied sh-next.
+> Thanks.
+>
+> --
+> Yosinori Sato
 
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
----
- drivers/media/i2c/imx214.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 159a3a604f0e..4d9879f60dfb 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -47,6 +47,7 @@ struct imx214 {
- 	struct v4l2_ctrl *pixel_rate;
- 	struct v4l2_ctrl *link_freq;
- 	struct v4l2_ctrl *exposure;
-+	struct v4l2_ctrl *unit_size;
- 
- 	struct regulator_bulk_data	supplies[IMX214_NUM_SUPPLIES];
- 
-@@ -948,6 +949,10 @@ static int imx214_probe(struct i2c_client *client)
- 	static const s64 link_freq[] = {
- 		IMX214_DEFAULT_LINK_FREQ,
- 	};
-+	static const struct v4l2_area unit_size = {
-+		.width = 1120,
-+		.height = 1120,
-+	};
- 	int ret;
- 
- 	ret = imx214_parse_fwnode(dev);
-@@ -1029,6 +1034,10 @@ static int imx214_probe(struct i2c_client *client)
- 					     V4L2_CID_EXPOSURE,
- 					     0, 3184, 1, 0x0c70);
- 
-+	imx214->unit_size = v4l2_ctrl_new_std_compound(&imx214->ctrls,
-+				NULL,
-+				V4L2_CID_UNIT_CELL_SIZE,
-+				v4l2_ctrl_ptr_from_void((void *)&unit_size));
- 	ret = imx214->ctrls.error;
- 	if (ret) {
- 		dev_err(&client->dev, "%s control init failed (%d)\n",
+I think you have not sent pull requests for sh or h8300.
+Would you send ones in this MW?
+
 -- 
-2.23.0
-
+Best Regards
+Masahiro Yamada
