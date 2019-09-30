@@ -2,109 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674E4C20CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E46FC20BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730849AbfI3Mpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 08:45:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46779 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfI3Mpt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 08:45:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id o18so11123405wrv.13;
-        Mon, 30 Sep 2019 05:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iI178b6o0qZVFBE5FgkMuuPfgQeMCHtWWim2bH0vxbY=;
-        b=jO6onDotzDWCKXEXFzt5lNj+IXe2cN21TYeChnFaKzRs7HYnmYbsPmIYHIi7enbNF4
-         mQa8u5bgxNDWXpiEFIs5ZU6+ff+9UycRj24TGk9n5RnpNPVRd43/j3BJ78zZDDMf+pRR
-         eB3SrMQ58CgKzB11kCbIOLDU5KRIEutAgyT8dgXTWRj2EJEPHS+ixySzNJTfLBNhxYgJ
-         68AGeSyl39hAgbzMKsNkX2YRRvfBbRGjNjtFunngdVEhPzQuH8b/tBZ6nu3SuLhPiP9g
-         yVX8bBsl9XObGaG++9XSz8OagizFufFlSRWqnFyFk1gq+W34kWd+Y4icip9DcFuwGZCh
-         aNfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iI178b6o0qZVFBE5FgkMuuPfgQeMCHtWWim2bH0vxbY=;
-        b=gOd8hldZfuQJR756Bl7LrlroILWsaYtF0nWAHjlW///U2de5emWh7j7RaNMRsiM/7Q
-         cACBMVUvUstX6GsVS0di346LYUGsPL3HAKLb5H12zjYX3t89hQvpHvK88ho3+D1U9g1P
-         Dd21NLsI9jfi15949abhVuFUQKzSqprjm7dL33mmuuJKa+P2UuA4BOHozVIFyyLIUxR9
-         313mhwQu2Hy61WO8AxUwGQtl1P4MBHRJ8GK24LfhOwPcfc4VIXqhalJVUGPTlpUHGLOM
-         a17Eq5U8kNKeVI6eZZxLpiHbRP4PJY1lbMX50BQFepuqSO1m8ZyV3mlNbtUZs1DIT6rl
-         SFDw==
-X-Gm-Message-State: APjAAAVptAZn2zmJsUbjAjhBBfE3cenyF5a9kaj3+k5nxAutPPO73QvH
-        KWD6SmV8qB/v25FeiSZ9ams=
-X-Google-Smtp-Source: APXvYqxXqlxnCTWpHdUcHd+CsyWUyx5za3cbr+Ty3uRN7gE1JPrkoUFKktywA+G0M4up4B1gCXbvvA==
-X-Received: by 2002:adf:e951:: with SMTP id m17mr12954736wrn.154.1569847546974;
-        Mon, 30 Sep 2019 05:45:46 -0700 (PDT)
-Received: from [192.168.1.4] (ip-86-49-35-8.net.upcbroadband.cz. [86.49.35.8])
-        by smtp.gmail.com with ESMTPSA id z1sm26014947wre.40.2019.09.30.05.45.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2019 05:45:46 -0700 (PDT)
-Subject: Re: [PATCH 00/11] of: dma-ranges fixes and improvements
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Oza Pawandeep <oza.oza@broadcom.com>
-References: <20190927002455.13169-1-robh@kernel.org>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <106d5b37-5732-204f-4140-8d528256a59b@gmail.com>
-Date:   Mon, 30 Sep 2019 14:40:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20190927002455.13169-1-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        id S1730917AbfI3Mkm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 30 Sep 2019 08:40:42 -0400
+Received: from mga18.intel.com ([134.134.136.126]:38278 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbfI3Mkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 08:40:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 05:40:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,567,1559545200"; 
+   d="scan'208";a="194164577"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga003.jf.intel.com with ESMTP; 30 Sep 2019 05:40:41 -0700
+Received: from fmsmsx120.amr.corp.intel.com (10.18.124.208) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 30 Sep 2019 05:40:41 -0700
+Received: from shsmsx107.ccr.corp.intel.com (10.239.4.96) by
+ fmsmsx120.amr.corp.intel.com (10.18.124.208) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 30 Sep 2019 05:40:41 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.166]) by
+ SHSMSX107.ccr.corp.intel.com ([169.254.9.33]) with mapi id 14.03.0439.000;
+ Mon, 30 Sep 2019 20:40:39 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+CC:     "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>,
+        "Xia, Chenbo" <chenbo.xia@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>
+Subject: RE: [PATCH v2 11/13] samples/vfio-mdev-pci: call
+ vfio_add_group_dev()
+Thread-Topic: [PATCH v2 11/13] samples/vfio-mdev-pci: call
+ vfio_add_group_dev()
+Thread-Index: AQHVZIuXfFKMbpYABEKE0eIkHeBbGKc811UAgAcTNtA=
+Date:   Mon, 30 Sep 2019 12:40:38 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C25743A0B55ED@SHSMSX104.ccr.corp.intel.com>
+References: <1567670370-4484-1-git-send-email-yi.l.liu@intel.com>
+        <1567670370-4484-12-git-send-email-yi.l.liu@intel.com>
+ <20190925203658.18ea50ab@x1.home>
+In-Reply-To: <20190925203658.18ea50ab@x1.home>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzBlOTcyNWEtZTY1Zi00NTc1LWIyNzYtMTRhMjJlOTljYTA1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQUc2eTQ5MFJyelYyMlwvZU44Z1B2VWRGOFdwY2dGaXJkVHZXcWg5VkpxeTFMRDFmY1ljdEJPS0h1ZTk5cUVPOTMifQ==
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/19 2:24 AM, Rob Herring wrote:
-> This series fixes several issues related to 'dma-ranges'. Primarily,
-> 'dma-ranges' in a PCI bridge node does correctly set dma masks for PCI
-> devices not described in the DT. A common case needing dma-ranges is a
-> 32-bit PCIe bridge on a 64-bit system. This affects several platforms
-> including Broadcom, NXP, Renesas, and Arm Juno. There's been several
-> attempts to fix these issues, most recently earlier this week[1].
-> 
-> In the process, I found several bugs in the address translation. It
-> appears that things have happened to work as various DTs happen to use
-> 1:1 addresses.
-> 
-> First 3 patches are just some clean-up. The 4th patch adds a unittest
-> exhibiting the issues. Patches 5-9 rework how of_dma_configure() works
-> making it work on either a struct device child node or a struct
-> device_node parent node so that it works on bus leaf nodes like PCI
-> bridges. Patches 10 and 11 fix 2 issues with address translation for
-> dma-ranges.
-> 
-> My testing on this has been with QEMU virt machine hacked up to set PCI
-> dma-ranges and the unittest. Nicolas reports this series resolves the
-> issues on Rpi4 and NXP Layerscape platforms.
+Hi Alex,
 
-With the following patches applied:
-      https://patchwork.ozlabs.org/patch/1144870/
-      https://patchwork.ozlabs.org/patch/1144871/
-on R8A7795 Salvator-XS
-Tested-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Thursday, September 26, 2019 10:37 AM
+> To: Liu, Yi L <yi.l.liu@intel.com>
+> Subject: Re: [PATCH v2 11/13] samples/vfio-mdev-pci: call vfio_add_group_dev()
+> 
+> On Thu,  5 Sep 2019 15:59:28 +0800
+> Liu Yi L <yi.l.liu@intel.com> wrote:
+> 
+> > This patch adds vfio_add_group_dev() calling in probe() to make
+> > vfio-mdev-pci work well with non-singleton iommu group. User could
+> > bind devices from a non-singleton iommu group to either vfio-pci
+> > driver or this sample driver. Existing passthru policy works well for
+> > this non-singleton group.
+> >
+> > This is actually a policy choice. A device driver can make this call
+> > if it wants to be vfio viable. And it needs to provide dummy
+> > vfio_device_ops which is required by vfio framework. To prevent user
+> > from opening the device from the iommu backed group fd, the open
+> > callback of the dummy vfio_device_ops should return -ENODEV to fail
+> > the VFIO_GET_DEVICE_FD request from userspace.
+> >
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > Cc: Lu Baolu <baolu.lu@linux.intel.com>
+> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> > ---
+> >  drivers/vfio/pci/vfio_mdev_pci.c | 91
+> > ++++++++++++++++++++++++++++++++++++----
+> >  1 file changed, 82 insertions(+), 9 deletions(-)
+> >
 
--- 
-Best regards,
-Marek Vasut
+[...]
+
+> > +static int vfio_pci_dummy_open(void *device_data) {
+> > +	struct vfio_mdev_pci_device *vmdev =
+> > +		(struct vfio_mdev_pci_device *) device_data;
+> > +	pr_warn("Device %s is not viable for vfio-pci passthru, please follow"
+> > +		" vfio-mdev passthru path as it has been wrapped as mdev!!!\n",
+> > +					dev_name(&vmdev->vdev.pdev->dev));
+> > +	return -ENODEV;
+> > +}
+> > +
+> > +static void vfio_pci_dummy_release(void *device_data) { }
+> 
+> Theoretically .release will never be called.  If we're paranoid, we could keep it with a
+> pr_warn.
+
+yes, it is.
+
+> > +
+> > +long vfio_pci_dummy_ioctl(void *device_data,
+> > +		   unsigned int cmd, unsigned long arg) {
+> > +	return 0;
+> > +}
+> > +
+> > +ssize_t vfio_pci_dummy_read(void *device_data, char __user *buf,
+> > +			     size_t count, loff_t *ppos)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +ssize_t vfio_pci_dummy_write(void *device_data, const char __user *buf,
+> > +			      size_t count, loff_t *ppos)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +int vfio_pci_dummy_mmap(void *device_data, struct vm_area_struct
+> > +*vma) {
+> > +	return 0;
+> > +}
+> > +
+> > +void vfio_pci_dummy_request(void *device_data, unsigned int count) {
+> > +}
+> 
+> AFAICT, none of .ioctl, .read, .write, .mmap, or .request need to be provided,
+> only .open and only .release for paranoia.
+
+sure. let me fix it.
+
+> > +
+> > +static const struct vfio_device_ops vfio_pci_dummy_ops = {
+> > +	.name		= "vfio-pci",
+> 
+> This is impersonating vfio-pci, shouldn't we use something like "vfio-mdev-pci-
+> dummy".  Thanks,
+
+Yep. will modify it.
+ 
+> Alex
+
+Thanks,
+Yi Liu
+
