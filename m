@@ -2,94 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B80E3C2168
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC009C2171
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731371AbfI3NFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:05:16 -0400
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:46753 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731349AbfI3NFO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:05:14 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id EvMSilZaKz6EAEvMViNgY3; Mon, 30 Sep 2019 15:05:12 +0200
-Subject: Re: [PATCH v8 7/8] media: v4l2-ctrl: Add new helper
- v4l2_ctrl_ptr_from_void
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>
-References: <20190930101841.19630-1-ribalda@kernel.org>
- <20190930101841.19630-8-ribalda@kernel.org>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <e1c4618d-4adf-98f6-77ff-b7fc96617a14@xs4all.nl>
-Date:   Mon, 30 Sep 2019 15:05:08 +0200
+        id S1731129AbfI3NFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:05:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:53902 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729738AbfI3NFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:05:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B17F11000;
+        Mon, 30 Sep 2019 06:05:46 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD2783F706;
+        Mon, 30 Sep 2019 06:05:44 -0700 (PDT)
+Subject: Re: [PATCH 00/11] of: dma-ranges fixes and improvements
+To:     Marek Vasut <marek.vasut@gmail.com>, Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Oza Pawandeep <oza.oza@broadcom.com>
+References: <20190927002455.13169-1-robh@kernel.org>
+ <106d5b37-5732-204f-4140-8d528256a59b@gmail.com>
+ <40bdf7cf-3bb1-24f8-844d-3eefbc761aba@arm.com>
+ <807a4f96-cbda-da4d-a3f1-2bfe5788105b@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <107d3a83-7448-b5c8-4b38-9b376848a1fa@arm.com>
+Date:   Mon, 30 Sep 2019 14:05:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190930101841.19630-8-ribalda@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfK0gxg17lJkcq7mwa9uMANVkLhq46/18+Ai/S06mG6taCJODn5/Hv+eEaba8pDOGJTp3V+bEHKs+HavX+Mmai5yem3gyaDDRLknhQQGZKAepvPrLg5t4
- VbeIuS5GOr5uBpxqLQyFMz0xdT19dYSLArO3oz7mW/vcMQma4KyzqNlc1yC/MXxi2tW/M4H6OKDVAyl83JLfCxoFHhB0G2ekCVkOLrJ+FNbV6zGOyyHUhwwX
- XwaTudOX2u1K+uFI1qfqDPuFDPVfmyb7iY2nsWCLV/khWZdgp8thAX7fZ5drW5IAbzeYwClfmeVErZaKDI/Z9LEfjeiXD8emQcMpFlHgMvTJpbt8rGdt9Dkz
- hI/RxaHt
+In-Reply-To: <807a4f96-cbda-da4d-a3f1-2bfe5788105b@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/30/19 12:18 PM, Ricardo Ribalda Delgado wrote:
-> This helper function simplifies the code by not needing a union
-> v4l2_ctrl_ptr and an assignment every time we need to use
-> a ctrl_ptr.
+On 30/09/2019 13:54, Marek Vasut wrote:
+> On 9/30/19 2:52 PM, Robin Murphy wrote:
+>> On 30/09/2019 13:40, Marek Vasut wrote:
+>>> On 9/27/19 2:24 AM, Rob Herring wrote:
+>>>> This series fixes several issues related to 'dma-ranges'. Primarily,
+>>>> 'dma-ranges' in a PCI bridge node does correctly set dma masks for PCI
+>>>> devices not described in the DT. A common case needing dma-ranges is a
+>>>> 32-bit PCIe bridge on a 64-bit system. This affects several platforms
+>>>> including Broadcom, NXP, Renesas, and Arm Juno. There's been several
+>>>> attempts to fix these issues, most recently earlier this week[1].
+>>>>
+>>>> In the process, I found several bugs in the address translation. It
+>>>> appears that things have happened to work as various DTs happen to use
+>>>> 1:1 addresses.
+>>>>
+>>>> First 3 patches are just some clean-up. The 4th patch adds a unittest
+>>>> exhibiting the issues. Patches 5-9 rework how of_dma_configure() works
+>>>> making it work on either a struct device child node or a struct
+>>>> device_node parent node so that it works on bus leaf nodes like PCI
+>>>> bridges. Patches 10 and 11 fix 2 issues with address translation for
+>>>> dma-ranges.
+>>>>
+>>>> My testing on this has been with QEMU virt machine hacked up to set PCI
+>>>> dma-ranges and the unittest. Nicolas reports this series resolves the
+>>>> issues on Rpi4 and NXP Layerscape platforms.
+>>>
+>>> With the following patches applied:
+>>>         https://patchwork.ozlabs.org/patch/1144870/
+>>>         https://patchwork.ozlabs.org/patch/1144871/
+>>
+>> Can you try it without those additional patches? This series aims to
+>> make the parsing work properly generically, such that we shouldn't need
+>> to add an additional PCI-specific version of almost the same code.
 > 
-> Suggested-by: Hans Verkuil <hverkuil@xs4all.nl>
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  include/media/v4l2-ctrls.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-> index c42f164e2c9e..d69cfdffd41d 100644
-> --- a/include/media/v4l2-ctrls.h
-> +++ b/include/media/v4l2-ctrls.h
-> @@ -73,6 +73,17 @@ union v4l2_ctrl_ptr {
->  	void *p;
->  };
->  
-> +/**
-> + * v4l2_ctrl_ptr() - Helper function to return a v4l2_ctrl_ptr from a
-> + * void pointer
-> + * @ptr:	The void pointer
-> + */
-> +static inline union v4l2_ctrl_ptr v4l2_ctrl_ptr_from_void(void *ptr)
-> +{
-> +	BUILD_BUG_ON(sizeof(union v4l2_ctrl_ptr) != sizeof(void *));
-> +	return (union v4l2_ctrl_ptr) ptr;
+> Seems to work even without those.
 
-Huh? Why not just do:
+Great, thanks for confirming!
 
-	union v4l2_ctrl_ptr p = { .p = ptr; };
-
-	return p;
-
-Or even shorter (not tested): return (union v4l2_ctrl_ptr) { .p = ptr; };
-
-No need for BUILD_BUG_ON that way, which is rather ugly.
-
-Regards,
-
-	Hans
-
-> +}
-> +
->  /**
->   * struct v4l2_ctrl_ops - The control operations that the driver has to provide.
->   *
-> 
-
+Robin.
