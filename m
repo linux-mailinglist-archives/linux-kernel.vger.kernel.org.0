@@ -2,90 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F57BC3387
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C06C3C33BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387553AbfJAL5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:57:09 -0400
-Received: from mga01.intel.com ([192.55.52.88]:51834 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbfJAL5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:57:09 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 04:57:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="366307307"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005.jf.intel.com with ESMTP; 01 Oct 2019 04:57:07 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iFGm9-0008Lf-SJ; Tue, 01 Oct 2019 14:57:05 +0300
-Date:   Tue, 1 Oct 2019 14:57:05 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v1 3/4] [media] usb: pulse8-cec: Switch to use %ptT
-Message-ID: <20191001115705.GK32742@smile.fi.intel.com>
-References: <20190104193009.30907-1-andriy.shevchenko@linux.intel.com>
- <20190104193009.30907-3-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104193009.30907-3-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1733105AbfJAMET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 08:04:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36838 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfJAMES (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 08:04:18 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91C43p9171527;
+        Tue, 1 Oct 2019 12:04:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=tgOBFZObT23SyNVVIgjHtEVR3Av80X15fH43kUobLu8=;
+ b=ro25Eb2C5gb4RNQdAjQkaP92uhpi+c7yOPLkyY4qWDW6FlcnFWTiQSzJiQsyeUewKT7T
+ xv/FU7CliTpaPNK/aaqEyJjDXQ5VPb+yaviO2qsCzvVEJe+iok31aMR2VoxDLHZ03Pa/
+ 9i7aB5SFJAW+DE/CVYcMnYulFm5tgXq3CnYalVS7hyMpJ/bOPDFlJd4ec2yO45XOD+7/
+ 8jC4ISozo4Y/V3VOmwjOU/Jqr7dCH1VJVGpjMbsvRecCX8+MjM4Q3ICCtybLWlpposT3
+ wniKDbf7kI5d2oNL2JyX+I8y9g14cNqoaL31/gITFk24WDDKNSCNXehekdRFv36MRvfU qw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2va05rn82s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 12:04:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91C3NUm157467;
+        Tue, 1 Oct 2019 12:04:12 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2vbnqcs96x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 12:04:12 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x91C4B9G017612;
+        Tue, 1 Oct 2019 12:04:11 GMT
+Received: from z2.cn.oracle.com (/10.182.71.205)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Oct 2019 05:04:11 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     vkuznets@redhat.com, linux-hyperv@vger.kernel.org,
+        kvm@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH v2 0/3] Add a unified parameter "nopvspin"
+Date:   Mon, 30 Sep 2019 20:08:56 +0800
+Message-Id: <1569845340-11884-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910010112
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910010112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 09:30:08PM +0200, Andy Shevchenko wrote:
-> Use %ptT instead of open coded variant to print content of
-> time64_t type in human readable format.
+There are cases folks want to disable spinlock optimization for
+debug/test purpose. Xen and hyperv already have parameters "xen_nopvspin"
+and "hv_nopvspin" to support that, but kvm doesn't.
 
-Hans, any objections on this?
+The first patch adds that feature to KVM guest with "nopvspin".
 
-> Cc: Hans Verkuil <hverkuil@xs4all.nl>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/media/usb/pulse8-cec/pulse8-cec.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/usb/pulse8-cec/pulse8-cec.c b/drivers/media/usb/pulse8-cec/pulse8-cec.c
-> index b085b14f3f87..05f997e9ce28 100644
-> --- a/drivers/media/usb/pulse8-cec/pulse8-cec.c
-> +++ b/drivers/media/usb/pulse8-cec/pulse8-cec.c
-> @@ -328,7 +328,6 @@ static int pulse8_setup(struct pulse8 *pulse8, struct serio *serio,
->  	u8 *data = pulse8->data + 1;
->  	u8 cmd[2];
->  	int err;
-> -	struct tm tm;
->  	time64_t date;
->  
->  	pulse8->vers = 0;
-> @@ -349,10 +348,7 @@ static int pulse8_setup(struct pulse8 *pulse8, struct serio *serio,
->  	if (err)
->  		return err;
->  	date = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
-> -	time64_to_tm(date, 0, &tm);
-> -	dev_info(pulse8->dev, "Firmware build date %04ld.%02d.%02d %02d:%02d:%02d\n",
-> -		 tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
-> -		 tm.tm_hour, tm.tm_min, tm.tm_sec);
-> +	dev_info(pulse8->dev, "Firmware build date %ptT\n", &date);
->  
->  	dev_dbg(pulse8->dev, "Persistent config:\n");
->  	cmd[0] = MSGCODE_GET_AUTO_ENABLED;
-> -- 
-> 2.19.2
-> 
+For compatibility reason original parameters "xen_nopvspin" and
+"hv_nopvspin" are retained and marked obsolete.
 
--- 
-With Best Regards,
-Andy Shevchenko
+v2:
+PATCH1: pick the print code change into seperate PATCH2,
+        updated patch description             [Vitaly Kuznetsov]
+PATCH2: new patch with print code change      [Vitaly Kuznetsov]
+PATCH3: add Reviewed-by                       [Juergen Gross]
 
-
+Thanks
+Zhenzhong
