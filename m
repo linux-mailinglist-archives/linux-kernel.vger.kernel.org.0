@@ -2,82 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7073CC2B19
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 01:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF893C2B27
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 02:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732457AbfI3Xtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 19:49:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40140 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfI3Xtu (ORCPT
+        id S1732573AbfJAACl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 20:02:41 -0400
+Received: from alpha.anastas.io ([104.248.188.109]:53211 "EHLO
+        alpha.anastas.io" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732515AbfJAACl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 19:49:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=E9ubt9+aej64brgZvM9455FGrDpqWfOc9ZRlZLURQKs=; b=h5m3Y6+D8+QLYdn4kAqdGp3pp
-        LdqTkgvwpu36p1OtF4/qPV4NKpJ0GP9CGhXB9wCaTs59kwNAuMtVeuu/FJwtX+BLbr+U7YiZYaje0
-        TCKdyuAq5zoVdssgYGKCT4HU3kPSGKDgI82ugc9bbQCoZhFplRkoQ1rZm8/vf1kZw62sQmIb7rbWy
-        owDu6UDJ/dXB57khV3NiY0E+LrB6rkoBWTbdqd2fwFQt86GKzfg5SHw+UYYxg4y5gA5pEB0K/RAfR
-        Vh2lAwtvPWYAPVG/7p23iJaA+FKWk0Wa7z1RPFgMRZQhwlu5JM3SSSJZIDwaeeZC5LbM/K+HpMtev
-        TdgwYFsQA==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iF5QL-0003Iq-K9; Mon, 30 Sep 2019 23:49:49 +0000
-Subject: Re: What populates /proc/partitions ?
-To:     "David F." <df7729@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <CAGRSmLsV96jK+7UB6T6k8j9u74oPSHTA+1TPU8F9G2NnOqCDJg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c0d9d434-1f47-66a0-1129-5003f2f2eb5c@infradead.org>
-Date:   Mon, 30 Sep 2019 16:49:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 30 Sep 2019 20:02:41 -0400
+Received: from authenticated-user (alpha.anastas.io [104.248.188.109])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by alpha.anastas.io (Postfix) with ESMTPSA id B632F7FD54;
+        Mon, 30 Sep 2019 18:55:37 -0500 (CDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=anastas.io; s=mail;
+        t=1569887738; bh=g3OgtUkIzypG8+fYbjfl8N5a0geT6PHfCSF+f6yKY4w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=c55I2Lc3KA7Qfe5EifBioGNSMzktIB8/T0DtOgzmnJqsdoAm0vSgTj9VFpoEdCjrQ
+         ev6X7k2agIDSQtpBmjGQngPa6yxt77uq5LMRGcH2zvtR2z1Bflh/lFSFT8Nh47YKyk
+         c0gWJaOMLapnoaFRd9lSW7Bh3K1UGZ+79MrEvvcgNtn/5UJUjLq3yPMnAznEv+EVvK
+         bGmkj68eRdVk7FYrprbX1uIe1Zlv+6N33zY/bUwyfBZ15rOKvFFgdAGdPac+Un2g48
+         /NBhWacKtfAZzO7d2SuL3PBychaFQgGyL6IvJpGGXDiMjHRUU1XzduhPkdZvVMmdde
+         MJwFK6QN8vA0w==
+From:   Shawn Anastasio <shawn@anastas.io>
+To:     alex.williamson@redhat.com, kvm@vger.kernel.org
+Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH RFC 0/1] VFIO: Region-specific file descriptors
+Date:   Mon, 30 Sep 2019 18:55:32 -0500
+Message-Id: <20190930235533.2759-1-shawn@anastas.io>
 MIME-Version: 1.0
-In-Reply-To: <CAGRSmLsV96jK+7UB6T6k8j9u74oPSHTA+1TPU8F9G2NnOqCDJg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/30/19 3:47 PM, David F. wrote:
-> Hi,
-> 
-> I want to find out why fd0 is being added to /proc/partitions and stop
-> that for my build.  I've searched "/proc/partitions" and "partitions",
-> not finding anything that matters.
+This patch adds region file descriptors to VFIO, a simple file descriptor type
+that allows read/write/mmap operations on a single region of a VFIO device.
 
-/proc/partitions is produced on demand by causing a read of it.
-That is done by these functions (pointers) in block/genhd.c:
+This feature is particularly useful for privileged applications that use VFIO
+and wish to share file descriptors with unprivileged applications without
+handing over full control of the device. It also allows applications to use
+regular offsets in read/write/mmap instead of the region index + offset that
+must be used with device file descriptors.
 
-static const struct seq_operations partitions_op = {
-	.start	= show_partition_start,
-	.next	= disk_seqf_next,
-	.stop	= disk_seqf_stop,
-	.show	= show_partition
-};
+The current implementation is very raw (PCI only, no reference counting which
+is probably wrong), but I wanted to get a sense to see if this feature is
+desired. If it is, tips on how to implement this more correctly are
+appreciated.
 
-in particular, show_partition().  In turn, that function uses data that was
-produced upon block device discovery, also in block/genhd.c.
-See functions disk_get_part(), disk_part_iter_init(), disk_part_iter_next(),
-disk_part_iter_exit(), __device_add_disk(), and get_gendisk().
+Comments welcome!
 
-> If udev is doing it, what function is it call so I can search on that?
 
-I don't know about that.  I guess in the kernel it is about "uevents".
-E.g., in block/genhd.c, there are some calls to kobject_uevent() or variants
-of it.
+Shawn Anastasio (1):
+  vfio/pci: Introduce region file descriptors
 
-> TIA!!
-
-There should be something in your boot log about "fd" or "fd0" or floppy.
-eh?
+ drivers/vfio/pci/vfio_pci.c         | 105 ++++++++++++++++++++++++++++
+ drivers/vfio/pci/vfio_pci_private.h |   5 ++
+ include/uapi/linux/vfio.h           |  14 ++++
+ 3 files changed, 124 insertions(+)
 
 -- 
-~Randy
+2.20.1
+
