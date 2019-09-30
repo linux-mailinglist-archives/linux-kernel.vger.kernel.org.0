@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72564C29B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 00:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83046C29BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 00:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbfI3WjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 18:39:17 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:57023 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729109AbfI3WjP (ORCPT
+        id S1730896AbfI3WjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 18:39:21 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:37204 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbfI3WjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 18:39:15 -0400
-Received: by mail-io1-f72.google.com with SMTP id a22so33149082ioq.23
+        Mon, 30 Sep 2019 18:39:16 -0400
+Received: by mail-io1-f69.google.com with SMTP id u18so33370042ioc.4
         for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 15:39:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=m8sUaKT7crraQNp1bJulsuqpJCNWCNZ+AvUePawvzjg=;
-        b=Ay4y2boYRqXQiLTnSjs6evcYmBJQ3Ybv/R9BC3nO4idBJBWRZy4KelWhKYDh+2kUMT
-         U18HK8WfZTfi8t7MWTS/dhBP8mR+CdnWl3Q+YxneJgzUxaE2p2Gdg6WABqXEDTF1WNXb
-         9r2jMGZ9ZysGapi8pbN5JbSqAjn7QJ6YxWw18L4VoqqcUT/b8o0SLMLAkpwS1jJqbYc6
-         Tv7EGltvD94BC9pBhLivdwrZUNM0qcTmq/eWTxGu24eBwBV7IN0nAQ8Ju6o5A/lgXpCP
-         SuULYpLFE82EGUuzxsxSjw+h/7bfImMjAcDEbcvnWY5FI7qDxuMeKu8I8cEZmH/1mIEV
-         w0Mw==
-X-Gm-Message-State: APjAAAWfvHo5JNyxO+LpBWKc+7KqYC+Wn0Dtkje7m3hL/2VasnTQObOe
-        hJ0j0xziAYpL/XF/vycsLnmQ+KBRF3yTi+X3aLrHwb9EjJZc
-X-Google-Smtp-Source: APXvYqy+UvgN4s8+JrV8VP8ug0x2BtZT0z2lXdmmW7i4uJmn+BEVWAHncONEz83/eTP9vll7iKYdSCASMjzUGr71zeOg5T8VJlbj
+        bh=L9tM9S8tLO/aPET/ricl0OlLf/wXv3oRaqGwqXFjXX8=;
+        b=fb2mieS//VU1rJ87Goj2ynGr8E307BjpUCkdm+aCKq7NkaAGEd7lyLQUd+w/aT3X+a
+         sOIG5NDtDNM2tY918xqoZTRg9awGGZWOdCGiZaUxwG6wsyAz9FqnpkwnJp7OMCWJ4GeU
+         gudjubpAL+ePxm0+B1j9SOnc3bu+GVvcyF9rusAss1dOEQz1yNyRIKALEI79eXWz4e2Z
+         dNkknurPtcxuXmfvbbAy98Pmo5LLtbWqGHaaXVXqMWZeo3IZ/8rLmY2V9IcPQC5mWV7R
+         gj1aCE1245GIkhC6PM28NVg1Ser0q8QFQGMuxurrXplujBPV+pAfeCSTbYsMq04p1B7x
+         9ApA==
+X-Gm-Message-State: APjAAAXZdh8C4xSxKhYucf5+Jm4tlMMo8mosOQMT09jTZi7O1jp9NBTl
+        4vquDZzvCHFKjWfZdUMwDiAhdH8ikn74GuStDxdKvex/l6gl
+X-Google-Smtp-Source: APXvYqy8jEwSgPKZ/BRyeNDuJqnsOcPJXJpDIutX8qkjtsBvCDFO3ulOKUpK2ufqSzu9eis2I7lb6gkzjrxYXmo0qjeKStz76uR3
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8618:: with SMTP id z24mr17197396ioj.67.1569883154531;
- Mon, 30 Sep 2019 15:39:14 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 15:39:14 -0700
+X-Received: by 2002:a92:9fdb:: with SMTP id z88mr24219433ilk.38.1569883155347;
+ Mon, 30 Sep 2019 15:39:15 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 15:39:15 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c3ce010593cce73a@google.com>
-Subject: KMSAN: uninit-value in dvb_usb_device_exit
-From:   syzbot <syzbot+20a83e47e94e371740d2@syzkaller.appspotmail.com>
-To:     glider@google.com, gregkh@linuxfoundation.org,
-        hverkuil-cisco@xs4all.nl, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mail@maciej.szmigiero.name,
-        mchehab@kernel.org, oneukum@suse.com, sean@mess.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Message-ID: <000000000000d043690593cce730@google.com>
+Subject: KASAN: slab-out-of-bounds Read in hiddev_ioctl_usage
+From:   syzbot <syzbot+a3f4c2f4f8cde2ff797b@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,95 +50,69 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    61ccdad1 Revert "drm/bochs: Use shadow buffer for bochs fr..
-git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b7d1ac600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27abc558ecb16a3b
-dashboard link: https://syzkaller.appspot.com/bug?extid=20a83e47e94e371740d2
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15aff61e600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105a0f22600000
+HEAD commit:    2994c077 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=15170f6d600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=69ddefac6929256a
+dashboard link: https://syzkaller.appspot.com/bug?extid=a3f4c2f4f8cde2ff797b
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a1a55b600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107c47bd600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+20a83e47e94e371740d2@syzkaller.appspotmail.com
+Reported-by: syzbot+a3f4c2f4f8cde2ff797b@syzkaller.appspotmail.com
 
-input: TeVii S632 USB as  
-/devices/platform/dummy_hcd.0/usb1/1-1/rc/rc0/input5
-dvb-usb: schedule remote query interval to 150 msecs.
-dw2102: su3000_power_ctrl: 0, initialized 1
-dvb-usb: TeVii S632 USB successfully initialized and connected.
-usb 1-1: USB disconnect, device number 2
 ==================================================================
-BUG: KMSAN: uninit-value in strscpy+0x33f/0x4c0 lib/string.c:207
-CPU: 0 PID: 3148 Comm: kworker/0:2 Not tainted 5.3.0-rc3+ #17
+BUG: KASAN: slab-out-of-bounds in hiddev_ioctl_usage.isra.0+0x12d0/0x13b0  
+drivers/hid/usbhid/hiddev.c:535
+Read of size 4 at addr ffff8881d3fc81dc by task syz-executor894/1724
+
+CPU: 0 PID: 1724 Comm: syz-executor894 Not tainted 5.3.0+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  kmsan_report+0x162/0x2d0 mm/kmsan/kmsan_report.c:109
-  __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:294
-  strscpy+0x33f/0x4c0 lib/string.c:207
-  dvb_usb_device_exit+0x1c8/0x270  
-drivers/media/usb/dvb-usb/dvb-usb-init.c:305
-  dw2102_disconnect+0x256/0x2a0 drivers/media/usb/dvb-usb/dw2102.c:2446
-  usb_unbind_interface+0x3a2/0xdd0 drivers/usb/core/driver.c:423
-  __device_release_driver drivers/base/dd.c:1120 [inline]
-  device_release_driver_internal+0x911/0xd20 drivers/base/dd.c:1151
-  device_release_driver+0x4b/0x60 drivers/base/dd.c:1174
-  bus_remove_device+0x4bf/0x670 drivers/base/bus.c:556
-  device_del+0xcd5/0x1d10 drivers/base/core.c:2288
-  usb_disable_device+0x567/0x1150 drivers/usb/core/message.c:1241
-  usb_disconnect+0x51e/0xd60 drivers/usb/core/hub.c:2199
-  hub_port_connect drivers/usb/core/hub.c:4949 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x3fd0/0x72f0 drivers/usb/core/hub.c:5441
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x189c/0x2460 kernel/workqueue.c:2417
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
+  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
+  kasan_report+0xe/0x12 mm/kasan/common.c:634
+  hiddev_ioctl_usage.isra.0+0x12d0/0x13b0 drivers/hid/usbhid/hiddev.c:535
+  hiddev_ioctl+0x7a1/0x1550 drivers/hid/usbhid/hiddev.c:807
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x444969
+Code: e8 bc af 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 1b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffff4d72ed8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000444969
+RDX: 0000000020000100 RSI: 00000000c018480b RDI: 0000000000000004
+RBP: 00000000006cf018 R08: 8fce4d9635172f21 R09: 00000000004002e0
+R10: 000000000000000f R11: 0000000000000246 R12: 0000000000402610
+R13: 00000000004026a0 R14: 0000000000000000 R15: 0000000000000000
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:187 [inline]
-  kmsan_internal_poison_shadow+0x53/0xa0 mm/kmsan/kmsan.c:146
-  kmsan_slab_free+0x8d/0x100 mm/kmsan/kmsan_hooks.c:195
-  slab_free_freelist_hook mm/slub.c:1472 [inline]
-  slab_free mm/slub.c:3038 [inline]
-  kfree+0x4c1/0x2db0 mm/slub.c:3980
-  dw2102_probe+0xbd1/0xce0 drivers/media/usb/dvb-usb/dw2102.c:2387
-  usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
-  really_probe+0x1373/0x1dc0 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:709
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:816
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
-  __device_attach+0x489/0x750 drivers/base/dd.c:882
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:929
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:514
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2114
-  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
-  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
-  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
-  really_probe+0x1373/0x1dc0 drivers/base/dd.c:552
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:709
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:816
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
-  __device_attach+0x489/0x750 drivers/base/dd.c:882
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:929
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:514
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2114
-  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x581d/0x72f0 drivers/usb/core/hub.c:5441
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+The buggy address belongs to the page:
+page:ffffea00074fe000 refcount:1 mapcount:0 mapping:0000000000000000  
+index:0x0 compound_mapcount: 0
+flags: 0x200000000010000(head)
+raw: 0200000000010000 dead000000000100 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881d3fc8080: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+  ffff8881d3fc8100: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> ffff8881d3fc8180: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+                                                     ^
+  ffff8881d3fc8200: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+  ffff8881d3fc8280: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
 ==================================================================
 
 
