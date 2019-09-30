@@ -2,44 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1127C2123
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6795C2140
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:04:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731134AbfI3NDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:03:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731121AbfI3NDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:03:09 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E4FB2086A;
-        Mon, 30 Sep 2019 13:03:08 +0000 (UTC)
-Date:   Mon, 30 Sep 2019 09:03:06 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masanari Iida <standby24x7@gmail.com>
-Cc:     rdunlap@infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ktest: Fix some typos in sample.conf
-Message-ID: <20190930090306.0d9918bb@gandalf.local.home>
-In-Reply-To: <20190930124925.20250-1-standby24x7@gmail.com>
-References: <20190930124925.20250-1-standby24x7@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1731188AbfI3NED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:04:03 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37743 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731178AbfI3NED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:04:03 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w67so6956570lff.4
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 06:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=antmicro-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=NKz061ZKrfKpmulUXMfGM39xSIQHkJ/qfJErKxufWTs=;
+        b=Et0O9/tGHYkgEKZtIGpCcrr6TOROMY5wZ7ALUslSNVg39r1XOCZMKomLMfcH3uf3B0
+         xz/WiE0S/yexoIOk0AC9NqaNvBNPiEDC/rvvm4LOhFU5fOFQJb9pSYD/h80DeicEjkLr
+         NBcHoNV03AGP8s5x3LHa2Kh80NJLv9U049I8U0H3F1K0A6torSBtsWAYizr1SGifdh6+
+         GMFWfoXAPEpIHtVoMz6JPUQOm1XlzGfql0LM/YNnyF5CZYsrYtX8vOJXKT5fa4qmxBdr
+         dBnGYVnKR4uulhidzNqkHG9o2Vt49/UssWx3sAhNimhrTLuryWGb2pMJks51PKwL1ju5
+         cJqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=NKz061ZKrfKpmulUXMfGM39xSIQHkJ/qfJErKxufWTs=;
+        b=ZoWfqE0MUM7jnfrHGBBzl/VdDro41VpsP5Enl0rLpErR5kJvASwO6S1/RxygJOxZwA
+         GdZ9plJDJI8VIBDNno6WLmrg7mMrgaTZfZsrCnIPL5OBsctEtYa21UFYwritOlRymwSA
+         Jc4BJOmSbqcKRH1/fiS+XRJm4YB/EgdWzzI1OBBu0NjAL4oKg+hZxI40HrZbum5dzs+6
+         0ZMQmkrI/odymgslRPluhSlIITHx5qHyEt2k90FZvKJ/HiNjO0SxYaq3oXlN5sxfrzV4
+         liNEYtEDCs3gVlkS4xwpj3IhpephYPXkRijmpEq6KmQ9rTvJ+nlm9wErwnsbbWqVj9c+
+         QBEQ==
+X-Gm-Message-State: APjAAAWhXmjteHCluUmXZ4wwDmA3Mzsbl/WYygfNX9KZK+M2oZaNnNgx
+        Wp+aWypdAbIBGHx/IO1jsTsBsA==
+X-Google-Smtp-Source: APXvYqzDz/EV5ey9sKE1NK4jYT+12yoR14i2vO/m28H9eOEdKF9EPYknV1nV56KgFRg+yVNgqwUEhQ==
+X-Received: by 2002:a19:c709:: with SMTP id x9mr11722949lff.20.1569848640277;
+        Mon, 30 Sep 2019 06:04:00 -0700 (PDT)
+Received: from localhost.localdomain (d79-196.icpnet.pl. [77.65.79.196])
+        by smtp.gmail.com with ESMTPSA id 4sm3315620ljv.87.2019.09.30.06.03.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 06:03:59 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 15:03:52 +0200
+From:   Mateusz Holenko <mholenko@antmicro.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH 0/3] LiteUART serial driver
+Message-ID: <20190930130352.GA5898@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Sep 2019 21:49:25 +0900
-Masanari Iida <standby24x7@gmail.com> wrote:
+This patchset introduces support for LiteUART
+- serial device from LiteX SoC builder
+(https://github.com/enjoy-digital/litex).
 
-> This patch fixes some spelling typo in sample.conf
-> 
-> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+In the following patchset I will add
+a new mor1kx-based (OpenRISC) platform that
+uses this device.
 
-Thanks for the patch. I'll add it to my queue.
+Later I plan to extend this platform by
+adding support for more devices from LiteX suite.
 
--- Steve
+Filip Kokosinski (3):
+  dt-bindings: vendor: add vendor prefix for LiteX
+  dt-bindings: serial: document LiteUART bindings
+  drivers/tty/serial: add LiteUART driver
+
+ .../bindings/serial/litex,liteuart.txt        |  12 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   7 +
+ drivers/tty/serial/Kconfig                    |  30 ++
+ drivers/tty/serial/Makefile                   |   1 +
+ drivers/tty/serial/liteuart.c                 | 382 ++++++++++++++++++
+ include/uapi/linux/serial_core.h              |   3 +
+ 7 files changed, 437 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/serial/litex,liteuart.txt
+ create mode 100644 drivers/tty/serial/liteuart.c
+
+-- 
+2.23.0
+
