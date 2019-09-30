@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37CAAC1CF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B976CC1CEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 10:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbfI3IUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 04:20:14 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:46046 "EHLO
+        id S1730162AbfI3ITz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 04:19:55 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:46082 "EHLO
         smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730015AbfI3IT1 (ORCPT
+        by vger.kernel.org with ESMTP id S1730027AbfI3IT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 30 Sep 2019 04:19:27 -0400
 Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 0783FC037B;
-        Mon, 30 Sep 2019 08:19:26 +0000 (UTC)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 2C859C037C;
+        Mon, 30 Sep 2019 08:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1569831566; bh=G+vfQq1R/8y3p6u1/BPNdwwbxWCUNbBVqRhlj5S5ctE=;
+        t=1569831566; bh=VsdVW+VCuIfZ9PxVxUbdgy4kpT/QeuAHKi9XUjOtZD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=gy0H2pXmZs2oFRI/slPIAg7mM68ugG3jHSaQKPlO6HGAU+gYxXg/pTpStJKRI8UT8
-         CnA4Y/sexqvoKNhPPGycOxisjjplp8jKznHWLthuam+ymW1lvnACnWHPb5A+/gPkpL
-         mYPOmyuG0tXNx8jN4xL+z8SBnmsJRh77lh6whatUpZEa6lyKJ+xlJV9vyjfoNIz/dw
-         CotOBG0sXJ6QlHLEOhXM11+E1pZtjvjJsXdWOJcK7kHzHPmTgx5BFTQajKe2Zmjtcg
-         7fJ1RSyjlNydo5oBMMYxH8UwmsKC64PUE6iEJsiY5sc2qzxilhMKN61E5q5W7jTXux
-         yxX/nBOcrPZZQ==
+        b=Kzw3waQETCU/A0RcuxbLrk/MUiGKZ7IhDthDyr/vWbsCHXayfKVcOpeintm6YM2Q7
+         l6xkUCr006LClfeEx9HEX4LaO5Nwz8l0zCIETOPhsypUxOFxxMQgoebMCd1JhFiuRv
+         fOwuNYl8hNa0/99nNybQFdqF4a4avPDtSGnxQ+4WovB/nLpU9+0TcYiN7HFgnjT4kt
+         frOSOaZRcbRdDVFBTDgTwu3RWOtglEWEy29X+0N5fJwgdNWkV4Mti2uM6ATkpl0LXR
+         LyyiUnpdQKQggIrPIJ7NzXHb8GmHGBVuwNOGMaGGVWu+n45nxm1UABNeKDSyEuQS+Q
+         1CFp/9yjmtVtQ==
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 95829A0089;
+        by mailhost.synopsys.com (Postfix) with ESMTP id AA895A0091;
         Mon, 30 Sep 2019 08:19:23 +0000 (UTC)
 From:   Jose Abreu <Jose.Abreu@synopsys.com>
 To:     netdev@vger.kernel.org
@@ -40,10 +40,11 @@ Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
         "David S. Miller" <davem@davemloft.net>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 net 7/9] net: stmmac: xgmac: Disable the Timestamp interrupt by default
-Date:   Mon, 30 Sep 2019 10:19:11 +0200
-Message-Id: <b458a4773d29efb8939b227f0bdd6a0f79b4b303.1569831229.git.Jose.Abreu@synopsys.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 net 9/9] net: stmmac: xgmac: Fix RSS writing wrong keys
+Date:   Mon, 30 Sep 2019 10:19:13 +0200
+Message-Id: <8879f74a8cc5dffdb14d553c321d64c63ea9fe2d.1569831229.git.Jose.Abreu@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1569831228.git.Jose.Abreu@synopsys.com>
 References: <cover.1569831228.git.Jose.Abreu@synopsys.com>
@@ -54,11 +55,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't use it anyway as XGMAC only supports polling for timestamp (in
-current SW implementation). This greatly reduces the system load by
-reducing the number of interrupts.
+Commit b6b6cc9acd7b, changed the call to dwxgmac2_rss_write_reg()
+passing it the variable cfg->key[i].
 
-Fixes: 2142754f8b9c ("net: stmmac: Add MAC related callbacks for XGMAC2")
+As key is an u8 but we write 32 bits at a time we need to cast it into
+an u32 so that the correct key values are written. Notice that the for
+loop already takes this into account so we don't try to write past the
+keys size.
+
+Fixes: b6b6cc9acd7b ("net: stmmac: selftest: avoid large stack usage")
 Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
 
 ---
@@ -71,23 +76,36 @@ Cc: netdev@vger.kernel.org
 Cc: linux-stm32@st-md-mailman.stormreply.com
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-index f7eb06f8fb37..99037386080a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-@@ -84,7 +84,7 @@
- #define XGMAC_TSIE			BIT(12)
- #define XGMAC_LPIIE			BIT(5)
- #define XGMAC_PMTIE			BIT(4)
--#define XGMAC_INT_DEFAULT_EN		(XGMAC_LPIIE | XGMAC_PMTIE | XGMAC_TSIE)
-+#define XGMAC_INT_DEFAULT_EN		(XGMAC_LPIIE | XGMAC_PMTIE)
- #define XGMAC_Qx_TX_FLOW_CTRL(x)	(0x00000070 + (x) * 4)
- #define XGMAC_PT			GENMASK(31, 16)
- #define XGMAC_PT_SHIFT			16
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+index 4a1f52474dbc..5031398e612c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+@@ -523,8 +523,8 @@ static int dwxgmac2_rss_configure(struct mac_device_info *hw,
+ 				  struct stmmac_rss *cfg, u32 num_rxq)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
++	u32 value, *key;
+ 	int i, ret;
+-	u32 value;
+ 
+ 	value = readl(ioaddr + XGMAC_RSS_CTRL);
+ 	if (!cfg || !cfg->enable) {
+@@ -533,8 +533,9 @@ static int dwxgmac2_rss_configure(struct mac_device_info *hw,
+ 		return 0;
+ 	}
+ 
++	key = (u32 *)cfg->key;
+ 	for (i = 0; i < (ARRAY_SIZE(cfg->key) / sizeof(u32)); i++) {
+-		ret = dwxgmac2_rss_write_reg(ioaddr, true, i, cfg->key[i]);
++		ret = dwxgmac2_rss_write_reg(ioaddr, true, i, key[i]);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
 2.7.4
 
