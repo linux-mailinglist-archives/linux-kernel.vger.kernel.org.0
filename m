@@ -2,85 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40BF7C2268
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D66C226D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:51:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731366AbfI3NtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:49:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730693AbfI3NtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:49:03 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 551602086A;
-        Mon, 30 Sep 2019 13:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569851342;
-        bh=FCh5P+PLkf8Fy6u6DVHDWSyXy5Kb48cMb9OwoT818PQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nw3vrRnoJ/wyKkOghJGAhrfUjB4HUOGPzCULFD4Kr3iQLmw7IAL1yY1IbWzMPK4da
-         eWbi6TE0ysvXKKMXYG8TK4x25jKiw/UAo+8HKTHiQZ8fv8/6pjbdMTDnYfvnQhdogc
-         3egyNZeMKQN7sD0n38+1a4P88VMa2muNcfOChcBU=
-Date:   Mon, 30 Sep 2019 14:48:57 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     arnd@arndb.de, nsekhar@ti.com, olof@lixom.net, t-kristo@ti.com,
-        catalin.marinas@arm.com, tony@atomide.com, s-anna@ti.com,
-        hch@lst.de, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 linux-next 4/4] arm64: configs: defconfig: Change
- CONFIG_REMOTEPROC from m to y
-Message-ID: <20190930134856.umdoeq7k6ukmajij@willie-the-truck>
-References: <20190920075946.13282-1-j-keerthy@ti.com>
- <20190920075946.13282-5-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190920075946.13282-5-j-keerthy@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1731401AbfI3Nun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:50:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36232 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729738AbfI3Nun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:50:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7AF41AF7E;
+        Mon, 30 Sep 2019 13:50:41 +0000 (UTC)
+Message-ID: <1569850516.2639.2.camel@suse.com>
+Subject: Re: WARNING in _chaoskey_fill/usb_submit_urb
+From:   Oliver Neukum <oneukum@suse.com>
+To:     syzbot <syzbot+f5349b421c6213d34ce2@syzkaller.appspotmail.com>,
+        gustavo@embeddedor.com, andreyknvl@google.com,
+        syzkaller-bugs@googlegroups.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Date:   Mon, 30 Sep 2019 15:35:16 +0200
+In-Reply-To: <000000000000488dd305933945d2@google.com>
+References: <000000000000488dd305933945d2@google.com>
+Content-Type: multipart/mixed; boundary="=-Va0/YDZugknsz+OWYo1m"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 01:29:46PM +0530, Keerthy wrote:
-> Commit 6334150e9a36 ("remoteproc: don't allow modular build")
-> changes CONFIG_REMOTEPROC to a boolean from a tristate config
-> option which inhibits all defconfigs marking CONFIG_REMOTEPROC as
-> a module in compiling the remoteproc and dependent config options.
+
+--=-Va0/YDZugknsz+OWYo1m
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Am Montag, den 23.09.2019, 07:31 -0700 schrieb syzbot:
+> Hello,
 > 
-> So fix the defconfig to have CONFIG_REMOTEPROC built in.
+> syzbot found the following crash on:
 > 
-> Fixes: 6334150e9a36 ("remoteproc: don't allow modular build")
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->  arch/arm64/configs/defconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> HEAD commit:    e0bd8d79 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1452c6a1600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8847e5384a16f66a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f5349b421c6213d34ce2
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16342d45600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166769b1600000
 > 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 8e05c39eab08..c9a867ac32d4 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -723,7 +723,7 @@ CONFIG_TEGRA_IOMMU_SMMU=y
->  CONFIG_ARM_SMMU=y
->  CONFIG_ARM_SMMU_V3=y
->  CONFIG_QCOM_IOMMU=y
-> -CONFIG_REMOTEPROC=m
-> +CONFIG_REMOTEPROC=y
->  CONFIG_QCOM_Q6V5_MSS=m
->  CONFIG_QCOM_Q6V5_PAS=m
->  CONFIG_QCOM_SYSMON=m
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+f5349b421c6213d34ce2@syzkaller.appspotmail.com
 
-Acked-by: Will Deacon <will@kernel.org>
+#syz test: https://github.com/google/kasan.git e0bd8d79
+--=-Va0/YDZugknsz+OWYo1m
+Content-Disposition: attachment; filename="0001-USB-chaoskey-fix-error-case-of-a-timeout.patch"
+Content-Type: text/x-patch; name="0001-USB-chaoskey-fix-error-case-of-a-timeout.patch";
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-This fixes the following annoying warning from "make defconfig" on arm64:
+RnJvbSAyN2IwMDg1NzY4YjU1ZjJlZDhmYWY0ZjEyNTQwMjNhMDNkYzNlYjI0IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPgpEYXRl
+OiBNb24sIDMwIFNlcCAyMDE5IDE1OjE5OjEzICswMjAwClN1YmplY3Q6IFtQQVRDSF0gVVNCOiBj
+aGFvc2tleTogZml4IGVycm9yIGNhc2Ugb2YgYSB0aW1lb3V0CgpJbiBjYXNlIG9mIGEgdGltZW91
+dCBjb21tdW5pY2F0aW9uIHdpdGggdGhlIGRldmljZSBuZWVkcyB0byBiZSBlbmRlZApmcm9tIHRo
+ZSBob3N0IHNpZGUsIGxlc3Qgd2Ugb3ZlcndyaXRlIGFuIGFjdGl2ZSBVUkIKClNpZ25lZC1vZmYt
+Ynk6IE9saXZlciBOZXVrdW0gPG9uZXVrdW1Ac3VzZS5kZT4KLS0tCiBkcml2ZXJzL3VzYi9taXNj
+L2NoYW9za2V5LmMgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCgpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy91c2IvbWlzYy9jaGFvc2tleS5jIGIvZHJpdmVycy91c2IvbWlzYy9j
+aGFvc2tleS5jCmluZGV4IGNmNTgyOGNlOTI3YS4uODUwZjQ2Y2JhY2UyIDEwMDY0NAotLS0gYS9k
+cml2ZXJzL3VzYi9taXNjL2NoYW9za2V5LmMKKysrIGIvZHJpdmVycy91c2IvbWlzYy9jaGFvc2tl
+eS5jCkBAIC0zOTEsNiArMzkxLDggQEAgc3RhdGljIGludCBfY2hhb3NrZXlfZmlsbChzdHJ1Y3Qg
+Y2hhb3NrZXkgKmRldikKIAllbHNlCiAJCXJlc3VsdCA9IGRldi0+dmFsaWQ7CiBvdXQ6CisJLyog
+aW4gY2FzZSBvZiBhIHRpbWVvdXQgKi8KKwl1c2Jfa2lsbF91cmIoZGV2LT51cmIpOyAKIAkvKiBM
+ZXQgdGhlIGRldmljZSBnbyBiYWNrIHRvIHNsZWVwIGV2ZW50dWFsbHkgKi8KIAl1c2JfYXV0b3Bt
+X3B1dF9pbnRlcmZhY2UoZGV2LT5pbnRlcmZhY2UpOwogCi0tIAoyLjE2LjQKCg==
 
-  arch/arm64/configs/defconfig:726:warning: symbol value 'm' invalid for REMOTEPROC
 
-I'm assuming the fix will go via arm-soc, but I can take it otherwise
-(please just let me know).
+--=-Va0/YDZugknsz+OWYo1m--
 
-Will
