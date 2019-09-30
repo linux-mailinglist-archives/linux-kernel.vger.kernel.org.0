@@ -2,125 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6981DC207D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:18:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9610C2085
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbfI3MSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 08:18:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57272 "EHLO mail.kernel.org"
+        id S1730296AbfI3MWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 08:22:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729649AbfI3MSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 08:18:11 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726072AbfI3MWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 08:22:22 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 762D62054F;
-        Mon, 30 Sep 2019 12:18:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6847B216F4;
+        Mon, 30 Sep 2019 12:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569845889;
-        bh=c2OUYeKYbDh5+GWE2NV/OFHkpMhJmyVCeS5+QVpDpqw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pa580s/woPLR4Dgg5jdNQ+yBigWHsZgIUlbw6ahDCv3DyWkNlG37VVXX9e1Iif3NU
-         Xlrfa/addvc1VsJY6kzFvJY+U6eXAM/MFIIU3wimHEDZF34bVMz3qrZ5kGlZGeVL22
-         wrx0r1+WH1cdYgaa7BdvYoqzhbo849gnBS1Gqzmo=
-Date:   Mon, 30 Sep 2019 13:18:04 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Kees Cook <keescook@google.com>
-Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
-Message-ID: <20190930121803.n34i63scet2ec7ll@willie-the-truck>
-References: <20190830034304.24259-1-yamada.masahiro@socionext.com>
- <f5c221f5749e5768c9f0d909175a14910d349456.camel@suse.de>
- <CAKwvOdk=tr5nqq1CdZnUvRskaVqsUCP0SEciSGonzY5ayXsMXw@mail.gmail.com>
- <CAHk-=wiTy7hrA=LkmApBE9PQtri8qYsSOrf2zbms_crfjgR=Hw@mail.gmail.com>
- <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
- <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
+        s=default; t=1569846141;
+        bh=cOLOKOmvaYLarF4Qg8rhvW+yROkM8klreFEOrduvdLY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QES9zpJwh+9KFJX0BeLY3ZWSYSnbZ3YWTvQwlob9ETkCKCo2RonUOPvLwJ8MlS+bx
+         GgUJXK80bRROeCz/eHnG0kop+J8Lv0zFRQ/9plLGDCMNjerGT9WnJtM0nBYX+24gWH
+         Pl51lx60GmdqV7jOfemEjSs2j9NlIF3S6/dKqwYc=
+Received: by mail-qt1-f179.google.com with SMTP id c21so16662224qtj.12;
+        Mon, 30 Sep 2019 05:22:21 -0700 (PDT)
+X-Gm-Message-State: APjAAAVTM5hYqt4ztwjQui1Pyv67xF9IOmYaZbcmfQ3vqGMctXiffRjc
+        RuBqIHPFOohNrXLlR2yd5WwJL4ya10nbg+lgnw==
+X-Google-Smtp-Source: APXvYqzrKI+HW/IJwobAuPoIwDguHXnRcIGXqgXgPSdclcufDbGq0nnxgxQ/qGqHwmh4ZxI6ERNeBADiPKAKMSdQKvY=
+X-Received: by 2002:ac8:444f:: with SMTP id m15mr24312480qtn.110.1569846140534;
+ Mon, 30 Sep 2019 05:22:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190923101513.32719-1-kurt@linutronix.de> <20190923101513.32719-3-kurt@linutronix.de>
+ <20190927161118.GA19333@bogus> <f63da257-95b4-bcb8-9ba4-9786645caf26@prevas.dk>
+In-Reply-To: <f63da257-95b4-bcb8-9ba4-9786645caf26@prevas.dk>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 30 Sep 2019 07:22:08 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKZQXGtrDUiAJj+xMnYowzDdxTdvDOXTbr_n3KWMrL7_w@mail.gmail.com>
+Message-ID: <CAL_JsqKZQXGtrDUiAJj+xMnYowzDdxTdvDOXTbr_n3KWMrL7_w@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] dt/bindings: Add bindings for Layerscape external irqs
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 09:05:11PM +0900, Masahiro Yamada wrote:
-> On Mon, Sep 30, 2019 at 8:26 PM Will Deacon <will@kernel.org> wrote:
-> > On Fri, Sep 27, 2019 at 03:38:44PM -0700, Linus Torvalds wrote:
-> > > Soem of that code is pretty subtle. They have fixed register usage
-> > > (but the asm macros actually check them). And the inline asms clobber
-> > > the link register, but they do seem to clearly _state_ that they
-> > > clobber it, so who knows.
-> > >
-> > > Just based on the EFAULT, I'd _guess_ that it's some interaction with
-> > > the domain access control register (so that get/set_domain() thing).
-> > > But I'm not even sure that code is enabled for the Rpi2, so who
-> > > knows..
+On Fri, Sep 27, 2019 at 4:16 PM Rasmus Villemoes
+<rasmus.villemoes@prevas.dk> wrote:
+>
+> On 27/09/2019 18.11, Rob Herring wrote:
+> > On Mon, Sep 23, 2019 at 12:15:13PM +0200, Kurt Kanzenbach wrote:
+> >> From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+> >>
+> >> This adds Device Tree binding documentation for the external interrupt
+> >> lines with configurable polarity present on some Layerscape SOCs.
+> >>
+> >> Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+> >> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+> >> ---
+> >>
+> >> +* Freescale Layerscape external IRQs
+> >> +
+> >> +Some Layerscape SOCs (LS1021A, LS1043A, LS1046A, LS2088A) support
+> >> +inverting the polarity of certain external interrupt lines.
+> >> +
+> >> +The device node must be a child of the node representing the
+> >> +Supplemental Configuration Unit (SCFG) or the Interrupt Sampling
+> >> +Control (ISC) Unit.
+> >> +
+> >> +Required properties:
+> >> +- compatible: should be "fsl,<soc-name>-extirq", e.g. "fsl,ls1021a-extirq".
+> >> +- interrupt-controller: Identifies the node as an interrupt controller
+> >> +- #interrupt-cells: Must be 2. The first element is the index of the
+> >> +  external interrupt line. The second element is the trigger type.
+> >> +- interrupt-parent: phandle of GIC.
+> >> +- reg: Specifies the Interrupt Polarity Control Register (INTPCR) in the SCFG.
+> >> +- fsl,extirq-map: Specifies the mapping to interrupt numbers in the parent
+> >> +  interrupt controller. Interrupts are mapped one-to-one to parent
+> >> +  interrupts.
 > >
-> > FWIW, we've run into issues with CONFIG_OPTIMIZE_INLINING and local
-> > variables marked as 'register' where GCC would do crazy things and end
-> > up corrupting data, so I suspect the use of fixed registers in the arm
-> > uaccess functions is hitting something similar:
+> > This should be an 'interrupt-map' instead.
+>
+> Rob, thanks for your review comments. I know you said the same thing at
+> v5, and it might seem like they are ignored. However, I asked a couple
+> of followup questions
+> (https://lore.kernel.org/lkml/0bb4533d-c749-d8ff-e1f2-4b08eb724713@prevas.dk/).
+> I'd really appreciate it if you could (a) point to some documentation on
+> how to write that interrupt-map and (b) explain how this is different
+> from the Qualcomm PDC case I tried to copy and which had your Reviewed-By.
+
+https://www.devicetree.org/specifications/
+https://elinux.org/Device_Tree_Usage#Advanced_Interrupt_Mapping
+
+For QC PDC, it could be a large number of interrupts to remap which
+interrupt-map doesn't scale to very well. Also, I think it sits in
+parallel to the GIC rather than downstream. The interrupt binding
+doesn't really have a way to express that.
+
+
+> >> +Optional properties:
+> >> +- fsl,bit-reverse: This boolean property should be set on the LS1021A
+> >> +  if the SCFGREVCR register has been set to all-ones (which is usually
+> >> +  the case), meaning that all reads and writes of SCFG registers are
+> >> +  implicitly bit-reversed. Other compatible platforms do not have such
+> >> +  a register.
 > >
-> > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91111
-> 
-> No. Not similar at all.
+> > Couldn't you just read that register and tell?
+>
+> In theory, yes, but as far as I understand (and as I wrote) it's
+> specific to the ls1021a. Of course one can decide whether it's
+> necessary/possible to read it based on the compatible string, but one
+> would also need an extra reg property to have its address - but that
+> register is not really part of the extirq "device" we're trying to
+> describe. So would it need to be represented as its own subnode of scfg?
 
-They're similar in that enabling CONFIG_OPTIMIZE_INLINING causes register
-variables to go wrong. I agree that the ARM code looks dodgy with
-that call to uaccess_save_and_enable(), but there are __asmeq macros
-in there to try to catch that, so it's still very fishy.
+Why? You should know where the register is because you know what chip
+you are on (from the compatible).
 
-> I fixed it already. See
-> https://lore.kernel.org/patchwork/patch/1132459/
+>
+> If it is set at all, it's done within the first few instructions after
+> reset (before control is even handed to the bootloader), so I see it as
+> a kind of quirk of the hardware. The data sheet says "SCFG bit reverse
+> (SCFG_SCFGREVCR) must be written 0xFFFF_FFFF as a part of initialization
+> sequence before writing to any other SCFG register." which, taken
+> literally, means we don't need the property at all and can just assume
+> it for the ls1021a (i.e., do it based on compatible string alone) - but
+> I think it should be read as "if you're going to write this register, it
+> must be done first thing".
+>
+> > Does this apply to only the extirq register or all of scfg?
+>
+> All of scfg. It really seems like some accident/bad joke coming out of a
+> discussion between a hardware and software engineer on the enumeration
+> of bits, with the hardware guy ending up saying "alright, have it
+> whichever way you want it", causing even more pain :(
 
-You fixed the specific case above for 32-bit ARM, but the arm64 case
-is due to a compiler bug. As it happens, we've reworked our atomics
-in 5.4 so that particular issue no longer triggers, but the fact remains
-that GCC has been shown to screw up explicit register allocation for
-perfectly legitimate code when giving the flexibility to move code out
-of line.
+If all of the scfg bits change, then if you have this property, it
+should be in the scfg node. But I prefer you use the compatible
+instead if that works.
 
-> The problems are fixable by writing correct code.
-
-Right, in the compiler ;)
-
-> I think we discussed this already.
-
-We did?
-
-> - There is nothing arch-specific in CONFIG_OPTIMIZE_INLINING
-
-Apart from the bugs... and even then, that's just based on reports.
-
-> - 'inline' is just a hint. It does not guarantee function inlining.
->   This is standard.
-> 
-> - The kernel macrofies 'inline' to add __attribute__((__always_inline__))
->   This terrible hack must end.
-
-I'm all for getting rid of hacks, but not at the cost of correctness.
-
-> -  __attribute__((__always_inline__)) takes aways compiler's freedom,
->    and prevents it from optimizing the code for -O2, -Os, or whatever.
-
-s/whatever/miscompiling the code/
-
-If it helps, here is more information about the arm64 failure which
-triggered the GCC bugzilla:
-
-https://www.spinics.net/lists/arm-kernel/msg730329.html
-
-Will
+Rob
