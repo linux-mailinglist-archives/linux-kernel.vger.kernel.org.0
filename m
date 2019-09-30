@@ -2,126 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D41EC28E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF4C7C28E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfI3Vf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:35:26 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43479 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbfI3VfZ (ORCPT
+        id S1731197AbfI3Vh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:37:29 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40311 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726504AbfI3Vh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:35:25 -0400
-Received: by mail-io1-f65.google.com with SMTP id v2so42215937iob.10
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 14:35:25 -0700 (PDT)
+        Mon, 30 Sep 2019 17:37:28 -0400
+Received: by mail-io1-f68.google.com with SMTP id h144so42273985iof.7
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 14:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5l+n2rw/iAlqfIRxbZZeFy6DYtAwztBk8k/LJBt7oE8=;
-        b=bJTIq76UANeq3zxz1NT4vFNcGC1oVXaZtF7S8x6HgJyDLCgRYDzz5c88Qv/omqOG5f
-         cOeKqWKbkd02ZUThbCe3A4aO/IZCJNqafo6/DoxsIQgdho+/6t05W6F7l23nB2qSEjv3
-         Who5JsO3zs1gw9OyojdLC/aeK7NfZZq6jKbvsiEUVDYz7eatGoSl6vbO6Z7mL6TMDwYu
-         F//sviWkyXOtVbnYJfg6WSpK48M4m3C9SjOh9TZp2vR7Cb42TUS3CQo5/CjidK1Rkoqn
-         Nj2/IryA3j2VhqtGo+AUHQE5edmWEVBeiDFfe3dZMArTum2CobOQZ+yK9WQJzVne9UXf
-         xBew==
+        bh=h1/5t0a320gO6rtoSFLmxFmUmcGcayGzHZ6jiBhmFkE=;
+        b=OwhvFeSp2ZaGkR6JyWaekRt39DDj8wTJo4hVNfKhMHexTAj8ZIpLOi23kap/omy0bj
+         2mZBEp810uUSlzqFeweXDm44lmx43YMg9zpOi1O6bgkVJIsSVEvL2KLfdC8LLSmhF4/S
+         mnYH5WrY5R1aTIc0g8bdfMKhdEsRdvq/3uhvkANSv5aaciT4NbLxMmKmCKBJtwwqhg/F
+         0LiFLYwNVT6khikXCKIBBSmvCiVJKqJrtoipkTzhrsgB1EvC5UtdhZnPNWxly0G7PCm+
+         MWRUdYF+/eT7iOZdfkfXIT/Oy8bJxH3a1q7SDqrWxUc3Nn8YbqFab72A2dsbBQL0XMS8
+         sejQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5l+n2rw/iAlqfIRxbZZeFy6DYtAwztBk8k/LJBt7oE8=;
-        b=nC6OLdBgMkl+fIl9RHQuttVRre22X1ZeLBx6VAKgYVOqzasBzOzZT+j7EMT5ulInOR
-         ppWQRr7acSU33Mw881eIWpeSKlM5obMSgt+0XYJpxEROMsJ09bFuZRgcVtqRsI2+aA9G
-         cqOHA7mFA7tXnVplHjw2Ys5zx0TcWY5w/vlXwfFrDyxU9+Pd+ML2EUFkthCyoAerWo94
-         idVLqTK+20ginNNiLN8FjijTZ94IK/LwUzmVa6pPT7Zvkut6igeW/Ya490vy0jpfztI8
-         0gC5wwQm7A08J1oQtjY92h9w56LTL4h/LNYjAn/TJCOMOHRKd19bk4rJ1emqQg8iK3qb
-         6nqQ==
-X-Gm-Message-State: APjAAAXCQORCymTErTTAirB5BmdAYaRenP/z2zfZSPY1nakLFHt3Wevn
-        z4FwNAV2Dq5ehCbsKueqnzttDB1tg9Wd+jpuUL5WvQY9
-X-Google-Smtp-Source: APXvYqz1tiK1Mxs3XfkgoniEC/dVCuoTbK/zeberVMZesyTKbgE8Rvrf6VbiQHdPCYTWFzQmSDeN8oktc8Q6CO/4N+k=
-X-Received: by 2002:a02:ac82:: with SMTP id x2mr21524721jan.34.1569879324942;
- Mon, 30 Sep 2019 14:35:24 -0700 (PDT)
+        bh=h1/5t0a320gO6rtoSFLmxFmUmcGcayGzHZ6jiBhmFkE=;
+        b=txTcRSQs5uWilww/CA1rmNO+0BPsAxQMk9mwSAufpy1vmiP2BTvSJrZbA1n+dsSydp
+         XFsfR9z36kfEZg/qMLb/GrI2vNOoTmwv8QnBQ7sFAu2GnHSxn2D0b2kJziYt2QFZMPR8
+         OrHRT8BtaIUwsfawJeBJbNqV9LQ6W/yPgxk/SlKVTTMUlHYJaRqvBMbBp9JJYw4TQvQq
+         /H79+5y4LQWUHdmtFUsZrooyIxqVp9+/xJYLE7zFuzi+JTBxta95uDv3KbgF5w8o5Zdm
+         yEcSW5tNEUdITWUBIOtFzUPqeckIkI3r7bx33gKZ2bBHLKfvrNsDqY2y5FRXJuzwqn8o
+         COiQ==
+X-Gm-Message-State: APjAAAWpLNt5FsXmCCtTbDPrEijL/LFMhlgAmOy2+R9UzshF2fL+XZh0
+        HDiBlXJz5u6zraDu/LLS0MZlfOAIl9EMwRGDtXU=
+X-Google-Smtp-Source: APXvYqzAeDU9zrO6VIz+ugbbAlCgVAXWrJ2UT7vfpF6sK2PXJ/JnuwaCKzk3KgMB7JUVqyiLAZBj1gJb6QYAJQY5fFA=
+X-Received: by 2002:a92:8702:: with SMTP id m2mr18251627ild.294.1569879447978;
+ Mon, 30 Sep 2019 14:37:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190920025137.29407-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20190920025137.29407-1-navid.emamdoost@gmail.com>
+References: <20190925154302.17708-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20190925154302.17708-1-navid.emamdoost@gmail.com>
 From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Mon, 30 Sep 2019 16:35:14 -0500
-Message-ID: <CAEkB2EQJDdE=0HDzL14WDHHuwuaNNjSXEGVm1p7MBopyDvzTzQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: rtl8192u: fix multiple memory leaks on error path
-To:     Colin Ian King <colin.king@canonical.com>,
-        Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     Navid Emamdoost <emamd001@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>, kjlu@umn.edu,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Mon, 30 Sep 2019 16:37:17 -0500
+Message-ID: <CAEkB2ETTmCsuOFDsJQ8LbBPHNgckpDFn2XhVePwAQEsCRsJo6g@mail.gmail.com>
+Subject: Re: [PATCH] mtd: onenand: prevent memory leak in onenand_scan
+To:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     Navid Emamdoost <emamd001@umn.edu>, kjlu@umn.edu,
+        Stephen McCamant <smccaman@umn.edu>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Could you take a look at this patch and confirm it, please?
+Would you please take a look at this patch?
 
-On Thu, Sep 19, 2019 at 9:51 PM Navid Emamdoost
+On Wed, Sep 25, 2019 at 10:43 AM Navid Emamdoost
 <navid.emamdoost@gmail.com> wrote:
 >
-> In rtl8192_tx on error handling path allocated urbs and also skb should
-> be released.
+> In onenand_scan if scan_bbt fails the allocated buffers should be
+> released.
 >
 > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 > ---
->  drivers/staging/rtl8192u/r8192U_core.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
+>  drivers/mtd/nand/onenand/onenand_base.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-> index fe1f279ca368..b62b03802b1b 100644
-> --- a/drivers/staging/rtl8192u/r8192U_core.c
-> +++ b/drivers/staging/rtl8192u/r8192U_core.c
-> @@ -1422,7 +1422,7 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
->                 (struct tx_fwinfo_819x_usb *)(skb->data + USB_HWDESC_HEADER_LEN);
->         struct usb_device *udev = priv->udev;
->         int pend;
-> -       int status;
-> +       int status, rt = -1;
->         struct urb *tx_urb = NULL, *tx_urb_zero = NULL;
->         unsigned int idx_pipe;
+> diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
+> index 77bd32a683e1..79c01f42925a 100644
+> --- a/drivers/mtd/nand/onenand/onenand_base.c
+> +++ b/drivers/mtd/nand/onenand/onenand_base.c
+> @@ -3977,8 +3977,11 @@ int onenand_scan(struct mtd_info *mtd, int maxchips)
+>         this->badblockpos = ONENAND_BADBLOCK_POS;
 >
-> @@ -1566,8 +1566,10 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
->                 }
->                 if (bSend0Byte) {
->                         tx_urb_zero = usb_alloc_urb(0, GFP_ATOMIC);
-> -                       if (!tx_urb_zero)
-> -                               return -ENOMEM;
-> +                       if (!tx_urb_zero) {
-> +                               rt = -ENOMEM;
-> +                               goto error;
-> +                       }
->                         usb_fill_bulk_urb(tx_urb_zero, udev,
->                                           usb_sndbulkpipe(udev, idx_pipe),
->                                           &zero, 0, tx_zero_isr, dev);
-> @@ -1577,7 +1579,7 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
->                                          "Error TX URB for zero byte %d, error %d",
->                                          atomic_read(&priv->tx_pending[tcb_desc->queue_index]),
->                                          status);
-> -                               return -1;
-> +                               goto error;
->                         }
->                 }
->                 netif_trans_update(dev);
-> @@ -1588,7 +1590,12 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
->         RT_TRACE(COMP_ERR, "Error TX URB %d, error %d",
->                  atomic_read(&priv->tx_pending[tcb_desc->queue_index]),
->                  status);
-> -       return -1;
-> +
-> +error:
-> +       dev_kfree_skb_any(skb);
-> +       usb_free_urb(tx_urb);
-> +       usb_free_urb(tx_urb_zero);
-> +       return rt;
->  }
+>         ret = this->scan_bbt(mtd);
+> -       if ((!FLEXONENAND(this)) || ret)
+> +       if ((!FLEXONENAND(this)) || ret) {
+> +               kfree(this->page_buf);
+> +               kfree(this->oob_buf);
+>                 return ret;
+> +       }
 >
->  static short rtl8192_usb_initendpoints(struct net_device *dev)
+>         /* Change Flex-OneNAND boundaries if required */
+>         for (i = 0; i < MAX_DIES; i++)
 > --
 > 2.17.1
 >
