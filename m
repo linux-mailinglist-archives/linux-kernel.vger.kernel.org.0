@@ -2,147 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5E82C1B67
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 08:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D54C1B6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 08:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbfI3GYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 02:24:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58688 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729521AbfI3GYJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 02:24:09 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8U6Lix6033545
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 02:24:06 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vb7u7fsn2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 02:24:06 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Mon, 30 Sep 2019 07:24:04 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 30 Sep 2019 07:24:01 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8U6NWZ531195514
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Sep 2019 06:23:32 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C799C42049;
-        Mon, 30 Sep 2019 06:24:00 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 725E542045;
-        Mon, 30 Sep 2019 06:24:00 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 30 Sep 2019 06:24:00 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id EEB5DA01C1;
-        Mon, 30 Sep 2019 16:23:58 +1000 (AEST)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     alastair@d-silva.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/1] memory_hotplug: Add a bounds check to __add_pages
-Date:   Mon, 30 Sep 2019 16:23:46 +1000
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190930062347.23620-1-alastair@au1.ibm.com>
-References: <20190930062347.23620-1-alastair@au1.ibm.com>
+        id S1729745AbfI3GYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 02:24:46 -0400
+Received: from mout.web.de ([212.227.17.11]:56799 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729521AbfI3GYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 02:24:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1569824676;
+        bh=4xDHwP7GsaokFa+ZzSb3wiClSs/ehrdmvXIwdvXgQMk=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=qfWp2Cif9eRZsJ98M+/gO1Pocp0aBtxmZlXCWInmCEc3/V4PKhPI7b7WEyZ+QZplC
+         5ysVJBBxO7OZ8DPEdwwLgnDVsJq2ZkQQ20VpCXRXw3FkZlepZHFSOo4tovDuzv2Lcf
+         FSOjkaNCx+B+prAGUTw1KAvBitZpX/+KgWvFqafA=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.97.105]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MI5ze-1iIerd3d6M-003tF6; Mon, 30
+ Sep 2019 08:24:35 +0200
+Cc:     Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20190930033928.32312-1-navid.emamdoost@gmail.com>
+Subject: Re: [PATCH] spi: gpio: prevent memory leak in spi_gpio_probe
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        linux-spi@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <dcd26f62-e384-bf6d-2e7d-63c0d0f7da11@web.de>
+Date:   Mon, 30 Sep 2019 08:24:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19093006-4275-0000-0000-0000036C6D31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19093006-4276-0000-0000-0000387EF2DF
-Message-Id: <20190930062347.23620-2-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-30_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909300067
+In-Reply-To: <20190930033928.32312-1-navid.emamdoost@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:HAOB9u7KRH3bxo+pLm7aJonGq6dLn3NKqjQyBqXs4e4Jn4ptihC
+ o72UISO8k53NizGPMPx2QOz3cCtMVvGN9PCpJjMXZdlIjuKVKoDhkO0MvI4q2Jrl2NkQZAf
+ t7VpYFCdOxhxenwxLDZMwwfO3kCBVva/Os3qW+WRcxyLh262p5fZJPwbDVnM+H6WF2dBtWZ
+ T6pAiMdJF5ywE9neE034Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tXbA7AauVAI=:q0N4RZbEOloFkIoiRvDZTz
+ L8bq8+r9j5/HBYMJ6DzRoDuAdF7Q30gOlHvhKteGxWXh1LeXU5FEzYS+7j6fnZoSB1HysunX7
+ oLkkBuPfV8UZk3TdWD9ZdYGQ+2I9H/z7Jb7WBOtAlcFJXm/13r/BbvoM4tugxpDGOxTzXvPP5
+ YiaLrzhVY5R7ZYf3ziBULgylJJzZ9HuKg1iSMoAxCJokiIAtwDllfcPUzfseRQtH62iNufyHr
+ PWsurRg7ThBwWHyr9q26ugWHpaO82H6ZRlHjkhT0PGk4w3q1wXW6rzVwQ5qm9Ittehl99sxwl
+ USpJh7U/kXuR6Wow6Lzn8AQiRP7suku52iNZddgw9Q6ii70Q4rJuqFb3ovwl2XUwTDyhiuHep
+ jQYzQq7pyZTqTNI6rzQj2/NPM7NcsFs+PmuXFDhokVMiwQi1p0Wb/pLPAAZwq1vXEJy60Pv1W
+ TsXKwWKqXRHLx4gxIaaWprCq6YfAw77sJy+ItSGKmJTe2U7+Nou7zjmi4WvRxcuemPe7oRoTm
+ gjXpGWTlAxc9+swFMhoDUw2w5TxTNf5QI31EEd56ZUc3xOroq+ob2vY59iQVuQ/WhC9AnFCaK
+ EAkEQfBr3oxJmvGjewvcpZWNNuM2L3dUjMkeQgR+NUkZ+j3WwCMqnN7rXdbdOIahWkEODwTJe
+ GSG17iYNGhMZQ5ZBfZTWA8EM3MLey55CdzBurP0fvJLsmGbmBntheU6mCyTbEBUMGFvSrHSJ5
+ aMwpE3OZWvxwDCU6evnAVf6h3Ib8prNeV0cS0SZ/spcewdBrcgPGlsBVdJyV7aFiQsuPlhaRl
+ YejSqQg5hf9vQ//GCPWXJ3RsaXR8WgQ5UQrSg3yvLLEfhypAUF2tDkOeMa8gMbDjCWjsL4Hfc
+ lUuRNWpfflp5X3ri1rNlTZxsITGgAAJ/D8byzjn0uNcoXRXcxoB5H+zq4twUFA/6MKy/9g/4C
+ u9bMRFtHhTqTyXUlYvkobOJOg6W4npwAhKOVMvrE6K1Lu2EAmrBOSmT/GiiVndXK7ckmI8prO
+ QxSy+hI6L5FPUwZC5J7+h9S46z97ivqsEgfbUVtBaU51Zos74qhLE+VD0Hajd1pltFR7rRuKu
+ 0Lz66qDY1I7zkrp5if5GCJHZwIuHIGRyKNkrCysKsUlbeDG6siA6ADdmerWZg47Jo57pqsNWM
+ z5LcPqvtGm6Bx5hN00/4DOsLi8udF6Gxn3Ildou2AyMD/LfG9muB+e5fkEDmO5bV9FlGM3cYU
+ ulROj7UPZb/F5BcUHZZLIO3v5UGimPnskDWAnIHAnDa5GvPpfNW9Ypt6VlYw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+* Please avoid typos in the commit message.
 
-On PowerPC, the address ranges allocated to OpenCAPI LPC memory
-are allocated from firmware. These address ranges may be higher
-than what older kernels permit, as we increased the maximum
-permissable address in commit 4ffe713b7587
-("powerpc/mm: Increase the max addressable memory to 2PB"). It is
-possible that the addressable range may change again in the
-future.
+* I would prefer an other wording for the change description.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=97f9a3c4eee55b0178b518ae7114a6a53372913d#n151
 
-In this scenario, we end up with a bogus section returned from
-__section_nr (see the discussion on the thread "mm: Trigger bug on
-if a section is not found in __section_nr").
 
-Adding a check here means that we fail early and have an
-opportunity to handle the error gracefully, rather than rumbling
-on and potentially accessing an incorrect section.
-
-Further discussion is also on the thread ("powerpc: Perform a bounds
-check in arch_add_memory")
-http://lkml.kernel.org/r/20190827052047.31547-1-alastair@au1.ibm.com
-
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- mm/memory_hotplug.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c73f09913165..a5eddf3c3c1f 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -278,6 +278,22 @@ static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
- 	return 0;
- }
- 
-+static int check_hotplug_memory_addressable(unsigned long pfn,
-+					    unsigned long nr_pages)
-+{
-+	const u64 max_addr = PFN_PHYS(pfn + nr_pages) - 1;
-+
-+	if (max_addr >> MAX_PHYSMEM_BITS) {
-+		const u64 max_allowed = (1ull << (MAX_PHYSMEM_BITS + 1)) - 1;
-+		WARN(1,
-+		     "Hotplugged memory exceeds maximum addressable address, range=%#llx-%#llx, maximum=%#llx\n",
-+		     PFN_PHYS(pfn), max_addr, max_allowed);
-+		return -E2BIG;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Reasonably generic function for adding memory.  It is
-  * expected that archs that support memory hotplug will
-@@ -291,6 +307,10 @@ int __ref __add_pages(int nid, unsigned long pfn, unsigned long nr_pages,
- 	unsigned long nr, start_sec, end_sec;
- 	struct vmem_altmap *altmap = restrictions->altmap;
- 
-+	err = check_hotplug_memory_addressable(pfn, nr_pages);
-+	if (err)
-+		return err;
-+
- 	if (altmap) {
- 		/*
- 		 * Validate altmap is within bounds of the total request
--- 
-2.21.0
-
+Regards,
+Markus
