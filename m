@@ -2,159 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 046C2C206B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6981DC207D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 14:18:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbfI3MPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 08:15:48 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49646 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfI3MPr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 08:15:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:To:From:Date:Reply-To:Cc:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZfDBsutnn0AhJnthNc5JfCT41CTdG+3OkNf+gtjI+DM=; b=okYil+Xj4Cw2pUPSKUvdGwBZ7
-        hSDbdzyD2965WO9s5CH4L8jCLwkNmopw2NZk/JKAy6+Tvli3NFDgW/wyH3f6MCsEfIZ08/G0/fK96
-        CjGzXaR687//2XeUiyuLnMgfcEDYOJwtZNO2Qv8IXD6nobO3928NTVAsC7kyStiW6r+6L/jWqHThN
-        knIrUUWFge4t4rxpIbVatI801QTetd9W6JweWFLMHToP+D0fxMhrGnk89hH1r37ONkvB6GC6UfP0+
-        nH3EVQ9tFnpaCjeZfJgRPM25m/M/Z7e9XNOP/PrqebsEuXCLESCTZ+6j3t95mjpsQgLCL0do5JZ8r
-        mRaAI6JlA==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:45870)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iEuaZ-0004Sw-Ey; Mon, 30 Sep 2019 13:15:39 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iEuaX-0007Ek-MU; Mon, 30 Sep 2019 13:15:37 +0100
-Date:   Mon, 30 Sep 2019 13:15:37 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     linux-arm-kernel@lists.infradead.org,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: perf annotate fails with "Invalid -1 error code"
-Message-ID: <20190930121537.GG25745@shell.armlinux.org.uk>
+        id S1730769AbfI3MSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 08:18:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729649AbfI3MSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 08:18:11 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 762D62054F;
+        Mon, 30 Sep 2019 12:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569845889;
+        bh=c2OUYeKYbDh5+GWE2NV/OFHkpMhJmyVCeS5+QVpDpqw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pa580s/woPLR4Dgg5jdNQ+yBigWHsZgIUlbw6ahDCv3DyWkNlG37VVXX9e1Iif3NU
+         Xlrfa/addvc1VsJY6kzFvJY+U6eXAM/MFIIU3wimHEDZF34bVMz3qrZ5kGlZGeVL22
+         wrx0r1+WH1cdYgaa7BdvYoqzhbo849gnBS1Gqzmo=
+Date:   Mon, 30 Sep 2019 13:18:04 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+Message-ID: <20190930121803.n34i63scet2ec7ll@willie-the-truck>
+References: <20190830034304.24259-1-yamada.masahiro@socionext.com>
+ <f5c221f5749e5768c9f0d909175a14910d349456.camel@suse.de>
+ <CAKwvOdk=tr5nqq1CdZnUvRskaVqsUCP0SEciSGonzY5ayXsMXw@mail.gmail.com>
+ <CAHk-=wiTy7hrA=LkmApBE9PQtri8qYsSOrf2zbms_crfjgR=Hw@mail.gmail.com>
+ <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
+ <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Sep 30, 2019 at 09:05:11PM +0900, Masahiro Yamada wrote:
+> On Mon, Sep 30, 2019 at 8:26 PM Will Deacon <will@kernel.org> wrote:
+> > On Fri, Sep 27, 2019 at 03:38:44PM -0700, Linus Torvalds wrote:
+> > > Soem of that code is pretty subtle. They have fixed register usage
+> > > (but the asm macros actually check them). And the inline asms clobber
+> > > the link register, but they do seem to clearly _state_ that they
+> > > clobber it, so who knows.
+> > >
+> > > Just based on the EFAULT, I'd _guess_ that it's some interaction with
+> > > the domain access control register (so that get/set_domain() thing).
+> > > But I'm not even sure that code is enabled for the Rpi2, so who
+> > > knows..
+> >
+> > FWIW, we've run into issues with CONFIG_OPTIMIZE_INLINING and local
+> > variables marked as 'register' where GCC would do crazy things and end
+> > up corrupting data, so I suspect the use of fixed registers in the arm
+> > uaccess functions is hitting something similar:
+> >
+> > https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91111
+> 
+> No. Not similar at all.
 
-While using perf report on aarch64, I try to annotate
-__arch_copy_to_user, and it fails with:
+They're similar in that enabling CONFIG_OPTIMIZE_INLINING causes register
+variables to go wrong. I agree that the ARM code looks dodgy with
+that call to uaccess_save_and_enable(), but there are __asmeq macros
+in there to try to catch that, so it's still very fishy.
 
-Error: Couldn't annotate __arch_copy_to_user: Internal error: Invalid -1 error code
+> I fixed it already. See
+> https://lore.kernel.org/patchwork/patch/1132459/
 
-which is not very helpful.  Looking at the code, the error message
-appended to the "Couldn't annotate ...:" comes from
-symbol__strerror_disassemble(), which expects either an errno or
-one of the special SYMBOL_ANNOTATE_ERRNO_* constants in its 3rd
-argument.
+You fixed the specific case above for 32-bit ARM, but the arm64 case
+is due to a compiler bug. As it happens, we've reworked our atomics
+in 5.4 so that particular issue no longer triggers, but the fact remains
+that GCC has been shown to screw up explicit register allocation for
+perfectly legitimate code when giving the flexibility to move code out
+of line.
 
-symbol__tui_annotate() passes the 3rd argument as the return value
-from symbol__annotate2().  symbol__annotate2() returns either zero or
--1.  This calls symbol__annotate(), which returns -1 (which would
-generally conflict with -EPERM), -errno, the return value of
-arch->init, or the return value of symbol__disassemble().
+> The problems are fixable by writing correct code.
 
-This seems to be something of a mess - different places seem to use
-different approaches to handling errors, and some don't bother
-propagating the error code up.
+Right, in the compiler ;)
 
-The upshot is, the error message reported when trying to annotate
-gives the user no clue why perf is unable to annotate, and you have
-to resort to stracing perf in an attempt to find out - which also
-isn't useful:
+> I think we discussed this already.
 
-3431  pselect6(1, [0], NULL, NULL, NULL, NULL) = 1 (in [0])
-3431  pselect6(5, [4], NULL, NULL, {tv_sec=10, tv_nsec=0}, NULL) = 1 (in [4], left {tv_sec=9, tv_nsec=999995480})
-3431  read(4, "\r", 1)                  = 1
-3431  uname({sysname="Linux", nodename="cex7", ...}) = 0
-3431  openat(AT_FDCWD, "/usr/lib/aarch64-linux-gnu/gconv/gconv-modules.cache", O_RDONLY) = 26
-3431  fstat(26, {st_mode=S_IFREG|0644, st_size=26404, ...}) = 0
-3431  mmap(NULL, 26404, PROT_READ, MAP_SHARED, 26, 0) = 0x7fa1fd9000
-3431  close(26)                         = 0
-3431  futex(0x7fa172b830, FUTEX_WAKE_PRIVATE, 2147483647) = 0
-3431  write(1, "\33[10;21H\33[37m\33[40m\342\224\214\342\224\200Error:\342\224"..., 522) = 522
-3431  pselect6(1, [0], NULL, NULL, NULL, NULL <detached ...>
+We did?
 
-Which makes it rather difficult to know what is actually failing...
-so the only way is to resort to gdb.
+> - There is nothing arch-specific in CONFIG_OPTIMIZE_INLINING
 
-It seems that dso__disassemble_filename() is returning -10000, which
-seems to be SYMBOL_ANNOTATE_ERRNO__NO_VMLINUX and as described above,
-this is lost due to the lack of error code propagation.
+Apart from the bugs... and even then, that's just based on reports.
 
-Specifically, the failing statement is:
+> - 'inline' is just a hint. It does not guarantee function inlining.
+>   This is standard.
+> 
+> - The kernel macrofies 'inline' to add __attribute__((__always_inline__))
+>   This terrible hack must end.
 
-        if (dso->symtab_type == DSO_BINARY_TYPE__KALLSYMS &&
-            !dso__is_kcore(dso))
-                return SYMBOL_ANNOTATE_ERRNO__NO_VMLINUX;
+I'm all for getting rid of hacks, but not at the cost of correctness.
 
-Looking at "dso" shows:
+> -  __attribute__((__always_inline__)) takes aways compiler's freedom,
+>    and prevents it from optimizing the code for -O2, -Os, or whatever.
 
-	kernel = DSO_TYPE_KERNEL,
-	symtab_type = DSO_BINARY_TYPE__KALLSYMS,
-	binary_type = DSO_BINARY_TYPE__KALLSYMS,
-	load_errno = DSO_LOAD_ERRNO__MISMATCHING_BUILDID,
-	name = 0x555588781c "/boot/vmlinux",
+s/whatever/miscompiling the code/
 
-and we finally get to the reason - it's using the wrong vmlinux.
-So, obvious solution (once the failure reason is known), give it
-the correct vmlinux.
+If it helps, here is more information about the arm64 failure which
+triggered the GCC bugzilla:
 
-Should it really be necessary to resort to gdb to discover why perf
-is failing?
+https://www.spinics.net/lists/arm-kernel/msg730329.html
 
-It looks like this was introduced by ecda45bd6cfe ("perf annotate:
-Introduce symbol__annotate2 method") which did this:
-
--       err = symbol__annotate(sym, map, evsel, 0, &browser.arch);
-+       err = symbol__annotate2(sym, map, evsel, &annotate_browser__opts, &browser.arch);
-
-+int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *evsel,
-+                     struct annotation_options *options, struct arch **parch)
-+{
-...
-+       err = symbol__annotate(sym, map, evsel, 0, parch);
-+       if (err)
-+               goto out_free_offsets;
-...
-+out_free_offsets:
-+       zfree(&notes->offsets);
-+       return -1;
-+}
-
-introducing this problem by the "return -1" disease.
-
-So, given that this function's return value is used as an error code
-in the way I've described above, should this function also be fixed
-to return ENOMEM when the zalloc fails, as well as propagating the
-return value from symbol__annotate() ?
-
-I haven't yet checked to see if there's other places that call this
-function but now rely on it returning -1... but I'd like to lodge a
-plea that perf gets some consistency wrt how errors are passed and
-propagated from one function to another.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Will
