@@ -2,144 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2D3C2784
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA1BC2751
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:53:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbfI3U6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:58:44 -0400
-Received: from mout.gmx.net ([212.227.17.20]:46773 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727720AbfI3U6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:58:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1569877121;
-        bh=YVn0d0IypIL/I8h6vV2cKfUczuH9hqHhzSGumXeWyH0=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=AMPrAM7ELWyCVxZjrXAB/9N5xT8tVG0I/V2NGx4vMQRwJ6o8AnTXeboWVyJh35Hlk
-         m/UWsmb/ycW3lzs3FbfdeQBKSi5HD8CrW81404JR7GNGYxXRJRXua+OvuRHll2aF24
-         AjUrpIxtmirprjRAEcmwA/+txKTK9E1mB2wh6unY=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [80.208.215.36] ([80.208.215.36]) by web-mail.gmx.net
- (3c-app-gmx-bap76.server.lan [172.19.172.64]) (via HTTP); Mon, 30 Sep 2019
- 21:44:12 +0200
-MIME-Version: 1.0
-Message-ID: <trinity-d5c9e092-508c-4db6-8f36-d5917466a750-1569872652621@3c-app-gmx-bap76>
-From:   "Frank Wunderlich" <frank-w@public-files.de>
-To:     "Hsin-hsiung Wang" <hsin-hsiung.wang@mediatek.com>,
-        "Lee Jones" <lee.jones@linaro.org>
-Cc:     "Matthias Brugger" <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Alessandro Zummo" <a.zummo@towertech.it>,
-        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-        srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Sean Wang" <sean.wang@mediatek.com>,
-        "Liam Girdwood" <lgirdwood@gmail.com>,
-        "Rob Herring" <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        "Richard Fontana" <rfontana@redhat.com>,
-        "Mark Brown" <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        =?UTF-8?Q?=22Ren=C3=A9_van_Dorst=22?= <opensource@vdorst.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Eddie Huang" <eddie.huang@mediatek.com>,
-        "Lee Jones" <lee.jones@linaro.org>,
-        "Kate Stewart" <kstewart@linuxfoundation.org>,
-        linux-rtc@vger.kernel.org
-Subject: Aw: Re:  Re: [BUG] [PATCH v5 02/10] mfd: mt6397: extract irq
- related code from core driver
-Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 30 Sep 2019 21:44:12 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <1567059876.15320.3.camel@mtksdaap41>
-References: <1566531931-9772-1-git-send-email-hsin-hsiung.wang@mediatek.com>
- <1566531931-9772-3-git-send-email-hsin-hsiung.wang@mediatek.com>
- <trinity-1f82bff1-535e-47cd-9a2f-8faccb56e356-1566562433314@3c-app-gmx-bs11>
- <e8a918ab-3e7a-b487-db77-df28d56518ce@gmail.com>
- <0A87F427-2D81-412A-9549-09A51A021799@public-files.de>
- <b5a21908-faee-17d1-ce26-99b941c0fa70@gmail.com>
- <trinity-a57f08bb-e30e-4e74-911c-c40e335d00da-1566580580817@3c-app-gmx-bs75>
- <1567059876.15320.3.camel@mtksdaap41>
-Content-Transfer-Encoding: quoted-printable
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:mOl5gwFlxXjAE9+q+U636kiILkcV8ouZYqUdavCDgk4kn81Id6pYOUZvJ59xPd2j9ozHN
- 8waSlJARwZGU/e+50l22obqu3bIr+fL4TvaYl9BbpYpSPN6sD78VLxIX6iCavbN4CWcQixxp0LcY
- 5DMu3BAQcL30VwmxUM6nn/+9zZbxJ+jCY8cBjW5TziN0HhvBmsrBmtkIW/5QN9djuXXP1JwXpdK/
- 5ni345mWrIhAsZlycA0M1+K7mg7469HwJwnFxncOyxiAT1no+CMD4+aeZeHKqIzsg87h4YZ/pSN+
- 5k=
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:eEhx1ooA/04=:yFlthYLfXFmb/8JnXCxFLQ
- cG572Ry6AOo0ntKRtpi1jnHwc/MifgtiZkrySHAdMEOwN6U4z5WDniyM2c03SYL4B62yLtMa/
- U19bsTBne7BMQPjUckdu0B6QiZ0aOoGEnogtZ3jkMM2FJ9cfBDeZ4CUM9xrBKWgV9hbYVeYw8
- ctFPp6ZCNOqhulXKMQIq+18/is4xcSGNMxRZVGEwzEMJx++U8FWWJCXC2qy+OwbZsiU72J1rN
- m0hRFgWfSdyu7DwPtFdm/ovEci+00L8n2eHp9e7vBYq6McTpBh3Zd/WuDEeZzaxvPnKIy5OVf
- b6FkzIpwpHNXEv2StcmxkmbpDXuhQmIwZNrLvzNtH0Dy4DR4VWOxCmyD/V4BvyhwngFa5AoUf
- p+0254Ps+QSAuiZx6/4VolVMGw14K3ZT1m4ZxpEuXrppadOsmVegWD2159755ceTite04Efsy
- aKgVhK3bCQDnzeo74/tTd4hgr2ySrWoHotVQtsl5aFU0dX2cVt06TH1Vrr0HNAMLhmR/AJQQq
- 0vxTG/EVGDBwvbGEVSllSOx9YpYL7nCGG5O7NFtVFTceEiRJT6zON3viUDNQX97Gp/gxzhX6g
- NY/z5hM5Y+1aVY5vxs2Tj7113FlLFIkd5i+3BOcw9/X5mZha9TUWCedWKxOEUpA1LhYQX1jCD
- Z1RfE1KJ1ZBns7KbOVb5V6YdZR92v3GnYP7c031/xzI5bUKRkkgIrxVsxHjqzVOmNeHM=
+        id S1730705AbfI3Uw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:52:57 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39209 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbfI3Uw4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:52:56 -0400
+Received: by mail-io1-f66.google.com with SMTP id a1so42048611ioc.6;
+        Mon, 30 Sep 2019 13:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=HjzHBo6jT8sEvFe44LiFogaEnhJkNVFYB6XfDK7uqQ0=;
+        b=A5mKEowmZmV++Op18zcmJR3/GH2ctiZffg/i22VkQ7tFE1c7sw8wb4oksQ6pjn3XGV
+         5NNGCwG3fx94axiNRlb/VLkqyNoXfylZgasulxkQJrbm9qKbbQCkBjlrh0iMKg2P3r0F
+         GeQwWcGXonOk1I4Yb+8/dLT2Tvc5iIEdRRsB4vdCrnG7/yKwQMcuJ1uYRFcTqE87ZqX9
+         VK2VLqGyvoS8iYb/I0DuzebaEOcC8Mycb9iqKQqRkq/SPUpntj0ZppnWmgakX5zSZtJ3
+         bLO+GoHmL8/1sqO/MLLtTUgjW07uDgE3N0nEeY8ZfwQBHvtkQ0xP8HGVt7kUjg3BeV0g
+         mpoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=HjzHBo6jT8sEvFe44LiFogaEnhJkNVFYB6XfDK7uqQ0=;
+        b=NcI6YA1affjO3DXITMbGWBoAJI+AaU4e5kWYImGuBfffek5czLnqy/Ceu5MCi63IBe
+         AcXkrEDgDsTdcG/AmZK07jIhvLcSlcC87yMO8SabBmOelJye0QYXfcfYyZjes7vn4UBL
+         EjKXJ/xjvqtE0IEYFlzAvxO7ttBmOAA7gyU+3LQpXrQ65PAmUBYPcrhoYVlFl8VnZYN/
+         st0Aq1rjca5R8P5bYPt+awTT686f/fh9LOMnHa34SZpZRVH3LkqWx4pGZO10XvHzBseV
+         FDRiJ3XGzvuiGUKs7dqtHrVxYdG2j1IcFLCnJWhOycAawxjn3d4pJ9hMpZV31epot0AT
+         MhkQ==
+X-Gm-Message-State: APjAAAVVkEMWOS4X5aP1Y5lokmSB24Y+ZsgkzNWCChNsQkqy3E/VCcY9
+        Gv7MS/mz1JFYqknhMgjElwc=
+X-Google-Smtp-Source: APXvYqzn/RTz90DQPs3v6GoRB75cFXIoD+MRJM6af30g7CqSFxkRz2+0cOy/I6rraDzMF6BGC8+FQw==
+X-Received: by 2002:a92:b612:: with SMTP id s18mr19955089ili.37.1569876776114;
+        Mon, 30 Sep 2019 13:52:56 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id g4sm6979666iof.56.2019.09.30.13.52.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2019 13:52:55 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] spi: gpio: prevent memory leak in spi_gpio_probe
+Date:   Mon, 30 Sep 2019 15:52:40 -0500
+Message-Id: <20190930205241.5483-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <dcd26f62-e384-bf6d-2e7d-63c0d0f7da11@web.de>
+References: <dcd26f62-e384-bf6d-2e7d-63c0d0f7da11@web.de>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+In spi_gpio_probe an SPI master is allocated via spi_alloc_master, but
+this controller should be released if devm_add_action_or_reset fails,
+otherwise memory leaks. In order to avoid leak spi_contriller_put must
+be called in case of failure for devm_add_action_or_reset.
 
-bug is still present in 5=2E4-rc1
+Fixes: 8b797490b4db ("spi: gpio: Make sure spi_master_put() is called in every error path")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+Changes in v2:
+	-- fix a typo in title and update the description
+---
+ drivers/spi/spi-gpio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-dmesg prints this line and at least switch is not inialized on bananapi-r2
+diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
+index 1d3e23ec20a6..f9c5bbb74714 100644
+--- a/drivers/spi/spi-gpio.c
++++ b/drivers/spi/spi-gpio.c
+@@ -371,8 +371,10 @@ static int spi_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	status = devm_add_action_or_reset(&pdev->dev, spi_gpio_put, master);
+-	if (status)
++	if (status) {
++		spi_master_put(master);
+ 		return status;
++	}
+ 
+ 	if (of_id)
+ 		status = spi_gpio_probe_dt(pdev, master);
+-- 
+2.17.1
 
-mt6397 1000d000=2Epwrap:mt6323: unsupported chip: 0x0
-
-regards Frank
-
-
-> Gesendet: Donnerstag, 29=2E August 2019 um 08:24 Uhr
-> Von: "Hsin-hsiung Wang" <hsin-hsiung=2Ewang@mediatek=2Ecom>
-> An: "Frank Wunderlich" <frank-w@public-files=2Ede>, "Matthias Brugger" <=
-matthias=2Ebgg@gmail=2Ecom>
-> Cc: linux-mediatek@lists=2Einfradead=2Eorg, "Mark Rutland" <mark=2Erutla=
-nd@arm=2Ecom>, "Alessandro Zummo" <a=2Ezummo@towertech=2Eit>, "Alexandre Be=
-lloni" <alexandre=2Ebelloni@bootlin=2Ecom>, srv_heupstream@mediatek=2Ecom, =
-devicetree@vger=2Ekernel=2Eorg, "Greg Kroah-Hartman" <gregkh@linuxfoundatio=
-n=2Eorg>, "Sean Wang" <sean=2Ewang@mediatek=2Ecom>, "Liam Girdwood" <lgirdw=
-ood@gmail=2Ecom>, "Rob Herring" <robh+dt@kernel=2Eorg>, linux-kernel@vger=
-=2Ekernel=2Eorg, "Richard Fontana" <rfontana@redhat=2Ecom>, "Mark Brown" <b=
-roonie@kernel=2Eorg>, linux-arm-kernel@lists=2Einfradead=2Eorg, "Ren=C3=A9 =
-van Dorst" <opensource@vdorst=2Ecom>, "Thomas Gleixner" <tglx@linutronix=2E=
-de>, "Eddie Huang" <eddie=2Ehuang@mediatek=2Ecom>, "Lee Jones" <lee=2Ejones=
-@linaro=2Eorg>, "Kate Stewart" <kstewart@linuxfoundation=2Eorg>, linux-rtc@=
-vger=2Ekernel=2Eorg
-> Betreff: Re: Aw: Re: [BUG] [PATCH v5 02/10] mfd: mt6397: extract irq rel=
-ated code from core driver
->
-> Hi Frank/Matthias,
->=20
-> On Fri, 2019-08-23 at 19:16 +0200, Frank Wunderlich wrote:
-> > > Gesendet: Freitag, 23=2E August 2019 um 17:42 Uhr
-> > > Von: "Matthias Brugger" <matthias=2Ebgg@gmail=2Ecom>
-> >=20
-> > > I suppose that's because 3/10 has code that should be in 2/10 and fo=
-r some
-> > > reason 3/10 was not pushed for linux-next inclusion=2E Although it h=
-as the same
-> > > Acked-for-mfd-by tag=2E
-> > >
-> > > @Frank, can you test if adding 3/10 to your code base fixes the issu=
-e?
-> >=20
-> > adding part 3 [1] seems to fix the issue too
-> >=20
-> > [    4=2E960051] mt6323-regulator mt6323-regulator: Chip ID =3D 0x2023
-> >=20
-> > thanks
-> >=20
-> > [1] https://patchwork=2Ekernel=2Eorg/patch/11110509/
-> Thanks for your comments=2E
-> The root cause seems I didn't split the code well=2E
-> I will fix it in the next version=2E
->=20
->
