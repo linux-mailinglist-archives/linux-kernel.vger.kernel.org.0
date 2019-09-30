@@ -2,209 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5694EC276E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2D3C2784
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbfI3U4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:56:00 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41984 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfI3U4A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:56:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n14so12869276wrw.9;
-        Mon, 30 Sep 2019 13:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+VdRyKsID9b2v30YDDuKBXdqqdZfrmc+wnK0aA6ys2s=;
-        b=Nt0WJfeOzXeW00wOzqbE+37Jg4Z4xucKbjfUVUAhXWZFy88hrG2dOwq2+XU2p3IyS8
-         3behcucPb6/fK42LtBhVmTuR7AZp0i1gp2Zn+Oy4+neURUlhUNekDf76G/gT1YFZi2Wd
-         pNfdKEXQajhy4sjIeXYczs6gYUIfSAdU7rzRfFRy72cYfbWG7fdtSBKhC/37yaSq5PGA
-         EfWzSHJCc6K1bgugKoRYNruqb1Zm5IERRdWRUJ487i7P66eNnQ/KVLkpy1Er5NKWXZ2J
-         bDCBCDb7t+FOqMTcyLbIn4Klb8vhTynVKyfJ9JkVyJPD0cyysnZDbmEIpWhRjaVsLl0S
-         bqCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+VdRyKsID9b2v30YDDuKBXdqqdZfrmc+wnK0aA6ys2s=;
-        b=nCxNTbZxU3NfhrxYzLTc9icQjTx+9d6rstE1K5rWOlYBGhdqUESceqZCCouDE2cCef
-         jRjoAZfGXIYG/MIZUTZxe3tmSQMJW+Irwh919uSZayzTEd5glO2f4dYYQ0krJP/Tck6R
-         vmVJ3w7MDfwQ0VxXtlTD/vEbfQ/ycHq7WbmoFY81VEv6lyagJX6gAO2o9hVKvoFzTne+
-         onejvy7+c0G+PYccpmn8ex8h3W9l8rmjmn53a5qTLeM5vHuxIpSR4GIOzUCuiZ5fwvNn
-         vpK758w7Es6RwbLUIDyIEDNQdZrSSoJXd1xp8kIEAJ1kviMEMiqnPBiJGmur24PYQRVq
-         nhTg==
-X-Gm-Message-State: APjAAAUv8Ow5xznPYmMc69JUAD+CTraAqw47RT05gUkRAVufi6d/k1/Y
-        mHeuHUyA//1DM4Qph6QqXvaDLe2lpA0=
-X-Google-Smtp-Source: APXvYqxnSW+xX+bFR+TsEjN44345akbJBvfZC247YdZWjvCSTXUV3EN6thNmA7xDhTC9EABPNaS0Cw==
-X-Received: by 2002:adf:f5cc:: with SMTP id k12mr14142976wrp.278.1569872650658;
-        Mon, 30 Sep 2019 12:44:10 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.142.9])
-        by smtp.gmail.com with ESMTPSA id r28sm14022113wrr.94.2019.09.30.12.44.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 12:44:09 -0700 (PDT)
-From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        linux-nvme@lists.infradead.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH v2 1/1] blk-mq: Inline request status checkers
-Date:   Mon, 30 Sep 2019 22:43:57 +0300
-Message-Id: <e6fc239412811140c83de906b75689530661f65d.1569872122.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <1cd320dad54bd78cb6721f7fe8dd2e197b9fbfa2.1569830796.git.asml.silence@gmail.com>
-References: <1cd320dad54bd78cb6721f7fe8dd2e197b9fbfa2.1569830796.git.asml.silence@gmail.com>
+        id S1731949AbfI3U6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:58:44 -0400
+Received: from mout.gmx.net ([212.227.17.20]:46773 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727720AbfI3U6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:58:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1569877121;
+        bh=YVn0d0IypIL/I8h6vV2cKfUczuH9hqHhzSGumXeWyH0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=AMPrAM7ELWyCVxZjrXAB/9N5xT8tVG0I/V2NGx4vMQRwJ6o8AnTXeboWVyJh35Hlk
+         m/UWsmb/ycW3lzs3FbfdeQBKSi5HD8CrW81404JR7GNGYxXRJRXua+OvuRHll2aF24
+         AjUrpIxtmirprjRAEcmwA/+txKTK9E1mB2wh6unY=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [80.208.215.36] ([80.208.215.36]) by web-mail.gmx.net
+ (3c-app-gmx-bap76.server.lan [172.19.172.64]) (via HTTP); Mon, 30 Sep 2019
+ 21:44:12 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <trinity-d5c9e092-508c-4db6-8f36-d5917466a750-1569872652621@3c-app-gmx-bap76>
+From:   "Frank Wunderlich" <frank-w@public-files.de>
+To:     "Hsin-hsiung Wang" <hsin-hsiung.wang@mediatek.com>,
+        "Lee Jones" <lee.jones@linaro.org>
+Cc:     "Matthias Brugger" <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "Alessandro Zummo" <a.zummo@towertech.it>,
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Sean Wang" <sean.wang@mediatek.com>,
+        "Liam Girdwood" <lgirdwood@gmail.com>,
+        "Rob Herring" <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        "Richard Fontana" <rfontana@redhat.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?Q?=22Ren=C3=A9_van_Dorst=22?= <opensource@vdorst.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Eddie Huang" <eddie.huang@mediatek.com>,
+        "Lee Jones" <lee.jones@linaro.org>,
+        "Kate Stewart" <kstewart@linuxfoundation.org>,
+        linux-rtc@vger.kernel.org
+Subject: Aw: Re:  Re: [BUG] [PATCH v5 02/10] mfd: mt6397: extract irq
+ related code from core driver
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 30 Sep 2019 21:44:12 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <1567059876.15320.3.camel@mtksdaap41>
+References: <1566531931-9772-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <1566531931-9772-3-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <trinity-1f82bff1-535e-47cd-9a2f-8faccb56e356-1566562433314@3c-app-gmx-bs11>
+ <e8a918ab-3e7a-b487-db77-df28d56518ce@gmail.com>
+ <0A87F427-2D81-412A-9549-09A51A021799@public-files.de>
+ <b5a21908-faee-17d1-ce26-99b941c0fa70@gmail.com>
+ <trinity-a57f08bb-e30e-4e74-911c-c40e335d00da-1566580580817@3c-app-gmx-bs75>
+ <1567059876.15320.3.camel@mtksdaap41>
+Content-Transfer-Encoding: quoted-printable
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:mOl5gwFlxXjAE9+q+U636kiILkcV8ouZYqUdavCDgk4kn81Id6pYOUZvJ59xPd2j9ozHN
+ 8waSlJARwZGU/e+50l22obqu3bIr+fL4TvaYl9BbpYpSPN6sD78VLxIX6iCavbN4CWcQixxp0LcY
+ 5DMu3BAQcL30VwmxUM6nn/+9zZbxJ+jCY8cBjW5TziN0HhvBmsrBmtkIW/5QN9djuXXP1JwXpdK/
+ 5ni345mWrIhAsZlycA0M1+K7mg7469HwJwnFxncOyxiAT1no+CMD4+aeZeHKqIzsg87h4YZ/pSN+
+ 5k=
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:eEhx1ooA/04=:yFlthYLfXFmb/8JnXCxFLQ
+ cG572Ry6AOo0ntKRtpi1jnHwc/MifgtiZkrySHAdMEOwN6U4z5WDniyM2c03SYL4B62yLtMa/
+ U19bsTBne7BMQPjUckdu0B6QiZ0aOoGEnogtZ3jkMM2FJ9cfBDeZ4CUM9xrBKWgV9hbYVeYw8
+ ctFPp6ZCNOqhulXKMQIq+18/is4xcSGNMxRZVGEwzEMJx++U8FWWJCXC2qy+OwbZsiU72J1rN
+ m0hRFgWfSdyu7DwPtFdm/ovEci+00L8n2eHp9e7vBYq6McTpBh3Zd/WuDEeZzaxvPnKIy5OVf
+ b6FkzIpwpHNXEv2StcmxkmbpDXuhQmIwZNrLvzNtH0Dy4DR4VWOxCmyD/V4BvyhwngFa5AoUf
+ p+0254Ps+QSAuiZx6/4VolVMGw14K3ZT1m4ZxpEuXrppadOsmVegWD2159755ceTite04Efsy
+ aKgVhK3bCQDnzeo74/tTd4hgr2ySrWoHotVQtsl5aFU0dX2cVt06TH1Vrr0HNAMLhmR/AJQQq
+ 0vxTG/EVGDBwvbGEVSllSOx9YpYL7nCGG5O7NFtVFTceEiRJT6zON3viUDNQX97Gp/gxzhX6g
+ NY/z5hM5Y+1aVY5vxs2Tj7113FlLFIkd5i+3BOcw9/X5mZha9TUWCedWKxOEUpA1LhYQX1jCD
+ Z1RfE1KJ1ZBns7KbOVb5V6YdZR92v3GnYP7c031/xzI5bUKRkkgIrxVsxHjqzVOmNeHM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Hi,
 
-blk_mq_request_completed() and blk_mq_request_started() are
-short, inline it.
+bug is still present in 5=2E4-rc1
 
-v2: by Christoph suggestion inline them by hand
+dmesg prints this line and at least switch is not inialized on bananapi-r2
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- block/blk-mq-tag.c       |  4 ++--
- block/blk-mq.c           | 14 +-------------
- block/blk-mq.h           |  9 ---------
- drivers/block/nbd.c      |  2 +-
- drivers/nvme/host/core.c |  2 +-
- include/linux/blk-mq.h   | 10 ++++++++--
- 6 files changed, 13 insertions(+), 28 deletions(-)
+mt6397 1000d000=2Epwrap:mt6323: unsupported chip: 0x0
 
-diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-index 008388e82b5c..32d63b607391 100644
---- a/block/blk-mq-tag.c
-+++ b/block/blk-mq-tag.c
-@@ -282,7 +282,7 @@ static bool bt_tags_iter(struct sbitmap *bitmap, unsigned int bitnr, void *data)
- 	 * test and set the bit before assining ->rqs[].
- 	 */
- 	rq = tags->rqs[bitnr];
--	if (rq && blk_mq_request_started(rq))
-+	if (rq && blk_mq_rq_state(rq) != MQ_RQ_IDLE)
- 		return iter_data->fn(rq, iter_data->data, reserved);
- 
- 	return true;
-@@ -360,7 +360,7 @@ static bool blk_mq_tagset_count_completed_rqs(struct request *rq,
- {
- 	unsigned *count = data;
- 
--	if (blk_mq_request_completed(rq))
-+	if (blk_mq_rq_state(rq) == MQ_RQ_COMPLETE)
- 		(*count)++;
- 	return true;
- }
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 29275f5a996f..a30f108d96be 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -663,18 +663,6 @@ bool blk_mq_complete_request(struct request *rq)
- }
- EXPORT_SYMBOL(blk_mq_complete_request);
- 
--int blk_mq_request_started(struct request *rq)
--{
--	return blk_mq_rq_state(rq) != MQ_RQ_IDLE;
--}
--EXPORT_SYMBOL_GPL(blk_mq_request_started);
--
--int blk_mq_request_completed(struct request *rq)
--{
--	return blk_mq_rq_state(rq) == MQ_RQ_COMPLETE;
--}
--EXPORT_SYMBOL_GPL(blk_mq_request_completed);
--
- void blk_mq_start_request(struct request *rq)
- {
- 	struct request_queue *q = rq->q;
-@@ -718,7 +706,7 @@ static void __blk_mq_requeue_request(struct request *rq)
- 	trace_block_rq_requeue(q, rq);
- 	rq_qos_requeue(q, rq);
- 
--	if (blk_mq_request_started(rq)) {
-+	if (blk_mq_rq_state(rq) != MQ_RQ_IDLE) {
- 		WRITE_ONCE(rq->state, MQ_RQ_IDLE);
- 		rq->rq_flags &= ~RQF_TIMED_OUT;
- 		if (q->dma_drain_size && blk_rq_bytes(rq))
-diff --git a/block/blk-mq.h b/block/blk-mq.h
-index 32c62c64e6c2..eaaca8fc1c28 100644
---- a/block/blk-mq.h
-+++ b/block/blk-mq.h
-@@ -128,15 +128,6 @@ extern void blk_mq_hctx_kobj_init(struct blk_mq_hw_ctx *hctx);
- 
- void blk_mq_release(struct request_queue *q);
- 
--/**
-- * blk_mq_rq_state() - read the current MQ_RQ_* state of a request
-- * @rq: target request.
-- */
--static inline enum mq_rq_state blk_mq_rq_state(struct request *rq)
--{
--	return READ_ONCE(rq->state);
--}
--
- static inline struct blk_mq_ctx *__blk_mq_get_ctx(struct request_queue *q,
- 					   unsigned int cpu)
- {
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index ac07e8c94c79..71a13a65c9d1 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -696,7 +696,7 @@ static struct nbd_cmd *nbd_read_stat(struct nbd_device *nbd, int index)
- 	if (hwq < nbd->tag_set.nr_hw_queues)
- 		req = blk_mq_tag_to_rq(nbd->tag_set.tags[hwq],
- 				       blk_mq_unique_tag_to_tag(tag));
--	if (!req || !blk_mq_request_started(req)) {
-+	if (!req || !blk_mq_rq_state(req) != MQ_RQ_IDLE) {
- 		dev_err(disk_to_dev(nbd->disk), "Unexpected reply (%d) %p\n",
- 			tag, req);
- 		return ERR_PTR(-ENOENT);
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 108f60b46804..3a54677dc5ad 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -292,7 +292,7 @@ bool nvme_cancel_request(struct request *req, void *data, bool reserved)
- 				"Cancelling I/O %d", req->tag);
- 
- 	/* don't abort one completed request */
--	if (blk_mq_request_completed(req))
-+	if (blk_mq_rq_state(req) == MQ_RQ_COMPLETE)
- 		return true;
- 
- 	nvme_req(req)->status = NVME_SC_HOST_PATH_ERROR;
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 0bf056de5cc3..e993ce19a8ec 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -301,9 +301,15 @@ static inline u16 blk_mq_unique_tag_to_tag(u32 unique_tag)
- 	return unique_tag & BLK_MQ_UNIQUE_TAG_MASK;
- }
- 
-+/**
-+ * blk_mq_rq_state() - read the current MQ_RQ_* state of a request
-+ * @rq: target request.
-+ */
-+static inline enum mq_rq_state blk_mq_rq_state(struct request *rq)
-+{
-+	return READ_ONCE(rq->state);
-+}
- 
--int blk_mq_request_started(struct request *rq);
--int blk_mq_request_completed(struct request *rq);
- void blk_mq_start_request(struct request *rq);
- void blk_mq_end_request(struct request *rq, blk_status_t error);
- void __blk_mq_end_request(struct request *rq, blk_status_t error);
--- 
-2.23.0
+regards Frank
 
+
+> Gesendet: Donnerstag, 29=2E August 2019 um 08:24 Uhr
+> Von: "Hsin-hsiung Wang" <hsin-hsiung=2Ewang@mediatek=2Ecom>
+> An: "Frank Wunderlich" <frank-w@public-files=2Ede>, "Matthias Brugger" <=
+matthias=2Ebgg@gmail=2Ecom>
+> Cc: linux-mediatek@lists=2Einfradead=2Eorg, "Mark Rutland" <mark=2Erutla=
+nd@arm=2Ecom>, "Alessandro Zummo" <a=2Ezummo@towertech=2Eit>, "Alexandre Be=
+lloni" <alexandre=2Ebelloni@bootlin=2Ecom>, srv_heupstream@mediatek=2Ecom, =
+devicetree@vger=2Ekernel=2Eorg, "Greg Kroah-Hartman" <gregkh@linuxfoundatio=
+n=2Eorg>, "Sean Wang" <sean=2Ewang@mediatek=2Ecom>, "Liam Girdwood" <lgirdw=
+ood@gmail=2Ecom>, "Rob Herring" <robh+dt@kernel=2Eorg>, linux-kernel@vger=
+=2Ekernel=2Eorg, "Richard Fontana" <rfontana@redhat=2Ecom>, "Mark Brown" <b=
+roonie@kernel=2Eorg>, linux-arm-kernel@lists=2Einfradead=2Eorg, "Ren=C3=A9 =
+van Dorst" <opensource@vdorst=2Ecom>, "Thomas Gleixner" <tglx@linutronix=2E=
+de>, "Eddie Huang" <eddie=2Ehuang@mediatek=2Ecom>, "Lee Jones" <lee=2Ejones=
+@linaro=2Eorg>, "Kate Stewart" <kstewart@linuxfoundation=2Eorg>, linux-rtc@=
+vger=2Ekernel=2Eorg
+> Betreff: Re: Aw: Re: [BUG] [PATCH v5 02/10] mfd: mt6397: extract irq rel=
+ated code from core driver
+>
+> Hi Frank/Matthias,
+>=20
+> On Fri, 2019-08-23 at 19:16 +0200, Frank Wunderlich wrote:
+> > > Gesendet: Freitag, 23=2E August 2019 um 17:42 Uhr
+> > > Von: "Matthias Brugger" <matthias=2Ebgg@gmail=2Ecom>
+> >=20
+> > > I suppose that's because 3/10 has code that should be in 2/10 and fo=
+r some
+> > > reason 3/10 was not pushed for linux-next inclusion=2E Although it h=
+as the same
+> > > Acked-for-mfd-by tag=2E
+> > >
+> > > @Frank, can you test if adding 3/10 to your code base fixes the issu=
+e?
+> >=20
+> > adding part 3 [1] seems to fix the issue too
+> >=20
+> > [    4=2E960051] mt6323-regulator mt6323-regulator: Chip ID =3D 0x2023
+> >=20
+> > thanks
+> >=20
+> > [1] https://patchwork=2Ekernel=2Eorg/patch/11110509/
+> Thanks for your comments=2E
+> The root cause seems I didn't split the code well=2E
+> I will fix it in the next version=2E
+>=20
+>
