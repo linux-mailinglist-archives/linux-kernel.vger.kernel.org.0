@@ -2,102 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58662C243F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4372C244A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731972AbfI3P2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 11:28:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52315 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731127AbfI3P2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:28:01 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 58C6D4628B
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 15:28:01 +0000 (UTC)
-Received: by mail-wm1-f69.google.com with SMTP id n3so6102402wmf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 08:28:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=1hKWQ8fyjtR8kDPezJtQ9It33dYqosk+4D7m4oHWLsM=;
-        b=DXxEMv1gGtSQi6camEPX2oxSSlnfChtsk/2gQK2UXMRxReU6vKFTyVX9saPydShl85
-         W+LjapCIB1j0BmE9S+gA1TsC1ybqGQOejcGaGgUfhwtBynjWgSaQs8Vv01iDXU89ZNfQ
-         dXXQ7PmzpI+lbMRzGbOKTwZy4uhcaBAf5V5YSvqL8V4s7Z2MMAy6Unq6T5zWKTHwso9u
-         LFJs2B7KAK0BYyZ41c+ydnNTeSB0A700W0bcHFlWR0/T04pDPSUKdzfmgod9Dn+3DOWD
-         pj3PlR0HLW907DrXmF+nzgs/AOWtEb6roWJViDvN58KPRWTCv7dhf4S2deizjokw3qWJ
-         9qUQ==
-X-Gm-Message-State: APjAAAUS0MEE+qKg/Q9UCfuOLa0byVEGHf5o+TukqSS8KGmTCbCQ6/Xa
-        VQbOPo9RhgDSr3RrOkyAT+kk6P3FPl7Qnu3uWwswwHfrVDfHMPGatoYeyCArz+Lz9/S0P7n5SKi
-        R5pKbyIKWtv70qnNJWpadd0Kg
-X-Received: by 2002:a5d:66ce:: with SMTP id k14mr14425597wrw.258.1569857280057;
-        Mon, 30 Sep 2019 08:28:00 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwQh4W43HEXgL9tL21uSH1S6sYMhC1NrfmFDMghmMierpsalTevwZVaciqHcGxptBzm4zyI7Q==
-X-Received: by 2002:a5d:66ce:: with SMTP id k14mr14425579wrw.258.1569857279840;
-        Mon, 30 Sep 2019 08:27:59 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id m62sm16269316wmm.35.2019.09.30.08.27.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 08:27:59 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>,
-        Liran Alon <liran.alon@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v2 8/8] KVM: x86: Fold decache_cr3() into cache_reg()
-In-Reply-To: <20190930150430.GA14693@linux.intel.com>
-References: <20190927214523.3376-1-sean.j.christopherson@intel.com> <20190927214523.3376-9-sean.j.christopherson@intel.com> <87a7am3v9u.fsf@vitty.brq.redhat.com> <20190930150430.GA14693@linux.intel.com>
-Date:   Mon, 30 Sep 2019 17:27:58 +0200
-Message-ID: <87y2y53itd.fsf@vitty.brq.redhat.com>
+        id S1732008AbfI3P21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 11:28:27 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:12236 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731127AbfI3P21 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 11:28:27 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8UFLau3016398;
+        Mon, 30 Sep 2019 17:28:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=yJpZfBWTDJMl1ZC5M8BD9X2h5CbjAxaL+Z0ej4FdTgo=;
+ b=up9SvLA/BcQdNv6vMRe8ST2ZUnCZveKCUpa54cYfijgR7ucJcyTJtlPK+oO5WNL7C9YO
+ G2qVmMc4jHQgfjF8zp4UD9JEEDHZ4ZA4HCgMF1Aa918Tf5TQMQsfNWIc0ctbOR5ocVe3
+ b6Bji8Db8sqOIf5atNQW0dsFzuYC3HWt9e+bctpQG8QU0T4zInsGX1EigYogKTo3TT/T
+ QXMPkxJNNRRzWUNTZbz2exF2B6XuxFUhw8w7Eqf3YPSeok0EW9lIVB6qME2HOLjro5oS
+ 07qU5tThzJwDsWmKc92H/fQrjMi2BVJ6kHPVBu4unrsu1I7vfR7pG+Wcz/ob9KE836dD wg== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2v9w00v119-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 30 Sep 2019 17:28:18 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7331922;
+        Mon, 30 Sep 2019 15:28:14 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 29BB62B3BF9;
+        Mon, 30 Sep 2019 17:28:14 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 30 Sep
+ 2019 17:28:14 +0200
+Received: from localhost (10.48.0.192) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 30 Sep 2019 17:28:12 +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <wsa@the-dreams.de>, <pierre-yves.mordret@st.com>
+CC:     <alain.volmat@st.com>, <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
+Subject: [PATCH] i2c: i2c-stm32f7: fix first byte to send in slave mode
+Date:   Mon, 30 Sep 2019 17:28:01 +0200
+Message-ID: <1569857281-19419-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.48.0.192]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-09-30_09:2019-09-30,2019-09-30 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+The slave-interface documentation [1] states "the bus driver should
+transmit the first byte" upon I2C_SLAVE_READ_REQUESTED slave event:
+- 'val': backend returns first byte to be sent
+The driver currently ignores the 1st byte to send on this event.
 
-> On Mon, Sep 30, 2019 at 12:58:53PM +0200, Vitaly Kuznetsov wrote:
->> Sean Christopherson <sean.j.christopherson@intel.com> writes:
->> 
->> > Handle caching CR3 (from VMX's VMCS) into struct kvm_vcpu via the common
->> > cache_reg() callback and drop the dedicated decache_cr3().  The name
->> > decache_cr3() is somewhat confusing as the caching behavior of CR3
->> > follows that of GPRs, RFLAGS and PDPTRs, (handled via cache_reg()), and
->> > has nothing in common with the caching behavior of CR0/CR4 (whose
->> > decache_cr{0,4}_guest_bits() likely provided the 'decache' verbiage).
->> >
->> > Note, this effectively adds a BUG() if KVM attempts to cache CR3 on SVM.
->> > Opportunistically add a WARN_ON_ONCE() in VMX to provide an equivalent
->> > check.
->> 
->> Just to justify my idea of replacing such occasions with
->> KVM_INTERNAL_ERROR by setting a special 'kill ASAP' bit somewhere:
->> 
->> This WARN_ON_ONCE() falls in the same category (IMO).
->
-> Maybe something like KVM_BUG_ON?  E.g.:
->
-> #define KVM_BUG_ON(kvm, cond)		\
-> ({					\
-> 	int r;				\
-> 					\
-> 	if (r = WARN_ON_ONCE(cond))	\
-> 		kvm->vm_bugged = true;	\
-> 	r;				\
-> )}
-> 	
+Fixes: 60d609f30de2 ("i2c: i2c-stm32f7: Add slave support")
 
-Yes, that's more or less what I meant! (to me 'vm_bugged' sounds like
-there was a bug in the VM but the bug is actually in KVM so maybe
-something like 'kvm_internal_bug' to make it explicit?)
+[1] https://www.kernel.org/doc/Documentation/i2c/slave-interface
 
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 266d1c2..0af9219 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -1192,6 +1192,8 @@ static void stm32f7_i2c_slave_start(struct stm32f7_i2c_dev *i2c_dev)
+ 			STM32F7_I2C_CR1_TXIE;
+ 		stm32f7_i2c_set_bits(base + STM32F7_I2C_CR1, mask);
+ 
++		/* Write 1st data byte */
++		writel_relaxed(value, base + STM32F7_I2C_TXDR);
+ 	} else {
+ 		/* Notify i2c slave that new write transfer is starting */
+ 		i2c_slave_event(slave, I2C_SLAVE_WRITE_REQUESTED, &value);
 -- 
-Vitaly
+2.7.4
+
