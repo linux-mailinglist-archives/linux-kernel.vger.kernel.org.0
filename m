@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F6EC236C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73DFEC2368
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:37:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731840AbfI3OhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:37:14 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3192 "EHLO huawei.com"
+        id S1731817AbfI3OhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:37:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3195 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731702AbfI3OhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:37:02 -0400
+        id S1731715AbfI3OhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:37:03 -0400
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2A2F4719A77CE6655499;
+        by Forcepoint Email with ESMTP id 40F62D0A7B7A024C01A2;
         Mon, 30 Sep 2019 22:36:58 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
@@ -26,9 +26,9 @@ CC:     <shameerali.kolothum.thodi@huawei.com>,
         <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
         <rjw@rjwysocki.net>, <lenb@kernel.org>, <nleeder@codeaurora.org>,
         <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>
-Subject: [RFC PATCH 1/6] ACPI/IORT: Set PMCG device parent
-Date:   Mon, 30 Sep 2019 22:33:46 +0800
-Message-ID: <1569854031-237636-2-git-send-email-john.garry@huawei.com>
+Subject: [RFC PATCH 2/6] iommu/arm-smmu-v3: Record IIDR in arm_smmu_device structure
+Date:   Mon, 30 Sep 2019 22:33:47 +0800
+Message-ID: <1569854031-237636-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
 References: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
@@ -41,97 +41,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the IORT, a PMCG node includes a node reference to its associated
-device.
+To allow other devices know the SMMU HW IIDR, record the IIDR contents as
+the first member of the arm_smmu_device structure.
 
-Set the PMCG platform device parent device for future referencing.
-
-For now, we only consider setting for when the associated component is an
-SMMUv3.
+In storing as the first member, it saves exposing SMMU APIs, which are
+nicely self-contained today.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/acpi/arm64/iort.c | 34 ++++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 8569b79e8b58..0b687520c3e7 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -1455,7 +1455,7 @@ static __init const struct iort_dev_config *iort_get_dev_cfg(
-  * Returns: 0 on success, <0 failure
-  */
- static int __init iort_add_platform_device(struct acpi_iort_node *node,
--					   const struct iort_dev_config *ops)
-+					   const struct iort_dev_config *ops, struct device *parent)
- {
- 	struct fwnode_handle *fwnode;
- 	struct platform_device *pdev;
-@@ -1466,6 +1466,8 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 	if (!pdev)
- 		return -ENOMEM;
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 40f4757096c3..1ed3ef0f1ec3 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -70,6 +70,8 @@
+ #define IDR1_SSIDSIZE			GENMASK(10, 6)
+ #define IDR1_SIDSIZE			GENMASK(5, 0)
  
-+	pdev->dev.parent = parent;
++#define ARM_SMMU_IIDR                  0x18
 +
- 	if (ops->dev_set_proximity) {
- 		ret = ops->dev_set_proximity(&pdev->dev, node);
- 		if (ret)
-@@ -1573,6 +1575,11 @@ static void __init iort_enable_acs(struct acpi_iort_node *iort_node)
- static inline void iort_enable_acs(struct acpi_iort_node *iort_node) { }
- #endif
+ #define ARM_SMMU_IDR5			0x14
+ #define IDR5_STALL_MAX			GENMASK(31, 16)
+ #define IDR5_GRAN64K			(1 << 6)
+@@ -546,6 +548,7 @@ struct arm_smmu_strtab_cfg {
  
-+static int iort_fwnode_match(struct device *dev, const void *fwnode)
-+{
-+	return dev->fwnode == fwnode;
-+}
-+
- static void __init iort_init_platform_devices(void)
- {
- 	struct acpi_iort_node *iort_node, *iort_end;
-@@ -1594,11 +1601,34 @@ static void __init iort_init_platform_devices(void)
- 				iort_table->length);
+ /* An SMMUv3 instance */
+ struct arm_smmu_device {
++	u32						iidr; /* must be first member */
+ 	struct device			*dev;
+ 	void __iomem			*base;
  
- 	for (i = 0; i < iort->node_count; i++) {
-+		struct device *parent = NULL;
-+
- 		if (iort_node >= iort_end) {
- 			pr_err("iort node pointer overflows, bad table\n");
- 			return;
- 		}
+@@ -3153,6 +3156,8 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	iommu_device_set_ops(&smmu->iommu, &arm_smmu_ops);
+ 	iommu_device_set_fwnode(&smmu->iommu, dev->fwnode);
  
-+		/* Fixme: handle parent declared in IORT after PMCG */
-+		if (iort_node->type == ACPI_IORT_NODE_PMCG) {
-+			struct acpi_iort_node *iort_assoc_node;
-+			struct acpi_iort_pmcg *pmcg;
-+			u32 node_reference;
++	smmu->iidr = readl(smmu->base + ARM_SMMU_IIDR);
 +
-+			pmcg = (struct acpi_iort_pmcg *)iort_node->node_data;
-+
-+			node_reference = pmcg->node_reference;
-+			iort_assoc_node = ACPI_ADD_PTR(struct acpi_iort_node, iort,
-+				 node_reference);
-+
-+			if (iort_assoc_node->type == ACPI_IORT_NODE_SMMU_V3) {
-+				struct fwnode_handle *assoc_fwnode;
-+
-+				assoc_fwnode = iort_get_fwnode(iort_assoc_node);
-+
-+				parent = bus_find_device(&platform_bus_type, NULL,
-+				      assoc_fwnode, iort_fwnode_match);
-+			}
-+		}
- 		iort_enable_acs(iort_node);
- 
- 		ops = iort_get_dev_cfg(iort_node);
-@@ -1609,7 +1639,7 @@ static void __init iort_init_platform_devices(void)
- 
- 			iort_set_fwnode(iort_node, fwnode);
- 
--			ret = iort_add_platform_device(iort_node, ops);
-+			ret = iort_add_platform_device(iort_node, ops, parent);
- 			if (ret) {
- 				iort_delete_fwnode(iort_node);
- 				acpi_free_fwnode_static(fwnode);
+ 	ret = iommu_device_register(&smmu->iommu);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to register iommu\n");
 -- 
 2.17.1
 
