@@ -2,101 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E80E4C2121
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F30CC2118
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 15:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731122AbfI3NDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 09:03:09 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33300 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731076AbfI3NDH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 09:03:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r17so14119883wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 06:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HrIq4ZVm8xkVZyO8f5Owi3O1Tv53HlREs0EWWL4v/q4=;
-        b=w1gNg8prgUP3BwyEHY0icT829DCXzmLYUhxFKoVjRtdaNyQitXh4veJvCPRIsJ1yAa
-         EjV8yIaLqywn2OLOjIE1Qiqqlwb35juSylLnUYlGzVFdhIGmVX6UEhYTQ2fTS2s550ug
-         +rEmahuc8qfCuv0k9jUnqAVP71g8ErK+jQyWeSZNqOb3wtPyKoNwQ4LtlLVaO2/icP9e
-         Y0flzj/3RcC8NaIT8OrfJpYtb1l/UrnuoZrpD0UUN6UBwnj5EAiAAVFjgXjhHLSzMgMA
-         nxidQ6CioHKdgup5Do1f2UZjKGdcLsijRVhzgFl1CPphyS5x76IeMjkY9mnL4zLR3avD
-         dmRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HrIq4ZVm8xkVZyO8f5Owi3O1Tv53HlREs0EWWL4v/q4=;
-        b=hKpRhkdK5yOOdUDP4ksWFL3kRck+OfXh4V47gfxMX/Lo+58DNhbf4jn3124l0KWkKq
-         VBUOetlCzNonIJB1QDADNTb4CravS9LAVtb8A9kwWj1q7v1bD22IKtFqJ9xqTiB4ews0
-         +kgF3jAXJ8JvaIQ3csdpQJWIA1pbYS3pBDOzSeh3mtXBuZgiFAhOIFzOZF/2ZQkRjFS8
-         rURx3DZ3r5qJSjF21PFw1o/hM24a5vGYSu3g6TRcJCRqCsZbCYxCDlJ45giA5GAnv8pB
-         8cqpRQs69M/yzB6sFqz0YxbnxAmZlhJKZXbvNbcj6ECSqsUfpvrZ2UoPhsYjZfFcMs8R
-         huTg==
-X-Gm-Message-State: APjAAAVsRuuE8scO82EMzyTlSToAJrxvzET5fgX3zcMjzijWOkUTS2Cu
-        os9O4GQZuhL4W3mGCwUvKtdDIA==
-X-Google-Smtp-Source: APXvYqzN6+yvym0aDjApdak2rnKhCxj3WgNHI4XeHwFPAGwC+jP/VsGclRBJNsmG4KVSjtE79Djsrg==
-X-Received: by 2002:a1c:544e:: with SMTP id p14mr16383235wmi.72.1569848584419;
-        Mon, 30 Sep 2019 06:03:04 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id e6sm10654756wrp.91.2019.09.30.06.03.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 06:03:03 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 6/6] MAINTAINERS: update the list of maintained files for max77650
-Date:   Mon, 30 Sep 2019 15:02:46 +0200
-Message-Id: <20190930130246.4860-7-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190930130246.4860-1-brgl@bgdev.pl>
-References: <20190930130246.4860-1-brgl@bgdev.pl>
+        id S1731043AbfI3NCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 09:02:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:53784 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730830AbfI3NCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 09:02:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E9751000;
+        Mon, 30 Sep 2019 06:02:49 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C1FF3F706;
+        Mon, 30 Sep 2019 06:02:48 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 14:02:46 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Julien Grall <julien.grall@arm.com>
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64/sve: Fix wrong free for task->thread.sve_state
+Message-ID: <20190930130244.GT27757@arm.com>
+References: <20190927153949.29870-1-msys.mizuma@gmail.com>
+ <b3dba44e-216c-f060-be8e-1c44bdc61576@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3dba44e-216c-f060-be8e-1c44bdc61576@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Sep 30, 2019 at 01:23:18PM +0100, Julien Grall wrote:
+> Hi,
+> 
+> On 27/09/2019 16:39, Masayoshi Mizuma wrote:
+> >From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> >
+> >The system which has SVE feature crashed because of
+> >the memory pointed by task->thread.sve_state was destroyed
+> >by someone.
+> >
+> >That is because sve_state is freed while the forking the
+> >child process. The child process has the pointer of sve_state
+> >which is same as the parent's because the child's task_struct
+> >is copied from the parent's one. If the copy_process()
+> >fails as an error on somewhere, for example, copy_creds(),
+> >then the sve_state is freed even if the parent is alive.
+> >The flow is as follows.
+> >
+> >copy_process
+> >         p = dup_task_struct
+> >             => arch_dup_task_struct
+> >                 *dst = *src;  // copy the entire region.
+> >:
+> >         retval = copy_creds
+> >         if (retval < 0)
+> >                 goto bad_fork_free;
+> >:
+> >bad_fork_free:
+> >...
+> >         delayed_free_task(p);
+> >           => free_task
+> >              => arch_release_task_struct
+> >                 => fpsimd_release_task
+> >                    => __sve_free
+> >                       => kfree(task->thread.sve_state);
+> >                          // free the parent's sve_state
+> >
+> >Move child's sve_state = NULL and clearing TIF_SVE flag
+> >to arch_dup_task_struct() so that the child doesn't free the
+> >parent's one.
+> >
+> >Cc: stable@vger.kernel.org
+> >Fixes: bc0ee4760364 ("arm64/sve: Core task context handling")
+> 
+> Looking at the log, it looks like THREAD_INFO_IN_TASK was selected before
+> the bc0ee4760364. So it should be fine to backport for all the Linux tree
+> contain this commit.
+> 
+> >Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> >Reported-by: Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
+> >Suggested-by: Dave Martin <Dave.Martin@arm.com>
+> 
+> I have tested the patch and can confirm that double-free disappeared after
+> the patch is applied:
+> 
+> Tested-by: Julien Grall <julien.grall@arm.com>
 
-The DT bindings for max77650 MFD have now been converted to yaml.
-Update the MAINTAINERS entry for this set of drivers.
+Good to have that confirmed -- thanks for verifying.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[...]
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 296de2b51c83..d60dd3729437 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9902,8 +9902,8 @@ MAXIM MAX77650 PMIC MFD DRIVER
- M:	Bartosz Golaszewski <bgolaszewski@baylibre.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/*/*max77650.txt
--F:	Documentation/devicetree/bindings/*/max77650*.txt
-+F:	Documentation/devicetree/bindings/*/*max77650.yaml
-+F:	Documentation/devicetree/bindings/*/max77650*.yaml
- F:	include/linux/mfd/max77650.h
- F:	drivers/mfd/max77650.c
- F:	drivers/regulator/max77650-regulator.c
--- 
-2.23.0
+> >---
+> >  arch/arm64/kernel/process.c | 21 ++++-----------------
+> >  1 file changed, 4 insertions(+), 17 deletions(-)
+> >
+> >diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> >index f674f28df..6937f5935 100644
+> >--- a/arch/arm64/kernel/process.c
+> >+++ b/arch/arm64/kernel/process.c
+> >@@ -323,22 +323,16 @@ void arch_release_task_struct(struct task_struct *tsk)
+> >  	fpsimd_release_task(tsk);
+> >  }
+> >-/*
+> >- * src and dst may temporarily have aliased sve_state after task_struct
+> >- * is copied.  We cannot fix this properly here, because src may have
+> >- * live SVE state and dst's thread_info may not exist yet, so tweaking
+> >- * either src's or dst's TIF_SVE is not safe.
+> >- *
+> >- * The unaliasing is done in copy_thread() instead.  This works because
+> >- * dst is not schedulable or traceable until both of these functions
+> >- * have been called.
+> >- */
+> 
+> It would be good to explain in the commit message why tweaking "dst" in
+> arch_dup_task_struct() is fine.
+> 
+> From my understanding, Arm64 used to have thread_info on the stack. So it
+> would not be possible to clear TIF_SVE until the stack is initialized.
+> 
+> Now that the thread_info is part of the task, it should be valid to modify
+> the flag from arch_dup_task_struct().
+> 
+> Note that technically, TIF_SVE does not need to be cleared from
+> arch_dup_task_struct(). It could also be done from copy_thread(). But it is
+> easier to keep the both changes together.
+> 
+> >  int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+> >  {
+> >  	if (current->mm)
+> >  		fpsimd_preserve_current_state();
+> >  	*dst = *src;
 
+Ack, some more explanation would be a good idea here.
+
+Maybe the following comments are sufficient?
+
+	/* We rely on the above assingment to initialise dst's thread_flags: */
+
+> >+	BUILD_BUG_ON(!IS_ENABLED(CONFIG_THREAD_INFO_IN_TASK));
+> 
+
+and
+
+	/*
+	 * Detach src's sve_state (if any) from dst so that it does not
+	 * get erroneously used or freed prematurely.  dst's sve_state
+	 * will be allocated on demand later on if dst uses SVE.
+	 * For consistency, also clear TIF_SVE here: this could be done
+	 * later in copy_process(), but to avoid tripping up future
+	 * maintainers it is best not to leave TIF_SVE and sve_state in
+	 * an inconsistent state, even temporarily.
+	 */
+
+> >+	dst->thread.sve_state = NULL;
+> >+	clear_tsk_thread_flag(dst, TIF_SVE);
+
+(TIF_SVE should not usually be set in the first place of course, since
+we are in a fork() or clone() syscall in src.  This may not be true if
+a task is created using kernel_thread() while running in the context of
+some user task that entered the kernel due to a trap or syscall --
+though probably nobody should be doing that.)
+
+[...]
+
+Cheers
+---DavE
