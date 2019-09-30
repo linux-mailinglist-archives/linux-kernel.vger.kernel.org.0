@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E224DC2369
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 868D6C236E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731829AbfI3OhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:37:06 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3194 "EHLO huawei.com"
+        id S1731750AbfI3OhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:37:01 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58450 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731803AbfI3OhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:37:04 -0400
+        id S1730780AbfI3OhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:37:00 -0400
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 324169B4856EE48EF227;
+        by Forcepoint Email with ESMTP id 5BFA948E40CC6B5FE5AE;
         Mon, 30 Sep 2019 22:36:58 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 30 Sep 2019 22:36:49 +0800
+ 14.3.439.0; Mon, 30 Sep 2019 22:36:50 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <lorenzo.pieralisi@arm.com>, <guohanjun@huawei.com>,
         <sudeep.holla@arm.com>, <robin.murphy@arm.com>,
@@ -26,9 +26,9 @@ CC:     <shameerali.kolothum.thodi@huawei.com>,
         <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
         <rjw@rjwysocki.net>, <lenb@kernel.org>, <nleeder@codeaurora.org>,
         <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>
-Subject: [RFC PATCH 5/6] perf/smmuv3: Match implementation options based on parent SMMU IIDR
-Date:   Mon, 30 Sep 2019 22:33:50 +0800
-Message-ID: <1569854031-237636-6-git-send-email-john.garry@huawei.com>
+Subject: [RFC PATCH 6/6] ACPI/IORT: Drop code to set the PMCG software-defined model
+Date:   Mon, 30 Sep 2019 22:33:51 +0800
+Message-ID: <1569854031-237636-7-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
 References: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
@@ -41,48 +41,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we match the implementation options based on the ACPI PLATFORM
-OEM ID.
-
-Since we can now match based on the parent SMMUv3 IIDR, switch to this
-method.
+Now that we can identify a PMCG implementation from the parent SMMUv3
+IIDR, drop all the code to match based on the ACPI OEM ID.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/perf/arm_smmuv3_pmu.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/acpi/arm64/iort.c | 35 +----------------------------------
+ include/linux/acpi_iort.h |  8 --------
+ 2 files changed, 1 insertion(+), 42 deletions(-)
 
-diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
-index 11f28ba5fae0..33d1379ae525 100644
---- a/drivers/perf/arm_smmuv3_pmu.c
-+++ b/drivers/perf/arm_smmuv3_pmu.c
-@@ -739,14 +739,10 @@ static void smmu_pmu_reset(struct smmu_pmu *smmu_pmu)
- 		       smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 0b687520c3e7..d04888cb8cff 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -1377,27 +1377,6 @@ static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
+ 				       ACPI_EDGE_SENSITIVE, &res[2]);
  }
  
--static void smmu_pmu_get_acpi_options(struct smmu_pmu *smmu_pmu)
-+static void smmu_pmu_get_implementation_options(struct smmu_pmu *smmu_pmu)
- {
+-static struct acpi_platform_list pmcg_plat_info[] __initdata = {
+-	/* HiSilicon Hip08 Platform */
+-	{"HISI  ", "HIP08   ", 0, ACPI_SIG_IORT, greater_than_or_equal,
+-	 "Erratum #162001800", IORT_SMMU_V3_PMCG_HISI_HIP08},
+-	{ }
+-};
+-
+-static int __init arm_smmu_v3_pmcg_add_platdata(struct platform_device *pdev)
+-{
 -	u32 model;
+-	int idx;
 -
--	model = *(u32 *)dev_get_platdata(smmu_pmu->dev);
+-	idx = acpi_match_platform_list(pmcg_plat_info);
+-	if (idx >= 0)
+-		model = pmcg_plat_info[idx].data;
+-	else
+-		model = IORT_SMMU_V3_PMCG_GENERIC;
 -
--	switch (model) {
--	case IORT_SMMU_V3_PMCG_HISI_HIP08:
-+	switch (smmu_pmu->parent_iidr) {
-+	case PARENT_SMMU_IIDR_HISI_HIP08:
- 		/* HiSilicon Erratum 162001800 */
- 		smmu_pmu->options |= SMMU_PMCG_EVCNTR_RDONLY;
- 		break;
-@@ -844,7 +840,7 @@ static int smmu_pmu_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+-	return platform_device_add_data(pdev, &model, sizeof(model));
+-}
+-
+ struct iort_dev_config {
+ 	const char *name;
+ 	int (*dev_init)(struct acpi_iort_node *node);
+@@ -1408,7 +1387,6 @@ struct iort_dev_config {
+ 				     struct acpi_iort_node *node);
+ 	int (*dev_set_proximity)(struct device *dev,
+ 				    struct acpi_iort_node *node);
+-	int (*dev_add_platdata)(struct platform_device *pdev);
+ };
  
--	smmu_pmu_get_acpi_options(smmu_pmu);
-+	smmu_pmu_get_implementation_options(smmu_pmu);
+ static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
+@@ -1430,7 +1408,6 @@ static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
+ 	.name = "arm-smmu-v3-pmcg",
+ 	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
+ 	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
+-	.dev_add_platdata = arm_smmu_v3_pmcg_add_platdata,
+ };
  
- 	/* Pick one CPU to be the preferred one to use */
- 	smmu_pmu->on_cpu = raw_smp_processor_id();
+ static __init const struct iort_dev_config *iort_get_dev_cfg(
+@@ -1494,17 +1471,7 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+ 	if (ret)
+ 		goto dev_put;
+ 
+-	/*
+-	 * Platform devices based on PMCG nodes uses platform_data to
+-	 * pass the hardware model info to the driver. For others, add
+-	 * a copy of IORT node pointer to platform_data to be used to
+-	 * retrieve IORT data information.
+-	 */
+-	if (ops->dev_add_platdata)
+-		ret = ops->dev_add_platdata(pdev);
+-	else
+-		ret = platform_device_add_data(pdev, &node, sizeof(node));
+-
++	ret = platform_device_add_data(pdev, &node, sizeof(node));
+ 	if (ret)
+ 		goto dev_put;
+ 
+diff --git a/include/linux/acpi_iort.h b/include/linux/acpi_iort.h
+index 8e7e2ec37f1b..7a8961e6a8bb 100644
+--- a/include/linux/acpi_iort.h
++++ b/include/linux/acpi_iort.h
+@@ -14,14 +14,6 @@
+ #define IORT_IRQ_MASK(irq)		(irq & 0xffffffffULL)
+ #define IORT_IRQ_TRIGGER_MASK(irq)	((irq >> 32) & 0xffffffffULL)
+ 
+-/*
+- * PMCG model identifiers for use in smmu pmu driver. Please note
+- * that this is purely for the use of software and has nothing to
+- * do with hardware or with IORT specification.
+- */
+-#define IORT_SMMU_V3_PMCG_GENERIC        0x00000000 /* Generic SMMUv3 PMCG */
+-#define IORT_SMMU_V3_PMCG_HISI_HIP08     0x00000001 /* HiSilicon HIP08 PMCG */
+-
+ int iort_register_domain_token(int trans_id, phys_addr_t base,
+ 			       struct fwnode_handle *fw_node);
+ void iort_deregister_domain_token(int trans_id);
 -- 
 2.17.1
 
