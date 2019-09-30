@@ -2,147 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45362C24B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DDF1C24C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 18:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732138AbfI3P4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 11:56:17 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:57314 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbfI3P4R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:56:17 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8UFuFtg090614;
-        Mon, 30 Sep 2019 10:56:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569858975;
-        bh=URZ9o4WF27v++mNirqh2f4vb/a8st2m2aDv9wcXGHAY=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=Rs92BCtN+Tp1ynSeCB48VMtBAi2teb09ZQCqVnmqNy1aaAft2ZrRo6OGR1aJQh00l
-         KuHs9+nAYorRd7DlcDVSxRIdPz+TzFA4pnpW/MSdy0j0ds4vJpb/uVRgiDHAle66c9
-         x+RR9tnlMK7OADvvopGI7WCgds1fY0o4qknr5ctI=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8UFuFOl093793
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Sep 2019 10:56:15 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 30
- Sep 2019 10:56:05 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 30 Sep 2019 10:56:05 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8UFuFRt074633;
-        Mon, 30 Sep 2019 10:56:15 -0500
-Date:   Mon, 30 Sep 2019 10:58:26 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Austin Kim <austinkernel.kim@gmail.com>
-CC:     Hans Verkuil <hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch 02/16] media: ti-vpe: vpe: Add missing null pointer checks
-Message-ID: <20190930155826.pimkap75k67mji3e@ti.com>
-References: <20190927183650.31345-1-bparrot@ti.com>
- <20190927183650.31345-3-bparrot@ti.com>
- <CAOoBcBUd7reG=-WOq+Vq9SynZMJ81CWFZPN35MkmaQvquZ9xyg@mail.gmail.com>
+        id S1732134AbfI3P7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 11:59:39 -0400
+Received: from vps.xff.cz ([195.181.215.36]:44246 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731790AbfI3P7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 11:59:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1569859177; bh=D2ejaUWp29uDGi/bAvIoPZtXvcgt2U13kUVwsfjN680=;
+        h=Date:From:To:Subject:References:X-My-GPG-KeyId:From;
+        b=bAy5AL9wyR8lQZ/ooSinafOoLY4OVl0wumhpX+V/u5L/fnoADyJ66LTqYnzt8F6uB
+         vuhZu6xxYFeSRRDMUbG9iJKqZfp1uyDTvPWh+PDrHysZujX5/uIsBhfrcle2A/IukU
+         9UgPwq3/qVl2BpEByIhmFriFzhbz8suwyIsUNrqw=
+Date:   Mon, 30 Sep 2019 17:59:37 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: sun8i-ui/vi: Fix layer zpos change/atomic
+ modesetting
+Message-ID: <20190930155937.rtvoxprayrkxodxo@core.my.home>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190914220337.646719-1-megous@megous.com>
+ <20190918141734.kerdbbaynwutrxf6@gilmour>
+ <20190918152309.j2dbu63jaru6jn2t@core.my.home>
+ <20190918201617.5gwzmshoxbcxbmrx@gilmour>
+ <20190919122058.fhpuafogdq7oir2d@core.my.home>
+ <20190919131244.35hmnp7jizegltp7@core.my.home>
+ <20190920151142.ijistzhtcaenehx6@gilmour>
+ <20190924124054.743s3tlw5qirghxo@core.my.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOoBcBUd7reG=-WOq+Vq9SynZMJ81CWFZPN35MkmaQvquZ9xyg@mail.gmail.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190924124054.743s3tlw5qirghxo@core.my.home>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Austin,
+Hi,
 
-Thanks for the review,
-
-Austin Kim <austinkernel.kim@gmail.com> wrote on Sun [2019-Sep-29 09:08:37 +0900]:
-> 2019년 9월 28일 (토) 오전 3:37, Benoit Parrot <bparrot@ti.com>님이 작성:
-> >
-> > A few NULL pointer checks were missing.
-> > Add check with appropriate return code.
-> >
-> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > ---
-> >  drivers/media/platform/ti-vpe/vpe.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-> > index 5ba72445584d..56f60dbea15c 100644
-> > --- a/drivers/media/platform/ti-vpe/vpe.c
-> > +++ b/drivers/media/platform/ti-vpe/vpe.c
-> > @@ -1537,6 +1537,8 @@ static int vpe_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
-> >                 return -EINVAL;
-> >
-> >         q_data = get_q_data(ctx, f->type);
-> > +       if (!q_data)
-> > +               return -EINVAL;
+On Tue, Sep 24, 2019 at 02:40:54PM +0200, megous hlavni wrote:
+> > >  On first run of the X server, only the black screen and the layer
+> > >  containing the cursor is visible. Switching to console and back
+> > >  corrects the situation.
+> > >
+> > >  I have dumped registers, and found out this:
+> > >
+> > >  (In both cases there are two enabled planes, plane 1 with zpos 0 and
+> > >  plane 3 with zpos 1).
+> > >
+> > >  1) First Xorg run:
+> > >
+> > >    0x01101000 : 00000201
+> > >    0x01101080 : 00000030
+> > >
+> > >    BLD_FILL_COLOR_CTL: (aka SUN8I_MIXER_BLEND_PIPE_CTL)
+> > >      P1_EN
+> > >
+> > >    BLD_CH_RTCTL: (aka SUN8I_MIXER_BLEND_ROUTE)
+> > >      P0_RTCTL channel0
+> > >      P1_RTCTL channel3
+> > >
+> > >  2) After switch to console and back to Xorg:
+> > >
+> > >  0x01101000 : 00000301
+> > >  0x01101080 : 00000031
+> > >
+> > >    BLD_FILL_COLOR_CTL:
+> > >      P1_EN and P0_EN
+> > >
+> > >    BLD_CH_RTCTL:
+> > >      P0_RTCTL channel1
+> > >      P1_RTCTL channel3
+> > >
+> > >  What happens is that sun8i_ui_layer_enable() function may disable
+> > >  blending pipes even if it is no longer assigned to its layer, because
+> > >  of incorrect state/zpos tracking in the driver.
+> > >
+> > >  In particular, layer 1 is configured to zpos 0 and thus uses pipe 0.
+> > >  When layer 3 is enabled by X server, sun8i_ui_layer_enable() will get
+> > >  called with old_zpos=0 zpos=1, which will lead to disabling of pipe 0.
+> > >
+> > >  In general this issue can happen to any layer during enable or zpos
+> > >  changes on multiple layers at once.
+> > >
+> > >  To correct this we now pass previous enabled/disabled state of the
+> > >  layer, and pass real previous zpos of the layer to
+> > >  sun8i_ui_layer_enable() and rework the sun8i_ui_layer_enable() function
+> > >  to react to the state changes correctly. In order to not complicate
+> > >  the atomic_disable callback with all of the above changes, we simply
+> > >  remove it and implement all the chanes as part of atomic_update, which
+> > >  also reduces the code duplication.
+> > 
+> > I'm not even sure why we need that old state. Can't we just reset
+> > completely the whole thing and do the configuration all over again?
 > 
-> With this commit, it seems that 'Null Pointer Dereference' could be
-> avoidable even though 'get_q_data(ctx, f->type);' returns NULL.
-> 
-> * Original Code:
->         q_data = get_q_data(ctx, f->type);
->         // q_data = NULL;
-> 
->         pix->width = q_data->width;
->         // pix->width =  (NULL)->width;
->         // In this case, data abort would be raised.
+> That would be nice from a dev standpoint if we can get a complete state for all
+> planes at once from DRM core, but how? DRM helper gives callbacks
+> for updating individual planes with prev and new state. These individual layer
+> change notifications don't map nicely to how pipes are represented in the mixer
+> registers.
 
-Yes I know this that is why the NULL check were added.
+If anyone wants to pursue this further, feel free to. I'm not planning to
+pursue this fix further, at the moment.
 
-You mentionned earlier that the NULL pointer dereference could be
-avoidable, but based on your comment I fail to see what you mean.
-
-Please also note that this patch was a result of static analysis software
-(klocwork) warnings.
-
-Benoit
-
-> 
-> >
-> >         pix->width = q_data->width;
-> >         pix->height = q_data->height;
-> > @@ -2001,6 +2003,8 @@ static int vpe_queue_setup(struct vb2_queue *vq,
-> >         struct vpe_q_data *q_data;
-> >
-> >         q_data = get_q_data(ctx, vq->type);
-> > +       if (!q_data)
-> > +               return -EINVAL;
-> >
-> >         *nplanes = q_data->nplanes;
-> >
-> > @@ -2025,6 +2029,8 @@ static int vpe_buf_prepare(struct vb2_buffer *vb)
-> >         vpe_dbg(ctx->dev, "type: %d\n", vb->vb2_queue->type);
-> >
-> >         q_data = get_q_data(ctx, vb->vb2_queue->type);
-> > +       if (!q_data)
-> > +               return -EINVAL;
-> >         num_planes = q_data->nplanes;
-> >
-> >         if (vb->vb2_queue->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-> > @@ -2481,7 +2487,12 @@ static int vpe_probe(struct platform_device *pdev)
-> >         mutex_init(&dev->dev_mutex);
-> >
-> >         dev->res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> > -                       "vpe_top");
-> > +                                               "vpe_top");
-> > +       if (!dev->res) {
-> > +               dev_err(&pdev->dev, "missing 'vpe_top' resources data\n");
-> > +               return -ENODEV;
-> > +       }
-> > +
-> >         /*
-> >          * HACK: we get resource info from device tree in the form of a list of
-> >          * VPE sub blocks, the driver currently uses only the base of vpe_top
-> > --
-> > 2.17.1
-> >
+regards,
+	o.
