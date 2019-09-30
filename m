@@ -2,151 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C17C284A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:09:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5200C287D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 23:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732607AbfI3VJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 17:09:17 -0400
-Received: from mail-eopbgr790048.outbound.protection.outlook.com ([40.107.79.48]:57055
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729740AbfI3VJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 17:09:17 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UKLJmUyJ0drRWYnDUsDdQrWt7JxmZ9iWsJ8t5AuxgKrzaoNCzxRjUAG3Pcwqtxrb8OvkMN1ToeaJlZqY07qfo53nSM2+sOe6cIG/iK65mqARGAGrcIsTrxxKCJpyEPzn9qQGp6PfCEf9L8RfBe47OnbBVVQWGnDaXJbHZfaXANI8mY1khpCt/SI5mX8vJgf3BXmeocrg4mqJ7iCCrbUt/TC4kX+ZimK2SCUY0hEJzoSWnxPt8bzo3VJdU/uLOOl4BKVAVCnJmaVe+3sTer3NKW1xVvuw7cxDRhFHI9O83txzCrHfYgZUZiAtCg7Y6nqwmqcTE95BOI85eTXKGAumuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+y9M0jU1NXQ3R4z7pId1oCPF70lJfJXoFsLro4kDx+Y=;
- b=A7apoVSCOD9rBgOXfSt130+9yiNXSF//wgFzs7v03qrToZYm61qFdUAp5WKL/NZdri8l3+PslLIcP9nNqpS9TyNMa8bY1aNKKSKMZHgjPMz48bzpe8VnI+83NpX0dc2H7ajFn0M7Vgrkd7p8umLO/D5v07ExGxV3nMtTPYwz7r9UMgPnbfr0OuGNNDFpAWkSX4+j097Obqn61T3dnVKTypEFA1LdFvYBsBq8oID2vDiWwon+nOfeYak7P8oriCpuQke1uOMWnWg4Sx6gHUsi90VRpfPpBEq4EKl0sUfaSlwDAAsb5PY8kt5DG61tD5xfYyNcIpP9YEEPV90bH4zslA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=verimatrix.com; dmarc=pass action=none
- header.from=verimatrix.com; dkim=pass header.d=verimatrix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verimatrix.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+y9M0jU1NXQ3R4z7pId1oCPF70lJfJXoFsLro4kDx+Y=;
- b=bf3WamBn1Ct+wy8VwOYzMY9J1mlAFYFGX+9Cyrw+IIWjk3bmGce0srhDZp+04gEzqjGvOQGm1/OA9vd+5zob+S/EB9uGjvpEU8UjO8QB2KBDuh+DcB9XhO5qjz1lTwGQ2PEOGn1OF7o2/VCEP/fsds5aCQdQV/kpnpoBqllwryU=
-Received: from CH2PR20MB2968.namprd20.prod.outlook.com (10.255.156.33) by
- CH2PR20MB3143.namprd20.prod.outlook.com (52.132.230.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.22; Mon, 30 Sep 2019 21:09:10 +0000
-Received: from CH2PR20MB2968.namprd20.prod.outlook.com
- ([fe80::e8b0:cb5f:268e:e3ae]) by CH2PR20MB2968.namprd20.prod.outlook.com
- ([fe80::e8b0:cb5f:268e:e3ae%5]) with mapi id 15.20.2305.017; Mon, 30 Sep 2019
- 21:09:10 +0000
-From:   Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pascal van Leeuwen <pascalvanl@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/3] crypto: inside-secure - Reduce stack usage
-Thread-Topic: [PATCH 2/3] crypto: inside-secure - Reduce stack usage
-Thread-Index: AQHVd4jLpZQEIOemw0ukUdKdGUz6fqdEp4sQgAAJNCA=
-Date:   Mon, 30 Sep 2019 21:09:10 +0000
-Message-ID: <CH2PR20MB29682E2C514733F290CFA3CECA820@CH2PR20MB2968.namprd20.prod.outlook.com>
-References: <20190930121520.1388317-1-arnd@arndb.de>
- <20190930121520.1388317-2-arnd@arndb.de>
- <CH2PR20MB2968B7855D241C747BEB68B9CA820@CH2PR20MB2968.namprd20.prod.outlook.com>
- <CAK8P3a0PeocENP6c=ENVrq2X8x-vinM6qhPRDDi_WEf6y73AOQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a0PeocENP6c=ENVrq2X8x-vinM6qhPRDDi_WEf6y73AOQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pvanleeuwen@verimatrix.com; 
-x-originating-ip: [188.204.2.113]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8193124b-c623-48d5-1060-08d745ea703f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CH2PR20MB3143;
-x-ms-traffictypediagnostic: CH2PR20MB3143:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <CH2PR20MB3143B94EA50FEC5C2D1B8B90CA820@CH2PR20MB3143.namprd20.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01762B0D64
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39850400004)(366004)(376002)(136003)(346002)(52314003)(51444003)(13464003)(199004)(189003)(7736002)(5660300002)(256004)(55016002)(9686003)(33656002)(14444005)(7696005)(6116002)(76176011)(25786009)(99286004)(6436002)(2906002)(66476007)(66946007)(8936002)(14454004)(71190400001)(3846002)(66066001)(8676002)(81156014)(76116006)(81166006)(316002)(6916009)(71200400001)(15974865002)(478600001)(54906003)(305945005)(74316002)(4326008)(229853002)(86362001)(476003)(486006)(446003)(6246003)(52536014)(26005)(66446008)(64756008)(66556008)(6506007)(11346002)(186003)(102836004)(53546011)(18886075002);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR20MB3143;H:CH2PR20MB2968.namprd20.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: verimatrix.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9z+InvQ8lCN3oZyshQ2PhAUn8F+eIPHlYxGuo8LYCbLy8agS70129SwCEmAPJrsHsm9zn9o2aTQDjbieqNEzUUmjX+EEA3pFdwTT1WbRJfGL7LK9Sz/cwMiH+LloyVilv/mOIMec6MWO9FIui77DY9khGmoRcO5OvGJ1bBJ1R/a7sD6zbp1NnfdGbIcp678uNdDu7E3nCJgdYES43Ojr1MVZmiX5OhZrdS+fHxaOrw2wso/L8AppiGSp2d8emhku7KI43t3zAPWrvu3N6ukI7jMk5+GEnwutKidpDNxB12+H5mOPSKE72uTeebuSK5mKTIYLIQeDomocMRkKg1L3uiu3+8M8p2pd/l76i4IbIyEARN9x52onGlb/2ET4paYITcqHQAzL1nq93iQOoHmlTyqQl0LLiMwWFO7O4lalmWE=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1732331AbfI3VQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 17:16:34 -0400
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:45720 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732140AbfI3VQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 17:16:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id E7E6E3F549;
+        Mon, 30 Sep 2019 19:38:39 +0200 (CEST)
+Authentication-Results: pio-pvt-msa3.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=GpvpfTgb;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id hnuYuafil-f7; Mon, 30 Sep 2019 19:38:34 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id B96B63F4B6;
+        Mon, 30 Sep 2019 19:38:31 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 789ED36016A;
+        Mon, 30 Sep 2019 19:38:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1569865111; bh=Mbv8I+Cf9qo+4r4AR1GScXQE/ojfy18469i5KoNwfsg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GpvpfTgbFXewp0ygt6YF4cirkWGlnK74clrVKSVTm7q9qX01w4J2Ic0CkUN2QlXEh
+         +TpoCVtuKvm2+5ivSMPVfSI3bB7XtpBXGdQ3y5+le76vg9tOoWSTvPeiNJaMXZZUcT
+         GQoa1J9ueiuw5NeMW0Doyyjpevc85q+KbNJq298s=
+Subject: Re: Ack to merge through DRM? WAS Re: [PATCH v2 1/5] mm: Add
+ write-protect and clean utilities for address space ranges
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20190926115548.44000-1-thomas_os@shipmail.org>
+ <20190926115548.44000-2-thomas_os@shipmail.org>
+ <85e31bcf-d3c8-2fcf-e659-2c9f82ebedc7@shipmail.org>
+ <CAHk-=wifjLeeMEtMPytiMAKiWkqPorjf1P4PbB3dj17Y3Jcqag@mail.gmail.com>
+ <a48a93d2-03e9-40d3-3b4c-a301632d3121@shipmail.org>
+ <CAHk-=whwN+CvaorsmczZRwFhSV+1x98xg-zajVD1qKmN=9JhBQ@mail.gmail.com>
+ <20190927121754.kn46qh2crvsnw5z2@box>
+ <CAHk-=whfriLqivyRtyjDPzeNr_Y3UYkC9g123Yi_yB5c8Gcmiw@mail.gmail.com>
+ <20190930130357.ye3zlkbka2jtd56a@box>
+ <CAHk-=wigUfYXiizFH6tBCH0Na=L+c=k7CgXGoZjwKg4K1rNJ2Q@mail.gmail.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <2788e6e6-6916-5f95-51f5-336b8edaee2f@shipmail.org>
+Date:   Mon, 30 Sep 2019 19:38:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: verimatrix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8193124b-c623-48d5-1060-08d745ea703f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 21:09:10.3489
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: dcb260f9-022d-4495-8602-eae51035a0d0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Bex8wGR454iLhzcCCFVFOc3BXhyAE/q7EEGDniyd94LNHmnC84v4SpkYblrKsGxtnEkRvhaJMzqSMhdjj2Lw43u4Z2can/oGX2M0O1CvZQE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR20MB3143
+In-Reply-To: <CAHk-=wigUfYXiizFH6tBCH0Na=L+c=k7CgXGoZjwKg4K1rNJ2Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBcm5kIEJlcmdtYW5uIDxhcm5k
-QGFybmRiLmRlPg0KPiBTZW50OiBNb25kYXksIFNlcHRlbWJlciAzMCwgMjAxOSAxMDoxMiBQTQ0K
-PiBUbzogUGFzY2FsIFZhbiBMZWV1d2VuIDxwdmFubGVldXdlbkB2ZXJpbWF0cml4LmNvbT4NCj4g
-Q2M6IEFudG9pbmUgVGVuYXJ0IDxhbnRvaW5lLnRlbmFydEBib290bGluLmNvbT47IEhlcmJlcnQg
-WHUgPGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdT47DQo+IERhdmlkIFMuIE1pbGxlciA8ZGF2
-ZW1AZGF2ZW1sb2Z0Lm5ldD47IFBhc2NhbCB2YW4gTGVldXdlbiA8cGFzY2FsdmFubEBnbWFpbC5j
-b20+OyBBcmQNCj4gQmllc2hldXZlbCA8YXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZz47IEVyaWMg
-QmlnZ2VycyA8ZWJpZ2dlcnNAZ29vZ2xlLmNvbT47IGxpbnV4LQ0KPiBjcnlwdG9Admdlci5rZXJu
-ZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFU
-Q0ggMi8zXSBjcnlwdG86IGluc2lkZS1zZWN1cmUgLSBSZWR1Y2Ugc3RhY2sgdXNhZ2UNCj4gDQo+
-IE9uIE1vbiwgU2VwIDMwLCAyMDE5IGF0IDk6MDQgUE0gUGFzY2FsIFZhbiBMZWV1d2VuDQo+IDxw
-dmFubGVldXdlbkB2ZXJpbWF0cml4LmNvbT4gd3JvdGU6DQo+IA0KPiA+ID4gQWx0ZXJuYXRpdmVs
-eSwgaXQgc2hvdWxkIGJlIHBvc3NpYmxlIHRvIHNocmluayB0aGVzZSBhbGxvY2F0aW9ucw0KPiA+
-ID4gYXMgdGhlIGV4dHJhIGJ1ZmZlcnMgYXBwZWFyIHRvIGJlIGxhcmdlbHkgdW5uZWNlc3Nhcnks
-IGJ1dCBkb2luZw0KPiA+ID4gdGhpcyB3b3VsZCBiZSBhIG11Y2ggbW9yZSBpbnZhc2l2ZSBjaGFu
-Z2UuDQo+ID4gPg0KPiA+IEFjdHVhbGx5LCBmb3IgSE1BQy1TSEE1MTIgeW91IERPIG5lZWQgYWxs
-IHRoYXQgYnVmZmVyIHNwYWNlLg0KPiA+IFlvdSBjb3VsZCBzaHJpbmsgaXQgdG8gMiAqIGN0eC0+
-c3RhdGVfc3ogYnV0IHRoZW4geW91ciBzaW1wbGUgaW5kZXhpbmcNCj4gPiBpcyBubyBsb25nZXIg
-Z29pbmcgdG8gZmx5LiBOb3Qgc3VyZSBpZiB0aGF0IHdvdWxkIGJlIHdvcnRoIHRoZSBlZmZvcnQu
-DQo+IA0KPiBTdGFjayBhbGxvY2F0aW9ucyBjYW4gbm8gbG9uZ2VyIGJlIGR5bmFtaWNhbGx5IHNp
-emVkIGluIHRoZSBrZXJuZWwsDQo+IHNvIHRoYXQgd291bGQgbm90IHdvcmsuDQo+IA0KSSB3YXMg
-YWN0dWFsbHkgcmVmZXJyaW5nIHRvIHlvdXIga3phbGxvYywgbm90IHRvIHRoZSBvcmlnaW5hbCBz
-dGFjaw0KYmFzZWQgaW1wbGVtZW50YXRpb24gLi4uDQoNCj4gV2hhdCBJIG5vdGljZWQgdGhvdWdo
-IGlzIHRoYXQgdGhlIGxhcmdlc3QgcGFydCBvZiBzYWZleGNlbF9haGFzaF9leHBvcnRfc3RhdGUN
-Cj4gaXMgdXNlZCBpbiB0aGUgJ2NhY2hlJyBtZW1iZXIsIGFuZCB0aGlzIGlzIGFwcGFyZW50bHkg
-b25seSByZWZlcmVuY2VkIGluc2lkZSBvZg0KPiBzYWZleGNlbF9obWFjX2luaXRfaXYsIHdoaWNo
-IHlvdSBjYWxsIHR3aWNlLiBJZiB0aGF0IGNhY2hlIGNhbiBiZSBhbGxvY2F0ZWQNCj4gb25seSBv
-bmNlLCB5b3Ugc2F2ZSBTSEE1MTJfQkxPQ0tfU0laRSBieXRlcyBpbiBvbmUgb2YgdGhlIHR3byBw
-YXRocy4NCj4gDQpXZWxsIC4uLiBobW1tIC4uLiAibXkiLi4uIFRoaXMgaXMgbm90IG9yaWdpbmFs
-bHkgIm15IiBjb2RlLiBBbmQgdW50aWwgeW91DQpicm91Z2h0IHRoaXMgdXAsIEkgZGlkIG5vdCBm
-dWxseSByZWFsaXNlIGl0IHdhcyB1c2luZyB0aGlzIGV4cG9ydF9zdGF0ZQ0Kc3RydWN0IHRvIHN0
-b3JlIHRob3NlIGRpZ2VzdHMuIFNlZW1zIHRvIGhhdmUgc29tZXRoaW5nIHRvIGRvIHdpdGggZGly
-ZWN0bHkNCnRha2luZyB0aGUgY3J5cHRvX2FoYXNoX2V4cG9ydCBzdGF0ZSBvdXRwdXQsIHdoaWNo
-IGlzIG11Y2ggbW9yZSB0aGFuIHRoYXQsDQppbiBjYXNlIHlvdSBuZWVkIHRvIGNvbnRpbnVlIHRo
-ZSBoYXNoICh3aGljaCB5b3UgZG9uJ3QgaGVyZSkuDQoNCkkgZ3Vlc3MgeW91IG5lZWQgdG8gImNh
-dGNoIiB0aGF0IG91dHB1dCBzb21ld2hlcmUsIHNvIHByb2JhYmx5IHlvdSBjb3VsZA0Kc2F2ZSBh
-IGJpdCBvZiBtZW1vcnkgYnV0IEkgZG91YnQgaXQgd291bGQgYmUgYSBzaWduaWZpY2FudCBpbXBy
-b3ZlbWVudC4NCg0KPiA+IEkgZG9uJ3QgbGlrZSB0aGUgcGFydCB3aGVyZSB5b3UgZHluYW1pY2Fs
-bHkgYWxsb2NhdGUgdGhlIGNyeXRvX2Flc19jdHgNCj4gPiB0aG91Z2gsIEkgdGhpbmsgdGhhdCB3
-YXMgbm90IG5lY2Vzc2FyeSBjb25zaWRlcmluZyBpdHMgYSBsb3Qgc21hbGxlci4NCj4gDQo+IEkg
-Y291bnQgNDg0IGJ5dGVzIGZvciBpdCwgd2hpY2ggaXMgcmVhbGx5IGxhcmdlLg0KPiANCk1heWJl
-IEkgc2hvdWxkJ3ZlIGNvdW50ZWQgbXlzZWxmIC4uLiB0b3RhbGx5IHVuZXhwZWN0ZWRseSBodWdl
-LiBXaHk/Pw0KQW55d2F5LCBnbGFkIEkgZ290IHJpZCBvZiBpdCBhbHJlYWR5IHRoZW4uDQoNCj4g
-PiBBbmQgaXQgY29uZmxpY3RzIHdpdGggYW5vdGhlciBjaGFuZ2UgSSBoYXZlIHdhaXRpbmcgdGhh
-dCBnZXRzIHJpZCBvZg0KPiA+IGFlc19leHBhbmRrZXkgYW5kIHRoYXQgc3RydWN0IGFsbHRvZ2V0
-aGVyIChzaW5jZSBpdCB3YXMgcmVhbGx5IGp1c3QNCj4gPiBhYnVzZWQgdG8gZG8gYSBrZXkgc2l6
-ZSBjaGVjaywgd2hpY2ggd2FzIHZlcnkgd2FzdGVmdWwgc2luY2UgdGhlDQo+ID4gZnVuY3Rpb24g
-YWN0dWFsbHkgZ2VuZXJhdGVzIGFsbCByb3VuZGtleXMgd2UgZG9uJ3QgbmVlZCBhdCBhbGwgLi4u
-KQ0KPiANCj4gUmlnaHQsIHRoaXMgaXMgd2hhdCBJIG5vdGljZWQgdGhlcmUuIFdpdGggNDgwIG9m
-IHRoZSA0ODQgYnl0ZXMgZ29uZSwNCj4geW91IGFyZSB3ZWxsIGJlbG93IHRoZSB3YXJuaW5nIGxp
-bWl0IGV2ZW4gd2l0aG91dCB0aGUgb3RoZXIgY2hhbmdlLg0KPiANCkFuZCBieSAib3RoZXIgY2hh
-bmdlIiB5b3UgbWVhbiB0aGUgc2FmZXhjZWxfYWhhc2hfZXhwb3J0X3N0YXRlPw0KT2ssIGdvb2Qg
-dG8ga25vd24sIGFsdGhvdWdoIEkgZG8gbGlrZSB0byBpbXByb3ZlIHRoYXQgb25lIGFzIHdlbGws
-DQpidXQgcHJlZmVyYWJseSBieSBub3QgZXhwb3J0aW5nIHRoZSBjYWNoZSBzbyBJIGRvbid0IG5l
-ZWQgdGhlIGZ1bGwNCnN0cnVjdC4NCg0KUmVnYXJkcywNClBhc2NhbCB2YW4gTGVldXdlbg0KU2ls
-aWNvbiBJUCBBcmNoaXRlY3QsIE11bHRpLVByb3RvY29sIEVuZ2luZXMgQCBWZXJpbWF0cml4DQp3
-d3cuaW5zaWRlc2VjdXJlLmNvbQ0KDQo=
+On 9/30/19 7:12 PM, Linus Torvalds wrote:
+> On Mon, Sep 30, 2019 at 6:04 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>> Have you seen page_vma_mapped_walk()? I made it specifically for rmap code
+>> to cover cases when a THP is mapped with PTEs. To me it's not a big
+>> stretch to make it cover multiple pages too.
+> I agree that is closer, but it does make for calling that big complex
+> function for every iteration step.
+>
+> Of course, you are right that the callback approach is problematic
+> too, now that we have retpoline issues, making those very expensive.
+> But at least that hopefully gets fixed some day and gets to be a rare
+> problem.
+>
+> Matter ot taste, I guess.
+>
+>                Linus
+
+Matthew Wilcox suggested something similar before the pagewalk.c rewrite:
+
+https://lore.kernel.org/lkml/20190806190937.GD30179@bombadil.infradead.org/
+
+Still, In this case I'd opt for using the pagewalk code: In the dirty 
+helpers we don't ever use a struct page, but only deal with PTE entries, 
+same as the pagewalk code does, but not page_vma_mapped_walk(). The 
+underlying memory may well be IO memory.
+
+/Thomas
+
+
