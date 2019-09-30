@@ -2,99 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D839C244B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC930C244F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:31:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732020AbfI3P2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 11:28:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40264 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731868AbfI3P2w (ORCPT
+        id S1732026AbfI3P3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 11:29:48 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41249 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730809AbfI3P3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:28:52 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l3so11840872wru.7
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 08:28:50 -0700 (PDT)
+        Mon, 30 Sep 2019 11:29:48 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r2so7360514lfn.8
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 08:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nKNYJ+YfKpvtJJY2vQQUQXqOjR+zsvfM3h1aXu/ISL4=;
-        b=H0TYWQ03EdNmCsa24PTRi/DaCpOIJ2BI1utBui9MEd6CPIO/n5FgXT5QaM7G8Byflr
-         IjsUq8JljCgaDgVaAzD8uiJnP7WloIUMKN3Yd5GolIFvfw42I7kWeQ7msUUyIHgOoxmT
-         qeUrgV6e8QoColLYaPZ/uWYidkmbwcECRLvj5XlCZ0prajHp0UTdR+4boOIhRHPLDq9o
-         eI824KIalBfpNDFfEvSm74rwpvE1rV4I603AEVMf/nzPzkTM2snjOj9N/Ljknq6V3HMf
-         EzAsVE3O+DX/VeOsQ2BL9njgaV5cZo/FxQolaudcPZx++VjdnnlQNQcuc+vizfk+Urhx
-         Nb2w==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GcQj6Rd9F3KLevHVxis1OmxH3WVUvsmgXjMTIJqkIFg=;
+        b=YRKoZku4KnTPIutFbWgtdiIEXuEq2kFBYAHLjWVBAEIc7HkbxZtYTWPaO8ybwJfh/G
+         uFAGnzV940ibk70MdpNMBMwiYmlhz6ySOXR2VA7v7BaWU1ZYGh9ZMzdHPwCBbBWX5O1f
+         gWW4L64pcsKVCOfVF2OPnqp5LyGYrfKIUos4U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nKNYJ+YfKpvtJJY2vQQUQXqOjR+zsvfM3h1aXu/ISL4=;
-        b=h7AyX6QL/2RT6EuN8uoiiFry/eFnDNTVM55tZs+bPli2LS9/8MwyMEoTlG64KWgSNg
-         HNRy6kP20qcjpsUlThQByNWs0HMR1VR/ORf0ghJgxiMEN6KTLRpqnqv2sAGr1Ck5n0NX
-         rbznxmQpg/AS4AA5dgBSje+XFzpeZgshGRIL4rh/XB9Ltf8+cr2wBVbvqCeBZMCYi2vt
-         HdmS6OUV6fBmwtinUsPl1gQR154AuS5CeLrcqu7PS6eiVY7ItgpoifQS0IA6/uI2TEiZ
-         CrxeXj2yiiAVIiIH7Uyn8pozrpvRMsOkCq/eJgvqBNa4VnXr+LLNsp80rgukLQXFEUha
-         XRHA==
-X-Gm-Message-State: APjAAAWr6sxiM3Bp5OSD4aq6dtL2jLbrXZPX0hbw7RBqXRKJ5tTNlF0D
-        NeIEB/H9+j9FO/EF9TMwOc+Dxw==
-X-Google-Smtp-Source: APXvYqzP1+989rANQG2Lck5S3rwS82kAY9NARdWl/o2qRDBdRfMkejnRZIf/tpixmscYbkuO/ufQZA==
-X-Received: by 2002:a5d:6a06:: with SMTP id m6mr13698975wru.190.1569857329714;
-        Mon, 30 Sep 2019 08:28:49 -0700 (PDT)
-Received: from radium.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o19sm12420949wro.50.2019.09.30.08.28.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 08:28:48 -0700 (PDT)
-From:   Fabien Parent <fparent@baylibre.com>
-To:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     matthias.bgg@gmail.com, wsa@the-dreams.de, qii.wang@mediatek.com,
-        drinkcat@chromium.org, hsinyi@chromium.org, tglx@linutronix.de,
-        Fabien Parent <fparent@baylibre.com>
-Subject: [PATCH v2] i2c: i2c-mt65xx: fix NULL ptr dereference
-Date:   Mon, 30 Sep 2019 17:28:46 +0200
-Message-Id: <20190930152846.5062-1-fparent@baylibre.com>
-X-Mailer: git-send-email 2.23.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GcQj6Rd9F3KLevHVxis1OmxH3WVUvsmgXjMTIJqkIFg=;
+        b=MHjtVjst2mDmYPJJUOyOiXpeAtcupy3a7il2AmtwFNR90pisPeSIpX11biHgJTZEL1
+         svG0lt5B1N63+GBaSoPgbcfDDhkYOFPazGVzLsbcZ05g33ZHcaJhR5HVm2sEyfa3JFf7
+         YVWtmKDWehbDpr+e0/+57z1eUIYeYUna4Jb2bOj7Bo0POSuJpM0G7TjACFenJPl3ZmGs
+         ypA+Glxnld1Oz32sGpyUTMC+8QE7470F6CgrmR1SobCOC540wvst3WG7V73KASO74hWz
+         8AfAlSmmLxfw7B5t0Aw9qF/lTZV23mdq0RzL4jVwpgu0TxukYDI7zJgnMPdbVsridbGG
+         1ZIA==
+X-Gm-Message-State: APjAAAW7NBTmsmzUKjPkJYk98yIqO3in0SpbjbMQth9EO/f1jwzz+RtL
+        tLegqgfifrPOAuOMYWOkH8//7X2F7AY=
+X-Google-Smtp-Source: APXvYqw5aD6YrBd/rPp87/QQdqYRnbHJDxvemF91iiOctmLfuLwBviaUsscs66jnyw6K4GNjfVeYJw==
+X-Received: by 2002:a19:2c1:: with SMTP id 184mr11862060lfc.100.1569857385725;
+        Mon, 30 Sep 2019 08:29:45 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id o2sm3316895lfl.20.2019.09.30.08.29.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2019 08:29:44 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id j19so9991628lja.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 08:29:44 -0700 (PDT)
+X-Received: by 2002:a2e:9f12:: with SMTP id u18mr12939698ljk.23.1569857383671;
+ Mon, 30 Sep 2019 08:29:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190924215238.184750-1-evgreen@chromium.org> <20190928001626.GT237523@dtor-ws>
+In-Reply-To: <20190928001626.GT237523@dtor-ws>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 30 Sep 2019 08:29:06 -0700
+X-Gmail-Original-Message-ID: <CAE=gft46VXLL5z2o5QEnTBMOrzDnK_uuFiK4NMQV21PBpLxmfQ@mail.gmail.com>
+Message-ID: <CAE=gft46VXLL5z2o5QEnTBMOrzDnK_uuFiK4NMQV21PBpLxmfQ@mail.gmail.com>
+Subject: Re: [PATCH v2] Input: atmel_mxt_ts - Disable IRQ across suspend
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Nick Dyer <nick@shmanahar.org>,
+        Jongpil Jung <jongpil19.jung@samsung.com>,
+        Furquan Shaikh <furquan@chromium.org>,
+        Rajat Jain <rajatja@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit abf4923e97c3 ("i2c: mediatek: disable zero-length transfers
-for mt8183"), there is a NULL pointer dereference for all the SoCs
-that don't have any quirk. mtk_i2c_functionality is not checking that
-the quirks pointer is not NULL before starting to use it.
+On Fri, Sep 27, 2019 at 5:16 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> Hi Evan,
+>
+> On Tue, Sep 24, 2019 at 02:52:38PM -0700, Evan Green wrote:
+> > Across suspend and resume, we are seeing error messages like the following:
+> >
+> > atmel_mxt_ts i2c-PRP0001:00: __mxt_read_reg: i2c transfer failed (-121)
+> > atmel_mxt_ts i2c-PRP0001:00: Failed to read T44 and T5 (-121)
+> >
+> > This occurs because the driver leaves its IRQ enabled. Upon resume, there
+> > is an IRQ pending, but the interrupt is serviced before both the driver and
+> > the underlying I2C bus have been resumed. This causes EREMOTEIO errors.
+> >
+> > Disable the IRQ in suspend, and re-enable it on resume. If there are cases
+> > where the driver enters suspend with interrupts disabled, that's a bug we
+> > should fix separately.
+> >
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > ---
+> >
+> > Changes in v2:
+> >  - Enable and disable unconditionally (Dmitry)
+> >
+> >  drivers/input/touchscreen/atmel_mxt_ts.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+> > index 24c4b691b1c9..a58092488679 100644
+> > --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+> > +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+> > @@ -3155,6 +3155,7 @@ static int __maybe_unused mxt_suspend(struct device *dev)
+> >               mxt_stop(data);
+> >
+> >       mutex_unlock(&input_dev->mutex);
+> > +     disable_irq(data->irq);
+> >
+> >       return 0;
+> >  }
+> > @@ -3174,6 +3175,7 @@ static int __maybe_unused mxt_resume(struct device *dev)
+> >               mxt_start(data);
+> >
+> >       mutex_unlock(&input_dev->mutex);
+> > +     enable_irq(data->irq);
+>
+> At least for older devices that do soft reset on resume we need
+> interrupts to already work when we call mxt_start().
+>
+> In general, order of resume steps should mirror suspend.
 
-This commit add a call to i2c_check_quirks which will check whether
-the quirks pointer is set, and if so will check if the IP has the
-NO_ZERO_LEN quirk.
-
-Fixes: abf4923e97c3 ("i2c: mediatek: disable zero-length transfers for mt8183")
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
----
-
-v2:
-	* use i2c_check_quirks to check the quirks
-
----
- drivers/i2c/busses/i2c-mt65xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-index 29eae1bf4f86..2152ec5f535c 100644
---- a/drivers/i2c/busses/i2c-mt65xx.c
-+++ b/drivers/i2c/busses/i2c-mt65xx.c
-@@ -875,7 +875,7 @@ static irqreturn_t mtk_i2c_irq(int irqno, void *dev_id)
- 
- static u32 mtk_i2c_functionality(struct i2c_adapter *adap)
- {
--	if (adap->quirks->flags & I2C_AQ_NO_ZERO_LEN)
-+	if (i2c_check_quirks(adap, I2C_AQ_NO_ZERO_LEN))
- 		return I2C_FUNC_I2C |
- 			(I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
- 	else
--- 
-2.23.0
-
+Ok, I can move the enable_irq up towards the top of resume. I was
+worried that a pending IRQ might not get handled correctly if
+mxt_start() hadn't been called yet. But if we need IRQs for
+mxt_start() to run anyway, then I guess it should be handled.
+-Evan
