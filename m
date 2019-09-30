@@ -2,301 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B9B8C2AE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 01:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16F31C2AC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 01:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732605AbfI3X2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 19:28:08 -0400
-Received: from mga05.intel.com ([192.55.52.43]:63706 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732511AbfI3X2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 19:28:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 16:28:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,568,1559545200"; 
-   d="scan'208";a="215880236"
-Received: from sqa-gate.sh.intel.com (HELO clx-ap-likexu.tsp.org) ([10.239.48.212])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Sep 2019 16:28:03 -0700
-From:   Like Xu <like.xu@linux.intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        vkuznets@redhat.com, peterz@infradead.org,
-        Jim Mattson <jmattson@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        ak@linux.intel.com, wei.w.wang@intel.com, kan.liang@intel.com,
-        like.xu@intel.com, ehankland@google.com, arbel.moshe@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] KVM: x86/vPMU: Add lazy mechanism to release perf_event per vPMC
-Date:   Mon, 30 Sep 2019 15:22:57 +0800
-Message-Id: <20190930072257.43352-4-like.xu@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190930072257.43352-1-like.xu@linux.intel.com>
-References: <20190930072257.43352-1-like.xu@linux.intel.com>
+        id S1732183AbfI3XVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 19:21:02 -0400
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:59934 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727621AbfI3XVC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 19:21:02 -0400
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8UNKt39019084;
+        Mon, 30 Sep 2019 16:20:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=vSpZGY4Rt4DhMZyDpVOBVqK5fEdztH3D7nzpfU9Gn+o=;
+ b=x6sJG/LsE5EUAyKNz3MHZDTnrr5DntcN9gia2lkNfjcf0gA/czXt3xhgzJeWZwrU+tGo
+ qzWXH9WLihdnWF2zCvr4EHzHXszZH3pZqYqdWFW4DD+hbfkU+92Nzwmczdn9HDJtu/n5
+ UOEKGP83dFulUBRrZ48noWZ/XAeQvdU103QFatkE4XLLKZfmI9FZcFJWf1Hgp6UW+r6n
+ lBGSBZNjpZSj0ojtiV3VGC/EdcTZ2PnqBgM3cZqPxaEItyj9uLWIM0Ft7z4bvUVkRmKy
+ oOYwY+bzsO35IPLQJlrQptgd5TSAEpjZqdA40Y8XWP8a9UsqHCfg5K3kAiiZO120foVo dQ== 
+Received: from sc-exch02.marvell.com ([199.233.58.182])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2va71mg5fb-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 30 Sep 2019 16:20:55 -0700
+Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH02.marvell.com
+ (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 30 Sep
+ 2019 16:20:53 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (104.47.40.50) by
+ SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Mon, 30 Sep 2019 16:20:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=P46oc5zVyHTOWHxIXBcPsOV9HZcmXIoL0oRBRRgJUfQPqArtvlTEuAitbGRvSbjerH5MVADWR5pHfbNHwQvV/4isdzk6IKJHoA3q/RXv+931tMy7bOCYkkA/4s8QNFNvQEPGsmgJEvy2lCyFcWEtJ4csBt5oI4DRXdWo2tLgN+rhMy73WoaD7AT3CFY9hwxDjTZXsfYACywzediX0R0wtDcsuC5rdlTA14XoNRuKkeDxT1GiY2UN06InLI+SEz962jPvEX1SBbGxeybP4OGU4CflRB7jROgPS1SVnawbu6+fkBSU/kloCCfQPBZzI8+4BWCBRWAUgaVykJkZoICF3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vSpZGY4Rt4DhMZyDpVOBVqK5fEdztH3D7nzpfU9Gn+o=;
+ b=DdGgIlwoHCEYOIPSMAiA786supip7LlOJmsnAabOzSleB5XxsiMARFu5suSWdkx9cL0tC4e2OE1vDGD1vchONaRpmHpvX4PmktDxE6RNQEc7xQlhAE+SOFVASXuUdcxf/J6DXSb7R3eEQrfBV8228TFbHl7oZC3wrhBSxV9OuqJ2PSAlPacJ2DsQPnpMwgexDXWWGQaaynkvr75EPUuJ3mHjgFfN6XpcWxcb3wwTLDhypkYbqntHs4N23OZCbnpcVC30KtKc0st7ILSFTTUDSGhUOodvY3C1MyWoMUYDtjJApusOMT+kNo+YnJ0DpS8ZfYDlwzOKW5zCVrWEVRKdJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vSpZGY4Rt4DhMZyDpVOBVqK5fEdztH3D7nzpfU9Gn+o=;
+ b=ee4MB0Z8+F9TtT8jLP1Cu2N1jihc7go6GlhGb3LXQHddTSA5hQDyPr2upaT9VfKE89yvEg346Zzd9+pWYHxATfYl/u5IWur2inamXmptIOi3CJ2y+wWPcbMqxNvMTcOAdJOSmByLg8DYtE9RnsS1HQJsYM0ZJvsyVS8cNQoETgw=
+Received: from CY4PR1801MB1895.namprd18.prod.outlook.com (10.171.254.153) by
+ CY4PR1801MB2054.namprd18.prod.outlook.com (10.165.88.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.16; Mon, 30 Sep 2019 23:20:51 +0000
+Received: from CY4PR1801MB1895.namprd18.prod.outlook.com
+ ([fe80::95d8:1a9a:a3b4:616b]) by CY4PR1801MB1895.namprd18.prod.outlook.com
+ ([fe80::95d8:1a9a:a3b4:616b%7]) with mapi id 15.20.2305.017; Mon, 30 Sep 2019
+ 23:20:51 +0000
+From:   Jayachandran Chandrasekharan Nair <jnair@marvell.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     George Cherian <gcherian@marvell.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shannon.zhao@linux.alibaba.com" <shannon.zhao@linux.alibaba.com>,
+        George Cherian <gcherian@marvell.com>,
+        Vadim Lomovtsev <vlomovtsev@marvell.com>,
+        Manish Jaggi <mjaggi@caviumnetworks.com>,
+        Robert Richter <rrichter@marvell.com>,
+        "Sunil Kovvuri Goutham" <sgoutham@marvell.com>
+Subject: Re: [PATCH] PCI: Enhance the ACS quirk for Cavium devices
+Thread-Topic: [PATCH] PCI: Enhance the ACS quirk for Cavium devices
+Thread-Index: AQHVd+WyQA/rX9/rek2UxMmqvqYW5w==
+Date:   Mon, 30 Sep 2019 23:20:50 +0000
+Message-ID: <20190930232041.GA22852@dc5-eodlnx05.marvell.com>
+References: <20190919024319.GA8792@dc5-eodlnx05.marvell.com>
+ <20190930203409.GA195851@google.com>
+In-Reply-To: <20190930203409.GA195851@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR01CA0048.prod.exchangelabs.com (2603:10b6:a03:94::25)
+ To CY4PR1801MB1895.namprd18.prod.outlook.com (2603:10b6:910:79::25)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [199.233.59.128]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 57e0ed37-f26d-4efe-7c7e-08d745fcd526
+x-ms-traffictypediagnostic: CY4PR1801MB2054:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY4PR1801MB20542C006F2CF9BB7C59B785A6820@CY4PR1801MB2054.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 01762B0D64
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(376002)(396003)(366004)(39860400002)(189003)(199004)(14454004)(8936002)(81156014)(6916009)(7736002)(71200400001)(66946007)(71190400001)(64756008)(66476007)(66446008)(316002)(54906003)(25786009)(81166006)(6116002)(8676002)(66556008)(478600001)(305945005)(3846002)(6486002)(229853002)(256004)(6436002)(14444005)(2906002)(99286004)(107886003)(5660300002)(52116002)(6512007)(66066001)(102836004)(26005)(33656002)(86362001)(4326008)(6506007)(486006)(386003)(76176011)(1076003)(476003)(11346002)(186003)(6246003)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR1801MB2054;H:CY4PR1801MB1895.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: hATioA8Mf3IInbaFmpLQFDdZwtkfENwIjJG85e9O/LOxuUyhpKiYjAa8lUScXZ+5Cva3UqO0C3q0XDN5NiEMUsBHL5p83Ivo7M0Z2ew7Jww7UYvJBPGtGrODGoDyTOADyVoWWKlbBHL4ZbLaEHkV3Oq0X5SV1CHHC4LvVlrizpQf5RFelqS803NkN0H2/m6gereyIajM53Zc7BJvkzBvro8NntXKqTU3J/0bBjpm84vmf+5dPMDQtQ1Tge6Vnop246JdjCsvr0wUeeLWYQJfmbjKNO/iEqaIzONOrT6fM4JJRtZg1QPw2uKzFUc1aVTcofKiZevgTsFmpJYCT1UuFdQH3TG9+yhuCNXHCMaOrSuSWOjKQzfHCDZOeQIwwo7qbJ0zz8iUacpG4s2zoVgA3jGJ+wMeTMcRDyXRQgLFT6s=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <38B3535B4CAB6C48A52C23912428D2D4@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57e0ed37-f26d-4efe-7c7e-08d745fcd526
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 23:20:50.9756
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Qq45HuoHAAlc9TWRhmkAcONhMbpM5yT/xBXyIXdlSAsxRG0EaLko14+nj9I6Gu66OXv5sPr75U3frV0Ws/LkaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1801MB2054
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-09-30_13:2019-09-30,2019-09-30 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, a host perf_event is created for a vPMC functionality emulation.
-It’s unpredictable to determine if a disabled perf_event will be reused.
-If they are disabled and are not reused for a considerable period of time,
-those obsolete perf_events would increase host context switch overhead that
-could have been avoided.
+On Mon, Sep 30, 2019 at 03:34:10PM -0500, Bjorn Helgaas wrote:
+> [+cc Vadim, Manish]
 
-If the guest doesn't access (set_msr/get_msr/rdpmc) any of the vPMC's MSRs
-during an entire vcpu sched time slice, and its independent enable bit of
-the vPMC isn't set, we can predict that the guest has finished the use of
-this vPMC, and then it's time to release the non-reused perf_event on the
-first call of vcpu_enter_guest() since the vcpu gets next scheduled in.
+Manish and Vadim are no longer with Cavium, adding Robert for
+ThunderX1 and Sunil for Cavium networking processors.
 
-This lazy mechanism delays the event release time to the beginning of the
-next scheduled time slice if vPMC's MSRs aren't accessed during this time
-slice. If guest comes back to use this vPMC in next time slice, a new perf
-event would be re-created via perf_event_create_kernel_counter() as usual.
+> On Thu, Sep 19, 2019 at 02:43:34AM +0000, George Cherian wrote:
+> > Enhance the ACS quirk for Cavium Processors. Add the root port
+> > vendor ID's in an array and use the same in match function.
+> > For newer devices add the vendor ID's in the array so that the
+> > match function is simpler.
+> >=20
+> > Signed-off-by: George Cherian <george.cherian@marvell.com>
+> > ---
+> >  drivers/pci/quirks.c | 28 +++++++++++++++++++---------
+> >  1 file changed, 19 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index 44c4ae1abd00..64deeaddd51c 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -4241,17 +4241,27 @@ static int pci_quirk_amd_sb_acs(struct pci_dev =
+*dev, u16 acs_flags)
+> >  #endif
+> >  }
+> > =20
+> > +static const u16 pci_quirk_cavium_acs_ids[] =3D {
+> > +	/* CN88xx family of devices */
+> > +	0xa180, 0xa170,
+> > +	/* CN99xx family of devices */
+> > +	0xaf84,
+> > +	/* CN11xxx family of devices */
+> > +	0xb884,
+> > +};
+> > +
+> >  static bool pci_quirk_cavium_acs_match(struct pci_dev *dev)
+> >  {
+> > -	/*
+> > -	 * Effectively selects all downstream ports for whole ThunderX 1
+> > -	 * family by 0xf800 mask (which represents 8 SoCs), while the lower
+> > -	 * bits of device ID are used to indicate which subdevice is used
+> > -	 * within the SoC.
+> > -	 */
+> > -	return (pci_is_pcie(dev) &&
+> > -		(pci_pcie_type(dev) =3D=3D PCI_EXP_TYPE_ROOT_PORT) &&
+> > -		((dev->device & 0xf800) =3D=3D 0xa000));
+> > +	int i;
+> > +
+> > +	if (!pci_is_pcie(dev) || pci_pcie_type(dev) !=3D PCI_EXP_TYPE_ROOT_PO=
+RT)
+> > +		return false;
+> > +
+> > +	for (i =3D 0; i < ARRAY_SIZE(pci_quirk_cavium_acs_ids); i++)
+> > +		if (pci_quirk_cavium_acs_ids[i] =3D=3D dev->device)
+>=20
+> I'm a little skeptical of this because the previous test:
+>=20
+>   (dev->device & 0xf800) =3D=3D 0xa000
+>=20
+> could match *many* devices, but of those, the new code only matches two
+> (0xa180, 0xa170).
+>=20
+> And the comment says the new code matches the CN99xx and CN11xxx
+> *families*, but it only matches a single device ID for each, which
+> makes me think there may be more devices to come.
+>=20
+> Maybe this is all what you want, but please confirm.
 
-Suggested-by: Wei W Wang <wei.w.wang@intel.com>
-Signed-off-by: Like Xu <like.xu@linux.intel.com>
----
- arch/x86/include/asm/kvm_host.h |  8 ++++++
- arch/x86/kvm/pmu.c              | 43 +++++++++++++++++++++++++++++++++
- arch/x86/kvm/pmu.h              |  3 +++
- arch/x86/kvm/pmu_amd.c          | 13 ++++++++++
- arch/x86/kvm/vmx/pmu_intel.c    | 25 +++++++++++++++++++
- arch/x86/kvm/x86.c              |  6 +++++
- 6 files changed, 98 insertions(+)
+There are only a very few device IDs for root ports, so just listing
+them out like this maybe better. The earlier match covered a lot of
+ThunderX1 devices, but did not really match the ThunderX2 root ports.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 15f2ebad94f9..6723c04c8dc6 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -479,6 +479,14 @@ struct kvm_pmu {
- 	struct kvm_pmc fixed_counters[INTEL_PMC_MAX_FIXED];
- 	struct irq_work irq_work;
- 	u64 reprogram_pmi;
-+
-+	/* for PMC being set, do not released its perf_event (if any) */
-+	u64 lazy_release_ctrl;
-+
-+	union {
-+		u8 event_count :7; /* the total number of created perf_events */
-+		bool enable_cleanup :1;
-+	} state;
- };
- 
- struct kvm_pmu_ops;
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 74bc5c42b8b5..1b3cec38b1a1 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -137,6 +137,7 @@ static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
- 	}
- 
- 	pmc->perf_event = event;
-+	pmc_to_pmu(pmc)->state.event_count++;
- 	clear_bit(pmc->idx, (unsigned long*)&pmc_to_pmu(pmc)->reprogram_pmi);
- }
- 
-@@ -368,6 +369,7 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
- 	if (!pmc)
- 		return 1;
- 
-+	__set_bit(pmc->idx, (unsigned long *)&pmu->lazy_release_ctrl);
- 	*data = pmc_read_counter(pmc) & mask;
- 	return 0;
- }
-@@ -385,11 +387,13 @@ bool kvm_pmu_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
- 
- int kvm_pmu_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *data)
- {
-+	kvm_x86_ops->pmu_ops->update_lazy_release_ctrl(vcpu, msr);
- 	return kvm_x86_ops->pmu_ops->get_msr(vcpu, msr, data);
- }
- 
- int kvm_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- {
-+	kvm_x86_ops->pmu_ops->update_lazy_release_ctrl(vcpu, msr_info->index);
- 	return kvm_x86_ops->pmu_ops->set_msr(vcpu, msr_info);
- }
- 
-@@ -417,9 +421,48 @@ void kvm_pmu_init(struct kvm_vcpu *vcpu)
- 	memset(pmu, 0, sizeof(*pmu));
- 	kvm_x86_ops->pmu_ops->init(vcpu);
- 	init_irq_work(&pmu->irq_work, kvm_pmi_trigger_fn);
-+	pmu->lazy_release_ctrl = 0;
-+	pmu->state.event_count = 0;
-+	pmu->state.enable_cleanup = false;
- 	kvm_pmu_refresh(vcpu);
- }
- 
-+static inline bool pmc_speculative_in_use(struct kvm_pmc *pmc)
-+{
-+	struct kvm_pmu *pmu = pmc_to_pmu(pmc);
-+
-+	if (pmc_is_fixed(pmc))
-+		return fixed_ctrl_field(pmu->fixed_ctr_ctrl,
-+			pmc->idx - INTEL_PMC_IDX_FIXED) & 0x3;
-+
-+	return pmc->eventsel & ARCH_PERFMON_EVENTSEL_ENABLE;
-+}
-+
-+void kvm_pmu_cleanup(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-+	struct kvm_pmc *pmc = NULL;
-+	u64 bitmask = ~pmu->lazy_release_ctrl;
-+	int i;
-+
-+	if (!unlikely(pmu->state.enable_cleanup))
-+		return;
-+
-+	/* do cleanup before the first time of running vcpu after sched_in */
-+	pmu->state.enable_cleanup = false;
-+
-+	/* cleanup unmarked vPMC in the last sched time slice */
-+	for_each_set_bit(i, (unsigned long *)&bitmask, X86_PMC_IDX_MAX) {
-+		pmc = kvm_x86_ops->pmu_ops->pmc_idx_to_pmc(pmu, i);
-+
-+		if (pmc && pmc->perf_event && !pmc_speculative_in_use(pmc))
-+			pmc_stop_counter(pmc);
-+	}
-+
-+	/* reset vPMC lazy-release states for this sched time slice */
-+	pmu->lazy_release_ctrl = 0;
-+}
-+
- void kvm_pmu_destroy(struct kvm_vcpu *vcpu)
- {
- 	kvm_pmu_reset(vcpu);
-diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-index 3a95952702d2..c681738ba59c 100644
---- a/arch/x86/kvm/pmu.h
-+++ b/arch/x86/kvm/pmu.h
-@@ -34,6 +34,7 @@ struct kvm_pmu_ops {
- 	void (*refresh)(struct kvm_vcpu *vcpu);
- 	void (*init)(struct kvm_vcpu *vcpu);
- 	void (*reset)(struct kvm_vcpu *vcpu);
-+	void (*update_lazy_release_ctrl)(struct kvm_vcpu *vcpu, u32 msr);
- };
- 
- static inline u64 pmc_bitmask(struct kvm_pmc *pmc)
-@@ -61,6 +62,7 @@ static inline void pmc_release_perf_event(struct kvm_pmc *pmc)
- 		perf_event_release_kernel(pmc->perf_event);
- 		pmc->perf_event = NULL;
- 		pmc->programed_config = 0;
-+		pmc_to_pmu(pmc)->state.event_count--;
- 	}
- }
- 
-@@ -125,6 +127,7 @@ int kvm_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info);
- void kvm_pmu_refresh(struct kvm_vcpu *vcpu);
- void kvm_pmu_reset(struct kvm_vcpu *vcpu);
- void kvm_pmu_init(struct kvm_vcpu *vcpu);
-+void kvm_pmu_cleanup(struct kvm_vcpu *vcpu);
- void kvm_pmu_destroy(struct kvm_vcpu *vcpu);
- int kvm_vm_ioctl_set_pmu_event_filter(struct kvm *kvm, void __user *argp);
- 
-diff --git a/arch/x86/kvm/pmu_amd.c b/arch/x86/kvm/pmu_amd.c
-index 3d656b2d439f..c74087dad5e8 100644
---- a/arch/x86/kvm/pmu_amd.c
-+++ b/arch/x86/kvm/pmu_amd.c
-@@ -208,6 +208,18 @@ static bool amd_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
- 	return ret;
- }
- 
-+static void amd_update_lazy_release_ctrl(struct kvm_vcpu *vcpu, u32 msr)
-+{
-+	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-+	struct kvm_pmc *pmc = NULL;
-+
-+	pmc = get_gp_pmc_amd(pmu, msr, PMU_TYPE_COUNTER);
-+	pmc = pmc ? pmc : get_gp_pmc_amd(pmu, msr, PMU_TYPE_EVNTSEL);
-+
-+	if (pmc)
-+		__set_bit(pmc->idx, (unsigned long *)&pmu->lazy_release_ctrl);
-+}
-+
- static int amd_pmu_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *data)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-@@ -315,4 +327,5 @@ struct kvm_pmu_ops amd_pmu_ops = {
- 	.refresh = amd_pmu_refresh,
- 	.init = amd_pmu_init,
- 	.reset = amd_pmu_reset,
-+	.update_lazy_release_ctrl = amd_update_lazy_release_ctrl,
- };
-diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-index 73bbefa1d54e..4aa7d2eea5c8 100644
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -140,6 +140,30 @@ static struct kvm_pmc *intel_msr_idx_to_pmc(struct kvm_vcpu *vcpu,
- 	return &counters[idx];
- }
- 
-+static void intel_update_lazy_release_ctrl(struct kvm_vcpu *vcpu, u32 msr)
-+{
-+	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-+	struct kvm_pmc *pmc = NULL;
-+	int i;
-+
-+	if (msr == MSR_CORE_PERF_FIXED_CTR_CTRL) {
-+		for (i = 0; i < pmu->nr_arch_fixed_counters; i++) {
-+			if (!fixed_ctrl_field(pmu->fixed_ctr_ctrl, i))
-+				continue;
-+			__set_bit(INTEL_PMC_IDX_FIXED + i,
-+				(unsigned long *)&pmu->lazy_release_ctrl);
-+		}
-+		return;
-+	}
-+
-+	pmc = get_fixed_pmc(pmu, msr);
-+	pmc = pmc ? pmc : get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0);
-+	pmc = pmc ? pmc : get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0);
-+
-+	if (pmc)
-+		__set_bit(pmc->idx, (unsigned long *)&pmu->lazy_release_ctrl);
-+}
-+
- static bool intel_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-@@ -373,4 +397,5 @@ struct kvm_pmu_ops intel_pmu_ops = {
- 	.refresh = intel_pmu_refresh,
- 	.init = intel_pmu_init,
- 	.reset = intel_pmu_reset,
-+	.update_lazy_release_ctrl = intel_update_lazy_release_ctrl,
- };
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0ed07d8d2caa..945b8be53a90 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8076,6 +8076,8 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		goto cancel_injection;
- 	}
- 
-+	kvm_pmu_cleanup(vcpu);
-+
- 	preempt_disable();
- 
- 	kvm_x86_ops->prepare_guest_switch(vcpu);
-@@ -9415,7 +9417,11 @@ void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
- 
- void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
- {
-+	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-+
- 	vcpu->arch.l1tf_flush_l1d = true;
-+	if (pmu->version && unlikely(pmu->state.event_count))
-+		pmu->state.enable_cleanup = true;
- 	kvm_x86_ops->sched_in(vcpu, cpu);
- }
- 
--- 
-2.21.0
+This looks ok for ThunderX2. Sunil & Robert can comment on other
+processor families I hope.
+=20
+> The commit log should be explicit that this adds CN99xx and CN11xxx,
+> which previously were not matched.
+>=20
+> This looks like stable material?
+>=20
+> > +			return true;
+> > +
+> > +	return false;
+> >  }
+> > =20
+> >  static int pci_quirk_cavium_acs(struct pci_dev *dev, u16 acs_flags)
 
+JC
