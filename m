@@ -2,133 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B24C2737
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25906C26C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731305AbfI3Ut0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:49:26 -0400
-Received: from mga05.intel.com ([192.55.52.43]:52671 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbfI3UtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:49:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 11:27:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,568,1559545200"; 
-   d="scan'208";a="194279360"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by orsmga003.jf.intel.com with ESMTP; 30 Sep 2019 11:27:45 -0700
-Received: from fmsmsx608.amr.corp.intel.com (10.18.126.88) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Sep 2019 11:27:45 -0700
-Received: from fmsmsx604.amr.corp.intel.com (10.18.126.84) by
- fmsmsx608.amr.corp.intel.com (10.18.126.88) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 30 Sep 2019 11:27:45 -0700
-Received: from FMSEDG001.ED.cps.intel.com (10.1.192.133) by
- fmsmsx604.amr.corp.intel.com (10.18.126.84) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Mon, 30 Sep 2019 11:27:45 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (104.47.50.55) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server (TLS) id
- 14.3.439.0; Mon, 30 Sep 2019 11:27:45 -0700
+        id S1731485AbfI3Uj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:39:59 -0400
+Received: from mail-eopbgr1300115.outbound.protection.outlook.com ([40.107.130.115]:7872
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730045AbfI3Uj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:39:57 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UVo9rP+LU5hpJJRCuJyLUZKXIWJqutUJUlVTiADpHiB0Y2SY8YZ0+6KgEr9hBT2ZqN3KVtA4F9OqcLEX+YcY7oKlAPm6yI8XvSSTaqsi8KhPSGigLs4zRpHjxTy2WJPcNAoAF5+D2gxSJwLaEg+mYv3X+8K64fycvu0wUsnAjvfLfsWTV7/2bTAPpow+MiXpx8juBvMnfvYXeEg46AbsuZbD3MtGHqODtiu6AhTHXYos07CqhwGIaaaoxLn6TZkFJD+l5n8WrHGZGiIPZ3zVkcqwhduXMDljvunW7Bc5+Rauec/ak9v3QywqUH0NtJP8zn+8DKjHKhIcxiVNwvWGew==
+ b=gcZPzM3ki5PVGdhqZbtr57bP0IXzRJYa5QqHFBXpBWAgFRuhcvH93SU7EDoncwfsANl+OIeEZkJzxy8V4Iz6vxwYq2He3iFoqRhBg/wrBTQKXPkN1WxcJ+ybq/0lJSsmVpoOnS+dx7N6kJ+rdbEB9NW4WrbCKdkWVOhoOjWL7teehzbGGw7llCVERY5f1F0WZ9T1uC8iD1wEaN9BV+NfPDflOYY1EUr2himxp+06wIkRUhBhKtkB1Q157L85b9K4pQVqqfB/l0Qwlu51FSw/t2nnqMhH7njqXQNzDmtyuxy/p5crlbjgzlsjGmq+nYrXVCvWqy8ZrjCJbzkhNlK3Rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gAnu/1ybbLlrux6KbT8hNxkB+iTGFLDF0ZCkR8rnses=;
- b=hBhnu4K60PYS7GxfJtBq9yYQiLe61dBmUvCIqB5kZMyHL/uLRCkz8+gYJj+EYpGPI/+6FY0jpgqGmVK12tuWw+4ms629TLMx3opDuozytkXUBoPu9UhofB+bBEB1IdBM3p8/gRCpwk9j8ERPzemeuhh6tAk2xfLZk1nebhwxxa+aE/yb3ELHmR3CRZPrAzQblaGoba7q5isOC0droQP4h9f8uuAAip6pRjo0RfE1yOn1x3K00f6huJ+q9IsGZ3cikCPoZIjgx1L1aZydWpTnsCXwwknnOFpUdRV3CjZMrjwoYVL96BiBArpZqcUoiymz/Z5alaCM3MDi+3d7qt6D0Q==
+ bh=quRyfDV9X/IMjdHfBbApx/83GbSWpcsGl4LJGy3SB+k=;
+ b=QkZ4hUt9zqVROwuwfv5/sJxNCgaahjGUOl25tVD+XCtsW3TR/El9e0+TK14/F6cUDuMP6RTn0rX7MXqQYcS7+NPfS8WJJeLM/b1Y5UVAoeHlouT6mIp1UJoACIpJyxotWxu8fteUP4UEIpulrQ42Qy4Z7Xggb2MB/4TL7k3/SykFjm67/XtpYgfVS6+OkD23VPyzIsV+1vNSzOqv/Y2kYb1nrL7lUsUd1SFQL9DDxntK3jIBbltX3FbkHQWohxQM8QXBrJQuemSNJIimRsDRZ7twfuEf6tro7ph/AejnuvL8oAWumgbC5T8Ce052h3aPZI2wMXiz9nfXHEuphizHvQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
- s=selector2-intel-onmicrosoft-com;
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gAnu/1ybbLlrux6KbT8hNxkB+iTGFLDF0ZCkR8rnses=;
- b=lQQcHMDCjjh2eR+1ok0CXSbYQKKdTfOVMZxLL0Lob+GElN1Xonou3trKRm+uUqRRSc81BlL/TKk8HNIgnF4OTVHD17m1ZAxSNaU1ojaAxN8HueEQdWXuiESx+zSW6plZxmzCMf6HtiLQP2Uu80ivlO2Flhkdn1mq+Jzos8/TVQY=
-Received: from BL0PR11MB3170.namprd11.prod.outlook.com (10.167.234.74) by
- BL0PR11MB3364.namprd11.prod.outlook.com (10.167.235.21) with Microsoft SMTP
+ bh=quRyfDV9X/IMjdHfBbApx/83GbSWpcsGl4LJGy3SB+k=;
+ b=BeFxJMuAExN9VgHOS+3Fs9nG84pHEdBEVal4f5juMUecJ/yNdHpHGFpMkSG6fkwnCokUbZaPJR4Ap8qFWtoyLiUBOdIAtFDTR5NF8D3ni9ZwKa2Kl2aablIzygf06mMi+kUg5u9EWiS9mkqRFu3ZnM75d5oDfnR/X4kxowsz3v4=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0186.APCP153.PROD.OUTLOOK.COM (10.170.187.144) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.17; Mon, 30 Sep 2019 18:27:43 +0000
-Received: from BL0PR11MB3170.namprd11.prod.outlook.com
- ([fe80::392e:e204:36d0:5351]) by BL0PR11MB3170.namprd11.prod.outlook.com
- ([fe80::392e:e204:36d0:5351%5]) with mapi id 15.20.2305.017; Mon, 30 Sep 2019
- 18:27:43 +0000
-From:   "Kammela, Gayatri" <gayatri.kammela@intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "Somayaji, Vishwanath" <vishwanath.somayaji@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Prestopine, Charles D" <charles.d.prestopine@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Liang, Kan" <kan.liang@intel.com>,
-        "Box, David E" <david.e.box@intel.com>,
-        "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: [PATCH v1 0/5] Add Tiger Lake/Elkhart Lake support to pmc_core
- driver
-Thread-Topic: [PATCH v1 0/5] Add Tiger Lake/Elkhart Lake support to pmc_core
- driver
-Thread-Index: AQHVdJpC9P0UAFBW3ky74xzBGKR04ac/CLOAgAABYgCABYUi4A==
-Date:   Mon, 30 Sep 2019 18:27:43 +0000
-Message-ID: <BL0PR11MB3170ECF632E1A8C90D26C08CF2820@BL0PR11MB3170.namprd11.prod.outlook.com>
-References: <20190926192603.18647-1-gayatri.kammela@intel.com>
- <CAHp75Vcrp2ffDCE=tm2dwSEhwfPCPWGhb-Nw0v-7ga2y=_dL8w@mail.gmail.com>
- <CAHp75VfwpYLVn2qWBMK11eR3D5VwnGf7VeYE=cQfq_y78ct75A@mail.gmail.com>
-In-Reply-To: <CAHp75VfwpYLVn2qWBMK11eR3D5VwnGf7VeYE=cQfq_y78ct75A@mail.gmail.com>
+ 15.20.2327.4; Mon, 30 Sep 2019 18:33:28 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::fc44:a784:73e6:c1c2]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::fc44:a784:73e6:c1c2%7]) with mapi id 15.20.2327.009; Mon, 30 Sep 2019
+ 18:33:28 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Stefano Garzarella <sgarzare@redhat.com>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "stefanha@redhat.com" <stefanha@redhat.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>,
+        "ytht.net@gmail.com" <ytht.net@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "jhansen@vmware.com" <jhansen@vmware.com>
+Subject: RE: [PATCH net v2] vsock: Fix a lockdep warning in __vsock_release()
+Thread-Topic: [PATCH net v2] vsock: Fix a lockdep warning in __vsock_release()
+Thread-Index: AQHVdD68klVN4bkfhUuYdmaenlvLyqc+f72ggAXEEoCAAE4IYA==
+Date:   Mon, 30 Sep 2019 18:33:27 +0000
+Message-ID: <PU1P153MB016958C4032818AC88E7C5A6BF820@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <1569460241-57800-1-git-send-email-decui@microsoft.com>
+ <20190926074749.sltehhkcgfduu7n2@steredhat.homenet.telecomitalia.it>
+ <PU1P153MB01698C46C9348B9762D5E122BF810@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190930135125.prztj336splp74wq@steredhat>
+In-Reply-To: <20190930135125.prztj336splp74wq@steredhat>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWQzODhmOTktNTc2Zi00OTY0LTg5ZmEtMWM3MzNlZGRmNmE2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRlQxeTBkcUI0WXR1WStNUG4wTzdpalBaOE83UUlnTlJ6akVMcDZTSGI2YWJjQUU4T3phN0k5bnZQbUg5cTF2aSJ9
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-dlp-product: dlpe-windows
-x-ctpclassification: CTP_NT
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-30T18:33:26.1074996Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=8e36ee39-50ee-4834-9c28-d930e7186b4f;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=gayatri.kammela@intel.com; 
-x-originating-ip: [134.134.136.221]
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:2:d492:e91a:5e0:dd92]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dbfa0737-7e0b-4063-456d-08d745d3e281
-x-ms-traffictypediagnostic: BL0PR11MB3364:
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-office365-filtering-correlation-id: 11ac7b3d-d607-45bd-7f6f-08d745d4afe8
+x-ms-office365-filtering-ht: Tenant
+X-MS-TrafficTypeDiagnostic: PU1P153MB0186:|PU1P153MB0186:|PU1P153MB0186:|PU1P153MB0186:|PU1P153MB0186:|PU1P153MB0186:|PU1P153MB0186:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BL0PR11MB3364AEB56D59B7622F1DF308F2820@BL0PR11MB3364.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-microsoft-antispam-prvs: <PU1P153MB01866330AD8349213B4B58E5BF820@PU1P153MB0186.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:519;
 x-forefront-prvs: 01762B0D64
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(376002)(136003)(346002)(189003)(199004)(316002)(3846002)(81156014)(81166006)(9686003)(6916009)(256004)(55016002)(476003)(86362001)(486006)(186003)(6436002)(8676002)(8936002)(66946007)(478600001)(76116006)(14454004)(66556008)(64756008)(66446008)(446003)(66476007)(229853002)(11346002)(33656002)(74316002)(6506007)(5660300002)(305945005)(4744005)(102836004)(52536014)(7696005)(2906002)(71200400001)(71190400001)(7736002)(26005)(76176011)(4326008)(54906003)(66066001)(25786009)(6246003)(99286004)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR11MB3364;H:BL0PR11MB3170.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(376002)(366004)(396003)(39860400002)(136003)(189003)(199004)(316002)(64756008)(66556008)(86362001)(66446008)(66476007)(55016002)(74316002)(76116006)(22452003)(33656002)(8936002)(81156014)(54906003)(52536014)(7696005)(9686003)(8676002)(186003)(99286004)(229853002)(6916009)(305945005)(66946007)(81166006)(6436002)(7416002)(7736002)(4326008)(46003)(558084003)(8990500004)(102836004)(5660300002)(6116002)(25786009)(14444005)(76176011)(71200400001)(2906002)(10090500001)(256004)(14454004)(10290500003)(6506007)(478600001)(446003)(6246003)(476003)(486006)(71190400001)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0186;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: kErcGuqid1GVcFR2sio02nN6M+PSyYbIj1ASgS0j8nyUCb40Pq7BBVR7RW/KipK9YQ0qYlcwxtCREfyTXEypFZrMKyUawt+diub0Vjsmq+Id8Dnpvjie+e27pQslVX39XPLQH6M+l16ePT+Omo/nIcVbjKnIVBIzTHm4dYljCT85iZHMAboSkhpe7wk7Q3gH0agyy+eIrbrcgQiA3qaVFxLO48mFNOEq5yV3OTS945VRzCAwCx/0ibJ/ky58QyWcIEuAHb5RRMjeAhTGT7dsPKxg1XG1fPAeZZDaOosDV5ZuWAIvcnqtj97EytlpHn+7JMjEvX1CCq+9MS+N0T5O3s/Vzgy7xJlsDIsRx2B0yOGUIp7qRriuqs4T13kv5Qspm2njdg/6yLbn7YM274P7qn768p+md61G4kLa2vjVnGY=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: N0v7evv77IWCSK2JUJwKioXVixDnE8EX4feKm652lLqQMXrYpr45hE3BeJQb350JkV1FDrig/xkgj+GPfU1+2pAbpiqjkPiAd/BiuS5Gil6KamDMA4bfNStp4B3JCoup6U4Pq8kiFVfVTuvPetDUewCrR5Y4Z1JcWQSuTaDEoGZzLLYjiTaiScMao6R/VNxpwIpU7DHCj2gN9zZipyYemy+EzcJmwNtrVX+z+3Ow9a1zIYmrw9mmTKk5NJuJGbwDCRrLkstcYWHojQKbdddaj6Nd/2/R76Qk+vX6QjAnfjpaanxIr6SzpaQXiIp7bdIurTvR2YGFZaHRM4OadsLUWBKfkFg8z9xgirPYQv/sot+VIa+ewt4ehDnQZVLmKZFSoOTQL2Q+heHVyaDtq1RPsyieMcMBwLwD+jHyLGRPcKU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbfa0737-7e0b-4063-456d-08d745d3e281
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 18:27:43.4494
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11ac7b3d-d607-45bd-7f6f-08d745d4afe8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2019 18:33:27.8320
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yI4wrr1K9nMrbGsy1t//IEpJ6DjE5ze82FXhT6s3vsukljDJwXF+mQskqRKCzfCTT91cwJqGOs62hzoth4EzAD2cKi1xbzxHSCAPOtdZ0ow=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR11MB3364
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-userprincipalname: xycrHjBUtVc5/W4HD1YboZVHrc/7iRr8/uF/GX3OziMJJU+liWhQWoJ7d5SZzE8+SaSDdY3hEJZ/p1g+iT2nQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0186
+X-OriginatorOrg: microsoft.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiB0b3Agb2YgdGhhdCB0aGUgZnVsbHkgaW5jb25zaXN0ZW50IFNvQyBuYW1pbmcgdGhyb3Vn
-aCB0aGUgZXhpc3RpbmcgY29kZSAvDQo+IG5ldyBhZGRpdGlvbnMuDQpJIHdpbGwgZml4IGl0IGlu
-IHRoZSBleGlzdGluZyBjb2RlL25ldyBhZGRpdGlvbnMgaW4gdjIuDQo+IA0KPiBJJ20gcHJldHR5
-IHN1cmUgeW91IG5lZWQgdG8gc3BlbGwgcGxhdGZvcm1zIGFzIFRpZ2VyIExha2UsIEVsa2hhcnQg
-TGFrZSBhbmQgc28NCj4gb24gZXZlcnl3aGVyZS4NClNvcnJ5LCBJIHdhcyBjYXJlZnVsIGFib3V0
-IG5hbWluZyBjb252ZW50aW9uIGluIHRoZSBjb21taXQgbWVzc2FnZSBidXQgbm90IGluIHRoZSBj
-b21tZW50cyDimLkuIEkgd2lsbCBmaXggaXQgaW4gdjIuDQo+IA0KPiBGaXggdGhpcywgYnV0IGRv
-IG5vdCBzZW5kIG5ldyB2ZXJzaW9uIHRpbGwgSSBsb29rIGF0IHRoZSBjb2RlIGhlcmUuDQpTdXJl
-IEFuZHkhIEkgd2lsbCB3YWl0LiBUaGFua3MhDQo+IA0K
+> From: Stefano Garzarella <sgarzare@redhat.com>
+> Sent: Monday, September 30, 2019 6:51 AM
+> ...=20
+> Feel free to add:
+>=20
+> Tested-by: Stefano Garzarella <sgarzare@redhat.com>
+
+Thanks, Stefano!
+
+I'll post a v3 with your suggestion "lock_sock_nested(sk, level);".
+It does look better than v2 to me. :-)
+
+Thanks,
+-- Dexuan
