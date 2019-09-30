@@ -2,111 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12F24C23EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B83AC23FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 17:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731865AbfI3PIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 11:08:55 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42323 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731471AbfI3PIz (ORCPT
+        id S1731919AbfI3PK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 11:10:29 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51700 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731867AbfI3PK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:08:55 -0400
-Received: by mail-pl1-f193.google.com with SMTP id e5so4022505pls.9
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 08:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ikApTYOgNDbcm2fbjspoUTMPGqOJShasqx7zWBwbSvs=;
-        b=BSYyvmHCff1NNAFiHUaepws8k+BE5WREgyKG5kQaKaROuZh8Uzwu5mhO7eLHrEQk3p
-         ai979woMyqyER2vN/IktGmXdsuuRaIPSc/G8m7dL5RPNPL8Nz536HodDslUEPJSxcsL5
-         J5crE9Ol9I8wtkiKqcCYedqTsAhWjwh+SNtlc2NC5gEOL33wiEjV3rhDO48MSGgESU78
-         /uPZGrkDP7g0D6+ZPR/9AmqxkMZBK2YLncKBcu0+EzMtNMVETa9MDWibg6odGK14i5o9
-         2c+oyEfGqlB58dk9VLW+8zWElXC2n+D8Xt0MOutYrwsbbTHFr4DmSrksUhi4NmjsU3Nc
-         oIuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ikApTYOgNDbcm2fbjspoUTMPGqOJShasqx7zWBwbSvs=;
-        b=PxEaKD+vTsIVu942i/z8GJ911wOvtsdnAsX3NyYY6BA2W7BWf8+fzAjMhhxBYsbmtX
-         tmtAlhSKh0+R8qVe5x/QnKmqw8t0y6POxLhiJHmW7CKdfE+uTax2wOFvLM7IeEKDX+z5
-         mCIyVkDY1DsF4vgZEDjA33wFVwUGyQkN5c4wxP+7ttIvnmO9QWjq3Fgj1AxIQv98CAkH
-         zI2k++EsHH6N1/u4DKvuBfTbHuRLYAxwyF4UVB7uVpSBung/xMSMYqN0Ol9C0erFV7rQ
-         I+Et8cLqyqYN1EU297teWVHnAb2umd0aHxlj9GhDkRL6qbIpIn1zV/yhawfGb8OfajlL
-         LbjQ==
-X-Gm-Message-State: APjAAAXYfRhWg8VN/RiYWaRM6/xn2Vqz/q7sKQvzGgkciXWQT/peQzWB
-        4rYA5V2fYWOA0uFT+1k7ap8=
-X-Google-Smtp-Source: APXvYqw/KQmgPb3C2PcVy/lA9wFRnhiyU5ciN4rjcoq+OaKMcz0AdcaTBx1nSXwfEESOUMTrlrSIDw==
-X-Received: by 2002:a17:902:a717:: with SMTP id w23mr20502339plq.17.1569856134000;
-        Mon, 30 Sep 2019 08:08:54 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id w6sm15690309pfj.17.2019.09.30.08.08.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 08:08:52 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Tue, 1 Oct 2019 00:08:48 +0900
-To:     Sodagudi Prasad <psodagud@codeaurora.org>
-Cc:     pmladek@suse.com, sergey.senozhatsky@gmail.com,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org
-Subject: Re: Time stamp value in printk records
-Message-ID: <20190930150848.GA303191@tigerII.localdomain>
-References: <7d1aee8505b91c460fee347ed4204b9a@codeaurora.org>
+        Mon, 30 Sep 2019 11:10:28 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8UFA4sE077672;
+        Mon, 30 Sep 2019 10:10:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569856204;
+        bh=IobouB3hSryccexn6r91cxD5nyqRsWZvzcNZNBzoyec=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=nKoKcVPcm2Q8kdM6uUzxj+PkdqX7uI8MEFWjPgOAYTdwzRfKgQ47+b0i8HIxz0NUW
+         7ZSz3XiDsUBI8n/CnilkQtRSgTiul+h5vgzHe/osdaNHDqSDc59jmOD1ho9oWSsB22
+         toHoH4x7KqR5sNtW8nRK9Gsr2VWU9Ov6mEaFZATo=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8UFA4hJ033545
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Sep 2019 10:10:04 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 30
+ Sep 2019 10:10:03 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 30 Sep 2019 10:10:04 -0500
+Received: from [172.24.190.212] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8UF9xbO027057;
+        Mon, 30 Sep 2019 10:10:00 -0500
+Subject: Re: [PATCH v2 linux-next 2/4] arm: configs: davinci_all_defconfig:
+ Change CONFIG_REMOTEPROC from m to y
+To:     Keerthy <j-keerthy@ti.com>, <arnd@arndb.de>, <olof@lixom.net>,
+        <t-kristo@ti.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <tony@atomide.com>
+CC:     <s-anna@ti.com>, <hch@lst.de>, <bjorn.andersson@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190920075946.13282-1-j-keerthy@ti.com>
+ <20190920075946.13282-3-j-keerthy@ti.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <e48c767f-6153-a8d5-b88d-f74927921ae2@ti.com>
+Date:   Mon, 30 Sep 2019 20:39:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7d1aee8505b91c460fee347ed4204b9a@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20190920075946.13282-3-j-keerthy@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 20/09/19 1:29 PM, Keerthy wrote:
+> Commit 6334150e9a36 ("remoteproc: don't allow modular build")
+> changes CONFIG_REMOTEPROC to a boolean from a tristate config
+> option which inhibits all defconfigs marking CONFIG_REMOTEPROC as
+> a module in compiling the remoteproc and dependent config options.
+> 
+> So fix the davinci_all_defconfig to have CONFIG_REMOTEPROC built in.
+> 
+> Fixes: 6334150e9a36 ("remoteproc: don't allow modular build")
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  arch/arm/configs/davinci_all_defconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+> index b34970ce6b31..01e3c0f4be92 100644
+> --- a/arch/arm/configs/davinci_all_defconfig
+> +++ b/arch/arm/configs/davinci_all_defconfig
+> @@ -228,7 +228,7 @@ CONFIG_RTC_DRV_OMAP=m
+>  CONFIG_DMADEVICES=y
+>  CONFIG_TI_EDMA=y
+>  CONFIG_COMMON_CLK_PWM=m
+> -CONFIG_REMOTEPROC=m
+> +CONFIG_REMOTEPROC=y
 
-On (09/30/19 06:33), Sodagudi Prasad wrote:
-> From Qualcomm side, we would like to check with upstream team about adding
-> Raw time stamp value to printk records. On Qualcomm soc, there are various
-> DSPs subsystems are there - for example audio, video and modem DSPs.
-> Adding raw timer value(along with sched_clock()) in the printk record helps
-> in the following use cases –
-> 1)	To find out which subsystem  crashed first  -  Whether application
-> processor crashed first or DSP subsystem?
-> 2)	If there are any system stability issues on the DSP side, what is the
-> activity on the APPS processor side during that time?
->
-> Initially during the device boot up, printk shed_clock value can be matched
-> with timer raw value used on the dsp subsystem, but after APPS processor
-> suspends several times, we don’t have way to correlate the time stamp  value
-> on the DSP and APPS processor. All timers(both apps processor timer and dsp
-> timers) are derived from globally always on timer on Qualcomm soc, So
-> keeping global timer raw values in printk records and dsp logs help to
-> correlate the activity of all the processors in SoC.
+Acked-by: Sekhar Nori <nsekhar@ti.com>
 
-Off the top of my head - timestamps are really hard.
-
-Not only because, as of now, we serialize printk() internally. But also
-because a lot of things can happen on any CPU between the moment when event
-occurs - printk() - and the moment when we read clocks. NMI, IRQ, preemption.
-
-Consider the following case
-
-CPU0			CPU1			CPU2			CPU3
-printk()		printk()		printk()		printk()
-			<<preemption>>					<<irq>>
- spin_lock(logbuf)
- clock()
- spin_unlock(logbuf)				spin_lock(logbuf)
- 						clock()			<<iret>>
-						spin_unlock(logbuf)	spin_lock(logbuf)
-									clock()
-			spin_lock(logbuf)				spin_unlock(logbuf)
-			clock()
-			spin_unlock(logbuf)
-
-	-ss
+Thanks,
+Sekhar
