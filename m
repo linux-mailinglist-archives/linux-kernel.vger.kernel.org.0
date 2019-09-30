@@ -2,95 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA1BC2751
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E80D8C2758
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 22:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730705AbfI3Uw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 16:52:57 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39209 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbfI3Uw4 (ORCPT
+        id S1731577AbfI3Ux3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 16:53:29 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59518 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730485AbfI3Ux2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:52:56 -0400
-Received: by mail-io1-f66.google.com with SMTP id a1so42048611ioc.6;
-        Mon, 30 Sep 2019 13:52:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HjzHBo6jT8sEvFe44LiFogaEnhJkNVFYB6XfDK7uqQ0=;
-        b=A5mKEowmZmV++Op18zcmJR3/GH2ctiZffg/i22VkQ7tFE1c7sw8wb4oksQ6pjn3XGV
-         5NNGCwG3fx94axiNRlb/VLkqyNoXfylZgasulxkQJrbm9qKbbQCkBjlrh0iMKg2P3r0F
-         GeQwWcGXonOk1I4Yb+8/dLT2Tvc5iIEdRRsB4vdCrnG7/yKwQMcuJ1uYRFcTqE87ZqX9
-         VK2VLqGyvoS8iYb/I0DuzebaEOcC8Mycb9iqKQqRkq/SPUpntj0ZppnWmgakX5zSZtJ3
-         bLO+GoHmL8/1sqO/MLLtTUgjW07uDgE3N0nEeY8ZfwQBHvtkQ0xP8HGVt7kUjg3BeV0g
-         mpoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HjzHBo6jT8sEvFe44LiFogaEnhJkNVFYB6XfDK7uqQ0=;
-        b=NcI6YA1affjO3DXITMbGWBoAJI+AaU4e5kWYImGuBfffek5czLnqy/Ceu5MCi63IBe
-         AcXkrEDgDsTdcG/AmZK07jIhvLcSlcC87yMO8SabBmOelJye0QYXfcfYyZjes7vn4UBL
-         EjKXJ/xjvqtE0IEYFlzAvxO7ttBmOAA7gyU+3LQpXrQ65PAmUBYPcrhoYVlFl8VnZYN/
-         st0Aq1rjca5R8P5bYPt+awTT686f/fh9LOMnHa34SZpZRVH3LkqWx4pGZO10XvHzBseV
-         FDRiJ3XGzvuiGUKs7dqtHrVxYdG2j1IcFLCnJWhOycAawxjn3d4pJ9hMpZV31epot0AT
-         MhkQ==
-X-Gm-Message-State: APjAAAVVkEMWOS4X5aP1Y5lokmSB24Y+ZsgkzNWCChNsQkqy3E/VCcY9
-        Gv7MS/mz1JFYqknhMgjElwc=
-X-Google-Smtp-Source: APXvYqzn/RTz90DQPs3v6GoRB75cFXIoD+MRJM6af30g7CqSFxkRz2+0cOy/I6rraDzMF6BGC8+FQw==
-X-Received: by 2002:a92:b612:: with SMTP id s18mr19955089ili.37.1569876776114;
-        Mon, 30 Sep 2019 13:52:56 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id g4sm6979666iof.56.2019.09.30.13.52.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 13:52:55 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] spi: gpio: prevent memory leak in spi_gpio_probe
-Date:   Mon, 30 Sep 2019 15:52:40 -0500
-Message-Id: <20190930205241.5483-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <dcd26f62-e384-bf6d-2e7d-63c0d0f7da11@web.de>
-References: <dcd26f62-e384-bf6d-2e7d-63c0d0f7da11@web.de>
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 30 Sep 2019 16:53:28 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 7E39228B90F
+Message-ID: <8063b9555d5bce6f2c002e49da3b7afaca9ae0b4.camel@collabora.com>
+Subject: Re: [PATCH v4 8/9] drm: rcar-du: kms: Update CMM in atomic commit
+ tail
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli+renesas@fpond.eu,
+        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     muroya@ksk.co.jp, koji.matsuoka.xm@renesas.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Doug Anderson <dianders@google.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Date:   Mon, 30 Sep 2019 17:53:00 -0300
+In-Reply-To: <20190906135436.10622-9-jacopo+renesas@jmondi.org>
+References: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
+         <20190906135436.10622-9-jacopo+renesas@jmondi.org>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In spi_gpio_probe an SPI master is allocated via spi_alloc_master, but
-this controller should be released if devm_add_action_or_reset fails,
-otherwise memory leaks. In order to avoid leak spi_contriller_put must
-be called in case of failure for devm_add_action_or_reset.
++Doug, Heiko:
 
-Fixes: 8b797490b4db ("spi: gpio: Make sure spi_master_put() is called in every error path")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
-Changes in v2:
-	-- fix a typo in title and update the description
----
- drivers/spi/spi-gpio.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Fri, 2019-09-06 at 15:54 +0200, Jacopo Mondi wrote:
+> Update CMM settings at in the atomic commit tail helper method.
+> The CMM is updated with new gamma values provided to the driver
+> in the GAMMA_LUT blob property.
+> 
+> When resuming from system suspend, the DU driver is responsible for
+> reprogramming and enabling the CMM unit if it was in use at the time the
+> system entered the suspend state.  Force the color_mgmt_changed flag to
+> true if the DRM gamma lut color transformation property was set in the
+> CRTC state duplicated at suspend time, as the CMM gets reprogrammed only
+> if said flag is active in the rcar_du_atomic_commit_update_cmm() method.
+> 
+> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> 
+> Daniel could you have a look if resume bits are worth being moved to the
+> DRM core? The color_mgmt_changed flag is set to false when the state is
+> duplicated if I read the code correctly, but when this happens in a
+> suspend/resume sequence its value should probably be restored to true if
+> any color management property was set in the crtc state when system entered
+> suspend.
+> 
 
-diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-index 1d3e23ec20a6..f9c5bbb74714 100644
---- a/drivers/spi/spi-gpio.c
-+++ b/drivers/spi/spi-gpio.c
-@@ -371,8 +371,10 @@ static int spi_gpio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+Perhaps we can use the for_each_new_crtc_in_state() helper here,
+and move it to the core like this:
+
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -3234,8 +3234,20 @@ int drm_atomic_helper_resume(struct
+drm_device *dev,
+                             struct drm_atomic_state *state)
+ {
+        struct drm_modeset_acquire_ctx ctx;
++       struct drm_crtc_state
+*crtc_state;
++       struct drm_crtc *crtc;
++       unsigned int i;
+        int err;
  
- 	status = devm_add_action_or_reset(&pdev->dev, spi_gpio_put, master);
--	if (status)
-+	if (status) {
-+		spi_master_put(master);
- 		return status;
-+	}
- 
- 	if (of_id)
- 		status = spi_gpio_probe_dt(pdev, master);
--- 
-2.17.1
++       for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
++   
+            /*
++                * Force re-enablement of CMM after system resume if any
++                * of the DRM color transformation properties
+was set in
++                * the state saved at system suspend time.
++                */
++               if (crtc_state->gamma_lut)
++                    
+   crtc_state->color_mgmt_changed = true;
++       }
+
+This probably is wrong, and should be instead constrained to some
+condition of some sort.
+
+FWIW, the Rockchip DRM is going to need this as well.
+
+Any ideas?
+
+Thanks,
+Ezequiel
 
