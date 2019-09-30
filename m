@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3C52C2364
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2F6EC236C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 16:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731656AbfI3Og4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 10:36:56 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46088 "EHLO huawei.com"
+        id S1731840AbfI3OhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 10:37:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3192 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730780AbfI3Ogz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 10:36:55 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4FC4CFE66C605F3E5AC5;
-        Mon, 30 Sep 2019 22:36:53 +0800 (CST)
+        id S1731702AbfI3OhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 10:37:02 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2A2F4719A77CE6655499;
+        Mon, 30 Sep 2019 22:36:58 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 30 Sep 2019 22:36:46 +0800
+ 14.3.439.0; Mon, 30 Sep 2019 22:36:48 +0800
 From:   John Garry <john.garry@huawei.com>
 To:     <lorenzo.pieralisi@arm.com>, <guohanjun@huawei.com>,
         <sudeep.holla@arm.com>, <robin.murphy@arm.com>,
@@ -26,10 +26,12 @@ CC:     <shameerali.kolothum.thodi@huawei.com>,
         <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
         <rjw@rjwysocki.net>, <lenb@kernel.org>, <nleeder@codeaurora.org>,
         <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>
-Subject: [RFC PATCH 0/6] SMMUv3 PMCG IMP DEF event support
-Date:   Mon, 30 Sep 2019 22:33:45 +0800
-Message-ID: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
+Subject: [RFC PATCH 1/6] ACPI/IORT: Set PMCG device parent
+Date:   Mon, 30 Sep 2019 22:33:46 +0800
+Message-ID: <1569854031-237636-2-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
+References: <1569854031-237636-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
@@ -39,52 +41,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds IMP DEF event support for the SMMUv3 PMCG.
+In the IORT, a PMCG node includes a node reference to its associated
+device.
 
-It is marked as an RFC as the method to identify the PMCG implementation
-may be a quite disliked. And, in general, the series is somewhat
-incomplete.
+Set the PMCG platform device parent device for future referencing.
 
-So the background is that the PMCG supports IMP DEF events, yet we have no
-method to identify the PMCG to know the IMP DEF events.
+For now, we only consider setting for when the associated component is an
+SMMUv3.
 
-A method for identifying the PMCG implementation could be using
-PMDEVARCH, but we cannot rely on this being set properly, as whether this
-is implemented is not defined in SMMUv3 spec.
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/acpi/arm64/iort.c | 34 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
-Another method would be perf event aliasing, but this method of event
-matching is based on CPU id, which would not guarantee same
-uniqueness as PMCG implementation.
-
-Yet another method could be to continue using ACPI OEM ID in the IORT
-code, but this does not scale. And it is not suitable if we ever add DT
-support to the PMCG driver.
-
-The method used in this series is based on matching on the parent SMMUv3
-IIDR. We store this IIDR contents in the arm smmu structure as the first
-element, which means that we don't have to expose SMMU APIs - this is
-the part which may be disliked.
-
-The final two patches switch the pre-existing PMCG model identification
-from ACPI OEM ID to the same parent SMMUv3 IIDR matching.
-
-For now, we only consider SMMUv3' nodes being the associated node for
-PMCG.
-
-John Garry (6):
-  ACPI/IORT: Set PMCG device parent
-  iommu/arm-smmu-v3: Record IIDR in arm_smmu_device structure
-  perf/smmuv3: Retrieve parent SMMUv3 IIDR
-  perf/smmuv3: Support HiSilicon hip08 (hi1620) IMP DEF events
-  perf/smmuv3: Match implementation options based on parent SMMU IIDR
-  ACPI/IORT: Drop code to set the PMCG software-defined model
-
- drivers/acpi/arm64/iort.c     | 69 ++++++++++++++--------------
- drivers/iommu/arm-smmu-v3.c   |  5 +++
- drivers/perf/arm_smmuv3_pmu.c | 84 ++++++++++++++++++++++++++++++-----
- include/linux/acpi_iort.h     |  8 ----
- 4 files changed, 112 insertions(+), 54 deletions(-)
-
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 8569b79e8b58..0b687520c3e7 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -1455,7 +1455,7 @@ static __init const struct iort_dev_config *iort_get_dev_cfg(
+  * Returns: 0 on success, <0 failure
+  */
+ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+-					   const struct iort_dev_config *ops)
++					   const struct iort_dev_config *ops, struct device *parent)
+ {
+ 	struct fwnode_handle *fwnode;
+ 	struct platform_device *pdev;
+@@ -1466,6 +1466,8 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+ 	if (!pdev)
+ 		return -ENOMEM;
+ 
++	pdev->dev.parent = parent;
++
+ 	if (ops->dev_set_proximity) {
+ 		ret = ops->dev_set_proximity(&pdev->dev, node);
+ 		if (ret)
+@@ -1573,6 +1575,11 @@ static void __init iort_enable_acs(struct acpi_iort_node *iort_node)
+ static inline void iort_enable_acs(struct acpi_iort_node *iort_node) { }
+ #endif
+ 
++static int iort_fwnode_match(struct device *dev, const void *fwnode)
++{
++	return dev->fwnode == fwnode;
++}
++
+ static void __init iort_init_platform_devices(void)
+ {
+ 	struct acpi_iort_node *iort_node, *iort_end;
+@@ -1594,11 +1601,34 @@ static void __init iort_init_platform_devices(void)
+ 				iort_table->length);
+ 
+ 	for (i = 0; i < iort->node_count; i++) {
++		struct device *parent = NULL;
++
+ 		if (iort_node >= iort_end) {
+ 			pr_err("iort node pointer overflows, bad table\n");
+ 			return;
+ 		}
+ 
++		/* Fixme: handle parent declared in IORT after PMCG */
++		if (iort_node->type == ACPI_IORT_NODE_PMCG) {
++			struct acpi_iort_node *iort_assoc_node;
++			struct acpi_iort_pmcg *pmcg;
++			u32 node_reference;
++
++			pmcg = (struct acpi_iort_pmcg *)iort_node->node_data;
++
++			node_reference = pmcg->node_reference;
++			iort_assoc_node = ACPI_ADD_PTR(struct acpi_iort_node, iort,
++				 node_reference);
++
++			if (iort_assoc_node->type == ACPI_IORT_NODE_SMMU_V3) {
++				struct fwnode_handle *assoc_fwnode;
++
++				assoc_fwnode = iort_get_fwnode(iort_assoc_node);
++
++				parent = bus_find_device(&platform_bus_type, NULL,
++				      assoc_fwnode, iort_fwnode_match);
++			}
++		}
+ 		iort_enable_acs(iort_node);
+ 
+ 		ops = iort_get_dev_cfg(iort_node);
+@@ -1609,7 +1639,7 @@ static void __init iort_init_platform_devices(void)
+ 
+ 			iort_set_fwnode(iort_node, fwnode);
+ 
+-			ret = iort_add_platform_device(iort_node, ops);
++			ret = iort_add_platform_device(iort_node, ops, parent);
+ 			if (ret) {
+ 				iort_delete_fwnode(iort_node);
+ 				acpi_free_fwnode_static(fwnode);
 -- 
 2.17.1
 
