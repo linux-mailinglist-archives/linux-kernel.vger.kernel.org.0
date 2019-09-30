@@ -2,108 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5CCFC253A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 18:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AD9BC2541
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2019 18:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732303AbfI3QgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 12:36:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55094 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731459AbfI3QgK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 12:36:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UWQiVDLYiRGcNlJcUhsM1uiwFgTPXa9ToDA5YpcNSbk=; b=lNuuMEcVXyAceTbuEy764dxpl
-        HUgqZiiEbmofF4MDJ1hAwuw9kZCZRd3rHUuYr0xiZwp/XWyUyeEyzkIY0dOGlOIUhcezVXCb38Urk
-        IzbWyNtRF2Q4H5RYRqsi7HpzOzyov9rxtWmDxHzE+qIIxy1QfCpiSEOb5wH03iyD5fmkvI2k5aull
-        HM8yffgOXpYZ49EaKlJWcwguHEXoVskB1F7J08CHBFHqPo4MGx+O/q/jLX0TEVTe6fbxEulvBoAl0
-        EmKjR0K+rj1Wycfivc4UwdKJ+bcQ21EuGkNpoZqaa2GgVkXlY0PzdhOs/6ZHBM0ztmZ7eF8NhOCd5
-        I4sFyx3zg==;
-Received: from [179.95.58.188] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iEyee-00070i-BN; Mon, 30 Sep 2019 16:36:08 +0000
-Date:   Mon, 30 Sep 2019 13:36:03 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pete Zaitcev <zaitcev@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] USB: fix runtime PM after driver unbind
-Message-ID: <20190930133603.0192f809@coco.lan>
-In-Reply-To: <20190930161205.18803-1-johan@kernel.org>
-References: <20190930161205.18803-1-johan@kernel.org>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1732338AbfI3QgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 12:36:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53094 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732255AbfI3QgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 12:36:24 -0400
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 98EEB59449
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 16:36:24 +0000 (UTC)
+Received: by mail-io1-f70.google.com with SMTP id r20so31362992ioh.7
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 09:36:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n6TZwGZ6BwH01Gtc+GZbV82I7jDbXiJPW011pcYuI0Q=;
+        b=CYdsXN+zbsPloCAJevcAgIIPzDdfBJgcV8dFIoHfMpgBj2uXtbojc2RrU+aieNHj+V
+         5ImsKAoA7bYx4yVQ8hzM3e9MWE4I59IuZuVpo5ItgpoNLMs+0k7eFMZ0XIdEBFt9immS
+         KWXMWRNE4VPnz1igfw5toT3yw+IJFBm8FKrkkKaprxGu1RS6jwSGsfxzKxKjeWY2kp9/
+         RpwFjLDuULd9O5Xh+jrO9YU+mKL13eTgIbsX2xZqMccA3E07KzNsmSeUkZW2pra30ruM
+         61+bOZF9+xp//+Vbg162mYuxTv0r6IZl4PlrO1kXQwMo1GWHuG7IEet+Zqz0OzMoPohx
+         obKA==
+X-Gm-Message-State: APjAAAU7RWSPzYlqXpOH2l1MzkmdNEXNtEL9o7GBx7KHCyEnseauB59C
+        LyKIMIDkSXdnscoBYZW3tDdNIhWIFDPbCDKa+uM4CyCI6Uj0HVLWk1t3fyCyPZM7IDIr15GZ8Q+
+        YVk3vmEm06HgmYRbjx2VTF2pxdaZn18prV51HNz/l
+X-Received: by 2002:a6b:3804:: with SMTP id f4mr7902612ioa.166.1569861384039;
+        Mon, 30 Sep 2019 09:36:24 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxTi7C+3z1z5gBDBQSyyub19LVPhCynfHDYm5iNSEA04yROLKW+AsLuHu877bWM07L3lw3ItDdT4w5mzyKMATY=
+X-Received: by 2002:a6b:3804:: with SMTP id f4mr7902576ioa.166.1569861383788;
+ Mon, 30 Sep 2019 09:36:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190927144421.22608-1-kherbst@redhat.com> <20190927214252.GA65801@google.com>
+ <CACO55tuaY1jFXpJPeC9M4PoWEDyy547_tE8MpLaTDb+C+ffsbg@mail.gmail.com>
+ <20190930080534.GS2714@lahna.fi.intel.com> <CACO55tuMo1aAA7meGtEey6J6sOS-ZA0ebZeL52i2zfkWtPqe_g@mail.gmail.com>
+ <20190930092934.GT2714@lahna.fi.intel.com> <CACO55tu9M8_TWu2MxNe_NROit+d+rHJP5_Tb+t73q5vr19sd1w@mail.gmail.com>
+ <20190930163001.GX2714@lahna.fi.intel.com>
+In-Reply-To: <20190930163001.GX2714@lahna.fi.intel.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Mon, 30 Sep 2019 18:36:12 +0200
+Message-ID: <CACO55tuk4SA6-xUtJ-oRePy8MPXYAp2cfmSPxwW3J5nQuX3y2g@mail.gmail.com>
+Subject: Re: [RFC PATCH] pci: prevent putting pcie devices into lower device
+ states on certain intel bridges
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 30 Sep 2019 18:12:01 +0200
-Johan Hovold <johan@kernel.org> escreveu:
+On Mon, Sep 30, 2019 at 6:30 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Mon, Sep 30, 2019 at 06:05:14PM +0200, Karol Herbst wrote:
+> > still happens with your patch applied. The machine simply gets shut down.
+> >
+> > dmesg can be found here:
+> > https://gist.githubusercontent.com/karolherbst/40eb091c7b7b33ef993525de660f1a3b/raw/2380e31f566e93e5ba7c87ef545420965d4c492c/gistfile1.txt
+>
+> Looking your dmesg:
+>
+> Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: DCB version 4.1
+> Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: MM: using COPY for buffer copies
+> Sep 30 17:24:27 kernel: [drm] Initialized nouveau 1.3.1 20120801 for 0000:01:00.0 on minor 1
+>
+> I would assume it runtime suspends here. Then it wakes up because of PCI
+> access from userspace:
+>
+> Sep 30 17:24:42 kernel: pci_raw_set_power_state: 56 callbacks suppressed
+>
+> and for some reason it does not get resumed properly. There are also few
+> warnings from ACPI that might be relevant:
+>
+> Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.GFX0._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
+> Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.PEG0.PEGP._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
+>
 
-> A recent change in USB core broke runtime-PM after driver unbind in
-> several drivers (when counting all USB serial drivers). Specifically,
-> drivers which took care not modify the runtime-PM usage counter after
-> their disconnect callback had returned, would now fail to be suspended
-> when a driver is later bound.
-> 
-> I guess Greg could take all of these directly through his tree, unless
-> the media maintainers disagree.
+afaik this is the case for essentially every laptop out there.
 
-Patches look ok and I'm fine if they go via Greg's tree. So:
+> This seems to be Dell XPS 9560 which I think has been around some time
+> already so I wonder why we only see issues now. Has it ever worked for
+> you or maybe there is a regression that causes it to happen now?
 
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+oh, it's broken since forever, we just tried to get more information
+from Nvidia if they know what this is all about, but we got nothing
+useful.
 
-Yet, on a quick look on media:
-
-	$ git grep -l usb_.*pm drivers/media/usb/
-	drivers/media/usb/cpia2/cpia2_usb.c
-	drivers/media/usb/dvb-usb-v2/az6007.c
-	drivers/media/usb/dvb-usb-v2/dvb_usb.h
-	drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-	drivers/media/usb/gspca/gspca.c
-	drivers/media/usb/gspca/gspca.h
-	drivers/media/usb/siano/smsusb.c
-	drivers/media/usb/stkwebcam/stk-webcam.c
-	drivers/media/usb/usbvision/usbvision-i2c.c
-	drivers/media/usb/uvc/uvc_driver.c
-	drivers/media/usb/uvc/uvc_v4l2.c
-	drivers/media/usb/zr364xx/zr364xx.c
-
-There are other drivers beside stkwebcam with has some PM routines.
-
-Ok, only two (stkwebcam and uvcvideo) uses usb_autopm_get_interface() and
-usb_autopm_put_interface(), but I'm wondering if the others are doing the
-right thing, as their implementation are probably older.
-
-> 
-> Johan
-> 
-> 
-> Johan Hovold (4):
->   USB: usb-skeleton: fix runtime PM after driver unbind
->   USB: usblp: fix runtime PM after driver unbind
->   USB: serial: fix runtime PM after driver unbind
->   media: stkwebcam: fix runtime PM after driver unbind
-> 
->  drivers/media/usb/stkwebcam/stk-webcam.c | 3 +--
->  drivers/usb/class/usblp.c                | 8 +++++---
->  drivers/usb/serial/usb-serial.c          | 5 +----
->  drivers/usb/usb-skeleton.c               | 8 +++-----
->  4 files changed, 10 insertions(+), 14 deletions(-)
-> 
-
-
-
-Thanks,
-Mauro
+We were also hoping to find a reliable fix or workaround we could have
+inside nouveau to fix that as I think nouveau is the only driver
+actually hit by this issue, but nothing turned out to be reliable
+enough.
