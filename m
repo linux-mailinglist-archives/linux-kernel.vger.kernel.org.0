@@ -2,107 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBC5EC37FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6918C3800
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389284AbfJAOp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:45:28 -0400
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:40674 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727051AbfJAOp2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:45:28 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id 2351C98941
-        for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2019 15:45:27 +0100 (IST)
-Received: (qmail 10165 invoked from network); 1 Oct 2019 14:45:27 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.19.210])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 1 Oct 2019 14:45:26 -0000
-Date:   Tue, 1 Oct 2019 15:45:24 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     tonyj@suse.com, acme@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Tony Jones <tonyj@suse.de>
-Subject: Re: [PATCH v2] perf script python: integrate page reclaim analyze
- script
-Message-ID: <20191001144524.GB3321@techsingularity.net>
-References: <1569899984-16272-1-git-send-email-laoar.shao@gmail.com>
+        id S2389299AbfJAOrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:47:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:51536 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389029AbfJAOrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:47:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C4491000;
+        Tue,  1 Oct 2019 07:46:59 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1298E3F71A;
+        Tue,  1 Oct 2019 07:46:57 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 15:46:50 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Julien Grall <julien.grall@arm.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Denis Efremov <efremov@linux.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Will Deacon <will@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [Xen-devel] [PATCH] ARM: xen: unexport HYPERVISOR_platform_op
+ function
+Message-ID: <20191001144650.GA22655@lakrids.cambridge.arm.com>
+References: <20190906153948.2160342-1-arnd@arndb.de>
+ <7abad95e-ea47-c068-d91c-ba503f2530b9@citrix.com>
+ <CAK8P3a1qkMLW_Wnn-N0seUw4N5bPwTU7Dy7CwOWxzS6NTnTmiQ@mail.gmail.com>
+ <bda2a05b-e2d0-feee-761b-88deeeac2449@citrix.com>
+ <95dbd972-fe78-d0ca-f7b4-1a6bdd418eab@arm.com>
+ <20191001143334.GA46651@lakrids.cambridge.arm.com>
+ <9e04485f-2d4a-81a2-c7e1-e50dd888930f@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1569899984-16272-1-git-send-email-laoar.shao@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9e04485f-2d4a-81a2-c7e1-e50dd888930f@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 11:19:44PM -0400, Yafang Shao wrote:
-> A new perf script page-reclaim is introduced in this patch. This new script
-> is used to report the page reclaim details. The possible usage of this
-> script is as bellow,
-> - identify latency spike caused by direct reclaim
-> - whehter the latency spike is relevant with pageout
-> - why is page reclaim requested, i.e. whether it is because of memory
->   fragmentation
-> - page reclaim efficiency
-> etc
-> In the future we may also enhance it to analyze the memcg reclaim.
+On Tue, Oct 01, 2019 at 03:39:41PM +0100, Julien Grall wrote:
+> On 01/10/2019 15:33, Mark Rutland wrote:
+> > On Sat, Sep 07, 2019 at 11:05:45AM +0100, Julien Grall wrote:
+> > > On 9/6/19 6:20 PM, Andrew Cooper wrote:
+> > > > On 06/09/2019 17:00, Arnd Bergmann wrote:
+> > > > > On Fri, Sep 6, 2019 at 5:55 PM Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+> > > > > > On 06/09/2019 16:39, Arnd Bergmann wrote:
+> > > > > > > HYPERVISOR_platform_op() is an inline function and should not
+> > > > > > > be exported. Since commit 15bfc2348d54 ("modpost: check for
+> > > > > > > static EXPORT_SYMBOL* functions"), this causes a warning:
+> > > > > > > 
+> > > > > > > WARNING: "HYPERVISOR_platform_op" [vmlinux] is a static EXPORT_SYMBOL_GPL
+> > > > > > > 
+> > > > > > > Remove the extraneous export.
+> > > > > > > 
+> > > > > > > Fixes: 15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions")
+> > > > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+[...]
+
+> > > While looking at the code, I also realized that the implementation of
+> > > HYPERCALL_dm_op might be incorrect for Arm32. Similarly do privcmd call, I
+> > > think dm_op call should enable user access as they will be used by
+> > > userspace.
+> > > 
+> > > We don't use dm_op on Arm so far, hence why I think this was unnoticed. I
+> > > will see if I can reproduce it and send a patch.
+> > 
+> > I'm seeing this when building arm64 defconfig v5.4-rc1:
+> > 
+> > | [mark@lakrids:~/src/linux]% usekorg 8.1.0  make ARCH=arm64 CROSS_COMPILE=aarch64-linux- -j56 -s
+> > | arch/arm64/Makefile:62: CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built
+> > | WARNING: "HYPERVISOR_platform_op" [vmlinux] is a static EXPORT_SYMBOL_GPL
+> > | WARNING: "HYPERVISOR_platform_op" [vmlinux] is a static EXPORT_SYMBOL_GPL
+> > 
+> > I couldn't see a follow-up; do you have a patch for this?
 > 
+> The first e-mail of the thread should contain a patch to address the warning
+> (see [1]). But it is still waiting on an Ack from Stefano so it can get
+> merged.
 
-Hi,
+Ah, sorry. I misunderstood what you were planning to send a patch for,
+and assumed you were going to propose an alternative to Arnd's patch.
 
-I ended up not reviewing this patch in detail simply because I would
-approach the same class of problem in an entirely different way today.
-There is value in accumulating the stats in a report like this;
+Stefano, do you see any problem with Arnd's patch? If not, it would be
+good to get this merged soon.
 
->     $ perf script report page-reclaim
->     Direct reclaims: 4924
->     Direct latency (ms)        total         max         avg         min
->         	          177823.211    6378.977      36.114       0.051
->     Direct file reclaimed 22920
->     Direct file scanned 28306
->     Direct file sync write I/O 0
->     Direct file async write I/O 0
->     Direct anon reclaimed 212567
->     Direct anon scanned 1446854
->     Direct anon sync write I/O 0
->     Direct anon async write I/O 278325
->     Direct order      0     1     3
->         	   4870    23    31
->     Wake kswapd requests 716
->     Wake order      0     1
->         	  715     1
+Thanks,
+Mark.
+
 > 
->     Kswapd reclaims: 9
-
-However, the basic option I would prefer is having the raw latency
-information for Direct latency that can be externally parsed by R or any
-other statistical method. The reason why is because knowing the max latency
-is not enough, I'd want to know the spread of latencies and whether they
-were clustered at a point of time or spread out over long periods of
-time. I would then build the higher-level reports on top if necessary.
-
-Today, I would also have considered getting the latency figures using eBPF
-or systemtap instead although having perf do it may be useful too. That's
-not universally popular though so at minimum I would have;
-
-perf script record page-reclaim -- capture all page-reclaim tracepoints
-perf script report page-reclaim -- For reclaim entry/exit, merge the two
-	tracepoints into one that reports latency. Dump the rest out
-	verbatim
-
-For latencies, I would externally post-process them until such time as I
-found a common class of bug that needed a high-level report and then
-build the perf script support for it.
-
-Please note that I did not spot anything wrong with your script, it's
-just that I would not use it myself in its current format for debugging
-a reclaim-related problem.
-
--- 
-Mel Gorman
-SUSE Labs
+> Cheers,
+> 
+> [1] https://patchwork.kernel.org/patch/11135601/
+> 
+> -- 
+> Julien Grall
