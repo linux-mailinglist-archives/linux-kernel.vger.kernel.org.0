@@ -2,161 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 818AFC308B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 11:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F4DC309B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 11:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbfJAJrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 05:47:23 -0400
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:13730 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728708AbfJAJrX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 05:47:23 -0400
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x919ivW4009138;
-        Tue, 1 Oct 2019 02:47:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=pfpt0818;
- bh=b1HgRmi0P5Zt0vOBGJZAz4o4IA/dcSjoflDnEoS9doc=;
- b=xyVB7+aM3JcHJeHzuF80dQwSWsHKcTzk2ZNFwJMXkUh4eLw/ZhEWN+fLi6BKObnYc/Mi
- vV2SNTCvUR/VhAsGIaR2bizMD56JzE972ljABAPrnhHszOW9R++AiqeUNiuEu63+E8Ps
- IhcdWOeJyIOrZrrIH9Rh04oSI61/zb4mbEF9EiVI1fBlCEvbXxrKRTPpMcVcx41eS87l
- UDZsYySSpcycRZWVls4NWSoIg9k4/KvfjDzQMMaBEfTP+CwXA29rg/TcLeT63tgHWhCh
- VlHpcSAST8qJehEDXi0o3DI7emx5TMjHSP5U7tiJr+MC0GdVcAcZ1H+fKnm83jDtnQ+9 Hw== 
-Received: from sc-exch02.marvell.com ([199.233.58.182])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2vbur19jmr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 01 Oct 2019 02:47:10 -0700
-Received: from SC-EXCH01.marvell.com (10.93.176.81) by SC-EXCH02.marvell.com
- (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 1 Oct
- 2019 02:47:09 -0700
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (104.47.32.55) by
- SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Tue, 1 Oct 2019 02:47:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=khy3njG8wia/M8fFf4WcyjdjVH5VLaOXDEr8MYxj8GUTRo0SsAGEtFt7O3eKDbPBTCGmGeJBcf7EDGpB4L8RrGW9VQRV4vXtFUaow8p+8cLhFpYzQz6SxHUMnOT9yIMf3ww992lwhLMuUAFHlFzzM76/IQ0OswNHG1pr/L+rxvf/tebMPaB/cAvP5vOKecvdoMk4fM9oQMD6eUERa5gSOu5Jh946mg8qBMX8CAlpnKXW6AryClJcbWQOAYDvW9dOr//5dDN2S2lGRgCtEfh72Z/VbqCVV5RShO/GO1hOjfAjXuh6aYXJxnKRvcXHcN+vTuf6sNFeotO9fKjD1T91jQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b1HgRmi0P5Zt0vOBGJZAz4o4IA/dcSjoflDnEoS9doc=;
- b=Vn8dt1L/GCL60pUfhR6TPqWIwu6lZtChTLLs4gQAYy56dI2SirKMO7TRMXKb52K5hXPTpDEeQ2YURiNfTehs7LbBfeajJjnRGtXYUMr570icEGRoiibh4V0z8+FxuS59HUxydO3zyj1GJOOUjAkLJSfvtljJNQwsHmBK8Vqnd8C6fPAbgjyqblu51WCH5NqnTsARztjY1dqpF/FMhFaUPYiUHA8WwysBn+o9qMxdQXYH6ipBDJyXxvYkx/tHFtoCrs1cCWnXlRglzN7hv8kqEMkwL/Cc4LlwYzzxcCszhlT6EDams111hOOD8yfK+DgBJ0qKITlCVfm0Xc8ZQGinyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b1HgRmi0P5Zt0vOBGJZAz4o4IA/dcSjoflDnEoS9doc=;
- b=iqw7kK/8kNkrjY6BuK+hUxTaPN37/2KNP6Chsa5hlEe4bVMpdFnnabvJURc2nWHEVDzPpzyAcMcUs0c6B1npGWTXk6+/+mrFevkQdl7RJpAcmUzYq5bJhDFdgkS+H7HNYWTdqCnU4NKz6MRFqXypslA1yZ+dQsovpP9yVXD5DG4=
-Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.238.217) by
- MN2PR18MB2751.namprd18.prod.outlook.com (20.179.20.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.17; Tue, 1 Oct 2019 09:47:07 +0000
-Received: from MN2PR18MB3408.namprd18.prod.outlook.com
- ([fe80::88e4:c340:f520:6b36]) by MN2PR18MB3408.namprd18.prod.outlook.com
- ([fe80::88e4:c340:f520:6b36%3]) with mapi id 15.20.2305.017; Tue, 1 Oct 2019
- 09:47:07 +0000
-From:   Robert Richter <rrichter@marvell.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Hanna Hawa <hhhawa@amazon.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        "benh@amazon.com" <benh@amazon.com>,
-        "ronenk@amazon.com" <ronenk@amazon.com>,
-        "talel@amazon.com" <talel@amazon.com>,
-        "jonnyc@amazon.com" <jonnyc@amazon.com>,
-        "hanochu@amazon.com" <hanochu@amazon.com>
-Subject: Re: [PATCH v4 1/2] edac: Add an API for edac device to report for
- multiple errors
-Thread-Topic: [PATCH v4 1/2] edac: Add an API for edac device to report for
- multiple errors
-Thread-Index: AQHVeD0w3a8Q6Y9qUkqSALBVLRrJbQ==
-Date:   Tue, 1 Oct 2019 09:47:07 +0000
-Message-ID: <20191001094659.5of5ul2tof6s75px@rric.localdomain>
-References: <20190923191741.29322-1-hhhawa@amazon.com>
- <20190923191741.29322-2-hhhawa@amazon.com> <20190930145046.GH29694@zn.tnic>
- <20191001065649.a6454bh4ncgdpigf@rric.localdomain>
- <20191001083242.GA5390@zn.tnic>
-In-Reply-To: <20191001083242.GA5390@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR0701CA0081.eurprd07.prod.outlook.com
- (2603:10a6:3:64::25) To MN2PR18MB3408.namprd18.prod.outlook.com
- (2603:10b6:208:16c::25)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [31.208.96.227]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 885747b6-5664-4e81-6ca8-08d746545292
-x-ms-traffictypediagnostic: MN2PR18MB2751:
-x-microsoft-antispam-prvs: <MN2PR18MB2751BD926E7103014A0A7BD8D99D0@MN2PR18MB2751.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 0177904E6B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(136003)(376002)(39860400002)(346002)(199004)(189003)(6512007)(9686003)(305945005)(6486002)(316002)(1076003)(64756008)(66446008)(66556008)(54906003)(66946007)(4326008)(66476007)(6246003)(486006)(6436002)(476003)(86362001)(478600001)(7736002)(7416002)(229853002)(446003)(66066001)(11346002)(99286004)(6116002)(3846002)(8936002)(8676002)(81156014)(81166006)(102836004)(71190400001)(14454004)(53546011)(6506007)(386003)(2906002)(6916009)(25786009)(52116002)(71200400001)(76176011)(26005)(256004)(186003)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2751;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Te52llMjrpj5jyW0WAH+DKekQutyuQuHhPBqVbibVJuot8/Xt0j1Es9FmLjR24bXbVig053p5RGVnAGm6cvpYRjIxeAFrVE7HEXx5A3KyTinlA/7sXN2FerPj65LueC9bHKiv6w3T62uRZ0DxhHjoON2ILeIIm99b0oachV7mR9jWBDKzCCFF2PSdswC+bsd3om7FHOa7L0yL4wakU+nvkHneaggrZUEJEesm94a4PUoMnNyGHvu9fDAXv3lAGR+9fcJocWVhsDQ7swQnvo/NYNbNaX0Ru78PIZbXA7BqQTzGEolQiECwHPPEomverfZtBhQdBzCIwsRFJpZP66yRSa2y4/XR9mWOXRyKgilhEw0J6UPZJw7/mbXBcu/Bf04B+1AwB3Pnk1189a8L99qPhDsZVw0gdRMViiwQHwYhr8=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F96B9A032DD11B43B46C5D4C8E8EA8CE@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1729599AbfJAJtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 05:49:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48566 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726461AbfJAJtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 05:49:51 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 96A5659465;
+        Tue,  1 Oct 2019 09:49:50 +0000 (UTC)
+Received: from [10.36.117.182] (ovpn-117-182.ams2.redhat.com [10.36.117.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A5AF560CD0;
+        Tue,  1 Oct 2019 09:49:48 +0000 (UTC)
+Subject: Re: [PATCH v7 1/1] memory_hotplug: Add a bounds check to __add_pages
+To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20191001004617.7536-1-alastair@au1.ibm.com>
+ <20191001004617.7536-2-alastair@au1.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
+ BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
+ 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
+ xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
+ jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
+ s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
+ m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
+ MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
+ z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
+ dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
+ UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
+ 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
+ uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
+ 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
+ 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
+ xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
+ 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
+ hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
+ u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
+ gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
+ rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
+ BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
+ KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
+ NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
+ YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
+ lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
+ qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
+ C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
+ W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
+ TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
+ +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <01def17b-1df8-a63a-4cfc-91e99614a2f0@redhat.com>
+Date:   Tue, 1 Oct 2019 11:49:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 885747b6-5664-4e81-6ca8-08d746545292
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2019 09:47:07.5108
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t4/6oMSv+u/VvBaq8VcuWsfs0lkZxYHvH8xS+zvVcu4UIyr5YwDrBO9kzdcdJkc+HyeUNRhKy5fENdUzKiwsPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2751
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-01_05:2019-10-01,2019-10-01 signatures=0
+In-Reply-To: <20191001004617.7536-2-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 01 Oct 2019 09:49:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.10.19 10:32:42, Borislav Petkov wrote:
+On 01.10.19 02:46, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> On PowerPC, the address ranges allocated to OpenCAPI LPC memory
+> are allocated from firmware. These address ranges may be higher
+> than what older kernels permit, as we increased the maximum
+> permissable address in commit 4ffe713b7587
+> ("powerpc/mm: Increase the max addressable memory to 2PB"). It is
+> possible that the addressable range may change again in the
+> future.
+> 
+> In this scenario, we end up with a bogus section returned from
+> __section_nr (see the discussion on the thread "mm: Trigger bug on
+> if a section is not found in __section_nr").
+> 
+> Adding a check here means that we fail early and have an
+> opportunity to handle the error gracefully, rather than rumbling
+> on and potentially accessing an incorrect section.
+> 
+> Further discussion is also on the thread ("powerpc: Perform a bounds
+> check in arch_add_memory")
+> http://lkml.kernel.org/r/20190827052047.31547-1-alastair@au1.ibm.com
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>  mm/memory_hotplug.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index c73f09913165..5af9f4466ad1 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -278,6 +278,22 @@ static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
+>  	return 0;
+>  }
+>  
+> +static int check_hotplug_memory_addressable(unsigned long pfn,
+> +					    unsigned long nr_pages)
+> +{
+> +	const u64 max_addr = PFN_PHYS(pfn + nr_pages) - 1;
+> +
+> +	if (max_addr >> MAX_PHYSMEM_BITS) {
+> +		const u64 max_allowed = (1ull << (MAX_PHYSMEM_BITS + 1)) - 1;
+> +		WARN(1,
+> +		     "Hotplugged memory exceeds maximum addressable address, range=%#llx-%#llx, maximum=%#llx\n",
+> +		     (u64)PFN_PHYS(pfn), max_addr, max_allowed);
+> +		return -E2BIG;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Reasonably generic function for adding memory.  It is
+>   * expected that archs that support memory hotplug will
+> @@ -291,6 +307,10 @@ int __ref __add_pages(int nid, unsigned long pfn, unsigned long nr_pages,
+>  	unsigned long nr, start_sec, end_sec;
+>  	struct vmem_altmap *altmap = restrictions->altmap;
+>  
+> +	err = check_hotplug_memory_addressable(pfn, nr_pages);
+> +	if (err)
+> +		return err;
+> +
+>  	if (altmap) {
+>  		/*
+>  		 * Validate altmap is within bounds of the total request
+> 
 
-> ----------------------------------------------------------------------
-> On Tue, Oct 01, 2019 at 06:56:58AM +0000, Robert Richter wrote:
-> > It is *not* the counterpart. The __* version already has the...
->=20
-> Lemme cut to the chase:
->=20
-> "Make the main workhorse the "count" functions which can log a @count
-> of errors. Have the current APIs edac_device_handle_{ce,ue}() call
-> the _count() variants and this way keep the exported symbols number
-> unchanged."
->=20
-> I want to see exactly *two* pairs of functions:
->=20
-> edac_device_handle_{ce,ue}_count	- logs a @count of errors
-> edac_device_handle_{ce,ue}		- logs a single error
->=20
-> Not three pairs. I.e., the "__" versions are not needed.
->=20
-> > The first patch only adds functionality but keeps the abi. Thus it
-> > makes a backport easier.
->=20
-> Works just the same with my version - single backport.
+I actually wanted to give my RB to v7, not v6 :)
 
-If you move to static inline for edac_device_handle_{ce,ue} the
-symbols vanish and this breaks the abi. That's why the split in two
-patches.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Your comment to not have a __ version as a third variant of the
-interface makes sense to me. But to keep ABI your patch still needs to
-be split. The first patch still must contain symbols for
-edac_device_handle_{ce,ue}. I am not sure if ABI compatability is
-something we want to make easier here. I personally like the approach.
+-- 
 
--Robert
+Thanks,
+
+David / dhildenb
