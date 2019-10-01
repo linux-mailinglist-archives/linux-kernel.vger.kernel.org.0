@@ -2,230 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6059BC4088
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7158DC4097
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfJAS60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 14:58:26 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36852 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfJAS60 (ORCPT
+        id S1726804AbfJATAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 15:00:11 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34414 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbfJATAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 14:58:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 23so1801194pgk.3;
-        Tue, 01 Oct 2019 11:58:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=rgKM+gSKdAvEPz1q3YgyrAMBx1ZEgZu8VXbIIzyUx7E=;
-        b=nHg8JxlOUhjCqeVpdQ+kppAjIL9/bKVm+aZYcY1PFlLnwa9r6q7Nn4UL/9+1k1GjsA
-         W893HGKcxMdCqdo3bc5ADC44hklEndiCvRUHl21BTLe7c+p9r58jnimANW7S/bT8aKwo
-         VlyYhjXK0f2CNybs5aJuTHGtk8vgXg95AIps1UW1/iMJJ5A5/6avp64ZG3UwH3ThjoIM
-         0xXT01PaX6rcwx25Q9BfCUQsnVaeMEv7MAYJ57Bibhr6R9k8iTEYPaPkFPOUAtu1aJPe
-         uZ5uiIo+8M2SI/BgU7J1jnlLZqWdFJYspnpBZNTHnUA7EFsj13TG7d+vfxnLNjbGjikP
-         TrLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=rgKM+gSKdAvEPz1q3YgyrAMBx1ZEgZu8VXbIIzyUx7E=;
-        b=gMWjPLd7wgxWe+r6YOayaG+AWI+XnMZ6vLgIsX+DlQvSjwluTrEbyLLZV6up9LMmgZ
-         hIBLSNCgWi4oSntanqhCNObktK+hgsyHOTKP19i00cBh204r9RcfSPUTCqG/pAHTr0xK
-         +CeBsnh+a/6xVqdpMr1o+AIjRxQyqaIZ5faczCT3lQORvwkweHFxAoDhRZn9vtZBZUdN
-         DBHHh7tUGqHD0xfYcsexmJqvICMwm88tfZjE+Lbh4hn8nsphF9vlYTjPf4OTLnrgzi6S
-         BRIRTAgO31AvMea1qUQGXtqq+vSpCXmDl+3GnRDPRlFMRoLgQw2kHch1a+XRX3xfFi1B
-         tsCQ==
-X-Gm-Message-State: APjAAAXX7mV3Oy+cs2Nm0rqzKwstBIkyegMGMPeQiqRCjT8wHIT6+8Ah
-        xytHnrHURz0yp4ZsmvRfN+E=
-X-Google-Smtp-Source: APXvYqwUMxxtwGQ+/Vz72xXwSnPlrwjofBxSqZxK59ynONJvC0kkiBd1wyg6/J92UGbWQlrqI5KRzg==
-X-Received: by 2002:a63:114b:: with SMTP id 11mr31472766pgr.42.1569956305075;
-        Tue, 01 Oct 2019 11:58:25 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id d5sm3180157pjw.31.2019.10.01.11.58.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 11:58:24 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 11:58:22 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] platform/x86: peaq-wmi: switch to using polled mode of
- input devices
-Message-ID: <20191001185822.GA48020@dtor-ws>
+        Tue, 1 Oct 2019 15:00:11 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91IxYHo170955;
+        Tue, 1 Oct 2019 18:59:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=HUjdfKmYAiVYdwx/VKsfp7MDujfbx9y3CuLubHKJmJQ=;
+ b=OrmAYS24/I71CUnEQyZTUymcuiWq3LRWiTUg8n1+xpq6/U3nn9Nj4GocSxAnQMyUDQ6D
+ dVUMnqhzj9BpFlEoKrm7Q9JWe6SlBVCPOKeSeXXlrZ399R+A7mLrS/tWA2rCp+QjnNa2
+ TadeQG8HXt7813ftQ/1ijYxH9XH87l6KkA7kUYw7u35I/9i5+kxdeCTOOejmbUAxTQdI
+ 3UniJbFJMOLfy2sw3uQ7mrnTqaBRg+opbB30KCJDJhFfYSkRQLLvYr1o2CJx5IJSjJ/g
+ 6ch4FC0CY/h5kDj+KHdjqhPVqLVTeUD0bM6ibsT/uSWBfDpaxNltJk1JnyDoJEkajDYA +w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2va05rr5k1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 18:59:38 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91IxSHw114015;
+        Tue, 1 Oct 2019 18:59:38 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2vbsm2g30p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 18:59:37 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x91IxCMH006633;
+        Tue, 1 Oct 2019 18:59:13 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Oct 2019 11:59:12 -0700
+Date:   Tue, 1 Oct 2019 21:58:55 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Jes Sorensen <jes.sorensen@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH] staging: rtl8723bs: hal: Fix memcpy calls
+Message-ID: <20191001185730.GM29696@kadam>
+References: <20190930110141.29271-1-efremov@linux.com>
+ <37b195b700394e95aa8329afc9f60431@AcuMS.aculab.com>
+ <e4051dcb-10dc-ff17-ec0b-6f51dccdb5bf@linux.com>
+ <20191001135649.GH22609@kadam>
+ <8d2e8196cae74ec4ae20e9c23e898207@AcuMS.aculab.com>
+ <a7c002f7-c6f2-a9ed-0100-acfbafea65c5@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a7c002f7-c6f2-a9ed-0100-acfbafea65c5@linux.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910010152
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910010152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have added polled mode to the normal input devices with the intent of
-retiring input_polled_dev. This converts peaq-wmi driver to use the
-polling mode of standard input devices and removes dependency on
-INPUT_POLLDEV.
+On Tue, Oct 01, 2019 at 06:13:21PM +0300, Denis Efremov wrote:
+> Just found an official documentation to this issue:
+> https://gcc.gnu.org/gcc-4.9/porting_to.html
+> "Null pointer checks may be optimized away more aggressively
+> ...
+> The pointers passed to memmove (and similar functions in <string.h>) must be non-null
+> even when nbytes==0, so GCC can use that information to remove the check after the
+> memmove call. Calling copy(p, NULL, 0) can therefore deference a null pointer and crash."
+> 
 
-Because the new polling coded does not allow peeking inside the poller
-structure to get the poll interval, we change the "debounce" process to
-operate on the time basis, instead of counting events.
+Correct.  In glibc those functions are annotated as non-NULL.
 
-We also fix error handling during initialization, as previously we leaked
-input device structure when we failed to register it.
+extern void *memcpy (void *__restrict __dest, const void *__restrict __src,
+                     size_t __n) __THROW __nonnull ((1, 2));
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+We aren't going to do that in the kernel.  A second difference is that
+in the kernel we use -fno-delete-null-pointer-checks so it doesn't
+delete the NULL checks.
 
-v2: include input.h instead of input-polldev.h
+regards,
+dan carpenter
 
- drivers/platform/x86/Kconfig    |  1 -
- drivers/platform/x86/peaq-wmi.c | 66 +++++++++++++++++++++------------
- 2 files changed, 42 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index f0a93f630455..c703c78c59f3 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -804,7 +804,6 @@ config PEAQ_WMI
- 	tristate "PEAQ 2-in-1 WMI hotkey driver"
- 	depends on ACPI_WMI
- 	depends on INPUT
--	select INPUT_POLLDEV
- 	help
- 	 Say Y here if you want to support WMI-based hotkeys on PEAQ 2-in-1s.
- 
-diff --git a/drivers/platform/x86/peaq-wmi.c b/drivers/platform/x86/peaq-wmi.c
-index fdeb3624c529..cf9c44c20a82 100644
---- a/drivers/platform/x86/peaq-wmi.c
-+++ b/drivers/platform/x86/peaq-wmi.c
-@@ -6,7 +6,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/dmi.h>
--#include <linux/input-polldev.h>
-+#include <linux/input.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
-@@ -18,8 +18,7 @@
- 
- MODULE_ALIAS("wmi:"PEAQ_DOLBY_BUTTON_GUID);
- 
--static unsigned int peaq_ignore_events_counter;
--static struct input_polled_dev *peaq_poll_dev;
-+static struct input_dev *peaq_poll_dev;
- 
- /*
-  * The Dolby button (yes really a Dolby button) causes an ACPI variable to get
-@@ -28,8 +27,10 @@ static struct input_polled_dev *peaq_poll_dev;
-  * (if polling after the release) or twice (polling between press and release).
-  * We ignore events for 0.5s after the first event to avoid reporting 2 presses.
-  */
--static void peaq_wmi_poll(struct input_polled_dev *dev)
-+static void peaq_wmi_poll(struct input_dev *input_dev)
- {
-+	static unsigned long last_event_time;
-+	static bool had_events;
- 	union acpi_object obj;
- 	acpi_status status;
- 	u32 dummy = 0;
-@@ -44,22 +45,25 @@ static void peaq_wmi_poll(struct input_polled_dev *dev)
- 		return;
- 
- 	if (obj.type != ACPI_TYPE_INTEGER) {
--		dev_err(&peaq_poll_dev->input->dev,
-+		dev_err(&input_dev->dev,
- 			"Error WMBC did not return an integer\n");
- 		return;
- 	}
- 
--	if (peaq_ignore_events_counter && peaq_ignore_events_counter--)
-+	if (!obj.integer.value)
- 		return;
- 
--	if (obj.integer.value) {
--		input_event(peaq_poll_dev->input, EV_KEY, KEY_SOUND, 1);
--		input_sync(peaq_poll_dev->input);
--		input_event(peaq_poll_dev->input, EV_KEY, KEY_SOUND, 0);
--		input_sync(peaq_poll_dev->input);
--		peaq_ignore_events_counter = max(1u,
--			PEAQ_POLL_IGNORE_MS / peaq_poll_dev->poll_interval);
--	}
-+	if (had_events && time_before(jiffies, last_event_time +
-+					msecs_to_jiffies(PEAQ_POLL_IGNORE_MS)))
-+		return;
-+
-+	input_event(input_dev, EV_KEY, KEY_SOUND, 1);
-+	input_sync(input_dev);
-+	input_event(input_dev, EV_KEY, KEY_SOUND, 0);
-+	input_sync(input_dev);
-+
-+	last_event_time = jiffies;
-+	had_events = true;
- }
- 
- /* Some other devices (Shuttle XS35) use the same WMI GUID for other purposes */
-@@ -75,6 +79,8 @@ static const struct dmi_system_id peaq_dmi_table[] __initconst = {
- 
- static int __init peaq_wmi_init(void)
- {
-+	int err;
-+
- 	/* WMI GUID is not unique, also check for a DMI match */
- 	if (!dmi_check_system(peaq_dmi_table))
- 		return -ENODEV;
-@@ -82,24 +88,36 @@ static int __init peaq_wmi_init(void)
- 	if (!wmi_has_guid(PEAQ_DOLBY_BUTTON_GUID))
- 		return -ENODEV;
- 
--	peaq_poll_dev = input_allocate_polled_device();
-+	peaq_poll_dev = input_allocate_device();
- 	if (!peaq_poll_dev)
- 		return -ENOMEM;
- 
--	peaq_poll_dev->poll = peaq_wmi_poll;
--	peaq_poll_dev->poll_interval = PEAQ_POLL_INTERVAL_MS;
--	peaq_poll_dev->poll_interval_max = PEAQ_POLL_MAX_MS;
--	peaq_poll_dev->input->name = "PEAQ WMI hotkeys";
--	peaq_poll_dev->input->phys = "wmi/input0";
--	peaq_poll_dev->input->id.bustype = BUS_HOST;
--	input_set_capability(peaq_poll_dev->input, EV_KEY, KEY_SOUND);
-+	peaq_poll_dev->name = "PEAQ WMI hotkeys";
-+	peaq_poll_dev->phys = "wmi/input0";
-+	peaq_poll_dev->id.bustype = BUS_HOST;
-+	input_set_capability(peaq_poll_dev, EV_KEY, KEY_SOUND);
-+
-+	err = input_setup_polling(peaq_poll_dev, peaq_wmi_poll);
-+	if (err)
-+		goto err_out;
-+
-+	input_set_poll_interval(peaq_poll_dev, PEAQ_POLL_INTERVAL_MS);
-+	input_set_max_poll_interval(peaq_poll_dev, PEAQ_POLL_MAX_MS);
-+
-+	err = input_register_device(peaq_poll_dev);
-+	if (err)
-+		goto err_out;
-+
-+	return 0;
- 
--	return input_register_polled_device(peaq_poll_dev);
-+err_out:
-+	input_free_device(peaq_poll_dev);
-+	return err;
- }
- 
- static void __exit peaq_wmi_exit(void)
- {
--	input_unregister_polled_device(peaq_poll_dev);
-+	input_unregister_device(peaq_poll_dev);
- }
- 
- module_init(peaq_wmi_init);
--- 
-2.23.0.444.g18eeb5a265-goog
-
-
--- 
-Dmitry
