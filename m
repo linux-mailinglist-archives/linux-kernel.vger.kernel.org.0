@@ -2,57 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F91C2BD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 04:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7634C2BDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 04:22:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbfJACR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 22:17:56 -0400
-Received: from mga01.intel.com ([192.55.52.88]:10644 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbfJACRz (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 22:17:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 19:17:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,569,1559545200"; 
-   d="scan'208";a="181550706"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga007.jf.intel.com with ESMTP; 30 Sep 2019 19:17:55 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 1979D301B07; Mon, 30 Sep 2019 19:17:55 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 19:17:55 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jin Yao <yao.jin@linux.intel.com>,
-        jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v1 0/2] perf stat: Support --all-kernel and --all-user
-Message-ID: <20191001021755.GF8560@tassilo.jf.intel.com>
-References: <20190925020218.8288-1-yao.jin@linux.intel.com>
- <20190929151022.GA16309@krava>
- <20190930182136.GD8560@tassilo.jf.intel.com>
- <20190930192800.GA13904@kernel.org>
+        id S1729736AbfJACWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 22:22:20 -0400
+Received: from nl101-2.vfemail.net ([149.210.219.31]:31199 "HELO
+        freequeue.vfemail.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1726157AbfJACWU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 22:22:20 -0400
+X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Sep 2019 22:22:19 EDT
+Received: (qmail 95000 invoked from network); 1 Oct 2019 02:14:51 -0000
+Received: from nl101-2.vfemail.net (149.210.219.31)
+  by localhost with SMTP; 1 Oct 2019 02:14:51 -0000
+Received: (qmail 94692 invoked from network); 1 Oct 2019 02:14:34 -0000
+Received: by simscan 1.4.0 ppid: 94686, pid: 94688, t: 0.1108s
+         scanners:none
+Received: from unknown (HELO localhost) (aGdudGt3aXNAdmZlbWFpbC5uZXQ=@192.168.1.192)
+  by nl101.vfemail.net with ESMTPA; 1 Oct 2019 02:14:34 -0000
+Received: from 71-215-123-70.ftmy.centurylink.net
+ (71-215-123-70.ftmy.centurylink.net [71.215.123.70]) by www.vfemail.net
+ (Horde Framework) with HTTPS; Tue, 01 Oct 2019 02:14:45 +0000
+Date:   Tue, 01 Oct 2019 02:14:45 +0000
+Message-ID: <20191001021445.Horde.vJlgHZzdj07RiCXGaQ6yOqT@www.vfemail.net>
+From:   hgntkwis@vfemail.net
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: x86/random: Speculation to the rescue
+User-Agent: Horde Application Framework 5
+X-VFEmail-Originating-IP: 71.215.123.70
+X-VFEmail-AntiSpam: Notify admin@vfemail.net of any spam, and include
+ VFEmail headers
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190930192800.GA13904@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > I think it's useful. Makes it easy to do kernel/user break downs.
-> > perf record should support the same.
-> 
-> Don't we have this already with:
-> 
-> [root@quaco ~]# perf stat -e cycles:u,instructions:u,cycles:k,instructions:k -a -- sleep 1
+Why not get entropy from the white noise that can be obtained from any  
+attached ADC? Audio cards, some SBCs, and microcontrollers all have  
+ADCs.
+Not that I'm familiar with when the kernel first needs entropy or an  
+expert in the field.
 
-This only works for simple cases. Try it for --topdown or multiple -M metrics.
+Thanks
 
--Andi
+
+
+-------------------------------------------------
+This free account was provided by VFEmail.net - report spam to abuse@vfemail.net
+ 
+ONLY AT VFEmail! - Use our Metadata Mitigator to keep your email out of the NSA's hands!
+$24.95 ONETIME Lifetime accounts with Privacy Features!  
+15GB disk! No bandwidth quotas!
+Commercial and Bulk Mail Options!  
