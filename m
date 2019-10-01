@@ -2,193 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 722FEC43AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 00:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9C6C43BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 00:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbfJAWTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 18:19:20 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41139 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfJAWTU (ORCPT
+        id S1728847AbfJAWVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 18:21:07 -0400
+Received: from gateway20.websitewelcome.com ([192.185.4.169]:31469 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727121AbfJAWVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 18:19:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f5so15054136ljg.8;
-        Tue, 01 Oct 2019 15:19:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oMnTWIkEFx7hV55d8HRQu4uB51SHbkOs+8qRO4hsJAg=;
-        b=lXMslVfz7D8gI9mo1A6A7CFLlOvvNOzKTULQyZx+3MprJpFQSceMODLbDPEWFctAPt
-         jdav5cHZwKLJ0zq03R9SPpX4DlK3b0AboPx7ScTZ6GQXs1w1gOrzCYpfLIQdJi/POq5e
-         RPpJf0hJGI6Teq8zpjwpLdsgH2Cvw92RksrnhhZl8dF98s29ee0gDiAxdgU6v0kEKgmn
-         E797CFH0clXE/pantveJ8+GX9vEvNdIjgfeDuSGv4H6Y825dnFZN2diZDQw12CnslPWB
-         xRdB8ya9rZ9YIjVvIbPUezcXiUA3JKxm+uguAJvArtPXxqFXyDy20o7YTgZREjAucMVv
-         HRbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oMnTWIkEFx7hV55d8HRQu4uB51SHbkOs+8qRO4hsJAg=;
-        b=c596HXm44236KyNs5GZE4CpOUJDhUW58z7GrqNowRNgjY8/c0tCyPwkg/1PkX08GWE
-         JRYx4fdzp+YEpd3xHdm0spgRxZ0d5OXqSFBlMT9AntoXaoqxoOxMEg2O4ns6k/bc7D7B
-         UsII77PguvodJPmMvnULxo/z4gADOP7SmCpkWUFgQsbclBk55HbGMExwHEYYf5AfthE9
-         RyYsuX+XA2i0NZ69vxT00Ytl8E5LX1PreCKPnWjoum8WgR7Qcyjix59b5Oxe8HmObVnL
-         rM6bMOm2aEFAhX+OlNg4KloDkMsi+4pRLULTpU5kxCnmO2SYPCeRPic2gf5pGesVZuQe
-         MriQ==
-X-Gm-Message-State: APjAAAVPqkhPo4LBKJq55DB6tpaex+AVxQH2NdH2HO9zo/P5jY6sVxbp
-        IqxvXx7/N1oMpL5clH9+xrdSawIy/ZFKdWL6vik=
-X-Google-Smtp-Source: APXvYqweBJ5toKrdcq0StVEbNJ9J/cYfYJDUQ8PAkdbREU0S7AVdKsQxGACvp49bFkNQF6eUP3KyjngCeUD0nmidRkw=
-X-Received: by 2002:a2e:b0d1:: with SMTP id g17mr108184ljl.238.1569968357000;
- Tue, 01 Oct 2019 15:19:17 -0700 (PDT)
+        Tue, 1 Oct 2019 18:21:06 -0400
+X-Greylist: delayed 1386 seconds by postgrey-1.27 at vger.kernel.org; Tue, 01 Oct 2019 18:21:05 EDT
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id BB50B400D8571
+        for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2019 15:51:12 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id FQ9eiKpiVHunhFQ9ei2qk3; Tue, 01 Oct 2019 16:57:58 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=H0qiex9RmtrMEEVNXKA/BGYgUi4eW/UijlkfLH1YdBQ=; b=fBn600iyGcdMLRzaVYHjMSX0N6
+        yhjuNQ2uHTlE9+drdt8h7FAWcReGxIzQHKxdWay7NQUZJMcMFaXJ9KaMV6e6j1l4cTCashU0yXbjC
+        MCV8/Bfdn/A1fZ3aAj4XsfiZpNT2Y3mmYxb9esQOJqylEKbSPpRICdmhxQBh2LSQbPRLpID5Uk1uD
+        tLX5BkH0ARnnQuUHlbzYP0cfnIbPsEU/iyuIwE/GdGIeyfmtjDkFsl6ASRfZSjd+aOWSfLTW5ovY3
+        ShZc20EIS2U8HC459zkq/3lF3UShyAopJSpDQuvvAhCXnBpGIibFhH/CKIdlAV17v5TKkba0knQ7x
+        gcGQFpfA==;
+Received: from [187.192.22.73] (port=35754 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iFQ9e-0014bq-2C; Tue, 01 Oct 2019 16:57:58 -0500
+Subject: Re: [PATCH] drm/amdgpu: fix structurally dead code vcn_v2_5_hw_init
+To:     "Liu, Leo" <Leo.Liu@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191001171635.GA17306@embeddedor>
+ <192815d9-5ecb-09a7-4624-5fd36126890d@amd.com>
+ <823b10a3-fe0e-2e8c-02c3-534944dbe6d2@embeddedor.com>
+ <dc76a52b-09a2-7ab9-b53e-52500f4f8669@amd.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <3c6ebf4a-8cba-40e2-7d70-c4d5006a160b@embeddedor.com>
+Date:   Tue, 1 Oct 2019 16:57:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CANL0fFSGG_+R2zbf-9MxVLJMTMgc+-fwSoLCqS1qc+jWo-zNLA@mail.gmail.com>
- <20190219213003.l7hzy2emdsxe4izy@gofer.mess.org>
-In-Reply-To: <20190219213003.l7hzy2emdsxe4izy@gofer.mess.org>
-From:   Gonsolo <gonsolo@gmail.com>
-Date:   Wed, 2 Oct 2019 00:19:05 +0200
-Message-ID: <CANL0fFRnEaapgm3oiDQmZb6qeAr4pwyhofZXA0mbmq=o4PPUDg@mail.gmail.com>
-Subject: Re: DVB-T2 Stick
-To:     Sean Young <sean@mess.org>
-Cc:     crope@iki.fi, linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000003ac0f70593e0be20"
+In-Reply-To: <dc76a52b-09a2-7ab9-b53e-52500f4f8669@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.22.73
+X-Source-L: No
+X-Exim-ID: 1iFQ9e-0014bq-2C
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [187.192.22.73]:35754
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 18
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000003ac0f70593e0be20
-Content-Type: text/plain; charset="UTF-8"
-
-Hi!
-
-> Secondly there are lots of coding style issues, see:
-> https://www.kernel.org/doc/html/v4.10/process/coding-style.html
-
-I addressed most of these except one "#if 0" warning from checkpatch.
-
-> I'm afraid there are many problems with this patch. First of all it looks
-> like support was added for a si2168 tuner but it looks like it will break
-> for any other si2157-type device.
 
 
-Can you give me a hint how to proceed here? I don't know much about
-DVB tuners or kernel development.
+On 10/1/19 16:46, Liu, Leo wrote:
 
-I attached the cleaned-up patch for 5.4.0-rc1
+>>>> +		ring->sched.ready = true;
+>>> This is redundant. all the sched->ready is initialized as true, please
+>>> refer to drm_sched_init()
+>>>
+>> I see... so in the following commit 1b61de45dfaf ("drm/amdgpu: add initial VCN2.0 support (v2)")
+>> that line is also redundant?
+> 
+> Yes.
+> 
 
-Thanks,
-g
+OK.
 
---0000000000003ac0f70593e0be20
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-DVB-T2-with-coding-style-updates.patch"
-Content-Disposition: attachment; 
-	filename="0001-DVB-T2-with-coding-style-updates.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k18elxx70>
-X-Attachment-Id: f_k18elxx70
+> 
+>>>>    		r = amdgpu_ring_test_ring(ring);
+>>>>    		if (r) {
+>>>>    			ring->sched.ready = false;
+>>>> @@ -266,8 +267,7 @@ static int vcn_v2_5_hw_init(void *handle)
+>>>>    
+>>>>    		for (i = 0; i < adev->vcn.num_enc_rings; ++i) {
+>>>>    			ring = &adev->vcn.inst[j].ring_enc[i];
+>>>> -			ring->sched.ready = false;
+>>>> -			continue;
+>>>> +			ring->sched.ready = true;
+>>> Because the VCN 2.5 FW still has issue for encode, so we have it
+>>> disabled here.
+>>>
+>> OK. So, maybe we can add a comment pointing that out?
+> 
+> That could be better.
+> 
 
-RnJvbSA2Y2FkYTY0NDIyMDdhNjcyMDJlNzM3MjE2OTJhY2VkNjY1YjhmZGYwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBHb24gU29sbyA8Z29uc29sb0BnbWFpbC5jb20+CkRhdGU6IFR1
-ZSwgMSBPY3QgMjAxOSAyMTo1OTo0NCArMDIwMApTdWJqZWN0OiBbUEFUQ0hdIERWQi1UMiB3aXRo
-IGNvZGluZyBzdHlsZSB1cGRhdGVzLgoKLS0tCiBkcml2ZXJzL21lZGlhL3R1bmVycy9zaTIxNTcu
-YyAgICAgICAgIHwgNDQgKysrKysrKysrKysrKysrKysrKysrKy0tLQogZHJpdmVycy9tZWRpYS90
-dW5lcnMvc2kyMTU3X3ByaXYuaCAgICB8ICA4ICsrKysrCiBkcml2ZXJzL21lZGlhL3VzYi9kdmIt
-dXNiLXYyL2FmOTAzNS5jIHwgNDcgKysrKysrKysrKysrKysrKysrKysrKysrKystCiAzIGZpbGVz
-IGNoYW5nZWQsIDkzIGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9tZWRpYS90dW5lcnMvc2kyMTU3LmMgYi9kcml2ZXJzL21lZGlhL3R1bmVycy9zaTIx
-NTcuYwppbmRleCBlODcwNDBkNmVjYTcuLmFmNTBlNzIxMjgxYiAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9tZWRpYS90dW5lcnMvc2kyMTU3LmMKKysrIGIvZHJpdmVycy9tZWRpYS90dW5lcnMvc2kyMTU3
-LmMKQEAgLTc1LDcgKzc1LDcgQEAgc3RhdGljIGludCBzaTIxNTdfaW5pdChzdHJ1Y3QgZHZiX2Zy
-b250ZW5kICpmZSkKIAlzdHJ1Y3Qgc2kyMTU3X2NtZCBjbWQ7CiAJY29uc3Qgc3RydWN0IGZpcm13
-YXJlICpmdzsKIAljb25zdCBjaGFyICpmd19uYW1lOwotCXVuc2lnbmVkIGludCB1aXRtcCwgY2hp
-cF9pZDsKKwl1bnNpZ25lZCBpbnQgdWl0bXA7CiAKIAlkZXZfZGJnKCZjbGllbnQtPmRldiwgIlxu
-Iik7CiAKQEAgLTExNyw3ICsxMTcsNyBAQCBzdGF0aWMgaW50IHNpMjE1N19pbml0KHN0cnVjdCBk
-dmJfZnJvbnRlbmQgKmZlKQogCQlpZiAocmV0KQogCQkJZ290byBlcnI7CiAJfQotCisjaWYgMAog
-CS8qIHF1ZXJ5IGNoaXAgcmV2aXNpb24gKi8KIAltZW1jcHkoY21kLmFyZ3MsICJceDAyIiwgMSk7
-CiAJY21kLndsZW4gPSAxOwpAQCAtMTM4LDYgKzEzOCw4IEBAIHN0YXRpYyBpbnQgc2kyMTU3X2lu
-aXQoc3RydWN0IGR2Yl9mcm9udGVuZCAqZmUpCiAJI2RlZmluZSBTSTIxNDFfQTEwICgnQScgPDwg
-MjQgfCA0MSA8PCAxNiB8ICcxJyA8PCA4IHwgJzAnIDw8IDApCiAKIAlzd2l0Y2ggKGNoaXBfaWQp
-IHsKKyNlbmRpZgorCXN3aXRjaCAoZGV2LT5jaGlwX2lkKSB7CiAJY2FzZSBTSTIxNThfQTIwOgog
-CWNhc2UgU0kyMTQ4X0EyMDoKIAkJZndfbmFtZSA9IFNJMjE1OF9BMjBfRklSTVdBUkU7CkBAIC0x
-NjEsOSArMTYzLDkgQEAgc3RhdGljIGludCBzaTIxNTdfaW5pdChzdHJ1Y3QgZHZiX2Zyb250ZW5k
-ICpmZSkKIAkJZ290byBlcnI7CiAJfQogCi0JZGV2X2luZm8oJmNsaWVudC0+ZGV2LCAiZm91bmQg
-YSAnU2lsaWNvbiBMYWJzIFNpMjElZC0lYyVjJWMnXG4iLAotCQkJY21kLmFyZ3NbMl0sIGNtZC5h
-cmdzWzFdLCBjbWQuYXJnc1szXSwgY21kLmFyZ3NbNF0pOwotCisvLwlkZXZfaW5mbygmY2xpZW50
-LT5kZXYsICJmb3VuZCBhICdTaWxpY29uIExhYnMgU2kyMSVkLSVjJWMlYydcbiIsCisvLwkJCWNt
-ZC5hcmdzWzJdLCBjbWQuYXJnc1sxXSwgY21kLmFyZ3NbM10sIGNtZC5hcmdzWzRdKTsKKy8vCiAJ
-aWYgKGZ3X25hbWUgPT0gTlVMTCkKIAkJZ290byBza2lwX2Z3X2Rvd25sb2FkOwogCkBAIC00NTYs
-NiArNDU4LDM4IEBAIHN0YXRpYyBpbnQgc2kyMTU3X3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50ICpj
-bGllbnQsCiAJbWVtY3B5KCZmZS0+b3BzLnR1bmVyX29wcywgJnNpMjE1N19vcHMsIHNpemVvZihz
-dHJ1Y3QgZHZiX3R1bmVyX29wcykpOwogCWZlLT50dW5lcl9wcml2ID0gY2xpZW50OwogCisJLyog
-cG93ZXIgdXAgKi8KKwlpZiAoZGV2LT5jaGlwdHlwZSA9PSBTSTIxNTdfQ0hJUFRZUEVfU0kyMTQ2
-KSB7CisJCW1lbWNweShjbWQuYXJncywgIlx4YzBceDA1XHgwMVx4MDBceDAwXHgwYlx4MDBceDAw
-XHgwMSIsIDkpOworCQljbWQud2xlbiA9IDk7CisJfSBlbHNlIHsKKwkJbWVtY3B5KGNtZC5hcmdz
-LAorCQkiXHhjMFx4MDBceDBjXHgwMFx4MDBceDAxXHgwMVx4MDFceDAxXHgwMVx4MDFceDAyXHgw
-MFx4MDBceDAxIiwKKwkJMTUpOworCQljbWQud2xlbiA9IDE1OworCX0KKwljbWQucmxlbiA9IDE7
-CisJcmV0ID0gc2kyMTU3X2NtZF9leGVjdXRlKGNsaWVudCwgJmNtZCk7CisJaWYgKHJldCkKKwkJ
-Z290byBlcnI7CisJLyogcXVlcnkgY2hpcCByZXZpc2lvbiAqLworCS8qIGhhY2s6IGRvIGl0IGhl
-cmUgYmVjYXVzZSBhZnRlciB0aGUgc2kyMTY4IGdldHMgMDEwMSwgY29tbWFuZHMgd2lsbAorCSAq
-IHN0aWxsIGJlIGV4ZWN1dGVkIGhlcmUgYnV0IG5vIHJlc3VsdAorCSAqLworCW1lbWNweShjbWQu
-YXJncywgIlx4MDIiLCAxKTsKKwljbWQud2xlbiA9IDE7CisJY21kLnJsZW4gPSAxMzsKKwlyZXQg
-PSBzaTIxNTdfY21kX2V4ZWN1dGUoY2xpZW50LCAmY21kKTsKKwlpZiAocmV0KQorCQlnb3RvIGVy
-cl9rZnJlZTsKKwlkZXYtPmNoaXBfaWQgPSBjbWQuYXJnc1sxXSA8PCAyNCB8CisJCWNtZC5hcmdz
-WzJdIDw8IDE2IHwKKwkJY21kLmFyZ3NbM10gPDwgOCB8CisJCWNtZC5hcmdzWzRdIDw8IDA7CisJ
-ZGV2X2luZm8oJmNsaWVudC0+ZGV2LCAiZm91bmQgYSAnU2lsaWNvbiBMYWJzIFNpMjElZC0lYyVj
-JWMnXG4iLAorCQljbWQuYXJnc1syXSwgY21kLmFyZ3NbMV0sIGNtZC5hcmdzWzNdLCBjbWQuYXJn
-c1s0XSk7CisKKwogI2lmZGVmIENPTkZJR19NRURJQV9DT05UUk9MTEVSCiAJaWYgKGNmZy0+bWRl
-dikgewogCQlkZXYtPm1kZXYgPSBjZmctPm1kZXY7CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlh
-L3R1bmVycy9zaTIxNTdfcHJpdi5oIGIvZHJpdmVycy9tZWRpYS90dW5lcnMvc2kyMTU3X3ByaXYu
-aAppbmRleCAyYmRhOTAzMzU4ZGEuLjBmNDA5MGUxODRlOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9t
-ZWRpYS90dW5lcnMvc2kyMTU3X3ByaXYuaAorKysgYi9kcml2ZXJzL21lZGlhL3R1bmVycy9zaTIx
-NTdfcHJpdi5oCkBAIC0yOCw2ICsyOCw3IEBAIHN0cnVjdCBzaTIxNTdfZGV2IHsKIAl1OCBjaGlw
-dHlwZTsKIAl1OCBpZl9wb3J0OwogCXUzMiBpZl9mcmVxdWVuY3k7CisJdTMyIGNoaXBfaWQ7CiAJ
-c3RydWN0IGRlbGF5ZWRfd29yayBzdGF0X3dvcms7CiAKICNpZiBkZWZpbmVkKENPTkZJR19NRURJ
-QV9DT05UUk9MTEVSKQpAQCAtNDMsNiArNDQsMTMgQEAgc3RydWN0IHNpMjE1N19kZXYgewogI2Rl
-ZmluZSBTSTIxNTdfQ0hJUFRZUEVfU0kyMTQxIDIKICNkZWZpbmUgU0kyMTU3X0NISVBUWVBFX1NJ
-MjE3NyAzCiAKKyNkZWZpbmUgU0kyMTU4X0EyMCAoJ0EnIDw8IDI0IHwgNTggPDwgMTYgfCAnMicg
-PDwgOCB8ICcwJyA8PCAwKQorI2RlZmluZSBTSTIxNDhfQTIwICgnQScgPDwgMjQgfCA0OCA8PCAx
-NiB8ICcyJyA8PCA4IHwgJzAnIDw8IDApCisjZGVmaW5lIFNJMjE1N19BMzAgKCdBJyA8PCAyNCB8
-IDU3IDw8IDE2IHwgJzMnIDw8IDggfCAnMCcgPDwgMCkKKyNkZWZpbmUgU0kyMTQ3X0EzMCAoJ0En
-IDw8IDI0IHwgNDcgPDwgMTYgfCAnMycgPDwgOCB8ICcwJyA8PCAwKQorI2RlZmluZSBTSTIxNDZf
-QTEwICgnQScgPDwgMjQgfCA0NiA8PCAxNiB8ICcxJyA8PCA4IHwgJzAnIDw8IDApCisjZGVmaW5l
-IFNJMjE0MV9BMTAgKCdBJyA8PCAyNCB8IDQxIDw8IDE2IHwgJzEnIDw8IDggfCAnMCcgPDwgMCkK
-KwogLyogZmlybXdhcmUgY29tbWFuZCBzdHJ1Y3QgKi8KICNkZWZpbmUgU0kyMTU3X0FSR0xFTiAg
-ICAgIDMwCiBzdHJ1Y3Qgc2kyMTU3X2NtZCB7CmRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3Vz
-Yi9kdmItdXNiLXYyL2FmOTAzNS5jIGIvZHJpdmVycy9tZWRpYS91c2IvZHZiLXVzYi12Mi9hZjkw
-MzUuYwppbmRleCAzYWZkMTg3MzM2MTQuLjViN2EwMGNkY2JkOCAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9tZWRpYS91c2IvZHZiLXVzYi12Mi9hZjkwMzUuYworKysgYi9kcml2ZXJzL21lZGlhL3VzYi9k
-dmItdXNiLXYyL2FmOTAzNS5jCkBAIC0xMjA2LDcgKzEyMDYsNTAgQEAgc3RhdGljIGludCBpdDkz
-MHhfZnJvbnRlbmRfYXR0YWNoKHN0cnVjdCBkdmJfdXNiX2FkYXB0ZXIgKmFkYXApCiAJc3RydWN0
-IHNpMjE2OF9jb25maWcgc2kyMTY4X2NvbmZpZzsKIAlzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXB0
-ZXI7CiAKLQlkZXZfZGJnKCZpbnRmLT5kZXYsICJhZGFwLT5pZD0lZFxuIiwgYWRhcC0+aWQpOwor
-CS8vZGV2X2RiZygmaW50Zi0+ZGV2LCAiYWRhcC0+aWQ9JWRcbiIsIGFkYXAtPmlkKTsKKwlkZXZf
-ZGJnKCZpbnRmLT5kZXYsICIlcyAgYWRhcC0+aWQ9JWRcbiIsIF9fZnVuY19fLCBhZGFwLT5pZCk7
-CisKKwkvKiBJMkMgbWFzdGVyIGJ1cyAyIGNsb2NrIHNwZWVkIDMwMGsgKi8KKwlyZXQgPSBhZjkw
-MzVfd3JfcmVnKGQsIDB4MDBmNmE3LCAweDA3KTsKKwlpZiAocmV0IDwgMCkKKwkJZ290byBlcnI7
-CisKKwkvKiBJMkMgbWFzdGVyIGJ1cyAxLDMgY2xvY2sgc3BlZWQgMzAwayAqLworCXJldCA9IGFm
-OTAzNV93cl9yZWcoZCwgMHgwMGYxMDMsIDB4MDcpOworCWlmIChyZXQgPCAwKQorCQlnb3RvIGVy
-cjsKKworCS8qIHNldCBncGlvMTEgbG93ICovCisJcmV0ID0gYWY5MDM1X3dyX3JlZ19tYXNrKGQs
-IDB4ZDhkNCwgMHgwMSwgMHgwMSk7CisJaWYgKHJldCA8IDApCisJCWdvdG8gZXJyOworCisJcmV0
-ID0gYWY5MDM1X3dyX3JlZ19tYXNrKGQsIDB4ZDhkNSwgMHgwMSwgMHgwMSk7CisJaWYgKHJldCA8
-IDApCisJCWdvdG8gZXJyOworCisJcmV0ID0gYWY5MDM1X3dyX3JlZ19tYXNrKGQsIDB4ZDhkMywg
-MHgwMSwgMHgwMSk7CisJaWYgKHJldCA8IDApCisJCWdvdG8gZXJyOworCisJLyogVHVuZXIgZW5h
-YmxlIHVzaW5nIGdwaW90Ml9lbiwgZ3Bpb3QyX29uIGFuZCBncGlvdDJfbyAocmVzZXQpICovCisJ
-cmV0ID0gYWY5MDM1X3dyX3JlZ19tYXNrKGQsIDB4ZDhiOCwgMHgwMSwgMHgwMSk7CisJaWYgKHJl
-dCA8IDApCisJCWdvdG8gZXJyOworCisJcmV0ID0gYWY5MDM1X3dyX3JlZ19tYXNrKGQsIDB4ZDhi
-OSwgMHgwMSwgMHgwMSk7CisJaWYgKHJldCA8IDApCisJCWdvdG8gZXJyOworCisJcmV0ID0gYWY5
-MDM1X3dyX3JlZ19tYXNrKGQsIDB4ZDhiNywgMHgwMCwgMHgwMSk7CisJaWYgKHJldCA8IDApCisJ
-CWdvdG8gZXJyOworCisJbXNsZWVwKDIwMCk7CisKKwlyZXQgPSBhZjkwMzVfd3JfcmVnX21hc2so
-ZCwgMHhkOGI3LCAweDAxLCAweDAxKTsKKwlpZiAocmV0IDwgMCkKKwkJZ290byBlcnI7CiAKIAkv
-KiBJMkMgbWFzdGVyIGJ1cyAyIGNsb2NrIHNwZWVkIDMwMGsgKi8KIAlyZXQgPSBhZjkwMzVfd3Jf
-cmVnKGQsIDB4MDBmNmE3LCAweDA3KTsKQEAgLTIxMTgsNiArMjE2MSw4IEBAIHN0YXRpYyBjb25z
-dCBzdHJ1Y3QgdXNiX2RldmljZV9pZCBhZjkwMzVfaWRfdGFibGVbXSA9IHsKIAogCS8qIElUOTMw
-eCBkZXZpY2VzICovCiAJeyBEVkJfVVNCX0RFVklDRShVU0JfVklEX0lURVRFQ0gsIFVTQl9QSURf
-SVRFVEVDSF9JVDkzMDMsCisJeyBEVkJfVVNCX0RFVklDRShVU0JfVklEX0RFWEFURUssIDB4MDEw
-MCwKKwkJJml0OTMweF9wcm9wcywgIkxvZ2lsaW5rIFZHMDAyMkEiLCBOVUxMKSB9LAogCQkmaXQ5
-MzB4X3Byb3BzLCAiSVRFIDkzMDMgR2VuZXJpYyIsIE5VTEwpIH0sCiAJeyBEVkJfVVNCX0RFVklD
-RShVU0JfVklEX0FWRVJNRURJQSwgVVNCX1BJRF9BVkVSTUVESUFfVEQzMTAsCiAJCSZpdDkzMHhf
-cHJvcHMsICJBVmVyTWVkaWEgVEQzMTAgRFZCLVQyIiwgTlVMTCkgfSwKLS0gCjIuMjAuMQoK
---0000000000003ac0f70593e0be20--
+Great. I'm glad it's not a bug.  I'll write a patch for that so other
+people don't waste time taking a look.
+
+I appreciate your feedback.
+Thanks
+--
+Gustavo
