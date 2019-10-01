@@ -2,80 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBD0EC3ACA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6924C3ABD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbfJAQjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:39:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50880 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728521AbfJAQju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:39:50 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2681321920;
-        Tue,  1 Oct 2019 16:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569947990;
-        bh=WtMBOunqzYjl4jozG6r1PE63VrycBMI8XpYf9CAn4oA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zvjOxzlwCFZb8zWwrEKXl6qX/pdNv0YFBqc+whfan7GG7ZKf8MsOiDdtMZ/+D0uGo
-         UPqhZ1EoGCT531ockbNEhlTyV2UPAHZzA6lkToiMnsMGDk3uCrAyE5eu8a2YTmn6RJ
-         nHiXBNwxmC0/b3HpMM2e1varC4AzyX8VH179nKiY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.3 19/71] drm/amdgpu: Fix KFD-related kernel oops on Hawaii
-Date:   Tue,  1 Oct 2019 12:38:29 -0400
-Message-Id: <20191001163922.14735-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
-References: <20191001163922.14735-1-sashal@kernel.org>
+        id S1727735AbfJAQj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:39:29 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:39375 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbfJAQj0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:39:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1569947965; x=1601483965;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8vKl6yDkUjVwSIEpS1l7EJEXTANs8Udckbj8KOh+Zes=;
+  b=CStsrV285EVpR0AnerPgPGqPjyI7WBMogxbCSBp2skS5/5+B6+zpJouj
+   /jikUaB9BJuK+7hLGtkZpQ6OhnLyuMPVl1daN+q+PYEYiIpmOCz4C53GE
+   5L7rVWK6UjJl4kyf6NfHOoQadl3qIKnsBJpuUL2NmdN03QTWpyGART7dd
+   M=;
+X-IronPort-AV: E=Sophos;i="5.64,571,1559520000"; 
+   d="scan'208";a="425072078"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-f273de60.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 01 Oct 2019 16:39:22 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-f273de60.us-east-1.amazon.com (Postfix) with ESMTPS id 95FB0A2254;
+        Tue,  1 Oct 2019 16:39:18 +0000 (UTC)
+Received: from EX13D02UWC003.ant.amazon.com (10.43.162.199) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 1 Oct 2019 16:39:18 +0000
+Received: from localhost (10.43.160.153) by EX13D02UWC003.ant.amazon.com
+ (10.43.162.199) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 1 Oct
+ 2019 16:39:16 +0000
+Date:   Tue, 1 Oct 2019 11:39:10 -0500
+From:   Patrick Williams <alpawi@amazon.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     Patrick Williams <patrick@stwcx.xyz>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jean Delvare <jdelvare@suse.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Max Staudt <max@enpas.org>,
+        Juergen Fitschen <jfi@ssv-embedded.de>,
+        Elie Morisse <syniurge@gmail.com>,
+        Ajay Gupta <ajayg@nvidia.com>, Stefan Roese <sr@denx.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "Paul Cercueil" <paul@crapouillou.net>,
+        Enrico Weigelt <info@metux.net>,
+        "Allison Randal" <allison@lohutok.net>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] i2c: pxa: migrate to new i2c_slave APIs
+Message-ID: <20191001163910.GA2307@8c859006a84e.ant.amazon.com>
+References: <20191001160001.2388-1-alpawi@amazon.com>
+ <20191001160001.2388-2-alpawi@amazon.com>
+ <20191001162913.GR32742@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191001162913.GR32742@smile.fi.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Originating-IP: [10.43.160.153]
+X-ClientProxiedBy: EX13D15UWB001.ant.amazon.com (10.43.161.254) To
+ EX13D02UWC003.ant.amazon.com (10.43.162.199)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Kuehling <Felix.Kuehling@amd.com>
+Thanks for the review Andy.
 
-[ Upstream commit dcafbd50f2e4d5cc964aae409fb5691b743fba23 ]
+On Tue, Oct 01, 2019 at 07:29:13PM +0300, Andy Shevchenko wrote:
+> 
+> 
+> On Tue, Oct 01, 2019 at 10:59:59AM -0500, Patrick Williams wrote:
+> There are quite a few people in the Cc list. I'm not sure they all are
+> interested in this. I deliberately dropped few names, sorry, if I was mistaken.
 
-Hawaii needs to flush caches explicitly, submitting an IB in a user
-VMID from kernel mode. There is no s_fence in this case.
+Agree it was kind of a big list.  Just chose what was given to me by
+get_maintainer.pl.  It seems like there isn't a direct identified
+maintainer of this file.
 
-Fixes: eb3961a57424 ("drm/amdgpu: remove fence context from the job")
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> > +		if (isr & ISR_RWM) {
+> > +			u8 byte = 0;
+> > +
+> > +			i2c_slave_event(i2c->slave, I2C_SLAVE_READ_REQUESTED,
+> > +					&byte);
+> > +			writel(byte, _IDBR(i2c));
+> > +		} else {
+> > +			i2c_slave_event(i2c->slave, I2C_SLAVE_WRITE_REQUESTED,
+> > +					NULL);
+> > +		}
+> 
+> Hmm... Perhaps
+> 
+> 		u8 byte = 0;
+> 
+> 		i2c_slave_event(i2c->slave, I2C_SLAVE_READ_REQUESTED, &byte);
+> 		if (isr & ISR_RWM)
+> 			writel(byte, _IDBR(i2c));
+> 
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
-index 7850084a05e3a..60655834d6498 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
-@@ -143,7 +143,8 @@ int amdgpu_ib_schedule(struct amdgpu_ring *ring, unsigned num_ibs,
- 	/* ring tests don't use a job */
- 	if (job) {
- 		vm = job->vm;
--		fence_ctx = job->base.s_fence->scheduled.context;
-+		fence_ctx = job->base.s_fence ?
-+			job->base.s_fence->scheduled.context : 0;
- 	} else {
- 		vm = NULL;
- 		fence_ctx = 0;
+The two different paths also require READ_REQUEST vs WRITE_REQUESTED.  I
+could do a ternary there but it seemed more obvious to just unroll the
+logic.
+
 -- 
-2.20.1
-
+- Patrick
