@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D570C3DD1
+	by mail.lfdr.de (Postfix) with ESMTP id 7B918C3DD2
 	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbfJAQj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:39:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51040 "EHLO mail.kernel.org"
+        id S1729220AbfJAQj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:39:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728595AbfJAQjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:39:55 -0400
+        id S1728521AbfJAQj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:39:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E17921920;
-        Tue,  1 Oct 2019 16:39:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E6C62190F;
+        Tue,  1 Oct 2019 16:39:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569947995;
-        bh=NuHhHXw4QZBdglT0kxOOBHpNOn1XLOOMc9cyecLOYBc=;
+        s=default; t=1569947996;
+        bh=sYY95Hr5Vx7uYLpkaAUKFT7rsKYr+ZKBrBYfbzCeno0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KFlQ0fe81+Fa8eDae6cTPtZ3TXN5IjIKlTipmtZAqLD+ceBYENQDxSciZyd5oGIOX
-         5/Pb1J/P/aUugBkn7YY4bW9BFN82ZHf1le/1UJnt5sgoqGcV/Y9SreEB2CZdklgqfY
-         7wFGsz9wZ/WdY3iDf1E6R07C7V5xht0A8GMeueIc=
+        b=nNajo/9/AtRBIt5z2NxJmrX/Ot9ufPNXCJMndxQO8Y7YE0CSXEUOaGmqlaIlU0CP4
+         AWNFw0gd+iOyN/fmGe2DI/gjY4Dkj8kVGqqrdCjrySbr2q7UkbORa0FVGP9qXl9Aui
+         /B32Haas3/LSBF1wGnHyMIb7gmkXoMJ1xGKYl6aM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 21/71] perf probe: Fix to clear tev->nargs in clear_probe_trace_event()
-Date:   Tue,  1 Oct 2019 12:38:31 -0400
-Message-Id: <20191001163922.14735-21-sashal@kernel.org>
+Cc:     Trond Myklebust <trondmy@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 22/71] pNFS: Ensure we do clear the return-on-close layout stateid on fatal errors
+Date:   Tue,  1 Oct 2019 12:38:32 -0400
+Message-Id: <20191001163922.14735-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
 References: <20191001163922.14735-1-sashal@kernel.org>
@@ -45,64 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 9e6124d9d635957b56717f85219a88701617253f ]
+[ Upstream commit 9c47b18cf722184f32148784189fca945a7d0561 ]
 
-Since add_probe_trace_event() can reuse tf->tevs[i] after calling
-clear_probe_trace_event(), this can make perf-probe crash if the 1st
-attempt of probe event finding fails to find an event argument, and the
-2nd attempt fails to find probe point.
+IF the server rejected our layout return with a state error such as
+NFS4ERR_BAD_STATEID, or even a stale inode error, then we do want
+to clear out all the remaining layout segments and mark that stateid
+as invalid.
 
-E.g.
-  $ perf probe -D "task_pid_nr tsk"
-  Failed to find 'tsk' in this function.
-  Failed to get entry address of warn_bad_vsyscall
-  Segmentation fault (core dumped)
-
-Committer testing:
-
-After the patch:
-
-  $ perf probe -D "task_pid_nr tsk"
-  Failed to find 'tsk' in this function.
-  Failed to get entry address of warn_bad_vsyscall
-  Failed to get entry address of signal_fault
-  Failed to get entry address of show_signal
-  Failed to get entry address of umip_printk
-  Failed to get entry address of __bad_area_nosemaphore
-  <SNIP>
-  Failed to get entry address of sock_set_timeout
-  Failed to get entry address of tcp_recvmsg
-  Probe point 'task_pid_nr' not found.
-    Error: Failed to add events.
-  $
-
-Fixes: 092b1f0b5f9f ("perf probe: Clear probe_trace_event when add_probe_trace_event() fails")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lore.kernel.org/lkml/156856587999.25775.5145779959474477595.stgit@devnote2
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 1c5bd76d17cca ("pNFS: Enable layoutreturn operation for...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/probe-event.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/pnfs.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 8394d48f8b32e..3355c445abedf 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2329,6 +2329,7 @@ void clear_probe_trace_event(struct probe_trace_event *tev)
- 		}
- 	}
- 	zfree(&tev->args);
-+	tev->nargs = 0;
- }
+diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
+index 4525d5acae386..0418b198edd3e 100644
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -1449,10 +1449,15 @@ void pnfs_roc_release(struct nfs4_layoutreturn_args *args,
+ 	const nfs4_stateid *res_stateid = NULL;
+ 	struct nfs4_xdr_opaque_data *ld_private = args->ld_private;
  
- struct kprobe_blacklist_node {
+-	if (ret == 0) {
+-		arg_stateid = &args->stateid;
++	switch (ret) {
++	case -NFS4ERR_NOMATCHING_LAYOUT:
++		break;
++	case 0:
+ 		if (res->lrs_present)
+ 			res_stateid = &res->stateid;
++		/* Fallthrough */
++	default:
++		arg_stateid = &args->stateid;
+ 	}
+ 	pnfs_layoutreturn_free_lsegs(lo, arg_stateid, &args->range,
+ 			res_stateid);
 -- 
 2.20.1
 
