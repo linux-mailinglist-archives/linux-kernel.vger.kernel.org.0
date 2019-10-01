@@ -2,119 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5BFBC332E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4C7C3344
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732701AbfJALnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:43:33 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53402 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731469AbfJALnc (ORCPT
+        id S1732624AbfJALq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:46:58 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35842 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbfJALq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:43:32 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id DD30F804C4; Tue,  1 Oct 2019 13:43:15 +0200 (CEST)
-Date:   Tue, 1 Oct 2019 13:43:30 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org, rodrigo.vivi@intel.com,
-        joonas.lahtinen@linux.intel.com
-Subject: Re: DDC on Thinkpad x220
-Message-ID: <20191001114329.GA4381@amd>
-References: <20190930184707.GA5703@amd>
- <87eezwdctl.fsf@intel.com>
+        Tue, 1 Oct 2019 07:46:58 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y19so15124587wrd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 04:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tHjd4gdm3EYFGi3d7rmzjd8b5ATclswBSBj6pNCCuo4=;
+        b=kfciGDgzcbaaC6jbn/MEfpcIelhCq/8Viax15KDJ/dEjFRgs3d6HGdVqnwJ6TP0Nho
+         yEut+/LNh913bWcoyUPFLl4suF6Od4JiwL1grkZnNKZO5JM98REp/0NYVMhmgzsUD/nl
+         Wql9TpKS0HL5O3cuqqI6JEW9qg+QrjmiO44y0nkL60CIr18juoq6MjkocLglse3fDTDr
+         fnz1TKLdHH1lQH8OXSHmWxVZ8cOgvUtjW2hbcFBm3jv0N2E5oLL9KopTlYFU2D0rxgMo
+         JbvmbqiCWEBAY3I0piPM93sixY51FivvPRhfs5GYiiUAc/UF308ADpOu45T41IuSfpSr
+         MEgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tHjd4gdm3EYFGi3d7rmzjd8b5ATclswBSBj6pNCCuo4=;
+        b=q4XTKm6fs5YRc1+oHaJp97wSec7eGtTMu44UVI+MJdLuu/yScwvTBprIh/knTzm4wE
+         CNg27FaJLtwmRM51llYlhgpROHFDiiJZ5R8SXWOf5JPJZn83XdAnHF3AsJKmip1s7KGt
+         nUh4MDZkEvTwpc01JLZy5eh+LaepC6XFSpCfKaM7uBfkJV6kFWeUECY39j3y44lIbbVh
+         O27b+upyXL0H+55n9Sh9U5SRwd3saxVtYySHVdBQuzVaQRlSIsiuGxYyJjO35b1QJ7PT
+         ZTx2x91DvOLs/DSoZ45xAnKfu9wMBtlhFoOJ4wXlY1Hdk6GSwEvejZO+XcSwnme6l1Wi
+         9Qlw==
+X-Gm-Message-State: APjAAAUpOETMzIEjbzAJxw6UW/G0zAU7lq4iASgcq4XzS7mDYAfdQ46s
+        a13VyfrMsoRofh1ejCCot2mskA==
+X-Google-Smtp-Source: APXvYqwQpblTxOj4x6m4JyNap+/jjIVd29LSWRWFw15HFe/EXenxen3aYr8OtGxjzrSlu+M4i3Ezzw==
+X-Received: by 2002:adf:f647:: with SMTP id x7mr16224883wrp.379.1569930415118;
+        Tue, 01 Oct 2019 04:46:55 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
+        by smtp.gmail.com with ESMTPSA id f83sm2546641wmf.43.2019.10.01.04.46.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 04:46:54 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 12:46:52 +0100
+From:   Matthias Maennich <maennich@google.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/7] nsdeps: make generated patches independent of locale
+Message-ID: <20191001114652.GD253280@google.com>
+References: <20190927093603.9140-1-yamada.masahiro@socionext.com>
+ <20190927093603.9140-8-yamada.masahiro@socionext.com>
+ <20190927132726.GB187147@google.com>
+ <CAK7LNARQZ49jvPOK5Dg3B7Nog7+zHsAn5=1oHH6hz9ZzJ=S+xA@mail.gmail.com>
+ <20190927181414.GB1804168@kroah.com>
+ <CAK7LNAQh12iuAk5aoeHhZ=iGcYraWFfsei-+VqwALbOPrrjWdg@mail.gmail.com>
+ <CAK7LNAR7QwfMRKwc1DwaRQW3GA-tBHhSv=yVq+xR_YkpYAnc6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <87eezwdctl.fsf@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAK7LNAR7QwfMRKwc1DwaRQW3GA-tBHhSv=yVq+xR_YkpYAnc6w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Sep 29, 2019 at 10:30:27AM +0900, Masahiro Yamada wrote:
+>On Sun, Sep 29, 2019 at 10:18 AM Masahiro Yamada
+><yamada.masahiro@socionext.com> wrote:
+>>
+>> On Sat, Sep 28, 2019 at 3:14 AM Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
+>> >
+>> > On Sat, Sep 28, 2019 at 12:42:28AM +0900, Masahiro Yamada wrote:
+>> > > On Fri, Sep 27, 2019 at 10:27 PM Matthias Maennich <maennich@google.com> wrote:
+>> > > >
+>> > > > On Fri, Sep 27, 2019 at 06:36:03PM +0900, Masahiro Yamada wrote:
+>> > > > >scripts/nsdeps automatically generates a patch to add MODULE_IMPORT_NS
+>> > > > >tags, and what is nicer, it sorts the lines alphabetically with the
+>> > > > >"sort" command. However, the output from the "sort" command depends
+>> > > > >on locale.
+>> > > > >
+>> > > > >Especially when namespaces contain underscores, the result is
+>> > > > >different depending on the locale.
+>> > > > >
+>> > > > >For example, I got this:
+>> > > > >
+>> > > > >$ { echo usbcommon; echo usb_common; } | LANG=en_US.UTF-8 sort
+>> > > > >usbcommon
+>> > > > >usb_common
+>> > > > >$ { echo usbcommon; echo usb_common; } | LANG=C sort
+>> > > > >usb_common
+>> > > > >usbcommon
+>> > > > >
+>> > > > >So, this means people might potentially send different patches.
+>> > > > >
+>> > > > >This kind of issue was reported in the past, for example,
+>> > > > >commit f55f2328bb28 ("kbuild: make sorting initramfs contents
+>> > > > >independent of locale").
+>> > > > >
+>> > > > >Adding "LANG=C" is a conventional way of fixing when a deterministic
+>> > > > >result is desirable.
+>> > > > >
+>> > > > >Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> > > > >---
+>> > > > >
+>> > > > > scripts/nsdeps | 2 +-
+>> > > > > 1 file changed, 1 insertion(+), 1 deletion(-)
+>> > > > >
+>> > > > >diff --git a/scripts/nsdeps b/scripts/nsdeps
+>> > > > >index 964b7fb8c546..3754dac13b31 100644
+>> > > > >--- a/scripts/nsdeps
+>> > > > >+++ b/scripts/nsdeps
+>> > > > >@@ -41,7 +41,7 @@ generate_deps() {
+>> > > > >               for source_file in $mod_source_files; do
+>> > > > >                       sed '/MODULE_IMPORT_NS/Q' $source_file > ${source_file}.tmp
+>> > > > >                       offset=$(wc -l ${source_file}.tmp | awk '{print $1;}')
+>> > > > >-                      cat $source_file | grep MODULE_IMPORT_NS | sort -u >> ${source_file}.tmp
+>> > > > >+                      cat $source_file | grep MODULE_IMPORT_NS | LANG=C sort -u >> ${source_file}.tmp
+>> > > >
+>> > > > I would prefer to have this set throughout the whole runtime of the
+>> > > > script. Otherwise we likely see a followup patch. So, either as an
+>> > > > export at the beginning of this file or as part of the command that
+>> > > > calls this script.
+>> > >
+>> > >
+>> > > I prefer to keep it close to the locale-dependent code.
+>> > >
+>> > >
+>> > >
+>> > > If I move it to somewhere else, I need to add a comment like
+>> > >
+>> > > # make "sort" command deterministic
+>> > > export LANG=C
+>> > >
+>> > > Otherwise, people would have no idea why it is needed.
+>> >
+>> > A comment is fine, it documents why it is here and it keeps anyone from
+>> > having to remember to add it to anything else that changes in here.
+>> >
+>> > thanks,
+>> >
+>> > greg k-h
+>>
+>>
+>> Huh, people who live in a country with English as mother tongue
+>> cannot understand the i18n because English is the
+>> only language in the world?
+>
+>I take back this comment.
+>I actually do not know where you live, or what native language you speak.
+>It was used to exaggerate things, but It is not important to
+>the point of discussions. Sorry.
 
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for pointing this out and reminding us! I am not a native English
+speaker, but often are surrounded by English, especially when
+programming. Error messages in my native language feel often rather
+funny than helpful, but I guess this not the case for most translations.
+Based on that I am ok with your original version of the patch.
 
-On Tue 2019-10-01 12:39:34, Jani Nikula wrote:
-> On Mon, 30 Sep 2019, Pavel Machek <pavel@ucw.cz> wrote:
-> > Hi!
-> >
-> > Thinkpad X220 should be new enough machine to talk DDC to the
-> > monitors, right? And my monitor has DDC enable/disable in the menu, so
-> > it should support it, too...
-> >
-> > But I don't have /dev/i2c* and did not figure out how to talk to the
-> > monitor. Is the support there in the kernel? What do I need to enable
-> > it?
->=20
-> # modprobe i2c-dev
-
-Thanks!
-
-I enabled I2C_CHARDEV, and installed ddccontrol:
-
-c   ddccontrol                      - program to control monitor
-
-I can read parameters of Dell monitor on VGA:
-
-sudo ddccontrol dev:/dev/i2c-1 -c -d
-/usr/share/ddccontrol-db/monitor/DELA013.xml
-Control 0x10: +/79/100   [???] -- brightness
-Control 0x12: +/63/100   [???] -- contrast
-
-Unfortunately the Fujitsu monitor does not seem to
-communicate. Fujitsu is my main monitor :-(.
-
-pavel@duo:~$ sudo ddccontrol dev:/dev/i2c-4 -c -d
-ddccontrol version 0.4.2
-Copyright 2004-2005 Oleg I. Vdovikin (oleg@cs.msu.su)
-Copyright 2004-2006 Nicolas Boichat (nicolas@boichat.ch)
-This program comes with ABSOLUTELY NO WARRANTY.
-You may redistribute copies of this program under the terms of the GNU
-General Public License.
-
-Reading EDID and initializing DDC/CI at bus dev:/dev/i2c-4...
-ioctl(): No such device or address
-ioctl returned -1
-ioctl(): No such device or address
-ioctl returned -1
-ioctl(): No such device or address
-ioctl returned -1
-I/O warning : failed to load external entity
-"/usr/share/ddccontrol-db/monitor/FUS080A.xml"
-Document not parsed successfully.
-ioctl(): No such device or address
-ioctl returned -1
-
-DDC/CI at dev:/dev/i2c-4 is unusable (-1).
-If your graphics card need it, please check all the required kernel
-modules are loaded (i2c-dev, and your framebuffer driver).
-
-Any further hints?
-
-Thanks and best regards,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---3V7upXqbjpZ4EhLz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl2TO+EACgkQMOfwapXb+vIh4QCdFDvDzV3QA1YJOk5R9U6nxemF
-HEsAnjEXcNYjfaMOB2RxofefvCvrZxEe
-=yDeJ
------END PGP SIGNATURE-----
-
---3V7upXqbjpZ4EhLz--
+Cheers,
+Matthias
