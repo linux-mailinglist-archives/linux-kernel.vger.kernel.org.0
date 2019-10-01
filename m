@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AEA1C331A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6DDC3315
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387796AbfJALmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:42:15 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40812 "EHLO
+        id S2387783AbfJALmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:42:04 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41042 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387556AbfJALlE (ORCPT
+        with ESMTP id S2387606AbfJALlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:04 -0400
+        Tue, 1 Oct 2019 07:41:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=63zJTbVH7lS8Trv4HBQFjRzzllGgjJHymJTri8Knfv4=; b=InsjyvrDB7a8
-        RFjRE4bIxMfpFVjx3QH+g91DtnW5nDUH5JTC67RBn6bGDf28mhkCru3Vn06T/Fx45LzlDMIamXWiB
-        rPReFf9xM32KmdgL+EwUhWBm+32q+g9eNJwdRY1AL5qqS/BzZqMED/d4zpRrK/i0TezB+E6RsfPdt
-        3twz4=;
+        List-Archive; bh=t5quOLTmLgJSTTvC1obcfZ2uC+grOuMX9vfWHkSc+cI=; b=pJk9GhdXqRRd
+        IMQ75CJDtyq3Lmmr7/gLZjw7SjnI5+/THZ83bTnm9euB/HSpS5IBBJ98IM4FLLInUb5fuvHe4D6E1
+        6PRnHjuODYqPBtaRIHlgVet1EbNA0cEp+FshaGYPrMdw1YH2UzLwFN0NJ9kMqle2hbkgfbX2APmUZ
+        YOr+E=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWZ-0004Xc-UK; Tue, 01 Oct 2019 11:40:59 +0000
+        id 1iFGWg-0004Ya-78; Tue, 01 Oct 2019 11:41:06 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6B0572742A30; Tue,  1 Oct 2019 12:40:59 +0100 (BST)
+        id AF4BB2742A30; Tue,  1 Oct 2019 12:41:05 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Pragnesh Patel <pragnesh.patel@sifive.com>
-Cc:     broonie@kernel.org, devicetree@vger.kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+To:     Markus Elfring <elfring@users.sourceforge.net>
+Cc:     kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Applied "fixed-regulator: dt-bindings: Fixed building error for compatible property" to the regulator tree
-In-Reply-To: <1568875145-2864-1-git-send-email-pragnesh.patel@sifive.com>
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: Applied "spi: xtensa-xtfpga: Use devm_platform_ioremap_resource() in xtfpga_spi_probe()" to the spi tree
+In-Reply-To: <178bb78e-714f-645f-d819-5732870c4272@web.de>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114059.6B0572742A30@ypsilon.sirena.org.uk>
-Date:   Tue,  1 Oct 2019 12:40:59 +0100 (BST)
+Message-Id: <20191001114105.AF4BB2742A30@ypsilon.sirena.org.uk>
+Date:   Tue,  1 Oct 2019 12:41:05 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   fixed-regulator: dt-bindings: Fixed building error for compatible property
+   spi: xtensa-xtfpga: Use devm_platform_ioremap_resource() in xtfpga_spi_probe()
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,38 +72,51 @@ to this mail.
 Thanks,
 Mark
 
-From 04a99ce605a780c275e2e9d2547d43fbba3f4d24 Mon Sep 17 00:00:00 2001
-From: Pragnesh Patel <pragnesh.patel@sifive.com>
-Date: Thu, 19 Sep 2019 12:09:04 +0530
-Subject: [PATCH] fixed-regulator: dt-bindings: Fixed building error for
- compatible property
+From 3f049e7df22e563b04fd576bdc37e6b3e2c7a996 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 15:35:08 +0200
+Subject: [PATCH] spi: xtensa-xtfpga: Use devm_platform_ioremap_resource() in
+ xtfpga_spi_probe()
 
-Compatible property is not of type 'string', so remove const:
-from it.
+Simplify this function implementation by using a known wrapper function.
 
-Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/1568875145-2864-1-git-send-email-pragnesh.patel@sifive.com
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Link: https://lore.kernel.org/r/178bb78e-714f-645f-d819-5732870c4272@web.de
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/regulator/fixed-regulator.yaml        | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-xtensa-xtfpga.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-index a78150c47aa2..f32416968197 100644
---- a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-@@ -30,8 +30,8 @@ if:
- properties:
-   compatible:
-     enum:
--      - const: regulator-fixed
--      - const: regulator-fixed-clock
-+      - regulator-fixed
-+      - regulator-fixed-clock
+diff --git a/drivers/spi/spi-xtensa-xtfpga.c b/drivers/spi/spi-xtensa-xtfpga.c
+index 86516eb1e143..fc2b5eb7d614 100644
+--- a/drivers/spi/spi-xtensa-xtfpga.c
++++ b/drivers/spi/spi-xtensa-xtfpga.c
+@@ -80,7 +80,6 @@ static void xtfpga_spi_chipselect(struct spi_device *spi, int is_on)
+ static int xtfpga_spi_probe(struct platform_device *pdev)
+ {
+ 	struct xtfpga_spi *xspi;
+-	struct resource *mem;
+ 	int ret;
+ 	struct spi_master *master;
  
-   regulator-name: true
- 
+@@ -97,14 +96,7 @@ static int xtfpga_spi_probe(struct platform_device *pdev)
+ 	xspi->bitbang.master = master;
+ 	xspi->bitbang.chipselect = xtfpga_spi_chipselect;
+ 	xspi->bitbang.txrx_word[SPI_MODE_0] = xtfpga_spi_txrx_word;
+-
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "No memory resource\n");
+-		ret = -ENODEV;
+-		goto err;
+-	}
+-	xspi->regs = devm_ioremap_resource(&pdev->dev, mem);
++	xspi->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(xspi->regs)) {
+ 		ret = PTR_ERR(xspi->regs);
+ 		goto err;
 -- 
 2.20.1
 
