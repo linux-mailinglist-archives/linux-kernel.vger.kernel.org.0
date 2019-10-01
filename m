@@ -2,81 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C15C356B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27297C356E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388291AbfJANTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:19:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:58668 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388005AbfJANTB (ORCPT
+        id S2388307AbfJANUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:20:23 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:22996 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725821AbfJANUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:19:01 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91DDuHL191848;
-        Tue, 1 Oct 2019 13:18:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=36AAYpNCVwQ1HuLTkAIFX9a+WjdH9YjtBIQub1EEbgs=;
- b=DX7Be7yX8elRr/z+UnBkC+KcU1IitcGVP6OVmdU5gF/vsWoCSYV0dXl+41Ec8rP7wQQA
- qUUqWuJwNpvT2cMJQTnTNsXiYk1D4cc6X4KQSwEzEleL6WTaiA7ya0AgLoYvc6QCgS6u
- NNUUsm/jn6ltyyyVgsCFJ5s/7aKbmfwsjejWL9rIj6XWePrBU0vjdLwWG6lCPX1ele62
- 6TiLjT/De2gcBRKSFgMhzTXz0jDTCjdBudkPj7l+hdlSEZL5MWOSW97T3/CC6CscaScO
- myGOrBebGiwninp6Lka4XwVR+6VlpVphf1ITuUqLYoWpa5ykjC6eGRmhYWr48Pq6bPbH Mw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2v9yfq5rkk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 13:18:58 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91DDjEP146599;
-        Tue, 1 Oct 2019 13:18:57 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2vbnqcwb0v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 13:18:57 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x91DIuaY029847;
-        Tue, 1 Oct 2019 13:18:56 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Oct 2019 06:18:55 -0700
-Date:   Tue, 1 Oct 2019 16:18:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jesse Barton <jessebarton95@gmail.com>
-Cc:     valdis.kletnieks@vt.edu, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] Staging: exfat: exfat_super.c: fixed multiple coding
- style issues with camelcase and parentheses
-Message-ID: <20191001131849.GE22609@kadam>
-References: <20190929002233.21998-1-jessebarton95@gmail.com>
+        Tue, 1 Oct 2019 09:20:22 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91DECxi031379;
+        Tue, 1 Oct 2019 08:20:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type;
+ s=PODMain02222019; bh=3EoE7FWYxNK59f42gp98Tt85HWsrCEBJg/yVd+I5GCQ=;
+ b=XFEH746mClPj03139K4kgmrvEkwACx7DSn5FPmsy22V0yc/53BfsgvIbp7IWa53A9I7h
+ U2ywRLRB8wSGImKpdKN92zh1FbeU2Y0eAP/g3hvBN74gzS3F1naOTYNng4oeXTkKc2NR
+ JY+C0g/JzJI2VTLHIQI2EOD39LZXtSYAjun4VFo4hzY5oNWUV4SMu2Mat/hEzvyPvQky
+ orZY9yS1+QQdprp7KShq/A2yqIvBaFSNEnkW+LYCQ6lh0mH3CNa4e2nlilMwbWieH81K
+ U1Qevk97rdsBRHUO2Dnm6tkZ6Qsp0KWw+zolunCD8IGLA6TUrBDFmm80Jl0unA3iKdtx Uw== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([87.246.76.36])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2va4x4nbmm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 01 Oct 2019 08:20:20 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 1 Oct
+ 2019 14:20:18 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Tue, 1 Oct 2019 14:20:18 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 001492A1;
+        Tue,  1 Oct 2019 13:20:17 +0000 (UTC)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <broonie@kernel.org>
+CC:     <lgirdwood@gmail.com>, <patches@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] regulator: lochnagar: Add on_off_delay for VDDCORE
+Date:   Tue, 1 Oct 2019 14:20:17 +0100
+Message-ID: <20191001132017.1785-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190929002233.21998-1-jessebarton95@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910010120
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010120
+Content-Type: text/plain
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=887
+ malwarescore=0 adultscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=1 bulkscore=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910010120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 28, 2019 at 07:22:33PM -0500, Jesse Barton wrote:
-> Fixed coding style issues with camelcase on functions and various parentheses that were not needed
-> 
+The VDDCORE regulator takes a good length of time to discharge down, so
+add an on_off_delay to ensure DCVDD is removed before it is powered on
+again.
 
-Do this as two separate patches.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/regulator/lochnagar-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-regards,
-dan carpenter
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+index ff97cc50f2eb9..9b05e03ba8305 100644
+--- a/drivers/regulator/lochnagar-regulator.c
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -210,6 +210,7 @@ static const struct regulator_desc lochnagar_regulators[] = {
+ 
+ 		.enable_time = 3000,
+ 		.ramp_delay = 1000,
++		.off_on_delay = 15000,
+ 
+ 		.owner = THIS_MODULE,
+ 	},
+-- 
+2.11.0
 
