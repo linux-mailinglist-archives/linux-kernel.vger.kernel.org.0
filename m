@@ -2,118 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9273C2D13
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 08:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80862C2D27
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 08:15:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732552AbfJAGIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 02:08:18 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55471 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbfJAGIS (ORCPT
+        id S1732429AbfJAGPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 02:15:32 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:51557 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731822AbfJAGPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 02:08:18 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iFBKY-0005n4-S4; Tue, 01 Oct 2019 08:08:14 +0200
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iFBKW-0006Ne-R5; Tue, 01 Oct 2019 08:08:12 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Tue, 1 Oct 2019 02:15:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1569910529;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RaDvnMbLxrkazX0FheBlc5k/BJaQuhfFQB7rxFi7w4I=;
+        b=ZqWivwEFgytJTnDLm3QrdKUgTy1+7k0daqJQZewuKd4yNGK5volaB94zNTmWC5WOkPNceT
+        hRcsr4teUOOrRAR3/CgDQ5flZZF4FM+d/9q0c6WoZXw27amUxGhD3Gyry3Iqe/PclM4GfG
+        BXhyRRSThIIeDCdX2nuuVPcOz0s8Nhw=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-96-C5Wr7pi_MYiQr1nE2jxiuQ-1; Tue, 01 Oct 2019 02:15:26 -0400
+Received: by mail-ed1-f69.google.com with SMTP id h12so7888677eda.19
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 23:15:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GWWMZLIGumGHax9H0h3X9Y0A4H9SN5QPKJSfyEBYC5I=;
+        b=Iqf7oz5U0CkX93W+Kd8EmhoLeHsWAZxmeI4ZEx5FmKe+mMpx3cIULeAUA6lmwhBzB7
+         rDKQKagd8VFjO0N/G+t+bK8CO3O6xZ7jkFLtOhdSHMVmEG478xfbDuxg97/hxObxSR9v
+         xsU04xNAJZ5s7se8X0X9r3zP0RdNBNRNculrQdK24Sx2hyLbQUYzGuqEWEXE2WCuJkUv
+         9KsGsp7omgspDpUZUGi4JOjhlChJkqzw5EExJ5PXqN1kQA2mV3rQl55KTOjJlC4Va9YH
+         vzpbxkJLtlPYJ2bUSgWIcyEL7M18jTJUU7j4fAQLObcAseQhT2CkaF3oKK+WusVVSLOI
+         2glA==
+X-Gm-Message-State: APjAAAWC1CgZSrcb2lTH6ZPJb8CkMmPHIvp1xQKe51p1R6YJHEiG1OPP
+        4vz3EHxZO1/RSYXK6jqKohYeaz0BWTOx/gWr84/Yb4PAwFSzjs8kVVLLMjslfU+6ISEIUwSp9vd
+        VqZ6ztzQuMIpbe+hfZtXaQ4BB
+X-Received: by 2002:a17:907:441d:: with SMTP id om21mr23215420ejb.188.1569910525080;
+        Mon, 30 Sep 2019 23:15:25 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqx0BznTJyAsTVjo5pCJTdBKgZR1znwvk5eXNetuzl3vkDGg/8PK5IbG/C1rmjBEH5WUMvACKw==
+X-Received: by 2002:a17:907:441d:: with SMTP id om21mr23215406ejb.188.1569910524881;
+        Mon, 30 Sep 2019 23:15:24 -0700 (PDT)
+Received: from shalem.localdomain (2001-1c00-0c14-2800-ec23-a060-24d5-2453.cable.dynamic.v6.ziggo.nl. [2001:1c00:c14:2800:ec23:a060:24d5:2453])
+        by smtp.gmail.com with ESMTPSA id 36sm2921211edz.92.2019.09.30.23.15.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2019 23:15:24 -0700 (PDT)
+Subject: Re: [PATCH v2] virt: vbox: fix memory leak in
+ hgcm_call_preprocess_linaddr
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] net: phy: at803x: remove probe and struct at803x_priv
-Date:   Tue,  1 Oct 2019 08:08:11 +0200
-Message-Id: <20191001060811.24291-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191001060811.24291-1-o.rempel@pengutronix.de>
-References: <20191001060811.24291-1-o.rempel@pengutronix.de>
+References: <664aab6a-37c9-7239-a817-25dfbab00c7f@redhat.com>
+ <20190930204223.3660-1-navid.emamdoost@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <48a2ad9b-bcdb-6146-0911-37961e07b1d9@redhat.com>
+Date:   Tue, 1 Oct 2019 08:15:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190930204223.3660-1-navid.emamdoost@gmail.com>
+Content-Language: en-US
+X-MC-Unique: C5Wr7pi_MYiQr1nE2jxiuQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-struct at803x_priv is never used in this driver. So remove it
-and the probe function allocating it.
+Hi,
 
-Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/at803x.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
+On 30-09-2019 22:42, Navid Emamdoost wrote:
+> In hgcm_call_preprocess_linaddr memory is allocated for bounce_buf but
+> is not released if copy_form_user fails. In order to prevent memory leak
+> in case of failure, the assignment to bounce_buf_ret is moved before the
+> error check. This way the allocated bounce_buf will be released by the
+> caller.
+>=20
+> Fixes: 579db9d45cb4 ("virt: Add vboxguest VMMDEV communication code")
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
-index 42492f83c8d7..e64f77e152f4 100644
---- a/drivers/net/phy/at803x.c
-+++ b/drivers/net/phy/at803x.c
-@@ -63,10 +63,6 @@ MODULE_DESCRIPTION("Atheros 803x PHY driver");
- MODULE_AUTHOR("Matus Ujhelyi");
- MODULE_LICENSE("GPL");
- 
--struct at803x_priv {
--	bool phy_reset:1;
--};
--
- struct at803x_context {
- 	u16 bmcr;
- 	u16 advertise;
-@@ -232,20 +228,6 @@ static int at803x_resume(struct phy_device *phydev)
- 	return phy_modify(phydev, MII_BMCR, BMCR_PDOWN | BMCR_ISOLATE, 0);
- }
- 
--static int at803x_probe(struct phy_device *phydev)
--{
--	struct device *dev = &phydev->mdio.dev;
--	struct at803x_priv *priv;
--
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
--
--	phydev->priv = priv;
--
--	return 0;
--}
--
- static int at803x_config_init(struct phy_device *phydev)
- {
- 	int ret;
-@@ -367,7 +349,6 @@ static struct phy_driver at803x_driver[] = {
- 	/* ATHEROS 8035 */
- 	PHY_ID_MATCH_EXACT(ATH8035_PHY_ID),
- 	.name			= "Atheros 8035 ethernet",
--	.probe			= at803x_probe,
- 	.config_init		= at803x_config_init,
- 	.set_wol		= at803x_set_wol,
- 	.get_wol		= at803x_get_wol,
-@@ -380,7 +361,6 @@ static struct phy_driver at803x_driver[] = {
- 	/* ATHEROS 8030 */
- 	PHY_ID_MATCH_EXACT(ATH8030_PHY_ID),
- 	.name			= "Atheros 8030 ethernet",
--	.probe			= at803x_probe,
- 	.config_init		= at803x_config_init,
- 	.link_change_notify	= at803x_link_change_notify,
- 	.set_wol		= at803x_set_wol,
-@@ -394,7 +374,6 @@ static struct phy_driver at803x_driver[] = {
- 	/* ATHEROS 8031 */
- 	PHY_ID_MATCH_EXACT(ATH8031_PHY_ID),
- 	.name			= "Atheros 8031 ethernet",
--	.probe			= at803x_probe,
- 	.config_init		= at803x_config_init,
- 	.set_wol		= at803x_set_wol,
- 	.get_wol		= at803x_get_wol,
--- 
-2.23.0
+Thank you.
+
+Patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>   drivers/virt/vboxguest/vboxguest_utils.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vbox=
+guest/vboxguest_utils.c
+> index 75fd140b02ff..43c391626a00 100644
+> --- a/drivers/virt/vboxguest/vboxguest_utils.c
+> +++ b/drivers/virt/vboxguest/vboxguest_utils.c
+> @@ -220,6 +220,8 @@ static int hgcm_call_preprocess_linaddr(
+>   =09if (!bounce_buf)
+>   =09=09return -ENOMEM;
+>  =20
+> +=09*bounce_buf_ret =3D bounce_buf;
+> +
+>   =09if (copy_in) {
+>   =09=09ret =3D copy_from_user(bounce_buf, (void __user *)buf, len);
+>   =09=09if (ret)
+> @@ -228,7 +230,6 @@ static int hgcm_call_preprocess_linaddr(
+>   =09=09memset(bounce_buf, 0, len);
+>   =09}
+>  =20
+> -=09*bounce_buf_ret =3D bounce_buf;
+>   =09hgcm_call_add_pagelist_size(bounce_buf, len, extra);
+>   =09return 0;
+>   }
+>=20
 
