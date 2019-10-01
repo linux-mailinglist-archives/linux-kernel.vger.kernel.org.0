@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47FACC3AFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27843C3B01
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730396AbfJAQkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:40:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52212 "EHLO mail.kernel.org"
+        id S1730492AbfJAQk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:40:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfJAQku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:40:50 -0400
+        id S1730416AbfJAQkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:40:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D293621A4C;
-        Tue,  1 Oct 2019 16:40:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AD79205C9;
+        Tue,  1 Oct 2019 16:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948049;
-        bh=9ja428gZ4RmI6EOL72mQVEMXFQ6pN4UX4cmhs7izldg=;
+        s=default; t=1569948054;
+        bh=tIbenjcvZqPaNdBtku31+1LasH3s1munDjqFxyHW7Yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WhrQhPlxyp6wbGCCnrQTe4AjV9mbdbt8QMh5Nf80R+sn36jhdXOjVC4lwb6SRHmHw
-         nuf1CV78yNkdNQdhKkyOSgRsTyq2eDVnLSzxYGvl1J9JIdelTK/NHOIwev8I/j3xdU
-         6/fruZ6jcseZMmExmgXvLmfk+Vbff/wOV3VHYpWw=
+        b=wCoFRTSJcWRTh6BIXDnBWis1naWIMqMZOBr8YPoxRPrgF4QftgxS1V5Z5ozO/j4nn
+         poueld2uU60M0AJtw45ZGYACf2juH8esy7nNukcPu68jyb8j4+2NtpgLSYnOVB+cda
+         Yz2qfz1dw6vrInYaLwv4rmeiQFEu8T40/pW1aub4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 54/71] blk-mq: move lockdep_assert_held() into elevator_exit
-Date:   Tue,  1 Oct 2019 12:39:04 -0400
-Message-Id: <20191001163922.14735-54-sashal@kernel.org>
+Cc:     Xin Long <lucien.xin@gmail.com>, Xiumei Mu <xmu@redhat.com>,
+        Fei Liu <feliu@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 56/71] macsec: drop skb sk before calling gro_cells_receive
+Date:   Tue,  1 Oct 2019 12:39:06 -0400
+Message-Id: <20191001163922.14735-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
 References: <20191001163922.14735-1-sashal@kernel.org>
@@ -46,65 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 284b94be1925dbe035ce5218d8b5c197321262c7 ]
+[ Upstream commit ba56d8ce38c8252fff5b745db3899cf092578ede ]
 
-Commit c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
-removes q->sysfs_lock from elevator_init_mq(), but forgot to deal with
-lockdep_assert_held() called in blk_mq_sched_free_requests() which is
-run in failure path of elevator_init_mq().
+Fei Liu reported a crash when doing netperf on a topo of macsec
+dev over veth:
 
-blk_mq_sched_free_requests() is called in the following 3 functions:
+  [  448.919128] refcount_t: underflow; use-after-free.
+  [  449.090460] Call trace:
+  [  449.092895]  refcount_sub_and_test+0xb4/0xc0
+  [  449.097155]  tcp_wfree+0x2c/0x150
+  [  449.100460]  ip_rcv+0x1d4/0x3a8
+  [  449.103591]  __netif_receive_skb_core+0x554/0xae0
+  [  449.108282]  __netif_receive_skb+0x28/0x78
+  [  449.112366]  netif_receive_skb_internal+0x54/0x100
+  [  449.117144]  napi_gro_complete+0x70/0xc0
+  [  449.121054]  napi_gro_flush+0x6c/0x90
+  [  449.124703]  napi_complete_done+0x50/0x130
+  [  449.128788]  gro_cell_poll+0x8c/0xa8
+  [  449.132351]  net_rx_action+0x16c/0x3f8
+  [  449.136088]  __do_softirq+0x128/0x320
 
-	elevator_init_mq()
-	elevator_exit()
-	blk_cleanup_queue()
+The issue was caused by skb's true_size changed without its sk's
+sk_wmem_alloc increased in tcp/skb_gro_receive(). Later when the
+skb is being freed and the skb's truesize is subtracted from its
+sk's sk_wmem_alloc in tcp_wfree(), underflow occurs.
 
-In blk_cleanup_queue(), blk_mq_sched_free_requests() is followed exactly
-by 'mutex_lock(&q->sysfs_lock)'.
+macsec is calling gro_cells_receive() to receive a packet, which
+actually requires skb->sk to be NULL. However when macsec dev is
+over veth, it's possible the skb->sk is still set if the skb was
+not unshared or expanded from the peer veth.
 
-So moving the lockdep_assert_held() from blk_mq_sched_free_requests()
-into elevator_exit() for fixing the report by syzbot.
+ip_rcv() is calling skb_orphan() to drop the skb's sk for tproxy,
+but it is too late for macsec's calling gro_cells_receive(). So
+fix it by dropping the skb's sk earlier on rx path of macsec.
 
-Reported-by: syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com
-Fixed: c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 5491e7c6b1a9 ("macsec: enable GRO and RPS on macsec devices")
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Reported-by: Fei Liu <feliu@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-mq-sched.c | 2 --
- block/blk.h          | 2 ++
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/macsec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index c9d183d6c4999..ca22afd47b3dc 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -555,8 +555,6 @@ void blk_mq_sched_free_requests(struct request_queue *q)
- 	struct blk_mq_hw_ctx *hctx;
- 	int i;
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 8f46aa1ddec01..cb7637364b40d 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -1235,6 +1235,7 @@ static rx_handler_result_t macsec_handle_frame(struct sk_buff **pskb)
+ 		macsec_rxsa_put(rx_sa);
+ 	macsec_rxsc_put(rx_sc);
  
--	lockdep_assert_held(&q->sysfs_lock);
--
- 	queue_for_each_hw_ctx(q, hctx, i) {
- 		if (hctx->sched_tags)
- 			blk_mq_free_rqs(q->tag_set, hctx->sched_tags, i);
-diff --git a/block/blk.h b/block/blk.h
-index de6b2e146d6eb..3ce8b73bb2264 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -194,6 +194,8 @@ void elv_unregister_queue(struct request_queue *q);
- static inline void elevator_exit(struct request_queue *q,
- 		struct elevator_queue *e)
- {
-+	lockdep_assert_held(&q->sysfs_lock);
-+
- 	blk_mq_sched_free_requests(q);
- 	__elevator_exit(q, e);
- }
++	skb_orphan(skb);
+ 	ret = gro_cells_receive(&macsec->gro_cells, skb);
+ 	if (ret == NET_RX_SUCCESS)
+ 		count_rx(dev, skb->len);
 -- 
 2.20.1
 
