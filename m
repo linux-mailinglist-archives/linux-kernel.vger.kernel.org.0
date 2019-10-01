@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 120A3C4149
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11750C4155
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:53:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfJATqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 15:46:50 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40072 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfJATqt (ORCPT
+        id S1726480AbfJATxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 15:53:45 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:41235 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbfJATxp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 15:46:49 -0400
-Received: by mail-io1-f65.google.com with SMTP id h144so51102664iof.7
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 12:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ezIl2rVOYhRKOvRq4MrUQe29fvd7yUyJUEWRFAhpnt0=;
-        b=e2mpUCC48bvayHuosTQRwn76fYaJRvUOiMdLE//GZ8dT7W3TjunXwZ1bpGJGcg4Nki
-         5Le+Sqq6KSofb/nxGerlQWa7OxXcinIBxu+woGTI5ta92J0n/h3BcIeJsVXb26h8VHNb
-         d6MjUtVvxfat6NPoDde1GqoEmX6dhSvd3ZArM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ezIl2rVOYhRKOvRq4MrUQe29fvd7yUyJUEWRFAhpnt0=;
-        b=dSOGGx/duIcJhzGVw9aGC2TFJzge/f25JJuSNDUW4TZEGeCy/MG6pxQMQ3ej0SHYbJ
-         CTrGW819symfBqFrITHsqU6CUR3+B1aFGvl+Itpi7pshRcZvuaeVJ+dSdTZ+JpDsJj2l
-         8WrXF0JFixHapNEIcWJfu7ymOScQY2X7rq7f4BKg+EiAbtdN0bNCmdJz5pfF5e65CkVp
-         OkOpKuIESMqwFfkZF7A8801qr8K30C5l/LzW0N9At3l2QzjcLFI16mKuM9zb23BjRaQE
-         tdbXzXT51YG8yeOMA6gRfXq+8tMdCykZuCE+DGNZG1Xf20fFCzsIvhKtxeTLUOS5aZf6
-         MMKA==
-X-Gm-Message-State: APjAAAV/OaHoTQmLGuNzszlRATMpQdx0pj0tbTTW+BlX5twP2sEDeQj9
-        NzyoakySBQ4tXrEfVZeld80LL/kXdCU=
-X-Google-Smtp-Source: APXvYqx7193LxpNjOxQWFvvL9AGXJCNgihAh8S2qfpDjED+TeZLvNNdH7el8+oNauKl6xymgXho6UQ==
-X-Received: by 2002:a92:451:: with SMTP id 78mr28685917ile.69.1569959208698;
-        Tue, 01 Oct 2019 12:46:48 -0700 (PDT)
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com. [209.85.166.44])
-        by smtp.gmail.com with ESMTPSA id 128sm3370788iox.35.2019.10.01.12.46.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2019 12:46:47 -0700 (PDT)
-Received: by mail-io1-f44.google.com with SMTP id b136so51161466iof.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 12:46:47 -0700 (PDT)
-X-Received: by 2002:a6b:b213:: with SMTP id b19mr6360479iof.58.1569959207391;
- Tue, 01 Oct 2019 12:46:47 -0700 (PDT)
+        Tue, 1 Oct 2019 15:53:45 -0400
+X-Originating-IP: 86.202.229.42
+Received: from localhost (lfbn-lyo-1-146-42.w86-202.abo.wanadoo.fr [86.202.229.42])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id E4C6240002;
+        Tue,  1 Oct 2019 19:53:42 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 21:53:42 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Nick Crews <ncrews@chromium.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        enric.balletbo@collabora.com, bleung@chromium.org,
+        dlaurie@chromium.org, djkurtz@chromium.org, dtor@google.com
+Subject: Re: [PATCH v3] rtc: wilco-ec: Handle reading invalid times
+Message-ID: <20191001195342.GH4106@piout.net>
+References: <20190925203209.79941-1-ncrews@chromium.org>
 MIME-Version: 1.0
-References: <20190926124115.1.Ice34ad5970a375c3c03cb15c3859b3ee501561bf@changeid>
- <20191001174104.GD4786@sirena.co.uk>
-In-Reply-To: <20191001174104.GD4786@sirena.co.uk>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 1 Oct 2019 12:46:35 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UE4K8Oj99KA5HNBxX0pXu11bkHjdwcmwwW3Z-+_nDiLA@mail.gmail.com>
-Message-ID: <CAD=FV=UE4K8Oj99KA5HNBxX0pXu11bkHjdwcmwwW3Z-+_nDiLA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: Document "regulator-boot-on" binding more thoroughly
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        ckeepax@opensource.cirrus.com,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925203209.79941-1-ncrews@chromium.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Nick,
 
-On Tue, Oct 1, 2019 at 10:41 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Thu, Sep 26, 2019 at 12:41:18PM -0700, Douglas Anderson wrote:
->
-> > -    description: bootloader/firmware enabled regulator
-> > +    description: bootloader/firmware enabled regulator.
-> > +      It's expected that this regulator was left on by the bootloader.
-> > +      If the bootloader didn't leave it on then OS should turn it on
-> > +      at boot but shouldn't prevent it from being turned off later.
->
-> This is good...
->
-> > +      This property is intended to only be used for regulators where
-> > +      Linux cannot read the state of the regulator at bootup.
->
-> ...but we shouldn't say "Linux" here since the DT binding is for all
-> OSs, not just Linux.  I'd say "software" instead.  Really the
-> expectation is that things wouldn't support readback at all, though it's
-> possible there's some weird hardware out there that will support
-> readback some of the time I guess.
+On 25/09/2019 14:32:09-0600, Nick Crews wrote:
+> If the RTC HW returns an invalid time, the rtc_year_days()
+> call would crash. This patch adds error logging in this
+> situation, and removes the tm_yday and tm_wday calculations.
+> These fields should not be relied upon by userspace
+> according to man rtc, and thus we don't need to calculate
+> them.
+> 
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> ---
+>  drivers/rtc/rtc-wilco-ec.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+> index 8ad4c4e6d557..53da355d996a 100644
+> --- a/drivers/rtc/rtc-wilco-ec.c
+> +++ b/drivers/rtc/rtc-wilco-ec.c
+> @@ -110,10 +110,15 @@ static int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+>  	tm->tm_mday	= rtc.day;
+>  	tm->tm_mon	= rtc.month - 1;
+>  	tm->tm_year	= rtc.year + (rtc.century * 100) - 1900;
+> -	tm->tm_yday	= rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+> -
+> -	/* Don't compute day of week, we don't need it. */
+> -	tm->tm_wday = -1;
+> +	/* Ignore other tm fields, man rtc says userspace shouldn't use them. */
+> +
+> +	if (rtc_valid_tm(tm)) {
+> +		dev_err(dev,
+> +			 "Time from RTC is invalid: second=%u, minute=%u, hour=%u, day=%u, month=%u, year=%u, century=%u",
+> +			 rtc.second, rtc.minute, rtc.hour, rtc.day, rtc.month,
+> +			 rtc.year, rtc.century);
 
-Argh.  I knew not to mention "Linux" and kept it in mind to write the
-first part.  ...but then I must have just spaced.  I also removed the
-"at bootup" part since it seemed better.
+Do you mind using %ptR? At this point you already filled the tm struct
+anyway and if you print century separately, you can infer tm_year.
 
--Doug
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
