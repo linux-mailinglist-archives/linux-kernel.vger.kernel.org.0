@@ -2,188 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47D23C2E92
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:05:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F27C2E9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730664AbfJAIFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 04:05:50 -0400
-Received: from foss.arm.com ([217.140.110.172]:43288 "EHLO foss.arm.com"
+        id S1732709AbfJAIHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 04:07:50 -0400
+Received: from mga06.intel.com ([134.134.136.31]:18682 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbfJAIFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:05:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D768337;
-        Tue,  1 Oct 2019 01:05:49 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78E413F739;
-        Tue,  1 Oct 2019 01:05:48 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 09:05:46 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Remi Pommarel <repk@triplefau.lt>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1726460AbfJAIHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 04:07:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 01:07:48 -0700
+X-IronPort-AV: E=Sophos;i="5.64,570,1559545200"; 
+   d="scan'208";a="190517127"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 01:07:44 -0700
+From:   Jani Nikula <jani.nikula@intel.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jani Nikula <jani.nikula@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: aardvark: Use LTSSM state to build link training
- flag
-Message-ID: <20191001080546.GI42880@e119886-lin.cambridge.arm.com>
-References: <20190522213351.21366-3-repk@triplefau.lt>
- <20190930154017.GF42880@e119886-lin.cambridge.arm.com>
- <20190930165230.GA12568@voidbox>
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        Vishal Kulkarni <vishal@chelsio.com>, netdev@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH v3] string-choice: add yesno(), onoff(), enableddisabled(), plural() helpers
+Date:   Tue,  1 Oct 2019 11:07:39 +0300
+Message-Id: <20191001080739.18513-1-jani.nikula@intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <8e697984-03b5-44f3-304e-42d303724eaa@rasmusvillemoes.dk>
+References: <8e697984-03b5-44f3-304e-42d303724eaa@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190930165230.GA12568@voidbox>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 06:52:30PM +0200, Remi Pommarel wrote:
-> On Mon, Sep 30, 2019 at 04:40:18PM +0100, Andrew Murray wrote:
-> > On Wed, May 22, 2019 at 11:33:51PM +0200, Remi Pommarel wrote:
-> > > Aardvark's PCI_EXP_LNKSTA_LT flag in its link status register is not
-> > > implemented and does not reflect the actual link training state (the
-> > > flag is always set to 0). In order to support link re-training feature
-> > > this flag has to be emulated. The Link Training and Status State
-> > > Machine (LTSSM) flag in Aardvark LMI config register could be used as
-> > > a link training indicator. Indeed if the LTSSM is in L0 or upper state
-> > > then link training has completed (see [1]).
-> > > 
-> > > Unfortunately because after asking a link retraining it takes a while
-> > > for the LTSSM state to become less than 0x10 (due to L0s to recovery
-> > > state transition delays), LTSSM can still be in L0 while link training
-> > > has not finished yet. So this waits for link to be in recovery or lesser
-> > > state before returning after asking for a link retrain.
-> > > 
-> > > [1] "PCI Express Base Specification", REV. 4.0
-> > >     PCI Express, February 19 2014, Table 4-14
-> > > 
-> > > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > > ---
-> > > Changes since v1:
-> > >   - Rename retraining flag field
-> > >   - Fix DEVCTL register writing
-> > > 
-> > > Changes since v2:
-> > >   - Rewrite patch logic so it is more legible
-> > > 
-> > > Please note that I will unlikely be able to answer any comments from May
-> > > 24th to June 10th.
-> > > ---
-> > >  drivers/pci/controller/pci-aardvark.c | 29 ++++++++++++++++++++++++++-
-> > >  1 file changed, 28 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> > > index 134e0306ff00..8803083b2174 100644
-> > > --- a/drivers/pci/controller/pci-aardvark.c
-> > > +++ b/drivers/pci/controller/pci-aardvark.c
-> > > @@ -180,6 +180,8 @@
-> > >  #define LINK_WAIT_MAX_RETRIES		10
-> > >  #define LINK_WAIT_USLEEP_MIN		90000
-> > >  #define LINK_WAIT_USLEEP_MAX		100000
-> > > +#define RETRAIN_WAIT_MAX_RETRIES	10
-> > > +#define RETRAIN_WAIT_USLEEP_US		2000
-> > >  
-> > >  #define MSI_IRQ_NUM			32
-> > >  
-> > > @@ -239,6 +241,17 @@ static int advk_pcie_wait_for_link(struct advk_pcie *pcie)
-> > >  	return -ETIMEDOUT;
-> > >  }
-> > >  
-> > > +static void advk_pcie_wait_for_retrain(struct advk_pcie *pcie)
-> > > +{
-> > > +	size_t retries;
-> > > +
-> > > +	for (retries = 0; retries < RETRAIN_WAIT_MAX_RETRIES; ++retries) {
-> > > +		if (!advk_pcie_link_up(pcie))
-> > > +			break;
-> > > +		udelay(RETRAIN_WAIT_USLEEP_US);
-> > > +	}
-> > > +}
-> > > +
-> > >  static void advk_pcie_setup_hw(struct advk_pcie *pcie)
-> > >  {
-> > >  	u32 reg;
-> > > @@ -426,11 +439,20 @@ advk_pci_bridge_emul_pcie_conf_read(struct pci_bridge_emul *bridge,
-> > >  		return PCI_BRIDGE_EMUL_HANDLED;
-> > >  	}
-> > >  
-> > > +	case PCI_EXP_LNKCTL: {
-> > > +		/* u32 contains both PCI_EXP_LNKCTL and PCI_EXP_LNKSTA */
-> > > +		u32 val = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + reg) &
-> > > +			~(PCI_EXP_LNKSTA_LT << 16);
-> > 
-> > The commit message says "the flag is always set to 0" - therefore I guess
-> > you don't *need* to mask out the LT bit here? I assume this is just
-> > belt-and-braces but thought I'd check incase I've misunderstood or if your
-> > commit message is inaccurate.
-> > 
-> > In any case masking out the bit (or adding a comment) makes this code more
-> > readable as the reader doesn't need to know what the hardware does with this
-> > bit.
-> 
-> Actually vendor eventually responded that the bit was reserved, but
-> during my tests it remains to 0.
-> 
-> So yes I am masking this out mainly for belt-and-braces and legibility.
+The kernel has plenty of ternary operators to choose between constant
+strings, such as condition ? "yes" : "no", as well as value == 1 ? "" :
+"s":
 
-Thanks for the clarification.
+$ git grep '? "yes" : "no"' | wc -l
+258
+$ git grep '? "on" : "off"' | wc -l
+204
+$ git grep '? "enabled" : "disabled"' | wc -l
+196
+$ git grep '? "" : "s"' | wc -l
+25
 
-> 
-> > > +		if (!advk_pcie_link_up(pcie))
-> > > +			val |= (PCI_EXP_LNKSTA_LT << 16);
-> > > +		*value = val;
-> > > +		return PCI_BRIDGE_EMUL_HANDLED;
-> > > +	}
-> > > +
-> > >  	case PCI_CAP_LIST_ID:
-> > >  	case PCI_EXP_DEVCAP:
-> > >  	case PCI_EXP_DEVCTL:
-> > >  	case PCI_EXP_LNKCAP:
-> > > -	case PCI_EXP_LNKCTL:
-> > >  		*value = advk_readl(pcie, PCIE_CORE_PCIEXP_CAP + reg);
-> > >  		return PCI_BRIDGE_EMUL_HANDLED;
-> > >  	default:
-> > > @@ -447,8 +469,13 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
-> > >  
-> > >  	switch (reg) {
-> > >  	case PCI_EXP_DEVCTL:
-> > > +		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
-> > > +		break;
-> > 
-> > Why is this here?
-> > 
-> 
-> Before PCI_EXP_DEVCTL and PCI_EXP_LNKCTL were doing the same thing, but
-> as now PCI_EXP_LNKCTL does extra things (i.e. wait for link to
-> successfully retrain), they do have different behaviours.
-> 
-> So this is here so PCI_EXP_DEVCTL keeps its old behaviour and do not
-> wait for link retrain in case an unrelated (PCI_EXP_LNKCTL_RL) bit is
-> set.
+Additionally, there are some occurences of the same in reverse order,
+split to multiple lines, or otherwise not caught by the simple grep.
 
-Oh yes, of course!
+Add helpers to return the constant strings. Remove existing equivalent
+and conflicting functions in i915, cxgb4, and USB core. Further
+conversion can be done incrementally.
 
-Thanks and:
+While the main goal here is to abstract recurring patterns, and slightly
+clean up the code base by not open coding the ternary operators, there
+are also some space savings to be had via better string constant
+pooling.
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: Vishal Kulkarni <vishal@chelsio.com>
+Cc: netdev@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org> # v1
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 
-> 
-> -- 
-> Remi
-> 
-> > > +
-> > >  	case PCI_EXP_LNKCTL:
-> > >  		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
-> > > +		if (new & PCI_EXP_LNKCTL_RL)
-> > > +			advk_pcie_wait_for_retrain(pcie);
-> > >  		break;
-> > >  
-> > >  	case PCI_EXP_RTCTL:
-> > > -- 
-> > > 2.20.1
-> > > 
+---
+
+v2: add string-choice.[ch] to not clutter kernel.h and to actually save
+space on string constants.
+
+v3: back to static inlines based on Rasmus' feedback
+
+Example of further cleanup possibilities are at [1], to be done
+incrementally afterwards.
+
+[1] http://lore.kernel.org/r/20190903133731.2094-2-jani.nikula@intel.com
+---
+ drivers/gpu/drm/i915/i915_utils.h             | 16 +---------
+ .../ethernet/chelsio/cxgb4/cxgb4_debugfs.c    | 12 +------
+ drivers/usb/core/config.c                     |  6 +---
+ drivers/usb/core/generic.c                    |  6 +---
+ include/linux/string-choice.h                 | 31 +++++++++++++++++++
+ 5 files changed, 35 insertions(+), 36 deletions(-)
+ create mode 100644 include/linux/string-choice.h
+
+diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
+index 562f756da421..794f02a90efe 100644
+--- a/drivers/gpu/drm/i915/i915_utils.h
++++ b/drivers/gpu/drm/i915/i915_utils.h
+@@ -28,6 +28,7 @@
+ #include <linux/list.h>
+ #include <linux/overflow.h>
+ #include <linux/sched.h>
++#include <linux/string-choice.h>
+ #include <linux/types.h>
+ #include <linux/workqueue.h>
+ 
+@@ -395,21 +396,6 @@ wait_remaining_ms_from_jiffies(unsigned long timestamp_jiffies, int to_wait_ms)
+ #define MBps(x) KBps(1000 * (x))
+ #define GBps(x) ((u64)1000 * MBps((x)))
+ 
+-static inline const char *yesno(bool v)
+-{
+-	return v ? "yes" : "no";
+-}
+-
+-static inline const char *onoff(bool v)
+-{
+-	return v ? "on" : "off";
+-}
+-
+-static inline const char *enableddisabled(bool v)
+-{
+-	return v ? "enabled" : "disabled";
+-}
+-
+ static inline void add_taint_for_CI(unsigned int taint)
+ {
+ 	/*
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index ae6a47dd7dc9..d9123dae1d00 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -35,6 +35,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/debugfs.h>
+ #include <linux/string_helpers.h>
++#include <linux/string-choice.h>
+ #include <linux/sort.h>
+ #include <linux/ctype.h>
+ 
+@@ -2023,17 +2024,6 @@ static const struct file_operations rss_debugfs_fops = {
+ /* RSS Configuration.
+  */
+ 
+-/* Small utility function to return the strings "yes" or "no" if the supplied
+- * argument is non-zero.
+- */
+-static const char *yesno(int x)
+-{
+-	static const char *yes = "yes";
+-	static const char *no = "no";
+-
+-	return x ? yes : no;
+-}
+-
+ static int rss_config_show(struct seq_file *seq, void *v)
+ {
+ 	struct adapter *adapter = seq->private;
+diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
+index 151a74a54386..52cee9067eb4 100644
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/device.h>
++#include <linux/string-choice.h>
+ #include <asm/byteorder.h>
+ #include "usb.h"
+ 
+@@ -19,11 +20,6 @@
+ #define USB_MAXCONFIG			8	/* Arbitrary limit */
+ 
+ 
+-static inline const char *plural(int n)
+-{
+-	return (n == 1 ? "" : "s");
+-}
+-
+ static int find_next_descriptor(unsigned char *buffer, int size,
+     int dt1, int dt2, int *num_skipped)
+ {
+diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
+index 38f8b3e31762..a784a09794d6 100644
+--- a/drivers/usb/core/generic.c
++++ b/drivers/usb/core/generic.c
+@@ -21,14 +21,10 @@
+ 
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
++#include <linux/string-choice.h>
+ #include <uapi/linux/usb/audio.h>
+ #include "usb.h"
+ 
+-static inline const char *plural(int n)
+-{
+-	return (n == 1 ? "" : "s");
+-}
+-
+ static int is_rndis(struct usb_interface_descriptor *desc)
+ {
+ 	return desc->bInterfaceClass == USB_CLASS_COMM
+diff --git a/include/linux/string-choice.h b/include/linux/string-choice.h
+new file mode 100644
+index 000000000000..320b598bd8f0
+--- /dev/null
++++ b/include/linux/string-choice.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Copyright © 2019 Intel Corporation
++ */
++
++#ifndef __STRING_CHOICE_H__
++#define __STRING_CHOICE_H__
++
++#include <linux/types.h>
++
++static inline const char *yesno(bool v)
++{
++	return v ? "yes" : "no";
++}
++
++static inline const char *onoff(bool v)
++{
++	return v ? "on" : "off";
++}
++
++static inline const char *enableddisabled(bool v)
++{
++	return v ? "enabled" : "disabled";
++}
++
++static inline const char *plural(long v)
++{
++	return v == 1 ? "" : "s";
++}
++
++#endif /* __STRING_CHOICE_H__ */
+-- 
+2.20.1
+
