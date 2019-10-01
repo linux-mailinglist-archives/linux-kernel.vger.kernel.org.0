@@ -2,88 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 675D6C3FE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 20:31:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADD95C3FE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 20:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbfJASbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 14:31:48 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:49070 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726100AbfJASbr (ORCPT
+        id S1726186AbfJASdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 14:33:05 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45357 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfJASdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 14:31:47 -0400
-Received: (qmail 6459 invoked by uid 2102); 1 Oct 2019 14:31:46 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 1 Oct 2019 14:31:46 -0400
-Date:   Tue, 1 Oct 2019 14:31:46 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Steven Rostedt <rostedt@goodmis.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Lockup on USB and block devices
-In-Reply-To: <20191001134430.1f9c9c75@gandalf.local.home>
-Message-ID: <Pine.LNX.4.44L0.1910011427110.1991-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Tue, 1 Oct 2019 14:33:05 -0400
+Received: by mail-pg1-f196.google.com with SMTP id q7so10239567pgi.12
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 11:33:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=jnSN9YmOheprwG21PrBNqfLBILdQ1P4B2+I4pJVgdBQ=;
+        b=QS+X3oE3DUzVheGjAiwqzmPSjnwmJVy8eBf13WzMYBpv4X1VQcAQiqh5mSZHVWUmyM
+         aBxcYpGy395FI8Hr6MxQZ/8DiXaGmAtjXHRFldeDH18KenofU7L2e5cskHjaI/FsdEuU
+         3QV3HAi/nyWD3q4A28alHlne45zT8RpwxODNl+BvgyCGpovnZ/RF6Ck7NVATibodeVWB
+         8WITWPN6TwWT2+hxz6e35rxv8L0yttp1QlMSZeIbRaJWW51KYzcQ5GTAyLBXckss+J6s
+         VxELANTBueQ+W1cwLw2/b2Z1M1BF2K0Mr1ScKvyBlIVnzenVLFs04BiGA4/Xri4RR1Dm
+         7rrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jnSN9YmOheprwG21PrBNqfLBILdQ1P4B2+I4pJVgdBQ=;
+        b=Ki6G+fs/hqRc4vw682IhW1sXCzXeVFLPUWFG8upRV0zRzUQeXI+miBSR+wb/zXIM8y
+         8kylIuyWmyn8y5uEIuToMeIY10j2GWv/SNT7Z/GEiuMt0xihG5qVC5zHnfWP2A9tLuHQ
+         A9ub6mWQvKSC+xT/OWMMf+HYgA367gO5Onj9aTO7Zr2rq5WXu7wYgLap94JaSF5WcRIH
+         jJVfoAwOSczQN8MMq2CmE2hFrGFU6nZJy5Q7tp7auGNXTzRIk1iCVG64HQi8pvWWodIX
+         6w3rqhW/HmxkvoWxL/WQbePLywMexThIeRcl50wJqmsYR87P1ZH1jnlk4lhcAkil/Q/6
+         hPsw==
+X-Gm-Message-State: APjAAAVV8pbING4ez9Vxsy7CTeAx8JyHWdNq/49egYGrqNBJME+ht5ly
+        eJbCNg32VFVdiMFUQVNH3iMnPbEqhnw=
+X-Google-Smtp-Source: APXvYqz6MsAdZSlHtUNRHakIXzpsW94dW14d/CK6CNmIMkvVJz5Y2T6j3L2nm6ELNanmgOYWKPsZuw==
+X-Received: by 2002:a62:5cc3:: with SMTP id q186mr28882257pfb.15.1569954783854;
+        Tue, 01 Oct 2019 11:33:03 -0700 (PDT)
+Received: from nuc7.sifive.com ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id bb15sm3094052pjb.2.2019.10.01.11.33.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 01 Oct 2019 11:33:03 -0700 (PDT)
+From:   Alan Mikhak <alan.mikhak@sifive.com>
+X-Google-Original-From: Alan Mikhak < alan.mikhak@sifive.com >
+To:     linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
+        alexios.zavras@intel.com, ming.lei@redhat.com,
+        gregkh@linuxfoundation.org, tglx@linutronix.de, jgg@ziepe.ca,
+        christophe.leroy@c-s.fr, thellstrom@vmware.com,
+        galpress@amazon.com, palmer@sifive.com, paul.walmsley@sifive.com
+Cc:     Alan Mikhak <alan.mikhak@sifive.com>
+Subject: [PATCH] scatterlist: Comment on pages for sg_set_page()
+Date:   Tue,  1 Oct 2019 11:32:50 -0700
+Message-Id: <1569954770-11477-1-git-send-email-alan.mikhak@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 Oct 2019, Steven Rostedt wrote:
+From: Alan Mikhak <alan.mikhak@sifive.com>
 
-> Not sure who to blame, but my server locked up when upgraded (accessing
-> volume group information), and echoing in "w" into sysrq-trigger showed
-> a bit of information.
-> 
-> First, looking at my dmesg I see that my usb-storage is hung up, for
-> whatever reason. Thus, this could be the source of all issues.
-> 
-> 
-> [5434447.145737] INFO: task usb-storage:32246 blocked for more than 120 seconds.
-> [5434447.145740]       Not tainted 5.2.4-custom #4
-> 
-> (BTW, I was upgrading to my 5.2.17 kernel when this happened)
-> 
-> [5434447.145741] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [5434447.145743] usb-storage     D    0 32246      2 0x80004000
-> [5434447.145745] Call Trace:
-> [5434447.145749]  ? __schedule+0x1e8/0x600
-> [5434447.145752]  schedule+0x29/0x90
-> [5434447.145755]  schedule_timeout+0x208/0x300
-> [5434447.145765]  ? usb_hcd_submit_urb+0xbe/0xb90 [usbcore]
-> [5434447.145773]  ? usb_alloc_urb+0x23/0x70 [usbcore]
-> [5434447.145782]  ? usb_sg_init+0x92/0x2b0 [usbcore]
-> [5434447.145791]  ? usb_hcd_submit_urb+0xbe/0xb90 [usbcore]
-> [5434447.145795]  ? __switch_to_asm+0x34/0x70
-> [5434447.145798]  wait_for_completion+0x111/0x180
-> [5434447.145800]  ? wake_up_q+0x70/0x70
-> [5434447.145809]  usb_sg_wait+0xfa/0x150 [usbcore]
-> [5434447.145814]  usb_stor_bulk_transfer_sglist.part.4+0x64/0xb0 [usb_storage]
-> [5434447.145818]  usb_stor_bulk_srb+0x49/0x80 [usb_storage]
-> [5434447.145821]  usb_stor_Bulk_transport+0x167/0x3e0 [usb_storage]
-> [5434447.145824]  ? schedule+0x29/0x90
-> [5434447.145828]  ? usb_stor_disconnect+0xb0/0xb0 [usb_storage]
-> [5434447.145832]  usb_stor_invoke_transport+0x3a/0x4e0 [usb_storage]
-> [5434447.145835]  ? wait_for_completion_interruptible+0x12d/0x1d0
-> [5434447.145837]  ? wake_up_q+0x70/0x70
-> [5434447.145841]  usb_stor_control_thread+0x1c5/0x270 [usb_storage]
-> [5434447.145845]  kthread+0x116/0x130
-> [5434447.145847]  ? kthread_create_worker_on_cpu+0x70/0x70
-> [5434447.145851]  ret_from_fork+0x35/0x40
+Update the description of sg_set_page() to communicate current
+requirements for the page pointer parameter.
 
-It looks like a problem with your xHCI USB host controller.  Normally a
-usb-storage transfer would be aborted after 90 seconds.  But if the
-host controller (or its driver) isn't working right, and the abort
-never completes, you end up with a situation like this -- usb-storage
-and the higher SCSI and block layers waiting indefinitely for an event
-that won't occur.
+Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
+---
+ include/linux/scatterlist.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-In theory, unplugging the USB mass-storage device would unblock
-everything (unless xhci-hcd is too badly wedged).  But of course, doing
-that is likely to mess up whatever you were working on.
-
-Alan Stern
+diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+index 6eec50fb36c8..6dda865893aa 100644
+--- a/include/linux/scatterlist.h
++++ b/include/linux/scatterlist.h
+@@ -112,6 +112,12 @@ static inline void sg_assign_page(struct scatterlist *sg, struct page *page)
+  *   of the page pointer. See sg_page() for looking up the page belonging
+  *   to an sg entry.
+  *
++ *   Scatterlist currently expects the page parameter to be a pointer to
++ *   a page that is backed by a page struct.
++ *
++ *   Page pointers derived from addresses obtained from ioremap() are
++ *   currently not supported since they require use of iomem safe memcpy.
++ *
+  **/
+ static inline void sg_set_page(struct scatterlist *sg, struct page *page,
+ 			       unsigned int len, unsigned int offset)
+-- 
+2.7.4
 
