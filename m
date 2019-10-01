@@ -2,126 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3612AC3B0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02AA7C3AEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731020AbfJAQl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:41:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730941AbfJAQlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:24 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C54CB205C9;
-        Tue,  1 Oct 2019 16:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948083;
-        bh=NAi1+Bo0JVBgckqyAVTISXOYMwHPgSPKdbHxAFeiRps=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s3LYVKxNJhpfXorbc7ajjvVgh5N0LVN9NhRsCp+YOPyp44LsFkDTq11Bn3FZm8tav
-         CUptZYGQcrmp8F50jDXe7SKJxKXyF3aTuE1VVwxciT50Szdq06VJFeLYzlVQfUMM/U
-         L3OO5/u8gO4qWigyeOCZYIrOdfNR7YEgpxR24Wwc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Filipe Manana <fdmanana@suse.com>, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 71/71] Btrfs: fix selftests failure due to uninitialized i_mode in test inodes
-Date:   Tue,  1 Oct 2019 12:39:21 -0400
-Message-Id: <20191001163922.14735-71-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
-References: <20191001163922.14735-1-sashal@kernel.org>
+        id S1730025AbfJAQk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:40:28 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:35264 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729851AbfJAQkZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:40:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1569948024; x=1601484024;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=B6ZukSVqPXIDGwanru0AxvEjOvXIzvMDbuKH0fi3bms=;
+  b=nPpfREgestedl+iuTO8n5jzvJdO57zsy+ZE6BM0V8syEP+ITTB7dK3PY
+   LHOcyeE/HrmpA4dPswmpT2tNnp6fvbykzK+tt3TuHtl2R1d67OoNsYMTs
+   7Dz+zFqUgTjjuyRCArB3Cp+UzGx8zgIfwhcGtSVgqg+S7O8XrfVAhc3pM
+   I=;
+X-IronPort-AV: E=Sophos;i="5.64,571,1559520000"; 
+   d="scan'208";a="419078825"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 01 Oct 2019 16:40:19 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (Postfix) with ESMTPS id 080C1A25ED;
+        Tue,  1 Oct 2019 16:40:17 +0000 (UTC)
+Received: from EX13D02UWC001.ant.amazon.com (10.43.162.243) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 1 Oct 2019 16:40:16 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
+ EX13D02UWC001.ant.amazon.com (10.43.162.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 1 Oct 2019 16:40:16 +0000
+Received: from 8c859006a84e.ant.amazon.com (172.26.203.30) by
+ mail-relay.amazon.com (10.43.160.118) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Tue, 1 Oct 2019 16:40:15 +0000
+From:   Patrick Williams <alpawi@amazon.com>
+CC:     =?UTF-8?q?Bj=C3=B6rn=20Ard=C3=B6?= <bjorn.ardo@axis.com>,
+        Patrick Williams <alpawi@amazon.com>,
+        Patrick Williams <patrick@stwcx.xyz>,
+        Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] i2c: slave-eeprom: initialize empty eeprom properly
+Date:   Tue, 1 Oct 2019 11:40:05 -0500
+Message-ID: <20191001164009.21610-1-alpawi@amazon.com>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+The i2c-slave-eeprom driver emulates at24 class eeprom devices,
+which come initialized with all 1s.  Do the same in the software
+emulation.
 
-[ Upstream commit 9f7fec0ba89108b9385f1b9fb167861224912a4a ]
-
-Some of the self tests create a test inode, setup some extents and then do
-calls to btrfs_get_extent() to test that the corresponding extent maps
-exist and are correct. However btrfs_get_extent(), since the 5.2 merge
-window, now errors out when it finds a regular or prealloc extent for an
-inode that does not correspond to a regular file (its ->i_mode is not
-S_IFREG). This causes the self tests to fail sometimes, specially when
-KASAN, slub_debug and page poisoning are enabled:
-
-  $ modprobe btrfs
-  modprobe: ERROR: could not insert 'btrfs': Invalid argument
-
-  $ dmesg
-  [ 9414.691648] Btrfs loaded, crc32c=crc32c-intel, debug=on, assert=on, integrity-checker=on, ref-verify=on
-  [ 9414.692655] BTRFS: selftest: sectorsize: 4096  nodesize: 4096
-  [ 9414.692658] BTRFS: selftest: running btrfs free space cache tests
-  [ 9414.692918] BTRFS: selftest: running extent only tests
-  [ 9414.693061] BTRFS: selftest: running bitmap only tests
-  [ 9414.693366] BTRFS: selftest: running bitmap and extent tests
-  [ 9414.696455] BTRFS: selftest: running space stealing from bitmap to extent tests
-  [ 9414.697131] BTRFS: selftest: running extent buffer operation tests
-  [ 9414.697133] BTRFS: selftest: running btrfs_split_item tests
-  [ 9414.697564] BTRFS: selftest: running extent I/O tests
-  [ 9414.697583] BTRFS: selftest: running find delalloc tests
-  [ 9415.081125] BTRFS: selftest: running find_first_clear_extent_bit test
-  [ 9415.081278] BTRFS: selftest: running extent buffer bitmap tests
-  [ 9415.124192] BTRFS: selftest: running inode tests
-  [ 9415.124195] BTRFS: selftest: running btrfs_get_extent tests
-  [ 9415.127909] BTRFS: selftest: running hole first btrfs_get_extent test
-  [ 9415.128343] BTRFS critical (device (efault)): regular/prealloc extent found for non-regular inode 256
-  [ 9415.131428] BTRFS: selftest: fs/btrfs/tests/inode-tests.c:904 expected a real extent, got 0
-
-This happens because the test inodes are created without ever initializing
-the i_mode field of the inode, and neither VFS's new_inode() nor the btrfs
-callback btrfs_alloc_inode() initialize the i_mode. Initialization of the
-i_mode is done through the various callbacks used by the VFS to create
-new inodes (regular files, directories, symlinks, tmpfiles, etc), which
-all call btrfs_new_inode() which in turn calls inode_init_owner(), which
-sets the inode's i_mode. Since the tests only uses new_inode() to create
-the test inodes, the i_mode was never initialized.
-
-This always happens on a VM I used with kasan, slub_debug and many other
-debug facilities enabled. It also happened to someone who reported this
-on bugzilla (on a 5.3-rc).
-
-Fix this by setting i_mode to S_IFREG at btrfs_new_test_inode().
-
-Fixes: 6bf9e4bd6a2778 ("btrfs: inode: Verify inode mode to avoid NULL pointer dereference")
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204397
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Patrick Williams <alpawi@amazon.com>
 ---
- fs/btrfs/tests/btrfs-tests.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/i2c/i2c-slave-eeprom.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
-index 1e3ba49493995..814a918998ece 100644
---- a/fs/btrfs/tests/btrfs-tests.c
-+++ b/fs/btrfs/tests/btrfs-tests.c
-@@ -51,7 +51,13 @@ static struct file_system_type test_type = {
+diff --git a/drivers/i2c/i2c-slave-eeprom.c b/drivers/i2c/i2c-slave-eeprom.c
+index db9763cb4dae..efee56106251 100644
+--- a/drivers/i2c/i2c-slave-eeprom.c
++++ b/drivers/i2c/i2c-slave-eeprom.c
+@@ -131,6 +131,8 @@ static int i2c_slave_eeprom_probe(struct i2c_client *client, const struct i2c_de
+ 	if (!eeprom)
+ 		return -ENOMEM;
  
- struct inode *btrfs_new_test_inode(void)
- {
--	return new_inode(test_mnt->mnt_sb);
-+	struct inode *inode;
++	memset(eeprom->buffer, 0xFF, size);
 +
-+	inode = new_inode(test_mnt->mnt_sb);
-+	if (inode)
-+		inode_init_owner(inode, NULL, S_IFREG);
-+
-+	return inode;
- }
- 
- static int btrfs_init_test_fs(void)
+ 	eeprom->idx_write_cnt = 0;
+ 	eeprom->num_address_bytes = flag_addr16 ? 2 : 1;
+ 	eeprom->address_mask = size - 1;
 -- 
-2.20.1
+2.17.2 (Apple Git-113)
 
