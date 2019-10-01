@@ -2,64 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16F61C2C01
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 04:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F9EC2C0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 04:48:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731757AbfJACnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 22:43:49 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:58062 "EHLO
+        id S1732253AbfJACsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 22:48:20 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34226 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbfJACnt (ORCPT
+        with ESMTP id S1726504AbfJACsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 22:43:49 -0400
+        Mon, 30 Sep 2019 22:48:19 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x912eNOg070025;
-        Tue, 1 Oct 2019 02:43:45 GMT
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x912j9JD073543;
+        Tue, 1 Oct 2019 02:48:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
  from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2019-08-05;
- bh=ysbJMTAWRnoqFPAjb9+nsfnvblBeuAaW1c+VwQajuCI=;
- b=iRg/y3i0FYmhjLplICmXr/3/AfGbBjsPZXWBXhjb1K0theVGF8HpcpLTRMgPUT5G6S8a
- UV5Gyq4hcLyTDwN41+/9v+r9/6wzN1zQE3QVfXav9VuXU3VrUKEVjv+vUqXLAQorjHSU
- Z2r5ZJJykpGrbNnTkKYvi0rRw7tjxm4qfmgK+PovnUJjkLiLIn34eBuzJOL0n1L/xIRf
- 4V6DOGqUTx9KcP0llRs5EVBhMiKAiStbh6Seifpdl02VoKNbTwOzgLa645Wv5hPutGoI
- m9EGCL3slbYsu6oBh6yvZNSLltZt3VljW1FvQohHhfG0xg4aDyPZnjdr0avHAWSo8gr1 4g== 
+ bh=YpRiIhlIid3LYOYkXp6iDEMgHa7do1U+KOrW141b9k4=;
+ b=jECCMiz6EziGE9RJjLyYyJO4jOvmwIL6/s6CTk80yDnfDkFoUfkgsPA54VN7K8yAyYNO
+ FoHKI1yBT2/0czbYXmbYtMDK9Ouewz46a7UQkVLt1v0QWaAAzrNow6lrnpNH8DzEHBB5
+ m+TZGJOS5pyycvkSfh7olvKauW0cmf4rlbLLsLy4n18gN000FnWZNDnTLXQ3QQo68Y6Y
+ zbsyg86M0Hj2n5zvSu0ODg2sYkW6a1hE1T5UYJJWTkbteMINuJZrjsTGMlNx3HMYopO/
+ FJqTNDkgqjomV4t+R0D88yXyn45Zsa0J/M6DgyGhsyHog4JuS4ko19Op0F8Nuf/u9/uy UA== 
 Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2v9yfq2u55-1
+        by aserp2120.oracle.com with ESMTP id 2v9yfq2ug7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 02:43:45 +0000
+        Tue, 01 Oct 2019 02:48:13 +0000
 Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x912hgrt018085;
-        Tue, 1 Oct 2019 02:43:44 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2vbmpxgjpc-1
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x912hhEh018158;
+        Tue, 1 Oct 2019 02:46:12 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2vbmpxgr2m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 02:43:44 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x912h6li024635;
-        Tue, 1 Oct 2019 02:43:06 GMT
+        Tue, 01 Oct 2019 02:46:12 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x912kAUh029370;
+        Tue, 1 Oct 2019 02:46:10 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Sep 2019 19:43:06 -0700
+        with ESMTP ; Mon, 30 Sep 2019 19:46:10 -0700
 To:     Colin King <colin.king@canonical.com>
-Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+Cc:     Satish Kharat <satishkh@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: mvsas: remove redundant assignment to variable rc
+Subject: Re: [PATCH] scsi: fnic: make array dev_cmd_err static const, makes object smaller
 From:   "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
-References: <20190905135017.23772-1-colin.king@canonical.com>
-Date:   Mon, 30 Sep 2019 22:43:02 -0400
-In-Reply-To: <20190905135017.23772-1-colin.king@canonical.com> (Colin King's
-        message of "Thu, 5 Sep 2019 14:50:17 +0100")
-Message-ID: <yq1eezxyymh.fsf@oracle.com>
+References: <20190906163945.3889-1-colin.king@canonical.com>
+Date:   Mon, 30 Sep 2019 22:46:07 -0400
+In-Reply-To: <20190906163945.3889-1-colin.king@canonical.com> (Colin King's
+        message of "Fri, 6 Sep 2019 17:39:45 +0100")
+Message-ID: <yq1a7alyyhc.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=901
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1908290000 definitions=main-1910010027
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
@@ -67,7 +70,7 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=150
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010026
+ definitions=main-1910010027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -76,9 +79,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Colin,
 
-> The variable rc is being initialized with a value that is never read
-> and is being re-assigned a little later on. The assignment is
-> redundant and hence can be removed.
+> Don't populate the array dev_cmd_err on the stack but instead make it
+> static const. Makes the object code smaller by 80 bytes.
 
 Applied to 5.5/scsi-queue, thanks!
 
