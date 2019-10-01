@@ -2,151 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76997C3229
+	by mail.lfdr.de (Postfix) with ESMTP id E5D64C322A
 	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732232AbfJALOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:14:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbfJALOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:14:09 -0400
-Received: from quaco.ghostprotocols.net (177.206.223.101.dynamic.adsl.gvt.net.br [177.206.223.101])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CC7521D80;
-        Tue,  1 Oct 2019 11:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569928448;
-        bh=AdBjSELZJhlgyRvsjG8O19Gi25UGUWyRyAzRlfwaJ0Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hoYG9D5fMu+tXD1bKhCd6bNsoVMROHmI1277Gvl97Whw1hpVBwNq7CBGXVf5mT/jK
-         KyogFWSdBJ1MPEnTrTHf/sl1XPMz9CT6dIE6XXvr5ArU/OXhad7laHfCAT3YSlTXoZ
-         kkjoP8tK1a1Dm3VH4VGU1190/6Ess+l+FBtj6ViA=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 24/24] perf annotate: Don't return -1 for error when doing BPF disassembly
-Date:   Tue,  1 Oct 2019 08:12:16 -0300
-Message-Id: <20191001111216.7208-25-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191001111216.7208-1-acme@kernel.org>
-References: <20191001111216.7208-1-acme@kernel.org>
+        id S1732263AbfJALOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:14:50 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35504 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731234AbfJALOt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 07:14:49 -0400
+Received: by mail-lf1-f65.google.com with SMTP id w6so9557503lfl.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 04:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=TViWHe/fCibeg71RMzs+W48ldBatY/PqH+UEQJGff2s=;
+        b=fpz7EK7SSc/CFiYhuMa1+crrkLU+3P3psihAMUMXcLQJOWdvylF/HTMxLMQT96RbMd
+         2MgggjMq6WWQJwojFW7NEXjoxsQrYt+inirA9ubEdAtphWn9bdcn7UETZR2OHphgGbdg
+         sEOQauhnmRmemHgZDMi98Zfg0cQXQ4kuOvTB6/88RevQR8J+3utdb/9a7TpP8n6HxtRs
+         /hh4oSpDTa1mrSObGTMGDd3qT4HOWGlx6wdUr4p40HKYaxARfiUH//BnKthcLSovVKlD
+         TjTuAMBtgEmCyKj09GxfMqiAoaDq0N+6J7xelpjZg5kHqAxsUEw6Po7wE5piE9OEyPgC
+         Ismw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=TViWHe/fCibeg71RMzs+W48ldBatY/PqH+UEQJGff2s=;
+        b=SHcQ6xfO/sy2I3yzHWB0vS3Xmn/cugo2LyrILV8ypKw0VgTwnQ7kDwud/V+Zmhijs9
+         1fujPgXxfXXRJOeQKWEhp6sJrBopQs4xDNOVSLahTR+bsJoZ2KcShYwnrdIEDo3hzvys
+         OkV+Q72aYiwdDvTr0Kemc3J5ku5tYn5ns0BzD7DoFhqUCvVMg5v7D/hDbXV6k0X8U76a
+         In6Mi+Yg+V014U7cgDLU0U3bZXqBJsBHfTccaqX8G/NZPfOt63hhaLwVMKlht+ESgLYP
+         KzUn0DUxQX+FOFZJ2QaYVa+8jqUKkQDkz79DR6fCzlrBfv1qO3z2LvrL3dhrdWrcELp2
+         5rCQ==
+X-Gm-Message-State: APjAAAW/Z3yPnv8Ymw/9HQEBwsIV849TuMs+sdymX3l/CJNStj2lsFXB
+        2mNuvcRdDfI8F8Ui5upn/104ZPUCofm/Gl4eng==
+X-Google-Smtp-Source: APXvYqzwIyR/0yP5xuAKqsKcQpD0EitsL2tfm3HOqebFXgjC4YezeBr71abqDrBfcFSLdgdCzOm7aGnBfMMLa1R+5Zg=
+X-Received: by 2002:a05:6512:4dd:: with SMTP id w29mr14445922lfq.2.1569928487799;
+ Tue, 01 Oct 2019 04:14:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac2:546f:0:0:0:0:0 with HTTP; Tue, 1 Oct 2019 04:14:46 -0700 (PDT)
+Reply-To: daoudaali2200@gmail.com
+From:   Daouda Ali <mralidaouda@gmail.com>
+Date:   Tue, 1 Oct 2019 12:14:46 +0100
+Message-ID: <CALMuGHOroCEMpQm2pxxX-FdtxGMRPX71Jpy1b57b5AnM5hKjpA@mail.gmail.com>
+Subject: INVESTMENT PROPOSAL.
+To:     daoudaali2200@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+It=E2=80=99s my pleasure to contact you through this media because I need a=
+n
+investment assistance in your country. However I have a profitable
+investment proposal with  good interest to share with you, amounted
+the sum of (Twenty Eight Million Four Hundred Thousand United State
+Dollar ($28.400.000.00). If you  are willing to handle this project
+kindly reply urgent to enable me provide you more information about
+the investment funds and the project.
 
-Return errno when open_memstream() fails and add two new speciall error
-codes for when an invalid, non BPF file or one without BTF is passed to
-symbol__disassemble_bpf(), so that its callers can rely on
-symbol__strerror_disassemble() to convert that to a human readable error
-message that can help figure out what is wrong, with hints even.
+I am waiting to hear from you through this my private
+email(daoudaali2200@gmail.com) so we can proceed further.
 
-Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-Cc: Will Deacon <will@kernel.org>
-Link: https://lkml.kernel.org/n/tip-usevw9r2gcipfcrbpaueurw0@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/annotate.c | 19 +++++++++++++++----
- tools/perf/util/annotate.h |  2 ++
- 2 files changed, 17 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index b49ecdd51188..4036c7f7b0fb 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1637,6 +1637,13 @@ int symbol__strerror_disassemble(struct symbol *sym __maybe_unused, struct map *
- 	case SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_CPUID_PARSING:
- 		scnprintf(buf, buflen, "Problems while parsing the CPUID in the arch specific initialization.");
- 		break;
-+	case SYMBOL_ANNOTATE_ERRNO__BPF_INVALID_FILE:
-+		scnprintf(buf, buflen, "Invalid BPF file: %s.", dso->long_name);
-+		break;
-+	case SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF:
-+		scnprintf(buf, buflen, "The %s BPF file has no BTF section, compile with -g or use pahole -J.",
-+			  dso->long_name);
-+		break;
- 	default:
- 		scnprintf(buf, buflen, "Internal error: Invalid %d error code\n", errnum);
- 		break;
-@@ -1719,13 +1726,13 @@ static int symbol__disassemble_bpf(struct symbol *sym,
- 	char tpath[PATH_MAX];
- 	size_t buf_size;
- 	int nr_skip = 0;
--	int ret = -1;
- 	char *buf;
- 	bfd *bfdf;
-+	int ret;
- 	FILE *s;
- 
- 	if (dso->binary_type != DSO_BINARY_TYPE__BPF_PROG_INFO)
--		return -1;
-+		return SYMBOL_ANNOTATE_ERRNO__BPF_INVALID_FILE;
- 
- 	pr_debug("%s: handling sym %s addr %" PRIx64 " len %" PRIx64 "\n", __func__,
- 		  sym->name, sym->start, sym->end - sym->start);
-@@ -1738,8 +1745,10 @@ static int symbol__disassemble_bpf(struct symbol *sym,
- 	assert(bfd_check_format(bfdf, bfd_object));
- 
- 	s = open_memstream(&buf, &buf_size);
--	if (!s)
-+	if (!s) {
-+		ret = errno;
- 		goto out;
-+	}
- 	init_disassemble_info(&info, s,
- 			      (fprintf_ftype) fprintf);
- 
-@@ -1748,8 +1757,10 @@ static int symbol__disassemble_bpf(struct symbol *sym,
- 
- 	info_node = perf_env__find_bpf_prog_info(dso->bpf_prog.env,
- 						 dso->bpf_prog.id);
--	if (!info_node)
-+	if (!info_node) {
-+		return SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF;
- 		goto out;
-+	}
- 	info_linear = info_node->info_linear;
- 	sub_id = dso->bpf_prog.sub_id;
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 116e21f49da6..d76fd0e81f46 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -372,6 +372,8 @@ enum symbol_disassemble_errno {
- 	SYMBOL_ANNOTATE_ERRNO__NO_LIBOPCODES_FOR_BPF,
- 	SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_CPUID_PARSING,
- 	SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_REGEXP,
-+	SYMBOL_ANNOTATE_ERRNO__BPF_INVALID_FILE,
-+	SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF,
- 
- 	__SYMBOL_ANNOTATE_ERRNO__END,
- };
--- 
-2.21.0
-
+Best Regards.
+Mr. Daouda Ali.
