@@ -2,88 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50BA7C4356
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E94B7C4371
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 00:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbfJAV7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:59:50 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34827 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbfJAV7u (ORCPT
+        id S1728682AbfJAWE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 18:04:26 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44160 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfJAWE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:59:50 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m15so23729995qtq.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 14:59:49 -0700 (PDT)
+        Tue, 1 Oct 2019 18:04:26 -0400
+Received: by mail-pl1-f194.google.com with SMTP id q15so6196397pll.11;
+        Tue, 01 Oct 2019 15:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=SzLgLM64zQisUJliC/nZaFfY8UW3bRx/BTTIsnBbPSg=;
-        b=UUaMbdCuPsrawZGd4AF+u4GmB/rygMSokCpJcnU4HebRX0bVYQ1P13OgvueqOSlgIA
-         KQMo2Gx2rihZQRtKE7IND92HVqe8WteIG+DLY3NNRm0cQhXeusaCRr6klY5/Z1Mj5sFT
-         R/1WlWVRviHloXLA4ZYQ1mwX4GPWkRoRbQgfDlYgPVglymd2jKdLyDOLplVe7UMGT5us
-         /sx0dEuwhaPUy6ouQUvZAiJ9+rvVhEYMjWscAjQqCysaLZIEX2ZCXq6TbZX5YTVrVj7e
-         HwIdoo7OnCjiSqIOW/UKsUlSWKcggKlOz4S0/zMENuRNZjT75Oa9lLtksvTFF/NjFk10
-         Xabg==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=l7orQYKnUvvQj6dfwOeG/rFQGC9QhyED0camIWdwGOg=;
+        b=THRFx164QQ/IDFGWDoWdArwl1AyL8fiOmEi2ZPdMf8iVLb031ViFV5eJYlg8zShtWq
+         qL7PS6B2nvH8YMMmazOLfPlWqRmkFHkWNx6gtnB0ATu/TMeu6WyRXf1nfFUClebB09gp
+         jfMPzG9NW7dkeSyEYiBW/MzjD/9CsV9MRqU+XL8XJIXJ639/Oejye2Wr58KN6u3q1SU7
+         H+IHWYKy1E8qcsiJ7up47yDJ3y9hG8BtyFAjAValxPEEb7a/MO8zppx4OflqxEbYVHzM
+         0OtNzXNm71T59pItyRPjm5z9fqdwjFf8yDHWR9WcmM5VDxUtxOwwCs/B3gfR9tOlxa0X
+         5kkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=SzLgLM64zQisUJliC/nZaFfY8UW3bRx/BTTIsnBbPSg=;
-        b=WNRqxlfyAMvfJUtXX4sAhiIoeqi+tXaSTgBBbDeKO0LgMfP19uKF1TaohwEw6kY9xi
-         1PwobZhHOI8qPAP0IQQ0fUsF9mdJ97wkf5Fj+I2Y6/A5BKvn+zViEUSbOAN2c0soMroO
-         3LuXJDZ4y54OCgzakkxfcVWkt5jaXl3HGhTehu/CmxxQKzhUebJGJXF5l/4VICCRp/1Z
-         sgpo0cOFYh/sKZeU6gdI2YD2mQMJfDjU9k6X3pCAvVIE+Vg7Rt3j5xCI4SGkdeb6kPgs
-         eFc1f4Y10ZqKcDnN8tksaa8sn3TKuCLElxIrIBGg0DX6eNXTm6Khw/KTHgOcVlK9egbz
-         d/uw==
-X-Gm-Message-State: APjAAAWm6X0ryZcMFolYNO3anL7HuNL9myMkfIjwL4goP5gz5Qlzf4Ec
-        RvEGzjDXOSWEVHecKsmD5/M2MEKUX9HRnO9KtLg=
-X-Google-Smtp-Source: APXvYqzk8Obq1vzKefbmAAmTTqYnJXjJ8hBq+kv/krCM9faymujHLJw0e18s8Wxp2pYW6LoO4O0o1ixllx0P9wCHsNg=
-X-Received: by 2002:a0c:f712:: with SMTP id w18mr125353qvn.244.1569967189044;
- Tue, 01 Oct 2019 14:59:49 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=l7orQYKnUvvQj6dfwOeG/rFQGC9QhyED0camIWdwGOg=;
+        b=dE3j7lXXoww/e9lY9S16r2Gz91/OpPKA7eGip9sQe6lOT1P8vlxJUosD6SqEI5GuO/
+         yj5mXaPpkKrWuwv6WJ7/0+FGiLmGUrVCBUQWb8P0XFBD0imkq0q1c7lT+uKzytUHX9gN
+         oVKpW2vfIGphtFeCtue2Q8dg/8RIvbmC2I3k2vNulrcwt62pRCcjmKbbWqT8Yw3MNetZ
+         FPSey1LrsXin7OePzPGtp9C4zeXzQceVTDRT+nIV/scKiq+5WjklokrFVoL8ZvxIhmnf
+         2TOpTAsa2wnVpARqWgyozkvYB94AYBHCKkSGwpYyu2S/82eKcyBcrRtA2gyDYekmOsIi
+         D/UQ==
+X-Gm-Message-State: APjAAAVPmIaF8D+eFL6SNiJooWNjru7JsmcJ7ZGHaVBF80rF+Xr82M/S
+        j5/VPi80OgRS8UMZwJu6O1O7nlaw
+X-Google-Smtp-Source: APXvYqxFVu5KmSe3vfMZGmDNd4jzR+p1QRKbkPXLk5315QxR5LJKUB/j8JFY8jmv8jys/q7pWWYk2Q==
+X-Received: by 2002:a17:902:9884:: with SMTP id s4mr52642plp.50.1569967464596;
+        Tue, 01 Oct 2019 15:04:24 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id q132sm16935414pfq.16.2019.10.01.15.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 15:04:24 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 15:04:21 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     linux-input@vger.kernel.org
+Cc:     Tomohiro Yoshidomi <sylph23k@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: psxpad-spi - switch to using polled mode of input
+ devices
+Message-ID: <20191001220421.GA66693@dtor-ws>
 MIME-Version: 1.0
-Received: by 2002:aed:39a1:0:0:0:0:0 with HTTP; Tue, 1 Oct 2019 14:59:48 -0700 (PDT)
-Reply-To: munasalemmustapha9@gmail.com
-From:   munasale mmustapha <luzynameladu@gmail.com>
-Date:   Tue, 1 Oct 2019 14:59:48 -0700
-Message-ID: <CAGtOUZ=ipSHZvat5+JmttvEWyP89MRZ05i=ryBfyfb56FSdRSg@mail.gmail.com>
-Subject: My name is Mrs Munasalem Mustapha from France,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My name is Mrs Munasalem Mustapha from France,
+We have added polled mode to the normal input devices with the intent of
+retiring input_polled_dev. This converts psxpad-spi driver to use the
+polling mode of standard input devices and removes dependency on
+INPUT_POLLDEV.
 
-I know that this message might come to you as surprise because we
-don't know each other nor have we ever met before but accept it with
-an open and positive mind. I have a Very important request that made
-me to contact you; I was diagnosed with ovarian cancer disease which
-doctors have confirmed and announced to me that i have just few days
-to leave, Now that I=E2=80=99m ending the race like this, without any famil=
-y
-members and no child, I just came across your email contact from my
-personal search.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/joystick/Kconfig      |  1 -
+ drivers/input/joystick/psxpad-spi.c | 64 +++++++++++++++--------------
+ 2 files changed, 34 insertions(+), 31 deletions(-)
 
-I=E2=80=99m a business woman from France dealing with gold exportation here=
- in
-Republic of Burkina Faso. I have decided to hand over the sum of ($6.5
-Million Dollar) in my account to you for the help of orphanage
-homes/the needy once in your location to fulfill my wish on earth. But
-before handing over my data=E2=80=99s to you, kindly assure me that you wil=
-l
-take only 50% of the money and share the rest to orphanage homes/the
-needy once in your country, Return to enable me forward to you the
-bank contact details now that I have access to Internet in the
-hospital to enable you contact the bank, always check your e-mail
-always remember me for doing good.
-Please don't forget to reply me in my Private
-E-mail:(munasalemmustapha9@gmail.com)
+diff --git a/drivers/input/joystick/Kconfig b/drivers/input/joystick/Kconfig
+index 312b854b5506..940b744639c7 100644
+--- a/drivers/input/joystick/Kconfig
++++ b/drivers/input/joystick/Kconfig
+@@ -334,7 +334,6 @@ config JOYSTICK_MAPLE
+ config JOYSTICK_PSXPAD_SPI
+ 	tristate "PlayStation 1/2 joypads via SPI interface"
+ 	depends on SPI
+-	select INPUT_POLLDEV
+ 	help
+ 	  Say Y here if you wish to connect PlayStation 1/2 joypads
+ 	  via SPI interface.
+diff --git a/drivers/input/joystick/psxpad-spi.c b/drivers/input/joystick/psxpad-spi.c
+index 7eee1b0e360f..a32656064f39 100644
+--- a/drivers/input/joystick/psxpad-spi.c
++++ b/drivers/input/joystick/psxpad-spi.c
+@@ -22,7 +22,6 @@
+ #include <linux/kernel.h>
+ #include <linux/device.h>
+ #include <linux/input.h>
+-#include <linux/input-polldev.h>
+ #include <linux/module.h>
+ #include <linux/spi/spi.h>
+ #include <linux/types.h>
+@@ -60,7 +59,7 @@ static const u8 PSX_CMD_ENABLE_MOTOR[]	= {
+ 
+ struct psxpad {
+ 	struct spi_device *spi;
+-	struct input_polled_dev *pdev;
++	struct input_dev *idev;
+ 	char phys[0x20];
+ 	bool motor1enable;
+ 	bool motor2enable;
+@@ -140,8 +139,7 @@ static void psxpad_set_motor_level(struct psxpad *pad,
+ static int psxpad_spi_play_effect(struct input_dev *idev,
+ 				  void *data, struct ff_effect *effect)
+ {
+-	struct input_polled_dev *pdev = input_get_drvdata(idev);
+-	struct psxpad *pad = pdev->private;
++	struct psxpad *pad = input_get_drvdata(idev);
+ 
+ 	switch (effect->type) {
+ 	case FF_RUMBLE:
+@@ -158,10 +156,9 @@ static int psxpad_spi_init_ff(struct psxpad *pad)
+ {
+ 	int err;
+ 
+-	input_set_capability(pad->pdev->input, EV_FF, FF_RUMBLE);
++	input_set_capability(pad->idev, EV_FF, FF_RUMBLE);
+ 
+-	err = input_ff_create_memless(pad->pdev->input, NULL,
+-				      psxpad_spi_play_effect);
++	err = input_ff_create_memless(pad->idev, NULL, psxpad_spi_play_effect);
+ 	if (err) {
+ 		dev_err(&pad->spi->dev,
+ 			"input_ff_create_memless() failed: %d\n", err);
+@@ -189,24 +186,25 @@ static inline int psxpad_spi_init_ff(struct psxpad *pad)
+ }
+ #endif	/* CONFIG_JOYSTICK_PSXPAD_SPI_FF */
+ 
+-static void psxpad_spi_poll_open(struct input_polled_dev *pdev)
++static int psxpad_spi_poll_open(struct input_dev *input)
+ {
+-	struct psxpad *pad = pdev->private;
++	struct psxpad *pad = input_get_drvdata(input);
+ 
+ 	pm_runtime_get_sync(&pad->spi->dev);
++
++	return 0;
+ }
+ 
+-static void psxpad_spi_poll_close(struct input_polled_dev *pdev)
++static void psxpad_spi_poll_close(struct input_dev *input)
+ {
+-	struct psxpad *pad = pdev->private;
++	struct psxpad *pad = input_get_drvdata(input);
+ 
+ 	pm_runtime_put_sync(&pad->spi->dev);
+ }
+ 
+-static void psxpad_spi_poll(struct input_polled_dev *pdev)
++static void psxpad_spi_poll(struct input_dev *input)
+ {
+-	struct psxpad *pad = pdev->private;
+-	struct input_dev *input = pdev->input;
++	struct psxpad *pad = input_get_drvdata(input);
+ 	u8 b_rsp3, b_rsp4;
+ 	int err;
+ 
+@@ -284,7 +282,6 @@ static void psxpad_spi_poll(struct input_polled_dev *pdev)
+ static int psxpad_spi_probe(struct spi_device *spi)
+ {
+ 	struct psxpad *pad;
+-	struct input_polled_dev *pdev;
+ 	struct input_dev *idev;
+ 	int err;
+ 
+@@ -292,31 +289,26 @@ static int psxpad_spi_probe(struct spi_device *spi)
+ 	if (!pad)
+ 		return -ENOMEM;
+ 
+-	pdev = input_allocate_polled_device();
+-	if (!pdev) {
++	idev = devm_input_allocate_device(&spi->dev);
++	if (!idev) {
+ 		dev_err(&spi->dev, "failed to allocate input device\n");
+ 		return -ENOMEM;
+ 	}
+ 
+ 	/* input poll device settings */
+-	pad->pdev = pdev;
++	pad->idev = idev;
+ 	pad->spi = spi;
+ 
+-	pdev->private = pad;
+-	pdev->open = psxpad_spi_poll_open;
+-	pdev->close = psxpad_spi_poll_close;
+-	pdev->poll = psxpad_spi_poll;
+-	/* poll interval is about 60fps */
+-	pdev->poll_interval = 16;
+-	pdev->poll_interval_min = 8;
+-	pdev->poll_interval_max = 32;
+-
+ 	/* input device settings */
+-	idev = pdev->input;
++	input_set_drvdata(idev, pad);
++
+ 	idev->name = "PlayStation 1/2 joypad";
+ 	snprintf(pad->phys, sizeof(pad->phys), "%s/input", dev_name(&spi->dev));
+ 	idev->id.bustype = BUS_SPI;
+ 
++	idev->open = psxpad_spi_poll_open;
++	idev->close = psxpad_spi_poll_close;
++
+ 	/* key/value map settings */
+ 	input_set_abs_params(idev, ABS_X, 0, 255, 0, 0);
+ 	input_set_abs_params(idev, ABS_Y, 0, 255, 0, 0);
+@@ -354,11 +346,23 @@ static int psxpad_spi_probe(struct spi_device *spi)
+ 	/* pad settings */
+ 	psxpad_set_motor_level(pad, 0, 0);
+ 
++
++	err = input_setup_polling(idev, psxpad_spi_poll);
++	if (err) {
++		dev_err(&spi->dev, "failed to set up polling: %d\n", err);
++		return err;
++	}
++
++	/* poll interval is about 60fps */
++	input_set_poll_interval(idev, 16);
++	input_set_min_poll_interval(idev, 8);
++	input_set_max_poll_interval(idev, 32);
++
+ 	/* register input poll device */
+-	err = input_register_polled_device(pdev);
++	err = input_register_device(idev);
+ 	if (err) {
+ 		dev_err(&spi->dev,
+-			"failed to register input poll device: %d\n", err);
++			"failed to register input device: %d\n", err);
+ 		return err;
+ 	}
+ 
+-- 
+2.23.0.444.g18eeb5a265-goog
 
-Your early response will be appreciated.
 
-Yours Faithfully,
-Mrs Munasalem Mustapha
+-- 
+Dmitry
