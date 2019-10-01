@@ -2,19 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ADD8C2EA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 716ECC2EA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:11:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731923AbfJAILG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 04:11:06 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:51105 "EHLO hermes.aosc.io"
+        id S1732942AbfJAILH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 04:11:07 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:51106 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbfJAILF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:11:05 -0400
-X-Greylist: delayed 437 seconds by postgrey-1.27 at vger.kernel.org; Tue, 01 Oct 2019 04:11:05 EDT
+        id S1727361AbfJAILG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 04:11:06 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id DFC5182AC9;
-        Tue,  1 Oct 2019 08:03:44 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id B47AA82889;
+        Tue,  1 Oct 2019 08:03:52 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         David Airlie <airlied@linux.ie>,
@@ -22,9 +21,11 @@ To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
 Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 0/3] drm/sun4i: dsi: misc timing fixes
-Date:   Tue,  1 Oct 2019 16:02:50 +0800
-Message-Id: <20191001080253.6135-1-icenowy@aosc.io>
+Subject: [PATCH 1/3] Revert "drm/sun4i: dsi: Change the start delay calculation"
+Date:   Tue,  1 Oct 2019 16:02:51 +0800
+Message-Id: <20191001080253.6135-2-icenowy@aosc.io>
+In-Reply-To: <20191001080253.6135-1-icenowy@aosc.io>
+References: <20191001080253.6135-1-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -32,31 +33,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset fixes some portion of timing calculation in sun6i_mipi_dsi
-driver according to the BSP driver.
+This reverts commit da676c6aa6413d59ab0a80c97bbc273025e640b2.
 
-Two of the patches are reverting, one is fixing some misread of the BSP
-source code, another is fixing a wrong refactor that actually breaks the
-formula.
+The original commit adds a start parameter to the calculation of the
+start delay according to some old BSP versions from Allwinner. However,
+there're two ways to add this delay -- add it in DSI controller or add
+it in the TCON. Add it in both controllers won't work.
 
-The other non-reverting patch is fixing a porch error which is usually
-seen in the original driver commit. Most of porch errors are then fixed,
-but this one gets ignored.
+The code before this commit is picked from new versions of BSP kernel,
+which has a comment for the 1 that says "put start_delay to tcon". By
+checking the sun4i_tcon0_mode_set_cpu() in sun4i_tcon driver, it has
+already added this delay, so we shouldn't repeat to add the delay in DSI
+controller, otherwise the timing won't match.
 
-By applying these patches, several DSI panels are tested to be driven
-properly by the timing provided by the vendor, including the LCD panel
-of PinePhone "Don't Be Evil" DevKit, the final PinePhone panel and the
-panel on PineTab. Without these patches they need dirty timing hacks to
-work.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Icenowy Zheng (3):
-  Revert "drm/sun4i: dsi: Change the start delay calculation"
-  drm/sun4i: dsi: fix DRQ calculation
-  Revert "drm/sun4i: dsi: Rework a bit the hblk calculation"
-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 1636344ba9ec..c86e11631ebc 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -365,8 +365,7 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+ 					   struct drm_display_mode *mode)
+ {
+-	u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
+-	u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
++	u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+ 
+ 	if (delay > mode->vtotal)
+ 		delay = delay % mode->vtotal;
 -- 
 2.21.0
 
