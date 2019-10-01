@@ -2,116 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7556EC2E47
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C309FC2E4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733078AbfJAHja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 03:39:30 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33372 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbfJAHj3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 03:39:29 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so7313962pfl.0;
-        Tue, 01 Oct 2019 00:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FPppnx0pHg/e5NQNVYHCSHLYJt27O7a0A615YGrLKc8=;
-        b=RNZoDGRHpt/Wdb8dG1PMcaHqUo2VhanExRHm03EBTnxrfHRrlr1pSkkQgLSxVUEUUj
-         Z6vB/F0ywZolrgx5IPX/8yng0MwAwu/DPV1rK3B4nL3+IoLa/eyhI7VjU/KSAMG8BlbP
-         RCpDMtcc4aJ6aXqynVOxr6jaLN8pjcwS8Aq0e1fx4Kq79/y/wTCWyI1BAbAnG814e6QO
-         mHOV8XCaLn4wjFnALqV/WTzNS3w5bP4Gx/jukPlzMZ9IdJmWPUu8r/Pp92GAUVnL+KTL
-         uvstGokKaNAAVqVYsf8vzoGr2P1RkbVDt+Nm5gfzle0pA6YidHLShRRME3soF4usyYRj
-         zRgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FPppnx0pHg/e5NQNVYHCSHLYJt27O7a0A615YGrLKc8=;
-        b=araj51OmRlZXWv6mUow0DZmPwJICk8qzfSexey1ymhVOrAJFK6AgQkMdr2totLqxOm
-         rn2GJipiRyoEei80opmPh1jo9JrOlPxkML1fYGaZdC826QXmLjaPXRJsY+iGsGZbuZHo
-         zXH2XlWv5Rrd7bMCQvwGhQnM8G0Px6LquxvUS6uSC4iv6GU9bN1zsveAVP0a/Vs2PglL
-         N0eIf+U11gQOuSC7cr+oSHnJE5D0SWNS8dUILLq/65LXBTjQpsxX1Ep85htwXTS6cPXB
-         L6SdpCRjSekNqUVG4Psjukxg/hEOOxLDUNIVkBAyBXx7fMwMmqXESjq+6OQFqvHQ0P6Z
-         PDsA==
-X-Gm-Message-State: APjAAAXyCRYNOC2+luUCt7C9rztJECIPCjBlr4dJXZa4qglpssGhiZtF
-        mzKw8m0KVDEPF9TciKGNnyE8/GIF
-X-Google-Smtp-Source: APXvYqwf/R8vsuDMrsHPW7AAcObC7akqhTa6ONGQou6OgWL5Xr1mJECAx9MceH6tA5EtUlPFROrz4Q==
-X-Received: by 2002:a63:cf4e:: with SMTP id b14mr29075889pgj.109.1569915567708;
-        Tue, 01 Oct 2019 00:39:27 -0700 (PDT)
-Received: from localhost.localdomain ([103.51.74.191])
-        by smtp.gmail.com with ESMTPSA id g19sm23133024pgm.63.2019.10.01.00.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 00:39:27 -0700 (PDT)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCHv3 RESEND-next 3/3] arm64: dts: meson: odroid-c2: Add missing regulator linked to HDMI supply
-Date:   Tue,  1 Oct 2019 07:39:01 +0000
-Message-Id: <20191001073901.372-4-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191001073901.372-1-linux.amoon@gmail.com>
-References: <20191001073901.372-1-linux.amoon@gmail.com>
+        id S1733091AbfJAHkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 03:40:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731358AbfJAHkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 03:40:19 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7FEF3A44AF6;
+        Tue,  1 Oct 2019 07:40:19 +0000 (UTC)
+Received: from localhost (ovpn-12-43.pek2.redhat.com [10.72.12.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B2703600C8;
+        Tue,  1 Oct 2019 07:40:15 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 15:40:12 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Dave Young <dyoung@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org, jgross@suse.com,
+        dhowells@redhat.com, Thomas.Lendacky@amd.com,
+        kexec@lists.infradead.org, Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH] x86/kdump: Fix 'kmem -s' reported an invalid freepointer
+ when SME was active
+Message-ID: <20191001074012.GK31919@MiWiFi-R3L-srv>
+References: <20190920035326.27212-1-lijiang@redhat.com>
+ <20190927051518.GA13023@dhcp-128-65.nay.redhat.com>
+ <87r241piqg.fsf@x220.int.ebiederm.org>
+ <20190928000505.GJ31919@MiWiFi-R3L-srv>
+ <875zldp2vj.fsf@x220.int.ebiederm.org>
+ <20190928030910.GA5774@MiWiFi-R3L-srv>
+ <87zhimks5j.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zhimks5j.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Tue, 01 Oct 2019 07:40:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As per schematics HDMI_P5V0 is supplied by P5V0 so add missing link.
+On 09/30/19 at 05:14am, Eric W. Biederman wrote:
+> Baoquan He <bhe@redhat.com> writes:
+> >> needs a little better description.  I know it is not a lot on modern
+> >> systems but reserving an extra 1M of memory to avoid having to special
+> >> case it later seems in need of calling out.
+> >> 
+> >> I have an old system around that I think that 640K is about 25% of
+> >> memory.
+> >
+> > Understood. Basically 640K is wasted in this case. But we only do like
+> > this in SME case, a condition checking is added. And system with SME is
+> > pretty new model, it may not impact the old system.
+> 
+> The conditional really should be based on if we are reserving memory
+> for a kdump kernel.  AKA if crash_kernel=XXX is specified on the kernel
+> command line.
+> 
+> At which point I think it would be very reasonable to unconditionally
+> reserve the low 640k, and make the whole thing a non-issue.  This would
+> allow the kdump code to just not do anything special for any of the
+> weird special case.
+> 
+> It isn't perfect because we need a page or so used in the first kernel
+> for bootstrapping the secondary cpus, but that seems like the least of
+> evils.  Especially as no one will DMA to that memory.
+> 
+> So please let's just change what memory we reserve when crash_kernel is
+> specified.
 
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Changes from previous
-Patchv1
-- As per Martin's suggestion added the HDMI_P5V0 fix regulator node.
-Patchv2
-- Added Matrin's and Neil's Reviewed-by.
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Yes, makes sense, thanks for pointing it out.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 2fcd512373a3..6ded279c40c8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-@@ -66,6 +66,15 @@
- 		regulator-always-on;
- 	};
- 
-+	hdmi_p5v0: regulator-hdmi_p5v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "HDMI_P5V0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		/* AP2331SA-7 */
-+		vin-supply = <&p5v0>;
-+	};
-+
- 	tflash_vdd: regulator-tflash_vdd {
- 		compatible = "regulator-fixed";
- 
-@@ -220,6 +229,7 @@
- 	status = "okay";
- 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
- 	pinctrl-names = "default";
-+	hdmi-supply = <&hdmi_p5v0>;
- };
- 
- &hdmi_tx_tmds_port {
--- 
-2.23.0
+> 
+> >> How we interact with BIOS tables in the first 640k needs some
+> >> explanation.  Both in the first kernel and in the crash kernel.
+> >
+> > Yes, totally agree.
+> >
+> > Those BIOS tables have been reserved as e820 reserved regions and will
+> > be passed to kdump kernel for reusing. Memblock reserved 640K doesn't
+> > mean it will cover the whole [0, 640K) region, it only searches for
+> > available system RAM from memblock allocator.
+> 
+> Careful with that assumption.  My memory is that the e820 memory map
+> frequently fails to cover areas like the real mode interrupt descriptor
+> table at address 0.
 
+OK, will think more about this. Thanks.
