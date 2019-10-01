@@ -2,37 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35358C3DA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E77CC3D93
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbfJARBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:01:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51670 "EHLO mail.kernel.org"
+        id S1726873AbfJARA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:00:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729952AbfJAQkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:40:25 -0400
+        id S1727617AbfJAQka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:40:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D25A921906;
-        Tue,  1 Oct 2019 16:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EED452190F;
+        Tue,  1 Oct 2019 16:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948024;
-        bh=LsS3cLKEpGqy9ebVuNqcBko7hWdPP6FRJnuapa640F0=;
+        s=default; t=1569948029;
+        bh=SW5+MJ+dAc9BhA2Qt94J5IT4MmvBAaF7zVFKoytNsbU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b0szmmoC189EYWABRee7b2x4Axd8Bso7h+51fUfAOfK05Ai3YOh/53N9COGnSu23L
-         ksdrAV/O/avuQYEXzA7KCX7zvStq8YlgNEMFyI9aCcxiaSoWTSKrfFhc/WQtijh2ng
-         hNtRySjfvokLaSsOdyL+zrQUurfAc29AZWMZ5XpU=
+        b=skUwb6J7VUD0Wg6oPeRGhi54jrD/qp77qBrBynwCnreoNpJmTQ0kTLAUWZCrQVNvL
+         i56leiAmlMOtAQ+IOd8fEibng2tYZVcVp8hyxlS6Z31YFSEfXhVKDTdFZq/fyCmwCQ
+         pEZU6e4rx9H0PGBQgrCAjJWEeUJyDKr5lNe2ivI8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 5.3 43/71] libnvdimm/nfit_test: Fix acpi_handle redefinition
-Date:   Tue,  1 Oct 2019 12:38:53 -0400
-Message-Id: <20191001163922.14735-43-sashal@kernel.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Kirill Tkhai <tkhai@yandex.ru>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Galbraith <efault@gmx.de>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 45/71] sched/membarrier: Call sync_core only before usermode for same mm
+Date:   Tue,  1 Oct 2019 12:38:55 -0400
+Message-Id: <20191001163922.14735-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
 References: <20191001163922.14735-1-sashal@kernel.org>
@@ -45,68 +53,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-[ Upstream commit 59f08896f058a92f03a0041b397a1a227c5e8529 ]
+[ Upstream commit 2840cf02fae627860156737e83326df354ee4ec6 ]
 
-After commit 62974fc389b3 ("libnvdimm: Enable unit test infrastructure
-compile checks"), clang warns:
+When the prev and next task's mm change, switch_mm() provides the core
+serializing guarantees before returning to usermode. The only case
+where an explicit core serialization is needed is when the scheduler
+keeps the same mm for prev and next.
 
-In file included from
-../drivers/nvdimm/../../tools/testing/nvdimm/test/iomap.c:15:
-../drivers/nvdimm/../../tools/testing/nvdimm/test/nfit_test.h:206:15:
-warning: redefinition of typedef 'acpi_handle' is a C11 feature
-[-Wtypedef-redefinition]
-typedef void *acpi_handle;
-              ^
-../include/acpi/actypes.h:424:15: note: previous definition is here
-typedef void *acpi_handle;      /* Actually a ptr to a NS Node */
-              ^
-1 warning generated.
-
-The include chain:
-
-iomap.c ->
-    linux/acpi.h ->
-        acpi/acpi.h ->
-            acpi/actypes.h
-    nfit_test.h
-
-Avoid this by including linux/acpi.h in nfit_test.h, which allows us to
-remove both the typedef and the forward declaration of acpi_object.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/660
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Link: https://lore.kernel.org/r/20190918042148.77553-1-natechancellor@gmail.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Chris Metcalf <cmetcalf@ezchip.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Kirill Tkhai <tkhai@yandex.ru>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190919173705.2181-4-mathieu.desnoyers@efficios.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/nvdimm/test/nfit_test.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ include/linux/sched/mm.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/nvdimm/test/nfit_test.h b/tools/testing/nvdimm/test/nfit_test.h
-index 448d686da8b13..0bf5640f1f071 100644
---- a/tools/testing/nvdimm/test/nfit_test.h
-+++ b/tools/testing/nvdimm/test/nfit_test.h
-@@ -4,6 +4,7 @@
-  */
- #ifndef __NFIT_TEST_H__
- #define __NFIT_TEST_H__
-+#include <linux/acpi.h>
- #include <linux/list.h>
- #include <linux/uuid.h>
- #include <linux/ioport.h>
-@@ -202,9 +203,6 @@ struct nd_intel_lss {
- 	__u32 status;
- } __packed;
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 4a7944078cc35..8557ec6642130 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -362,6 +362,8 @@ enum {
  
--union acpi_object;
--typedef void *acpi_handle;
--
- typedef struct nfit_test_resource *(*nfit_test_lookup_fn)(resource_size_t);
- typedef union acpi_object *(*nfit_test_evaluate_dsm_fn)(acpi_handle handle,
- 		 const guid_t *guid, u64 rev, u64 func,
+ static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
+ {
++	if (current->mm != mm)
++		return;
+ 	if (likely(!(atomic_read(&mm->membarrier_state) &
+ 		     MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE)))
+ 		return;
 -- 
 2.20.1
 
