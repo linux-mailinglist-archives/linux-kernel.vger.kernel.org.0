@@ -2,99 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AFD9C36F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DE9C3707
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388983AbfJAOUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:20:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388512AbfJAOUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:20:43 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0DA421855;
-        Tue,  1 Oct 2019 14:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569939643;
-        bh=24fhhR5+md0mOeWNqDkBGyechQDCTAZku95IGy5Kpq4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jdn5igzjnGX4prnKpEQ8P1d+jyX9se7sEYUPNxIR9MYZeZqVKZAfyH6mXOH4fCNEh
-         JjHQv7fjkLwYVD0zlQkch0rQghb8GHS4zeKXGu65/O8F9Ed+EJFms67kJfX9Kicc7Y
-         a2kAezvPOFD0qedCPm1KM0ntFTjOY3NWCCk9gXa8=
-Date:   Tue, 1 Oct 2019 15:20:38 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
-Message-ID: <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
-References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
- <20190926214342.34608-1-vincenzo.frascino@arm.com>
- <20190926214342.34608-2-vincenzo.frascino@arm.com>
- <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck>
- <20191001132731.GG41399@arrakis.emea.arm.com>
- <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
+        id S2389051AbfJAOWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:22:17 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:39417 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388894AbfJAOWP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:22:15 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MfHIb-1hdFVk2Qsl-00gpsk; Tue, 01 Oct 2019 16:21:19 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: atmel: fix atmel_ssc_set_audio link failure
+Date:   Tue,  1 Oct 2019 16:20:55 +0200
+Message-Id: <20191001142116.1172290-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:+NFFLFJ3uAstZ1v7XE2zMOHO+xPwR8CCKuSDvkVLAs/dyvEYV3F
+ aaVJU2YkvLHOqLAuS7f9B4FjeRy1ETJZw1B302gdLNKywdIJI+RHoRz829Uot1Xqu5n044o
+ QDcIQIsRro/+0s1ix2XUe/LSCIcgkeSVbGW7ySGKqzSalU5mdCbZOP7CNNnpJVyM5u+p3wZ
+ otEMA5Wodj9hFYD6bq/gA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nYhBuPR5Iho=:ywwtGfzj2glibkVf1yv+gi
+ 4DmdK8oqUXYdcCXJg3dN4ao1auIJ7AoklVMPqXSk/ASTz2mL0PLYizTJwV7BjfkihoLUh6Rmv
+ gRaA29X3chqm9b2h2HCkJAtzoqkI+MdFw+DFakAUqJHjwVKtaD1B5iK4vcwDQSGF3sKKK48Vn
+ nBmhc5OwHOrYWL5qaHUF7W4h8K0BGDRQOtzWx0CVAkKdg/I5Xrbd814iywOfdzKxspYPuZ6zw
+ 41RjVQdSMCKa7rz/A0bVPGfA6Hb9ksfWfqMJK5Gmzlh8xzisujMCBPGjxkfmWxHgnjDFelVlS
+ AHzS0a2B7ClTvXIlZ8Z6h9evppl4mCSjpioDFzzo9tk8yL6peEDWUbTwBABFbZ9vcO4toPwql
+ 4JLP5+nRC5qaeDPJhGs2ndvbNJsnRJYdQ/vN0yXQR+BFHcPvN/mg8DFevnbOJLLXDIi1o/nwK
+ L6c9geQnbF9WBynAIo26Vzx9XbYDxAhLCwrSMcOfK0eFxxjaT7Igur2ZIsKKzcKGYz03lAz+h
+ Drp2B/kIsjfgxR8oVoY7R3rhOKGGTaag7KkeiHTGe6Klv3B2883391qk/m6l8lfnn9YrYSfVD
+ ySiKlqfnENrqraZsrxcryA4IpXnirQfUIqZPTUvookUNafdlET8LIFvPhDcGqjr+19Cb1G8Yv
+ oOMefwPdLKX6oo8FyfrrobfB25WEL2laYKjxwbmjBmBOP82IZssbaHWSDFUvpH4cuaqhF2Dn+
+ UZNAUt0yKZaP4fmpNMt879HOaqhwi3vk63z1kWPYXWueVrqayPKcAbKN7xl2dX2TBXiX5OxON
+ xb2I1BdJnYNtZsLCKWtYjIyHK1k6DE5IutltpsdfFQecZkMafzDOFmuBQmD5PURSV2aXgh12e
+ V4PLmfYOqg71TeZg6aeQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 03:20:35PM +0100, Vincenzo Frascino wrote:
-> On 10/1/19 2:27 PM, Catalin Marinas wrote:
-> > On Tue, Oct 01, 2019 at 02:14:23PM +0100, Will Deacon wrote:
-> >> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
-> >>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> >>> index 37c610963eee..0e5beb928af5 100644
-> >>> --- a/arch/arm64/Kconfig
-> >>> +++ b/arch/arm64/Kconfig
-> >>> @@ -110,7 +110,7 @@ config ARM64
-> >>>  	select GENERIC_STRNLEN_USER
-> >>>  	select GENERIC_TIME_VSYSCALL
-> >>>  	select GENERIC_GETTIMEOFDAY
-> >>> -	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
-> >>> +	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT && COMPATCC_IS_ARM_GCC)
-> >>>  	select HANDLE_DOMAIN_IRQ
-> >>>  	select HARDIRQS_SW_RESEND
-> >>>  	select HAVE_PCI
-> >>> @@ -313,6 +313,9 @@ config KASAN_SHADOW_OFFSET
-> >>>  	default 0xeffffff900000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
-> >>>  	default 0xffffffffffffffff
-> >>>  
-> >>> +config COMPATCC_IS_ARM_GCC
-> >>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
-> >>
-> >> I've seen toolchains where the first part of the tuple is "armv7-", so they
-> >> won't get detected here. However, do we really need to detect this? If
-> >> somebody passes a duff compiler, then the build will fail in the same way as
-> >> if they passed it to CROSS_COMPILE=.
-> > 
-> > Not sure what happens if we pass an aarch64 compiler. Can we end up with
-> > a 64-bit compat vDSO?
-> > 
-> 
-> I agree with Catalin here. The problem is not only when you pass and aarch64
-> toolchain but even an x86 and so on.
+The ssc audio driver can call into both pdc and dma backends.  With the
+latest rework, the logic to do this in a safe way avoiding link errors
+was removed, bringing back link errors that were fixed long ago in commit
+061981ff8cc8 ("ASoC: atmel: properly select dma driver state") such as
 
-I disagree. What happens if you do:
+sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
+atmel_ssc_dai.c:(.text+0xac): undefined reference to `atmel_pcm_pdc_platform_register'
 
-$ make ARCH=arm64 CROSS_COMPILE=x86_64-linux-gnu-
+Fix it this time using Makefile hacks and a comment to prevent this
+from accidentally getting removed again rather than Kconfig hacks.
 
-on your x86 box?
+Fixes: 18291410557f ("ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in Kconfig")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/atmel/Kconfig  |  4 ++--
+ sound/soc/atmel/Makefile | 10 ++++++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-> If the problem is related to armv7- we can change the rule as "arm.*-gcc" which
-> should detect them as well. Do you know what is the triple that an armv7-
-> toolchain prints?
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index f118c229ed82..25c31bf64936 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -10,11 +10,11 @@ config SND_ATMEL_SOC
+ if SND_ATMEL_SOC
+ 
+ config SND_ATMEL_SOC_PDC
+-	tristate
++	bool
+ 	depends on HAS_DMA
+ 
+ config SND_ATMEL_SOC_DMA
+-	tristate
++	bool
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 
+ config SND_ATMEL_SOC_SSC
+diff --git a/sound/soc/atmel/Makefile b/sound/soc/atmel/Makefile
+index 1f6890ed3738..c7d2989791be 100644
+--- a/sound/soc/atmel/Makefile
++++ b/sound/soc/atmel/Makefile
+@@ -6,8 +6,14 @@ snd-soc-atmel_ssc_dai-objs := atmel_ssc_dai.o
+ snd-soc-atmel-i2s-objs := atmel-i2s.o
+ snd-soc-mchp-i2s-mcc-objs := mchp-i2s-mcc.o
+ 
+-obj-$(CONFIG_SND_ATMEL_SOC_PDC) += snd-soc-atmel-pcm-pdc.o
+-obj-$(CONFIG_SND_ATMEL_SOC_DMA) += snd-soc-atmel-pcm-dma.o
++# pdc and dma need to both be built-in if any user of
++# ssc is built-in.
++ifdef CONFIG_SND_ATMEL_SOC_PDC
++obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-pdc.o
++endif
++ifdef CONFIG_SND_ATMEL_SOC_DMA
++obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-dma.o
++endif
+ obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel_ssc_dai.o
+ obj-$(CONFIG_SND_ATMEL_SOC_I2S) += snd-soc-atmel-i2s.o
+ obj-$(CONFIG_SND_MCHP_SOC_I2S_MCC) += snd-soc-mchp-i2s-mcc.o
+-- 
+2.20.0
 
-'fraid not, since I don't have one to hand. I think you'd end up matching
-arm*-gcc, which is pretty broad.
-
-Will
