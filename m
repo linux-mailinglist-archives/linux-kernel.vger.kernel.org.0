@@ -2,111 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B23DC3290
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E979C3294
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:38:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732435AbfJALfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:35:08 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40843 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfJALfH (ORCPT
+        id S1732007AbfJALh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:37:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45118 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725947AbfJALh7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:35:07 -0400
-Received: by mail-ed1-f66.google.com with SMTP id v38so11545115edm.7
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 04:35:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E97hATFqUaGgFuCNpdc4AOwFPOf5+SqGe40+poznacI=;
-        b=P+CATDmh/jTPq0XwaKF/n39BSZeOuBW3MQRyxZHIuMawzm5eeqJlzJx5S1j7GSWLk0
-         NoZoKF6YvxFPcNPncaZyHz14QW/Upj8jeWxIrD/s/DMC6j1fE45rj0wuIzPh7tI4hM3a
-         L64HqPqorKlSORb5EsEy5NO0P7suoxa2BuiPbjUSwGQEvvfDqfOFvpnDC7QArSvORm8k
-         SRtHEqeFXRnwCJLHk6hbsw8Nv8eDJQx8uHPvQROdrknp7WBsBug/Xlz41OXrxzBeZMNi
-         u+uNGi0T6SLucoeifrnMlmbvX85ulTOL7X0rxNpHycpkwrzYlnrmEF0BabPkJlDgHLkr
-         NZrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E97hATFqUaGgFuCNpdc4AOwFPOf5+SqGe40+poznacI=;
-        b=rRF+THOx7aKl0456u8WvvvNnc8ROizitFSmaauXckxNVAVekIHeBK6Hw/CnM1gKHwr
-         hAINLLYIN1CgFZMcbfc3CCbK8A+7y162wYkQtQ944lJVcgwqdeUjemPRe717Ba89Bu12
-         c+IKJGyaxBngc41kWXnXOYkHBcrVocLmTLNIZFBzURamSg95L+5bX588n2MLMeqiENQ7
-         SFJr6yaqSBn2N5ruzriAyld7gGvw9nmgpPJexiSO2UhgpNLS1pvDc1cF1BnmvbGF2ba7
-         HAH+GtBN00xr6MXoq9Xs4aktsLtZdMz1DYI/1HQ+umtAtD/IUzJJug32DgJyHejsHGY8
-         y86w==
-X-Gm-Message-State: APjAAAU3wV9LF8AYCcNzKQoe/guaJ2YG67JSDlRtScDhXgN924fyL1vX
-        yKePPRZBIqPlvH8xk62fNNWgCQ==
-X-Google-Smtp-Source: APXvYqw8wc+2HNPj2szS78WqBHuJJNXhqrNG97HJku+gxizOVoujL7OOXkpAqRPmfRsaWysgId8Osw==
-X-Received: by 2002:a50:ce06:: with SMTP id y6mr24178667edi.282.1569929706062;
-        Tue, 01 Oct 2019 04:35:06 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id g6sm3087125edk.40.2019.10.01.04.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 04:35:05 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id BC366102FB8; Tue,  1 Oct 2019 14:35:05 +0300 (+03)
-Date:   Tue, 1 Oct 2019 14:35:05 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Qian Cai <cai@lca.pw>, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Walter Wu <walter-zh.wu@mediatek.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: [PATCH v2 2/3] mm, page_owner: decouple freeing stack trace from
- debug_pagealloc
-Message-ID: <20191001113505.kidbhjl7u2hawxvb@box>
-References: <20190930122916.14969-1-vbabka@suse.cz>
- <20190930122916.14969-3-vbabka@suse.cz>
- <1569847787.5576.244.camel@lca.pw>
- <eccee04f-a56e-6f6f-01c6-e94d94bba4c5@suse.cz>
+        Tue, 1 Oct 2019 07:37:59 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x91BWbQ3141148
+        for <linux-kernel@vger.kernel.org>; Tue, 1 Oct 2019 07:37:57 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vc2tyxknm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 07:37:45 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 1 Oct 2019 12:36:54 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 1 Oct 2019 12:36:50 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x91BanHT59834586
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 1 Oct 2019 11:36:50 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF909AE04D;
+        Tue,  1 Oct 2019 11:36:49 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7519AAE053;
+        Tue,  1 Oct 2019 11:36:48 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.122.211.122])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue,  1 Oct 2019 11:36:48 +0000 (GMT)
+Date:   Tue, 1 Oct 2019 17:06:47 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        peterz@infradead.org, vincent.guittot@linaro.org,
+        tglx@linutronix.de, qais.yousef@arm.com
+Subject: Re: [PATCH v2 2/4] sched/fair: Move active balance logic to its own
+ function
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20190815145107.5318-1-valentin.schneider@arm.com>
+ <20190815145107.5318-3-valentin.schneider@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <eccee04f-a56e-6f6f-01c6-e94d94bba4c5@suse.cz>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190815145107.5318-3-valentin.schneider@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+x-cbid: 19100111-4275-0000-0000-0000036CDBA9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19100111-4276-0000-0000-0000387F65BF
+Message-Id: <20191001111601.GA32306@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-01_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910010106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 11:39:34PM +0200, Vlastimil Babka wrote:
-> On 9/30/19 2:49 PM, Qian Cai wrote:
-> >> --- a/Documentation/admin-guide/kernel-parameters.txt
-> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> >> @@ -3237,6 +3237,14 @@
-> >>  			we can turn it on.
-> >>  			on: enable the feature
-> >>  
-> >> +	page_owner_free=
-> >> +			[KNL] When enabled together with page_owner, store also
-> >> +			the stack of who frees a page, for error page dump
-> >> +			purposes. This is also implicitly enabled by
-> >> +			debug_pagealloc=on or KASAN, so only page_owner=on is
-> >> +			sufficient in those cases.
-> >> +			on: enable the feature
-> >> +
-> > 
-> > If users are willing to set page_owner=on, what prevent them from enabling KASAN
-> > as well? That way, we don't need this additional parameter.
-> 
-> Well, my use case is shipping production kernels with CONFIG_PAGE_OWNER
-> and CONFIG_DEBUG_PAGEALLOC enabled, and instructing users to boot-time
-> enable only for troubleshooting a crash or memory leak, without a need
-> to install a debug kernel. Things like static keys and page_ext
-> allocations makes this possible without CPU and memory overhead when not
-> boot-time enabled. I don't know too much about KASAN internals, but I
-> assume it's not possible to use it that way on production kernels yet?
+> +unlock:
+> +	raw_spin_unlock_irqrestore(&busiest->lock, flags);
+> +
+> +	if (status == started)
+> +		stop_one_cpu_nowait(cpu_of(busiest),
+> +				    active_load_balance_cpu_stop, busiest,
+> +				    &busiest->active_balance_work);
+> +
+> +	/* We've kicked active balancing, force task migration. */
+> +	if (status != cancelled_affinity)
+> +		sd->nr_balance_failed = sd->cache_nice_tries + 1;
 
-I don't know about production, but QEMU (without KVM acceleration) is
-painfully slow if KASAN is enabled.
+Should we really update nr_balance_failed if status is cancelled?
+I do understand this behaviour was present even before this change. But
+still dont understand why we need to update if the current operation didn't
+kick active_load_balance.
 
 -- 
- Kirill A. Shutemov
+Thanks and Regards
+Srikar Dronamraju
+
