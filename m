@@ -2,48 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BDC9C3318
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7CA1C3320
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387790AbfJALmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:42:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40880 "EHLO
+        id S2387830AbfJALm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:42:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40708 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387569AbfJALlF (ORCPT
+        with ESMTP id S2387532AbfJALlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:05 -0400
+        Tue, 1 Oct 2019 07:41:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=zIkM8oZgmIv/BhPJfyepEtaPqf94VD1HkTKQ5Bkf03o=; b=rjUhPgbp9msm
-        QGDlarWKfelOcSp6yjhEK8t8BnIjzJmTyhAFw2dvt5H80DDeuC8eLpmdJNxArzrz2FReKT2ijFJXk
-        66I/MRGRzds+unjB8nUn8FG6uv9cYvEoK424b1jbBuNfA5uJuKHeEcsBvk2ADsIbEvm6C/JzRBD3I
-        iVNbQ=;
+        List-Archive; bh=dH/v3FdfsuuzHHtKYk8U5TeddpOlvyfMmEh5ohyVa1E=; b=BP8Wi0LKs6g4
+        vgBpmYJ5+zPjTsYg9+T6y5rqEI/+x1lbmmh1C2K+HmukcTvCLAECaGvBoiEm6Vf9nueI1a4Gf3gn8
+        Q1b9BREwsfTInkT0SFusMzfW3Ra4sV+fYF4jKb79zdjewzdLO6k9PLEhhoH6HPcmInwr35SNEFfgt
+        SWIWY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWT-0004Vn-7m; Tue, 01 Oct 2019 11:40:53 +0000
+        id 1iFGWY-0004XD-O2; Tue, 01 Oct 2019 11:40:58 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id A265527429C0; Tue,  1 Oct 2019 12:40:52 +0100 (BST)
+        id 3B43A27429C0; Tue,  1 Oct 2019 12:40:58 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, festevam@gmail.com,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Mark Brown <broonie@kernel.org>,
-        mark.rutland@arm.com, nicoleotsuka@gmail.com,
-        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
-        robh+dt@kernel.org, timur@kernel.org, tiwai@suse.com,
-        Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: fsl_mqs: add DT binding documentation" to the asoc tree
-In-Reply-To: <65e1f035aea2951aacda54aa3a751bc244f72f6a.1568367274.git.shengjiu.wang@nxp.com>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>
+Subject: Applied "regulator: da9063: Simplify da9063_buck_set_mode for BUCK_MODE_MANUAL case" to the regulator tree
+In-Reply-To: <20190926055128.23434-2-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114052.A265527429C0@ypsilon.sirena.org.uk>
-Date:   Tue,  1 Oct 2019 12:40:52 +0100 (BST)
+Message-Id: <20191001114058.3B43A27429C0@ypsilon.sirena.org.uk>
+Date:   Tue,  1 Oct 2019 12:40:58 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_mqs: add DT binding documentation
+   regulator: da9063: Simplify da9063_buck_set_mode for BUCK_MODE_MANUAL case
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -76,65 +72,58 @@ to this mail.
 Thanks,
 Mark
 
-From 75234212c446cef3272a025b588b2e418158ed30 Mon Sep 17 00:00:00 2001
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Fri, 13 Sep 2019 17:42:13 +0800
-Subject: [PATCH] ASoC: fsl_mqs: add DT binding documentation
+From e62cb0e0002ceb1a761b4dd7bb6a2bfc77a1ae77 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Thu, 26 Sep 2019 13:51:28 +0800
+Subject: [PATCH] regulator: da9063: Simplify da9063_buck_set_mode for
+ BUCK_MODE_MANUAL case
 
-Add the DT binding documentation for NXP MQS driver
+The sleep flag bit decides the mode for BUCK_MODE_MANUAL case, simplify
+the logic as the result is the same.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/65e1f035aea2951aacda54aa3a751bc244f72f6a.1568367274.git.shengjiu.wang@nxp.com
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Link: https://lore.kernel.org/r/20190926055128.23434-2-axel.lin@ingics.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/fsl,mqs.txt     | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/fsl,mqs.txt
+ drivers/regulator/da9063-regulator.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl,mqs.txt b/Documentation/devicetree/bindings/sound/fsl,mqs.txt
-new file mode 100644
-index 000000000000..40353fc30255
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/fsl,mqs.txt
-@@ -0,0 +1,36 @@
-+fsl,mqs audio CODEC
-+
-+Required properties:
-+  - compatible : Must contain one of "fsl,imx6sx-mqs", "fsl,codec-mqs"
-+		"fsl,imx8qm-mqs", "fsl,imx8qxp-mqs".
-+  - clocks : A list of phandles + clock-specifiers, one for each entry in
-+	     clock-names
-+  - clock-names : "mclk" - must required.
-+		  "core" - required if compatible is "fsl,imx8qm-mqs", it
-+		           is for register access.
-+  - gpr : A phandle of General Purpose Registers in IOMUX Controller.
-+	  Required if compatible is "fsl,imx6sx-mqs".
-+
-+Required if compatible is "fsl,imx8qm-mqs":
-+  - power-domains: A phandle of PM domain provider node.
-+  - reg: Offset and length of the register set for the device.
-+
-+Example:
-+
-+mqs: mqs {
-+	compatible = "fsl,imx6sx-mqs";
-+	gpr = <&gpr>;
-+	clocks = <&clks IMX6SX_CLK_SAI1>;
-+	clock-names = "mclk";
-+	status = "disabled";
-+};
-+
-+mqs: mqs@59850000 {
-+	compatible = "fsl,imx8qm-mqs";
-+	reg = <0x59850000 0x10000>;
-+	clocks = <&clk IMX8QM_AUD_MQS_IPG>,
-+		 <&clk IMX8QM_AUD_MQS_HMCLK>;
-+	clock-names = "core", "mclk";
-+	power-domains = <&pd_mqs0>;
-+	status = "disabled";
-+};
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 28b1b20f45bd..2aceb3b7afc2 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -225,7 +225,7 @@ static unsigned da9063_buck_get_mode(struct regulator_dev *rdev)
+ {
+ 	struct da9063_regulator *regl = rdev_get_drvdata(rdev);
+ 	struct regmap_field *field;
+-	unsigned int val, mode = 0;
++	unsigned int val;
+ 	int ret;
+ 
+ 	ret = regmap_field_read(regl->mode, &val);
+@@ -235,7 +235,6 @@ static unsigned da9063_buck_get_mode(struct regulator_dev *rdev)
+ 	switch (val) {
+ 	default:
+ 	case BUCK_MODE_MANUAL:
+-		mode = REGULATOR_MODE_FAST | REGULATOR_MODE_STANDBY;
+ 		/* Sleep flag bit decides the mode */
+ 		break;
+ 	case BUCK_MODE_SLEEP:
+@@ -262,11 +261,9 @@ static unsigned da9063_buck_get_mode(struct regulator_dev *rdev)
+ 		return 0;
+ 
+ 	if (val)
+-		mode &= REGULATOR_MODE_STANDBY;
++		return REGULATOR_MODE_STANDBY;
+ 	else
+-		mode &= REGULATOR_MODE_NORMAL | REGULATOR_MODE_FAST;
+-
+-	return mode;
++		return REGULATOR_MODE_FAST;
+ }
+ 
+ /*
 -- 
 2.20.1
 
