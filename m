@@ -2,169 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8ADC437E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 00:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF389C43A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 00:17:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbfJAWJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 18:09:16 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41822 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728710AbfJAWJP (ORCPT
+        id S1728746AbfJAWQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 18:16:59 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:44843 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728254AbfJAWQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 18:09:15 -0400
-Received: by mail-io1-f67.google.com with SMTP id n26so23642972ioj.8;
-        Tue, 01 Oct 2019 15:09:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nlWjCK4JfoFwVHPd1CXSJz1uB7s9TlzfcEVekMEDvj4=;
-        b=bTVUKo9SipbtKo0Zec4iG3wm79rG6S1xFjxhZ9y6nP7YYoSgOkgxdDS3Qp2HPxPMgZ
-         OJLYEUiwImTjlkFoUYUs8Z6gwAjrU+lDypdWLXgUfo2lIppczGnKDSSSM/pOz4fG4020
-         QZxIdhL9y9DHQXBccSobsU89j/vrc8dcC5lin9wacS3Dxxr5p3Pnbnhjm9snIRrT38S0
-         MRm8v3O+8vhc8LAmI29XNAhj4EQSiMDA5wG+ldl8Ls7kCOvrCAjXKSur5X1ozApSN6v+
-         nOsm4MJw0JY2xMfhjDKEBvGlJPXtkIEhyfU3eIoMyXWTc42eoGYggHyAO7wpT1dMUO92
-         aL/g==
-X-Gm-Message-State: APjAAAWZ4kr9xcivejLCn+rgm3Rd06wXJVKNJkiQogT9/f59mSGfPhy9
-        b24DfLiUVQdFAjpE+5sIPeCRHgA=
-X-Google-Smtp-Source: APXvYqytMSqnPmc36JxDmrc1RBCCTAHoyzL0pSQngsbJL0iWzc3ScR5eVrCWnvbFN9m04ret5bw0yg==
-X-Received: by 2002:a92:3bca:: with SMTP id n71mr380086ilh.104.1569967752751;
-        Tue, 01 Oct 2019 15:09:12 -0700 (PDT)
-Received: from localhost ([2607:fb90:1780:6fbf:9c38:e932:436b:4079])
-        by smtp.gmail.com with ESMTPSA id o187sm6921932ila.13.2019.10.01.15.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 15:09:12 -0700 (PDT)
-Message-ID: <5d93ce88.1c69fb81.aec64.6b1b@mx.google.com>
-Date:   Tue, 01 Oct 2019 17:09:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        Zhiqiang Liang <zhiqiang.liang@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>
-Subject: Re: [PATCH 1/3] dt-bindings: power: add Amlogic secure power domains
- bindings
-References: <1568895064-4116-1-git-send-email-jianxin.pan@amlogic.com>
- <1568895064-4116-2-git-send-email-jianxin.pan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1568895064-4116-2-git-send-email-jianxin.pan@amlogic.com>
-X-Mutt-References: <1568895064-4116-2-git-send-email-jianxin.pan@amlogic.com>
+        Tue, 1 Oct 2019 18:16:59 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TdwLulC_1569968204;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TdwLulC_1569968204)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 02 Oct 2019 06:16:54 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
+        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
+        shakeelb@google.com, rientjes@google.com, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: thp: move deferred split queue to memcg's nodeinfo
+Date:   Wed,  2 Oct 2019 06:16:43 +0800
+Message-Id: <1569968203-64647-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 08:11:02AM -0400, Jianxin Pan wrote:
-> Add the bindings for the Amlogic Secure power domains, controlling the
-> secure power domains.
-> 
-> The bindings targets the Amlogic A1 and C1 compatible SoCs, in which the
-> power domain registers are in secure world.
-> 
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> Signed-off-by: Zhiqiang Liang <zhiqiang.liang@amlogic.com>
-> ---
->  .../bindings/power/amlogic,meson-sec-pwrc.yaml     | 32 ++++++++++++++++++++++
->  include/dt-bindings/power/meson-a1-power.h         | 32 ++++++++++++++++++++++
->  2 files changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
->  create mode 100644 include/dt-bindings/power/meson-a1-power.h
-> 
-> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
-> new file mode 100644
-> index 00000000..327e0d9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
-> @@ -0,0 +1,32 @@
-> +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +# Copyright (c) 2019 Amlogic, Inc
-> +# Author: Jianxin Pan <jianxin.pan@amlogic.com>
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/power/amlogic,meson-sec-pwrc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Amlogic Meson Secure Power Domains
-> +
-> +maintainers:
-> +  - Jianxin Pan <jianxin.pan@amlogic.com>
-> +
-> +description: |+
-> +  A1/C1 series The Secure Power Domains node should be the child of a syscon
-> +  node with the required property.
+The commit 87eaceb3faa59b9b4d940ec9554ce251325d83fe ("mm: thp: make
+deferred split shrinker memcg aware") makes deferred split queue per
+memcg to resolve memcg pre-mature OOM problem.  But, all nodes end up
+sharing the same queue instead of one queue per-node before the commit.
+It is not a big deal for memcg limit reclaim, but it may cause global
+kswapd shrink THPs from a different node.
 
-'a syscon node' is not specific enough. It must be a specific node.
+And, 0-day testing reported -19.6% regression of stress-ng's madvise
+test [1].  I didn't see that much regression on my test box (24 threads,
+48GB memory, 2 nodes), with the same test (stress-ng --timeout 1
+--metrics-brief --sequential 72  --class vm --exclude spawn,exec), I saw
+average -3% (run the same test 10 times then calculate the average since
+the test itself may have most 15% variation according to my test)
+regression sometimes (not every time, sometimes I didn't see regression
+at all).
 
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - amlogic,meson-a1-pwrc
-> +
-> +required:
-> +  - compatible
-> +
-> +examples:
-> +  - |
-> +    pwrc: power-controller {
-> +          compatible = "amlogic,meson-a1-pwrc";
+This might be caused by deferred split queue lock contention.  With some
+configuration (i.e. just one root memcg) the lock contention my be worse
+than before (given 2 nodes, two locks are reduced to one lock).
 
-But why do you need this node? It has no resources.
+So, moving deferred split queue to memcg's nodeinfo to make it NUMA
+aware again.
 
-#power-domain-cells needed?
+With this change stress-ng's madvise test shows average 4% improvement
+sometimes and I didn't see degradation anymore.
 
-> +    };
-> +
-> +
-> diff --git a/include/dt-bindings/power/meson-a1-power.h b/include/dt-bindings/power/meson-a1-power.h
-> new file mode 100644
-> index 00000000..6cf50bf
-> --- /dev/null
-> +++ b/include/dt-bindings/power/meson-a1-power.h
-> @@ -0,0 +1,32 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-> +/*
-> + * Copyright (c) 2019 Amlogic, Inc.
-> + * Author: Jianxin Pan <jianxin.pan@amlogic.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_MESON_A1_POWER_H
-> +#define _DT_BINDINGS_MESON_A1_POWER_H
-> +
-> +#define PWRC_DSPA_ID	8
-> +#define PWRC_DSPB_ID	9
-> +#define PWRC_UART_ID	10
-> +#define PWRC_DMC_ID	11
-> +#define PWRC_I2C_ID	12
-> +#define PWRC_PSRAM_ID	13
-> +#define PWRC_ACODEC_ID	14
-> +#define PWRC_AUDIO_ID	15
-> +#define PWRC_OTP_ID	16
-> +#define PWRC_DMA_ID	17
-> +#define PWRC_SD_EMMC_ID	18
-> +#define PWRC_RAMA_ID	19
-> +#define PWRC_RAMB_ID	20
-> +#define PWRC_IR_ID	21
-> +#define PWRC_SPICC_ID	22
-> +#define PWRC_SPIFC_ID	23
-> +#define PWRC_USB_ID	24
-> +#define PWRC_NIC_ID	25
-> +#define PWRC_PDMIN_ID	26
-> +#define PWRC_RSA_ID	27
-> +#define PWRC_MAX_ID	28
-> +
-> +#endif
-> -- 
-> 2.7.4
-> 
+[1]: https://lore.kernel.org/lkml/20190930084604.GC17687@shao2-debian/
+
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ include/linux/memcontrol.h |  8 ++++----
+ mm/huge_memory.c           | 15 +++++++++------
+ mm/memcontrol.c            | 29 +++++++++++++++++------------
+ 3 files changed, 30 insertions(+), 22 deletions(-)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 9b60863..4b5c791 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -137,6 +137,10 @@ struct mem_cgroup_per_node {
+ 	bool			congested;	/* memcg has many dirty pages */
+ 						/* backed by a congested BDI */
+ 
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	struct deferred_split deferred_split_queue;
++#endif
++
+ 	struct mem_cgroup	*memcg;		/* Back pointer, we cannot */
+ 						/* use container_of	   */
+ };
+@@ -330,10 +334,6 @@ struct mem_cgroup {
+ 	struct list_head event_list;
+ 	spinlock_t event_list_lock;
+ 
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	struct deferred_split deferred_split_queue;
+-#endif
+-
+ 	struct mem_cgroup_per_node *nodeinfo[0];
+ 	/* WARNING: nodeinfo must be the last member here */
+ };
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index c5cb6dc..3b78910 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -500,10 +500,11 @@ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+ static inline struct deferred_split *get_deferred_split_queue(struct page *page)
+ {
+ 	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
+-	struct pglist_data *pgdat = NODE_DATA(page_to_nid(page));
++	int nid = page_to_nid(page);
++	struct pglist_data *pgdat = NODE_DATA(nid);
+ 
+ 	if (memcg)
+-		return &memcg->deferred_split_queue;
++		return &memcg->nodeinfo[nid]->deferred_split_queue;
+ 	else
+ 		return &pgdat->deferred_split_queue;
+ }
+@@ -2882,12 +2883,13 @@ void deferred_split_huge_page(struct page *page)
+ static unsigned long deferred_split_count(struct shrinker *shrink,
+ 		struct shrink_control *sc)
+ {
+-	struct pglist_data *pgdata = NODE_DATA(sc->nid);
++	int nid = sc->nid;
++	struct pglist_data *pgdata = NODE_DATA(nid);
+ 	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+ 
+ #ifdef CONFIG_MEMCG
+ 	if (sc->memcg)
+-		ds_queue = &sc->memcg->deferred_split_queue;
++		ds_queue = &sc->memcg->nodeinfo[nid]->deferred_split_queue;
+ #endif
+ 	return READ_ONCE(ds_queue->split_queue_len);
+ }
+@@ -2895,7 +2897,8 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
+ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 		struct shrink_control *sc)
+ {
+-	struct pglist_data *pgdata = NODE_DATA(sc->nid);
++	int nid = sc->nid;
++	struct pglist_data *pgdata = NODE_DATA(nid);
+ 	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+ 	unsigned long flags;
+ 	LIST_HEAD(list), *pos, *next;
+@@ -2904,7 +2907,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 
+ #ifdef CONFIG_MEMCG
+ 	if (sc->memcg)
+-		ds_queue = &sc->memcg->deferred_split_queue;
++		ds_queue = &sc->memcg->nodeinfo[nid]->deferred_split_queue;
+ #endif
+ 
+ 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index c313c49..19d4295 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4989,6 +4989,12 @@ static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+ 	pn->on_tree = false;
+ 	pn->memcg = memcg;
+ 
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	spin_lock_init(&pn->deferred_split_queue.split_queue_lock);
++	INIT_LIST_HEAD(&pn->deferred_split_queue.split_queue);
++	pn->deferred_split_queue.split_queue_len = 0;
++#endif
++
+ 	memcg->nodeinfo[node] = pn;
+ 	return 0;
+ }
+@@ -5081,11 +5087,6 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ 		memcg->cgwb_frn[i].done =
+ 			__WB_COMPLETION_INIT(&memcg_cgwb_frn_waitq);
+ #endif
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	spin_lock_init(&memcg->deferred_split_queue.split_queue_lock);
+-	INIT_LIST_HEAD(&memcg->deferred_split_queue.split_queue);
+-	memcg->deferred_split_queue.split_queue_len = 0;
+-#endif
+ 	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
+ 	return memcg;
+ fail:
+@@ -5419,6 +5420,8 @@ static int mem_cgroup_move_account(struct page *page,
+ 	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
+ 	int ret;
+ 	bool anon;
++	struct deferred_split *ds_queue;
++	int nid = page_to_nid(page);
+ 
+ 	VM_BUG_ON(from == to);
+ 	VM_BUG_ON_PAGE(PageLRU(page), page);
+@@ -5466,10 +5469,11 @@ static int mem_cgroup_move_account(struct page *page,
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	if (compound && !list_empty(page_deferred_list(page))) {
+-		spin_lock(&from->deferred_split_queue.split_queue_lock);
++		ds_queue = &from->nodeinfo[nid]->deferred_split_queue;
++		spin_lock(&ds_queue->split_queue_lock);
+ 		list_del_init(page_deferred_list(page));
+-		from->deferred_split_queue.split_queue_len--;
+-		spin_unlock(&from->deferred_split_queue.split_queue_lock);
++		ds_queue->split_queue_len--;
++		spin_unlock(&ds_queue->split_queue_lock);
+ 	}
+ #endif
+ 	/*
+@@ -5483,11 +5487,12 @@ static int mem_cgroup_move_account(struct page *page,
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	if (compound && list_empty(page_deferred_list(page))) {
+-		spin_lock(&to->deferred_split_queue.split_queue_lock);
++		ds_queue = &to->nodeinfo[nid]->deferred_split_queue;
++		spin_lock(&ds_queue->split_queue_lock);
+ 		list_add_tail(page_deferred_list(page),
+-			      &to->deferred_split_queue.split_queue);
+-		to->deferred_split_queue.split_queue_len++;
+-		spin_unlock(&to->deferred_split_queue.split_queue_lock);
++			      &ds_queue->split_queue);
++		ds_queue->split_queue_len++;
++		spin_unlock(&ds_queue->split_queue_lock);
+ 	}
+ #endif
+ 
+-- 
+1.8.3.1
 
