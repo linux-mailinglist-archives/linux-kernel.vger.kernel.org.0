@@ -2,247 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C41B0C42A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC31CC42B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfJAV0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:26:23 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:44316 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbfJAV0X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:26:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZcyJFaU199HQGTOCbuTWwERJGL8QNllHqpGJn20ojIM=; b=FWKCS+Bwiqq5ZsX1/9d8F12vD
-        tuooA0OvfZXCfpJZF3S24mg2oLjsVBsTB5Pwy0c4l2/wk3PwEODS45XUhOxL4C+JbDrzo8dY5adxZ
-        WQdb5jXXXZpzmvB9nuq0uZKkrq8HFHmyIyomYvrELiPKm61MomZCB5e5DvWoKlV+7h0vGmAE4y1yI
-        h+oPQ6Mgqbf7pmVJ4xPKKS7+nrX/DmLLrNxeTFvSnsz6iYII67NAAgF0iqVA8Jz3eU4EZ8uDhqa+V
-        hmodnzNt7/Ycz47gm9XbqaqmkH7hTZJTyvz6D+Z1niBGtzHab0YwqD3BT9O8A04C7PBEsPQNKxE14
-        0o/pEzK2A==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:46420)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iFPet-0004pL-7S; Tue, 01 Oct 2019 22:26:11 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iFPeq-0008WV-Vu; Tue, 01 Oct 2019 22:26:09 +0100
-Date:   Tue, 1 Oct 2019 22:26:08 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
-Message-ID: <20191001212608.GN25745@shell.armlinux.org.uk>
-References: <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
- <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck>
- <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
- <20191001170142.x66orounxuln7zs3@willie-the-truck>
- <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
- <20191001175512.GK25745@shell.armlinux.org.uk>
- <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
- <20191001181438.GL25745@shell.armlinux.org.uk>
- <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
- <20191001205938.GM25745@shell.armlinux.org.uk>
+        id S1727870AbfJAV3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 17:29:37 -0400
+Received: from mail-eopbgr800051.outbound.protection.outlook.com ([40.107.80.51]:17440
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727818AbfJAV3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 17:29:36 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IGwa3GDTwbvfSOjS0CqsQPhiKXYfj/xuGcZzwNMlKLjJiQtVD67bARx714RT6UYBHPDyu5kcp1aMoiegVpZE2xgWmRioFwgeWRxc0+oobJzxjlkdJ2AFByvAzsFf6RxrE/nTvGEV9qOF520RPreTKeEdxGtuxIMObd9yVGTom7twVSdoYoIicFvthM5VEvwHBTf/wOyURDnIV63TilrnCeA59V7M32Vz3cI6ROdiNWYu3ZkEW9rN9L84bc/QbCpcJvIXTrUqJmUffiyVrq6AE2QP4VRNL1K8EhUJSekxVXgxZk87V2i4U+bhFUMA4JKPy4ykk+M70BeFfqvjTvGKcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4AMzhDMWlIsMMyNikXEDNxRx9gyyR+NE3rUR7F8XmE=;
+ b=nLg6Eul3JLaQMwAZqPx8j0Jjmli8CqPoEhkQEtDpSEUxqAY6W0j32jz6PNt3XL/6jOCnrdL7VeadyxfgHD7Q667U7fajwJhH04P4eNVcGdSu20NPMBxk+aqT9Bsjyc6wACaYzADhStYuc7+7gj1mgzw+qRQPw1QLDlHPWmmH4kcDOpjNsT+tMo04EQPzJetDmmTEEPBIRRsi4rkmTl3DGGymIU0KiLp7hTUYLfFmPu4XV+fZOTKv5/bulPfVwnrskERDgABSDDXozPM5qK5+VBbbZ+WcCUUT1ukwF9eAwYstPTIsrUD73hicbXxlm5Hfv4KQV+meveS5FnegRMrnBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4AMzhDMWlIsMMyNikXEDNxRx9gyyR+NE3rUR7F8XmE=;
+ b=3HkkubYV7FHzZVEyAEL9+Ozk1qgwsIg9iHqyYwqLanHJFKVQPBHGVCGaZ2bCnCqz7MRS4zt3rUhky3ZJgZwyvMXzS0CZQLciSveSt/OwawlP1joYPjn0oGi7ERAf8uAmuMVmVcPQI2+2Dqcut4ynGljpBzLP4bpXXmuykUSW6Gc=
+Received: from DM5PR12MB2456.namprd12.prod.outlook.com (52.132.141.37) by
+ DM5PR12MB1258.namprd12.prod.outlook.com (10.168.239.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.20; Tue, 1 Oct 2019 21:29:30 +0000
+Received: from DM5PR12MB2456.namprd12.prod.outlook.com
+ ([fe80::3449:def:4457:5b72]) by DM5PR12MB2456.namprd12.prod.outlook.com
+ ([fe80::3449:def:4457:5b72%3]) with mapi id 15.20.2305.022; Tue, 1 Oct 2019
+ 21:29:30 +0000
+From:   "Liu, Leo" <Leo.Liu@amd.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/amdgpu: fix structurally dead code vcn_v2_5_hw_init
+Thread-Topic: [PATCH] drm/amdgpu: fix structurally dead code vcn_v2_5_hw_init
+Thread-Index: AQHVeHwU+1a8umxE5EyQDrqeTbYcDKdGTaMA
+Date:   Tue, 1 Oct 2019 21:29:30 +0000
+Message-ID: <192815d9-5ecb-09a7-4624-5fd36126890d@amd.com>
+References: <20191001171635.GA17306@embeddedor>
+In-Reply-To: <20191001171635.GA17306@embeddedor>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+x-originating-ip: [165.204.55.251]
+x-clientproxiedby: YT1PR01CA0027.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01::40)
+ To DM5PR12MB2456.namprd12.prod.outlook.com (2603:10b6:4:b4::37)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Leo.Liu@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 01a85e82-c2a3-4ff9-8742-08d746b67198
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DM5PR12MB1258:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR12MB12589C24E218E36CA52D7593E59D0@DM5PR12MB1258.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0177904E6B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(136003)(39860400002)(376002)(346002)(189003)(199004)(7736002)(6116002)(3846002)(64756008)(86362001)(66066001)(66556008)(305945005)(71190400001)(71200400001)(4326008)(99286004)(31696002)(52116002)(54906003)(110136005)(316002)(58126008)(76176011)(65956001)(36756003)(65806001)(66476007)(81156014)(8936002)(8676002)(81166006)(66446008)(31686004)(6506007)(2906002)(386003)(66946007)(5660300002)(486006)(6512007)(478600001)(256004)(14444005)(2616005)(446003)(476003)(11346002)(26005)(102836004)(186003)(6246003)(25786009)(229853002)(6436002)(6486002)(14454004)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1258;H:DM5PR12MB2456.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ZJm9qOeDMFcJKOvmd4a3cTbhwHtfkxXMfWZgR4p9lzjEJ7oMcxl6uFooMaPnG+3jNK6CgCeiw90qXdxfG/Q13v9Worey/ow2wvyobIeQk/V0zxLvomnx3zsKfus+0nJtERHk0TikViVoBnzay7kU+aoLRS9gYoAs+b9CT6gW1Ckz8eEdeG9u2QAElIOJI0u8im7SnQFzJWrzcv1/IJqqXn6OZZxFETVpTT0OzrTfEmkNkpYLR+1jsR/H9el3x8TfX9hEpD7O+JtLcBD4xC0Fg63yc2ZxhU1ah25SEfO3fawmy3gXGGktNrW7XhiqoX4KkVtD6DeUR41OZcyzysI6F6DurE4q8oBpaiyEQfVGVnjOZvKW0uRJi/KJ3BS7dRNPnJjWPDvniew3HPoeZLsVhfZ2JU6C9QctGg43Ozr63o8=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <ECA8B4F795D59A4F98CD32414F5655B4@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191001205938.GM25745@shell.armlinux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01a85e82-c2a3-4ff9-8742-08d746b67198
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2019 21:29:30.1997
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rxyDzWZCn1kd4na7lOjAszKBTvpFE2t8Vq2+jpCLS3Mbc/VzPkRHc7ggtsazFIMS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1258
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 09:59:38PM +0100, Russell King - ARM Linux admin wrote:
-> On Tue, Oct 01, 2019 at 01:21:44PM -0700, Nick Desaulniers wrote:
-> > On Tue, Oct 1, 2019 at 11:14 AM Russell King - ARM Linux admin
-> > <linux@armlinux.org.uk> wrote:
-> > >
-> > > On Tue, Oct 01, 2019 at 11:00:11AM -0700, Nick Desaulniers wrote:
-> > > > On Tue, Oct 1, 2019 at 10:55 AM Russell King - ARM Linux admin
-> > > > <linux@armlinux.org.uk> wrote:
-> > > > >
-> > > > > On Tue, Oct 01, 2019 at 10:44:43AM -0700, Nick Desaulniers wrote:
-> > > > > > I apologize; I don't mean to be difficult.  I would just like to avoid
-> > > > > > surprises when code written with the assumption that it will be
-> > > > > > inlined is not.  It sounds like we found one issue in arm32 and one in
-> > > > > > arm64 related to outlining.  If we fix those two cases, I think we're
-> > > > > > close to proceeding with Masahiro's cleanup, which I view as a good
-> > > > > > thing for the health of the Linux kernel codebase.
-> > > > >
-> > > > > Except, using the C preprocessor for this turns the arm32 code into
-> > > > > yuck:
-> > > > >
-> > > > > 1. We'd need to turn get_domain() and set_domain() into multi-line
-> > > > >    preprocessor macro definitions, using the GCC ({ }) extension
-> > > > >    so that get_domain() can return a value.
-> > > > >
-> > > > > 2. uaccess_save_and_enable() and uaccess_restore() also need to
-> > > > >    become preprocessor macro definitions too.
-> > > > >
-> > > > > So, we end up with multiple levels of nested preprocessor macros.
-> > > > > When something goes wrong, the compiler warning/error message is
-> > > > > going to be utterly _horrid_.
-> > > >
-> > > > That's why I preferred V1 of Masahiro's patch, that fixed the inline
-> > > > asm not to make use of caller saved registers before calling a
-> > > > function that might not be inlined.
-> > >
-> > > ... which I objected to based on the fact that this uaccess stuff is
-> > > supposed to add protection against the kernel being fooled into
-> > > accessing userspace when it shouldn't.  The whole intention there is
-> > > that [sg]et_domain(), and uaccess_*() are _always_ inlined as close
-> > > as possible to the call site of the accessor touching userspace.
-> > 
-> > Then use the C preprocessor to force the inlining.  I'm sorry it's not
-> > as pretty as static inline functions.
-> > 
-> > >
-> > > Moving it before the assignments mean that the compiler is then free
-> > > to issue memory loads/stores to load up those registers, which is
-> > > exactly what we want to avoid.
-> > >
-> > >
-> > > In any case, I violently disagree with the idea that stuff we have
-> > > in header files should be permitted not to be inlined because we
-> > > have soo much that is marked inline.
-> > 
-> > So there's a very important subtly here.  There's:
-> > 1. code that adds `inline` cause "oh maybe it would be nice to inline
-> > this, but if it isn't no big deal"
-> > 2. code that if not inlined is somehow not correct.
-> > 3. avoid ODR violations via `static inline`
-> > 
-> > I'll posit that "we have soo much that is marked inline [is
-> > predominantly case 1 or 3, not case 2]."  Case 2 is a code smell, and
-> > requires extra scrutiny.
-> > 
-> > > Having it moved out of line,
-> > > and essentially the same function code appearing in multiple C files
-> > > is really not an improvement over the current situation with excessive
-> > > use of inlining.  Anyone who has looked at the code resulting from
-> > > dma_map_single() will know exactly what I'm talking about, which is
-> > > way in excess of the few instructions we have for the uaccess_* stuff
-> > > here.
-> > >
-> > > The right approach is to move stuff out of line - and by that, I
-> > > mean _actually_ move the damn code, so that different compilation
-> > > units can use the same instructions, and thereby gain from the
-> > > whole point of an instruction cache.
-> > 
-> > And be marked __attribute__((noinline)), otherwise might be inlined via LTO.
-> > 
-> > >
-> > > The whole "let's make inline not really mean inline" is nothing more
-> > > than a band-aid to the overuse (and abuse) of "inline".
-> > 
-> > Let's triple check the ISO C11 draft spec just to be sure:
-> > § 6.7.4.6: A function declared with an inline function specifier is an
-> > inline function. Making a
-> > function an inline function suggests that calls to the function be as
-> > fast as possible.
-> > The extent to which such suggestions are effective is
-> > implementation-defined. 139)
-> > 139) For example, an implementation might never perform inline
-> > substitution, or might only perform inline
-> > substitutions to calls in the scope of an inline declaration.
-> > § J.3.8 [Undefined Behavior] Hints: The extent to which suggestions
-> > made by using the inline function specifier are effective (6.7.4).
-> > 
-> > My translation:
-> > "Please don't assume inline means anything."
-> > 
-> > For the unspecified GNU C extension __attribute__((always_inline)), it
-> > seems to me like it's meant more for performing inlining (an
-> > optimization) at -O0.  Whether the compiler warns or not seems like a
-> > nice side effect, but provides no strong guarantee otherwise.
-> > 
-> > I'm sorry that so much code may have been written with that
-> > assumption, and I'm sorry to be the bearer of bad news, but this isn't
-> > a recent change.  If code was written under false assumptions, it
-> > should be rewritten. Sorry.
-> 
-> You may quote C11, but that is not relevent.  The kernel is coded to
-> gnu89 standard - see the -std=gnu89 flag.
-
-There's more to this and why C11 is entirely irrelevant.  The "inline"
-you see in our headers is not the compiler keyword that you find in
-various C standards, it is a macro that gets expanded to either:
-
-#define inline inline __attribute__((__always_inline__)) __gnu_inline \
-        __maybe_unused notrace
-
-or
-
-#define inline inline                                    __gnu_inline \
-        __maybe_unused notrace
-
-__gnu_inline is defined as:
-
-#define __gnu_inline                    __attribute__((__gnu_inline__))
-
-So this attaches the gnu_inline attribute to the function:
-
-`gnu_inline'
-     This attribute should be used with a function that is also declared
-     with the `inline' keyword.  It directs GCC to treat the function
-     as if it were defined in gnu90 mode even when compiling in C99 or
-     gnu99 mode.
-...
-     Since ISO C99 specifies a different semantics for `inline', this
-     function attribute is provided as a transition measure and as a
-     useful feature in its own right.  This attribute is available in
-     GCC 4.1.3 and later.  It is available if either of the
-     preprocessor macros `__GNUC_GNU_INLINE__' or
-     `__GNUC_STDC_INLINE__' are defined.  *Note An Inline Function is
-     As Fast As a Macro: Inline.
-
-which is quite clear that C99 semantics do not apply to _this_ inline.
-The manual goes on to explain:
-
- GCC implements three different semantics of declaring a function
-inline.  One is available with `-std=gnu89' or `-fgnu89-inline' or when
-`gnu_inline' attribute is present on all inline declarations, another
-when `-std=c99', `-std=c11', `-std=gnu99' or `-std=gnu11' (without
-`-fgnu89-inline'), and the third is used when compiling C++.
-
-I'd suggest gnu90 mode is pretty similar to gnu89 mode, and as we build
-the kernel in gnu89 mode, that is the inlining definition that is
-appropriate.
-
-When it comes to __always_inline, the GCC manual is the definitive
-reference, since we use the GCC attribute for that:
-
-#define __always_inline                 inline __attribute__((__always_inline__))
-
-and I've already quoted what the GCC manual says for always_inline.
-
-Arguing about what the C11 spec says about inlining when we aren't
-using C11 dialect in the kernel, but are using GCC features, does
-not move the discussion on.
-
-Thanks anyway, maybe it will become relevent in the future if we
-decide to move to C11.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+DQpPbiAyMDE5LTEwLTAxIDE6MTYgcC5tLiwgR3VzdGF2byBBLiBSLiBTaWx2YSB3cm90ZToNCj4g
+Tm90aWNlIHRoYXQgdGhlcmUgaXMgYSAqY29udGludWUqIHN0YXRlbWVudCBpbiB0aGUgbWlkZGxl
+IG9mIHRoZQ0KPiBmb3IgbG9vcCBhbmQgdGhhdCBwcmV2ZW50cyB0aGUgY29kZSBiZWxvdyBmcm9t
+IGV2ZXIgYmVpbmcgcmVhY2hlZDoNCj4NCj4gCXIgPSBhbWRncHVfcmluZ190ZXN0X3Jpbmcocmlu
+Zyk7DQo+IAlpZiAocikgew0KPiAJCXJpbmctPnNjaGVkLnJlYWR5ID0gZmFsc2U7DQo+IAkJZ290
+byBkb25lOw0KPiAJfQ0KPg0KPiBGaXggdGhpcyBieSByZW1vdmluZyB0aGUgY29udGludWUgc3Rh
+dGVtZW50IGFuZCB1cGRhdGluZyByaW5nLT5zY2hlZC5yZWFkeQ0KPiB0byB0cnVlIGJlZm9yZSBj
+YWxsaW5nIGFtZGdwdV9yaW5nX3Rlc3RfcmluZyhyaW5nKS4NCj4NCj4gTm90aWNlIHRoYXQgdGhp
+cyBmaXggaXMgYmFzZWQgb24NCj4gY29tbWl0IDFiNjFkZTQ1ZGZhZiAoImRybS9hbWRncHU6IGFk
+ZCBpbml0aWFsIFZDTjIuMCBzdXBwb3J0ICh2MikiKQ0KPg0KPiBBZGRyZXNzZXMtQ292ZXJpdHkt
+SUQgMTQ4NTYwOCAoIlN0cnVjdHVyYWxseSBkZWFkIGNvZGUiKQ0KPiBGaXhlczogMjhjMTdkNzIw
+NzJiICgiZHJtL2FtZGdwdTogYWRkIFZDTjIuNSBiYXNpYyBzdXBwb3J0cyIpDQo+IFNpZ25lZC1v
+ZmYtYnk6IEd1c3Rhdm8gQS4gUi4gU2lsdmEgPGd1c3Rhdm9AZW1iZWRkZWRvci5jb20+DQo+IC0t
+LQ0KPg0KPiBBbnkgZmVlZGJhY2sgaXMgZ3JlYXRseSBhcHByZWNpYXRlZC4NCj4NCj4gICBkcml2
+ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS92Y25fdjJfNS5jIHwgNSArKystLQ0KPiAgIDEgZmlsZSBj
+aGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS92Y25fdjJfNS5jIGIvZHJpdmVycy9ncHUvZHJt
+L2FtZC9hbWRncHUvdmNuX3YyXzUuYw0KPiBpbmRleCAzOTVjMjI1OWY5NzkuLjQ3YjBkY2Q1OWUx
+MyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvdmNuX3YyXzUuYw0K
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS92Y25fdjJfNS5jDQo+IEBAIC0yNTgs
+NiArMjU4LDcgQEAgc3RhdGljIGludCB2Y25fdjJfNV9od19pbml0KHZvaWQgKmhhbmRsZSkNCj4g
+ICAJCWFkZXYtPm5iaW9fZnVuY3MtPnZjbl9kb29yYmVsbF9yYW5nZShhZGV2LCByaW5nLT51c2Vf
+ZG9vcmJlbGwsDQo+ICAgCQkJCQkJICAgICByaW5nLT5kb29yYmVsbF9pbmRleCwgaik7DQo+ICAg
+DQo+ICsJCXJpbmctPnNjaGVkLnJlYWR5ID0gdHJ1ZTsNCg0KVGhpcyBpcyByZWR1bmRhbnQuIGFs
+bCB0aGUgc2NoZWQtPnJlYWR5IGlzIGluaXRpYWxpemVkIGFzIHRydWUsIHBsZWFzZSANCnJlZmVy
+IHRvIGRybV9zY2hlZF9pbml0KCkNCg0KDQo+ICAgCQlyID0gYW1kZ3B1X3JpbmdfdGVzdF9yaW5n
+KHJpbmcpOw0KPiAgIAkJaWYgKHIpIHsNCj4gICAJCQlyaW5nLT5zY2hlZC5yZWFkeSA9IGZhbHNl
+Ow0KPiBAQCAtMjY2LDggKzI2Nyw3IEBAIHN0YXRpYyBpbnQgdmNuX3YyXzVfaHdfaW5pdCh2b2lk
+ICpoYW5kbGUpDQo+ICAgDQo+ICAgCQlmb3IgKGkgPSAwOyBpIDwgYWRldi0+dmNuLm51bV9lbmNf
+cmluZ3M7ICsraSkgew0KPiAgIAkJCXJpbmcgPSAmYWRldi0+dmNuLmluc3Rbal0ucmluZ19lbmNb
+aV07DQo+IC0JCQlyaW5nLT5zY2hlZC5yZWFkeSA9IGZhbHNlOw0KPiAtCQkJY29udGludWU7DQo+
+ICsJCQlyaW5nLT5zY2hlZC5yZWFkeSA9IHRydWU7DQoNCkJlY2F1c2UgdGhlIFZDTiAyLjUgRlcg
+c3RpbGwgaGFzIGlzc3VlIGZvciBlbmNvZGUsIHNvIHdlIGhhdmUgaXQgDQpkaXNhYmxlZCBoZXJl
+Lg0KDQoNClJlZ2FyZHMsDQoNCkxlbw0KDQoNCg0KDQo+ICAgCQkJciA9IGFtZGdwdV9yaW5nX3Rl
+c3RfcmluZyhyaW5nKTsNCj4gICAJCQlpZiAocikgew0KPiAgIAkJCQlyaW5nLT5zY2hlZC5yZWFk
+eSA9IGZhbHNlOw0KPiBAQCAtMjc2LDYgKzI3Niw3IEBAIHN0YXRpYyBpbnQgdmNuX3YyXzVfaHdf
+aW5pdCh2b2lkICpoYW5kbGUpDQo+ICAgCQl9DQo+ICAgDQo+ICAgCQlyaW5nID0gJmFkZXYtPnZj
+bi5pbnN0W2pdLnJpbmdfanBlZzsNCj4gKwkJcmluZy0+c2NoZWQucmVhZHkgPSB0cnVlOw0KPiAg
+IAkJciA9IGFtZGdwdV9yaW5nX3Rlc3RfcmluZyhyaW5nKTsNCj4gICAJCWlmIChyKSB7DQo+ICAg
+CQkJcmluZy0+c2NoZWQucmVhZHkgPSBmYWxzZTsNCg==
