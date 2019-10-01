@@ -2,114 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E90A6C3850
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:58:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D1BC3863
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389576AbfJAO6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:58:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:51790 "EHLO foss.arm.com"
+        id S2389388AbfJAPBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 11:01:10 -0400
+Received: from mga01.intel.com ([192.55.52.88]:4861 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389029AbfJAO6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:58:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B41E1000;
-        Tue,  1 Oct 2019 07:58:02 -0700 (PDT)
-Received: from [10.37.8.149] (unknown [10.37.8.149])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE5A73F71A;
-        Tue,  1 Oct 2019 07:58:00 -0700 (PDT)
-Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
-        tglx@linutronix.de
-References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
- <20190926214342.34608-1-vincenzo.frascino@arm.com>
- <20190926214342.34608-2-vincenzo.frascino@arm.com>
- <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck>
- <20191001132731.GG41399@arrakis.emea.arm.com>
- <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
- <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
- <7558914c-fc2d-d05a-ccbe-76ef451670ae@arm.com>
- <20191001144353.5rn3bkcc6eyfclh7@willie-the-truck>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <7306ead0-a9b6-98d0-e775-c677eeeb55a5@arm.com>
-Date:   Tue, 1 Oct 2019 15:59:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727051AbfJAPBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 11:01:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 08:01:09 -0700
+X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
+   d="scan'208";a="190615982"
+Received: from jkrzyszt-desk.igk.intel.com (HELO jkrzyszt-desk.ger.corp.intel.com) ([172.22.244.17])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 08:01:07 -0700
+From:   Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        =?utf-8?B?TWljaGHFgg==?= Wajdeczko <michal.wajdeczko@intel.com>
+Subject: Re: [RFC PATCH] iommu/vt-d: Fix IOMMU field not populated on device hot re-plug
+Date:   Tue, 01 Oct 2019 17:01:02 +0200
+Message-ID: <7739498.9tyZrNxj5X@jkrzyszt-desk.ger.corp.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <2674326.ZPvzKFr69O@jkrzyszt-desk.ger.corp.intel.com>
+References: <20190822142922.31526-1-janusz.krzysztofik@linux.intel.com> <52fbfac9-c879-4b45-dd74-fafe62c2432b@linux.intel.com> <2674326.ZPvzKFr69O@jkrzyszt-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191001144353.5rn3bkcc6eyfclh7@willie-the-truck>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/19 3:43 PM, Will Deacon wrote:
-> On Tue, Oct 01, 2019 at 03:37:49PM +0100, Vincenzo Frascino wrote:
->> On 10/1/19 3:20 PM, Will Deacon wrote:
->>> On Tue, Oct 01, 2019 at 03:20:35PM +0100, Vincenzo Frascino wrote:
->>>> On 10/1/19 2:27 PM, Catalin Marinas wrote:
->>>>> On Tue, Oct 01, 2019 at 02:14:23PM +0100, Will Deacon wrote:
->>>>>> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
->>>>>>> +config COMPATCC_IS_ARM_GCC
->>>>>>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
->>>>>>
->>>>>> I've seen toolchains where the first part of the tuple is "armv7-", so they
->>>>>> won't get detected here. However, do we really need to detect this? If
->>>>>> somebody passes a duff compiler, then the build will fail in the same way as
->>>>>> if they passed it to CROSS_COMPILE=.
->>>>>
->>>>> Not sure what happens if we pass an aarch64 compiler. Can we end up with
->>>>> a 64-bit compat vDSO?
->>>>>
->>>>
->>>> I agree with Catalin here. The problem is not only when you pass and aarch64
->>>> toolchain but even an x86 and so on.
->>>
->>> I disagree. What happens if you do:
->>>
->>> $ make ARCH=arm64 CROSS_COMPILE=x86_64-linux-gnu-
->>>
->>> on your x86 box?
->>>
->>
->> The kernel compilation breaks as follows:
->>
->> x86_64-linux-gnu-gcc: error: unrecognized command line option ‘-mlittle-endian’;
->> did you mean ‘-fconvert=little-endian’?
->> /data1/Projects/LinuxKernel/linux/scripts/Makefile.build:265: recipe for target
->> 'scripts/mod/empty.o' failed
->> make[2]: *** [scripts/mod/empty.o] Error 1
->> /data1/Projects/LinuxKernel/linux/Makefile:1128: recipe for target 'prepare0' failed
->> make[1]: *** [prepare0] Error 2
->> make[1]: Leaving directory '/data1/Projects/LinuxKernel/linux-out'
->> Makefile:179: recipe for target 'sub-make' failed
->> make: *** [sub-make] Error 2
->>
->> Similar issue in the compat vdso library compilation if I do (without the check):
->>
->> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
->> CROSS_COMPILE_COMPAT=x86_64-linux-gnu-
->>
->> With this check the compilation completes correctly but the compat vdso does not
->> get built (unless my environment is playing me tricks ;) ).
+Hi Baolu,
+
+On Tuesday, September 3, 2019 9:41:23 AM CEST Janusz Krzysztofik wrote:
+> Hi Baolu,
 > 
-> My point was that we don't attempt to sanitise the compiler passed via
-> CROSS_COMPILE, so I don't think we should do anything special for COMPATCC
-> either.
->
+> On Tuesday, September 3, 2019 3:29:40 AM CEST Lu Baolu wrote:
+> > Hi Janusz,
+> > 
+> > On 9/2/19 4:37 PM, Janusz Krzysztofik wrote:
+> > >> I am not saying that keeping data is not acceptable. I just want to
+> > >> check whether there are any other solutions.
+> > > Then reverting 458b7c8e0dde and applying this patch still resolves the 
+> issue
+> > > for me.  No errors appear when mappings are unmapped on device close after 
+> the
+> > > device has been removed, and domain info preserved on device removal is
+> > > successfully reused on device re-plug.
+> > 
+> > This patch doesn't look good to me although I agree that keeping data is
+> > acceptable. 
 
-I agree on this, but the point I was trying to make is that the kernel should
-still be able to build even if the compiler for compat vdso is not correct.
+Any progress with that?  Which mailing list should I watch for updates?
 
-I do not have a strong opinion though.
+Thanks,
+Janusz
 
-> Will
+> > It updates dev->archdata.iommu, but leaves the hardware
+> > context/pasid table unchanged. This might cause problems somewhere.
+> > 
+> > > 
+> > > Is there anything else I can do to help?
+> > 
+> > Can you please tell me how to reproduce the problem? 
+> 
+> The most simple way to reproduce the issue, assuming there are no non-Intel 
+> graphics adapters installed, is to run the following shell commands:
+> 
+> #!/bin/sh
+> # load i915 module
+> modprobe i915
+> # open an i915 device and keep it open in background
+> cat /dev/dri/card0 >/dev/null &
+> sleep 2
+> # simulate device unplug
+> echo 1 >/sys/class/drm/card0/device/remove
+> # make the background process close the device on exit
+> kill $!
+> 
+> Thanks,
+> Janusz
+> 
+> 
+> > Keeping the per
+> > device domain info while device is unplugged is a bit dangerous because
+> > info->dev might be a wild pointer. We need to work out a clean fix.
+> > 
+> > > 
+> > > Thanks,
+> > > Janusz
+> > > 
+> > 
+> > Best regards,
+> > Baolu
+> > 
+> 
+> 
+> 
+> 
 > 
 
--- 
-Regards,
-Vincenzo
+
+
+
