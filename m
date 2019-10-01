@@ -2,151 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8580C37FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE436C37F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:45:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389296AbfJAOpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:45:52 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:18710 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388953AbfJAOpw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:45:52 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x91Ejjxr024273
-        for <linux-kernel@vger.kernel.org>; Tue, 1 Oct 2019 23:45:45 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x91Ejjxr024273
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569941145;
-        bh=7Bvi5CB0Y/ucWirAJcxGpfKhycv9MrI86dSeJ1hyRV8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ulyr0khHHe36KPGJCJrnxu8e9T8xzFpB1O00oAj36lfn4CUt3QcjhRrB9O/quF70h
-         GU0U2qYbhlR9QGlWcmSbd3SyDCJYHJuLbHmNQCSfTqU5Tr4YqL+ZMpurdarZI46wk9
-         tt3AeCrLDrLqQB+A6JEYHFOCn9sbXfuthFGALkFXKprHA2hTTzrTjKst8wCODA/nMl
-         B64fmZtzxuOm+pPgQon20stGHrbGKj89oMRaVeeVJRnxG3uO6lML3eZz/Xqj9uboHQ
-         OoMTUyMW3LsOC3M8CBdhlnx7C4b+GHYf6gtnu1XA61YAP7VHFFupW+OLofSCD6XkSS
-         4HZ+2v6rfisCg==
-X-Nifty-SrcIP: [209.85.222.174]
-Received: by mail-qk1-f174.google.com with SMTP id y189so11485832qkc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 07:45:45 -0700 (PDT)
-X-Gm-Message-State: APjAAAWzHEBDSZh69LKo/Kue13FUZlnqUcy4mAiDt2ryutux77jZSrzM
-        2CmDDurMezuCMh/SghDd75pkLmiJXPphiVL2JKo=
-X-Google-Smtp-Source: APXvYqw0Ehg1E2Ssjw+hMDuLH3p9aLYQPiEv56ONeJimQdzQeXmDt6AGsA2prDioWim1q9bSODZXnTNt61n5WoZxtlA=
-X-Received: by 2002:a05:620a:6b6:: with SMTP id i22mr6449417qkh.477.1569941144328;
- Tue, 01 Oct 2019 07:45:44 -0700 (PDT)
+        id S2389223AbfJAOpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:45:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727051AbfJAOpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:45:15 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4F9520842;
+        Tue,  1 Oct 2019 14:45:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569941115;
+        bh=MbUa04KuNgItVwY5USdZ6TyEdh7Ae9N8Gs4WWEOl86M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uFmKGT1bGiYOjq9NeOF6ZlszpMGlsbIQP4oklizKksH/InvFpuvFnOy4k0wabtFDW
+         EqN1M0DIAr0OMno+B4E6NmjoP+uDU2LQHX8AG8EWDe/er+gUhiF5mnlanLkBXk6/aQ
+         AbfIJ9LTT2c0htND9zDy2ebgWId43mIb+VYq8iqk=
+Date:   Tue, 1 Oct 2019 10:45:13 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jiaxin Yu <jiaxin.yu@mediatek.com>
+Subject: Re: [PATCH AUTOSEL 5.3 087/203] ASoC: mediatek: mt6358: add delay
+ after dmic clock on
+Message-ID: <20191001144513.GW8171@sasha-vm>
+References: <20190922184350.30563-1-sashal@kernel.org>
+ <20190922184350.30563-87-sashal@kernel.org>
+ <20190923182159.GV2036@sirena.org.uk>
 MIME-Version: 1.0
-References: <20191001121724.23886-1-yamada.masahiro@socionext.com> <CAMuHMdUFMC0hbv68Ggsu4q2A+OyHwS1kMsgjjRvxZ7qnqqov7A@mail.gmail.com>
-In-Reply-To: <CAMuHMdUFMC0hbv68Ggsu4q2A+OyHwS1kMsgjjRvxZ7qnqqov7A@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 1 Oct 2019 23:45:07 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARRAOk4YxFxdCvjF_eQd84nted1rhsqGhX5-UK5WKaDvA@mail.gmail.com>
-Message-ID: <CAK7LNARRAOk4YxFxdCvjF_eQd84nted1rhsqGhX5-UK5WKaDvA@mail.gmail.com>
-Subject: Re: [PATCH] scripts/setlocalversion: clear local varaible to make it
- work for sh
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190923182159.GV2036@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Mon, Sep 23, 2019 at 11:21:59AM -0700, Mark Brown wrote:
+>On Sun, Sep 22, 2019 at 02:41:53PM -0400, Sasha Levin wrote:
+>> From: Jiaxin Yu <jiaxin.yu@mediatek.com>
+>>
+>> [ Upstream commit ccb1fa21ef58a2ac15519bb878470762e967e8b3 ]
+>>
+>> Most dmics produce a high level when they receive clock. The difference
+>> between power-on and memory record time is about 10ms, but the dmic
+>> needs 50ms to output normal data.
+>>
+>> This commit add 100ms delay after SoC output clock so that we can cut
+>> off the pop noise at the beginning.
+>
+>This might mess up a production system, please don't backport it.
+>In general delays to eliminate pops and clicks that are part of
+>the PCM statup path (as opposed to DAPM) are not safe to
+>backport.
 
-On Tue, Oct 1, 2019 at 10:20 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Yamada-san,
->
-> s/varaible/variable/ in subject.
->
-> On Tue, Oct 1, 2019 at 2:17 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > Geert Uytterhoeven reports a strange side-effect of commit 858805b336be
-> > ("kbuild: add $(BASH) to run scripts with bash-extension"), which
-> > inserts the contents of a localversion file in the build directory twice.
-> >
-> > [Steps to Reproduce]
-> >   $ echo bar > localversion
-> >   $ mkdir build
-> >   $ cd build/
-> >   $ echo foo > localversion
-> >   $ make -s -f ../Makefile defconfig include/config/kernel.release
-> >   $ cat include/config/kernel.release
-> >   5.4.0-rc1foofoobar
-> >
-> > This comes down to the behavior change of 'local' variables.
-> >
-> > The 'man sh' on my Ubuntu machine, where sh is an alias to dash,
-> > explains as follows:
-> >   When a variable is made local, it inherits the initial value and
-> >   exported and readonly flags from the variable with the same name
-> >   in the surrounding scope, if there is one. Otherwise, the variable
-> >   is initially unset.
-> >
-> > [Test Code]
-> >
-> >   foo ()
-> >   {
-> >           local res
-> >           echo "res: $res"
-> >   }
-> >
-> >   res=1
-> >   foo
-> >
-> > [Result]
-> >
-> >   $ sh test.sh
-> >   res: 1
-> >   $ bash test.sh
-> >   res:
-> >
-> > So, scripts/setlocalversion correctly works only for bash in spite of
-> > its hashbang being #!/bin/sh. Nobody had noticed it before because
-> > CONFIG_SHELL was previously set to sh only when bash is missing, which
-> > is very unlikely to happen.
-> >
-> > The benefit of commit 858805b336be is to make people write portable and
-> > correct code. I gave it the Fixes tag since it uncovered the issue for
-> > most of people.
-> >
-> > Clear the variable 'res' in collect_files() to make it work for sh
-> > (and it also works on distributions where sh is an alias to bash).
-> >
-> > Fixes: commit 858805b336be ("kbuild: add $(BASH) to run scripts with bash-extension")
-> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->
-> Can you please use
->
->     Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> instead?
+Okay, I'll drop it, thanks.
 
-OK, I will.
-
-Thanks.
-
-
-
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> Thanks, that fixes the issue for me!
->
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--
+Thanks,
+Sasha
