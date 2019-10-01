@@ -2,128 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F234C43FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 00:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86957C4401
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 00:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbfJAWtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 18:49:15 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45057 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728919AbfJAWtF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 18:49:05 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y72so9153716pfb.12;
-        Tue, 01 Oct 2019 15:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lByhQoUDqedSEy5jA6OCeRd6BYLoC/Hj4IwADVyV/Nw=;
-        b=WJKIPqAEY/H0PHzfcKZu5++4lceWw/qRVIiktl/qkBV5K8aji5rGiLHvtt1Cr8aWCg
-         vHOm9JrCRK7xr1153NTkjsc0wU0cAcshM094iSds+eyFSWlYTQoVu7Bh2AbjxGTculz5
-         xg5kp0Knv81SN4PRMiBE51WSrSvd9E+V4W2ixzJQL7ZKUqF3vew/gHPNEAz4UVvg7Z5p
-         dv9iaFQcPGH/qptes9jzQ2m115mWkiNI0kHmh9t3S5UuzdD1UvLqocJBnnErTS4Q8lMY
-         ciyNzzVDOivzD0AkRSstw9gaoFBbOErtTFSEIY999ST6fcqZQeQAPCiu+eD+xkEacaJC
-         QBbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lByhQoUDqedSEy5jA6OCeRd6BYLoC/Hj4IwADVyV/Nw=;
-        b=jC+LkSPcBs1748ArgRXc2uIx3B43MiROwU/mjVk+Rem7E3L6Olbcq4B+8XZ7xA1Qnq
-         NKOsKL17IJ4NSjlNa8ad/exoWGwFqV9wNttwtuWGLH6hlTWgIetY/36NZhknuzz5GWHS
-         eT5c1TDXTItgc47hcZrV7ua1H8fyJyyLSc7JgdvWARkLG/QIswWmPtgCsP7yvjIYJtVk
-         e33tX6wEpwKgdAsGZTWGFEcwhq3sc/otUkIew5Pkjb5ahvY8ysI4FdQpbut9BF8qXbbU
-         /Rb+jVOaANkr0DigbpnisUB/VmQgiWeNYTNYoU1n/SDjIQHF3D0IAHms2NXDhL9Mnb5T
-         laxA==
-X-Gm-Message-State: APjAAAUNLFum+enFCIoF5tXwD9MLP0EVj9ato74Lpzfv90Q1crFARllg
-        araTKhLWbMauMgoJXq0s6tMlsvh+
-X-Google-Smtp-Source: APXvYqw2VJmCyzOsAOxBdOzNbTd0KkoYIRi/7Y88yuuzid05BfYRTc439EhGBxpTHYxv5uBbtXSdPw==
-X-Received: by 2002:a63:4616:: with SMTP id t22mr256877pga.123.1569970144635;
-        Tue, 01 Oct 2019 15:49:04 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id c128sm20913506pfc.166.2019.10.01.15.49.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 15:49:04 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM
-        BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE...),
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2835
-        ARM ARCHITECTURE),
-        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2835
-        ARM ARCHITECTURE)
-Subject: [PATCH 7/7] irqchip/irq-bcm283x: Add registration prints
-Date:   Tue,  1 Oct 2019 15:48:42 -0700
-Message-Id: <20191001224842.9382-8-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191001224842.9382-1-f.fainelli@gmail.com>
-References: <20191001224842.9382-1-f.fainelli@gmail.com>
+        id S1728972AbfJAWtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 18:49:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728957AbfJAWtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 18:49:14 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CB5621D81;
+        Tue,  1 Oct 2019 22:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569970154;
+        bh=xB9IwsMj/fScYg2XiwPqGatgL6Aty5pZqlqJ/wiTtZU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KHsqcGBXq0Nawrs7C3od9Zz1F+ZC53m7bZEuO/J64qljqanzDioDLSARWOdEL3qf8
+         nxq9cpsNNWVvQZTARDpUkjZPzahQb30Cld1mYuVG+yqCiIhpTbIOJHC2zVtsYEEfSo
+         g53ifhLnU64BlLmk3ydnVHqn7BCXiZE0nDMwDwvY=
+Date:   Tue, 1 Oct 2019 18:49:13 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Pavel Shilovskiy <pshilov@microsoft.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Steven French <Steven.French@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>
+Subject: Re: [PATCH 5.2 02/45] smb3: fix unmount hang in open_shroot
+Message-ID: <20191001224913.GE17454@sasha-vm>
+References: <20190929135024.387033930@linuxfoundation.org>
+ <20190929135025.151404151@linuxfoundation.org>
+ <BY5PR21MB13958939EBDEB4122A29675EB69D0@BY5PR21MB1395.namprd21.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <BY5PR21MB13958939EBDEB4122A29675EB69D0@BY5PR21MB1395.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With many different kind of interrupt controllers available and used on
-7211, add prints to help determine which ones are registered.
+On Tue, Oct 01, 2019 at 08:41:43PM +0000, Pavel Shilovskiy wrote:
+>Hi Greg,
+>
+>Are you going to apply this patch to the 5.3.y stable kernel? The patch is applicable there too.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/irqchip/irq-bcm2835.c | 9 +++++++++
- drivers/irqchip/irq-bcm2836.c | 2 ++
- 2 files changed, 11 insertions(+)
+I will, yes.
 
-diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
-index 55afc3487723..ae23e9ec86d0 100644
---- a/drivers/irqchip/irq-bcm2835.c
-+++ b/drivers/irqchip/irq-bcm2835.c
-@@ -76,6 +76,12 @@ enum armctrl_type {
- 	ARMCTRL_BCM7211
- };
- 
-+static const char *armctrl_type_str[] = {
-+	[ARMCTRL_BCM2835] = "BCM2835",
-+	[ARMCTRL_BCM2836] = "BCM2836",
-+	[ARMCTRL_BCM7211] = "BCM7211",
-+};
-+
- static const int reg_pending[] __initconst = { 0x00, 0x04, 0x08 };
- static const int reg_enable[] __initconst = { 0x18, 0x10, 0x14 };
- static const int reg_disable[] __initconst = { 0x24, 0x1c, 0x20 };
-@@ -205,6 +211,9 @@ static int __init armctrl_of_init(struct device_node *node,
- 		set_handle_irq(bcm2835_handle_irq);
- 	}
- 
-+	pr_info("registered %s intc (%pOF)\n", armctrl_type_str[type],
-+		node);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/irqchip/irq-bcm2836.c b/drivers/irqchip/irq-bcm2836.c
-index 77fa395c8f6b..b159dc91919d 100644
---- a/drivers/irqchip/irq-bcm2836.c
-+++ b/drivers/irqchip/irq-bcm2836.c
-@@ -240,6 +240,8 @@ static int __init arm_irqchip_l1_intc_of_init_smp(struct device_node *node,
- 
- 	set_handle_irq(bcm2836_arm_irqchip_handle_irq);
- 
-+	pr_info("Registered BCM2836 intc (%s)\n", node->full_name);
-+
- 	return 0;
- }
- 
--- 
-2.17.1
-
+--
+Thanks,
+Sasha
