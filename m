@@ -2,84 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB5FBC363A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F40BDC3640
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:48:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388762AbfJANrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:47:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:51123 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfJANrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:47:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 06:47:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="197857666"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 01 Oct 2019 06:47:20 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 343B71F6; Tue,  1 Oct 2019 16:47:19 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 4/4] usb: host: xhci-tegra: Switch to use %ptT
-Date:   Tue,  1 Oct 2019 16:47:17 +0300
-Message-Id: <20191001134717.81282-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191001134717.81282-1-andriy.shevchenko@linux.intel.com>
-References: <20191001134717.81282-1-andriy.shevchenko@linux.intel.com>
+        id S2388801AbfJANrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:47:48 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33463 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388557AbfJANrr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 09:47:47 -0400
+Received: by mail-oi1-f193.google.com with SMTP id e18so14464524oii.0;
+        Tue, 01 Oct 2019 06:47:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rEDnc9Jd/28M1ohLSPCRWsF0EEAGDKVCbMJuC0W7puU=;
+        b=StHkJTYSOwHh5hm5Hu6ec6yqjkLusXPUTVDkMd8UMHq2m0r6w6E7awEcRXO9kHceCi
+         7v5tSGlFikKJPiMqJfGhbkCIT6rrnEOPma0fRJI3+N7enJCvHjs0dB4ZTbRgE+elEyNU
+         hlcCb+O/FuX5/WMVUpHbERv/nQsql/N8bwd4R6q+OqQ6R3iBn7k4mQVdscPU1txbwWfz
+         rP/qf6h0ZWT35niWRp8I7memvyFp3/ENzrwVhtdd7AKdPSyf6BR7O31vbcPpTJFGuhmN
+         Ezqp/BGS7bHlbLYwIfIRzSjDD2VvcaIeSeC9j5Eu0q8CMkeMHRntvw5+O2xO41sIqFNc
+         W/3A==
+X-Gm-Message-State: APjAAAXFnIyVyeG0CGmzNwmMJnhG5FbAmfi/JI11iYW/sisvbDrgDbyY
+        q40r4JZ65bbBX0o/e2LxYXDa2ozsrw==
+X-Google-Smtp-Source: APXvYqw+KmPmFzmwX23fwaUZyE2kdDvGO96W7ayIpwSq39QK5BvLEHskSHj/M4RX2RX1E5kPaWkipA==
+X-Received: by 2002:aca:5ad7:: with SMTP id o206mr3927590oib.59.1569937665296;
+        Tue, 01 Oct 2019 06:47:45 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o184sm5305824oia.28.2019.10.01.06.47.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 06:47:44 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 08:47:44 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Xingyu Chen <xingyu.chen@amlogic.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: reset: add bindings for the Meson-A1
+ SoC Reset Controller
+Message-ID: <20191001134744.GA28989@bogus>
+References: <1569738255-3941-1-git-send-email-xingyu.chen@amlogic.com>
+ <1569738255-3941-3-git-send-email-xingyu.chen@amlogic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1569738255-3941-3-git-send-email-xingyu.chen@amlogic.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use %ptT instead of open coded variant to print content of
-time64_t type in human readable format.
+On Sun, 29 Sep 2019 14:24:14 +0800, Xingyu Chen wrote:
+> Add DT bindings for the Meson-A1 SoC Reset Controller include file,
+> and also slightly update documentation.
+> 
+> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> ---
+>  .../bindings/reset/amlogic,meson-reset.yaml        |  1 +
+>  include/dt-bindings/reset/amlogic,meson-a1-reset.h | 74 ++++++++++++++++++++++
+>  2 files changed, 75 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-reset.h
+> 
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/usb/host/xhci-tegra.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 2ff7c911fbd0..c1bf2ad1474d 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -802,7 +802,6 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
- 	const struct firmware *fw;
- 	unsigned long timeout;
- 	time64_t timestamp;
--	struct tm time;
- 	u64 address;
- 	u32 value;
- 	int err;
-@@ -907,11 +906,8 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
- 	}
- 
- 	timestamp = le32_to_cpu(header->fwimg_created_time);
--	time64_to_tm(timestamp, 0, &time);
- 
--	dev_info(dev, "Firmware timestamp: %ld-%02d-%02d %02d:%02d:%02d UTC\n",
--		 time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
--		 time.tm_hour, time.tm_min, time.tm_sec);
-+	dev_info(dev, "Firmware timestamp: %ptT UTC\n", &timestamp);
- 
- 	return 0;
- }
--- 
-2.23.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
