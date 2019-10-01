@@ -2,123 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A59C3F0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF720C3F11
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730987AbfJARyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:54:32 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14255 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728486AbfJARyc (ORCPT
+        id S1731104AbfJARzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:55:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48982 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfJARzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:54:32 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d9392df0000>; Tue, 01 Oct 2019 10:54:39 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 01 Oct 2019 10:54:31 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 01 Oct 2019 10:54:31 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 1 Oct
- 2019 17:54:30 +0000
-Received: from rcampbell-dev.nvidia.com (172.20.13.39) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Tue, 1 Oct 2019 17:54:30 +0000
-Subject: Re: [PATCH] mm/thp: make set_huge_zero_page() return void
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190930195528.32553-1-rcampbell@nvidia.com>
- <20191001115239.dqodyji3r32zjkea@box>
-From:   Ralph Campbell <rcampbell@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <68b384ac-b311-6ea2-81ad-053ff7f3ba64@nvidia.com>
-Date:   Tue, 1 Oct 2019 10:54:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 1 Oct 2019 13:55:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UdeDTcRqRLmOWNI66TIvhiXBuusNntkv2kJPDqWMITI=; b=cI5pL9xvdMaZoQSXt/BoTvwCf
+        6MS2X7NqiP8DNfNNUfGVb1cu90q/m0myKcYkXX8xFft8BLi1/eB1uQnWkEvPaSyVqJ7zv254ZjiaL
+        0xfG4zbL4U3UWysSzRXKZSORC6SNhkkmiB1vOhVgMIPOuM7iGQ26qhGgh++OtljBweJ90=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iFMMZ-0005rl-6M; Tue, 01 Oct 2019 17:55:03 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 13E7327429C0; Tue,  1 Oct 2019 18:55:02 +0100 (BST)
+Date:   Tue, 1 Oct 2019 18:55:01 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: atmel: fix atmel_ssc_set_audio link failure
+Message-ID: <20191001175501.GA14762@sirena.co.uk>
+References: <20191001142116.1172290-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20191001115239.dqodyji3r32zjkea@box>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1569952479; bh=BaVcfmO77CbSRF4xJ7ENR7iiC1TjdAOn8cbtscDfEog=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=hk7GVMY2RbARRj+8vRGwRTIBWLlV+9xU34GGzQ5cW09C2Qa5u557QOWPQQhETeelM
-         VLy3eVJ4QwizyOgL08VCQECqRTuxumtTzbHwnYp+af7ROVQBkzB6baK7wctS5Tg+cD
-         u/hPye4SjWz3+DyCUontM8dUS7BGYa/z8mNhUAUtT+SCmljMjehqG3I7S5p2GyiQP2
-         wHZIbWckPspTZIbV7IavKO4Menqj+M36VOOihk8uryvkLu9nhO7uoQj3sXpnL1HyMu
-         059FiPMNyImJ0gNZQs35B0icbqnXkltg3n0W4TJRMdfJtZaubpO8Qqdr6gyUVRLAoa
-         i/FCypcgiro2g==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Content-Disposition: inline
+In-Reply-To: <20191001142116.1172290-1-arnd@arndb.de>
+X-Cookie: Happiness is twin floppies.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 10/1/19 4:52 AM, Kirill A. Shutemov wrote:
-> On Mon, Sep 30, 2019 at 12:55:28PM -0700, Ralph Campbell wrote:
->> The return value from set_huge_zero_page() is never checked so simplify
->> the code by making it return void.
->>
->> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
->> ---
->>   mm/huge_memory.c | 6 ++----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index c5cb6dcd6c69..6cf0ee65538d 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -686,20 +686,18 @@ static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
->>   }
->>   
->>   /* Caller must hold page table lock. */
->> -static bool set_huge_zero_page(pgtable_t pgtable, struct mm_struct *mm,
->> +static void set_huge_zero_page(pgtable_t pgtable, struct mm_struct *mm,
->>   		struct vm_area_struct *vma, unsigned long haddr, pmd_t *pmd,
->>   		struct page *zero_page)
->>   {
->>   	pmd_t entry;
->> -	if (!pmd_none(*pmd))
->> -		return false;
->> +
-> 
-> Wat? So you just bindly overwrite whatever is there?
-> 
-> NAK.
+--7JfCtLOvnd9MIVvH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-No, the only two places it is called from are 
-do_huge_pmd_anonymous_page() which has the pmd_lock()
-and already checked pmd_none() is true and
-copy_huge_pmd() where the destination page table
-is being filled in with no other threads accessing it.
-I guess I should have put this analysis in the changelog.
+On Tue, Oct 01, 2019 at 04:20:55PM +0200, Arnd Bergmann wrote:
+> The ssc audio driver can call into both pdc and dma backends.  With the
+> latest rework, the logic to do this in a safe way avoiding link errors
+> was removed, bringing back link errors that were fixed long ago in commit
+> 061981ff8cc8 ("ASoC: atmel: properly select dma driver state") such as
 
-Still, I guess putting a pmd_none() check in copy_huge_pmd()
-as future proofing new callers of copy_huge_pmd() would
-make sense.
+This doesn't apply against current code, please check and resend.
 
->>   	entry = mk_pmd(zero_page, vma->vm_page_prot);
->>   	entry = pmd_mkhuge(entry);
->>   	if (pgtable)
->>   		pgtable_trans_huge_deposit(mm, pmd, pgtable);
->>   	set_pmd_at(mm, haddr, pmd, entry);
->>   	mm_inc_nr_ptes(mm);
->> -	return true;
->>   }
->>   
->>   vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->> -- 
->> 2.20.1
->>
->>
-> 
+--7JfCtLOvnd9MIVvH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2TkvUACgkQJNaLcl1U
+h9BpXwf/ZbLU57SSOIs72nreZTj7QYl5ewRdha8NvlgMpwL9Tpoann2+x+D1YwW4
+YrgZi10+u/d5JJXj26Le5tfl9/XHOiEtnsmSGeyyZ4HCMkGdsN/pbOteyNVq8OSm
+m0kbUZzyPrs4UShvQmtmf/NVGAEMno5FWExHJMesI+HCkAguc43qkgPrhCK6w6hE
+OTG/+vIokBlBGCwqdM597185U5H/O/zeEtMF//UhLEOyzm7SiowvGAFOukr7PQzK
+UCJeArfyY1ik0gYbptXvjoo3+Y1DKg/sRNdtNoF14WIS2oHOkTKm6dpuqxfN2RIt
+He43J5QRq+JEaBnzvw/+7mvakg5Rjg==
+=mk8+
+-----END PGP SIGNATURE-----
+
+--7JfCtLOvnd9MIVvH--
