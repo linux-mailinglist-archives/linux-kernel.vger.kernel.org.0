@@ -2,52 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 136B4C2E2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60115C2DF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733054AbfJAHRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 03:17:48 -0400
-Received: from s15324798.onlinehome-server.info ([87.106.249.56]:44691 "EHLO
-        usine23.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730309AbfJAHRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 03:17:47 -0400
-Received: by usine23.com (Postfix, from userid 2001)
-        id 9FC90104AEC4; Tue,  1 Oct 2019 08:51:12 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.1.7-deb3 (2006-10-05) on 
-        s15324798.onlinehome-server.info
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=5.0 tests=AWL,RATWARE_GECKO_BUILD 
-        autolearn=no version=3.1.7-deb3
-Received: from pop.usine23.com (unknown [203.6.208.38])
-        by usine23.com (Postfix) with ESMTP id 862A0104AEA7;
-        Tue,  1 Oct 2019 08:51:09 +0200 (CEST)
-To:     "linux kernel" <linux-kernel@vger.kernel.org>,
-        "Suki Buryani" <sukiburyani@yahoo.com>,
-        "Priscilla Wong" <priscillawong@ruggedcom.com>,
-        "Steven King" <sfking@fdwdc.com>,
-        "Greg Ungerer" <gerg@uclinux.org>,
-        "Michael Schmitz" <schmitzmic@gmail.com>,
-        "Chen Gang" <gang.chen@asianux.com>,
-        "linux m68k" <linux-m68k@lists.linux-m68k.org>
-From:   nik_bin_nek_alwi <commercial@usine23.com>
-Subject: =?UTF-8?Q?Re=3A=E2=8F=B0Hi?=
-Message-ID: <06356db1-7db3-4625-b854-301321e36b35@usine23.com>
-Date:   Mon, 30 Sep 2019 20:46:25 -1000
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1732814AbfJAHIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 03:08:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49326 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfJAHIy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 03:08:54 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1iFCHD-0002PH-9I; Tue, 01 Oct 2019 07:08:51 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] Revert "Input: elantech - enable SMBus on new (2018+) systems"
+Date:   Tue,  1 Oct 2019 15:08:45 +0800
+Message-Id: <20191001070845.9720-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Grandios! http://knrsbwy.Merissa836.xyz/index
+This reverts commit 883a2a80f79ca5c0c105605fafabd1f3df99b34c.
 
+Apparently use dmi_get_bios_year() as manufacturing date isn't accurate
+and this breaks older laptops with new BIOS update.
 
+So let's revert this patch.
 
-___
-Bis bald
-nik_bin_nek_alwi@yahoo.com
+There are still new HP laptops still need to use SMBus to support all
+features, but it'll be enabled via a whitelist.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/input/mouse/elantech.c | 55 ++++++++++++++++++----------------
+ 1 file changed, 29 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
+index 04fe43440a3c..2d8434b7b623 100644
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1827,31 +1827,6 @@ static int elantech_create_smbus(struct psmouse *psmouse,
+ 				  leave_breadcrumbs);
+ }
+ 
+-static bool elantech_use_host_notify(struct psmouse *psmouse,
+-				     struct elantech_device_info *info)
+-{
+-	if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
+-		return true;
+-
+-	switch (info->bus) {
+-	case ETP_BUS_PS2_ONLY:
+-		/* expected case */
+-		break;
+-	case ETP_BUS_SMB_HST_NTFY_ONLY:
+-	case ETP_BUS_PS2_SMB_HST_NTFY:
+-		/* SMbus implementation is stable since 2018 */
+-		if (dmi_get_bios_year() >= 2018)
+-			return true;
+-		/* fall through */
+-	default:
+-		psmouse_dbg(psmouse,
+-			    "Ignoring SMBus bus provider %d\n", info->bus);
+-		break;
+-	}
+-
+-	return false;
+-}
+-
+ /**
+  * elantech_setup_smbus - called once the PS/2 devices are enumerated
+  * and decides to instantiate a SMBus InterTouch device.
+@@ -1871,7 +1846,7 @@ static int elantech_setup_smbus(struct psmouse *psmouse,
+ 		 * i2c_blacklist_pnp_ids.
+ 		 * Old ICs are up to the user to decide.
+ 		 */
+-		if (!elantech_use_host_notify(psmouse, info) ||
++		if (!ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version) ||
+ 		    psmouse_matches_pnp_id(psmouse, i2c_blacklist_pnp_ids))
+ 			return -ENXIO;
+ 	}
+@@ -1891,6 +1866,34 @@ static int elantech_setup_smbus(struct psmouse *psmouse,
+ 	return 0;
+ }
+ 
++static bool elantech_use_host_notify(struct psmouse *psmouse,
++				     struct elantech_device_info *info)
++{
++	if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
++		return true;
++
++	switch (info->bus) {
++	case ETP_BUS_PS2_ONLY:
++		/* expected case */
++		break;
++	case ETP_BUS_SMB_ALERT_ONLY:
++		/* fall-through  */
++	case ETP_BUS_PS2_SMB_ALERT:
++		psmouse_dbg(psmouse, "Ignoring SMBus provider through alert protocol.\n");
++		break;
++	case ETP_BUS_SMB_HST_NTFY_ONLY:
++		/* fall-through  */
++	case ETP_BUS_PS2_SMB_HST_NTFY:
++		return true;
++	default:
++		psmouse_dbg(psmouse,
++			    "Ignoring SMBus bus provider %d.\n",
++			    info->bus);
++	}
++
++	return false;
++}
++
+ int elantech_init_smbus(struct psmouse *psmouse)
+ {
+ 	struct elantech_device_info info;
+-- 
+2.17.1
+
