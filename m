@@ -2,108 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DBADC37AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC1FC37C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389196AbfJAOkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:40:10 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34987 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388925AbfJAOkJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:40:09 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m15so21935056qtq.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 07:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9VDIX95q75l1fcGPHAGCoexbF88NYXczf33Qn1D7mVs=;
-        b=IeYUUoTk8eThv+72jp/pu8xdlXAAX3/zY7+IYupoKCxoermZheJWI2mo/kCxoX9snx
-         axePe7gr3wV54BxZqT/+17qIbHZ7OBZwdPCzV3bvxJW064GLwtbydfK8IG03nph4oexj
-         VdPBwQumivhwrAaBWPsJv1sWgC25P8FIgxuzWJKhmJw25hkWNqen/jbydTfC5Yh1LGzA
-         qh9CmPBeE9R4aXGYkDViCY+fox3lMgOFu471rQJ3cDyGzPLktOYX1FDYoQDKH2EKrjQ8
-         E2zZ/g0fWndeRA309yMCUTfJ3uRFlKpj6BQtWyUfSSsrMSJIjg8gSg5DVJc+Lfzn6Tgp
-         Vzcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9VDIX95q75l1fcGPHAGCoexbF88NYXczf33Qn1D7mVs=;
-        b=f3BvyDLA7aEaB3yfa8Jhj4oGHHdd7P/qd1c1hQSrRa0S04FppzDXc/zYKFfeO5pUqo
-         Ix8q/ziDiRDWXyXdeCJhX20wH6ZLeZnsjHehyPnXFymVyvLpqYeqoAzUIgzYYE8bNGVn
-         sJ9Abmw/7lqajTVLOPzlLBun0cW/Ki6//x2c0igPjM47ea1fvUdpOITFcknv1JVajDAR
-         26SgY592pdBarhEfkvenKBt+Jx/EItifue6dSGr/UD7XdVp+vQFPjqFTsWV7lqhA3d3F
-         CusxFb6WYIdg7QptK24sOybV5hlKbqA4ls/0wV161FsWxd7RJQEb0K+VARXIMCyBYWi9
-         Lc2Q==
-X-Gm-Message-State: APjAAAXijXsnSRuS6QWpiaUVTBZITTvYWioKnZS+w0xQd4fYRb/WQKAO
-        WDs0+o2BlG5IZG2ri5DBIPb+0g==
-X-Google-Smtp-Source: APXvYqzJ4rqvFAJEgTDf25ELUEziBgh6eojZxo/BhgpnqhUElgq0KqGYVa27C4uPjU2WvJ+a3QRC7A==
-X-Received: by 2002:a05:6214:180a:: with SMTP id o10mr25687114qvw.51.1569940808438;
-        Tue, 01 Oct 2019 07:40:08 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id q2sm7515437qkc.68.2019.10.01.07.40.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 07:40:07 -0700 (PDT)
-Message-ID: <1569940805.5576.257.camel@lca.pw>
-Subject: Re: [PATCH] mm/memcontrol.c: fix another unused function warning
-From:   Qian Cai <cai@lca.pw>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
+        id S2389249AbfJAOlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:41:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55784 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727051AbfJAOlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:41:18 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 813722EF16A;
+        Tue,  1 Oct 2019 14:41:17 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-54.ams2.redhat.com [10.36.116.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D83F15D9C9;
+        Tue,  1 Oct 2019 14:41:14 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Date:   Tue, 01 Oct 2019 10:40:05 -0400
-In-Reply-To: <20191001142227.1227176-1-arnd@arndb.de>
-References: <20191001142227.1227176-1-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH v5 04/10] mm/memory_hotplug: Don't access uninitialized memmaps in shrink_zone_span()
+Date:   Tue,  1 Oct 2019 16:40:05 +0200
+Message-Id: <20191001144011.3801-5-david@redhat.com>
+In-Reply-To: <20191001144011.3801-1-david@redhat.com>
+References: <20191001144011.3801-1-david@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 01 Oct 2019 14:41:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-01 at 16:22 +0200, Arnd Bergmann wrote:
-> Removing the mem_cgroup_id_get() stub function introduced a new warning
-> of the same kind when CONFIG_MMU is disabled:
+Let's limit shrinking to !ZONE_DEVICE so we can fix the current code. We
+should never try to touch the memmap of offline sections where we could
+have uninitialized memmaps and could trigger BUGs when calling
+page_to_nid() on poisoned pages.
 
-Shouldn't CONFIG_MEMCG depends on CONFIG_MMU instead?
+There is no reliable way to distinguish an uninitialized memmap from an
+initialized memmap that belongs to ZONE_DEVICE, as we don't have
+anything like SECTION_IS_ONLINE we can use similar to
+pfn_to_online_section() for !ZONE_DEVICE memory. E.g.,
+set_zone_contiguous() similarly relies on pfn_to_online_section() and
+will therefore never set a ZONE_DEVICE zone consecutive. Stopping to
+shrink the ZONE_DEVICE therefore results in no observable changes,
+besides /proc/zoneinfo indicating different boundaries - something we
+can totally live with.
 
-> 
-> mm/memcontrol.c:4929:13: error: unused function 'mem_cgroup_id_get_many' [-Werror,-Wunused-function]
-> 
-> Address this using a __maybe_unused annotation.
-> 
-> Note: alternatively, this could be moved into an #ifdef block.  Marking it
-> 'static inline' would not work here as that would still produce the
-> warning on clang, which only ignores unused inline functions declared
-> in header files instead of .c files.
-> 
-> Fixes: 4d0e3230a56a ("mm/memcontrol.c: fix a -Wunused-function warning")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  mm/memcontrol.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c313c49074ca..5f9f90e3cef8 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4921,7 +4921,8 @@ static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
->  	}
->  }
->  
-> -static void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
-> +static void __maybe_unused
-> +mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
->  {
->  	refcount_add(n, &memcg->id.ref);
->  }
+Before commit d0dc12e86b31 ("mm/memory_hotplug: optimize memory
+hotplug"), the memmap was initialized with 0 and the node with the
+right value. So the zone might be wrong but not garbage. After that
+commit, both the zone and the node will be garbage when touching
+uninitialized memmaps.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
+Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ mm/memory_hotplug.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 86b4dc18e831..afed8331332b 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -331,7 +331,7 @@ static unsigned long find_smallest_section_pfn(int nid, struct zone *zone,
+ 				     unsigned long end_pfn)
+ {
+ 	for (; start_pfn < end_pfn; start_pfn += PAGES_PER_SUBSECTION) {
+-		if (unlikely(!pfn_valid(start_pfn)))
++		if (unlikely(!pfn_to_online_page(start_pfn)))
+ 			continue;
+ 
+ 		if (unlikely(pfn_to_nid(start_pfn) != nid))
+@@ -356,7 +356,7 @@ static unsigned long find_biggest_section_pfn(int nid, struct zone *zone,
+ 	/* pfn is the end pfn of a memory section. */
+ 	pfn = end_pfn - 1;
+ 	for (; pfn >= start_pfn; pfn -= PAGES_PER_SUBSECTION) {
+-		if (unlikely(!pfn_valid(pfn)))
++		if (unlikely(!pfn_to_online_page(pfn)))
+ 			continue;
+ 
+ 		if (unlikely(pfn_to_nid(pfn) != nid))
+@@ -415,7 +415,7 @@ static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
+ 	 */
+ 	pfn = zone_start_pfn;
+ 	for (; pfn < zone_end_pfn; pfn += PAGES_PER_SUBSECTION) {
+-		if (unlikely(!pfn_valid(pfn)))
++		if (unlikely(!pfn_to_online_page(pfn)))
+ 			continue;
+ 
+ 		if (page_zone(pfn_to_page(pfn)) != zone)
+@@ -463,6 +463,14 @@ static void __remove_zone(struct zone *zone, unsigned long start_pfn,
+ 	struct pglist_data *pgdat = zone->zone_pgdat;
+ 	unsigned long flags;
+ 
++	/*
++	 * Zone shrinking code cannot properly deal with ZONE_DEVICE. So
++	 * we will not try to shrink the zones - which is okay as
++	 * set_zone_contiguous() cannot deal with ZONE_DEVICE either way.
++	 */
++	if (zone_idx(zone) == ZONE_DEVICE)
++		return;
++
+ 	pgdat_resize_lock(zone->zone_pgdat, &flags);
+ 	shrink_zone_span(zone, start_pfn, start_pfn + nr_pages);
+ 	update_pgdat_span(pgdat);
+-- 
+2.21.0
+
