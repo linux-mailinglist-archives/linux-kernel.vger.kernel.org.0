@@ -2,87 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CB36C2C09
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 04:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 478D2C2C13
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 04:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732118AbfJACru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 22:47:50 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33814 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731558AbfJACru (ORCPT
+        id S1731869AbfJACvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 22:51:35 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44976 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728133AbfJACvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 22:47:50 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x912ijX4073255;
-        Tue, 1 Oct 2019 02:47:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=C4Ynnx74PCoy+zfRT8x1ygaVH+/lbXXlT0ly8Rqw4hE=;
- b=IxMuifhmtds6qmd4htbThO61fudyJn7ESsvKLUETfEDb0htXzrDNz3JGoCBymr2vHa76
- 5gM4qUUKcaRn5LRVSigPb4XpkrDxlzC1HCBUBFr7leCTaVjTMbV65mo50WCqR9dfI8Oh
- JXa7djAlQ0GPR7E6ogRS67OnqLn8goI80vRPVDUf6H4B9/9ntemFOh2NVA1WZXC9IzkY
- FieLuhW7R0oNH2sIDZk4zsQuf++zv2Dg1YmwRvIaxMDcpFtYsotmu/NCEcG4N1tdyVNK
- qaY2OqchKS3E/OIx8YYkCxcow6Sn0ZC7ncjfkjedkZqxOHku2xUUyirpAAU1b/k3VICL AQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2v9yfq2ufu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 02:47:43 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x912hoSY091020;
-        Tue, 1 Oct 2019 02:47:43 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2vbqd01bp9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 02:47:42 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x912lfwJ024165;
-        Tue, 1 Oct 2019 02:47:41 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Sep 2019 19:47:40 -0700
-To:     Colin King <colin.king@canonical.com>
-Cc:     Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: make array setup_attrs static const, makes object smaller
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190906170104.10450-1-colin.king@canonical.com>
-Date:   Mon, 30 Sep 2019 22:47:38 -0400
-In-Reply-To: <20190906170104.10450-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 6 Sep 2019 18:01:04 +0100")
-Message-ID: <yq11rvxyyet.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Mon, 30 Sep 2019 22:51:35 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q21so6833488pfn.11;
+        Mon, 30 Sep 2019 19:51:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7uDOjGLVfsje09d+PM/vZYivc4cjDJ4NCt7g5E7CAYo=;
+        b=FMWOZWdmZW+QVz/B4ew4zpGJp9cGSN2ItVMP7p5fJt5gXwZrf3Gn9smWMJEfseSf3o
+         gIIfzlxGusDX0xdgaYMS5wGubLejGehTlo+0oedyuuoZPx79tfI92LdmtQy4p777QFd2
+         xKxXProXiKpbBlwmzKfMkp1VYVz2eEvwrJ0lZWnWNzB+H0WtH/nusKYtuE+gFg+Oj+GS
+         UYQbJwBd9HHHMQvhClp1+jtUeACtil6iVJu6KlPRqvHawirrXFS/YsVcR+1+Ej7xqDm3
+         +glVcvkVC0HW/NbLiI+w7oqsWG3zZfN4XnSn0iNAPNthU3HyG+aK3lyzVAb7ubWJYk1g
+         1PvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7uDOjGLVfsje09d+PM/vZYivc4cjDJ4NCt7g5E7CAYo=;
+        b=l6IXjfT7YXo4R20X+oIRXulum8Jdev4Ela/qUT0A3RbNrWwLXU0db7MzSsfs/+YJWH
+         gF2Q084XcVMZrQKdJY7XkUEFUpdm+2nlvA1PK0mpE0+BC1vwf2MBFAp4rI6B0u8XhtMB
+         W7aymPWXX+8u6t1H399hURFo1CGzfWTWWImsEmvN11KKPT1+hnruhbRj4zsxC3bqkpkk
+         VVE8+0nUnLSnoFL1iNihU169yw/dP8c29GF1ohErMe0SeSj3xBhqebWATI+Nof3SgSis
+         YLyxmOXgBeMTEMtW6IXs/mIe1WIX7cQqlASnV1GK/t6+YgK6TFjYjs5zYXP4RzRzVHGe
+         07kQ==
+X-Gm-Message-State: APjAAAWzuwHIL0ZuCtTmL0K50uUvgAiBn7ZEOJWdy9GzIWuSkD1bwqtj
+        5Pi9BRE6ImApNcL4t2d92CnK6qdh
+X-Google-Smtp-Source: APXvYqzS8aFNlMBE6RnTDrAQiKG47Nby1cenHElVuqWgMDjf3lBsyO4bQpftJXesZe9MXCkYvTg9dA==
+X-Received: by 2002:a63:1009:: with SMTP id f9mr27014516pgl.124.1569898292357;
+        Mon, 30 Sep 2019 19:51:32 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
+        by smtp.gmail.com with ESMTPSA id k124sm16279188pgc.6.2019.09.30.19.51.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2019 19:51:31 -0700 (PDT)
+Subject: Re: [PATCH] phy-brcm-usb: Use devm_platform_ioremap_resource() in
+ brcm_usb_phy_probe()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Al Cooper <alcooperx@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <88679e6a-6701-7d30-d52e-5e970af4de04@web.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <5f3ec750-d295-bf57-39b6-b05ed6f05da1@gmail.com>
+Date:   Mon, 30 Sep 2019 19:51:24 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=895
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910010027
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=998 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010027
+In-Reply-To: <88679e6a-6701-7d30-d52e-5e970af4de04@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Colin,
 
-> Don't populate the array setup_attrs on the stack but instead make it
-> static const. Makes the object code smaller by 180 bytes.
+On 9/26/2019 9:08 AM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 26 Sep 2019 18:00:14 +0200
+> 
+> Simplify this function implementation a bit by using
+> a known wrapper function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Applied to 5.5/scsi-queue. Thanks!
-
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Florian
