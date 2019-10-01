@@ -2,139 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA46AC2F51
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBF2AC2F55
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733051AbfJAIyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 04:54:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36484 "EHLO mail.kernel.org"
+        id S1733172AbfJAIzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 04:55:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39740 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726568AbfJAIyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:54:54 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726148AbfJAIzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 04:55:20 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4E4F2133F;
-        Tue,  1 Oct 2019 08:54:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569920093;
-        bh=szecxbNIyt9fQKdI3mGXWWqH6xc6Il8EeHjy2q22MmE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Dw4H4ZgGHfx/ZI6u+yBi43GwHZD0pDN+dtBIoa/0toBp0bJaCpdYHjNkGLCFAI9sf
-         p885axzz4B5SVa572ab3PX675xVLqnNifp3CrsKEnCpiFERdRAknYwkpPY5g2i7kq1
-         M36qcriDMmumSxbNIUz0jbiLSTvWluo3nA59W9Xg=
-Date:   Tue, 1 Oct 2019 09:54:46 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     Yizhuo <yzhai003@ucr.edu>, csong@cs.ucr.edu,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, zhiyunq@cs.ucr.edu,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] iio: adc: imx25-gcq: Variable could be uninitialized if
- regmap_read() fails
-Message-ID: <20191001095446.17bc9cd8@archlinux>
-In-Reply-To: <20190930074412.up4k6zdus4y7u4xb@pengutronix.de>
-References: <20190928002852.28329-1-yzhai003@ucr.edu>
-        <20190930074412.up4k6zdus4y7u4xb@pengutronix.de>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E890C049D7C;
+        Tue,  1 Oct 2019 08:55:18 +0000 (UTC)
+Received: from krava (ovpn-204-21.brq.redhat.com [10.40.204.21])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0BE265D9D5;
+        Tue,  1 Oct 2019 08:55:12 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 10:55:11 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Steve MacLean <Steve.MacLean@microsoft.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        John Keeping <john@metanate.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Leo Yan <leo.yan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Brian Robbins <brianrob@microsoft.com>,
+        Tom McDonald <Thomas.McDonald@microsoft.com>,
+        John Salem <josalem@microsoft.com>,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 3/4 RESEND] perf inject --jit: Remove //anon mmap events
+Message-ID: <20191001085511.GB30823@krava>
+References: <BN8PR21MB13622159D33A3EBCADDF4B2FF7820@BN8PR21MB1362.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN8PR21MB13622159D33A3EBCADDF4B2FF7820@BN8PR21MB1362.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 01 Oct 2019 08:55:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Sep 2019 09:44:12 +0200
-Marco Felsch <m.felsch@pengutronix.de> wrote:
+On Mon, Sep 30, 2019 at 09:00:01PM +0000, Steve MacLean wrote:
+> While a JIT is jitting code it will eventually need to commit more pages and
+> change these pages to executable permissions.
+> 
+> Typically the JIT will want these collocated to minimize branch displacements.
+> 
+> The kernel will coalesce these anonymous mapping with identical permissions
+> before sending an mmap event for the new pages. This means the mmap event for
+> the new pages will include the older pages.
+> 
+> These anonymous mmap events will obscure the jitdump injected pseudo events.
+> This means that the jitdump generated symbols, machine code, debugging info,
+> and unwind info will no longer be used.
+> 
+> Observations:
+> 
+> When a process emits a jit dump marker and a jitdump file, the perf-xxx.map
+> file represents inferior information which has been superseded by the
+> jitdump jit-xxx.dump file.
+> 
+> Further the '//anon*' mmap events are only required for the legacy
+> perf-xxx.map mapping.
+> 
+> Summary:
+> 
+> Add rbtree to track which pids have successfully injected a jitdump file.
+> 
+> During "perf inject --jit", discard "//anon*" mmap events for any pid which
+> has successfully processed a jitdump file.
+> 
+> Committer testing:
+> 
+> // jitdump case
+> perf record <app with jitdump>
+> perf inject --jit --input perf.data --output perfjit.data
+> 
+> // verify mmap "//anon" events present initially
+> perf script --input perf.data --show-mmap-events | grep '//anon'
+> // verify mmap "//anon" events removed
+> perf script --input perfjit.data --show-mmap-events | grep '//anon'
+> 
+> // no jitdump case
+> perf record <app without jitdump>
+> perf inject --jit --input perf.data --output perfjit.data
+> 
+> // verify mmap "//anon" events present initially
+> perf script --input perf.data --show-mmap-events | grep '//anon'
+> // verify mmap "//anon" events not removed
+> perf script --input perfjit.data --show-mmap-events | grep '//anon'
+> 
+> Repro:
+> 
+> This issue was discovered while testing the initial CoreCLR jitdump
+> implementation. https://github.com/dotnet/coreclr/pull/26897.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Stephane Eranian <eranian@google.com>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
+> ---
+> tools/perf/builtin-inject.c |  4 +--
+>  tools/perf/util/jitdump.c   | 63 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 65 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+> index c14f40b8..4c921e0 100644
+> --- a/tools/perf/builtin-inject.c
+> +++ b/tools/perf/builtin-inject.c
+> @@ -261,7 +261,7 @@ static int perf_event__jit_repipe_mmap(struct perf_tool *tool,
+>          * if jit marker, then inject jit mmaps and generate ELF images
+>          */
+>         ret = jit_process(inject->session, &inject->output, machine,
+> -                         event->mmap.filename, sample->pid, &n);
+> +                         event->mmap.filename, event->mmap.pid, &n);
+>         if (ret < 0)
+>                 return ret;
+>         if (ret) {
+> @@ -299,7 +299,7 @@ static int perf_event__jit_repipe_mmap2(struct perf_tool *tool,
+>          * if jit marker, then inject jit mmaps and generate ELF images
+>          */
+>         ret = jit_process(inject->session, &inject->output, machine,
+> -                         event->mmap2.filename, sample->pid, &n);
+> +                         event->mmap2.filename, event->mmap2.pid, &n);
+>         if (ret < 0)
+>                 return ret;
+>         if (ret) {
+> diff --git a/tools/perf/util/jitdump.c b/tools/perf/util/jitdump.c
+> index 22d09c4..6a1563f 100644
+> --- a/tools/perf/util/jitdump.c
+> +++ b/tools/perf/util/jitdump.c
+> @@ -751,6 +751,59 @@ jit_detect(char *mmap_name, pid_t pid)
+>         return 0;
+>  }
+>  
+> +struct pid_rbtree
+> +{
+> +       struct rb_node node;
+> +       pid_t pid;
+> +};
+> +
+> +static void jit_add_pid(struct rb_root *root, pid_t pid)
+> +{
+> +       struct rb_node **new = &(root->rb_node), *parent = NULL;
+> +       struct pid_rbtree* data = NULL;
+> +
+> +       /* Figure out where to put new node */
+> +       while (*new) {
+> +               struct pid_rbtree *this = container_of(*new, struct pid_rbtree, node);
+> +               pid_t nodePid = this->pid;
 
-> Hi Yizhuo,
-> 
-> thanks for your patch.
-> 
-> On 19-09-27 17:28, Yizhuo wrote:
-> > In function mx25_gcq_irq(), local variable "stats" could
-> > be uninitialized if function regmap_read() returns -EINVAL.
-> > However, this value is used in if statement, which is
-> > potentially unsafe. The same case applied to the variable
-> > "data" in function mx25_gcq_get_raw_value() in the same file.  
-> 
-> IMHO the commit header should be something like: "iio: adc: imx25-gcq:
-> fix uninitialized variable usage"...
-> 
-> and please add a fixes tag.
-As with the others, before adding a fixes tag, please verify there
-is an actual path to trigger this.
+looks like Andi is right, I'm still getting malformed patch error
 
-In this case it's an mmio regmap with no clock. For those, I'm not sure
-if there is a failure path.
-
-Still a worthwhile hardening / cleanup patch, but shouldn't be called
-a fix or marked with a fixes tag because we don't want people to think
-it is necessary to backport it.
-
-Thanks,
-
-Jonathan
+the patch has extra characters '=20' and broken lines, like:
 
 
-> 
-> > 
-> > Signed-off-by: Yizhuo <yzhai003@ucr.edu>
-> > ---
-> >  drivers/iio/adc/fsl-imx25-gcq.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/fsl-imx25-gcq.c b/drivers/iio/adc/fsl-imx25-gcq.c
-> > index df19ecae52f7..dbf3e8e85aba 100644
-> > --- a/drivers/iio/adc/fsl-imx25-gcq.c
-> > +++ b/drivers/iio/adc/fsl-imx25-gcq.c
-> > @@ -74,7 +74,10 @@ static irqreturn_t mx25_gcq_irq(int irq, void *data)
-> >  	struct mx25_gcq_priv *priv = data;
-> >  	u32 stats;
-> >  
-> > -	regmap_read(priv->regs, MX25_ADCQ_SR, &stats);
-> > +	int ret = regmap_read(priv->regs, MX25_ADCQ_SR, &stats);  
-> 
-> Please don't do this. First declare the variable and then use it.
-> 
-> Regards,
->   Marco
-> 
-> > +
-> > +	if (ret)
-> > +		return ret;
-> >  
-> >  	if (stats & MX25_ADCQ_SR_EOQ) {
-> >  		regmap_update_bits(priv->regs, MX25_ADCQ_MR,
-> > @@ -121,7 +124,10 @@ static int mx25_gcq_get_raw_value(struct device *dev,
-> >  		return -ETIMEDOUT;
-> >  	}
-> >  
-> > -	regmap_read(priv->regs, MX25_ADCQ_FIFO, &data);
-> > +	int ret = regmap_read(priv->regs, MX25_ADCQ_FIFO, &data);
-> > +
-> > +	if (ret)
-> > +		return ret;
-> >  
-> >  	*val = MX25_ADCQ_FIFO_DATA(data);
-> >  
-> > -- 
-> > 2.17.1
-> > 
-> > 
-> >   
-> 
+	--- a/tools/perf/util/jitdump.c
+	+++ b/tools/perf/util/jitdump.c
+	@@ -751,6 +751,59 @@ jit_detect(char *mmap_name, pid_t pid)
+		return 0;
+	 }
+	=20
+	+struct pid_rbtree
+	+{
+	+       struct rb_node node;
+	+       pid_t pid;
+	+};
+	+
+	+static void jit_add_pid(struct rb_root *root, pid_t pid)
+	+{
+	+       struct rb_node **new =3D &(root->rb_node), *parent =3D NULL;
+	+       struct pid_rbtree* data =3D NULL;
+	+
+	+       /* Figure out where to put new node */
+	+       while (*new) {
+	+               struct pid_rbtree *this =3D container_of(*new, struct pid_r=
+	btree, node);
+	+               pid_t nodePid =3D this->pid;
 
+
+jirka
