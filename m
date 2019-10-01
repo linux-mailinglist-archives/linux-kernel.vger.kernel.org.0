@@ -2,39 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E05C3D08
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9B96C3CEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732486AbfJAQ4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:56:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53822 "EHLO mail.kernel.org"
+        id S1731698AbfJAQmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:42:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731479AbfJAQmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:42:03 -0400
+        id S1726521AbfJAQmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:42:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7275721920;
-        Tue,  1 Oct 2019 16:42:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26A4420B7C;
+        Tue,  1 Oct 2019 16:42:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948122;
-        bh=RFlFr5ng0YfvJ70nWmeLshEy94Iz1WKXPi6LEh6LIuY=;
+        s=default; t=1569948128;
+        bh=DNNfLFjNLJirXZGKKwbJVR1o9YeP0aSn2OSCE44mIxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ctBOR35HqljWr0o8ZYwDOD53usHOzVYDe+FwnG4pe8m45D+2nCIQICU2zO2CBMeWH
-         88th1+Y+mpaWr5R7Oj9Wzo5AVhPda1+6ETJ05OKnrbI4+qqRAHcKZP138R9gmW4xym
-         oYp0f6Aqq1IjzqbpZruDhBcd2rs/fYbq8oG1/3fM=
+        b=yBOCxhwaKDjQ4DrAMPNCYrBEN9FcCAQJ2i2kTFYOV4vvrB1zG//moeqUPyG9lS5Er
+         1I95Y0k4DUjLxARH+Q0tXLEe7pGl3z2/9d+oUWppCnd7yY7nfwS7zmYiboiaDfLDgc
+         1YaKAudzmGWDwhzJwb5sXu9SGXMEbpv9A/4ds9Jc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
-        syzbot+618aacd49e8c8b8486bd@syzkaller.appspotmail.com,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        David Ahern <dsahern@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 27/63] net_sched: add max len check for TCA_KIND
-Date:   Tue,  1 Oct 2019 12:40:49 -0400
-Message-Id: <20191001164125.15398-27-sashal@kernel.org>
+Cc:     Sanjay R Mehta <sanju.mehta@amd.com>, Jon Mason <jdmason@kudzu.us>,
+        Sasha Levin <sashal@kernel.org>, linux-ntb@googlegroups.com
+Subject: [PATCH AUTOSEL 5.2 29/63] ntb: point to right memory window index
+Date:   Tue,  1 Oct 2019 12:40:51 -0400
+Message-Id: <20191001164125.15398-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -47,42 +42,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Sanjay R Mehta <sanju.mehta@amd.com>
 
-[ Upstream commit 62794fc4fbf52f2209dc094ea255eaef760e7d01 ]
+[ Upstream commit ae89339b08f3fe02457ec9edd512ddc3d246d0f8 ]
 
-The TCA_KIND attribute is of NLA_STRING which does not check
-the NUL char. KMSAN reported an uninit-value of TCA_KIND which
-is likely caused by the lack of NUL.
+second parameter of ntb_peer_mw_get_addr is pointing to wrong memory
+window index by passing "peer gidx" instead of "local gidx".
 
-Change it to NLA_NUL_STRING and add a max len too.
+For ex, "local gidx" value is '0' and "peer gidx" value is '1', then
 
-Fixes: 8b4c3cdd9dd8 ("net: sched: Add policy validation for tc attributes")
-Reported-and-tested-by: syzbot+618aacd49e8c8b8486bd@syzkaller.appspotmail.com
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+on peer side ntb_mw_set_trans() api is used as below with gidx pointing to
+local side gidx which is '0', so memroy window '0' is chosen and XLAT '0'
+will be programmed by peer side.
+
+    ntb_mw_set_trans(perf->ntb, peer->pidx, peer->gidx, peer->inbuf_xlat,
+                    peer->inbuf_size);
+
+Now, on local side ntb_peer_mw_get_addr() is been used as below with gidx
+pointing to "peer gidx" which is '1', so pointing to memory window '1'
+instead of memory window '0'.
+
+    ntb_peer_mw_get_addr(perf->ntb,  peer->gidx, &phys_addr,
+                        &peer->outbuf_size);
+
+So this patch pass "local gidx" as parameter to ntb_peer_mw_get_addr().
+
+Signed-off-by: Sanjay R Mehta <sanju.mehta@amd.com>
+Signed-off-by: Jon Mason <jdmason@kudzu.us>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_api.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/ntb/test/ntb_perf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
-index 04faee7ccbce6..dac9f2887694d 100644
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -1390,7 +1390,8 @@ check_loop_fn(struct Qdisc *q, unsigned long cl, struct qdisc_walker *w)
- }
+diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
+index 11a6cd3740049..c6a1dee3c429b 100644
+--- a/drivers/ntb/test/ntb_perf.c
++++ b/drivers/ntb/test/ntb_perf.c
+@@ -1370,7 +1370,7 @@ static int perf_setup_peer_mw(struct perf_peer *peer)
+ 	int ret;
  
- const struct nla_policy rtm_tca_policy[TCA_MAX + 1] = {
--	[TCA_KIND]		= { .type = NLA_STRING },
-+	[TCA_KIND]		= { .type = NLA_NUL_STRING,
-+				    .len = IFNAMSIZ - 1 },
- 	[TCA_RATE]		= { .type = NLA_BINARY,
- 				    .len = sizeof(struct tc_estimator) },
- 	[TCA_STAB]		= { .type = NLA_NESTED },
+ 	/* Get outbound MW parameters and map it */
+-	ret = ntb_peer_mw_get_addr(perf->ntb, peer->gidx, &phys_addr,
++	ret = ntb_peer_mw_get_addr(perf->ntb, perf->gidx, &phys_addr,
+ 				   &peer->outbuf_size);
+ 	if (ret)
+ 		return ret;
 -- 
 2.20.1
 
