@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D2FC32FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D35C330C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387669AbfJALlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:41:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41148 "EHLO
+        id S2387752AbfJALlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:41:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41278 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387624AbfJALlL (ORCPT
+        with ESMTP id S2387649AbfJALlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:11 -0400
+        Tue, 1 Oct 2019 07:41:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=5RlbHh8rwxXyihgE5xepVD66/5wBHu9kLeWwEiDJYwA=; b=TE4JDBjoZYIa
-        i1yrmXy+PE+RydKV9Cjbr5NqQ3br+oIJBCKAVZEUAyOjymDjDenvTFo0eDk46hUZA2JydH3G1rm60
-        8C79ByBRec/qcxntnaXrSbnvbMu8m20PtV+1mz0nrWYSf2pP6QPdT5LmS/Ull3lW6mAFFIfB2Xr5W
-        /3BgU=;
+        List-Archive; bh=s76vvuJytASWP0aoMu6n1w53rQCXKWbC2l3bEXVXrQ0=; b=FHJI43356iX2
+        9a0FSPeuCCrjKpXgjSqLjYd6sCKOdZV9CKmILUhXGGb1MzoSbMEQJqK8HgjCRNG6mYgeyg33qmVYN
+        oJpcUAyFMRL62OZXKL+xJXO7egAzpNMZVOHYTNTzzCD4Rh697u2sGg8kGrD/24cjDqgzDpYcd/ZJm
+        kj68k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWh-0004Z6-PG; Tue, 01 Oct 2019 11:41:07 +0000
+        id 1iFGWh-0004Z0-He; Tue, 01 Oct 2019 11:41:07 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 44C832742A30; Tue,  1 Oct 2019 12:41:07 +0100 (BST)
+        id 0FAEC2742A10; Tue,  1 Oct 2019 12:41:07 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: dw: Add compatible string for Renesas RZ/N1 SPI Controller" to the spi tree
-In-Reply-To: <1568793876-9009-5-git-send-email-gareth.williams.jx@renesas.com>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Applied "spi: atmel: Remove AVR32 leftover" to the spi tree
+In-Reply-To: <20190919154034.7489-1-gregory.clement@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114107.44C832742A30@ypsilon.sirena.org.uk>
+Message-Id: <20191001114107.0FAEC2742A10@ypsilon.sirena.org.uk>
 Date:   Tue,  1 Oct 2019 12:41:07 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: dw: Add compatible string for Renesas RZ/N1 SPI Controller
+   spi: atmel: Remove AVR32 leftover
 
 has been applied to the spi tree at
 
@@ -72,38 +75,64 @@ to this mail.
 Thanks,
 Mark
 
-From 3ade3a37bdd77319dd7865228402cf1669c9b678 Mon Sep 17 00:00:00 2001
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Date: Wed, 18 Sep 2019 09:04:36 +0100
-Subject: [PATCH] spi: dw: Add compatible string for Renesas RZ/N1 SPI
- Controller
+From e61bb114d41ddf6ae5bf05a0109fc13116550c7d Mon Sep 17 00:00:00 2001
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Thu, 19 Sep 2019 17:40:34 +0200
+Subject: [PATCH] spi: atmel: Remove AVR32 leftover
 
-The Renesas RZ/N1 SPI Controller is based on the Synopsys DW SSI, but has
-additional registers for software CS control and DMA. This patch does not
-address the changes required for DMA support, it simply adds the compatible
-string. The CS registers are not needed as Linux can use gpios for the CS
-signals.
+AV32 support has been from the kernel a few release ago, but there was
+still some specific macro for this architecture in this driver. Lets
+remove it.
 
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Link: https://lore.kernel.org/r/1568793876-9009-5-git-send-email-gareth.williams.jx@renesas.com
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Link: https://lore.kernel.org/r/20190919154034.7489-1-gregory.clement@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-dw-mmio.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-atmel.c | 24 ------------------------
+ 1 file changed, 24 deletions(-)
 
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index bd46fca3f094..b5ce8bd58d9e 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -223,6 +223,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
- 	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_ocelot_init},
- 	{ .compatible = "mscc,jaguar2-spi", .data = dw_spi_mscc_jaguar2_init},
- 	{ .compatible = "amazon,alpine-dw-apb-ssi", .data = dw_spi_alpine_init},
-+	{ .compatible = "renesas,rzn1-spi", },
- 	{ /* end of table */}
- };
- MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
+diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
+index acf318e7330c..3ed5e663da6f 100644
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -222,37 +222,13 @@
+ 	  | SPI_BF(name, value))
+ 
+ /* Register access macros */
+-#ifdef CONFIG_AVR32
+-#define spi_readl(port, reg) \
+-	__raw_readl((port)->regs + SPI_##reg)
+-#define spi_writel(port, reg, value) \
+-	__raw_writel((value), (port)->regs + SPI_##reg)
+-
+-#define spi_readw(port, reg) \
+-	__raw_readw((port)->regs + SPI_##reg)
+-#define spi_writew(port, reg, value) \
+-	__raw_writew((value), (port)->regs + SPI_##reg)
+-
+-#define spi_readb(port, reg) \
+-	__raw_readb((port)->regs + SPI_##reg)
+-#define spi_writeb(port, reg, value) \
+-	__raw_writeb((value), (port)->regs + SPI_##reg)
+-#else
+ #define spi_readl(port, reg) \
+ 	readl_relaxed((port)->regs + SPI_##reg)
+ #define spi_writel(port, reg, value) \
+ 	writel_relaxed((value), (port)->regs + SPI_##reg)
+-
+-#define spi_readw(port, reg) \
+-	readw_relaxed((port)->regs + SPI_##reg)
+ #define spi_writew(port, reg, value) \
+ 	writew_relaxed((value), (port)->regs + SPI_##reg)
+ 
+-#define spi_readb(port, reg) \
+-	readb_relaxed((port)->regs + SPI_##reg)
+-#define spi_writeb(port, reg, value) \
+-	writeb_relaxed((value), (port)->regs + SPI_##reg)
+-#endif
+ /* use PIO for small transfers, avoiding DMA setup/teardown overhead and
+  * cache operations; better heuristics consider wordsize and bitrate.
+  */
 -- 
 2.20.1
 
