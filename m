@@ -2,94 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4900CC356C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C15C356B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388302AbfJANTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:19:08 -0400
-Received: from inca-roads.misterjones.org ([213.251.177.50]:38169 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388005AbfJANTH (ORCPT
+        id S2388291AbfJANTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:19:01 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:58668 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388005AbfJANTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:19:07 -0400
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
-        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iFI3N-0005kv-Pu; Tue, 01 Oct 2019 15:18:57 +0200
-Date:   Tue, 1 Oct 2019 14:18:48 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Jia He <justin.he@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Punit Agrawal <punitagrawal@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>, hejianet@gmail.com,
-        Kaly Xin <Kaly.Xin@arm.com>
-Subject: Re: [PATCH v10 1/3] arm64: cpufeature: introduce helper
- cpu_has_hw_af()
-Message-ID: <20191001141848.762296bd@why>
-In-Reply-To: <20191001125446.gknoofnm7az4wqf5@willie-the-truck>
-References: <20190930015740.84362-1-justin.he@arm.com>
-        <20190930015740.84362-2-justin.he@arm.com>
-        <20191001125446.gknoofnm7az4wqf5@willie-the-truck>
-Organization: Approximate
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 1 Oct 2019 09:19:01 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91DDuHL191848;
+        Tue, 1 Oct 2019 13:18:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=36AAYpNCVwQ1HuLTkAIFX9a+WjdH9YjtBIQub1EEbgs=;
+ b=DX7Be7yX8elRr/z+UnBkC+KcU1IitcGVP6OVmdU5gF/vsWoCSYV0dXl+41Ec8rP7wQQA
+ qUUqWuJwNpvT2cMJQTnTNsXiYk1D4cc6X4KQSwEzEleL6WTaiA7ya0AgLoYvc6QCgS6u
+ NNUUsm/jn6ltyyyVgsCFJ5s/7aKbmfwsjejWL9rIj6XWePrBU0vjdLwWG6lCPX1ele62
+ 6TiLjT/De2gcBRKSFgMhzTXz0jDTCjdBudkPj7l+hdlSEZL5MWOSW97T3/CC6CscaScO
+ myGOrBebGiwninp6Lka4XwVR+6VlpVphf1ITuUqLYoWpa5ykjC6eGRmhYWr48Pq6bPbH Mw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2v9yfq5rkk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 13:18:58 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91DDjEP146599;
+        Tue, 1 Oct 2019 13:18:57 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2vbnqcwb0v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 13:18:57 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x91DIuaY029847;
+        Tue, 1 Oct 2019 13:18:56 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Oct 2019 06:18:55 -0700
+Date:   Tue, 1 Oct 2019 16:18:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jesse Barton <jessebarton95@gmail.com>
+Cc:     valdis.kletnieks@vt.edu, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] Staging: exfat: exfat_super.c: fixed multiple coding
+ style issues with camelcase and parentheses
+Message-ID: <20191001131849.GE22609@kadam>
+References: <20190929002233.21998-1-jessebarton95@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: will@kernel.org, justin.he@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, james.morse@arm.com, willy@infradead.org, kirill.shutemov@linux.intel.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, punitagrawal@gmail.com, tglx@linutronix.de, akpm@linux-foundation.org, hejianet@gmail.com, Kaly.Xin@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190929002233.21998-1-jessebarton95@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910010120
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910010120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 Oct 2019 13:54:47 +0100
-Will Deacon <will@kernel.org> wrote:
-
-> On Mon, Sep 30, 2019 at 09:57:38AM +0800, Jia He wrote:
-> > We unconditionally set the HW_AFDBM capability and only enable it on
-> > CPUs which really have the feature. But sometimes we need to know
-> > whether this cpu has the capability of HW AF. So decouple AF from
-> > DBM by new helper cpu_has_hw_af().
-> > 
-> > Signed-off-by: Jia He <justin.he@arm.com>
-> > Suggested-by: Suzuki Poulose <Suzuki.Poulose@arm.com>
-> > Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> > ---
-> >  arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> > index 9cde5d2e768f..949bc7c85030 100644
-> > --- a/arch/arm64/include/asm/cpufeature.h
-> > +++ b/arch/arm64/include/asm/cpufeature.h
-> > @@ -659,6 +659,16 @@ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
-> >  	default: return CONFIG_ARM64_PA_BITS;
-> >  	}
-> >  }
-> > +
-> > +/* Check whether hardware update of the Access flag is supported */
-> > +static inline bool cpu_has_hw_af(void)
-> > +{
-> > +	if (IS_ENABLED(CONFIG_ARM64_HW_AFDBM))
-> > +		return read_cpuid(ID_AA64MMFR1_EL1) & 0xf;  
+On Sat, Sep 28, 2019 at 07:22:33PM -0500, Jesse Barton wrote:
+> Fixed coding style issues with camelcase on functions and various parentheses that were not needed
 > 
-> 0xf? I think we should have a mask in sysreg.h for this constant.
 
-We don't have the mask, but we certainly have the shift.
+Do this as two separate patches.
 
-GENMASK(ID_AA64MMFR1_HADBS_SHIFT + 3, ID_AA64MMFR1_HADBS_SHIFT) is a bit
-of a mouthful though. Ideally, we'd have a helper for that.
+regards,
+dan carpenter
 
-	M.
--- 
-Without deviation from the norm, progress is not possible.
