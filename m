@@ -2,92 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D017C3034
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 11:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A77FC3037
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 11:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfJAJaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 05:30:22 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44975 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfJAJaV (ORCPT
+        id S1729143AbfJAJbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 05:31:45 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45417 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbfJAJbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 05:30:21 -0400
-Received: by mail-yw1-f67.google.com with SMTP id m13so4038373ywa.11
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 02:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=x6ZXQQxzoml14NVErNzUyQEmyrBF8ArDdBNS8Uodmbo=;
-        b=I3l3kG09z75kRVXzCU8LlNKVH2Bde2NsxsIziU5Jh+quW2kbpAp4T4wJx5lWBdSp6f
-         4VyEw5sjmHECBOSBthYY/jOPbkFfKOtE4Op6L54vnZSs66PxI5sM/mlMDtL3dMDbEPVJ
-         4utZmAUGHTeuXZliE7inaeJmgz7LHSJBSvwI1Wnp92NRJXZY6/fym1kWDt0U17UlTuBm
-         X6m4im1gqDXULKbVFkmafrP/mzZpEOKtp3VwPAhyTprdOfXwUM9F2WgG8WvJng9ZIKX2
-         1A5pK6Ol9gWu9ZYmg7Z1jJ+NNb9S7ny8SNGp5lW03RLYchIo+y3omh3hN19IqDjofkET
-         uP7g==
+        Tue, 1 Oct 2019 05:31:45 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 41so10911225oti.12;
+        Tue, 01 Oct 2019 02:31:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=x6ZXQQxzoml14NVErNzUyQEmyrBF8ArDdBNS8Uodmbo=;
-        b=bKU5Obq68ukcCKYQE79saHmadH1W4KSYwFRA+kdWtlEQQvppw3pej5M6cuUeqk/SmV
-         9zCauwbuF2qsQvM5pmkL9KOFSC2fo5dKQXoFqFxv/iF1n/yOIsf8K2qNy1GrEJ1IALBK
-         Ec/GoLK62lraBk7mS5V+gm9BS7KP8Dpi3PucS2+EBumaOxcDq2P4CTVJ2eH+JEvtkLD9
-         l6SGDx7pi8I5QkdL1bAIozF5l9Q0MqFf/8WhhycP4WWJBEMjngqQ+agxE0s9G63+J54F
-         ZLnjRrnhAb02Cp+2pu4CDoEm2QvrkatQMoBOhjBvsS8M9/95t9/qaLfSaJnxpGenBg11
-         0HnQ==
-X-Gm-Message-State: APjAAAVQit4L9i7nCqOPy0quAPtVaKLXgGtkmy/l2iTIgkql3XE4qjqn
-        NMqSzXIh58Itk0pWVCfJKnbEwRf0Spdfdo4f+5UytNDx
-X-Google-Smtp-Source: APXvYqzIX5zGU/kHiL+8xPaBFUCPCg+o6+MI3F6ZbPPNcmucI97aj82oMjNxsEOKF58rCjF4VbJLP23pjr1lUgUnF0c=
-X-Received: by 2002:a81:84d0:: with SMTP id u199mr14119606ywf.284.1569922219447;
- Tue, 01 Oct 2019 02:30:19 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bTJZse+SbdPMDD1qqqBwjeMw24Hq9Hp0zN9VfWRxdY8=;
+        b=ubgzn34KvhKY2ebsttIiG3RQjj1eFRueVwXkToI9F/8lti/4KIatGOfLFYdQ41FBwA
+         hUcjpFKip39lUyfMUb0yLPKUtPi82NNnakzD2+Kh18yGM/RHOQwOvyBlDn6HaYfppC6E
+         gA3kcqttb1Z5N4YTRQRXiBrQsHaChtg540nHaLRZz2BuWZvrkg9Dtea7x20oocNnt7Kx
+         X8siT0m1J+z0DBXLleuQjgyJjaKeIoYe5srRZSHgpY7P0amH8ld41bebFAVWpbWcc7za
+         WEBqNg6x8qSnR07x17QOxAXXiPCX6HfqseFT8utINoof4L/hPZL0KaHAjzKIKkTXi7zs
+         /tIA==
+X-Gm-Message-State: APjAAAUhclVYldT4OZcMxpHlpj3VYJDIPHf493UohHVOU1YMgMZF+QQ2
+        NNhST9s3xE1i2ss7/w0N3g0/q6AdN9opGKjxI54=
+X-Google-Smtp-Source: APXvYqxgy6O5gLjryUiztR7kAgkA0bgy3TFCjqSQaRnqWj5Ee7E3NcWx+6DlXs2JYQI3woIAZuai6vgI4CIUbeEtT44=
+X-Received: by 2002:a9d:6301:: with SMTP id q1mr1125046otk.262.1569922304073;
+ Tue, 01 Oct 2019 02:31:44 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:ad82:0:0:0:0:0 with HTTP; Tue, 1 Oct 2019 02:30:18 -0700 (PDT)
-Reply-To: eddywilliam0003@gmail.com
-From:   eddy william <bbruce539@gmail.com>
-Date:   Tue, 1 Oct 2019 11:30:18 +0200
-Message-ID: <CADiB6YnkTLeZzgVT02qSi1ncdvXFrsj-CMghgDe87tO1qh_F7Q@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
+References: <001601d57487$e1029ef0$a307dcd0$@net> <000f01d576df$a6b87a30$f4296e90$@net>
+In-Reply-To: <000f01d576df$a6b87a30$f4296e90$@net>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 1 Oct 2019 11:31:32 +0200
+Message-ID: <CAJZ5v0gu=rALS9ZLNMDT3cw_sT2m8XCKP6+AW3488x2Q9EXM3g@mail.gmail.com>
+Subject: Re: [RFC/RFT][PATCH v8] cpuidle: New timer events oriented governor
+ for tickless systems
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Chen, Hu" <hu1.chen@intel.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Sun, Sep 29, 2019 at 6:05 PM Doug Smythies <dsmythies@telus.net> wrote:
+>
+> On 2019.09.26 09:32 Doug Smythies wrote:
+>
+> > If the deepest idle state is disabled, the system
+> > can become somewhat unstable, with anywhere between no problem
+> > at all, to the occasional temporary jump using a lot more
+> > power for a few seconds, to a permanent jump using a lot more
+> > power continuously. I have been unable to isolate the exact
+> > test load conditions under which this will occur. However,
+> > temporarily disabling and then enabling other idle states
+> > seems to make for a somewhat repeatable test. It is important
+> > to note that the issue occurs with only ever disabling the deepest
+> > idle state, just not reliably.
+> >
+> > I want to know how you want to proceed before I do a bunch of
+> > regression testing.
+>
+> I did some regression testing anyhow, more to create and debug
+> a methodology than anything else.
+>
+> > On 2018.12.11 03:50 Rafael J. Wysocki wrote:
+> >
+> >> v7 -> v8:
+> >>  * Apply the selection rules to the idle deepest state as well as to
+> >>    the shallower ones (the deepest idle state was treated differently
+> >>    before by mistake).
+> >>  * Subtract 1/2 of the exit latency from the measured idle duration
+> >>    in teo_update() (instead of subtracting the entire exit latency).
+> >>    This makes the idle state selection be slightly more performance-
+> >>   oriented.
+> >
+> > I have isolated the issue to a subset of the v7 to v8 changes, however
+> > it was not the exit latency changes.
+> >
+> > The partial revert to V7 changes I made were (on top of 5.3):
+>
+> The further testing showed a problem or two with my partial teo-v7 reversion
+> (I call it teo-v12) under slightly different testing conditions.
+>
+> I also have a 5.3 based kernel with the current teo reverted and the entire
+> teo-v7 put in its place. I have yet to find a idle state disabled related issue
+> with this kernel.
+>
+> I'll come back to this thread at a later date with better details and test results.
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
+Thanks for this work!
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0003@gmail=
-.com
-
-Many thanks in advance,
-Mr.Eddy William
-
-
-Hallo
-
-Mein Name ist Eddy William . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6cht=
-e
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($14.2 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
-
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0003@gmail.com
-
-Vielen Dank im Voraus,
-Mr.Eddy William
+Please also note that there is a teo patch in 5.4-rc1 that may make a
+difference in principle.
