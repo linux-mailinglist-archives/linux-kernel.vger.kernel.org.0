@@ -2,115 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4544C3DA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F736C3D78
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfJARBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:01:12 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:39658 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729908AbfJAQkX (ORCPT
+        id S1727372AbfJARAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:00:04 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38424 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727190AbfJAQ74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:40:23 -0400
+        Tue, 1 Oct 2019 12:59:56 -0400
+Received: by mail-pg1-f195.google.com with SMTP id x10so10068011pgi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1569948023; x=1601484023;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=AbNQ1OO9qC/P3BwiZpTRZ/SDjeyYkXOLrzA/Huj/dlM=;
-  b=dklJ7GAoPEbbCd0GNBKwREbBojt4ThoOuKgodwy/P2AcgmXmO01T4PWh
-   jUHBiFfR/Z5RVFhX2bxZ0k1lhMbGLYDRYUMoThrqChe/9e/gf9FCZsw87
-   qPgiZd6dOtFEKq3w8YhuH4ZxwfUAwXhDktfyqCcpQsdoulZiOA8J2Nw32
-   A=;
-X-IronPort-AV: E=Sophos;i="5.64,571,1559520000"; 
-   d="scan'208";a="425072316"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 01 Oct 2019 16:40:21 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (Postfix) with ESMTPS id 75C71A24BD;
-        Tue,  1 Oct 2019 16:40:21 +0000 (UTC)
-Received: from EX13D02UWC002.ant.amazon.com (10.43.162.6) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 1 Oct 2019 16:40:21 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
- EX13D02UWC002.ant.amazon.com (10.43.162.6) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 1 Oct 2019 16:40:20 +0000
-Received: from 8c859006a84e.ant.amazon.com (172.26.203.30) by
- mail-relay.amazon.com (10.43.160.118) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Tue, 1 Oct 2019 16:40:20 +0000
-From:   Patrick Williams <alpawi@amazon.com>
-CC:     =?UTF-8?q?Bj=C3=B6rn=20Ard=C3=B6?= <bjorn.ardo@axis.com>,
-        Patrick Williams <alpawi@amazon.com>,
-        Patrick Williams <patrick@stwcx.xyz>,
-        Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] i2c: slave-eeprom: support additional models
-Date:   Tue, 1 Oct 2019 11:40:06 -0500
-Message-ID: <20191001164009.21610-2-alpawi@amazon.com>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <20191001164009.21610-1-alpawi@amazon.com>
-References: <20191001164009.21610-1-alpawi@amazon.com>
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2awflrC+S8sW6Q8RM/7IHEMp9YVcJWuJTxLTWpq/SvI=;
+        b=BV49VzhGClndCpnhV7hfr6O3hnvXTBaeI71S7Wb7NEfFeGK2L2UbE/CHr1SoGn8sqR
+         t+jDBhR/ja8iIRH73mXK+85sipatQ7KQi02cIBi3mZZrug3mhTFJBWzZcpHtSXD0L7ot
+         U7YiWARFMcbhN4RpZ05H4ne6z+rLWsFutiKvXBIjenmImi90FKyUQToC6CN1mXG2e713
+         EEVldl+tL6vYTmxzps3RVIM44J97N+9Lvr0NNtbpJDzt0V9SeUj04OM3eDajFZhs5/bc
+         cHcLm79dh6p4hK5pWMlZDm30hvguPG9+fVnYuf+WpzrOwzFupTWqjOlLWDZyIGYmHxCy
+         qEDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2awflrC+S8sW6Q8RM/7IHEMp9YVcJWuJTxLTWpq/SvI=;
+        b=hiJm5FW7ff+xkOZYG2fTXt/CTPaAKdi2wnukgZKQBJdwLvub9UQchrOuyAKEV5RyeI
+         hXUex1DYK26z8sW9/1ZQtJQblNWz4ER/ZmUE1coApwDryAiDySVL/o/IlJrLtPupresd
+         Tgt+amt/Vn1iDQReOWcCl9ii5Qb+Xlkq0czCLmepaDmyVuYryWNeRUuAbrIMOA9mK0Is
+         LjMNkBTNECPiSodnbye7Hr4jN+leSi+uNK5Ikyr4o+epiim3awwjeJH9sx0ZOfNJt148
+         0EagAuSdbHPdBVpd7I1IRlx64l3uBlSaVyO1hif44RQBZPVDXQMmYU7DYyAx7ddzp+79
+         T3RQ==
+X-Gm-Message-State: APjAAAV/arcmAuW6e8HaDBYSu4dshTOjQReBfWYQ3wAlYMAE2mtLWRpj
+        vdeMzWis4UvumDTNcK+UrhKYaTUj6GhtXYd0Px+5MQ==
+X-Google-Smtp-Source: APXvYqza0SPHw15ijDTzbY4E90ZETPgajrtr0mx3323n/WmbwxvaNA6FJ4ljLciXhra0aRHuEKxCIkefXuD7pecraIk=
+X-Received: by 2002:a63:2f45:: with SMTP id v66mr7478314pgv.263.1569949194584;
+ Tue, 01 Oct 2019 09:59:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
+ <20190926214342.34608-1-vincenzo.frascino@arm.com> <20190926214342.34608-2-vincenzo.frascino@arm.com>
+ <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck> <20191001132731.GG41399@arrakis.emea.arm.com>
+ <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com> <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
+ <7558914c-fc2d-d05a-ccbe-76ef451670ae@arm.com> <20191001144353.5rn3bkcc6eyfclh7@willie-the-truck>
+ <20191001153056.GO41399@arrakis.emea.arm.com> <20191001164657.l2wz3ghq6icm3lim@willie-the-truck>
+In-Reply-To: <20191001164657.l2wz3ghq6icm3lim@willie-the-truck>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 1 Oct 2019 09:59:43 -0700
+Message-ID: <CAKwvOd=+-PEQXOZBG6rprWdOzHfcQq9ojkGo+Q28vfC4AU=Hwg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for emulating the following EEPROMs:
-    * 24c01  - 1024 bit
-    * 24c128 - 128k bit
-    * 24c256 - 256k bit
-    * 24c512 - 512k bit
+On Tue, Oct 1, 2019 at 9:47 AM Will Deacon <will@kernel.org> wrote:
+>
+> On Tue, Oct 01, 2019 at 04:30:56PM +0100, Catalin Marinas wrote:
+> > In the long run, I wouldn't mandate CROSS_COMPILE_COMPAT to always be
+> > set for the compat vDSO since with clang we could use the same compiler
+> > binary for both native and compat (with different flags). That's once we
+> > cleaned up the headers.
+>
+> But we'll still need it even with clang so that the relevant triple can be
+> passed to the --target option. The top-level Makefile already does this:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n544
 
-The flag bits in the device id were shifted up 1 bit to make
-room for saving the 24c512's size.  24c512 uses the full 16-bit
-address space of a 2-byte addressable EEPROM.
+That's not pulling the cross compiler out of a *config* (as this patch
+is proposing); rather from an env var.
 
-Signed-off-by: Patrick Williams <alpawi@amazon.com>
----
- drivers/i2c/i2c-slave-eeprom.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+>
+> so I think we should do the same thing for the compat vdso as well, which
+> would allow us to remove this complexity by requiring that
+> CROSS_COMPILE_COMPAT identifies the cross-compiler to use in exactly the
+> same way as CROSS_COMPILE does.
+>
+> Am I missing something here?
 
-diff --git a/drivers/i2c/i2c-slave-eeprom.c b/drivers/i2c/i2c-slave-eeprom.c
-index efee56106251..65419441313b 100644
---- a/drivers/i2c/i2c-slave-eeprom.c
-+++ b/drivers/i2c/i2c-slave-eeprom.c
-@@ -37,9 +37,9 @@ struct eeprom_data {
- 	u8 buffer[];
- };
- 
--#define I2C_SLAVE_BYTELEN GENMASK(15, 0)
--#define I2C_SLAVE_FLAG_ADDR16 BIT(16)
--#define I2C_SLAVE_FLAG_RO BIT(17)
-+#define I2C_SLAVE_BYTELEN GENMASK(16, 0)
-+#define I2C_SLAVE_FLAG_ADDR16 BIT(17)
-+#define I2C_SLAVE_FLAG_RO BIT(18)
- #define I2C_SLAVE_DEVICE_MAGIC(_len, _flags) ((_flags) | (_len))
- 
- static int i2c_slave_eeprom_slave_cb(struct i2c_client *client,
-@@ -171,12 +171,20 @@ static int i2c_slave_eeprom_remove(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id i2c_slave_eeprom_id[] = {
-+	{ "slave-24c01", I2C_SLAVE_DEVICE_MAGIC(1024 / 8,  0) },
-+	{ "slave-24c01ro", I2C_SLAVE_DEVICE_MAGIC(1024 / 8,  I2C_SLAVE_FLAG_RO) },
- 	{ "slave-24c02", I2C_SLAVE_DEVICE_MAGIC(2048 / 8,  0) },
- 	{ "slave-24c02ro", I2C_SLAVE_DEVICE_MAGIC(2048 / 8,  I2C_SLAVE_FLAG_RO) },
- 	{ "slave-24c32", I2C_SLAVE_DEVICE_MAGIC(32768 / 8, I2C_SLAVE_FLAG_ADDR16) },
- 	{ "slave-24c32ro", I2C_SLAVE_DEVICE_MAGIC(32768 / 8, I2C_SLAVE_FLAG_ADDR16 | I2C_SLAVE_FLAG_RO) },
- 	{ "slave-24c64", I2C_SLAVE_DEVICE_MAGIC(65536 / 8, I2C_SLAVE_FLAG_ADDR16) },
- 	{ "slave-24c64ro", I2C_SLAVE_DEVICE_MAGIC(65536 / 8, I2C_SLAVE_FLAG_ADDR16 | I2C_SLAVE_FLAG_RO) },
-+	{ "slave-24c128", I2C_SLAVE_DEVICE_MAGIC(131072 / 8, I2C_SLAVE_FLAG_ADDR16) },
-+	{ "slave-24c128ro", I2C_SLAVE_DEVICE_MAGIC(131072 / 8, I2C_SLAVE_FLAG_ADDR16 | I2C_SLAVE_FLAG_RO) },
-+	{ "slave-24c256", I2C_SLAVE_DEVICE_MAGIC(262144 / 8, I2C_SLAVE_FLAG_ADDR16) },
-+	{ "slave-24c256ro", I2C_SLAVE_DEVICE_MAGIC(262144 / 8, I2C_SLAVE_FLAG_ADDR16 | I2C_SLAVE_FLAG_RO) },
-+	{ "slave-24c512", I2C_SLAVE_DEVICE_MAGIC(524288 / 8, I2C_SLAVE_FLAG_ADDR16) },
-+	{ "slave-24c512ro", I2C_SLAVE_DEVICE_MAGIC(524288 / 8, I2C_SLAVE_FLAG_ADDR16 | I2C_SLAVE_FLAG_RO) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, i2c_slave_eeprom_id);
+I think the second paragraph you wrote shows we're all in agreement,
+but I suspect you may be conflating *how* the toplevel Makefile knows
+we're doing a cross compile.  It doesn't read a config, this patch
+would make it so a cross compiler is specified via config, Catalin
+asked "please no," I agree with Catalin (and I suspect you do too).
 -- 
-2.17.2 (Apple Git-113)
-
+Thanks,
+~Nick Desaulniers
