@@ -2,255 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 267AEC3927
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A098FC3937
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388277AbfJAPeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 11:34:19 -0400
-Received: from mail-eopbgr760103.outbound.protection.outlook.com ([40.107.76.103]:37895
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727236AbfJAPeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 11:34:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ddzmi4pjSnPKaexWaNKinmEANVNeRmjzqOxCfsSzbwUPDt0AcEkV+0RwGbWQ09P5u29I2P4I/5azEvg2BJzTbfo1FC6NdmYf3KrUWpgUfbi9y2KR7Qy8xcMghGOyvHjMkY5RALrU+UNsygCYmCboJSneHDNkS7oHomA6q6hQfU+hF37PSFAdKUhy1ogSb9M+mR5pljGvjVEj0wwQdyuLyNGg8pDURYe6YB4byVsle2O7U4cKBDQOlnR7YPOMMNJw+Lhy3FebdgWDg54rS1R77NDq/mr3jihXS6CxJqV4z1blBDfNlERH5kMQTdvNl06wZVnEkg1x5P7MyqZkvM/fZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7gI59ecenQkg/Ia14PtLESLE7XFUxhb/ByENVySoOdk=;
- b=UE9n2iON2mv0exPvyrOIeaDZamOI2NIpuTtcrD6jz2/NxoXITmhMLr9qwzKbngYl0uWare0D5puUZ+GDyFd3W9+UZ4gchpZdLh0ID2uOn6D+IK1jm2vXTGJgXxoRtiJfaUPJh4CqJsTszdO04MS+9Atw41CbMbhclrXyWVKNwKzMsPQesCJj+VBZAvxY2AgWrczx2ReyO5HuIpKSf9kBjdB+BAXfBn1oKNQOAbctGr05ka2lBxGJ9XYOiEo7n0xX3msyIpCSyB5ZOf5R8Re8WvCsm4bI2x9QiP9AL5+qTJGE0gvUpVl4hhRM91MweGi0FDfIEzv8XqFF19Pe2vchrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fortanix.com; dmarc=pass action=none header.from=fortanix.com;
- dkim=pass header.d=fortanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector2-fortanix-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7gI59ecenQkg/Ia14PtLESLE7XFUxhb/ByENVySoOdk=;
- b=WuKLwFfSMls8n+b+ZQG2bmSCl9UgvI3ysSpXOIaA4UBgKmNNBQwEQm7V+gb0rnjPeVmNWHzTu5QnJ0p3ESQkDiNX8FPSIdaGahY0pA61sZnIhnxuOvHKRBv2jgb+knQFI1lXNZsJLuevNfLF9nv6gV9Pb3uR1ju/qhSQQtzGzLI=
-Received: from BYAPR11MB3734.namprd11.prod.outlook.com (20.178.238.83) by
- BYAPR11MB2791.namprd11.prod.outlook.com (52.135.228.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.17; Tue, 1 Oct 2019 15:34:11 +0000
-Received: from BYAPR11MB3734.namprd11.prod.outlook.com
- ([fe80::3cc2:4e3:ad44:cb03]) by BYAPR11MB3734.namprd11.prod.outlook.com
- ([fe80::3cc2:4e3:ad44:cb03%7]) with mapi id 15.20.2305.017; Tue, 1 Oct 2019
- 15:34:11 +0000
-From:   Jethro Beekman <jethro@fortanix.com>
-To:     Roopa Prabhu <roopa@cumulusnetworks.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        Litao jiao <jiaolitao@raisecom.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] Don't copy mark from encapsulated packet when routing
- VXLAN
-Thread-Topic: [RFC PATCH] Don't copy mark from encapsulated packet when
- routing VXLAN
-Thread-Index: AQHVd1gqiAyO7yupP0GOyruRZOsWPqdF64YAgAAA7AA=
-Date:   Tue, 1 Oct 2019 15:34:10 +0000
-Message-ID: <52eea4e9-dcf4-9b23-8282-c88d6e97b3d9@fortanix.com>
-References: <1db9d050-7ccd-0576-7710-156f22517025@fortanix.com>
- <CAJieiUgo8mr6+WTiVK_nneqbTP02hJR0yomjXSgf-0K3+hV+EA@mail.gmail.com>
-In-Reply-To: <CAJieiUgo8mr6+WTiVK_nneqbTP02hJR0yomjXSgf-0K3+hV+EA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM4PR0202CA0008.eurprd02.prod.outlook.com
- (2603:10a6:200:89::18) To BYAPR11MB3734.namprd11.prod.outlook.com
- (2603:10b6:a03:fb::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [212.61.132.179]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b7dad665-f6f5-4975-f8b9-08d74684ce4c
-x-ms-traffictypediagnostic: BYAPR11MB2791:
-x-microsoft-antispam-prvs: <BYAPR11MB2791F568F5E8E85E416B86ACAA9D0@BYAPR11MB2791.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-forefront-prvs: 0177904E6B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39840400004)(346002)(136003)(366004)(376002)(189003)(199004)(229853002)(6486002)(14454004)(6116002)(3846002)(36756003)(6512007)(6916009)(71190400001)(25786009)(316002)(508600001)(486006)(71200400001)(66066001)(6246003)(305945005)(7736002)(4326008)(5660300002)(11346002)(81166006)(31686004)(476003)(99936001)(256004)(66556008)(26005)(64756008)(186003)(66616009)(66476007)(66446008)(8676002)(8936002)(86362001)(31696002)(446003)(66946007)(2616005)(52116002)(54906003)(6436002)(2906002)(102836004)(53546011)(6506007)(76176011)(386003)(99286004)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR11MB2791;H:BYAPR11MB3734.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 0Cq3xwOM5DGfAuxq0rB5fbGgIvu51ec5o2VXoapfGP26SaHuXie0arcuCryf6kn4v24iJgMOhrCF+p5RoP2+soITmBI1RiGpuAb5X/34W5rzeHuYVDNblibBSfZxHouTs8ZICl2T9vrR4cO0feJbqcRkE3SfBA1UtZBZapqTo62gW1x4t7YbgZr8PlORtWsAotcWCNtsahwURHezrMYkdjSxb6wem0Q8DNLtYPPyDOPMFtkFBTJkEI2Cn9v9rW1/t2PqxvGwX2HCQGSqRNOeHkpyRji0cywG8qZ3uDKrj0ODVtO3olvmYN/Oy5i7q9tyf8tSmQGhKEf/y/QSa1jb22fIZ5TbmTpzqkeKyYFk3y2gn59OJfssuonDJwZQ9h85cidjDyovRYvjEPjxD0FVT10OR5NZI7tmrDD+qOZ/5FE=
-x-ms-exchange-transport-forked: True
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090900080708030008040809"
+        id S2389681AbfJAPfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 11:35:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38180 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389583AbfJAPfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 11:35:18 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9541330917AC;
+        Tue,  1 Oct 2019 15:35:17 +0000 (UTC)
+Received: from [10.36.116.54] (ovpn-116-54.ams2.redhat.com [10.36.116.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1564610027A1;
+        Tue,  1 Oct 2019 15:35:00 +0000 (UTC)
+Subject: Re: [PATCH v11 0/6] mm / virtio: Provide support for unused page
+ reporting
+To:     Alexander Duyck <alexander.duyck@gmail.com>,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        mhocko@kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, vbabka@suse.cz, osalvador@suse.de
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com,
+        konrad.wilk@oracle.com, nitesh@redhat.com, riel@surriel.com,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com
+References: <20191001152441.27008.99285.stgit@localhost.localdomain>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <7233498c-2f64-d661-4981-707b59c78fd5@redhat.com>
+Date:   Tue, 1 Oct 2019 17:35:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7dad665-f6f5-4975-f8b9-08d74684ce4c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2019 15:34:10.9301
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1zSSy2/DgWNS13xFAUg8TvMkiIIwE3tea8z1l6csg2KC04Xy0W9W1EiDwPIjPYRuTA6XFgsazj4quyEncx+tvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2791
+In-Reply-To: <20191001152441.27008.99285.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 01 Oct 2019 15:35:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---------------ms090900080708030008040809
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On 01.10.19 17:29, Alexander Duyck wrote:
+> This series provides an asynchronous means of reporting to a hypervisor
+> that a guest page is no longer in use and can have the data associated
+> with it dropped. To do this I have implemented functionality that allows
+> for what I am referring to as unused page reporting. The advantage of
+> unused page reporting is that we can support a significant amount of
+> memory over-commit with improved performance as we can avoid having to
+> write/read memory from swap as the VM will instead actively participate
+> in freeing unused memory so it doesn't have to be written.
+> 
+> The functionality for this is fairly simple. When enabled it will allocate
+> statistics to track the number of reported pages in a given free area.
+> When the number of free pages exceeds this value plus a high water value,
+> currently 32, it will begin performing page reporting which consists of
+> pulling non-reported pages off of the free lists of a given zone and
+> placing them into a scatterlist. The scatterlist is then given to the page
+> reporting device and it will perform the required action to make the pages
+> "reported", in the case of virtio-balloon this results in the pages being
+> madvised as MADV_DONTNEED. After this they are placed back on their
+> original free list. If they are not merged in freeing an additional bit is
+> set indicating that they are a "reported" buddy page instead of a standard
+> buddy page. The cycle then repeats with additional non-reported pages
+> being pulled until the free areas all consist of reported pages.
+> 
+> In order to try and keep the time needed to find a non-reported page to
+> a minimum we maintain a "reported_boundary" pointer. This pointer is used
+> by the get_unreported_pages iterator to determine at what point it should
+> resume searching for non-reported pages. In order to guarantee pages do
+> not get past the scan I have modified add_to_free_list_tail so that it
+> will not insert pages behind the reported_boundary. Doing this allows us
+> to keep the overhead to a minimum as re-walking the list without the
+> boundary will result in as much as 18% additional overhead on a 32G VM.
+> 
+> If another process needs to perform a massive manipulation of the free
+> list, such as compaction, it can either reset a given individual boundary
+> which will push the boundary back to the list_head, or it can clear the
+> bit indicating the zone is actively processing which will result in the
+> reporting process resetting all of the boundaries for a given zone.
+> 
+> I am leaving a number of things hard-coded such as limiting the lowest
+> order processed to pageblock_order, and have left it up to the guest to
+> determine what the limit is on how many pages it wants to allocate to
+> process the hints. The upper limit for this is based on the size of the
+> queue used to store the scatterlist.
+> 
+> I wanted to avoid gaming the performance testing for this. As far as
+> possible gain a significant performance improvement should be visible in
+> cases where guests are forced to write/read from swap. As such, testing
+> it would be more of a benchmark of copying a page from swap versus just
+> allocating a zero page. I have been verifying that the memory is being
+> freed using memhog to allocate all the memory on the guest, and then
+> watching /proc/meminfo to verify the host sees the memory returned after
+> the test completes.
+> 
+> As far as possible regressions I have focused on cases where performing
+> the hinting would be non-optimal, such as cases where the code isn't
+> needed as memory is not over-committed, or the functionality is not in
+> use. I have been using the will-it-scale/page_fault1 test running with 16
+> vcpus and have modified it to use Transparent Huge Pages. With this I see
+> almost no difference with the patches applied and the feature disabled.
+> Likewise I see almost no difference with the feature enabled, but the
+> madvise disabled in the hypervisor due to a device being assigned. With
+> the feature fully enabled in both guest and hypervisor I see a regression
+> between -1.86% and -8.84% versus the baseline. I found that most of the
+> overhead was due to the page faulting/zeroing that comes as a result of
+> the pages having been evicted from the guest.
 
-On 2019-10-01 17:30, Roopa Prabhu wrote:
-> On Sun, Sep 29, 2019 at 11:27 PM Jethro Beekman <jethro@fortanix.com> w=
-rote:
->>
->> When using rule-based routing to send traffic via VXLAN, a routing
->> loop may occur. Say you have the following routing setup:
->>
->> ip rule add from all fwmark 0x2/0x2 lookup 2
->> ip route add table 2 default via 10.244.2.0 dev vxlan1 onlink
->>
->> The intention is to route packets with mark 2 through VXLAN, and
->> this works fine. However, the current vxlan code copies the mark
->> to the encapsulated packet. Immediately after egress on the VXLAN
->> interface, the encapsulated packet is routed, with no opportunity
->> to mangle the encapsulated packet. The mark is copied from the
->> inner packet to the outer packet, and the same routing rule and
->> table shown above will apply, resulting in ELOOP.
->>
->> This patch simply doesn't copy the mark from the encapsulated packet.
->> I don't intend this code to land as is, but I want to start a
->> discussion on how to make separate routing of VXLAN inner and
->> encapsulated traffic easier.
->=20
-> yeah, i think the patch as is will break users who use mark to
-> influence the underlay route lookup.
-> When you say the mark is copied into the packet, what exactly are you
-> seeing and where is the copy happening ?
->=20
+I think Michal asked for a performance comparison against Nitesh's
+approach, to evaluate if keeping the reported state + tracking inside
+the buddy is really worth it. Do you have any such numbers already? (or
+did my tired eyes miss them in this cover letter? :/)
 
-Maybe the mark isn't actually copied? At least it's used in the route loo=
-kup as shown in the patch.
+-- 
 
---
-Jethro Beekman | Fortanix
+Thanks,
 
->=20
->=20
->>
->> Signed-off-by: Jethro Beekman <jethro@fortanix.com>
->> ---
->>  drivers/net/vxlan.c | 2 --
->>  1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
->> index 3d9bcc9..f9ed1b7 100644
->> --- a/drivers/net/vxlan.c
->> +++ b/drivers/net/vxlan.c
->> @@ -2236,7 +2236,6 @@ static struct rtable *vxlan_get_route(struct vxl=
-an_dev *vxlan, struct net_device
->>         memset(&fl4, 0, sizeof(fl4));
->>         fl4.flowi4_oif =3D oif;
->>         fl4.flowi4_tos =3D RT_TOS(tos);
->> -       fl4.flowi4_mark =3D skb->mark;
->>         fl4.flowi4_proto =3D IPPROTO_UDP;
->>         fl4.daddr =3D daddr;
->>         fl4.saddr =3D *saddr;
->> @@ -2294,7 +2293,6 @@ static struct dst_entry *vxlan6_get_route(struct=
- vxlan_dev *vxlan,
->>         fl6.daddr =3D *daddr;
->>         fl6.saddr =3D *saddr;
->>         fl6.flowlabel =3D ip6_make_flowinfo(RT_TOS(tos), label);
->> -       fl6.flowi6_mark =3D skb->mark;
->>         fl6.flowi6_proto =3D IPPROTO_UDP;
->>         fl6.fl6_dport =3D dport;
->>         fl6.fl6_sport =3D sport;
->> --
->> 2.7.4
->>
->>
-
-
---------------ms090900080708030008040809
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-C54wggVPMIIEN6ADAgECAhAFFr+cC0ZYZTtbKgQCBwyyMA0GCSqGSIb3DQEBCwUAMIGCMQsw
-CQYDVQQGEwJJVDEPMA0GA1UECAwGTWlsYW5vMQ8wDQYDVQQHDAZNaWxhbm8xIzAhBgNVBAoM
-GkFjdGFsaXMgUy5wLkEuLzAzMzU4NTIwOTY3MSwwKgYDVQQDDCNBY3RhbGlzIENsaWVudCBB
-dXRoZW50aWNhdGlvbiBDQSBHMTAeFw0xOTA5MTYwOTQ3MDlaFw0yMDA5MTYwOTQ3MDlaMB4x
-HDAaBgNVBAMME2pldGhyb0Bmb3J0YW5peC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDHWEhcRGkEl1ZnImSqBt/OXNJ4AyDZ86CejuWI9jYpWbtf/gXBQO6iaaEKBDlj
-Vffk2QxH9wcifkYsvCYfxFgD15dU9TABO7YOwvHa8NtxanWr1xomufu/P1ApI336+S7ZXfSe
-qMnookNJUMHuF3Nxw2lI69LXqZLCdcVXquM4DY1lVSV+DXIwpTMtB+pMyqOWrsgmrISMZYFw
-EUJOqVDvtU8KewhpuGAYXAQSDVLcAl2nZg7C2Mex8vT8stBoslPTkRXxAgMbslDNDUiKhy8d
-E3I78P+stNHlFAgALgoYLBiVVLZkVBUPvgr2yUApR63yosztqp+jFhqfeHbjTRlLAgMBAAGj
-ggIiMIICHjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFH5g/Phspz09166ToXkCj7N0KTv1
-MEsGCCsGAQUFBwEBBD8wPTA7BggrBgEFBQcwAoYvaHR0cDovL2NhY2VydC5hY3RhbGlzLml0
-L2NlcnRzL2FjdGFsaXMtYXV0Y2xpZzEwHgYDVR0RBBcwFYETamV0aHJvQGZvcnRhbml4LmNv
-bTBHBgNVHSAEQDA+MDwGBiuBHwEYATAyMDAGCCsGAQUFBwIBFiRodHRwczovL3d3dy5hY3Rh
-bGlzLml0L2FyZWEtZG93bmxvYWQwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMIHo
-BgNVHR8EgeAwgd0wgZuggZiggZWGgZJsZGFwOi8vbGRhcDA1LmFjdGFsaXMuaXQvY24lM2RB
-Y3RhbGlzJTIwQ2xpZW50JTIwQXV0aGVudGljYXRpb24lMjBDQSUyMEcxLG8lM2RBY3RhbGlz
-JTIwUy5wLkEuLzAzMzU4NTIwOTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0
-O2JpbmFyeTA9oDugOYY3aHR0cDovL2NybDA1LmFjdGFsaXMuaXQvUmVwb3NpdG9yeS9BVVRI
-Q0wtRzEvZ2V0TGFzdENSTDAdBgNVHQ4EFgQUAXkM7yNq6pH6j+IC/7IsDPSTMnowDgYDVR0P
-AQH/BAQDAgWgMA0GCSqGSIb3DQEBCwUAA4IBAQC8z+2tLUwep0OhTQBgMaybrxTHCxRZ4/en
-XB0zGVrry94pItE4ro4To/t86Kfcic41ZsaX8/SFVUW2NNHjEodJu94UhYqPMDUVjO6Y14s2
-jznFHyKQdXMrhIBU5lzYqyh97w6s82Z/qoMy3OuLek+8rXirwju9ATSNLsFTzt2CEoyCSRtl
-yOmR7Z9wgSvD7C7XoBdGEFVdGCXwCy1t9AT7UCIHKssnguVaMGN9vWqLPVKOVTwc4g3RAQC7
-J1Aoo6U5d6wCIX4MxEZhICxnUgAKHULxsWMGjBfQAo3QGXjJ4wDEu7O/5KCyUfn6lyhRYa+t
-YgyFAX0ZU9Upovd+aOw0MIIGRzCCBC+gAwIBAgIILNSK07EeD4kwDQYJKoZIhvcNAQELBQAw
-azELMAkGA1UEBhMCSVQxDjAMBgNVBAcMBU1pbGFuMSMwIQYDVQQKDBpBY3RhbGlzIFMucC5B
-Li8wMzM1ODUyMDk2NzEnMCUGA1UEAwweQWN0YWxpcyBBdXRoZW50aWNhdGlvbiBSb290IENB
-MB4XDTE1MDUxNDA3MTQxNVoXDTMwMDUxNDA3MTQxNVowgYIxCzAJBgNVBAYTAklUMQ8wDQYD
-VQQIDAZNaWxhbm8xDzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwaQWN0YWxpcyBTLnAuQS4v
-MDMzNTg1MjA5NjcxLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENB
-IEcxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwPzBiVbZiOL0BGW/zQk1qygp
-MP4MyvcnqxwR7oY9XeT1bES2DFczlZfeiIqNLanbkyqTxydXZ+kxoS9071qWsZ6zS+pxSqXL
-s+RTvndEaWx5hdHZcKNWGzhy5FiO4GZvGlFInFEiaY+dOEpjjWvSeXpvcDpnYw6M9AXuHo4J
-hjC3P/OK//5QFXnztTa4iU66RpLteOTgCtiRCwZNKx8EFeqqfTpYvfEb4H91E7n+Y61jm0d2
-E8fJ2wGTaSSwjc8nTI2ApXujoczukb2kHqwaGP3q5UuedWcnRZc65XUhK/Z6K32KvrQuNP32
-F/5MxkvEDnJpUnnt9iMExvEzn31zDQIDAQABo4IB1TCCAdEwQQYIKwYBBQUHAQEENTAzMDEG
-CCsGAQUFBzABhiVodHRwOi8vb2NzcDA1LmFjdGFsaXMuaXQvVkEvQVVUSC1ST09UMB0GA1Ud
-DgQWBBR+YPz4bKc9Pdeuk6F5Ao+zdCk79TAPBgNVHRMBAf8EBTADAQH/MB8GA1UdIwQYMBaA
-FFLYiDrIn3hm7YnzezhwlMkCAjbQMEUGA1UdIAQ+MDwwOgYEVR0gADAyMDAGCCsGAQUFBwIB
-FiRodHRwczovL3d3dy5hY3RhbGlzLml0L2FyZWEtZG93bmxvYWQwgeMGA1UdHwSB2zCB2DCB
-lqCBk6CBkIaBjWxkYXA6Ly9sZGFwMDUuYWN0YWxpcy5pdC9jbiUzZEFjdGFsaXMlMjBBdXRo
-ZW50aWNhdGlvbiUyMFJvb3QlMjBDQSxvJTNkQWN0YWxpcyUyMFMucC5BLiUyZjAzMzU4NTIw
-OTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0O2JpbmFyeTA9oDugOYY3aHR0
-cDovL2NybDA1LmFjdGFsaXMuaXQvUmVwb3NpdG9yeS9BVVRILVJPT1QvZ2V0TGFzdENSTDAO
-BgNVHQ8BAf8EBAMCAQYwDQYJKoZIhvcNAQELBQADggIBAE2TztUkvkEbShZYc19lifLZej5Y
-jLzLxA/lWxZnssFLpDPySfzMmndz3F06S51ltwDe+blTwcpdzUl3M2alKH3bOr855ku9Rr6u
-edya+HGQUT0OhqDo2K2CAE9nBcfANxifjfT8XzCoC3ctf9ux3og1WuE8WTcLZKgCMuNRBmJt
-e9C4Ug0w3iXqPzq8KuRRobNKqddPjk3EiK+QA+EFCCka1xOLh/7cPGTJMNta1/0u5oLiXaOA
-HeALt/nqeZ2kZ+lizK8oTv4in5avIf3ela3oL6vrwpTca7TZxTX90e805dZQN4qRVPdPbrBl
-WtNozH7SdLeLrcoN8l2EXO6190GAJYdynTc2E6EyrLVGcDKUX91VmCSRrqEppZ7W05TbWRLi
-6+wPjAzmTq2XSmKfajq7juTKgkkw7FFJByixa0NdSZosdQb3VkLqG8EOYOamZLqH+v7ua0+u
-lg7FOviFbeZ7YR9eRO81O8FC1uLgutlyGD2+GLjgQnsvneDsbNAWfkory+qqAxvVzX5PSaQp
-2pJ52AaIH1MN1i2/geRSP83TRMrFkwuIMzDhXxKFQvpspNc19vcTryzjtwP4xq0WNS4YWPS4
-U+9mW+U0Cgnsgx9fMiJNbLflf5qSb53j3AGHnjK/qJzPa39wFTXLXB648F3w1Qf9R7eZeTRJ
-fCQY/fJUMYID9jCCA/ICAQEwgZcwgYIxCzAJBgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8x
-DzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwaQWN0YWxpcyBTLnAuQS4vMDMzNTg1MjA5Njcx
-LDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZY
-ZTtbKgQCBwyyMA0GCWCGSAFlAwQCAQUAoIICLzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0xOTEwMDExNTMzMjZaMC8GCSqGSIb3DQEJBDEiBCCuTeM7DQJQ
-fmW/WaZKasiRxoJOcQpeb8ooAJQeVJWY5zBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQB
-KjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMC
-AgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGoBgkrBgEEAYI3EAQxgZowgZcwgYIxCzAJ
-BgNVBAYTAklUMQ8wDQYDVQQIDAZNaWxhbm8xDzANBgNVBAcMBk1pbGFubzEjMCEGA1UECgwa
-QWN0YWxpcyBTLnAuQS4vMDMzNTg1MjA5NjcxLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1
-dGhlbnRpY2F0aW9uIENBIEcxAhAFFr+cC0ZYZTtbKgQCBwyyMIGqBgsqhkiG9w0BCRACCzGB
-mqCBlzCBgjELMAkGA1UEBhMCSVQxDzANBgNVBAgMBk1pbGFubzEPMA0GA1UEBwwGTWlsYW5v
-MSMwIQYDVQQKDBpBY3RhbGlzIFMucC5BLi8wMzM1ODUyMDk2NzEsMCoGA1UEAwwjQWN0YWxp
-cyBDbGllbnQgQXV0aGVudGljYXRpb24gQ0EgRzECEAUWv5wLRlhlO1sqBAIHDLIwDQYJKoZI
-hvcNAQEBBQAEggEAdL+mXPATsX3qU5qLz76vu2EnixRcBBEy044XpOQistvZat5HtKOhRJEd
-hOPJUa4CTYiha8ky6oaSArXvZOcAA0FPKQM8A0S/FZf1gltzdp/vMJjRiTfp74Nw3QrZyalq
-1Z43yjr6PXXS1w0z+tsm6d/8zR8GGkALFmymqJCZZBbkv9Zy+P2TuSXm7oXBwGkTS0cxtj+n
-zlhFJlfW24n6dow8ZFN+ZOR9KECtY2LwOuTvp0AOTcSJxz8geczs5elfKGYacoAI1ri8CbgH
-xC5n5bBgvYt8kvRVKuU43XWSsbZp2txJcQlb0i5+eazaqybESgnuGblTQ5hfQDeP/c4ZrwAA
-AAAAAA==
-
---------------ms090900080708030008040809--
+David / dhildenb
