@@ -2,106 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7C6DC41FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 22:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 406ACC4203
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 22:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfJAUv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 16:51:56 -0400
-Received: from mga07.intel.com ([134.134.136.100]:36079 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbfJAUvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 16:51:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 13:51:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="195770735"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga006.jf.intel.com with ESMTP; 01 Oct 2019 13:51:54 -0700
-Subject: Re: [PATCH v11 0/6] mm / virtio: Provide support for unused page
- reporting
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        mst@redhat.com, linux-kernel@vger.kernel.org, willy@infradead.org,
-        mhocko@kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, vbabka@suse.cz, osalvador@suse.de
-Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com,
-        konrad.wilk@oracle.com, riel@surriel.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com
-References: <20191001152441.27008.99285.stgit@localhost.localdomain>
- <7233498c-2f64-d661-4981-707b59c78fd5@redhat.com>
- <1ea1a4e11617291062db81f65745b9c95fd0bb30.camel@linux.intel.com>
- <8bd303a6-6e50-b2dc-19ab-4c3f176c4b02@redhat.com>
- <d21e6fce694f286ecaf227697a1ec5555734520b.camel@linux.intel.com>
- <b45c9ea924cbb8b8dc390082d5a0b4bd91e7a8f8.camel@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <150e09b3-42c0-567e-55b8-7be6b45fd576@intel.com>
-Date:   Tue, 1 Oct 2019 13:51:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <b45c9ea924cbb8b8dc390082d5a0b4bd91e7a8f8.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727441AbfJAUwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 16:52:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40633 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfJAUwc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 16:52:32 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l3so17108143wru.7;
+        Tue, 01 Oct 2019 13:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YdRHcVFToHIZbvkxUNJPK19pypp2Z2yOIgvmAjENZz0=;
+        b=CZBkuUYHqE3ivHd6F1I66DMYJ2YMY706bvqkad/lOPVvMwKUwiUoZ/zRolnJbuFgsd
+         vsdgeiGloPIWskOjaWPQL/Lw0HcGMwMcDXGhRlMkw3txfz6ZXdtdIG3MTM2GXlzEnbC4
+         fM8+iq9dYFXk96hlc+oW8gN6C/mUv3ocKDFjeq0jxuvEtg3wfKIjGWPYbiTj09p0uwuo
+         8GmsMwEskqskeuMFqVtIeqW0PoAF6X4Df1trUbLTin6GfCsfS9zTjDNPaupyK2pin9Ey
+         5Cn/WMXDFYE0Wg5jUSSFbfd1OfosGjodmpSN9LNxozr1Q/L2NlDTUfnUtsUm67AgRzRV
+         GgUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YdRHcVFToHIZbvkxUNJPK19pypp2Z2yOIgvmAjENZz0=;
+        b=k2B86yBpSCXKOtNlwH0CaiKI0y5mDnV70J6wxEYfpKmjRW3oXfcZFk3jzBRof+y9do
+         jnfLxHqmM7WYBL7DVBbdWxuW2Uf2rjxSodKALDzOO2G3VZrX7Mrn0k4gHy4SV3pxz+Vv
+         +OISrnEA4ebHKG3fcz7YTFmynPrFGPN6jGSHn8E+PT8wTMjZbN+A7JaOaTlDhm7yyD1i
+         PN2P1UwyR2XBoxl+7gHL/ZeczsmJBEJK6x/kZ2Iz5Vlt4fIAmFZtpTIqGrA8lYwlMAdY
+         UxN1Weku7ftZ5AFmDwL3uLzO29ulSTUiIOllr6n1zdKrznkS++Ya6WbcYiIWtiyuAFbh
+         4vtQ==
+X-Gm-Message-State: APjAAAUxBtIaZ590ABtud0URGxGN17Kt1O1XMaDt5WPfXgd5Nxjs6Ofw
+        qnRpoTnfai/YVxYYoV+Yg5o=
+X-Google-Smtp-Source: APXvYqxkB68UDBZMJnWyKXg3gFOPUhWrTyeISJjqxdeI58U/o4a7897AxfLSCcjzW1MLdXsAVJ7VYA==
+X-Received: by 2002:a5d:62c8:: with SMTP id o8mr18999590wrv.350.1569963147806;
+        Tue, 01 Oct 2019 13:52:27 -0700 (PDT)
+Received: from localhost.localdomain ([86.124.196.40])
+        by smtp.gmail.com with ESMTPSA id y13sm26680057wrg.8.2019.10.01.13.52.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 13:52:27 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vladimir Oltean <olteanv@gmail.com>
+Subject: [PATCH] spi: spi-fsl-dspi: Always use the TCFQ devices in poll mode
+Date:   Tue,  1 Oct 2019 23:52:16 +0300
+Message-Id: <20191001205216.32115-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/19 1:49 PM, Alexander Duyck wrote:
-> So it looks like v12 still has issues. I'm pretty sure you should be using
-> spin_lock_irq(), not spin_lock() in page_reporting.c to avoid the
-> possibility of an IRQ firing and causing lock recursion on the zone lock.
+With this patch, the "interrupts" property from the device tree bindings
+is ignored, even if present, if the driver runs in TCFQ mode.
 
-Lockdep should make all of this a lot easier to find.  Is it being used?
+Switching to using the DSPI in poll mode has several distinct
+benefits:
+
+- With interrupts, the DSPI driver in TCFQ mode raises an IRQ after each
+  transmitted word. There is more time wasted for the "waitq" event than
+  for actual I/O. And the DSPI IRQ count can easily get the largest in
+  /proc/interrupts on Freescale boards with attached SPI devices.
+
+- The SPI I/O time is both lower, and more consistently so. Attached to
+  some Freescale devices are either PTP switches, or SPI RTCs. For
+  reading time off of a SPI slave device, it is important that all SPI
+  transfers take a deterministic time to complete.
+
+- In poll mode there is much less time spent by the CPU in hardirq
+  context, which helps with the response latency of the system, and at
+  the same time there is more control over when interrupts must be
+  disabled (to get a precise timestamp measurement, which will come in a
+  future patch): win-win.
+
+On the LS1021A-TSN board, where the SPI device is a SJA1105 PTP switch
+(with a bits_per_word=8 driver), I created a "benchmark" where I
+periodically transferred a 12-byte message once per second, for 120
+seconds. I then recorded the time before putting the first byte in the
+TX FIFO, and the time after reading the last byte from the RX FIFO. That
+is the transfer delay in nanoseconds.
+
+Interrupt mode:
+
+  delay: min 125120 max 168320 mean 150286 std dev 17675.3
+
+Poll mode:
+
+  delay: min 69440 max 119040 mean 70312.9 std dev 8065.34
+
+Both the mean latency and the standard deviation are more than 50% lower
+in poll mode than in interrupt mode, and the 'max' in poll mode is lower
+than the 'min' in interrupt mode. This is with an 'ondemand' governor on
+an otherwise idle system - therefore running mostly at 600 MHz out of a
+max of 1200 MHz.
+
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+---
+ drivers/spi/spi-fsl-dspi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index bec758e978fb..7bb018eb67d0 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -707,7 +707,7 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
+ 	regmap_read(dspi->regmap, SPI_SR, &spi_sr);
+ 	regmap_write(dspi->regmap, SPI_SR, spi_sr);
+ 
+-	if (!(spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)))
++	if (!(spi_sr & SPI_SR_EOQF))
+ 		return IRQ_NONE;
+ 
+ 	if (dspi_rxtx(dspi) == 0) {
+@@ -1114,6 +1114,9 @@ static int dspi_probe(struct platform_device *pdev)
+ 
+ 	dspi_init(dspi);
+ 
++	if (dspi->devtype_data->trans_mode == DSPI_TCFQ_MODE)
++		goto poll_mode;
++
+ 	dspi->irq = platform_get_irq(pdev, 0);
+ 	if (dspi->irq <= 0) {
+ 		dev_info(&pdev->dev,
+-- 
+2.17.1
+
