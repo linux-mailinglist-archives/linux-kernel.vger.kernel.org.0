@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8B6C331E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75F73C3324
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387822AbfJALm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:42:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40746 "EHLO
+        id S2387850AbfJALml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:42:41 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40606 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387537AbfJALlC (ORCPT
+        with ESMTP id S2387495AbfJALk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:02 -0400
+        Tue, 1 Oct 2019 07:40:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=RaehcVWI7CqFqJ3sZaDsrRQlx6JMqoPgEGwPcYTozzY=; b=V/Sz9RRPzg5A
-        xKBq6NbmMeQKbD6lx5Z/CCT3ASOmtBGiUFBNdAYUpLomqjwo3x6XaI/rEhcAbzvKYfk1epb4eJPQc
-        m//MQwL54TC1ov35IidCpvuvoD4LlIAYj1N0BDtmXn3ndrXGzAj8IuHcsiBG6UOYW2V5gmYLGURCy
-        wK7gY=;
+        List-Archive; bh=EZwXH2/aboNMmkJHaxOZm8Q5obeSzSnzi54A3erjNLY=; b=a0FYSRLwPqIy
+        7f9N2YC5sUglieOL4Sk813LoHqYbsXCQB1TKMJ9g0HIyUbbZmTdr72dI9gwQbzDSEjc81igak3EqX
+        ySK9pcDJYCNs2yAnz8Shb9Nc21UNcSDFt33CpSD9Owhknmd7fWV/LZSaOr0pnYXXQdzhH/rg1M3Jh
+        VhZgA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWM-0004ST-5i; Tue, 01 Oct 2019 11:40:46 +0000
+        id 1iFGWM-0004SZ-FF; Tue, 01 Oct 2019 11:40:46 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id A06972742A31; Tue,  1 Oct 2019 12:40:45 +0100 (BST)
+        id E1B2827429C0; Tue,  1 Oct 2019 12:40:45 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Shengjiu Wang <shengjiu.wang@nxp.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         devicetree@vger.kernel.org, festevam@gmail.com, lars@metafoo.de,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, Mark Brown <broonie@kernel.org>,
-        mark.rutland@arm.com, nicoleotsuka@gmail.com, perex@perex.cz,
+        mark.rutland@arm.com, nicoleotsuka@gmail.com,
+        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
         robh+dt@kernel.org, timur@kernel.org, tiwai@suse.com,
         Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: pcm_dmaengine: Extract snd_dmaengine_pcm_refine_runtime_hwparams" to the asoc tree
-In-Reply-To: <d728f65194e9978cbec4132b522d4fed420d704a.1569493933.git.shengjiu.wang@nxp.com>
+Subject: Applied "ASoC: fsl_asrc: update supported sample format" to the asoc tree
+In-Reply-To: <45a7c383f43cc1dd9d0934846447aee653278c03.1569493933.git.shengjiu.wang@nxp.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114045.A06972742A31@ypsilon.sirena.org.uk>
+Message-Id: <20191001114045.E1B2827429C0@ypsilon.sirena.org.uk>
 Date:   Tue,  1 Oct 2019 12:40:45 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,7 +51,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: pcm_dmaengine: Extract snd_dmaengine_pcm_refine_runtime_hwparams
+   ASoC: fsl_asrc: update supported sample format
 
 has been applied to the asoc tree at
 
@@ -75,218 +76,53 @@ to this mail.
 Thanks,
 Mark
 
-From e957204e732bc2916a241dc61dd7dd14e9a98350 Mon Sep 17 00:00:00 2001
+From 109539c986cee525e5ff9ae98793f23c2b29e54d Mon Sep 17 00:00:00 2001
 From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Fri, 27 Sep 2019 09:46:11 +0800
-Subject: [PATCH] ASoC: pcm_dmaengine: Extract
- snd_dmaengine_pcm_refine_runtime_hwparams
+Date: Fri, 27 Sep 2019 09:46:10 +0800
+Subject: [PATCH] ASoC: fsl_asrc: update supported sample format
 
-When set the runtime hardware parameters, we may need to query
-the capability of DMA to complete the parameters.
+The ASRC support 24bit/16bit/8bit input width, which is
+data width, not slot width.
 
-This patch is to Extract this operation from
-dmaengine_pcm_set_runtime_hwparams function to a separate function
-snd_dmaengine_pcm_refine_runtime_hwparams, that other components
-which need this feature can call this function.
+For the S20_3LE format, the data with is 20bit, slot width
+is 24bit, if we set ASRMCR1n.IWD to be 24bits, the result
+is the volume is lower than expected, it likes 24bit data
+right shift 4 bits
+
+So replace S20_3LE with S24_3LE in supported list and add S8
+format in TX supported list
 
 Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Link: https://lore.kernel.org/r/d728f65194e9978cbec4132b522d4fed420d704a.1569493933.git.shengjiu.wang@nxp.com
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Link: https://lore.kernel.org/r/45a7c383f43cc1dd9d0934846447aee653278c03.1569493933.git.shengjiu.wang@nxp.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/sound/dmaengine_pcm.h         |  5 ++
- sound/core/pcm_dmaengine.c            | 83 +++++++++++++++++++++++++++
- sound/soc/soc-generic-dmaengine-pcm.c | 61 ++------------------
- 3 files changed, 94 insertions(+), 55 deletions(-)
+ sound/soc/fsl/fsl_asrc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-index c679f6116580..b65220685920 100644
---- a/include/sound/dmaengine_pcm.h
-+++ b/include/sound/dmaengine_pcm.h
-@@ -83,6 +83,11 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
- 	const struct snd_dmaengine_dai_dma_data *dma_data,
- 	struct dma_slave_config *config);
+diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+index 4d3804a1ea55..584badf956d2 100644
+--- a/sound/soc/fsl/fsl_asrc.c
++++ b/sound/soc/fsl/fsl_asrc.c
+@@ -624,7 +624,7 @@ static int fsl_asrc_dai_probe(struct snd_soc_dai *dai)
  
-+int snd_dmaengine_pcm_refine_runtime_hwparams(
-+	struct snd_pcm_substream *substream,
-+	struct snd_dmaengine_dai_dma_data *dma_data,
-+	struct snd_pcm_hardware *hw,
-+	struct dma_chan *chan);
+ #define FSL_ASRC_FORMATS	(SNDRV_PCM_FMTBIT_S24_LE | \
+ 				 SNDRV_PCM_FMTBIT_S16_LE | \
+-				 SNDRV_PCM_FMTBIT_S20_3LE)
++				 SNDRV_PCM_FMTBIT_S24_3LE)
  
- /*
-  * Try to request the DMA channel using compat_request_channel or
-diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
-index 89a05926ac73..5749a8a49784 100644
---- a/sound/core/pcm_dmaengine.c
-+++ b/sound/core/pcm_dmaengine.c
-@@ -369,4 +369,87 @@ int snd_dmaengine_pcm_close_release_chan(struct snd_pcm_substream *substream)
- }
- EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_close_release_chan);
- 
-+/**
-+ * snd_dmaengine_pcm_refine_runtime_hwparams - Refine runtime hw params
-+ * @substream: PCM substream
-+ * @dma_data: DAI DMA data
-+ * @hw: PCM hw params
-+ * @chan: DMA channel to use for data transfers
-+ *
-+ * Returns 0 on success, a negative error code otherwise.
-+ *
-+ * This function will query DMA capability, then refine the pcm hardware
-+ * parameters.
-+ */
-+int snd_dmaengine_pcm_refine_runtime_hwparams(
-+	struct snd_pcm_substream *substream,
-+	struct snd_dmaengine_dai_dma_data *dma_data,
-+	struct snd_pcm_hardware *hw,
-+	struct dma_chan *chan)
-+{
-+	struct dma_slave_caps dma_caps;
-+	u32 addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
-+			  BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
-+			  BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-+	snd_pcm_format_t i;
-+	int ret = 0;
-+
-+	if (!hw || !chan || !dma_data)
-+		return -EINVAL;
-+
-+	ret = dma_get_slave_caps(chan, &dma_caps);
-+	if (ret == 0) {
-+		if (dma_caps.cmd_pause && dma_caps.cmd_resume)
-+			hw->info |= SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME;
-+		if (dma_caps.residue_granularity <= DMA_RESIDUE_GRANULARITY_SEGMENT)
-+			hw->info |= SNDRV_PCM_INFO_BATCH;
-+
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+			addr_widths = dma_caps.dst_addr_widths;
-+		else
-+			addr_widths = dma_caps.src_addr_widths;
-+	}
-+
-+	/*
-+	 * If SND_DMAENGINE_PCM_DAI_FLAG_PACK is set keep
-+	 * hw.formats set to 0, meaning no restrictions are in place.
-+	 * In this case it's the responsibility of the DAI driver to
-+	 * provide the supported format information.
-+	 */
-+	if (!(dma_data->flags & SND_DMAENGINE_PCM_DAI_FLAG_PACK))
-+		/*
-+		 * Prepare formats mask for valid/allowed sample types. If the
-+		 * dma does not have support for the given physical word size,
-+		 * it needs to be masked out so user space can not use the
-+		 * format which produces corrupted audio.
-+		 * In case the dma driver does not implement the slave_caps the
-+		 * default assumption is that it supports 1, 2 and 4 bytes
-+		 * widths.
-+		 */
-+		for (i = SNDRV_PCM_FORMAT_FIRST; i <= SNDRV_PCM_FORMAT_LAST; i++) {
-+			int bits = snd_pcm_format_physical_width(i);
-+
-+			/*
-+			 * Enable only samples with DMA supported physical
-+			 * widths
-+			 */
-+			switch (bits) {
-+			case 8:
-+			case 16:
-+			case 24:
-+			case 32:
-+			case 64:
-+				if (addr_widths & (1 << (bits / 8)))
-+					hw->formats |= pcm_format_to_bits(i);
-+				break;
-+			default:
-+				/* Unsupported types */
-+				break;
-+			}
-+		}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_refine_runtime_hwparams);
-+
- MODULE_LICENSE("GPL");
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 5552c66ca642..f2c98a9cbf75 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -118,12 +118,7 @@ static int dmaengine_pcm_set_runtime_hwparams(struct snd_pcm_substream *substrea
- 	struct device *dma_dev = dmaengine_dma_dev(pcm, substream);
- 	struct dma_chan *chan = pcm->chan[substream->stream];
- 	struct snd_dmaengine_dai_dma_data *dma_data;
--	struct dma_slave_caps dma_caps;
- 	struct snd_pcm_hardware hw;
--	u32 addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
--			  BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
--			  BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
--	snd_pcm_format_t i;
- 	int ret;
- 
- 	if (pcm->config && pcm->config->pcm_hardware)
-@@ -145,56 +140,12 @@ static int dmaengine_pcm_set_runtime_hwparams(struct snd_pcm_substream *substrea
- 	if (pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_RESIDUE)
- 		hw.info |= SNDRV_PCM_INFO_BATCH;
- 
--	ret = dma_get_slave_caps(chan, &dma_caps);
--	if (ret == 0) {
--		if (dma_caps.cmd_pause && dma_caps.cmd_resume)
--			hw.info |= SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME;
--		if (dma_caps.residue_granularity <= DMA_RESIDUE_GRANULARITY_SEGMENT)
--			hw.info |= SNDRV_PCM_INFO_BATCH;
--
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--			addr_widths = dma_caps.dst_addr_widths;
--		else
--			addr_widths = dma_caps.src_addr_widths;
--	}
--
--	/*
--	 * If SND_DMAENGINE_PCM_DAI_FLAG_PACK is set keep
--	 * hw.formats set to 0, meaning no restrictions are in place.
--	 * In this case it's the responsibility of the DAI driver to
--	 * provide the supported format information.
--	 */
--	if (!(dma_data->flags & SND_DMAENGINE_PCM_DAI_FLAG_PACK))
--		/*
--		 * Prepare formats mask for valid/allowed sample types. If the
--		 * dma does not have support for the given physical word size,
--		 * it needs to be masked out so user space can not use the
--		 * format which produces corrupted audio.
--		 * In case the dma driver does not implement the slave_caps the
--		 * default assumption is that it supports 1, 2 and 4 bytes
--		 * widths.
--		 */
--		for (i = SNDRV_PCM_FORMAT_FIRST; i <= SNDRV_PCM_FORMAT_LAST; i++) {
--			int bits = snd_pcm_format_physical_width(i);
--
--			/*
--			 * Enable only samples with DMA supported physical
--			 * widths
--			 */
--			switch (bits) {
--			case 8:
--			case 16:
--			case 24:
--			case 32:
--			case 64:
--				if (addr_widths & (1 << (bits / 8)))
--					hw.formats |= pcm_format_to_bits(i);
--				break;
--			default:
--				/* Unsupported types */
--				break;
--			}
--		}
-+	ret = snd_dmaengine_pcm_refine_runtime_hwparams(substream,
-+							dma_data,
-+							&hw,
-+							chan);
-+	if (ret)
-+		return ret;
- 
- 	return snd_soc_set_runtime_hwparams(substream, &hw);
- }
+ static struct snd_soc_dai_driver fsl_asrc_dai = {
+ 	.probe = fsl_asrc_dai_probe,
+@@ -635,7 +635,8 @@ static struct snd_soc_dai_driver fsl_asrc_dai = {
+ 		.rate_min = 5512,
+ 		.rate_max = 192000,
+ 		.rates = SNDRV_PCM_RATE_KNOT,
+-		.formats = FSL_ASRC_FORMATS,
++		.formats = FSL_ASRC_FORMATS |
++			   SNDRV_PCM_FMTBIT_S8,
+ 	},
+ 	.capture = {
+ 		.stream_name = "ASRC-Capture",
 -- 
 2.20.1
 
