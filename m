@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B22C3563
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4900CC356C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388288AbfJANSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:18:16 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46879 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbfJANSP (ORCPT
+        id S2388302AbfJANTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:19:08 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:38169 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388005AbfJANTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:18:15 -0400
-Received: by mail-qk1-f196.google.com with SMTP id 201so11111151qkd.13
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 06:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wjg5ezOc5p7km8S342IaUr3A38UGT2t2Rxceh2nlfUU=;
-        b=lGp6SqYWxT9IFi+KGl1pHet+QbGKnv9h5fRA3tHQiPKK22pU5UvC0p7Tkp/LVSzNfB
-         oh1GwarLvZcJfIFf6WzcDjApRPlIssJyX5fkvJ1K9zOPCv5gLlb6d4yOko9bEAKYxyny
-         LUTciaMHBRbhSOJM0SLdXM82rrvJArFZnVVVzr+cywYp+Z7dud/o1KtefHReI/KLzX0X
-         R+u2n/TS/gaiuZzcJy2anjMIQFf3IZ3m25aY6O0Fs6tbc+tlCzLm+XhcIQ1y1FDjZcg5
-         bC7kfuyLqGzcpAfPFJrfP90cKr3almQWWlDHDEbn74QfhONlhED3nBcasTNfSxhcm+41
-         ri0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wjg5ezOc5p7km8S342IaUr3A38UGT2t2Rxceh2nlfUU=;
-        b=fDX3sZ7eu8CEbkOyWNVghOWutcltyCMxQgv6eY41KWaVGpZygPNsMhIqi1WlRPFo1k
-         +X7YSMSkccJfaUfkhmUtYZ1gQMABZOyAicHwlbVeGJMEHVW/wtAHEszt7G8/UBlIUTdx
-         M4/52m4DJmBvWqTWPS/mNuTUjswcUHUdNQOM5Gc2riUh9ZuF95R9Du0OfYpQcXYG0pZx
-         kfTHKa4pqqk1Wq8+D94o5qbf/SEObrwmgHqkEkaXPbbXbUgSv6Zb3UEF4BCFM0wfFM4x
-         Vvo0PG1VNesuFp+7kRExDnyOu54UWiKCfDPRZHllGDCCANFdiqnwXShifoCNBqspQsHS
-         gS8w==
-X-Gm-Message-State: APjAAAUZWt+I10jK45AyiCw+EoX6JOtBOKJRZjds9jcAja/YvxZPDdbY
-        pmItc/J4kCYZFSMrKAYDcYG7eA==
-X-Google-Smtp-Source: APXvYqyNL9IyO0vyZzASB134qH8CPv466017882cxvJNuyos/hOCFC9v49BtrPBHXe4sgaMMLsantg==
-X-Received: by 2002:a37:4286:: with SMTP id p128mr6108139qka.40.1569935893364;
-        Tue, 01 Oct 2019 06:18:13 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a190sm8443634qkf.118.2019.10.01.06.18.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 06:18:12 -0700 (PDT)
-Message-ID: <1569935890.5576.255.camel@lca.pw>
-Subject: Re: [PATCH v2 2/3] mm, page_owner: decouple freeing stack trace
- from debug_pagealloc
-From:   Qian Cai <cai@lca.pw>
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Tue, 1 Oct 2019 09:19:07 -0400
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iFI3N-0005kv-Pu; Tue, 01 Oct 2019 15:18:57 +0200
+Date:   Tue, 1 Oct 2019 14:18:48 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     Jia He <justin.he@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Walter Wu <walter-zh.wu@mediatek.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Date:   Tue, 01 Oct 2019 09:18:10 -0400
-In-Reply-To: <cb02d61c-eeb1-9875-185d-d3dd0e0b2424@suse.cz>
-References: <eccee04f-a56e-6f6f-01c6-e94d94bba4c5@suse.cz>
-         <731C4866-DF28-4C96-8EEE-5F22359501FE@lca.pw>
-         <218f6fa7-a91e-4630-12ea-52abb6762d55@suse.cz>
-         <20191001115114.gnala74q3ydreuii@box> <1569932788.5576.247.camel@lca.pw>
-         <626cd04e-513c-a50b-6787-d79690964088@suse.cz>
-         <cb02d61c-eeb1-9875-185d-d3dd0e0b2424@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Punit Agrawal <punitagrawal@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>, hejianet@gmail.com,
+        Kaly Xin <Kaly.Xin@arm.com>
+Subject: Re: [PATCH v10 1/3] arm64: cpufeature: introduce helper
+ cpu_has_hw_af()
+Message-ID: <20191001141848.762296bd@why>
+In-Reply-To: <20191001125446.gknoofnm7az4wqf5@willie-the-truck>
+References: <20190930015740.84362-1-justin.he@arm.com>
+        <20190930015740.84362-2-justin.he@arm.com>
+        <20191001125446.gknoofnm7az4wqf5@willie-the-truck>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: will@kernel.org, justin.he@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, james.morse@arm.com, willy@infradead.org, kirill.shutemov@linux.intel.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, punitagrawal@gmail.com, tglx@linutronix.de, akpm@linux-foundation.org, hejianet@gmail.com, Kaly.Xin@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-10-01 at 14:35 +0200, Vlastimil Babka wrote:
-> On 10/1/19 2:32 PM, Vlastimil Babka wrote:
-> > On 10/1/19 2:26 PM, Qian Cai wrote:
-> > > On Tue, 2019-10-01 at 14:51 +0300, Kirill A. Shutemov wrote:
-> > > > On Tue, Oct 01, 2019 at 10:07:44AM +0200, Vlastimil Babka wrote:
-> > > > > On 10/1/19 1:49 AM, Qian Cai wrote:
-> > > > 
-> > > > DEBUG_PAGEALLOC is much more intrusive debug option. Not all architectures
-> > > > support it in an efficient way. Some require hibernation.
-> > > > 
-> > > > I don't see a reason to tie these two option together.
-> > > 
-> > > Make sense. How about page_owner=on will have page_owner_free=on by default?
-> > > That way we don't need the extra parameter.
+On Tue, 1 Oct 2019 13:54:47 +0100
+Will Deacon <will@kernel.org> wrote:
+
+> On Mon, Sep 30, 2019 at 09:57:38AM +0800, Jia He wrote:
+> > We unconditionally set the HW_AFDBM capability and only enable it on
+> > CPUs which really have the feature. But sometimes we need to know
+> > whether this cpu has the capability of HW AF. So decouple AF from
+> > DBM by new helper cpu_has_hw_af().
 > > 
-> >  
-> > There were others that didn't want that overhead (memory+cpu) always. So the
-> > last version is as flexible as we can get, IMHO, before approaching bikeshed
-> > territory. It's just another parameter.
+> > Signed-off-by: Jia He <justin.he@arm.com>
+> > Suggested-by: Suzuki Poulose <Suzuki.Poulose@arm.com>
+> > Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> > ---
+> >  arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> > index 9cde5d2e768f..949bc7c85030 100644
+> > --- a/arch/arm64/include/asm/cpufeature.h
+> > +++ b/arch/arm64/include/asm/cpufeature.h
+> > @@ -659,6 +659,16 @@ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+> >  	default: return CONFIG_ARM64_PA_BITS;
+> >  	}
+> >  }
+> > +
+> > +/* Check whether hardware update of the Access flag is supported */
+> > +static inline bool cpu_has_hw_af(void)
+> > +{
+> > +	if (IS_ENABLED(CONFIG_ARM64_HW_AFDBM))
+> > +		return read_cpuid(ID_AA64MMFR1_EL1) & 0xf;  
 > 
-> Or suggest how to replace page_owner=on with something else (page_owner=full?)
-> and I can change that. But I don't want to implement a variant where we store only
-> the freeing stack, though.
+> 0xf? I think we should have a mask in sysreg.h for this constant.
 
-I don't know why you think it is a variant. It sounds to me it is a natural
-extension that belongs to page_owner=on that it could always store freeing stack
-to help with debugging. Then, it could make implementation easier without all
-those different  combinations you mentioned in the patch description that could
-confuse anyone.
+We don't have the mask, but we certainly have the shift.
 
-If someone complains about the overhead introduced to the existing page_owner=on
-users, then I think we should have some number to prove that say how much
-overhead there by storing freeing stack in page_owner=on, 10%, 50%?
+GENMASK(ID_AA64MMFR1_HADBS_SHIFT + 3, ID_AA64MMFR1_HADBS_SHIFT) is a bit
+of a mouthful though. Ideally, we'd have a helper for that.
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
