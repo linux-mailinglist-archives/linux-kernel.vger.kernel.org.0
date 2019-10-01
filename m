@@ -2,230 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC44C32FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 166B9C3306
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387693AbfJALlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:41:19 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41242 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387639AbfJALlN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=OCrO7F+Q4EMqWzna+2ATTFpi6NFCoH1Jp9Nac69dYYA=; b=MqTjx+TBlDvZ
-        AMZm/UPkLbInMVYZOxqKEtXkohTw/22y+dNmB0cD32k7kvNPCGnGtZnrYrSngyBpm2bKMDQgc3gUe
-        y+O5Nn93aCHcXk5YOoVf8x8k/QfdYvR+F11+lGW/zMIuZvWdgcXodAAm1RQJFWXV5h6KjI5xTlutC
-        /hx1A=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWi-0004ZV-Ma; Tue, 01 Oct 2019 11:41:08 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 2D26327429C0; Tue,  1 Oct 2019 12:41:08 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Pragnesh Patel <pragnesh.patel@sifive.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, palmer@sifive.com,
-        paul.walmsley@sifive.com, Rob Herring <robh+dt@kernel.org>
-Subject: Applied "spi: dt-bindings: Convert spi-sifive binding to json-schema" to the spi tree
-In-Reply-To: <1568804927-13565-1-git-send-email-pragnesh.patel@sifive.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191001114108.2D26327429C0@ypsilon.sirena.org.uk>
-Date:   Tue,  1 Oct 2019 12:41:08 +0100 (BST)
+        id S1731379AbfJALli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:41:38 -0400
+Received: from foss.arm.com ([217.140.110.172]:47532 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387715AbfJALld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 07:41:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5CAAC337;
+        Tue,  1 Oct 2019 04:41:32 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C85B53F706;
+        Tue,  1 Oct 2019 04:41:31 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 12:41:30 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: Re: [PATCH] Partially revert "compiler: enable
+ CONFIG_OPTIMIZE_INLINING forcibly"
+Message-ID: <20191001114129.GL42880@e119886-lin.cambridge.arm.com>
+References: <20190930114540.27498-1-will@kernel.org>
+ <CAK7LNARWkQ-z02RYv3XQ69KkWdmEVaZge07qiYC8_kyMrFzCTg@mail.gmail.com>
+ <20191001104253.fci7s3sn5ov3h56d@willie-the-truck>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001104253.fci7s3sn5ov3h56d@willie-the-truck>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Oct 01, 2019 at 11:42:54AM +0100, Will Deacon wrote:
+> On Tue, Oct 01, 2019 at 06:40:26PM +0900, Masahiro Yamada wrote:
+> > On Mon, Sep 30, 2019 at 8:45 PM Will Deacon <will@kernel.org> wrote:
+> > > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > > index 93d97f9b0157..c37c72adaeff 100644
+> > > --- a/lib/Kconfig.debug
+> > > +++ b/lib/Kconfig.debug
+> > > @@ -312,6 +312,7 @@ config HEADERS_CHECK
+> > >
+> > >  config OPTIMIZE_INLINING
+> > >         def_bool y
+> > > +       depends on !(ARM || ARM64) # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91111
+> > 
+> > 
+> > This is a too big hammer.
+> 
+> It matches the previous default behaviour!
+> 
+> > For ARM, it is not a compiler bug, so I am trying to fix the kernel code.
+> > 
+> > For ARM64, even if it is a compiler bug, you can add __always_inline
+> > to the functions in question.
+> > (arch_atomic64_dec_if_positive in this case).
+> > 
+> > You do not need to force __always_inline globally.
+> 
+> So you'd prefer I do something like the diff below? I mean, it's a start,
+> but I do worry that we're hanging arch/arm/ out to dry.
 
-   spi: dt-bindings: Convert spi-sifive binding to json-schema
+If I've understood one part of this issue correctly - and using the
+c2p_unsupported build failure as an example [1], there are instances in
+the kernel where it is assumed that the compiler will optimise out a call
+to an undefined function, and also assumed that the compiler will know
+at compile time that the function will never get called. It's common to
+satisfy this assumption when the calling function is inlined.
 
-has been applied to the spi tree at
+But I suspect there may be other cases similar to c2p_unsupported which
+are still lurking.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+For example the following functions are called but non-existent, and thus
+may be an area worth investigating:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+__buggy_use_of_MTHCA_PUT, __put_dbe_unknown, __cmpxchg_wrong_size,
+__bad_percpu_size, __put_user_bad, __get_user_unknown,
+__bad_unaligned_access_size, __bad_xchg
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+But more generally, as this is a common pattern - isn't there a benefit
+here for changing all of these to BUILD_BUG? (So they can be found easily).
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Or to avoid this class of issues, change them to BUG or unreachable - but
+lose the benefit of compile time detection?
 
 Thanks,
-Mark
 
-From 9c12e34a3be127454b26054043c3b302bca08fdc Mon Sep 17 00:00:00 2001
-From: Pragnesh Patel <pragnesh.patel@sifive.com>
-Date: Wed, 18 Sep 2019 16:38:39 +0530
-Subject: [PATCH] spi: dt-bindings: Convert spi-sifive binding to json-schema
+Andrew Murray
 
-Convert the spi-sifive binding to DT schema format.
-
-Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/1568804927-13565-1-git-send-email-pragnesh.patel@sifive.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/spi/spi-sifive.txt    | 37 --------
- .../devicetree/bindings/spi/spi-sifive.yaml   | 86 +++++++++++++++++++
- 2 files changed, 86 insertions(+), 37 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.txt
- create mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.yaml
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.txt b/Documentation/devicetree/bindings/spi/spi-sifive.txt
-deleted file mode 100644
-index 3f5c6e438972..000000000000
---- a/Documentation/devicetree/bindings/spi/spi-sifive.txt
-+++ /dev/null
-@@ -1,37 +0,0 @@
--SiFive SPI controller Device Tree Bindings
--------------------------------------------
--
--Required properties:
--- compatible		: Should be "sifive,<chip>-spi" and "sifive,spi<version>".
--			  Supported compatible strings are:
--			  "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
--			  onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
--			  SPI v0 IP block with no chip integration tweaks.
--			  Please refer to sifive-blocks-ip-versioning.txt for details
--- reg			: Physical base address and size of SPI registers map
--			  A second (optional) range can indicate memory mapped flash
--- interrupts		: Must contain one entry
--- interrupt-parent	: Must be core interrupt controller
--- clocks		: Must reference the frequency given to the controller
--- #address-cells	: Must be '1', indicating which CS to use
--- #size-cells		: Must be '0'
--
--Optional properties:
--- sifive,fifo-depth		: Depth of hardware queues; defaults to 8
--- sifive,max-bits-per-word	: Maximum bits per word; defaults to 8
--
--SPI RTL that corresponds to the IP block version numbers can be found here:
--https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/spi
--
--Example:
--	spi: spi@10040000 {
--		compatible = "sifive,fu540-c000-spi", "sifive,spi0";
--		reg = <0x0 0x10040000 0x0 0x1000 0x0 0x20000000 0x0 0x10000000>;
--		interrupt-parent = <&plic>;
--		interrupts = <51>;
--		clocks = <&tlclk>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		sifive,fifo-depth = <8>;
--		sifive,max-bits-per-word = <8>;
--	};
-diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.yaml b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
-new file mode 100644
-index 000000000000..140e4351a19f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
-@@ -0,0 +1,86 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/spi-sifive.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: SiFive SPI controller
-+
-+maintainers:
-+  - Pragnesh Patel <pragnesh.patel@sifive.com>
-+  - Paul Walmsley  <paul.walmsley@sifive.com>
-+  - Palmer Dabbelt <palmer@sifive.com>
-+
-+allOf:
-+  - $ref: "spi-controller.yaml#"
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: sifive,fu540-c000-spi
-+      - const: sifive,spi0
-+
-+    description:
-+      Should be "sifive,<chip>-spi" and "sifive,spi<version>".
-+      Supported compatible strings are -
-+      "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
-+      onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
-+      SPI v0 IP block with no chip integration tweaks.
-+      Please refer to sifive-blocks-ip-versioning.txt for details
-+
-+      SPI RTL that corresponds to the IP block version numbers can be found here -
-+      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/spi
-+
-+  reg:
-+    maxItems: 1
-+
-+    description:
-+      Physical base address and size of SPI registers map
-+      A second (optional) range can indicate memory mapped flash
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+    description:
-+      Must reference the frequency given to the controller
-+
-+  sifive,fifo-depth:
-+    description:
-+      Depth of hardware queues; defaults to 8
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - enum: [ 8 ]
-+      - default: 8
-+
-+  sifive,max-bits-per-word:
-+    description:
-+      Maximum bits per word; defaults to 8
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/uint32"
-+      - enum: [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
-+      - default: 8
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+examples:
-+  - |
-+    spi: spi@10040000 {
-+      compatible = "sifive,fu540-c000-spi", "sifive,spi0";
-+      reg = <0x0 0x10040000 0x0 0x1000 0x0 0x20000000 0x0 0x10000000>;
-+      interrupt-parent = <&plic>;
-+      interrupts = <51>;
-+      clocks = <&tlclk>;
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      sifive,fifo-depth = <8>;
-+      sifive,max-bits-per-word = <8>;
-+    };
-+
-+...
--- 
-2.20.1
-
+[1] https://lore.kernel.org/patchwork/patch/1122097/
+> 
+> Will
+> 
+> --->8
+> 
+> diff --git a/arch/arm64/include/asm/atomic_lse.h b/arch/arm64/include/asm/atomic_lse.h
+> index c6bd87d2915b..574808b9df4c 100644
+> --- a/arch/arm64/include/asm/atomic_lse.h
+> +++ b/arch/arm64/include/asm/atomic_lse.h
+> @@ -321,7 +321,8 @@ static inline s64 __lse_atomic64_dec_if_positive(atomic64_t *v)
+>  }
+>  
+>  #define __CMPXCHG_CASE(w, sfx, name, sz, mb, cl...)                    \
+> -static inline u##sz __lse__cmpxchg_case_##name##sz(volatile void *ptr, \
+> +static __always_inline u##sz                                           \
+> +__lse__cmpxchg_case_##name##sz(volatile void *ptr,                     \
+>                                               u##sz old,                \
+>                                               u##sz new)                \
+>  {                                                                      \
+> @@ -362,7 +363,8 @@ __CMPXCHG_CASE(x,  ,  mb_, 64, al, "memory")
+>  #undef __CMPXCHG_CASE
+>  
+>  #define __CMPXCHG_DBL(name, mb, cl...)                                 \
+> -static inline long __lse__cmpxchg_double##name(unsigned long old1,     \
+> +static __always_inline long                                            \
+> +__lse__cmpxchg_double##name(unsigned long old1,                                \
+>                                          unsigned long old2,            \
+>                                          unsigned long new1,            \
+>                                          unsigned long new2,            \
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
