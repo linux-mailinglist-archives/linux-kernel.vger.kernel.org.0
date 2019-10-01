@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E39D5C3DE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C141C3DE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730841AbfJARDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:03:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50750 "EHLO mail.kernel.org"
+        id S1730537AbfJARDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:03:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728288AbfJAQjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:39:43 -0400
+        id S1727929AbfJAQjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:39:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7602421920;
-        Tue,  1 Oct 2019 16:39:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C999421920;
+        Tue,  1 Oct 2019 16:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569947982;
-        bh=iN0ZoXws2jinrtIFpt62MZAlVZIwWNnzZJfiQf4dWFM=;
+        s=default; t=1569947984;
+        bh=6wgNZmsOgbRgn0aUaKX9yXUl7VTpU4/3/nmkC16hG4s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t9I83yqvw898XHZtgR/g1BKAeNHgaQ9+X4ejpr9rXQDrDSZboIlW5XV6Oyxus8dwR
-         UqhMGNuzIoGXosK2QTHKbweOvhpIRwui7pNFBir9B8xr1FAgwnoNDVuIPbXJPhya3R
-         /XK7cfGquLigG8L+N8zP38NEKCBj841fj2D51Uwo=
+        b=k/ZZ9Z3L4x83zsG9JA88HTUFBYSK1EBAhnOWw5Dz2pxUhUNe6VsJ8ak8DB/lM447V
+         aDR418+4yNiMOOg/m2I5IABWu6lqdFqjviAdO9boWIkYiBqzZvCfhyDzySzpGoAcDY
+         Qxy5kYT3rUB3NsO1EOvCTuj5j+t2AX3lgA+zTcec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Erqi Chen <chenerqi@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 14/71] ceph: reconnect connection if session hang in opening state
-Date:   Tue,  1 Oct 2019 12:38:24 -0400
-Message-Id: <20191001163922.14735-14-sashal@kernel.org>
+Cc:     Trond Myklebust <trondmy@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 16/71] SUNRPC: RPC level errors should always set task->tk_rpc_status
+Date:   Tue,  1 Oct 2019 12:38:26 -0400
+Message-Id: <20191001163922.14735-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
 References: <20191001163922.14735-1-sashal@kernel.org>
@@ -44,44 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erqi Chen <chenerqi@gmail.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 71a228bc8d65900179e37ac309e678f8c523f133 ]
+[ Upstream commit 714fbc73888f59321854e7f6c2f224213923bcad ]
 
-If client mds session is evicted in CEPH_MDS_SESSION_OPENING state,
-mds won't send session msg to client, and delayed_work skip
-CEPH_MDS_SESSION_OPENING state session, the session hang forever.
+Ensure that we set task->tk_rpc_status for all RPC level errors so that
+the caller can distinguish between those and server reply status errors.
 
-Allow ceph_con_keepalive to reconnect a session in OPENING to avoid
-session hang. Also, ensure that we skip sessions in RESTARTING and
-REJECTED states since those states can't be resurrected by issuing
-a keepalive.
-
-Link: https://tracker.ceph.com/issues/41551
-Signed-off-by: Erqi Chen chenerqi@gmail.com
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/mds_client.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/sunrpc/clnt.c  | 6 +++---
+ net/sunrpc/sched.c | 5 ++++-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 920e9f048bd8f..b11af7d8e8e93 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -4044,7 +4044,9 @@ static void delayed_work(struct work_struct *work)
- 				pr_info("mds%d hung\n", s->s_mds);
- 			}
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index a07b516e503a0..76e745ff78138 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -1837,7 +1837,7 @@ call_allocate(struct rpc_task *task)
+ 		return;
+ 	}
+ 
+-	rpc_exit(task, -ERESTARTSYS);
++	rpc_call_rpcerror(task, -ERESTARTSYS);
+ }
+ 
+ static int
+@@ -2561,7 +2561,7 @@ rpc_encode_header(struct rpc_task *task, struct xdr_stream *xdr)
+ 	return 0;
+ out_fail:
+ 	trace_rpc_bad_callhdr(task);
+-	rpc_exit(task, error);
++	rpc_call_rpcerror(task, error);
+ 	return error;
+ }
+ 
+@@ -2628,7 +2628,7 @@ rpc_decode_header(struct rpc_task *task, struct xdr_stream *xdr)
+ 		return -EAGAIN;
+ 	}
+ out_err:
+-	rpc_exit(task, error);
++	rpc_call_rpcerror(task, error);
+ 	return error;
+ 
+ out_unparsable:
+diff --git a/net/sunrpc/sched.c b/net/sunrpc/sched.c
+index 1f275aba786fc..53934fe73a9db 100644
+--- a/net/sunrpc/sched.c
++++ b/net/sunrpc/sched.c
+@@ -930,8 +930,10 @@ static void __rpc_execute(struct rpc_task *task)
+ 		/*
+ 		 * Signalled tasks should exit rather than sleep.
+ 		 */
+-		if (RPC_SIGNALLED(task))
++		if (RPC_SIGNALLED(task)) {
++			task->tk_rpc_status = -ERESTARTSYS;
+ 			rpc_exit(task, -ERESTARTSYS);
++		}
+ 
+ 		/*
+ 		 * The queue->lock protects against races with
+@@ -967,6 +969,7 @@ static void __rpc_execute(struct rpc_task *task)
+ 			 */
+ 			dprintk("RPC: %5u got signal\n", task->tk_pid);
+ 			set_bit(RPC_TASK_SIGNALLED, &task->tk_runstate);
++			task->tk_rpc_status = -ERESTARTSYS;
+ 			rpc_exit(task, -ERESTARTSYS);
  		}
--		if (s->s_state < CEPH_MDS_SESSION_OPEN) {
-+		if (s->s_state == CEPH_MDS_SESSION_NEW ||
-+		    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
-+		    s->s_state == CEPH_MDS_SESSION_REJECTED) {
- 			/* this mds is failed or recovering, just wait */
- 			ceph_put_mds_session(s);
- 			continue;
+ 		dprintk("RPC: %5u sync task resuming\n", task->tk_pid);
 -- 
 2.20.1
 
