@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3BBC3251
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42376C3257
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731696AbfJALVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:21:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:54938 "EHLO
+        id S1731828AbfJALVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:21:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:54949 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbfJALVt (ORCPT
+        with ESMTP id S1725839AbfJALVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:21:49 -0400
+        Tue, 1 Oct 2019 07:21:53 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iFGDr-0000H4-Rg; Tue, 01 Oct 2019 13:21:39 +0200
+        id 1iFGDs-0000H8-3G; Tue, 01 Oct 2019 13:21:40 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7184C1C03AB;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B78681C08B2;
         Tue,  1 Oct 2019 13:21:39 +0200 (CEST)
 Date:   Tue, 01 Oct 2019 11:21:39 -0000
 From:   "tip-bot2 for Tony W Wang-oc" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce: Add Zhaoxin LMCE support
+Subject: [tip: ras/core] x86/mce: Add Zhaoxin MCE support
 Cc:     "Tony W Wang-oc" <TonyWWang-oc@zhaoxin.com>,
         Borislav Petkov <bp@suse.de>, CooperYan@zhaoxin.com,
         DavidWang@zhaoxin.com, HerryYang@zhaoxin.com,
@@ -34,10 +34,10 @@ Cc:     "Tony W Wang-oc" <TonyWWang-oc@zhaoxin.com>,
         Tony Luck <tony.luck@intel.com>, "x86-ml" <x86@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <1568787573-1297-5-git-send-email-TonyWWang-oc@zhaoxin.com>
-References: <1568787573-1297-5-git-send-email-TonyWWang-oc@zhaoxin.com>
+In-Reply-To: <1568787573-1297-2-git-send-email-TonyWWang-oc@zhaoxin.com>
+References: <1568787573-1297-2-git-send-email-TonyWWang-oc@zhaoxin.com>
 MIME-Version: 1.0
-Message-ID: <156992889928.9978.12753504403920052831.tip-bot2@tip-bot2>
+Message-ID: <156992889966.9978.4146314179705937670.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,19 +53,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the ras/core branch of tip:
 
-Commit-ID:     70f0c230031dfef3c9b3e37b2a8c18d3f7186fb2
-Gitweb:        https://git.kernel.org/tip/70f0c230031dfef3c9b3e37b2a8c18d3f7186fb2
+Commit-ID:     6e898d2bf67a82df0aa0c955adc9278faba9a635
+Gitweb:        https://git.kernel.org/tip/6e898d2bf67a82df0aa0c955adc9278faba9a635
 Author:        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-AuthorDate:    Wed, 18 Sep 2019 14:19:33 +08:00
+AuthorDate:    Wed, 18 Sep 2019 14:19:30 +08:00
 Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 01 Oct 2019 12:33:33 +02:00
+CommitterDate: Tue, 01 Oct 2019 12:32:27 +02:00
 
-x86/mce: Add Zhaoxin LMCE support
+x86/mce: Add Zhaoxin MCE support
 
-Newer Zhaoxin CPUs support LMCE compatible with Intel. Add support for
-that.
+All newer Zhaoxin CPUs are compatible with Intel's Machine-Check
+Architecture, so add support for them.
 
- [ bp: Export functions and massage. ]
+ [ bp: Reflow comment in vendor_disable_error_reporting() and massage
+   commit message. ]
 
 Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
@@ -79,111 +80,96 @@ Cc: QiyuanWang@zhaoxin.com
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/1568787573-1297-5-git-send-email-TonyWWang-oc@zhaoxin.com
+Link: https://lkml.kernel.org/r/1568787573-1297-2-git-send-email-TonyWWang-oc@zhaoxin.com
 ---
- arch/x86/kernel/cpu/mce/core.c     | 22 ++++++++++++++++++++--
- arch/x86/kernel/cpu/mce/intel.c    |  4 ++--
- arch/x86/kernel/cpu/mce/internal.h |  4 ++++
- 3 files changed, 26 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/mce/core.c | 44 +++++++++++++++++++++++----------
+ 1 file changed, 31 insertions(+), 13 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 1e6b8a4..5f42f25 100644
+index 743370e..a780fe0 100644
 --- a/arch/x86/kernel/cpu/mce/core.c
 +++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1132,6 +1132,12 @@ static bool __mc_check_crashing_cpu(int cpu)
- 		u64 mcgstatus;
+@@ -488,8 +488,9 @@ int mce_usable_address(struct mce *m)
+ 	if (!(m->status & MCI_STATUS_ADDRV))
+ 		return 0;
  
- 		mcgstatus = mce_rdmsrl(MSR_IA32_MCG_STATUS);
-+
-+		if (boot_cpu_data.x86_vendor == X86_VENDOR_ZHAOXIN) {
-+			if (mcgstatus & MCG_STATUS_LMCES)
-+				return false;
-+		}
-+
- 		if (mcgstatus & MCG_STATUS_RIPV) {
- 			mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
- 			return true;
-@@ -1282,9 +1288,10 @@ void do_machine_check(struct pt_regs *regs, long error_code)
+-	/* Checks after this one are Intel-specific: */
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
++	/* Checks after this one are Intel/Zhaoxin-specific: */
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
+ 		return 1;
  
- 	/*
- 	 * Check if this MCE is signaled to only this logical processor,
--	 * on Intel only.
-+	 * on Intel, Zhaoxin only.
- 	 */
--	if (m.cpuvendor == X86_VENDOR_INTEL)
-+	if (m.cpuvendor == X86_VENDOR_INTEL ||
-+	    m.cpuvendor == X86_VENDOR_ZHAOXIN)
- 		lmce = m.mcgstatus & MCG_STATUS_LMCES;
+ 	if (!(m->status & MCI_STATUS_MISCV))
+@@ -507,10 +508,13 @@ EXPORT_SYMBOL_GPL(mce_usable_address);
  
- 	/*
-@@ -1797,9 +1804,15 @@ static void mce_zhaoxin_feature_init(struct cpuinfo_x86 *c)
- 	}
- 
- 	intel_init_cmci();
-+	intel_init_lmce();
- 	mce_adjust_timer = cmci_intel_adjust_timer;
- }
- 
-+static void mce_zhaoxin_feature_clear(struct cpuinfo_x86 *c)
-+{
-+	intel_clear_lmce();
-+}
-+
- static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
+ bool mce_is_memory_error(struct mce *m)
  {
- 	switch (c->x86_vendor) {
-@@ -1836,6 +1849,11 @@ static void __mcheck_cpu_clear_vendor(struct cpuinfo_x86 *c)
- 	case X86_VENDOR_INTEL:
- 		mce_intel_feature_clear(c);
- 		break;
+-	if (m->cpuvendor == X86_VENDOR_AMD ||
+-	    m->cpuvendor == X86_VENDOR_HYGON) {
++	switch (m->cpuvendor) {
++	case X86_VENDOR_AMD:
++	case X86_VENDOR_HYGON:
+ 		return amd_mce_is_memory_error(m);
+-	} else if (m->cpuvendor == X86_VENDOR_INTEL) {
 +
++	case X86_VENDOR_INTEL:
 +	case X86_VENDOR_ZHAOXIN:
-+		mce_zhaoxin_feature_clear(c);
-+		break;
-+
- 	default:
- 		break;
+ 		/*
+ 		 * Intel SDM Volume 3B - 15.9.2 Compound Error Codes
+ 		 *
+@@ -527,9 +531,10 @@ bool mce_is_memory_error(struct mce *m)
+ 		return (m->status & 0xef80) == BIT(7) ||
+ 		       (m->status & 0xef00) == BIT(8) ||
+ 		       (m->status & 0xeffc) == 0xc;
+-	}
+ 
+-	return false;
++	default:
++		return false;
++	}
+ }
+ EXPORT_SYMBOL_GPL(mce_is_memory_error);
+ 
+@@ -1697,6 +1702,18 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+ 		if (c->x86 == 6 && c->x86_model == 45)
+ 			quirk_no_way_out = quirk_sandybridge_ifu;
  	}
-diff --git a/arch/x86/kernel/cpu/mce/intel.c b/arch/x86/kernel/cpu/mce/intel.c
-index fb6e990..68a1d25 100644
---- a/arch/x86/kernel/cpu/mce/intel.c
-+++ b/arch/x86/kernel/cpu/mce/intel.c
-@@ -444,7 +444,7 @@ void intel_init_cmci(void)
- 	cmci_recheck();
- }
- 
--static void intel_init_lmce(void)
-+void intel_init_lmce(void)
++
++	if (c->x86_vendor == X86_VENDOR_ZHAOXIN) {
++		/*
++		 * All newer Zhaoxin CPUs support MCE broadcasting. Enable
++		 * synchronization with a one second timeout.
++		 */
++		if (c->x86 > 6 || (c->x86_model == 0x19 || c->x86_model == 0x1f)) {
++			if (cfg->monarch_timeout < 0)
++				cfg->monarch_timeout = USEC_PER_SEC;
++		}
++	}
++
+ 	if (cfg->monarch_timeout < 0)
+ 		cfg->monarch_timeout = 0;
+ 	if (cfg->bootlog != 0)
+@@ -2014,15 +2031,16 @@ static void mce_disable_error_reporting(void)
+ static void vendor_disable_error_reporting(void)
  {
- 	u64 val;
+ 	/*
+-	 * Don't clear on Intel or AMD or Hygon CPUs. Some of these MSRs
+-	 * are socket-wide.
+-	 * Disabling them for just a single offlined CPU is bad, since it will
+-	 * inhibit reporting for all shared resources on the socket like the
+-	 * last level cache (LLC), the integrated memory controller (iMC), etc.
++	 * Don't clear on Intel or AMD or Hygon or Zhaoxin CPUs. Some of these
++	 * MSRs are socket-wide. Disabling them for just a single offlined CPU
++	 * is bad, since it will inhibit reporting for all shared resources on
++	 * the socket like the last level cache (LLC), the integrated memory
++	 * controller (iMC), etc.
+ 	 */
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL ||
+ 	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON ||
+-	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_ZHAOXIN)
+ 		return;
  
-@@ -457,7 +457,7 @@ static void intel_init_lmce(void)
- 		wrmsrl(MSR_IA32_MCG_EXT_CTL, val | MCG_EXT_CTL_LMCE_EN);
- }
- 
--static void intel_clear_lmce(void)
-+void intel_clear_lmce(void)
- {
- 	u64 val;
- 
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
-index a7ee230..842b273 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -46,12 +46,16 @@ bool mce_intel_cmci_poll(void);
- void mce_intel_hcpu_update(unsigned long cpu);
- void cmci_disable_bank(int bank);
- void intel_init_cmci(void);
-+void intel_init_lmce(void);
-+void intel_clear_lmce(void);
- #else
- # define cmci_intel_adjust_timer mce_adjust_timer_default
- static inline bool mce_intel_cmci_poll(void) { return false; }
- static inline void mce_intel_hcpu_update(unsigned long cpu) { }
- static inline void cmci_disable_bank(int bank) { }
- static inline void intel_init_cmci(void) { }
-+static inline void intel_init_lmce(void) { }
-+static inline void intel_clear_lmce(void) { }
- #endif
- 
- void mce_timer_kick(unsigned long interval);
+ 	mce_disable_error_reporting();
