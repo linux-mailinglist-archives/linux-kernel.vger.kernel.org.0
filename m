@@ -2,138 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A30CC2F7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 11:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD562C2F83
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 11:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733268AbfJAJCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 05:02:53 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35614 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732876AbfJAJCx (ORCPT
+        id S1733284AbfJAJDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 05:03:50 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34598 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfJAJDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 05:02:53 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x918Xvd8145892;
-        Tue, 1 Oct 2019 09:02:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=Ss5NpWoU0ZtQE+xaK30GI2odKGwGDndDFGiADsg5f+o=;
- b=AmIJP46eDWMeMGVOKdEbvWtj6RAv6kkkd8oyqL0pDdJvgRP42W+k5v+/WoT8r1OdETyE
- ZXtnX3GCpdVEuLtaNeUyuGJNn3mzp+kQQop1WfGBZYDYkXzBDZCyJC01XD5v/zrnjZiI
- vfiBhC/+tWx2OyMkQPMk8ZAOZsRJ9Uu598LsbnyR51jd+b2jAuas9M6yS8IoBt4CvmGX
- 7RLuXT9ez+lnNIWUxW93nK5GZRQukgoc3H6Ne9DwJmydrVq95wqgqnseraWt8l+2atQJ
- sPaPhTBTsDqGrM9Xj5RX8clZj5ZShWNDK10V5y3FdwTJY+jAtDl1rOemfp3vrFJ0EpDt 2A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2v9yfq4ebw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 09:02:40 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x918WrbG006916;
-        Tue, 1 Oct 2019 09:02:39 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2vbmpy4m96-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 09:02:39 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9192bnF026280;
-        Tue, 1 Oct 2019 09:02:37 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Oct 2019 02:02:36 -0700
-Date:   Tue, 1 Oct 2019 12:02:30 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     bharat@chelsio.com, dledford@redhat.com, jgg@ziepe.ca,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/iw_cgxb4: Fix an error handling path in
- 'c4iw_connect()'
-Message-ID: <20191001090229.GK27389@kadam>
-References: <20190923190746.10964-1-christophe.jaillet@wanadoo.fr>
+        Tue, 1 Oct 2019 05:03:49 -0400
+Received: by mail-ot1-f66.google.com with SMTP id m19so10913880otp.1;
+        Tue, 01 Oct 2019 02:03:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tHb/q0D5mq2W+1z309ghRX/uOTtJacVT4nymLRBbTcY=;
+        b=htkYd76D3kiDKEcy1bWVrY8+LBE/JTkBI+mpbmAmo2K653WzDQPZopJzPaUzyvcsD8
+         PUcIsjBHr4bk3NFJ5aX9ecsYZIv44d0o1Kl3tC6e6kB+LWm2ydN6iL7CNkI3TsOpGpB5
+         QY1OHSFgiZmHAnudnKRjUyL4CU27rK2x+dLLeeG1Eu19JwE06buCpYwGOrXicxUNlZZv
+         ttrROxujt0T89cVt+1FEVtNTp2GqwqN01vxkFoFknhLC+bA7Qb297JsqydOuxaKuJsM5
+         v93nTjBmphU/RKczONQdAaFyp8Fucjeq3t7XyEDX2qk3aNsaGSYw36250H48rEzIDLid
+         4G2Q==
+X-Gm-Message-State: APjAAAWlkXeMrrIqMKKayfl1MDbu8F7jjCsSTihgEGNfhmXYf6NwYbgE
+        uT7g7pqxhSt5IdIZRwCnyl3+jZUMhf8pa4tqo7s=
+X-Google-Smtp-Source: APXvYqyt8Fr5MNj8xgi9zNhfzNfGel2OzKPctcEPWiUOWLO4+kzE7HEg5SIyhaqF7N+eaUzd0/bjIui+DRWnMOK6Apw=
+X-Received: by 2002:a9d:404d:: with SMTP id o13mr17494480oti.39.1569920628345;
+ Tue, 01 Oct 2019 02:03:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923190746.10964-1-christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910010083
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010083
+References: <20190812150452.27983-1-ard.biesheuvel@linaro.org>
+ <20190812150452.27983-5-ard.biesheuvel@linaro.org> <CAMuHMdXY5UH4KhcaNVuxa8-+GN-4bjyvCd0wzPYuFBY5Ch=fNA@mail.gmail.com>
+ <CAKv+Gu-KPypju6roQaVKP0DHE3aZijVVqLGwNyhiRSNqn1r6-w@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-KPypju6roQaVKP0DHE3aZijVVqLGwNyhiRSNqn1r6-w@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 1 Oct 2019 11:03:37 +0200
+Message-ID: <CAMuHMdV9m+Dbch46cVNqtn4cyB74qgHa18Qcm=HQv7Wx1rk==w@mail.gmail.com>
+Subject: Re: [PATCH 4/5] efi: Export Runtime Configuration Interface table to sysfs
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Narendra K <Narendra.K@dell.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 09:07:46PM +0200, Christophe JAILLET wrote:
-> We should jump to fail3 in order to undo the 'xa_insert_irq()' call.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure which Fixes tag to use because of the many refactorings in this
-> area. So I've choosen to use none :).
-> The issue was already there in 4a740838bf44c. This commit has renamed
-> all labels because a new fail1 was introduced. I've not searched further.
-> 
-> Naming of error labels should be improved. Having nowadays a fail5
-> between fail2 and fail3 (because fail5 was the last
-> error handling path added) is not that readable.
-> However, it goes beyong the purpose of this patch.
-> 
-> Maybe, just using a fail2a, just as already done in 9f5a9632e412 (which
-> introduced fail5) would be enough.
+Hi Ard,
 
-I think/hope that you're joking.  Anyway, these are GW-BASIC style
-labels.  The other anti-pattern that we sometimes see is come-from
-labels where the code does:
+On Tue, Oct 1, 2019 at 10:54 AM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On Tue, 1 Oct 2019 at 10:51, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Mon, Aug 12, 2019 at 5:07 PM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> > > From: Narendra K <Narendra.K@dell.com>
+> > >
+> > > System firmware advertises the address of the 'Runtime
+> > > Configuration Interface table version 2 (RCI2)' via
+> > > an EFI Configuration Table entry. This code retrieves the RCI2
+> > > table from the address and exports it to sysfs as a binary
+> > > attribute 'rci2' under /sys/firmware/efi/tables directory.
+> > > The approach adopted is similar to the attribute 'DMI' under
+> > > /sys/firmware/dmi/tables.
+> > >
+> > > RCI2 table contains BIOS HII in XML format and is used to populate
+> > > BIOS setup page in Dell EMC OpenManage Server Administrator tool.
+> > > The BIOS setup page contains BIOS tokens which can be configured.
+> > >
+> > > Signed-off-by: Narendra K <Narendra.K@dell.com>
+> > > Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+> > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >
+> > Thanks, this is now commit 1c5fecb61255aa12 ("efi: Export Runtime
+> > Configuration Interface table to sysfs").
+> >
+> > > --- a/drivers/firmware/efi/Kconfig
+> > > +++ b/drivers/firmware/efi/Kconfig
+> > > @@ -180,6 +180,19 @@ config RESET_ATTACK_MITIGATION
+> > >           have been evicted, since otherwise it will trigger even on clean
+> > >           reboots.
+> > >
+> > > +config EFI_RCI2_TABLE
+> > > +       bool "EFI Runtime Configuration Interface Table Version 2 Support"
+> > > +       help
+> > > +         Displays the content of the Runtime Configuration Interface
+> > > +         Table version 2 on Dell EMC PowerEdge systems as a binary
+> > > +         attribute 'rci2' under /sys/firmware/efi/tables directory.
+> > > +
+> > > +         RCI2 table contains BIOS HII in XML format and is used to populate
+> > > +         BIOS setup page in Dell EMC OpenManage Server Administrator tool.
+> > > +         The BIOS setup page contains BIOS tokens which can be configured.
+> > > +
+> > > +         Say Y here for Dell EMC PowerEdge systems.
+> >
+> > A quick Google search tells me these are Intel Xeon.
+> > Are arm/arm64/ia64 variants available, too?
+> > If not, this should be protected by "depends on x86" ("|| COMPILE_TEST"?).
+>
+> The code in question is entirely architecture agnostic, and defaults
+> to 'n', so I am not convinced this is needed. (It came up in the
+> review as well)
 
-	foo = kmalloc();
-	if (!foo)
-		goto kmalloc_failed;
+"make oldconfig" still asks me the question on e.g. arm64, where it is
+irrelevant, until arm64 variants of the hardware show up.
 
-We've no clue what the goto does.  And another anti-pattern is generic
-names where we have "goto out;" instead of a better label name which
-says what the goto does "goto unlock;".  Otherwise we have to scroll
-down every time we encounter a goto.
+So IMHO it should have "depends on X86 || COMPILE_TEST".
 
-Imagine if we used the same anti patterns for naming functions:
+Gr{oetje,eeting}s,
 
-	called_from_frob_1();
-	called_from_frob_2();
+                        Geert
 
-And with a string of error lables like this if we name the error labels
-after what the label frees then it makes auditing the function very
-easy.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	one = alloc();
-	if (!one)
-		return -ENOMEM;
-
-	two = alloc();
-	if (!two) {
-		ret = -ENOMEM;
-		goto free_one;
-	}
-
-	three = alloc();
-	if (!three) {
-		ret = -ENOMEM;
-		goto free_two;
-	}
-
-We only need to remember the most recently allocated resource.  And if
-we need to update the function later then the patch is minimal because
-we only need to change the one goto and the error label.  No need to
-re-number everything.  You can audit a patch with properly named labels
-from directly within your email client instead of needing to re-review
-the whole function in the source.
-
-regards,
-dan carpenter
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
