@@ -2,125 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE4C6C391F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C5EC392C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:34:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389776AbfJAPcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 11:32:04 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41575 "EHLO mga18.intel.com"
+        id S2389627AbfJAPe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 11:34:28 -0400
+Received: from mga02.intel.com ([134.134.136.20]:62567 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388277AbfJAPcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 11:32:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727236AbfJAPe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 11:34:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 08:32:00 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 08:32:59 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="275026881"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 01 Oct 2019 08:32:00 -0700
-Received: from abapat-mobl1.amr.corp.intel.com (unknown [10.251.1.101])
-        by linux.intel.com (Postfix) with ESMTP id D8A92580696;
-        Tue,  1 Oct 2019 08:31:58 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH] ASoC: SOF: imx: fix reverse
- CONFIG_SND_SOC_SOF_OF dependency
-To:     Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Cc:     Hulk Robot <hulkci@huawei.com>, YueHaibing <yuehaibing@huawei.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+   d="scan'208";a="205087932"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 01 Oct 2019 08:32:55 -0700
+Received: by lahna (sSMTP sendmail emulation); Tue, 01 Oct 2019 18:32:54 +0300
+Date:   Tue, 1 Oct 2019 18:32:54 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Mario.Limonciello@dell.com, linux-usb@vger.kernel.org,
+        andreas.noever@gmail.com, michael.jamet@intel.com,
+        YehezkelShB@gmail.com, rajmohan.mani@intel.com,
+        nicholas.johnson-opensource@outlook.com.au, lukas@wunner.de,
+        stern@rowland.harvard.edu, anthony.wong@canonical.com,
         linux-kernel@vger.kernel.org
-References: <20191001142026.1124917-1-arnd@arndb.de>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <bb58c7cc-209d-7a2f-0e5b-95a9605ffe7b@linux.intel.com>
-Date:   Tue, 1 Oct 2019 10:31:58 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
+Message-ID: <20191001153254.GD2714@lahna.fi.intel.com>
+References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
+ <20191001113830.13028-18-mika.westerberg@linux.intel.com>
+ <20191001124748.GH2954373@kroah.com>
+ <20191001130905.GO2714@lahna.fi.intel.com>
+ <20191001145354.GA3366714@kroah.com>
+ <924ce4d5862c4d859e238c0e706a3d5b@AUSX13MPC105.AMER.DELL.COM>
+ <20191001152213.GB3450435@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20191001142026.1124917-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001152213.GB3450435@kroah.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/19 9:20 AM, Arnd Bergmann wrote:
-> CONFIG_SND_SOC_SOF_IMX depends on CONFIG_SND_SOC_SOF, but is in
-> turn referenced by the sof-of-dev driver. This creates a reverse
-> dependency that manifests in a link error when CONFIG_SND_SOC_SOF_OF
-> is built-in but CONFIG_SND_SOC_SOF_IMX=m:
+On Tue, Oct 01, 2019 at 05:22:13PM +0200, Greg KH wrote:
+> On Tue, Oct 01, 2019 at 02:59:06PM +0000, Mario.Limonciello@dell.com wrote:
+> > 
+> > 
+> > > -----Original Message-----
+> > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Sent: Tuesday, October 1, 2019 9:54 AM
+> > > To: Mika Westerberg
+> > > Cc: linux-usb@vger.kernel.org; Andreas Noever; Michael Jamet; Yehezkel Bernat;
+> > > Rajmohan Mani; Nicholas Johnson; Lukas Wunner; Alan Stern; Limonciello, Mario;
+> > > Anthony Wong; linux-kernel@vger.kernel.org
+> > > Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
+> > > 
+> > > 
+> > > [EXTERNAL EMAIL]
+> > > 
+> > > On Tue, Oct 01, 2019 at 04:09:05PM +0300, Mika Westerberg wrote:
+> > > > On Tue, Oct 01, 2019 at 02:47:48PM +0200, Greg Kroah-Hartman wrote:
+> > > > > > -	  Thunderbolt Controller driver. This driver is required if you
+> > > > > > -	  want to hotplug Thunderbolt devices on Apple hardware or on PCs
+> > > > > > -	  with Intel Falcon Ridge or newer.
+> > > > > > +	  USB4 (Thunderbolt) driver. USB4 is the public spec based on
+> > > > > > +	  Thunderbolt 3 protocol. This driver is required if you want to
+> > > > > > +	  hotplug Thunderbolt and USB4 compliant devices on Apple
+> > > > > > +	  hardware or on PCs with Intel Falcon Ridge or newer.
+> > > > >
+> > > > > Wait, did "old" thunderbolt just get re-branded as USB4?
+> > > >
+> > > > Not but the driver started supporting USB4 as well :)
+> > > >
+> > > > USB4 is pretty much public spec of Thunderbolt 3 but with some
+> > > > differences in register layouts (this is because Thunderbolt uses some
+> > > > vendor specific capabilities which are now moved to more "standard"
+> > > > places).
+> > > 
+> > > Ok, then we need to rename the Kconfig option as well, otherwise no one
+> > > will "know" that this changed, so they will not be prompted for it.
+> > > 
+> > > > > Because if I have an "old" laptop that needs Thunderbolt support, how am
+> > > > > I going to know it is now called USB4 instead?
+> > > >
+> > > > Well the Kconfig option tries to have both names there:
+> > > >
+> > > >   tristate "USB4 (Thunderbolt) support"
+> > > >
+> > > > and then
+> > > >
+> > > >   USB4 (Thunderbolt) driver. USB4 is the public spec based on
+> > > >   Thunderbolt 3 protocol. This driver is required if you want to hotplug
+> > > >   Thunderbolt and USB4 compliant devices on Apple hardware or on PCs
+> > > >   with Intel Falcon Ridge or newer.
+> > > >
+> > > > and the Kconfig option is still CONFIG_THUNDERBOLT. I know this is
+> > > > confusing but I don't have better ideas how we can advertise both. I
+> > > > borrowed this "format" from firewire.
+> > > 
+> > > CONFIG_USB4 instead?
+> > 
+> > How about CONFIG_USB4_PCIE?
+> > 
+> > I think that will help align that certain aspects of USB4 can be built optionally.
 > 
-> sound/soc/sof/sof-of-dev.o:(.data+0x118): undefined reference to `sof_imx8_ops'
+> What aspects?  We don't have that here at all.
 > 
-> Make the latter a 'bool' symbol and change the Makefile so the imx8
-> driver is compiled the same way as the driver using it.
-> 
-> A nicer way would be to reverse the layering and move all
-> the imx specific bits of sof-of-dev.c into the imx driver
-> itself, which can then call into the common code. Doing this
-> would need more testing and can be done if we add another
-> driver like the first one.
+> I guess the parts of USB4 that are not just this "hook up the PCIe
+> lane" that need to still be developed?
 
-Or use something like
-
-config SND_SOC_SOF_IMX8_SUPPORT
-	bool "SOF support for i.MX8"
-    	depends on IMX_SCU
-    	depends on IMX_DSP
-
-config SND_SOC_SOF_IMX8
-	tristate
-	<i.mx selects>
-
-config SND_SOC_SOF_OF
-	depends on OF
-	select SND_SOC_SOF_IMX8 if SND_SOC_SOF_IMX8_SUPPORT
-
-That way you propagate the module/built-in information. That's how we 
-fixed those issues for the Intel parts.
-
-> 
-> Fixes: f4df4e4042b0 ("ASoC: SOF: imx8: Fix COMPILE_TEST error")
-> Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   sound/soc/sof/imx/Kconfig  | 2 +-
->   sound/soc/sof/imx/Makefile | 4 +++-
->   2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/sof/imx/Kconfig b/sound/soc/sof/imx/Kconfig
-> index 5acae75f5750..a3891654a1fc 100644
-> --- a/sound/soc/sof/imx/Kconfig
-> +++ b/sound/soc/sof/imx/Kconfig
-> @@ -12,7 +12,7 @@ config SND_SOC_SOF_IMX_TOPLEVEL
->   if SND_SOC_SOF_IMX_TOPLEVEL
->   
->   config SND_SOC_SOF_IMX8
-> -	tristate "SOF support for i.MX8"
-> +	bool "SOF support for i.MX8"
->   	depends on IMX_SCU
->   	depends on IMX_DSP
->   	help
-> diff --git a/sound/soc/sof/imx/Makefile b/sound/soc/sof/imx/Makefile
-> index 6ef908e8c807..9e8f35df0ff2 100644
-> --- a/sound/soc/sof/imx/Makefile
-> +++ b/sound/soc/sof/imx/Makefile
-> @@ -1,4 +1,6 @@
->   # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->   snd-sof-imx8-objs := imx8.o
->   
-> -obj-$(CONFIG_SND_SOC_SOF_IMX8) += snd-sof-imx8.o
-> +ifdef CONFIG_SND_SOC_SOF_IMX8
-> +obj-$(CONFIG_SND_SOC_SOF_OF) += snd-sof-imx8.o
-> +endif
-> 
-
+Actually PCIe tunneling is already there in the driver. USB4 has one bit
+that is needed to be set before PCIe tunneling can happen (we do that in
+patch 17/22) but other than that the existing PCIe tunneling code in the
+driver works as is.
