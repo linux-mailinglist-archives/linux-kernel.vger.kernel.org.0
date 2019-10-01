@@ -2,113 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7BEDC36F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B922C36F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388932AbfJAOVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:21:52 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:56411 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbfJAOVv (ORCPT
+        id S2388969AbfJAOUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:20:22 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38887 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727055AbfJAOUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:21:51 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MHoVE-1iKFDt0sgo-00ExaL; Tue, 01 Oct 2019 16:20:31 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        Tue, 1 Oct 2019 10:20:20 -0400
+Received: by mail-ed1-f68.google.com with SMTP id l21so12074245edr.5
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 07:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jW7eXDdGpzoPqCGQ/N/Pe4qVEBLi12b1nAQpyDAd19Q=;
+        b=saWObvKZ+2SD8KboWxSXVO4qJxtT2dlC90wePqcBMjuIQ16RhK1fhrPTLJrwlldyQf
+         ELqbo5Zcx/a0uGVlJDOC7M9+6tIvOz1d5MOefIkpGNakWSPKTla9TB8saKYRQnnpsA0k
+         OTl9mp1bToCTT2Za3zOjdzA+aS61WXFprYGqtObLzk3dRe7tS/P7H88cYkXApEwLVksm
+         5ADB2qQWBR1fp7sgE35A6Fo9GOvEuxEmzQx8wUyUj+RyAxAww7KG3kXgmWywMS3YDcpy
+         qIZTVPd/WYVKU2OIHHdS284uCNknaakxIFU/AFUYPUueVMfJqrn/zhKTp+9AiBmtPGca
+         jBjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jW7eXDdGpzoPqCGQ/N/Pe4qVEBLi12b1nAQpyDAd19Q=;
+        b=BxnbN39Zz1ZMGpkyOl5RTpNnnU+dwBzrkOtxUkSbG0s0gGoW0UcbugrbXmRucXUeb0
+         RUY5Q5GaodaH+te3S++HVqNLfinE2oDkTUS11VD08YK6pTlKfKMfSRAApB/8veFxaSPt
+         8I49G3CyfjaOdn0fdTFEHBBgADHnx+3LHT2zc07WoBenb9mEh0LbK7/GlqJdF3Bg0yMi
+         aSbzS+LHHHvESbQd/tUSJyLeEL2Nbx7vMHIgWUVuOTdNLHUU8Doe5K1Ih2995nQEizsw
+         CljdPpifhIhMgr0z4xuGH7Wx8flFHvZqZtH6ClwqZJClLbYFRpbdQcq9qgjtl1fQ05C8
+         BnZw==
+X-Gm-Message-State: APjAAAXYBgB8ACAiIdIDYqekBSJBbiIqmsyphI9GQxUR1f3KZdGCi40C
+        4eOEmkWxPsyVP204nUfLu/I/3g==
+X-Google-Smtp-Source: APXvYqxMumpbaDDZhfyPxjux2WynqitCyDnI8AW4aNzJk7qqt9bGOvfbWjUKvhnOcREwF/sAhreYKA==
+X-Received: by 2002:aa7:dc55:: with SMTP id g21mr25526019edu.210.1569939618577;
+        Tue, 01 Oct 2019 07:20:18 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id o26sm3143696edi.23.2019.10.01.07.20.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Oct 2019 07:20:17 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 51D61102FB8; Tue,  1 Oct 2019 17:20:18 +0300 (+03)
+Date:   Tue, 1 Oct 2019 17:20:18 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     William Kucharski <william.kucharski@oracle.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: SOF: imx: fix reverse CONFIG_SND_SOC_SOF_OF dependency
-Date:   Tue,  1 Oct 2019 16:20:09 +0200
-Message-Id: <20191001142026.1124917-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+Subject: Re: [PATCH 14/15] mm: Align THP mappings for non-DAX
+Message-ID: <20191001142018.wpordswdkadac6kt@box>
+References: <20190925005214.27240-1-willy@infradead.org>
+ <20190925005214.27240-15-willy@infradead.org>
+ <20191001104558.rdcqhjdz7frfuhca@box>
+ <A935F599-BB18-40C3-90DD-47B7700743D6@oracle.com>
+ <20191001113216.3qbrkqmb2b2xtwkd@box>
+ <5dc7b5c1-6d7d-90ee-9423-6eda9ecb005c@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:hL/OrOqx1oO4Bmp86kRM00tNRZ3chWT/eTPxi4JaUrsImLSXYp7
- i+qhAnFRG6eViMZ5TNl46bk0rixPpe+lc1OET7BF5YF7A071moylb49GvEj4GDKarj0uC0+
- ZU+hnVbZdw2WlCiPsgBt8jo3E/gi5h3MNgOBHDOJ3oB6ufIx8rjPWbFJglcQSltdef+vZ+z
- vb+eFvoyJkEdMHXsRPfSg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:UD9CBuUg62g=:c9PbZz2InB7poesIjc/J/C
- JDvhs0OAUieNXQYRdSS/AETOv3aLuELWRzX420aQAkLscCBi3TzXaYL5Je/C5Hm+pDziHPC+f
- c8/qVlqXWZtXwbsyGdhRNrkj5uwl96NnLUAmarjmwh68CXMZ4J5Wlk7oaKCVyRQTR1xHpL8LY
- qQmtbXueO1sAQqJOPbZ0gmzdpEn38ToU3i5ZPMCEdaGPjtjc6wZNAsBEpzCXzbM0wvamttdRp
- qFL00i6GPGw5UoBa93WdO4uW80+vaP2nutw/LwKluTurpcYBUxW8pAbE8fhr1w1RYRxhKVxt3
- HT+/vR6HrFTBo7WDfY+MbBySCYD++0Wdz0QsEkdWJLm7ctUU9hzcJqBTMIKjAGdaVpo37d3AD
- mRNIvoKo62Q4/zz8HhMoU0FQdSetGcri26tevKkt9l4KikSL4wOuPsST0tr69YqVrgcVgzF22
- +V1yiuUtuLwAt/ugNS6K6nKEqEJvVj4RBXVMM65FY/cjPMTxqDrCWBbqqeOBj7vhoLHMvE8St
- NFOraaDm6HFe+AkhgJARAGBMLUYhnge9RaJBRR25cyJyxaRE0LUUIBEKUzPp4HSO1nsFtEWuQ
- 9Bkw1DY/URAci10xnfO4M3F5hP1e+OOcmOlhE+V8vtziqpcgbdCU9OZ1YbkOnq0pEVJ08CSYc
- rc/ngKrFD5pK+v45Kh1oKYzooYfgrtaaXRAdzZmKGka4RXtGgn7etgDRNjSM/XaWxgK0XmKkw
- Sp/xgUJie7+imAetJyXn6jXjV14HtyyqgV4WUPsCFFXwibYETjtOLmrT3eXFMYpC12WseKotV
- jpdjAT5MMl/74tC5GVYZpp1hjPswSP3wr1EcRlaWd58P0++zn5yiuZJagiOEELf8bYtx7wUqI
- /B4b2Dbt883pMpM4aFqA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5dc7b5c1-6d7d-90ee-9423-6eda9ecb005c@oracle.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_SND_SOC_SOF_IMX depends on CONFIG_SND_SOC_SOF, but is in
-turn referenced by the sof-of-dev driver. This creates a reverse
-dependency that manifests in a link error when CONFIG_SND_SOC_SOF_OF
-is built-in but CONFIG_SND_SOC_SOF_IMX=m:
+On Tue, Oct 01, 2019 at 06:18:28AM -0600, William Kucharski wrote:
+> 
+> 
+> On 10/1/19 5:32 AM, Kirill A. Shutemov wrote:
+> > On Tue, Oct 01, 2019 at 05:21:26AM -0600, William Kucharski wrote:
+> > > 
+> > > 
+> > > > On Oct 1, 2019, at 4:45 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > > > 
+> > > > On Tue, Sep 24, 2019 at 05:52:13PM -0700, Matthew Wilcox wrote:
+> > > > > 
+> > > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > > > index cbe7d0619439..670a1780bd2f 100644
+> > > > > --- a/mm/huge_memory.c
+> > > > > +++ b/mm/huge_memory.c
+> > > > > @@ -563,8 +563,6 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+> > > > > 
+> > > > > 	if (addr)
+> > > > > 		goto out;
+> > > > > -	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
+> > > > > -		goto out;
+> > > > > 
+> > > > > 	addr = __thp_get_unmapped_area(filp, len, off, flags, PMD_SIZE);
+> > > > > 	if (addr)
+> > > > 
+> > > > I think you reducing ASLR without any real indication that THP is relevant
+> > > > for the VMA. We need to know if any huge page allocation will be
+> > > > *attempted* for the VMA or the file.
+> > > 
+> > > Without a properly aligned address the code will never even attempt allocating
+> > > a THP.
+> > > 
+> > > I don't think rounding an address to one that would be properly aligned to map
+> > > to a THP if possible is all that detrimental to ASLR and without the ability to
+> > > pick an aligned address it's rather unlikely anyone would ever map anything to
+> > > a THP unless they explicitly designate an address with MAP_FIXED.
+> > > 
+> > > If you do object to the slight reduction of the ASLR address space, what
+> > > alternative would you prefer to see?
+> > 
+> > We need to know by the time if THP is allowed for this
+> > file/VMA/process/whatever. Meaning that we do not give up ASLR entropy for
+> > nothing.
+> > 
+> > For instance, if THP is disabled globally, there is no reason to align the
+> > VMA to the THP requirements.
+> 
+> I understand, but this code is in thp_get_unmapped_area(), which is only called
+> if THP is configured and the VMA can support it.
+> 
+> I don't see it in Matthew's patchset, so I'm not sure if it was inadvertently
+> missed in his merge or if he has other ideas for how it would eventually be
+> called, but in my last patch revision the code calling it in do_mmap()
+> looked like this:
+> 
+> #ifdef CONFIG_RO_EXEC_FILEMAP_HUGE_FAULT_THP
+>         /*
+>          * If THP is enabled, it's a read-only executable that is
+>          * MAP_PRIVATE mapped, the length is larger than a PMD page
+>          * and either it's not a MAP_FIXED mapping or the passed address is
+>          * properly aligned for a PMD page, attempt to get an appropriate
+>          * address at which to map a PMD-sized THP page, otherwise call the
+>          * normal routine.
+>          */
+>         if ((prot & PROT_READ) && (prot & PROT_EXEC) &&
+>                 (!(prot & PROT_WRITE)) && (flags & MAP_PRIVATE) &&
+>                 (!(flags & MAP_FIXED)) && len >= HPAGE_PMD_SIZE) {
 
-sound/soc/sof/sof-of-dev.o:(.data+0x118): undefined reference to `sof_imx8_ops'
+len and MAP_FIXED is already handled by thp_get_unmapped_area().
 
-Make the latter a 'bool' symbol and change the Makefile so the imx8
-driver is compiled the same way as the driver using it.
+	if (prot & (PROT_READ|PROT_WRITE|PROT_READ) == (PROT_READ|PROT_EXEC) &&
+		(flags & MAP_PRIVATE)) {
 
-A nicer way would be to reverse the layering and move all
-the imx specific bits of sof-of-dev.c into the imx driver
-itself, which can then call into the common code. Doing this
-would need more testing and can be done if we add another
-driver like the first one.
 
-Fixes: f4df4e4042b0 ("ASoC: SOF: imx8: Fix COMPILE_TEST error")
-Fixes: 202acc565a1f ("ASoC: SOF: imx: Add i.MX8 HW support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/sof/imx/Kconfig  | 2 +-
- sound/soc/sof/imx/Makefile | 4 +++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+>                 addr = thp_get_unmapped_area(file, addr, len, pgoff, flags);
+> 
+>                 if (addr && (!(addr & ~HPAGE_PMD_MASK))) {
 
-diff --git a/sound/soc/sof/imx/Kconfig b/sound/soc/sof/imx/Kconfig
-index 5acae75f5750..a3891654a1fc 100644
---- a/sound/soc/sof/imx/Kconfig
-+++ b/sound/soc/sof/imx/Kconfig
-@@ -12,7 +12,7 @@ config SND_SOC_SOF_IMX_TOPLEVEL
- if SND_SOC_SOF_IMX_TOPLEVEL
- 
- config SND_SOC_SOF_IMX8
--	tristate "SOF support for i.MX8"
-+	bool "SOF support for i.MX8"
- 	depends on IMX_SCU
- 	depends on IMX_DSP
- 	help
-diff --git a/sound/soc/sof/imx/Makefile b/sound/soc/sof/imx/Makefile
-index 6ef908e8c807..9e8f35df0ff2 100644
---- a/sound/soc/sof/imx/Makefile
-+++ b/sound/soc/sof/imx/Makefile
-@@ -1,4 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
- snd-sof-imx8-objs := imx8.o
- 
--obj-$(CONFIG_SND_SOC_SOF_IMX8) += snd-sof-imx8.o
-+ifdef CONFIG_SND_SOC_SOF_IMX8
-+obj-$(CONFIG_SND_SOC_SOF_OF) += snd-sof-imx8.o
-+endif
+This check is broken.
+
+For instance, if pgoff is one, (addr & ~HPAGE_PMD_MASK) has to be equal to
+PAGE_SIZE to have chance to get a huge page in the mapping.
+
+>                         /*
+>                          * If we got a suitable THP mapping address, shut off
+>                          * VM_MAYWRITE for the region, since it's never what
+>                          * we would want.
+>                          */
+>                         vm_maywrite = 0;
+
+Wouldn't it break uprobe, for instance?
+
+>                 } else
+>                         addr = get_unmapped_area(file, addr, len, pgoff, flags);
+>         } else {
+> #endif
+> 
+> So I think that meets your expectations regarding ASLR.
+> 
+>    -- Bill
+
 -- 
-2.20.0
-
+ Kirill A. Shutemov
