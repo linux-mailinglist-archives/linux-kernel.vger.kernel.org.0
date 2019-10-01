@@ -2,96 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 080F5C2F3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4ECC2F57
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733217AbfJAIt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 04:49:27 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44381 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733162AbfJAItW (ORCPT
+        id S1733236AbfJAIz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 04:55:28 -0400
+Received: from mail-m964.mail.126.com ([123.126.96.4]:49510 "EHLO
+        mail-m964.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbfJAIz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:49:22 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m13so12409800ljj.11;
-        Tue, 01 Oct 2019 01:49:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ca/INmDFVsC6VnPl4lbuo+UeGmswEkRdIM5NeHHd3ug=;
-        b=Ww2Ryi3ltsDgPMrNrUxlUd1YCrtKo4JXAq66jwhEe5NhT3hH6bvP3PCNYNTXWWH/km
-         rnASuR5wZ/e7lFdrzlwDbZwYGPdCB1pLom4PU5IGqCn0HUOzyhRoNuFZ3zS1Qv1Q0BlI
-         OubmPXEvOAjpE2tmNxkggcT8p1DJPrSJ1bMKcXjdACiBJJFLIThbGNKqPbrIOjgdiSS8
-         LLDdlphbJv0NC6KwYkn9T4+FhtqkWLBm8pMy78ACj4K7jpypqmXY02NCz7ip5kgwuByZ
-         5odw/nPiZojdsFm7CCzljDuNapnvdx7u9/whkX0NFc8gNnqDp5VBYs2YZfzyCKKpQvKR
-         /Wlw==
-X-Gm-Message-State: APjAAAVQRnLGLiV7f6pH4I/zY1gt915BUquHgIQDjPfyMusTTv2k0uYo
-        aUCRfvfq32JcZqMNBFnp6Jk=
-X-Google-Smtp-Source: APXvYqx6zk0AODtqV62ey8fF5pZauaelQT9dehzN+xR3TYKKj5ckKfHYTVe4n8+ixmC52JRbSN1mxQ==
-X-Received: by 2002:a2e:4296:: with SMTP id h22mr15418860ljf.208.1569919760229;
-        Tue, 01 Oct 2019 01:49:20 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id h12sm3880087ljg.24.2019.10.01.01.49.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 01:49:18 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iFDqX-0000XP-BP; Tue, 01 Oct 2019 10:49:25 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Pete Zaitcev <zaitcev@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH v2 4/4] media: stkwebcam: fix runtime PM after driver unbind
-Date:   Tue,  1 Oct 2019 10:49:08 +0200
-Message-Id: <20191001084908.2003-5-johan@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191001084908.2003-1-johan@kernel.org>
-References: <20191001084908.2003-1-johan@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 1 Oct 2019 04:55:28 -0400
+X-Greylist: delayed 1819 seconds by postgrey-1.27 at vger.kernel.org; Tue, 01 Oct 2019 04:55:26 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=8+PkyfTKytiTLsOI38
+        wFrb2knSB9Am6i5LeugKWw9WQ=; b=lbsGjsWGEkeVAIkDd4hYYzzM1Pjr32hoS5
+        a4ZpV12XLxW49wzP4EaHN7rcCAfppBn1LZeRTR6GI48uO++0CHywuMaZqwxh/E1P
+        Sg5JmrsQWdUwDjul59BMda1SsF+I6e20d+LqrNKSTdPKZat3CNWt/IDSXB9xHbxs
+        E6423apYs=
+Received: from localhost.localdomain (unknown [123.116.149.18])
+        by smtp9 (Coremail) with SMTP id NeRpCgCnLRpbDZNdDyGnAA--.8531S2;
+        Tue, 01 Oct 2019 16:25:00 +0800 (CST)
+From:   wh_bin@126.com
+To:     pablo@netfilter.org
+Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wh_bin@126.com
+Subject: [PATCH] netfilter:get_next_corpse():No need to double check the *bucket
+Date:   Tue,  1 Oct 2019 16:24:41 +0800
+Message-Id: <20191001082441.7140-1-wh_bin@126.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: NeRpCgCnLRpbDZNdDyGnAA--.8531S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWrurW7uryfZry3tFWfZFyxXwb_yoW8JryUpw
+        nakw1ay34xWrs0yF4Fgry7AFsxCws3ua1jgr45G34rGwnrGwn8CF48Kry7Xas8Xrs5JF13
+        Ars0yw1j9F1kXw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UTKZZUUUUU=
+X-Originating-IP: [123.116.149.18]
+X-CM-SenderInfo: xzkbuxbq6rjloofrz/1tbiWBxBol1w0rQrGwAAsc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit c2b71462d294 ("USB: core: Fix bug caused by duplicate
-interface PM usage counter") USB drivers must always balance their
-runtime PM gets and puts, including when the driver has already been
-unbound from the interface.
+From: Hongbin Wang <wh_bin@126.com>
 
-Leaving the interface with a positive PM usage counter would prevent a
-later bound driver from suspending the device.
+The *bucket is in for loops,it has been checked.
 
-Note that runtime PM has never actually been enabled for this driver
-since the support_autosuspend flag in its usb_driver struct is not set.
-
-Fixes: c2b71462d294 ("USB: core: Fix bug caused by duplicate interface PM usage counter")
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Hongbin Wang <wh_bin@126.com>
 ---
- drivers/media/usb/stkwebcam/stk-webcam.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/netfilter/nf_conntrack_core.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/stkwebcam/stk-webcam.c b/drivers/media/usb/stkwebcam/stk-webcam.c
-index be8041e3e6b8..b0cfa4c1f8cc 100644
---- a/drivers/media/usb/stkwebcam/stk-webcam.c
-+++ b/drivers/media/usb/stkwebcam/stk-webcam.c
-@@ -643,8 +643,7 @@ static int v4l_stk_release(struct file *fp)
- 		dev->owner = NULL;
- 	}
- 
--	if (is_present(dev))
--		usb_autopm_put_interface(dev->interface);
-+	usb_autopm_put_interface(dev->interface);
- 	mutex_unlock(&dev->lock);
- 	return v4l2_fh_release(fp);
- }
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index 0c63120b2db2..8d48babe6561 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -2000,14 +2000,12 @@ get_next_corpse(int (*iter)(struct nf_conn *i, void *data),
+ 		lockp = &nf_conntrack_locks[*bucket % CONNTRACK_LOCKS];
+ 		local_bh_disable();
+ 		nf_conntrack_lock(lockp);
+-		if (*bucket < nf_conntrack_htable_size) {
+-			hlist_nulls_for_each_entry(h, n, &nf_conntrack_hash[*bucket], hnnode) {
+-				if (NF_CT_DIRECTION(h) != IP_CT_DIR_ORIGINAL)
+-					continue;
+-				ct = nf_ct_tuplehash_to_ctrack(h);
+-				if (iter(ct, data))
+-					goto found;
+-			}
++		hlist_nulls_for_each_entry(h, n, &nf_conntrack_hash[*bucket], hnnode) {
++			if (NF_CT_DIRECTION(h) != IP_CT_DIR_ORIGINAL)
++				continue;
++			ct = nf_ct_tuplehash_to_ctrack(h);
++			if (iter(ct, data))
++				goto found;
+ 		}
+ 		spin_unlock(lockp);
+ 		local_bh_enable();
 -- 
-2.23.0
+2.17.1
 
