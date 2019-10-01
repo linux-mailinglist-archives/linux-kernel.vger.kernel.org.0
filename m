@@ -2,40 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06829C3B21
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F61EC3B25
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbfJAQmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:42:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53854 "EHLO mail.kernel.org"
+        id S1731825AbfJAQmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:42:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbfJAQmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:42:05 -0400
+        id S1731734AbfJAQmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:42:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08333205C9;
-        Tue,  1 Oct 2019 16:42:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6865921855;
+        Tue,  1 Oct 2019 16:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948125;
-        bh=WIl6W8ebQcojUGSsK88TdAJ9kurCE2C5egXd6emtgqY=;
+        s=default; t=1569948132;
+        bh=M+E//PlUJpUU80qohtiS2iSxUUk/eSlGO32hiEW5ZzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c3C2TEDErbt5QCFFHKMmkgxbvR8rjXdD+3RN/HtYdIFHCg0/i55DN8f3KgceMzwNp
-         YlLATdqWLPkkYreEc50uW9mmlkiPaVR21qiQeIINcv5JeDsKyx5k4hifShu9MsI/pJ
-         jUYA+HorZxWBmiUIlNYXO3/6c/kDUvmzO69XW7QM=
+        b=Ny0hVqavjzCVgBZ80Dy+sVGDhF8mxs2Lq+e1Ga64SzBhR1y1DRQ1u3GNSYcPhF1cK
+         klj3d33dkSedbLf0tlOXKP2zV7QoKeTicaXtChujZ+HDFxvHaMu7nn2mR5Ej1pCjYi
+         MWsG3oYGE6xwXVKbFh2r7elZUGNljxl2CuzUt3LU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 28/63] x86/purgatory: Disable the stackleak GCC plugin for the purgatory
-Date:   Tue,  1 Oct 2019 12:40:50 -0400
-Message-Id: <20191001164125.15398-28-sashal@kernel.org>
+Cc:     Andrei Dulea <adulea@amazon.de>, Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.2 32/63] iommu/amd: Fix downgrading default page-sizes in alloc_pte()
+Date:   Tue,  1 Oct 2019 12:40:54 -0400
+Message-Id: <20191001164125.15398-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -48,51 +42,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arvind Sankar <nivedita@alum.mit.edu>
+From: Andrei Dulea <adulea@amazon.de>
 
-[ Upstream commit ca14c996afe7228ff9b480cf225211cc17212688 ]
+[ Upstream commit 6ccb72f8374e17d60b58a7bfd5570496332c54e2 ]
 
-Since commit:
+Downgrading an existing large mapping to a mapping using smaller
+page-sizes works only for the mappings created with page-mode 7 (i.e.
+non-default page size).
 
-  b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS")
+Treat large mappings created with page-mode 0 (i.e. default page size)
+like a non-present mapping and allow to overwrite it in alloc_pte().
 
-kexec breaks if GCC_PLUGIN_STACKLEAK=y is enabled, as the purgatory
-contains undefined references to stackleak_track_stack.
+While around, make sure that we flush the TLB only if we change an
+existing mapping, otherwise we might end up acting on garbage PTEs.
 
-Attempting to load a kexec kernel results in this failure:
-
-  kexec: Undefined symbol: stackleak_track_stack
-  kexec-bzImage64: Loading purgatory failed
-
-Fix this by disabling the stackleak plugin for the purgatory.
-
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS")
-Link: https://lkml.kernel.org/r/20190923171753.GA2252517@rani.riverdale.lan
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 6d568ef9a622 ("iommu/amd: Allow downgrading page-sizes in alloc_pte()")
+Signed-off-by: Andrei Dulea <adulea@amazon.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/purgatory/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iommu/amd_iommu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 10fb42da0007e..b81b5172cf994 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -23,6 +23,7 @@ KCOV_INSTRUMENT := n
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 3e687f18b203a..f0fdc598f64dc 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1480,6 +1480,7 @@ static u64 *alloc_pte(struct protection_domain *domain,
+ 		pte_level = PM_PTE_LEVEL(__pte);
  
- PURGATORY_CFLAGS_REMOVE := -mcmodel=kernel
- PURGATORY_CFLAGS := -mcmodel=large -ffreestanding -fno-zero-initialized-in-bss
-+PURGATORY_CFLAGS += $(DISABLE_STACKLEAK_PLUGIN)
+ 		if (!IOMMU_PTE_PRESENT(__pte) ||
++		    pte_level == PAGE_MODE_NONE ||
+ 		    pte_level == PAGE_MODE_7_LEVEL) {
+ 			page = (u64 *)get_zeroed_page(gfp);
+ 			if (!page)
+@@ -1490,7 +1491,7 @@ static u64 *alloc_pte(struct protection_domain *domain,
+ 			/* pte could have been changed somewhere. */
+ 			if (cmpxchg64(pte, __pte, __npte) != __pte)
+ 				free_page((unsigned long)page);
+-			else if (pte_level == PAGE_MODE_7_LEVEL)
++			else if (IOMMU_PTE_PRESENT(__pte))
+ 				domain->updated = true;
  
- # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
- # in turn leaves some undefined symbols like __fentry__ in purgatory and not
+ 			continue;
 -- 
 2.20.1
 
