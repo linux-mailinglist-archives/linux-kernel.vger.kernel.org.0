@@ -2,188 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B312CC3E05
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 025CCC3E0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731171AbfJAREK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:04:10 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36725 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730011AbfJAREC (ORCPT
+        id S1730661AbfJAREY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:04:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45798 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfJAREV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:04:02 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y22so8455563pfr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 10:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EcBrAvMosjOG+UozMLy1mX7WITMjOIgSIxKt9S1MY78=;
-        b=tQeowPI5FGxOFELVxn4y0uIrJzC5WdQ10Icig06ZTrO0qKSy0zxsNCHYx7PmJoHS7p
-         dog98eiYC996iI878c1DE9kDWe1n3D3glN7bCP3v+0GjdRobfuD6Wz5/LnugQCizZyKk
-         3t+GPMpzdPfo1HbVPk7aMWwpYS3e2/yiAtXINj1ZEEPjJ/r4rXi1mw3kWiTZbGtX2HY7
-         3Y64wTqHn2rZkQswmnTCus2NmKzKuBV5mD8CYr2MtWGQn0+L9J4dAcrgVi5Nhlx1+AK/
-         SQdt2fRwKidwBzn6oVp/ixyPx3dK1TWxMMj4ReQ25zrY85m6rZ9BTXSs2fD6sD4snKLA
-         M4qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EcBrAvMosjOG+UozMLy1mX7WITMjOIgSIxKt9S1MY78=;
-        b=AYdz6a3OXXOU9KI976ROpOciQbzrHbO83E4c3iMM4CIgHFbYUjSAQEr052Cnkz1yBz
-         1SfekutJIkX4a9w9yrY3HM2uyox4yFLrSfeZztDD+/eNTqoYKbQpDJODMfWRsl1xqGtQ
-         bacE3PUgvNChglz2upeTSGRv69kjL26X0n1Dn/Reai1zqdHNlYuQKBucuvfmJV96sisV
-         3SMQvyA11Zjxl9zDGtUczNrfMxXB3/diJttJ8fzwYDDjMGPDO0XToz5F7WkldtHErdw9
-         V0Q+c+lNAWjcTpqfa7lwY+sfEDnzofMwAXV/Scgl0YXkmca0wRmlRKoqw4nbgGvfHoSi
-         PAsQ==
-X-Gm-Message-State: APjAAAW7k009MAU8uk6NrVlPmPYmyao1iiAGGnq800+IpaukQystxiR8
-        h8AKgXfNRd98AHGvkL8qqlDRnbhue8GwCZ7c4aZo3A==
-X-Google-Smtp-Source: APXvYqw3A/RUIhbvi9tHej5gK5Ducu/8QWOwZ72fe1dUcSs00OVimHuao8TGBKT2Q9Yr+5x6YGdZ13lsQb3fiV6nTWk=
-X-Received: by 2002:a62:798e:: with SMTP id u136mr29331106pfc.3.1569949441392;
- Tue, 01 Oct 2019 10:04:01 -0700 (PDT)
+        Tue, 1 Oct 2019 13:04:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1AAB26177C; Tue,  1 Oct 2019 17:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569949461;
+        bh=UEkX/cHMbQ0sDePOFVv3FYadMtUY51cOeHadyFKhHvY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MWo5h9KQE6iRhSXNDSxstK3op6HdP7U/hDZ2AALli5OwqN2QqeYIm6Xyr0gxdpXuM
+         IvyM5hN1KtE2Mgr9LGJEAzLmgdtSCVDn5Bt91RQr3t0IHGJccCZRGiUdwgfVECLX2i
+         AK4GeB3Ocl18d5kbrxP0RVryYf+sbk+uMWK7D9rU=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 62D5561728;
+        Tue,  1 Oct 2019 17:04:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569949454;
+        bh=UEkX/cHMbQ0sDePOFVv3FYadMtUY51cOeHadyFKhHvY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Amc4WfDqR/Ia2oe2RA7vGkjDeZHnbdBIgta2AynRkAwnAg0DKlyrue7DBbGM2Zhb5
+         vGwuYZkfCUQAHLfmEkZ4PpW4V1SYojQvaVT//h5rwM4kfQ3lgT6iOMSdCCmBo8q1bl
+         uGQDcZFuvPCNecg3TlEHS0/XCvOgiPl9Mv/+wDig=
 MIME-Version: 1.0
-References: <20191001083701.27207-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20191001083701.27207-1-yamada.masahiro@socionext.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 1 Oct 2019 10:03:50 -0700
-Message-ID: <CAKwvOd=NObDXDL3jz9ZX9wo4tn747peBJPTj0DXyLerixgL+wQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: add __always_inline to functions called from __get_user_check()
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 01 Oct 2019 10:04:14 -0700
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv9 2/3] arm64: dts: qcom: msm8998: Add Coresight support
+In-Reply-To: <CAOCk7NrK+wY8jfHdS8781NOQtyLm2RRe1NW2Rm3_zeaot0Q99Q@mail.gmail.com>
+References: <cover.1564550873.git.saiprakash.ranjan@codeaurora.org>
+ <90114e06825e537c3aafd3de5c78743a9de6fadc.1564550873.git.saiprakash.ranjan@codeaurora.org>
+ <CAOCk7NrK+wY8jfHdS8781NOQtyLm2RRe1NW2Rm3_zeaot0Q99Q@mail.gmail.com>
+Message-ID: <16212a577339204e901cf4eefa5e82f1@codeaurora.org>
+X-Sender: saiprakash.ranjan@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 1:37 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> KernelCI reports that bcm2835_defconfig is no longer booting since
-> commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-> forcibly") (https://lkml.org/lkml/2019/9/26/825).
->
-> I also received a regression report from Nicolas Saenz Julienne
-> (https://lkml.org/lkml/2019/9/27/263).
->
-> This problem has cropped up on bcm2835_defconfig because it enables
-> CONFIG_CC_OPTIMIZE_FOR_SIZE. The compiler tends to prefer not inlining
-> functions with -Os. I was able to reproduce it with other boards and
-> defconfig files by manually enabling CONFIG_CC_OPTIMIZE_FOR_SIZE.
->
-> The __get_user_check() specifically uses r0, r1, r2 registers.
-> So, uaccess_save_and_enable() and uaccess_restore() must be inlined.
-> Otherwise, those register assignments would be entirely dropped,
-> according to my analysis of the disassembly.
->
-> Prior to commit 9012d011660e ("compiler: allow all arches to enable
-> CONFIG_OPTIMIZE_INLINING"), the 'inline' marker was always enough for
-> inlining functions, except on x86.
->
-> Since that commit, all architectures can enable CONFIG_OPTIMIZE_INLINING.
-> So, __always_inline is now the only guaranteed way of forcible inlining.
+On 2019-10-01 09:13, Jeffrey Hugo wrote:
+> Sai,
+> 
+> This patch breaks boot on the 835 laptops.  However, I haven't seen
+> the same issue on the MTP.  I wonder, is coresight expected to work
+> with production fused devices?  I wonder if thats the difference
+> between the laptop and MTP that is causing the issue.
+> 
+> Let me know what I can do to help debug.
+> 
 
-No, the C preprocessor is the only guaranteed way of inlining.  I
-preferred v1; if you're going to <strikethrough>play with
-fire</strikethrough>write assembly, don't get burned.
+I did test on MSM8998 MTP and didn't face any issue. I am guessing this 
+is the same issue which you reported regarding cpuidle? Coresight ETM 
+and cpuidle do not work well together since ETMs share the same power 
+domain as CPU and they might get turned off when CPU enters idle states. 
+Can you try with cpuidle.off=1 cmdline or just remove idle states from 
+DT to confirm? If this is the issue, then we can try the below patch 
+from Andrew Murray for ETM save and restore:
 
->
-> I also added __always_inline to 4 functions in the call-graph from the
-> __get_user_check() macro.
->
-> Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Reported-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
-> Changes in v2:
->   - Use __always_inline instead of changing the function call places
->      (per Russell King)
->   - The previous submission is: https://lore.kernel.org/patchwork/patch/1132459/
->
->  arch/arm/include/asm/domain.h  | 8 ++++----
->  arch/arm/include/asm/uaccess.h | 4 ++--
->  2 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/include/asm/domain.h b/arch/arm/include/asm/domain.h
-> index 567dbede4785..f1d0a7807cd0 100644
-> --- a/arch/arm/include/asm/domain.h
-> +++ b/arch/arm/include/asm/domain.h
-> @@ -82,7 +82,7 @@
->  #ifndef __ASSEMBLY__
->
->  #ifdef CONFIG_CPU_CP15_MMU
-> -static inline unsigned int get_domain(void)
-> +static __always_inline unsigned int get_domain(void)
->  {
->         unsigned int domain;
->
-> @@ -94,7 +94,7 @@ static inline unsigned int get_domain(void)
->         return domain;
->  }
->
-> -static inline void set_domain(unsigned val)
-> +static __always_inline void set_domain(unsigned int val)
->  {
->         asm volatile(
->         "mcr    p15, 0, %0, c3, c0      @ set domain"
-> @@ -102,12 +102,12 @@ static inline void set_domain(unsigned val)
->         isb();
->  }
->  #else
-> -static inline unsigned int get_domain(void)
-> +static __always_inline unsigned int get_domain(void)
->  {
->         return 0;
->  }
->
-> -static inline void set_domain(unsigned val)
-> +static __always_inline void set_domain(unsigned int val)
->  {
->  }
->  #endif
-> diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-> index 303248e5b990..98c6b91be4a8 100644
-> --- a/arch/arm/include/asm/uaccess.h
-> +++ b/arch/arm/include/asm/uaccess.h
-> @@ -22,7 +22,7 @@
->   * perform such accesses (eg, via list poison values) which could then
->   * be exploited for priviledge escalation.
->   */
-> -static inline unsigned int uaccess_save_and_enable(void)
-> +static __always_inline unsigned int uaccess_save_and_enable(void)
->  {
->  #ifdef CONFIG_CPU_SW_DOMAIN_PAN
->         unsigned int old_domain = get_domain();
-> @@ -37,7 +37,7 @@ static inline unsigned int uaccess_save_and_enable(void)
->  #endif
->  }
->
-> -static inline void uaccess_restore(unsigned int flags)
-> +static __always_inline void uaccess_restore(unsigned int flags)
->  {
->  #ifdef CONFIG_CPU_SW_DOMAIN_PAN
->         /* Restore the user access mask */
-> --
-> 2.17.1
->
+https://patchwork.kernel.org/patch/11097893/
 
+It is not merged yet. They would appreciate your tested by ;)
 
--- 
 Thanks,
-~Nick Desaulniers
+Sai
