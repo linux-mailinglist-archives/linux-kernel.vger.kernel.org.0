@@ -2,46 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E9CC32FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3767C32F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387704AbfJALlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:41:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41282 "EHLO
+        id S1732706AbfJALlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:41:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41030 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387650AbfJALlP (ORCPT
+        with ESMTP id S2387600AbfJALlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:15 -0400
+        Tue, 1 Oct 2019 07:41:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=z6hLIza3q6cYchvVHYiHKN/ZHrei8SPlYx9ockTASYE=; b=m96scqtLNyc6
-        h7zycSmfCjk8HcAr5pjagGXNgf3F26sVMHXmBbFWwr+7GRl4aFIMGM3zuhSQyFMdNY0gLQVl3qn4B
-        +nq26LmeHKsoxfSx908CLa6DAOK+AdVxbXx9lHUWQC1AnJ/KFoLZt0sXyp6c87LEFTAGZv8ixZjy2
-        9Mp8o=;
+        List-Archive; bh=frM2JsTVe3jb5WiWwu7ktf9Jc8bbbMxoSVuWP1vincI=; b=KFeL27be0KdS
+        RdCLZ7pZZHlD4j+kYZwXdDBRtEaVRKWnZbnuZ82Q4ZfMEluAu6Mt/GKBf9M7mEk8H3/brDw6SUxco
+        frHPTwS03rVTQAMbkdlXfgSgW3iKOzkmu05xx66EjRJ49Nt/pMr2Cm0jjJjqIM3YzOfaHzdawridi
+        A9qBI=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWg-0004Yg-FL; Tue, 01 Oct 2019 11:41:06 +0000
+        id 1iFGWf-0004YV-V3; Tue, 01 Oct 2019 11:41:06 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id EAA1C27429C0; Tue,  1 Oct 2019 12:41:05 +0100 (BST)
+        id 7830D2742A10; Tue,  1 Oct 2019 12:41:05 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Markus Elfring <elfring@users.sourceforge.net>
-Cc:     kernel-janitors@vger.kernel.org,
-        Leilk Liu <leilk.liu@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-spi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Applied "spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_slave_probe()" to the spi tree
-In-Reply-To: <225b76ca-a367-4bef-d8ce-42c7af9242a5@web.de>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     krzk@kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: Introduce dspi_slave_abort() function for NXP's dspi SPI driver" to the spi tree
+In-Reply-To: <20190924110547.14770-3-lukma@denx.de>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114105.EAA1C27429C0@ypsilon.sirena.org.uk>
+Message-Id: <20191001114105.7830D2742A10@ypsilon.sirena.org.uk>
 Date:   Tue,  1 Oct 2019 12:41:05 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,7 +45,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: mediatek: Use devm_platform_ioremap_resource() in mtk_spi_slave_probe()
+   spi: Introduce dspi_slave_abort() function for NXP's dspi SPI driver
 
 has been applied to the spi tree at
 
@@ -75,54 +70,65 @@ to this mail.
 Thanks,
 Mark
 
-From 6cdcb5d394413d906773f1ae2efaa86485d6d6e1 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 15:12:33 +0200
-Subject: [PATCH] spi: mediatek: Use devm_platform_ioremap_resource() in
- mtk_spi_slave_probe()
+From f4b323905d8b3e28b2a9cef9325dbec1b0f7f064 Mon Sep 17 00:00:00 2001
+From: Lukasz Majewski <lukma@denx.de>
+Date: Tue, 24 Sep 2019 13:05:47 +0200
+Subject: [PATCH] spi: Introduce dspi_slave_abort() function for NXP's dspi SPI
+ driver
 
-Simplify this function implementation by using a known wrapper function.
+This change provides the dspi_slave_abort() function, which is a callback
+for slave_abort() method of SPI controller generic driver.
 
-This issue was detected by using the Coccinelle software.
+As in the SPI slave mode the transmission is driven by master, any
+distortion may cause the slave to enter undefined internal state.
+To avoid this problem the dspi_slave_abort() terminates all pending and
+ongoing DMA transactions (with sync) and clears internal FIFOs.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Link: https://lore.kernel.org/r/225b76ca-a367-4bef-d8ce-42c7af9242a5@web.de
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Link: https://lore.kernel.org/r/20190924110547.14770-3-lukma@denx.de
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-slave-mt27xx.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/spi/spi-fsl-dspi.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/spi/spi-slave-mt27xx.c b/drivers/spi/spi-slave-mt27xx.c
-index 61bc43b0fe57..44edaa360405 100644
---- a/drivers/spi/spi-slave-mt27xx.c
-+++ b/drivers/spi/spi-slave-mt27xx.c
-@@ -368,7 +368,6 @@ static int mtk_spi_slave_probe(struct platform_device *pdev)
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index bec758e978fb..2c0f211eed87 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -1006,6 +1006,25 @@ static void dspi_init(struct fsl_dspi *dspi)
+ 			     SPI_CTARE_FMSZE(0) | SPI_CTARE_DTCP(1));
+ }
+ 
++static int dspi_slave_abort(struct spi_master *master)
++{
++	struct fsl_dspi *dspi = spi_master_get_devdata(master);
++
++	/*
++	 * Terminate all pending DMA transactions for the SPI working
++	 * in SLAVE mode.
++	 */
++	dmaengine_terminate_sync(dspi->dma->chan_rx);
++	dmaengine_terminate_sync(dspi->dma->chan_tx);
++
++	/* Clear the internal DSPI RX and TX FIFO buffers */
++	regmap_update_bits(dspi->regmap, SPI_MCR,
++			   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF,
++			   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF);
++
++	return 0;
++}
++
+ static int dspi_probe(struct platform_device *pdev)
  {
- 	struct spi_controller *ctlr;
- 	struct mtk_spi_slave *mdata;
--	struct resource *res;
- 	int irq, ret;
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -1030,6 +1049,7 @@ static int dspi_probe(struct platform_device *pdev)
+ 	ctlr->dev.of_node = pdev->dev.of_node;
  
- 	ctlr = spi_alloc_slave(&pdev->dev, sizeof(*mdata));
-@@ -392,17 +391,8 @@ static int mtk_spi_slave_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, ctlr);
+ 	ctlr->cleanup = dspi_cleanup;
++	ctlr->slave_abort = dspi_slave_abort;
+ 	ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
  
- 	init_completion(&mdata->xfer_done);
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		ret = -ENODEV;
--		dev_err(&pdev->dev, "failed to determine base address\n");
--		goto err_put_ctlr;
--	}
--
- 	mdata->dev = &pdev->dev;
--
--	mdata->base = devm_ioremap_resource(&pdev->dev, res);
-+	mdata->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mdata->base)) {
- 		ret = PTR_ERR(mdata->base);
- 		goto err_put_ctlr;
+ 	pdata = dev_get_platdata(&pdev->dev);
 -- 
 2.20.1
 
