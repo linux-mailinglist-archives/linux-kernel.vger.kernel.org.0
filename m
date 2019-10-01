@@ -2,45 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF391C32E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE60EC3327
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387472AbfJALk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:40:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40404 "EHLO
+        id S2387859AbfJALmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:42:49 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40542 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731469AbfJALkz (ORCPT
+        with ESMTP id S2387465AbfJALk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:40:55 -0400
+        Tue, 1 Oct 2019 07:40:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Pm5Wzk3cyK4n7/BtFOzOjGj6C3W93IFmNChDWB7dwI4=; b=uXNWd2PIwgpR
-        hgkZkcPTAFdL9w9SWVnGl7urBvpK8OVyoFjjJCt1GgT2bdc3na6aA4sGbeL5bxDj16hVs52E2AuED
-        sebSZceCiLS90t0hRKJcyTTlqw24tX/TIY3Euj/LpHrdbLelziRXNwgfyOR1eyXrHBD3cGYXGwrS9
-        YlS0A=;
+        List-Archive; bh=ZGl+hCx9u/66B7tvLuoBxNOYAm3sNLNizym3DyA34fs=; b=hGjRKc5zycsW
+        CPYR6e2IPZO68ULxAdUEptle9zMo6ktB6gTeZN86uQWLQ4iVEKZEigYGKtttEjR7sSsQKLZ/KP22R
+        7ZyAUeZCqjf7oMOM/yuNvXGODmDMdVJqWWQ36VEJcL+V/JqscXWamMcrPTdbZOi3CfdTUZQ9iUSVy
+        W19ro=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWO-0004TF-GP; Tue, 01 Oct 2019 11:40:48 +0000
+        id 1iFGWO-0004T4-8k; Tue, 01 Oct 2019 11:40:48 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id E96E82742A30; Tue,  1 Oct 2019 12:40:47 +0100 (BST)
+        id AA2AA2742A10; Tue,  1 Oct 2019 12:40:47 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
+        Jaroslav Kysela <perex@perex.cz>,
         kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Subject: Applied "ASoC: amd: acp3x: clean up indentation issue" to the asoc tree
-In-Reply-To: <20190925094545.19941-1-colin.king@canonical.com>
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: rt5663: clean up indentation issues" to the asoc tree
+In-Reply-To: <20190925100330.20695-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114047.E96E82742A30@ypsilon.sirena.org.uk>
+Message-Id: <20191001114047.AA2AA2742A10@ypsilon.sirena.org.uk>
 Date:   Tue,  1 Oct 2019 12:40:47 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: amd: acp3x: clean up indentation issue
+   ASoC: rt5663: clean up indentation issues
 
 has been applied to the asoc tree at
 
@@ -74,34 +75,43 @@ to this mail.
 Thanks,
 Mark
 
-From 67f798c78242ef3051bf6bf304ddb8a09514e1c5 Mon Sep 17 00:00:00 2001
+From bd1468f252e85280b71a069a2255842d78133cc4 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 25 Sep 2019 10:45:45 +0100
-Subject: [PATCH] ASoC: amd: acp3x: clean up indentation issue
+Date: Wed, 25 Sep 2019 11:03:30 +0100
+Subject: [PATCH] ASoC: rt5663: clean up indentation issues
 
-There is a statement that is indented one level too deeply,
-remove the extraneous tab.
+There are two break statements that are indented one level too deeply,
+remove the extraneous tabs.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190925094545.19941-1-colin.king@canonical.com
+Link: https://lore.kernel.org/r/20190925100330.20695-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/raven/acp3x-pcm-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/rt5663.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index bc4dfafdfcd1..ea57088d50ce 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -631,7 +631,7 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
--			return -ENODEV;
-+		return -ENODEV;
+diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
+index 2943692f66ed..e6c1ec6c426e 100644
+--- a/sound/soc/codecs/rt5663.c
++++ b/sound/soc/codecs/rt5663.c
+@@ -3644,7 +3644,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
+ 		regmap_update_bits(rt5663->regmap, RT5663_PWR_ANLG_1,
+ 			RT5663_LDO1_DVO_MASK | RT5663_AMP_HP_MASK,
+ 			RT5663_LDO1_DVO_0_9V | RT5663_AMP_HP_3X);
+-			break;
++		break;
+ 	case CODEC_VER_0:
+ 		regmap_update_bits(rt5663->regmap, RT5663_DIG_MISC,
+ 			RT5663_DIG_GATE_CTRL_MASK, RT5663_DIG_GATE_CTRL_EN);
+@@ -3663,7 +3663,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
+ 		regmap_update_bits(rt5663->regmap, RT5663_TDM_2,
+ 			RT5663_DATA_SWAP_ADCDAT1_MASK,
+ 			RT5663_DATA_SWAP_ADCDAT1_LL);
+-			break;
++		break;
+ 	default:
+ 		dev_err(&i2c->dev, "%s:Unknown codec type\n", __func__);
  	}
- 
- 	adata = devm_kzalloc(&pdev->dev, sizeof(*adata), GFP_KERNEL);
 -- 
 2.20.1
 
