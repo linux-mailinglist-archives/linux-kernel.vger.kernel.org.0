@@ -2,158 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4F1C2B85
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 03:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95501C2B89
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 03:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfJABKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 21:10:05 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34358 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbfJABKE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 21:10:04 -0400
-Received: by mail-io1-f67.google.com with SMTP id q1so43523875ion.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 18:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=xFqMMrxKCXMcslhu2zfrfyc9kzsAj4fkLS/MuTxAVCg=;
-        b=GoCWqM+Zz28lLl7ajwAjgTEGFgbWcFOaTkW/9kfPzn3ZKMDKdFEwWUEgtVqEmW5+Pi
-         ErIPeoSxLdk0VNNMEgp7WCEpXgfIZ9Iu4xKFiPQX1Oaw6ZkXByS82++7SuP/f+MLNqXN
-         zDAOXw/ZpOoCVQkF1ZW1GC9lREvyrIOsRIsYUA4bdQtGE0OsJMZruuKEwqOJmuW6OEV9
-         Fwqi5J0yg/bWw8N5yoZlnOwYstfw+N6N49JWq0FpL0Zo1NGoM6ej1ILOQbFpgLGf/IaN
-         /r/a1fcjk3XZdTXwG1s+teX8GPGjc59nd4kBxlj9wpJpuLQmOLfPH25JDvplApc74V0E
-         J22g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=xFqMMrxKCXMcslhu2zfrfyc9kzsAj4fkLS/MuTxAVCg=;
-        b=lEQ8rrqS/O84hUicEb/h2vJf0oyZAMMU1waptqqM1PBIHzEK8pKR5OwJwgp9Rv+EHV
-         hGwcH+/fdcrESBU5uw0XTkp742+gq1uSV46Fh8MSSNtB6KhemGeXHhx8jMqnwM2VMkqr
-         699LL8r/9Kt2bA8sZxuvUyDf/81YTLEPo8ROBPRUxPF16JTRdxTJSdm1p9+8sBk0xlTI
-         lKGz2cbGnfg5pWd0diQd6UPa0rzyDb5hOX1CMlLjepvG4oco69QotGQqbSi0KMdXzTGz
-         vNjPgwwUn3Ve6DKpjyuswcA15eRv2QJlbSadpRvbI9PU/MaPT+Bjkc4i5Z1mpKLPgmfV
-         U/kA==
-X-Gm-Message-State: APjAAAV/TP9EwaqNEvho9m0R9Pfz8I6VnzhKs4qUFiqjOOLE1nQkB6Os
-        u2PE67rTKGs1e2c169MGmCqLjw==
-X-Google-Smtp-Source: APXvYqzBqe/7Btoa9l4E24FJ5bN7lZw5IRrcfs9ELCo59g1KOKAhywDl9om7oE3rrVuUuEPsKgVvIA==
-X-Received: by 2002:a6b:5002:: with SMTP id e2mr2357878iob.15.1569892203998;
-        Mon, 30 Sep 2019 18:10:03 -0700 (PDT)
-Received: from localhost (c-75-72-120-115.hsd1.mn.comcast.net. [75.72.120.115])
-        by smtp.gmail.com with ESMTPSA id i4sm4400169iop.6.2019.09.30.18.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 18:10:03 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 20:10:02 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 00/45] 5.2.18-stable review
-Message-ID: <20191001011002.jswwgiol6e24knvs@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20190929135024.387033930@linuxfoundation.org>
+        id S1729748AbfJABLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 21:11:41 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:36932 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726314AbfJABLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 21:11:40 -0400
+Received: from smtp2.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 24BC8A2212;
+        Tue,  1 Oct 2019 03:11:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id J7q4_S4uKmke; Tue,  1 Oct 2019 03:11:33 +0200 (CEST)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] lib: introduce copy_struct_from_user() helper
+Date:   Tue,  1 Oct 2019 11:10:51 +1000
+Message-Id: <20191001011055.19283-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190929135024.387033930@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 03:55:28PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.18 release.
-> There are 45 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 01 Oct 2019 01:47:47 PM UTC.
-> Anything received after that time might be too late.
+Patch changelog:
+ v4:
+  * __always_inline copy_struct_from_user(). [Kees Cook]
+  * Rework test_user_copy.ko changes. [Kees Cook]
+ v3: <https://lore.kernel.org/lkml/20190930182810.6090-1-cyphar@cyphar.com/>
+     <https://lore.kernel.org/lkml/20190930191526.19544-1-asarai@suse.de/>
+ v2: <https://lore.kernel.org/lkml/20190925230332.18690-1-cyphar@cyphar.com/>
+ v1: <https://lore.kernel.org/lkml/20190925165915.8135-1-cyphar@cyphar.com/>
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+This series was split off from the openat2(2) syscall discussion[1].
+However, the copy_struct_to_user() helper has been dropped, because
+after some discussion it appears that there is no really obvious
+semantics for how copy_struct_to_user() should work on mixed-vintages
+(for instance, whether [2] is the correct semantics for all syscalls).
 
-Summary
-------------------------------------------------------------------------
+A common pattern for syscall extensions is increasing the size of a
+struct passed from userspace, such that the zero-value of the new fields
+result in the old kernel behaviour (allowing for a mix of userspace and
+kernel vintages to operate on one another in most cases).
 
-kernel: 5.2.18-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-5.2.y
-git commit: 70cc0b99b90f823b81175b1f15f73ced86135c5b
-git describe: v5.2.17-46-g70cc0b99b90f
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.2-oe/build/v5.2.17-46-g70cc0b99b90f
+Previously there was no common lib/ function that implemented
+the necessary extension-checking semantics (and different syscalls
+implemented them slightly differently or incompletely[3]). This series
+implements the helper and ports several syscalls to use it.
 
-No regressions (compared to build v5.2.17)
+Some in-kernel selftests are included in this patch. More complete
+self-tests for copy_struct_from_user() are included in the openat2()
+patchset.
 
-No fixes (compared to build v5.2.17)
+[1]: https://lore.kernel.org/lkml/20190904201933.10736-1-cyphar@cyphar.com/
 
-Ran 22166 total tests in the following environments and test suites.
+[2]: commit 1251201c0d34 ("sched/core: Fix uclamp ABI bug, clean up and
+     robustify sched_read_attr() ABI logic and code")
 
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
+[3]: For instance {sched_setattr,perf_event_open,clone3}(2) all do do
+     similar checks to copy_struct_from_user() while rt_sigprocmask(2)
+     always rejects differently-sized struct arguments.
 
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-open-posix-tests
-* network-basic-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
+Aleksa Sarai (4):
+  lib: introduce copy_struct_from_user() helper
+  clone3: switch to copy_struct_from_user()
+  sched_setattr: switch to copy_struct_from_user()
+  perf_event_open: switch to copy_struct_from_user()
+
+ include/linux/bitops.h     |   7 ++
+ include/linux/uaccess.h    |  70 +++++++++++++++++++
+ include/uapi/linux/sched.h |   2 +
+ kernel/events/core.c       |  47 +++----------
+ kernel/fork.c              |  34 ++--------
+ kernel/sched/core.c        |  43 ++----------
+ lib/strnlen_user.c         |   8 +--
+ lib/test_user_copy.c       | 136 +++++++++++++++++++++++++++++++++++--
+ lib/usercopy.c             |  55 +++++++++++++++
+ 9 files changed, 288 insertions(+), 114 deletions(-)
 
 -- 
-Linaro LKFT
-https://lkft.linaro.org
+2.23.0
+
