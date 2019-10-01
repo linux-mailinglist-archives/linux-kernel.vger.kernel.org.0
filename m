@@ -2,131 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9917DC380F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D6B6C3817
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:54:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389295AbfJAOuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:50:46 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:57465 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727051AbfJAOuq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:50:46 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 4BF9D40004;
-        Tue,  1 Oct 2019 14:50:39 +0000 (UTC)
-Date:   Tue, 1 Oct 2019 16:52:22 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
-        Sean Paul <seanpaul@chromium.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ilia Mirkin <imirkin@alum.mit.edu>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] RFC: drm/atomic-helper: Reapply color
- transformation after resume
-Message-ID: <20191001145222.32aapomoqlaxpvbb@uno.localdomain>
-References: <20190930222802.32088-1-ezequiel@collabora.com>
- <20190930222802.32088-6-ezequiel@collabora.com>
+        id S2389211AbfJAOx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:53:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727143AbfJAOx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:53:58 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81C1220815;
+        Tue,  1 Oct 2019 14:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569941637;
+        bh=ZZ63NgRB4la/JntiVLUk4sSc2uMP4usvtqmHwu3XxTs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oiJasVlV/zy+HQBB3apaVUeS88GLzmWZf3sELqH6JOyNmq4K7MjVnegmzgtjg/VJA
+         S4oyDx7A4/DF7rZt9NET7tydhgIkY0UlbdfKqHHL8nkFrL8izKLBWf3MKvMtpgVqcX
+         yO2oZq61V2mJrj8OmQqiGAZE7tXg9fIaa8964USI=
+Date:   Tue, 1 Oct 2019 16:53:54 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-usb@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        Lukas Wunner <lukas@wunner.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
+Message-ID: <20191001145354.GA3366714@kroah.com>
+References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
+ <20191001113830.13028-18-mika.westerberg@linux.intel.com>
+ <20191001124748.GH2954373@kroah.com>
+ <20191001130905.GO2714@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zl62uyu5oe5zzls3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190930222802.32088-6-ezequiel@collabora.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191001130905.GO2714@lahna.fi.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 01, 2019 at 04:09:05PM +0300, Mika Westerberg wrote:
+> On Tue, Oct 01, 2019 at 02:47:48PM +0200, Greg Kroah-Hartman wrote:
+> > > -	  Thunderbolt Controller driver. This driver is required if you
+> > > -	  want to hotplug Thunderbolt devices on Apple hardware or on PCs
+> > > -	  with Intel Falcon Ridge or newer.
+> > > +	  USB4 (Thunderbolt) driver. USB4 is the public spec based on
+> > > +	  Thunderbolt 3 protocol. This driver is required if you want to
+> > > +	  hotplug Thunderbolt and USB4 compliant devices on Apple
+> > > +	  hardware or on PCs with Intel Falcon Ridge or newer.
+> > 
+> > Wait, did "old" thunderbolt just get re-branded as USB4?
+> 
+> Not but the driver started supporting USB4 as well :)
+> 
+> USB4 is pretty much public spec of Thunderbolt 3 but with some
+> differences in register layouts (this is because Thunderbolt uses some
+> vendor specific capabilities which are now moved to more "standard"
+> places). 
 
---zl62uyu5oe5zzls3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Ok, then we need to rename the Kconfig option as well, otherwise no one
+will "know" that this changed, so they will not be prompted for it.
 
-Hi Ezequiel,
+> > Because if I have an "old" laptop that needs Thunderbolt support, how am
+> > I going to know it is now called USB4 instead?
+> 
+> Well the Kconfig option tries to have both names there:
+> 
+>   tristate "USB4 (Thunderbolt) support"
+> 
+> and then
+> 
+>   USB4 (Thunderbolt) driver. USB4 is the public spec based on
+>   Thunderbolt 3 protocol. This driver is required if you want to hotplug
+>   Thunderbolt and USB4 compliant devices on Apple hardware or on PCs
+>   with Intel Falcon Ridge or newer.
+> 
+> and the Kconfig option is still CONFIG_THUNDERBOLT. I know this is
+> confusing but I don't have better ideas how we can advertise both. I
+> borrowed this "format" from firewire.
 
-On Mon, Sep 30, 2019 at 07:28:02PM -0300, Ezequiel Garcia wrote:
-> Some platforms are not able to maintain the color transformation
-> state after a system suspend/resume cycle.
->
-> Set the colog_mgmt_changed flag so that CMM on the CRTCs in
+CONFIG_USB4 instead?
 
-CMM is the name of the Renesas unit for color enanchement. It should
-not be used here as this will apply to all platforms.
+> > Shouldn't there just be a new USB4 option that only enables/builds the
+> > USB4 stuff if selected?  Why would I want all of this additional code on
+> > my old system if it's not going to do anything at all?
+> 
+> USB4 devices are backward compatible with Thunderbolt 3 so you should be
+> able to plug in USB4 device to your old Thunderbolt 3 laptop for
+> example. It goes the other way as well. Some things are optional but for
+> example USB4 hubs must support also Thunderbolt 3.
+> 
+> Does that clarify?
 
-> the suspend state are reapplied after system resume.
->
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> ---
-> This is an RFC, and it's mostly based on Jacopo Mondi's work https://lkml.org/lkml/2019/9/6/498.
->
-> Changes from v2:
-> * New patch.
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index e41db0f202ca..518488125575 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3234,8 +3234,20 @@ int drm_atomic_helper_resume(struct drm_device *dev,
->  			     struct drm_atomic_state *state)
->  {
->  	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_crtc *crtc;
-> +	unsigned int i;
->  	int err;
->
-> +	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
-> +		/*
-> +		 * Force re-enablement of CMM after system resume if any
-> +		 * of the DRM color transformation properties was set in
-> +		 * the state saved at system suspend time.
-> +		 */
-> +		if (crtc_state->gamma_lut)
+Yes, it does, looks like marketing just renamed an old functioning
+system into a "brand new one!" :)
 
-Please note that in my original patch I only took gamma_lut into
-account as that's what our CMM supports at the moment, but you should
-here consider the degamma_lut and cmt flags in the crtc_state.
+thanks,
 
-> +			crtc_state->color_mgmt_changed = true;
-> +	}
->  	drm_mode_config_reset(dev);
->
->  	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
-> --
-> 2.22.0
->
-
---zl62uyu5oe5zzls3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl2TaCYACgkQcjQGjxah
-VjyNJA//aSwBuTdB7lLcaiEaE+P3RsAcLZl6sS/EGaTO5tsvgJD43qhcW0FyAZdV
-8ABNJ3e+W7ZgTzkHWVBvs6Y5eQlE3AvvAhXFPEjL9ca9Y/rRLgcF6mQ8GQCqsYO7
-dvBkd1bpWG7XBOO5KzSLSDbIsjDRmDbpFVQHtTWDJZN/LzIqZHoGPZL9Tc7yoAY7
-9MW3av52glPOWqTJj9zscg/Y7BWuapCmmPPV97iLUPKVtvN/G+2fgIVxushM2e3K
-TJvYsU63CZ5pzKX1U02UBbs0KKsENRRjWCTcGs2gf5xq0WhBs+lC0uZAclNkw/lu
-wd5ehPD3CaE2NiBECnHtptxEZE+jMzzP7jmDojYHILG0NqV6pcVVHdZsYK7AE/qb
-CfqDtLn6HnbaZZcia7Smp50QpTGY5z46Qe9l15CH/wtzjywwyKyl9GvuEK18ycx5
-6iwGZW0PYHJnAQwh0U4F92akAXIOf5xfpW2358jlIr8iwmSE5UgrqA4YcDDPGDfs
-7YvBDUBn/Bs0RYUetb/+HI5rcYZsWdBkpL/cHP6y+8yItmdS9IyYlHS6pXxm3X04
-dS7tEaUs29GYJKsVshqq7ORctg0pd4ebsSsZeyqTLq7YmzXefjzpHihSvuKt0oMU
-pqCdnYKZkFUm70gLJXTHVVjSty7YOBB428DgPlWTFmgNUvVUqec=
-=hYRk
------END PGP SIGNATURE-----
-
---zl62uyu5oe5zzls3--
+greg k-h
