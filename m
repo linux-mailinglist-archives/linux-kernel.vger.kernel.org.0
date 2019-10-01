@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 678D8C3AFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B18BAC3B00
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730355AbfJAQkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:40:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52124 "EHLO mail.kernel.org"
+        id S1729967AbfJAQkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:40:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730301AbfJAQkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:40:46 -0400
+        id S1730326AbfJAQkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:40:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 667BF21872;
-        Tue,  1 Oct 2019 16:40:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81BE021906;
+        Tue,  1 Oct 2019 16:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948046;
-        bh=d1cwlKNt2mnCdzZ5RHbHyTPGEAf/7X1xqYU1nu09wHU=;
+        s=default; t=1569948048;
+        bh=ri0y+tcaOShXS+LvXq26MlFByM5jdC+qr44td80hKS4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C0i5Myvr3iAwxCSVoc+fj657JLJFK5XPsG8NNa9pujL4l5K8T2Q1gvioYo1h/E2Ui
-         h5qLHSfAV3H/oWidbXpGZB3wpY4tdgbqyuAFROpaoNabdm9gIzBegpNKQ0s60yMJLS
-         q9Z+tEX3tjOqG3QZqMD4USWRZnmILR01XgUTyJHg=
+        b=P1q4M/6eJ8WSU6kRlti/gsiXyyGMEt8VZ4V2zG9DZ/6d4xMACmdCPU1t4OcQLUT61
+         SjoJS8v73B3MeISf+NiTufUI8dVAQNRtnRjGaBunlDPwYxAsMNjNNCS8PEtR9UzGB0
+         e2B8PKzXwZwCnxcJJ7WKRf0DSAkjo6a/1UmF7CXo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 51/71] kernel/elfcore.c: include proper prototypes
-Date:   Tue,  1 Oct 2019 12:39:01 -0400
-Message-Id: <20191001163922.14735-51-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, kexec@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.3 53/71] kexec: bail out upon SIGKILL when allocating memory.
+Date:   Tue,  1 Oct 2019 12:39:03 -0400
+Message-Id: <20191001163922.14735-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
 References: <20191001163922.14735-1-sashal@kernel.org>
@@ -44,49 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit 0f74914071ab7e7b78731ed62bf350e3a344e0a5 ]
+[ Upstream commit 7c3a6aedcd6aae0a32a527e68669f7dd667492d1 ]
 
-When building with W=1, gcc properly complains that there's no prototypes:
+syzbot found that a thread can stall for minutes inside kexec_load() after
+that thread was killed by SIGKILL [1].  It turned out that the reproducer
+was trying to allocate 2408MB of memory using kimage_alloc_page() from
+kimage_load_normal_segment().  Let's check for SIGKILL before doing memory
+allocation.
 
-  CC      kernel/elfcore.o
-kernel/elfcore.c:7:17: warning: no previous prototype for 'elf_core_extra_phdrs' [-Wmissing-prototypes]
-    7 | Elf_Half __weak elf_core_extra_phdrs(void)
-      |                 ^~~~~~~~~~~~~~~~~~~~
-kernel/elfcore.c:12:12: warning: no previous prototype for 'elf_core_write_extra_phdrs' [-Wmissing-prototypes]
-   12 | int __weak elf_core_write_extra_phdrs(struct coredump_params *cprm, loff_t offset)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/elfcore.c:17:12: warning: no previous prototype for 'elf_core_write_extra_data' [-Wmissing-prototypes]
-   17 | int __weak elf_core_write_extra_data(struct coredump_params *cprm)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/elfcore.c:22:15: warning: no previous prototype for 'elf_core_extra_data_size' [-Wmissing-prototypes]
-   22 | size_t __weak elf_core_extra_data_size(void)
-      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
 
-Provide the include file so gcc is happy, and we don't have potential code drift
-
-Link: http://lkml.kernel.org/r/29875.1565224705@turing-police
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Link: http://lkml.kernel.org/r/993c9185-d324-2640-d061-bed2dd18b1f7@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/elfcore.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/kexec_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/elfcore.c b/kernel/elfcore.c
-index fc482c8e0bd88..57fb4dcff4349 100644
---- a/kernel/elfcore.c
-+++ b/kernel/elfcore.c
-@@ -3,6 +3,7 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/binfmts.h>
-+#include <linux/elfcore.h>
- 
- Elf_Half __weak elf_core_extra_phdrs(void)
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index d5870723b8ada..15d70a90b50dc 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -300,6 +300,8 @@ static struct page *kimage_alloc_pages(gfp_t gfp_mask, unsigned int order)
  {
+ 	struct page *pages;
+ 
++	if (fatal_signal_pending(current))
++		return NULL;
+ 	pages = alloc_pages(gfp_mask & ~__GFP_ZERO, order);
+ 	if (pages) {
+ 		unsigned int count, i;
 -- 
 2.20.1
 
