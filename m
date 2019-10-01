@@ -2,115 +2,405 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DECEC2EC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:23:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBBDC2ECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:25:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732982AbfJAIXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 04:23:18 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38664 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfJAIXR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:23:17 -0400
-Received: by mail-lj1-f195.google.com with SMTP id b20so12369110ljj.5;
-        Tue, 01 Oct 2019 01:23:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=39RhDSMZRJbAMEubpivc7sb2S4Q4zvVL3vDz0kDKunQ=;
-        b=apGeQcXrcJwa17iebDwOvQb1D2jFDABi+i3Y5e9mtrhu6R+cDl5hZidWE+hmdrUnj6
-         rC85MF3HgBo9uVwoXdwuZandJbtq6UfLt0U1jzPbr5Or7eDtBfGtoEPxwszZ+9831772
-         dFin7XkBaqyuES7uwR34j9cvvwR9sWeeH+qzGbUcJAAVqZhCY3Vc9HOguPGHiUxeNPT3
-         R9tPPEfKUYRee84EeqgrYEcE5SPfNZ5S572tpzBcXqC1YQis9nT4UpBIOnP/dIazrysF
-         IUR1YzG/X2BX+AteRzwng7nejqDQ4uxfk0bPiEk38EYNOjezfD6Kvsfh1cO+mJnDb0fQ
-         d+kg==
-X-Gm-Message-State: APjAAAVXA+i5xp/AWmzwaCjHxUjSgbLbD8IhUgx1JdgYHOF7/Rh85kjs
-        0+DEgiZDjRIeLE7ahy/JSNw=
-X-Google-Smtp-Source: APXvYqwodPNS5oQBgRnLFOd73QE2r4CIJZzLiTOY6/q38+5ENMLIBmOyPaOGzVyvR0NyQ54cKXksoQ==
-X-Received: by 2002:a2e:96d5:: with SMTP id d21mr14700661ljj.187.1569918195316;
-        Tue, 01 Oct 2019 01:23:15 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id h25sm4836377lfj.81.2019.10.01.01.23.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 01:23:14 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@kernel.org>)
-        id 1iFDRK-00005F-1V; Tue, 01 Oct 2019 10:23:22 +0200
-Date:   Tue, 1 Oct 2019 10:23:22 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pete Zaitcev <zaitcev@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] USB: fix runtime PM after driver unbind
-Message-ID: <20191001082322.GH13531@localhost>
-References: <20190930161205.18803-1-johan@kernel.org>
- <20190930133603.0192f809@coco.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190930133603.0192f809@coco.lan>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1733013AbfJAIZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 04:25:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58684 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726148AbfJAIZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 04:25:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0FC3AF9F;
+        Tue,  1 Oct 2019 08:25:36 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] xen/efi: have a common runtime setup function
+Date:   Tue,  1 Oct 2019 10:25:34 +0200
+Message-Id: <20191001082534.12067-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 01:36:03PM -0300, Mauro Carvalho Chehab wrote:
-> Em Mon, 30 Sep 2019 18:12:01 +0200
-> Johan Hovold <johan@kernel.org> escreveu:
-> 
-> > A recent change in USB core broke runtime-PM after driver unbind in
-> > several drivers (when counting all USB serial drivers). Specifically,
-> > drivers which took care not modify the runtime-PM usage counter after
-> > their disconnect callback had returned, would now fail to be suspended
-> > when a driver is later bound.
-> > 
-> > I guess Greg could take all of these directly through his tree, unless
-> > the media maintainers disagree.
-> 
-> Patches look ok and I'm fine if they go via Greg's tree. So:
-> 
-> Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Today the EFI runtime functions are setup in architecture specific
+code (x86 and arm), with the functions themselves living in drivers/xen
+as they are not architecture dependent.
 
-Thanks for taking a look.
+As the setup is exactly the same for arm and x86 move the setup to
+drivers/xen, too. This at once removes the need to make the single
+functions global visible.
 
-> Yet, on a quick look on media:
-> 
-> 	$ git grep -l usb_.*pm drivers/media/usb/
-> 	drivers/media/usb/cpia2/cpia2_usb.c
-> 	drivers/media/usb/dvb-usb-v2/az6007.c
-> 	drivers/media/usb/dvb-usb-v2/dvb_usb.h
-> 	drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-> 	drivers/media/usb/gspca/gspca.c
-> 	drivers/media/usb/gspca/gspca.h
-> 	drivers/media/usb/siano/smsusb.c
-> 	drivers/media/usb/stkwebcam/stk-webcam.c
-> 	drivers/media/usb/usbvision/usbvision-i2c.c
-> 	drivers/media/usb/uvc/uvc_driver.c
-> 	drivers/media/usb/uvc/uvc_v4l2.c
-> 	drivers/media/usb/zr364xx/zr364xx.c
-> 
-> There are other drivers beside stkwebcam with has some PM routines.
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/arm/include/asm/xen/xen-ops.h   |  6 ---
+ arch/arm/xen/Makefile                |  1 -
+ arch/arm/xen/efi.c                   | 30 -------------
+ arch/arm/xen/enlighten.c             |  1 -
+ arch/arm64/include/asm/xen/xen-ops.h |  7 ---
+ arch/arm64/xen/Makefile              |  1 -
+ arch/x86/xen/efi.c                   | 16 +------
+ drivers/xen/efi.c                    | 85 ++++++++++++++++++++----------------
+ include/xen/xen-ops.h                | 25 +----------
+ 9 files changed, 50 insertions(+), 122 deletions(-)
+ delete mode 100644 arch/arm/include/asm/xen/xen-ops.h
+ delete mode 100644 arch/arm/xen/efi.c
+ delete mode 100644 arch/arm64/include/asm/xen/xen-ops.h
 
-Yeah, but that may be for system-wide suspend.
+diff --git a/arch/arm/include/asm/xen/xen-ops.h b/arch/arm/include/asm/xen/xen-ops.h
+deleted file mode 100644
+index ec154e719b11..000000000000
+--- a/arch/arm/include/asm/xen/xen-ops.h
++++ /dev/null
+@@ -1,6 +0,0 @@
+-#ifndef _ASM_XEN_OPS_H
+-#define _ASM_XEN_OPS_H
+-
+-void xen_efi_runtime_setup(void);
+-
+-#endif /* _ASM_XEN_OPS_H */
+diff --git a/arch/arm/xen/Makefile b/arch/arm/xen/Makefile
+index 7ed28982c4c3..c32d04713ba0 100644
+--- a/arch/arm/xen/Makefile
++++ b/arch/arm/xen/Makefile
+@@ -1,3 +1,2 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-y		:= enlighten.o hypercall.o grant-table.o p2m.o mm.o
+-obj-$(CONFIG_XEN_EFI) += efi.o
+diff --git a/arch/arm/xen/efi.c b/arch/arm/xen/efi.c
+deleted file mode 100644
+index cb2aaf98e243..000000000000
+--- a/arch/arm/xen/efi.c
++++ /dev/null
+@@ -1,30 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * Copyright (c) 2015, Linaro Limited, Shannon Zhao
+- */
+-
+-#include <linux/efi.h>
+-#include <xen/xen-ops.h>
+-#include <asm/xen/xen-ops.h>
+-
+-/* Set XEN EFI runtime services function pointers. Other fields of struct efi,
+- * e.g. efi.systab, will be set like normal EFI.
+- */
+-void __init xen_efi_runtime_setup(void)
+-{
+-	efi.get_time                 = xen_efi_get_time;
+-	efi.set_time                 = xen_efi_set_time;
+-	efi.get_wakeup_time          = xen_efi_get_wakeup_time;
+-	efi.set_wakeup_time          = xen_efi_set_wakeup_time;
+-	efi.get_variable             = xen_efi_get_variable;
+-	efi.get_next_variable        = xen_efi_get_next_variable;
+-	efi.set_variable             = xen_efi_set_variable;
+-	efi.set_variable_nonblocking = xen_efi_set_variable;
+-	efi.query_variable_info      = xen_efi_query_variable_info;
+-	efi.query_variable_info_nonblocking = xen_efi_query_variable_info;
+-	efi.update_capsule           = xen_efi_update_capsule;
+-	efi.query_capsule_caps       = xen_efi_query_capsule_caps;
+-	efi.get_next_high_mono_count = xen_efi_get_next_high_mono_count;
+-	efi.reset_system             = xen_efi_reset_system;
+-}
+-EXPORT_SYMBOL_GPL(xen_efi_runtime_setup);
+diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+index 1e57692552d9..99f955a5b694 100644
+--- a/arch/arm/xen/enlighten.c
++++ b/arch/arm/xen/enlighten.c
+@@ -15,7 +15,6 @@
+ #include <xen/xen-ops.h>
+ #include <asm/xen/hypervisor.h>
+ #include <asm/xen/hypercall.h>
+-#include <asm/xen/xen-ops.h>
+ #include <asm/system_misc.h>
+ #include <asm/efi.h>
+ #include <linux/interrupt.h>
+diff --git a/arch/arm64/include/asm/xen/xen-ops.h b/arch/arm64/include/asm/xen/xen-ops.h
+deleted file mode 100644
+index e6e784051932..000000000000
+--- a/arch/arm64/include/asm/xen/xen-ops.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _ASM_XEN_OPS_H
+-#define _ASM_XEN_OPS_H
+-
+-void xen_efi_runtime_setup(void);
+-
+-#endif /* _ASM_XEN_OPS_H */
+diff --git a/arch/arm64/xen/Makefile b/arch/arm64/xen/Makefile
+index a4fc65f3928d..b66215e8658e 100644
+--- a/arch/arm64/xen/Makefile
++++ b/arch/arm64/xen/Makefile
+@@ -1,4 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ xen-arm-y	+= $(addprefix ../../arm/xen/, enlighten.o grant-table.o p2m.o mm.o)
+ obj-y		:= xen-arm.o hypercall.o
+-obj-$(CONFIG_XEN_EFI) += $(addprefix ../../arm/xen/, efi.o)
+diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
+index 7e3eb70f411a..a04551ee5568 100644
+--- a/arch/x86/xen/efi.c
++++ b/arch/x86/xen/efi.c
+@@ -57,21 +57,7 @@ static efi_system_table_t __init *xen_efi_probe(void)
+ 		return NULL;
+ 
+ 	/* Here we know that Xen runs on EFI platform. */
+-
+-	efi.get_time                 = xen_efi_get_time;
+-	efi.set_time                 = xen_efi_set_time;
+-	efi.get_wakeup_time          = xen_efi_get_wakeup_time;
+-	efi.set_wakeup_time          = xen_efi_set_wakeup_time;
+-	efi.get_variable             = xen_efi_get_variable;
+-	efi.get_next_variable        = xen_efi_get_next_variable;
+-	efi.set_variable             = xen_efi_set_variable;
+-	efi.set_variable_nonblocking = xen_efi_set_variable;
+-	efi.query_variable_info      = xen_efi_query_variable_info;
+-	efi.query_variable_info_nonblocking = xen_efi_query_variable_info;
+-	efi.update_capsule           = xen_efi_update_capsule;
+-	efi.query_capsule_caps       = xen_efi_query_capsule_caps;
+-	efi.get_next_high_mono_count = xen_efi_get_next_high_mono_count;
+-	efi.reset_system             = xen_efi_reset_system;
++	xen_efi_runtime_setup();
+ 
+ 	efi_systab_xen.tables = info->cfg.addr;
+ 	efi_systab_xen.nr_tables = info->cfg.nent;
+diff --git a/drivers/xen/efi.c b/drivers/xen/efi.c
+index 89d60f8e3c18..ffbdaa9f4a45 100644
+--- a/drivers/xen/efi.c
++++ b/drivers/xen/efi.c
+@@ -40,7 +40,7 @@
+ 
+ #define efi_data(op)	(op.u.efi_runtime_call)
+ 
+-efi_status_t xen_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
++static efi_status_t xen_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(get_time);
+ 
+@@ -61,9 +61,8 @@ efi_status_t xen_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_get_time);
+ 
+-efi_status_t xen_efi_set_time(efi_time_t *tm)
++static efi_status_t xen_efi_set_time(efi_time_t *tm)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(set_time);
+ 
+@@ -75,10 +74,10 @@ efi_status_t xen_efi_set_time(efi_time_t *tm)
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_set_time);
+ 
+-efi_status_t xen_efi_get_wakeup_time(efi_bool_t *enabled, efi_bool_t *pending,
+-				     efi_time_t *tm)
++static efi_status_t xen_efi_get_wakeup_time(efi_bool_t *enabled,
++					    efi_bool_t *pending,
++					    efi_time_t *tm)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(get_wakeup_time);
+ 
+@@ -98,9 +97,8 @@ efi_status_t xen_efi_get_wakeup_time(efi_bool_t *enabled, efi_bool_t *pending,
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_get_wakeup_time);
+ 
+-efi_status_t xen_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
++static efi_status_t xen_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(set_wakeup_time);
+ 
+@@ -117,11 +115,10 @@ efi_status_t xen_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_set_wakeup_time);
+ 
+-efi_status_t xen_efi_get_variable(efi_char16_t *name, efi_guid_t *vendor,
+-				  u32 *attr, unsigned long *data_size,
+-				  void *data)
++static efi_status_t xen_efi_get_variable(efi_char16_t *name, efi_guid_t *vendor,
++					 u32 *attr, unsigned long *data_size,
++					 void *data)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(get_variable);
+ 
+@@ -141,11 +138,10 @@ efi_status_t xen_efi_get_variable(efi_char16_t *name, efi_guid_t *vendor,
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_get_variable);
+ 
+-efi_status_t xen_efi_get_next_variable(unsigned long *name_size,
+-				       efi_char16_t *name,
+-				       efi_guid_t *vendor)
++static efi_status_t xen_efi_get_next_variable(unsigned long *name_size,
++					      efi_char16_t *name,
++					      efi_guid_t *vendor)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(get_next_variable_name);
+ 
+@@ -165,11 +161,10 @@ efi_status_t xen_efi_get_next_variable(unsigned long *name_size,
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_get_next_variable);
+ 
+-efi_status_t xen_efi_set_variable(efi_char16_t *name, efi_guid_t *vendor,
+-				 u32 attr, unsigned long data_size,
+-				 void *data)
++static efi_status_t xen_efi_set_variable(efi_char16_t *name, efi_guid_t *vendor,
++					 u32 attr, unsigned long data_size,
++					 void *data)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(set_variable);
+ 
+@@ -186,11 +181,10 @@ efi_status_t xen_efi_set_variable(efi_char16_t *name, efi_guid_t *vendor,
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_set_variable);
+ 
+-efi_status_t xen_efi_query_variable_info(u32 attr, u64 *storage_space,
+-					 u64 *remaining_space,
+-					 u64 *max_variable_size)
++static efi_status_t xen_efi_query_variable_info(u32 attr, u64 *storage_space,
++						u64 *remaining_space,
++						u64 *max_variable_size)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(query_variable_info);
+ 
+@@ -208,9 +202,8 @@ efi_status_t xen_efi_query_variable_info(u32 attr, u64 *storage_space,
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_query_variable_info);
+ 
+-efi_status_t xen_efi_get_next_high_mono_count(u32 *count)
++static efi_status_t xen_efi_get_next_high_mono_count(u32 *count)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(get_next_high_monotonic_count);
+ 
+@@ -221,10 +214,9 @@ efi_status_t xen_efi_get_next_high_mono_count(u32 *count)
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_get_next_high_mono_count);
+ 
+-efi_status_t xen_efi_update_capsule(efi_capsule_header_t **capsules,
+-				    unsigned long count, unsigned long sg_list)
++static efi_status_t xen_efi_update_capsule(efi_capsule_header_t **capsules,
++				unsigned long count, unsigned long sg_list)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(update_capsule);
+ 
+@@ -241,11 +233,9 @@ efi_status_t xen_efi_update_capsule(efi_capsule_header_t **capsules,
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_update_capsule);
+ 
+-efi_status_t xen_efi_query_capsule_caps(efi_capsule_header_t **capsules,
+-					unsigned long count, u64 *max_size,
+-					int *reset_type)
++static efi_status_t xen_efi_query_capsule_caps(efi_capsule_header_t **capsules,
++			unsigned long count, u64 *max_size, int *reset_type)
+ {
+ 	struct xen_platform_op op = INIT_EFI_OP(query_capsule_capabilities);
+ 
+@@ -264,10 +254,9 @@ efi_status_t xen_efi_query_capsule_caps(efi_capsule_header_t **capsules,
+ 
+ 	return efi_data(op).status;
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_query_capsule_caps);
+ 
+-void xen_efi_reset_system(int reset_type, efi_status_t status,
+-			  unsigned long data_size, efi_char16_t *data)
++static void xen_efi_reset_system(int reset_type, efi_status_t status,
++				 unsigned long data_size, efi_char16_t *data)
+ {
+ 	switch (reset_type) {
+ 	case EFI_RESET_COLD:
+@@ -281,4 +270,26 @@ void xen_efi_reset_system(int reset_type, efi_status_t status,
+ 		BUG();
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(xen_efi_reset_system);
++
++/*
++ * Set XEN EFI runtime services function pointers. Other fields of struct efi,
++ * e.g. efi.systab, will be set like normal EFI.
++ */
++void __init xen_efi_runtime_setup(void)
++{
++	efi.get_time			= xen_efi_get_time;
++	efi.set_time			= xen_efi_set_time;
++	efi.get_wakeup_time		= xen_efi_get_wakeup_time;
++	efi.set_wakeup_time		= xen_efi_set_wakeup_time;
++	efi.get_variable		= xen_efi_get_variable;
++	efi.get_next_variable		= xen_efi_get_next_variable;
++	efi.set_variable		= xen_efi_set_variable;
++	efi.set_variable_nonblocking	= xen_efi_set_variable;
++	efi.query_variable_info		= xen_efi_query_variable_info;
++	efi.query_variable_info_nonblocking = xen_efi_query_variable_info;
++	efi.update_capsule		= xen_efi_update_capsule;
++	efi.query_capsule_caps		= xen_efi_query_capsule_caps;
++	efi.get_next_high_mono_count	= xen_efi_get_next_high_mono_count;
++	efi.reset_system		= xen_efi_reset_system;
++}
++EXPORT_SYMBOL_GPL(xen_efi_runtime_setup);
+diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
+index 98b30c1613b2..d89969aa9942 100644
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -212,30 +212,7 @@ int xen_xlate_map_ballooned_pages(xen_pfn_t **pfns, void **vaddr,
+ 
+ bool xen_running_on_version_or_later(unsigned int major, unsigned int minor);
+ 
+-efi_status_t xen_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc);
+-efi_status_t xen_efi_set_time(efi_time_t *tm);
+-efi_status_t xen_efi_get_wakeup_time(efi_bool_t *enabled, efi_bool_t *pending,
+-				     efi_time_t *tm);
+-efi_status_t xen_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm);
+-efi_status_t xen_efi_get_variable(efi_char16_t *name, efi_guid_t *vendor,
+-				  u32 *attr, unsigned long *data_size,
+-				  void *data);
+-efi_status_t xen_efi_get_next_variable(unsigned long *name_size,
+-				       efi_char16_t *name, efi_guid_t *vendor);
+-efi_status_t xen_efi_set_variable(efi_char16_t *name, efi_guid_t *vendor,
+-				  u32 attr, unsigned long data_size,
+-				  void *data);
+-efi_status_t xen_efi_query_variable_info(u32 attr, u64 *storage_space,
+-					 u64 *remaining_space,
+-					 u64 *max_variable_size);
+-efi_status_t xen_efi_get_next_high_mono_count(u32 *count);
+-efi_status_t xen_efi_update_capsule(efi_capsule_header_t **capsules,
+-				    unsigned long count, unsigned long sg_list);
+-efi_status_t xen_efi_query_capsule_caps(efi_capsule_header_t **capsules,
+-					unsigned long count, u64 *max_size,
+-					int *reset_type);
+-void xen_efi_reset_system(int reset_type, efi_status_t status,
+-			  unsigned long data_size, efi_char16_t *data);
++void xen_efi_runtime_setup(void);
+ 
+ 
+ #ifdef CONFIG_PREEMPT
+-- 
+2.16.4
 
-> Ok, only two (stkwebcam and uvcvideo) uses usb_autopm_get_interface() and
-> usb_autopm_put_interface(), but I'm wondering if the others are doing the
-> right thing, as their implementation are probably older.
-
-Right, only these two support runtime PM through USB core (autosuspend).
-
-In fact, I see now that stkwebcam fails to set the supports_autosuspend
-flag in its usb_driver struct, so runtime PM has never actually been
-enabled for this driver either. But I guess it doesn't hurt to fix
-missing puts if someones wants to try enabling it, if not only for
-documentation purposes and avoiding copy-paste proliferation.
-
-Lots of legacy...
-
-Johan
