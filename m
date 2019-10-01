@@ -2,151 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3BB8C340D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED1F1C3414
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfJAMSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 08:18:17 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52492 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfJAMSQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 08:18:16 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91CI1aZ106156;
-        Tue, 1 Oct 2019 07:18:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569932281;
-        bh=xse21JTAzQ8GU1Wu6CB2o+llOAUhXp4hV5WxhhhEmJk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=bEe3phAdv8S8+ucek6mTI+4AS67Ezt72kzbjzMc1tTGTwbStGkMK4iNvdmcgALj+L
-         bX5dSWIDOwY2YDdJC46Ec6VkRxxon8xdMa53fHxywPfnYi6vgkDPLbqWdm+7ygxKtm
-         qKq7AgWx1MIxMORiDX6dUjgMgHmHxPtSUN0K/w7Y=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x91CI1Dw055642
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 1 Oct 2019 07:18:01 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
- 2019 07:18:00 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 1 Oct 2019 07:17:50 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91CHuxU053240;
-        Tue, 1 Oct 2019 07:17:57 -0500
-Subject: Re: [PATCH 1/2] dt-bindings: ufs: ti,j721e-ufs.yaml: Add binding for
- TI UFS wrapper
-To:     Rob Herring <robh@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>, <jejb@linux.ibm.com>,
-        Martin K Petersen <martin.petersen@oracle.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Janek Kotas <jank@cadence.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <nsekhar@ti.com>
-References: <20190918133921.25844-1-vigneshr@ti.com>
- <20190918133921.25844-2-vigneshr@ti.com> <20191001120826.GA4214@bogus>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <c3490572-8230-3e41-0916-097091386b21@ti.com>
-Date:   Tue, 1 Oct 2019 17:48:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2387764AbfJAMSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 08:18:51 -0400
+Received: from mga02.intel.com ([134.134.136.20]:42627 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732706AbfJAMSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 08:18:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 05:18:49 -0700
+X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
+   d="scan'208";a="185165068"
+Received: from likexu-mobl1.ccr.corp.intel.com (HELO [10.249.172.165]) ([10.249.172.165])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 01 Oct 2019 05:18:46 -0700
+Subject: Re: [PATCH 2/3] KVM: x86/vPMU: Reuse perf_event to avoid unnecessary
+ pmc_reprogram_counter
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
+        vkuznets@redhat.com, Jim Mattson <jmattson@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        ak@linux.intel.com, wei.w.wang@intel.com, kan.liang@intel.com,
+        like.xu@intel.com, ehankland@google.com, arbel.moshe@oracle.com,
+        linux-kernel@vger.kernel.org
+References: <20190930072257.43352-1-like.xu@linux.intel.com>
+ <20190930072257.43352-3-like.xu@linux.intel.com>
+ <20191001082218.GK4519@hirez.programming.kicks-ass.net>
+From:   Like Xu <like.xu@linux.intel.com>
+Organization: Intel OTC
+Message-ID: <e6beb99d-3073-b03a-3e30-449fc79cd203@linux.intel.com>
+Date:   Tue, 1 Oct 2019 20:18:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191001120826.GA4214@bogus>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20191001082218.GK4519@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Peter,
 
-
-On 01/10/19 5:38 PM, Rob Herring wrote:
-> On Wed, Sep 18, 2019 at 07:09:20PM +0530, Vignesh Raghavendra wrote:
->> Add binding documentation of TI wrapper for Cadence UFS Controller.
->>
->> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
->> ---
->>  .../devicetree/bindings/ufs/ti,j721e-ufs.yaml | 45 +++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
->> new file mode 100644
->> index 000000000000..dabd7c795fbe
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
->> @@ -0,0 +1,45 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/ufs/ti,j721e-ufs.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+On 2019/10/1 16:22, Peter Zijlstra wrote:
+> On Mon, Sep 30, 2019 at 03:22:56PM +0800, Like Xu wrote:
+>> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+>> index 46875bbd0419..74bc5c42b8b5 100644
+>> --- a/arch/x86/kvm/pmu.c
+>> +++ b/arch/x86/kvm/pmu.c
+>> @@ -140,6 +140,35 @@ static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
+>>   	clear_bit(pmc->idx, (unsigned long*)&pmc_to_pmu(pmc)->reprogram_pmi);
+>>   }
+>>   
+>> +static void pmc_pause_counter(struct kvm_pmc *pmc)
+>> +{
+>> +	if (!pmc->perf_event)
+>> +		return;
 >> +
->> +title: TI J721e UFS Host Controller Glue Driver
+>> +	pmc->counter = pmc_read_counter(pmc);
 >> +
->> +maintainers:
->> +  - Vignesh Raghavendra <vigneshr@ti.com>
+>> +	perf_event_disable(pmc->perf_event);
 >> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: ti,j721e-ufs
->> +
->> +  reg:
->> +    maxItems: 1
->> +    description: address of TI UFS glue registers
->> +
->> +  clocks:
->> +    maxItems: 1
->> +    description: phandle to the M-PHY clock
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - power-domains
->> +
->> +examples:
->> +  - |
->> +    ufs_wrapper: ufs-wrapper@4e80000 {
->> +       compatible = "ti,j721e-ufs";
->> +       reg = <0x0 0x4e80000 0x0 0x100>;
->> +       power-domains = <&k3_pds 277>;
->> +       clocks = <&k3_clks 277 1>;
->> +       assigned-clocks = <&k3_clks 277 1>;
->> +       assigned-clock-parents = <&k3_clks 277 4>;
->> +       #address-cells = <2>;
->> +       #size-cells = <2>;
+>> +	/* reset count to avoid redundant accumulation */
+>> +	local64_set(&pmc->perf_event->count, 0);
 > 
-> Based on the driver you expect to have a child node here with the UFS 
-> controller? You need to show that and have a schema for it.
+> Yuck, don't frob in data structures you don't own.
+
+Yes, it's reasonable. Thanks.
+
+> 
+> Just like you exported the IOC_PERIOD thing, so too is there a
+> IOC_RESET.
+> 
+> Furthermore; wth do you call pmc_read_counter() _before_ doing
+> perf_event_disable() ? Doing it the other way around is much cheaper,
+> even better, you can use perf_event_count() after disable.
+
+Yes, it's much better and let me apply this.
+
+> 
+>> +}
+>> +
+>> +static bool pmc_resume_counter(struct kvm_pmc *pmc)
+>> +{
+>> +	if (!pmc->perf_event)
+>> +		return false;
+>> +
+>> +	/* recalibrate sample period and check if it's accepted by perf core */
+>> +	if (perf_event_period(pmc->perf_event,
+>> +			(-pmc->counter) & pmc_bitmask(pmc)))
+>> +		return false;
+> 
+> I'd do the reset here, but then you have 3 function in a row that do
+> perf_event_ctx_lock()+perf_event_ctx_unlock(), which is rather
+> expensive.
+
+Calling pmc_pause_counter() is not always followed by calling 
+pmc_resume_counter(). The former may be called multiple times before the 
+later is called, so if we do not reset event->count in the 
+pmc_pause_counter(), it will be repeatedly accumulated into pmc->counter 
+which is a functional error.
+
+> 
+>> +
+>> +	/* reuse perf_event to serve as pmc_reprogram_counter() does*/
+>> +	perf_event_enable(pmc->perf_event);
+>> +	clear_bit(pmc->idx, (unsigned long *)&pmc_to_pmu(pmc)->reprogram_pmi);
+>> +	return true;
+>> +}
 > 
 
-Yes, Cadence UFS controller node will be the child node. Its bindings
-are documented at: Documentation/devicetree/bindings/ufs/cdns,ufshc.txt
-(which in turn refers to
-Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt)
-
-But they are not in .yaml yet. How would you suggest to reference that?
-Or should I just write plain text DT binding doc given that subsystem is
-not converted to yaml?
-
->> +    };
->> -- 
->> 2.23.0
->>
-
--- 
-Regards
-Vignesh
