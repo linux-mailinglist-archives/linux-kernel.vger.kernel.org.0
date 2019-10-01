@@ -2,47 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96E56C3322
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E40FC32DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387838AbfJALmh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:42:37 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40640 "EHLO
+        id S2387439AbfJALky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:40:54 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40296 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387503AbfJALlA (ORCPT
+        with ESMTP id S1731469AbfJALky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:00 -0400
+        Tue, 1 Oct 2019 07:40:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=iY6ES9hP3CWF4u3OHcTrGb1l/ZeOMGCP6gxjprw6Y3c=; b=q6SqyX1CYEul
-        7ipsRGWpXBg9WW6ZuvTlIVkZyOqJJM/sdVVqPQ4ns9LN+ku3dxFiJ8t6g+eoDyeptQRHIePZLbML3
-        JPzcpjFofHJEPCa6sL8eFjLoUW9795g9ecRk3toF1sABLnjbDMN5e5IQXC4jpiBb13DGRrN3Sm6yF
-        g7g2I=;
+        List-Archive; bh=+gqFQySrShV/ToSh8YGHlEnWI1hCCq31xeGoKbe2xP8=; b=W6+VhIelim16
+        88zCkz/rOj4zN0jeG1fTJB2sQdqgKIRWUbskh8rnG2yZOw3/dzTeSqk3/AkE03V52p9H5WIc2T32r
+        zbQTwiI49zMC75YmcNFGM73DgP5pKKXqv0qI/H4cM7CfKlYsi6blQdfAPmFZjTg1qOthqj0ce+ZVv
+        JEDPc=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWM-0004Sc-L8; Tue, 01 Oct 2019 11:40:46 +0000
+        id 1iFGWN-0004Sl-FO; Tue, 01 Oct 2019 11:40:47 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 2CCFA2742A10; Tue,  1 Oct 2019 12:40:46 +0100 (BST)
+        id E68622742A10; Tue,  1 Oct 2019 12:40:46 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, festevam@gmail.com, lars@metafoo.de,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Mark Brown <broonie@kernel.org>,
-        mark.rutland@arm.com, nicoleotsuka@gmail.com,
-        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
-        robh+dt@kernel.org, timur@kernel.org, tiwai@suse.com,
-        Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: fsl_asrc: Use in(out)put_format instead of in(out)put_word_width" to the asoc tree
-In-Reply-To: <7937c1404ee327ce141cb03b3575b02ea01a740c.1569493933.git.shengjiu.wang@nxp.com>
+        lgirdwood@gmail.com, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        pierre-louis.bossart@intel.com, ranjani.sridharan@intel.com
+Subject: Applied "ASoC: core: Clarify usage of ignore_machine" to the asoc tree
+In-Reply-To: <20190925183358.11955-1-daniel.baluta@nxp.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114046.2CCFA2742A10@ypsilon.sirena.org.uk>
+Message-Id: <20191001114046.E68622742A10@ypsilon.sirena.org.uk>
 Date:   Tue,  1 Oct 2019 12:40:46 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_asrc: Use in(out)put_format instead of in(out)put_word_width
+   ASoC: core: Clarify usage of ignore_machine
 
 has been applied to the asoc tree at
 
@@ -76,153 +72,46 @@ to this mail.
 Thanks,
 Mark
 
-From 4bf62571070dd1021556e275d9221f736b2ffcf3 Mon Sep 17 00:00:00 2001
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Fri, 27 Sep 2019 09:46:09 +0800
-Subject: [PATCH] ASoC: fsl_asrc: Use in(out)put_format instead of
- in(out)put_word_width
+From 49f9c4f2e83cf562f1a6e3f62eafa4ede5343e4a Mon Sep 17 00:00:00 2001
+From: Daniel Baluta <daniel.baluta@nxp.com>
+Date: Wed, 25 Sep 2019 21:33:58 +0300
+Subject: [PATCH] ASoC: core: Clarify usage of ignore_machine
 
-snd_pcm_format_t is more formal than enum asrc_word_width, which has
-two property, width and physical width, which is more accurate than
-enum asrc_word_width. So it is better to use in(out)put_format
-instead of in(out)put_word_width.
+For a sound card ignore_machine means that existing FEs links should be
+ignored and existing BEs links should be overridden with some information
+from the matching component driver.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Link: https://lore.kernel.org/r/7937c1404ee327ce141cb03b3575b02ea01a740c.1569493933.git.shengjiu.wang@nxp.com
+Current code make some confusions about this so fix it!
+
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/20190925183358.11955-1-daniel.baluta@nxp.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_asrc.c | 56 +++++++++++++++++++++++++++-------------
- sound/soc/fsl/fsl_asrc.h |  4 +--
- 2 files changed, 40 insertions(+), 20 deletions(-)
+ sound/soc/soc-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index cfa40ef6b1ca..4d3804a1ea55 100644
---- a/sound/soc/fsl/fsl_asrc.c
-+++ b/sound/soc/fsl/fsl_asrc.c
-@@ -265,6 +265,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
- 	struct asrc_config *config = pair->config;
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
- 	enum asrc_pair_index index = pair->index;
-+	enum asrc_word_width input_word_width;
-+	enum asrc_word_width output_word_width;
- 	u32 inrate, outrate, indiv, outdiv;
- 	u32 clk_index[2], div[2];
- 	int in, out, channels;
-@@ -283,9 +285,32 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
- 		return -EINVAL;
- 	}
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index d2842a383846..4a47ba94559f 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1859,7 +1859,7 @@ static void soc_check_tplg_fes(struct snd_soc_card *card)
  
--	/* Validate output width */
--	if (config->output_word_width == ASRC_WIDTH_8_BIT) {
--		pair_err("does not support 8bit width output\n");
-+	switch (snd_pcm_format_width(config->input_format)) {
-+	case 8:
-+		input_word_width = ASRC_WIDTH_8_BIT;
-+		break;
-+	case 16:
-+		input_word_width = ASRC_WIDTH_16_BIT;
-+		break;
-+	case 24:
-+		input_word_width = ASRC_WIDTH_24_BIT;
-+		break;
-+	default:
-+		pair_err("does not support this input format, %d\n",
-+			 config->input_format);
-+		return -EINVAL;
-+	}
-+
-+	switch (snd_pcm_format_width(config->output_format)) {
-+	case 16:
-+		output_word_width = ASRC_WIDTH_16_BIT;
-+		break;
-+	case 24:
-+		output_word_width = ASRC_WIDTH_24_BIT;
-+		break;
-+	default:
-+		pair_err("does not support this output format, %d\n",
-+			 config->output_format);
- 		return -EINVAL;
- 	}
+ 	for_each_component(component) {
  
-@@ -383,8 +408,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair)
- 	/* Implement word_width configurations */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRMCR1(index),
- 			   ASRMCR1i_OW16_MASK | ASRMCR1i_IWD_MASK,
--			   ASRMCR1i_OW16(config->output_word_width) |
--			   ASRMCR1i_IWD(config->input_word_width));
-+			   ASRMCR1i_OW16(output_word_width) |
-+			   ASRMCR1i_IWD(input_word_width));
+-		/* does this component override FEs ? */
++		/* does this component override BEs ? */
+ 		if (!component->driver->ignore_machine)
+ 			continue;
  
- 	/* Enable BUFFER STALL */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRMCR(index),
-@@ -497,13 +522,13 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
- 				  struct snd_soc_dai *dai)
- {
- 	struct fsl_asrc *asrc_priv = snd_soc_dai_get_drvdata(dai);
--	int width = params_width(params);
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct fsl_asrc_pair *pair = runtime->private_data;
- 	unsigned int channels = params_channels(params);
- 	unsigned int rate = params_rate(params);
- 	struct asrc_config config;
--	int word_width, ret;
-+	snd_pcm_format_t format;
-+	int ret;
+@@ -1880,7 +1880,7 @@ static void soc_check_tplg_fes(struct snd_soc_card *card)
+ 				continue;
+ 			}
  
- 	ret = fsl_asrc_request_pair(channels, pair);
- 	if (ret) {
-@@ -513,15 +538,10 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
+-			dev_info(card->dev, "info: override FE DAI link %s\n",
++			dev_info(card->dev, "info: override BE DAI link %s\n",
+ 				 card->dai_link[i].name);
  
- 	pair->config = &config;
- 
--	if (width == 16)
--		width = ASRC_WIDTH_16_BIT;
--	else
--		width = ASRC_WIDTH_24_BIT;
--
- 	if (asrc_priv->asrc_width == 16)
--		word_width = ASRC_WIDTH_16_BIT;
-+		format = SNDRV_PCM_FORMAT_S16_LE;
- 	else
--		word_width = ASRC_WIDTH_24_BIT;
-+		format = SNDRV_PCM_FORMAT_S24_LE;
- 
- 	config.pair = pair->index;
- 	config.channel_num = channels;
-@@ -529,13 +549,13 @@ static int fsl_asrc_dai_hw_params(struct snd_pcm_substream *substream,
- 	config.outclk = OUTCLK_ASRCK1_CLK;
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		config.input_word_width   = width;
--		config.output_word_width  = word_width;
-+		config.input_format   = params_format(params);
-+		config.output_format  = format;
- 		config.input_sample_rate  = rate;
- 		config.output_sample_rate = asrc_priv->asrc_rate;
- 	} else {
--		config.input_word_width   = word_width;
--		config.output_word_width  = width;
-+		config.input_format   = format;
-+		config.output_format  = params_format(params);
- 		config.input_sample_rate  = asrc_priv->asrc_rate;
- 		config.output_sample_rate = rate;
- 	}
-diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
-index c60075112570..38af485bdd22 100644
---- a/sound/soc/fsl/fsl_asrc.h
-+++ b/sound/soc/fsl/fsl_asrc.h
-@@ -342,8 +342,8 @@ struct asrc_config {
- 	unsigned int dma_buffer_size;
- 	unsigned int input_sample_rate;
- 	unsigned int output_sample_rate;
--	enum asrc_word_width input_word_width;
--	enum asrc_word_width output_word_width;
-+	snd_pcm_format_t input_format;
-+	snd_pcm_format_t output_format;
- 	enum asrc_inclk inclk;
- 	enum asrc_outclk outclk;
- };
+ 			/* override platform component */
 -- 
 2.20.1
 
