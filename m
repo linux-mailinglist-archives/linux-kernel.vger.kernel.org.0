@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86845C3CF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6465BC3D06
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:56:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731751AbfJAQmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:42:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53992 "EHLO mail.kernel.org"
+        id S1732203AbfJAQ43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:56:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731692AbfJAQmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:42:11 -0400
+        id S1731754AbfJAQmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:42:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6282C20B7C;
-        Tue,  1 Oct 2019 16:42:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C28C21924;
+        Tue,  1 Oct 2019 16:42:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948131;
-        bh=lLf2g9KCQK5PoHP2qYZDVggikNw887AYHXv+3PO2oMY=;
+        s=default; t=1569948133;
+        bh=ZZClAxTFEW3c/LpGC1W37IcwlbtijIfprIcMS513UcE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=exMS1+0doRtSYnFDzacdeWaWwur0wlM3kSRb9jQ2tp4QF2PCTR3cyfh8fhdH91C07
-         Noxc9e61WRUmf3mzL9vDf/aQjIg8eZipxxwpGGcDGyPfM5e4XwhYGWGX9EUXbVMDdL
-         s1Ae06Y9JeNtnZq+dlG9q04QLyOPu5Cp6k5/ZPeM=
+        b=EM+VlOTm8cSOa9sEHTpxTPTVuC5gysfgaKupFwokSdssA7bVJMxgDVWTojDff0Se7
+         UfWHyR3oF0h4ejVdFE7kUZrbic2Z5SBqY7rdtIg7R9QYng6iQc426pcRIpZwHEYrYh
+         MxxF934ZMAIS6SrqUF0MLy3956HO1MLfXidsD4bc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 31/63] thermal_hwmon: Sanitize thermal_zone type
-Date:   Tue,  1 Oct 2019 12:40:53 -0400
-Message-Id: <20191001164125.15398-31-sashal@kernel.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nvdimm@lists.01.org
+Subject: [PATCH AUTOSEL 5.2 33/63] libnvdimm/region: Initialize bad block for volatile namespaces
+Date:   Tue,  1 Oct 2019 12:40:55 -0400
+Message-Id: <20191001164125.15398-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -43,51 +43,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Mavrodiev <stefan@olimex.com>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 
-[ Upstream commit 8c7aa184281c01fc26f319059efb94725012921d ]
+[ Upstream commit c42adf87e4e7ed77f6ffe288dc90f980d07d68df ]
 
-When calling thermal_add_hwmon_sysfs(), the device type is sanitized by
-replacing '-' with '_'. However tz->type remains unsanitized. Thus
-calling thermal_hwmon_lookup_by_type() returns no device. And if there is
-no device, thermal_remove_hwmon_sysfs() fails with "hwmon device lookup
-failed!".
+We do check for a bad block during namespace init and that use
+region bad block list. We need to initialize the bad block
+for volatile regions for this to work. We also observe a lockdep
+warning as below because the lock is not initialized correctly
+since we skip bad block init for volatile regions.
 
-The result is unregisted hwmon devices in the sysfs.
+ INFO: trying to register non-static key.
+ the code is fine but needs lockdep annotation.
+ turning off the locking correctness validator.
+ CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.3.0-rc1-15699-g3dee241c937e #149
+ Call Trace:
+ [c0000000f95cb250] [c00000000147dd84] dump_stack+0xe8/0x164 (unreliable)
+ [c0000000f95cb2a0] [c00000000022ccd8] register_lock_class+0x308/0xa60
+ [c0000000f95cb3a0] [c000000000229cc0] __lock_acquire+0x170/0x1ff0
+ [c0000000f95cb4c0] [c00000000022c740] lock_acquire+0x220/0x270
+ [c0000000f95cb580] [c000000000a93230] badblocks_check+0xc0/0x290
+ [c0000000f95cb5f0] [c000000000d97540] nd_pfn_validate+0x5c0/0x7f0
+ [c0000000f95cb6d0] [c000000000d98300] nd_dax_probe+0xd0/0x1f0
+ [c0000000f95cb760] [c000000000d9b66c] nd_pmem_probe+0x10c/0x160
+ [c0000000f95cb790] [c000000000d7f5ec] nvdimm_bus_probe+0x10c/0x240
+ [c0000000f95cb820] [c000000000d0f844] really_probe+0x254/0x4e0
+ [c0000000f95cb8b0] [c000000000d0fdfc] driver_probe_device+0x16c/0x1e0
+ [c0000000f95cb930] [c000000000d10238] device_driver_attach+0x68/0xa0
+ [c0000000f95cb970] [c000000000d1040c] __driver_attach+0x19c/0x1c0
+ [c0000000f95cb9f0] [c000000000d0c4c4] bus_for_each_dev+0x94/0x130
+ [c0000000f95cba50] [c000000000d0f014] driver_attach+0x34/0x50
+ [c0000000f95cba70] [c000000000d0e208] bus_add_driver+0x178/0x2f0
+ [c0000000f95cbb00] [c000000000d117c8] driver_register+0x108/0x170
+ [c0000000f95cbb70] [c000000000d7edb0] __nd_driver_register+0xe0/0x100
+ [c0000000f95cbbd0] [c000000001a6baa4] nd_pmem_driver_init+0x34/0x48
+ [c0000000f95cbbf0] [c0000000000106f4] do_one_initcall+0x1d4/0x4b0
+ [c0000000f95cbcd0] [c0000000019f499c] kernel_init_freeable+0x544/0x65c
+ [c0000000f95cbdb0] [c000000000010d6c] kernel_init+0x2c/0x180
+ [c0000000f95cbe20] [c00000000000b954] ret_from_kernel_thread+0x5c/0x68
 
-Fixes: 409ef0bacacf ("thermal_hwmon: Sanitize attribute name passed to hwmon")
-
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Link: https://lore.kernel.org/r/20190919083355.26340-1-aneesh.kumar@linux.ibm.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal_hwmon.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/nvdimm/bus.c         | 2 +-
+ drivers/nvdimm/region.c      | 4 ++--
+ drivers/nvdimm/region_devs.c | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
-index 40c69a533b240..dd5d8ee379287 100644
---- a/drivers/thermal/thermal_hwmon.c
-+++ b/drivers/thermal/thermal_hwmon.c
-@@ -87,13 +87,17 @@ static struct thermal_hwmon_device *
- thermal_hwmon_lookup_by_type(const struct thermal_zone_device *tz)
- {
- 	struct thermal_hwmon_device *hwmon;
-+	char type[THERMAL_NAME_LENGTH];
+diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+index df41f3571dc97..0d97158e7ac3f 100644
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -176,7 +176,7 @@ static int nvdimm_clear_badblocks_region(struct device *dev, void *data)
+ 	sector_t sector;
  
- 	mutex_lock(&thermal_hwmon_list_lock);
--	list_for_each_entry(hwmon, &thermal_hwmon_list, node)
--		if (!strcmp(hwmon->type, tz->type)) {
-+	list_for_each_entry(hwmon, &thermal_hwmon_list, node) {
-+		strcpy(type, tz->type);
-+		strreplace(type, '-', '_');
-+		if (!strcmp(hwmon->type, type)) {
- 			mutex_unlock(&thermal_hwmon_list_lock);
- 			return hwmon;
- 		}
-+	}
- 	mutex_unlock(&thermal_hwmon_list_lock);
+ 	/* make sure device is a region */
+-	if (!is_nd_pmem(dev))
++	if (!is_memory(dev))
+ 		return 0;
  
- 	return NULL;
+ 	nd_region = to_nd_region(dev);
+diff --git a/drivers/nvdimm/region.c b/drivers/nvdimm/region.c
+index 488c47ac4c4ae..0c618e478e65e 100644
+--- a/drivers/nvdimm/region.c
++++ b/drivers/nvdimm/region.c
+@@ -34,7 +34,7 @@ static int nd_region_probe(struct device *dev)
+ 	if (rc)
+ 		return rc;
+ 
+-	if (is_nd_pmem(&nd_region->dev)) {
++	if (is_memory(&nd_region->dev)) {
+ 		struct resource ndr_res;
+ 
+ 		if (devm_init_badblocks(dev, &nd_region->bb))
+@@ -123,7 +123,7 @@ static void nd_region_notify(struct device *dev, enum nvdimm_event event)
+ 		struct nd_region *nd_region = to_nd_region(dev);
+ 		struct resource res;
+ 
+-		if (is_nd_pmem(&nd_region->dev)) {
++		if (is_memory(&nd_region->dev)) {
+ 			res.start = nd_region->ndr_start;
+ 			res.end = nd_region->ndr_start +
+ 				nd_region->ndr_size - 1;
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index a15276cdec7d4..0a02b2b308f6f 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -630,11 +630,11 @@ static umode_t region_visible(struct kobject *kobj, struct attribute *a, int n)
+ 	if (!is_memory(dev) && a == &dev_attr_dax_seed.attr)
+ 		return 0;
+ 
+-	if (!is_nd_pmem(dev) && a == &dev_attr_badblocks.attr)
++	if (!is_memory(dev) && a == &dev_attr_badblocks.attr)
+ 		return 0;
+ 
+ 	if (a == &dev_attr_resource.attr) {
+-		if (is_nd_pmem(dev))
++		if (is_memory(dev))
+ 			return 0400;
+ 		else
+ 			return 0;
 -- 
 2.20.1
 
