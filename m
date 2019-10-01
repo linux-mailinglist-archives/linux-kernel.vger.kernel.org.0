@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 392B7C3E04
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66ED0C3DF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbfJAREE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:04:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50628 "EHLO mail.kernel.org"
+        id S1730326AbfJARDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:03:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728061AbfJAQjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:39:37 -0400
+        id S1728227AbfJAQjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:39:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3379E2168B;
-        Tue,  1 Oct 2019 16:39:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37AA521D79;
+        Tue,  1 Oct 2019 16:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569947976;
-        bh=Kk6XxuN59+qbkbLJtVxcjtqKExqw2JI0CVGdOUTiFQw=;
+        s=default; t=1569947980;
+        bh=au7RXpazVKg8aDvc0+r3dLxy0AhQ6+CZk+Ol5BMAo6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHC3a5aaFE0DoHdowBpbtVras53K1YvO0V1EhB5FHMn6uBnlrLl6KSpjXgFlgNBsG
-         SHTIV89AjHY5y8k0SYCnyIaSRUqUcxmkQT+5tP7VbBWgivCsDhGLcrDgJHpgoVZyDZ
-         pUfxDK/TfUGHn6ZtVhrhImE8G70T9KhSCiJzQVD0=
+        b=R1Mand8YmHXVHMe14HG64bjEMXdzQt4kCmr1v7CDblqjCnD/6RXkmq+oOZjDhjNkm
+         0qV703FSh/csJIXLfXOPrkac+JNJ0G0Z5Q0TcWDgE+ES2gqb1aHdlSoAd3tqsKi0Uj
+         Poe747laz2ccTkfYUg4LiZmdyd26b7ftKjVMgn7g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bharath Vedartham <linux.bhar@gmail.com>,
-        syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Sasha Levin <sashal@kernel.org>,
-        v9fs-developer@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.3 09/71] 9p/cache.c: Fix memory leak in v9fs_cache_session_get_cookie
-Date:   Tue,  1 Oct 2019 12:38:19 -0400
-Message-Id: <20191001163922.14735-9-sashal@kernel.org>
+Cc:     Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 12/71] ceph: fix directories inode i_blkbits initialization
+Date:   Tue,  1 Oct 2019 12:38:22 -0400
+Message-Id: <20191001163922.14735-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
 References: <20191001163922.14735-1-sashal@kernel.org>
@@ -45,46 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bharath Vedartham <linux.bhar@gmail.com>
+From: Luis Henriques <lhenriques@suse.com>
 
-[ Upstream commit 962a991c5de18452d6c429d99f3039387cf5cbb0 ]
+[ Upstream commit 750670341a24cb714e624e0fd7da30900ad93752 ]
 
-v9fs_cache_session_get_cookie assigns a random cachetag to v9ses->cachetag,
-if the cachetag is not assigned previously.
+When filling an inode with info from the MDS, i_blkbits is being
+initialized using fl_stripe_unit, which contains the stripe unit in
+bytes.  Unfortunately, this doesn't make sense for directories as they
+have fl_stripe_unit set to '0'.  This means that i_blkbits will be set
+to 0xff, causing an UBSAN undefined behaviour in i_blocksize():
 
-v9fs_random_cachetag allocates memory to v9ses->cachetag with kmalloc and uses
-scnprintf to fill it up with a cachetag.
+  UBSAN: Undefined behaviour in ./include/linux/fs.h:731:12
+  shift exponent 255 is too large for 32-bit type 'int'
 
-But if scnprintf fails, v9ses->cachetag is not freed in the current
-code causing a memory leak.
+Fix this by initializing i_blkbits to CEPH_BLOCK_SHIFT if fl_stripe_unit
+is zero.
 
-Fix this by freeing v9ses->cachetag it v9fs_random_cachetag fails.
-
-This was reported by syzbot, the link to the report is below:
-https://syzkaller.appspot.com/bug?id=f012bdf297a7a4c860c38a88b44fbee43fd9bbf3
-
-Link: http://lkml.kernel.org/r/20190522194519.GA5313@bharath12345-Inspiron-5559
-Reported-by: syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/9p/cache.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ceph/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/9p/cache.c b/fs/9p/cache.c
-index 995e332eee5c0..eb2151fb60494 100644
---- a/fs/9p/cache.c
-+++ b/fs/9p/cache.c
-@@ -51,6 +51,8 @@ void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses)
- 	if (!v9ses->cachetag) {
- 		if (v9fs_random_cachetag(v9ses) < 0) {
- 			v9ses->fscache = NULL;
-+			kfree(v9ses->cachetag);
-+			v9ses->cachetag = NULL;
- 			return;
- 		}
- 	}
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 18500edefc56f..3b537e7038c7a 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -801,7 +801,12 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 
+ 	/* update inode */
+ 	inode->i_rdev = le32_to_cpu(info->rdev);
+-	inode->i_blkbits = fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
++	/* directories have fl_stripe_unit set to zero */
++	if (le32_to_cpu(info->layout.fl_stripe_unit))
++		inode->i_blkbits =
++			fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
++	else
++		inode->i_blkbits = CEPH_BLOCK_SHIFT;
+ 
+ 	__ceph_update_quota(ci, iinfo->max_bytes, iinfo->max_files);
+ 
 -- 
 2.20.1
 
