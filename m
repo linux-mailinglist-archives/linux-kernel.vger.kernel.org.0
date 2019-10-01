@@ -2,273 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5CC5C3183
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 12:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E09BC317F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 12:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730795AbfJAKcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 06:32:50 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46633 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730547AbfJAKct (ORCPT
+        id S1731004AbfJAKcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 06:32:43 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38636 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730491AbfJAKcm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 06:32:49 -0400
-Received: by mail-ed1-f67.google.com with SMTP id t3so11388139edw.13
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 03:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hkj8XVJ/JUK9saNg13tQ3faYHAWqr5mxxbpKyWY+/lk=;
-        b=NbJgxJgb2fDhq/gnPWMIPrPM/oV+fS4TBXJvQAXcqmX50zg8TaU+J9jp6/owm8xdTO
-         77d7jWEAwC9B88ER83cuQjSkF0gKE34LfPv2slmWytVuVJNOI2fqpyoQ8W3mkMywStFB
-         zYqPlSb4r1fqYURb1Oq3HfaDWTiSfxUoJ/tK2DeO4krnh1Yso3P1WQ2XG5tRuC1HDl06
-         b2CcPsJ3vq912hJH77+m5oxVY0W2Zby2DH/cwYspL6cQxatIpDNPiGtpKWtpLx3QA5sT
-         uM9fF5EAZ2poz03M6z6QHx4WLxWskE/JrelAPO1DQbyldqxFEbq3j2Rr99D6IC1/IP7h
-         /N9g==
+        Tue, 1 Oct 2019 06:32:42 -0400
+Received: by mail-lj1-f195.google.com with SMTP id b20so12771484ljj.5;
+        Tue, 01 Oct 2019 03:32:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hkj8XVJ/JUK9saNg13tQ3faYHAWqr5mxxbpKyWY+/lk=;
-        b=Pt/PafpVwxRan1LQRx6yDsJomuNpqZOkSJS3/f6ZMknFPGmK/JwAbqNcPvHCCM9L9s
-         NmnIlmwlREKSEr5ugzVei55HVLsnIJyJ8e2ktvNTekp2elM8HWoNkF5b6wMbDQAw9NyA
-         DooIG31SFL0lFaG0vkToohrHCnc7H8l/V+qocttm05vuNmET87gU58eQhk5nEz6gKp0l
-         jd00wIXdOwcVZ5BNvO48Nw1L5q5h1iyBW6udetr0Lq66mJ6E9MVq0lpGE6CIk1XxNU6W
-         40U2WdjnjoVuWeaZs0yEp6javW9Tn7DkFX0OHyCHgFPdmKuMZFwBATyOXgtvWYKHN+Im
-         CL3A==
-X-Gm-Message-State: APjAAAVRtGPbItHmAp5vwCxH4asMeqdY1YpmMDG3P0/LSbwqG6B6ahjw
-        O9lG76jzPi6zYJZpTmMtWiV7XQ==
-X-Google-Smtp-Source: APXvYqwJKL8NZI0rPzJBtmIdStjGyQsB05mczE+qkf3OKCLP9xcEDXlOu63DS9N0WrWNB+DqyKJtYw==
-X-Received: by 2002:a05:6402:1adc:: with SMTP id ba28mr25451063edb.103.1569925966479;
-        Tue, 01 Oct 2019 03:32:46 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id r18sm3052121edx.94.2019.10.01.03.32.45
+        bh=Khg3aofzi3y/RCwSBD7Xayq8I3pziAFgYukoZ7zb6rU=;
+        b=HkqPABTo9fco0Hg0r/hhWqWlPi2yB47JN9Hbj/PSMzCm9JeId+yWmRAqVSJ+slE71e
+         RNECs3QovhpUAI6I9ow/bFG40X66xSVLRXxbOKOMR6plgeCMcZTGYtCf3EDHR/220Ntj
+         qJ5FCie2Q27VP/j8VWCD29ymoEwwir7P8FQ5yOxI7bdgz88zsSkZa2ZT1CVNUleC1Ugd
+         mskUmuFBHlmxZtK2gdtsDViFebzfK4Hh2vT7EOLBVZ10rk7O6Kwk6DxwaL5tse6xZa8I
+         s1AQhXjx5dyAwGZHQY9H5fnrmxis1WgI5ECkHlzj0lAupCNE3dtoP28F6bvjAS9i3REQ
+         XrrA==
+X-Gm-Message-State: APjAAAUMs/r81QdGVWqu04jZw9kw1v5ZuFKJdthE4da0babKYn0if0M5
+        MWVEfjTSL5h7Tngpt703fJA=
+X-Google-Smtp-Source: APXvYqznKMmJpGX5KqoZeKw2jw5mQu/uyaurSQ6yCB45uyfSePTJnlkRc0FWIAdvkJidXYhm2KfJUQ==
+X-Received: by 2002:a2e:86c7:: with SMTP id n7mr15062623ljj.227.1569925958596;
+        Tue, 01 Oct 2019 03:32:38 -0700 (PDT)
+Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
+        by smtp.gmail.com with ESMTPSA id 4sm3897558ljv.87.2019.10.01.03.32.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 03:32:45 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id E6139102FB8; Tue,  1 Oct 2019 13:32:45 +0300 (+03)
-Date:   Tue, 1 Oct 2019 13:32:45 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/15] mm: Allow find_get_page to be used for large pages
-Message-ID: <20191001103245.zmgbtoer4f7ytxg2@box>
-References: <20190925005214.27240-1-willy@infradead.org>
- <20190925005214.27240-11-willy@infradead.org>
+        Tue, 01 Oct 2019 03:32:37 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92.2)
+        (envelope-from <johan@kernel.org>)
+        id 1iFFSY-00055s-6a; Tue, 01 Oct 2019 12:32:46 +0200
+Date:   Tue, 1 Oct 2019 12:32:46 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     syzbot <syzbot+e29b17e5042bbc56fae9@syzkaller.appspotmail.com>
+Cc:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in mcba_usb_disconnect
+Message-ID: <20191001103246.GJ13531@localhost>
+References: <000000000000d4e4900593cce75d@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190925005214.27240-11-willy@infradead.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <000000000000d4e4900593cce75d@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 05:52:09PM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Mon, Sep 30, 2019 at 03:39:15PM -0700, syzbot wrote:
+> Hello,
 > 
-> Add FGP_PMD to indicate that we're trying to find-or-create a page that
-> is at least PMD_ORDER in size.  The internal 'conflict' entry usage
-> is modelled after that in DAX, but the implementations are different
-> due to DAX using multi-order entries and the page cache using multiple
-> order-0 entries.
+> syzbot found the following crash on:
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/pagemap.h | 13 ++++++
->  mm/filemap.c            | 99 +++++++++++++++++++++++++++++++++++------
->  2 files changed, 99 insertions(+), 13 deletions(-)
+> HEAD commit:    2994c077 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=173b5acd600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=69ddefac6929256a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e29b17e5042bbc56fae9
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10ec8e19600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107ad813600000
 > 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index d610a49be571..d6d97f9fb762 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -248,6 +248,19 @@ pgoff_t page_cache_prev_miss(struct address_space *mapping,
->  #define FGP_NOFS		0x00000010
->  #define FGP_NOWAIT		0x00000020
->  #define FGP_FOR_MMAP		0x00000040
-> +/*
-> + * If you add more flags, increment FGP_ORDER_SHIFT (no further than 25).
-> + * Do not insert flags above the FGP order bits.
-> + */
-> +#define FGP_ORDER_SHIFT		7
-> +#define FGP_PMD			((PMD_SHIFT - PAGE_SHIFT) << FGP_ORDER_SHIFT)
-> +#define FGP_PUD			((PUD_SHIFT - PAGE_SHIFT) << FGP_ORDER_SHIFT)
-> +
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +#define fgp_order(fgp)		((fgp) >> FGP_ORDER_SHIFT)
-> +#else
-> +#define fgp_order(fgp)		0
-> +#endif
->  
->  struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
->  		int fgp_flags, gfp_t cache_gfp_mask);
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index afe8f5d95810..8eca91547e40 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1576,7 +1576,71 @@ struct page *find_get_entry(struct address_space *mapping, pgoff_t offset)
->  
->  	return page;
->  }
-> -EXPORT_SYMBOL(find_get_entry);
-> +
-> +static bool pagecache_is_conflict(struct page *page)
-> +{
-> +	return page == XA_RETRY_ENTRY;
-> +}
-> +
-> +/**
-> + * __find_get_page - Find and get a page cache entry.
-> + * @mapping: The address_space to search.
-> + * @offset: The page cache index.
-> + * @order: The minimum order of the entry to return.
-> + *
-> + * Looks up the page cache entries at @mapping between @offset and
-> + * @offset + 2^@order.  If there is a page cache page, it is returned with
-> + * an increased refcount unless it is smaller than @order.
-> + *
-> + * If the slot holds a shadow entry of a previously evicted page, or a
-> + * swap entry from shmem/tmpfs, it is returned.
-> + *
-> + * Return: the found page, a value indicating a conflicting page or %NULL if
-> + * there are no pages in this range.
-> + */
-> +static struct page *__find_get_page(struct address_space *mapping,
-> +		unsigned long offset, unsigned int order)
-> +{
-> +	XA_STATE(xas, &mapping->i_pages, offset);
-> +	struct page *page;
-> +
-> +	rcu_read_lock();
-> +repeat:
-> +	xas_reset(&xas);
-> +	page = xas_find(&xas, offset | ((1UL << order) - 1));
-> +	if (xas_retry(&xas, page))
-> +		goto repeat;
-> +	/*
-> +	 * A shadow entry of a recently evicted page, or a swap entry from
-> +	 * shmem/tmpfs.  Skip it; keep looking for pages.
-> +	 */
-> +	if (xa_is_value(page))
-> +		goto repeat;
-> +	if (!page)
-> +		goto out;
-> +	if (compound_order(page) < order) {
-> +		page = XA_RETRY_ENTRY;
-> +		goto out;
-> +	}
-> +
-> +	if (!page_cache_get_speculative(page))
-> +		goto repeat;
-> +
-> +	/*
-> +	 * Has the page moved or been split?
-> +	 * This is part of the lockless pagecache protocol. See
-> +	 * include/linux/pagemap.h for details.
-> +	 */
-> +	if (unlikely(page != xas_reload(&xas))) {
-> +		put_page(page);
-> +		goto repeat;
-> +	}
-
-You need to re-check compound_order() after obtaining reference to the
-page. Otherwise the page could be split under you.
-
-> +	page = find_subpage(page, offset);
-> +out:
-> +	rcu_read_unlock();
-> +
-> +	return page;
-> +}
->  
->  /**
->   * find_lock_entry - locate, pin and lock a page cache entry
-> @@ -1618,12 +1682,12 @@ EXPORT_SYMBOL(find_lock_entry);
->   * pagecache_get_page - find and get a page reference
->   * @mapping: the address_space to search
->   * @offset: the page index
-> - * @fgp_flags: PCG flags
-> + * @fgp_flags: FGP flags
->   * @gfp_mask: gfp mask to use for the page cache data page allocation
->   *
->   * Looks up the page cache slot at @mapping & @offset.
->   *
-> - * PCG flags modify how the page is returned.
-> + * FGP flags modify how the page is returned.
->   *
->   * @fgp_flags can be:
->   *
-> @@ -1636,6 +1700,10 @@ EXPORT_SYMBOL(find_lock_entry);
->   * - FGP_FOR_MMAP: Similar to FGP_CREAT, only we want to allow the caller to do
->   *   its own locking dance if the page is already in cache, or unlock the page
->   *   before returning if we had to add the page to pagecache.
-> + * - FGP_PMD: We're only interested in pages at PMD granularity.  If there
-> + *   is no page here (and FGP_CREATE is set), we'll create one large enough.
-> + *   If there is a smaller page in the cache that overlaps the PMD page, we
-> + *   return %NULL and do not attempt to create a page.
-
-I still think it's suboptimal interface. It's okay to ask for PMD page,
-but there's small page already caller should deal with it. Otherwise the
-caller will do one additional lookup in xarray for fallback path for no
-real reason.
-
->   *
->   * If FGP_LOCK or FGP_CREAT are specified then the function may sleep even
->   * if the GFP flags specified for FGP_CREAT are atomic.
-> @@ -1649,10 +1717,11 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
->  {
->  	struct page *page;
->  
-> +	BUILD_BUG_ON(((63 << FGP_ORDER_SHIFT) >> FGP_ORDER_SHIFT) != 63);
->  repeat:
-> -	page = find_get_entry(mapping, offset);
-> -	if (xa_is_value(page))
-> -		page = NULL;
-> +	page = __find_get_page(mapping, offset, fgp_order(fgp_flags));
-> +	if (pagecache_is_conflict(page))
-> +		return NULL;
->  	if (!page)
->  		goto no_page;
->  
-> @@ -1686,7 +1755,7 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
->  		if (fgp_flags & FGP_NOFS)
->  			gfp_mask &= ~__GFP_FS;
->  
-> -		page = __page_cache_alloc(gfp_mask);
-> +		page = __page_cache_alloc_order(gfp_mask, fgp_order(fgp_flags));
->  		if (!page)
->  			return NULL;
->  
-> @@ -1704,13 +1773,17 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
->  			if (err == -EEXIST)
->  				goto repeat;
->  		}
-> +		if (page) {
-> +			if (fgp_order(fgp_flags))
-> +				count_vm_event(THP_FILE_ALLOC);
->  
-> -		/*
-> -		 * add_to_page_cache_lru locks the page, and for mmap we expect
-> -		 * an unlocked page.
-> -		 */
-> -		if (page && (fgp_flags & FGP_FOR_MMAP))
-> -			unlock_page(page);
-> +			/*
-> +			 * add_to_page_cache_lru locks the page, and
-> +			 * for mmap we expect an unlocked page.
-> +			 */
-> +			if (fgp_flags & FGP_FOR_MMAP)
-> +				unlock_page(page);
-> +		}
->  	}
->  
->  	return page;
-> -- 
-> 2.23.0
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+e29b17e5042bbc56fae9@syzkaller.appspotmail.com
 > 
+> mcba_usb 1-1:0.180 can1: Failed to send cmd (169)
+> mcba_usb 1-1:0.180: Microchip CAN BUS Analyzer connected
+> usb 1-1: USB disconnect, device number 2
+> mcba_usb 1-1:0.95 can0: device disconnected
+> ==================================================================
+> BUG: KASAN: use-after-free in __lock_acquire+0x3377/0x3eb0  
+> kernel/locking/lockdep.c:3828
+> Read of size 8 at addr ffff8881d2e98f48 by task kworker/0:1/12
+> 
+> CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0+ #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xca/0x13e lib/dump_stack.c:113
+>   print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
+>   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
+>   kasan_report+0xe/0x12 mm/kasan/common.c:634
+>   __lock_acquire+0x3377/0x3eb0 kernel/locking/lockdep.c:3828
+>   lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4487
+>   __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
+>   _raw_spin_lock_irq+0x2d/0x40 kernel/locking/spinlock.c:167
+>   spin_lock_irq include/linux/spinlock.h:363 [inline]
+>   usb_kill_anchored_urbs+0x1e/0x110 drivers/usb/core/urb.c:787
+>   mcba_urb_unlink drivers/net/can/usb/mcba_usb.c:711 [inline]
+>   mcba_usb_disconnect+0xd6/0xe4 drivers/net/can/usb/mcba_usb.c:881
+>   usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+>   __device_release_driver drivers/base/dd.c:1134 [inline]
+>   device_release_driver_internal+0x42f/0x500 drivers/base/dd.c:1165
+>   bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:532
+>   device_del+0x420/0xb10 drivers/base/core.c:2375
+>   usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+>   usb_disconnect+0x284/0x8d0 drivers/usb/core/hub.c:2199
+>   hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+>   port_event drivers/usb/core/hub.c:5359 [inline]
+>   hub_event+0x1454/0x3640 drivers/usb/core/hub.c:5441
+>   process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+>   process_scheduled_works kernel/workqueue.c:2331 [inline]
+>   worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
+>   kthread+0x318/0x420 kernel/kthread.c:255
+>   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> 
+> The buggy address belongs to the page:
+> page:ffffea00074ba600 refcount:0 mapcount:-128 mapping:0000000000000000  
+> index:0x0
+> flags: 0x200000000000000()
+> raw: 0200000000000000 ffffea0007479208 ffff88821fffac18 0000000000000000
+> raw: 0000000000000000 0000000000000003 00000000ffffff7f 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>   ffff8881d2e98e00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>   ffff8881d2e98e80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > ffff8881d2e98f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>                                                ^
+>   ffff8881d2e98f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>   ffff8881d2e99000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ==================================================================
 
--- 
- Kirill A. Shutemov
+Fix posted
+
+	https://lkml.kernel.org/r/20191001102914.4567-2-johan@kernel.org
+
+Johan
