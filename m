@@ -2,81 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6176EC3190
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 12:36:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67BDFC319A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 12:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730699AbfJAKf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 06:35:59 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33720 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfJAKf7 (ORCPT
+        id S1730808AbfJAKhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 06:37:17 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:54837 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729317AbfJAKhR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 06:35:59 -0400
-Received: by mail-ed1-f66.google.com with SMTP id c4so11458499edl.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 03:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZNGuyH5VuGfp79kfCmqyKc3sZNZ698HUAysJogIW8J8=;
-        b=GvWY6ZvGINP8k5fiHp2HCSyp++QYkRNHtKNKitVSQrpOL5yKvYytHwMSmIDySSNp9p
-         BppOYXqm0K6ivvDJ+RIo1C22GSXi1/NMeRedaDWOnvnfYBVuatjVUdteMt7V4+B7CE8G
-         HM2Av4gCcd6NwITVA0MBfQOqQ4wcuRNhns/lauZgGyCd6LUHpKQ+zSaVLZVw7DwyFX5A
-         B0BL7HrR89eTEQFUrTb02YNbn6bZHmEh+4HjahRkUrb66lSX8Kpn4B9Wz6FTt05nzwdB
-         9jZ2+hXPD0rOEKByN+gpCx17AsxMS6SyjD7oUcm63jGlMnu8tpllxDDI/sJ4v7RWkxnO
-         MJrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZNGuyH5VuGfp79kfCmqyKc3sZNZ698HUAysJogIW8J8=;
-        b=D8qQwpiRYGBvfzBTEV5TyrHtLdV98r+RM7oisLccFyV5GAQPOkpJbP3foRnFj4Bweo
-         HSZ/Ln0+//ZcazOQGvyd1D2fL16/akjpnUIyN4n38y+uSrIy4Q/Puy69mx5+KbLKB89s
-         aDAJpQo3atanf65qImHLsnorCEeChpHvGGh/PO5dCt0ITKDM29ibUtTHlTmjcZ3tLxeP
-         AEvj2k3WLZuZ3ZrpNwSoE6O1e44MzPBrFJ8odlXRfSjIRUiRFCdtRNmhi1lcIJc2i37W
-         3AR6KkVm3fVp9KyI9tVrfAOisdEonBkoG+ZvTjmOwuSnZPurdY1O8T0bDBo6qZXllWZz
-         9BDQ==
-X-Gm-Message-State: APjAAAVHI7sPg6g169ZC/DrKSWBv33aaXGi0Ix2gz+51r2+8L0qMAzrI
-        ZA+2VETVifvA1QFnEOiE9qe2jQ==
-X-Google-Smtp-Source: APXvYqz87K8iJr9+PvdkjESjYxltd3GHd5aNw6kR4j971RAwDiqE2AOgqRqlUqNxEnnFUERsZY3ZGg==
-X-Received: by 2002:a17:906:c82d:: with SMTP id dd13mr12497351ejb.169.1569926157970;
-        Tue, 01 Oct 2019 03:35:57 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id i30sm3057790ede.32.2019.10.01.03.35.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 03:35:57 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id ECBB2102FB8; Tue,  1 Oct 2019 13:35:57 +0300 (+03)
-Date:   Tue, 1 Oct 2019 13:35:57 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Tue, 1 Oct 2019 06:37:17 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iFFWe-00088X-QK; Tue, 01 Oct 2019 12:37:00 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4AAE01C03AB;
+        Tue,  1 Oct 2019 12:37:00 +0200 (CEST)
+Date:   Tue, 01 Oct 2019 10:37:00 -0000
+From:   "tip-bot2 for Nick Desaulniers" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/boot] x86/realmode: Explicitly set entry point via ENTRY in
+ linker script
+Cc:     Borislav Petkov <bp@alien8.de>, Peter Smith <Peter.Smith@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        clang-built-linux@googlegroups.com, grimar@accesssoftek.com,
+        Ingo Molnar <mingo@redhat.com>, maskray@google.com,
+        ruiu@google.com, Thomas Gleixner <tglx@linutronix.de>,
+        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/15] mm: Remove hpage_nr_pages
-Message-ID: <20191001103557.rqjc2zkvhym4ntre@box>
-References: <20190925005214.27240-1-willy@infradead.org>
- <20190925005214.27240-12-willy@infradead.org>
+In-Reply-To: <20190925180908.54260-1-ndesaulniers@google.com>
+References: <20190925180908.54260-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925005214.27240-12-willy@infradead.org>
-User-Agent: NeoMutt/20180716
+Message-ID: <156992622015.9978.3158653614859964805.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 05:52:10PM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> This function assumed that compound pages were necessarily PMD sized.
-> While that may be true for some users, it's not going to be true for
-> all users forever, so it's better to remove it and avoid the confusion
-> by just using compound_nr() or page_size().
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+The following commit has been merged into the x86/boot branch of tip:
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Commit-ID:     3f5f909bc331a7ff9120b11c8e0e320d60b01c89
+Gitweb:        https://git.kernel.org/tip/3f5f909bc331a7ff9120b11c8e0e320d60b01c89
+Author:        Nick Desaulniers <ndesaulniers@google.com>
+AuthorDate:    Wed, 25 Sep 2019 11:09:06 -07:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 01 Oct 2019 12:17:58 +02:00
 
--- 
- Kirill A. Shutemov
+x86/realmode: Explicitly set entry point via ENTRY in linker script
+
+Linking with ld.lld via
+
+$ make LD=ld.lld
+
+produces the warning:
+
+  ld.lld: warning: cannot find entry symbol _start; defaulting to 0x1000
+
+Linking with ld.bfd shows the default entry is 0x1000:
+
+$ readelf -h arch/x86/realmode/rm/realmode.elf | grep Entry
+  Entry point address:               0x1000
+
+While ld.lld is being pedantic, just set the entry point explicitly,
+instead of depending on the implicit default. The symbol pa_text_start
+refers to the start of the .text section, which may not be at 0x1000 if
+the preceding sections listed in arch/x86/realmode/rm/realmode.lds.S
+were large enough. This matches behavior in arch/x86/boot/setup.ld.
+
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Suggested-by: Peter Smith <Peter.Smith@arm.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: clang-built-linux@googlegroups.com
+Cc: grimar@accesssoftek.com
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: maskray@google.com
+Cc: ruiu@google.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190925180908.54260-1-ndesaulniers@google.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/216
+---
+ arch/x86/realmode/rm/realmode.lds.S | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/realmode/rm/realmode.lds.S b/arch/x86/realmode/rm/realmode.lds.S
+index 3bb9808..64d135d 100644
+--- a/arch/x86/realmode/rm/realmode.lds.S
++++ b/arch/x86/realmode/rm/realmode.lds.S
+@@ -11,6 +11,7 @@
+ 
+ OUTPUT_FORMAT("elf32-i386")
+ OUTPUT_ARCH(i386)
++ENTRY(pa_text_start)
+ 
+ SECTIONS
+ {
