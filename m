@@ -2,265 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80ED8C3CA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C48EAC3CD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:55:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389440AbfJAQxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:53:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:54182 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbfJAQxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:53:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FB2E337;
-        Tue,  1 Oct 2019 09:53:05 -0700 (PDT)
-Received: from [192.168.0.9] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C81543F706;
-        Tue,  1 Oct 2019 09:53:03 -0700 (PDT)
-Subject: Re: [PATCH v3 04/10] sched/fair: rework load_balance
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Hillf Danton <hdanton@sina.com>
-References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
- <1568878421-12301-5-git-send-email-vincent.guittot@linaro.org>
- <9bfb3252-c268-8c0c-9c72-65f872e9c8b2@arm.com>
- <CAKfTPtDUFMFnD+RZndx0+8A+V9HV9Hv0TN+p=mAge0VsqS6xmA@mail.gmail.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <3dca46c5-c395-e2b3-a7e8-e9208ba741c8@arm.com>
-Date:   Tue, 1 Oct 2019 18:52:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAKfTPtDUFMFnD+RZndx0+8A+V9HV9Hv0TN+p=mAge0VsqS6xmA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        id S1731520AbfJAQzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:55:19 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:39426 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731011AbfJAQzQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:55:16 -0400
+Received: from pps.filterd (m0170398.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91Gsqni021941;
+        Tue, 1 Oct 2019 12:55:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=iSPiFeopsOpYhHpx1hqRJ4BtqLz6VkDHwgz5yWZ0WPw=;
+ b=AOughgZ92wyBrEeyO9Ogyvy2KbY2LsOMUkr2ptDeDfyVPOJeR82FJ2OUtgqI+MQUjHR+
+ roLMpnYPO805iLZxIpzx+9xc6yfyi82amuWTXjKebRhXlLu31g6vthQ3m/E+EeYHIj7y
+ PM94hdwbhwk2NRJbdqlpHYnYE8jGdQ/bPDnGMX/ovte5XEPUM1WmuNUfcUcz6KFnsour
+ mcIfzrIm1tKIN0IkUgTjh/Abzb+Fkhx2dPq65RFXho+OO2Yp59SbAhxWqhHmHYXm0mH/
+ 6RRhFW3tEpJVjKMl37/XCU5qAI+y86oaJA4b+nXIu5+zodo/6xdrzm4hrbCXkjs1TTuM Yg== 
+Received: from mx0a-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
+        by mx0b-00154904.pphosted.com with ESMTP id 2va2rapgks-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Oct 2019 12:55:14 -0400
+Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91GrSLd123237;
+        Tue, 1 Oct 2019 12:55:14 -0400
+Received: from ausxippc106.us.dell.com (AUSXIPPC106.us.dell.com [143.166.85.156])
+        by mx0b-00154901.pphosted.com with ESMTP id 2vc0wmua0u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 12:55:14 -0400
+X-LoopCount0: from 10.166.132.133
+X-PREM-Routing: D-Outbound
+X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
+   d="scan'208";a="467383014"
+From:   <Mario.Limonciello@dell.com>
+To:     <mika.westerberg@linux.intel.com>
+CC:     <linux-usb@vger.kernel.org>, <andreas.noever@gmail.com>,
+        <michael.jamet@intel.com>, <YehezkelShB@gmail.com>,
+        <rajmohan.mani@intel.com>,
+        <nicholas.johnson-opensource@outlook.com.au>, <lukas@wunner.de>,
+        <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
+        <anthony.wong@canonical.com>, <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH 22/22] thunderbolt: Do not start firmware unless asked
+ by the user
+Thread-Topic: [RFC PATCH 22/22] thunderbolt: Do not start firmware unless
+ asked by the user
+Thread-Index: AQHVeEzP00v40G7xFkaR9Ok+Xa9iBadF18vQgABc5AD//8mS8A==
+Date:   Tue, 1 Oct 2019 16:53:54 +0000
+Message-ID: <1cec43f38ccd42d9a4d9a9c86365a24a@AUSX13MPC105.AMER.DELL.COM>
+References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
+ <20191001113830.13028-23-mika.westerberg@linux.intel.com>
+ <10cccc5a8d1a43fd9769ab6c4b53aeba@AUSX13MPC105.AMER.DELL.COM>
+ <20191001145850.GZ2714@lahna.fi.intel.com>
+In-Reply-To: <20191001145850.GZ2714@lahna.fi.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-10-01T16:53:52.6773593Z;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
+ aiplabel=External Public
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-01_08:2019-10-01,2019-10-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910010142
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 adultscore=0 impostorscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
+ definitions=main-1910010142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/10/2019 10:14, Vincent Guittot wrote:
-> On Mon, 30 Sep 2019 at 18:24, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->>
->> Hi Vincent,
->>
->> On 19/09/2019 09:33, Vincent Guittot wrote:
+> -----Original Message-----
+> From: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Sent: Tuesday, October 1, 2019 9:59 AM
+> To: Limonciello, Mario
+> Cc: linux-usb@vger.kernel.org; andreas.noever@gmail.com;
+> michael.jamet@intel.com; YehezkelShB@gmail.com; rajmohan.mani@intel.com;
+> nicholas.johnson-opensource@outlook.com.au; lukas@wunner.de;
+> gregkh@linuxfoundation.org; stern@rowland.harvard.edu;
+> anthony.wong@canonical.com; linux-kernel@vger.kernel.org
+> Subject: Re: [RFC PATCH 22/22] thunderbolt: Do not start firmware unless =
+asked by
+> the user
+>=20
+>=20
+> [EXTERNAL EMAIL]
+>=20
+> On Tue, Oct 01, 2019 at 02:43:15PM +0000, Mario.Limonciello@dell.com wrot=
+e:
+> > > -----Original Message-----
+> > > From: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > Sent: Tuesday, October 1, 2019 6:39 AM
+> > > To: linux-usb@vger.kernel.org
+> > > Cc: Andreas Noever; Michael Jamet; Mika Westerberg; Yehezkel Bernat;
+> Rajmohan
+> > > Mani; Nicholas Johnson; Lukas Wunner; Greg Kroah-Hartman; Alan Stern;
+> > > Limonciello, Mario; Anthony Wong; linux-kernel@vger.kernel.org
+> > > Subject: [RFC PATCH 22/22] thunderbolt: Do not start firmware unless =
+asked by
+> the
+> > > user
+> > >
+> > >
+> > > [EXTERNAL EMAIL]
+> > >
+> > > Since now we can do pretty much the same thing in the software
+> > > connection manager than the firmware would do, there is no point
+> > > starting it by default. Instead we can just continue using the softwa=
+re
+> > > connection manager.
+> > >
+> > > Make it possible for user to switch between the two by adding a modul=
+e
+> > > pararameter (start_icm) which is by default false. Having this abilit=
+y
+> > > to enable the firmware may be useful at least when debugging possible
+> > > issues with the software connection manager implementation.
+> >
+> > If the host system firmware didn't start the ICM, does that mean SW con=
+nection
+> > manager would just take over even on systems with discrete AR/TR contro=
+llers?
+>=20
+> Yes. This is pretty much the case with Apple systems now.
 
-[...]
+Potentially if system firmware started ICM can we accomplish the same thing=
+ by
+resetting AR/TR that normally use ICM and then SW CM would take over?
 
->>> @@ -7347,7 +7362,7 @@ static int detach_tasks(struct lb_env *env)
->>>   {
->>>         struct list_head *tasks = &env->src_rq->cfs_tasks;
->>>         struct task_struct *p;
->>> -     unsigned long load;
->>> +     unsigned long util, load;
->>
->> Minor: Order by length or reduce scope to while loop ?
-> 
-> I don't get your point here
+Or is the ICM started up automatically when the controller is power cycled =
+based
+on something in the NVM?
 
-Nothing dramatic here! Just
+I'm trying to find a way that I can usefully exercise some of this stuff on=
+ pre-USB4
+controllers like AR/TR/ICL-TBT.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d0c3aa1dc290..a08f342ead89 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7333,8 +7333,8 @@ static const unsigned int sched_nr_migrate_break = 32;
- static int detach_tasks(struct lb_env *env)
- {
-        struct list_head *tasks = &env->src_rq->cfs_tasks;
--       struct task_struct *p;
-        unsigned long load, util;
-+       struct task_struct *p;
-        int detached = 0;
+>=20
+> > >
+> > > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > ---
+> > >  drivers/thunderbolt/icm.c | 14 +++++++++++---
+> > >  drivers/thunderbolt/tb.c  |  4 ----
+> > >  2 files changed, 11 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+> > > index 9c9c6ea2b790..c4a2de0f2a44 100644
+> > > --- a/drivers/thunderbolt/icm.c
+> > > +++ b/drivers/thunderbolt/icm.c
+> > > @@ -11,6 +11,7 @@
+> > >
+> > >  #include <linux/delay.h>
+> > >  #include <linux/mutex.h>
+> > > +#include <linux/moduleparam.h>
+> > >  #include <linux/pci.h>
+> > >  #include <linux/pm_runtime.h>
+> > >  #include <linux/platform_data/x86/apple.h>
+> > > @@ -43,6 +44,10 @@
+> > >  #define ICM_APPROVE_TIMEOUT		10000	/* ms */
+> > >  #define ICM_MAX_LINK			4
+> > >
+> > > +static bool start_icm;
+> > > +module_param(start_icm, bool, 0444);
+> > > +MODULE_PARM_DESC(start_icm, "start ICM firmware if it is not running
+> (default:
+> > > false)");
+> > > +
+> > >  /**
+> > >   * struct icm - Internal connection manager private data
+> > >   * @request_lock: Makes sure only one message is send to ICM at time
+> > > @@ -1353,13 +1358,16 @@ static bool icm_ar_is_supported(struct tb *tb=
+)
+> > >  {
+> > >  	struct pci_dev *upstream_port;
+> > >  	struct icm *icm =3D tb_priv(tb);
+> > > +	u32 val;
+> > >
+> > >  	/*
+> > >  	 * Starting from Alpine Ridge we can use ICM on Apple machines
+> > >  	 * as well. We just need to reset and re-enable it first.
+> >
+> > This comment doesn't really seem as relevant anymore.  The meaning of i=
+t
+> > has nothing to do with Apple anymore.
+>=20
+> Actually it is still relevant. For USB4 the intent is to have FW/SW CM
+> switch in ACPI spec instead. But that is still under discussion.
 
-        lockdep_assert_held(&env->src_rq->lock);
+Like read a hint from an ACPI table that indicates which one driver should =
+use?
 
-or
+The idea being early USB4 systems would test and ship with this bit set to
+FW CM and later USB4 systems can have it set to SW CM?
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d0c3aa1dc290..4d1864d43ed7 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7334,7 +7334,6 @@ static int detach_tasks(struct lb_env *env)
- {
-        struct list_head *tasks = &env->src_rq->cfs_tasks;
-        struct task_struct *p;
--       unsigned long load, util;
-        int detached = 0;
+I like that idea, but I think that you almost want the module parameter to =
+indicate
+which CM you want to "use" instead so you would override what was set in AC=
+PI
+either way, but default to auto.
 
-        lockdep_assert_held(&env->src_rq->lock);
-@@ -7343,6 +7342,8 @@ static int detach_tasks(struct lb_env *env)
-                return 0;
+cm=3Dauto
+TBT3 and less: follow NVM behavior
+USB4: follow ACPI table, either use FW or SW CM.
 
-        while (!list_empty(tasks)) {
-+               unsigned long load, util;
-+
-                /*
+cm=3Dicm
+Start up ICM, or error out if you can't.
 
-[...]
+cm=3Dsw
+Stop ICM if it's running, and initialize using kernel CM.
 
->>> @@ -8042,14 +8104,24 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->>>                 }
->>>         }
->>>
->>> -     /* Adjust by relative CPU capacity of the group */
->>> +     /* Check if dst cpu is idle and preferred to this group */
->>
->> s/preferred to/preferred by ? or the preferred CPU of this group ?
-> 
-> dst cpu doesn't belong to this group. We compare asym_prefer_cpu of
-> this group vs dst_cpu which belongs to another group
+That would certainly allow running this across some more configurations rea=
+lly easily then.
 
-Ah, in the sense of 'preferred over'. Got it now!
-
-[...]
-
->>> +     if (busiest->group_type == group_imbalanced) {
->>> +             /*
->>> +              * In the group_imb case we cannot rely on group-wide averages
->>> +              * to ensure CPU-load equilibrium, try to move any task to fix
->>> +              * the imbalance. The next load balance will take care of
->>> +              * balancing back the system.
->>
->> balancing back ?
-> 
-> In case of imbalance, we don't try to balance the system but only try
-> to get rid of the pinned tasks problem. The system will still be
-> unbalanced after the migration and the next load balance will take
-> care of balancing the system
-
-OK.
-
-[...]
-
->>>         /*
->>> -      * Avg load of busiest sg can be less and avg load of local sg can
->>> -      * be greater than avg load across all sgs of sd because avg load
->>> -      * factors in sg capacity and sgs with smaller group_type are
->>> -      * skipped when updating the busiest sg:
->>> +      * Try to use spare capacity of local group without overloading it or
->>> +      * emptying busiest
->>>          */
->>> -     if (busiest->group_type != group_misfit_task &&
->>> -         (busiest->avg_load <= sds->avg_load ||
->>> -          local->avg_load >= sds->avg_load)) {
->>> -             env->imbalance = 0;
->>> +     if (local->group_type == group_has_spare) {
->>> +             if (busiest->group_type > group_fully_busy) {
->>
->> So this could be 'busiest->group_type == group_overloaded' here to match
->> the comment below? Since you handle group_misfit_task,
->> group_asym_packing, group_imbalanced above and return.
-> 
-> This is just to be more robust in case some new states are added later
-
-OK, although I doubt that additional states can be added easily w/o
-carefully auditing the entire lb code ;-)
-
-[...]
-
->>> +             if (busiest->group_weight == 1 || sds->prefer_sibling) {
->>> +                     /*
->>> +                      * When prefer sibling, evenly spread running tasks on
->>> +                      * groups.
->>> +                      */
->>> +                     env->balance_type = migrate_task;
->>> +                     env->imbalance = (busiest->sum_h_nr_running - local->sum_h_nr_running) >> 1;
->>> +                     return;
->>> +             }
->>> +
->>> +             /*
->>> +              * If there is no overload, we just want to even the number of
->>> +              * idle cpus.
->>> +              */
->>> +             env->balance_type = migrate_task;
->>> +             env->imbalance = max_t(long, 0, (local->idle_cpus - busiest->idle_cpus) >> 1);
->>
->> Why do we need a max_t(long, 0, ...) here and not for the 'if
->> (busiest->group_weight == 1 || sds->prefer_sibling)' case?
-> 
-> For env->imbalance = (busiest->sum_h_nr_running - local->sum_h_nr_running) >> 1;
-> 
-> either we have sds->prefer_sibling && busiest->sum_nr_running >
-> local->sum_nr_running + 1
-
-I see, this corresponds to
-
-/* Try to move all excess tasks to child's sibling domain */
-       if (sds.prefer_sibling && local->group_type == group_has_spare &&
-           busiest->sum_h_nr_running > local->sum_h_nr_running + 1)
-               goto force_balance;
-
-in find_busiest_group, I assume.
-
-Haven't been able to recreate this yet on my arm64 platform since there
-is no prefer_sibling and in case local and busiest have
-group_type=group_has_spare they bailout in
-
-         if (busiest->group_type != group_overloaded &&
-              (env->idle == CPU_NOT_IDLE ||
-               local->idle_cpus <= (busiest->idle_cpus + 1)))
-                 goto out_balanced;
-
-
-[...]
-
->>> -     if (busiest->group_type == group_overloaded &&
->>> -         local->group_type   == group_overloaded) {
->>> -             load_above_capacity = busiest->sum_h_nr_running * SCHED_CAPACITY_SCALE;
->>> -             if (load_above_capacity > busiest->group_capacity) {
->>> -                     load_above_capacity -= busiest->group_capacity;
->>> -                     load_above_capacity *= scale_load_down(NICE_0_LOAD);
->>> -                     load_above_capacity /= busiest->group_capacity;
->>> -             } else
->>> -                     load_above_capacity = ~0UL;
->>> +     if (local->group_type < group_overloaded) {
->>> +             /*
->>> +              * Local will become overloaded so the avg_load metrics are
->>> +              * finally needed.
->>> +              */
->>
->> How does this relate to the decision_matrix[local, busiest] (dm[])? E.g.
->> dm[overload, overload] == avg_load or dm[fully_busy, overload] == force.
->> It would be nice to be able to match all allowed fields of dm to code sections.
-> 
-> decision_matrix describes how it decides between balanced or unbalanced.
-> In case of dm[overload, overload], we use the avg_load to decide if it
-> is balanced or not
-
-OK, that's why you calculate sgs->avg_load in update_sg_lb_stats() only
-for 'sgs->group_type == group_overloaded'.
-
-> In case of dm[fully_busy, overload], the groups are unbalanced because
-> fully_busy < overload and we force the balance. Then
-> calculate_imbalance() uses the avg_load to decide how much will be
-> moved
-
-And in this case 'local->group_type < group_overloaded' in
-calculate_imbalance(), 'local->avg_load' and 'sds->avg_load' have to be
-calculated before using them in env->imbalance = min(...).
-
-OK, got it now.
-
-> dm[overload, overload]=force means that we force the balance and we
-> will compute later the imbalance. avg_load may be used to calculate
-> the imbalance
-> dm[overload, overload]=avg_load means that we compare the avg_load to
-> decide whether we need to balance load between groups
-> dm[overload, overload]=nr_idle means that we compare the number of
-> idle cpus to decide whether we need to balance.  In fact this is no
-> more true with patch 7 because we also take into account the number of
-> nr_h_running when weight =1
-
-This becomes clearer now ... slowly.
-
-[...]
+>=20
+> > > +	 * However, only start it if explicitly asked by the user.
+> > >  	 */
+> > > -	if (!x86_apple_machine)
+> > > -		return true;
+> > > +	val =3D ioread32(tb->nhi->iobase + REG_FW_STS);
+> > > +	if (!(val & REG_FW_STS_ICM_EN) && !start_icm)
+> > > +		return false;
+> >
+> > This code is already in icm_firmware_start.  Maybe split it to a small =
+function
+> > So you can just have the more readable
+> >
+> > If (!icm_firmware_running(tb) && !start_icm))
+>=20
+> Good point. I'll do that.
