@@ -2,112 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 604E9C3820
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52CBAC3848
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:58:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389339AbfJAO4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:56:02 -0400
-Received: from mga17.intel.com ([192.55.52.151]:45896 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726987AbfJAO4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:56:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 07:56:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="203254365"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga002.jf.intel.com with SMTP; 01 Oct 2019 07:55:57 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 01 Oct 2019 17:55:56 +0300
-Date:   Tue, 1 Oct 2019 17:55:56 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-rockchip@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Sean Paul <seanpaul@chromium.org>, kernel@collabora.com
-Subject: Re: [PATCH v3 5/5] RFC: drm/atomic-helper: Reapply color
- transformation after resume
-Message-ID: <20191001145556.GP1208@intel.com>
-References: <20190930222802.32088-1-ezequiel@collabora.com>
- <20190930222802.32088-6-ezequiel@collabora.com>
+        id S2389532AbfJAO5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:57:00 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33286 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389345AbfJAO4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:56:09 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91Eu4Dv056667;
+        Tue, 1 Oct 2019 09:56:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569941764;
+        bh=ibI9NPF0/8nT61WRodw7jAKN9UVtkJDo9RpvHCu3aJA=;
+        h=From:To:CC:Subject:Date;
+        b=bQYPqwn5nh8ae9IXSqVST24TOdQrHXHEeH4vfGoot4iSe3Tvm+f/1WH4gEB8B9x3t
+         BVN7ub/OXBgn1eTJaxABda9QuJs9aaUlkRr4TYfVyEsD2pctwficG+MKGlSCsOvzh1
+         Zv3C2hvJ2HgdGszeABYh6GtJGqCBN+gqSS2ISwtk=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x91Eu4Ih052838
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 1 Oct 2019 09:56:04 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
+ 2019 09:55:54 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 1 Oct 2019 09:56:04 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91Eu44h014646;
+        Tue, 1 Oct 2019 09:56:04 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v10 00/16] Multicolor Framework
+Date:   Tue, 1 Oct 2019 09:56:04 -0500
+Message-ID: <20191001145620.11123-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190930222802.32088-6-ezequiel@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 07:28:02PM -0300, Ezequiel Garcia wrote:
-> Some platforms are not able to maintain the color transformation
-> state after a system suspend/resume cycle.
-> 
-> Set the colog_mgmt_changed flag so that CMM on the CRTCs in
-> the suspend state are reapplied after system resume.
-> 
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> ---
-> This is an RFC, and it's mostly based on Jacopo Mondi's work https://lkml.org/lkml/2019/9/6/498.
-> 
-> Changes from v2:
-> * New patch.
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index e41db0f202ca..518488125575 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -3234,8 +3234,20 @@ int drm_atomic_helper_resume(struct drm_device *dev,
->  			     struct drm_atomic_state *state)
->  {
->  	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_crtc *crtc;
-> +	unsigned int i;
->  	int err;
->  
-> +	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
-> +		/*
-> +		 * Force re-enablement of CMM after system resume if any
-> +		 * of the DRM color transformation properties was set in
-> +		 * the state saved at system suspend time.
-> +		 */
-> +		if (crtc_state->gamma_lut)
+Hello
 
-You say "any" but you check the one?
+I have updated the code per v9 review comments
+https://lore.kernel.org/patchwork/project/lkml/list/?series=411824
 
-> +			crtc_state->color_mgmt_changed = true;
+Some notable changes:
 
-But I'm not convinced this is the best way to go about it. 
-I would generally expect that you repgrogram everything
-when doing a full modeset since the state was possibly
-lost while the crtc was disabled.
+MC framework 4/16
+ - Added a color structure for device drivers to use to associate color IDs with
+ brightness values
+ - Name of structure may need some work but this is for proof of concept.
+ - Added back in the devm_* APIs
+ - Inlined function led_classdev_multicolor_register
 
-> +	}
->  	drm_mode_config_reset(dev);
->  
->  	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
-> -- 
-> 2.22.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+LP55xx
+ - Fixed binding doc to add "@" to nodes [8/16]
+ - Fixed associated DT file to add the "@" to each node [9,10,11/16]
+ - Separate the LP5523 code changes from the LP55xx common code change
+ - Added channel to color ID mapping for LP55xx [12/16]
+
+LP5523
+ - Separated out this code from LP55xx
+
+LP5521
+ - New patch adding multicolor framework support for this device
+
+Dan
+
+Dan Murphy (16):
+  dt: bindings: Add multicolor class dt bindings documention
+  dt-bindings: leds: Add multicolor ID to the color ID list
+  leds: Add multicolor ID to the color ID list
+  leds: multicolor: Introduce a multicolor class definition
+  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+  leds: lp50xx: Add the LP50XX family of the RGB LED driver
+  dt: bindings: lp55xx: Be consistent in the document with LED acronym
+  dt: bindings: lp55xx: Update binding for Multicolor Framework
+  ARM: dts: n900: Add reg property to the LP5523 channel node
+  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+  leds: lp55xx: Add multicolor framework support to lp55xx
+  leds: lp5523: Update the lp5523 code to add intensity function
+  leds: lp5521: Add multicolor framework intensity support
+  leds: lp55xx: Fix checkpatch file permissions issues
+  leds: lp5523: Fix checkpatch issues in the code
+
+ .../ABI/testing/sysfs-class-led-multicolor    |  35 +
+ .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+ .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
+ .../devicetree/bindings/leds/leds-lp55xx.txt  | 155 +++-
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  |  96 +++
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
+ arch/arm/boot/dts/omap3-n900.dts              |  29 +-
+ arch/arm/boot/dts/ste-href.dtsi               |  22 +-
+ drivers/leds/Kconfig                          |  22 +
+ drivers/leds/Makefile                         |   2 +
+ drivers/leds/led-class-multicolor.c           | 268 ++++++
+ drivers/leds/led-core.c                       |   1 +
+ drivers/leds/leds-lp50xx.c                    | 784 ++++++++++++++++++
+ drivers/leds/leds-lp5521.c                    |  14 +
+ drivers/leds/leds-lp5523.c                    |  33 +-
+ drivers/leds/leds-lp55xx-common.c             | 191 ++++-
+ drivers/leds/leds-lp55xx-common.h             |  11 +
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          |  88 ++
+ include/linux/platform_data/leds-lp55xx.h     |   6 +
+ 21 files changed, 1928 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 drivers/leds/leds-lp50xx.c
+ create mode 100644 include/linux/led-class-multicolor.h
 
 -- 
-Ville Syrjälä
-Intel
+2.22.0.214.g8dca754b1e
+
