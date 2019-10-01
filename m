@@ -2,105 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED47C388F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E1BDC3899
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:10:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389356AbfJAPHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 11:07:41 -0400
-Received: from mga01.intel.com ([192.55.52.88]:5659 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726309AbfJAPHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 11:07:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 08:07:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="205080497"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 01 Oct 2019 08:07:34 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 01 Oct 2019 18:07:34 +0300
-Date:   Tue, 1 Oct 2019 18:07:34 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Lukas Wunner <lukas@wunner.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
-Message-ID: <20191001150734.GA2714@lahna.fi.intel.com>
-References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
- <20191001113830.13028-18-mika.westerberg@linux.intel.com>
- <20191001124748.GH2954373@kroah.com>
- <20191001130905.GO2714@lahna.fi.intel.com>
- <20191001145354.GA3366714@kroah.com>
+        id S2389434AbfJAPJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 11:09:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36536 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732232AbfJAPJh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 11:09:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5jDO6BJ2XZ3lCXlD4qqkd9/bqgxLyoxwyp9GKWDHrvI=; b=eFg+C2Li9Lbix6bmqH7hvtyDk
+        QT5kBQpSlNZKQ7vjjA3KXp658Y6Ku8ja5dqtr2zaGbLoTpBkLNauhpYw40IHKCLKXgKpNmEN5wf5d
+        7LdqWKwhF+ZJM06vaFsOqKh7LRxnvvXrgpnPGWd8Ep46LoGVLqeLo0EzlCFogGnxXTudD+4l1Wwke
+        NYZOOZvEzSVY54fd6j5YWUhWCj7Q+aCcEUCj471uqNg7JGdnJbkKcQ0hefbaemak9W9LRglgEaS8c
+        k8HPNJY7+iQmWnVsEE7h07diTzgpC5GAgEiI1kjSx5zNadyhm45xHxTasEHSOb2lIP3Tm8XFoSHt2
+        hOYouQTpA==;
+Received: from 177.157.127.95.dynamic.adsl.gvt.net.br ([177.157.127.95] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iFJmR-0000AQ-La; Tue, 01 Oct 2019 15:09:35 +0000
+Date:   Tue, 1 Oct 2019 12:09:30 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] docs: Programmatically render MAINTAINERS into ReST
+Message-ID: <20191001120930.5d388839@coco.lan>
+In-Reply-To: <20191001083147.3a1b513f@lwn.net>
+References: <20190924230208.12414-1-keescook@chromium.org>
+        <20191001083147.3a1b513f@lwn.net>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001145354.GA3366714@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 04:53:54PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Oct 01, 2019 at 04:09:05PM +0300, Mika Westerberg wrote:
-> > On Tue, Oct 01, 2019 at 02:47:48PM +0200, Greg Kroah-Hartman wrote:
-> > > > -	  Thunderbolt Controller driver. This driver is required if you
-> > > > -	  want to hotplug Thunderbolt devices on Apple hardware or on PCs
-> > > > -	  with Intel Falcon Ridge or newer.
-> > > > +	  USB4 (Thunderbolt) driver. USB4 is the public spec based on
-> > > > +	  Thunderbolt 3 protocol. This driver is required if you want to
-> > > > +	  hotplug Thunderbolt and USB4 compliant devices on Apple
-> > > > +	  hardware or on PCs with Intel Falcon Ridge or newer.
-> > > 
-> > > Wait, did "old" thunderbolt just get re-branded as USB4?
-> > 
-> > Not but the driver started supporting USB4 as well :)
-> > 
-> > USB4 is pretty much public spec of Thunderbolt 3 but with some
-> > differences in register layouts (this is because Thunderbolt uses some
-> > vendor specific capabilities which are now moved to more "standard"
-> > places). 
-> 
-> Ok, then we need to rename the Kconfig option as well, otherwise no one
-> will "know" that this changed, so they will not be prompted for it.
-> 
-> > > Because if I have an "old" laptop that needs Thunderbolt support, how am
-> > > I going to know it is now called USB4 instead?
-> > 
-> > Well the Kconfig option tries to have both names there:
-> > 
-> >   tristate "USB4 (Thunderbolt) support"
-> > 
-> > and then
-> > 
-> >   USB4 (Thunderbolt) driver. USB4 is the public spec based on
-> >   Thunderbolt 3 protocol. This driver is required if you want to hotplug
-> >   Thunderbolt and USB4 compliant devices on Apple hardware or on PCs
-> >   with Intel Falcon Ridge or newer.
-> > 
-> > and the Kconfig option is still CONFIG_THUNDERBOLT. I know this is
-> > confusing but I don't have better ideas how we can advertise both. I
-> > borrowed this "format" from firewire.
-> 
-> CONFIG_USB4 instead?
+Em Tue, 1 Oct 2019 08:31:47 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-OK, but does that break existing .configs? I mean if you have already
-CONFIG_THUNDERBOLT in your .config/defconfig does it now just get
-dropped silently?
+> On Tue, 24 Sep 2019 16:02:06 -0700
+> Kees Cook <keescook@chromium.org> wrote:
+> 
+> > Commit log from Patch 2 repeated here for cover letter:
+> > 
+> > In order to have the MAINTAINERS file visible in the rendered ReST
+> > output, this makes some small changes to the existing MAINTAINERS file
+> > to allow for better machine processing, and adds a new Sphinx directive
+> > "maintainers-include" to perform the rendering.  
+> 
+> I finally got around to trying this out.  After the usual warnings, the
+> build comes to a screeching halt with this:
+> 
+>   Sphinx parallel build error:
+>   UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 8: ordinal not in range(128)
+> 
+> For extra fun, the build process simply hangs, requiring a ^C to blow it
+> away.  You've managed to get new behavior out of Sphinx that I've not seen
+> before, congratulations :)
+> 
+> This almost certainly has to do with the fact that I'm (intentionally)
+> running the Python2 Sphinx build here.  Something's not doing unicode that
+> should be.
+> 
+> I would suggest that we might just want to repair this before merging this
+> feature.  Either that, or we bite the bullet and deprecate the use of
+> Python 2 entirely - something that's probably not too far into our future
+> regardless.  Anybody have thoughts on that matter?
 
-For example firewire has CONFIG_FIREWIRE even though the "standard" name
-is IEEE 1394. I was thinking maybe we can do the same for
-USB4/Thunderbolt?
+I'm almost sure we got this already. If I'm not mistaken, the solution
+is to add the encoding line after shebang. Looking at 
+Documentation/sphinx/maintainers_include.py (patch 2/2), the script
+starts with:
+
+	#!/usr/bin/env python
+	# SPDX-License-Identifier: GPL-2.0
+	# -*- coding: utf-8; mode: python -*-
+	# pylint: disable=R0903, C0330, R0914, R0912, E0401
+
+But, as I pointed before, the SPDX header at the wrong place is causing the 
+crash, as the encoding line should be the second line, not the third one,
+e. g.:
+
+	#!/usr/bin/env python
+	# -*- coding: utf-8; mode: python -*-
+	# SPDX-License-Identifier: GPL-2.0
+	# pylint: disable=R0903, C0330, R0914, R0912, E0401
+
+I also suspect that this would happen even with python3, depending on
+how LC_ALL, LANG, ... are set on the distro you use.
+
+Thanks,
+Mauro
