@@ -2,140 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 838E5C3D04
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:56:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AF5CC3D1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732086AbfJAQ4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:56:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39260 "EHLO mail.kernel.org"
+        id S1732965AbfJAQ5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:57:17 -0400
+Received: from foss.arm.com ([217.140.110.172]:54326 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731801AbfJAQ4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:56:14 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A147206BB;
-        Tue,  1 Oct 2019 16:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948973;
-        bh=5rOmi/hQpmZC8qAgYpId4kUI81s/ozuuSGWHgczZ5BM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0tOVHOQwoEb0OxWlsUfzG6QSwR/67paORUCTvwb3UaFOhbnfzkMSlLGkYTRiIJQQ1
-         Xim6ULBJisHYLja++NzlTwlRQQ4o5CY4EdqD91HQhPrWDknDarp5s2rM63i9F87/eE
-         93URjYeeEg6jxTWkYLTulKf2l+yql5WIBEXxaAj0=
-Date:   Tue, 1 Oct 2019 18:56:11 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Potnuri Bharat Teja <bharat@chelsio.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Waisman <nico@semmle.com>
-Subject: [PATCH v2] cxgb4: do not dma memory off of the stack
-Message-ID: <20191001165611.GA3542072@kroah.com>
-References: <20191001153917.GA3498459@kroah.com>
+        id S1726403AbfJAQ5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:57:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15EA71570;
+        Tue,  1 Oct 2019 09:57:13 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B9613F706;
+        Tue,  1 Oct 2019 09:57:11 -0700 (PDT)
+Subject: Re: [PATCH v3 04/10] sched/fair: rework load_balance
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
+ <1568878421-12301-5-git-send-email-vincent.guittot@linaro.org>
+ <46e81a81-f88e-c935-d452-9b746bde492b@arm.com>
+ <CAKfTPtA7E5p1VZ+Ujbw4Sgp2fw8+TmSiLR-fGuUAdk=R8cQ9VQ@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <36d904ff-44fa-a561-677d-4858d5921b69@arm.com>
+Date:   Tue, 1 Oct 2019 18:57:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001153917.GA3498459@kroah.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <CAKfTPtA7E5p1VZ+Ujbw4Sgp2fw8+TmSiLR-fGuUAdk=R8cQ9VQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nicolas pointed out that the cxgb4 driver is doing dma off of the stack,
-which is generally considered a very bad thing.  On some architectures
-it could be a security problem, but odds are none of them actually run
-this driver, so it's just a "normal" bug.
 
-Resolve this by allocating the memory for a message off of the heap
-instead of the stack.  kmalloc() always will give us a proper memory
-location that DMA will work correctly from.
 
-Reported-by: Nicolas Waisman <nico@semmle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On 01/10/2019 11:14, Vincent Guittot wrote:
+> group_asym_packing
+> 
+> On Tue, 1 Oct 2019 at 10:15, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 19/09/2019 09:33, Vincent Guittot wrote:
+>>
+>>
+>> [...]
+>>
+>>> @@ -8042,14 +8104,24 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>>>               }
+>>>       }
+>>>
+>>> -     /* Adjust by relative CPU capacity of the group */
+>>> +     /* Check if dst cpu is idle and preferred to this group */
+>>> +     if (env->sd->flags & SD_ASYM_PACKING &&
+>>> +         env->idle != CPU_NOT_IDLE &&
+>>> +         sgs->sum_h_nr_running &&
+>>> +         sched_asym_prefer(env->dst_cpu, group->asym_prefer_cpu)) {
+>>> +             sgs->group_asym_packing = 1;
+>>> +     }
+>>> +
+>>
+>> Since asym_packing check is done per-sg rather per-CPU (like misfit_task), can you
+>> not check for asym_packing in group_classify() directly (like for overloaded) and
+>> so get rid of struct sg_lb_stats::group_asym_packing?
+> 
+> asym_packing uses a lot of fields of env to set group_asym_packing but
+> env is not statistics and i'd like to remove env from
+> group_classify() argument so it will use only statistics.
+> At now, env is an arg of group_classify only for imbalance_pct field
+> and I have replaced env by imabalnce_pct in a patch that is under
+> preparation.
+> With this change, I can use group_classify outside load_balance()
 
----
- v2: clean up memory on error case, pointed out by Nicolas
- v1: https://lore.kernel.org/r/20191001153917.GA3498459@kroah.com
-     Test-built only, I don't have this hardware to actually run this
-     code at all.
+OK, I see. This relates to the 'update find_idlest_group() to be more
+aligned with load_balance()' point mentioned in the cover letter I
+assume. To make sure we can use load instead of runnable_load there as well.
 
-diff --git a/drivers/infiniband/hw/cxgb4/mem.c b/drivers/infiniband/hw/cxgb4/mem.c
-index aa772ee0706f..35c284af574d 100644
---- a/drivers/infiniband/hw/cxgb4/mem.c
-+++ b/drivers/infiniband/hw/cxgb4/mem.c
-@@ -275,13 +275,17 @@ static int write_tpt_entry(struct c4iw_rdev *rdev, u32 reset_tpt_entry,
- 			   struct sk_buff *skb, struct c4iw_wr_wait *wr_waitp)
- {
- 	int err;
--	struct fw_ri_tpte tpt;
-+	struct fw_ri_tpte *tpt;
- 	u32 stag_idx;
- 	static atomic_t key;
- 
- 	if (c4iw_fatal_error(rdev))
- 		return -EIO;
- 
-+	tpt = kmalloc(sizeof(*tpt), GFP_KERNEL);
-+	if (!tpt)
-+		return -ENOMEM;
-+
- 	stag_state = stag_state > 0;
- 	stag_idx = (*stag) >> 8;
- 
-@@ -291,6 +295,7 @@ static int write_tpt_entry(struct c4iw_rdev *rdev, u32 reset_tpt_entry,
- 			mutex_lock(&rdev->stats.lock);
- 			rdev->stats.stag.fail++;
- 			mutex_unlock(&rdev->stats.lock);
-+			kfree(tpt);
- 			return -ENOMEM;
- 		}
- 		mutex_lock(&rdev->stats.lock);
-@@ -305,28 +310,28 @@ static int write_tpt_entry(struct c4iw_rdev *rdev, u32 reset_tpt_entry,
- 
- 	/* write TPT entry */
- 	if (reset_tpt_entry)
--		memset(&tpt, 0, sizeof(tpt));
-+		memset(tpt, 0, sizeof(*tpt));
- 	else {
--		tpt.valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |
-+		tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |
- 			FW_RI_TPTE_STAGKEY_V((*stag & FW_RI_TPTE_STAGKEY_M)) |
- 			FW_RI_TPTE_STAGSTATE_V(stag_state) |
- 			FW_RI_TPTE_STAGTYPE_V(type) | FW_RI_TPTE_PDID_V(pdid));
--		tpt.locread_to_qpid = cpu_to_be32(FW_RI_TPTE_PERM_V(perm) |
-+		tpt->locread_to_qpid = cpu_to_be32(FW_RI_TPTE_PERM_V(perm) |
- 			(bind_enabled ? FW_RI_TPTE_MWBINDEN_F : 0) |
- 			FW_RI_TPTE_ADDRTYPE_V((zbva ? FW_RI_ZERO_BASED_TO :
- 						      FW_RI_VA_BASED_TO))|
- 			FW_RI_TPTE_PS_V(page_size));
--		tpt.nosnoop_pbladdr = !pbl_size ? 0 : cpu_to_be32(
-+		tpt->nosnoop_pbladdr = !pbl_size ? 0 : cpu_to_be32(
- 			FW_RI_TPTE_PBLADDR_V(PBL_OFF(rdev, pbl_addr)>>3));
--		tpt.len_lo = cpu_to_be32((u32)(len & 0xffffffffUL));
--		tpt.va_hi = cpu_to_be32((u32)(to >> 32));
--		tpt.va_lo_fbo = cpu_to_be32((u32)(to & 0xffffffffUL));
--		tpt.dca_mwbcnt_pstag = cpu_to_be32(0);
--		tpt.len_hi = cpu_to_be32((u32)(len >> 32));
-+		tpt->len_lo = cpu_to_be32((u32)(len & 0xffffffffUL));
-+		tpt->va_hi = cpu_to_be32((u32)(to >> 32));
-+		tpt->va_lo_fbo = cpu_to_be32((u32)(to & 0xffffffffUL));
-+		tpt->dca_mwbcnt_pstag = cpu_to_be32(0);
-+		tpt->len_hi = cpu_to_be32((u32)(len >> 32));
- 	}
- 	err = write_adapter_mem(rdev, stag_idx +
- 				(rdev->lldi.vr->stag.start >> 5),
--				sizeof(tpt), &tpt, skb, wr_waitp);
-+				sizeof(*tpt), tpt, skb, wr_waitp);
- 
- 	if (reset_tpt_entry) {
- 		c4iw_put_resource(&rdev->resource.tpt_table, stag_idx);
-@@ -334,6 +339,7 @@ static int write_tpt_entry(struct c4iw_rdev *rdev, u32 reset_tpt_entry,
- 		rdev->stats.stag.cur -= 32;
- 		mutex_unlock(&rdev->stats.lock);
- 	}
-+	kfree(tpt);
- 	return err;
- }
- 
+[...]
