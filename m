@@ -2,158 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC7BEC395E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 179D8C397A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:49:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389640AbfJAPoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 11:44:37 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42871 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbfJAPoh (ORCPT
+        id S2389753AbfJAPts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 11:49:48 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:8025 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbfJAPts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 11:44:37 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q12so8268847pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 08:44:35 -0700 (PDT)
+        Tue, 1 Oct 2019 11:49:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3RxnDGRr7B1XTJFunDM7ZNbXmbQskGnoRCYVHzPDhjY=;
-        b=aaXHJnyItKtapP/eT7bgV/RWcyFHwp4VhYihtj48vumdyUhczhQsttZcV7NVVOnK/G
-         bA0s4p9tepc1VmsRkQQ5CQML0vT+xCOsgbuaWoLtVVaFijXVrlx1DMR1wGOCjdFdgdrc
-         ZgvEtbd23AuEK8wDpfL/qIoLrUUGbeMRcwenVT+WV8JqrWPao1UWc8J6T1QjmQof0Ue7
-         pC2pPoOxrWe6FNsXNsRVMzR3O1osZ6JF9B98kOxXht0KlPseHc2BedqgSnEqmIK+Wfg0
-         v6qkpF5ICEM8hJgvHXeS85jUZ1gtI97Ll1NkBXbp9Vjxs0FtyJ+wtWhnMuDTboj/IaSY
-         KwXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3RxnDGRr7B1XTJFunDM7ZNbXmbQskGnoRCYVHzPDhjY=;
-        b=VD9/yMbUTCr+5PdIHfr8/I7uNqM9Iz2dTe+ovFQNDpLUraqhpVN+h/lYOtPG+4sxOM
-         okv+Gxhjplwk7xCh9iFhQ5hllDcP4DSbQ5B40f0ty8ySBkjXOgTW8ZB0cukfatfHmdBR
-         EOIlfDD+Nrt7FpWmFJPGFwXiHzqZTSlSwpRimSp1/gPuF1sVnqjcmww6W4BAzC78jNl2
-         QIGo1qR3OpWqCk8ThFm3TfB4lTxz3n1uPhEJbkCzhPllYuCv/tVA3CB586GQq2/r3qpU
-         XDTL/+mvzH51y/tvDC7R46rCLNeep2BBbHoTcOZJy3tnVFmnEoHjTFjCIQdYn+jzwk5N
-         +Ntw==
-X-Gm-Message-State: APjAAAWvyOAwelixNKz0V9ggZ6vizhFDS3tdaOuF48JvzzAjtVKAoGBL
-        KK1Pk1Gmki7bC0Pd62jjq23oEuk8Lut4eA==
-X-Google-Smtp-Source: APXvYqwVhM/EntPxs94ONszYZE1mKQBE9G5wS7fcs2w8cMG3BAuOlnjqb0PYFYz8fL7WJ+yQjl16nA==
-X-Received: by 2002:a63:350f:: with SMTP id c15mr27311143pga.225.1569944674989;
-        Tue, 01 Oct 2019 08:44:34 -0700 (PDT)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id p88sm5938164pjp.22.2019.10.01.08.44.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 08:44:34 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 08:44:27 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     Sriram Krishnan <srirakr2@cisco.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        xe-linux-external@cisco.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] AF_PACKET doesnt strip VLAN information
-Message-ID: <20191001084427.73f130c0@hermes.lan>
-In-Reply-To: <CA+FuTSfN5=xkYUKiafM3uKF37kV6mg0Cn5WGv2QF887Pyw5A5g@mail.gmail.com>
-References: <1569646705-10585-1-git-send-email-srirakr2@cisco.com>
-        <CA+FuTSfN5=xkYUKiafM3uKF37kV6mg0Cn5WGv2QF887Pyw5A5g@mail.gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1569944988; x=1601480988;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=PgZ9aytk0j+S8TWOd0mGQ2grSS4ZIPx/rutqBSNX9jI=;
+  b=Vl5WOhqBnUarXg7QtiEDzMy7b+wfCE3iVKhM353m6fzubxfbvObwITFd
+   tF7gkSzIXEfzGCtsYalShBQ+tRs7X6YXP+siFgZjn7oe8sqjL8hypdRjz
+   XrQscHSWQMkjvE43AglTAezjFHcDmAuFfetlxEW40YcmdEXS/yljWf9ML
+   A=;
+X-IronPort-AV: E=Sophos;i="5.64,571,1559520000"; 
+   d="scan'208";a="838434598"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2c-2225282c.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 01 Oct 2019 15:47:16 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2c-2225282c.us-west-2.amazon.com (Postfix) with ESMTPS id 4D0D9A1EF5;
+        Tue,  1 Oct 2019 15:46:56 +0000 (UTC)
+Received: from EX13D02UWC004.ant.amazon.com (10.43.162.236) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 1 Oct 2019 15:46:56 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
+ EX13D02UWC004.ant.amazon.com (10.43.162.236) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 1 Oct 2019 15:46:56 +0000
+Received: from 8c859006a84e.ant.amazon.com (172.26.203.30) by
+ mail-relay.amazon.com (10.43.160.118) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Tue, 1 Oct 2019 15:46:55 +0000
+From:   Patrick Williams <alpawi@amazon.com>
+CC:     Patrick Williams <alpawi@amazon.com>,
+        Patrick Williams <patrick@stwcx.xyz>, <stable@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] pinctrl: armada-37xx: fix control of pins 32 and up
+Date:   Tue, 1 Oct 2019 10:46:31 -0500
+Message-ID: <20191001154634.96165-1-alpawi@amazon.com>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <20190618160105.26343-3-alpawi@amazon.com>
+References: <20190618160105.26343-3-alpawi@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Sep 2019 11:16:14 -0400
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+The 37xx configuration registers are only 32 bits long, so
+pins 32-35 spill over into the next register.  The calculation
+for the register address was done, but the bitmask was not, so
+any configuration to pin 32 or above resulted in a bitmask that
+overflowed and performed no action.
 
-> On Mon, Sep 30, 2019 at 1:24 AM Sriram Krishnan <srirakr2@cisco.com> wrote:
-> >
-> > When an application sends with AF_PACKET and places a vlan header on
-> > the raw packet; then the AF_PACKET needs to move the tag into the skb
-> > so that it gets processed normally through the rest of the transmit
-> > path.
-> >
-> > This is particularly a problem on Hyper-V where the host only allows
-> > vlan in the offload info.  
-> 
-> This sounds like behavior that needs to be addressed in the driver, instead?
+Fix the register / offset calculation to also adjust the offset.
 
-This was what we did first, but the problem was more general.
-For example, many filtering functions assume that vlan tag is in
-skb meta data, not the packet data itself. Therefore AF_PACKET would
-get around any filter rules.
+Fixes: 5715092a458c ("pinctrl: armada-37xx: Add gpio support")
+Signed-off-by: Patrick Williams <alpawi@amazon.com>
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: <stable@vger.kernel.org>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-> 
-> > Cc: xe-linux-external@cisco.com
-> > ---
-> >  net/packet/af_packet.c | 26 ++++++++++++++++++++++++--
-> >  1 file changed, 24 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> > index e2742b0..cfe0904 100644
-> > --- a/net/packet/af_packet.c
-> > +++ b/net/packet/af_packet.c
-> > @@ -1849,15 +1849,35 @@ static int packet_rcv_spkt(struct sk_buff *skb, struct net_device *dev,
-> >         return 0;
-> >  }
-> >
-> > -static void packet_parse_headers(struct sk_buff *skb, struct socket *sock)
-> > +static int packet_parse_headers(struct sk_buff *skb, struct socket *sock)
-> >  {
-> >         if ((!skb->protocol || skb->protocol == htons(ETH_P_ALL)) &&
-> >             sock->type == SOCK_RAW) {  
-> 
-> If inside this branch, may miss packets with skb->protocol set to one
-> of the VLAN Ethertypes.
-> 
-> > +               __be16 ethertype;
-> > +
-> >                 skb_reset_mac_header(skb);
-> > +
-> > +               ethertype = eth_hdr(skb)->h_proto;
-> > +               /*
-> > +                * If Vlan tag is present in the packet
-> > +                *  move it to skb
-> > +               */
-> > +               if (eth_type_vlan(ethertype)) {
-> > +                       int err;
-> > +                       __be16 vlan_tci;
-> > +
-> > +                       err = __skb_vlan_pop(skb, &vlan_tci);
-> > +                       if (unlikely(err))
-> > +                               return err;
-> > +
-> > +                       __vlan_hwaccel_put_tag(skb, ethertype, vlan_tci);  
-> 
-> What happens with multiple tags (QinQ)?
-
-Same as multiple tags in a normal sent packet. The second tag is in
-the packet itself.
-
-> 
-> > +               }
-> > +
-> >                 skb->protocol = dev_parse_header_protocol(skb);
-> >         }
-> >
-> >         skb_probe_transport_header(skb);
-> > +       return 0;
-> >  }
-> >
-> >  /*
-> > @@ -1979,7 +1999,9 @@ static int packet_sendmsg_spkt(struct socket *sock, struct msghdr *msg,
-> >         if (unlikely(extra_len == 4))
-> >                 skb->no_fcs = 1;
-> >
-> > -       packet_parse_headers(skb, sock);
-> > +       err = packet_parse_headers(skb, sock);
-> > +       if (err)
-> > +               goto out_unlock;  
-> 
-> This only tests the new return value in one of three callers of
-> packet_sendmsg_spkt.
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 6462d3ca7ceb..34c1fee52cbe 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -221,11 +221,11 @@ static const struct armada_37xx_pin_data armada_37xx_pin_sb = {
+ };
+ 
+ static inline void armada_37xx_update_reg(unsigned int *reg,
+-					  unsigned int offset)
++					  unsigned int *offset)
+ {
+ 	/* We never have more than 2 registers */
+-	if (offset >= GPIO_PER_REG) {
+-		offset -= GPIO_PER_REG;
++	if (*offset >= GPIO_PER_REG) {
++		*offset -= GPIO_PER_REG;
+ 		*reg += sizeof(u32);
+ 	}
+ }
+@@ -376,7 +376,7 @@ static inline void armada_37xx_irq_update_reg(unsigned int *reg,
+ {
+ 	int offset = irqd_to_hwirq(d);
+ 
+-	armada_37xx_update_reg(reg, offset);
++	armada_37xx_update_reg(reg, &offset);
+ }
+ 
+ static int armada_37xx_gpio_direction_input(struct gpio_chip *chip,
+@@ -386,7 +386,7 @@ static int armada_37xx_gpio_direction_input(struct gpio_chip *chip,
+ 	unsigned int reg = OUTPUT_EN;
+ 	unsigned int mask;
+ 
+-	armada_37xx_update_reg(&reg, offset);
++	armada_37xx_update_reg(&reg, &offset);
+ 	mask = BIT(offset);
+ 
+ 	return regmap_update_bits(info->regmap, reg, mask, 0);
+@@ -399,7 +399,7 @@ static int armada_37xx_gpio_get_direction(struct gpio_chip *chip,
+ 	unsigned int reg = OUTPUT_EN;
+ 	unsigned int val, mask;
+ 
+-	armada_37xx_update_reg(&reg, offset);
++	armada_37xx_update_reg(&reg, &offset);
+ 	mask = BIT(offset);
+ 	regmap_read(info->regmap, reg, &val);
+ 
+@@ -413,7 +413,7 @@ static int armada_37xx_gpio_direction_output(struct gpio_chip *chip,
+ 	unsigned int reg = OUTPUT_EN;
+ 	unsigned int mask, val, ret;
+ 
+-	armada_37xx_update_reg(&reg, offset);
++	armada_37xx_update_reg(&reg, &offset);
+ 	mask = BIT(offset);
+ 
+ 	ret = regmap_update_bits(info->regmap, reg, mask, mask);
+@@ -434,7 +434,7 @@ static int armada_37xx_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	unsigned int reg = INPUT_VAL;
+ 	unsigned int val, mask;
+ 
+-	armada_37xx_update_reg(&reg, offset);
++	armada_37xx_update_reg(&reg, &offset);
+ 	mask = BIT(offset);
+ 
+ 	regmap_read(info->regmap, reg, &val);
+@@ -449,7 +449,7 @@ static void armada_37xx_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	unsigned int reg = OUTPUT_VAL;
+ 	unsigned int mask, val;
+ 
+-	armada_37xx_update_reg(&reg, offset);
++	armada_37xx_update_reg(&reg, &offset);
+ 	mask = BIT(offset);
+ 	val = value ? mask : 0;
+ 
+-- 
+2.17.2 (Apple Git-113)
 
