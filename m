@@ -2,115 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3D0C3AA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A347C3AB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:39:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbfJAQhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:37:42 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42533 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbfJAQhm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:37:42 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z12so10006079pgp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:37:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=nRBqIlLhM8ZUJgatnzPvhuMc606HDrYYNudVlJiQtTo=;
-        b=QOdvq3F7RPeoeqsDbhWOOUVxzHnf6D2wVftkdGGj7lbk6tdr5FAZLxzC65bB/Ovnni
-         UeOttAleJyJ/kz4TXsHzrARBIN7Cuapykt9NtyGO6IEU7eUPKwURc6F3iEM98ehRUZS9
-         GXYsHtFIAT7VlERhrlt3NiNiGb1M0OiN+tV/c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=nRBqIlLhM8ZUJgatnzPvhuMc606HDrYYNudVlJiQtTo=;
-        b=d9217rZGXyNKNZl+EBlWxKMGSkZgHsBpQjQGm1zOpek5fAp2B7vOIyU2YejDaQCMq6
-         mfEpYRMJxMAPgZ/gnLV44tzB259I/cMoW/0M5T02K2lgg7gvfyWNr8WX4+l/K8em7p2v
-         3MQeYymPYU7BsMORu39E4BHojxjzec4+2ftxMayy6RKtY5xVu4wkEmPXO55qasoYvABQ
-         2O5pZm87bPastqo3z58DUKzdmbZ5+uql/d6d4e3HWRj4S/w/Ji4aFMV5O3Vef5hymv+h
-         rrCgAzDOO7z+mhmOcLb/sst46e+hTK5gB/fNHTwMXJXPD8hQQSOOUL5y/S8H91bRwin+
-         CK9w==
-X-Gm-Message-State: APjAAAUBjSdh5qqDMIcscQavB8zwouNY63M+g9EYcHXiAmaLFpYCSDbm
-        dPRwaMMbSe/MBknntKFpdVfZ0Q==
-X-Google-Smtp-Source: APXvYqxABunlkZYYv47wKMZHW4Sh+AhM/8kQR1CYPnWCpBn6VhnZ7CX/4jr3QFOIhmKBT/OaLCrRGA==
-X-Received: by 2002:a17:90a:bb8e:: with SMTP id v14mr6323823pjr.84.1569947861914;
-        Tue, 01 Oct 2019 09:37:41 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q20sm19504378pfl.79.2019.10.01.09.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 09:37:41 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 09:37:39 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, a.darwish@linutronix.de,
-        LKML <linux-kernel@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Nicholas Mc Guire <hofrat@opentech.at>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: x86/random: Speculation to the rescue
-Message-ID: <201910010932.C6DF862@keescook>
-References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
- <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
- <20191001161448.GA1918@darwi-home-pc>
+        id S1727628AbfJAQjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:39:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbfJAQjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:39:25 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58B532168B;
+        Tue,  1 Oct 2019 16:39:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569947964;
+        bh=sdWjKc7950Ix1oAlzn3Bdm8pbL63ww+3W/0cLP/FqRI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lcMSEn1iwSYiXpzEX/NXKetKJPHm1YTvbJ/HdTCfJnJ5kJbveV4SsHzjVEZQppWg7
+         yvMf48oSC1BomSPh+Ksi4NTScQRl8Fz/99VlSMP94QeWtiQ8LqfnIKWnpPLj6YPvfb
+         R254JFg47OUEZzBEYC5fS/9UwYb4HPSvQ1Ihu1rQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 01/71] drivers: thermal: qcom: tsens: Fix memory leak from qfprom read
+Date:   Tue,  1 Oct 2019 12:38:11 -0400
+Message-Id: <20191001163922.14735-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191001161448.GA1918@darwi-home-pc>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 06:15:02PM +0200, Ahmed S. Darwish wrote:
-> On Sat, Sep 28, 2019 at 04:53:52PM -0700, Linus Torvalds wrote:
-> > Ahmed - would you be willing to test this on your problem case (with
-> > the ext4 optimization re-enabled, of course)?
-> >
-> 
-> So I pulled the patch and the revert of the ext4 revert as they're all
-> now merged in master. It of course made the problem go away...
-> 
-> To test the quality of the new jitter code, I added a small patch on
-> top to disable all other sources of randomness except the new jitter
-> entropy code, [1] and made quick tests on the quality of getrandom(0).
-> 
-> Using the "ent" tool, [2] also used to test randomness in the Stephen
-> Müller LRNG paper, on a 500000-byte file, produced the following
-> results:
-> 
->     $ ent rand-file
-> 
->     Entropy = 7.999625 bits per byte.
-> 
->     Optimum compression would reduce the size of this 500000 byte file
->     by 0 percent.
-> 
->     Chi square distribution for 500000 samples is 259.43, and randomly
->     would exceed this value 41.11 percent of the times.
-> 
->     Arithmetic mean value of data bytes is 127.4085 (127.5 = random).
-> 
->     Monte Carlo value for Pi is 3.148476594 (error 0.22 percent).
-> 
->     Serial correlation coefficient is 0.001740 (totally uncorrelated = 0.0).
-> 
-> As can be seen above, everything looks random, and almost all of the
-> statistical randomness tests matched the same kernel without the
-> "jitter + schedule()" patch added (after getting it un-stuck).
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Can you post the patch for [1]? Another test we should do is the
-multi-boot test. Testing the stream (with ent, or with my dieharder run)
-is mainly testing the RNG algo. I'd like to see if the first 8 bytes
-out of the kernel RNG change between multiple boots of the same system.
-e.g. read the first 8 bytes, for each of 100000 boots, and feed THAT
-byte "stream" into ent...
+[ Upstream commit 6b8249abb093551ef173d13a25ed0044d5dd33e0 ]
 
+memory returned as part of nvmem_read via qfprom_read should be
+freed by the consumer once done.
+Existing code is not doing it so fix it.
+
+Below memory leak detected by kmemleak
+   [<ffffff80088b7658>] kmemleak_alloc+0x50/0x84
+    [<ffffff80081df120>] __kmalloc+0xe8/0x168
+    [<ffffff80086db350>] nvmem_cell_read+0x30/0x80
+    [<ffffff8008632790>] qfprom_read+0x4c/0x7c
+    [<ffffff80086335a4>] calibrate_v1+0x34/0x204
+    [<ffffff8008632518>] tsens_probe+0x164/0x258
+    [<ffffff80084e0a1c>] platform_drv_probe+0x80/0xa0
+    [<ffffff80084de4f4>] really_probe+0x208/0x248
+    [<ffffff80084de2c4>] driver_probe_device+0x98/0xc0
+    [<ffffff80084dec54>] __device_attach_driver+0x9c/0xac
+    [<ffffff80084dca74>] bus_for_each_drv+0x60/0x8c
+    [<ffffff80084de634>] __device_attach+0x8c/0x100
+    [<ffffff80084de6c8>] device_initial_probe+0x20/0x28
+    [<ffffff80084dcbb8>] bus_probe_device+0x34/0x7c
+    [<ffffff80084deb08>] deferred_probe_work_func+0x6c/0x98
+    [<ffffff80080c3da8>] process_one_work+0x160/0x2f8
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/thermal/qcom/tsens-8960.c |  2 ++
+ drivers/thermal/qcom/tsens-v0_1.c | 12 ++++++++++--
+ drivers/thermal/qcom/tsens-v1.c   |  1 +
+ drivers/thermal/qcom/tsens.h      |  1 +
+ 4 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/thermal/qcom/tsens-8960.c b/drivers/thermal/qcom/tsens-8960.c
+index 8d9b721dadb65..e46a4e3f25c42 100644
+--- a/drivers/thermal/qcom/tsens-8960.c
++++ b/drivers/thermal/qcom/tsens-8960.c
+@@ -229,6 +229,8 @@ static int calibrate_8960(struct tsens_priv *priv)
+ 	for (i = 0; i < num_read; i++, s++)
+ 		s->offset = data[i];
+ 
++	kfree(data);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/thermal/qcom/tsens-v0_1.c b/drivers/thermal/qcom/tsens-v0_1.c
+index 6f26fadf4c279..055647bcee67d 100644
+--- a/drivers/thermal/qcom/tsens-v0_1.c
++++ b/drivers/thermal/qcom/tsens-v0_1.c
+@@ -145,8 +145,10 @@ static int calibrate_8916(struct tsens_priv *priv)
+ 		return PTR_ERR(qfprom_cdata);
+ 
+ 	qfprom_csel = (u32 *)qfprom_read(priv->dev, "calib_sel");
+-	if (IS_ERR(qfprom_csel))
++	if (IS_ERR(qfprom_csel)) {
++		kfree(qfprom_cdata);
+ 		return PTR_ERR(qfprom_csel);
++	}
+ 
+ 	mode = (qfprom_csel[0] & MSM8916_CAL_SEL_MASK) >> MSM8916_CAL_SEL_SHIFT;
+ 	dev_dbg(priv->dev, "calibration mode is %d\n", mode);
+@@ -181,6 +183,8 @@ static int calibrate_8916(struct tsens_priv *priv)
+ 	}
+ 
+ 	compute_intercept_slope(priv, p1, p2, mode);
++	kfree(qfprom_cdata);
++	kfree(qfprom_csel);
+ 
+ 	return 0;
+ }
+@@ -198,8 +202,10 @@ static int calibrate_8974(struct tsens_priv *priv)
+ 		return PTR_ERR(calib);
+ 
+ 	bkp = (u32 *)qfprom_read(priv->dev, "calib_backup");
+-	if (IS_ERR(bkp))
++	if (IS_ERR(bkp)) {
++		kfree(calib);
+ 		return PTR_ERR(bkp);
++	}
+ 
+ 	calib_redun_sel =  bkp[1] & BKP_REDUN_SEL;
+ 	calib_redun_sel >>= BKP_REDUN_SHIFT;
+@@ -313,6 +319,8 @@ static int calibrate_8974(struct tsens_priv *priv)
+ 	}
+ 
+ 	compute_intercept_slope(priv, p1, p2, mode);
++	kfree(calib);
++	kfree(bkp);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
+index 10b595d4f6199..870f502f2cb6c 100644
+--- a/drivers/thermal/qcom/tsens-v1.c
++++ b/drivers/thermal/qcom/tsens-v1.c
+@@ -138,6 +138,7 @@ static int calibrate_v1(struct tsens_priv *priv)
+ 	}
+ 
+ 	compute_intercept_slope(priv, p1, p2, mode);
++	kfree(qfprom_cdata);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
+index 2fd94997245bf..b89083b61c383 100644
+--- a/drivers/thermal/qcom/tsens.h
++++ b/drivers/thermal/qcom/tsens.h
+@@ -17,6 +17,7 @@
+ 
+ #include <linux/thermal.h>
+ #include <linux/regmap.h>
++#include <linux/slab.h>
+ 
+ struct tsens_priv;
+ 
 -- 
-Kees Cook
+2.20.1
+
