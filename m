@@ -2,68 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2052DC2DC6
+	by mail.lfdr.de (Postfix) with ESMTP id 8E869C2DC7
 	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:08:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731685AbfJAHHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 03:07:39 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58614 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbfJAHHj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 03:07:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U+VBcJtf8B2Pl+iBalhNWw2Jq5hguTIVdcwKLqa/Fg8=; b=MZM6C3tO1ffvt2J0a6LR7mWlC
-        B2VnygxSdHeDiWidvoyw1wkMx+8uK4y2dXJeOanFbjA8Qwyd5mAM76YBBayAPYrB1ejXnY5mY/PD5
-        HXnbk3RKYES9ghzRr0ANEyk4Ws/Yjohs9bIEHWsQOElU6zB5qTj5ZPk58LZ3vEXPxq+vrcBrqZG2v
-        6DSD0jYbmRV5OM7oH030xhAN/tz813PzG2KB0zdQnM79xahwqu5jqN2iAP0WdLDgfWjwfLdlQv222
-        doVoMwJExAi7lXAUVNMkJcJBoCg382fkN+XCDzv3Se6KAEX83jolK8hRnntUkWHc9LXsk8R1iDBHv
-        HbWaavrHQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iFCFn-0000wU-F0; Tue, 01 Oct 2019 07:07:23 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1732778AbfJAHHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 03:07:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726571AbfJAHHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 03:07:41 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 03B8E301B59;
-        Tue,  1 Oct 2019 09:06:32 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4974926529A4F; Tue,  1 Oct 2019 09:07:20 +0200 (CEST)
-Date:   Tue, 1 Oct 2019 09:07:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Zhang, Jun" <jun.zhang@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "He, Bo" <bo.he@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/PAT: priority the PAT warn to error to highlight the
- developer
-Message-ID: <20191001070720.GI4519@hirez.programming.kicks-ass.net>
-References: <20190929072032.14195-1-jun.zhang@intel.com>
- <20190930120211.GE29694@zn.tnic>
- <88DC34334CA3444C85D647DBFA962C2735B662B6@SHSMSX104.ccr.corp.intel.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CA32215EA;
+        Tue,  1 Oct 2019 07:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569913660;
+        bh=W7DnxrQJnaB/Vyz05qZnyM11wdUw87JS7sJFfJAQ/tQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j5l9vYSp2Ru3Vtf5nstKyAitckbXEBnP9u3svYKeL12Uy8PFqvru9rYLE1SQxbaHv
+         hXltbDuMrL1pR1PqYyA0LpG5C9VE4V3H4BPzudam+SRAGKewmsR/ZBPYC/iNxKAzLD
+         pYFrxfFYfv/aaIF19sFqzvFgT/fH8LCMmh5Hu3g8=
+Date:   Tue, 1 Oct 2019 09:07:38 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: 5.3.3??? [was Re: Linux 5.3.2]
+Message-ID: <20191001070738.GC2893807@kroah.com>
+References: <20191001070457.GA2893807@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <88DC34334CA3444C85D647DBFA962C2735B662B6@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191001070457.GA2893807@kroah.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 05:00:25AM +0000, Zhang, Jun wrote:
-> Please see my comments.
+On Tue, Oct 01, 2019 at 09:04:57AM +0200, Greg KH wrote:
+> I'm announcing the release of the 5.3.2 kernel.
 > 
+> All users of the 5.3 kernel series must upgrade.
 
-Please use a normal MUA that can quote text you're replying to. This is
-unreadable garbage.
+Ok, I messed up this morning and typed "5.3" instead of "5.2" in my
+scripts and an "empty" 5.3.3 kernel got released.  Well kind of, it got
+checked into git, but there wasn't anything to release so things got a
+bit confused.
+
+So just consider 5.3.3 a "nothing to see here, ignore the man who forgot
+to release kernels _after_ coffee and not before" type of release.
+
+5.3.4 will be the _next_ release after this one, sorry for any
+confusion.
+
+ugh,
+
+greg k-h
