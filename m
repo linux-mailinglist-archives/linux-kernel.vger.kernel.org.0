@@ -2,82 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A31DBC3C4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 227A1C3C64
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733214AbfJAQn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:43:57 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:56406 "EHLO vps0.lunn.ch"
+        id S2389110AbfJAQvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:51:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732946AbfJAQno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:43:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=QuwwxLI9kehPovTMnhH9tA/I5Dk8xgDmaCwWA+JgdKs=; b=jRiBOJ+rTkEwl7VFrxVg659ca8
-        wE80UkiiCyYsOLCNrwJ8A5H//VMB9zBAb5HNTBZlx7/caNEggddhy4ECPA79qLoIGa/5ANSlgzWbo
-        Dn2PDpgELnhdQv1XA2Q33QkzPnsLRMMaa/QjEPiG5pb2NNYCCwJPJ3WRndmIOvHreI7Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iFLFU-0001Zn-3t; Tue, 01 Oct 2019 18:43:40 +0200
-Date:   Tue, 1 Oct 2019 18:43:40 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     David Miller <davem@davemloft.net>
-Cc:     o.rempel@pengutronix.de, jcliburn@gmail.com, chris.snook@gmail.com,
-        kernel@pengutronix.de, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] net: ag71xx: fix mdio subnode support
-Message-ID: <20191001164340.GC2031@lunn.ch>
-References: <20191001064147.23633-1-o.rempel@pengutronix.de>
- <20191001.090320.1192378852987776883.davem@davemloft.net>
+        id S2387946AbfJAQoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:44:25 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 638D82168B;
+        Tue,  1 Oct 2019 16:44:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569948265;
+        bh=LZt8K+pFKJyJFvN9uH562Rpkc7q8eYhurxMZU2lrw3c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KQicYPU7tCpO6RgyukFheSM3oBPMY4a8QotJ4F4hNFQPlaZ5BDOHRdisvsGFzqXgt
+         NkFdRDj9o/hj9aEyPd2cwrh3b0+ISiZvwozdK/O4LPl6+T8arr3iJysp6aPdykfMKG
+         MRo5pOlzfMknMr3HlSkzw47w5sIihVxHjpdw0hvc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 01/29] ima: always return negative code for error
+Date:   Tue,  1 Oct 2019 12:43:55 -0400
+Message-Id: <20191001164423.16406-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001.090320.1192378852987776883.davem@davemloft.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 09:03:20AM -0700, David Miller wrote:
-> From: Oleksij Rempel <o.rempel@pengutronix.de>
-> Date: Tue,  1 Oct 2019 08:41:47 +0200
-> 
-> > @@ -571,7 +571,9 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
-> >  		msleep(200);
-> >  	}
-> >  
-> > -	err = of_mdiobus_register(mii_bus, np);
-> > +	mnp = of_get_child_by_name(np, "mdio");
-> > +	err = of_mdiobus_register(mii_bus, mnp);
-> 
-> of_get_child_by_name() can fail, so error checking is necessary
-> before you pass mnp into of_mdiobus_register().
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-Hi David
+[ Upstream commit f5e1040196dbfe14c77ce3dfe3b7b08d2d961e88 ]
 
-/**
- *	of_get_child_by_name - Find the child node by name for a given parent
- *	@node:	parent node
- *	@name:	child name to look for.
- *
- *      This function looks for child node for given matching name
- *
- *	Returns a node pointer if found, with refcount incremented, use
- *	of_node_put() on it when done.
- *	Returns NULL if node is not found.
- */
+integrity_kernel_read() returns the number of bytes read. If this is
+a short read then this positive value is returned from
+ima_calc_file_hash_atfm(). Currently this is only indirectly called from
+ima_calc_file_hash() and this function only tests for the return value
+being zero or nonzero and also doesn't forward the return value.
+Nevertheless there's no point in returning a positive value as an error,
+so translate a short read into -EINVAL.
 
-So on error, it returns NULL. And passing NULL to
-of_mdiobus_register() is the correct thing to do if there is no DT
-node. of_node_put() is also O.K. with NULL.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/integrity/ima/ima_crypto.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-So this is all O.K. as is.
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index af680b5b678a4..06b0ee75f34fb 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -293,8 +293,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 		rbuf_len = min_t(loff_t, i_size - offset, rbuf_size[active]);
+ 		rc = integrity_kernel_read(file, offset, rbuf[active],
+ 					   rbuf_len);
+-		if (rc != rbuf_len)
++		if (rc != rbuf_len) {
++			if (rc >= 0)
++				rc = -EINVAL;
+ 			goto out3;
++		}
+ 
+ 		if (rbuf[1] && offset) {
+ 			/* Using two buffers, and it is not the first
+-- 
+2.20.1
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
