@@ -2,56 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54904C3EA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7C2C3EAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:35:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730815AbfJARcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:32:53 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37848 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfJARcw (ORCPT
+        id S1730906AbfJARfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:35:13 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44408 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfJARfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:32:52 -0400
-Received: by mail-io1-f66.google.com with SMTP id b19so22005345iob.4;
-        Tue, 01 Oct 2019 10:32:52 -0700 (PDT)
+        Tue, 1 Oct 2019 13:35:12 -0400
+Received: by mail-io1-f67.google.com with SMTP id w12so21997727iol.11;
+        Tue, 01 Oct 2019 10:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=ME9JERHhVrbe9bZKOQu8b1hgHngZbw7UvQiOYqhf3AE=;
-        b=K4u9RUQTlRAzpP4lzQfqEmLquc9JpM8ygSmmaYvctHChiQieDW4heA1Z0Ur4HDWvIb
-         fbZWY/NIzFubV9g6dDf0LUC2ScRvY1ZyiGr7c1aZUTGlr7ZLDSVh/z6mWHHMCsXhdOv6
-         k+/evVW0UNKvTM9upXIQLF+Bb7eYUXOX0z9A800GhjXe7ihOgiiv8fl5pVVfydjKBLvl
-         nsEM8toqBhnEN2jhh2vLdYYP7P4EAjn7TV24Fc0q2qiWOSW7sphMV0uZBphI0gyuE1AY
-         7xUcJiVTrbNjThUXpR85oIekm59z42fPyrEEZKHMHJ1tx5SP6dRD75s/7toh5bgxkZoP
-         qC0A==
+        bh=whCgXamHjLa77I09nl1deijXX7dIhsW9Skf9Y8knCmo=;
+        b=aFUkDlFNN2vPPPa80DmYalj2bWE1zHHIJgL12YyUXrMNE3d9vGFXI4xhWP7rFAAFdO
+         hVyNYXMtR+qDuMcMM3A7/VQIj3tZoBRknyKMaFFGCNVywIE7VBKr4zQC/IB9+tZUMQV5
+         UNgOr6iIK7JIX1H1ucGSgIQiqEyFfegJ2B/7MAoaqU4WQYZD/F+XtTg5V+sX5SGfPMfW
+         hKqT1lTxvHCbLW5VIRnI92mt40V9fetLD2NvQekDAILhzDVDJKanNjk1ZzJFPbwK4WnI
+         fntKR7V8AQZhtBqPCz0MboL8EwfZvK51RvZMDXCwUZzzkl0Yv9YzZA/B6LUVwv1NTnyu
+         Z+Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ME9JERHhVrbe9bZKOQu8b1hgHngZbw7UvQiOYqhf3AE=;
-        b=MCyn8hIFTE6qZYNHCnIJZuhoTuwKinq/DUzRrpmrPnF+yr1eQs5r0uAhttqbrj/Sae
-         4Fb+8cgG70bbxKiV7WbnNLdrjlg8dqdCD6ua5yJabWPUFOUIlOlKGd7NRDpDZe+TUboE
-         XZE8/EY5hFGHGtkyQ0QXbFPAhpUugtYyMhh5/0X1cE6CiFTsZF2D9qIs9r4O7ujFnIsz
-         XIyRyt9/DtvtEwXlUITKrJ5oqbuO5o48abdOMXQR+X+HNKnyRxedvDE5UbkOnYm0T0F+
-         XANk6z6YutI2n7a/L9XIZ4QH5P/4iZ6o+btHvMWRlgrq9xB+bhwm4Cgiy09IYEOuKmaA
-         D+6Q==
-X-Gm-Message-State: APjAAAUuV6Glqwur4cXuiYq8bxyx1i60Fyx7xYgR+ks6s/bjpQOrBCAL
-        QazVLoMr4E1tp3tsL+3xNEMX/AMrabgWUHCfCBM=
-X-Google-Smtp-Source: APXvYqyYxMAY5xQEu8G8vVHN+ATd4tNlLzhw/LbXbd0+G/Y0WbtHvI9gQ28fXhdaQVTfcMo0yQSeNiuKOf21ktWtsTA=
-X-Received: by 2002:a5d:8143:: with SMTP id f3mr22230939ioo.294.1569951171833;
- Tue, 01 Oct 2019 10:32:51 -0700 (PDT)
+        bh=whCgXamHjLa77I09nl1deijXX7dIhsW9Skf9Y8knCmo=;
+        b=HlLcMBQ0TNXhMRkMslpKQ2x4znG9oGxC/GSpZI4hFSyc7bwA8tx97WvonIeL50mbzb
+         XjQM9WFk4DQm2SvUGewSPZ6Vm5NIIshXvweoKByPBlTbsHTynTtPil76R6kWWsYUqy8G
+         dLdqcKH5hjjzCD5RAcNB3oDoJl2Vsz6T3wmUcBJSDMO8t/+we2hzMY3HmffW2DMqdsuJ
+         o19HUGjXguO6wy5McFUnMcl2QWxTzmeHIbGgE2nw9vA+pZRUAkp17a+5PN+6AC379qy3
+         EFxjSPCIzKFxh/b3vhMqM4xkZ+om4ss8euoLxSiC+kYtOuViRgtclPbtH75YAhFuesz5
+         9Vlg==
+X-Gm-Message-State: APjAAAWzZsEiTcI7q3U/M9ODH7IOzWKJsLP+ItOkRfZ85RLjvfSLbvQl
+        XstYoYYjkrZgIJRIGC7sXnC7cUKxrjMMT0rn5WU=
+X-Google-Smtp-Source: APXvYqyF+hCI/7qokfvgtd0R4EhKYcuwhAnJLTud34PPq8G0hFBvmlE46T8Dg1hgZFjibidTkFZWg7EaTovnocy6GPo=
+X-Received: by 2002:a92:8702:: with SMTP id m2mr23259951ild.294.1569951310606;
+ Tue, 01 Oct 2019 10:35:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190930205241.5483-1-navid.emamdoost@gmail.com> <6b55e753-5797-2bdc-fae6-f575a0ef8186@web.de>
-In-Reply-To: <6b55e753-5797-2bdc-fae6-f575a0ef8186@web.de>
+References: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de> <20190930210114.6557-1-navid.emamdoost@gmail.com>
+ <44ad775e-3b6f-4cbc-ba6f-455ff7191c58@web.de>
+In-Reply-To: <44ad775e-3b6f-4cbc-ba6f-455ff7191c58@web.de>
 From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Tue, 1 Oct 2019 12:32:41 -0500
-Message-ID: <CAEkB2ES3-gotqS9184izf0fKOigFaFUetBiqekmYJPBgPWbSBQ@mail.gmail.com>
-Subject: Re: [PATCH v2] spi: gpio: prevent memory leak in spi_gpio_probe
+Date:   Tue, 1 Oct 2019 12:34:59 -0500
+Message-ID: <CAEkB2ERMqs=xbt4H-1ro0zAQryoQUH=N5iJop-CKbSOo_mTk3w@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: affs: fix a memory leak in affs_remount
 To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-spi@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>,
-        Kangjie Lu <kjlu@umn.edu>, Stephen McCamant <smccaman@umn.edu>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     linux-fsdevel@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        David Sterba <dsterba@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
@@ -69,22 +76,37 @@ for the patch.
 Thanks,
 Navid.
 
-On Tue, Oct 1, 2019 at 4:11 AM Markus Elfring <Markus.Elfring@web.de> wrote=
+On Tue, Oct 1, 2019 at 3:31 AM Markus Elfring <Markus.Elfring@web.de> wrote=
 :
 >
-> > =E2=80=A6 In order to avoid leak spi_contriller_put must
-> > be called in case of failure for devm_add_action_or_reset.
+> > The allocated memory for new_opts is only released if pare_options fail=
+.
 >
-> How does this wording fit to the diff display that you would like
-> to add the function call =E2=80=9Cspi_master_put(master)=E2=80=9D in
-> one if branch?
+> Can the following wording be nicer?
+>
+>   The allocated memory for the buffer =E2=80=9Cnew_opts=E2=80=9D will be =
+released
+>   only if a call of the function =E2=80=9Cparse_options=E2=80=9D failed.
 >
 >
-> > Fixes: 8b797490b4db ("spi: gpio: Make sure spi_master_put() is called i=
-n every error path")
+> > The release for new_opts is added.
 >
-> Is there a need to complete the corresponding exception handling
-> at any more source code places?
+> * How do you think about the change possibility to delete questionable
+>   source code here?
+>
+> * Would you like to complete the data processing for corresponding option=
+s
+>   any more?
+>
+>
+> >       -- fix a type in title, =E2=80=A6
+>
+> Please avoid typos also in your version comments.
+>
+>
+> > ---
+>
+> I suggest to replace this second delimiter by a blank line.
 >
 > Regards,
 > Markus
