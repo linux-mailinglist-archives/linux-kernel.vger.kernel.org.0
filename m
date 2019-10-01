@@ -2,111 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1191C3C73
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E68C7C3CAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733199AbfJAQwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:52:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733140AbfJAQny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:43:54 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE3F9205C9;
-        Tue,  1 Oct 2019 16:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948233;
-        bh=Ssy2G1RYYjVy0ZSes0pBTBlvxbNL8z8gD+60zY8RVcY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vQdUnSa8BVN6caz+bFzQy4D9yEgFkvlbmsJfZC5QoG7kWb4s7bJn/d0k8/Yo+qcqZ
-         05ncWgCMNOLFKMpBSq1885wtjS9DIUHkv7FoR5JwebBUrNyxIkleJPINR/gxC6I2hp
-         K7xgha5JaJVaIAcsuvAVIJUCydTfbeXHBhp1RiSg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 29/43] libnvdimm/nfit_test: Fix acpi_handle redefinition
-Date:   Tue,  1 Oct 2019 12:42:57 -0400
-Message-Id: <20191001164311.15993-29-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164311.15993-1-sashal@kernel.org>
-References: <20191001164311.15993-1-sashal@kernel.org>
+        id S1732477AbfJAQnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:43:18 -0400
+Received: from mail-yw1-f49.google.com ([209.85.161.49]:45515 "EHLO
+        mail-yw1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732484AbfJAQnL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:43:11 -0400
+Received: by mail-yw1-f49.google.com with SMTP id x65so5039728ywf.12
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:43:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tdLG/r7+P2Ngh8ZWtcYEEBy7N3f+Jkee88RnUZ/onlY=;
+        b=WG8m/x9u6EkqT3rbeISwibZR7wgr+y475s8ZYI+aKyhwk79T6y6VPB35Cs3YbjtDOu
+         DMmMM05x8SATtUB1NF3jvKOnIBm+Ma+zsUa1igpmoXAVCEj36LiGlKAZn8XriduTz/+X
+         lXFMHVYW3vWZlla1cL3hfo+Ya47QiCoBw+zgqJ17l477sI6j+qm6bmUNF9e2cC+Xekee
+         RcWy0oOSfg3sY79agjSWAuQSmKt8Mwf5LSDuwLv3fISsnvpixqEd0RHOkYvTTRNwzJZQ
+         JPt/3eSuKe93B93Vts+/m6/wQLLYAFHappRoIYpDavTNDUoJf1WUg1G+EJ56VfVcT672
+         4/lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tdLG/r7+P2Ngh8ZWtcYEEBy7N3f+Jkee88RnUZ/onlY=;
+        b=GiTTr3Bt9z5q6OmRzvsiXf4zWtFKAY03MM57ibR+HU3FuG2TkJXmHLT180ff2/pU3C
+         VWGhTv//Rj2k48mD+RCPEEaK+tu2nkKNY91Kkj4OqK03sXrMr+mF2GKFr/IauUVcsnfR
+         oMARTosj+oiRi4JbjJwqUlFRVcyDsvyA0eX3frUZEyAQXtkGm7l+h2pVqOARYolI4QNt
+         cQ1P+ZXDOifr2hb1ovnvDyt+aVvVZ0Gw80gFfvPuGZbUc5LnI1LlThbln1IAmbt7TBvP
+         ncB9gaOskK1aejV1ppBdRDX5Ygozr+en1wJulPeA1esNRc5N7TE6+MymL4tAnB/yyJGu
+         ij3g==
+X-Gm-Message-State: APjAAAXehrc+KiRdV8CemQpnLUntPi5u1tbREj4OdnY+tB+nzjbV+oU4
+        Y8sEufyuQ4DlCCyWApv4QJC66jZtvW6BvTqlJqJ/iPbr38bKtQ==
+X-Google-Smtp-Source: APXvYqw8ExU/R+uf06q48A3Wc10DKEkfY9elTc4ZQLBRVAtnt6bXMEPjFlsfSkkw9RUm1qqJ4HjtU5LK9JF/fO1AX6o=
+X-Received: by 2002:a81:a144:: with SMTP id y65mr16843887ywg.437.1569948189853;
+ Tue, 01 Oct 2019 09:43:09 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <CAL_quvRknSSVvXN3q_Se0hrziw2oTNS3ENNoeHYhvciCRq9Yww@mail.gmail.com>
+ <20191001162710.GB3526634@kroah.com>
+In-Reply-To: <20191001162710.GB3526634@kroah.com>
+From:   Mat King <mathewk@google.com>
+Date:   Tue, 1 Oct 2019 10:42:58 -0600
+Message-ID: <CAL_quvS4o7rqpjPL2hcJ_-cJWUVNfgaLzzMoymHrswshxYYwKg@mail.gmail.com>
+Subject: Re: New sysfs interface for privacy screens
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        rafael@kernel.org, Ross Zwisler <zwisler@google.com>,
+        Rajat Jain <rajatja@google.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+On Tue, Oct 1, 2019 at 10:27 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Oct 01, 2019 at 10:09:46AM -0600, Mat King wrote:
+> > Resending in plain text mode
+> >
+> > I have been looking into adding Linux support for electronic privacy
+> > screens which is a feature on some new laptops which is built into the
+> > display and allows users to turn it on instead of needing to use a
+> > physical privacy filter. In discussions with my colleagues the idea of
+> > using either /sys/class/backlight or /sys/class/leds but this new
+> > feature does not seem to quite fit into either of those classes.
+> >
+> > I am proposing adding a class called "privacy_screen" to interface
+> > with these devices. The initial API would be simple just a single
+> > property called "privacy_state" which when set to 1 would mean that
+> > privacy is enabled and 0 when privacy is disabled.
+> >
+> > Current known use cases will use ACPI _DSM in order to interface with
+> > the privacy screens, but this class would allow device driver authors
+> > to use other interfaces as well.
+> >
+> > Example:
+> >
+> > # get privacy screen state
+> > cat /sys/class/privacy_screen/cros_privacy/privacy_state # 1: privacy
+> > enabled 0: privacy disabled
+> >
+> > # set privacy enabled
+> > echo 1 > /sys/class/privacy_screen/cros_privacy/privacy_state
+>
+> What is "cros_privacy" here?
 
-[ Upstream commit 59f08896f058a92f03a0041b397a1a227c5e8529 ]
+This would be set by the device driver. This example would be for a
+Chrome OS privacy screen device, but the driver would set the name
+just like in the backlight class.
 
-After commit 62974fc389b3 ("libnvdimm: Enable unit test infrastructure
-compile checks"), clang warns:
+>
+> >  Does this approach seem to be reasonable?
+>
+> Seems sane to me, do you have any code that implements this so we can
+> see it?
 
-In file included from
-../drivers/nvdimm/../../tools/testing/nvdimm/test/iomap.c:15:
-../drivers/nvdimm/../../tools/testing/nvdimm/test/nfit_test.h:206:15:
-warning: redefinition of typedef 'acpi_handle' is a C11 feature
-[-Wtypedef-redefinition]
-typedef void *acpi_handle;
-              ^
-../include/acpi/actypes.h:424:15: note: previous definition is here
-typedef void *acpi_handle;      /* Actually a ptr to a NS Node */
-              ^
-1 warning generated.
+It is still early in the implementation so there is no code quite yet.
+I wanted to get some general feedback on the approach first. As soon
+as I have code to share I will post it.
 
-The include chain:
+>
+> thanks,
+>
+> greg k-h
 
-iomap.c ->
-    linux/acpi.h ->
-        acpi/acpi.h ->
-            acpi/actypes.h
-    nfit_test.h
-
-Avoid this by including linux/acpi.h in nfit_test.h, which allows us to
-remove both the typedef and the forward declaration of acpi_object.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/660
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Link: https://lore.kernel.org/r/20190918042148.77553-1-natechancellor@gmail.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/testing/nvdimm/test/nfit_test.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/tools/testing/nvdimm/test/nfit_test.h b/tools/testing/nvdimm/test/nfit_test.h
-index 33752e06ff8d0..3de57cc8716b9 100644
---- a/tools/testing/nvdimm/test/nfit_test.h
-+++ b/tools/testing/nvdimm/test/nfit_test.h
-@@ -12,6 +12,7 @@
-  */
- #ifndef __NFIT_TEST_H__
- #define __NFIT_TEST_H__
-+#include <linux/acpi.h>
- #include <linux/list.h>
- #include <linux/uuid.h>
- #include <linux/ioport.h>
-@@ -234,9 +235,6 @@ struct nd_intel_lss {
- 	__u32 status;
- } __packed;
- 
--union acpi_object;
--typedef void *acpi_handle;
--
- typedef struct nfit_test_resource *(*nfit_test_lookup_fn)(resource_size_t);
- typedef union acpi_object *(*nfit_test_evaluate_dsm_fn)(acpi_handle handle,
- 		 const guid_t *guid, u64 rev, u64 func,
--- 
-2.20.1
-
+Thank you for the feedback.
