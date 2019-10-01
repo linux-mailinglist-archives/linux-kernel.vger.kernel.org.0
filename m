@@ -2,119 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF30C3572
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:21:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D88ADC3584
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388343AbfJANVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:21:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53932 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388212AbfJANVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:21:14 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E01B6205F4;
-        Tue,  1 Oct 2019 13:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569936073;
-        bh=QYSllP9/ys/7IY6OqXAXwvvPaklbnIJyDItt8Dcq5lY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rzJug3FJYMFIwyKDen3q25TZR5cluR7qieTbzsU3WaMfE18VvgMlfBxWVGfYaGSJ/
-         Q63nru9hgzDq8nieQkpJU2IUwDuYrrlifkK0AVXZi349v2SS/FU9FNNaWbTj+WGQ3B
-         FHNlA9eeVeIHQ8sNmVuNTMMZHl7Y3VlZlZBd/Qas=
-Date:   Tue, 1 Oct 2019 14:21:09 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
-        catalin.marinas@arm.com, tglx@linutronix.de
-Subject: Re: [PATCH v3 3/5] arm64: vdso32: Fix compilation warning
-Message-ID: <20191001132108.jx2x7quyk2p2vyfw@willie-the-truck>
-References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
- <20190926214342.34608-1-vincenzo.frascino@arm.com>
- <20190926214342.34608-4-vincenzo.frascino@arm.com>
+        id S2388375AbfJANXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:23:49 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36212 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388314AbfJANXr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 09:23:47 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m18so3249759wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 06:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SMP20nsut8K+lsuDT/dJwOJCmshErHGRxDa2UzJ4ZSA=;
+        b=pNZ/xbdGWvMJsrR7LsXNQNn33ITo6LZWDWxKIj+23UfEU0tPa4OTxtwuulGSIiue/8
+         X2z+ubrhvAbCxFXavidWWf2FPs1QLxu6krwSgY6PHudkSlKEaLZgDkBzc6NwYGIx6O2M
+         gJGIhlJWhK/ZIkdZACSA7HXTfduo2+8gMtYCvMnjziBC0/HQAatX59iobBg6IKjSfjD3
+         rLOizJzInMBqYjfpyAmLaTJjQd/MLnr733PVks/P89Tj53XeC/UQRVcWijRJ2aSPr0Ir
+         ozuJWiz6IJXcSR2YFIfW3DBIud2oNsLgV3/FeBX2XdDnnadTVVJj4DyL8XYJNX/LsIH5
+         V6NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SMP20nsut8K+lsuDT/dJwOJCmshErHGRxDa2UzJ4ZSA=;
+        b=TX9XIAUa3SzuzFqjbBktRwabXlJCKs4Ybv2bDQ3Gss3U+xS5WgnXm91ecF9rWvJI5U
+         u0o1+/Kv2kavG8VdzJeeSz/nVefWU9YaUHhBbXGeFc8YLTABNRmcq+psIaBTtNaWHur9
+         9mY943IFUO9P33H29S2IHfkir5NGCneR+nRfAad11hZNOzJ1gHrdRg4NwfBsb3AlyDlb
+         jU4uz3Bml6cCVOpPOgPuRKYsckaKK9Nq9rMepBfQgrMz2+KAuhjDdXPdhG1zEyaSTFtV
+         YZMwDx6OYob/WVPmUUdL0wyCvzFfvA4J8yUAdWMTURxSfrnOLyr6Rsajj1HiQo6EZqZY
+         1UIA==
+X-Gm-Message-State: APjAAAXe8BT2AVjkp+MXQJTGxh+elvhMKsfVQj8jvDYsVB8W7Yp+o6B9
+        s4y0aD31pG9ZCdVGIvlpmtP1aA==
+X-Google-Smtp-Source: APXvYqwyifTBE4GQLXEIzUj8q0mUZotz7tkb9kVX+0xOqDAooBCfQ0uylmeNHVo+z3S+VXuqNhiuhg==
+X-Received: by 2002:a7b:c8d6:: with SMTP id f22mr3519152wml.173.1569936223907;
+        Tue, 01 Oct 2019 06:23:43 -0700 (PDT)
+Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
+        by smtp.gmail.com with ESMTPSA id o22sm41847990wra.96.2019.10.01.06.23.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 06:23:43 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/3] tegra: use regulator_bulk_set_supply_names()
+Date:   Tue,  1 Oct 2019 15:23:30 +0200
+Message-Id: <20191001132333.20146-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190926214342.34608-4-vincenzo.frascino@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 10:43:40PM +0100, Vincenzo Frascino wrote:
-> As reported by Will Deacon the following compilation warning appears
-> during the compilation of the vdso32:
-> 
-> In file included from ./arch/arm64/include/asm/thread_info.h:17:0,
->                  from ./include/linux/thread_info.h:38,
->                  from ./arch/arm64/include/asm/preempt.h:5,
->                  from ./include/linux/preempt.h:78,
->                  from ./include/linux/spinlock.h:51,
->                  from ./include/linux/seqlock.h:36,
->                  from ./include/linux/time.h:6,
->                  from .../work/linux/lib/vdso/gettimeofday.c:7,
->                  from <command-line>:0:
-> ./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
-> ./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer to
-> integer of different size [-Wpointer-to-int-cast]
->   u64 __addr = (u64)addr & ~__tag_shifted(0xff);
->                ^
-> In file included from ./arch/arm64/include/asm/pgtable-hwdef.h:8:0,
->                  from ./arch/arm64/include/asm/processor.h:34,
->                  from ./arch/arm64/include/asm/elf.h:118,
->                  from ./include/linux/elf.h:5,
->                  from ./include/linux/elfnote.h:62,
->                  from arch/arm64/kernel/vdso32/note.c:11:
-> ./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
-> ./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer to
-> integer of different size [-Wpointer-to-int-cast]
->   u64 __addr = (u64)addr & ~__tag_shifted(0xff);
->                ^
-> 
-> This happens because few 64 bit compilation headers are included during
-> the generation of vdso32.
-> 
-> Fix the issue redefining the __tag_set function.
-> 
-> Note: This fix is meant to be temporary, a more comprehensive solution
-> based on the refactoring of the generic headers will be provided with a
-> future patch set. At that point it will be possible to revert this patch.
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  arch/arm64/include/asm/memory.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> index b61b50bf68b1..c61b2eb50a3b 100644
-> --- a/arch/arm64/include/asm/memory.h
-> +++ b/arch/arm64/include/asm/memory.h
-> @@ -228,11 +228,14 @@ static inline unsigned long kaslr_offset(void)
->  #define __tag_get(addr)		0
->  #endif /* CONFIG_KASAN_SW_TAGS */
->  
-> +#ifdef __aarch64__
-> +/* Do not attempt to compile this code with compat vdso */
->  static inline const void *__tag_set(const void *addr, u8 tag)
->  {
->  	u64 __addr = (u64)addr & ~__tag_shifted(0xff);
->  	return (const void *)(__addr | __tag_shifted(tag));
->  }
-> +#endif
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Sorry, but I'm not taking this.
+The regulator_bulk_set_supply_names() helper was merged upstream. Use it
+in a couple tegra drivers.
 
-I know you're trying to fix the issues I reported as quickly as you can (and
-thank you for that), but I'm sure that you agree this needs more thought to
-develop a proper solution to what is a much bigger issue than can be solved
-by sprinkling #ifdefs. I can live with the warning on the basis that a
-proper fix is in the pipeline, but in the meantime it can serve as a
-reminder that we're not done here.
+Bartosz Golaszewski (3):
+  ahci: tegra: use regulator_bulk_set_supply_names()
+  phy: tegra: use regulator_bulk_set_supply_names()
+  usb: host: xhci-tegra: use regulator_bulk_set_supply_names()
 
-Will
+ drivers/ata/ahci_tegra.c      | 6 +++---
+ drivers/phy/tegra/xusb.c      | 6 +++---
+ drivers/usb/host/xhci-tegra.c | 5 +++--
+ 3 files changed, 9 insertions(+), 8 deletions(-)
+
+-- 
+2.23.0
+
