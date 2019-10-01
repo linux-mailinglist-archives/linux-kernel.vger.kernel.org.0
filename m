@@ -2,515 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACE0CC4328
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:54:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCBBC434E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:58:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbfJAVye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:54:34 -0400
-Received: from mail-eopbgr750115.outbound.protection.outlook.com ([40.107.75.115]:30851
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S1727511AbfJAV6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 17:58:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38854 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728374AbfJAVy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:54:28 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e6JyXmKYfAM2pBepbyziyoJTpfpovQXu3GNeDGQ5+YcLjOcd0ppYD84iKXM6rLyavT95jGts5IOQKlsEQ71zktKM8tDJnVtbW9ILzyERzA5m9MfeKQzt+z/6AxHdc3e6eFD9KWay4dzPJBtrJLYdiKBJ95Ndq41YPvGWr1Ljcnc9Nr2+s6eYhK8rc/5CkAbS7orEpQqIMJ3h881ev4/8MnWubaxjjLp43KHHFKd0FKzRODY2SmX1Bv1cOm/ttN9tw6wZqWSnOWgy4tl52PfYbU4gTIb/+ODMHvpsXtoDyFQ/y/B5FuFmqBo7eqNUlO+rxJK4TPlzwgyPkVqM2hosgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c0HFqTmB5HlOC7377lZyro2MRboHr5sygckm1ojSSmc=;
- b=INOyJG9UuQueR4mVeQzyvavc9zW0QEETNpjuodyqM4/LUW8T45uUfEylQIRpYfsYwRyQDB5jAVxwMlXh4sq5401APOlKr4v0YzrAUTXf4ynxaaPWbMeaD/vFSl/jb+Al9W1KTXCczmLyuRE/nXcaZQQQ9spko35h+fZVwxs9z23eEOnQIpVROIm3tByZY1K4/ClihJ1yCnlzDWqfWayGQHcHHwdfJOqGy8D+6+STUb+Kk6vMlxd3Rxs4PCis5bwHT0vWo21l7mauDF+tRjouP4dhT/in3brDa5q75v/D+lk5XDVxon7Y92uCw1beKA4cKCiSr+hLWILF2vzCHl6RgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c0HFqTmB5HlOC7377lZyro2MRboHr5sygckm1ojSSmc=;
- b=jd6MUnj3izzRbeFHAHUKMSLAuMofi17CnjkjE0vt0FZW6PxcqlYShp5iKTq7m5t1zKSL76ltTYxNDGv6kYIYFQLNePl+PkekEqOc17qvDu10SjNB0NhLZ/Mu9PRjlP4JUOY8C9jqje4L0BYAK15D6iMjMNfV8a813IVxlblalks=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1581.namprd22.prod.outlook.com (10.174.167.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.15; Tue, 1 Oct 2019 21:54:17 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::498b:c2cd:e816:1481]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::498b:c2cd:e816:1481%2]) with mapi id 15.20.2305.022; Tue, 1 Oct 2019
- 21:54:17 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-CC:     Huacai Chen <chenhc@lemote.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <pburton@wavecomp.com>
-Subject: [PATCH v2 36/36] MIPS: Check Loongson3 LL/SC errata workaround
- correctness
-Thread-Topic: [PATCH v2 36/36] MIPS: Check Loongson3 LL/SC errata workaround
- correctness
-Thread-Index: AQHVeKKxElSaWtuqP0WF1bkQzrRwhQ==
-Date:   Tue, 1 Oct 2019 21:53:44 +0000
-Message-ID: <20191001215249.4157062-37-paul.burton@mips.com>
-References: <20191001215249.4157062-1-paul.burton@mips.com>
-In-Reply-To: <20191001215249.4157062-1-paul.burton@mips.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR07CA0093.namprd07.prod.outlook.com
- (2603:10b6:a03:12b::34) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.23.0
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0bb4137f-0dcc-42f3-b3b9-08d746b9d440
-x-ms-traffictypediagnostic: MWHPR2201MB1581:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB1581A7FCA4E9C6C3720CAF26C19D0@MWHPR2201MB1581.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2150;
-x-forefront-prvs: 0177904E6B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39850400004)(366004)(346002)(396003)(376002)(189003)(199004)(8936002)(26005)(478600001)(6512007)(8676002)(81166006)(81156014)(6916009)(386003)(76176011)(186003)(6506007)(25786009)(52116002)(6436002)(99286004)(6486002)(316002)(102836004)(54906003)(14454004)(5640700003)(2501003)(486006)(66476007)(7736002)(256004)(14444005)(66556008)(66946007)(1076003)(64756008)(36756003)(107886003)(66066001)(66446008)(4326008)(42882007)(2906002)(6666004)(3846002)(6116002)(476003)(446003)(2616005)(11346002)(2351001)(71190400001)(44832011)(5660300002)(50226002)(305945005)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1581;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Gp9EukrRI//ySsEbyxFC7DwWSrHGX+BHBDcIKvhPYwYfH3x45jVV7Aj6pPsM71QzPeWg1vpduACibv6gjYqOsOBc7Xq1r77Vx6kCT7VTJuVmEV79r7tdAIoyxF9urw5YCY0tozDPQuBHGCRMPCosdsOw4UhsUtFjbdIjDZOZ0HAF9DmuK26iUI2RtoOWAuRnRGHHCyR/coFUZVCvcmq8ZLPZnqSyqCEI0mwpyQIa+z0YkOFzRCHgMPC9Wp8uO0HocNl2mOXIIESLiTma5TlM/oePIHMHAm5vhxHoAZ6ZcC3TnqyX7hsEyH1TTBNINzXriKv7w6T6RYEyTcrewtDKZstwgH1RJmQkGSRbAlC3OaXR8zZA+6bqUq1cE4UQQnpZ9z+ZGW5A0E4lTYuRn9tPqb7AN/NVUXaKmZXzSdnanuY=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1725865AbfJAV6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 17:58:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BE58FAD3E;
+        Tue,  1 Oct 2019 21:58:12 +0000 (UTC)
+Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
+To:     David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+References: <alpine.DEB.2.21.1909041252230.94813@chino.kir.corp.google.com>
+ <20190904205522.GA9871@redhat.com>
+ <alpine.DEB.2.21.1909051400380.217933@chino.kir.corp.google.com>
+ <20190909193020.GD2063@dhcp22.suse.cz>
+ <20190925070817.GH23050@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1909261149380.39830@chino.kir.corp.google.com>
+ <20190927074803.GB26848@dhcp22.suse.cz>
+ <CAHk-=wgba5zOJtGBFCBP3Oc1m4ma+AR+80s=hy=BbvNr3GqEmA@mail.gmail.com>
+ <20190930112817.GC15942@dhcp22.suse.cz>
+ <20191001054343.GA15624@dhcp22.suse.cz>
+ <fac13297-424f-33b0-e01d-d72b949a73fe@suse.cz>
+ <alpine.DEB.2.21.1910011318050.38265@chino.kir.corp.google.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a5abc877-26de-ed3c-eb33-71474301c852@suse.cz>
+Date:   Tue, 1 Oct 2019 23:54:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bb4137f-0dcc-42f3-b3b9-08d746b9d440
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2019 21:53:44.2067
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KL3NDdSO6my+cfFkU9PIXHW4Qjr0f2kDoxJKpNqDQttws39kVBbAwSYlSXxu49XFH3W8UXB145+iEOmb7HMj6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1581
+In-Reply-To: <alpine.DEB.2.21.1910011318050.38265@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Loongson3 LL/SC errata workarounds are enabled (ie.
-CONFIG_CPU_LOONGSON3_WORKAROUNDS=3Dy) run a tool to scan through the
-compiled kernel & ensure that the workaround is applied correctly. That
-is, ensure that:
+On 10/1/19 10:31 PM, David Rientjes wrote:
+> On Tue, 1 Oct 2019, Vlastimil Babka wrote:
+> 
+>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>> index 4ae967bcf954..2c48146f3ee2 100644
+>> --- a/mm/mempolicy.c
+>> +++ b/mm/mempolicy.c
+>> @@ -2129,18 +2129,20 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
+>>  		nmask = policy_nodemask(gfp, pol);
+>>  		if (!nmask || node_isset(hpage_node, *nmask)) {
+>>  			mpol_cond_put(pol);
+>> +			/*
+>> +			 * First, try to allocate THP only on local node, but
+>> +			 * don't reclaim unnecessarily, just compact.
+>> +			 */
+>>  			page = __alloc_pages_node(hpage_node,
+>> -						gfp | __GFP_THISNODE, order);
+>> +				gfp | __GFP_THISNODE | __GFP_NORETRY, order);
+> 
+> The page allocator has heuristics to determine when compaction should be 
+> retried, reclaim should be retried, and the allocation itself should retry 
+> for high-order allocations (see PAGE_ALLOC_COSTLY_ORDER).
 
-  - Every LL or LLD instruction is preceded by a sync instruction.
+Yes, and flags like __GFP_NORETRY and __GFP_RETRY_MAYFAIL affect these
+heuristics according to the caller's willingness to wait vs availability
+of some kind of fallback.
+  
+> PAGE_ALLOC_COSTLY_ORDER exists solely to avoid poor allocator behavior 
+> when reclaim itself is unlikely -- or disruptive enough -- in making that 
+> amount of contiguous memory available.
 
-  - Any branches from within an LL/SC loop to outside of that loop
-    target a sync instruction.
+The __GFP_NORETRY check for costly orders is one of the implementation
+details of that poor allocator behavior avoidance.
 
-Reasoning for these conditions can be found by reading the comment above
-the definition of __SYNC_loongson3_war in arch/mips/include/asm/sync.h.
+> Rather than papering over the poor feedback loop between compaction and 
+> reclaim that exists in the page allocator, it's probably better to improve 
+> that and determine when an allocation should fail or it's worthwhile to 
+> retry.  That's a separate topic from NUMA locality of thp.
 
-This tool will help ensure that we don't inadvertently introduce code
-paths that miss the required workarounds.
+I don't disagree. But we are doing that 'papering over' already and I simply
+believe it can be done better, until we can drop it. Right now at least the
+hugetlb allocations are regressing, as Michal showed.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
+> In other words, we should likely address how compaction and reclaim is 
+> done for all high order-allocations in the page allocator itself rather 
+> than only here for hugepage allocations and relying on specific gfp bits 
+> to be set.
 
----
+Well, with your patches, decisions are made based on pageblock order
+(affecting also hugetlbfs) and a specific __GFP_IO bit. I don't see how
+using a __GFP_NORETRY and costly order is worse - both are concepts
+already used to guide reclaim/compaction decisions. And it won't affect
+hugetlbfs. Also with some THP defrag modes, __GFP_NORETRY is also already
+being used.
 
-Changes in v2:
-- Only try to build loongson3-llsc-check from arch/mips/Makefile when
-  CONFIG_CPU_LOONGSON3_WORKAROUNDS is enabled.
+> Ask: if the allocation here should not retry regardless of why 
+> compaction failed, why should any high-order allocation (user or kernel) 
+> retry if compaction failed and at what order we should just fail?
 
- arch/mips/Makefile                     |   3 +
- arch/mips/Makefile.postlink            |  10 +-
- arch/mips/tools/.gitignore             |   1 +
- arch/mips/tools/Makefile               |   5 +
- arch/mips/tools/loongson3-llsc-check.c | 307 +++++++++++++++++++++++++
- 5 files changed, 325 insertions(+), 1 deletion(-)
- create mode 100644 arch/mips/tools/loongson3-llsc-check.c
+If that's refering to the quoted code above, the allocation here should not
+retry because it would lead to reclaiming just the local node, effectively
+a node reclaim mode, leading to the problems Andrea and Mel reported.
+That's because __GFP_THISNODE makes it rather specific, so we shouldn't
+conclude anything for the other kinds of allocations, as you're asking.
 
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index cdc09b71febe..0a5eab626260 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -14,6 +14,9 @@
-=20
- archscripts: scripts_basic
- 	$(Q)$(MAKE) $(build)=3Darch/mips/tools elf-entry
-+ifeq ($(CONFIG_CPU_LOONGSON3_WORKAROUNDS),y)
-+	$(Q)$(MAKE) $(build)=3Darch/mips/tools loongson3-llsc-check
-+endif
- 	$(Q)$(MAKE) $(build)=3Darch/mips/boot/tools relocs
-=20
- KBUILD_DEFCONFIG :=3D 32r2el_defconfig
-diff --git a/arch/mips/Makefile.postlink b/arch/mips/Makefile.postlink
-index 4eea4188cb20..f03fdc95143e 100644
---- a/arch/mips/Makefile.postlink
-+++ b/arch/mips/Makefile.postlink
-@@ -3,7 +3,8 @@
- # Post-link MIPS pass
- # =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
- #
--# 1. Insert relocations into vmlinux
-+# 1. Check that Loongson3 LL/SC workarounds are applied correctly
-+# 2. Insert relocations into vmlinux
-=20
- PHONY :=3D __archpost
- __archpost:
-@@ -11,6 +12,10 @@ __archpost:
- -include include/config/auto.conf
- include scripts/Kbuild.include
-=20
-+CMD_LS3_LLSC =3D arch/mips/tools/loongson3-llsc-check
-+quiet_cmd_ls3_llsc =3D LLSCCHK $@
-+      cmd_ls3_llsc =3D $(CMD_LS3_LLSC) $@
-+
- CMD_RELOCS =3D arch/mips/boot/tools/relocs
- quiet_cmd_relocs =3D RELOCS $@
-       cmd_relocs =3D $(CMD_RELOCS) $@
-@@ -19,6 +24,9 @@ quiet_cmd_relocs =3D RELOCS $@
-=20
- vmlinux: FORCE
- 	@true
-+ifeq ($(CONFIG_CPU_LOONGSON3_WORKAROUNDS),y)
-+	$(call if_changed,ls3_llsc)
-+endif
- ifeq ($(CONFIG_RELOCATABLE),y)
- 	$(call if_changed,relocs)
- endif
-diff --git a/arch/mips/tools/.gitignore b/arch/mips/tools/.gitignore
-index 56d34ccccce4..b0209450d9ff 100644
---- a/arch/mips/tools/.gitignore
-+++ b/arch/mips/tools/.gitignore
-@@ -1 +1,2 @@
- elf-entry
-+loongson3-llsc-check
-diff --git a/arch/mips/tools/Makefile b/arch/mips/tools/Makefile
-index 3baee4bc6775..aaef688749f5 100644
---- a/arch/mips/tools/Makefile
-+++ b/arch/mips/tools/Makefile
-@@ -3,3 +3,8 @@ hostprogs-y :=3D elf-entry
- PHONY +=3D elf-entry
- elf-entry: $(obj)/elf-entry
- 	@:
-+
-+hostprogs-$(CONFIG_CPU_LOONGSON3_WORKAROUNDS) +=3D loongson3-llsc-check
-+PHONY +=3D loongson3-llsc-check
-+loongson3-llsc-check: $(obj)/loongson3-llsc-check
-+	@:
-diff --git a/arch/mips/tools/loongson3-llsc-check.c b/arch/mips/tools/loong=
-son3-llsc-check.c
-new file mode 100644
-index 000000000000..0ebddd0ae46f
---- /dev/null
-+++ b/arch/mips/tools/loongson3-llsc-check.c
-@@ -0,0 +1,307 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <byteswap.h>
-+#include <elf.h>
-+#include <endian.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <inttypes.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/mman.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+
-+#ifdef be32toh
-+/* If libc provides le{16,32,64}toh() then we'll use them */
-+#elif BYTE_ORDER =3D=3D LITTLE_ENDIAN
-+# define le16toh(x)	(x)
-+# define le32toh(x)	(x)
-+# define le64toh(x)	(x)
-+#elif BYTE_ORDER =3D=3D BIG_ENDIAN
-+# define le16toh(x)	bswap_16(x)
-+# define le32toh(x)	bswap_32(x)
-+# define le64toh(x)	bswap_64(x)
-+#endif
-+
-+/* MIPS opcodes, in bits 31:26 of an instruction */
-+#define OP_SPECIAL	0x00
-+#define OP_REGIMM	0x01
-+#define OP_BEQ		0x04
-+#define OP_BNE		0x05
-+#define OP_BLEZ		0x06
-+#define OP_BGTZ		0x07
-+#define OP_BEQL		0x14
-+#define OP_BNEL		0x15
-+#define OP_BLEZL	0x16
-+#define OP_BGTZL	0x17
-+#define OP_LL		0x30
-+#define OP_LLD		0x34
-+#define OP_SC		0x38
-+#define OP_SCD		0x3c
-+
-+/* Bits 20:16 of OP_REGIMM instructions */
-+#define REGIMM_BLTZ	0x00
-+#define REGIMM_BGEZ	0x01
-+#define REGIMM_BLTZL	0x02
-+#define REGIMM_BGEZL	0x03
-+#define REGIMM_BLTZAL	0x10
-+#define REGIMM_BGEZAL	0x11
-+#define REGIMM_BLTZALL	0x12
-+#define REGIMM_BGEZALL	0x13
-+
-+/* Bits 5:0 of OP_SPECIAL instructions */
-+#define SPECIAL_SYNC	0x0f
-+
-+static void usage(FILE *f)
-+{
-+	fprintf(f, "Usage: loongson3-llsc-check /path/to/vmlinux\n");
-+}
-+
-+static int se16(uint16_t x)
-+{
-+	return (int16_t)x;
-+}
-+
-+static bool is_ll(uint32_t insn)
-+{
-+	switch (insn >> 26) {
-+	case OP_LL:
-+	case OP_LLD:
-+		return true;
-+
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool is_sc(uint32_t insn)
-+{
-+	switch (insn >> 26) {
-+	case OP_SC:
-+	case OP_SCD:
-+		return true;
-+
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool is_sync(uint32_t insn)
-+{
-+	/* Bits 31:11 should all be zeroes */
-+	if (insn >> 11)
-+		return false;
-+
-+	/* Bits 5:0 specify the SYNC special encoding */
-+	if ((insn & 0x3f) !=3D SPECIAL_SYNC)
-+		return false;
-+
-+	return true;
-+}
-+
-+static bool is_branch(uint32_t insn, int *off)
-+{
-+	switch (insn >> 26) {
-+	case OP_BEQ:
-+	case OP_BEQL:
-+	case OP_BNE:
-+	case OP_BNEL:
-+	case OP_BGTZ:
-+	case OP_BGTZL:
-+	case OP_BLEZ:
-+	case OP_BLEZL:
-+		*off =3D se16(insn) + 1;
-+		return true;
-+
-+	case OP_REGIMM:
-+		switch ((insn >> 16) & 0x1f) {
-+		case REGIMM_BGEZ:
-+		case REGIMM_BGEZL:
-+		case REGIMM_BGEZAL:
-+		case REGIMM_BGEZALL:
-+		case REGIMM_BLTZ:
-+		case REGIMM_BLTZL:
-+		case REGIMM_BLTZAL:
-+		case REGIMM_BLTZALL:
-+			*off =3D se16(insn) + 1;
-+			return true;
-+
-+		default:
-+			return false;
-+		}
-+
-+	default:
-+		return false;
-+	}
-+}
-+
-+static int check_ll(uint64_t pc, uint32_t *code, size_t sz)
-+{
-+	ssize_t i, max, sc_pos;
-+	int off;
-+
-+	/*
-+	 * Every LL must be preceded by a sync instruction in order to ensure
-+	 * that instruction reordering doesn't allow a prior memory access to
-+	 * execute after the LL & cause erroneous results.
-+	 */
-+	if (!is_sync(le32toh(code[-1]))) {
-+		fprintf(stderr, "%" PRIx64 ": LL not preceded by sync\n", pc);
-+		return -EINVAL;
-+	}
-+
-+	/* Find the matching SC instruction */
-+	max =3D sz / 4;
-+	for (sc_pos =3D 0; sc_pos < max; sc_pos++) {
-+		if (is_sc(le32toh(code[sc_pos])))
-+			break;
-+	}
-+	if (sc_pos >=3D max) {
-+		fprintf(stderr, "%" PRIx64 ": LL has no matching SC\n", pc);
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * Check branches within the LL/SC loop target sync instructions,
-+	 * ensuring that speculative execution can't generate memory accesses
-+	 * due to instructions outside of the loop.
-+	 */
-+	for (i =3D 0; i < sc_pos; i++) {
-+		if (!is_branch(le32toh(code[i]), &off))
-+			continue;
-+
-+		/*
-+		 * If the branch target is within the LL/SC loop then we don't
-+		 * need to worry about it.
-+		 */
-+		if ((off >=3D -i) && (off <=3D sc_pos))
-+			continue;
-+
-+		/* If the branch targets a sync instruction we're all good... */
-+		if (is_sync(le32toh(code[i + off])))
-+			continue;
-+
-+		/* ...but if not, we have a problem */
-+		fprintf(stderr, "%" PRIx64 ": Branch target not a sync\n",
-+			pc + (i * 4));
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int check_code(uint64_t pc, uint32_t *code, size_t sz)
-+{
-+	int err =3D 0;
-+
-+	if (sz % 4) {
-+		fprintf(stderr, "%" PRIx64 ": Section size not a multiple of 4\n",
-+			pc);
-+		err =3D -EINVAL;
-+		sz -=3D (sz % 4);
-+	}
-+
-+	if (is_ll(le32toh(code[0]))) {
-+		fprintf(stderr, "%" PRIx64 ": First instruction in section is an LL\n",
-+			pc);
-+		err =3D -EINVAL;
-+	}
-+
-+#define advance() (	\
-+	code++,		\
-+	pc +=3D 4,	\
-+	sz -=3D 4		\
-+)
-+
-+	/*
-+	 * Skip the first instructionm allowing check_ll to look backwards
-+	 * unconditionally.
-+	 */
-+	advance();
-+
-+	/* Now scan through the code looking for LL instructions */
-+	for (; sz; advance()) {
-+		if (is_ll(le32toh(code[0])))
-+			err |=3D check_ll(pc, code, sz);
-+	}
-+
-+	return err;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int vmlinux_fd, status, err, i;
-+	const char *vmlinux_path;
-+	struct stat st;
-+	Elf64_Ehdr *eh;
-+	Elf64_Shdr *sh;
-+	void *vmlinux;
-+
-+	status =3D EXIT_FAILURE;
-+
-+	if (argc < 2) {
-+		usage(stderr);
-+		goto out_ret;
-+	}
-+
-+	vmlinux_path =3D argv[1];
-+	vmlinux_fd =3D open(vmlinux_path, O_RDONLY);
-+	if (vmlinux_fd =3D=3D -1) {
-+		perror("Unable to open vmlinux");
-+		goto out_ret;
-+	}
-+
-+	err =3D fstat(vmlinux_fd, &st);
-+	if (err) {
-+		perror("Unable to stat vmlinux");
-+		goto out_close;
-+	}
-+
-+	vmlinux =3D mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, vmlinux_fd, 0)=
-;
-+	if (vmlinux =3D=3D MAP_FAILED) {
-+		perror("Unable to mmap vmlinux");
-+		goto out_close;
-+	}
-+
-+	eh =3D vmlinux;
-+	if (memcmp(eh->e_ident, ELFMAG, SELFMAG)) {
-+		fprintf(stderr, "vmlinux is not an ELF?\n");
-+		goto out_munmap;
-+	}
-+
-+	if (eh->e_ident[EI_CLASS] !=3D ELFCLASS64) {
-+		fprintf(stderr, "vmlinux is not 64b?\n");
-+		goto out_munmap;
-+	}
-+
-+	if (eh->e_ident[EI_DATA] !=3D ELFDATA2LSB) {
-+		fprintf(stderr, "vmlinux is not little endian?\n");
-+		goto out_munmap;
-+	}
-+
-+	for (i =3D 0; i < le16toh(eh->e_shnum); i++) {
-+		sh =3D vmlinux + le64toh(eh->e_shoff) + (i * le16toh(eh->e_shentsize));
-+
-+		if (sh->sh_type !=3D SHT_PROGBITS)
-+			continue;
-+		if (!(sh->sh_flags & SHF_EXECINSTR))
-+			continue;
-+
-+		err =3D check_code(le64toh(sh->sh_addr),
-+				 vmlinux + le64toh(sh->sh_offset),
-+				 le64toh(sh->sh_size));
-+		if (err)
-+			goto out_munmap;
-+	}
-+
-+	status =3D EXIT_SUCCESS;
-+out_munmap:
-+	munmap(vmlinux, st.st_size);
-+out_close:
-+	close(vmlinux_fd);
-+out_ret:
-+	return status;
-+}
---=20
-2.23.0
+> If 
+> hugetlb wants to stress this to the fullest extent possible, it already 
+> appropriately uses __GFP_RETRY_MAYFAIL.
 
+Which doesn't work anymore right now, and should again after this patch.
+
+> The code here is saying we care more about NUMA locality than hugepages
+
+That's why there's __GFP_THISNODE, yes.
+ 
+> simply because that's where the access latency is better and is specific 
+> to hugepages; allocation behavior for high-order pages needs to live in 
+> the page allocator.
+
+I'd rather add the __GFP_NORETRY to __GFP_THISNODE here to influence the
+allocation behavior, than reintroduce any __GFP_THISNODE checks in the
+page allocator. There are not that many __GFP_THISNODE users, but there
+are plenty of __GFP_NORETRY users, so it seems better to adjust behavior
+based on the latter flag. IIRC in the recent past you argued for putting
+back __GFP_NORETRY to all THP allocations including madvise, so why is there
+a problem now?
+
+>>  
+>>  			/*
+>> -			 * If hugepage allocations are configured to always
+>> -			 * synchronous compact or the vma has been madvised
+>> -			 * to prefer hugepage backing, retry allowing remote
+>> -			 * memory as well.
+>> +			 * If that fails, allow both compaction and reclaim,
+>> +			 * but on all nodes.
+>>  			 */
+>> -			if (!page && (gfp & __GFP_DIRECT_RECLAIM))
+>> +			if (!page)
+>>  				page = __alloc_pages_node(hpage_node,
+>> -						gfp | __GFP_NORETRY, order);
+
+Also this __GFP_NORETRY was added by your patch, so I really don't see
+why do you think it's wrong in the first allocation attempt.
+
+>> +								gfp, order);
+>>  
+>>  			goto out;
+>>  		}
+> 
+> We certainly don't want this for non-MADV_HUGEPAGE regions when thp 
+> enabled bit is not set to "always".  We'd much rather fallback to local 
+> native pages because of its improved access latency.  This is allowing all 
+> hugepage allocations to be remote even without MADV_HUGEPAGE which is not 
+> even what Andrea needs: qemu uses MADV_HUGEPAGE.
+ 
+OTOH it's better to use a remote THP than a remote base page, in case the
+local node is below watermark. But that would probably require a larger surgery
+of the allocator.
+
+But what you're saying is keep the gfp & __GFP_DIRECT_RECLAIM condition.
+I still suggest to drop the __GFP_NORETRY as that goes against MADV_HUGEPAGE.
