@@ -2,88 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49974C2B42
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 02:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEA3FC2B53
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 02:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732537AbfJAAXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 20:23:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40800 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfJAAXT (ORCPT
+        id S1732643AbfJAAXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 20:23:46 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:35659 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbfJAAXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 20:23:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fsLx0GJUJTlmuF55t2D7ilPhf07K45hnoVtMrAljrE4=; b=ca1w28MK4nxmnpiwVOWOYAEFT
-        SbbdtRaAkpUmfqVIFBvvgIuJ/2qShONsmiH2C/5bymEzZ/+8gyH/PIe0rxUmK2h8txKka2DDpEWLk
-        LxyTGNhH7zccuYZeLrId029OJTaEJ8cfzubexl5SXsG57PtgsQ4CSKJTpnSUNl8VN4nyzuFHSxOgf
-        mYgV3MHWuUwTj/x/4G5qNOutUNU90pGVRBlu4kvtiplKoRfeD7sCWc6SkC0TKgRW8M9+it0ls58vD
-        46JdwUseC791j0xbGzijsim6GgpLmQ27keKSlFs/ObB5LUhcEfcrm3IG/6JmStpKBtH1m39lZXeMD
-        O4dKNz5/Q==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iF5wh-0005zc-9z; Tue, 01 Oct 2019 00:23:15 +0000
-To:     LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrey Konovalov <andreyknvl@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH mmotm] sparc64: pgtable_64.h: fix mismatched parens
-Message-ID: <29dd42d5-52e3-e2a2-679f-f0e8648f2b40@infradead.org>
-Date:   Mon, 30 Sep 2019 17:23:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 30 Sep 2019 20:23:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1569889426; x=1601425426;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=j/bjglqWF/oGbWlxsWj+tvbJ6Bessty1AA1xECR1Vog=;
+  b=HaZLz1ag6vvs/QqafT253BFnVExYlSPELkZNkuKvQ0M645ZOBO4cSyWZ
+   HqXfapkl1IUumuclH/jUibmoFkI/5LokzY1Z/zmeohyH+2zFq0/392WuX
+   Y2b0vDhqpw9kzaZtGp/wz9/PnE9uYbqUspkwGUZV9zHIM43d8Bp68TwMt
+   XxmFq00UWdkaKMkbDQMNbgRDNIItP3eVx0FLAozmcTDsP/Mop71ORACgo
+   HrT6REzmgTsndbB+pRCngQxXEmZRycliekG4EeB6E7Y38CW82mH53A3T1
+   VPFKKTP/VNKLXjRjl0uvzNgrFgVi6z24YfbLwIWVpx17XHyCftZXsUWI7
+   A==;
+IronPort-SDR: kYf20uN/v8FApQddjS4xLV1QwnUF6iympFQG0G/gTacpgDCnJ6N2mehPAA9crrJbE37rGJbqyT
+ /mWMgaLPa9Qq+w+iBR0jzJN1170PkLJ0lH67UlrdxmT95OaTIwWbDICqRz5gBvdXgRfj8Whdp0
+ j9/XqLPWmNCzVlUgcdXiI2oN3UoENtYMultQ8O9txM5MdZOg6ctSEqgDT7+CbSwVOTG5Eirvp3
+ QLfNmyeIP0EWHFjLvLP2GzgNeNP6VSJkFNtW2jrjctt5jIjJT+Ha+7i6aGoPhv+uMax3l2Ap/m
+ FcY=
+X-IronPort-AV: E=Sophos;i="5.64,569,1559491200"; 
+   d="scan'208";a="120256450"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 01 Oct 2019 08:23:45 +0800
+IronPort-SDR: kO+/oaLgvdvxyHw2ykguk5wmVNR8jXvQ5ih8nPGLQiMs5SkZTOVYIpfvb1HoDrtT+hfn+qIe7G
+ uogbOuD5EICPpNh8dk+hTrfHngzJsIS7voG0586ORKs443CRBDzWE1tyLtOvJtp0R3xvHcM7H9
+ JGNgIannE8SvD7Pd2CS+ScpRED56mcJRn3jIeHsl9XTrHhlLTYNFjUg1Y6bvvRx0JcaPdhUxPS
+ q7AgN0ZqZCyZhvBEvMYa9MoqG2K8WdApTAM64fDZLeLXxKxhfT7IV5vOboCCYZfoKamTTHGQzM
+ wbCXlVD17xqV+EVCYLQ4vtT8
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 17:19:58 -0700
+IronPort-SDR: Enpz6ImGLYlKOaKEwe6Rbmc3lpN5MHdhtg9jzP56tbwwu7o/wCSsI6NznTgoDyXW5JR6DdBbtK
+ R6bq130Vc/KfWJvdEGEd98JWn0oidKKoIMOVn5RpLcv9ZqpRTROCFyw6/d81DrnzuP4Dcb9jXB
+ IQX8Hhbpk1BM92zQhRP1D9hKEgNxm23tY90YbREGxWOlyORjvfGAdkxrPuqqSXME/PofiaZeK1
+ UrcBJkdK+yG9Eb1k1PLq1QGQw8M8SeNs/r9r/dkXETQyYfrcxed4V6oeE2OzbAH9ntc+jHEcV+
+ 9/4=
+WDCIronportException: Internal
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 30 Sep 2019 17:23:45 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Johan Hovold <johan@kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>, hch@infradead.org
+Subject: [v6 PATCH] RISC-V: Remove unsupported isa string info print
+Date:   Mon, 30 Sep 2019 17:23:18 -0700
+Message-Id: <20191001002318.7515-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+/proc/cpuinfo should just print all the isa string as an information
+instead of determining what is supported or not. ELF hwcap can be
+used by the userspace to figure out that.
 
-Fix lib-untag-user-pointers-in-strn_user.patch unmatched left paren.
-Fixes many of these build errors:
+Simplify the isa string printing by removing the unsupported isa string
+print and all related code.
 
-../mm/gup.c: In function '__get_user_pages':
-../mm/gup.c:791:30: error: expected ')' before ';' token
-  start = untagged_addr(start);
-                              ^
-In file included from ../arch/sparc/include/asm/pgtable.h:5,
-                 from ../include/linux/mm.h:99,
-                 from ../mm/gup.c:7:
-../arch/sparc/include/asm/pgtable_64.h:1102:2: note: to match this '('
-  ((__typeof__(addr))(__untagged_addr((unsigned long)(addr)))
-  ^
-../mm/gup.c:791:10: note: in expansion of macro 'untagged_addr'
-  start = untagged_addr(start);
-          ^~~~~~~~~~~~~
-../mm/gup.c:892:21: error: expected ';' before '}' token
+The relevant discussion can be found at
+http://lists.infradead.org/pipermail/linux-riscv/2019-September/006702.html
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
+ arch/riscv/kernel/cpu.c | 35 ++++-------------------------------
+ 1 file changed, 4 insertions(+), 31 deletions(-)
 
-Is this already fixed???
-
-
- arch/sparc/include/asm/pgtable_64.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- mmotm-2019-0925-1810.orig/arch/sparc/include/asm/pgtable_64.h
-+++ mmotm-2019-0925-1810/arch/sparc/include/asm/pgtable_64.h
-@@ -1099,7 +1099,7 @@ static inline unsigned long __untagged_a
- 	return start;
- }
- #define untagged_addr(addr) \
--	((__typeof__(addr))(__untagged_addr((unsigned long)(addr)))
-+	((__typeof__(addr))(__untagged_addr((unsigned long)(addr))))
+diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+index 7da3c6a93abd..9486c426af86 100644
+--- a/arch/riscv/kernel/cpu.c
++++ b/arch/riscv/kernel/cpu.c
+@@ -48,49 +48,22 @@ int riscv_of_processor_hartid(struct device_node *node)
  
- static inline bool pte_access_permitted(pte_t pte, bool write)
+ static void print_isa(struct seq_file *f, const char *orig_isa)
  {
+-	static const char *ext = "mafdcsu";
+-	const char *isa = orig_isa;
+-	const char *e;
+-
+ 	/*
+ 	 * Linux doesn't support rv32e or rv128i, and we only support booting
+ 	 * kernels on harts with the same ISA that the kernel is compiled for.
+ 	 */
+ #if defined(CONFIG_32BIT)
+-	if (strncmp(isa, "rv32i", 5) != 0)
++	if (strncmp(orig_isa, "rv32i", 5) != 0)
+ 		return;
+ #elif defined(CONFIG_64BIT)
+-	if (strncmp(isa, "rv64i", 5) != 0)
++	if (strncmp(orig_isa, "rv64i", 5) != 0)
+ 		return;
+ #endif
+ 
+-	/* Print the base ISA, as we already know it's legal. */
++	/* Print the entire ISA as it is */
+ 	seq_puts(f, "isa\t\t: ");
+-	seq_write(f, isa, 5);
+-	isa += 5;
+-
+-	/*
+-	 * Check the rest of the ISA string for valid extensions, printing those
+-	 * we find.  RISC-V ISA strings define an order, so we only print the
+-	 * extension bits when they're in order. Hide the supervisor (S)
+-	 * extension from userspace as it's not accessible from there.
+-	 */
+-	for (e = ext; *e != '\0'; ++e) {
+-		if (isa[0] == e[0]) {
+-			if (isa[0] != 's')
+-				seq_write(f, isa, 1);
+-
+-			isa++;
+-		}
+-	}
++	seq_write(f, orig_isa, strlen(orig_isa));
+ 	seq_puts(f, "\n");
+-
+-	/*
+-	 * If we were given an unsupported ISA in the device tree then print
+-	 * a bit of info describing what went wrong.
+-	 */
+-	if (isa[0] != '\0')
+-		pr_info("unsupported ISA \"%s\" in device tree\n", orig_isa);
+ }
+ 
+ static void print_mmu(struct seq_file *f, const char *mmu_type)
+-- 
+2.21.0
 
