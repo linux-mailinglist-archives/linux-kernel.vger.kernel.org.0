@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D6FC3D42
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:58:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 975C2C3D39
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:58:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732701AbfJAQ6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:58:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53212 "EHLO mail.kernel.org"
+        id S1731285AbfJAQlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:41:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731081AbfJAQlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:37 -0400
+        id S1731168AbfJAQlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:41:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1128205C9;
-        Tue,  1 Oct 2019 16:41:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1188E2190F;
+        Tue,  1 Oct 2019 16:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948096;
-        bh=Kk6XxuN59+qbkbLJtVxcjtqKExqw2JI0CVGdOUTiFQw=;
+        s=default; t=1569948098;
+        bh=RZ+WOcSOBvQdQXPYEN1ohKIQpxofeW8IA32kr+1bOQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wfdW+E1kKJRny/4jpb6czE242Y8H8zCM3fCs6Uu4n1Cd55qI6Ha1fiBADWXbai81s
-         zV7e+W8XL7EP4hnW8EkV5dZXQ2TLeC07RNOjQQw1ERiF+pFS5s2tk+mD6Yw8vQd6lf
-         AFJZudSlIkh+wNZXUrAghhTyBo21DwCCYF5DxHZQ=
+        b=1TgcFVG5MLZnMMVQpLNF+ZKATvqkfm10J7MG6fJ8HIgL04UT0jK20zjh2UMNYGn+3
+         R9tVQ++8hgCY5bhCkNtbFHzjywmZHzfQLhfqj1ke/juJyBCV4z+3otpxvbz/GhFNZn
+         kfsjftS+2N2gJga0LkpYkeRf1mYnaq/Mq+0QvEF8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bharath Vedartham <linux.bhar@gmail.com>,
-        syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Sasha Levin <sashal@kernel.org>,
-        v9fs-developer@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.2 08/63] 9p/cache.c: Fix memory leak in v9fs_cache_session_get_cookie
-Date:   Tue,  1 Oct 2019 12:40:30 -0400
-Message-Id: <20191001164125.15398-8-sashal@kernel.org>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 10/63] fuse: fix request limit
+Date:   Tue,  1 Oct 2019 12:40:32 -0400
+Message-Id: <20191001164125.15398-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -45,46 +42,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bharath Vedartham <linux.bhar@gmail.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit 962a991c5de18452d6c429d99f3039387cf5cbb0 ]
+[ Upstream commit f22f812d5ce75a18b56073a7a63862e6ea764070 ]
 
-v9fs_cache_session_get_cookie assigns a random cachetag to v9ses->cachetag,
-if the cachetag is not assigned previously.
+The size of struct fuse_req was reduced from 392B to 144B on a non-debug
+config, thus the sanitize_global_limit() helper was setting a larger
+default limit.  This doesn't really reflect reduction in the memory used by
+requests, since the fields removed from fuse_req were added to fuse_args
+derived structs; e.g. sizeof(struct fuse_writepages_args) is 248B, thus
+resulting in slightly more memory being used for writepage requests
+overalll (due to using 256B slabs).
 
-v9fs_random_cachetag allocates memory to v9ses->cachetag with kmalloc and uses
-scnprintf to fill it up with a cachetag.
+Make the calculatation ignore the size of fuse_req and use the old 392B
+value.
 
-But if scnprintf fails, v9ses->cachetag is not freed in the current
-code causing a memory leak.
-
-Fix this by freeing v9ses->cachetag it v9fs_random_cachetag fails.
-
-This was reported by syzbot, the link to the report is below:
-https://syzkaller.appspot.com/bug?id=f012bdf297a7a4c860c38a88b44fbee43fd9bbf3
-
-Link: http://lkml.kernel.org/r/20190522194519.GA5313@bharath12345-Inspiron-5559
-Reported-by: syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/9p/cache.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/fuse/inode.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/9p/cache.c b/fs/9p/cache.c
-index 995e332eee5c0..eb2151fb60494 100644
---- a/fs/9p/cache.c
-+++ b/fs/9p/cache.c
-@@ -51,6 +51,8 @@ void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses)
- 	if (!v9ses->cachetag) {
- 		if (v9fs_random_cachetag(v9ses) < 0) {
- 			v9ses->fscache = NULL;
-+			kfree(v9ses->cachetag);
-+			v9ses->cachetag = NULL;
- 			return;
- 		}
- 	}
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 4bb885b0f0322..04b10b3b8741b 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -822,9 +822,12 @@ static const struct super_operations fuse_super_operations = {
+ 
+ static void sanitize_global_limit(unsigned *limit)
+ {
++	/*
++	 * The default maximum number of async requests is calculated to consume
++	 * 1/2^13 of the total memory, assuming 392 bytes per request.
++	 */
+ 	if (*limit == 0)
+-		*limit = ((totalram_pages() << PAGE_SHIFT) >> 13) /
+-			 sizeof(struct fuse_req);
++		*limit = ((totalram_pages() << PAGE_SHIFT) >> 13) / 392;
+ 
+ 	if (*limit >= 1 << 16)
+ 		*limit = (1 << 16) - 1;
 -- 
 2.20.1
 
