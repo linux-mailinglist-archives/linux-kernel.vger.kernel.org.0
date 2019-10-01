@@ -2,119 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F48C383D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B5CDC384A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389477AbfJAO4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:56:41 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33308 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389364AbfJAO4L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:56:11 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x91Eu8vq056695;
-        Tue, 1 Oct 2019 09:56:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569941768;
-        bh=lKl5jQ7mh6/gE8rehrlJj/IcqIN46YAPUSSDUhqA3so=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Opmzs9BP0USY6cCsUBSaxJovLrYAlG4Jw8rz+fBZi/5zYyAuhPquNrIfErcgb4WH9
-         axjdduEZD0PzTu2WG0FVnfSU+yk/ciT5m4CNCYdy/Z3dDAyvZqtfJNQoZv/SwpzEGy
-         x2Dpn0Zr0ZhpcFI18SRK7i/5Qqmzq8bW65a/T0QA=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x91Eu83v052937
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 1 Oct 2019 09:56:08 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
- 2019 09:55:57 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 1 Oct 2019 09:55:57 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x91Eu7D4014792;
-        Tue, 1 Oct 2019 09:56:07 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v10 16/16] leds: lp5523: Fix checkpatch issues in the code
-Date:   Tue, 1 Oct 2019 09:56:20 -0500
-Message-ID: <20191001145620.11123-17-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20191001145620.11123-1-dmurphy@ti.com>
-References: <20191001145620.11123-1-dmurphy@ti.com>
+        id S2389207AbfJAO5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:57:05 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:27152 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389535AbfJAO5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:57:03 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 46jMkZ2SSrz4G;
+        Tue,  1 Oct 2019 16:55:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1569941704; bh=/oFjgNLU/ZvSelC6tLjw91cHQa877YduGYa+snzVYRU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JsQ1F1kX3wGRrlY1a9hWTLA2LaalbBEahiTlqlZOGsDZXb+SyXUwzKD4rbke0EmXG
+         x7N82fQJUZm074OdjoaLeJbSdMG/B3bF3Y+uWGhTlrenGAtWt3MMrBkxoPn3XT0f1v
+         ZYxlbloRZzLwqC97uSfDNoEDk0Yhu006mYNLkwnJtid/YXtL8s7NeBwDWKf2yIH9tk
+         brd/t5cuqt8mnC01f850RppQzimpW7PEbWF1Z5ZrE8uY+2lVF17M9PdYc7BIglHjxm
+         ZiM2Lzi3u2RaucgE3dU7OMpp60GXXQsanht7Z/0Ho1o/zDnV8d5fPbjPMTazBU7wW0
+         JuWnKzqAZOu9g==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+Date:   Tue, 1 Oct 2019 16:56:56 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: atmel: fix atmel_ssc_set_audio link failure
+Message-ID: <20191001145656.GB6905@qmqm.qmqm.pl>
+References: <20191001142116.1172290-1-arnd@arndb.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191001142116.1172290-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch errors and warnings for the LP5523.c device
-driver.
+On Tue, Oct 01, 2019 at 04:20:55PM +0200, Arnd Bergmann wrote:
+> The ssc audio driver can call into both pdc and dma backends.  With the
+> latest rework, the logic to do this in a safe way avoiding link errors
+> was removed, bringing back link errors that were fixed long ago in commit
+> 061981ff8cc8 ("ASoC: atmel: properly select dma driver state") such as
+> 
+> sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
+> atmel_ssc_dai.c:(.text+0xac): undefined reference to `atmel_pcm_pdc_platform_register'
+> 
+> Fix it this time using Makefile hacks and a comment to prevent this
+> from accidentally getting removed again rather than Kconfig hacks.
+> 
+> Fixes: 18291410557f ("ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in Kconfig")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  sound/soc/atmel/Kconfig  |  4 ++--
+>  sound/soc/atmel/Makefile | 10 ++++++++--
+>  2 files changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+> index f118c229ed82..25c31bf64936 100644
+> --- a/sound/soc/atmel/Kconfig
+> +++ b/sound/soc/atmel/Kconfig
+> @@ -10,11 +10,11 @@ config SND_ATMEL_SOC
+>  if SND_ATMEL_SOC
+>  
+>  config SND_ATMEL_SOC_PDC
+> -	tristate
+> +	bool
+>  	depends on HAS_DMA
+>  
+>  config SND_ATMEL_SOC_DMA
+> -	tristate
+> +	bool
+>  	select SND_SOC_GENERIC_DMAENGINE_PCM
+>  
+>  config SND_ATMEL_SOC_SSC
+> diff --git a/sound/soc/atmel/Makefile b/sound/soc/atmel/Makefile
+> index 1f6890ed3738..c7d2989791be 100644
+> --- a/sound/soc/atmel/Makefile
+> +++ b/sound/soc/atmel/Makefile
+> @@ -6,8 +6,14 @@ snd-soc-atmel_ssc_dai-objs := atmel_ssc_dai.o
+>  snd-soc-atmel-i2s-objs := atmel-i2s.o
+>  snd-soc-mchp-i2s-mcc-objs := mchp-i2s-mcc.o
+>  
+> -obj-$(CONFIG_SND_ATMEL_SOC_PDC) += snd-soc-atmel-pcm-pdc.o
+> -obj-$(CONFIG_SND_ATMEL_SOC_DMA) += snd-soc-atmel-pcm-dma.o
+> +# pdc and dma need to both be built-in if any user of
+> +# ssc is built-in.
+> +ifdef CONFIG_SND_ATMEL_SOC_PDC
+> +obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-pdc.o
+> +endif
+> +ifdef CONFIG_SND_ATMEL_SOC_DMA
+> +obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-dma.o
+> +endif
+>  obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel_ssc_dai.o
+>  obj-$(CONFIG_SND_ATMEL_SOC_I2S) += snd-soc-atmel-i2s.o
+>  obj-$(CONFIG_SND_MCHP_SOC_I2S_MCC) += snd-soc-mchp-i2s-mcc.o
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/leds-lp5523.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+I was just exploring similar solution, using $(if X,Y) instead, but your
+fix will work just as well.
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 07484fc2f715..039db7e676ab 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -23,13 +23,13 @@
- 
- #define LP5523_PROGRAM_LENGTH		32	/* bytes */
- /* Memory is used like this:
--   0x00 engine 1 program
--   0x10 engine 2 program
--   0x20 engine 3 program
--   0x30 engine 1 muxing info
--   0x40 engine 2 muxing info
--   0x50 engine 3 muxing info
--*/
-+ * 0x00 engine 1 program
-+ * 0x10 engine 2 program
-+ * 0x20 engine 3 program
-+ * 0x30 engine 1 muxing info
-+ * 0x40 engine 2 muxing info
-+ * 0x50 engine 3 muxing info
-+ */
- #define LP5523_MAX_LEDS			9
- 
- /* Registers */
-@@ -326,7 +326,7 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
- 					const u8 *data, size_t size)
- {
- 	u8 pattern[LP5523_PROGRAM_LENGTH] = {0};
--	unsigned cmd;
-+	unsigned int cmd;
- 	char c[3];
- 	int nrchars;
- 	int ret;
-@@ -468,6 +468,7 @@ static int lp5523_mux_parse(const char *buf, u16 *mux, size_t len)
- static void lp5523_mux_to_array(u16 led_mux, char *array)
- {
- 	int i, pos = 0;
-+
- 	for (i = 0; i < LP5523_MAX_LEDS; i++)
- 		pos += sprintf(array + pos, "%x", LED_ACTIVE(led_mux, i));
- 
-@@ -506,7 +507,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
- 	if (ret)
- 		return ret;
- 
--	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM , (u8)(mux >> 8));
-+	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM, (u8)(mux >> 8));
- 	if (ret)
- 		return ret;
- 
--- 
-2.22.0.214.g8dca754b1e
+Reviewed-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
 
+Best Regards,
+Micha³ Miros³aw
