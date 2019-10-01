@@ -2,158 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 032B2C2B88
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 03:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA46C2B95
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 03:13:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfJABLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 21:11:39 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42622 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfJABLj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 21:11:39 -0400
-Received: by mail-io1-f68.google.com with SMTP id n197so43425179iod.9
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 18:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=yp8hB/Tts3x0Mfx+GqQZEiUscl3G6Z+j7ctgB40nM2k=;
-        b=XiMGyl13tRNgxDVThBQyMeQQ7e24icor+33bSiJMOVwOWmot1TtU+hChLwh9mqjq/G
-         rpgxgk1LtvI/fWXFsidbQtFmASDWWppOM9Eps3/1Hy9QLEyvCyCUkNCp/eoKH8+kJiwr
-         T7jf1iElCWG2vW7wF05UZBq9mlVBiTDxfdhQ6gm37h+UEXGGUcf2pnpOLm7Gk6X7VbjR
-         kNQocfdYprrzPZnNpDMgV193igJEvbKshDriYHyssBi2QXSGXMCq1AMHumCuuBEhMI0L
-         HuvJPZMB4z+kV1frlvS4OCwsit3PEQ0t275kL2z0/aaCz4cNNLcAp6bp+yjkymO12Cn8
-         W9VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=yp8hB/Tts3x0Mfx+GqQZEiUscl3G6Z+j7ctgB40nM2k=;
-        b=C6jSXJbqYk6fM7UnCwNaYmMXnoTQMFWuKrQE3RUJ1SSuNjwECv66W9+Wx3A4qrRAaV
-         lxjsfDy/DNzXbr+Yd9W+94ol8OPbe16+hYg87YBeZ8F9Kd0ZjFaqvsSFVjJkBHCdTf/7
-         rRL79ZnQhi6y46u1BPdgEIMOPfePiTEPKK0BQC8z1HvuGhMOkQKAlEjXgWWU0oNoODEk
-         Euj5HRnpBnB2PXXCX467su5EsFPcrMtEDgi2jKC8czE3wnIxpPg3YW/5+l/SKJunCReX
-         8AuZNv6KPcn5sL5CwN84MbxqK5jMrdU9lFtU1NaIgeLl1cp91jjWq2yjp1AxD618WcAv
-         Wyow==
-X-Gm-Message-State: APjAAAVqKxFR8PEz2cLt3wXr3PFuKWBAv5vr2JajkHtF+hKk0PTS4aQt
-        u813Rkwj3EWOYvgmjTyJnpbPMQ==
-X-Google-Smtp-Source: APXvYqz2+i2UkcVxbC/XWvFPYV1dsy8grc1Uv2JRRkDvv4r2bcKpnJAT+A1WVvx8rOAjhszJnuuS6w==
-X-Received: by 2002:a92:9fdb:: with SMTP id z88mr24888870ilk.38.1569892298658;
-        Mon, 30 Sep 2019 18:11:38 -0700 (PDT)
-Received: from localhost (c-75-72-120-115.hsd1.mn.comcast.net. [75.72.120.115])
-        by smtp.gmail.com with ESMTPSA id l3sm6180657ioj.7.2019.09.30.18.11.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 18:11:38 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 20:11:37 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.3 00/25] 5.3.2-stable review
-Message-ID: <20191001011137.ec2ascntddpgkr2n@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20190929135006.127269625@linuxfoundation.org>
+        id S1731035AbfJABNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 21:13:17 -0400
+Received: from mga12.intel.com ([192.55.52.136]:64309 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbfJABNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 21:13:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 18:13:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,569,1559545200"; 
+   d="scan'208";a="191307813"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 30 Sep 2019 18:13:16 -0700
+Received: from [10.226.38.18] (unknown [10.226.38.18])
+        by linux.intel.com (Postfix) with ESMTP id 927655803E4;
+        Mon, 30 Sep 2019 18:13:14 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] dt-bindings: spi: Add support for cadence-qspi IP
+ Intel LGM SoC
+To:     Rob Herring <robh@kernel.org>
+Cc:     broonie@kernel.org, mark.rutland@arm.com,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com
+References: <20190916073843.39618-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20190916073843.39618-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20190930223640.GA18491@bogus>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <e70c6f98-7e0f-97f2-bede-00de4389f825@linux.intel.com>
+Date:   Tue, 1 Oct 2019 09:13:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20190930223640.GA18491@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190929135006.127269625@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 03:56:03PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.2 release.
-> There are 25 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 01 Oct 2019 01:47:47 PM UTC.
-> Anything received after that time might be too late.
+Hi Rob,
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+    Thank you for the review comments.
 
-Summary
-------------------------------------------------------------------------
+On 1/10/2019 6:36 AM, Rob Herring wrote:
+> On Mon, Sep 16, 2019 at 03:38:42PM +0800, Ramuthevar,Vadivel MuruganX wrote:
+>> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>>
+>> On Intel Lightening Mountain(LGM) SoCs QSPI controller support
+>> to QSPI-NAND flash. This introduces to device tree binding
+>> documentation for Cadence-QSPI controller and spi-nand flash.
+>>
+>> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> ---
+>>   .../devicetree/bindings/spi/cadence,qspi-nand.yaml | 84 ++++++++++++++++++++++
+>>   1 file changed, 84 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/spi/cadence,qspi-nand.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/cadence,qspi-nand.yaml b/Documentation/devicetree/bindings/spi/cadence,qspi-nand.yaml
+>> new file mode 100644
+>> index 000000000000..9aae4c1459cc
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/cadence,qspi-nand.yaml
+>> @@ -0,0 +1,84 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/spi/cadence,qspi-nand.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Cadence QSPI Flash Controller on Intel's SoC
+>> +
+>> +maintainers:
+>> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> +
+>> +allOf:
+>> +  - $ref: "spi-controller.yaml#"
+>> +
+>> +description: |
+>> +  The Cadence QSPI is a controller optimized for communication with SPI
+>> +  FLASH memories, without DMA support on Intel's SoC.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: cadence,lgm-qspi
+> Vendor here should be 'intel'. Perhaps the binding should be shared too
+> like the driver.
+>
+> Plus the vendor prefix for Cadence is cdns.
+Agreed!, will update.
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  fifo-depth:
+>> +    maxItems: 1
+>> +
+> This is vendor specific, so needs a vendor prefix, type, and
+> description.
+agreed!
+>> +  fifo-width:
+>> +    maxItems: 1
+> Same
+>
+>> +
+>> +  qspi-phyaddr:
+>> +    maxItems: 1
+> Same
+>
+>> +
+>> +  qspi-phymask:
+>> +    maxItems: 1
+> Same
+will update all the above.
+>> +
+>> +  clocks:
+>> +    maxItems: 2
+> Need to define what each clock is when there is more than 1.
+Sure, will update.
+>> +
+>> +  clocks-names:
+>> +    maxItems: 2
+> Need to define the strings.
+Noted, will update.
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  reset-names:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - fifo-depth
+>> +  - fifo-width
+>> +  - qspi-phyaddr
+>> +  - qspi-phymask
+>> +  - clocks
+>> +  - clock-names
+>> +  - resets
+>> +  - reset-names
+>> +
+>> +examples:
+>> +  - |
+>> +    qspi@ec000000 {
+> spi@...
 
-kernel: 5.3.2-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-5.3.y
-git commit: 5910f7ae17298c45fce24a2f314573bcb7a86284
-git describe: v5.3.1-26-g5910f7ae1729
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.3-oe/build/v5.3.1-26-g5910f7ae1729
+Controller is qspi , so that have updated.
 
-No regressions (compared to build v5.3.1)
-
-No fixes (compared to build v5.3.1)
-
-Ran 23295 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-open-posix-tests
-* network-basic-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
+With Best Regards
+Vadivel Murugan R
+>> +          compatible = "cadence,qspi-nand";
+>> +          reg = <0xec000000 0x100>;
+>> +          fifo-depth = <128>;
+>> +          fifo-width = <4>;
+>> +          qspi-phyaddr = <0xf4000000>;
+>> +          qspi-phymask = <0xffffffff>;
+>> +          clocks = <&cgu0 LGM_CLK_QSPI>, <&cgu0 LGM_GCLK_QSPI>;
+>> +          clock-names = "freq", "qspi";
+>> +          resets = <&rcu0 0x10 1>;
+>> +          reset-names = "qspi";
+>> +          #address-cells = <1>;
+>> +          #size-cells = <0>;
+>> +
+>> +          flash: flash@1 {
+>> +              compatible = "spi-nand";
+>> +              reg = <1>;
+>> +              spi-max-frequency = <10000000>;
+>> +          };
+>> +    };
+>> +
+>> -- 
+>> 2.11.0
+>>
