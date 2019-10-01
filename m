@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B64C3B32
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60837C3B37
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732075AbfJAQmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:42:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54458 "EHLO mail.kernel.org"
+        id S1732168AbfJAQmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:42:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732017AbfJAQmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:42:31 -0400
+        id S1732051AbfJAQmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:42:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF1AF21D79;
-        Tue,  1 Oct 2019 16:42:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E2E721D7B;
+        Tue,  1 Oct 2019 16:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948150;
-        bh=mzEWVmCzDzk3Hf6JP35BoydyehFPyUmjHoYwXHYpf5I=;
+        s=default; t=1569948156;
+        bh=d1cwlKNt2mnCdzZ5RHbHyTPGEAf/7X1xqYU1nu09wHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t41KtSRHge6rv1+ZvJC5EiiMHX8lvqTwd4ZP+kQcbScnm+fI7I/tSuqjNaKbL0F/P
-         9wqWBLIAbFC1KlJf1Bfqp1Cu0LclBN/BOjSnFG2lP26Gsh0sIeAaFmZNP6Y8oGwj3d
-         2+1oTk7YfYX4ylyNrHdHlRqE79DuYeeNHjQ7BTLo=
+        b=0ldfSK/rmPiZ/tk1dcE+vJKuMuae5SmwC+L6yA3RrDgwx0wVs4U5P4segHYU8qySn
+         2qj3pJRsf8iuxkDhK/UXidGFvnAijr+nAew0usoBidxOx8VCIjTOCbBFD5e/uc5rBg
+         wlPhuZ/xVdi+1w0f4r4VT5YhgkG8z6RDj9zFxUNQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Andreas Krebbel <krebbel@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
+Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 44/63] perf build: Add detection of java-11-openjdk-devel package
-Date:   Tue,  1 Oct 2019 12:41:06 -0400
-Message-Id: <20191001164125.15398-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 46/63] kernel/elfcore.c: include proper prototypes
+Date:   Tue,  1 Oct 2019 12:41:08 -0400
+Message-Id: <20191001164125.15398-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -47,60 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 815c1560bf8fd522b8d93a1d727868b910c1cc24 ]
+[ Upstream commit 0f74914071ab7e7b78731ed62bf350e3a344e0a5 ]
 
-With Java 11 there is no seperate JRE anymore.
+When building with W=1, gcc properly complains that there's no prototypes:
 
-Details:
+  CC      kernel/elfcore.o
+kernel/elfcore.c:7:17: warning: no previous prototype for 'elf_core_extra_phdrs' [-Wmissing-prototypes]
+    7 | Elf_Half __weak elf_core_extra_phdrs(void)
+      |                 ^~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:12:12: warning: no previous prototype for 'elf_core_write_extra_phdrs' [-Wmissing-prototypes]
+   12 | int __weak elf_core_write_extra_phdrs(struct coredump_params *cprm, loff_t offset)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:17:12: warning: no previous prototype for 'elf_core_write_extra_data' [-Wmissing-prototypes]
+   17 | int __weak elf_core_write_extra_data(struct coredump_params *cprm)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/elfcore.c:22:15: warning: no previous prototype for 'elf_core_extra_data_size' [-Wmissing-prototypes]
+   22 | size_t __weak elf_core_extra_data_size(void)
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
 
-  https://coderanch.com/t/701603/java/JRE-JDK
+Provide the include file so gcc is happy, and we don't have potential code drift
 
-Therefore the detection of the JRE needs to be adapted.
-
-This change works for s390 and x86.  I have not tested other platforms.
-
-Committer testing:
-
-Continues to work with the OpenJDK 8:
-
-  $ rm -f ~acme/lib64/libperf-jvmti.so
-  $ rpm -qa | grep jdk-devel
-  java-1.8.0-openjdk-devel-1.8.0.222.b10-0.fc30.x86_64
-  $ git log --oneline -1
-  a51937170f33 (HEAD -> perf/core) perf build: Add detection of java-11-openjdk-devel package
-  $ rm -rf /tmp/build/perf ; mkdir -p /tmp/build/perf ; make -C tools/perf O=/tmp/build/perf install > /dev/null 2>1
-  $ ls -la ~acme/lib64/libperf-jvmti.so
-  -rwxr-xr-x. 1 acme acme 230744 Sep 24 16:46 /home/acme/lib64/libperf-jvmti.so
-  $
-
-Suggested-by: Andreas Krebbel <krebbel@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Link: http://lore.kernel.org/lkml/20190909114116.50469-4-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: http://lkml.kernel.org/r/29875.1565224705@turing-police
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/Makefile.config | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/elfcore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 17b81bc403e46..f7115501435f5 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -902,7 +902,7 @@ ifndef NO_JVMTI
-     JDIR=$(shell /usr/sbin/update-java-alternatives -l | head -1 | awk '{print $$3}')
-   else
-     ifneq (,$(wildcard /usr/sbin/alternatives))
--      JDIR=$(shell /usr/sbin/alternatives --display java | tail -1 | cut -d' ' -f 5 | sed 's%/jre/bin/java.%%g')
-+      JDIR=$(shell /usr/sbin/alternatives --display java | tail -1 | cut -d' ' -f 5 | sed -e 's%/jre/bin/java.%%g' -e 's%/bin/java.%%g')
-     endif
-   endif
-   ifndef JDIR
+diff --git a/kernel/elfcore.c b/kernel/elfcore.c
+index fc482c8e0bd88..57fb4dcff4349 100644
+--- a/kernel/elfcore.c
++++ b/kernel/elfcore.c
+@@ -3,6 +3,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/binfmts.h>
++#include <linux/elfcore.h>
+ 
+ Elf_Half __weak elf_core_extra_phdrs(void)
+ {
 -- 
 2.20.1
 
