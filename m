@@ -2,160 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C93C3A4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2D0EC3A5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389725AbfJAQTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:19:31 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39046 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbfJAQTb (ORCPT
+        id S2389915AbfJAQVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:21:25 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:33466 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389775AbfJAQVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:19:31 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r3so16296428wrj.6
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:19:28 -0700 (PDT)
+        Tue, 1 Oct 2019 12:21:25 -0400
+Received: by mail-pf1-f202.google.com with SMTP id z4so10639761pfn.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:21:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=olW9g7ZJ1YdKje93pPyqYLV/2GhovO1OgxzrOxQyECE=;
-        b=BvviHFuvKJ8tu5f6ZYQhFExw9xJYWYErknsa9Npz5HWq7rufaDPABP32en6lqfUEGH
-         qhp9tWCEKzDVTgk3wpnp73erc9W3PPFFcRg7+XgbBNzdXv0HVQB5ZPEPu0TxKgj/rie5
-         9+GICPTEeO6nuq2Y6Gjm6Un3AgbWzrgA11UFJD7j5waM171hkrn62x2xv1l0tu9Jz2eN
-         jOpyGDTfK9Wo2en9rKm4XLzlTHxp5irN1vkVUIlSI4YVdYVyi2StxDYNZG8GiCuYdXUL
-         3B8D8VVUNgsc3zLx9l6vQo7YD9wTB9gk37dYwjFrXjOO/cR3gJOIzp9rnGg1VfeIPtvL
-         y2eA==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=zGjQR/sTKc3smldtiGbvkknjnXT+JplA/pSqSqfQKlI=;
+        b=G+DasL0iJZ5kBOTu/zg5lhBzEt6jZOfAi1wnx0r7cOAZ7BldGdYXaJI63ngD6HwE+O
+         td2ExZht8/oykOJ6vj3MIg3yGym9/ezKCc3UmfSjNgdhuBL1BlabvNzMYb2E3ZmK4lmR
+         xKQSP9pNUpOfgoU/c44mv2JlOPpsdNSPsp6QouWh475Br8GI5iE0CIHgwsannd+OKyWt
+         kctUWW68POaqfmJytgwPWY5G+l1LIwfEbaTs2bpLH0Umzhe8ZJmbA42UbPso+f2qtHUY
+         ulHHgYlPaHHs5q5C7uw6TN6jFgZV8vOqg7CfY4xxzi79Ymw1jMuYTQHemWXww+T+xqMs
+         yHPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=olW9g7ZJ1YdKje93pPyqYLV/2GhovO1OgxzrOxQyECE=;
-        b=MG1eHdwN6XV6JxN31fzhTu38rCC/S8dfhQTXsbfr6MUmvVxR7dmyklPfJRUZAkZThP
-         z1y7AJDXFLV0MvpWCTH62FBXItP3H1EUR3y+Hn7lMDlaVzHOdva69eqvhFjJHx7914Pc
-         8zC0M6BEv9n0IFU2VvCFTADc9KlYseOazlmIKupaVxMJjyIiAp+roPyLdtHWo3NMog4k
-         Xkq6umaUZZGTCmq3/7iXkxB/HhR5AO+j1Gy1nVm8rtW/VcnVOmBPhMxEVNeOlUA86zCR
-         q03DXWTpZTHMyRoNYV26t76uFtUnkTchaSrRScRipRcDa/skcCBkl1bieK1+O2sxwRu3
-         AcgA==
-X-Gm-Message-State: APjAAAWu+42/LXP/f83eL+8MFcyyRX+z9p1mJyzZjtUU+B0bA57G12+j
-        ySqlSQ6VOjmAfIm05tVHurboj3tssT8RmA==
-X-Google-Smtp-Source: APXvYqxMEx7sw497JP7p3C1ijxZVtn0IzGNXlcqhPjHzNhGlYVIGtqR4n0Oo0+KB2UYJrwDs5nc5xg==
-X-Received: by 2002:adf:b3d2:: with SMTP id x18mr3891320wrd.264.1569946767617;
-        Tue, 01 Oct 2019 09:19:27 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
-        by smtp.gmail.com with ESMTPSA id e6sm14665069wrp.91.2019.10.01.09.19.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 09:19:26 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 17:19:23 +0100
-From:   Matthias Maennich <maennich@google.com>
-To:     Shaun Ruffell <sruffell@sruffell.net>
-Cc:     linux-kernel@vger.kernel.org, Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] modpost: Copy namespace string into 'struct symbol'
-Message-ID: <20191001161923.GH90796@google.com>
-References: <20190906103235.197072-5-maennich@google.com>
- <20190926222446.30510-1-sruffell@sruffell.net>
- <20190927080346.GC90796@google.com>
- <20190930212046.rhtqmnueoffe7dnr@sruffell.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190930212046.rhtqmnueoffe7dnr@sruffell.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=zGjQR/sTKc3smldtiGbvkknjnXT+JplA/pSqSqfQKlI=;
+        b=F2ao1a3KlCiAUyWxH0zAZtz1W5wGKGsUV0Kf2roIudbE/7QziIFVPNa/eFZ2qyvLD3
+         Ft39+PtOc71LbQT0hXfuLXF5JxhlAm6l31dybhVyUriwd7Myi7SvmJkOWzCDDZKxEeU3
+         GQ21rxpoSMclW9PJZEComU0xCC+uJaYf6y+5oI0+PUsZiG1rsCPcXaZZFB9keqDlDvY1
+         dSOUoC10q/oiQWfDoER5BliZtkEinn7OjTdDSJnEBg2AUZrHnFYY5c1bIkM4CpLKvFVT
+         NHWNsyiRehEQbhNQUz2IOq4nNqua7qdVdTWbvHcSbclsp8dg71EJbfr2h2CsrbCnlBND
+         JIrg==
+X-Gm-Message-State: APjAAAVHgILGn0VceD8hiS5hNcLRjiX4mzPG08NsZ+gTSkbhHhwi7WcT
+        1krZNbJ8Olbq6VEZAB9OZ0G54CQRQaisylK4eSw=
+X-Google-Smtp-Source: APXvYqyhx8xunEJibdqSSZMbfsVIGbOyET72Al96jQRFry9WCb7OIOKmE3DHCN3SHdahPhXrl18UgoKkM5icUQv7144=
+X-Received: by 2002:a63:d846:: with SMTP id k6mr31013518pgj.378.1569946884027;
+ Tue, 01 Oct 2019 09:21:24 -0700 (PDT)
+Date:   Tue,  1 Oct 2019 09:21:21 -0700
+In-Reply-To: <20191001104253.fci7s3sn5ov3h56d@willie-the-truck>
+Message-Id: <20191001162121.67109-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+References: <20191001104253.fci7s3sn5ov3h56d@willie-the-truck>
+X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
+Subject: Re: [PATCH] Partially revert "compiler: enable CONFIG_OPTIMIZE_INLINING
+ forcibly"
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     will@kernel.org
+Cc:     arnd@arndb.de, catalin.marinas@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk, nsaenzjulienne@suse.de,
+        torvalds@linux-foundation.org, yamada.masahiro@socionext.com,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 04:20:46PM -0500, Shaun Ruffell wrote:
->On Fri, Sep 27, 2019 at 09:03:46AM +0100, Matthias Maennich wrote:
->> On Thu, Sep 26, 2019 at 05:24:46PM -0500, Shaun Ruffell wrote:
->> > When building an out-of-tree module I was receiving many warnings from
->> > modpost like:
->> >
->> >  WARNING: module dahdi_vpmadt032_loader uses symbol __kmalloc from namespace ts/dahdi-linux/drivers/dahdi/dahdi-version.o: ..., but does not import it.
->> >  WARNING: module dahdi_vpmadt032_loader uses symbol vpmadtreg_register from namespace linux/drivers/dahdi/dahdi-version.o: ..., but does not import it.
->> >  WARNING: module dahdi_vpmadt032_loader uses symbol param_ops_int from namespace ahdi-linux/drivers/dahdi/dahdi-version.o: ..., but does not import it.
->> >  WARNING: module dahdi_vpmadt032_loader uses symbol __init_waitqueue_head from namespace ux/drivers/dahdi/dahdi-version.o: ..., but does not import it.
->> >  ...
->> >
->> > The fundamental issue appears to be that read_dump() is passing a
->> > pointer to a statically allocated buffer for the namespace which is
->> > reused as the file is parsed.
->>
->> Hi Shaun,
->>
->> Thanks for working on this. I think you are right about the root cause
->> of this. I will have a closer look at your fix later today.
->
->Thanks Matthias.
+> So you'd prefer I do something like the diff below?
 
-In the meantime, Masahiro came up with an alternative approach to
-address this problem:
-https://lore.kernel.org/lkml/20190927093603.9140-2-yamada.masahiro@socionext.com/
-How do you think about it? It ignores the memory allocation problem that
-you addressed as modpost is a host tool after all. As part of the patch
-series, an alternative format for the namespace ksymtab entry is
-suggested that also changes the way modpost has to deal with it.
-
->> > @@ -672,7 +696,6 @@ static void handle_modversions(struct module *mod, struct elf_info *info,
->> > 	unsigned int crc;
->> > 	enum export export;
->> > 	bool is_crc = false;
->> > -	const char *name, *namespace;
->> >
->> > 	if ((!is_vmlinux(mod->name) || mod->is_dot_o) &&
->> > 	    strstarts(symname, "__ksymtab"))
->> > @@ -744,9 +767,13 @@ static void handle_modversions(struct module *mod, struct elf_info *info,
->> > 	default:
->> > 		/* All exported symbols */
->> > 		if (strstarts(symname, "__ksymtab_")) {
->> > +			const char *name, *namespace;
->> > +
->> > 			name = symname + strlen("__ksymtab_");
->> > 			namespace = sym_extract_namespace(&name);
->> > 			sym_add_exported(name, namespace, mod, export);
->> > +			if (namespace)
->> > +				free((char *)name);
->>
->> This probably should free namespace instead.
->
->Given the implementation of sym_extract_namespace below, I believe
->free((char *)name) is correct.
-
-Yeah, you are right. I was just noticing the inconsistency and thought
-it was obviously wrong. So, I was wrong. Sorry and thanks for the
-explanation.
-
->
->  static const char *sym_extract_namespace(const char **symname)
->  {
->  	size_t n;
->  	char *dupsymname;
->
->  	n = strcspn(*symname, ".");
->  	if (n < strlen(*symname) - 1) {
->  		dupsymname = NOFAIL(strdup(*symname));
->  		dupsymname[n] = '\0';
->  		*symname = dupsymname;
->  		return dupsymname + n + 1;
->  	}
->
->  	return NULL;
->  }
->
->I agree that freeing name instead of namespace is a little surprising
->unless you know the implementation of sym_extract_namespace.
->
->I thought about changing the the signature of sym_extract_namespace() to
->make it clear when the symname is used to return a new allocation or
->not, and given your comment, perhaps I should have.
-
-I would rather follow-up with Masahiro's approach for now. What do you
-think?
-
-Cheers,
-Matthias
-
+Yes, I find that diff preferable.  Use __always_inline only when absolutely
+necessary.  Even then, it sounds like this is a workaround for one compiler,
+so it should probably also have a comment. (I don't mind changing this for
+all compilers).
