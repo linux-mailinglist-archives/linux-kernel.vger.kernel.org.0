@@ -2,142 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 939C2C42B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35EB4C42C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:33:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbfJAV3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:29:02 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:17627 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbfJAV3C (ORCPT
+        id S1727891AbfJAVdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 17:33:07 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42985 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbfJAVdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:29:02 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191001212859epoutp028c84d8fbed5ddab915c8e2e97d3fa2e2~JoyiVVW3t2194621946epoutp02W
-        for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2019 21:28:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191001212859epoutp028c84d8fbed5ddab915c8e2e97d3fa2e2~JoyiVVW3t2194621946epoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569965339;
-        bh=Yw3R56mDxhyX+u4BbNdpgiLhPEMauvLJ8lCJK6ld5rI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=B7G370sxl+pK92P/zn2FfPr/DyZWbVTyus2c5paURjEeGrcd5iEhvMk9iyHRDu0ti
-         ZLfNXJtlPiFOIF17nzNkLRiJ3ue/3w1nOtZSYv3Hn7pnwPeT/iydEUjeYSPaE1Qhn1
-         z5i3jhol3E7+w/H/rD3fLxFPjoufAMODqNdOZKdk=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191001212859epcas1p3994901743dac42e89b4e5b8246638f0e~Joyh9zKKr2696226962epcas1p3W;
-        Tue,  1 Oct 2019 21:28:59 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 46jXT50YFmzMqYkV; Tue,  1 Oct
-        2019 21:28:57 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4C.9D.04068.815C39D5; Wed,  2 Oct 2019 06:28:57 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191001212856epcas1p3e718d6ad3965a6956cc49007e3a95fd4~JoyfOofDg2696226962epcas1p3V;
-        Tue,  1 Oct 2019 21:28:56 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191001212856epsmtrp17d413fd26795ac38443de3f1128b6b65~JoyfLOYjM2299222992epsmtrp1f;
-        Tue,  1 Oct 2019 21:28:56 +0000 (GMT)
-X-AuditID: b6c32a39-f5fff70000000fe4-6c-5d93c518e45c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6E.9F.03889.815C39D5; Wed,  2 Oct 2019 06:28:56 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191001212856epsmtip12fe8c2e438560997049fb2d8134b9bd1~Joye-1klJ2152221522epsmtip1S;
-        Tue,  1 Oct 2019 21:28:56 +0000 (GMT)
-Subject: Re: [PATCH] PM / devfreq: exynos-ppmu: remove useless assignment
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <b70439ce-0300-1a95-7ed2-41d70db559a8@samsung.com>
-Date:   Wed, 2 Oct 2019 06:33:44 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Tue, 1 Oct 2019 17:33:07 -0400
+Received: by mail-pl1-f195.google.com with SMTP id e5so6175149pls.9
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 14:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Z4e1NN6nu4ZaQSr4QU7LcV+N896S8TJHxo2z5wLZZe4=;
+        b=Pr4ab6DTLcpPoAFbMcSjaTUTYVYp1LDm5BAlOJU2YvcEMt0bTipepUjaxG5lMpoUOp
+         lFCI5o5vkaajGiotvJdJXz2y9Ieao3sEzHy2wrSWu+nNxZvJJ6LJkgjjBaRWx1ZT5bm8
+         4QIcAuuFL/pw3oFZX1nVHUqhVjcBSxdbNKnvKd0GP0sevjFa63alN7etTzG5F5Qf0DHu
+         io4j6lgazyqxmgA7U+/15haF4Am+flXl911MfAe8UdtLZyRvu9CPEb5xVZ0ISAJuLnPl
+         J06OuplsJbzdojcrSa/kZx9aEFGxQ/dSE+ZxmHLg1xK7+2xExXqNg6VNQjOmO/SYhZPl
+         dw6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Z4e1NN6nu4ZaQSr4QU7LcV+N896S8TJHxo2z5wLZZe4=;
+        b=XMsIcae/lNV46fdN2xnH9RaL6MgEXXF80tvORdlqBqDqyvW2JnucO64jhwGazk8KQ/
+         udY5gmz8NaIVFNY4R5fG7NsnueDUe4K/69wH9Syd8VJy1m1IjDOEY7pt9wnSH5wQN6b0
+         PtPZNxLs4TqV/0ImW0Q/zysPFSpAHjhgwCMJs//7mVTFNYaat7Oq9uTXgtg2ziY7ED3R
+         milaWIHx0xd61vRaw98h7OIE4XNSxI2V8drqbSl7Cpkm121RJewNpnYYLBFv2BE20KKS
+         jGUNBF/YnR/TscQxdJkPblh7aOYb47MO9sy2Y4Yu5b+Og0tRy6aavkol4Ge81x5Qdb9Q
+         GRhw==
+X-Gm-Message-State: APjAAAWYoJ8ZOFKLLmhgi+Ajkn0AgbJssCrQ5iE4nmIzYueNgbihHdZE
+        3VIySWh9bCQM2oR3ncAqKg4jO9jaiJ1C/8UcQOqERA==
+X-Google-Smtp-Source: APXvYqyxozJxVm+qJ2C11b5+NXCGyt7TX/8uK7rOEwCENn8WK5blF8+KGJMCObW2H0xWVEXihaTyEWNZTLWX6ufwZ2Q=
+X-Received: by 2002:a17:902:7c08:: with SMTP id x8mr11776916pll.119.1569965585922;
+ Tue, 01 Oct 2019 14:33:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191001124641.22896-1-m.szyprowski@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURjt7uzOjuHWtGp9SpROEiioO+rqKBpBERv2Qygoim2ddNiVfbaz
-        hlbQ9lDTsiyjdEt70UMjTTEpTRfUNAXflaFogi5lREFZmEq0zij573zfd84937n3EpiyAg8i
-        Mi0Ozm5hTRS+WtrQFhYREfi6RKu6VSFhaktrZExf3zM5M9R4C2d+FrUjprSvRcI8bR+TM6On
-        H+Pb5Zq6qgJcc6m+Cml+1m1KxQ4akwwcm8HZgzlLujUj06JPplL26nbo1HEqOoJOYOKpYAtr
-        5pKpnXtSI3ZlmrzmVPAx1pTlbaWyPE9FbUuyW7McXLDByjuSKc6WYbIl2CJ51sxnWfSR6VZz
-        Iq1SRau9xDSjofrvuMRWTGSfuzErc6JBvBD5EEDGwmTeGXkhWk0oyRcI3g4UYWLxA8F7z1eZ
-        WPxG0HOzQbosKfRU4OKgGcHD6j9LxXcEHQ0FkkWWH7kbPo3XCwN/8iKC6dF+4SyMLERQPNwi
-        W2ThZDi4P38QVllLhsC72Um0iBXkNvhaPiNwpGQozLbUCt4B5AH4MdEmEznroKtsSuj7ePnz
-        j12CFiM3wMjUbYmIN8PZ5zeFREB+xKEzNxcTQ+yEucE3S9gPvnTWy0UcBNOX85bwCajsasdF
-        8XkE9e5+mTiIAfeDEq8D4XUIg5rGKLEdAi/ny5eWWAPffl2ULVKAVMD5PKVI2QJDE2MSEQfC
-        /fwCvBhRrhVxXCsiuFZEcP03u4OkVWg9Z+PNeo6nbeqVD16HhL8ZnvACdfTuaUUkgShfxYd9
-        JVqljD3G55hbERAY5a9IWriqVSoy2JzjnN2qs2eZOL4Vqb23fQULCki3en+6xaGj1dExMTFM
-        LB2npmlqg0Kjd2qVpJ51cEaOs3H2ZZ2E8Alyothn3MbW41uPenqaQsnaJ579AWu6a21NzemX
-        VO6XJ+Ou6VbFb8k3DBlPlRq0vr1HJuuaIpt3DQ8/0oQ2vvI/OLKQeKi7sqhgIFuZ5ryRW3P4
-        +t2U+Ed7D+TMXwB//J6xp7I/bGTq2/sZz9Gq0bnOabc6obojJMdZmZ3W1ZQ3HtJSRkl5A0uH
-        Y3ae/QdqMkX4sQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42LZdlhJTlfi6ORYg3sTRCw2zljPanH+/AZ2
-        i8u75rBZfO49wmgx4/w+Jou1R+6yW9xuXMHmwO6xaVUnm0ffllWMHp83yQUwR3HZpKTmZJal
-        FunbJXBlrPt3j6lgAkdFy/QfrA2Ml9i6GDk5JARMJLqezgOzhQR2M0q0X1CAiEtKTLt4lLmL
-        kQPIFpY4fLi4i5ELqOQto8SB02fB6oUFPCWe39vCBpIQEehhlHj3ah8jiMMM4mxrWsUK0TKR
-        UWLXm9lMIC1sAloS+1/cAGvnF1CUuPrjMSOIzStgJ/Fm7hdWEJtFQEXix76NLCC2qECExOEd
-        s6BqBCVOznwCFucEqv+9AiLOLKAu8WfeJWYIW1zi1pP5TBC2vETz1tnMExiFZyFpn4WkZRaS
-        lllIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOHi2tHYwnTsQfYhTgYFTi
-        4b0RMjlWiDWxrLgy9xCjBAezkgivzZ9JsUK8KYmVValF+fFFpTmpxYcYpTlYlMR55fOPRQoJ
-        pCeWpGanphakFsFkmTg4pRoYiwoFmJeafOY90+jfFTOz7JH8yfnFmY5hO+34hdwlbnRkBbJ9
-        sVHMsqz9JpH0Xcvqi+cG8RdX6xPfy/WrqN9oOnXcO5X/k1Orcuu+WyvXNDHfiOq7onaeK7Sq
-        3mbZpVzhNaaV96dOcd2wn2dWRNyU+aavGENL9pyrXvb7h0RIzsN3k3b+SJqgxFKckWioxVxU
-        nAgAeqdNmpoCAAA=
-X-CMS-MailID: 20191001212856epcas1p3e718d6ad3965a6956cc49007e3a95fd4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781
-References: <CGME20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781@eucas1p2.samsung.com>
-        <20191001124641.22896-1-m.szyprowski@samsung.com>
+References: <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
+ <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
+ <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
+ <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
+ <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
+ <20191001205938.GM25745@shell.armlinux.org.uk> <20191001212608.GN25745@shell.armlinux.org.uk>
+In-Reply-To: <20191001212608.GN25745@shell.armlinux.org.uk>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 1 Oct 2019 14:32:54 -0700
+Message-ID: <CAKwvOdmkmdM14BNurK3WwyG3Qc5wOFeajMtQ1D+na9mLfkim+w@mail.gmail.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Will Deacon <will@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Oct 1, 2019 at 2:26 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> On Tue, Oct 01, 2019 at 09:59:38PM +0100, Russell King - ARM Linux admin =
+wrote:
+> > On Tue, Oct 01, 2019 at 01:21:44PM -0700, Nick Desaulniers wrote:
+> > > On Tue, Oct 1, 2019 at 11:14 AM Russell King - ARM Linux admin
+> > > <linux@armlinux.org.uk> wrote:
+> > > >
+> > > > The whole "let's make inline not really mean inline" is nothing mor=
+e
+> > > > than a band-aid to the overuse (and abuse) of "inline".
+> > >
+> > > Let's triple check the ISO C11 draft spec just to be sure:
+> > > =C2=A7 6.7.4.6: A function declared with an inline function specifier=
+ is an
+> > > inline function. Making a
+> > > function an inline function suggests that calls to the function be as
+> > > fast as possible.
+> > > The extent to which such suggestions are effective is
+> > > implementation-defined. 139)
+> > > 139) For example, an implementation might never perform inline
+> > > substitution, or might only perform inline
+> > > substitutions to calls in the scope of an inline declaration.
+> > > =C2=A7 J.3.8 [Undefined Behavior] Hints: The extent to which suggesti=
+ons
+> > > made by using the inline function specifier are effective (6.7.4).
+> > >
+> > > My translation:
+> > > "Please don't assume inline means anything."
+> > >
+> > > For the unspecified GNU C extension __attribute__((always_inline)), i=
+t
+> > > seems to me like it's meant more for performing inlining (an
+> > > optimization) at -O0.  Whether the compiler warns or not seems like a
+> > > nice side effect, but provides no strong guarantee otherwise.
+> > >
+> > > I'm sorry that so much code may have been written with that
+> > > assumption, and I'm sorry to be the bearer of bad news, but this isn'=
+t
+> > > a recent change.  If code was written under false assumptions, it
+> > > should be rewritten. Sorry.
+> >
+> > You may quote C11, but that is not relevent.  The kernel is coded to
+> > gnu89 standard - see the -std=3Dgnu89 flag.
+>
+> There's more to this and why C11 is entirely irrelevant.  The "inline"
+> you see in our headers is not the compiler keyword that you find in
+> various C standards, it is a macro that gets expanded to either:
+>
+> #define inline inline __attribute__((__always_inline__)) __gnu_inline \
+>         __maybe_unused notrace
+>
+> or
+>
+> #define inline inline                                    __gnu_inline \
+>         __maybe_unused notrace
+>
+> __gnu_inline is defined as:
+>
+> #define __gnu_inline                    __attribute__((__gnu_inline__))
+>
+> So this attaches the gnu_inline attribute to the function:
+>
+> `gnu_inline'
+>      This attribute should be used with a function that is also declared
+>      with the `inline' keyword.  It directs GCC to treat the function
+>      as if it were defined in gnu90 mode even when compiling in C99 or
+>      gnu99 mode.
+> ...
+>      Since ISO C99 specifies a different semantics for `inline', this
+>      function attribute is provided as a transition measure and as a
+>      useful feature in its own right.  This attribute is available in
+>      GCC 4.1.3 and later.  It is available if either of the
+>      preprocessor macros `__GNUC_GNU_INLINE__' or
+>      `__GNUC_STDC_INLINE__' are defined.  *Note An Inline Function is
+>      As Fast As a Macro: Inline.
+>
+> which is quite clear that C99 semantics do not apply to _this_ inline.
+> The manual goes on to explain:
+>
+>  GCC implements three different semantics of declaring a function
+> inline.  One is available with `-std=3Dgnu89' or `-fgnu89-inline' or when
+> `gnu_inline' attribute is present on all inline declarations, another
+> when `-std=3Dc99', `-std=3Dc11', `-std=3Dgnu99' or `-std=3Dgnu11' (withou=
+t
+> `-fgnu89-inline'), and the third is used when compiling C++.
 
-On 19. 10. 1. 오후 9:46, Marek Szyprowski wrote:
-> The error code is propagated to the caller, so there is no need to keep
-> it additionally in the unused variable.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/devfreq/event/exynos-ppmu.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index 87b42055e6bc..85c7a77bf3f0 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -673,7 +673,6 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
->  	for (i = 0; i < info->num_events; i++) {
->  		edev[i] = devm_devfreq_event_add_edev(&pdev->dev, &desc[i]);
->  		if (IS_ERR(edev[i])) {
-> -			ret = PTR_ERR(edev[i]);
->  			dev_err(&pdev->dev,
->  				"failed to add devfreq-event device\n");
->  			return PTR_ERR(edev[i]);
-> 
+(I wrote the kernel patch for gnu_inline; it only comes into play when
+`inline` appears on a function *also defined as `extern`*).
 
-Thanks.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>
+> I'd suggest gnu90 mode is pretty similar to gnu89 mode, and as we build
+> the kernel in gnu89 mode, that is the inlining definition that is
+> appropriate.
+>
+> When it comes to __always_inline, the GCC manual is the definitive
+> reference, since we use the GCC attribute for that:
+>
+> #define __always_inline                 inline __attribute__((__always_in=
+line__))
+>
+> and I've already quoted what the GCC manual says for always_inline.
+>
+> Arguing about what the C11 spec says about inlining when we aren't
+> using C11 dialect in the kernel, but are using GCC features, does
+> not move the discussion on.
+>
+> Thanks anyway, maybe it will become relevent in the future if we
+> decide to move to C11.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+It's not like the semantics of inline are better specified by an older
+standard, or changed (The only real semantic change involving `inline`
+between ISO C90 and ISO C99 has to do with whether `extern inline`
+emits the function with external linkage as you noted).  But that's
+irrelevant to the discussion.).  I quoted C11 because ctrl+f doesn't
+work for the C90 ISO spec pdf.  C90 spec doesn't even have a section
+on Function Specifiers.  From what I can tell, `inline` wasn't
+specified until ISO C99.
+
+GNU modes are often modifiers off of ISO C bases; gnu89 corresponds to
+ISO C90.  They may permit the use of features from newer ISO C specs
+and GNU C extensions without warning under -Wpedantic.  There aren't a
+whole lot of semantic differences, at least that I'm aware of.
+
+Please don't assume inline means anything.
+--=20
+Thanks,
+~Nick Desaulniers
