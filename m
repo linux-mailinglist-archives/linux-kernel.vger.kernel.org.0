@@ -2,159 +2,301 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 818DCC2EFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9F5C2EFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733083AbfJAIjj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 04:39:39 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:21926 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbfJAIji (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:39:38 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x918bGRK010166;
-        Tue, 1 Oct 2019 17:37:16 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x918bGRK010166
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569919038;
-        bh=5vgn6LNEnRoez/oiB48qIZvraN4rGfguB7nlITyUZnQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=p91ffoOa2E/AqaszRIYAKxH64lj7JJFDmZ79GZ/o3VRI/mwetxYYTQsnMaUw14GmA
-         ZVm6pzze0VUYtB3hV7bLkjiHP+ofi+YmdztVAuitDJ3kA93dhWnhTO8TVLFTz6Dl7g
-         XvOobdLSRmBFYm3F1wliVdaWSZMBm6GoDv/aBdFWMv2Rmxw2+0ZeUdVRufx3OS7r0P
-         Hs72Fd2OSDGs662tuHHS+kUJnTYqsSs2+cjjh4jfgQUE+jKBtvSnylC86v6Zs0O5G6
-         WF0bdsK1XFHCIBi6PJrD9ZiZqjOv17oQVq7jZI87bIrFBpbYdHV9ykA61Q81Qo8YXo
-         +B0Gs6PCTXyTQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: add __always_inline to functions called from __get_user_check()
-Date:   Tue,  1 Oct 2019 17:37:01 +0900
-Message-Id: <20191001083701.27207-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1733093AbfJAIhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 04:37:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36832 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727957AbfJAIhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 04:37:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5517FAF27;
+        Tue,  1 Oct 2019 08:37:44 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 10:37:43 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
+Message-ID: <20191001083743.GC15624@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1909041252230.94813@chino.kir.corp.google.com>
+ <20190904205522.GA9871@redhat.com>
+ <alpine.DEB.2.21.1909051400380.217933@chino.kir.corp.google.com>
+ <20190909193020.GD2063@dhcp22.suse.cz>
+ <20190925070817.GH23050@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1909261149380.39830@chino.kir.corp.google.com>
+ <20190927074803.GB26848@dhcp22.suse.cz>
+ <CAHk-=wgba5zOJtGBFCBP3Oc1m4ma+AR+80s=hy=BbvNr3GqEmA@mail.gmail.com>
+ <20190930112817.GC15942@dhcp22.suse.cz>
+ <20191001054343.GA15624@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001054343.GA15624@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KernelCI reports that bcm2835_defconfig is no longer booting since
-commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-forcibly") (https://lkml.org/lkml/2019/9/26/825).
+On Tue 01-10-19 07:43:43, Michal Hocko wrote:
+[...]
+> I also didn't really get to test any NUMA aspect of the change yet. I
+> still do hope that David can share something I can play with
+> because I do not want to create something completely artificial.
 
-I also received a regression report from Nicolas Saenz Julienne
-(https://lkml.org/lkml/2019/9/27/263).
+I have split out my kvm machine into two nodes to get at least some
+idea how these patches behave
+$ numactl -H
+available: 2 nodes (0-1)
+node 0 cpus: 0 2
+node 0 size: 475 MB
+node 0 free: 432 MB
+node 1 cpus: 1 3
+node 1 size: 503 MB
+node 1 free: 458 MB
 
-This problem has cropped up on bcm2835_defconfig because it enables
-CONFIG_CC_OPTIMIZE_FOR_SIZE. The compiler tends to prefer not inlining
-functions with -Os. I was able to reproduce it with other boards and
-defconfig files by manually enabling CONFIG_CC_OPTIMIZE_FOR_SIZE.
+Again, I am using the simple page cache full of memory and mmap less
+than the full capacity of node 1 with a preferred numa policy:
+root@test1:~# cat thp_test.sh
+#!/bin/sh
 
-The __get_user_check() specifically uses r0, r1, r2 registers.
-So, uaccess_save_and_enable() and uaccess_restore() must be inlined.
-Otherwise, those register assignments would be entirely dropped,
-according to my analysis of the disassembly.
+set -x
+echo 3 > /proc/sys/vm/drop_caches
+echo 1 > /proc/sys/vm/compact_memory
+dd if=/mnt/data/file-1G of=/dev/null bs=$((4<<10))
+TS=$(date +%s)
+cp /proc/vmstat vmstat.$TS.before
+numactl --preferred 1 ./mem_eater nowait 400M
+cp /proc/vmstat vmstat.$TS.after
 
-Prior to commit 9012d011660e ("compiler: allow all arches to enable
-CONFIG_OPTIMIZE_INLINING"), the 'inline' marker was always enough for
-inlining functions, except on x86.
+First run with 5.3 and without THP
+$ echo never > /sys/kernel/mm/transparent_hugepage/enabled
+root@test1:~# sh thp_test.sh 
++ echo 3
++ echo 1
++ dd if=/mnt/data/file-1G of=/dev/null bs=4096
+262144+0 records in
+262144+0 records out
+1073741824 bytes (1.1 GB) copied, 21.938 s, 48.9 MB/s
++ date +%s
++ TS=1569914851
++ cp /proc/vmstat vmstat.1569914851.before
++ numactl --preferred 1 ./mem_eater nowait 400M
+7f4bdefec000-7f4bf7fec000 rw-p 00000000 00:00 0 
+Size:             409600 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:              409600 kB
+Pss:              409600 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:    409600 kB
+Referenced:       344460 kB
+Anonymous:        409600 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                0 kB
+THPeligible:            0
+7f4bdefec000 prefer:1 anon=102400 dirty=102400 active=86115 N0=41963 N1=60437 kernelpagesize_kB=4
++ cp /proc/vmstat vmstat.1569914851.after
 
-Since that commit, all architectures can enable CONFIG_OPTIMIZE_INLINING.
-So, __always_inline is now the only guaranteed way of forcible inlining.
+Few more runs:
+7fd0f248b000 prefer:1 anon=102400 dirty=102400 active=86909 N0=40079 N1=62321 kernelpagesize_kB=4
+7f2a69fc3000 prefer:1 anon=102400 dirty=102400 active=85244 N0=44455 N1=57945 kernelpagesize_kB=4
 
-I also added __always_inline to 4 functions in the call-graph from the
-__get_user_check() macro.
+So we get around 56-60% pages to the preferred node
 
-Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
-Reported-by: "kernelci.org bot" <bot@kernelci.org>
-Reported-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Now let's enable THPs
+root@test1:~# echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
+root@test1:~# sh thp_test.sh
++ echo 3
++ echo 1
++ dd if=/mnt/data/file-1G of=/dev/null bs=4096
+262144+0 records in
+262144+0 records out
+1073741824 bytes (1.1 GB) copied, 21.8665 s, 49.1 MB/s
++ date +%s
++ TS=1569915082
++ cp /proc/vmstat vmstat.1569915082.before
++ numactl --preferred 1 ./mem_eater nowait 400M
+7f05c6dee000-7f05dfdee000 rw-p 00000000 00:00 0
+Size:             409600 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:              409600 kB
+Pss:              409600 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:    409600 kB
+Referenced:       210872 kB
+Anonymous:        409600 kB
+LazyFree:              0 kB
+AnonHugePages:    407552 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                0 kB
+THPeligible:            1
+7f05c6dee000 prefer:1 anon=102400 dirty=102400 active=52718 N0=50688 N1=51712 kernelpagesize_kB=4
++ cp /proc/vmstat vmstat.1569915082.after
 
-Changes in v2:
-  - Use __always_inline instead of changing the function call places
-     (per Russell King)
-  - The previous submission is: https://lore.kernel.org/patchwork/patch/1132459/
+Few more runs
+AnonHugePages:    407552 kB
+7effca1b9000 prefer:1 anon=102400 dirty=102400 active=65977 N0=53760 N1=48640 kernelpagesize_kB=4
 
- arch/arm/include/asm/domain.h  | 8 ++++----
- arch/arm/include/asm/uaccess.h | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+AnonHugePages:    407552 kB
+7f474bfc4000 prefer:1 anon=102400 dirty=102400 active=52676 N0=8704 N1=93696 kernelpagesize_kB=4
 
-diff --git a/arch/arm/include/asm/domain.h b/arch/arm/include/asm/domain.h
-index 567dbede4785..f1d0a7807cd0 100644
---- a/arch/arm/include/asm/domain.h
-+++ b/arch/arm/include/asm/domain.h
-@@ -82,7 +82,7 @@
- #ifndef __ASSEMBLY__
+The utilization is again almost 100% and the preferred node usage
+varied a lot between 47-91%. The last one looks like the result we would
+like to achieve, right?
+
+Now with 5.3 + all 4 patches this time:
+root@test1:~# sh thp_test.sh
++ echo 3
++ echo 1
++ dd if=/mnt/data/file-1G of=/dev/null bs=4096
+262144+0 records in
+262144+0 records out
+1073741824 bytes (1.1 GB) copied, 21.5368 s, 49.9 MB/s
++ date +%s
++ TS=1569915403
++ cp /proc/vmstat vmstat.1569915403.before
++ numactl --preferred 1 ./mem_eater nowait 400M
+7f8114ab4000-7f812dab4000 rw-p 00000000 00:00 0
+Size:             409600 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:              409600 kB
+Pss:              409600 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:    409600 kB
+Referenced:       207568 kB
+Anonymous:        409600 kB
+LazyFree:              0 kB
+AnonHugePages:    401408 kB
+ShmemPmdMapped:        0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                0 kB
+THPeligible:            1
+7f8114ab4000 prefer:1 anon=102400 dirty=102400 active=51892 N0=3072 N1=99328 kernelpagesize_kB=4
++ cp /proc/vmstat vmstat.1569915403.after
+
+Few more runs:
+AnonHugePages:    376832 kB
+7f37a1404000 prefer:1 anon=102400 dirty=102400 active=55204 N0=23153 N1=79247 kernelpagesize_kB=4
+
+AnonHugePages:    372736 kB
+7f4abe4af000 prefer:1 anon=102400 dirty=102400 active=52399 N0=23646 N1=78754 kernelpagesize_kB=4
+
+The THP utilization varies again and the locality is higher in average
+76+%.  Which is even higher than the base page case. I was really
+wondering what is the reason for that So I've added a simple debugging
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 8caab1f81a52..565f667f6dcb 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2140,9 +2140,11 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
+ 			 * to prefer hugepage backing, retry allowing remote
+ 			 * memory as well.
+ 			 */
+-			if (!page && (gfp & __GFP_DIRECT_RECLAIM))
++			if (!page && (gfp & __GFP_DIRECT_RECLAIM)) {
+ 				page = __alloc_pages_node(hpage_node,
+ 						gfp | __GFP_NORETRY, order);
++				printk("XXX: %s\n", !page ? "fail" : hpage_node == page_to_nid(page)?"match":"fallback");
++			}
  
- #ifdef CONFIG_CPU_CP15_MMU
--static inline unsigned int get_domain(void)
-+static __always_inline unsigned int get_domain(void)
+ 			goto out;
+ 		}
+
+Cases like
+AnonHugePages:    407552 kB
+7f3ab2ebf000 prefer:1 anon=102400 dirty=102400 active=77503 N0=43520 N1=58880 kernelpagesize_kB=4
+     85 XXX: fallback
+a very successful ones on the other hand
+AnonHugePages:    280576 kB
+7feffd9c2000 prefer:1 anon=102400 dirty=102400 active=52563 N0=3131 N1=99269 kernelpagesize_kB=4
+     62 XXX: fail
+      3 XXX: fallback
+
+Note that 62 failing THPs is 31744 pages which also explains much higher
+locality I suspect (we simply allocate small pages from the preferred
+node).
+
+This is just a very trivial test and I still have to grasp the outcome.
+My current feeling is that the whole thing is very timing specific and
+the higher local utilization depends on somebody else doing a reclaim
+on our behalf with patches applied.
+
+5.3 without any patches behaves more stable although there is a slightly
+higher off node THP success rate but it also seems that the same
+overall THP success rate can be achieved from the local node as well so
+performing compaction would make more sense for those.
+
+With the simple hack on top of 5.3
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 9c9194959271..414d0eaa6287 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4685,7 +4685,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
  {
- 	unsigned int domain;
+ 	struct page *page;
+ 	unsigned int alloc_flags = ALLOC_WMARK_LOW;
+-	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
++	gfp_t alloc_mask, first_alloc_mask; /* The gfp_t that was actually used for allocation */
+ 	struct alloc_context ac = { };
  
-@@ -94,7 +94,7 @@ static inline unsigned int get_domain(void)
- 	return domain;
- }
+ 	/*
+@@ -4711,7 +4711,10 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ 	alloc_flags |= alloc_flags_nofragment(ac.preferred_zoneref->zone, gfp_mask);
  
--static inline void set_domain(unsigned val)
-+static __always_inline void set_domain(unsigned int val)
- {
- 	asm volatile(
- 	"mcr	p15, 0, %0, c3, c0	@ set domain"
-@@ -102,12 +102,12 @@ static inline void set_domain(unsigned val)
- 	isb();
- }
- #else
--static inline unsigned int get_domain(void)
-+static __always_inline unsigned int get_domain(void)
- {
- 	return 0;
- }
+ 	/* First allocation attempt */
+-	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
++	first_alloc_mask = alloc_mask;
++	if (order && (alloc_mask & __GFP_DIRECT_RECLAIM))
++		first_alloc_mask |= __GFP_THISNODE;
++	page = get_page_from_freelist(first_alloc_mask, order, alloc_flags, &ac);
+ 	if (likely(page))
+ 		goto out;
  
--static inline void set_domain(unsigned val)
-+static __always_inline void set_domain(unsigned int val)
- {
- }
- #endif
-diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index 303248e5b990..98c6b91be4a8 100644
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -22,7 +22,7 @@
-  * perform such accesses (eg, via list poison values) which could then
-  * be exploited for priviledge escalation.
-  */
--static inline unsigned int uaccess_save_and_enable(void)
-+static __always_inline unsigned int uaccess_save_and_enable(void)
- {
- #ifdef CONFIG_CPU_SW_DOMAIN_PAN
- 	unsigned int old_domain = get_domain();
-@@ -37,7 +37,7 @@ static inline unsigned int uaccess_save_and_enable(void)
- #endif
- }
- 
--static inline void uaccess_restore(unsigned int flags)
-+static __always_inline void uaccess_restore(unsigned int flags)
- {
- #ifdef CONFIG_CPU_SW_DOMAIN_PAN
- 	/* Restore the user access mask */
+I am getting
+AnonHugePages:    407552 kB
+7f88a67ca000 prefer:1 anon=102400 dirty=102400 active=60362 N0=39424 N1=62976 kernelpagesize_kB=4
+
+AnonHugePages:    407552 kB
+7f18f0de5000 prefer:1 anon=102400 dirty=102400 active=51685 N0=34720 N1=67680 kernelpagesize_kB=4
+
+AnonHugePages:    407552 kB
+7f443f89e000 prefer:1 anon=102400 dirty=102400 active=52382 N0=62976 N1=39424 kernelpagesize_kB=4
+
+While first two rounds looked very promising with 60%+ locality with a
+consistent THP utilization then the locality went crazy so there is
+more to look into. The fast path still seems to make some difference
+though.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
