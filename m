@@ -2,108 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D87C3C03
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2175C3C17
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388724AbfJAQry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:47:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57838 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390261AbfJAQpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:45:24 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 764B3205C9;
-        Tue,  1 Oct 2019 16:45:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948323;
-        bh=jvAHYF044tOe4IyKrq8IstBz4ghDMkwNfGr78ETNkJw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JXkKRx46EFNoe/9OtMMn8DKaJpOUX7pSO09ezymC/BvLW6TeNeV7nULAHd21It6gT
-         4Ox6eX8I4L7pBeqzKh+O8i2WX5wQvt3bqzKfQzEru2cwoU9YsVfiLBNGyvd3Om8Rg8
-         UFeGIDHAk+263gu1/CnANM4yA5bWmrP09i6QZfOQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takeshi Misawa <jeliantsurux@gmail.com>,
-        syzbot+d9c8bf24e56416d7ce2c@syzkaller.appspotmail.com,
-        Guillaume Nault <gnault@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-ppp@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 14/19] ppp: Fix memory leak in ppp_write
-Date:   Tue,  1 Oct 2019 12:45:00 -0400
-Message-Id: <20191001164505.16708-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164505.16708-1-sashal@kernel.org>
-References: <20191001164505.16708-1-sashal@kernel.org>
+        id S2388838AbfJAQsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:48:50 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40348 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388815AbfJAQsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:48:47 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x127so8406460pfb.7
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=20rYn1QbDb7O1Jy/WEQnWDY4kyWThv4W3UDnp8d9vY0=;
+        b=incc1FUxNcuHOGOSdHcLUvYZ+S9DvRryel7pL2XWNa0CD0Rh/KNc8lcVsA5KIAMO4t
+         bA+Tmct/udrc4HNV2LqKjNIhg9aJ4k+p/2Wm6+Dz/JEQYhHmuYCTv+51hclaJoKsi84v
+         ZBQ9Fxz5MkV9S48MZoVRuyZwJ8B3m3Jq1xWWw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=20rYn1QbDb7O1Jy/WEQnWDY4kyWThv4W3UDnp8d9vY0=;
+        b=cZwppg7FoRanydD2kCDdWCeIj7PHLFHV6PqJN7EVY8dId94GlLyN+xYZMfWnrRD0AU
+         0YB1/nG9S75YntUc3QA+Hzsdui8u1Pe05p8GLUUL7Gk5oyKh/J+PTJ+e1EoIN6E8QiOI
+         446yKqrPsB/twccV1PAnunQLJO+hbVLKZz7NlasygLQF7Xstp0uzFpb9JY7cA3BhpmeN
+         KSSn3W/YJ+0fkXXhAU1N7ZLx2EHFEdvDdXMC6Vj0NKol+n8Pm3dExTc5z99FvGb6Anzr
+         QJHtG1xvJ0MH6m3TxeWArf8GNybRbdju7zhhKyaLI9QwgPPyhytgSI2AWomwO7XrSKWt
+         VRTw==
+X-Gm-Message-State: APjAAAVHaenB/4V+dXo3buJ4MByZ4ysmjTCTXNlUgCWe2E4mDdIVlDiK
+        a7KVnE5NJN4g0TIX4BitRQpYrw==
+X-Google-Smtp-Source: APXvYqyQdM54m8I3epULb9G/NnqJjXeZcpNK3uSgKyfYIzayyiRPCSEbx2BiWIr88Kk9uq04ooueQw==
+X-Received: by 2002:a63:6b49:: with SMTP id g70mr29953089pgc.92.1569948526763;
+        Tue, 01 Oct 2019 09:48:46 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q204sm17704948pfc.11.2019.10.01.09.48.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 09:48:45 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 09:48:44 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-kernel@vger.kernel.org,
+        =?iso-8859-1?Q?J=E9r=E9mie?= Galarneau 
+        <jeremie.galarneau@efficios.com>, s.mesoraca16@gmail.com,
+        viro@zeniv.linux.org.uk, dan.carpenter@oracle.com,
+        akpm@linux-foundation.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        kernel-hardening@lists.openwall.com, linux-audit@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v2] audit: Report suspicious O_CREAT usage
+Message-ID: <201910010945.CAABF57@keescook>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takeshi Misawa <jeliantsurux@gmail.com>
+This renames the very specific audit_log_link_denied() to
+audit_log_path_denied() and adds the AUDIT_* type as an argument. This
+allows for the creation of the new AUDIT_ANOM_CREAT that can be used to
+report the fifo/regular file creation restrictions that were introduced
+in commit 30aba6656f61 ("namei: allow restricted O_CREAT of FIFOs and
+regular files"). Additionally further clarifies the existing
+"operations" strings.
 
-[ Upstream commit 4c247de564f1ff614d11b3bb5313fb70d7b9598b ]
-
-When ppp is closing, __ppp_xmit_process() failed to enqueue skb
-and skb allocated in ppp_write() is leaked.
-
-syzbot reported :
-BUG: memory leak
-unreferenced object 0xffff88812a17bc00 (size 224):
-  comm "syz-executor673", pid 6952, jiffies 4294942888 (age 13.040s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000d110fff9>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<00000000d110fff9>] slab_post_alloc_hook mm/slab.h:522 [inline]
-    [<00000000d110fff9>] slab_alloc_node mm/slab.c:3262 [inline]
-    [<00000000d110fff9>] kmem_cache_alloc_node+0x163/0x2f0 mm/slab.c:3574
-    [<000000002d616113>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:197
-    [<000000000167fc45>] alloc_skb include/linux/skbuff.h:1055 [inline]
-    [<000000000167fc45>] ppp_write+0x48/0x120 drivers/net/ppp/ppp_generic.c:502
-    [<000000009ab42c0b>] __vfs_write+0x43/0xa0 fs/read_write.c:494
-    [<00000000086b2e22>] vfs_write fs/read_write.c:558 [inline]
-    [<00000000086b2e22>] vfs_write+0xee/0x210 fs/read_write.c:542
-    [<00000000a2b70ef9>] ksys_write+0x7c/0x130 fs/read_write.c:611
-    [<00000000ce5e0fdd>] __do_sys_write fs/read_write.c:623 [inline]
-    [<00000000ce5e0fdd>] __se_sys_write fs/read_write.c:620 [inline]
-    [<00000000ce5e0fdd>] __x64_sys_write+0x1e/0x30 fs/read_write.c:620
-    [<00000000d9d7b370>] do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:296
-    [<0000000006e6d506>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fix this by freeing skb, if ppp is closing.
-
-Fixes: 6d066734e9f0 ("ppp: avoid loop in xmit recursion detection code")
-Reported-and-tested-by: syzbot+d9c8bf24e56416d7ce2c@syzkaller.appspotmail.com
-Signed-off-by: Takeshi Misawa <jeliantsurux@gmail.com>
-Reviewed-by: Guillaume Nault <gnault@redhat.com>
-Tested-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/net/ppp/ppp_generic.c | 2 ++
- 1 file changed, 2 insertions(+)
+v2:
+ - fix build failure typo in CONFIG_AUDIT=n case
+ - improve operations naming (paul)
+---
+ fs/namei.c                 |  8 ++++++--
+ include/linux/audit.h      |  5 +++--
+ include/uapi/linux/audit.h |  1 +
+ kernel/audit.c             | 11 ++++++-----
+ 4 files changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 1e4969d90f1a6..801bab5968d04 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -1432,6 +1432,8 @@ static void __ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
- 			netif_wake_queue(ppp->dev);
- 		else
- 			netif_stop_queue(ppp->dev);
-+	} else {
-+		kfree_skb(skb);
- 	}
- 	ppp_xmit_unlock(ppp);
+diff --git a/fs/namei.c b/fs/namei.c
+index 671c3c1a3425..2d5d245ae723 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -925,7 +925,7 @@ static inline int may_follow_link(struct nameidata *nd)
+ 		return -ECHILD;
+ 
+ 	audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+-	audit_log_link_denied("follow_link");
++	audit_log_path_denied(AUDIT_ANOM_LINK, "sticky_follow_link");
+ 	return -EACCES;
  }
+ 
+@@ -993,7 +993,7 @@ static int may_linkat(struct path *link)
+ 	if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
+ 		return 0;
+ 
+-	audit_log_link_denied("linkat");
++	audit_log_path_denied(AUDIT_ANOM_LINK, "unowned_linkat");
+ 	return -EPERM;
+ }
+ 
+@@ -1031,6 +1031,10 @@ static int may_create_in_sticky(struct dentry * const dir,
+ 	    (dir->d_inode->i_mode & 0020 &&
+ 	     ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
+ 	      (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
++		const char *operation = S_ISFIFO(inode->i_mode) ?
++					"sticky_create_fifo" :
++					"sticky_create_regular";
++		audit_log_path_denied(AUDIT_ANOM_CREAT, operation);
+ 		return -EACCES;
+ 	}
+ 	return 0;
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index aee3dc9eb378..f9ceae57ca8d 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -156,7 +156,8 @@ extern void		    audit_log_d_path(struct audit_buffer *ab,
+ 					     const struct path *path);
+ extern void		    audit_log_key(struct audit_buffer *ab,
+ 					  char *key);
+-extern void		    audit_log_link_denied(const char *operation);
++extern void		    audit_log_path_denied(int type,
++						  const char *operation);
+ extern void		    audit_log_lost(const char *message);
+ 
+ extern int audit_log_task_context(struct audit_buffer *ab);
+@@ -217,7 +218,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
+ { }
+ static inline void audit_log_key(struct audit_buffer *ab, char *key)
+ { }
+-static inline void audit_log_link_denied(const char *string)
++static inline void audit_log_path_denied(int type, const char *operation)
+ { }
+ static inline int audit_log_task_context(struct audit_buffer *ab)
+ {
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index c89c6495983d..3ad935527177 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -143,6 +143,7 @@
+ #define AUDIT_ANOM_PROMISCUOUS      1700 /* Device changed promiscuous mode */
+ #define AUDIT_ANOM_ABEND            1701 /* Process ended abnormally */
+ #define AUDIT_ANOM_LINK		    1702 /* Suspicious use of file links */
++#define AUDIT_ANOM_CREAT	    1703 /* Suspicious file creation */
+ #define AUDIT_INTEGRITY_DATA	    1800 /* Data integrity verification */
+ #define AUDIT_INTEGRITY_METADATA    1801 /* Metadata integrity verification */
+ #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
+diff --git a/kernel/audit.c b/kernel/audit.c
+index da8dc0db5bd3..d75485aa25ff 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2155,18 +2155,19 @@ void audit_log_task_info(struct audit_buffer *ab)
+ EXPORT_SYMBOL(audit_log_task_info);
+ 
+ /**
+- * audit_log_link_denied - report a link restriction denial
+- * @operation: specific link operation
++ * audit_log_path_denied - report a path restriction denial
++ * @type: audit message type (AUDIT_ANOM_LINK, AUDIT_ANOM_CREAT, etc)
++ * @operation: specific operation name
+  */
+-void audit_log_link_denied(const char *operation)
++void audit_log_path_denied(int type, const char *operation)
+ {
+ 	struct audit_buffer *ab;
+ 
+ 	if (!audit_enabled || audit_dummy_context())
+ 		return;
+ 
+-	/* Generate AUDIT_ANOM_LINK with subject, operation, outcome. */
+-	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_ANOM_LINK);
++	/* Generate log with subject, operation, outcome. */
++	ab = audit_log_start(audit_context(), GFP_KERNEL, type);
+ 	if (!ab)
+ 		return;
+ 	audit_log_format(ab, "op=%s", operation);
 -- 
-2.20.1
+2.17.1
 
+
+-- 
+Kees Cook
