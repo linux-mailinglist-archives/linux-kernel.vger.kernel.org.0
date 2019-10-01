@@ -2,73 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B46C3CA0
+	by mail.lfdr.de (Postfix) with ESMTP id 80ED8C3CA1
 	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389418AbfJAQxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:53:00 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:56510 "EHLO vps0.lunn.ch"
+        id S2389440AbfJAQxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:53:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:54182 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389331AbfJAQw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:52:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=FX5jf20eacmB/0gFXEhbZpatqYKCnwg235wY4yTy5I8=; b=ZaDS95R+qKbRGCSKbOtuDkKVkt
-        /C/hkhascHZ5lWv9IFuRxtzt2/pOybQ0vbmd7SmvBukkhoPdpz691km29114XSaqO9j/geTyTDrqU
-        2RjCogdwSyQJEKXMJsarWOGVkqEDvUu6l3PoKFZzHIaFAzrFPMgAJmAgkQmCeG60SaJg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iFLOJ-0001ii-4j; Tue, 01 Oct 2019 18:52:47 +0200
-Date:   Tue, 1 Oct 2019 18:52:47 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/3] Pine64+ specific hacks for RTL8211E Ethernet PHY
-Message-ID: <20191001165247.GE2031@lunn.ch>
-References: <20191001082912.12905-1-icenowy@aosc.io>
- <3ef60a0c-5cfd-420b-6cad-2c16eb2a6c01@gmail.com>
+        id S1727562AbfJAQxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:53:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FB2E337;
+        Tue,  1 Oct 2019 09:53:05 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C81543F706;
+        Tue,  1 Oct 2019 09:53:03 -0700 (PDT)
+Subject: Re: [PATCH v3 04/10] sched/fair: rework load_balance
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
+ <1568878421-12301-5-git-send-email-vincent.guittot@linaro.org>
+ <9bfb3252-c268-8c0c-9c72-65f872e9c8b2@arm.com>
+ <CAKfTPtDUFMFnD+RZndx0+8A+V9HV9Hv0TN+p=mAge0VsqS6xmA@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <3dca46c5-c395-e2b3-a7e8-e9208ba741c8@arm.com>
+Date:   Tue, 1 Oct 2019 18:52:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ef60a0c-5cfd-420b-6cad-2c16eb2a6c01@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKfTPtDUFMFnD+RZndx0+8A+V9HV9Hv0TN+p=mAge0VsqS6xmA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 09:47:08AM -0700, Florian Fainelli wrote:
-> On 10/1/19 1:29 AM, Icenowy Zheng wrote:
-> > There're some Pine64+ boards known to have broken RTL8211E chips, and
-> > a hack is given by Pine64+, which is said to be from Realtek.
-> > 
-> > This patchset adds the hack.
-> > 
-> > The hack is taken from U-Boot, and it contains magic numbers without
-> > any document.
+On 01/10/2019 10:14, Vincent Guittot wrote:
+> On Mon, 30 Sep 2019 at 18:24, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> Hi Vincent,
+>>
+>> On 19/09/2019 09:33, Vincent Guittot wrote:
+
+[...]
+
+>>> @@ -7347,7 +7362,7 @@ static int detach_tasks(struct lb_env *env)
+>>>   {
+>>>         struct list_head *tasks = &env->src_rq->cfs_tasks;
+>>>         struct task_struct *p;
+>>> -     unsigned long load;
+>>> +     unsigned long util, load;
+>>
+>> Minor: Order by length or reduce scope to while loop ?
 > 
-> Such hacks are the very reason why PHY fixups exists, please investigate
-> working with Realtek first to understand how to make this hack less of a
-> hack so it is understood what it does and you can either add proper
-> infrastructure to the realtek PHY driver to perform that hack, or if
-> that is not an option, register a board specific fixup.
+> I don't get your point here
 
-Hi Icenowy
+Nothing dramatic here! Just
 
-It would also be nice to know if only Pine64 has these bad PHYs, or if
-they were in the general distribution chain and other boards might
-have them as well.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d0c3aa1dc290..a08f342ead89 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7333,8 +7333,8 @@ static const unsigned int sched_nr_migrate_break = 32;
+ static int detach_tasks(struct lb_env *env)
+ {
+        struct list_head *tasks = &env->src_rq->cfs_tasks;
+-       struct task_struct *p;
+        unsigned long load, util;
++       struct task_struct *p;
+        int detached = 0;
 
-     Andrew
+        lockdep_assert_held(&env->src_rq->lock);
+
+or
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d0c3aa1dc290..4d1864d43ed7 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7334,7 +7334,6 @@ static int detach_tasks(struct lb_env *env)
+ {
+        struct list_head *tasks = &env->src_rq->cfs_tasks;
+        struct task_struct *p;
+-       unsigned long load, util;
+        int detached = 0;
+
+        lockdep_assert_held(&env->src_rq->lock);
+@@ -7343,6 +7342,8 @@ static int detach_tasks(struct lb_env *env)
+                return 0;
+
+        while (!list_empty(tasks)) {
++               unsigned long load, util;
++
+                /*
+
+[...]
+
+>>> @@ -8042,14 +8104,24 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>>>                 }
+>>>         }
+>>>
+>>> -     /* Adjust by relative CPU capacity of the group */
+>>> +     /* Check if dst cpu is idle and preferred to this group */
+>>
+>> s/preferred to/preferred by ? or the preferred CPU of this group ?
+> 
+> dst cpu doesn't belong to this group. We compare asym_prefer_cpu of
+> this group vs dst_cpu which belongs to another group
+
+Ah, in the sense of 'preferred over'. Got it now!
+
+[...]
+
+>>> +     if (busiest->group_type == group_imbalanced) {
+>>> +             /*
+>>> +              * In the group_imb case we cannot rely on group-wide averages
+>>> +              * to ensure CPU-load equilibrium, try to move any task to fix
+>>> +              * the imbalance. The next load balance will take care of
+>>> +              * balancing back the system.
+>>
+>> balancing back ?
+> 
+> In case of imbalance, we don't try to balance the system but only try
+> to get rid of the pinned tasks problem. The system will still be
+> unbalanced after the migration and the next load balance will take
+> care of balancing the system
+
+OK.
+
+[...]
+
+>>>         /*
+>>> -      * Avg load of busiest sg can be less and avg load of local sg can
+>>> -      * be greater than avg load across all sgs of sd because avg load
+>>> -      * factors in sg capacity and sgs with smaller group_type are
+>>> -      * skipped when updating the busiest sg:
+>>> +      * Try to use spare capacity of local group without overloading it or
+>>> +      * emptying busiest
+>>>          */
+>>> -     if (busiest->group_type != group_misfit_task &&
+>>> -         (busiest->avg_load <= sds->avg_load ||
+>>> -          local->avg_load >= sds->avg_load)) {
+>>> -             env->imbalance = 0;
+>>> +     if (local->group_type == group_has_spare) {
+>>> +             if (busiest->group_type > group_fully_busy) {
+>>
+>> So this could be 'busiest->group_type == group_overloaded' here to match
+>> the comment below? Since you handle group_misfit_task,
+>> group_asym_packing, group_imbalanced above and return.
+> 
+> This is just to be more robust in case some new states are added later
+
+OK, although I doubt that additional states can be added easily w/o
+carefully auditing the entire lb code ;-)
+
+[...]
+
+>>> +             if (busiest->group_weight == 1 || sds->prefer_sibling) {
+>>> +                     /*
+>>> +                      * When prefer sibling, evenly spread running tasks on
+>>> +                      * groups.
+>>> +                      */
+>>> +                     env->balance_type = migrate_task;
+>>> +                     env->imbalance = (busiest->sum_h_nr_running - local->sum_h_nr_running) >> 1;
+>>> +                     return;
+>>> +             }
+>>> +
+>>> +             /*
+>>> +              * If there is no overload, we just want to even the number of
+>>> +              * idle cpus.
+>>> +              */
+>>> +             env->balance_type = migrate_task;
+>>> +             env->imbalance = max_t(long, 0, (local->idle_cpus - busiest->idle_cpus) >> 1);
+>>
+>> Why do we need a max_t(long, 0, ...) here and not for the 'if
+>> (busiest->group_weight == 1 || sds->prefer_sibling)' case?
+> 
+> For env->imbalance = (busiest->sum_h_nr_running - local->sum_h_nr_running) >> 1;
+> 
+> either we have sds->prefer_sibling && busiest->sum_nr_running >
+> local->sum_nr_running + 1
+
+I see, this corresponds to
+
+/* Try to move all excess tasks to child's sibling domain */
+       if (sds.prefer_sibling && local->group_type == group_has_spare &&
+           busiest->sum_h_nr_running > local->sum_h_nr_running + 1)
+               goto force_balance;
+
+in find_busiest_group, I assume.
+
+Haven't been able to recreate this yet on my arm64 platform since there
+is no prefer_sibling and in case local and busiest have
+group_type=group_has_spare they bailout in
+
+         if (busiest->group_type != group_overloaded &&
+              (env->idle == CPU_NOT_IDLE ||
+               local->idle_cpus <= (busiest->idle_cpus + 1)))
+                 goto out_balanced;
+
+
+[...]
+
+>>> -     if (busiest->group_type == group_overloaded &&
+>>> -         local->group_type   == group_overloaded) {
+>>> -             load_above_capacity = busiest->sum_h_nr_running * SCHED_CAPACITY_SCALE;
+>>> -             if (load_above_capacity > busiest->group_capacity) {
+>>> -                     load_above_capacity -= busiest->group_capacity;
+>>> -                     load_above_capacity *= scale_load_down(NICE_0_LOAD);
+>>> -                     load_above_capacity /= busiest->group_capacity;
+>>> -             } else
+>>> -                     load_above_capacity = ~0UL;
+>>> +     if (local->group_type < group_overloaded) {
+>>> +             /*
+>>> +              * Local will become overloaded so the avg_load metrics are
+>>> +              * finally needed.
+>>> +              */
+>>
+>> How does this relate to the decision_matrix[local, busiest] (dm[])? E.g.
+>> dm[overload, overload] == avg_load or dm[fully_busy, overload] == force.
+>> It would be nice to be able to match all allowed fields of dm to code sections.
+> 
+> decision_matrix describes how it decides between balanced or unbalanced.
+> In case of dm[overload, overload], we use the avg_load to decide if it
+> is balanced or not
+
+OK, that's why you calculate sgs->avg_load in update_sg_lb_stats() only
+for 'sgs->group_type == group_overloaded'.
+
+> In case of dm[fully_busy, overload], the groups are unbalanced because
+> fully_busy < overload and we force the balance. Then
+> calculate_imbalance() uses the avg_load to decide how much will be
+> moved
+
+And in this case 'local->group_type < group_overloaded' in
+calculate_imbalance(), 'local->avg_load' and 'sds->avg_load' have to be
+calculated before using them in env->imbalance = min(...).
+
+OK, got it now.
+
+> dm[overload, overload]=force means that we force the balance and we
+> will compute later the imbalance. avg_load may be used to calculate
+> the imbalance
+> dm[overload, overload]=avg_load means that we compare the avg_load to
+> decide whether we need to balance load between groups
+> dm[overload, overload]=nr_idle means that we compare the number of
+> idle cpus to decide whether we need to balance.  In fact this is no
+> more true with patch 7 because we also take into account the number of
+> nr_h_running when weight =1
+
+This becomes clearer now ... slowly.
+
+[...]
