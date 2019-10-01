@@ -2,72 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22549C2B70
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 02:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 782DCC2B74
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 03:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbfJAAxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Sep 2019 20:53:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbfJAAxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Sep 2019 20:53:37 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90C0120815;
-        Tue,  1 Oct 2019 00:53:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569891217;
-        bh=77i6Dx2TQa6aIEbPIK9hT2kd3SmRZpilcJCRtAau8J0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YuI2cEsPCcELvZ8fXzwgkiXAy6TkHMnp5080OTTs0EZ4+VadiipO8WdbcYRUw/Vr4
-         qHGHcnlX0uFS4/ggTAnoit9Q15xR0BSCMryG38ETHCNb/HcTH78Mq5ArND3yaaoqeF
-         UTM/luVh+EuhPakfXo719EV52kELLT+yotP1Yugc=
-Subject: Re: [PATCH 5.2 00/45] 5.2.18-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190929135024.387033930@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <df4d31b8-907d-1c69-78c5-c40092cf4654@kernel.org>
-Date:   Mon, 30 Sep 2019 18:53:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727659AbfJABAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Sep 2019 21:00:34 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44083 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfJABAe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Sep 2019 21:00:34 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i14so8381908pgt.11
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 18:00:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E6c31Z8bqLagiMFjesWQuytu80YEed1XWODDuNsW24s=;
+        b=epI3ugdyCvOb4zVNWfia360x2V+v1fm0AgFUCheJyZoUPJVy8ggRSIGIk4NaAVbcs8
+         glkEUdVmFN63+q25+HfwPVyF7/WpBLgRjU2E3olV+ADe28YhCAQg+TX6TAKvCx31/fjd
+         mDk4bYpvHaWJVnZyiYSSnbKK3bGoR5ynIr//c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E6c31Z8bqLagiMFjesWQuytu80YEed1XWODDuNsW24s=;
+        b=KK2syX0QxL3m2kGbcfbvKOaSp7FiVczS4iEzXXL6DCYGx7xLS65YzN5dSnh0UV56OP
+         0cDvGUo4+8RLOTN6KY7PsqzIOkOeuVSVNvWKcD2M9JlexNXBqNZJVCX0xNVI7oQpfh4P
+         e7w7dp4Y0HXWS91r2MKqSO0850LkPnPZNHg0D1W32Xf7fDLAcv1RPKwRnPllPj8zdGet
+         1gWWLquHVjkeW/knbPdCIqtC138skrE/WtO0UjUrbv2xFZjNffZYnXT3Ccwb4+Ju46dR
+         cJ/QcwCo4khFxp5UKIIm0GJ8JzeHSpBNUTGD5ZlyXOCFLAcLwUukm2OJyigidBALx7lN
+         lAUA==
+X-Gm-Message-State: APjAAAU1r2zLr3tPAweIHFAvyUZeQ0MnoulXOK4Sif0OIn8c9ybgfTHI
+        iQw52F9kju1UskutwCsSlhLK9MO1wYQ=
+X-Google-Smtp-Source: APXvYqxIwQ/Z/NG15bD/vJSTi2QXMxa4a8imVSlOMCNDTKdY/6Mm2LE1FlsEyH4TWT/43exPRAlWBQ==
+X-Received: by 2002:a63:1950:: with SMTP id 16mr28046453pgz.213.1569891631964;
+        Mon, 30 Sep 2019 18:00:31 -0700 (PDT)
+Received: from localhost ([2401:fa00:1:10:79b4:bd83:e4a5:a720])
+        by smtp.gmail.com with ESMTPSA id 62sm13146047pfg.164.2019.09.30.18.00.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2019 18:00:31 -0700 (PDT)
+From:   Cheng-Yi Chiang <cychiang@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        dianders@chromium.org, dgreid@chromium.org, tzungbi@chromium.org,
+        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH] drm/bridge: dw-hdmi: Restore audio when setting a mode
+Date:   Tue,  1 Oct 2019 09:00:20 +0800
+Message-Id: <20191001010020.122134-1-cychiang@chromium.org>
+X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
 MIME-Version: 1.0
-In-Reply-To: <20190929135024.387033930@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/29/19 7:55 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.18 release.
-> There are 45 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue 01 Oct 2019 01:47:47 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.18-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+From: Daniel Kurtz <djkurtz@chromium.org>
 
-Compiled and booted on my test system. No dmesg regressions.
+When setting a new display mode, dw_hdmi_setup() calls
+dw_hdmi_enable_video_path(), which disables all hdmi clocks, including
+the audio clock.
 
-thanks,
--- Shuah
+We should only (re-)enable the audio clock if audio was already enabled
+when setting the new mode.
+
+Without this patch, on RK3288, there will be HDMI audio on some monitors
+if i2s was played to headphone when the monitor was plugged.
+ACER H277HU and ASUS PB278 are two of the monitors showing this issue.
+
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index aa7efd4da1c8..c60e951122c9 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1982,6 +1982,15 @@ static void hdmi_disable_overflow_interrupts(struct dw_hdmi *hdmi)
+ 		    HDMI_IH_MUTE_FC_STAT2);
+ }
+ 
++static void dw_hdmi_audio_restore(struct dw_hdmi *hdmi)
++{
++	mutex_lock(&hdmi->audio_mutex);
++
++	hdmi_enable_audio_clk(hdmi, hdmi->audio_enable);
++
++	mutex_unlock(&hdmi->audio_mutex);
++}
++
+ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ {
+ 	int ret;
+@@ -2045,7 +2054,7 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 
+ 		/* HDMI Initialization Step E - Configure audio */
+ 		hdmi_clk_regenerator_update_pixel_clock(hdmi);
+-		hdmi_enable_audio_clk(hdmi, true);
++		dw_hdmi_audio_restore(hdmi);
+ 	}
+ 
+ 	/* not for DVI mode */
+-- 
+2.23.0.444.g18eeb5a265-goog
 
