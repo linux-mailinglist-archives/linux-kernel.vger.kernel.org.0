@@ -2,114 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69331C3627
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E61FEC3634
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfJANp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:45:57 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41113 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfJANp5 (ORCPT
+        id S2388725AbfJANq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:46:29 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:32860 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726152AbfJANq2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:45:57 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d16so1037889qtq.8
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 06:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=T00f8oMdHVkq3W+YEv58SmUAyov+mXAtsvXMMacWUW0=;
-        b=V39IyWmxk0rgxt/doIxYB7cVCye9DyolWnRUFJWdX2uiEJw7ZqTTPwOC1H3mTm/MtK
-         uoZhI9uHFApcOHp2lrQGzysxHBQN5o53+a1xxXtTQ08W1tVyh9k+0Mt0lBJeORFCy2GA
-         7HIA9QCLKhHlUqQj3SAwMG8+X93km5hvTjGxPjmLWjtn21OkVu8uKXt5ldVnVV79O5cy
-         zvJLVp+dlA0WQo1Nl097b9bCI1HitM7j8Br4HOJ2iyZIdtSOBVJRL5hOUPM9sIMLqf8E
-         vNlXR4mVpy2cUVYgHf68mTY4gEqW/+tBwqSGnGZn356X6XKR8EqtayopDV8AVpkMcUNm
-         PP0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=T00f8oMdHVkq3W+YEv58SmUAyov+mXAtsvXMMacWUW0=;
-        b=JcS1AYAKifQeHaKyiWPj4hGhwyEZCT2Ezt0E7H2Maww2vW9jTaDNdC9oVxO8AZp2jE
-         pvvfKdivoAMwiqnYBhUfY1xo4J8WEVXlCIxzXFSbP00VDWPnsboI7Yd61cJq3FxN1L6t
-         3jZRNvVREQYXCVwnY6j+eTWBACJi0oPfDX0XjKEExrYlNoO4+OBzjuCV43tUf7RoV1WH
-         1jop8Wi0pU0B/Kw6xGctLkf0qo8Y6+s+h4luqbujpA8aTp5s/B5kl0wYPkQj4gvHM7O8
-         05b7Bm+XM2Jre4+BZbtvrPvH+s579VRl3pWOVbGcCU4rbbdST8nVLvh3wln6kolgTx5o
-         SEMg==
-X-Gm-Message-State: APjAAAUnPvf9mXksy8h/oHpDtxyPL91IXbngNP/EG4SCTYadrS4WkWD1
-        X6PLsFGEGCynqavrWSk3g4x0Yw==
-X-Google-Smtp-Source: APXvYqwiG/lt+iFDKSmGAhOXggR1gSAbWoLCXPkRzTmBM7QvGMyE3m+0mokw3wsruQ7dNlyt9RXdvA==
-X-Received: by 2002:ac8:5243:: with SMTP id y3mr30415686qtn.51.1569937556568;
-        Tue, 01 Oct 2019 06:45:56 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
-        by smtp.gmail.com with ESMTPSA id g3sm6948383qkb.117.2019.10.01.06.45.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 01 Oct 2019 06:45:55 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1iFITT-00058C-Ek; Tue, 01 Oct 2019 10:45:55 -0300
-Date:   Tue, 1 Oct 2019 10:45:55 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>
-Cc:     dri-devel@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-        sam@ravnborg.org, hdegoede@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [1/3] drm/tinydrm/Kconfig: Remove menuconfig DRM_TINYDRM
-Message-ID: <20191001134555.GB22532@ziepe.ca>
-References: <20190725105132.22545-2-noralf@tronnes.org>
- <20191001123636.GA8351@ziepe.ca>
- <1fffe7b1-a738-a9e3-ea5f-9d696cb98650@tronnes.org>
+        Tue, 1 Oct 2019 09:46:28 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91DibK1023820;
+        Tue, 1 Oct 2019 08:46:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type;
+ s=PODMain02222019; bh=w7BEQ9sUsn6D/1NoT2B9gBAf78ahn+6oAXHVOe5nVKY=;
+ b=Hbx/4xlvAuPhqHX67K8dl9c8dlWGYvwEQkUXQyBNtcfH07p3AdaINxN+wbCZdEcKdXbw
+ rUP8745Y6yHuYiU/03Jydn7y4ZWYnfoXajBMRBWkNKXwE8M1B4Fh5VaydDt1JqkXyWkF
+ XhjOW2b8JJxC6X14mlZBOy7Yv20vcqthFDusj8FdRBwSoVT+BCZJseZooImxpqYMP9yg
+ XxSzupddWlWFekFYRNi19ctU+UnQmwQJf7zUofCzk2bnYKLi3N5qJAz6wkFSoFK4WgDz
+ He/lf+mWw3cyEnysKhj3mk4lXk03+fWE+ig+7Ty+t6qT0x72oEkemN0E7FpGu59mLwrE Sw== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([87.246.76.36])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2va4x4ncr7-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 01 Oct 2019 08:46:19 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 1 Oct
+ 2019 14:46:17 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Tue, 1 Oct 2019 14:46:17 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id CA6312A1;
+        Tue,  1 Oct 2019 13:46:17 +0000 (UTC)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 1/3] mfd: wm8998: Remove some unused registers
+Date:   Tue, 1 Oct 2019 14:46:15 +0100
+Message-ID: <20191001134617.12093-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1fffe7b1-a738-a9e3-ea5f-9d696cb98650@tronnes.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=732
+ malwarescore=0 adultscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=1 bulkscore=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910010125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 03:28:46PM +0200, Noralf Trønnes wrote:
-> 
-> 
-> Den 01.10.2019 14.36, skrev Jason Gunthorpe:
-> > On Thu, Jul 25, 2019 at 12:51:30PM +0200, Noralf Trønnes wrote:
-> >> This makes the tiny drivers visible by default without having to enable a
-> >> knob.
-> >>
-> >> Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-> >> Reviewed-by: Hans de Goede <hdegoede@redhat.com> to it once
-> >>  drivers/gpu/drm/Makefile        |  2 +-
-> >>  drivers/gpu/drm/tinydrm/Kconfig | 37 +++++++++++++++++++--------------
-> >>  2 files changed, 22 insertions(+), 17 deletions(-)
-> > 
-> > Bisection says this patch (28c47e16ea2a19adb47fe2c182cbd61cb854237c)
-> > breaks kconfig stuff in v5.4-rc by creating circular
-> > dependencies. Could someone send a -rc patch to fix this please?
-> > 
-> > THINKPAD_ACPI (defined at drivers/platform/x86/Kconfig:484), with definition...
-> > ...depends on FB_SSD1307 (defined at drivers/video/fbdev/Kconfig:2259), with definition...
-> > ...depends on FB (defined at drivers/video/fbdev/Kconfig:12), with definition...
-> > ...depends on DRM_KMS_FB_HELPER (defined at drivers/gpu/drm/Kconfig:79), with definition...
-> > ...depends on DRM_KMS_HELPER (defined at drivers/gpu/drm/Kconfig:73), with definition...
-> > ...depends on TINYDRM_REPAPER (defined at drivers/gpu/drm/tinydrm/Kconfig:51), with definition...
-> > ...depends on THERMAL (defined at drivers/thermal/Kconfig:6), with definition...
-> > ...depends on SENSORS_NPCM7XX (defined at drivers/hwmon/Kconfig:1285), with definition...
-> > ...depends on HWMON (defined at drivers/hwmon/Kconfig:6), with definition...
-> > ...depends on THINKPAD_ACPI (defined at drivers/platform/x86/Kconfig:484), with definition...
-> > ...depends on ACPI_VIDEO (defined at drivers/acpi/Kconfig:193), with definition...
-> > ...depends on ACER_WMI (defined at drivers/platform/x86/Kconfig:19), with definition...
-> > ...depends on BACKLIGHT_CLASS_DEVICE (defined at drivers/video/backlight/Kconfig:144), with definition...
-> > ...depends again on THINKPAD_ACPI (defined at drivers/platform/x86/Kconfig:484)
-> > 
-> 
-> Would this commit fix this by any chance:
-> 
-> drm/tiny: Kconfig: Remove always-y THERMAL dep. from TINYDRM_REPAPER
-> https://cgit.freedesktop.org/drm/drm-misc/commit/?id=dfef959803c728c616ad29b008cd91b3446a993a
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
 
-Yes, thank you, can someone send this to -rc to unbreak 5.4?
+Patch is new to the series.
 
-Jason
+Thanks,
+Charles
+
+ drivers/mfd/wm8998-tables.c           | 12 ------------
+ include/linux/mfd/arizona/registers.h |  7 -------
+ 2 files changed, 19 deletions(-)
+
+diff --git a/drivers/mfd/wm8998-tables.c b/drivers/mfd/wm8998-tables.c
+index ebf0eadd2075c..9b34a6d760949 100644
+--- a/drivers/mfd/wm8998-tables.c
++++ b/drivers/mfd/wm8998-tables.c
+@@ -806,12 +806,6 @@ static const struct reg_default wm8998_reg_default[] = {
+ 	{ 0x00000EF3, 0x0000 },    /* R3827  - ISRC 2 CTRL 1 */
+ 	{ 0x00000EF4, 0x0001 },    /* R3828  - ISRC 2 CTRL 2 */
+ 	{ 0x00000EF5, 0x0000 },    /* R3829  - ISRC 2 CTRL 3 */
+-	{ 0x00001700, 0x0000 },    /* R5888  - FRF_COEFF_1 */
+-	{ 0x00001701, 0x0000 },    /* R5889  - FRF_COEFF_2 */
+-	{ 0x00001702, 0x0000 },    /* R5890  - FRF_COEFF_3 */
+-	{ 0x00001703, 0x0000 },    /* R5891  - FRF_COEFF_4 */
+-	{ 0x00001704, 0x0000 },    /* R5892  - DAC_COMP_1 */
+-	{ 0x00001705, 0x0000 },    /* R5893  - DAC_COMP_2 */
+ };
+ 
+ static bool wm8998_readable_register(struct device *dev, unsigned int reg)
+@@ -1492,12 +1486,6 @@ static bool wm8998_readable_register(struct device *dev, unsigned int reg)
+ 	case ARIZONA_ISRC_2_CTRL_1:
+ 	case ARIZONA_ISRC_2_CTRL_2:
+ 	case ARIZONA_ISRC_2_CTRL_3:
+-	case ARIZONA_FRF_COEFF_1:
+-	case ARIZONA_FRF_COEFF_2:
+-	case ARIZONA_FRF_COEFF_3:
+-	case ARIZONA_FRF_COEFF_4:
+-	case ARIZONA_V2_DAC_COMP_1:
+-	case ARIZONA_V2_DAC_COMP_2:
+ 		return true;
+ 	default:
+ 		return false;
+diff --git a/include/linux/mfd/arizona/registers.h b/include/linux/mfd/arizona/registers.h
+index bb1a2530ae279..49e24d1de8d47 100644
+--- a/include/linux/mfd/arizona/registers.h
++++ b/include/linux/mfd/arizona/registers.h
+@@ -1186,13 +1186,6 @@
+ #define ARIZONA_DSP4_SCRATCH_1                   0x1441
+ #define ARIZONA_DSP4_SCRATCH_2                   0x1442
+ #define ARIZONA_DSP4_SCRATCH_3                   0x1443
+-#define ARIZONA_FRF_COEFF_1                      0x1700
+-#define ARIZONA_FRF_COEFF_2                      0x1701
+-#define ARIZONA_FRF_COEFF_3                      0x1702
+-#define ARIZONA_FRF_COEFF_4                      0x1703
+-#define ARIZONA_V2_DAC_COMP_1                    0x1704
+-#define ARIZONA_V2_DAC_COMP_2                    0x1705
+-
+ 
+ /*
+  * Field Definitions.
+-- 
+2.11.0
+
