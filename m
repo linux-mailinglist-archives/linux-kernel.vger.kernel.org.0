@@ -2,71 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58AB0C4009
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 20:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87C55C4018
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 20:43:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbfJASkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 14:40:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfJASkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 14:40:25 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEB472133F;
-        Tue,  1 Oct 2019 18:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569955225;
-        bh=Z4IfwR1ZU5AEcqWAHKoTrywxvUITptIy5CVJe05Wp6k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FAoLSjdOImd8QCvzlGTOvffzRpYS7KLZdQY5YQDAFLBIl2nzJDIwHVx7d1+VYzZb2
-         1lh8GPwWzlD7DoXpKTA0FOwZehDfUMy1G2NUNyla+UvV770Mtqm1e3PfM/XT4KlezQ
-         RBsvFR/gbUz4swY60V8by29UByJx5d1OCyGCDt2E=
-Date:   Tue, 1 Oct 2019 14:40:23 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH] HID: hyperv: Add the support of hibernation
-Message-ID: <20191001184023.GC8171@sasha-vm>
-References: <1568244952-66716-1-git-send-email-decui@microsoft.com>
- <PU1P153MB01695CEE01D65E8CD5CFA4E9BF870@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <nycvar.YFH.7.76.1909261521410.24354@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1909261522380.24354@cbobk.fhfr.pm>
- <PU1P153MB016973F30CC1A52E46D15230BF810@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190927120513.GM8171@sasha-vm>
- <PU1P153MB01698048162343130F34DAE0BF830@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+        id S1726440AbfJASlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 14:41:04 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53449 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfJASlC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 14:41:02 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i16so4499747wmd.3;
+        Tue, 01 Oct 2019 11:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ad9CzssPymOGmpiotW53dcVN6Jgme73EHYSK1vbEGGM=;
+        b=VE9y2exDYQ7iwgALQkEQazkwcCgDWcrbAlzPRlNSraU8nXtNWAMptA/baTT0J24TUu
+         ALLRsmCxj19bnsRVMHd1Mc335jfcWI6e7QWfN2Yw3/oWVw70s9en+9XR0sGLGpaHOfM8
+         ozhMd3I/S3kQs0JO4mJzY4I9CcdJCx27r0wXbe/FjFe0mrqocXVWuD24OsbaUtILsIX3
+         U8lHMIvflzb1e4dWlGtqUADN9SMh2FFiF4r7BxOP083zCCevY7CcOCA/uHcDSLUCF0mz
+         jrr6Z/s89J3pM/BWPfX8yVSjTgxFWUHGKv7UJ598deVb5QtFs4jHxy7feHztMivwUPuv
+         G16Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ad9CzssPymOGmpiotW53dcVN6Jgme73EHYSK1vbEGGM=;
+        b=cf9UGCTPpeV5PPFcrkBMQWgEEOaW93sDPIB53QNiCvpNJ7eT14Vp6zfQet9ZqBmsK/
+         6GCxWMTuluunRitydzi/DADA7Fgk6EH4UPpASzNp6Esl1dUpeNdN3oDUMGjN1RLGbYC2
+         vclB2O9hsCukr3pK0rdRTVzN9dgNMkHECNOHH64HrrutY0JS+0Oj49QrEDYS0RJzM7S9
+         zR87J5QrCIljJVQUhJCuDsH0SDJSFSVFe1g/ossTuR8REyKR7PmVJ9EU1u4AfAXGORGu
+         ukhjQkS0XtTT4c8T1Kq8vbnj6nm6cY6vn3Jdzc4/pt4G3vqOI1OpB6WFLEu/Kec7OVTv
+         cXbQ==
+X-Gm-Message-State: APjAAAVxxz+cHn0tzld5+bxznaalTP3H1aN9R7zblGXRrDSmU4fe6bpO
+        udwmNRzwia124BXCMp2hdQi9vHRq
+X-Google-Smtp-Source: APXvYqyBTXZQWIIp8yLhfwrMbO01hVdgaxPzAIuBW1bTqraQ0wLQvd6e5VNA8AdtJz1PaG+S8gIxng==
+X-Received: by 2002:a1c:d142:: with SMTP id i63mr5063822wmg.53.1569955259525;
+        Tue, 01 Oct 2019 11:40:59 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8f26:6400:ad11:16fb:d8da:de15? (p200300EA8F266400AD1116FBD8DADE15.dip0.t-ipconnect.de. [2003:ea:8f26:6400:ad11:16fb:d8da:de15])
+        by smtp.googlemail.com with ESMTPSA id q15sm36736242wrg.65.2019.10.01.11.40.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Oct 2019 11:40:59 -0700 (PDT)
+Subject: Re: [PATCH v2 2/3] net: phy: at803x: add ar9331 support
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191001060811.24291-1-o.rempel@pengutronix.de>
+ <20191001060811.24291-3-o.rempel@pengutronix.de>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <6dca530f-ae31-abe0-a85e-fd3d796fbc87@gmail.com>
+Date:   Tue, 1 Oct 2019 20:40:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <PU1P153MB01698048162343130F34DAE0BF830@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191001060811.24291-3-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 05:44:09PM +0000, Dexuan Cui wrote:
->> From: Sasha Levin <sashal@kernel.org>
->> Dexuan, I've been silently ignoring your patches for the past few weeks
->> for the same reason as Jiri has mentioned. I'll pick them all up once
->> the 5.4 merge window closes in a few days.
->
->Thanks, Sasha!
->
->BTW, I'll post a v2 for this patch, as IMO I may be able to get rid of the
->mousevsc_pm_notify in this patch by disabling the channel callback
->in the suspend function.
+On 01.10.2019 08:08, Oleksij Rempel wrote:
+> Mostly this hardware can work with generic PHY driver, but this change
+> is needed to provided interrupt handling support.
+> Tested with dsa ar9331-switch driver.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/net/phy/at803x.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
+> index 7895dbe600ac..42492f83c8d7 100644
+> --- a/drivers/net/phy/at803x.c
+> +++ b/drivers/net/phy/at803x.c
+> @@ -53,6 +53,7 @@
+>  #define AT803X_DEBUG_REG_5			0x05
+>  #define AT803X_DEBUG_TX_CLK_DLY_EN		BIT(8)
+>  
+> +#define ATH9331_PHY_ID 0x004dd041
+>  #define ATH8030_PHY_ID 0x004dd076
+>  #define ATH8031_PHY_ID 0x004dd074
+>  #define ATH8035_PHY_ID 0x004dd072
+> @@ -403,6 +404,16 @@ static struct phy_driver at803x_driver[] = {
+>  	.aneg_done		= at803x_aneg_done,
+>  	.ack_interrupt		= &at803x_ack_interrupt,
+>  	.config_intr		= &at803x_config_intr,
+> +}, {
+> +	/* ATHEROS AR9331 */
+> +	PHY_ID_MATCH_EXACT(ATH9331_PHY_ID),
+> +	.name			= "Atheros AR9331 built-in PHY",
+> +	.config_init		= at803x_config_init,
+> +	.suspend		= at803x_suspend,
+> +	.resume			= at803x_resume,
+> +	/* PHY_BASIC_FEATURES */
+> +	.ack_interrupt		= &at803x_ack_interrupt,
+> +	.config_intr		= &at803x_config_intr,
+>  } };
+>  
+>  module_phy_driver(at803x_driver);
+> 
 
-Okay, I'm ignoring this patch for now then.
-
---
-Thanks,
-Sasha
+Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
