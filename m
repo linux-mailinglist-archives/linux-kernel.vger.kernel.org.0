@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D6DDC3315
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D8EC32EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387783AbfJALmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:42:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41042 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387606AbfJALlJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387623AbfJALlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 1 Oct 2019 07:41:09 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40942 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387594AbfJALlH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 07:41:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=t5quOLTmLgJSTTvC1obcfZ2uC+grOuMX9vfWHkSc+cI=; b=pJk9GhdXqRRd
-        IMQ75CJDtyq3Lmmr7/gLZjw7SjnI5+/THZ83bTnm9euB/HSpS5IBBJ98IM4FLLInUb5fuvHe4D6E1
-        6PRnHjuODYqPBtaRIHlgVet1EbNA0cEp+FshaGYPrMdw1YH2UzLwFN0NJ9kMqle2hbkgfbX2APmUZ
-        YOr+E=;
+        List-Archive; bh=t6QaYLUtMP7FT0N0YeWXRrrbr9pVC1Hq/x3bsn93qgA=; b=RmgGI0h4dbDT
+        v9IbUcKRZ2319gI6qJ8piygWiCVx6sI4jy+hikrJQq+alDHCFH2m8Pq2rZFfcf/rlrS5eH6BcyU8l
+        3PAIdIwpvDlpxa3XhoZqm6yyurwY+wVGMtquNNRgYPpCH886LWZ5rNSLQehAAZbo8cxkszmp+CNCt
+        0jD/4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWg-0004Ya-78; Tue, 01 Oct 2019 11:41:06 +0000
+        id 1iFGWf-0004YU-Ov; Tue, 01 Oct 2019 11:41:05 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id AF4BB2742A30; Tue,  1 Oct 2019 12:41:05 +0100 (BST)
+        id 4111927429C0; Tue,  1 Oct 2019 12:41:05 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Markus Elfring <elfring@users.sourceforge.net>
-Cc:     kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Applied "spi: xtensa-xtfpga: Use devm_platform_ioremap_resource() in xtfpga_spi_probe()" to the spi tree
-In-Reply-To: <178bb78e-714f-645f-d819-5732870c4272@web.de>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: fsl-lpspi: clean up indentation issue" to the spi tree
+In-Reply-To: <20190926113701.26986-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114105.AF4BB2742A30@ypsilon.sirena.org.uk>
+Message-Id: <20191001114105.4111927429C0@ypsilon.sirena.org.uk>
 Date:   Tue,  1 Oct 2019 12:41:05 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +45,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: xtensa-xtfpga: Use devm_platform_ioremap_resource() in xtfpga_spi_probe()
+   spi: fsl-lpspi: clean up indentation issue
 
 has been applied to the spi tree at
 
@@ -72,51 +70,33 @@ to this mail.
 Thanks,
 Mark
 
-From 3f049e7df22e563b04fd576bdc37e6b3e2c7a996 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 21 Sep 2019 15:35:08 +0200
-Subject: [PATCH] spi: xtensa-xtfpga: Use devm_platform_ioremap_resource() in
- xtfpga_spi_probe()
+From 1b0a2b2d3ccb98cf998816d87f7193139d54579e Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 26 Sep 2019 12:37:01 +0100
+Subject: [PATCH] spi: fsl-lpspi: clean up indentation issue
 
-Simplify this function implementation by using a known wrapper function.
+The complete call is indented incorrectly, remove the extraneous tabs.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Link: https://lore.kernel.org/r/178bb78e-714f-645f-d819-5732870c4272@web.de
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190926113701.26986-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-xtensa-xtfpga.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/spi/spi-fsl-lpspi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-xtensa-xtfpga.c b/drivers/spi/spi-xtensa-xtfpga.c
-index 86516eb1e143..fc2b5eb7d614 100644
---- a/drivers/spi/spi-xtensa-xtfpga.c
-+++ b/drivers/spi/spi-xtensa-xtfpga.c
-@@ -80,7 +80,6 @@ static void xtfpga_spi_chipselect(struct spi_device *spi, int is_on)
- static int xtfpga_spi_probe(struct platform_device *pdev)
- {
- 	struct xtfpga_spi *xspi;
--	struct resource *mem;
- 	int ret;
- 	struct spi_master *master;
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index d08e9324140e..5efd73cd0ead 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -779,7 +779,7 @@ static irqreturn_t fsl_lpspi_isr(int irq, void *dev_id)
  
-@@ -97,14 +96,7 @@ static int xtfpga_spi_probe(struct platform_device *pdev)
- 	xspi->bitbang.master = master;
- 	xspi->bitbang.chipselect = xtfpga_spi_chipselect;
- 	xspi->bitbang.txrx_word[SPI_MODE_0] = xtfpga_spi_txrx_word;
--
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!mem) {
--		dev_err(&pdev->dev, "No memory resource\n");
--		ret = -ENODEV;
--		goto err;
--	}
--	xspi->regs = devm_ioremap_resource(&pdev->dev, mem);
-+	xspi->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(xspi->regs)) {
- 		ret = PTR_ERR(xspi->regs);
- 		goto err;
+ 	if (temp_SR & SR_FCF && (temp_IER & IER_FCIE)) {
+ 		writel(SR_FCF, fsl_lpspi->base + IMX7ULP_SR);
+-			complete(&fsl_lpspi->xfer_done);
++		complete(&fsl_lpspi->xfer_done);
+ 		return IRQ_HANDLED;
+ 	}
+ 
 -- 
 2.20.1
 
