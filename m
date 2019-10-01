@@ -2,62 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC51C40EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB64C40F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbfJATTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 15:19:47 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36171 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfJATTr (ORCPT
+        id S1726964AbfJATUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 15:20:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53480 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfJATUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 15:19:47 -0400
-Received: by mail-io1-f68.google.com with SMTP id b136so50948900iof.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 12:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=yzM1I7vIj4B6gEhfFYiqYpPbob9CJ1EBRRdKMPdh5bE=;
-        b=Fq2Kjs/iX6LiZmnOWFtjhJF6iOi+mLEwLG9UqfKvqvt+zuZzTC0frnyDWgdPYBhILN
-         0rYfRYAqppyht16olX1S7MNXRwZnYKs4xoGzRGr/R0JPA+uk/nUK1OpgcZJi+eOYZ0Gy
-         /j+/EMkAk2H0Vrefe3yAKzWU8SZJuBz0p161iQwn1Psnkplu57fgo/ypJY8vnsd+7vLH
-         NsaoYhdcf1qSlsFNtZAeZcDNJLJnNLt9dd6JZeoJdcQDD67HwCeEX51YklFh0pYwAw43
-         tSUstmRqGlEyVX3bFz5EcGzGjRPozuJziRWfYlntIRatYS//OOtcAyhLGN0JbDA9yBSd
-         V6rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=yzM1I7vIj4B6gEhfFYiqYpPbob9CJ1EBRRdKMPdh5bE=;
-        b=BdMJ0NPIygzC5s3di05/L8WmZN/ByL8Oc78qFaIadUDsD9naiipJymIPLFluRyaUcB
-         YsCsGAa2G92bkxB6K0ISJq8MwdifqUl2quFoPdWmBgT/9Qmt7boBBkaOvnr8QJCbD5wV
-         HUbNv5ySxf65ks8ZWo3jq24jZWGmf3+OConwxMDLBGqHrovunLgn+Dp3NHQzf9fz5CtP
-         B6KguQtsI93YfwWNOjkSpoOJzZ7SLyXTcUwEOEojqoLUk8pLbhTFVQDz+o+lJ/kN0rv2
-         JSTK4WFg0B0bkDY6pee/A9NyfzggTkeuHgbP893mmeF1MXL6baQpv53Z1jNMDaz0jpCb
-         HCnQ==
-X-Gm-Message-State: APjAAAXs8WUQ1aiuFeLdkdj/56slh1s3dLmHPsqHHMvnD5Op1aAX/MoK
-        W3mw3SWrOGM+ZIxsnKu+hPd9FvZE7/Pb83JK6Pw=
-X-Google-Smtp-Source: APXvYqwj6+dkexMIZW0z1lF2oT1ert7qizLmWTrDdI+F9eZ9nrcS0njkimgo67FVTEqnNy/AXzwY0WUT8eH+S9mXn04=
-X-Received: by 2002:a5d:83d3:: with SMTP id u19mr3825574ior.299.1569957586369;
- Tue, 01 Oct 2019 12:19:46 -0700 (PDT)
+        Tue, 1 Oct 2019 15:20:33 -0400
+Received: from pendragon.ideasonboard.com (modemcable151.96-160-184.mc.videotron.ca [184.160.96.151])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8717623F;
+        Tue,  1 Oct 2019 21:20:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1569957630;
+        bh=Sa0SIsPyN1ATWCS9yyuYZWlyF0yqVPZu5bykCqOt5Uc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f9MxPlRhYTL6Mb7fNBnk14C/A646XeI/c7M5YeLylwqrBw0yM2fLZFBOpUU10lRPP
+         RK1ieQ+V22aSCKG5Svwkj4fKwLezyqpunV2HPw9jreE08SgQBTxL/bwLbWR0Ys2sMK
+         VFWDgA1xQKOrwLxRzK+8sUdsR3jz5YutSZF9dMrA=
+Date:   Tue, 1 Oct 2019 22:20:15 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli+renesas@fpond.eu,
+        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
+        daniel@ffwll.ch, muroya@ksk.co.jp, koji.matsuoka.xm@renesas.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Doug Anderson <dianders@google.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v4 8/9] drm: rcar-du: kms: Update CMM in atomic commit
+ tail
+Message-ID: <20191001192015.GB21064@pendragon.ideasonboard.com>
+References: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
+ <20190906135436.10622-9-jacopo+renesas@jmondi.org>
+ <8063b9555d5bce6f2c002e49da3b7afaca9ae0b4.camel@collabora.com>
 MIME-Version: 1.0
-Reply-To: akgazshak@gmail.com
-Received: by 2002:a4f:cd99:0:0:0:0:0 with HTTP; Tue, 1 Oct 2019 12:19:42 -0700 (PDT)
-From:   =?UTF-8?Q?=C4=B0shak_BURAKGAZI?= <akgazishak@gmail.com>
-Date:   Tue, 1 Oct 2019 12:19:42 -0700
-X-Google-Sender-Auth: _AZYxd5keeDL9KkcpSAIVD062lc
-Message-ID: <CAEhAppFSyE5PU5x4VEvS9fqjRTE=s6mQFBAuSO7O6Ks46b-NDg@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8063b9555d5bce6f2c002e49da3b7afaca9ae0b4.camel@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-15nXldedINeY15XXkSwNCg0K15HXkden16nXlCDXl9ep15XXkSDXnteQ15XXkyDXqdeg15PXkdeo
-INeV16DXk9eV158g15HXmdeX16Eg15zXnteb16rXkSDXqdep15zXl9eq15kg15DXnNeZ15og15zX
-pNeg15kg15vXnyDXotecINeU15TXpNen15PXlCDXlNeW15Ug15vXkNefLg0KDQrXkNeZ16nXkNen
-Lg0K
+Hi Ezequiel,
+
+On Mon, Sep 30, 2019 at 05:53:00PM -0300, Ezequiel Garcia wrote:
+> +Doug, Heiko:
+> 
+> On Fri, 2019-09-06 at 15:54 +0200, Jacopo Mondi wrote:
+> > Update CMM settings at in the atomic commit tail helper method.
+> > The CMM is updated with new gamma values provided to the driver
+> > in the GAMMA_LUT blob property.
+> > 
+> > When resuming from system suspend, the DU driver is responsible for
+> > reprogramming and enabling the CMM unit if it was in use at the time the
+> > system entered the suspend state.  Force the color_mgmt_changed flag to
+> > true if the DRM gamma lut color transformation property was set in the
+> > CRTC state duplicated at suspend time, as the CMM gets reprogrammed only
+> > if said flag is active in the rcar_du_atomic_commit_update_cmm() method.
+> > 
+> > Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> > 
+> > Daniel could you have a look if resume bits are worth being moved to the
+> > DRM core? The color_mgmt_changed flag is set to false when the state is
+> > duplicated if I read the code correctly, but when this happens in a
+> > suspend/resume sequence its value should probably be restored to true if
+> > any color management property was set in the crtc state when system entered
+> > suspend.
+> 
+> Perhaps we can use the for_each_new_crtc_in_state() helper here,
+> and move it to the core like this:
+> 
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3234,8 +3234,20 @@ int drm_atomic_helper_resume(struct
+> drm_device *dev,
+>                              struct drm_atomic_state *state)
+>  {
+>         struct drm_modeset_acquire_ctx ctx;
+> +       struct drm_crtc_state
+> *crtc_state;
+> +       struct drm_crtc *crtc;
+> +       unsigned int i;
+>         int err;
+>  
+> +       for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
+> +   
+>             /*
+> +                * Force re-enablement of CMM after system resume if any
+> +                * of the DRM color transformation properties
+> was set in
+> +                * the state saved at system suspend time.
+> +                */
+> +               if (crtc_state->gamma_lut)
+> +                    
+>    crtc_state->color_mgmt_changed = true;
+> +       }
+> 
+> This probably is wrong, and should be instead constrained to some
+> condition of some sort.
+> 
+> FWIW, the Rockchip DRM is going to need this as well.
+> 
+> Any ideas?
+
+That's more or less what I had in mind, yes. The question is if
+something like this would make sense. If there's a consensus it would, I
+think it can be done as part of this series.
+
+-- 
+Regards,
+
+Laurent Pinchart
