@@ -2,151 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C93C4439
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 01:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 061FAC4449
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 01:29:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728981AbfJAXUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 19:20:36 -0400
-Received: from mail-eopbgr790133.outbound.protection.outlook.com ([40.107.79.133]:4224
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727078AbfJAXUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 19:20:36 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XgWHq0zh/fM/R4ZBcQxlOuDTgQIpW/99SZYD5+5+ZjJY1RbUKmHFc/Zthx7Cy2WUVVcpZoEf0UOqhvIRXHsRK7g49eDfj1qKyvHhsaxI1CA7R4T4xuxl81ObcJMKhVEH9N7aif4xGdDzlP3h4a28SVIVRJFcyu19aUJR4DzOs7LMOLKGhxPG7hxiVAxIq0rD7ZVdVIQOEwaR0YFXqZio81JohimR+lyz6odm+RU3+Fk1Qh/Zw4dazt2OiIOsyIx9z6/It1SeHghhJaUC15EfMO+X4nHypRxRXAHVmZUoAlTet8wtLRdskiCZfrSf1pPLOO3bRW72l/JWKi4b2AV83w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z+SHZ+9RL3PQu9l1BZOG60bbBV4cOli8PNTI/O5vfjM=;
- b=kLou9XVFthWq0FjynLDfN5O2DTkqPTvYymHIs7GNhqm8oUbGdOMd2TZ42kioifl1DKm2bEf2sqLmVemhtMa+CwplqYkuKO73dzzzbPeaMGP8cdLy4yjtwYdJKT4YxrPWF3nrMnGKW9/ywdAtVjKjfmxcB5nj8scg++MgOHMQgQFk5Yb8ns4smJbh/GoTq47mUVv2CfXBajLnwE4xjbwHL5R/EJVyEvhCHHljeyve/iPugO8b3EIZHEWIOh2cY4gnJkWgY3chi56/kUtLvYTZR65lm/qcYsKvruf/5w3TGM5WQV+BfsrKbNNodiqAzvE0gT6A+w+Ezw/1y4h6H7jhjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z+SHZ+9RL3PQu9l1BZOG60bbBV4cOli8PNTI/O5vfjM=;
- b=ZlY5Xbf/VCBHjoc2b9h6PE9S1ykOOK2oFuibOtFKYbJACx9Kv3I+rf0mXBMGaneIJlafPa+BO+8poH8okZQHCalXQFp8b7EUdQQPBrbw/sBWQE9G6VrLmoKwVzSH5olgdGbmgoiFILKGWLoN5Lovyniqpn1eGnRbo1j48oI3V+w=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1328.namprd22.prod.outlook.com (10.172.63.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.20; Tue, 1 Oct 2019 23:20:33 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::498b:c2cd:e816:1481]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::498b:c2cd:e816:1481%2]) with mapi id 15.20.2305.022; Tue, 1 Oct 2019
- 23:20:33 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Alexandre GRIVEAUX <agriveaux@deutnet.info>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 5/5] MIPS: JZ4780: DTS: Add CPU nodes
-Thread-Topic: [PATCH v2 5/5] MIPS: JZ4780: DTS: Add CPU nodes
-Thread-Index: AQHVeK7SbV2C0qqRJUuqS/aXvoANpw==
-Date:   Tue, 1 Oct 2019 23:20:33 +0000
-Message-ID: <20191001232031.qaci6hk5tjo652mi@pburton-laptop>
-References: <cover.1569955865.git.agriveaux@deutnet.info>
- <0dbd1986be4ee50bdd9f45c140aded7c49fddb8a.1569955865.git.agriveaux@deutnet.info>
-In-Reply-To: <0dbd1986be4ee50bdd9f45c140aded7c49fddb8a.1569955865.git.agriveaux@deutnet.info>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BY5PR17CA0006.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::19) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [73.93.153.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 73069e43-4224-4781-d46f-08d746c5f557
-x-ms-traffictypediagnostic: MWHPR2201MB1328:
-x-microsoft-antispam-prvs: <MWHPR2201MB1328E3607528D1C224A8A8E0C19D0@MWHPR2201MB1328.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0177904E6B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(366004)(136003)(396003)(376002)(39840400004)(346002)(199004)(189003)(81156014)(99286004)(6506007)(386003)(76176011)(52116002)(81166006)(6916009)(8676002)(42882007)(25786009)(478600001)(26005)(186003)(102836004)(446003)(66556008)(64756008)(66446008)(66476007)(66946007)(71200400001)(33716001)(14454004)(66066001)(44832011)(476003)(486006)(11346002)(71190400001)(256004)(6486002)(6246003)(6116002)(3846002)(316002)(305945005)(7736002)(5660300002)(229853002)(9686003)(4326008)(1076003)(6512007)(54906003)(58126008)(2906002)(6436002)(8936002)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1328;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZJtlPmOTGH1l/nazmseu2R1dAGYK9rIx89xk5x6J1WoEC9WGdOyUzPlRXEDCp8jEhZtP5BzRLnqtxytnuD1aGr6U2opmuZUFXYn0lYZppBoEvhoD7FJnpSvbsEIQ4FeDYHXusBsqqJd+L+cK0jUR+O5PhP63o+vFZCjG1wPA3ik06vMvyAs9UZ+Z2GYExotUiOS+UO6h+S7n6KMlBWANmkBblf7NfPTdgg1SSZa23gZ5zXUMxvuABNVzxiwVYE8++yCIMfz+9ULJ1U3M61/8h7AadpvPLGTa9/p2urXkZM9TDXluI+4+/3siZ1iOSWRr3LPOIXBB2lV1B23uHAfjUxoaQgUUYErPw9AFFNG631AgjUwtvrebewvGLBF0xQM574dHC7KgCpqZ45X66yc1JhnEiU+/jvQnxN1bx6HfpOM=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <9529F98D2530BE4ABE646708C200EF09@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1729065AbfJAX3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 19:29:33 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43520 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729052AbfJAX33 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 19:29:29 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a2so9227128pfo.10
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 16:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EcVg9u8V8Uf/idldytEF3NgOMyW0OU8oijTXHZJkyVg=;
+        b=LoLWuA/zt6wQo9niY6rS50WlST0jKh8TXiLphIX/HwUpy05ohub5qr5fmX/ajPIl38
+         XXY9DeDYzLb3r6VQgb82GF+lkIrTF0YatAYRiWTOyE0EbZ19L9ZzOE4ZksI8EWzk99qF
+         HppXuMICfou5mYFPWkwYg/UF2L+14P67qumf0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EcVg9u8V8Uf/idldytEF3NgOMyW0OU8oijTXHZJkyVg=;
+        b=jll2ZfuenTrzUDgG4CZp8W9NsVQV9qQwn8dVdB8yFjYSoCEq5sKW03lQGr0L2wY91s
+         hWc1u1UK6Zyr/19ZWNPMsSe1pIwyQEkUaCJAboMHCpGWk5Vxjqc+2x7SXHLLYfp36iw4
+         MPztOi6OwQ4kMcLg7tsEN5gD/0P2bWyZUcfYiac3o+TpA5a08rLAk7vOh4PjjUvu0fRP
+         QlKiRQu7eBq839amRdnssM8UxxFbQTCvBoa/hngMsvvBQn+KmJm8vpv5rIoTmX4balEl
+         3LAdeuqpFR0SCUp7ALchsVU8RLr8MMZ8Uhn/1RWr3nkTUBS/emyCHwUgu7lE6DJQeeJI
+         Vp1A==
+X-Gm-Message-State: APjAAAXGihnJldvJjgv8Hwtlbm6BNHWWSoaUFK0LoQJcKi//3IosjQS6
+        h86IFjwtjf6+rVf6Ru+JzpqB+s72NDs=
+X-Google-Smtp-Source: APXvYqyttY662qaZ9at4NRsqD7ukXbj1wr2h7SXDVAWfKw7gZzdYntUGCR2evMFpv1BqiZxzO5THcw==
+X-Received: by 2002:a62:fc46:: with SMTP id e67mr1005912pfh.153.1569972568837;
+        Tue, 01 Oct 2019 16:29:28 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id c8sm20990266pga.42.2019.10.01.16.29.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2019 16:29:28 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Matthias Kaehlcke <mka@chromium.org>, linux-pwm@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] backlight: pwm_bl: Don't assign levels table repeatedly
+Date:   Tue,  1 Oct 2019 16:29:24 -0700
+Message-Id: <20191001162835.1.I4f2ede1f55ddd1c72b0303b7fd7f73a782fa33e5@changeid>
+X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73069e43-4224-4781-d46f-08d746c5f557
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2019 23:20:33.6799
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: D83YB6x2kmJifw6mk9bAJR4aDXTh2mYfmsj/826goi/KPkrmXfXoV8QRCrlL3WrdhnO6UpyM6hiEoT2nEoHLNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1328
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+pwm_backlight_probe() re-assigns pb->levels for every brightness
+level. This is not needed and was likely not intended, since
+neither side of the assignment changes during the loop. Assign
+the field only once.
 
-On Tue, Oct 01, 2019 at 09:09:48PM +0200, Alexandre GRIVEAUX wrote:
-> The JZ4780 have 2 core, adding to DT.
->=20
-> Signed-off-by: Alexandre GRIVEAUX <agriveaux@deutnet.info>
-> ---
->  arch/mips/boot/dts/ingenic/jz4780.dtsi | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->=20
-> diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/=
-ingenic/jz4780.dtsi
-> index f928329b034b..9c7346724f1f 100644
-> --- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-> +++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-> @@ -7,6 +7,23 @@
->  	#size-cells =3D <1>;
->  	compatible =3D "ingenic,jz4780";
-> =20
-> +	cpus {
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		cpu@0 {
-> +			compatible =3D "ingenic,jz4780";
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
 
-This should probably be something like ingenic,xburst2. JZ4780 is the
-SoC. It also should be a documented binding, but I think it would be
-worth holding off on the whole thing until we actually get SMP support
-merged - just in case we come up with a binding that doesn't actually
-work out.
+ drivers/video/backlight/pwm_bl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-So I expect I'll just apply patches 1-4 for now.
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 746eebc411df..959436b9e92b 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -564,6 +564,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	memset(&props, 0, sizeof(struct backlight_properties));
+ 
+ 	if (data->levels) {
++		pb->levels = data->levels;
++
+ 		/*
+ 		 * For the DT case, only when brightness levels is defined
+ 		 * data->levels is filled. For the non-DT case, data->levels
+@@ -572,8 +574,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 		for (i = 0; i <= data->max_brightness; i++) {
+ 			if (data->levels[i] > pb->scale)
+ 				pb->scale = data->levels[i];
+-
+-			pb->levels = data->levels;
+ 		}
+ 
+ 		if (pwm_backlight_is_linear(data))
+-- 
+2.23.0.444.g18eeb5a265-goog
 
-Thanks for working on it!
-
-    Paul
-
-> +			device_type =3D "cpu";
-> +			reg =3D <0>;
-> +		};
-> +
-> +		cpu@1 {
-> +			compatible =3D "ingenic,jz4780";
-> +			device_type =3D "cpu";
-> +			reg =3D <1>;
-> +		};
-> +	};
-> +
->  	cpuintc: interrupt-controller {
->  		#address-cells =3D <0>;
->  		#interrupt-cells =3D <1>;
-> --=20
-> 2.20.1
->=20
