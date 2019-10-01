@@ -2,100 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89002C3A81
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4BDEC3A88
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:30:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389988AbfJAQ3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:29:25 -0400
-Received: from mga17.intel.com ([192.55.52.151]:55629 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728536AbfJAQ3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:29:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 09:29:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="221062600"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Oct 2019 09:29:16 -0700
-Received: from andy by smile with local (Exim 4.92.2)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iFL1V-0002p6-Sv; Tue, 01 Oct 2019 19:29:13 +0300
-Date:   Tue, 1 Oct 2019 19:29:13 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Patrick Williams <alpawi@amazon.com>
-Cc:     Patrick Williams <patrick@stwcx.xyz>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Jean Delvare <jdelvare@suse.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Max Staudt <max@enpas.org>,
-        Juergen Fitschen <jfi@ssv-embedded.de>,
-        Elie Morisse <syniurge@gmail.com>,
-        Ajay Gupta <ajayg@nvidia.com>, Stefan Roese <sr@denx.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Enrico Weigelt <info@metux.net>,
-        Allison Randal <allison@lohutok.net>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: pxa: migrate to new i2c_slave APIs
-Message-ID: <20191001162913.GR32742@smile.fi.intel.com>
-References: <20191001160001.2388-1-alpawi@amazon.com>
- <20191001160001.2388-2-alpawi@amazon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001160001.2388-2-alpawi@amazon.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2390019AbfJAQaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:30:02 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49352 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729744AbfJAQaC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:30:02 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id F1319154B74EF;
+        Tue,  1 Oct 2019 09:30:00 -0700 (PDT)
+Date:   Tue, 01 Oct 2019 09:30:00 -0700 (PDT)
+Message-Id: <20191001.093000.372726574458067639.davem@davemloft.net>
+To:     icenowy@aosc.io
+Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        andrew@lunn.ch, f.fainelli@gmail.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org, mripard@kernel.org, wens@csie.org,
+        robh+dt@kernel.org, hkallweit1@gmail.com
+Subject: Re: [PATCH 0/3] Pine64+ specific hacks for RTL8211E Ethernet PHY
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <2CCD0856-433E-4602-A079-9F7F5F2E00D6@aosc.io>
+References: <20191001082912.12905-1-icenowy@aosc.io>
+        <20191001.090651.796983023328992596.davem@davemloft.net>
+        <2CCD0856-433E-4602-A079-9F7F5F2E00D6@aosc.io>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 01 Oct 2019 09:30:01 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Icenowy Zheng <icenowy@aosc.io>
+Date: Wed, 02 Oct 2019 00:08:39 +0800
 
-
-On Tue, Oct 01, 2019 at 10:59:59AM -0500, Patrick Williams wrote:
-> The i2c subsystem was enhanced circa 2015 to support operating as
-> an i2c-slave device.  Prior to that, the i2c-pxa driver supported
-> an i2c-slave but had its own APIs.  There are no existing in-kernel
-> drivers or platforms that utilize the i2c-pxa APIs.
 > 
-> Migrate the i2c-pxa driver to the general i2c-slave APIs so that
-> existing drivers, such as the i2c-slave-eeprom, can be used.
 > 
-> This has been tested with a Marvell EspressoBin, using i2c-pxa and
-> i2c-slave-eeprom, acting as a slave, and a RaspeberryPi 3, using the
-> at24 driver, acting as a master.
+> 于 2019年10月2日 GMT+08:00 上午12:06:51, David Miller <davem@davemloft.net> 写到:
+>>From: Icenowy Zheng <icenowy@aosc.io>
+>>Date: Tue,  1 Oct 2019 16:29:09 +0800
+>>
+>>> There're some Pine64+ boards known to have broken RTL8211E chips, and
+>>> a hack is given by Pine64+, which is said to be from Realtek.
+>>> 
+>>> This patchset adds the hack.
+>>> 
+>>> The hack is taken from U-Boot, and it contains magic numbers without
+>>> any document.
+>>
+>>Please contact Realtek and try to get an explanation about this.
+> 
+> Sorry, but Realtek never shows any idea to add more infomation about this.
+> 
+> These hacks had existed and worked for years.
 
-There are quite a few people in the Cc list. I'm not sure they all are
-interested in this. I deliberately dropped few names, sorry, if I was mistaken.
+Have you actually tried to communicate with an appropriate contact yourself?
 
-> +		if (isr & ISR_RWM) {
-> +			u8 byte = 0;
-> +
-> +			i2c_slave_event(i2c->slave, I2C_SLAVE_READ_REQUESTED,
-> +					&byte);
-> +			writel(byte, _IDBR(i2c));
-> +		} else {
-> +			i2c_slave_event(i2c->slave, I2C_SLAVE_WRITE_REQUESTED,
-> +					NULL);
-> +		}
-
-Hmm... Perhaps
-
-		u8 byte = 0;
-
-		i2c_slave_event(i2c->slave, I2C_SLAVE_READ_REQUESTED, &byte);
-		if (isr & ISR_RWM)
-			writel(byte, _IDBR(i2c));
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+If not, I am asking you to do so.
