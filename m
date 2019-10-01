@@ -2,89 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68606C3A7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1ECC3A83
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389932AbfJAQ2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:28:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44190 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbfJAQ2v (ORCPT
+        id S2390000AbfJAQ3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:29:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58656 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729782AbfJAQ3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:28:51 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i14so9973256pgt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=i0vYOnNzNl23wM5oAHQgXQknCy7kFcbZ26kS9YCoHBU=;
-        b=n5fjg1bqcekd+hNTKhsmR269yN2JoDYT7RNHZANM0CG3KvJR4l0sKewNwj5Cl+7/R4
-         lAyx5LnFBIt1px6L05UmEZPA9i2zOAJkpjn/cjD7aaFAwAdjVxTREahP7BB/PM3xPtIp
-         zjjyDFWC3J3WfPK3n+0rHoaP3GdV6ByAiWF14=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=i0vYOnNzNl23wM5oAHQgXQknCy7kFcbZ26kS9YCoHBU=;
-        b=i8aIXOt+MCZHZQlgM5K7yxh7wzXUIuvy1ammLSBvPJviflGm4YFKWaQKv88xEWc+k6
-         yjKSzuZIfXQ1yuK3aA9xVjybhHzN4A5RL0l4jv6eRnaLo0a2g1JqN+KW6Ir/eI1YHOQW
-         JR5qcyIBZqvUk2ieJRveIQaXt2E9BWdSPg/rS36MHDeC6/+AnQkqHu7wDW80ZRQfQPOv
-         Lz4gvCIoGpRehRM8UtZ0ZW+j3HqsZ5IhCFa/D4VfMKyB0DKgB8G/0y3N0UqsOjJqFGUZ
-         OkQLqV7sms6Rj8xVZYhiPgTMqxeSMWzp3tUedYfYPkXbZnMjQf+mFMuQJM2EQsIy8Rjw
-         xpNg==
-X-Gm-Message-State: APjAAAW2uyMm2dE21Vb4K9yTtEliD57mJP00HNCO6SYidZLAsI8lgW0+
-        qgSxB736S0JgJGijdWAedSr46Q==
-X-Google-Smtp-Source: APXvYqxsBvaB4PwyrQX1efSVDTYBbjVuirkKmUqj8X/jNHPZhagjzfCPkrTmQzSXjn9MZFUDVhtoTQ==
-X-Received: by 2002:a63:cb:: with SMTP id 194mr30303545pga.172.1569947330613;
-        Tue, 01 Oct 2019 09:28:50 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i6sm26975081pfq.20.2019.10.01.09.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 09:28:49 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 09:28:42 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] lib: introduce copy_struct_from_user() helper
-Message-ID: <201910010928.243849D@keescook>
-References: <20191001011055.19283-1-cyphar@cyphar.com>
- <20191001011055.19283-2-cyphar@cyphar.com>
- <201909301856.01255535BD@keescook>
- <20191001023126.qhzeiwmtoo4agy7t@wittgenstein>
+        Tue, 1 Oct 2019 12:29:43 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x91GDcPI084473;
+        Tue, 1 Oct 2019 12:29:13 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vc9bgahr1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Oct 2019 12:29:13 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x91GFibZ104327;
+        Tue, 1 Oct 2019 12:29:12 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vc9bgahqc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Oct 2019 12:29:12 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x91GQQLN009749;
+        Tue, 1 Oct 2019 16:29:11 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma02dal.us.ibm.com with ESMTP id 2v9y57m06g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Oct 2019 16:29:11 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x91GT9Vl45351412
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 1 Oct 2019 16:29:09 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C01F2BE053;
+        Tue,  1 Oct 2019 16:29:09 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6EE9BE056;
+        Tue,  1 Oct 2019 16:29:06 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.80.224.222])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue,  1 Oct 2019 16:29:06 +0000 (GMT)
+Subject: Re: [PATCH v6 1/9] dt-bindings: ibm,secureboot: secure boot specific
+ properties for PowerNV
+To:     Rob Herring <robh@kernel.org>, Nayna Jain <nayna@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1569594360-7141-1-git-send-email-nayna@linux.ibm.com>
+ <1569594360-7141-2-git-send-email-nayna@linux.ibm.com>
+ <20191001133330.GA29810@bogus>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <e0575a28-5bd9-1f5b-c09d-ed86cb715165@linux.vnet.ibm.com>
+Date:   Tue, 1 Oct 2019 12:29:06 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001023126.qhzeiwmtoo4agy7t@wittgenstein>
+In-Reply-To: <20191001133330.GA29810@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-01_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910010140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 04:31:27AM +0200, Christian Brauner wrote:
-> On Mon, Sep 30, 2019 at 06:58:39PM -0700, Kees Cook wrote:
-> > On Tue, Oct 01, 2019 at 11:10:52AM +1000, Aleksa Sarai wrote:
-> > > +static __always_inline
-> > > +int copy_struct_from_user(void *dst, size_t ksize,
-> > > +			  const void __user *src, size_t usize)
-> > 
-> > And of course I forgot to realize both this and check_zeroed_user()
-> > should also have the __must_check attribute. Sorry for forgetting that
-> > earlier!
-> 
-> Just said to Aleksa that I'll just fix this up when I apply so he
-> doesn't have to resend. You ok with this, Kees?
 
-Yup; that's totally fine. Thanks!
 
--- 
-Kees Cook
+On 10/01/2019 09:33 AM, Rob Herring wrote:
+> On Fri, Sep 27, 2019 at 10:25:52AM -0400, Nayna Jain wrote:
+>> PowerNV represents both the firmware and Host OS secureboot state of the
+>> system via device tree. This patch adds the documentation to give
+>> the definition of the nodes and the properties.
+>>
+>> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+>> ---
+>>   .../bindings/powerpc/ibm,secureboot.rst       | 76 ++++++++++++++++
+>>   .../devicetree/bindings/powerpc/secvar.rst    | 89 +++++++++++++++++++
+>>   2 files changed, 165 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/powerpc/ibm,secureboot.rst
+>>   create mode 100644 Documentation/devicetree/bindings/powerpc/secvar.rst
+>>
+>> diff --git a/Documentation/devicetree/bindings/powerpc/ibm,secureboot.rst b/Documentation/devicetree/bindings/powerpc/ibm,secureboot.rst
+>> new file mode 100644
+>> index 000000000000..03d32099d2eb
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/powerpc/ibm,secureboot.rst
+>> @@ -0,0 +1,76 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+> Not the right form for reST files.
+>
+>> +*** NOTE ***
+>> +This document is copied from OPAL firmware
+>> +(skiboot/doc/device-tree/ibm,secureboot.rst)
+> Why copy into the kernel?
+
+Do you mean we do not need the device-tree documentation in the kernel 
+when it already exists in the skiboot tree ?
+
+I think I am ok with that. Michael, what do you think ?
+
+Thanks & Regards,
+      - Nayna
