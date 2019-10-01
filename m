@@ -2,117 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7C4C4288
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27EAAC425B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfJAVTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:19:51 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43853 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727764AbfJAVTv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:19:51 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v27so10565186pgk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 14:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=INoMgnqhH49ZFKFHhyaP4EdT7D9OjFM4A6O+XvHM0Oo=;
-        b=xEclNzVyc/D7N5Pge7bXfLSjXeQWU6dKIYmcYVwA0mJBEwv3nJRePW7ixJ+OxOcEf3
-         oF8fbGpU8WMh5ENrdibkuN3eJ4d/6QL8kHv+ljNO/Ezfnx9lH6BigkMrQZIU522JciH7
-         u0AD7f3sMRmvaHpFNXgr6Ke+8I6D7d3q6Ea5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=INoMgnqhH49ZFKFHhyaP4EdT7D9OjFM4A6O+XvHM0Oo=;
-        b=WiEHwkoDyo4XlwJwtKj0imDV80szOob+McjmXATLwqRWGVmR1KHP5+rI8B5L1HffP3
-         xGJk5MRAX89vcZT9EAlT0SQ9cpwrq3yY/S/+vuMF3ME/HNygA8cS+15ggfPOFsUtF8a/
-         wAjElhbALdGSXYZamFkx0Y6IkckZHKgHJXVlSrUniEu5jc9vow7M4SuWY2sjL1o5vaIT
-         vu3epfH86oc/dTzGcZD9t8baOnzjn7c8CYKea1V5W7F58+GWeF9gpWnvlq0oF5vGGceM
-         FrzoS/17tjB+Q6iPv9VfslVJTGckxRYgJtp9tPvJUUmn3ffiiigkUjQxkJcq/+1/iBDd
-         NBwQ==
-X-Gm-Message-State: APjAAAXD+4bYoWzLpYSk+Ifp6cNGMqgLxc04IOvAofTjQPmqUWy5NiWH
-        Emv6RpOISb3Yj1O2V3CpNiQktg==
-X-Google-Smtp-Source: APXvYqykfKxPl+xURQAGrxObt96rfgwmrAvdzsBTTtUGsm71bavcOXuDxOhHS9rP8Fe8Jas2SKCfWA==
-X-Received: by 2002:a17:90a:21a9:: with SMTP id q38mr239494pjc.23.1569964790305;
-        Tue, 01 Oct 2019 14:19:50 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id e3sm3080069pjs.15.2019.10.01.14.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 14:19:49 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 17:19:48 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Marco Elver <elver@google.com>
-Cc:     kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>, paulmck@linux.ibm.com,
-        Paul Turner <pjt@google.com>, Daniel Axtens <dja@axtens.net>,
-        Anatol Pomazau <anatol@google.com>,
-        Will Deacon <willdeacon@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        stern@rowland.harvard.edu, akiyks@gmail.com, npiggin@gmail.com,
-        boqun.feng@gmail.com, dlustig@nvidia.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr
-Subject: Re: Kernel Concurrency Sanitizer (KCSAN)
-Message-ID: <20191001211948.GA42035@google.com>
-References: <CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com>
+        id S1727495AbfJAVNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 17:13:51 -0400
+Received: from mga09.intel.com ([134.134.136.24]:51794 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725941AbfJAVNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 17:13:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 14:13:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,572,1559545200"; 
+   d="scan'208";a="391339367"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.155])
+  by fmsmga005.fm.intel.com with ESMTP; 01 Oct 2019 14:13:47 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>, stable@vger.kernel.org
+Subject: [char-misc for 4.5-rc2 1/2] mei: me: add comet point (lake) LP device ids
+Date:   Wed,  2 Oct 2019 02:59:57 +0300
+Message-Id: <20191001235958.19979-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 04:18:57PM +0200, Marco Elver wrote:
-> Hi all,
-> 
-> We would like to share a new data-race detector for the Linux kernel:
-> Kernel Concurrency Sanitizer (KCSAN) --
-> https://github.com/google/ktsan/wiki/KCSAN  (Details:
-> https://github.com/google/ktsan/blob/kcsan/Documentation/dev-tools/kcsan.rst)
-> 
-> To those of you who we mentioned at LPC that we're working on a
-> watchpoint-based KTSAN inspired by DataCollider [1], this is it (we
-> renamed it to KCSAN to avoid confusion with KTSAN).
-> [1] http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf
-> 
-> In the coming weeks we're planning to:
-> * Set up a syzkaller instance.
-> * Share the dashboard so that you can see the races that are found.
-> * Attempt to send fixes for some races upstream (if you find that the
-> kcsan-with-fixes branch contains an important fix, please feel free to
-> point it out and we'll prioritize that).
-> 
-> There are a few open questions:
-> * The big one: most of the reported races are due to unmarked
-> accesses; prioritization or pruning of races to focus initial efforts
-> to fix races might be required. Comments on how best to proceed are
-> welcome. We're aware that these are issues that have recently received
-> attention in the context of the LKMM
-> (https://lwn.net/Articles/793253/).
-> * How/when to upstream KCSAN?
+Add Comet Point devices IDs for Comet Lake U platforms.
 
-Looks exciting. I think based on our discussion at LPC, you mentioned
-one way of pruning is if the compiler generated different code with _ONCE
-annotations than what would have otherwise been generated. Is that still on
-the table, for the purposing of pruning the reports?
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/misc/mei/hw-me-regs.h | 3 +++
+ drivers/misc/mei/pci-me.c     | 3 +++
+ 2 files changed, 6 insertions(+)
 
-Also appreciate a CC on future patches as well.
+diff --git a/drivers/misc/mei/hw-me-regs.h b/drivers/misc/mei/hw-me-regs.h
+index 77f7dff7098d..c09f8bb49495 100644
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -79,6 +79,9 @@
+ #define MEI_DEV_ID_CNP_H      0xA360  /* Cannon Point H */
+ #define MEI_DEV_ID_CNP_H_4    0xA364  /* Cannon Point H 4 (iTouch) */
+ 
++#define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
++#define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
++
+ #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
+ 
+ #define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
+diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
+index d5a92c6eadb3..775a2090c2ac 100644
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -96,6 +96,9 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H, MEI_ME_PCH12_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CNP_H_4, MEI_ME_PCH8_CFG)},
+ 
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
++
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
+-- 
+2.21.0
 
-thanks,
-
- - Joel
-
-
-> 
-> Feel free to test and send feedback.
-> 
-> Thanks,
-> -- Marco
