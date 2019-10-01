@@ -2,435 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 548C2C4118
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B441AC4122
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 21:35:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfJATdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 15:33:39 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53275 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbfJATdf (ORCPT
+        id S1727095AbfJATey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 15:34:54 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56743 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbfJATey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 15:33:35 -0400
-Received: by mail-wm1-f66.google.com with SMTP id i16so4641506wmd.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 12:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WzszKoFLT5NZbsdUd0WPglNj1NW4fnrsvxmRV31aUBU=;
-        b=fB+4Rxsip2rgYkAaVfwvGIDHK2K/xujvY+JTVeEQEmhUG59m7hp3vst6MoKVDlCvcI
-         cDRRM6pcb1wkVeG8TzYFrZ6GlwUMb/w5R/renXsLTyP+MhkBiHZtz7XeqlGNqwX/orwS
-         GwWYuBA2aYWAuKFw+BJfrGZj893f+kEFZFuLykvuTAcTswS9MJfHHsq2Qb7axBU+JJaD
-         y4YSjrl14Qszvdx8WVz2fl5cZt2n3defYe33ZG7zwPoKn7cXvVGDr2H/iaCsXR3UteKP
-         8wEP8yTOOSoCNxBKr3o3731RFcecfo5egA8otbAQ7JCbMRGsMHH2bK5rlNDuk8zyangZ
-         5LHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WzszKoFLT5NZbsdUd0WPglNj1NW4fnrsvxmRV31aUBU=;
-        b=IPNZPkXmQMdjLRlt40XgjQrBApcsNVe+ocBAYaZrF8IWGkOX0hI35/DW5m1ZrNALaA
-         R0eJnEYIgeeaNy2kBcVMyqyYx3sailXeshLn8w6PNNMIahHzHU0aWoR1V1ZmEWA/MvO0
-         +2Z90yuhjXxhEVvvXrbU56pZS0kDOIhoFV6SRSrhPGR1pk/wT/wOHqwcNYBN0xhxvjN4
-         +wXjr+N4jykAHp2OhCL3Ke6+/KLuW4U32+XwnlmBz4aKqff8oYXErDx0uOyvhHciRA3k
-         4xFN/HiLbs/9e/8AXJpBQHhR/l9vOH8UJ+Iz3EZ4zZzPB/0UuganYsmb87EPHFVXco8X
-         4RWA==
-X-Gm-Message-State: APjAAAWj1rTdkYUs5r1KFw6C2tCqP3baNhfvKNSdw4vdYEHQhyIybs+x
-        tIvVWmxdQXAt1zua5b6DGmqcrw==
-X-Google-Smtp-Source: APXvYqyiZvluY93z+fCSecUMw35Ea67CwwoPralkN+KQwVlJiq0vjXEwkD1KpICk6TuIqWfFZVicDQ==
-X-Received: by 2002:a1c:9dc1:: with SMTP id g184mr4930236wme.77.1569958411663;
-        Tue, 01 Oct 2019 12:33:31 -0700 (PDT)
-Received: from localhost.localdomain ([212.140.138.217])
-        by smtp.gmail.com with ESMTPSA id q15sm36967632wrg.65.2019.10.01.12.33.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 12:33:31 -0700 (PDT)
-From:   Paolo Valente <paolo.valente@linaro.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH 2/2] block, bfq: present a double cgroups interface
-Date:   Tue,  1 Oct 2019 20:33:16 +0100
-Message-Id: <20191001193316.3330-3-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001193316.3330-1-paolo.valente@linaro.org>
-References: <20191001193316.3330-1-paolo.valente@linaro.org>
+        Tue, 1 Oct 2019 15:34:54 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iFNuW-0003ZJ-L1; Tue, 01 Oct 2019 21:34:12 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F09D91C03AB;
+        Tue,  1 Oct 2019 21:34:11 +0200 (CEST)
+Date:   Tue, 01 Oct 2019 19:34:11 -0000
+From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] membarrier: Fix RCU locking bug caused by faulty merge
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kirill Tkhai <tkhai@yandex.ru>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        "Russell King - ARM Linux admin" <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-tip-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20191001085033.GP4519@hirez.programming.kicks-ass.net>
+References: <20191001085033.GP4519@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <156995845178.9978.16309965770056877944.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When bfq was merged into mainline, there were two I/O schedulers that
-implemented the proportional-share policy: bfq for blk-mq and cfq for
-legacy blk. bfq's interface files in the blkio/io controller have the
-same names as cfq. But the cgroups interface doesn't allow two
-entities to use the same name for their files, so for bfq we had to
-prepend the "bfq" prefix to each of its files. However no legacy code
-uses these modified file names. This naming also causes confusion, as,
-e.g., in [1].
+The following commit has been merged into the sched/urgent branch of tip:
 
-Now cfq has gone with legacy blk, so there is no need any longer for
-these prefixes in (the never used) bfq names. Yet some people may have
-started to use the current bfq interface. So, as suggested by Tejun
-Heo [2], make bfq present a double interface, one with the file names
-prepended with the "bfq" prefix, and the other one with no prefix.
+Commit-ID:     73956fc07dd7b25d4a33ab3fdd6247c60d0b237c
+Gitweb:        https://git.kernel.org/tip/73956fc07dd7b25d4a33ab3fdd6247c60d0b237c
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Tue, 01 Oct 2019 10:50:33 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 01 Oct 2019 21:27:50 +02:00
 
-[1] https://github.com/systemd/systemd/issues/7057
-[2] https://lkml.org/lkml/2019/9/18/736
+membarrier: Fix RCU locking bug caused by faulty merge
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+The following commit:
+
+  227a4aadc75b ("sched/membarrier: Fix p->mm->membarrier_state racy load")
+
+got fat fingered by me when merging it with other patches. It meant to move
+the RCU section out of the for loop but ended up doing it partially, leaving
+a superfluous rcu_read_lock() inside, causing havok.
+
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Chris Metcalf <cmetcalf@ezchip.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Kirill Tkhai <tkhai@yandex.ru>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-tip-commits@vger.kernel.org
+Fixes: 227a4aadc75b ("sched/membarrier: Fix p->mm->membarrier_state racy load")
+Link: https://lkml.kernel.org/r/20191001085033.GP4519@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/block/bfq-iosched.rst |  40 +++--
- block/bfq-cgroup.c                  | 258 ++++++++++++++--------------
- 2 files changed, 153 insertions(+), 145 deletions(-)
+ kernel/sched/membarrier.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/block/bfq-iosched.rst b/Documentation/block/bfq-iosched.rst
-index 0d237d402860..8ecd37903391 100644
---- a/Documentation/block/bfq-iosched.rst
-+++ b/Documentation/block/bfq-iosched.rst
-@@ -536,12 +536,14 @@ process.
- To get proportional sharing of bandwidth with BFQ for a given device,
- BFQ must of course be the active scheduler for that device.
- 
--Within each group directory, the names of the files associated with
--BFQ-specific cgroup parameters and stats begin with the "bfq."
--prefix. So, with cgroups-v1 or cgroups-v2, the full prefix for
--BFQ-specific files is "blkio.bfq." or "io.bfq." For example, the group
--parameter to set the weight of a group with BFQ is blkio.bfq.weight
--or io.bfq.weight.
-+The interface of the proportional-share policy implemented by BFQ
-+consists of a series of cgroup parameters. For legacy issues, each
-+parameter can be read or written, equivalently, through one of two
-+files: the first file has the same name as the parameter to
-+read/write, while the second file has that same name prepended by the
-+prefix "bfq.". For example, the two files by which to set/show the
-+weight of a group are blkio.weight and blkio.bfq.weight with
-+cgroups-v1, or io.weight and io.bfq.weight with cgroups-v2.
- 
- As for cgroups-v1 (blkio controller), the exact set of stat files
- created, and kept up-to-date by bfq, depends on whether
-@@ -550,14 +552,15 @@ the stat files documented in
- Documentation/admin-guide/cgroup-v1/blkio-controller.rst. If, instead,
- CONFIG_BFQ_CGROUP_DEBUG is not set, then bfq creates only the files::
- 
--  blkio.bfq.io_service_bytes
--  blkio.bfq.io_service_bytes_recursive
--  blkio.bfq.io_serviced
--  blkio.bfq.io_serviced_recursive
-+  blkio.io_service_bytes
-+  blkio.io_service_bytes_recursive
-+  blkio.io_serviced
-+  blkio.io_serviced_recursive
- 
--The value of CONFIG_BFQ_CGROUP_DEBUG greatly influences the maximum
--throughput sustainable with bfq, because updating the blkio.bfq.*
--stats is rather costly, especially for some of the stats enabled by
-+(plus their counterparts with also the bfq prefix). The value of
-+CONFIG_BFQ_CGROUP_DEBUG greatly influences the maximum throughput
-+sustainable with BFQ, because updating the blkio.* stats is rather
-+costly, especially for some of the stats enabled by
- CONFIG_BFQ_CGROUP_DEBUG.
- 
- Parameters to set
-@@ -565,11 +568,12 @@ Parameters to set
- 
- For each group, there is only the following parameter to set.
- 
--weight (namely blkio.bfq.weight or io.bfq-weight): the weight of the
--group inside its parent. Available values: 1..10000 (default 100). The
--linear mapping between ioprio and weights, described at the beginning
--of the tunable section, is still valid, but all weights higher than
--IOPRIO_BE_NR*10 are mapped to ioprio 0.
-+weight (namely blkio.weight/blkio.bfq.weight or
-+io.weight/io.bfq.weight): the weight of the group inside its
-+parent. Available values: 1..10000 (default 100). The linear mapping
-+between ioprio and weights, described at the beginning of the tunable
-+section, is still valid, but all weights higher than IOPRIO_BE_NR*10
-+are mapped to ioprio 0.
- 
- Recall that, if low-latency is set, then BFQ automatically raises the
- weight of the queues associated with interactive and soft real-time
-diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-index decda96770f4..d3b59b731992 100644
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -1211,139 +1211,143 @@ struct blkcg_policy blkcg_policy_bfq = {
- 	.pd_reset_stats_fn	= bfq_pd_reset_stats,
- };
- 
--struct cftype bfq_blkcg_legacy_files[] = {
--	{
--		.name = "bfq.weight",
--		.flags = CFTYPE_NOT_ON_ROOT,
--		.seq_show = bfq_io_show_weight_legacy,
--		.write_u64 = bfq_io_set_weight_legacy,
--	},
--	{
--		.name = "bfq.weight_device",
--		.flags = CFTYPE_NOT_ON_ROOT,
--		.seq_show = bfq_io_show_weight,
--		.write = bfq_io_set_weight,
--	},
--
--	/* statistics, covers only the tasks in the bfqg */
--	{
--		.name = "bfq.io_service_bytes",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_bytes,
--	},
--	{
--		.name = "bfq.io_serviced",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_ios,
--	},
--#ifdef CONFIG_BFQ_CGROUP_DEBUG
--	{
--		.name = "bfq.time",
--		.private = offsetof(struct bfq_group, stats.time),
--		.seq_show = bfqg_print_stat,
--	},
--	{
--		.name = "bfq.sectors",
--		.seq_show = bfqg_print_stat_sectors,
--	},
--	{
--		.name = "bfq.io_service_time",
--		.private = offsetof(struct bfq_group, stats.service_time),
--		.seq_show = bfqg_print_rwstat,
--	},
--	{
--		.name = "bfq.io_wait_time",
--		.private = offsetof(struct bfq_group, stats.wait_time),
--		.seq_show = bfqg_print_rwstat,
--	},
--	{
--		.name = "bfq.io_merged",
--		.private = offsetof(struct bfq_group, stats.merged),
--		.seq_show = bfqg_print_rwstat,
--	},
--	{
--		.name = "bfq.io_queued",
--		.private = offsetof(struct bfq_group, stats.queued),
--		.seq_show = bfqg_print_rwstat,
--	},
--#endif /* CONFIG_BFQ_CGROUP_DEBUG */
-+#define bfq_make_blkcg_legacy_files(prefix)			\
-+	{							\
-+		.name = #prefix "weight",			\
-+		.flags = CFTYPE_NOT_ON_ROOT,			\
-+		.seq_show = bfq_io_show_weight,			\
-+		.write_u64 = bfq_io_set_weight_legacy,		\
-+	},							\
-+								\
-+	/* statistics, covers only the tasks in the bfqg */	\
-+	{							\
-+		.name = #prefix "io_service_bytes",		\
-+		.private = (unsigned long)&blkcg_policy_bfq,	\
-+		.seq_show = blkg_print_stat_bytes,		\
-+	},							\
-+	{							\
-+		.name = #prefix "io_serviced",		\
-+		.private = (unsigned long)&blkcg_policy_bfq,	\
-+		.seq_show = blkg_print_stat_ios,		\
-+	},							\
-+								\
-+	/* the same statistics which cover the bfqg and its descendants */ \
-+	{							\
-+		.name = #prefix "io_service_bytes_recursive",	\
-+		.private = (unsigned long)&blkcg_policy_bfq,	\
-+		.seq_show = blkg_print_stat_bytes_recursive,	\
-+	},							\
-+	{							\
-+		.name = #prefix "io_serviced_recursive",	\
-+		.private = (unsigned long)&blkcg_policy_bfq,	\
-+		.seq_show = blkg_print_stat_ios_recursive,	\
-+	}
-+
-+#define bfq_make_blkcg_legacy_debug_files(prefix)			\
-+	{								\
-+		.name = #prefix "time",				\
-+		.private = offsetof(struct bfq_group, stats.time),	\
-+		.seq_show = bfqg_print_stat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "sectors",				\
-+		.seq_show = bfqg_print_stat_sectors,			\
-+	},								\
-+	{								\
-+		.name = #prefix "io_service_time",			\
-+		.private = offsetof(struct bfq_group, stats.service_time), \
-+		.seq_show = bfqg_print_rwstat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "io_wait_time",			\
-+		.private = offsetof(struct bfq_group, stats.wait_time),	\
-+		.seq_show = bfqg_print_rwstat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "io_merged",				\
-+		.private = offsetof(struct bfq_group, stats.merged),	\
-+		.seq_show = bfqg_print_rwstat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "io_queued",				\
-+		.private = offsetof(struct bfq_group, stats.queued),	\
-+		.seq_show = bfqg_print_rwstat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "time_recursive",			\
-+		.private = offsetof(struct bfq_group, stats.time),	\
-+		.seq_show = bfqg_print_stat_recursive,			\
-+	},								\
-+	{								\
-+		.name = #prefix "sectors_recursive",			\
-+		.seq_show = bfqg_print_stat_sectors_recursive,		\
-+	},								\
-+	{								\
-+		.name = #prefix "io_service_time_recursive",		\
-+		.private = offsetof(struct bfq_group, stats.service_time), \
-+		.seq_show = bfqg_print_rwstat_recursive,		\
-+	},								\
-+	{								\
-+		.name = #prefix "io_wait_time_recursive",		\
-+		.private = offsetof(struct bfq_group, stats.wait_time),	\
-+		.seq_show = bfqg_print_rwstat_recursive,		\
-+	},								\
-+	{								\
-+		.name = #prefix "io_merged_recursive",		\
-+		.private = offsetof(struct bfq_group, stats.merged),	\
-+		.seq_show = bfqg_print_rwstat_recursive,		\
-+	},								\
-+	{								\
-+		.name = #prefix "io_queued_recursive",		\
-+		.private = offsetof(struct bfq_group, stats.queued),	\
-+		.seq_show = bfqg_print_rwstat_recursive,		\
-+	},								\
-+	{								\
-+		.name = #prefix "avg_queue_size",			\
-+		.seq_show = bfqg_print_avg_queue_size,			\
-+	},								\
-+	{								\
-+		.name = #prefix "group_wait_time",			\
-+		.private = offsetof(struct bfq_group, stats.group_wait_time), \
-+		.seq_show = bfqg_print_stat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "idle_time",				\
-+		.private = offsetof(struct bfq_group, stats.idle_time),	\
-+		.seq_show = bfqg_print_stat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "empty_time",				\
-+		.private = offsetof(struct bfq_group, stats.empty_time), \
-+		.seq_show = bfqg_print_stat,				\
-+	},								\
-+	{								\
-+		.name = #prefix "dequeue",				\
-+		.private = offsetof(struct bfq_group, stats.dequeue),	\
-+		.seq_show = bfqg_print_stat,				\
-+	}
- 
--	/* the same statistics which cover the bfqg and its descendants */
--	{
--		.name = "bfq.io_service_bytes_recursive",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_bytes_recursive,
--	},
--	{
--		.name = "bfq.io_serviced_recursive",
--		.private = (unsigned long)&blkcg_policy_bfq,
--		.seq_show = blkg_print_stat_ios_recursive,
--	},
-+struct cftype bfq_blkcg_legacy_files[] = {
-+	bfq_make_blkcg_legacy_files(bfq.),
-+	bfq_make_blkcg_legacy_files(),
- #ifdef CONFIG_BFQ_CGROUP_DEBUG
--	{
--		.name = "bfq.time_recursive",
--		.private = offsetof(struct bfq_group, stats.time),
--		.seq_show = bfqg_print_stat_recursive,
--	},
--	{
--		.name = "bfq.sectors_recursive",
--		.seq_show = bfqg_print_stat_sectors_recursive,
--	},
--	{
--		.name = "bfq.io_service_time_recursive",
--		.private = offsetof(struct bfq_group, stats.service_time),
--		.seq_show = bfqg_print_rwstat_recursive,
--	},
--	{
--		.name = "bfq.io_wait_time_recursive",
--		.private = offsetof(struct bfq_group, stats.wait_time),
--		.seq_show = bfqg_print_rwstat_recursive,
--	},
--	{
--		.name = "bfq.io_merged_recursive",
--		.private = offsetof(struct bfq_group, stats.merged),
--		.seq_show = bfqg_print_rwstat_recursive,
--	},
--	{
--		.name = "bfq.io_queued_recursive",
--		.private = offsetof(struct bfq_group, stats.queued),
--		.seq_show = bfqg_print_rwstat_recursive,
--	},
--	{
--		.name = "bfq.avg_queue_size",
--		.seq_show = bfqg_print_avg_queue_size,
--	},
--	{
--		.name = "bfq.group_wait_time",
--		.private = offsetof(struct bfq_group, stats.group_wait_time),
--		.seq_show = bfqg_print_stat,
--	},
--	{
--		.name = "bfq.idle_time",
--		.private = offsetof(struct bfq_group, stats.idle_time),
--		.seq_show = bfqg_print_stat,
--	},
--	{
--		.name = "bfq.empty_time",
--		.private = offsetof(struct bfq_group, stats.empty_time),
--		.seq_show = bfqg_print_stat,
--	},
--	{
--		.name = "bfq.dequeue",
--		.private = offsetof(struct bfq_group, stats.dequeue),
--		.seq_show = bfqg_print_stat,
--	},
--#endif	/* CONFIG_BFQ_CGROUP_DEBUG */
-+	bfq_make_blkcg_legacy_debug_files(bfq.),
-+	bfq_make_blkcg_legacy_debug_files(),
-+#endif
- 	{ }	/* terminate */
- };
- 
-+#define bfq_make_blkg_files(prefix)		\
-+	{					\
-+		.name = #prefix "weight",	\
-+		.flags = CFTYPE_NOT_ON_ROOT,	\
-+		.seq_show = bfq_io_show_weight,	\
-+		.write = bfq_io_set_weight,	\
-+	}
-+
- struct cftype bfq_blkg_files[] = {
--	{
--		.name = "bfq.weight",
--		.flags = CFTYPE_NOT_ON_ROOT,
--		.seq_show = bfq_io_show_weight,
--		.write = bfq_io_set_weight,
--	},
-+	bfq_make_blkg_files(bfq.),
-+	bfq_make_blkg_files(),
- 	{} /* terminate */
- };
- 
--- 
-2.20.1
-
+diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
+index a39bed2..168479a 100644
+--- a/kernel/sched/membarrier.c
++++ b/kernel/sched/membarrier.c
+@@ -174,7 +174,6 @@ static int membarrier_private_expedited(int flags)
+ 		 */
+ 		if (cpu == raw_smp_processor_id())
+ 			continue;
+-		rcu_read_lock();
+ 		p = rcu_dereference(cpu_rq(cpu)->curr);
+ 		if (p && p->mm == mm)
+ 			__cpumask_set_cpu(cpu, tmpmask);
