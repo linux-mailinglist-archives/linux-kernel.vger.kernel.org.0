@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BABAC3B67
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C20A5C3B6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732982AbfJAQnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:43:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55662 "EHLO mail.kernel.org"
+        id S1733044AbfJAQns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:43:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732795AbfJAQnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:43:33 -0400
+        id S1732809AbfJAQnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:43:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1769921924;
-        Tue,  1 Oct 2019 16:43:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BCA821D80;
+        Tue,  1 Oct 2019 16:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948212;
-        bh=q5BxtsgnxxA6emR9f+27ejh2u61bFo5fC+LFUQ3QRZA=;
+        s=default; t=1569948215;
+        bh=aLfiwxh2cGEke7pOc3TnWhzlU9xXH4nxrckrExWMU18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nVHbIiD6HElCTUjSIpDoqVP6buhtCXSVWAWnMHGl8vkYANNkJYnlPXQiwk4RzxiY6
-         QlwEvkkKtZlJIgnXqbhWJaugZ8YQfH5GPy3wQatxlVRoSMEC7GUbYaBeumM7MJT1fK
-         Xe5kZu6vVDyptpjOL/Y3VvwNIAnTWemZA45x3zLk=
+        b=kWWIZRNqbE4vqel5OdWH3sr+frEE5US6n38icgt6oKSuf6iz2NqmNR2UYjNxzgpKm
+         aOWAFBlkMYgTg58gMX+iehZ0tiMB9CyA9DHZ7qIRds15weOf1jJf5zA2snYF2B5FM3
+         VAJ/jxYGbX3YB9wbS7/X3UPdKRsp7txmJWcj6Jp0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trond Myklebust <trondmy@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 15/43] pNFS: Ensure we do clear the return-on-close layout stateid on fatal errors
-Date:   Tue,  1 Oct 2019 12:42:43 -0400
-Message-Id: <20191001164311.15993-15-sashal@kernel.org>
+Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 17/43] pwm: stm32-lp: Add check in case requested period cannot be achieved
+Date:   Tue,  1 Oct 2019 12:42:45 -0400
+Message-Id: <20191001164311.15993-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164311.15993-1-sashal@kernel.org>
 References: <20191001164311.15993-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,45 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-[ Upstream commit 9c47b18cf722184f32148784189fca945a7d0561 ]
+[ Upstream commit c91e3234c6035baf5a79763cb4fcd5d23ce75c2b ]
 
-IF the server rejected our layout return with a state error such as
-NFS4ERR_BAD_STATEID, or even a stale inode error, then we do want
-to clear out all the remaining layout segments and mark that stateid
-as invalid.
+LPTimer can use a 32KHz clock for counting. It depends on clock tree
+configuration. In such a case, PWM output frequency range is limited.
+Although unlikely, nothing prevents user from requesting a PWM frequency
+above counting clock (32KHz for instance):
+- This causes (prd - 1) = 0xffff to be written in ARR register later in
+the apply() routine.
+This results in badly configured PWM period (and also duty_cycle).
+Add a check to report an error is such a case.
 
-Fixes: 1c5bd76d17cca ("pNFS: Enable layoutreturn operation for...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/pnfs.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-stm32-lp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
-index 4931c3a75f038..c818f9886f618 100644
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -1426,10 +1426,15 @@ void pnfs_roc_release(struct nfs4_layoutreturn_args *args,
- 	const nfs4_stateid *res_stateid = NULL;
- 	struct nfs4_xdr_opaque_data *ld_private = args->ld_private;
- 
--	if (ret == 0) {
--		arg_stateid = &args->stateid;
-+	switch (ret) {
-+	case -NFS4ERR_NOMATCHING_LAYOUT:
-+		break;
-+	case 0:
- 		if (res->lrs_present)
- 			res_stateid = &res->stateid;
-+		/* Fallthrough */
-+	default:
-+		arg_stateid = &args->stateid;
- 	}
- 	pnfs_layoutreturn_free_lsegs(lo, arg_stateid, &args->range,
- 			res_stateid);
+diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+index 0059b24cfdc3c..28e1f64134763 100644
+--- a/drivers/pwm/pwm-stm32-lp.c
++++ b/drivers/pwm/pwm-stm32-lp.c
+@@ -58,6 +58,12 @@ static int stm32_pwm_lp_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	/* Calculate the period and prescaler value */
+ 	div = (unsigned long long)clk_get_rate(priv->clk) * state->period;
+ 	do_div(div, NSEC_PER_SEC);
++	if (!div) {
++		/* Clock is too slow to achieve requested period. */
++		dev_dbg(priv->chip.dev, "Can't reach %u ns\n",	state->period);
++		return -EINVAL;
++	}
++
+ 	prd = div;
+ 	while (div > STM32_LPTIM_MAX_ARR) {
+ 		presc++;
 -- 
 2.20.1
 
