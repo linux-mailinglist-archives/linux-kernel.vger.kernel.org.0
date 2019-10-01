@@ -2,161 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BDDBC2CE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 07:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17453C2CEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 07:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731549AbfJAF2M convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 1 Oct 2019 01:28:12 -0400
-Received: from mga02.intel.com ([134.134.136.20]:7652 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727720AbfJAF2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 01:28:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Sep 2019 22:28:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,570,1559545200"; 
-   d="scan'208";a="190478749"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Sep 2019 22:28:10 -0700
-Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Sep 2019 22:28:10 -0700
-Received: from shsmsx106.ccr.corp.intel.com (10.239.4.159) by
- FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Sep 2019 22:28:09 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.166]) by
- SHSMSX106.ccr.corp.intel.com ([169.254.10.119]) with mapi id 14.03.0439.000;
- Tue, 1 Oct 2019 13:28:08 +0800
-From:   "Zhang, Jun" <jun.zhang@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "labbott@redhat.com" <labbott@redhat.com>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-        "arve@android.com" <arve@android.com>,
-        "tkjos@android.com" <tkjos@android.com>,
-        "maco@android.com" <maco@android.com>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>,
-        "christian@brauner.io" <christian@brauner.io>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "Bai, Jie A" <jie.a.bai@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        "he@osuosl.org" <he@osuosl.org>, "Bai@osuosl.org" <Bai@osuosl.org>,
-        "He, Bo" <bo.he@intel.com>
-Subject: RE: [PATCH] ion_system_heap: support X86 archtecture
-Thread-Topic: [PATCH] ion_system_heap: support X86 archtecture
-Thread-Index: AQHVdppyYu/UDgwp3kCa1tCveaZ4I6dB6ZkAgANY4IA=
-Date:   Tue, 1 Oct 2019 05:28:07 +0000
-Message-ID: <88DC34334CA3444C85D647DBFA962C2735B662D8@SHSMSX104.ccr.corp.intel.com>
-References: <20190929072841.14848-1-jun.zhang@intel.com>
- <20190929101254.GA1907778@kroah.com>
-In-Reply-To: <20190929101254.GA1907778@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjViOGZjNzEtZDcxOS00YTFjLTk4NGUtYTUzYzBjOGNmMjUwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic25ZeGlQekh3WlRQa1RtNTVxa0VvSEpzV2RmaU5SdG41eWxkbm4reU1Ta3c0aTJpQVEwTUdPODZqUCtsdTNiRiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729457AbfJAFbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 01:31:34 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37975 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbfJAFbe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 01:31:34 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u28so8827190lfc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2019 22:31:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SaFoYhmwuNCCe0dxD4a30Zl6Go0ZxpMOGqzzubMUHdw=;
+        b=azESaA0rdcy9GMB3FE8I4/zNalw7ysfkd8tfzjgj0RmnGawU5l6mzRJjHXNAt4IEyV
+         wy9qVNdmmcOgGESFc3PXu9o5lOAVD8PNRdHmmwtMPqkOCowpNOH1ZwnKZ4cMbCKxzWFk
+         32kbYx/D+sDYwixF1TtIg0L2ChdH/rsPBcJuO4AlNhlaigIWk68u0LZ4GJiHi35pEaV3
+         yUXj0FmfrNF7QeT/p4m119G4iN4IhZq3+oylQ55x8rv4IxA/iKr+DPFlVc5zlSLoU1TJ
+         wWeja5LAMc/L+1lHON5BZkGiXmIridIuk4ZepjpHGQpgE85tvZp5HOTo5c8QL0/opDhu
+         Bv1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SaFoYhmwuNCCe0dxD4a30Zl6Go0ZxpMOGqzzubMUHdw=;
+        b=SuFkOALrJfWxOqz62AKi6utv0R656pxjf4JpiFazB3QFBChA56hXM7W7C2GD+qYn81
+         HTAPQqDzMrSX1yotJKJT7s4nCN+JAm29zCbpQ18DlbJSfDu9QfOkvW4lz16NZGAoF/YX
+         pC/yqTEtgEazpqTm0BwMKGeG5IQeiGTG8vjvpcfvNJYxc/d0adb83OBepg6YdHF8+uWt
+         GM6WZ571+39HwgE4VGxjy5e69wK+71VP466kqsIZ4p2UU6CzVf/t1Y4wW081rPn8bgRA
+         7d6WCl98vbsTNGpg9UJpjKF6ymZpCX+PzM7LI0wV6fu1bREbJA42iSUP2kTZg0A7ZCeu
+         X2eg==
+X-Gm-Message-State: APjAAAWb1vZoZsdMV2c86kD7aL3+tW1mYkr67EAw14kbEgIofi6VDC6y
+        qDgmcQgnLhGPcuaCa8KFVJDU699FYxVotW/uWsfE
+X-Google-Smtp-Source: APXvYqxzu/y3a+l/E1zfJ1GOYAu4oXQyAYURFEX7eRMkz3mjRmcinntM7JzqNurwlxoUk87hd8Bu9ZzmdAjySpJiO8k=
+X-Received: by 2002:a05:6512:202:: with SMTP id a2mr13379491lfo.175.1569907890668;
+ Mon, 30 Sep 2019 22:31:30 -0700 (PDT)
 MIME-Version: 1.0
+References: <201909251348.A1542A52@keescook> <CAHC9VhRNmWw1__-haD1ZEekADTho3EJyXQMd6ETpOv4c8Qn9nw@mail.gmail.com>
+ <2065829.xbNJnTdZ4q@x2> <201909301128.5951C390@keescook>
+In-Reply-To: <201909301128.5951C390@keescook>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 1 Oct 2019 01:31:19 -0400
+Message-ID: <CAHC9VhR-3CkARf7mVOCW1vLDgygjspcw_JEcteBBrdpxpdBY7g@mail.gmail.com>
+Subject: Re: [PATCH] audit: Report suspicious O_CREAT usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?J=C3=A9r=C3=A9mie_Galarneau?= 
+        <jeremie.galarneau@efficios.com>, s.mesoraca16@gmail.com,
+        viro@zeniv.linux.org.uk, dan.carpenter@oracle.com,
+        akpm@linux-foundation.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        kernel-hardening@lists.openwall.com, linux-audit@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Greg
+On Mon, Sep 30, 2019 at 2:29 PM Kees Cook <keescook@chromium.org> wrote:
+> On Mon, Sep 30, 2019 at 09:50:00AM -0400, Steve Grubb wrote:
+> > On Thursday, September 26, 2019 11:31:32 AM EDT Paul Moore wrote:
+> > > On Wed, Sep 25, 2019 at 5:02 PM Kees Cook <keescook@chromium.org> wro=
+te:
+> > > > This renames the very specific audit_log_link_denied() to
+> > > > audit_log_path_denied() and adds the AUDIT_* type as an argument. T=
+his
+> > > > allows for the creation of the new AUDIT_ANOM_CREAT that can be use=
+d to
+> > > > report the fifo/regular file creation restrictions that were introd=
+uced
+> > > > in commit 30aba6656f61 ("namei: allow restricted O_CREAT of FIFOs a=
+nd
+> > > > regular files"). Without this change, discovering that the restrict=
+ion
+> > > > is enabled can be very challenging:
+> > > > https://lore.kernel.org/lkml/CA+jJMxvkqjXHy3DnV5MVhFTL2RUhg0WQ-XVFW=
+3ngDQO
+> > > > dkFq0PA@mail.gmail.com
+> > > >
+> > > > Reported-by: J=C3=A9r=C3=A9mie Galarneau <jeremie.galarneau@efficio=
+s.com>
+> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > > ---
+> > > > This is not a complete fix because reporting was broken in commit
+> > > > 15564ff0a16e ("audit: make ANOM_LINK obey audit_enabled and
+> > > > audit_dummy_context")
+> > > > which specifically goes against the intention of these records: the=
+y
+> > > > should _always_ be reported. If auditing isn't enabled, they should=
+ be
+> > > > ratelimited.
+> > > >
+> > > > Instead of using audit, should this just go back to using
+> > > > pr_ratelimited()?
+> > >
+> > > I'm going to ignore the rename and other aspects of this patch for th=
+e
+> > > moment so we can focus on the topic of if/when/how these records
+> > > should be emitted by the kernel.
+> > >
+> > > Unfortunately, people tend to get very upset if audit emits *any*
+> > > records when they haven't explicitly enabled audit, the significance
+> > > of the record doesn't seem to matter, which is why you see patches
+> > > like 15564ff0a16e ("audit: make ANOM_LINK obey audit_enabled and
+> > > audit_dummy_context").  We could consider converting some records to
+> > > printk()s, rate-limited or not, but we need to balance this with the
+> > > various security certifications which audit was created to satisfy.
+> > > In some cases a printk() isn't sufficient.
+> > >
+> > > Steve is probably the only one who really keeps track of the various
+> > > auditing requirements of the different security certifications; what
+> > > say you Steve on this issue with ANOM_CREAT records?
+> >
+> > Common Criteria and other security standards I track do not call out fo=
+r
+> > anomoly detection. So, there are no requirements on this. That said, we=
+ do
+> > have other anomaly detections because they give early warning that some=
+thing
+> > strange is happening. I think adding this event is a nice improvement a=
+s long
+> > as it obeys audit_enabled before emitting an event - for example, look =
+at the
+> > AUDIT_ANOM_ABEND event.
+>
+> Okay, so the patch is good as-is? (The "report things always" issue I
+> will deal with separately. For now I'd just like to gain this anomaly
+> detection corner case...)
+>
+> Paul, what do you see as next steps here?
 
-Sorry, I am newcomer, and I don't know why couldn't use #ifdefs?  I only refer some kernel code(V4.19) in drivers/hwtracing/intel_th/msu.c.
-Could you tell me why? And I tell my workmate to avoid the same case.
+I'll reply back on the original post so I can more easily comment on
+the details of patch.
 
-If I define a config in Kconfig, and static inline function in .h file, then call it? Could you accept it?
-
-If not, Could you give me a sample?
-
-Thanks,
-Jun
-
------Original Message-----
-From: Greg KH <gregkh@linuxfoundation.org> 
-Sent: Sunday, September 29, 2019 6:13 PM
-To: Zhang, Jun <jun.zhang@intel.com>
-Cc: labbott@redhat.com; sumit.semwal@linaro.org; arve@android.com; tkjos@android.com; maco@android.com; joel@joelfernandes.org; christian@brauner.io; devel@driverdev.osuosl.org; Bai, Jie A <jie.a.bai@intel.com>; linux-kernel@vger.kernel.org; dri-devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; he@osuosl.org; Bai@osuosl.org; He, Bo <bo.he@intel.com>
-Subject: Re: [PATCH] ion_system_heap: support X86 archtecture
-
-On Sun, Sep 29, 2019 at 03:28:41PM +0800, jun.zhang@intel.com wrote:
-> From: zhang jun <jun.zhang@intel.com>
-> 
-> we see tons of warning like:
-> [   45.846872] x86/PAT: NDK MediaCodec_:3753 map pfn RAM range req
-> write-combining for [mem 0x1e7a80000-0x1e7a87fff], got write-back
-> [   45.848827] x86/PAT: .vorbis.decoder:4088 map pfn RAM range req
-> write-combining for [mem 0x1e7a58000-0x1e7a58fff], got write-back
-> [   45.848875] x86/PAT: NDK MediaCodec_:3753 map pfn RAM range req
-> write-combining for [mem 0x1e7a48000-0x1e7a4ffff], got write-back
-> [   45.849403] x86/PAT: .vorbis.decoder:4088 map pfn RAM range
-> req write-combining for [mem 0x1e7a70000-0x1e7a70fff], got write-back
-> 
-> check the kernel Documentation/x86/pat.txt, it says:
-> A. Exporting pages to users with remap_pfn_range, io_remap_pfn_range, 
-> vm_insert_pfn Drivers wanting to export some pages to userspace do it 
-> by using mmap interface and a combination of
-> 1) pgprot_noncached()
-> 2) io_remap_pfn_range() or remap_pfn_range() or vm_insert_pfn() With 
-> PAT support, a new API pgprot_writecombine is being added.
-> So, drivers can continue to use the above sequence, with either
-> pgprot_noncached() or pgprot_writecombine() in step 1, followed by step 2.
-> 
-> In addition, step 2 internally tracks the region as UC or WC in 
-> memtype list in order to ensure no conflicting mapping.
-> 
-> Note that this set of APIs only works with IO (non RAM) regions.
-> If driver ants to export a RAM region, it has to do set_memory_uc() or
-> set_memory_wc() as step 0 above and also track the usage of those 
-> pages and use set_memory_wb() before the page is freed to free pool.
-> 
-> the fix follow the pat document, do set_memory_wc() as step 0 and use 
-> the set_memory_wb() before the page is freed.
-> 
-> Signed-off-by: he, bo <bo.he@intel.com>
-> Signed-off-by: zhang jun <jun.zhang@intel.com>
-> Signed-off-by: Bai, Jie A <jie.a.bai@intel.com>
-> ---
->  drivers/staging/android/ion/ion_system_heap.c | 28 
-> ++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion_system_heap.c 
-> b/drivers/staging/android/ion/ion_system_heap.c
-> index b83a1d16bd89..d298b8194820 100644
-> --- a/drivers/staging/android/ion/ion_system_heap.c
-> +++ b/drivers/staging/android/ion/ion_system_heap.c
-> @@ -13,6 +13,7 @@
->  #include <linux/scatterlist.h>
->  #include <linux/slab.h>
->  #include <linux/vmalloc.h>
-> +#include <asm/set_memory.h>
->  
->  #include "ion.h"
->  
-> @@ -134,6 +135,13 @@ static int ion_system_heap_allocate(struct ion_heap *heap,
->  	sg = table->sgl;
->  	list_for_each_entry_safe(page, tmp_page, &pages, lru) {
->  		sg_set_page(sg, page, page_size(page), 0);
-> +
-> +#ifdef CONFIG_X86
-> +	if (!(buffer->flags & ION_FLAG_CACHED))
-> +		set_memory_wc((unsigned long)page_address(sg_page(sg)),
-> +			      PAGE_ALIGN(sg->length) >> PAGE_SHIFT); #endif
-
-There is no way to do this without these #ifdefs?  That feels odd, why can't you just always test for this?
-
-thanks,
-
-greg k-h
+--=20
+paul moore
+www.paul-moore.com
