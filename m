@@ -2,129 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F740C378E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44583C37A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:38:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389019AbfJAOgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:36:01 -0400
-Received: from foss.arm.com ([217.140.110.172]:51124 "EHLO foss.arm.com"
+        id S2389129AbfJAOi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:38:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387781AbfJAOgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:36:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FD471000;
-        Tue,  1 Oct 2019 07:36:00 -0700 (PDT)
-Received: from [10.37.8.149] (unknown [10.37.8.149])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2217B3F71A;
-        Tue,  1 Oct 2019 07:35:58 -0700 (PDT)
-Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
-        tglx@linutronix.de
-References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
- <20190926214342.34608-1-vincenzo.frascino@arm.com>
- <20190926214342.34608-2-vincenzo.frascino@arm.com>
- <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck>
- <20191001132731.GG41399@arrakis.emea.arm.com>
- <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
- <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <7558914c-fc2d-d05a-ccbe-76ef451670ae@arm.com>
-Date:   Tue, 1 Oct 2019 15:37:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727143AbfJAOi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:38:27 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD3212054F;
+        Tue,  1 Oct 2019 14:38:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569940705;
+        bh=BC6OroHcKot4AxHRsLzrj3gVVxqz2wKqdFSlgTuptpw=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=BYHEm8XyvTeCxQXNCByi8u5BlrT28BYw6+dYsZfyegW+qvnaE0V30GvfVl5LKhTVR
+         TbYCnlYyFno04qwhsbnta3Rc7FW7ECti0aE8lfZe5rdZapEbFkOtfAk/Vt2o9Mr7WJ
+         a93ez7ZSk3JUOhccqgPm8UbUZZ39MSaylIylYKNw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org>
+References: <20190918095018.17979-1-tdas@codeaurora.org> <20190918095018.17979-4-tdas@codeaurora.org> <20190918213946.DC03521924@mail.kernel.org> <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org> <20190924231223.9012C207FD@mail.kernel.org> <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org> <20190925130346.42E0820640@mail.kernel.org> <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for SC7180
+User-Agent: alot/0.8.1
+Date:   Tue, 01 Oct 2019 07:38:25 -0700
+Message-Id: <20191001143825.CD3212054F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Taniya Das (2019-09-27 00:37:57)
+> Hi Stephen,
+>=20
+> On 9/25/2019 6:33 PM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2019-09-25 04:20:07)
+> >> Hi Stephen,
+> >>
+> >> Please find my comments.
+> >>
+> >> On 9/25/2019 4:42 AM, Stephen Boyd wrote:
+> >>> Quoting Taniya Das (2019-09-23 01:01:11)
+> >>>> Hi Stephen,
+> >>>>
+> >>>> Thanks for your comments.
+> >>>>
+> >>>> On 9/19/2019 3:09 AM, Stephen Boyd wrote:
+> >>>>> Quoting Taniya Das (2019-09-18 02:50:18)
+> >>>>>> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-=
+sc7180.c
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..d47865d5408f
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/drivers/clk/qcom/gcc-sc7180.c
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>> [...]
+> >>>>>> +static struct clk_branch gcc_ufs_phy_phy_aux_clk =3D {
+> >>>>>> +       .halt_reg =3D 0x77094,
+> >>>>>> +       .halt_check =3D BRANCH_HALT,
+> >>>>>> +       .hwcg_reg =3D 0x77094,
+> >>>>>> +       .hwcg_bit =3D 1,
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0x77094,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_ufs_phy_phy_aux_clk",
+> >>>>>> +                       .parent_data =3D &(const struct clk_parent=
+_data){
+> >>>>>> +                               .hw =3D &gcc_ufs_phy_phy_aux_clk_s=
+rc.clkr.hw,
+> >>>>>> +                       },
+> >>>>>> +                       .num_parents =3D 1,
+> >>>>>> +                       .flags =3D CLK_SET_RATE_PARENT,
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk =3D {
+> >>>>>> +       .halt_reg =3D 0x7701c,
+> >>>>>> +       .halt_check =3D BRANCH_HALT_SKIP,
+> >>>>>
+> >>>>> Again, nobody has fixed the UFS driver to not need to do this halt =
+skip
+> >>>>> check for these clks? It's been over a year.
+> >>>>>
+> >>>>
+> >>>> The UFS_PHY_RX/TX clocks could be left enabled due to certain HW boot
+> >>>> configuration and thus during the late initcall of clk_disable there
+> >>>> could be warnings of "clock stuck ON" in the dmesg. That is the reas=
+on
+> >>>> also to use the BRANCH_HALT_SKIP flag.
+> >>>
+> >>> Oh that's bad. Why do the clks stay on when we try to turn them off?
+> >>>
+> >>
+> >> Those could be due to the configuration selected by HW and SW cannot
+> >> override them, so traditionally we have never polled for CLK_OFF for
+> >> these clocks.
+> >=20
+> > Is that the case or just a guess?
+> >=20
+>=20
+> This is the behavior :).
 
+Ok. It's the same as sdm845 so I guess it's OK.
 
-On 10/1/19 3:20 PM, Will Deacon wrote:
-> On Tue, Oct 01, 2019 at 03:20:35PM +0100, Vincenzo Frascino wrote:
->> On 10/1/19 2:27 PM, Catalin Marinas wrote:
->>> On Tue, Oct 01, 2019 at 02:14:23PM +0100, Will Deacon wrote:
->>>> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
->>>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>>>> index 37c610963eee..0e5beb928af5 100644
->>>>> --- a/arch/arm64/Kconfig
->>>>> +++ b/arch/arm64/Kconfig
->>>>> @@ -110,7 +110,7 @@ config ARM64
->>>>>  	select GENERIC_STRNLEN_USER
->>>>>  	select GENERIC_TIME_VSYSCALL
->>>>>  	select GENERIC_GETTIMEOFDAY
->>>>> -	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
->>>>> +	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT && COMPATCC_IS_ARM_GCC)
->>>>>  	select HANDLE_DOMAIN_IRQ
->>>>>  	select HARDIRQS_SW_RESEND
->>>>>  	select HAVE_PCI
->>>>> @@ -313,6 +313,9 @@ config KASAN_SHADOW_OFFSET
->>>>>  	default 0xeffffff900000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
->>>>>  	default 0xffffffffffffffff
->>>>>  
->>>>> +config COMPATCC_IS_ARM_GCC
->>>>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
->>>>
->>>> I've seen toolchains where the first part of the tuple is "armv7-", so they
->>>> won't get detected here. However, do we really need to detect this? If
->>>> somebody passes a duff compiler, then the build will fail in the same way as
->>>> if they passed it to CROSS_COMPILE=.
->>>
->>> Not sure what happens if we pass an aarch64 compiler. Can we end up with
->>> a 64-bit compat vDSO?
->>>
->>
->> I agree with Catalin here. The problem is not only when you pass and aarch64
->> toolchain but even an x86 and so on.
-> 
-> I disagree. What happens if you do:
-> 
-> $ make ARCH=arm64 CROSS_COMPILE=x86_64-linux-gnu-
-> 
-> on your x86 box?
->
+>=20
+> >>
+> >>>>
+> >>>> I would also check internally for the UFS driver fix you are referri=
+ng here.
+> >>>
+> >>> Sure. I keep asking but nothing is done :(
+> >>>
+> >>>>
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0x7701c,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_ufs_phy_rx_symbol_0_clk",
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>> [...]
+> >>>>>> +
+> >>>>>> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk =3D {
+> >>>>>> +       .halt_reg =3D 0xf058,
+> >>>>>> +       .halt_check =3D BRANCH_HALT_SKIP,
+> >>>>>
+> >>>>> Why does this need halt_skip?
+> >>>>
+> >>>> This is required as the source is external PHY, so we want to not ch=
+eck
+> >>>> for HALT.
+> >>>
+> >>> This doesn't really answer my question. If the source is an external =
+phy
+> >>> then it should be listed as a clock in the DT binding and the parent
+> >>> should be specified here. Unless something doesn't work because of th=
+at?
+> >>>
+> >>
+> >> The USB phy is managed by the USB driver and clock driver is not aware
+> >> if USB driver models the phy as a clock. Thus we do want to keep a
+> >> dependency on the parent and not poll for CLK_ENABLE.
+> >=20
+> > The clk driver should be aware of the USB driver modeling the phy as a
+> > clk. We do that for other phys so what is the difference here?
+> >=20
+>=20
+> Let me check with the USB team, but could we keep them for now?
 
-The kernel compilation breaks as follows:
+Ok. It's also the same as sdm845 so I guess it's OK. Would be nice to
+properly model it though so we can be certain the clk is actually
+enabled.
 
-x86_64-linux-gnu-gcc: error: unrecognized command line option ‘-mlittle-endian’;
-did you mean ‘-fconvert=little-endian’?
-/data1/Projects/LinuxKernel/linux/scripts/Makefile.build:265: recipe for target
-'scripts/mod/empty.o' failed
-make[2]: *** [scripts/mod/empty.o] Error 1
-/data1/Projects/LinuxKernel/linux/Makefile:1128: recipe for target 'prepare0' failed
-make[1]: *** [prepare0] Error 2
-make[1]: Leaving directory '/data1/Projects/LinuxKernel/linux-out'
-Makefile:179: recipe for target 'sub-make' failed
-make: *** [sub-make] Error 2
+>=20
+> >>
+> >>>>
+> >>>>>
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0xf058,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_usb3_prim_phy_pipe_clk",
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static struct clk_branch gcc_usb_phy_cfg_ahb2phy_clk =3D {
+> >>>>>> +       .halt_reg =3D 0x6a004,
+> >>>>>> +       .halt_check =3D BRANCH_HALT,
+> >>>>>> +       .hwcg_reg =3D 0x6a004,
+> >>>>>> +       .hwcg_bit =3D 1,
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0x6a004,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_usb_phy_cfg_ahb2phy_clk",
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +/* Leave the clock ON for parent config_noc_clk to be kept enable=
+d */
+> >>>>>
+> >>>>> There's no parent though... So I guess this means it keeps it enabl=
+ed
+> >>>>> implicitly in hardware?
+> >>>>>
+> >>>>
+> >>>> These are not left enabled, but want to leave them enabled for clien=
+ts
+> >>>> on config NOC.
+> >>>
+> >>> Sure. It just doesn't make sense to create clk structures and expose
+> >>> them in the kernel when we just want to turn the bits on and leave th=
+em
+> >>> on forever. Why not just do some register writes in probe for this
+> >>> driver? Doesn't that work just as well and use less memory?
+> >>>
+> >>
+> >> Even if I write these registers during probe, the late init check
+> >> 'clk_core_is_enabled' would return true and would be turned OFF, that =
+is
+> >> the reason for marking them CRITICAL.
+> >>
+> >=20
+> > That wouldn't happen if the clks weren't registered though, no?
+> >=20
+>=20
+> I want to keep these clock CRITICAL and registered for now, but we=20
+> should be able to revisit/clean them up later.
+>=20
 
-Similar issue in the compat vdso library compilation if I do (without the check):
+Why do you want to keep them critical and registered? I'm suggesting
+that any clk that is marked critical and doesn't have a parent should
+instead become a register write in probe to turn the clk on.
 
-$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-CROSS_COMPILE_COMPAT=x86_64-linux-gnu-
-
-With this check the compilation completes correctly but the compat vdso does not
-get built (unless my environment is playing me tricks ;) ).
-
->> If the problem is related to armv7- we can change the rule as "arm.*-gcc" which
->> should detect them as well. Do you know what is the triple that an armv7-
->> toolchain prints?
-> 
-> 'fraid not, since I don't have one to hand. I think you'd end up matching
-> arm*-gcc, which is pretty broad.
-> 
-
-If we all agree I can extend this rule then.
-
-> Will
-> 
-
--- 
-Regards,
-Vincenzo
