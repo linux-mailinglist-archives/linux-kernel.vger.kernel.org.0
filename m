@@ -2,45 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55DD2C32DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45069C32E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387492AbfJALk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:40:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40400 "EHLO
+        id S2387564AbfJALlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:41:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40646 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732803AbfJALk4 (ORCPT
+        with ESMTP id S2387513AbfJALlA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:40:56 -0400
+        Tue, 1 Oct 2019 07:41:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=WERVSR+BAQJwf3PYWWyXu5R8XD5gifIGU8k5q5E4VGw=; b=ukEO4Ubfs4C5
-        e1EtMwu3yNT9/lC1hpLzQoFaXSxdrgrdBa2Pzi2yVPVmti3JfFiBgAESsr49bHkXbEIUqnP9Vr1Bm
-        XQ1uPFV8VeDkyRKhKv+GQ5kaxYZ+WjMfvoeb7ReGSUTWi8m9lMwbxPP6SwbRDtSXBbQvkkZK1D/tS
-        yIXBU=;
+        List-Archive; bh=tYidPqV9evGITvFKkefYkx+MVPV/Xz9CUR8kqXFz+Ew=; b=h2gfqiL6AL84
+        v6pwTjwDOv2ZAoIuZcIr5WwnVFaft1ll5i3RA+foapZDUGA+mjAxOsw0uEF+imR5a1vdpRVCipmGO
+        44SROcKViRDJOcju0+nsHcUyYWin4kYqXBHMFP0P7G1iLSGBHgJlWfdDQPKsJlg9A4o5h0dvp+REV
+        Ypmn4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWN-0004Sz-Tb; Tue, 01 Oct 2019 11:40:47 +0000
+        id 1iFGWN-0004Ss-NL; Tue, 01 Oct 2019 11:40:47 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6CF3527429C0; Tue,  1 Oct 2019 12:40:47 +0100 (BST)
+        id 2F9722742A30; Tue,  1 Oct 2019 12:40:47 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
+        alsa-devel@alsa-project.org,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Jaroslav Kysela <perex@perex.cz>,
         kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
         Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: wcd9335: clean up indentation issue" to the asoc tree
-In-Reply-To: <20190925111023.7771-1-colin.king@canonical.com>
+Subject: Applied "ASoC: stm32: sai: clean up indentation issue" to the asoc tree
+In-Reply-To: <20190925112621.9312-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191001114047.6CF3527429C0@ypsilon.sirena.org.uk>
+Message-Id: <20191001114047.2F9722742A30@ypsilon.sirena.org.uk>
 Date:   Tue,  1 Oct 2019 12:40:47 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,7 +55,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: wcd9335: clean up indentation issue
+   ASoC: stm32: sai: clean up indentation issue
 
 has been applied to the asoc tree at
 
@@ -74,42 +80,34 @@ to this mail.
 Thanks,
 Mark
 
-From 944eedd8c021893d08d02a8eec8e5161327316cd Mon Sep 17 00:00:00 2001
+From 423013f824ab0590c229a107f21c54ac6596c4e1 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 25 Sep 2019 12:10:23 +0100
-Subject: [PATCH] ASoC: wcd9335: clean up indentation issue
+Date: Wed, 25 Sep 2019 12:26:21 +0100
+Subject: [PATCH] ASoC: stm32: sai: clean up indentation issue
 
-There is an if statement that is indented one level too deeply,
-remove the extraneous tabs.
+There is a statement that is indented one level too deeply,
+remove the extraneous tab.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190925111023.7771-1-colin.king@canonical.com
+Link: https://lore.kernel.org/r/20190925112621.9312-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wcd9335.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ sound/soc/stm/stm32_sai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
-index f318403133e9..f11ffa28683b 100644
---- a/sound/soc/codecs/wcd9335.c
-+++ b/sound/soc/codecs/wcd9335.c
-@@ -2837,11 +2837,11 @@ static int wcd9335_codec_enable_dec(struct snd_soc_dapm_widget *w,
- 				   TX_HPF_CUT_OFF_FREQ_MASK) >> 5;
- 		snd_soc_component_update_bits(comp, tx_vol_ctl_reg, 0x10, 0x10);
- 		snd_soc_component_update_bits(comp, dec_cfg_reg, 0x08, 0x00);
--			if (hpf_coff_freq != CF_MIN_3DB_150HZ) {
--				snd_soc_component_update_bits(comp, dec_cfg_reg,
--						    TX_HPF_CUT_OFF_FREQ_MASK,
--						    hpf_coff_freq << 5);
--			}
-+		if (hpf_coff_freq != CF_MIN_3DB_150HZ) {
-+			snd_soc_component_update_bits(comp, dec_cfg_reg,
-+						      TX_HPF_CUT_OFF_FREQ_MASK,
-+						      hpf_coff_freq << 5);
-+		}
- 		break;
- 	case SND_SOC_DAPM_POST_PMD:
- 		snd_soc_component_update_bits(comp, tx_vol_ctl_reg, 0x10, 0x00);
+diff --git a/sound/soc/stm/stm32_sai.c b/sound/soc/stm/stm32_sai.c
+index ef4273361d0d..e20267504b16 100644
+--- a/sound/soc/stm/stm32_sai.c
++++ b/sound/soc/stm/stm32_sai.c
+@@ -100,7 +100,7 @@ static int stm32_sai_sync_conf_provider(struct stm32_sai_data *sai, int synco)
+ 		dev_err(&sai->pdev->dev, "%pOFn%s already set as sync provider\n",
+ 			sai->pdev->dev.of_node,
+ 			prev_synco == STM_SAI_SYNC_OUT_A ? "A" : "B");
+-			stm32_sai_pclk_disable(&sai->pdev->dev);
++		stm32_sai_pclk_disable(&sai->pdev->dev);
+ 		return -EINVAL;
+ 	}
+ 
 -- 
 2.20.1
 
