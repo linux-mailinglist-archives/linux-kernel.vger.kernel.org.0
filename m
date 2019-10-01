@@ -2,103 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4CFC36F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08680C36FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388852AbfJAOVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:21:32 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60321 "EHLO mga09.intel.com"
+        id S2389014AbfJAOWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:22:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727096AbfJAOVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:21:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 07:21:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="205071389"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 01 Oct 2019 07:21:27 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 01 Oct 2019 17:21:26 +0300
-Date:   Tue, 1 Oct 2019 17:21:26 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Mario.Limonciello@dell.com
-Cc:     linux-usb@vger.kernel.org, andreas.noever@gmail.com,
-        michael.jamet@intel.com, YehezkelShB@gmail.com,
-        rajmohan.mani@intel.com,
-        nicholas.johnson-opensource@outlook.com.au, lukas@wunner.de,
-        gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
-        anthony.wong@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 21/22] thunderbolt: Update documentation with the
- USB4 information
-Message-ID: <20191001142126.GX2714@lahna.fi.intel.com>
-References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
- <20191001113830.13028-22-mika.westerberg@linux.intel.com>
- <5d628533d75b4b00a26c868012d5e5df@AUSX13MPC105.AMER.DELL.COM>
+        id S2388994AbfJAOWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:22:01 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BD1321924;
+        Tue,  1 Oct 2019 14:21:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569939720;
+        bh=5yiJvRSEr6T5UmNF+BYavdiRJ6HW9GziesEHfLCrWsc=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=JThJwDOzedK/yGTjqsRLOfCl4mb4aJWSXHnYIEMNrARGMNySYkTiJeidT9Besk4ML
+         RG6BfinCLN4E5e7tGkMo7q/tHBjNCUs/uzLswfbrdI8XsuzJSErQM39zy9i9ARckCe
+         ydPNQWdPv5B0h2VBIwIrP3MD9HwVaNskx6yO5IaA=
+Date:   Tue, 1 Oct 2019 16:21:34 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: prodikeys: make array keys static const, makes
+ object smaller
+In-Reply-To: <20190905165406.24641-1-colin.king@canonical.com>
+Message-ID: <nycvar.YFH.7.76.1910011621240.13160@cbobk.fhfr.pm>
+References: <20190905165406.24641-1-colin.king@canonical.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5d628533d75b4b00a26c868012d5e5df@AUSX13MPC105.AMER.DELL.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 02:17:01PM +0000, Mario.Limonciello@dell.com wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Sent: Tuesday, October 1, 2019 6:38 AM
-> > To: linux-usb@vger.kernel.org
-> > Cc: Andreas Noever; Michael Jamet; Mika Westerberg; Yehezkel Bernat; Rajmohan
-> > Mani; Nicholas Johnson; Lukas Wunner; Greg Kroah-Hartman; Alan Stern;
-> > Limonciello, Mario; Anthony Wong; linux-kernel@vger.kernel.org
-> > Subject: [RFC PATCH 21/22] thunderbolt: Update documentation with the USB4
-> > information
-> > 
-> > 
-> > [EXTERNAL EMAIL]
-> > 
-> > Update user's and administrator's guide to mention USB4, how it relates
-> > to Thunderbolt (it is public spec of Thunderbolt 3) and and how it is
-> > supported in Linux.
-> > 
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > ---
-> >  Documentation/admin-guide/thunderbolt.rst | 27 ++++++++++++++++++-----
-> >  1 file changed, 22 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/Documentation/admin-guide/thunderbolt.rst b/Documentation/admin-
-> > guide/thunderbolt.rst
-> > index 898ad78f3cc7..4cbed319133d 100644
-> > --- a/Documentation/admin-guide/thunderbolt.rst
-> > +++ b/Documentation/admin-guide/thunderbolt.rst
-> > @@ -1,6 +1,25 @@
-> > -=============
-> > - Thunderbolt
-> > -=============
-> > +======================
-> > + Thunderbolt and USB4
-> > +======================
-> > +USB4 is the public spec of Thunderbolt 3 with some differences at the
-> > +register level among other things. There are two different
-> > +implementations available: firmware connection manager and software
-> > +connection manager. Typically PCs come with a firmware connection
-> > +manager for Thunderbolt 3 and early USB4 capable systems. Apple systems
-> > +on the other hand use software connection manager and the future USB4
-> > +compliant PCs follow the suit.
-> 
-> Future isn't going to age very well.  Perhaps refer instead to "later" USB4 compliant
-> PCs.
+On Thu, 5 Sep 2019, Colin King wrote:
 
-Yup.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array keys on the stack but instead make it
+> static const. Makes the object code smaller by 166 bytes.
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   18931	   5872	    480	  25283	   62c3	drivers/hid/hid-prodikeys.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   18669	   5968	    480	  25117	   621d	drivers/hid/hid-prodikeys.o
+> 
+> (gcc version 9.2.1, amd64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/hid/hid-prodikeys.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
+> index 21544ebff855..fb6841ebe4d9 100644
+> --- a/drivers/hid/hid-prodikeys.c
+> +++ b/drivers/hid/hid-prodikeys.c
+> @@ -516,7 +516,7 @@ static void pcmidi_setup_extra_keys(
+>  		MY PICTURES =>	KEY_WORDPROCESSOR
+>  		MY MUSIC=>	KEY_SPREADSHEET
+>  	*/
+> -	unsigned int keys[] = {
+> +	static const unsigned int keys[] = {
+>  		KEY_FN,
+>  		KEY_MESSENGER, KEY_CALENDAR,
+>  		KEY_ADDRESSBOOK, KEY_DOCUMENTS,
+> @@ -532,7 +532,7 @@ static void pcmidi_setup_extra_keys(
+>  		0
+>  	};
+>  
+> -	unsigned int *pkeys = &keys[0];
+> +	const unsigned int *pkeys = &keys[0];
+>  	unsigned short i;
 
-> Also, we should be seeing this stuff pop-up outside of PCs.  So maybe better
-> to just call out "devices".
+Applied, thanks for the fix.
 
-Indeed, I'll update this accordingly.
+-- 
+Jiri Kosina
+SUSE Labs
+
