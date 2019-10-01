@@ -2,83 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77284C39B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2CCC39BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:01:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389811AbfJAQAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:00:25 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:57693 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727398AbfJAQAZ (ORCPT
+        id S2389827AbfJAQBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:01:10 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38323 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfJAQBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:00:25 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-164--oUOnduMO7u6T_CwoD2SuA-1; Tue, 01 Oct 2019 17:00:21 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 1 Oct 2019 17:00:21 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 1 Oct 2019 17:00:21 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'efremov@linux.com'" <efremov@linux.com>,
-        'Dan Carpenter' <dan.carpenter@oracle.com>
-CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Jes Sorensen <jes.sorensen@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: RE: [PATCH] staging: rtl8723bs: hal: Fix memcpy calls
-Thread-Topic: [PATCH] staging: rtl8723bs: hal: Fix memcpy calls
-Thread-Index: AQHVd36LU5ikVLKK6EuvH5wLNYQtMKdEMyLwgAGeKE+AAAh2kP///AWAgAAc6lA=
-Date:   Tue, 1 Oct 2019 16:00:20 +0000
-Message-ID: <35c2d89987854fb8a42f04dc28ad4bc9@AcuMS.aculab.com>
-References: <20190930110141.29271-1-efremov@linux.com>
- <37b195b700394e95aa8329afc9f60431@AcuMS.aculab.com>
- <e4051dcb-10dc-ff17-ec0b-6f51dccdb5bf@linux.com>
- <20191001135649.GH22609@kadam>
- <8d2e8196cae74ec4ae20e9c23e898207@AcuMS.aculab.com>
- <a7c002f7-c6f2-a9ed-0100-acfbafea65c5@linux.com>
-In-Reply-To: <a7c002f7-c6f2-a9ed-0100-acfbafea65c5@linux.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 1 Oct 2019 12:01:09 -0400
+Received: by mail-qt1-f195.google.com with SMTP id j31so22268498qta.5;
+        Tue, 01 Oct 2019 09:01:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x01awrD5TSlsk6NlvH+kQSXg+iJmGObI88cW5UgsE3c=;
+        b=QWvTtiz/VZYw1m0emYZEvdX3jIvdDqxwcdnllghimSJMK3C5Ai00cL9TOAPOHwpnne
+         YE15m+iiuMUNVC+K9dzxXBFNg9iGTX+VK09xl+5cwlMlABm5otzMli3Y6EdlIVZqSvav
+         84cqfGop0SmbgwugT+NhoZuvW1JJCo3kW4e3RuBDjlx06YoUBhdEX0cNs0+2QotM5Wnm
+         x0spmgprZ1miAdsdHHmHtAs84Un7joJuFc+fdWgb5GPLEZEgJ5WdtQ6w0iqUtrxSlBpn
+         dvz/ln4tCoK+o3Dor2376kxekznS1rs+ob7tirDpEUZKjFIKlBcnxQa4w28N7qp1VEC2
+         8oCQ==
+X-Gm-Message-State: APjAAAWIRZfTW65nmSxNeVi8tjBPv1kSJWlXhkze0tTY4LvtO14Wr0lA
+        TvhxrP3CvxQB1fFA0RfKBEtHatXtNZO5UUjPCRk=
+X-Google-Smtp-Source: APXvYqwXNQ85AMQ82y5yVifrvbRIc55eAUjhwij0+sTOJVCU6PWFQrAXLde5ogB+7LJPke763XickWNjc6/9cst2GW4=
+X-Received: by 2002:a05:6214:2b0:: with SMTP id m16mr25953761qvv.45.1569945667079;
+ Tue, 01 Oct 2019 09:01:07 -0700 (PDT)
 MIME-Version: 1.0
-X-MC-Unique: -oUOnduMO7u6T_CwoD2SuA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20191001142227.1227176-1-arnd@arndb.de> <1569940805.5576.257.camel@lca.pw>
+In-Reply-To: <1569940805.5576.257.camel@lca.pw>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 1 Oct 2019 18:00:50 +0200
+Message-ID: <CAK8P3a04nMwy3VpdtD6x_tdPC14LPPbt3JKrGN48qRo_sDVk-Q@mail.gmail.com>
+Subject: Re: [PATCH] mm/memcontrol.c: fix another unused function warning
+To:     Qian Cai <cai@lca.pw>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRGVuaXMgRWZyZW1vdg0KPiBTZW50OiAwMSBPY3RvYmVyIDIwMTkgMTY6MTMNCi4uLg0K
-PiBKdXN0IGZvdW5kIGFuIG9mZmljaWFsIGRvY3VtZW50YXRpb24gdG8gdGhpcyBpc3N1ZToNCj4g
-aHR0cHM6Ly9nY2MuZ251Lm9yZy9nY2MtNC45L3BvcnRpbmdfdG8uaHRtbA0KPiAiTnVsbCBwb2lu
-dGVyIGNoZWNrcyBtYXkgYmUgb3B0aW1pemVkIGF3YXkgbW9yZSBhZ2dyZXNzaXZlbHkNCj4gLi4u
-DQo+IFRoZSBwb2ludGVycyBwYXNzZWQgdG8gbWVtbW92ZSAoYW5kIHNpbWlsYXIgZnVuY3Rpb25z
-IGluIDxzdHJpbmcuaD4pIG11c3QgYmUgbm9uLW51bGwNCj4gZXZlbiB3aGVuIG5ieXRlcz09MCwg
-c28gR0NDIGNhbiB1c2UgdGhhdCBpbmZvcm1hdGlvbiB0byByZW1vdmUgdGhlIGNoZWNrIGFmdGVy
-IHRoZQ0KPiBtZW1tb3ZlIGNhbGwuIENhbGxpbmcgY29weShwLCBOVUxMLCAwKSBjYW4gdGhlcmVm
-b3JlIGRlZmVyZW5jZSBhIG51bGwgcG9pbnRlciBhbmQgY3Jhc2guIg0KDQpSaWdodCwgc28ganVz
-dCBkb24ndCBjb2RlIGEgTlVMTCBwb2ludGVyIHRlc3QgYWZ0ZXIgYSBtZW1jcHkoKSBjYWxsLg0K
-VGhlcmUgaXMgbm8gbmVlZCB0byBhdm9pZCB0aGUgY2FsbCBpdHNlbGYuDQoNCj4gQnV0IGFnYWlu
-LCBJIHdvdWxkIHNheSB0aGF0IHRoZSBidWcgaW4gdGhpcyBjb2RlIGlzIGJlY2F1c2UgdGhlIGlm
-IGNvbmRpdGlvbiB3YXMgY29weS1wYXN0ZWQNCj4gYW5kIGl0IHNob3VsZCBiZSBpbnZlcnRlZC4N
-Cg0KT2gsIHRoZSBjb2RlIGlzIHF1ZXN0aW9uIGlzIGp1c3Qgc3R1cGlkbHkgYmFkLg0KSXQgc2Vl
-bWVkIHRvIGRvOg0KCWlmIChhKQ0KCQl4Ow0KCWVsc2UgaWYgKCFhKQ0KCQl5Ow0KCWVsc2UNCgkJ
-ZXJyb3IgKCJhbGwgYm9ya2VkIikNCg0KSWYgdGhlIHdob2xlIGRyaXZlciBpcyB3cml0dGVuIGxp
-a2UgdGhhdCBpdCBuZWVkcyBmaXhpbmcgYmVmb3JlIGFueW9uZSB0YWtlcyBhIHNlcmlvdXMgbG9v
-ayBhdCBpdC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJh
-bWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0
-cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Tue, Oct 1, 2019 at 4:40 PM Qian Cai <cai@lca.pw> wrote:
+>
+> On Tue, 2019-10-01 at 16:22 +0200, Arnd Bergmann wrote:
+> > Removing the mem_cgroup_id_get() stub function introduced a new warning
+> > of the same kind when CONFIG_MMU is disabled:
+>
+> Shouldn't CONFIG_MEMCG depends on CONFIG_MMU instead?
 
+Maybe. Generally we allow building a lot of stuff without CONFIG_MMU that
+may not make sense, so I just followed the same idea here.
+
+      Arnd
