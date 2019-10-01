@@ -2,135 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6C6C3880
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:04:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0B9FC3879
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 17:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389486AbfJAPEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 11:04:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36704 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727185AbfJAPEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 11:04:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 291F6AF8E;
-        Tue,  1 Oct 2019 15:04:38 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        James Dingwall <james@dingwall.me.uk>, stable@vger.kernel.org
-Subject: [PATCH] xen/xenbus: fix self-deadlock after killing user process
-Date:   Tue,  1 Oct 2019 17:03:55 +0200
-Message-Id: <20191001150355.25365-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        id S2389419AbfJAPER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 11:04:17 -0400
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:39043 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727185AbfJAPER (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 11:04:17 -0400
+Received: by mail-wr1-f41.google.com with SMTP id r3so15981843wrj.6;
+        Tue, 01 Oct 2019 08:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=82JevLXpiEtGmAc3CHys8cJux4GB+e9q7dCU4OqqwNA=;
+        b=TkwWCU1HOyaEwaiACxq0x15vbDID7pKPA8viZni877Yi7iGnxC6M3I68GDxYNM3sNz
+         PcPkG4SnLTFiLbhFVDUEDlEoZPoF4ksevciAU+w+vCaGCQwVu5E/i64j61Rpa7f9aECf
+         mb1hkU0qY0I8K/PCdkq+1Xru8Npmgh5Bd6YM3KIWI+0yHIbd5RljcJO9LyT8z+JOah3m
+         +yspFda/lKHcs6KogjdvziqrLVSEkWuWOi++6Psil4w4zWbiOcbvw+SLQV0BKPfk9NAC
+         EVK3S85mnLBTpmjt6oOrb+FE1/N8mh6x5qfHSiFkcN3DzmJHU7d1zu1vTdGkrnILJLGd
+         vRhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=82JevLXpiEtGmAc3CHys8cJux4GB+e9q7dCU4OqqwNA=;
+        b=N03ndwjXFM9aKbFMb42swh72wxHGJz3vNDqSoVjqnrbMLRCgV8YJ/MsYpsZhbxs3Np
+         69ryAfhNBoLv7jDHJ6B2FaNG9wdUgdEe7iGKZMtBIsjmHCtjMCj2yK/fVSLacUqI09ay
+         /StPJ53XUSDI6meknq1rDg1KsVMJ7iRQSm+CWaqGCisXGE8BIbEmStbiux0uY4PDPwRe
+         UiL2L7H+96hjniymNp6qKK9xusTJ8nxyuKenuTBslcSwgwYfnVHkusiU5kPBEMK9AnuG
+         xsi2TCeFT/vDQlJ4dFkPBfTGYXNwpU8uxtlLb8Dt5rMEwfSbjuxyMLXgFTLsx/eetPSk
+         Q3Cw==
+X-Gm-Message-State: APjAAAUeDOiMqa8T+rymo+TEGsuI+lEaK/qRb04asitlEyYrabZvK9N1
+        jx8UtF3sE58AIpaqBkn0uRuBv/dz
+X-Google-Smtp-Source: APXvYqysmRZv4fvIeB8npqusjQa8iA0BFIqVmK9AcFOwpTbIHBre6jHhDi8o++Cu1n3PH+aBr679Lw==
+X-Received: by 2002:a5d:4ecf:: with SMTP id s15mr1386728wrv.234.1569942255091;
+        Tue, 01 Oct 2019 08:04:15 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id y13sm25466006wrg.8.2019.10.01.08.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 08:04:13 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 17:04:12 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Nagarjuna Kristam <nkristam@nvidia.com>
+Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch V2] soc/tegra: fuse: Add fuse clock check in
+ tegra_fuse_readl
+Message-ID: <20191001150412.GG3566931@ulmo>
+References: <1567508212-1194-1-git-send-email-nkristam@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uc35eWnScqDcQrv5"
+Content-Disposition: inline
+In-Reply-To: <1567508212-1194-1-git-send-email-nkristam@nvidia.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case a user process using xenbus has open transactions and is killed
-e.g. via ctrl-C the following cleanup of the allocated resources might
-result in a deadlock due to trying to end a transaction in the xenbus
-worker thread:
 
-[ 2551.474706] INFO: task xenbus:37 blocked for more than 120 seconds.
-[ 2551.492215]       Tainted: P           OE     5.0.0-29-generic #5
-[ 2551.510263] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[ 2551.528585] xenbus          D    0    37      2 0x80000080
-[ 2551.528590] Call Trace:
-[ 2551.528603]  __schedule+0x2c0/0x870
-[ 2551.528606]  ? _cond_resched+0x19/0x40
-[ 2551.528632]  schedule+0x2c/0x70
-[ 2551.528637]  xs_talkv+0x1ec/0x2b0
-[ 2551.528642]  ? wait_woken+0x80/0x80
-[ 2551.528645]  xs_single+0x53/0x80
-[ 2551.528648]  xenbus_transaction_end+0x3b/0x70
-[ 2551.528651]  xenbus_file_free+0x5a/0x160
-[ 2551.528654]  xenbus_dev_queue_reply+0xc4/0x220
-[ 2551.528657]  xenbus_thread+0x7de/0x880
-[ 2551.528660]  ? wait_woken+0x80/0x80
-[ 2551.528665]  kthread+0x121/0x140
-[ 2551.528667]  ? xb_read+0x1d0/0x1d0
-[ 2551.528670]  ? kthread_park+0x90/0x90
-[ 2551.528673]  ret_from_fork+0x35/0x40
+--uc35eWnScqDcQrv5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by doing the cleanup via a workqueue instead.
+On Tue, Sep 03, 2019 at 04:26:52PM +0530, Nagarjuna Kristam wrote:
+> tegra_fuse_readl() can be called from drivers at any time. If this API is
+> called before tegra_fuse_probe(), we end up enabling clock before it is
+> registered. Add check for fuse clock in tegra_fuse_readl() and return
+> corresponding error if any.
+>=20
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> ---
+> V2:
+> 	- Added Null and other error checks for fuse->clk.
+> ---
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-Reported-by: James Dingwall <james@dingwall.me.uk>
-Fixes: fd8aa9095a95c ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
-Cc: <stable@vger.kernel.org> # 4.11
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/xen/xenbus/xenbus_dev_frontend.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+Applied to for-5.5/soc, thanks.
 
-diff --git a/drivers/xen/xenbus/xenbus_dev_frontend.c b/drivers/xen/xenbus/xenbus_dev_frontend.c
-index 08adc590f631..597af455a522 100644
---- a/drivers/xen/xenbus/xenbus_dev_frontend.c
-+++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
-@@ -55,6 +55,7 @@
- #include <linux/string.h>
- #include <linux/slab.h>
- #include <linux/miscdevice.h>
-+#include <linux/workqueue.h>
- 
- #include <xen/xenbus.h>
- #include <xen/xen.h>
-@@ -116,6 +117,8 @@ struct xenbus_file_priv {
- 	wait_queue_head_t read_waitq;
- 
- 	struct kref kref;
-+
-+	struct work_struct wq;
- };
- 
- /* Read out any raw xenbus messages queued up. */
-@@ -300,14 +303,14 @@ static void watch_fired(struct xenbus_watch *watch,
- 	mutex_unlock(&adap->dev_data->reply_mutex);
- }
- 
--static void xenbus_file_free(struct kref *kref)
-+static void xenbus_worker(struct work_struct *wq)
- {
- 	struct xenbus_file_priv *u;
- 	struct xenbus_transaction_holder *trans, *tmp;
- 	struct watch_adapter *watch, *tmp_watch;
- 	struct read_buffer *rb, *tmp_rb;
- 
--	u = container_of(kref, struct xenbus_file_priv, kref);
-+	u = container_of(wq, struct xenbus_file_priv, wq);
- 
- 	/*
- 	 * No need for locking here because there are no other users,
-@@ -333,6 +336,18 @@ static void xenbus_file_free(struct kref *kref)
- 	kfree(u);
- }
- 
-+static void xenbus_file_free(struct kref *kref)
-+{
-+	struct xenbus_file_priv *u;
-+
-+	/*
-+	 * We might be called in xenbus_thread().
-+	 * Use workqueue to avoid deadlock.
-+	 */
-+	u = container_of(kref, struct xenbus_file_priv, kref);
-+	schedule_work(&u->wq);
-+}
-+
- static struct xenbus_transaction_holder *xenbus_get_transaction(
- 	struct xenbus_file_priv *u, uint32_t tx_id)
- {
-@@ -650,6 +665,7 @@ static int xenbus_file_open(struct inode *inode, struct file *filp)
- 	INIT_LIST_HEAD(&u->watches);
- 	INIT_LIST_HEAD(&u->read_buffers);
- 	init_waitqueue_head(&u->read_waitq);
-+	INIT_WORK(&u->wq, xenbus_worker);
- 
- 	mutex_init(&u->reply_mutex);
- 	mutex_init(&u->msgbuffer_mutex);
--- 
-2.16.4
+Thierry
 
+--uc35eWnScqDcQrv5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2TauwACgkQ3SOs138+
+s6EqvQ//QmqQwmW5Ol+MmXGhVIp3l5MIWX0f5l5/D9v1a911yCzm9o9mPKjAlkJy
+RA3+8kZJhAGmxE4GFZ/3aV1V32dqrnvNkJXEgagTnQ+kXaIfr2o67DoW5q220ftV
+JT7USAUONMWTqEJrR90e+EV668kDD9ZtAcLrn40BBjM+0g0K19g+7vLXAvzuLNTb
+CONTgcahroCKIf9x2YG8aUKICAeIbz/JflbaZwLyrV+WBQ8H4mg3RHbd1MPOQIha
+sNv6HunEy9nJeP8kcHopFJfikHMNempXIpcB2mlmU/iubTvdvBFDm+POhivPuuqv
+RCvopwwzqyxN+jyjj3SolNVAVWwzCbYYI96HBMn2j3jD0+2qCGO0WA/TQVx8IMZS
+vBouimwhcWKu8HIHhTj3ZSt59bhIya9jak+1wpfmm9BgX6ifZNB4k082kB336uds
+p6TlDKZAoTHVzKmRVC6nYmSMb46OKDVdqzZP9jn2aNPZio2jIhHzQNg83MPuUofQ
+3jRXU0JifD15pnIG9zkXXM100k0HdnW+2rwzcVbEQRGsxd9YqQvV8gZWjtAQD9J/
+jvzAaF3rcFZM8iMAUaU7VTIc6dzGJlqaqVhAr6q9VuKsrQsNVQFv3j2Z//dVhM8D
+jgMlsySTFvNLZQf6K8bruE0yqY/YCG55L7JU7hJFRfdEBkmqTgs=
+=XLEa
+-----END PGP SIGNATURE-----
+
+--uc35eWnScqDcQrv5--
