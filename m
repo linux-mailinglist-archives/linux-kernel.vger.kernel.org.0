@@ -2,47 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C07C3CE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF9AC3CC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:55:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbfJAQzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:55:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54542 "EHLO mail.kernel.org"
+        id S1732279AbfJAQmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:42:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfJAQmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:42:35 -0400
+        id S1732082AbfJAQmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:42:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A7152168B;
-        Tue,  1 Oct 2019 16:42:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF69B222C5;
+        Tue,  1 Oct 2019 16:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948154;
-        bh=iUtZ+ozD5ageHYgBSvJsnHAVqbiyiKVeoNsJQ9ir0oE=;
+        s=default; t=1569948160;
+        bh=nxxeL1J9BA6m3C/MTM13KTCe1snedyexFr9+5Ba6axM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JqMfTtjrFaNL5SpXDJmqHWs2iaoE+BAs7GY00ycKgYgmvdTo1Ct1SQGAGnJ8mlHTF
-         Hz4o1+W18+My7rCmykoTEQeOH//L8bAEvqv1XoybKLZGONTJtBYv1IunWGHWIcGLNK
-         blnAGVF2Z2vlBiNdhSL0DsNhxNIq1EMrTRuky/+E=
+        b=JIRhlJRQeAH3ukLcaaF6+llLxPtouSB/sRN30jyBCz6uRer43++lquiHdouRXM/5W
+         BxtIvfy8pPo/RuplLHpo9KX8YqnwGx26WyrVVjVOHE1SC6c9eVWyunNZ7uIY9aDkjw
+         6nwBgoTyx4KQrNmleWtlBeaIZlVquq0CrzVn0tYY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>, Jan Kara <jack@suse.cz>,
-        "Tobin C . Harding" <tobin@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, Joe Perches <joe@perches.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Nitin Gote <nitin.r.gote@intel.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Stephen Kitt <steve@sk2.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 45/63] include/trace/events/writeback.h: fix -Wstringop-truncation warnings
-Date:   Tue,  1 Oct 2019 12:41:07 -0400
-Message-Id: <20191001164125.15398-45-sashal@kernel.org>
+Cc:     Allan Zhang <allanzhang@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 49/63] bpf: Fix bpf_event_output re-entry issue
+Date:   Tue,  1 Oct 2019 12:41:11 -0400
+Message-Id: <20191001164125.15398-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -55,189 +47,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Allan Zhang <allanzhang@google.com>
 
-[ Upstream commit d1a445d3b86c9341ce7a0954c23be0edb5c9bec5 ]
+[ Upstream commit 768fb61fcc13b2acaca758275d54c09a65e2968b ]
 
-There are many of those warnings.
+BPF_PROG_TYPE_SOCK_OPS program can reenter bpf_event_output because it
+can be called from atomic and non-atomic contexts since we don't have
+bpf_prog_active to prevent it happen.
 
-In file included from ./arch/powerpc/include/asm/paca.h:15,
-                 from ./arch/powerpc/include/asm/current.h:13,
-                 from ./include/linux/thread_info.h:21,
-                 from ./include/asm-generic/preempt.h:5,
-                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
-                 from ./include/linux/preempt.h:78,
-                 from ./include/linux/spinlock.h:51,
-                 from fs/fs-writeback.c:19:
-In function 'strncpy',
-    inlined from 'perf_trace_writeback_page_template' at
-./include/trace/events/writeback.h:56:1:
-./include/linux/string.h:260:9: warning: '__builtin_strncpy' specified
-bound 32 equals destination size [-Wstringop-truncation]
-  return __builtin_strncpy(p, q, size);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This patch enables 3 levels of nesting to support normal, irq and nmi
+context.
 
-Fix it by using the new strscpy_pad() which was introduced in "lib/string:
-Add strscpy_pad() function" and will always be NUL-terminated instead of
-strncpy().  Also, change strlcpy() to use strscpy_pad() in this file for
-consistency.
+We can easily reproduce the issue by running netperf crr mode with 100
+flows and 10 threads from netperf client side.
 
-Link: http://lkml.kernel.org/r/1564075099-27750-1-git-send-email-cai@lca.pw
-Fixes: 455b2864686d ("writeback: Initial tracing support")
-Fixes: 028c2dd184c0 ("writeback: Add tracing to balance_dirty_pages")
-Fixes: e84d0a4f8e39 ("writeback: trace event writeback_queue_io")
-Fixes: b48c104d2211 ("writeback: trace event bdi_dirty_ratelimit")
-Fixes: cc1676d917f3 ("writeback: Move requeueing when I_SYNC set to writeback_sb_inodes()")
-Fixes: 9fb0a7da0c52 ("writeback: add more tracepoints")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Tobin C. Harding <tobin@kernel.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Dave Chinner <dchinner@redhat.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Joe Perches <joe@perches.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Nitin Gote <nitin.r.gote@intel.com>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: Stephen Kitt <steve@sk2.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Here is the whole stack dump:
+
+[  515.228898] WARNING: CPU: 20 PID: 14686 at kernel/trace/bpf_trace.c:549 bpf_event_output+0x1f9/0x220
+[  515.228903] CPU: 20 PID: 14686 Comm: tcp_crr Tainted: G        W        4.15.0-smp-fixpanic #44
+[  515.228904] Hardware name: Intel TBG,ICH10/Ikaria_QC_1b, BIOS 1.22.0 06/04/2018
+[  515.228905] RIP: 0010:bpf_event_output+0x1f9/0x220
+[  515.228906] RSP: 0018:ffff9a57ffc03938 EFLAGS: 00010246
+[  515.228907] RAX: 0000000000000012 RBX: 0000000000000001 RCX: 0000000000000000
+[  515.228907] RDX: 0000000000000000 RSI: 0000000000000096 RDI: ffffffff836b0f80
+[  515.228908] RBP: ffff9a57ffc039c8 R08: 0000000000000004 R09: 0000000000000012
+[  515.228908] R10: ffff9a57ffc1de40 R11: 0000000000000000 R12: 0000000000000002
+[  515.228909] R13: ffff9a57e13bae00 R14: 00000000ffffffff R15: ffff9a57ffc1e2c0
+[  515.228910] FS:  00007f5a3e6ec700(0000) GS:ffff9a57ffc00000(0000) knlGS:0000000000000000
+[  515.228910] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  515.228911] CR2: 0000537082664fff CR3: 000000061fed6002 CR4: 00000000000226f0
+[  515.228911] Call Trace:
+[  515.228913]  <IRQ>
+[  515.228919]  [<ffffffff82c6c6cb>] bpf_sockopt_event_output+0x3b/0x50
+[  515.228923]  [<ffffffff8265daee>] ? bpf_ktime_get_ns+0xe/0x10
+[  515.228927]  [<ffffffff8266fda5>] ? __cgroup_bpf_run_filter_sock_ops+0x85/0x100
+[  515.228930]  [<ffffffff82cf90a5>] ? tcp_init_transfer+0x125/0x150
+[  515.228933]  [<ffffffff82cf9159>] ? tcp_finish_connect+0x89/0x110
+[  515.228936]  [<ffffffff82cf98e4>] ? tcp_rcv_state_process+0x704/0x1010
+[  515.228939]  [<ffffffff82c6e263>] ? sk_filter_trim_cap+0x53/0x2a0
+[  515.228942]  [<ffffffff82d90d1f>] ? tcp_v6_inbound_md5_hash+0x6f/0x1d0
+[  515.228945]  [<ffffffff82d92160>] ? tcp_v6_do_rcv+0x1c0/0x460
+[  515.228947]  [<ffffffff82d93558>] ? tcp_v6_rcv+0x9f8/0xb30
+[  515.228951]  [<ffffffff82d737c0>] ? ip6_route_input+0x190/0x220
+[  515.228955]  [<ffffffff82d5f7ad>] ? ip6_protocol_deliver_rcu+0x6d/0x450
+[  515.228958]  [<ffffffff82d60246>] ? ip6_rcv_finish+0xb6/0x170
+[  515.228961]  [<ffffffff82d5fb90>] ? ip6_protocol_deliver_rcu+0x450/0x450
+[  515.228963]  [<ffffffff82d60361>] ? ipv6_rcv+0x61/0xe0
+[  515.228966]  [<ffffffff82d60190>] ? ipv6_list_rcv+0x330/0x330
+[  515.228969]  [<ffffffff82c4976b>] ? __netif_receive_skb_one_core+0x5b/0xa0
+[  515.228972]  [<ffffffff82c497d1>] ? __netif_receive_skb+0x21/0x70
+[  515.228975]  [<ffffffff82c4a8d2>] ? process_backlog+0xb2/0x150
+[  515.228978]  [<ffffffff82c4aadf>] ? net_rx_action+0x16f/0x410
+[  515.228982]  [<ffffffff830000dd>] ? __do_softirq+0xdd/0x305
+[  515.228986]  [<ffffffff8252cfdc>] ? irq_exit+0x9c/0xb0
+[  515.228989]  [<ffffffff82e02de5>] ? smp_call_function_single_interrupt+0x65/0x120
+[  515.228991]  [<ffffffff82e020e1>] ? call_function_single_interrupt+0x81/0x90
+[  515.228992]  </IRQ>
+[  515.228996]  [<ffffffff82a11ff0>] ? io_serial_in+0x20/0x20
+[  515.229000]  [<ffffffff8259c040>] ? console_unlock+0x230/0x490
+[  515.229003]  [<ffffffff8259cbaa>] ? vprintk_emit+0x26a/0x2a0
+[  515.229006]  [<ffffffff8259cbff>] ? vprintk_default+0x1f/0x30
+[  515.229008]  [<ffffffff8259d9f5>] ? vprintk_func+0x35/0x70
+[  515.229011]  [<ffffffff8259d4bb>] ? printk+0x50/0x66
+[  515.229013]  [<ffffffff82637637>] ? bpf_event_output+0xb7/0x220
+[  515.229016]  [<ffffffff82c6c6cb>] ? bpf_sockopt_event_output+0x3b/0x50
+[  515.229019]  [<ffffffff8265daee>] ? bpf_ktime_get_ns+0xe/0x10
+[  515.229023]  [<ffffffff82c29e87>] ? release_sock+0x97/0xb0
+[  515.229026]  [<ffffffff82ce9d6a>] ? tcp_recvmsg+0x31a/0xda0
+[  515.229029]  [<ffffffff8266fda5>] ? __cgroup_bpf_run_filter_sock_ops+0x85/0x100
+[  515.229032]  [<ffffffff82ce77c1>] ? tcp_set_state+0x191/0x1b0
+[  515.229035]  [<ffffffff82ced10e>] ? tcp_disconnect+0x2e/0x600
+[  515.229038]  [<ffffffff82cecbbb>] ? tcp_close+0x3eb/0x460
+[  515.229040]  [<ffffffff82d21082>] ? inet_release+0x42/0x70
+[  515.229043]  [<ffffffff82d58809>] ? inet6_release+0x39/0x50
+[  515.229046]  [<ffffffff82c1f32d>] ? __sock_release+0x4d/0xd0
+[  515.229049]  [<ffffffff82c1f3e5>] ? sock_close+0x15/0x20
+[  515.229052]  [<ffffffff8273b517>] ? __fput+0xe7/0x1f0
+[  515.229055]  [<ffffffff8273b66e>] ? ____fput+0xe/0x10
+[  515.229058]  [<ffffffff82547bf2>] ? task_work_run+0x82/0xb0
+[  515.229061]  [<ffffffff824086df>] ? exit_to_usermode_loop+0x7e/0x11f
+[  515.229064]  [<ffffffff82408171>] ? do_syscall_64+0x111/0x130
+[  515.229067]  [<ffffffff82e0007c>] ? entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Fixes: a5a3a828cd00 ("bpf: add perf event notificaton support for sock_ops")
+Signed-off-by: Allan Zhang <allanzhang@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reviewed-by: Stanislav Fomichev <sdf@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Link: https://lore.kernel.org/bpf/20190925234312.94063-2-allanzhang@google.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/trace/events/writeback.h | 38 +++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+ kernel/trace/bpf_trace.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index aa7f3aeac7408..79095434c1be3 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -66,8 +66,9 @@ DECLARE_EVENT_CLASS(writeback_page_template,
- 	),
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 1c9a4745e596d..aaf66cd9daa6b 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -497,14 +497,17 @@ static const struct bpf_func_proto bpf_perf_event_output_proto = {
+ 	.arg5_type	= ARG_CONST_SIZE_OR_ZERO,
+ };
  
- 	TP_fast_assign(
--		strncpy(__entry->name,
--			mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)", 32);
-+		strscpy_pad(__entry->name,
-+			    mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)",
-+			    32);
- 		__entry->ino = mapping ? mapping->host->i_ino : 0;
- 		__entry->index = page->index;
- 	),
-@@ -110,8 +111,8 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
+-static DEFINE_PER_CPU(struct pt_regs, bpf_pt_regs);
+-static DEFINE_PER_CPU(struct perf_sample_data, bpf_misc_sd);
++static DEFINE_PER_CPU(int, bpf_event_output_nest_level);
++struct bpf_nested_pt_regs {
++	struct pt_regs regs[3];
++};
++static DEFINE_PER_CPU(struct bpf_nested_pt_regs, bpf_pt_regs);
++static DEFINE_PER_CPU(struct bpf_trace_sample_data, bpf_misc_sds);
  
- 		/* may be called for files on pseudo FSes w/ unregistered bdi */
--		strncpy(__entry->name,
--			bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
-+		strscpy_pad(__entry->name,
-+			    bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->flags		= flags;
-@@ -190,8 +191,8 @@ DECLARE_EVENT_CLASS(writeback_write_inode_template,
- 	),
+ u64 bpf_event_output(struct bpf_map *map, u64 flags, void *meta, u64 meta_size,
+ 		     void *ctx, u64 ctx_size, bpf_ctx_copy_t ctx_copy)
+ {
+-	struct perf_sample_data *sd = this_cpu_ptr(&bpf_misc_sd);
+-	struct pt_regs *regs = this_cpu_ptr(&bpf_pt_regs);
++	int nest_level = this_cpu_inc_return(bpf_event_output_nest_level);
+ 	struct perf_raw_frag frag = {
+ 		.copy		= ctx_copy,
+ 		.size		= ctx_size,
+@@ -519,12 +522,25 @@ u64 bpf_event_output(struct bpf_map *map, u64 flags, void *meta, u64 meta_size,
+ 			.data	= meta,
+ 		},
+ 	};
++	struct perf_sample_data *sd;
++	struct pt_regs *regs;
++	u64 ret;
++
++	if (WARN_ON_ONCE(nest_level > ARRAY_SIZE(bpf_misc_sds.sds))) {
++		ret = -EBUSY;
++		goto out;
++	}
++	sd = this_cpu_ptr(&bpf_misc_sds.sds[nest_level - 1]);
++	regs = this_cpu_ptr(&bpf_pt_regs.regs[nest_level - 1]);
  
- 	TP_fast_assign(
--		strncpy(__entry->name,
--			dev_name(inode_to_bdi(inode)->dev), 32);
-+		strscpy_pad(__entry->name,
-+			    dev_name(inode_to_bdi(inode)->dev), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->sync_mode	= wbc->sync_mode;
- 		__entry->cgroup_ino	= __trace_wbc_assign_cgroup(wbc);
-@@ -234,8 +235,9 @@ DECLARE_EVENT_CLASS(writeback_work_class,
- 		__field(unsigned int, cgroup_ino)
- 	),
- 	TP_fast_assign(
--		strncpy(__entry->name,
--			wb->bdi->dev ? dev_name(wb->bdi->dev) : "(unknown)", 32);
-+		strscpy_pad(__entry->name,
-+			    wb->bdi->dev ? dev_name(wb->bdi->dev) :
-+			    "(unknown)", 32);
- 		__entry->nr_pages = work->nr_pages;
- 		__entry->sb_dev = work->sb ? work->sb->s_dev : 0;
- 		__entry->sync_mode = work->sync_mode;
-@@ -288,7 +290,7 @@ DECLARE_EVENT_CLASS(writeback_class,
- 		__field(unsigned int, cgroup_ino)
- 	),
- 	TP_fast_assign(
--		strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
- 		__entry->cgroup_ino = __trace_wb_assign_cgroup(wb);
- 	),
- 	TP_printk("bdi %s: cgroup_ino=%u",
-@@ -310,7 +312,7 @@ TRACE_EVENT(writeback_bdi_register,
- 		__array(char, name, 32)
- 	),
- 	TP_fast_assign(
--		strncpy(__entry->name, dev_name(bdi->dev), 32);
-+		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
- 	),
- 	TP_printk("bdi %s",
- 		__entry->name
-@@ -335,7 +337,7 @@ DECLARE_EVENT_CLASS(wbc_class,
- 	),
+ 	perf_fetch_caller_regs(regs);
+ 	perf_sample_data_init(sd, 0, 0);
+ 	sd->raw = &raw;
  
- 	TP_fast_assign(
--		strncpy(__entry->name, dev_name(bdi->dev), 32);
-+		strscpy_pad(__entry->name, dev_name(bdi->dev), 32);
- 		__entry->nr_to_write	= wbc->nr_to_write;
- 		__entry->pages_skipped	= wbc->pages_skipped;
- 		__entry->sync_mode	= wbc->sync_mode;
-@@ -386,7 +388,7 @@ TRACE_EVENT(writeback_queue_io,
- 	),
- 	TP_fast_assign(
- 		unsigned long *older_than_this = work->older_than_this;
--		strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->name, dev_name(wb->bdi->dev), 32);
- 		__entry->older	= older_than_this ?  *older_than_this : 0;
- 		__entry->age	= older_than_this ?
- 				  (jiffies - *older_than_this) * 1000 / HZ : -1;
-@@ -472,7 +474,7 @@ TRACE_EVENT(bdi_dirty_ratelimit,
- 	),
+-	return __bpf_perf_event_output(regs, map, flags, sd);
++	ret = __bpf_perf_event_output(regs, map, flags, sd);
++out:
++	this_cpu_dec(bpf_event_output_nest_level);
++	return ret;
+ }
  
- 	TP_fast_assign(
--		strlcpy(__entry->bdi, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
- 		__entry->write_bw	= KBps(wb->write_bandwidth);
- 		__entry->avg_write_bw	= KBps(wb->avg_write_bandwidth);
- 		__entry->dirty_rate	= KBps(dirty_rate);
-@@ -537,7 +539,7 @@ TRACE_EVENT(balance_dirty_pages,
- 
- 	TP_fast_assign(
- 		unsigned long freerun = (thresh + bg_thresh) / 2;
--		strlcpy(__entry->bdi, dev_name(wb->bdi->dev), 32);
-+		strscpy_pad(__entry->bdi, dev_name(wb->bdi->dev), 32);
- 
- 		__entry->limit		= global_wb_domain.dirty_limit;
- 		__entry->setpoint	= (global_wb_domain.dirty_limit +
-@@ -597,8 +599,8 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name,
--		        dev_name(inode_to_bdi(inode)->dev), 32);
-+		strscpy_pad(__entry->name,
-+			    dev_name(inode_to_bdi(inode)->dev), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->dirtied_when	= inode->dirtied_when;
-@@ -671,8 +673,8 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
- 	),
- 
- 	TP_fast_assign(
--		strncpy(__entry->name,
--			dev_name(inode_to_bdi(inode)->dev), 32);
-+		strscpy_pad(__entry->name,
-+			    dev_name(inode_to_bdi(inode)->dev), 32);
- 		__entry->ino		= inode->i_ino;
- 		__entry->state		= inode->i_state;
- 		__entry->dirtied_when	= inode->dirtied_when;
+ BPF_CALL_0(bpf_get_current_task)
 -- 
 2.20.1
 
