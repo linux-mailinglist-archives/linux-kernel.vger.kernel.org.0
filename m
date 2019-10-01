@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD0D9C350D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA85C350F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:00:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388233AbfJAM7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 08:59:38 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40874 "EHLO
+        id S2388243AbfJAM7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 08:59:44 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55140 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388199AbfJAM7f (ORCPT
+        with ESMTP id S2388212AbfJAM7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 1 Oct 2019 08:59:35 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b24so3118595wmj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 05:59:32 -0700 (PDT)
+Received: by mail-wm1-f66.google.com with SMTP id p7so3274525wmp.4
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 05:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3BPysl6DVnolWKLxLF4VbdfeZy6f97Qv6aum3TgQhxM=;
-        b=Py0M9oMfQI+PMa52Szwcn96sG7yU+5grw98sqbRASFWjqymtUPfIXRkhfGWRJD+uDc
-         DFOu0PfiYq1m23B1DGc6kJPwZwMiaRvRd1WOam26xktbHxIDyr6V06nEie2tUaHoKdtV
-         AomZQ+XSHDMaZFKSreeGOeLEXAxO4iRq1Tp0sk+tnJuTJbP2SILKf6ElpGAzQ+k8jCyQ
-         NMvnZtYl9F504nM6L1/fKeoVVAjAK9cwk1LrFe8bU200Hp+AZIy1y9ujvf+Q6hhBfUUV
-         MFGIJrG+POreX2icEi090xnKID8hmd/owTKbPoTRDP55mYCSy1y9nWR81XgMJAB48TcD
-         GdGQ==
+        bh=AptOB7aQMzupkvqKi0d1i4i7uXh0E5N7gRvX5FWeAOU=;
+        b=Mj8KL/3yO/+8pQR6hKmMxjehp8UsaQmJXB+50w4JFC0Jbpw/bv2KHHtQqu6BYcbZ0s
+         GnstolGS0HMZooKY2nCYemYIsdaW8nlkyXolNB7aBZ2wQgg3+tC6mtqu6pxs7bjcCWXy
+         7cPPNplvd38z+flfRXABRtkSJsSPiN7w4B2Z5mXYR4SNSpvQjEYEP05z6/up9NkcTA3h
+         r36ddCNTZVeEErft7TF+UYk0jwcNEJCYfaFm1PMfMF+x+dFlzVYdG6Dlz00VIYzPoksO
+         1NiE+Kx8avaQAi9fzsQecRgxXfikJ7hT2QJFzwEMqauBQWPwUJyenh0Ni5myYPeN0+5a
+         veOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3BPysl6DVnolWKLxLF4VbdfeZy6f97Qv6aum3TgQhxM=;
-        b=FnxwkXRK8IsyDJ8zb96A1dEGo6NV27M718tpg+dLjK0leDnTDOzTALAI071otY9knZ
-         3D9MbkDpY2DVicSvso9fqyLdw0n10RRdCD/v4XGBGNqpRJo9NCWMclldijAGvZcHrDzm
-         IHetpL3cQlBGNxzTPMDbxptSVv9MyF0jmoofdQhCdT4Bp0YGYxyGxuqBXYMMhHiSbNby
-         OZlfjb+sZ4pYmeQbVplmlZy+mGi84U9Ijg19/Ywob7c44XFbtZnu24vvETUCCc3uSC70
-         j4Z0UcL6IIhvM+leGc7b58DfFU1nPbO9aaDRmfpxH9bnQWEwp5ik8aOR+24cWkNFU1QH
-         4XIg==
-X-Gm-Message-State: APjAAAVlazKaKSAB86cVIVYvc2OOdgW/xuxeBZGwjypPNNIwLF/a8QRW
-        vinPgjDUvfyf1bSYkZt7L/eJaw==
-X-Google-Smtp-Source: APXvYqz4hwRoZovdKY3xAs1Jj3G2pPXNemkxGMSqBibHk1SoQoNt+fHBr5oTS1QgLiaTkOSdBS1/dw==
-X-Received: by 2002:a7b:c4c7:: with SMTP id g7mr3528584wmk.11.1569934771921;
-        Tue, 01 Oct 2019 05:59:31 -0700 (PDT)
+        bh=AptOB7aQMzupkvqKi0d1i4i7uXh0E5N7gRvX5FWeAOU=;
+        b=Ncj0aPNnwmQstFuWz2cM0Hsj/TeBgZBo0H/VMSvHlx8nNFMJXdZMYzHbyxqN3lal1H
+         LeU+Nn/fba608XcRhJcggAiwn6f14La+yfJhzCXZ42cYO3AZHadFofET+GjEj1kVElKg
+         s8dz3Frrb8hOwGC8YLjSHxN2nAbBLwB+qn3pfniRDGadK2BEtwU8oKRjIa6BPn7LDSGn
+         EKXT15PPlYvmXc6h4kYFE8RxF9PSKvTInHRLc3hG+ZCDFcuCo8haj3Wx7vn5nUm9pLDS
+         90ZY38tXkg2zdmA69Gk5Y91ygDvbt2xVZgjmD0HSPMjieV4Rmimy9bEBasSLjXelXlPj
+         TECg==
+X-Gm-Message-State: APjAAAWISnfzjqc+Y8tyet4hzh7LATC8g4/YwE56CEjlGiQ8N0i3tLeU
+        O1EXNLg8Z+7TUQChnZItOnJIuQ==
+X-Google-Smtp-Source: APXvYqx3q+9sUGs6+xirhCygiJCG0L1MJfnhI1dmSdWZ8G1s1CHPmFRdObGuXQg/gt02Yp/yvI/WGg==
+X-Received: by 2002:a1c:7d92:: with SMTP id y140mr3594356wmc.141.1569934773015;
+        Tue, 01 Oct 2019 05:59:33 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id 3sm3561400wmo.22.2019.10.01.05.59.30
+        by smtp.gmail.com with ESMTPSA id 3sm3561400wmo.22.2019.10.01.05.59.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 05:59:31 -0700 (PDT)
+        Tue, 01 Oct 2019 05:59:32 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>,
@@ -58,9 +58,9 @@ To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
 Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 6/7] backlight: gpio: use a helper variable for &pdev->dev
-Date:   Tue,  1 Oct 2019 14:58:36 +0200
-Message-Id: <20191001125837.4472-7-brgl@bgdev.pl>
+Subject: [PATCH v4 7/7] backlight: gpio: pull gpio_backlight_initial_power_state() into probe
+Date:   Tue,  1 Oct 2019 14:58:37 +0200
+Message-Id: <20191001125837.4472-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191001125837.4472-1-brgl@bgdev.pl>
 References: <20191001125837.4472-1-brgl@bgdev.pl>
@@ -73,68 +73,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Instead of dereferencing pdev each time, use a helper variable for
-the associated device pointer.
+The probe function in the gpio-backlight driver is quite short. If we
+pull gpio_backlight_initial_power_state() into probe we can drop two
+more fields from struct gpio_backlight and shrink the driver code.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/video/backlight/gpio_backlight.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/video/backlight/gpio_backlight.c | 36 ++++++++----------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-index 20c5311c7ed2..6247687b6330 100644
+index 6247687b6330..37ec184f0c5c 100644
 --- a/drivers/video/backlight/gpio_backlight.c
 +++ b/drivers/video/backlight/gpio_backlight.c
-@@ -71,25 +71,25 @@ static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
+@@ -17,11 +17,8 @@
+ #include <linux/slab.h>
  
+ struct gpio_backlight {
+-	struct device *dev;
+ 	struct device *fbdev;
+-
+ 	struct gpio_desc *gpiod;
+-	int def_value;
+ };
+ 
+ static int gpio_backlight_update_status(struct backlight_device *bl)
+@@ -53,41 +50,24 @@ static const struct backlight_ops gpio_backlight_ops = {
+ 	.check_fb	= gpio_backlight_check_fb,
+ };
+ 
+-static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
+-{
+-	struct device_node *node = gbl->dev->of_node;
+-
+-	/* Not booted with device tree or no phandle link to the node */
+-	if (!node || !node->phandle)
+-		return gbl->def_value ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN;
+-
+-	/* if the enable GPIO is disabled, do not enable the backlight */
+-	if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
+-		return FB_BLANK_POWERDOWN;
+-
+-	return FB_BLANK_UNBLANK;
+-}
+-
+-
  static int gpio_backlight_probe(struct platform_device *pdev)
  {
--	struct gpio_backlight_platform_data *pdata =
--		dev_get_platdata(&pdev->dev);
-+	struct device *dev = &pdev->dev;
-+	struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
+ 	struct device *dev = &pdev->dev;
+ 	struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
++	struct device_node *of_node = dev->of_node;
  	struct backlight_properties props;
  	struct backlight_device *bl;
  	struct gpio_backlight *gbl;
- 	int ret;
+-	int ret;
++	int ret, def_value;
  
--	gbl = devm_kzalloc(&pdev->dev, sizeof(*gbl), GFP_KERNEL);
-+	gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
+ 	gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
  	if (gbl == NULL)
  		return -ENOMEM;
  
--	gbl->dev = &pdev->dev;
-+	gbl->dev = dev;
- 
+-	gbl->dev = dev;
+-
  	if (pdata)
  		gbl->fbdev = pdata->fbdev;
  
--	gbl->def_value = device_property_read_bool(&pdev->dev, "default-on");
-+	gbl->def_value = device_property_read_bool(dev, "default-on");
+-	gbl->def_value = device_property_read_bool(dev, "default-on");
++	def_value = device_property_read_bool(dev, "default-on");
  
--	gbl->gpiod = devm_gpiod_get(&pdev->dev, NULL, GPIOD_ASIS);
-+	gbl->gpiod = devm_gpiod_get(dev, NULL, GPIOD_ASIS);
+ 	gbl->gpiod = devm_gpiod_get(dev, NULL, GPIOD_ASIS);
  	if (IS_ERR(gbl->gpiod)) {
- 		ret = PTR_ERR(gbl->gpiod);
- 		if (ret != -EPROBE_DEFER)
-@@ -101,11 +101,11 @@ static int gpio_backlight_probe(struct platform_device *pdev)
- 	memset(&props, 0, sizeof(props));
- 	props.type = BACKLIGHT_RAW;
- 	props.max_brightness = 1;
--	bl = devm_backlight_device_register(&pdev->dev, dev_name(&pdev->dev),
--					&pdev->dev, gbl, &gpio_backlight_ops,
-+	bl = devm_backlight_device_register(dev, dev_name(dev),
-+					dev, gbl, &gpio_backlight_ops,
- 					&props);
- 	if (IS_ERR(bl)) {
--		dev_err(&pdev->dev, "failed to register backlight\n");
-+		dev_err(dev, "failed to register backlight\n");
+@@ -109,7 +89,15 @@ static int gpio_backlight_probe(struct platform_device *pdev)
  		return PTR_ERR(bl);
  	}
  
+-	bl->props.power = gpio_backlight_initial_power_state(gbl);
++	/* Not booted with device tree or no phandle link to the node */
++	if (!of_node || !of_node->phandle)
++		bl->props.power = def_value ? FB_BLANK_UNBLANK
++					    : FB_BLANK_POWERDOWN;
++	else if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
++		bl->props.power = FB_BLANK_POWERDOWN;
++	else
++		bl->props.power = FB_BLANK_UNBLANK;
++
+ 	bl->props.brightness = 1;
+ 
+ 	backlight_update_status(bl);
 -- 
 2.23.0
 
