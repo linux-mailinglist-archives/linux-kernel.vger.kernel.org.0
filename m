@@ -2,201 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF2AC2F55
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28DCDC2F5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 10:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733172AbfJAIzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 04:55:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39740 "EHLO mx1.redhat.com"
+        id S1733200AbfJAI4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 04:56:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60536 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbfJAIzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 04:55:20 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729787AbfJAI4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 04:56:52 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E890C049D7C;
-        Tue,  1 Oct 2019 08:55:18 +0000 (UTC)
-Received: from krava (ovpn-204-21.brq.redhat.com [10.40.204.21])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0BE265D9D5;
-        Tue,  1 Oct 2019 08:55:12 +0000 (UTC)
-Date:   Tue, 1 Oct 2019 10:55:11 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Steve MacLean <Steve.MacLean@microsoft.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        John Keeping <john@metanate.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Leo Yan <leo.yan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Brian Robbins <brianrob@microsoft.com>,
-        Tom McDonald <Thomas.McDonald@microsoft.com>,
-        John Salem <josalem@microsoft.com>,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH 3/4 RESEND] perf inject --jit: Remove //anon mmap events
-Message-ID: <20191001085511.GB30823@krava>
-References: <BN8PR21MB13622159D33A3EBCADDF4B2FF7820@BN8PR21MB1362.namprd21.prod.outlook.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id E4F2469061
+        for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2019 08:56:51 +0000 (UTC)
+Received: by mail-io1-f69.google.com with SMTP id w16so37164216ioc.15
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 01:56:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y4MCB39tSojzPSG5F8motQYTFmJxxDn1nUNabNxkafU=;
+        b=GHHVkI354HoNxpViDFcfBM7dDntKf/oi7iwP54NuPsY8Xps/vAUELzSOf/0vMf3A01
+         6CsyMX2IxWz7vdKFgkG46H59e6ggQlxfeR1Zu8Yz/V3Jj41onTKG4smCcVIANFLAW45R
+         9SSJS+yGmoMiFmcEEKrTZok52Xg9827v2oLixodxix+KZcLXTpm+KaMo7wxjEcJMrYL9
+         qG+oWrSX4hE0BZGsXHEmNf9TxQIrcSrkDBj8hh9IkkJfUisVlkP4E1h3xe9WcfcAI1Sb
+         hjCEphokrg96BhVIm8WZ/ZQDdkctAnjtRvUwtZ1FJ7WdRK5vmFIYuy/7nbTB1PF3syVS
+         2dFQ==
+X-Gm-Message-State: APjAAAXp0nZsdFpJ8OLQS/XrAeRQQxxXwlHapoFohM2zyqI2/rBHajNe
+        ff0jnHUkGOPWt7hNtTJfBFbAlk24c9utiQSf4ag9ptt13217maDhRd1DXbMBLoIrAPRhHNWGJhP
+        u40Wb+jSeTa48mecFpDHQU0VsgM3Z6Zawf/1X5zCn
+X-Received: by 2002:a02:3785:: with SMTP id r127mr23230729jar.40.1569920211280;
+        Tue, 01 Oct 2019 01:56:51 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwoNzktoaUof8b0H3sFnkM9bXtOd3VgXH5Bw47BtxohVXwwNwKIPvNn8hjvUfNCqV1BTAm2hn7ua8hYHfXP2xc=
+X-Received: by 2002:a02:3785:: with SMTP id r127mr23230713jar.40.1569920210929;
+ Tue, 01 Oct 2019 01:56:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN8PR21MB13622159D33A3EBCADDF4B2FF7820@BN8PR21MB1362.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 01 Oct 2019 08:55:19 +0000 (UTC)
+References: <20190927144421.22608-1-kherbst@redhat.com> <20190927214252.GA65801@google.com>
+ <CACO55tuaY1jFXpJPeC9M4PoWEDyy547_tE8MpLaTDb+C+ffsbg@mail.gmail.com>
+ <20190930080534.GS2714@lahna.fi.intel.com> <CACO55tuMo1aAA7meGtEey6J6sOS-ZA0ebZeL52i2zfkWtPqe_g@mail.gmail.com>
+ <20190930092934.GT2714@lahna.fi.intel.com> <CACO55tu9M8_TWu2MxNe_NROit+d+rHJP5_Tb+t73q5vr19sd1w@mail.gmail.com>
+ <20190930163001.GX2714@lahna.fi.intel.com> <CACO55tuk4SA6-xUtJ-oRePy8MPXYAp2cfmSPxwW3J5nQuX3y2g@mail.gmail.com>
+ <20191001084651.GC2714@lahna.fi.intel.com>
+In-Reply-To: <20191001084651.GC2714@lahna.fi.intel.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Tue, 1 Oct 2019 10:56:39 +0200
+Message-ID: <CACO55ts9ommYbA5g4=G+f0G=v90qGM7EsurU7AL7bU=PFzQMnw@mail.gmail.com>
+Subject: Re: [RFC PATCH] pci: prevent putting pcie devices into lower device
+ states on certain intel bridges
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 09:00:01PM +0000, Steve MacLean wrote:
-> While a JIT is jitting code it will eventually need to commit more pages and
-> change these pages to executable permissions.
-> 
-> Typically the JIT will want these collocated to minimize branch displacements.
-> 
-> The kernel will coalesce these anonymous mapping with identical permissions
-> before sending an mmap event for the new pages. This means the mmap event for
-> the new pages will include the older pages.
-> 
-> These anonymous mmap events will obscure the jitdump injected pseudo events.
-> This means that the jitdump generated symbols, machine code, debugging info,
-> and unwind info will no longer be used.
-> 
-> Observations:
-> 
-> When a process emits a jit dump marker and a jitdump file, the perf-xxx.map
-> file represents inferior information which has been superseded by the
-> jitdump jit-xxx.dump file.
-> 
-> Further the '//anon*' mmap events are only required for the legacy
-> perf-xxx.map mapping.
-> 
-> Summary:
-> 
-> Add rbtree to track which pids have successfully injected a jitdump file.
-> 
-> During "perf inject --jit", discard "//anon*" mmap events for any pid which
-> has successfully processed a jitdump file.
-> 
-> Committer testing:
-> 
-> // jitdump case
-> perf record <app with jitdump>
-> perf inject --jit --input perf.data --output perfjit.data
-> 
-> // verify mmap "//anon" events present initially
-> perf script --input perf.data --show-mmap-events | grep '//anon'
-> // verify mmap "//anon" events removed
-> perf script --input perfjit.data --show-mmap-events | grep '//anon'
-> 
-> // no jitdump case
-> perf record <app without jitdump>
-> perf inject --jit --input perf.data --output perfjit.data
-> 
-> // verify mmap "//anon" events present initially
-> perf script --input perf.data --show-mmap-events | grep '//anon'
-> // verify mmap "//anon" events not removed
-> perf script --input perfjit.data --show-mmap-events | grep '//anon'
-> 
-> Repro:
-> 
-> This issue was discovered while testing the initial CoreCLR jitdump
-> implementation. https://github.com/dotnet/coreclr/pull/26897.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Stephane Eranian <eranian@google.com>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
-> ---
-> tools/perf/builtin-inject.c |  4 +--
->  tools/perf/util/jitdump.c   | 63 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 65 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-> index c14f40b8..4c921e0 100644
-> --- a/tools/perf/builtin-inject.c
-> +++ b/tools/perf/builtin-inject.c
-> @@ -261,7 +261,7 @@ static int perf_event__jit_repipe_mmap(struct perf_tool *tool,
->          * if jit marker, then inject jit mmaps and generate ELF images
->          */
->         ret = jit_process(inject->session, &inject->output, machine,
-> -                         event->mmap.filename, sample->pid, &n);
-> +                         event->mmap.filename, event->mmap.pid, &n);
->         if (ret < 0)
->                 return ret;
->         if (ret) {
-> @@ -299,7 +299,7 @@ static int perf_event__jit_repipe_mmap2(struct perf_tool *tool,
->          * if jit marker, then inject jit mmaps and generate ELF images
->          */
->         ret = jit_process(inject->session, &inject->output, machine,
-> -                         event->mmap2.filename, sample->pid, &n);
-> +                         event->mmap2.filename, event->mmap2.pid, &n);
->         if (ret < 0)
->                 return ret;
->         if (ret) {
-> diff --git a/tools/perf/util/jitdump.c b/tools/perf/util/jitdump.c
-> index 22d09c4..6a1563f 100644
-> --- a/tools/perf/util/jitdump.c
-> +++ b/tools/perf/util/jitdump.c
-> @@ -751,6 +751,59 @@ jit_detect(char *mmap_name, pid_t pid)
->         return 0;
->  }
->  
-> +struct pid_rbtree
-> +{
-> +       struct rb_node node;
-> +       pid_t pid;
-> +};
-> +
-> +static void jit_add_pid(struct rb_root *root, pid_t pid)
-> +{
-> +       struct rb_node **new = &(root->rb_node), *parent = NULL;
-> +       struct pid_rbtree* data = NULL;
-> +
-> +       /* Figure out where to put new node */
-> +       while (*new) {
-> +               struct pid_rbtree *this = container_of(*new, struct pid_rbtree, node);
-> +               pid_t nodePid = this->pid;
+On Tue, Oct 1, 2019 at 10:47 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Mon, Sep 30, 2019 at 06:36:12PM +0200, Karol Herbst wrote:
+> > On Mon, Sep 30, 2019 at 6:30 PM Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
+> > >
+> > > On Mon, Sep 30, 2019 at 06:05:14PM +0200, Karol Herbst wrote:
+> > > > still happens with your patch applied. The machine simply gets shut down.
+> > > >
+> > > > dmesg can be found here:
+> > > > https://gist.githubusercontent.com/karolherbst/40eb091c7b7b33ef993525de660f1a3b/raw/2380e31f566e93e5ba7c87ef545420965d4c492c/gistfile1.txt
+> > >
+> > > Looking your dmesg:
+> > >
+> > > Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: DCB version 4.1
+> > > Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: MM: using COPY for buffer copies
+> > > Sep 30 17:24:27 kernel: [drm] Initialized nouveau 1.3.1 20120801 for 0000:01:00.0 on minor 1
+> > >
+> > > I would assume it runtime suspends here. Then it wakes up because of PCI
+> > > access from userspace:
+> > >
+> > > Sep 30 17:24:42 kernel: pci_raw_set_power_state: 56 callbacks suppressed
+> > >
+> > > and for some reason it does not get resumed properly. There are also few
+> > > warnings from ACPI that might be relevant:
+> > >
+> > > Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.GFX0._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
+> > > Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.PEG0.PEGP._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
+> > >
+> >
+> > afaik this is the case for essentially every laptop out there.
+>
+> OK, so they are harmless?
+>
 
-looks like Andi is right, I'm still getting malformed patch error
+yes
 
-the patch has extra characters '=20' and broken lines, like:
+> > > This seems to be Dell XPS 9560 which I think has been around some time
+> > > already so I wonder why we only see issues now. Has it ever worked for
+> > > you or maybe there is a regression that causes it to happen now?
+> >
+> > oh, it's broken since forever, we just tried to get more information
+> > from Nvidia if they know what this is all about, but we got nothing
+> > useful.
+> >
+> > We were also hoping to find a reliable fix or workaround we could have
+> > inside nouveau to fix that as I think nouveau is the only driver
+> > actually hit by this issue, but nothing turned out to be reliable
+> > enough.
+>
+> Can't you just block runtime PM from the nouveau driver until this is
+> understood better? That can be done by calling pm_runtime_forbid() (or
+> not calling pm_runtime_allow() in the driver). Or in case of PCI driver
+> you just don't decrease the reference count when probe() ends.
+>
 
+the thing is, it does work for a lot of laptops. We could only observe
+this on kaby lake and skylake ones. Even on Cannon Lakes it seems to
+work just fine.
 
-	--- a/tools/perf/util/jitdump.c
-	+++ b/tools/perf/util/jitdump.c
-	@@ -751,6 +751,59 @@ jit_detect(char *mmap_name, pid_t pid)
-		return 0;
-	 }
-	=20
-	+struct pid_rbtree
-	+{
-	+       struct rb_node node;
-	+       pid_t pid;
-	+};
-	+
-	+static void jit_add_pid(struct rb_root *root, pid_t pid)
-	+{
-	+       struct rb_node **new =3D &(root->rb_node), *parent =3D NULL;
-	+       struct pid_rbtree* data =3D NULL;
-	+
-	+       /* Figure out where to put new node */
-	+       while (*new) {
-	+               struct pid_rbtree *this =3D container_of(*new, struct pid_r=
-	btree, node);
-	+               pid_t nodePid =3D this->pid;
+> I think that would be much better than blocking any devices behind
+> Kabylake PCIe root ports from entering D3 (I don't really think the
+> problem is in the root ports itself but there is something we are
+> missing when the NVIDIA GPU is put into D3cold or back from there).
 
+I highly doubt there is anything wrong with the GPU alone as we have
+too many indications which tell us otherwise.
 
-jirka
+Anyway, at this point I don't know where to look further for what's
+actually wrong. And apparently it works on Windows, but I don't know
+why and I have no idea what Windows does on such systems to make it
+work reliably.
