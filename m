@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FADFC3B39
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D09C3B3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732227AbfJAQmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:42:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54630 "EHLO mail.kernel.org"
+        id S1732361AbfJAQnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:43:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732073AbfJAQmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:42:39 -0400
+        id S1732274AbfJAQmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:42:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E49321D82;
-        Tue,  1 Oct 2019 16:42:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B682720B7C;
+        Tue,  1 Oct 2019 16:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948159;
-        bh=+n3gJ1VrqbqNkcBk7vhlCR91tUTb6AximTmpMzZNXhQ=;
+        s=default; t=1569948174;
+        bh=s9bI3RQyQ7ZpumkjuFDT8yh/T4vi+2jONkZP6sqpKjg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DO1DrFphJfrg20WyNzAHO84ZNCoAouP7RhpahnK0fICjv1c3ZqqC8r2suMbVH4OLj
-         R6+XsZJMGfFu6BnTobks3wyWS0hReWIDPULDX2D5fOZh4QlJNYb/lHJqQTolGD60cp
-         /tm8FKVb2k8ZsnCGz0VNICVf94EHRTQ58BqR76ws=
+        b=PGfRhhNAEPYd1A+jqMkhOxKSdIkbrc9RDP8ofbpi2IOSdQo7DonY6gsvKBTkGd9Gd
+         7egm0mbvgkJW8JfwhNOXTQ6iU24Ig6uOfPNKtBkNUKwSb4GsvMOAOAtz1fQBf2u7dx
+         WvmQLuXilA3jjOWHqISZb8quIhPEwTNuj9F0lv4Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 48/63] blk-mq: move lockdep_assert_held() into elevator_exit
-Date:   Tue,  1 Oct 2019 12:41:10 -0400
-Message-Id: <20191001164125.15398-48-sashal@kernel.org>
+Cc:     David Ahern <dsahern@gmail.com>,
+        Patrick Ruddy <pruddy@vyatta.att-mail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 56/63] vrf: Do not attempt to create IPv6 mcast rule if IPv6 is disabled
+Date:   Tue,  1 Oct 2019 12:41:18 -0400
+Message-Id: <20191001164125.15398-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -46,65 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 284b94be1925dbe035ce5218d8b5c197321262c7 ]
+[ Upstream commit dac91170f8e9c73784af5fad6225e954b795601c ]
 
-Commit c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
-removes q->sysfs_lock from elevator_init_mq(), but forgot to deal with
-lockdep_assert_held() called in blk_mq_sched_free_requests() which is
-run in failure path of elevator_init_mq().
+A user reported that vrf create fails when IPv6 is disabled at boot using
+'ipv6.disable=1':
+   https://bugzilla.kernel.org/show_bug.cgi?id=204903
 
-blk_mq_sched_free_requests() is called in the following 3 functions:
+The failure is adding fib rules at create time. Add RTNL_FAMILY_IP6MR to
+the check in vrf_fib_rule if ipv6_mod_enabled is disabled.
 
-	elevator_init_mq()
-	elevator_exit()
-	blk_cleanup_queue()
-
-In blk_cleanup_queue(), blk_mq_sched_free_requests() is followed exactly
-by 'mutex_lock(&q->sysfs_lock)'.
-
-So moving the lockdep_assert_held() from blk_mq_sched_free_requests()
-into elevator_exit() for fixing the report by syzbot.
-
-Reported-by: syzbot+da3b7677bb913dc1b737@syzkaller.appspotmail.com
-Fixed: c48dac137a62 ("block: don't hold q->sysfs_lock in elevator_init_mq")
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: e4a38c0c4b27 ("ipv6: add vrf table handling code for ipv6 mcast")
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Cc: Patrick Ruddy <pruddy@vyatta.att-mail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-mq-sched.c | 2 --
- block/blk.h          | 2 ++
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/vrf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index 2766066a15dbf..3cf555f127006 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -554,8 +554,6 @@ void blk_mq_sched_free_requests(struct request_queue *q)
- 	struct blk_mq_hw_ctx *hctx;
- 	int i;
+diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
+index 97fb0cb1b97ab..1a22165afb393 100644
+--- a/drivers/net/vrf.c
++++ b/drivers/net/vrf.c
+@@ -1153,7 +1153,8 @@ static int vrf_fib_rule(const struct net_device *dev, __u8 family, bool add_it)
+ 	struct sk_buff *skb;
+ 	int err;
  
--	lockdep_assert_held(&q->sysfs_lock);
--
- 	queue_for_each_hw_ctx(q, hctx, i) {
- 		if (hctx->sched_tags)
- 			blk_mq_free_rqs(q->tag_set, hctx->sched_tags, i);
-diff --git a/block/blk.h b/block/blk.h
-index 7814aa207153c..38938125ab729 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -184,6 +184,8 @@ void elv_unregister_queue(struct request_queue *q);
- static inline void elevator_exit(struct request_queue *q,
- 		struct elevator_queue *e)
- {
-+	lockdep_assert_held(&q->sysfs_lock);
-+
- 	blk_mq_sched_free_requests(q);
- 	__elevator_exit(q, e);
- }
+-	if (family == AF_INET6 && !ipv6_mod_enabled())
++	if ((family == AF_INET6 || family == RTNL_FAMILY_IP6MR) &&
++	    !ipv6_mod_enabled())
+ 		return 0;
+ 
+ 	skb = nlmsg_new(vrf_fib_rule_nl_size(), GFP_KERNEL);
 -- 
 2.20.1
 
