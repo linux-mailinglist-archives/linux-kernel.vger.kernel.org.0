@@ -2,234 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCBBC434E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 439FDC4327
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfJAV6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:58:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38854 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725865AbfJAV6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:58:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BE58FAD3E;
-        Tue,  1 Oct 2019 21:58:12 +0000 (UTC)
-Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
-To:     David Rientjes <rientjes@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
+        id S1728530AbfJAVyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 17:54:36 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43590 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbfJAVya (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 17:54:30 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v27so10628813pgk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 14:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=ENE8lCt1crf8LnnzzVk3RdzghYu9Y7qjMvfHyutZqEM=;
+        b=GR21DtnbEA+kE+k0vTIHmfnhDfZIY2DCbYDDM9cr2SMWYDc646u3WaARyfEPa6KztD
+         cvlh3UXseCaxYmoqq8aHPohxyGr1cYzO8eSy+rpjsk18BLmbU7BJy9npjiDEzWdaZIku
+         IadqA5LQZ0CBF3kZm8h2e2JgPPz89cPl67PE4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ENE8lCt1crf8LnnzzVk3RdzghYu9Y7qjMvfHyutZqEM=;
+        b=cJw1JPQkEORmKz4hZu6GPcYPWtkbRxkldTrktQVFlL4jAvuAhsYFeyxa2geKsjWLIx
+         wFCsJ1zl6zjjd3075xRFqXnWqghDBPGGF6e3S4pWsg5deYtvIM9zII/6URglCSENreTv
+         GMVioJok30Trm4K2CtGqLQxZ5GywSXe+LtBWGM6m0teCWFvVcExJqDvwVP4o11zvTsJq
+         UrA2FIVSHiB7N5Iky/VYqmxXnDpvtbh1Br68frAAIA5nfqJpt3aZ2LFW78ViPqrd+wF8
+         DaklFplpG6ufweGpScB8Q2ouPrugVMLcZcKrCLb87DzMJi2hSiMGY8/e+szG6bGRAiwa
+         3lmw==
+X-Gm-Message-State: APjAAAWJrkjg6V9lA6UKUmuugzyvCl5cXXlb10fOhf2OUChYD9KVtVTn
+        tXmTYLI5nQv9EqA9Gl6sLfI1eQ==
+X-Google-Smtp-Source: APXvYqynDNpZsGHGKSmI8DACWshnS2LNeZcLSDFiHhvjfnDhCaVpMBz/yjaQFBaT1mFxvnQmvG24OQ==
+X-Received: by 2002:a62:b40a:: with SMTP id h10mr601438pfn.88.1569966869584;
+        Tue, 01 Oct 2019 14:54:29 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b73sm8535469pga.36.2019.10.01.14.54.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 14:54:28 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 14:54:27 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Bill Metzenthen <billm@melbpc.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <alpine.DEB.2.21.1909041252230.94813@chino.kir.corp.google.com>
- <20190904205522.GA9871@redhat.com>
- <alpine.DEB.2.21.1909051400380.217933@chino.kir.corp.google.com>
- <20190909193020.GD2063@dhcp22.suse.cz>
- <20190925070817.GH23050@dhcp22.suse.cz>
- <alpine.DEB.2.21.1909261149380.39830@chino.kir.corp.google.com>
- <20190927074803.GB26848@dhcp22.suse.cz>
- <CAHk-=wgba5zOJtGBFCBP3Oc1m4ma+AR+80s=hy=BbvNr3GqEmA@mail.gmail.com>
- <20190930112817.GC15942@dhcp22.suse.cz>
- <20191001054343.GA15624@dhcp22.suse.cz>
- <fac13297-424f-33b0-e01d-d72b949a73fe@suse.cz>
- <alpine.DEB.2.21.1910011318050.38265@chino.kir.corp.google.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a5abc877-26de-ed3c-eb33-71474301c852@suse.cz>
-Date:   Tue, 1 Oct 2019 23:54:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86: math-emu: limit MATH_EMULATION to 486SX
+ compatibles
+Message-ID: <201910011454.3B8E504091@keescook>
+References: <20191001142344.1274185-1-arnd@arndb.de>
+ <20191001142344.1274185-2-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1910011318050.38265@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191001142344.1274185-2-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/19 10:31 PM, David Rientjes wrote:
-> On Tue, 1 Oct 2019, Vlastimil Babka wrote:
+On Tue, Oct 01, 2019 at 04:23:35PM +0200, Arnd Bergmann wrote:
+> The fpu emulation code is old and fragile in places, try to limit its
+> use to builds for CPUs that actually use it. As far as I can tell,
+> this is only true for i486sx compatibles, including the Cyrix 486SLC,
+> AMD Am486SX and ÉLAN SC410, UMC U5S amd DM&P VortexSX86, all of which
+> were relatively short-lived and got replaced with i486DX compatible
+> processors soon after introduction, though the some of the embedded
+> versions remained available much longer.
 > 
->> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
->> index 4ae967bcf954..2c48146f3ee2 100644
->> --- a/mm/mempolicy.c
->> +++ b/mm/mempolicy.c
->> @@ -2129,18 +2129,20 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
->>  		nmask = policy_nodemask(gfp, pol);
->>  		if (!nmask || node_isset(hpage_node, *nmask)) {
->>  			mpol_cond_put(pol);
->> +			/*
->> +			 * First, try to allocate THP only on local node, but
->> +			 * don't reclaim unnecessarily, just compact.
->> +			 */
->>  			page = __alloc_pages_node(hpage_node,
->> -						gfp | __GFP_THISNODE, order);
->> +				gfp | __GFP_THISNODE | __GFP_NORETRY, order);
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Nice, I like carving out CONFIG space for 486SX; this makes sense to me.
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  arch/x86/Kconfig              |  2 +-
+>  arch/x86/Kconfig.cpu          | 25 ++++++++++++++++---------
+>  arch/x86/Makefile_32.cpu      |  1 +
+>  arch/x86/include/asm/module.h |  2 ++
+>  4 files changed, 20 insertions(+), 10 deletions(-)
 > 
-> The page allocator has heuristics to determine when compaction should be 
-> retried, reclaim should be retried, and the allocation itself should retry 
-> for high-order allocations (see PAGE_ALLOC_COSTLY_ORDER).
-
-Yes, and flags like __GFP_NORETRY and __GFP_RETRY_MAYFAIL affect these
-heuristics according to the caller's willingness to wait vs availability
-of some kind of fallback.
-  
-> PAGE_ALLOC_COSTLY_ORDER exists solely to avoid poor allocator behavior 
-> when reclaim itself is unlikely -- or disruptive enough -- in making that 
-> amount of contiguous memory available.
-
-The __GFP_NORETRY check for costly orders is one of the implementation
-details of that poor allocator behavior avoidance.
-
-> Rather than papering over the poor feedback loop between compaction and 
-> reclaim that exists in the page allocator, it's probably better to improve 
-> that and determine when an allocation should fail or it's worthwhile to 
-> retry.  That's a separate topic from NUMA locality of thp.
-
-I don't disagree. But we are doing that 'papering over' already and I simply
-believe it can be done better, until we can drop it. Right now at least the
-hugetlb allocations are regressing, as Michal showed.
-
-> In other words, we should likely address how compaction and reclaim is 
-> done for all high order-allocations in the page allocator itself rather 
-> than only here for hugepage allocations and relying on specific gfp bits 
-> to be set.
-
-Well, with your patches, decisions are made based on pageblock order
-(affecting also hugetlbfs) and a specific __GFP_IO bit. I don't see how
-using a __GFP_NORETRY and costly order is worse - both are concepts
-already used to guide reclaim/compaction decisions. And it won't affect
-hugetlbfs. Also with some THP defrag modes, __GFP_NORETRY is also already
-being used.
-
-> Ask: if the allocation here should not retry regardless of why 
-> compaction failed, why should any high-order allocation (user or kernel) 
-> retry if compaction failed and at what order we should just fail?
-
-If that's refering to the quoted code above, the allocation here should not
-retry because it would lead to reclaiming just the local node, effectively
-a node reclaim mode, leading to the problems Andrea and Mel reported.
-That's because __GFP_THISNODE makes it rather specific, so we shouldn't
-conclude anything for the other kinds of allocations, as you're asking.
-
-> If 
-> hugetlb wants to stress this to the fullest extent possible, it already 
-> appropriately uses __GFP_RETRY_MAYFAIL.
-
-Which doesn't work anymore right now, and should again after this patch.
-
-> The code here is saying we care more about NUMA locality than hugepages
-
-That's why there's __GFP_THISNODE, yes.
- 
-> simply because that's where the access latency is better and is specific 
-> to hugepages; allocation behavior for high-order pages needs to live in 
-> the page allocator.
-
-I'd rather add the __GFP_NORETRY to __GFP_THISNODE here to influence the
-allocation behavior, than reintroduce any __GFP_THISNODE checks in the
-page allocator. There are not that many __GFP_THISNODE users, but there
-are plenty of __GFP_NORETRY users, so it seems better to adjust behavior
-based on the latter flag. IIRC in the recent past you argued for putting
-back __GFP_NORETRY to all THP allocations including madvise, so why is there
-a problem now?
-
->>  
->>  			/*
->> -			 * If hugepage allocations are configured to always
->> -			 * synchronous compact or the vma has been madvised
->> -			 * to prefer hugepage backing, retry allowing remote
->> -			 * memory as well.
->> +			 * If that fails, allow both compaction and reclaim,
->> +			 * but on all nodes.
->>  			 */
->> -			if (!page && (gfp & __GFP_DIRECT_RECLAIM))
->> +			if (!page)
->>  				page = __alloc_pages_node(hpage_node,
->> -						gfp | __GFP_NORETRY, order);
-
-Also this __GFP_NORETRY was added by your patch, so I really don't see
-why do you think it's wrong in the first allocation attempt.
-
->> +								gfp, order);
->>  
->>  			goto out;
->>  		}
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index f4d9d1e55e5c..77b02387bd0c 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1751,7 +1751,7 @@ config X86_RESERVE_LOW
+>  config MATH_EMULATION
+>  	bool
+>  	depends on MODIFY_LDT_SYSCALL
+> -	prompt "Math emulation" if X86_32
+> +	prompt "Math emulation" if X86_32 && (M486SX || MELAN)
+>  	---help---
+>  	  Linux can emulate a math coprocessor (used for floating point
+>  	  operations) if you don't have one. 486DX and Pentium processors have
+> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+> index 228705a1232a..5f7bff9885a1 100644
+> --- a/arch/x86/Kconfig.cpu
+> +++ b/arch/x86/Kconfig.cpu
+> @@ -50,12 +50,19 @@ choice
+>  	  See each option's help text for additional details. If you don't know
+>  	  what to do, choose "486".
+>  
+> +config M486SX
+> +	bool "486SX"
+> +	depends on X86_32
+> +	---help---
+> +	  Select this for an 486-class CPU without an FPU such as
+> +	  AMD/Cyrix/IBM/Intel SL/SLC/SLC2/SLC3/SX/SX2 and UMC U5S.
+> +
+>  config M486
+> -	bool "486"
+> +	bool "486DX"
+>  	depends on X86_32
+>  	---help---
+>  	  Select this for an 486-class CPU such as AMD/Cyrix/IBM/Intel
+> -	  486DX/DX2/DX4 or SL/SLC/SLC2/SLC3/SX/SX2 and UMC U5D or U5S.
+> +	  486DX/DX2/DX4 and UMC U5D.
+>  
+>  config M586
+>  	bool "586/K5/5x86/6x86/6x86MX"
+> @@ -313,20 +320,20 @@ config X86_L1_CACHE_SHIFT
+>  	int
+>  	default "7" if MPENTIUM4 || MPSC
+>  	default "6" if MK7 || MK8 || MPENTIUMM || MCORE2 || MATOM || MVIAC7 || X86_GENERIC || GENERIC_CPU
+> -	default "4" if MELAN || M486 || MGEODEGX1
+> +	default "4" if MELAN || M486SX || M486 || MGEODEGX1
+>  	default "5" if MWINCHIP3D || MWINCHIPC6 || MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODE_LX
+>  
+>  config X86_F00F_BUG
+>  	def_bool y
+> -	depends on M586MMX || M586TSC || M586 || M486
+> +	depends on M586MMX || M586TSC || M586 || M486SX || M486
+>  
+>  config X86_INVD_BUG
+>  	def_bool y
+> -	depends on M486
+> +	depends on M486SX || M486
+>  
+>  config X86_ALIGNMENT_16
+>  	def_bool y
+> -	depends on MWINCHIP3D || MWINCHIPC6 || MCYRIXIII || MELAN || MK6 || M586MMX || M586TSC || M586 || M486 || MVIAC3_2 || MGEODEGX1
+> +	depends on MWINCHIP3D || MWINCHIPC6 || MCYRIXIII || MELAN || MK6 || M586MMX || M586TSC || M586 || M486SX || M486 || MVIAC3_2 || MGEODEGX1
+>  
+>  config X86_INTEL_USERCOPY
+>  	def_bool y
+> @@ -379,7 +386,7 @@ config X86_MINIMUM_CPU_FAMILY
+>  
+>  config X86_DEBUGCTLMSR
+>  	def_bool y
+> -	depends on !(MK6 || MWINCHIPC6 || MWINCHIP3D || MCYRIXIII || M586MMX || M586TSC || M586 || M486) && !UML
+> +	depends on !(MK6 || MWINCHIPC6 || MWINCHIP3D || MCYRIXIII || M586MMX || M586TSC || M586 || M486SX || M486) && !UML
+>  
+>  menuconfig PROCESSOR_SELECT
+>  	bool "Supported processor vendors" if EXPERT
+> @@ -403,7 +410,7 @@ config CPU_SUP_INTEL
+>  config CPU_SUP_CYRIX_32
+>  	default y
+>  	bool "Support Cyrix processors" if PROCESSOR_SELECT
+> -	depends on M486 || M586 || M586TSC || M586MMX || (EXPERT && !64BIT)
+> +	depends on M486SX || M486 || M586 || M586TSC || M586MMX || (EXPERT && !64BIT)
+>  	---help---
+>  	  This enables detection, tunings and quirks for Cyrix processors
+>  
+> @@ -471,7 +478,7 @@ config CPU_SUP_TRANSMETA_32
+>  config CPU_SUP_UMC_32
+>  	default y
+>  	bool "Support UMC processors" if PROCESSOR_SELECT
+> -	depends on M486 || (EXPERT && !64BIT)
+> +	depends on M486SX || M486 || (EXPERT && !64BIT)
+>  	---help---
+>  	  This enables detection, tunings and quirks for UMC processors
+>  
+> diff --git a/arch/x86/Makefile_32.cpu b/arch/x86/Makefile_32.cpu
+> index 1f5faf8606b4..cd3056759880 100644
+> --- a/arch/x86/Makefile_32.cpu
+> +++ b/arch/x86/Makefile_32.cpu
+> @@ -10,6 +10,7 @@ else
+>  tune		= $(call cc-option,-mcpu=$(1),$(2))
+>  endif
+>  
+> +cflags-$(CONFIG_M486SX)		+= -march=i486
+>  cflags-$(CONFIG_M486)		+= -march=i486
+>  cflags-$(CONFIG_M586)		+= -march=i586
+>  cflags-$(CONFIG_M586TSC)	+= -march=i586
+> diff --git a/arch/x86/include/asm/module.h b/arch/x86/include/asm/module.h
+> index 7948a17febb4..c215d2762488 100644
+> --- a/arch/x86/include/asm/module.h
+> +++ b/arch/x86/include/asm/module.h
+> @@ -15,6 +15,8 @@ struct mod_arch_specific {
+>  
+>  #ifdef CONFIG_X86_64
+>  /* X86_64 does not define MODULE_PROC_FAMILY */
+> +#elif defined CONFIG_M486SX
+> +#define MODULE_PROC_FAMILY "486SX "
+>  #elif defined CONFIG_M486
+>  #define MODULE_PROC_FAMILY "486 "
+>  #elif defined CONFIG_M586
+> -- 
+> 2.20.0
 > 
-> We certainly don't want this for non-MADV_HUGEPAGE regions when thp 
-> enabled bit is not set to "always".  We'd much rather fallback to local 
-> native pages because of its improved access latency.  This is allowing all 
-> hugepage allocations to be remote even without MADV_HUGEPAGE which is not 
-> even what Andrea needs: qemu uses MADV_HUGEPAGE.
- 
-OTOH it's better to use a remote THP than a remote base page, in case the
-local node is below watermark. But that would probably require a larger surgery
-of the allocator.
 
-But what you're saying is keep the gfp & __GFP_DIRECT_RECLAIM condition.
-I still suggest to drop the __GFP_NORETRY as that goes against MADV_HUGEPAGE.
+-- 
+Kees Cook
