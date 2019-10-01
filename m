@@ -2,86 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF720C3F11
+	by mail.lfdr.de (Postfix) with ESMTP id BB6DAC3F10
 	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbfJARzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:55:19 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48982 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbfJARzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:55:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UdeDTcRqRLmOWNI66TIvhiXBuusNntkv2kJPDqWMITI=; b=cI5pL9xvdMaZoQSXt/BoTvwCf
-        6MS2X7NqiP8DNfNNUfGVb1cu90q/m0myKcYkXX8xFft8BLi1/eB1uQnWkEvPaSyVqJ7zv254ZjiaL
-        0xfG4zbL4U3UWysSzRXKZSORC6SNhkkmiB1vOhVgMIPOuM7iGQ26qhGgh++OtljBweJ90=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iFMMZ-0005rl-6M; Tue, 01 Oct 2019 17:55:03 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 13E7327429C0; Tue,  1 Oct 2019 18:55:02 +0100 (BST)
-Date:   Tue, 1 Oct 2019 18:55:01 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        id S1731034AbfJARzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:55:15 -0400
+Received: from mga12.intel.com ([192.55.52.136]:54169 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbfJARzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 13:55:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 10:55:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
+   d="scan'208";a="191527474"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 01 Oct 2019 10:55:13 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iFMMj-0007wQ-6G; Wed, 02 Oct 2019 01:55:13 +0800
+Date:   Wed, 2 Oct 2019 01:55:04 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Frank Shi <shifu0704@thundersoft.com>
+Cc:     kbuild-all@01.org, alsa-devel@alsa-project.org,
+        Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: atmel: fix atmel_ssc_set_audio link failure
-Message-ID: <20191001175501.GA14762@sirena.co.uk>
-References: <20191001142116.1172290-1-arnd@arndb.de>
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] tas2770: fix platform_no_drv_owner.cocci warnings
+Message-ID: <20191001175504.ufhyxh66psrht42k@332d0cec05f4>
+References: <201910020148.MBUfA91l%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191001142116.1172290-1-arnd@arndb.de>
-X-Cookie: Happiness is twin floppies.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <201910020148.MBUfA91l%lkp@intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: kbuild test robot <lkp@intel.com>
 
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+sound/soc/codecs/tas2770.c:796:3-8: No need to set .owner here. The core will do it.
 
-On Tue, Oct 01, 2019 at 04:20:55PM +0200, Arnd Bergmann wrote:
-> The ssc audio driver can call into both pdc and dma backends.  With the
-> latest rework, the logic to do this in a safe way avoiding link errors
-> was removed, bringing back link errors that were fixed long ago in commit
-> 061981ff8cc8 ("ASoC: atmel: properly select dma driver state") such as
+ Remove .owner field if calls are used which set it automatically
 
-This doesn't apply against current code, please check and resend.
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
 
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes: 1a476abc723e ("tas2770: add tas2770 smart PA kernel driver")
+CC: Frank Shi <shifu0704@thundersoft.com>
+Signed-off-by: kbuild test robot <lkp@intel.com>
+---
 
------BEGIN PGP SIGNATURE-----
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+head:   1a476abc723e644248dba975b71122fcf878703b
+commit: 1a476abc723e644248dba975b71122fcf878703b [32/32] tas2770: add tas2770 smart PA kernel driver
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2TkvUACgkQJNaLcl1U
-h9BpXwf/ZbLU57SSOIs72nreZTj7QYl5ewRdha8NvlgMpwL9Tpoann2+x+D1YwW4
-YrgZi10+u/d5JJXj26Le5tfl9/XHOiEtnsmSGeyyZ4HCMkGdsN/pbOteyNVq8OSm
-m0kbUZzyPrs4UShvQmtmf/NVGAEMno5FWExHJMesI+HCkAguc43qkgPrhCK6w6hE
-OTG/+vIokBlBGCwqdM597185U5H/O/zeEtMF//UhLEOyzm7SiowvGAFOukr7PQzK
-UCJeArfyY1ik0gYbptXvjoo3+Y1DKg/sRNdtNoF14WIS2oHOkTKm6dpuqxfN2RIt
-He43J5QRq+JEaBnzvw/+7mvakg5Rjg==
-=mk8+
------END PGP SIGNATURE-----
+ tas2770.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---7JfCtLOvnd9MIVvH--
+--- a/sound/soc/codecs/tas2770.c
++++ b/sound/soc/codecs/tas2770.c
+@@ -793,7 +793,6 @@ MODULE_DEVICE_TABLE(of, tas2770_of_match
+ static struct i2c_driver tas2770_i2c_driver = {
+ 	.driver = {
+ 		.name   = "tas2770",
+-		.owner  = THIS_MODULE,
+ 		.of_match_table = of_match_ptr(tas2770_of_match),
+ 	},
+ 	.probe      = tas2770_i2c_probe,
