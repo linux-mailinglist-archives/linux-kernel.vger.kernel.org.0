@@ -2,60 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A68E3C3D2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1DCFC3C87
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387907AbfJAQ6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:58:05 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:49568 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731314AbfJAQlq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:46 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2241015458711;
-        Tue,  1 Oct 2019 09:41:45 -0700 (PDT)
-Date:   Tue, 01 Oct 2019 09:41:44 -0700 (PDT)
-Message-Id: <20191001.094144.1520493336302505890.davem@davemloft.net>
-To:     icenowy@aosc.io
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        andrew@lunn.ch, f.fainelli@gmail.com, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mripard@kernel.org, linux-sunxi@googlegroups.com,
-        robh+dt@kernel.org, wens@csie.org, hkallweit1@gmail.com
-Subject: Re: [PATCH 0/3] Pine64+ specific hacks for RTL8211E Ethernet PHY
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <D1124458-D5CB-4AFF-B106-C6EA1A98100F@aosc.io>
-References: <2CCD0856-433E-4602-A079-9F7F5F2E00D6@aosc.io>
-        <20191001.093000.372726574458067639.davem@davemloft.net>
-        <D1124458-D5CB-4AFF-B106-C6EA1A98100F@aosc.io>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 01 Oct 2019 09:41:45 -0700 (PDT)
+        id S1732596AbfJAQnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:43:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726109AbfJAQnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:43:14 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD9A320B7C;
+        Tue,  1 Oct 2019 16:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569948193;
+        bh=yKGquLgQJM6xHAVIyQdIcYLEBg8ctH6tGylCXrJKmP4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VmdYgCHZrI9gjTnJcvOrjWE/UpMMwBODtzJ3sAQJT40lZP6w9RAomHmaPJN77Nqrh
+         QKoyIFgguRH4oTk9Rhdk4OB2/lJrWNFN36mBHDZaji5WMHucki3VFikGzQtwjHts0M
+         fQjZzkoHkGcgUu1SJnNiD2HYFtBO0LOpW9JuZKH0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 01/43] ima: always return negative code for error
+Date:   Tue,  1 Oct 2019 12:42:29 -0400
+Message-Id: <20191001164311.15993-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
-Date: Wed, 02 Oct 2019 00:31:25 +0800
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-> I have tried to ask via TL Lim from Pine64, because I have no way
-> to communicate directly to Realtek. However TL cannot get anything
-> more from Realtek.
+[ Upstream commit f5e1040196dbfe14c77ce3dfe3b7b08d2d961e88 ]
 
-We have several Realtek developers who post here as part of maintaining
-the upstream copy of their drivers, and upstream developers of other
-Realtek parts who sometimes interact with Realtek.
+integrity_kernel_read() returns the number of bytes read. If this is
+a short read then this positive value is returned from
+ima_calc_file_hash_atfm(). Currently this is only indirectly called from
+ima_calc_file_hash() and this function only tests for the return value
+being zero or nonzero and also doesn't forward the return value.
+Nevertheless there's no point in returning a positive value as an error,
+so translate a short read into -EINVAL.
 
-Be creative and work with these people to try to get to the right
-people.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/integrity/ima/ima_crypto.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Please stop making excuses and do the right thing.
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index d9e7728027c6c..b7822d2b79736 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -271,8 +271,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 		rbuf_len = min_t(loff_t, i_size - offset, rbuf_size[active]);
+ 		rc = integrity_kernel_read(file, offset, rbuf[active],
+ 					   rbuf_len);
+-		if (rc != rbuf_len)
++		if (rc != rbuf_len) {
++			if (rc >= 0)
++				rc = -EINVAL;
+ 			goto out3;
++		}
+ 
+ 		if (rbuf[1] && offset) {
+ 			/* Using two buffers, and it is not the first
+-- 
+2.20.1
 
-Thank you.
