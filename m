@@ -2,100 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E0BC3E9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A8AC3EA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbfJARbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:31:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:55214 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbfJARbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:31:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2069337;
-        Tue,  1 Oct 2019 10:31:46 -0700 (PDT)
-Received: from [10.1.197.116] (unknown [10.1.197.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A01A13F706;
-        Tue,  1 Oct 2019 10:31:40 -0700 (PDT)
-Subject: Re: [PATCHv9 2/3] arm64: dts: qcom: msm8998: Add Coresight support
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <cover.1564550873.git.saiprakash.ranjan@codeaurora.org>
- <90114e06825e537c3aafd3de5c78743a9de6fadc.1564550873.git.saiprakash.ranjan@codeaurora.org>
- <CAOCk7NrK+wY8jfHdS8781NOQtyLm2RRe1NW2Rm3_zeaot0Q99Q@mail.gmail.com>
- <16212a577339204e901cf4eefa5e82f1@codeaurora.org>
- <CAOCk7NohO67qeYCnrjy4P0KN9nLUiamphHRvj-bFP++K7khPOw@mail.gmail.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <450756ff-f897-7825-3424-6d5645fa9db9@arm.com>
-Date:   Tue, 1 Oct 2019 18:31:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S1730859AbfJARcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:32:54 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37138 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727190AbfJARcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 13:32:53 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f22so4155609wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 10:32:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eit7XFw0W/bYi2TCI4JrcqCDUmHso2PStZ6TlpS2snM=;
+        b=rGxWRkY13ekSaaxG3ktLGMpWWwSYN3s/18UU4LQrZ+IE3qC2fMHQaLA8PtNtW8Fksu
+         KTzaHkN37F/CDznHSNRpGbLwHveN4J33EzlUiOW8Z5aleLb/ZFn6aq4qH4mq1wlBjMxP
+         B57/N2RDXkOqV0VGItpMxUJGst7S6NtDyrbWe1NB6c/LOmiXtSQEJ8qm4nZ6jiMgo3EY
+         QeiO6fD0+VQ1yMtcQxKJo6e4cNG7o7ioUreH0pHflcFacOIjkLO5U9ahcFr5zal74ocT
+         4fwpyWQSwRrQ4n0Z7g+Gpupa2Gy6vSabwVwrC8oXhLIwD8G2tHLmrylvqvW7m/+p21a+
+         2RfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eit7XFw0W/bYi2TCI4JrcqCDUmHso2PStZ6TlpS2snM=;
+        b=QG3fQvFmSQgicvtuf6Z3B9QSg/H8RX4SP80+jSp7d4rtVF1AKXFztZ3IwuSR1KiB5V
+         jNmXXah+ArxOueTThhV4vS3YkQx6VSUt+GH3pUacHEBOXzpXMzmgzr0KSN1hrmC9QQb6
+         mAsvhIwVVvYflZIX9Z5Ru8piDUpQGrNwiVZp2xs05DGQDhdTfxro0aseXaVZQKVelPkM
+         5uCuXUO6Hj0nfwjHqfeChiqWMTQmg9keOpRve5VmopVMVztsUasbgrxBYAxO1fgmzlHc
+         3Iun1igG9njSWyFCgEqPARcWZi8LukpTWGVygtLK+RqkQmDcMdCmGIpzGMHShckjsl5b
+         Pcpg==
+X-Gm-Message-State: APjAAAWuvNZY1qdgyIXx956I8xV+5LPoptFq8N+8/jwSIY0jxPG9f/ue
+        HMINp5Qj+HaY+QGn14nra0LEow==
+X-Google-Smtp-Source: APXvYqyF7yR/rpwfrA41ZRGNTEjjIVMSgetqL/JWumgvwhhhAuDGo44vyKvWwhHKt91GmyMiQrTAYg==
+X-Received: by 2002:a05:600c:2:: with SMTP id g2mr4682497wmc.111.1569951170420;
+        Tue, 01 Oct 2019 10:32:50 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id v8sm27868403wra.79.2019.10.01.10.32.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 10:32:49 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     srini@kernel.org
+Cc:     peng.fan@nxp.com, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH] nvmem: imx: scu: fix dependency in Kconfig
+Date:   Tue,  1 Oct 2019 18:32:32 +0100
+Message-Id: <20191001173232.18822-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <CAOCk7NohO67qeYCnrjy4P0KN9nLUiamphHRvj-bFP++K7khPOw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix below error by adding HAVE_ARM_SMCCC dependency in Kconfig
+ERROR: "__arm_smccc_smc" [drivers/nvmem/nvmem-imx-ocotp-scu.ko] undefined!
 
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/nvmem/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 01/10/2019 18:14, Jeffrey Hugo wrote:
-> On Tue, Oct 1, 2019 at 11:04 AM Sai Prakash Ranjan
-> <saiprakash.ranjan@codeaurora.org> wrote:
->>
->> On 2019-10-01 09:13, Jeffrey Hugo wrote:
->>> Sai,
->>>
->>> This patch breaks boot on the 835 laptops.  However, I haven't seen
->>> the same issue on the MTP.  I wonder, is coresight expected to work
->>> with production fused devices?  I wonder if thats the difference
->>> between the laptop and MTP that is causing the issue.
->>>
->>> Let me know what I can do to help debug.
->>>
->>
->> I did test on MSM8998 MTP and didn't face any issue. I am guessing this
->> is the same issue which you reported regarding cpuidle? Coresight ETM
-> 
-> Yes, its the same issue.  Right now, I need both patches reverted to boot.
-> 
->> and cpuidle do not work well together since ETMs share the same power
->> domain as CPU and they might get turned off when CPU enters idle states.
->> Can you try with cpuidle.off=1 cmdline or just remove idle states from
->> DT to confirm? If this is the issue, then we can try the below patch
->> from Andrew Murray for ETM save and restore:
->>
->> https://patchwork.kernel.org/patch/11097893/
-> 
-> Is there still value in testing this if the idle states are removed,
-> yet the coresight nodes still cause issues?
-> 
-> Funny enough, I'm using the arm64 defconfig which doesn't seem to
-> select CONFIG_CORESIGHT, so I'm not even sure what would be binding to
-> the DT devices...
+diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+index 8fd425d38d97..fd0716818881 100644
+--- a/drivers/nvmem/Kconfig
++++ b/drivers/nvmem/Kconfig
+@@ -50,6 +50,7 @@ config NVMEM_IMX_OCOTP
+ config NVMEM_IMX_OCOTP_SCU
+ 	tristate "i.MX8 SCU On-Chip OTP Controller support"
+ 	depends on IMX_SCU
++	depends on HAVE_ARM_SMCCC
+ 	help
+ 	  This is a driver for the SCU On-Chip OTP Controller (OCOTP)
+ 	  available on i.MX8 SoCs.
+-- 
+2.21.0
 
-That looks like potentially missing Power domain support, either in the kernel
-or from the firmware.
-
-The Coresight components are also AMBA devices (with primecell compatible)
-and thus the AMBA bus layer does some probing to check the PIDRx registers
-to match the driver. The AMBA layer does try to get the power to the
-component, but someone is lying that it is powered.
-
-Suzuki
