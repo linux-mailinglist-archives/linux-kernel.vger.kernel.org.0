@@ -2,88 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED278C2CE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 07:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B3BC2CE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 07:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbfJAFRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 01:17:05 -0400
-Received: from mx.socionext.com ([202.248.49.38]:20873 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbfJAFRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 01:17:05 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 01 Oct 2019 14:17:02 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 18DC3605F8;
-        Tue,  1 Oct 2019 14:17:03 +0900 (JST)
-Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Tue, 1 Oct 2019 14:17:03 +0900
-Received: from SOC-EX02V.e01.socionext.com (10.213.24.22) by
- SOC-EX01V.e01.socionext.com (10.213.24.21) with Microsoft SMTP Server (TLS)
- id 15.0.995.29; Tue, 1 Oct 2019 14:17:02 +0900
-Received: from SOC-EX02V.e01.socionext.com ([10.213.25.22]) by
- SOC-EX02V.e01.socionext.com ([10.213.25.22]) with mapi id 15.00.0995.028;
- Tue, 1 Oct 2019 14:17:02 +0900
-From:   <orito.takao@socionext.com>
-To:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <adrian.hunter@intel.com>
-CC:     <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <masami.hiramatsu@linaro.org>,
-        <jaswinder.singh@linaro.org>, <sugaya.taichi@socionext.com>,
-        <kasai.kazuhiro@socionext.com>, <kanematsu.shinji@socionext.com>
-Subject: Re: [PATCH v3 0/2] mmc: sdhci-milbeaut: add Milbeaut SD driver
-Thread-Topic: [PATCH v3 0/2] mmc: sdhci-milbeaut: add Milbeaut SD driver
-Thread-Index: AQHVZ3ihYlxK3AfGCE+319PUx3aqu6dEyReA
-Date:   Tue, 1 Oct 2019 05:17:02 +0000
-Message-ID: <20191001141655.C8BE.F0D17A80@socionext.com>
-References: <1568079631-28808-1-git-send-email-orito.takao@socionext.com>
-In-Reply-To: <1568079631-28808-1-git-send-email-orito.takao@socionext.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Becky! ver. 2.74.02 [ja] (Unregistered)
-x-originating-ip: [10.213.24.1]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <AA2CA0E6E0E71E458AE7E083CDEB38D8@socionext.com>
-Content-Transfer-Encoding: base64
+        id S1731217AbfJAF1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 01:27:06 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:45803 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729406AbfJAF1F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 01:27:05 -0400
+X-IronPort-AV: E=Sophos;i="5.64,570,1559512800"; 
+   d="scan'208";a="404095827"
+Received: from 81-65-53-202.rev.numericable.fr (HELO hadrien) ([81.65.53.202])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 07:27:01 +0200
+Date:   Tue, 1 Oct 2019 07:27:01 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Sam Ravnborg <sam@ravnborg.org>
+cc:     Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org,
+        kbuild-all@01.org
+Subject: drivers/gpu/drm/exynos/exynos_drm_dsi.c:1796:2-9: line 1796 is
+ redundant because platform_get_irq() already prints an error (fwd)
+Message-ID: <alpine.DEB.2.21.1910010726101.4150@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpIZWxsbw0KDQpEb2VzIGFueW9uZSBoYXZlIGFueSBjb21tZW50cyBvbiB0aGlzID8NCg0KPiBU
-aGUgZm9sbG93aW5nIHBhdGNoZXMgYWRkIGRyaXZlciBmb3IgU0QgSG9zdCBjb250cm9sbGVyIG9u
-DQo+IFNvY2lvbmV4dCdzIE1pbGJlYXV0IE0xMFYgcGxhdGZvcm1zLg0KPiANCj4gU0QgSG9zdCBj
-b250cm9sbGVyIG9uIE1pbGJlYXV0IGNvbnNpc3RzIG9mIHR3byBjb250cm9sbGVyIHBhcnRzLg0K
-PiBPbmUgaXMgY29yZSBjb250cm9sbGVyIEZfU0RIMzAsIHRoaXMgaXMgc2ltaWxhciB0byBzZGhj
-aS1mdWppdHN1DQo+IGNvbnRyb2xsZXIuDQo+IEFub3RoZXIgaXMgYnJpZGdlIGNvbnRyb2xsZXIu
-IFRoaXMgYnJpZGdlIGNvbnRyb2xsZXIgaXMgbm90IGNvbXBhdGlibGUNCj4gd2l0aCBzZGhjaS1m
-dWppdHN1IGNvbnRyb2xsZXIuIFRoaXMgaXMgc3BlY2lhbCBmb3IgTWlsYmVhdXQgc2VyaWVzLg0K
-PiANCj4gSXQgaGFzIHRoZSBzZXZlcmFsIHBhcnRzLA0KPiAgLSByZXNldCBjb250cm9sDQo+ICAt
-IGNsb2NrIGVuYWJsZSAvIHNlbGVjdCBmb3IgU0RSNTAvMjUvMTINCj4gIC0gaG9sZCBjb250cm9s
-IG9mIERBVEEvQ01EIGxpbmUNCj4gIC0gc2VsZWN0IGNoYXJhY3RlcmlzdGljcyBmb3IgV1AvQ0Qv
-TEVEIGxpbmUNCj4gIC0gUmUtdHVuaW5nIGNvbnRyb2wgZm9yIG1vZGUzDQo+ICAtIENhcGFiaWxp
-dHkgc2V0dGluZw0KPiAgICBUaW1lb3V0IENsb2NrIC8gQmFzZSBDbG9jayAvIFRpbWVyIENvdW50
-IGZvciBSZS1UdW5pbmcgLw0KPiAgICBEZWJvdW5jZSBwZXJpb2QNCj4gVGhlc2UgcmVxdWlyZXMg
-c3BlY2lhbCBwcm9jZWR1cmVzIGF0IHJlc2V0IG9yIGNsb2NrIGVuYWJsZS9jaGFuZ2Ugb3INCj4g
-IGZ1cnRoZXIgdHVuaW5nIG9mIGNsb2NrLg0KPiANCj4gVGFrYW8gT3JpdG8gKDIpOg0KPiAgIGR0
-LWJpbmRpbmdzOiBtbWM6IGFkZCBEVCBiaW5kaW5ncyBmb3IgTWlsYmVhdXQgU0QgY29udHJvbGxl
-cg0KPiAgIG1tYzogc2RoY2ktbWlsYmVhdXQ6IGFkZCBNaWxiZWF1dCBTRCBjb250cm9sbGVyIGRy
-aXZlcg0KPiANCj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9zZGhjaS1taWxiZWF1dC50
-eHQgICAgIHwgIDMwICsrDQo+ICBkcml2ZXJzL21tYy9ob3N0L0tjb25maWcgICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAxMSArDQo+ICBkcml2ZXJzL21tYy9ob3N0L01ha2VmaWxlICAgICAg
-ICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ICBkcml2ZXJzL21tYy9ob3N0L3NkaGNpLW1p
-bGJlYXV0LmMgICAgICAgICAgICAgICAgICB8IDM2MiArKysrKysrKysrKysrKysrKysrKysNCj4g
-IGRyaXZlcnMvbW1jL2hvc3Qvc2RoY2lfZl9zZGgzMC5jICAgICAgICAgICAgICAgICAgIHwgIDI2
-ICstDQo+ICBkcml2ZXJzL21tYy9ob3N0L3NkaGNpX2Zfc2RoMzAuaCAgICAgICAgICAgICAgICAg
-ICB8ICAzMiArKw0KPiAgNiBmaWxlcyBjaGFuZ2VkLCA0MzcgaW5zZXJ0aW9ucygrKSwgMjUgZGVs
-ZXRpb25zKC0pDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL21tYy9zZGhjaS1taWxiZWF1dC50eHQNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
-cml2ZXJzL21tYy9ob3N0L3NkaGNpLW1pbGJlYXV0LmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
-cml2ZXJzL21tYy9ob3N0L3NkaGNpX2Zfc2RoMzAuaA0KPiANCj4gLS0gDQo+IDEuOS4xDQo+IA0K
-DQpUaGFua3MNCk9yaXRvDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpUYWthbyBPcml0bw0KU29jaW9uZXh0IEluYy4N
-CkUtbWFpbDpvcml0by50YWthb0Bzb2Npb25leHQuY29tDQpUZWw6KzgxLTgwLTk4MTUtMTQ2MA0K
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0NCg==
+
+
+---------- Forwarded message ----------
+Date: Tue, 1 Oct 2019 10:47:40 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: drivers/gpu/drm/exynos/exynos_drm_dsi.c:1796:2-9: line 1796 is
+    redundant because platform_get_irq() already prints an error
+
+CC: kbuild-all@01.org
+CC: linux-kernel@vger.kernel.org
+TO: Sam Ravnborg <sam@ravnborg.org>
+CC: Inki Dae <inki.dae@samsung.com>
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c
+commit: 156bdac99061b4013c8e47799c6e574f7f84e9f4 drm/exynos: trigger build of all modules
+date:   3 months ago
+:::::: branch date: 9 hours ago
+:::::: commit date: 3 months ago
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+
+>> drivers/gpu/drm/exynos/exynos_drm_dsi.c:1796:2-9: line 1796 is redundant because platform_get_irq() already prints an error
+
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=156bdac99061b4013c8e47799c6e574f7f84e9f4
+git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+git remote update linus
+git checkout 156bdac99061b4013c8e47799c6e574f7f84e9f4
+vim +1796 drivers/gpu/drm/exynos/exynos_drm_dsi.c
+
+f37cd5e8098441 Inki Dae         2014-05-09  1722
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1723  static int exynos_dsi_probe(struct platform_device *pdev)
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1724  {
+2900c69c52079a Andrzej Hajda    2014-10-07  1725  	struct device *dev = &pdev->dev;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1726  	struct resource *res;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1727  	struct exynos_dsi *dsi;
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1728  	int ret, i;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1729
+2900c69c52079a Andrzej Hajda    2014-10-07  1730  	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
+2900c69c52079a Andrzej Hajda    2014-10-07  1731  	if (!dsi)
+2900c69c52079a Andrzej Hajda    2014-10-07  1732  		return -ENOMEM;
+2900c69c52079a Andrzej Hajda    2014-10-07  1733
+e17ddecc3aa519 YoungJun Cho     2014-07-22  1734  	/* To be checked as invalid one */
+e17ddecc3aa519 YoungJun Cho     2014-07-22  1735  	dsi->te_gpio = -ENOENT;
+e17ddecc3aa519 YoungJun Cho     2014-07-22  1736
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1737  	init_completion(&dsi->completed);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1738  	spin_lock_init(&dsi->transfer_lock);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1739  	INIT_LIST_HEAD(&dsi->transfer_list);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1740
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1741  	dsi->dsi_host.ops = &exynos_dsi_ops;
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1742  	dsi->dsi_host.dev = dev;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1743
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1744  	dsi->dev = dev;
+2154ac9229c10f Marek Szyprowski 2016-04-19  1745  	dsi->driver_data = of_device_get_match_data(dev);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1746
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1747  	ret = exynos_dsi_parse_dt(dsi);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1748  	if (ret)
+8665040850e3cb Andrzej Hajda    2015-06-11  1749  		return ret;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1750
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1751  	dsi->supplies[0].supply = "vddcore";
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1752  	dsi->supplies[1].supply = "vddio";
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1753  	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1754  				      dsi->supplies);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1755  	if (ret) {
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1756  		dev_info(dev, "failed to get regulators: %d\n", ret);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1757  		return -EPROBE_DEFER;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1758  	}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1759
+a86854d0c599b3 Kees Cook        2018-06-12  1760  	dsi->clks = devm_kcalloc(dev,
+a86854d0c599b3 Kees Cook        2018-06-12  1761  			dsi->driver_data->num_clks, sizeof(*dsi->clks),
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1762  			GFP_KERNEL);
+e6f988a4585762 Hyungwon Hwang   2015-06-12  1763  	if (!dsi->clks)
+e6f988a4585762 Hyungwon Hwang   2015-06-12  1764  		return -ENOMEM;
+e6f988a4585762 Hyungwon Hwang   2015-06-12  1765
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1766  	for (i = 0; i < dsi->driver_data->num_clks; i++) {
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1767  		dsi->clks[i] = devm_clk_get(dev, clk_names[i]);
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1768  		if (IS_ERR(dsi->clks[i])) {
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1769  			if (strcmp(clk_names[i], "sclk_mipi") == 0) {
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1770  				strcpy(clk_names[i], OLD_SCLK_MIPI_CLK_NAME);
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1771  				i--;
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1772  				continue;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1773  			}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1774
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1775  			dev_info(dev, "failed to get the clock: %s\n",
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1776  					clk_names[i]);
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1777  			return PTR_ERR(dsi->clks[i]);
+0ff03fd164a4f2 Hyungwon Hwang   2015-06-12  1778  		}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1779  	}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1780
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1781  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1782  	dsi->reg_base = devm_ioremap_resource(dev, res);
+293d3f6a707046 Jingoo Han       2014-04-17  1783  	if (IS_ERR(dsi->reg_base)) {
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1784  		dev_err(dev, "failed to remap io region\n");
+8665040850e3cb Andrzej Hajda    2015-06-11  1785  		return PTR_ERR(dsi->reg_base);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1786  	}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1787
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1788  	dsi->phy = devm_phy_get(dev, "dsim");
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1789  	if (IS_ERR(dsi->phy)) {
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1790  		dev_info(dev, "failed to get dsim phy\n");
+8665040850e3cb Andrzej Hajda    2015-06-11  1791  		return PTR_ERR(dsi->phy);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1792  	}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1793
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1794  	dsi->irq = platform_get_irq(pdev, 0);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1795  	if (dsi->irq < 0) {
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07 @1796  		dev_err(dev, "failed to request dsi irq resource\n");
+8665040850e3cb Andrzej Hajda    2015-06-11  1797  		return dsi->irq;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1798  	}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1799
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1800  	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1801  	ret = devm_request_threaded_irq(dev, dsi->irq, NULL,
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1802  					exynos_dsi_irq, IRQF_ONESHOT,
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1803  					dev_name(dev), dsi);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1804  	if (ret) {
+e2d2a1e0a26472 Andrzej Hajda    2014-10-07  1805  		dev_err(dev, "failed to request dsi irq\n");
+8665040850e3cb Andrzej Hajda    2015-06-11  1806  		return ret;
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1807  	}
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1808
+cf67cc9a29ac19 Gustavo Padovan  2015-08-11  1809  	platform_set_drvdata(pdev, &dsi->encoder);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1810
+ba6e47795d836e Inki Dae         2015-11-16  1811  	pm_runtime_enable(dev);
+ba6e47795d836e Inki Dae         2015-11-16  1812
+8665040850e3cb Andrzej Hajda    2015-06-11  1813  	return component_add(dev, &exynos_dsi_component_ops);
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1814  }
+7eb8f069be8a03 Andrzej Hajda    2014-04-04  1815
+
+:::::: The code at line 1796 was first introduced by commit
+:::::: e2d2a1e0a264725fd0a62b91422d33ba2263a341 drm/exynos: dsi: simplify device pointer evaluation
+
+:::::: TO: Andrzej Hajda <a.hajda@samsung.com>
+:::::: CC: Inki Dae <inki.dae@samsung.com>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
