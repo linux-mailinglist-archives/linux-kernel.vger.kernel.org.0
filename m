@@ -2,59 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 545C3C4044
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 20:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 975BDC4049
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 20:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfJASmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 14:42:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33932 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbfJASmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 14:42:33 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 344FD2190F;
-        Tue,  1 Oct 2019 18:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569955352;
-        bh=5vQyiBW7N80kC2WfeV1Zs8ny3axRA860TQ7AJAkm2LA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MIUjrdp2SYeUvBdnC7UyrFPY67F/naWfSSURodByEzeV+nui3EV3FrXzjtceUD1eD
-         YaOdwLLsP+8VY0ssg5LXYoES8zRVOtCW6xLr3G1ddpnzVffqbCOFqswxjqgz7g+FjP
-         UzfcHXQQjKpHMjD35pPDyn/VKuG6VjwsdLDj+Sns=
-Date:   Tue, 1 Oct 2019 14:42:31 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH v2] hv_sock: Add the support of hibernation
-Message-ID: <20191001184231.GD8171@sasha-vm>
-References: <1569447243-27433-1-git-send-email-decui@microsoft.com>
+        id S1726411AbfJASnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 14:43:19 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36886 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfJASnT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 14:43:19 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y5so8689872pfo.4
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 11:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wOlYko7NkoTZki/CziEJgME03XS7kkXPkXPHoWO1dek=;
+        b=HRefi9sbT2b8lKM1WA3enIvk00lwiNRmnkNkKSSjyabgnBjMrPgZ5KhzSXRskxRsKd
+         QPiV6aRNC/atiPa5n4nqYGou7cgzn1B+N2aCxqv4Ffq+jtGGeoZoretuydUH967g8Pj2
+         yL5S/SJ34sS0JfgIGx00jUUmcACqxYwQ8nTgE0U6LGDKhGzYfYoFqx+AfKd/seDQZENB
+         a6xEN5oxCFehW8GtdPFZwuRF+LDNLGrqfg3C8JSUhM357Kg8XNh9Vl4w2fMZmDZI+i4y
+         yQCRbVcp65ztpPn81L6u4KxYTwdenOBjLvmYHG/3tCRwGM3uT9VgEtnrQCo8+3dy0Gpn
+         6ASw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wOlYko7NkoTZki/CziEJgME03XS7kkXPkXPHoWO1dek=;
+        b=b+5bcOd0YumJvY7pkzZ7G2uK6rf7WgeKFHZS8TtDQF7D6CvJrKsBET6pQJqsFQrEAi
+         HlEg/09eoOIiz3aHjBkDiXIiH7EgWwuP1I6K7PYj0RVPuS/rJJDMOqR9nBrvjKwX6a6e
+         kvzc7jwug6d2gQXaug0FdMLpRG4EPoFjgqFS3G7muvrY3kPn/H1o91ZJVlSwgHZITJpG
+         bVBWuPvJqiAt89jy9lvVfN65TDTSBEsqJnjmcwYiIFMA61MolFxpnhk3Liaauid/iEVl
+         SPFpZeaAPIR2AAs3s18yBwxs9o5Wc3cEdLXaaEw6fkGZG4rwndY1plx26sisC0iBqdmq
+         yLyg==
+X-Gm-Message-State: APjAAAXc8DI1BzRQk3ndVtvpZjxfUCkVjINkooffNYkZA/bkikjFVl8z
+        Aapb+T7nczb4wh5OiW6EXTo3
+X-Google-Smtp-Source: APXvYqwLF+mpra8npi1MtsuyWuY9HY6bRBWMk0uyodiiNMMhRMbM1EYftY19y+KeALm5cn5na/b0Qg==
+X-Received: by 2002:a17:90a:1150:: with SMTP id d16mr7411913pje.2.1569955398457;
+        Tue, 01 Oct 2019 11:43:18 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:631a:1d56:6a:8714:31a4:1f8])
+        by smtp.gmail.com with ESMTPSA id q33sm13274538pgm.50.2019.10.01.11.43.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 01 Oct 2019 11:43:17 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 00:13:09 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     mchehab@kernel.org, robh+dt@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        c.barrett@framos.com, a.brela@framos.com
+Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add entry for IMX290 CMOS image
+ sensor driver
+Message-ID: <20191001184309.GB7739@Mani-XPS-13-9360>
+References: <20190830091943.22646-1-manivannan.sadhasivam@linaro.org>
+ <20190830091943.22646-4-manivannan.sadhasivam@linaro.org>
+ <20190923090752.GK5525@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1569447243-27433-1-git-send-email-decui@microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190923090752.GK5525@valkosipuli.retiisi.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 09:34:13PM +0000, Dexuan Cui wrote:
->Add the necessary dummy callbacks for hibernation.
->
->Signed-off-by: Dexuan Cui <decui@microsoft.com>
->Acked-by: David S. Miller <davem@davemloft.net>
+On Mon, Sep 23, 2019 at 12:07:52PM +0300, Sakari Ailus wrote:
+> On Fri, Aug 30, 2019 at 02:49:43PM +0530, Manivannan Sadhasivam wrote:
+> > Add MAINTAINERS entry for Sony IMX290 CMOS image sensor driver.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  MAINTAINERS | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index f7c84004187d..0ee261fca602 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14962,6 +14962,14 @@ S:	Maintained
+> >  F:	drivers/media/i2c/imx274.c
+> >  F:	Documentation/devicetree/bindings/media/i2c/imx274.txt
+> >  
+> > +SONY IMX290 SENSOR DRIVER
+> > +M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +L:	linux-media@vger.kernel.org
+> > +T:	git git://linuxtv.org/media_tree.git
+> > +S:	Maintained
+> > +F:	drivers/media/i2c/imx290.c
+> > +F:	Documentation/devicetree/bindings/media/i2c/imx290.txt
+> > +
+> >  SONY IMX319 SENSOR DRIVER
+> >  M:	Bingbu Cao <bingbu.cao@intel.com>
+> >  L:	linux-media@vger.kernel.org
+> 
+> Please squash this change to the first patch.
+> 
 
-Queued up for hyperv-next, thanks!
+Oops, looks like you already said this in previous review as well. Will
+do.
 
---
 Thanks,
-Sasha
+Mani
+
+> -- 
+> Sakari Ailus
