@@ -2,108 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A812C3382
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7835C3369
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387524AbfJAL4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:56:13 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56862 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfJAL4M (ORCPT
+        id S1732574AbfJALzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:55:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42115 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfJALzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:56:12 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91BsCOJ164303;
-        Tue, 1 Oct 2019 11:54:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=BhN0A4ZjzhxzoC7wkUWrOhf6S9z0K6FDpK47i4TJ/6I=;
- b=nR+CbgGFpLQPQTF1hG1HjFhRONS8OkleTBHkUSeTVoki/NKtzxsKuiOxC7jENjM7NI0e
- 8ei6XKTUmBZGj5TAxII9KkdKMn03GhlX2InC/qOs2gCXGZN7pEROHyOSpJtzUSnw6eqW
- 7TII6UZlAGzFGU+kdJq5C+x1mgXCOHnbAQ3X0MI6gJKAbCb04Txvpf2r5s8QEL6LFXr0
- EJg/22VoeqfzHZpWiiJtd/GlKwsj1BS4WS9rCDj/aOuEOE+VpNbh7LtuBNJYtZoJUKtc
- /VQb0eAFIGn2tX8AoXC//QJEviB4YsCFsqiyY6hiRLlC5poHBcTy94hsVMrAU6DpLt1L Gw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2v9xxuna3h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 11:54:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91Bs3Jc130979;
-        Tue, 1 Oct 2019 11:54:50 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2vbnqcrsen-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 11:54:50 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x91BsnJE004496;
-        Tue, 1 Oct 2019 11:54:49 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Oct 2019 04:54:48 -0700
-Date:   Tue, 1 Oct 2019 14:54:42 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: tcpm: Fix a signedness bug in
- tcpm_fw_get_caps()
-Message-ID: <20191001115442.GB22609@kadam>
-References: <20190925110219.GN3264@mwanda>
- <20190926125310.GA9967@roeck-us.net>
+        Tue, 1 Oct 2019 07:55:17 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n14so15118227wrw.9
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 04:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GHLe7e8r+/FCVT1kzqY6hP+wa7uaYw8XO2eGQ9nU4rA=;
+        b=n31hAYExjy5IepO7PyO8Fs/EZZXom6l5oc/S0Eje24xWlwdjaUkLrihcDEXU8aP0E1
+         run/3jjD6Gb3zzpU31ruhE7R7xaQxOB8pGjEuUfQyELF+OAZqEAtv9mWv7LQMwu0EqTO
+         TkJKqCfEPacNHLfzgE948KXWTc7nPzvvfonuSWVrRluE4SD3jiOe4IVlfv2oIjpQtsa/
+         ie1LbZYtj4Bm1Ygcgg6LAUsZUCrossZpofAFOcDwGT9ojXcuMF+eZwy54T76dRZPC+yb
+         L/daQ6pv8Zx95jDWkm0NcLQCTovnQXN6odO3bDWsirk78NgatrVgN/70qAvTnKzW9HPZ
+         H2Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GHLe7e8r+/FCVT1kzqY6hP+wa7uaYw8XO2eGQ9nU4rA=;
+        b=ZhkqOrGevA1Jw7+CfntcGtKvKRlHxwXgS1zOYkqI7S+gkcMrP2oEHFm516UZ7y+0Xm
+         NP+A5kTtHV42sYudO6CSDdRi3qJ++lPbyrxtUJgj1wRA851+ZSXBUBzBttnPvC+SOVfY
+         qHJLstutXHWhuF/7A6aESs3/hQno0Pej5LZOhvF/uDHT9FH4YxjNpWHalQXOpQto4+El
+         CxL8DR9eX0+ARxijyZmcZI1MEXd+oskA7XZZxJqGs9Q9CvKy0mXKEasySdTZwuxrLe6x
+         yPOsO6NI99CP7HGpCV/U0UcLIQ1fA8DrveBBs0vvnjO94vpJUltsy+hU+/LkD9KSYE1/
+         VH1A==
+X-Gm-Message-State: APjAAAUPRswh9pgqr1egTt4JreMuFD989wfE+cnftsUcbkHGuJ6PH8yD
+        sa3gz9/LLXTuZBUB/LhZqP7isA==
+X-Google-Smtp-Source: APXvYqy2H8crN8Mg+areHNQoEnZLARfxMocEJYSpFDoDmuborFyk3aLbhncz/HrZ7l7SjoG4yuQ+ww==
+X-Received: by 2002:adf:bb8e:: with SMTP id q14mr18860595wrg.74.1569930914927;
+        Tue, 01 Oct 2019 04:55:14 -0700 (PDT)
+Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id p85sm4052171wme.23.2019.10.01.04.55.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 04:55:14 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] clk: meson: axg-audio: add sm1 support
+Date:   Tue,  1 Oct 2019 13:55:03 +0200
+Message-Id: <20191001115511.17357-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190926125310.GA9967@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910010110
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010110
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 05:53:10AM -0700, Guenter Roeck wrote:
-> On Wed, Sep 25, 2019 at 02:02:19PM +0300, Dan Carpenter wrote:
-> > The "port->typec_caps.data" and "port->typec_caps.type" variables are
-> > enums and in this context GCC will treat them as an unsigned int so they
-> > can never be less than zero.
-> > 
-> > Fixes: ae8a2ca8a221 ("usb: typec: Group all TCPCI/TCPM code together")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/usb/typec/tcpm/tcpm.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> > index 96562744101c..d3b63e000ae2 100644
-> > --- a/drivers/usb/typec/tcpm/tcpm.c
-> > +++ b/drivers/usb/typec/tcpm/tcpm.c
-> > @@ -4410,7 +4410,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
-> >  	ret = fwnode_property_read_string(fwnode, "data-role", &cap_str);
-> >  	if (ret == 0) {
-> >  		port->typec_caps.data = typec_find_port_data_role(cap_str);
-> > -		if (port->typec_caps.data < 0)
-> > +		if ((int)port->typec_caps.data < 0)
-> >  			return -EINVAL;
-> 
-> Doesn't that also cause a warning about overwriting error return codes ?
+The purpose of this patchset is to add the sm1 support to the amlogic audio
+clock controller. The line count is lot higher than what I hoped for. Even
+if extremely similar, there is a shift in the register address on the sm1
+which makes a bit of a mess.
 
-I'm happy that you think there is a tool which generates warnings like
-that but it's just people manually complaining.  :P
+I could have patched the address on the fly if running on sm1 but the end
+result did not save much lines and would have been a pain to maintain and
+scale in the future
 
-I'll resend though.
+Instead I choose to re-arrange the driver to share the macros and declare
+separate clocks for the clock which have changed.
 
-regards,
-dan carpenter
+Change since v1 [0]:
+ - Fix newline in the last patch
+
+[0]: https://lkml.kernel.org/r/20190924153356.24103-1-jbrunet@baylibre.com
+
+Jerome Brunet (7):
+  dt-bindings: clk: axg-audio: add sm1 bindings
+  dt-bindings: clock: meson: add sm1 resets to the axg-audio controller
+  clk: meson: axg-audio: remove useless defines
+  clk: meson: axg-audio: fix regmap last register
+  clk: meson: axg-audio: prepare sm1 addition
+  clk: meson: axg-audio: provide clk top signal name
+  clk: meson: axg_audio: add sm1 support
+
+ .../bindings/clock/amlogic,axg-audio-clkc.txt |    3 +-
+ drivers/clk/meson/axg-audio.c                 | 2021 +++++++++++------
+ drivers/clk/meson/axg-audio.h                 |   21 +-
+ include/dt-bindings/clock/axg-audio-clkc.h    |   10 +
+ .../reset/amlogic,meson-g12a-audio-reset.h    |   15 +
+ 5 files changed, 1373 insertions(+), 697 deletions(-)
+
+-- 
+2.21.0
+
