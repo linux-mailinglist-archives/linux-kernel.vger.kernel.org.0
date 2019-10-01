@@ -2,115 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B77EC3EDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148EAC3EDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfJARni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:43:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56054 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfJARni (ORCPT
+        id S1728342AbfJARoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:44:02 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33868 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfJARoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:43:38 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iFMBE-0000rD-WA; Tue, 01 Oct 2019 19:43:21 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 820C91C03AB;
-        Tue,  1 Oct 2019 19:43:20 +0200 (CEST)
-Date:   Tue, 01 Oct 2019 17:43:20 -0000
-From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/microcode] x86/microcode/intel: Issue the revision updated
- message only on the BSP
-Cc:     Borislav Petkov <bp@suse.de>, Ashok Raj <ashok.raj@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jon Grimm <Jon.Grimm@amd.com>, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, Mihai Carabas <mihai.carabas@oracle.com>,
-        patrick.colp@oracle.com, Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20190824085341.GC16813@zn.tnic>
-References: <20190824085341.GC16813@zn.tnic>
+        Tue, 1 Oct 2019 13:44:02 -0400
+Received: by mail-qk1-f195.google.com with SMTP id q203so12113102qke.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 10:44:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iEhC4rBksrqGUyOLde28S6MdRltK4FanlvR62miO8Ng=;
+        b=XDzxFVBlNwrv8acclBscPjFygnMn27IiO/iYUcxaTV5UgMssfzgFoUQQmxnoujgRSn
+         9nO6IvoD5m3afkh6JDhc0+mCaIPR3iEJRQ7wnNvRI8NXNs+PV0n7+5H46/AO6/nkQVRQ
+         FzOFJLW5TRsX2nJjZBbvncdSqUtO5MY1ENWBed2U85HhmkQuc2LYx9Sr0XHxl8F0pqMw
+         VedHc425xtXTg5XXT7abXEAOudNDdwWpGxAZ69yveZfEabeFJOy2vZD/tXxrWpAVgZB2
+         VpvdPu35rpgwn0Sl9oD8266enQ6P/krd/5cGT16mQeQBRk1pCTtcbIes5D3dai1ThFZT
+         pJGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iEhC4rBksrqGUyOLde28S6MdRltK4FanlvR62miO8Ng=;
+        b=QXoSTgCk/bjPd4skNPvgBZNbhcxQByi3J72P2VaKKMHp3og+sqc6EaV6RvffCUnx6F
+         G8PpJNxMA6IFZRl2p6me8L2EmU+QdaRDjOirxGXuv8ha3HaYTVTGWeoT7Zf8Irf5dIHt
+         u9kB6//kMRUKqo9n/+wZalU9ULfXKgNhcg+Hip21JKhJx1FYrMZgYBdzlv4zNpdew6Z1
+         3/L4mLJ+wbCfQ2EhgIZcmwFlkXaKzVPVOdHsY8sbZ8oe9XqfqyNVKRQkXtJTjhO8GzML
+         /xnKcaSYmZHkr1PQ8cPJyMZbofWjxImhy592QvGWx8hGyU/Pe7QTL61zUNixmcHzFd7x
+         7f6w==
+X-Gm-Message-State: APjAAAUduW1ntTtuVUISow2f1yNImlOF4DV3j6NAApK4G5Tt82Q5lozD
+        gPw7FBhGRYLGtPm00XCOBQxMcQ==
+X-Google-Smtp-Source: APXvYqyywUgxVDQJT3yz8Aini7DEixOhKfmaWm6XtpNF/scEZrYZwc8TZCT+bBf2zf77VdBL7PL5hQ==
+X-Received: by 2002:a37:4d02:: with SMTP id a2mr7378463qkb.63.1569951839878;
+        Tue, 01 Oct 2019 10:43:59 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
+        by smtp.gmail.com with ESMTPSA id k17sm11991937qtk.7.2019.10.01.10.43.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 01 Oct 2019 10:43:59 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1iFMBq-0005M4-Sj; Tue, 01 Oct 2019 14:43:58 -0300
+Date:   Tue, 1 Oct 2019 14:43:58 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Alan Mikhak <alan.mikhak@sifive.com>
+Cc:     linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
+        alexios.zavras@intel.com, ming.lei@redhat.com,
+        gregkh@linuxfoundation.org, tglx@linutronix.de,
+        christophe.leroy@c-s.fr, Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH] scatterlist: Validate page before calling PageSlab()
+Message-ID: <20191001174358.GG22532@ziepe.ca>
+References: <1569885755-10947-1-git-send-email-alan.mikhak@sifive.com>
+ <20191001121623.GA22532@ziepe.ca>
+ <CABEDWGzsJR+YpX7eDrt_EerT0VEHjpBXSpc6Nzbbmvqc2OiR8Q@mail.gmail.com>
+ <20191001171220.GF22532@ziepe.ca>
+ <CABEDWGyDh6t2t9UXpw=tu1f6Sz=3YTMH6mG05cSTz74zyR9H+A@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <156995180039.9978.4399431172812014164.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABEDWGyDh6t2t9UXpw=tu1f6Sz=3YTMH6mG05cSTz74zyR9H+A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/microcode branch of tip:
+On Tue, Oct 01, 2019 at 10:26:38AM -0700, Alan Mikhak wrote:
 
-Commit-ID:     811ae8ba6dca6b91a3ceccf9d40b98818cc4f400
-Gitweb:        https://git.kernel.org/tip/811ae8ba6dca6b91a3ceccf9d40b98818cc4f400
-Author:        Borislav Petkov <bp@suse.de>
-AuthorDate:    Sat, 24 Aug 2019 10:01:53 +02:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 01 Oct 2019 16:06:35 +02:00
+> > > Cost of adding page structs to a large PCI I/O address range can be
+> > > quite substantial. Allowing PCI I/O pages without page structs may be
+> > > desirable. Perhaps it is worth considering this cost.
+> >
+> > This is generally agreed, but nobody has figured out a solution.
+> >
+> > > Scatterlist has no problem doing its memcpy() from pages without a
+> > > page struct that were obtained from ioremap(). It is only at
+> >
+> > Calling memcpy on pointers from ioremap is very much not allowed. Code
+> > has to use the iomem safe memcpy.
+>
+> Is it in the realm of possible to add support for such PCI I/O pages
+> to scatterlist? Perhaps some solution is possible by adding a new
+> function, say sg_set_iomem_page(), and a new SG_MITER_IOMEM flag that
+> tells scatterlist to use iomem safe memcpy functions when the page is
+> not backed by page struct because it was obtained from ioremap(). This
+> flag can also be used at sg_miter_stop() to not call PageSlab() or
+> flush_kernel_dcache_page().
 
-x86/microcode/intel: Issue the revision updated message only on the BSP
+People have tried many different things so far, it is more comple than
+just the copy functions as there is also sg_page to worry about.
 
-... in order to not pollute dmesg with a line for each updated microcode
-engine.
+> If supporting PCI I/O pages is not possible, would it be possible to
+> check for invalid page pointers in sg_set_page() and communicate the
+> requirement for a page struct backing in its description?
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jon Grimm <Jon.Grimm@amd.com>
-Cc: kanth.ghatraju@oracle.com
-Cc: konrad.wilk@oracle.com
-Cc: Mihai Carabas <mihai.carabas@oracle.com>
-Cc: patrick.colp@oracle.com
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190824085341.GC16813@zn.tnic
----
- arch/x86/kernel/cpu/microcode/intel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Clarifying the comments seems reasonable to me.
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index ce799cf..6a99535 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -791,6 +791,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
- {
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
-+	bool bsp = c->cpu_index == boot_cpu_data.cpu_index;
- 	struct microcode_intel *mc;
- 	enum ucode_state ret;
- 	static int prev_rev;
-@@ -836,7 +837,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		return UCODE_ERROR;
- 	}
- 
--	if (rev != prev_rev) {
-+	if (bsp && rev != prev_rev) {
- 		pr_info("updated to revision 0x%x, date = %04x-%02x-%02x\n",
- 			rev,
- 			mc->hdr.date & 0xffff,
-@@ -852,7 +853,7 @@ out:
- 	c->microcode	 = rev;
- 
- 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
--	if (c->cpu_index == boot_cpu_data.cpu_index)
-+	if (bsp)
- 		boot_cpu_data.microcode = rev;
- 
- 	return ret;
+Jason
