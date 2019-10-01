@@ -2,97 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 025CCC3E0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92683C3E1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:05:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbfJAREY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:04:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45798 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbfJAREV (ORCPT
+        id S1727929AbfJARFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:05:14 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:59990 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726080AbfJARFO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:04:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1AAB26177C; Tue,  1 Oct 2019 17:04:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1569949461;
-        bh=UEkX/cHMbQ0sDePOFVv3FYadMtUY51cOeHadyFKhHvY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MWo5h9KQE6iRhSXNDSxstK3op6HdP7U/hDZ2AALli5OwqN2QqeYIm6Xyr0gxdpXuM
-         IvyM5hN1KtE2Mgr9LGJEAzLmgdtSCVDn5Bt91RQr3t0IHGJccCZRGiUdwgfVECLX2i
-         AK4GeB3Ocl18d5kbrxP0RVryYf+sbk+uMWK7D9rU=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 62D5561728;
-        Tue,  1 Oct 2019 17:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1569949454;
-        bh=UEkX/cHMbQ0sDePOFVv3FYadMtUY51cOeHadyFKhHvY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Amc4WfDqR/Ia2oe2RA7vGkjDeZHnbdBIgta2AynRkAwnAg0DKlyrue7DBbGM2Zhb5
-         vGwuYZkfCUQAHLfmEkZ4PpW4V1SYojQvaVT//h5rwM4kfQ3lgT6iOMSdCCmBo8q1bl
-         uGQDcZFuvPCNecg3TlEHS0/XCvOgiPl9Mv/+wDig=
+        Tue, 1 Oct 2019 13:05:14 -0400
+Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91GsnHa006736;
+        Tue, 1 Oct 2019 13:05:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=jUH94XgfeTwunSBeDtwCP+0mvxv0U2LwW/qIYlD6oHg=;
+ b=K3GRbL+qwVeYmwujTbRcRUYnbV0elBmhXwTQoTOZzNFf/QwcTCCuEd6Evc+EbREDovUG
+ aXp/QDFXxn6zIHGwHXpQNqdFGcW58LQpZZk4TIl3vHf/fBdAbJkLShroU6p25albtGcg
+ pHBIgMpCXWik9d6leLBEF2wY7xGkNIEokl8Edp48KiV5goFHdb9BOuQL571H7Nn5ebto
+ tDUybP+e6azwLZGCmOSIvV1Tk18nF3NQrxyXyy1B5ol27kbNKaYNTJtTfLjdiINb6bbX
+ gt5KvDcZl9ZOVx0CH+pGmNaSOxdOvRGjACF7B6SRCduoV88h47bRWWTE7two9UwB+hgp /g== 
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
+        by mx0b-00154904.pphosted.com with ESMTP id 2va2386tby-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Oct 2019 13:05:11 -0400
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91GrSp2124289;
+        Tue, 1 Oct 2019 13:05:11 -0400
+Received: from ausxipps301.us.dell.com (ausxipps301.us.dell.com [143.166.148.223])
+        by mx0b-00154901.pphosted.com with ESMTP id 2vby3cn6w2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Oct 2019 13:05:11 -0400
+X-LoopCount0: from 10.166.132.132
+X-PREM-Routing: D-Outbound
+X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
+   d="scan'208";a="403855534"
+From:   <Mario.Limonciello@dell.com>
+To:     <mika.westerberg@linux.intel.com>, <linux-usb@vger.kernel.org>
+CC:     <andreas.noever@gmail.com>, <michael.jamet@intel.com>,
+        <YehezkelShB@gmail.com>, <rajmohan.mani@intel.com>,
+        <nicholas.johnson-opensource@outlook.com.au>, <lukas@wunner.de>,
+        <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
+        <anthony.wong@canonical.com>, <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
+Thread-Topic: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
+Thread-Index: AQHVeEzShOhklesInk+gx9St4A7986dGAqig
+Date:   Tue, 1 Oct 2019 17:05:09 +0000
+Message-ID: <184c95fc476146939b240557e54ee2c9@AUSX13MPC105.AMER.DELL.COM>
+References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
+ <20191001113830.13028-18-mika.westerberg@linux.intel.com>
+In-Reply-To: <20191001113830.13028-18-mika.westerberg@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-10-01T17:05:07.4414478Z;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
+ aiplabel=External Public
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 01 Oct 2019 10:04:14 -0700
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv9 2/3] arm64: dts: qcom: msm8998: Add Coresight support
-In-Reply-To: <CAOCk7NrK+wY8jfHdS8781NOQtyLm2RRe1NW2Rm3_zeaot0Q99Q@mail.gmail.com>
-References: <cover.1564550873.git.saiprakash.ranjan@codeaurora.org>
- <90114e06825e537c3aafd3de5c78743a9de6fadc.1564550873.git.saiprakash.ranjan@codeaurora.org>
- <CAOCk7NrK+wY8jfHdS8781NOQtyLm2RRe1NW2Rm3_zeaot0Q99Q@mail.gmail.com>
-Message-ID: <16212a577339204e901cf4eefa5e82f1@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-01_08:2019-10-01,2019-10-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=733
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910010142
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=835 priorityscore=1501 mlxscore=0
+ phishscore=0 adultscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910010142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-10-01 09:13, Jeffrey Hugo wrote:
-> Sai,
-> 
-> This patch breaks boot on the 835 laptops.  However, I haven't seen
-> the same issue on the MTP.  I wonder, is coresight expected to work
-> with production fused devices?  I wonder if thats the difference
-> between the laptop and MTP that is causing the issue.
-> 
-> Let me know what I can do to help debug.
-> 
+> @@ -322,9 +398,21 @@ static int tb_switch_nvm_add(struct tb_switch *sw)
+>  	u32 val;
+>  	int ret;
+>=20
+> -	if (!sw->dma_port)
+> +	if (!nvm_readable(sw))
+>  		return 0;
+>=20
+> +	/*
+> +	 * The NVM format of non-Intel hardware is not known so
+> +	 * currently restrict NVM upgrade for Intel hardware. We may
+> +	 * relax this in the future when we learn other NVM formats.
+> +	 */
+> +	if (sw->config.vendor_id !=3D PCI_VENDOR_ID_INTEL) {
+> +		dev_info(&sw->dev,
+> +			 "NVM format of vendor %#x is not known, disabling NVM
+> upgrade\n",
+> +			 sw->config.vendor_id);
+> +		return 0;
+> +	}
+> +
 
-I did test on MSM8998 MTP and didn't face any issue. I am guessing this 
-is the same issue which you reported regarding cpuidle? Coresight ETM 
-and cpuidle do not work well together since ETMs share the same power 
-domain as CPU and they might get turned off when CPU enters idle states. 
-Can you try with cpuidle.off=1 cmdline or just remove idle states from 
-DT to confirm? If this is the issue, then we can try the below patch 
-from Andrew Murray for ETM save and restore:
+Don't you actually have an attribute you can use here for this exact purpos=
+e that you
+could  be setting rather than returning immediately?
+sw->no_nvm_upgrade
 
-https://patchwork.kernel.org/patch/11097893/
+Then potentially you can at least let users "dump out" the nvm on !Intel bu=
+t don't let
+it be written until ready to relax further.
 
-It is not merged yet. They would appreciate your tested by ;)
+>  	nvm =3D kzalloc(sizeof(*nvm), GFP_KERNEL);
+>  	if (!nvm)
+>  		return -ENOMEM;
 
-Thanks,
-Sai
