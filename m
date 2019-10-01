@@ -2,71 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35EB4C42C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:33:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD2FBC42C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbfJAVdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:33:07 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42985 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbfJAVdH (ORCPT
+        id S1727905AbfJAVgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 17:36:19 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41196 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbfJAVgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:33:07 -0400
-Received: by mail-pl1-f195.google.com with SMTP id e5so6175149pls.9
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 14:33:06 -0700 (PDT)
+        Tue, 1 Oct 2019 17:36:19 -0400
+Received: by mail-yw1-f65.google.com with SMTP id 129so5375242ywb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 14:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Z4e1NN6nu4ZaQSr4QU7LcV+N896S8TJHxo2z5wLZZe4=;
-        b=Pr4ab6DTLcpPoAFbMcSjaTUTYVYp1LDm5BAlOJU2YvcEMt0bTipepUjaxG5lMpoUOp
-         lFCI5o5vkaajGiotvJdJXz2y9Ieao3sEzHy2wrSWu+nNxZvJJ6LJkgjjBaRWx1ZT5bm8
-         4QIcAuuFL/pw3oFZX1nVHUqhVjcBSxdbNKnvKd0GP0sevjFa63alN7etTzG5F5Qf0DHu
-         io4j6lgazyqxmgA7U+/15haF4Am+flXl911MfAe8UdtLZyRvu9CPEb5xVZ0ISAJuLnPl
-         J06OuplsJbzdojcrSa/kZx9aEFGxQ/dSE+ZxmHLg1xK7+2xExXqNg6VNQjOmO/SYhZPl
-         dw6Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=SzLgLM64zQisUJliC/nZaFfY8UW3bRx/BTTIsnBbPSg=;
+        b=Kgj8govZOYtVMviZn4ZroBZKWseYL4YWLRlplzGI7/VRxsG6VCMyqc8l5pWHmELkO4
+         8CPSi9u8oG4ItpziTrn5e3VfB7JVynzQruvKPVRtAFbxx0IPDDBZLGPvSPE+xSrvmVGe
+         OnC/SIvSKESQeGoXrhI97F8fk1Ph9hxbhzAg/JHbiycJuW7qlKrYQwfvTPG0B5dK7Dy9
+         bIw0DFHj4slKhub6d6b9zYYTaEg33HxT9/1toSvIgJzMeQQzPoOhl88mWKRjRHJgwTsF
+         uuUdtvtYfgoyiydStpd5oj9ukAKWiYVqSRPfoRuQCe+hILNDliZyPJvSL3MxLvNisHuk
+         JBZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Z4e1NN6nu4ZaQSr4QU7LcV+N896S8TJHxo2z5wLZZe4=;
-        b=XMsIcae/lNV46fdN2xnH9RaL6MgEXXF80tvORdlqBqDqyvW2JnucO64jhwGazk8KQ/
-         udY5gmz8NaIVFNY4R5fG7NsnueDUe4K/69wH9Syd8VJy1m1IjDOEY7pt9wnSH5wQN6b0
-         PtPZNxLs4TqV/0ImW0Q/zysPFSpAHjhgwCMJs//7mVTFNYaat7Oq9uTXgtg2ziY7ED3R
-         milaWIHx0xd61vRaw98h7OIE4XNSxI2V8drqbSl7Cpkm121RJewNpnYYLBFv2BE20KKS
-         jGUNBF/YnR/TscQxdJkPblh7aOYb47MO9sy2Y4Yu5b+Og0tRy6aavkol4Ge81x5Qdb9Q
-         GRhw==
-X-Gm-Message-State: APjAAAWYoJ8ZOFKLLmhgi+Ajkn0AgbJssCrQ5iE4nmIzYueNgbihHdZE
-        3VIySWh9bCQM2oR3ncAqKg4jO9jaiJ1C/8UcQOqERA==
-X-Google-Smtp-Source: APXvYqyxozJxVm+qJ2C11b5+NXCGyt7TX/8uK7rOEwCENn8WK5blF8+KGJMCObW2H0xWVEXihaTyEWNZTLWX6ufwZ2Q=
-X-Received: by 2002:a17:902:7c08:: with SMTP id x8mr11776916pll.119.1569965585922;
- Tue, 01 Oct 2019 14:33:05 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=SzLgLM64zQisUJliC/nZaFfY8UW3bRx/BTTIsnBbPSg=;
+        b=uXOiUjA5HrxiYyJb276q7Qd4oKi7uKhjPzHQooQlu1Y9PTt75dBIMlSb3AQpCpkabx
+         uDc/KxtxfH0D5/Sxfmw/Eg7eojOJdCo9gZP2CebruGgcPbG2EiRr/GOM2QcgUgZ12GdY
+         1QB2sSqG3LLFV6h/+YasaC2lkUrQfe4rBbNw1bBKpsI1OblX9vBtihuzoPyUlA4xIICZ
+         uLzUHsP4W+gmDzzSjcQ4DmNNX8oQ8EO6NsdPVDyQK+XQpocHwda4FBNN9BRy+GkF6LgQ
+         yXlfEhgvRcwF+76Cgy5KZe+JCt5rkVMneHZVqyi9tfatROluCHT/jC6rCVzg174CVt/g
+         0IhQ==
+X-Gm-Message-State: APjAAAUYyqCW8S6PHIzOjNZdvpyf5KlVZoD79yfn4s30Im+kVv9VcBjh
+        wMQcMrb7K+RJfUG91/3f49lUH78OWIcDZ+gxirA=
+X-Google-Smtp-Source: APXvYqyI2SKMNxC8le2ihlysXiUIqGBDDOMSJ5eO9ery5yy6lGacepqVvMebrZBVksj9F9C6cyJHBtZSmebbsL2PP7Q=
+X-Received: by 2002:a81:3483:: with SMTP id b125mr451999ywa.62.1569965778675;
+ Tue, 01 Oct 2019 14:36:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
- <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
- <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
- <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
- <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
- <20191001205938.GM25745@shell.armlinux.org.uk> <20191001212608.GN25745@shell.armlinux.org.uk>
-In-Reply-To: <20191001212608.GN25745@shell.armlinux.org.uk>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 1 Oct 2019 14:32:54 -0700
-Message-ID: <CAKwvOdmkmdM14BNurK3WwyG3Qc5wOFeajMtQ1D+na9mLfkim+w@mail.gmail.com>
-Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Will Deacon <will@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+Received: by 2002:a25:3c41:0:0:0:0:0 with HTTP; Tue, 1 Oct 2019 14:36:18 -0700 (PDT)
+Reply-To: munasalemmustapha9@gmail.com
+From:   munasale mmustapha <luzynamelad9@gmail.com>
+Date:   Tue, 1 Oct 2019 14:36:18 -0700
+Message-ID: <CAA9rC2k9hdhgjV3JBH60GEG8aXrn12jQ0cHteJC9MCjezZeQjQ@mail.gmail.com>
+Subject: My name is Mrs Munasalem Mustapha from France,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,132 +56,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 2:26 PM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, Oct 01, 2019 at 09:59:38PM +0100, Russell King - ARM Linux admin =
-wrote:
-> > On Tue, Oct 01, 2019 at 01:21:44PM -0700, Nick Desaulniers wrote:
-> > > On Tue, Oct 1, 2019 at 11:14 AM Russell King - ARM Linux admin
-> > > <linux@armlinux.org.uk> wrote:
-> > > >
-> > > > The whole "let's make inline not really mean inline" is nothing mor=
-e
-> > > > than a band-aid to the overuse (and abuse) of "inline".
-> > >
-> > > Let's triple check the ISO C11 draft spec just to be sure:
-> > > =C2=A7 6.7.4.6: A function declared with an inline function specifier=
- is an
-> > > inline function. Making a
-> > > function an inline function suggests that calls to the function be as
-> > > fast as possible.
-> > > The extent to which such suggestions are effective is
-> > > implementation-defined. 139)
-> > > 139) For example, an implementation might never perform inline
-> > > substitution, or might only perform inline
-> > > substitutions to calls in the scope of an inline declaration.
-> > > =C2=A7 J.3.8 [Undefined Behavior] Hints: The extent to which suggesti=
-ons
-> > > made by using the inline function specifier are effective (6.7.4).
-> > >
-> > > My translation:
-> > > "Please don't assume inline means anything."
-> > >
-> > > For the unspecified GNU C extension __attribute__((always_inline)), i=
-t
-> > > seems to me like it's meant more for performing inlining (an
-> > > optimization) at -O0.  Whether the compiler warns or not seems like a
-> > > nice side effect, but provides no strong guarantee otherwise.
-> > >
-> > > I'm sorry that so much code may have been written with that
-> > > assumption, and I'm sorry to be the bearer of bad news, but this isn'=
-t
-> > > a recent change.  If code was written under false assumptions, it
-> > > should be rewritten. Sorry.
-> >
-> > You may quote C11, but that is not relevent.  The kernel is coded to
-> > gnu89 standard - see the -std=3Dgnu89 flag.
->
-> There's more to this and why C11 is entirely irrelevant.  The "inline"
-> you see in our headers is not the compiler keyword that you find in
-> various C standards, it is a macro that gets expanded to either:
->
-> #define inline inline __attribute__((__always_inline__)) __gnu_inline \
->         __maybe_unused notrace
->
-> or
->
-> #define inline inline                                    __gnu_inline \
->         __maybe_unused notrace
->
-> __gnu_inline is defined as:
->
-> #define __gnu_inline                    __attribute__((__gnu_inline__))
->
-> So this attaches the gnu_inline attribute to the function:
->
-> `gnu_inline'
->      This attribute should be used with a function that is also declared
->      with the `inline' keyword.  It directs GCC to treat the function
->      as if it were defined in gnu90 mode even when compiling in C99 or
->      gnu99 mode.
-> ...
->      Since ISO C99 specifies a different semantics for `inline', this
->      function attribute is provided as a transition measure and as a
->      useful feature in its own right.  This attribute is available in
->      GCC 4.1.3 and later.  It is available if either of the
->      preprocessor macros `__GNUC_GNU_INLINE__' or
->      `__GNUC_STDC_INLINE__' are defined.  *Note An Inline Function is
->      As Fast As a Macro: Inline.
->
-> which is quite clear that C99 semantics do not apply to _this_ inline.
-> The manual goes on to explain:
->
->  GCC implements three different semantics of declaring a function
-> inline.  One is available with `-std=3Dgnu89' or `-fgnu89-inline' or when
-> `gnu_inline' attribute is present on all inline declarations, another
-> when `-std=3Dc99', `-std=3Dc11', `-std=3Dgnu99' or `-std=3Dgnu11' (withou=
-t
-> `-fgnu89-inline'), and the third is used when compiling C++.
+My name is Mrs Munasalem Mustapha from France,
 
-(I wrote the kernel patch for gnu_inline; it only comes into play when
-`inline` appears on a function *also defined as `extern`*).
+I know that this message might come to you as surprise because we
+don't know each other nor have we ever met before but accept it with
+an open and positive mind. I have a Very important request that made
+me to contact you; I was diagnosed with ovarian cancer disease which
+doctors have confirmed and announced to me that i have just few days
+to leave, Now that I=E2=80=99m ending the race like this, without any famil=
+y
+members and no child, I just came across your email contact from my
+personal search.
 
->
-> I'd suggest gnu90 mode is pretty similar to gnu89 mode, and as we build
-> the kernel in gnu89 mode, that is the inlining definition that is
-> appropriate.
->
-> When it comes to __always_inline, the GCC manual is the definitive
-> reference, since we use the GCC attribute for that:
->
-> #define __always_inline                 inline __attribute__((__always_in=
-line__))
->
-> and I've already quoted what the GCC manual says for always_inline.
->
-> Arguing about what the C11 spec says about inlining when we aren't
-> using C11 dialect in the kernel, but are using GCC features, does
-> not move the discussion on.
->
-> Thanks anyway, maybe it will become relevent in the future if we
-> decide to move to C11.
+I=E2=80=99m a business woman from France dealing with gold exportation here=
+ in
+Republic of Burkina Faso. I have decided to hand over the sum of ($6.5
+Million Dollar) in my account to you for the help of orphanage
+homes/the needy once in your location to fulfill my wish on earth. But
+before handing over my data=E2=80=99s to you, kindly assure me that you wil=
+l
+take only 50% of the money and share the rest to orphanage homes/the
+needy once in your country, Return to enable me forward to you the
+bank contact details now that I have access to Internet in the
+hospital to enable you contact the bank, always check your e-mail
+always remember me for doing good.
+Please don't forget to reply me in my Private
+E-mail:(munasalemmustapha9@gmail.com)
 
-It's not like the semantics of inline are better specified by an older
-standard, or changed (The only real semantic change involving `inline`
-between ISO C90 and ISO C99 has to do with whether `extern inline`
-emits the function with external linkage as you noted).  But that's
-irrelevant to the discussion.).  I quoted C11 because ctrl+f doesn't
-work for the C90 ISO spec pdf.  C90 spec doesn't even have a section
-on Function Specifiers.  From what I can tell, `inline` wasn't
-specified until ISO C99.
+Your early response will be appreciated.
 
-GNU modes are often modifiers off of ISO C bases; gnu89 corresponds to
-ISO C90.  They may permit the use of features from newer ISO C specs
-and GNU C extensions without warning under -Wpedantic.  There aren't a
-whole lot of semantic differences, at least that I'm aware of.
-
-Please don't assume inline means anything.
---=20
-Thanks,
-~Nick Desaulniers
+Yours Faithfully,
+Mrs Munasalem Mustapha
