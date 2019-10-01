@@ -2,77 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC47C36EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 421B3C36EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:20:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388940AbfJAOSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:18:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33274 "EHLO mail.kernel.org"
+        id S2388955AbfJAOUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:20:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727055AbfJAOSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:18:48 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1727055AbfJAOUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:20:17 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F78E2086A;
-        Tue,  1 Oct 2019 14:18:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F2332086A;
+        Tue,  1 Oct 2019 14:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569939528;
-        bh=BZoLkO7pPzU3r96BwmjE8Yk+cfOBfvTp6vVFJajgGi0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LuvHpqFnQEAf2BjLJouneSSWDpXnphl0go8fxpv4Np+kR/D7JMIYeMixWOcgAGOtR
-         Z4z06rexQ5MhaJ1WtOeaYIX/aSmVcJA3YLsYIAciSbfVbyhs1akYxuTApsNlVSoSCh
-         tSX8x5tbdGjsvyvGROQLF2Ptws9GzIE+lgDBmphs=
-Date:   Tue, 1 Oct 2019 10:18:46 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH AUTOSEL 5.3 034/203] ASoC: meson: g12a-tohdmitx: override
- codec2codec params
-Message-ID: <20191001141846.GU8171@sasha-vm>
-References: <20190922184350.30563-1-sashal@kernel.org>
- <20190922184350.30563-34-sashal@kernel.org>
- <1j7e5ztnoo.fsf@starbuckisacylon.baylibre.com>
+        s=default; t=1569939617;
+        bh=UBnUQs50xSOkAzYN97eAZdHXL9k0XEWd0kn+PTRxajU=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=prT1Fl0YizlgUboDPPxpvbZVV3SIGE00+dMlBtgmbgqP2s4Y36KEsx6rGTtadGOQy
+         wKEwLgLclodCRs1bQzLK2lTFrNTfTrz8axTBqpJujYH8suF7TejEbyvBtq6fAdqGJJ
+         5rgpw0aRNPnRhd4yp/6vJ7feBYTNdsFNcX1x2N+Q=
+Date:   Tue, 1 Oct 2019 16:19:50 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     =?ISO-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+cc:     linux-input@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] HID: fix error message in hid_open_report()
+In-Reply-To: <5866b49b330a750b44003ebd9f532541dcb13f18.1566587656.git.mirq-linux@rere.qmqm.pl>
+Message-ID: <nycvar.YFH.7.76.1910011619280.13160@cbobk.fhfr.pm>
+References: <5866b49b330a750b44003ebd9f532541dcb13f18.1566587656.git.mirq-linux@rere.qmqm.pl>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1j7e5ztnoo.fsf@starbuckisacylon.baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 10:35:35AM +0200, Jerome Brunet wrote:
->On Sun 22 Sep 2019 at 14:41, Sasha Levin <sashal@kernel.org> wrote:
->
->> From: Jerome Brunet <jbrunet@baylibre.com>
->>
->> [ Upstream commit 2c4956bc1e9062e5e3c5ea7612294f24e6d4fbdd ]
->>
->> So far, forwarding the hw_params of the input to output relied on the
->> .hw_params() callback of the cpu side of the codec2codec link to be called
->> first. This is a bit weak.
->>
->> Instead, override the stream params of the codec2codec to link to set it up
->> correctly.
->
->Hi Sasha
->
->This change depends on the following series in ASoC:
->https://lore.kernel.org/r/20190725165949.29699-1-jbrunet@baylibre.com
->which has also been merged in this merge window.
->
->With this change, things are done (IMO) in a better way but there was no
->known issue before that.
->
->I don't think it is worth backporting the mentioned ASoC series to
->5.3. I would suggest to just drop this change from stable.
+On Fri, 23 Aug 2019, Michał Mirosław wrote:
 
-I've dropped it, thank you.
+> On HID report descriptor parsing error the code displays bogus
+> pointer instead of error offset (subtracts start=NULL from end).
+> Make the message more useful by displaying correct error offset
+> and include total buffer size for reference.
+> 
+> This was carried over from ancient times - "Fixed" commit just
+> promoted the message from DEBUG to ERROR.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 8c3d52fc393b ("HID: make parser more verbose about parsing errors by default")
+> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> 
+> ---
+> v2: fixed printf() warning spotted by Jiri Kosina <jikos@kernel.org>
 
---
-Thanks,
-Sasha
+Applied, thank you.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
