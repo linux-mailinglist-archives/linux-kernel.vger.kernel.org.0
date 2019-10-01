@@ -2,58 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F5BDC372B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A5C3C373F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:27:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389146AbfJAOYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:24:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36820 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387581AbfJAOYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:24:13 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9199E21855;
-        Tue,  1 Oct 2019 14:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569939852;
-        bh=DtYd54/3IZfCY7nrpXq9zBTqzYtKRdKNAPE+LjcOMpA=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Srl7mAAYyU0K2eMjXKz7iFef2gX+7zh9HwRww3J2Nty1Z5K1Kdbgz1NgQh3UcG1Z0
-         U8v9spZpVE7yuwcdKpKwgx2QSiPNrOusNJM98cvywSD5I0x13zHTB9gviogMaO779s
-         zAr3n1ajP7bTLptEsfT5Q1ncxbE22cjHbaKKxLQE=
-Date:   Tue, 1 Oct 2019 16:23:46 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Rishi Gupta <gupt21@gmail.com>
-cc:     dmitry.torokhov@gmail.com, benjamin.tissoires@redhat.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] HID: hidraw: replace printk() with corresponding
- pr_xx() variant
-In-Reply-To: <1568946901-29752-1-git-send-email-gupt21@gmail.com>
-Message-ID: <nycvar.YFH.7.76.1910011623370.13160@cbobk.fhfr.pm>
-References: <20190919161613.GR237523@dtor-ws> <1568946901-29752-1-git-send-email-gupt21@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S2388981AbfJAO1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:27:38 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:57941 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388931AbfJAO1i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:27:38 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 37DFE240008;
+        Tue,  1 Oct 2019 14:27:35 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 16:27:34 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: atmel: fix atmel_ssc_set_audio link failure
+Message-ID: <20191001142734.GD4106@piout.net>
+References: <20191001142116.1172290-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001142116.1172290-1-arnd@arndb.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019, Rishi Gupta wrote:
+Hi,
 
-> This commit replaces direct invocations of printk with
-> their appropriate pr_info/warn() variant.
+On 01/10/2019 16:20:55+0200, Arnd Bergmann wrote:
+> The ssc audio driver can call into both pdc and dma backends.  With the
+> latest rework, the logic to do this in a safe way avoiding link errors
+> was removed, bringing back link errors that were fixed long ago in commit
+> 061981ff8cc8 ("ASoC: atmel: properly select dma driver state") such as
 > 
-> Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+> sound/soc/atmel/atmel_ssc_dai.o: In function `atmel_ssc_set_audio':
+> atmel_ssc_dai.c:(.text+0xac): undefined reference to `atmel_pcm_pdc_platform_register'
+> 
+> Fix it this time using Makefile hacks and a comment to prevent this
+> from accidentally getting removed again rather than Kconfig hacks.
+> 
+> Fixes: 18291410557f ("ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in Kconfig")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> Changes in v3:
-> * Use hid_warn() subsystem specific variant instead of pr_warn()
+>  sound/soc/atmel/Kconfig  |  4 ++--
+>  sound/soc/atmel/Makefile | 10 ++++++++--
+>  2 files changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+> index f118c229ed82..25c31bf64936 100644
+> --- a/sound/soc/atmel/Kconfig
+> +++ b/sound/soc/atmel/Kconfig
+> @@ -10,11 +10,11 @@ config SND_ATMEL_SOC
+>  if SND_ATMEL_SOC
+>  
+>  config SND_ATMEL_SOC_PDC
+> -	tristate
+> +	bool
+>  	depends on HAS_DMA
+>  
+>  config SND_ATMEL_SOC_DMA
+> -	tristate
+> +	bool
+>  	select SND_SOC_GENERIC_DMAENGINE_PCM
+>  
+>  config SND_ATMEL_SOC_SSC
+> diff --git a/sound/soc/atmel/Makefile b/sound/soc/atmel/Makefile
+> index 1f6890ed3738..c7d2989791be 100644
+> --- a/sound/soc/atmel/Makefile
+> +++ b/sound/soc/atmel/Makefile
+> @@ -6,8 +6,14 @@ snd-soc-atmel_ssc_dai-objs := atmel_ssc_dai.o
+>  snd-soc-atmel-i2s-objs := atmel-i2s.o
+>  snd-soc-mchp-i2s-mcc-objs := mchp-i2s-mcc.o
+>  
+> -obj-$(CONFIG_SND_ATMEL_SOC_PDC) += snd-soc-atmel-pcm-pdc.o
+> -obj-$(CONFIG_SND_ATMEL_SOC_DMA) += snd-soc-atmel-pcm-dma.o
+> +# pdc and dma need to both be built-in if any user of
+> +# ssc is built-in.
+> +ifdef CONFIG_SND_ATMEL_SOC_PDC
+> +obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-pdc.o
+> +endif
+> +ifdef CONFIG_SND_ATMEL_SOC_DMA
+> +obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel-pcm-dma.o
+> +endif
 
-Applied, thanks.
+Doesn't that prevent them to be built as a module at all?
+I'm not sure there is a use case though.
+
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
