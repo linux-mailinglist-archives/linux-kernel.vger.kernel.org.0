@@ -2,218 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79DADC37E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B47C37ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389224AbfJAOnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:43:20 -0400
-Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:11872 "EHLO
-        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727083AbfJAOnT (ORCPT
+        id S2389244AbfJAOnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:43:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49846 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfJAOny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:43:19 -0400
-Received: from pps.filterd (m0170391.ppops.net [127.0.0.1])
-        by mx0a-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91Ee3Nu022902;
-        Tue, 1 Oct 2019 10:43:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=uG3gCt0GACwoQj/YW+nHfdm0eFe8Az6uRYqs2X8dCvw=;
- b=B6P+/3QUK6Zwzy4bj1n190CSwrJC/CGWUIe6uIPSJj40C6iqJuzkye5Y4KiXz9IRWo3J
- iBoq5EfNhq+zHH89RGCU2L5VFI7kADVPSkDnS7QQix+Vp75oJdz2x0wSZA6eHwS5XP5x
- hT+ICR4bHQDG6jPNPjtePxeOJUEW1KiJ7kpIQsQLfidub4mZrSlhJOmoKdZZ6bLVLWBA
- lDvoJ45KziGz1clgpSOj8ZPsOV8253ltkj3D7WcDOxR7h5YFCuBhqMUWRT+EBAI27H09
- Bgo2E/Qr70NNzQ61T+EhZtto86Fq1+beOVs65NApVoQU9ggf/Ne9IhHkCHAWIix53mpe 4A== 
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-        by mx0a-00154904.pphosted.com with ESMTP id 2va2nynw4m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Oct 2019 10:43:18 -0400
-Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91EbqAE193826;
-        Tue, 1 Oct 2019 10:43:17 -0400
-Received: from ausxipps310.us.dell.com (AUSXIPPS310.us.dell.com [143.166.148.211])
-        by mx0a-00154901.pphosted.com with ESMTP id 2vc2rup0a0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 10:43:17 -0400
-X-LoopCount0: from 10.166.132.134
-X-PREM-Routing: D-Outbound
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="429771745"
-From:   <Mario.Limonciello@dell.com>
-To:     <mika.westerberg@linux.intel.com>, <linux-usb@vger.kernel.org>
-CC:     <andreas.noever@gmail.com>, <michael.jamet@intel.com>,
-        <YehezkelShB@gmail.com>, <rajmohan.mani@intel.com>,
-        <nicholas.johnson-opensource@outlook.com.au>, <lukas@wunner.de>,
-        <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
-        <anthony.wong@canonical.com>, <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH 22/22] thunderbolt: Do not start firmware unless asked
- by the user
-Thread-Topic: [RFC PATCH 22/22] thunderbolt: Do not start firmware unless
- asked by the user
-Thread-Index: AQHVeEzP00v40G7xFkaR9Ok+Xa9iBadF18vQ
-Date:   Tue, 1 Oct 2019 14:43:15 +0000
-Message-ID: <10cccc5a8d1a43fd9769ab6c4b53aeba@AUSX13MPC105.AMER.DELL.COM>
-References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
- <20191001113830.13028-23-mika.westerberg@linux.intel.com>
-In-Reply-To: <20191001113830.13028-23-mika.westerberg@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-10-01T14:43:12.4612150Z;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
- aiplabel=External Public
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 1 Oct 2019 10:43:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7XYS68JRsX31K5FNAZ0r4/kwd1UKDXQc2kjO9l53ZkQ=; b=DS+DLd8foqbMppOR2FgrfSY/c
+        VNVf64l6qlMXcxd2kvJO/pgouyArI97fZZ7sYsQ31kfqbUHmfN00Kl7H2/p9OixKmaM9/Wu4avaAw
+        ZP5EIznQGi7wk6xSW4olNVjNEoaKeKzpYfMc2sR5qHWTSWwHrwYmNgstn8jB4pZg8PrmKmVyMQ2HE
+        MMLer0Oo8QzkZGyWotHl0nHvjLNA4HmKcaCIxfQARYEMQadcY5jho/ln0DFJ49pQWMRrSyHilYntD
+        0uCHv1MQEIf0aCbySIlbz2kr6EuCSKqp+gk/FWrLi8Ydb6Su6R4ix4UceLQvyRTdBieA8oPhd0OvC
+        /S6Xr9dbg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iFJN8-0004g6-NL; Tue, 01 Oct 2019 14:43:26 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E146930610C;
+        Tue,  1 Oct 2019 16:42:34 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4D96A2652AB4D; Tue,  1 Oct 2019 16:43:23 +0200 (CEST)
+Date:   Tue, 1 Oct 2019 16:43:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 13/15] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20191001144323.GR4519@hirez.programming.kicks-ass.net>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.313688119@infradead.org>
+ <20190610183357.zj6rwdpgw36anpfc@treble>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-01_07:2019-10-01,2019-10-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 clxscore=1015 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910010132
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
- mlxscore=0 phishscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- bulkscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1910010132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610183357.zj6rwdpgw36anpfc@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Sent: Tuesday, October 1, 2019 6:39 AM
-> To: linux-usb@vger.kernel.org
-> Cc: Andreas Noever; Michael Jamet; Mika Westerberg; Yehezkel Bernat; Rajm=
-ohan
-> Mani; Nicholas Johnson; Lukas Wunner; Greg Kroah-Hartman; Alan Stern;
-> Limonciello, Mario; Anthony Wong; linux-kernel@vger.kernel.org
-> Subject: [RFC PATCH 22/22] thunderbolt: Do not start firmware unless aske=
-d by the
-> user
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> Since now we can do pretty much the same thing in the software
-> connection manager than the firmware would do, there is no point
-> starting it by default. Instead we can just continue using the software
-> connection manager.
->=20
-> Make it possible for user to switch between the two by adding a module
-> pararameter (start_icm) which is by default false. Having this ability
-> to enable the firmware may be useful at least when debugging possible
-> issues with the software connection manager implementation.
+On Mon, Jun 10, 2019 at 01:33:57PM -0500, Josh Poimboeuf wrote:
+> On Wed, Jun 05, 2019 at 03:08:06PM +0200, Peter Zijlstra wrote:
+> > --- a/arch/x86/include/asm/static_call.h
+> > +++ b/arch/x86/include/asm/static_call.h
+> > @@ -2,6 +2,20 @@
+> >  #ifndef _ASM_STATIC_CALL_H
+> >  #define _ASM_STATIC_CALL_H
+> >  
+> > +#include <asm/asm-offsets.h>
+> > +
+> > +#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
+> > +
+> > +/*
+> > + * This trampoline is only used during boot / module init, so it's safe to use
+> > + * the indirect branch without a retpoline.
+> > + */
+> > +#define __ARCH_STATIC_CALL_TRAMP_JMP(key, func)				\
+> > +	ANNOTATE_RETPOLINE_SAFE						\
+> > +	"jmpq *" __stringify(key) "+" __stringify(SC_KEY_func) "(%rip) \n"
+> > +
+> > +#else /* !CONFIG_HAVE_STATIC_CALL_INLINE */
+> 
+> I wonder if we can simplify this (and drop the indirect branch) by
+> getting rid of the above cruft, and instead just use the out-of-line
+> trampoline as the default for inline as well.
+> 
+> Then the inline case could fall back to the out-of-line implementation
+> (by patching the trampoline's jmp dest) before static_call_initialized
+> is set.
 
-If the host system firmware didn't start the ICM, does that mean SW connect=
-ion
-manager would just take over even on systems with discrete AR/TR controller=
-s?
+I think I've got that covered. I changed arch_static_call_transform() to
+(always) first rewrite the trampoline and then the in-line site.
 
->=20
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  drivers/thunderbolt/icm.c | 14 +++++++++++---
->  drivers/thunderbolt/tb.c  |  4 ----
->  2 files changed, 11 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-> index 9c9c6ea2b790..c4a2de0f2a44 100644
-> --- a/drivers/thunderbolt/icm.c
-> +++ b/drivers/thunderbolt/icm.c
-> @@ -11,6 +11,7 @@
->=20
->  #include <linux/delay.h>
->  #include <linux/mutex.h>
-> +#include <linux/moduleparam.h>
->  #include <linux/pci.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/platform_data/x86/apple.h>
-> @@ -43,6 +44,10 @@
->  #define ICM_APPROVE_TIMEOUT		10000	/* ms */
->  #define ICM_MAX_LINK			4
->=20
-> +static bool start_icm;
-> +module_param(start_icm, bool, 0444);
-> +MODULE_PARM_DESC(start_icm, "start ICM firmware if it is not running (de=
-fault:
-> false)");
-> +
->  /**
->   * struct icm - Internal connection manager private data
->   * @request_lock: Makes sure only one message is send to ICM at time
-> @@ -1353,13 +1358,16 @@ static bool icm_ar_is_supported(struct tb *tb)
->  {
->  	struct pci_dev *upstream_port;
->  	struct icm *icm =3D tb_priv(tb);
-> +	u32 val;
->=20
->  	/*
->  	 * Starting from Alpine Ridge we can use ICM on Apple machines
->  	 * as well. We just need to reset and re-enable it first.
+That way, when early/module crud comes in that still points at the
+trampoline, it will jump to the right place.
 
-This comment doesn't really seem as relevant anymore.  The meaning of it
-has nothing to do with Apple anymore.
-
-> +	 * However, only start it if explicitly asked by the user.
->  	 */
-> -	if (!x86_apple_machine)
-> -		return true;
-> +	val =3D ioread32(tb->nhi->iobase + REG_FW_STS);
-> +	if (!(val & REG_FW_STS_ICM_EN) && !start_icm)
-> +		return false;
-
-This code is already in icm_firmware_start.  Maybe split it to a small func=
-tion
-So you can just have the more readable
-
-If (!icm_firmware_running(tb) && !start_icm))
-
->=20
->  	/*
->  	 * Find the upstream PCIe port in case we need to do reset
-> @@ -2224,7 +2232,7 @@ struct tb *icm_probe(struct tb_nhi *nhi)
->=20
->  	case PCI_DEVICE_ID_INTEL_ICL_NHI0:
->  	case PCI_DEVICE_ID_INTEL_ICL_NHI1:
-> -		icm->is_supported =3D icm_ar_is_supported;
-> +		icm->is_supported =3D icm_fr_is_supported;
->  		icm->driver_ready =3D icm_icl_driver_ready;
->  		icm->set_uuid =3D icm_icl_set_uuid;
->  		icm->device_connected =3D icm_icl_device_connected;
-> diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-> index 6c468ba96e9a..aebf2c10aa85 100644
-> --- a/drivers/thunderbolt/tb.c
-> +++ b/drivers/thunderbolt/tb.c
-> @@ -9,7 +9,6 @@
->  #include <linux/slab.h>
->  #include <linux/errno.h>
->  #include <linux/delay.h>
-> -#include <linux/platform_data/x86/apple.h>
->=20
->  #include "tb.h"
->  #include "tb_regs.h"
-> @@ -1117,9 +1116,6 @@ struct tb *tb_probe(struct tb_nhi *nhi)
->  	struct tb_cm *tcm;
->  	struct tb *tb;
->=20
-> -	if (!x86_apple_machine)
-> -		return NULL;
-> -
->  	tb =3D tb_domain_alloc(nhi, sizeof(*tcm));
->  	if (!tb)
->  		return NULL;
-> --
-> 2.23.0
-
+I've not even compiled yet, but it ought to work ;-)
