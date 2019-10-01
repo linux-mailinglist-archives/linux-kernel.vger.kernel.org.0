@@ -2,81 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E24C3D7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE3EC3DB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733213AbfJARAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 13:00:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41808 "EHLO mail.kernel.org"
+        id S1731897AbfJARBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:01:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727283AbfJAQ74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:59:56 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1729317AbfJARBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 13:01:50 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73CD02168B;
-        Tue,  1 Oct 2019 16:59:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71D082054F;
+        Tue,  1 Oct 2019 17:01:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569949196;
-        bh=Hx7m5OdIpys0QsugrbkIJbTrZ0dFqGn5jXjlF+SX1Js=;
+        s=default; t=1569949308;
+        bh=bJnGJ3RhjW/8aLO07qPZQmJNbpODR84+mvK448XA88o=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SWBN/pBbD2o1S6NIjHpADoADN7TLftfv+C5JX1CA4UavizlY0xTJMEeZtYfn0sNgq
-         kUd6Fk3aZ7RbwatKOVoAG0eESlfWxzYCIoIc07WnA4pYz7PxhalVURhcI13PBdfwgv
-         3+O/ZOZ0+MQlQ3IiLCp09DT8Nu4AR1ih+n2lpYOY=
-Date:   Tue, 1 Oct 2019 18:59:53 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.3 00/25] 5.3.2-stable review
-Message-ID: <20191001165953.GA3542610@kroah.com>
-References: <20190929135006.127269625@linuxfoundation.org>
- <97a5107b-9b90-53be-47d3-dc5167013fd6@nvidia.com>
+        b=yaOg32kjz9hD653NvILZdRQ7X/HdYptJmBc184vQlyHSvp23BmDSe5R8zcFK9i0hE
+         qw+CdI6NHge3cdjg2NYe1TegjwR7ZTfcmqezNpCBsNxmpCQ//W7UMwX3qgDgVsOAbK
+         ID0YrKYPlGuec6Xu+XKji1EYG4cwCBfmgTBjbRjw=
+Date:   Tue, 1 Oct 2019 18:01:43 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+Message-ID: <20191001170142.x66orounxuln7zs3@willie-the-truck>
+References: <20190830034304.24259-1-yamada.masahiro@socionext.com>
+ <f5c221f5749e5768c9f0d909175a14910d349456.camel@suse.de>
+ <CAKwvOdk=tr5nqq1CdZnUvRskaVqsUCP0SEciSGonzY5ayXsMXw@mail.gmail.com>
+ <CAHk-=wiTy7hrA=LkmApBE9PQtri8qYsSOrf2zbms_crfjgR=Hw@mail.gmail.com>
+ <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
+ <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
+ <20190930121803.n34i63scet2ec7ll@willie-the-truck>
+ <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
+ <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck>
+ <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <97a5107b-9b90-53be-47d3-dc5167013fd6@nvidia.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 03:59:06PM +0100, Jon Hunter wrote:
+On Tue, Oct 01, 2019 at 09:32:25AM -0700, Nick Desaulniers wrote:
+> On Tue, Oct 1, 2019 at 2:28 AM Will Deacon <will@kernel.org> wrote:
+> > On Mon, Sep 30, 2019 at 02:50:10PM -0700, Nick Desaulniers wrote:
+> > > In this case, if there's a known codegen bug in a particular compiler
+> > > or certain versions of it, I recommend the use of either the C
+> > > preprocessor or __attribute__((no_inline)) to get the desired behavior
+> > > localized to the function in question, and for us to proceed with
+> > > Masahiro's cleanup.
+> >
+> > Hmm, I don't see how that would help. The problem occurs when things
+> > are moved out of line by the compiler (see below).
 > 
-> On 29/09/2019 14:56, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.3.2 release.
-> > There are 25 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue 01 Oct 2019 01:47:47 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.2-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.3:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.3.2-rc1-g5910f7ae1729
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+> It's being moved out of line because __attribute__((always_inline)) or
+> just inline provide no guarantees that outlining does not occur.  It
+> would help to make functions that need to be inlined macros, because
+> the C preprocessor doesn't have that issue.
 
-Thanks for testing these and letting me know.
+Hmm, let me try to put it another way: enabling CONFIG_OPTIMIZE_INLINING
+has been shown to cause miscompilation with many versions of GCC on arm64
+because the compiler moves things out of line that it otherwise doesn't
+appear to do. I don't see how __attribute__((no_inline)) helps with that,
+and replacing static functions with macros isn't great for type-checking
+and argument evaluation.
 
-greg k-h
+> > > The comment above the use of CONFIG_OPTIMIZE_INLINING in
+> > > include/linux/compiler_types.h says:
+> > >   * Force always-inline if the user requests it so via the .config.
+> > > Which makes me grimace (__attribute__((always_inline)) doesn't *force*
+> > > anything as per above), and the idea that forcing things marked inline
+> > > to also be __attribute__((always_inline)) is an "optimization" (re:
+> > > the name of the config; CONFIG_OPTIMIZE_INLINING) is also highly
+> > > suspect.  Aggressive inlining leads to image size bloat, instruction
+> > > cache and register pressure; it is not exclusively an optimization.
+> >
+> > Agreed on all of this, but the fact remains that GCC has been shown to
+> > *miscompile* the arm64 kernel with CONFIG_OPTIMIZE_INLINING=y. Please,
+> > look at this thread:
+> >
+> >         https://www.spinics.net/lists/arm-kernel/msg730329.html
+> >         https://www.spinics.net/lists/arm-kernel/msg730512.html
+> >
+> > GCC decides to pull an atomic operation out-of-line and, in doing so,
+> 
+> If the function is incorrect unless inlined, use a macro.
+
+The function is correct per the GCC documentation regarding register
+variables and inline asm.
+
+> > Reducing the instruction cache footprint is great, but not if the
+> > resulting code is broken!
+> 
+> You don't have to convince compiler folks about correctness. ;)
+> Correctness trumps all, especially performance.
+
+Then why is this conversation so difficult? :(
+
+Will
