@@ -2,67 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90A53C3C65
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4E3C3C33
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:50:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389128AbfJAQvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:51:02 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45487 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387911AbfJAQoZ (ORCPT
+        id S2388673AbfJAQuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:50:19 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34775 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390015AbfJAQog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:44:25 -0400
-Received: by mail-qt1-f195.google.com with SMTP id c21so22392941qtj.12
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:44:24 -0700 (PDT)
+        Tue, 1 Oct 2019 12:44:36 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 3so22470504qta.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:44:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=jfIuZU/cepPy/pGnCIDFXdIvjcjtwA0mX3QH0b4Ddzw=;
-        b=ha19NFboGyfHEPz930ffsn+JeMcUvcxw+R6+5Wt19DGh5Wp0S+83een5SL0uF3MYZx
-         o31wHvxw5EWug+u2y0I+3ehH0yId1nb5pAy8MbjS+2luKoh22K5Dl+dLQaN23S+VZFyf
-         UDjLJJY2V61SeVJTALWm3vZ2t55K6kWwaw1/uBHCOGkiGskPjTAGyCStwEZlRKW8B//C
-         34gLc/KwccsIQssnUhLIk/k8PT6EOO6CqgYx9zLn1UI2bL2tuwgTWzPDLJbZ9mT6TCKf
-         U1ua3cekvQCzwAcenTbckEXQZUQjntbb7ZkrcNqbJVuwqcbSPWownieT7L2MkpjKrd9c
-         nr3g==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7GPDFQWuJXwzJuqgdtkv8cWj1/rryU2amRMgaS7klwk=;
+        b=UI4eNsI01cw12FCH1szI/WpOWDa4aYdcfwkvjF0IataQqplLO5GIZr4lLpKiTNA1Ay
+         30U8FhzxOnozK/bML5k8xB8Vk/Mvr4T7avhwBHv7jt3G0Id/wFihN8VFw3eyKc8pGSLF
+         vhJd5VxytmfI8W3SVJ6Y70mWApfvtdP0qOYh7jZjeIuXbqyZ30E6+7D8kBMzAJGnJwMj
+         JO2DFGWYAm8+CuNdxW50PvPeOpgJUYiXllV7SB789XKFpeK9CDGSwG6iG7kBSIKxpHeE
+         2GhuyBg5Imcu8wBPi3w4si8hU8R9pLqCkPmY8iyZyieAMvzcmNRhTOiCeB3x7VYWf7L3
+         MWRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=jfIuZU/cepPy/pGnCIDFXdIvjcjtwA0mX3QH0b4Ddzw=;
-        b=Iurm27+Bwx2E6VftZLTEvAudSwdIlrMeKdG8A96Qr5qx9UFW2ARFv10o7ohsg45yP4
-         rLiA5c5QJFXl6XWsCFcZZOOMw6tID0Gxl5qLtaYe419yFgd/cxmMKFNP8ZbbWLIMaK9N
-         uMdC7OoZWppC/QqcOs7/mrPkm35uaPUCBemOYwzxAcisB3jDapjbSW/tmQjTsTOGZsOj
-         Wb/rmHzQnfP3JUcKUrnILUmM3KJSaKlJ2S8MGaxqbqFKkzqlBkJRarFBfpTfIr5S3auY
-         uOetIYuEiEvgQ2soCjTUcAPOGWmzqcjwkj6Gzi8t5uF/CNIDK41az6oGvCZef33oq6up
-         ghdQ==
-X-Gm-Message-State: APjAAAVBflyS8gEmJpe4N6UDdFB3SF2XhoksGwCZwTKlh/suHOE/8S3J
-        rSsR1uCYP4lXhvA8xJT79sMjVDtcxxLOdN9Dc4M=
-X-Google-Smtp-Source: APXvYqzpdnWTfcZOfneU/AAEPmM3omJZiw6BEkVZYhOCKM2GF0Z3GE4BBVeDr2p2JcdbNsfNpsUKL0r6B+CIFbUDY/g=
-X-Received: by 2002:ac8:724d:: with SMTP id l13mr32110039qtp.381.1569948264539;
- Tue, 01 Oct 2019 09:44:24 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0c:f746:0:0:0:0:0 with HTTP; Tue, 1 Oct 2019 09:44:24 -0700 (PDT)
-Reply-To: mrskaringrossmannk@gmail.com
-From:   =?UTF-8?Q?Karin_Gro=C3=9Fmann?= <esztert476@gmail.com>
-Date:   Tue, 1 Oct 2019 16:44:24 +0000
-Message-ID: <CAEc7Y=ewxT-FsWmiuREwzT23EoEQmAow8+XjONWr4cVupVZ2uw@mail.gmail.com>
-Subject: dear
-To:     undisclosed-recipients:;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7GPDFQWuJXwzJuqgdtkv8cWj1/rryU2amRMgaS7klwk=;
+        b=rGvFpwlI6d+jBK0sskeVG44YVMrl1r+TFjZToP/jMf0i+w1f7++WiV0VvTkoopELxc
+         o/znvSxrGMha7zUYgxk5dKO2kr/6kqaNMwVCCVnesK9cCl0triRXlNf3JOfVh3V2Gdei
+         YnntUA0G/x3mImeoQg7MamenDYQTy4uwgtP4i6G+zr0/+3wtAQFNohNXamFUsEntS+21
+         JFr0t83I8hCR+GEEahj38ZBUD+7UGYgs/EqBW3P+7i0LSvRq60i4aeQFQhpmjXBiassn
+         hDGP5FUO2oOJqH8ENX0uf5GE6wVkqGrATr7ZiZtbGM0mp1DLyofd0F0tR0RwwfelLlUm
+         fvpQ==
+X-Gm-Message-State: APjAAAW7UlhK6Ivw8jCG1i1GxP7S8Yk7DRODsw/pMLkFZhIQRJOYvm4u
+        YVTzfhaEwXVsWeZzsJbOeDb4IA==
+X-Google-Smtp-Source: APXvYqyObNCYAzFu3jyjhNDjKUVhXypcTsi/L5PiHM0qUrfbw71DITAFbh7MVl2LtTvReBCYDaJLHQ==
+X-Received: by 2002:ac8:1207:: with SMTP id x7mr22977563qti.247.1569948275773;
+        Tue, 01 Oct 2019 09:44:35 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id a11sm7923492qkc.123.2019.10.01.09.44.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Oct 2019 09:44:35 -0700 (PDT)
+Message-ID: <1569948272.5576.259.camel@lca.pw>
+Subject: Re: [PATCH] mm/memcontrol.c: fix another unused function warning
+From:   Qian Cai <cai@lca.pw>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Date:   Tue, 01 Oct 2019 12:44:32 -0400
+In-Reply-To: <CAK8P3a04nMwy3VpdtD6x_tdPC14LPPbt3JKrGN48qRo_sDVk-Q@mail.gmail.com>
+References: <20191001142227.1227176-1-arnd@arndb.de>
+         <1569940805.5576.257.camel@lca.pw>
+         <CAK8P3a04nMwy3VpdtD6x_tdPC14LPPbt3JKrGN48qRo_sDVk-Q@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi dear,
+On Tue, 2019-10-01 at 18:00 +0200, Arnd Bergmann wrote:
+> On Tue, Oct 1, 2019 at 4:40 PM Qian Cai <cai@lca.pw> wrote:
+> > 
+> > On Tue, 2019-10-01 at 16:22 +0200, Arnd Bergmann wrote:
+> > > Removing the mem_cgroup_id_get() stub function introduced a new warning
+> > > of the same kind when CONFIG_MMU is disabled:
+> > 
+> > Shouldn't CONFIG_MEMCG depends on CONFIG_MMU instead?
+> 
+> Maybe. Generally we allow building a lot of stuff without CONFIG_MMU that
+> may not make sense, so I just followed the same idea here.
 
-I'm Mrs Karin Gro=C3=9Fmann, please i wish to have a communication with you=
-.
-
-I am waiting for your answer,
-
-mrskaringrossmannk@gmail.com
-
-Mrs Karin Gro=C3=9Fmann.
+Those blindly mark __maybe_unused might just mask important warnings off in the
+future, and they are ugly. Let's fix it properly.
