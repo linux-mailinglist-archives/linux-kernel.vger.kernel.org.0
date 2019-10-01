@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 328AEC4315
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F376C4331
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 23:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbfJAVxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 17:53:47 -0400
+        id S1728371AbfJAVyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 17:54:13 -0400
 Received: from mail-eopbgr730113.outbound.protection.outlook.com ([40.107.73.113]:17171
         "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728200AbfJAVxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:53:40 -0400
+        id S1728177AbfJAVxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 17:53:44 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jhlmrJtnFZS1uRLa/L/tibdnZROlxPEQ5wQG+jI781nhIys3WUnWms74P5ZeMreAOSZQis3QPRGzYyBwepDw665wcIhLXv54AZPwQyCzDxzPMqFp7fvBfwbYq3RO1nkeZ2T5GTuhVu6iIx3FqLQ8pPBp1DgBkKsn3utXn1rBIWbeAIm2j9nJGboqgN4XCs5/q0RPf5Nrog/FknNxT1J8FKnXe5WEZBtrJiRe5cE7U7KlQj2dekDKRoNMSGaZuHpNia4yOcz0SH+71tU5yrpMOQ1yT2N8bAcCYNPZ+btBBU8r0ovTy6a9l1UbB+oKnc8ZgQUIDIHU4Rki8mIoXuhdIQ==
+ b=P4u2ANLHWaywxHKlGlUbFpdEqZR0SWNwXuA4z0dlpAbcwIBLOj13963QxRRLKxwCBWbpbD45pLLDnVSCf0ZpEi0o/7MXT8gbOZDh8dioEUAXLTUVpnVpnc0TeQTbplZQDe6ekJseMYLEIYvK9EzsIpVa3g6n8oz5eRv6kvfN8iv7fcfZl+5cVvvH1GG2lddKp2FQy19nmDADrLF3cm4u12uquuAlp1rvfSivLLmvaY8sbqcNcp6jAN684NaiKyEm5pogZ+okotCDRYrQ08pgYmAEPM1HreNI6lu95DSjpR1iFBCKjJOQdLC79uuLuygicRBKOTbxuc6G/pP5g1exAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ci/15PmHn5aOkSH4PGDpm2VAoB19B/XPaRo/e5fUaXA=;
- b=JX6LY+WSa54PYRK7E1y/CDQazB6OEbmXi4OYqkfWDyziOmwVjPMDnV+dt3Ue+4Hg/65BqMrG1QcHdOgvoDGpeRQgkMoQW3IGjklOZdh23kFx5aM7/SqyGljPv7yw067343oIKY/ivQ5BSedgMaj7p1CrHIHPcwXkKZfWjczenHiLY70Agns0CJhpKF7NPPcmaVHsCJ6K0HeczyTbiC3ACFKJyTrE5t9eFlrrpBJshZ6UXXjVrF2/eoTk9jo5S9glyKB7+uyxz6TZglx79ZYmg9H7ro6sVs/ANIv0AnIg9UbnZupowqKTpGMBT97mida+6BWU5drLzvIKzK+kMi9W3A==
+ bh=08aXOuUCv1QBQ78zSHt4gRJFznTUvA/Oy5HXdvyZIf8=;
+ b=CYgvxIpOnllsx1RvjIn1h1xNFX8P775vTM/j+Kb7GiMnKYbZi0PK6FHU4rVi3L30c3+E3gNPtt9E5XOWbd1vcePPl9fL7VzRiBIEiW00LeQGjlCJ7FEDSWWJuEIOyrJ5GV/W+mbNJHdo3MX/JEOb4kjFCofeyYWj+4FbuDYmjuevB9dRch6iqr23MErzCXXjtizuq1jvkcWBcYb6PMJlWks7PqvJby1PFUv1cGrvf42Ia9rTRoJAboSkda0IdMz2J0OAc+aLgn8QEOCvZAkuwaosjk2ulD44ky7p42eYWwjDr19nstDbCwXz6uRxtfEzNpOswILFBujlhpUGTtgTaQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
  dkim=pass header.d=mips.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ci/15PmHn5aOkSH4PGDpm2VAoB19B/XPaRo/e5fUaXA=;
- b=Zir1FnQDp4HaGyU5Al1Csalw5RaMiQgqtO8dc1PavhdBrNZC9tWwuDfjE9EZV/4THOLtOSFrgtYYpyzQukpz50JkKm5EB4aY66clWNltTkcmw6oxug1JOR8UV6hQPv+1kEOXqCCJeZO1FHFU7fkSmSoDKM50GAb5vJP404nPuaI=
+ bh=08aXOuUCv1QBQ78zSHt4gRJFznTUvA/Oy5HXdvyZIf8=;
+ b=quuuvoVTt5nSQX5Q3BCm/owf9hVlbiVjGHwncWB3nSk+PfXTkWRzXBbYqKUATYZoELukE3yNwfT3B/v+tq7pLyuX7nxHDeEUgDzeWccsI/G//lt1sllJb0wNE0IDpbgQZ8JOZ6mLbHfRdwDGknsCg2Epmi+i55qfkU1M8JxDiyM=
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
  MWHPR2201MB1439.namprd22.prod.outlook.com (10.174.169.166) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -41,11 +41,13 @@ CC:     Huacai Chen <chenhc@lemote.com>,
         Jiaxun Yang <jiaxun.yang@flygoat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Paul Burton <pburton@wavecomp.com>
-Subject: [PATCH v2 22/36] MIPS: bitops: Use the BIT() macro
-Thread-Topic: [PATCH v2 22/36] MIPS: bitops: Use the BIT() macro
-Thread-Index: AQHVeKKqA6Bv8sCnekWZwAB+VsQHGA==
-Date:   Tue, 1 Oct 2019 21:53:31 +0000
-Message-ID: <20191001215249.4157062-23-paul.burton@mips.com>
+Subject: [PATCH v2 23/36] MIPS: bitops: Avoid redundant zero-comparison for
+ non-LLSC
+Thread-Topic: [PATCH v2 23/36] MIPS: bitops: Avoid redundant zero-comparison
+ for non-LLSC
+Thread-Index: AQHVeKKr/ZciCZFEkku5+pQr0Jn66g==
+Date:   Tue, 1 Oct 2019 21:53:32 +0000
+Message-ID: <20191001215249.4157062-24-paul.burton@mips.com>
 References: <20191001215249.4157062-1-paul.burton@mips.com>
 In-Reply-To: <20191001215249.4157062-1-paul.burton@mips.com>
 Accept-Language: en-US
@@ -61,192 +63,129 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.23.0
 x-originating-ip: [12.94.197.246]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1450bc32-0afc-4610-589c-08d746b9cced
+x-ms-office365-filtering-correlation-id: c89cc258-248f-4811-ae57-08d746b9cd6e
 x-ms-traffictypediagnostic: MWHPR2201MB1439:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB143955AA7D4332496C37ACE2C19D0@MWHPR2201MB1439.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1201;
+x-microsoft-antispam-prvs: <MWHPR2201MB1439ACCFD0906F565515CFD2C19D0@MWHPR2201MB1439.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:883;
 x-forefront-prvs: 0177904E6B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(396003)(39840400004)(366004)(346002)(136003)(376002)(199004)(189003)(186003)(11346002)(6512007)(1076003)(486006)(66066001)(26005)(6486002)(316002)(2906002)(5640700003)(6436002)(44832011)(42882007)(25786009)(446003)(6916009)(386003)(6506007)(76176011)(478600001)(52116002)(2616005)(102836004)(476003)(5660300002)(305945005)(64756008)(66446008)(14444005)(2351001)(7736002)(99286004)(54906003)(14454004)(71190400001)(71200400001)(66946007)(66556008)(66476007)(36756003)(3846002)(6116002)(107886003)(4326008)(50226002)(81166006)(81156014)(8676002)(2501003)(8936002)(256004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1439;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39840400004)(366004)(346002)(136003)(376002)(199004)(189003)(186003)(11346002)(6512007)(1076003)(486006)(66066001)(26005)(6486002)(316002)(2906002)(5640700003)(6436002)(44832011)(42882007)(25786009)(446003)(6916009)(386003)(6506007)(76176011)(478600001)(52116002)(2616005)(102836004)(476003)(5660300002)(305945005)(64756008)(66446008)(14444005)(2351001)(7736002)(99286004)(54906003)(14454004)(71190400001)(71200400001)(66946007)(66556008)(66476007)(36756003)(3846002)(6116002)(107886003)(4326008)(50226002)(81166006)(81156014)(8676002)(2501003)(8936002)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1439;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: wavecomp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SZLAzBOYsmF7EkeXRPnIpcbQ0VmxULLbUV99kglxFa7lxAJVsa1MHnGQYQqduLyyqtW5D7JTPdaOYeX8EYMp3jOnlB7I960jAUpOZdQI2F/kYUSIyTqbR5szrNRbGcV21JYw6/jw+tlGni06R+9NHPG7uCveyL2XEtWXHVbU9RLy20s7iMGvd0FinQaOwHGDV2PmEWI+Mn8s8m0iB2klUQmH3UIfk+RlIe3uyFTfhZLRumkhENqv0zN+rOhgrq63QnYKb0jfjzYrEP5Iz3L7ovwB8yRrRDKhrrGMC2DNTk5aQEjdz9ZMCnOADrXnuf9kAlYrTCcIZ6syvFXdamdxwECQB3jtoSvclpBbJcyV/uH1+pYVN8d3aONHQzRC6P4J4YpkR5e3+xXni17Bndd+EsiPbiN0m+uTMRwVyvAsC1E=
+x-microsoft-antispam-message-info: WxbgGVYN1Nvhe47PK0tlnvGGMDFotd0jF396+tnuQOdSj45qGfyfoqVD3SkQDkYJDUOB0Le6mN5Wb8FKh441m70nFxa9S0nt+wrMI+1Nz9qsZfk7XF66JojG3RmHaLUWUtijFeeGH5bBemmu1ryU0rW0Hb8GO8HLPJdRmS7wrJUMnAR8USRpCvIDzrfsA1GUTHBhPh19Ltjdsc/r0PfNZCBSdLTQZYPdyutEqiIenYADc4f/b4aybZjFDiVEyieHWgUXnETO9mFc7HujsGy20QOOmh/LXTXoMWIuKK9WS7BWPSuS5tTZSRJoaWfpP4MRzcLHn4QapYAaGaCRh0q2rFxLPd2UaVu2a7OLTQOTf7HttItdlQG4QAtb1ZIlEAI0Ik1xPupstSWCnRXlqlxFx1VjdxHL/TLK4Qc7VFQPzM4=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1450bc32-0afc-4610-589c-08d746b9cced
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2019 21:53:31.9024
+X-MS-Exchange-CrossTenant-Network-Message-Id: c89cc258-248f-4811-ae57-08d746b9cd6e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2019 21:53:32.7210
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nHVVRwVUr1tCqku9VBwEj933BjwgzbXejnjPpgZ5XcyKM+P5ow0yuG1e9CHrSCX43OYKLF7XQ+Uzm37np4jU3A==
+X-MS-Exchange-CrossTenant-userprincipalname: rbU+xxcf3H8sHO4b/F3ewENS/Zz0rwk5ySqKGxX/HcooT8qbnzDBXOonUEyJf7qWRIMFc0gO6ZN6X2YNbmlQlQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1439
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the BIT() macro in asm/bitops.h rather than open-coding its
-equivalent.
+The IRQ-disabling non-LLSC fallbacks for bitops on UP systems already
+return a zero or one, so there's no need to perform another comparison
+against zero. Move these comparisons into the LLSC paths to avoid the
+redundant work.
 
 Signed-off-by: Paul Burton <paul.burton@mips.com>
 ---
 
 Changes in v2: None
 
- arch/mips/include/asm/bitops.h | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ arch/mips/include/asm/bitops.h | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/arch/mips/include/asm/bitops.h b/arch/mips/include/asm/bitops.=
 h
-index 7314ba5a3683..0f8ff896e86b 100644
+index 0f8ff896e86b..7671db2a7b73 100644
 --- a/arch/mips/include/asm/bitops.h
 +++ b/arch/mips/include/asm/bitops.h
-@@ -13,6 +13,7 @@
- #error only <linux/bitops.h> can be included directly
- #endif
-=20
-+#include <linux/bits.h>
- #include <linux/compiler.h>
- #include <linux/types.h>
- #include <asm/barrier.h>
-@@ -70,7 +71,7 @@ static inline void set_bit(unsigned long nr, volatile uns=
-igned long *addr)
- 		"	beqzl	%0, 1b					\n"
- 		"	.set	pop					\n"
- 		: "=3D&r" (temp), "=3D" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit), GCC_OFF_SMALL_ASM() (*m)
-+		: "ir" (BIT(bit)), GCC_OFF_SMALL_ASM() (*m)
- 		: __LLSC_CLOBBER);
- 		return;
- 	}
-@@ -99,7 +100,7 @@ static inline void set_bit(unsigned long nr, volatile un=
-signed long *addr)
- 		"	" __SC	"%0, %1				\n"
- 		"	.set	pop				\n"
- 		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit)
-+		: "ir" (BIT(bit))
- 		: __LLSC_CLOBBER);
- 	} while (unlikely(!temp));
- }
-@@ -135,7 +136,7 @@ static inline void clear_bit(unsigned long nr, volatile=
- unsigned long *addr)
- 		"	beqzl	%0, 1b					\n"
- 		"	.set	pop					\n"
- 		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (~(1UL << bit))
-+		: "ir" (~(BIT(bit)))
- 		: __LLSC_CLOBBER);
- 		return;
- 	}
-@@ -164,7 +165,7 @@ static inline void clear_bit(unsigned long nr, volatile=
- unsigned long *addr)
- 		"	" __SC "%0, %1				\n"
- 		"	.set	pop				\n"
- 		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (~(1UL << bit))
-+		: "ir" (~(BIT(bit)))
- 		: __LLSC_CLOBBER);
- 	} while (unlikely(!temp));
- }
-@@ -213,7 +214,7 @@ static inline void change_bit(unsigned long nr, volatil=
-e unsigned long *addr)
- 		"	beqzl	%0, 1b				\n"
- 		"	.set	pop				\n"
- 		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit)
-+		: "ir" (BIT(bit))
- 		: __LLSC_CLOBBER);
- 		return;
- 	}
-@@ -228,7 +229,7 @@ static inline void change_bit(unsigned long nr, volatil=
-e unsigned long *addr)
- 		"	" __SC	"%0, %1				\n"
- 		"	.set	pop				\n"
- 		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit)
-+		: "ir" (BIT(bit))
- 		: __LLSC_CLOBBER);
- 	} while (unlikely(!temp));
- }
-@@ -261,7 +262,7 @@ static inline int test_and_set_bit_lock(unsigned long n=
+@@ -264,6 +264,8 @@ static inline int test_and_set_bit_lock(unsigned long n=
 r,
- 		"	and	%2, %0, %3				\n"
- 		"	.set	pop					\n"
  		: "=3D&r" (temp), "+m" (*m), "=3D&r" (res)
--		: "ir" (1UL << bit)
-+		: "ir" (BIT(bit))
+ 		: "ir" (BIT(bit))
  		: __LLSC_CLOBBER);
++
++		res =3D res !=3D 0;
  	} else {
  		loongson_llsc_mb();
-@@ -274,11 +275,11 @@ static inline int test_and_set_bit_lock(unsigned long=
+ 		do {
+@@ -279,12 +281,12 @@ static inline int test_and_set_bit_lock(unsigned long=
  nr,
- 			"	" __SC	"%2, %1				\n"
- 			"	.set	pop				\n"
- 			: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=3D&r" (res)
--			: "ir" (1UL << bit)
-+			: "ir" (BIT(bit))
  			: __LLSC_CLOBBER);
  		} while (unlikely(!res));
 =20
--		res =3D temp & (1UL << bit);
-+		res =3D temp & BIT(bit);
+-		res =3D temp & BIT(bit);
++		res =3D (temp & BIT(bit)) !=3D 0;
  	}
 =20
  	smp_llsc_mb();
-@@ -332,7 +333,7 @@ static inline int test_and_clear_bit(unsigned long nr,
- 		"	and	%2, %0, %3				\n"
- 		"	.set	pop					\n"
+=20
+-	return res !=3D 0;
++	return res;
+ }
+=20
+ /*
+@@ -335,6 +337,8 @@ static inline int test_and_clear_bit(unsigned long nr,
  		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=3D&r" (res)
--		: "ir" (1UL << bit)
-+		: "ir" (BIT(bit))
+ 		: "ir" (BIT(bit))
  		: __LLSC_CLOBBER);
++
++		res =3D res !=3D 0;
  	} else if ((MIPS_ISA_REV >=3D 2) && __builtin_constant_p(nr)) {
  		loongson_llsc_mb();
-@@ -358,11 +359,11 @@ static inline int test_and_clear_bit(unsigned long nr=
+ 		do {
+@@ -363,12 +367,12 @@ static inline int test_and_clear_bit(unsigned long nr=
 ,
- 			"	" __SC	"%2, %1				\n"
- 			"	.set	pop				\n"
- 			: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=3D&r" (res)
--			: "ir" (1UL << bit)
-+			: "ir" (BIT(bit))
  			: __LLSC_CLOBBER);
  		} while (unlikely(!res));
 =20
--		res =3D temp & (1UL << bit);
-+		res =3D temp & BIT(bit);
+-		res =3D temp & BIT(bit);
++		res =3D (temp & BIT(bit)) !=3D 0;
  	}
 =20
  	smp_llsc_mb();
-@@ -400,7 +401,7 @@ static inline int test_and_change_bit(unsigned long nr,
- 		"	and	%2, %0, %3				\n"
- 		"	.set	pop					\n"
+=20
+-	return res !=3D 0;
++	return res;
+ }
+=20
+ /*
+@@ -403,6 +407,8 @@ static inline int test_and_change_bit(unsigned long nr,
  		: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=3D&r" (res)
--		: "ir" (1UL << bit)
-+		: "ir" (BIT(bit))
+ 		: "ir" (BIT(bit))
  		: __LLSC_CLOBBER);
++
++		res =3D res !=3D 0;
  	} else {
  		loongson_llsc_mb();
-@@ -413,11 +414,11 @@ static inline int test_and_change_bit(unsigned long n=
+ 		do {
+@@ -418,12 +424,12 @@ static inline int test_and_change_bit(unsigned long n=
 r,
- 			"	" __SC	"\t%2, %1			\n"
- 			"	.set	pop				\n"
- 			: "=3D&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=3D&r" (res)
--			: "ir" (1UL << bit)
-+			: "ir" (BIT(bit))
  			: __LLSC_CLOBBER);
  		} while (unlikely(!res));
 =20
--		res =3D temp & (1UL << bit);
-+		res =3D temp & BIT(bit);
+-		res =3D temp & BIT(bit);
++		res =3D (temp & BIT(bit)) !=3D 0;
  	}
 =20
  	smp_llsc_mb();
+=20
+-	return res !=3D 0;
++	return res;
+ }
+=20
+ #include <asm-generic/bitops/non-atomic.h>
 --=20
 2.23.0
 
