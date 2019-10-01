@@ -2,109 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0482C330F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A47C3300
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387759AbfJALlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:41:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41204 "EHLO
+        id S2387709AbfJALl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:41:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41432 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387633AbfJALlN (ORCPT
+        with ESMTP id S2387681AbfJALlT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:41:13 -0400
+        Tue, 1 Oct 2019 07:41:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=CX+gGn0ulj8a8xwxiDkqA33F/I+QW8zBsiOoBhNf9xY=; b=RuAYOK3rUhXn
-        IzkI03E9zhw4HUdJ2iRpLTMz/cGsSgFpZPpp/4vSs0VpxgIGnyWxOQYCbA9qctKpj9MihunuLRcH4
-        yfkarbQl0M6VTb864ffF6xv/sdPSpwjJ5ugpgVMYZ+KkJgbypu0hnHCEwWJxcXD42JLow2XanvIbG
-        5uOUQ=;
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=y1E3R8dLROwbz+u7OaMfdoIIhxQX9FooeMJGxRhUgSc=; b=xwRDywKyS94HRdedy8s646tUp
+        27khmRCQ2coohEPGb5rQxVNMszzyodgQm8jAM01Z7xkR1ljJVRJ3hNnHnP/INxE7b3OiGvMpH2ZnK
+        O/oEznclYQx5CkNUgSfBSXElIZxFphEfBZ6eyiLPl9DW/NENZnQfGAw0nHL9XhDuqf+ac=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGWi-0004ZF-8E; Tue, 01 Oct 2019 11:41:08 +0000
+        id 1iFGWi-0004Zb-UE; Tue, 01 Oct 2019 11:41:08 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id ACF3F2742A10; Tue,  1 Oct 2019 12:41:07 +0100 (BST)
+        id 62C2E2742A31; Tue,  1 Oct 2019 12:41:08 +0100 (BST)
+Date:   Tue, 1 Oct 2019 12:41:08 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Applied "dt-bindings: snps,dw-apb-ssi: Add optional clock domain information" to the spi tree
-In-Reply-To: <1568793876-9009-3-git-send-email-gareth.williams.jx@renesas.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191001114107.ACF3F2742A10@ypsilon.sirena.org.uk>
-Date:   Tue,  1 Oct 2019 12:41:07 +0100 (BST)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lukasz Majewski <lukma@denx.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] spi: Avoid calling spi_slave_abort() with kfreed spidev
+Message-ID: <20191001114108.GA4786@sirena.co.uk>
+References: <20191001090657.25721-1-lukma@denx.de>
+ <CAMuHMdWHTaPkzTdzz-j1rFeT=aAEG+J46fgKiPYrXoAR_DTvtQ@mail.gmail.com>
+ <20191001113420.032dbfef@jawa>
+ <CAMuHMdWh7xPZqp4J1qG22dXk_g=Q1WtQ9Xu-r3wiFOL3kW+WBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWh7xPZqp4J1qG22dXk_g=Q1WtQ9Xu-r3wiFOL3kW+WBg@mail.gmail.com>
+X-Cookie: Keep refrigerated.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   dt-bindings: snps,dw-apb-ssi: Add optional clock domain information
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been applied to the spi tree at
+On Tue, Oct 01, 2019 at 12:00:07PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Oct 1, 2019 at 11:34 AM Lukasz Majewski <lukma@denx.de> wrote:
+> > > On Tue, Oct 1, 2019 at 11:07 AM Lukasz Majewski <lukma@denx.de> wrote:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+> > The if (!dofree) prevents from calling spi_slave_abort() when
+> > spidev->spi == NULL and spidev is kfree'd.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> If spidev->users != 0, the block checking spidev->spi == NULL is never
+> executed, and spi_slave_abort() will be called.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> I'm wondering if spidev->spi can be NULL if spidev->users is still positive.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+It *shouldn't* be.  I think we have other problems if it is.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Mark
+-----BEGIN PGP SIGNATURE-----
 
-From 47cf13bc763c891c6192184c5e5aa8c1b331b2ff Mon Sep 17 00:00:00 2001
-From: Gareth Williams <gareth.williams.jx@renesas.com>
-Date: Wed, 18 Sep 2019 09:04:34 +0100
-Subject: [PATCH] dt-bindings: snps,dw-apb-ssi: Add optional clock domain
- information
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2TO1MACgkQJNaLcl1U
+h9Co+gf9EMfuNyB92VOoFo9okqWdMzDPwyTkYJyk6HSgVicME9grYfHDe81a7GjJ
+9Dph4fdIVAcDkIFL/MbVPi3hsJCKFy+8QV1htiKYl32T9J3fKWROCKUD67c+PDwb
+6LV+0EZCb5He4bdw3/CbrMsLhDTMedQL0/smyCNVcfj9WNeRBX64tv+48sE6lCaZ
+bIGvhUppBJfIjDUU9hmKBweOp7XdMvGQE8SZmhruhgVEl/XICBkL73hYrHyW0QnJ
+6FTJmaYLaW8nTDsk9XEiCM/AV8yC+hGdQhlEg4VxiGJ+1sm3QfXvyqYVQo7umAkV
+hNXIGjDoZ61XFt7E/0SnzKLru/taCg==
+=mQ+T
+-----END PGP SIGNATURE-----
 
-Note in the bindings documentation that pclk should be renamed if a clock
-domain is used to enable the optional bus clock.
-
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Link: https://lore.kernel.org/r/1568793876-9009-3-git-send-email-gareth.williams.jx@renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-index f54c8c36395e..3ed08ee9feba 100644
---- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-+++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-@@ -16,7 +16,8 @@ Required properties:
- Optional properties:
- - clock-names : Contains the names of the clocks:
-     "ssi_clk", for the core clock used to generate the external SPI clock.
--    "pclk", the interface clock, required for register access.
-+    "pclk", the interface clock, required for register access. If a clock domain
-+     used to enable this clock then it should be named "pclk_clkdomain".
- - cs-gpios : Specifies the gpio pins to be used for chipselects.
- - num-cs : The number of chipselects. If omitted, this will default to 4.
- - reg-io-width : The I/O register width (in bytes) implemented by this
--- 
-2.20.1
-
+--LZvS9be/3tNcYl/X--
