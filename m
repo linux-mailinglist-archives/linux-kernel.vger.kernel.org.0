@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0888DC32BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98155C32C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbfJALig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:38:36 -0400
-Received: from mga04.intel.com ([192.55.52.120]:46305 "EHLO mga04.intel.com"
+        id S2387427AbfJALkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:40:16 -0400
+Received: from mga06.intel.com ([134.134.136.31]:8631 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbfJALif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732424AbfJALif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 1 Oct 2019 07:38:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 04:38:34 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 04:38:35 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="391165497"
+   d="scan'208";a="274967135"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 01 Oct 2019 04:38:31 -0700
+  by orsmga001.jf.intel.com with ESMTP; 01 Oct 2019 04:38:31 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id EB73D1DF; Tue,  1 Oct 2019 14:38:30 +0300 (EEST)
+        id 118E2234; Tue,  1 Oct 2019 14:38:31 +0300 (EEST)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -36,9 +36,9 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Mario.Limonciello@dell.com,
         Anthony Wong <anthony.wong@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 02/22] thunderbolt: Log switch route string on config read/write timeout
-Date:   Tue,  1 Oct 2019 14:38:10 +0300
-Message-Id: <20191001113830.13028-3-mika.westerberg@linux.intel.com>
+Subject: [RFC PATCH 04/22] thunderbolt: Make tb_sw_write() take const parameter
+Date:   Tue,  1 Oct 2019 14:38:12 +0300
+Message-Id: <20191001113830.13028-5-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
 References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
@@ -49,40 +49,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helps to point out which switch config read/write triggered the
-timeout.
+The function does not modify the argument in any way so make it const.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/ctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/thunderbolt/tb.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
-index 2ec1af8f7968..d97813e80e5f 100644
---- a/drivers/thunderbolt/ctl.c
-+++ b/drivers/thunderbolt/ctl.c
-@@ -962,8 +962,8 @@ int tb_cfg_read(struct tb_ctl *ctl, void *buffer, u64 route, u32 port,
- 		return tb_cfg_get_error(ctl, space, &res);
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 1565af2e48cb..455ca490ea87 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -399,7 +399,7 @@ static inline int tb_sw_read(struct tb_switch *sw, void *buffer,
+ 			   length);
+ }
  
- 	case -ETIMEDOUT:
--		tb_ctl_warn(ctl, "timeout reading config space %u from %#x\n",
--			    space, offset);
-+		tb_ctl_warn(ctl, "%llx: timeout reading config space %u from %#x\n",
-+			    route, space, offset);
- 		break;
- 
- 	default:
-@@ -988,8 +988,8 @@ int tb_cfg_write(struct tb_ctl *ctl, const void *buffer, u64 route, u32 port,
- 		return tb_cfg_get_error(ctl, space, &res);
- 
- 	case -ETIMEDOUT:
--		tb_ctl_warn(ctl, "timeout writing config space %u to %#x\n",
--			    space, offset);
-+		tb_ctl_warn(ctl, "%llx: timeout writing config space %u to %#x\n",
-+			    route, space, offset);
- 		break;
- 
- 	default:
+-static inline int tb_sw_write(struct tb_switch *sw, void *buffer,
++static inline int tb_sw_write(struct tb_switch *sw, const void *buffer,
+ 			      enum tb_cfg_space space, u32 offset, u32 length)
+ {
+ 	if (sw->is_unplugged)
 -- 
 2.23.0
 
