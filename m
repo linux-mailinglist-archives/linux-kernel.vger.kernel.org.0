@@ -2,67 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0012DC39FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3657EC39DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389791AbfJAQHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:07:51 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44562 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733279AbfJAQHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:07:48 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 70DFC3FA71A0965C69C2;
-        Wed,  2 Oct 2019 00:07:45 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 2 Oct 2019 00:07:15 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <xuwei5@hisilicon.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <arnd@arndb.de>, <bhelgaas@google.com>, <olof@lixom.net>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 3/3] bus: hisi_lpc: Expand build test coverage
-Date:   Wed, 2 Oct 2019 00:04:27 +0800
-Message-ID: <1569945867-82243-4-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1569945867-82243-1-git-send-email-john.garry@huawei.com>
-References: <1569945867-82243-1-git-send-email-john.garry@huawei.com>
+        id S1728290AbfJAQFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:05:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:53014 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726327AbfJAQFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:05:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A35D91000;
+        Tue,  1 Oct 2019 09:05:22 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCC543F71A;
+        Tue,  1 Oct 2019 09:05:20 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 17:05:18 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     hch@lst.de, wahrenst@gmx.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, f.fainelli@gmail.com, will@kernel.org,
+        linux-mm@kvack.org, robin.murphy@arm.com,
+        linux-kernel@vger.kernel.org, mbrugger@suse.com,
+        linux-rpi-kernel@lists.infradead.org, phill@raspberrypi.org,
+        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Subject: Re: [PATCH v6 0/4] Raspberry Pi 4 DMA addressing support
+Message-ID: <20191001160518.GQ41399@arrakis.emea.arm.com>
+References: <20190911182546.17094-1-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911182546.17094-1-nsaenzjulienne@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the driver will only ever be built for ARM64 because it selects
-CONFIG_INDIRECT_PIO, which itself depends on ARM64.
+On Wed, Sep 11, 2019 at 08:25:42PM +0200, Nicolas Saenz Julienne wrote:
+> Nicolas Saenz Julienne (4):
+>   arm64: mm: use arm64_dma_phys_limit instead of calling
+>     max_zone_dma_phys()
+>   arm64: rename variables used to calculate ZONE_DMA32's size
+>   arm64: use both ZONE_DMA and ZONE_DMA32
+>   mm: refresh ZONE_DMA and ZONE_DMA32 comments in 'enum zone_type'
 
-Expand build test coverage for the driver to other architectures by only
-selecting CONFIG_INDIRECT_PIO for ARM64, when we really want it.
+I queued these patches for 5.5 (though they'll appear in -next around
+-rc3).
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/bus/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-index 6b331061d34b..44cb4b6bea18 100644
---- a/drivers/bus/Kconfig
-+++ b/drivers/bus/Kconfig
-@@ -41,8 +41,8 @@ config MOXTET
- 
- config HISILICON_LPC
- 	bool "Support for ISA I/O space on HiSilicon Hip06/7"
--	depends on ARM64 && (ARCH_HISI || COMPILE_TEST)
--	select INDIRECT_PIO
-+	depends on (ARM64 && ARCH_HISI) || COMPILE_TEST
-+	select INDIRECT_PIO if ARM64
- 	help
- 	  Driver to enable I/O access to devices attached to the Low Pin
- 	  Count bus on the HiSilicon Hip06/7 SoC.
 -- 
-2.17.1
-
+Catalin
