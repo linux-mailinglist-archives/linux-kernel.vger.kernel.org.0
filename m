@@ -2,80 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA08C2DBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0E5C2DC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731923AbfJAHCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 03:02:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39482 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbfJAHCi (ORCPT
+        id S1732738AbfJAHFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 03:05:04 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:32781 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbfJAHFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 03:02:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AGuzTjIA6zIwZLTAcZWukiKmrFjmZKO6ZmG1uh+vwww=; b=m7a3cHIO2AekiG8nMLX4/ITuc
-        85DytciWj/C0X/aKvjAWAHQqbE8eSoZSI9vfIcZWLEYDUgr6SaHbZ01ERw2Il+Z5oFdqPMub2xbIa
-        II5V22h0o2+MZN0TQhpeNYNdWFiX7YSVeKVtfWwYab4262Q0imUFKbJj6pX/353y4yp3j/BWgCg4I
-        TDrBvebmHPMLwO/hq+nxkxJaS3+4FaP+wkuTaTVl6bAQ+hfuH1U+aEze2nJjp0AnX1EdwNdpQI45R
-        bT4w0mUhUQw86XAzau6iPGo7XmP7+hVcFtNzv1YwwsOlkAwk0nOg9UBVSu2RCCVWdFr5KV0HVFvRp
-        dw9PXQRXQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iFCBA-0003O3-Fe; Tue, 01 Oct 2019 07:02:36 +0000
-Date:   Tue, 1 Oct 2019 00:02:36 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Johan Hovold <johan@kernel.org>, hch@infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [v6 PATCH] RISC-V: Remove unsupported isa string info print
-Message-ID: <20191001070236.GA7622@infradead.org>
-References: <20191001002318.7515-1-atish.patra@wdc.com>
+        Tue, 1 Oct 2019 03:05:04 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iFCDQ-0003FK-Mn; Tue, 01 Oct 2019 09:04:56 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iFCDK-0006R1-HW; Tue, 01 Oct 2019 09:04:50 +0200
+Date:   Tue, 1 Oct 2019 09:04:50 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org,
+        alexandre.torgue@st.com, mark.rutland@arm.com,
+        mcoquelin.stm32@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, benjamin.gaignard@st.com,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 2/2] pwm: stm32: add power management support
+Message-ID: <20191001070450.4zogfryzo7a5ssbd@pengutronix.de>
+References: <1569857951-20007-1-git-send-email-fabrice.gasnier@st.com>
+ <1569857951-20007-3-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191001002318.7515-1-atish.patra@wdc.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1569857951-20007-3-git-send-email-fabrice.gasnier@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 05:23:18PM -0700, Atish Patra wrote:
-> /proc/cpuinfo should just print all the isa string as an information
-> instead of determining what is supported or not. ELF hwcap can be
-> used by the userspace to figure out that.
-> 
-> Simplify the isa string printing by removing the unsupported isa string
-> print and all related code.
-> 
-> The relevant discussion can be found at
-> http://lists.infradead.org/pipermail/linux-riscv/2019-September/006702.html
+Hello Fabrice,
 
-This looks good, but can you also rename the orig_isa argument to isa
-now that we never modify it?
+On Mon, Sep 30, 2019 at 05:39:11PM +0200, Fabrice Gasnier wrote:
+> Add suspend/resume PM sleep ops. When going to low power, enforce the PWM
+> channel isn't active. Let the PWM consumers disable it during their own
+> suspend sequence, see [1]. So, perform a check here, and handle the
+> pinctrl states. Also restore the break inputs upon resume, as registers
+> content may be lost when going to low power mode.
+> 
+> [1] https://lkml.org/lkml/2019/2/5/770
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>  drivers/pwm/pwm-stm32.c | 82 +++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 62 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+> index 740e2de..9bcd73a 100644
+> --- a/drivers/pwm/pwm-stm32.c
+> +++ b/drivers/pwm/pwm-stm32.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/mfd/stm32-timers.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pwm.h>
+>  
+> @@ -19,6 +20,12 @@
+>  #define CCMR_CHANNEL_MASK  0xFF
+>  #define MAX_BREAKINPUT 2
+>  
+> +struct stm32_breakinput {
+> +	u32 index;
+> +	u32 level;
+> +	u32 filter;
+> +};
+> +
+>  struct stm32_pwm {
+>  	struct pwm_chip chip;
+>  	struct mutex lock; /* protect pwm config/enable */
+> @@ -26,15 +33,11 @@ struct stm32_pwm {
+>  	struct regmap *regmap;
+>  	u32 max_arr;
+>  	bool have_complementary_output;
+> +	struct stm32_breakinput breakinput[MAX_BREAKINPUT];
+> +	unsigned int nbreakinput;
+>  	u32 capture[4] ____cacheline_aligned; /* DMA'able buffer */
+>  };
+>  
+> -struct stm32_breakinput {
+> -	u32 index;
+> -	u32 level;
+> -	u32 filter;
+> -};
+> -
+>  static inline struct stm32_pwm *to_stm32_pwm_dev(struct pwm_chip *chip)
+>  {
+>  	return container_of(chip, struct stm32_pwm, chip);
+> @@ -512,15 +515,27 @@ static int stm32_pwm_set_breakinput(struct stm32_pwm *priv,
+>  	return (bdtr & bke) ? 0 : -EINVAL;
+>  }
+>  
+> -static int stm32_pwm_apply_breakinputs(struct stm32_pwm *priv,
+> +static int stm32_pwm_apply_breakinputs(struct stm32_pwm *priv)
+> +{
+> +	int i, ret = 0;
+> +
+> +	for (i = 0; i < priv->nbreakinput && !ret; i++) {
+> +		ret = stm32_pwm_set_breakinput(priv,
+> +					       priv->breakinput[i].index,
+> +					       priv->breakinput[i].level,
+> +					       priv->breakinput[i].filter);
+> +	}
+> +
+> +	return ret;
+> +}
 
+Can you explain what the effect of this function is? This is something
+that is lost during suspend?
+
+I wonder why the patch is so big. There are some rearrangements that
+should have no effect and I think it would be beneficial for
+reviewability to split this patch in a patch that only does the
+restructuring and than on top of that add the PM stuff.
+
+> +
+> +static int stm32_pwm_probe_breakinputs(struct stm32_pwm *priv,
+>  				       struct device_node *np)
+>  {
+> -	struct stm32_breakinput breakinput[MAX_BREAKINPUT];
+> -	int nb, ret, i, array_size;
+> +	int nb, ret, array_size;
+>  
+>  	nb = of_property_count_elems_of_size(np, "st,breakinput",
+>  					     sizeof(struct stm32_breakinput));
+> -
 >  	/*
->  	 * Linux doesn't support rv32e or rv128i, and we only support booting
->  	 * kernels on harts with the same ISA that the kernel is compiled for.
->  	 */
->  #if defined(CONFIG_32BIT)
-> -	if (strncmp(isa, "rv32i", 5) != 0)
-> +	if (strncmp(orig_isa, "rv32i", 5) != 0)
->  		return;
->  #elif defined(CONFIG_64BIT)
-> -	if (strncmp(isa, "rv64i", 5) != 0)
-> +	if (strncmp(orig_isa, "rv64i", 5) != 0)
->  		return;
->  #endif
+>  	 * Because "st,breakinput" parameter is optional do not make probe
+>  	 * failed if it doesn't exist.
+> @@ -531,20 +546,14 @@ static int stm32_pwm_apply_breakinputs(struct stm32_pwm *priv,
+>  	if (nb > MAX_BREAKINPUT)
+>  		return -EINVAL;
+>  
+> +	priv->nbreakinput = nb;
+>  	array_size = nb * sizeof(struct stm32_breakinput) / sizeof(u32);
+>  	ret = of_property_read_u32_array(np, "st,breakinput",
+> -					 (u32 *)breakinput, array_size);
+> +					 (u32 *)priv->breakinput, array_size);
+>  	if (ret)
+>  		return ret;
+>  
+> -	for (i = 0; i < nb && !ret; i++) {
+> -		ret = stm32_pwm_set_breakinput(priv,
+> -					       breakinput[i].index,
+> -					       breakinput[i].level,
+> -					       breakinput[i].filter);
+> -	}
+> -
+> -	return ret;
+> +	return stm32_pwm_apply_breakinputs(priv);
+>  }
+>  
+>  static void stm32_pwm_detect_complementary(struct stm32_pwm *priv)
+> @@ -614,7 +623,7 @@ static int stm32_pwm_probe(struct platform_device *pdev)
+>  	if (!priv->regmap || !priv->clk)
+>  		return -EINVAL;
+>  
+> -	ret = stm32_pwm_apply_breakinputs(priv, np);
+> +	ret = stm32_pwm_probe_breakinputs(priv, np);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -647,6 +656,38 @@ static int stm32_pwm_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static int __maybe_unused stm32_pwm_suspend(struct device *dev)
+> +{
+> +	struct stm32_pwm *priv = dev_get_drvdata(dev);
+> +	struct pwm_state state;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < priv->chip.npwm; i++) {
+> +		pwm_get_state(&priv->chip.pwms[i], &state);
 
-And I don't think having these checks here makes much sense.  If we want
-to check this at all we should do it somewhere in the boot process.
+pwm_get_state is a function designed to be used by PWM consumers. I
+would prefer to check the hardware registers here instead.
+
+What if there is no consumer and the PWM just happens to be enabled by
+the bootloader? Or is this too minor an issue to be worth consideration?
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
