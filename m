@@ -2,203 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EC01C3797
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F740C378E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389097AbfJAOgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:36:38 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:39356 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727143AbfJAOgh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:36:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tyodDJ3QqVXQ521pmVmI0iyl/8ysAcGxtSbPVr8dF+E=; b=GuB5HSg6TQ0BZ6QAdlwfRLIR1
-        X7HRoJBzFvrVfmEUro4k3EYMMGjbezejEksYHb2O7QuWqCVe90uPE/HcsF0QUz70X3S8/VQeGWkhj
-        7X89GOzniY0lN1Qq+DNPQZDspYZKyIoQl71RcyCX0Xwjw6X8t8QQS2Go/61qfCD0zJo0oNLi5aicJ
-        xdmZhoFKHYqfpgRH3lCFGGk6tOLe95UYB+qAcUYan3GeNqpj5ChiwkYPHz7BiyMCixTjvpk4JScNP
-        TUwmYfqxuzbRsX3gSL/zZWs+fbiqSKTnwHpu/Ysk0kCLmITIXIe6gFlIGXv9WLAyq8CPHO8+jnLqV
-        Gr/rKstxQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50446)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iFJGO-0002uf-Gs; Tue, 01 Oct 2019 15:36:28 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iFJGM-0008H3-8D; Tue, 01 Oct 2019 15:36:26 +0100
-Date:   Tue, 1 Oct 2019 15:36:26 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: Re: [PATCH] Partially revert "compiler: enable
- CONFIG_OPTIMIZE_INLINING forcibly"
-Message-ID: <20191001143626.GI25745@shell.armlinux.org.uk>
-References: <20190930114540.27498-1-will@kernel.org>
- <CAK7LNARWkQ-z02RYv3XQ69KkWdmEVaZge07qiYC8_kyMrFzCTg@mail.gmail.com>
- <20191001104253.fci7s3sn5ov3h56d@willie-the-truck>
- <20191001114129.GL42880@e119886-lin.cambridge.arm.com>
+        id S2389019AbfJAOgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:36:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:51124 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387781AbfJAOgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:36:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FD471000;
+        Tue,  1 Oct 2019 07:36:00 -0700 (PDT)
+Received: from [10.37.8.149] (unknown [10.37.8.149])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2217B3F71A;
+        Tue,  1 Oct 2019 07:35:58 -0700 (PDT)
+Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
+        tglx@linutronix.de
+References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
+ <20190926214342.34608-1-vincenzo.frascino@arm.com>
+ <20190926214342.34608-2-vincenzo.frascino@arm.com>
+ <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck>
+ <20191001132731.GG41399@arrakis.emea.arm.com>
+ <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
+ <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <7558914c-fc2d-d05a-ccbe-76ef451670ae@arm.com>
+Date:   Tue, 1 Oct 2019 15:37:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001114129.GL42880@e119886-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 12:41:30PM +0100, Andrew Murray wrote:
-> On Tue, Oct 01, 2019 at 11:42:54AM +0100, Will Deacon wrote:
-> > On Tue, Oct 01, 2019 at 06:40:26PM +0900, Masahiro Yamada wrote:
-> > > On Mon, Sep 30, 2019 at 8:45 PM Will Deacon <will@kernel.org> wrote:
-> > > > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > > > index 93d97f9b0157..c37c72adaeff 100644
-> > > > --- a/lib/Kconfig.debug
-> > > > +++ b/lib/Kconfig.debug
-> > > > @@ -312,6 +312,7 @@ config HEADERS_CHECK
-> > > >
-> > > >  config OPTIMIZE_INLINING
-> > > >         def_bool y
-> > > > +       depends on !(ARM || ARM64) # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91111
-> > > 
-> > > 
-> > > This is a too big hammer.
-> > 
-> > It matches the previous default behaviour!
-> > 
-> > > For ARM, it is not a compiler bug, so I am trying to fix the kernel code.
-> > > 
-> > > For ARM64, even if it is a compiler bug, you can add __always_inline
-> > > to the functions in question.
-> > > (arch_atomic64_dec_if_positive in this case).
-> > > 
-> > > You do not need to force __always_inline globally.
-> > 
-> > So you'd prefer I do something like the diff below? I mean, it's a start,
-> > but I do worry that we're hanging arch/arm/ out to dry.
+
+
+On 10/1/19 3:20 PM, Will Deacon wrote:
+> On Tue, Oct 01, 2019 at 03:20:35PM +0100, Vincenzo Frascino wrote:
+>> On 10/1/19 2:27 PM, Catalin Marinas wrote:
+>>> On Tue, Oct 01, 2019 at 02:14:23PM +0100, Will Deacon wrote:
+>>>> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
+>>>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>>>> index 37c610963eee..0e5beb928af5 100644
+>>>>> --- a/arch/arm64/Kconfig
+>>>>> +++ b/arch/arm64/Kconfig
+>>>>> @@ -110,7 +110,7 @@ config ARM64
+>>>>>  	select GENERIC_STRNLEN_USER
+>>>>>  	select GENERIC_TIME_VSYSCALL
+>>>>>  	select GENERIC_GETTIMEOFDAY
+>>>>> -	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
+>>>>> +	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT && COMPATCC_IS_ARM_GCC)
+>>>>>  	select HANDLE_DOMAIN_IRQ
+>>>>>  	select HARDIRQS_SW_RESEND
+>>>>>  	select HAVE_PCI
+>>>>> @@ -313,6 +313,9 @@ config KASAN_SHADOW_OFFSET
+>>>>>  	default 0xeffffff900000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
+>>>>>  	default 0xffffffffffffffff
+>>>>>  
+>>>>> +config COMPATCC_IS_ARM_GCC
+>>>>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
+>>>>
+>>>> I've seen toolchains where the first part of the tuple is "armv7-", so they
+>>>> won't get detected here. However, do we really need to detect this? If
+>>>> somebody passes a duff compiler, then the build will fail in the same way as
+>>>> if they passed it to CROSS_COMPILE=.
+>>>
+>>> Not sure what happens if we pass an aarch64 compiler. Can we end up with
+>>> a 64-bit compat vDSO?
+>>>
+>>
+>> I agree with Catalin here. The problem is not only when you pass and aarch64
+>> toolchain but even an x86 and so on.
 > 
-> If I've understood one part of this issue correctly - and using the
-> c2p_unsupported build failure as an example [1], there are instances in
-> the kernel where it is assumed that the compiler will optimise out a call
-> to an undefined function, and also assumed that the compiler will know
-> at compile time that the function will never get called. It's common to
-> satisfy this assumption when the calling function is inlined.
+> I disagree. What happens if you do:
 > 
-> But I suspect there may be other cases similar to c2p_unsupported which
-> are still lurking.
+> $ make ARCH=arm64 CROSS_COMPILE=x86_64-linux-gnu-
 > 
-> For example the following functions are called but non-existent, and thus
-> may be an area worth investigating:
+> on your x86 box?
+>
+
+The kernel compilation breaks as follows:
+
+x86_64-linux-gnu-gcc: error: unrecognized command line option ‘-mlittle-endian’;
+did you mean ‘-fconvert=little-endian’?
+/data1/Projects/LinuxKernel/linux/scripts/Makefile.build:265: recipe for target
+'scripts/mod/empty.o' failed
+make[2]: *** [scripts/mod/empty.o] Error 1
+/data1/Projects/LinuxKernel/linux/Makefile:1128: recipe for target 'prepare0' failed
+make[1]: *** [prepare0] Error 2
+make[1]: Leaving directory '/data1/Projects/LinuxKernel/linux-out'
+Makefile:179: recipe for target 'sub-make' failed
+make: *** [sub-make] Error 2
+
+Similar issue in the compat vdso library compilation if I do (without the check):
+
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+CROSS_COMPILE_COMPAT=x86_64-linux-gnu-
+
+With this check the compilation completes correctly but the compat vdso does not
+get built (unless my environment is playing me tricks ;) ).
+
+>> If the problem is related to armv7- we can change the rule as "arm.*-gcc" which
+>> should detect them as well. Do you know what is the triple that an armv7-
+>> toolchain prints?
 > 
-> __buggy_use_of_MTHCA_PUT, __put_dbe_unknown, __cmpxchg_wrong_size,
-> __bad_percpu_size, __put_user_bad, __get_user_unknown,
-> __bad_unaligned_access_size, __bad_xchg
+> 'fraid not, since I don't have one to hand. I think you'd end up matching
+> arm*-gcc, which is pretty broad.
 > 
-> But more generally, as this is a common pattern - isn't there a benefit
-> here for changing all of these to BUILD_BUG? (So they can be found easily).
 
-Precisely, what is your suggestion?
+If we all agree I can extend this rule then.
 
-If you think that replacing the call to __get_user_bad with BUILD_BUG(),
-BUILD_BUG() becomes a no-op when __OPTIMIZE__ is not defined (see the
-definition of __compiletime_assert() in linux/compiler.h); this means
-such places will be reachable, which leads to uninitialised variables.
-
-> Or to avoid this class of issues, change them to BUG or unreachable - but
-> lose the benefit of compile time detection?
-
-I think you ought to read the GCC manual wrt __builtin_unreachable().
-"If control flow reaches the point of the `__builtin_unreachable',
- the program is undefined.  It is useful in situations where the
- compiler cannot deduce the unreachability of the code."
-
-I have seen cases where the instructions following an unreachable
-code section have been the literal pool for the function - which,
-if reached, would be quite confusing to debug.  If you're lucky, you
-might get an undefined instruction exception.  If not, you could
-continue and start executing another part of the function, leading
-to possibly no crash at all - but unexpected results (which may end
-up leaking sensitive data.)
-
-For example, in our BUG() implementation on 32-bit ARM, we use
-unreachable() after the asm() statement creating the bug table
-entry and inserting the undefined instruction into the text.
-Here's the resulting disassembly:
-
-     278:       ebfffffe        bl      0 <page_mapped>
-                        278: R_ARM_CALL page_mapped
-     27c:       e3500000        cmp     r0, #0
-     280:       1a00006c        bne     438 <invalidate_inode_pages2_range+0x3ac>
-...
-     2d4:       ebfffffe        bl      0 <_raw_spin_lock_irqsave>
-                        2d4: R_ARM_CALL _raw_spin_lock_irqsave
-     2d8:       e5943008        ldr     r3, [r4, #8]
-     2dc:       e3130001        tst     r3, #1
-     2e0:       e1a02000        mov     r2, r0
-     2e4:       1a000054        bne     43c <invalidate_inode_pages2_range+0x3b0>
-...
-     438:       e7f001f2        .word   0xe7f001f2
-     43c:       e2433001        sub     r3, r3, #1
-     440:       eaffffa9        b       2ec <invalidate_inode_pages2_range+0x260>
-
-Now, consider what unreachable() actually gets you here - it tells
-the compiler that we do not expect to reach this point (that being
-the point between 438 and 43c.)  If we were to reach that point, we
-would continue executing the code at 43c.
-
-In this case, it would be like...
-
-	if (BUG_ON(page_mapped(page)))
-	    goto random-location-in-xa_lock_irqsave()-inside-invalidate_complete_page2();
-
-So no.  unreachable() is not an option.
-
-We really do want these places to be compile-time detected - relying
-on triggering them at runtime is just not good enough IMHO (think
-about how much testing the kernel would require to discover one of
-these suckers buried in the depths of the code.)
-
-Here's the question to ask: do we want to reliably detect issues
-that we know are bad, which can lead to:
-- unreliable kernel operation,
-- user exploitable crashes,
-or do we want to hide them for the sake of allowing -O0 compilation?
-
-Given that the kernel as a general rule has very poor run-time test
-coverage at the moment, I don't think this is the time to consider
-giving up the protection that we have against this badness.
-
-We've had several instances where these checks have triggered in the
-user access code, and people have noticed when doing build tests.
-They probably don't have the ability to do run-time testing on every
-arch.
-
-So, the existing facility of detecting these at build time is, IMHO,
-an absolute must.
-
-It would be different if the kernel community as a whole had the
-ability to run-test every code path through the kernel source on
-every arch, but I don't see that's a remotely realistic prospect.
-
-If we want -O0 to work, but still want to preserve the ability to
-detect these adequately, I think the easiest solution to that would
-be to provide these dummy functions only when building with -O0,
-making them all BUG().
+> Will
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Regards,
+Vincenzo
