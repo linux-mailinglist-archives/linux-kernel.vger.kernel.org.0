@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A600C39FB
+	by mail.lfdr.de (Postfix) with ESMTP id 0012DC39FC
 	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387529AbfJAQHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:07:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44524 "EHLO huawei.com"
+        id S2389791AbfJAQHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:07:51 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44562 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733280AbfJAQHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733279AbfJAQHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 1 Oct 2019 12:07:48 -0400
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6C6B5E5304A984C54688;
+        by Forcepoint Email with ESMTP id 70DFC3FA71A0965C69C2;
         Wed,  2 Oct 2019 00:07:45 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
@@ -22,9 +22,9 @@ To:     <xuwei5@hisilicon.com>
 CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         <arnd@arndb.de>, <bhelgaas@google.com>, <olof@lixom.net>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH 2/3] logic_pio: Define PIO_INDIRECT_SIZE for !CONFIG_INDIRECT_PIO
-Date:   Wed, 2 Oct 2019 00:04:26 +0800
-Message-ID: <1569945867-82243-3-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 3/3] bus: hisi_lpc: Expand build test coverage
+Date:   Wed, 2 Oct 2019 00:04:27 +0800
+Message-ID: <1569945867-82243-4-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1569945867-82243-1-git-send-email-john.garry@huawei.com>
 References: <1569945867-82243-1-git-send-email-john.garry@huawei.com>
@@ -37,32 +37,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the goal of expanding the test coverage of the HiSi LPC driver to
-!ARM64, define a dummy PIO_INDIRECT_SIZE for !CONFIG_INDIRECT_PIO, which
-is required by the named driver.
+Currently the driver will only ever be built for ARM64 because it selects
+CONFIG_INDIRECT_PIO, which itself depends on ARM64.
+
+Expand build test coverage for the driver to other architectures by only
+selecting CONFIG_INDIRECT_PIO for ARM64, when we really want it.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- include/linux/logic_pio.h | 4 ++--
+ drivers/bus/Kconfig | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/logic_pio.h b/include/linux/logic_pio.h
-index 88e1e6304a71..54945aa824b4 100644
---- a/include/linux/logic_pio.h
-+++ b/include/linux/logic_pio.h
-@@ -108,10 +108,10 @@ void logic_outsl(unsigned long addr, const void *buffer, unsigned int count);
-  * area by redefining the macro below.
-  */
- #define PIO_INDIRECT_SIZE 0x4000
--#define MMIO_UPPER_LIMIT (IO_SPACE_LIMIT - PIO_INDIRECT_SIZE)
- #else
--#define MMIO_UPPER_LIMIT IO_SPACE_LIMIT
-+#define PIO_INDIRECT_SIZE 0
- #endif /* CONFIG_INDIRECT_PIO */
-+#define MMIO_UPPER_LIMIT (IO_SPACE_LIMIT - PIO_INDIRECT_SIZE)
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index 6b331061d34b..44cb4b6bea18 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -41,8 +41,8 @@ config MOXTET
  
- struct logic_pio_hwaddr *find_io_range_by_fwnode(struct fwnode_handle *fwnode);
- unsigned long logic_pio_trans_hwaddr(struct fwnode_handle *fwnode,
+ config HISILICON_LPC
+ 	bool "Support for ISA I/O space on HiSilicon Hip06/7"
+-	depends on ARM64 && (ARCH_HISI || COMPILE_TEST)
+-	select INDIRECT_PIO
++	depends on (ARM64 && ARCH_HISI) || COMPILE_TEST
++	select INDIRECT_PIO if ARM64
+ 	help
+ 	  Driver to enable I/O access to devices attached to the Low Pin
+ 	  Count bus on the HiSilicon Hip06/7 SoC.
 -- 
 2.17.1
 
