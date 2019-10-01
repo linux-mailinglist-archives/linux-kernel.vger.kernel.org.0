@@ -2,62 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E869C2DC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 136B4C2E2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 09:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732778AbfJAHHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 03:07:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbfJAHHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 03:07:41 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CA32215EA;
-        Tue,  1 Oct 2019 07:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569913660;
-        bh=W7DnxrQJnaB/Vyz05qZnyM11wdUw87JS7sJFfJAQ/tQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j5l9vYSp2Ru3Vtf5nstKyAitckbXEBnP9u3svYKeL12Uy8PFqvru9rYLE1SQxbaHv
-         hXltbDuMrL1pR1PqYyA0LpG5C9VE4V3H4BPzudam+SRAGKewmsR/ZBPYC/iNxKAzLD
-         pYFrxfFYfv/aaIF19sFqzvFgT/fH8LCMmh5Hu3g8=
-Date:   Tue, 1 Oct 2019 09:07:38 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: 5.3.3??? [was Re: Linux 5.3.2]
-Message-ID: <20191001070738.GC2893807@kroah.com>
-References: <20191001070457.GA2893807@kroah.com>
+        id S1733054AbfJAHRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 03:17:48 -0400
+Received: from s15324798.onlinehome-server.info ([87.106.249.56]:44691 "EHLO
+        usine23.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730309AbfJAHRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 03:17:47 -0400
+Received: by usine23.com (Postfix, from userid 2001)
+        id 9FC90104AEC4; Tue,  1 Oct 2019 08:51:12 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.1.7-deb3 (2006-10-05) on 
+        s15324798.onlinehome-server.info
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=5.0 tests=AWL,RATWARE_GECKO_BUILD 
+        autolearn=no version=3.1.7-deb3
+Received: from pop.usine23.com (unknown [203.6.208.38])
+        by usine23.com (Postfix) with ESMTP id 862A0104AEA7;
+        Tue,  1 Oct 2019 08:51:09 +0200 (CEST)
+To:     "linux kernel" <linux-kernel@vger.kernel.org>,
+        "Suki Buryani" <sukiburyani@yahoo.com>,
+        "Priscilla Wong" <priscillawong@ruggedcom.com>,
+        "Steven King" <sfking@fdwdc.com>,
+        "Greg Ungerer" <gerg@uclinux.org>,
+        "Michael Schmitz" <schmitzmic@gmail.com>,
+        "Chen Gang" <gang.chen@asianux.com>,
+        "linux m68k" <linux-m68k@lists.linux-m68k.org>
+From:   nik_bin_nek_alwi <commercial@usine23.com>
+Subject: =?UTF-8?Q?Re=3A=E2=8F=B0Hi?=
+Message-ID: <06356db1-7db3-4625-b854-301321e36b35@usine23.com>
+Date:   Mon, 30 Sep 2019 20:46:25 -1000
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001070457.GA2893807@kroah.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 09:04:57AM +0200, Greg KH wrote:
-> I'm announcing the release of the 5.3.2 kernel.
-> 
-> All users of the 5.3 kernel series must upgrade.
+Grandios! http://knrsbwy.Merissa836.xyz/index
 
-Ok, I messed up this morning and typed "5.3" instead of "5.2" in my
-scripts and an "empty" 5.3.3 kernel got released.  Well kind of, it got
-checked into git, but there wasn't anything to release so things got a
-bit confused.
 
-So just consider 5.3.3 a "nothing to see here, ignore the man who forgot
-to release kernels _after_ coffee and not before" type of release.
 
-5.3.4 will be the _next_ release after this one, sorry for any
-confusion.
-
-ugh,
-
-greg k-h
+___
+Bis bald
+nik_bin_nek_alwi@yahoo.com
