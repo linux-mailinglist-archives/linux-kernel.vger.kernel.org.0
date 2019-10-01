@@ -2,171 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D90C37C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBADC37AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389236AbfJAOlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:41:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47832 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388938AbfJAOlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:41:15 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 84E4E309B6C4;
-        Tue,  1 Oct 2019 14:41:14 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-54.ams2.redhat.com [10.36.116.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B78395D9CC;
-        Tue,  1 Oct 2019 14:41:11 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
+        id S2389196AbfJAOkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:40:10 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34987 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388925AbfJAOkJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:40:09 -0400
+Received: by mail-qt1-f194.google.com with SMTP id m15so21935056qtq.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 07:40:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=9VDIX95q75l1fcGPHAGCoexbF88NYXczf33Qn1D7mVs=;
+        b=IeYUUoTk8eThv+72jp/pu8xdlXAAX3/zY7+IYupoKCxoermZheJWI2mo/kCxoX9snx
+         axePe7gr3wV54BxZqT/+17qIbHZ7OBZwdPCzV3bvxJW064GLwtbydfK8IG03nph4oexj
+         VdPBwQumivhwrAaBWPsJv1sWgC25P8FIgxuzWJKhmJw25hkWNqen/jbydTfC5Yh1LGzA
+         qh9CmPBeE9R4aXGYkDViCY+fox3lMgOFu471rQJ3cDyGzPLktOYX1FDYoQDKH2EKrjQ8
+         E2zZ/g0fWndeRA309yMCUTfJ3uRFlKpj6BQtWyUfSSsrMSJIjg8gSg5DVJc+Lfzn6Tgp
+         Vzcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9VDIX95q75l1fcGPHAGCoexbF88NYXczf33Qn1D7mVs=;
+        b=f3BvyDLA7aEaB3yfa8Jhj4oGHHdd7P/qd1c1hQSrRa0S04FppzDXc/zYKFfeO5pUqo
+         Ix8q/ziDiRDWXyXdeCJhX20wH6ZLeZnsjHehyPnXFymVyvLpqYeqoAzUIgzYYE8bNGVn
+         sJ9Abmw/7lqajTVLOPzlLBun0cW/Ki6//x2c0igPjM47ea1fvUdpOITFcknv1JVajDAR
+         26SgY592pdBarhEfkvenKBt+Jx/EItifue6dSGr/UD7XdVp+vQFPjqFTsWV7lqhA3d3F
+         CusxFb6WYIdg7QptK24sOybV5hlKbqA4ls/0wV161FsWxd7RJQEb0K+VARXIMCyBYWi9
+         Lc2Q==
+X-Gm-Message-State: APjAAAXijXsnSRuS6QWpiaUVTBZITTvYWioKnZS+w0xQd4fYRb/WQKAO
+        WDs0+o2BlG5IZG2ri5DBIPb+0g==
+X-Google-Smtp-Source: APXvYqzJ4rqvFAJEgTDf25ELUEziBgh6eojZxo/BhgpnqhUElgq0KqGYVa27C4uPjU2WvJ+a3QRC7A==
+X-Received: by 2002:a05:6214:180a:: with SMTP id o10mr25687114qvw.51.1569940808438;
+        Tue, 01 Oct 2019 07:40:08 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id q2sm7515437qkc.68.2019.10.01.07.40.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Oct 2019 07:40:07 -0700 (PDT)
+Message-ID: <1569940805.5576.257.camel@lca.pw>
+Subject: Re: [PATCH] mm/memcontrol.c: fix another unused function warning
+From:   Qian Cai <cai@lca.pw>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v5 03/10] mm/memory_hotplug: Don't access uninitialized memmaps in shrink_pgdat_span()
-Date:   Tue,  1 Oct 2019 16:40:04 +0200
-Message-Id: <20191001144011.3801-4-david@redhat.com>
-In-Reply-To: <20191001144011.3801-1-david@redhat.com>
-References: <20191001144011.3801-1-david@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 01 Oct 2019 14:41:14 +0000 (UTC)
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Date:   Tue, 01 Oct 2019 10:40:05 -0400
+In-Reply-To: <20191001142227.1227176-1-arnd@arndb.de>
+References: <20191001142227.1227176-1-arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We might use the nid of memmaps that were never initialized. For
-example, if the memmap was poisoned, we will crash the kernel in
-pfn_to_nid() right now. Let's use the calculated boundaries of the separate
-zones instead. This now also avoids having to iterate over a whole bunch of
-subsections again, after shrinking one zone.
+On Tue, 2019-10-01 at 16:22 +0200, Arnd Bergmann wrote:
+> Removing the mem_cgroup_id_get() stub function introduced a new warning
+> of the same kind when CONFIG_MMU is disabled:
 
-Before commit d0dc12e86b31 ("mm/memory_hotplug: optimize memory
-hotplug"), the memmap was initialized to 0 and the node was set to the
-right value. After that commit, the node might be garbage.
+Shouldn't CONFIG_MEMCG depends on CONFIG_MMU instead?
 
-We'll have to fix shrink_zone_span() next.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Wei Yang <richardw.yang@linux.intel.com>
-Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
-Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/memory_hotplug.c | 72 ++++++++++-----------------------------------
- 1 file changed, 15 insertions(+), 57 deletions(-)
-
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 680b4b3e57d9..86b4dc18e831 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -436,67 +436,25 @@ static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
- 	zone_span_writeunlock(zone);
- }
- 
--static void shrink_pgdat_span(struct pglist_data *pgdat,
--			      unsigned long start_pfn, unsigned long end_pfn)
-+static void update_pgdat_span(struct pglist_data *pgdat)
- {
--	unsigned long pgdat_start_pfn = pgdat->node_start_pfn;
--	unsigned long p = pgdat_end_pfn(pgdat); /* pgdat_end_pfn namespace clash */
--	unsigned long pgdat_end_pfn = p;
--	unsigned long pfn;
--	int nid = pgdat->node_id;
--
--	if (pgdat_start_pfn == start_pfn) {
--		/*
--		 * If the section is smallest section in the pgdat, it need
--		 * shrink pgdat->node_start_pfn and pgdat->node_spanned_pages.
--		 * In this case, we find second smallest valid mem_section
--		 * for shrinking zone.
--		 */
--		pfn = find_smallest_section_pfn(nid, NULL, end_pfn,
--						pgdat_end_pfn);
--		if (pfn) {
--			pgdat->node_start_pfn = pfn;
--			pgdat->node_spanned_pages = pgdat_end_pfn - pfn;
--		}
--	} else if (pgdat_end_pfn == end_pfn) {
--		/*
--		 * If the section is biggest section in the pgdat, it need
--		 * shrink pgdat->node_spanned_pages.
--		 * In this case, we find second biggest valid mem_section for
--		 * shrinking zone.
--		 */
--		pfn = find_biggest_section_pfn(nid, NULL, pgdat_start_pfn,
--					       start_pfn);
--		if (pfn)
--			pgdat->node_spanned_pages = pfn - pgdat_start_pfn + 1;
--	}
--
--	/*
--	 * If the section is not biggest or smallest mem_section in the pgdat,
--	 * it only creates a hole in the pgdat. So in this case, we need not
--	 * change the pgdat.
--	 * But perhaps, the pgdat has only hole data. Thus it check the pgdat
--	 * has only hole or not.
--	 */
--	pfn = pgdat_start_pfn;
--	for (; pfn < pgdat_end_pfn; pfn += PAGES_PER_SUBSECTION) {
--		if (unlikely(!pfn_valid(pfn)))
--			continue;
--
--		if (pfn_to_nid(pfn) != nid)
--			continue;
-+	unsigned long node_start_pfn = 0, node_end_pfn = 0;
-+	struct zone *zone;
- 
--		/* Skip range to be removed */
--		if (pfn >= start_pfn && pfn < end_pfn)
--			continue;
-+	for (zone = pgdat->node_zones;
-+	     zone < pgdat->node_zones + MAX_NR_ZONES; zone++) {
-+		unsigned long zone_end_pfn = zone->zone_start_pfn +
-+					     zone->spanned_pages;
- 
--		/* If we find valid section, we have nothing to do */
--		return;
-+		/* No need to lock the zones, they can't change. */
-+		if (zone_end_pfn > node_end_pfn)
-+			node_end_pfn = zone_end_pfn;
-+		if (zone->zone_start_pfn < node_start_pfn)
-+			node_start_pfn = zone->zone_start_pfn;
- 	}
- 
--	/* The pgdat has no valid section */
--	pgdat->node_start_pfn = 0;
--	pgdat->node_spanned_pages = 0;
-+	pgdat->node_start_pfn = node_start_pfn;
-+	pgdat->node_spanned_pages = node_end_pfn - node_start_pfn;
- }
- 
- static void __remove_zone(struct zone *zone, unsigned long start_pfn,
-@@ -507,7 +465,7 @@ static void __remove_zone(struct zone *zone, unsigned long start_pfn,
- 
- 	pgdat_resize_lock(zone->zone_pgdat, &flags);
- 	shrink_zone_span(zone, start_pfn, start_pfn + nr_pages);
--	shrink_pgdat_span(pgdat, start_pfn, start_pfn + nr_pages);
-+	update_pgdat_span(pgdat);
- 	pgdat_resize_unlock(zone->zone_pgdat, &flags);
- }
- 
--- 
-2.21.0
-
+> 
+> mm/memcontrol.c:4929:13: error: unused function 'mem_cgroup_id_get_many' [-Werror,-Wunused-function]
+> 
+> Address this using a __maybe_unused annotation.
+> 
+> Note: alternatively, this could be moved into an #ifdef block.  Marking it
+> 'static inline' would not work here as that would still produce the
+> warning on clang, which only ignores unused inline functions declared
+> in header files instead of .c files.
+> 
+> Fixes: 4d0e3230a56a ("mm/memcontrol.c: fix a -Wunused-function warning")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  mm/memcontrol.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index c313c49074ca..5f9f90e3cef8 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4921,7 +4921,8 @@ static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
+>  	}
+>  }
+>  
+> -static void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
+> +static void __maybe_unused
+> +mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
+>  {
+>  	refcount_add(n, &memcg->id.ref);
+>  }
