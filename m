@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B533DC3C24
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17303C3C27
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390073AbfJAQoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:44:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56882 "EHLO mail.kernel.org"
+        id S2388963AbfJAQt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:49:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfJAQoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:44:37 -0400
+        id S2387963AbfJAQoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:44:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19ABE2168B;
-        Tue,  1 Oct 2019 16:44:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00611222BE;
+        Tue,  1 Oct 2019 16:44:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948276;
-        bh=bUeR3G4ltMyhjy1E4Dp4Np7mZiJmRIOpqJtRyynAjLA=;
+        s=default; t=1569948283;
+        bh=fs1kXOuMAZDK0RFCV/7w0Tm3PE2ZQmsW58TUgfoIP+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HtPusCcLQhCZ4vTlDOngq1FZfPof4so9q3RMwlKZ9E7s3xIqVj6tpQRvZZ47diA5y
-         auoUPpeOuQAUft/65egV2W7C5t4BIyLtQ8aIsKdVYbCsf78sWPgI1g5Sdy7q3CcawF
-         +3ynske96KRseDnHlLz5zh/zLF9GVEyYsUK1GXx4=
+        b=u+cgwDUaRfLDzG6ya7MGYA+4Ux6iOjcgHj3mhlaBzaoGF17PvgDt7DChlEt++Sf7y
+         +EVluZ6rMWIs0EjkPBAWEv9EHNAjKA696oyfKG1bbmkpCq3Nahacj/6kpG1JdGx5NR
+         pqMkudrf8HLPun/okIlVGfig74LUUsvnUUYQ2gGw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trek <trek00@inbox.ru>, Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 10/29] drm/amdgpu: Check for valid number of registers to read
-Date:   Tue,  1 Oct 2019 12:44:04 -0400
-Message-Id: <20191001164423.16406-10-sashal@kernel.org>
+Cc:     Peter Mamonov <pmamonov@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 16/29] net/phy: fix DP83865 10 Mbps HDX loopback disable function
+Date:   Tue,  1 Oct 2019 12:44:10 -0400
+Message-Id: <20191001164423.16406-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164423.16406-1-sashal@kernel.org>
 References: <20191001164423.16406-1-sashal@kernel.org>
@@ -43,37 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trek <trek00@inbox.ru>
+From: Peter Mamonov <pmamonov@gmail.com>
 
-[ Upstream commit 73d8e6c7b841d9bf298c8928f228fb433676635c ]
+[ Upstream commit e47488b2df7f9cb405789c7f5d4c27909fc597ae ]
 
-Do not try to allocate any amount of memory requested by the user.
-Instead limit it to 128 registers. Actually the longest series of
-consecutive allowed registers are 48, mmGB_TILE_MODE0-31 and
-mmGB_MACROTILE_MODE0-15 (0x2644-0x2673).
+According to the DP83865 datasheet "the 10 Mbps HDX loopback can be
+disabled in the expanded memory register 0x1C0.1". The driver erroneously
+used bit 0 instead of bit 1.
 
-Bug: https://bugs.freedesktop.org/show_bug.cgi?id=111273
-Signed-off-by: Trek <trek00@inbox.ru>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 4621bf129856 ("phy: Add file missed in previous commit.")
+Signed-off-by: Peter Mamonov <pmamonov@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/phy/national.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-index e16229000a983..884ed359f2493 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-@@ -540,6 +540,9 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
- 		if (sh_num == AMDGPU_INFO_MMR_SH_INDEX_MASK)
- 			sh_num = 0xffffffff;
+diff --git a/drivers/net/phy/national.c b/drivers/net/phy/national.c
+index 2addf1d3f619e..3aa910b3dc89b 100644
+--- a/drivers/net/phy/national.c
++++ b/drivers/net/phy/national.c
+@@ -110,14 +110,17 @@ static void ns_giga_speed_fallback(struct phy_device *phydev, int mode)
  
-+		if (info->read_mmr_reg.count > 128)
-+			return -EINVAL;
+ static void ns_10_base_t_hdx_loopack(struct phy_device *phydev, int disable)
+ {
++	u16 lb_dis = BIT(1);
 +
- 		regs = kmalloc_array(info->read_mmr_reg.count, sizeof(*regs), GFP_KERNEL);
- 		if (!regs)
- 			return -ENOMEM;
+ 	if (disable)
+-		ns_exp_write(phydev, 0x1c0, ns_exp_read(phydev, 0x1c0) | 1);
++		ns_exp_write(phydev, 0x1c0,
++			     ns_exp_read(phydev, 0x1c0) | lb_dis);
+ 	else
+ 		ns_exp_write(phydev, 0x1c0,
+-			     ns_exp_read(phydev, 0x1c0) & 0xfffe);
++			     ns_exp_read(phydev, 0x1c0) & ~lb_dis);
+ 
+ 	pr_debug("10BASE-T HDX loopback %s\n",
+-		 (ns_exp_read(phydev, 0x1c0) & 0x0001) ? "off" : "on");
++		 (ns_exp_read(phydev, 0x1c0) & lb_dis) ? "off" : "on");
+ }
+ 
+ static int ns_config_init(struct phy_device *phydev)
 -- 
 2.20.1
 
