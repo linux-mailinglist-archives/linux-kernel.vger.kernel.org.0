@@ -2,285 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33817C35E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D701C35E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388610AbfJANhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:37:46 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38976 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388261AbfJANho (ORCPT
+        id S2388624AbfJANiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:38:13 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44879 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387990AbfJANiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:37:44 -0400
-Received: by mail-ot1-f67.google.com with SMTP id s22so11532288otr.6;
-        Tue, 01 Oct 2019 06:37:43 -0700 (PDT)
+        Tue, 1 Oct 2019 09:38:12 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z9so2442322wrl.11;
+        Tue, 01 Oct 2019 06:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=96r3CtWiSvcK9gJDc0tqchiSXL0mJ/YvvBtbDmkfaE0=;
+        b=SgD1WPZopI9T61+uSgIvK+P8Moz6ilypDWR5uZTEcSuXxgh1OVfRxm8IC4KUHqMmSX
+         hBpGb1wgoBnVtZU64ZhZhr+uvsnzRW/oNhSmvQvPcJiVn4Y+sszZSZ8iK4h2QVTZ/vD/
+         Din5OSrcToGMog98cihi9+QPhYXtbZdwZeVtyftm5g8+p0FRTR7IyBmjvhwKnugSiA9P
+         qSj65oMPYlvd5CfFm/4+9WBwPAqze/wV4n7HpSB5Kf92Y7gNEEPi1977PQ0qwg1bstoG
+         e/NcisDmyad+4UgxYGb9cCU4WroV+kg9wmeo7HYz9pCGEqNW64R7AEoAusLmSMVlDEAh
+         uImg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FovmWZAmPghOw/PD/V9KoIrCAwZ7Z6DVYRn/oNcxwdw=;
-        b=heDbnqF7WflHRXq6CBsD3uCDggy+/6/8WQk6+DezZ70Xw+Mfz/yNrTx6ZTbBTmoKyi
-         M53WblXewGh9U4WwsQJmT0TJUTB1NlnfAcVcjH6DQ8Vg0GUqJQtqETz0Cf1pm417phgk
-         Idvxwo1il/6oR6L70h+JhR3+q5dFmhgKlDgm3cV4GdhuhcnmANFoMB+8gOWIZOeV0dK1
-         6DeORanyNlCRRttqhycGKBdPg0gmCzdWP5zKwMS5F2GVcl6yFgzNB0jm2GEXZtkP/9fQ
-         tHcIXuMArs3rj04kwWi5xeQwBlrPFH5q9bMLGWFxPSrYWGRn5hxXKqU/xIRsMUob8sbz
-         f+Pw==
-X-Gm-Message-State: APjAAAU5JT6MVe9RaYYj5ncOTMZ4LBZjvoTesX4T2kT1hlpQMX3Z7Gph
-        RHJTNqRRbLlvPPhLWwIBG236bb1ATQ==
-X-Google-Smtp-Source: APXvYqxaxRdreIle6LJbVo4aH8TbadosoBq8YKKKRx6nz6eLz30w+/TfgU3CDNPb9S+IfNOHp7GaGA==
-X-Received: by 2002:a9d:39a5:: with SMTP id y34mr19070070otb.100.1569937062789;
-        Tue, 01 Oct 2019 06:37:42 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w201sm5100451oie.44.2019.10.01.06.37.42
+        bh=96r3CtWiSvcK9gJDc0tqchiSXL0mJ/YvvBtbDmkfaE0=;
+        b=ig5y2A2iLA3S5LalM5yU4n1qZlbBUyBOyTrvGH8EyuLxwzOmQpzar/IhQi8wxY+Yjd
+         tysZ5gr6Nw1bPqEp/MgSkZJ51kX7mbOg415rNRrecXTiEhujaQNzaM1B+aCBoGIzk70k
+         XsAEgshAC0XFwX5/RnYfgTlXUjTC5BVQVyyMNmnVYJqJiYtZSGbthhjKbOYHGnwm1HmC
+         tB+jR6JKNcT38R9Kt3TA4NlaDTYqwV2V7coSgCINPLQIuGlnllMTHYSo3HbRY5hx+J/F
+         iqBT3WsjuTfz3PINuOuwN0FMlNeeeGhweuKZtdiGIjLVd5dRHQmEwnT8eYoLg/eWJP2e
+         qDHQ==
+X-Gm-Message-State: APjAAAW6ZjJFX5UJsKCkuourO5nC1tD970PJfwJaftsLi0oY3uOG5jIJ
+        SIaE0QH3mesLN+A1Y8UlGOdGhFuS
+X-Google-Smtp-Source: APXvYqx2MapoAoWxH36kAG/86QPnpHg5qum++6m/VlNMhipx4NA3i/ZbQOKuletj5kJHHrNYMRtLMg==
+X-Received: by 2002:a5d:52c5:: with SMTP id r5mr6086222wrv.160.1569937090036;
+        Tue, 01 Oct 2019 06:38:10 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id f20sm2844042wmb.6.2019.10.01.06.38.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 06:37:42 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 08:37:41 -0500
-From:   Rob Herring <robh@kernel.org>
+        Tue, 01 Oct 2019 06:38:08 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 15:38:07 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Peter Rosin <peda@axentia.se>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org,
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: at24: convert the binding document
- to yaml
-Message-ID: <20191001133741.GA3357@bogus>
-References: <20190930085957.2779-1-brgl@bgdev.pl>
- <20190930085957.2779-2-brgl@bgdev.pl>
+Subject: Re: [PATCH 0/3] tegra: use regulator_bulk_set_supply_names()
+Message-ID: <20191001133807.GB3563296@ulmo>
+References: <20191001132333.20146-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
 Content-Disposition: inline
-In-Reply-To: <20190930085957.2779-2-brgl@bgdev.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191001132333.20146-1-brgl@bgdev.pl>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 10:59:56AM +0200, Bartosz Golaszewski wrote:
+
+--rJwd6BRFiFCcLxzm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 01, 2019 at 03:23:30PM +0200, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Convert the binding document for at24 EEPROMs from txt to yaml. The
-> compatible property uses a regex pattern to address all the possible
-> combinations of "vendor,model" strings.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> [robh: rework compatible schema, fix missing allOf for $ref, fix errors in example]
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> [Bartosz: added comments explaining the compatible property]
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  .../devicetree/bindings/eeprom/at24.txt       |  90 +--------
->  .../devicetree/bindings/eeprom/at24.yaml      | 179 ++++++++++++++++++
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 181 insertions(+), 90 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/eeprom/at24.yaml
+>=20
+> The regulator_bulk_set_supply_names() helper was merged upstream. Use it
+> in a couple tegra drivers.
+>=20
+> Bartosz Golaszewski (3):
+>   ahci: tegra: use regulator_bulk_set_supply_names()
+>   phy: tegra: use regulator_bulk_set_supply_names()
+>   usb: host: xhci-tegra: use regulator_bulk_set_supply_names()
+>=20
+>  drivers/ata/ahci_tegra.c      | 6 +++---
+>  drivers/phy/tegra/xusb.c      | 6 +++---
+>  drivers/usb/host/xhci-tegra.c | 5 +++--
+>  3 files changed, 9 insertions(+), 8 deletions(-)
 
+I really don't see the point here. You've got a positive diffstat here,
+which means all that churn is without benefit.
 
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> new file mode 100644
-> index 000000000000..aee0890d3b7a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> @@ -0,0 +1,179 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +# Copyright 2019 BayLibre SAS
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/eeprom/at24.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: I2C EEPROMs compatible with Atmel's AT24
-> +
-> +maintainers:
-> +  - Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
-> +  required:
-> +    - compatible
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^eeprom@[0-9a-f]{1,2}$"
-> +
-> +  # There are multiple known vendors who manufacture EEPROM chips compatible
-> +  # with Atmel's AT24. The compatible string requires either a single item
-> +  # if the memory comes from Atmel (in which case the vendor part must be
-> +  # 'atmel') or two items with the same 'model' part where the vendor part of
-> +  # the first one is the actual manufacturer and the second item is the
-> +  # corresponding 'atmel,<model>' from Atmel.
-> +  #
-> +  # While the below schema would technically allow the following:
-> +  #
-> +  #     compatible = "atmel,24c01", "atmel,24c01";
+Is there some subsequent work based on this that will actually improve
+things?
 
-This is prevented in the common 'compatible' schema that requires unique 
-items.
+Thierry
 
-> +  #
-> +  # this obviously must not be used.
-> +  compatible:
-> +    oneOf:
-> +      - allOf:
-> +          - minItems: 1
-> +            maxItems: 2
-> +            items:
-> +              - pattern: "^(atmel|catalyst|microchip|nxp|ramtron|renesas|rohm|st),(24(c|cs|mac)[0-9]+|spd)$"
-> +              - pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
-> +          - oneOf:
-> +              - items:
-> +                  pattern: c00$
-> +              - items:
-> +                  pattern: c01$
-> +              - items:
-> +                  pattern: c02$
-> +              - items:
-> +                  pattern: c04$
-> +              - items:
-> +                  pattern: c08$
+--rJwd6BRFiFCcLxzm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Need to add the 'cs' variants I missed.
+-----BEGIN PGP SIGNATURE-----
 
-> +              - items:
-> +                  pattern: c16$
-> +              - items:
-> +                  pattern: cs16$
-> +              - items:
-> +                  pattern: c32$
-> +              - items:
-> +                  pattern: cs32$
-> +              - items:
-> +                  pattern: c64$
-> +              - items:
-> +                  pattern: cs64$
-> +              - items:
-> +                  pattern: c128$
-> +              - items:
-> +                  pattern: cs128$
-> +              - items:
-> +                  pattern: c256$
-> +              - items:
-> +                  pattern: cs256$
-> +              - items:
-> +                  pattern: c512$
-> +              - items:
-> +                  pattern: cs512$
-> +              - items:
-> +                  pattern: c1024$
-> +              - items:
-> +                  pattern: cs1024$
-> +              - items:
-> +                  pattern: c2048$
-> +              - items:
-> +                  pattern: cs2048$
-> +              - items:
-> +                  pattern: spd$
-> +      # These are special cases that don't conform to the above pattern.
-> +      # Each requires a standard at24 model as fallback.
-> +      - items:
-> +          - const: rohm,br24t01
-> +          - const: atmel,24c01
-> +      - items:
-> +          - const: nxp,se97b
-> +          - const: atmel,24c02
-> +      - items:
-> +          - const: renesas,r1ex24002
-> +          - const: atmel,24c02
-> +      - items:
-> +          - const: renesas,r1ex24016
-> +          - const: atmel,24c16
-> +      - items:
-> +          - const: renesas,r1ex24128
-> +          - const: atmel,24c128
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  pagesize:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      The length of the pagesize for writing. Please consult the
-> +      manual of your device, that value varies a lot. A wrong value
-> +      may result in data loss! If not specified, a safety value of
-> +      '1' is used which will be very slow.
-> +    enum: [ 1, 8, 16, 32, 64, 128, 258 ]
-> +    default: 1
-> +
-> +  read-only:
-> +    $ref: /schemas/types.yaml#definitions/flag
-> +    description:
-> +      Disables writes to the eeprom.
-> +
-> +  size:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Total eeprom size in bytes.
-> +
-> +  no-read-rollover:
-> +    $ref: /schemas/types.yaml#definitions/flag
-> +    description:
-> +      Indicates that the multi-address eeprom does not automatically roll
-> +      over reads to the next slave address. Please consult the manual of
-> +      your device.
-> +
-> +  wp-gpios:
-> +    description:
-> +      GPIO to which the write-protect pin of the chip is connected.
-> +    maxItems: 1
-> +
-> +  address-width:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Number of address bits.
-> +    default: 8
-> +    enum: [ 8, 16 ]
-> +
-> +  num-addresses:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Total number of i2c slave addresses this device takes.
-> +    default: 1
-> +    minimum: 1
-> +    maximum: 8
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      eeprom@52 {
-> +          compatible = "microchip,24c32", "atmel,24c32";
-> +          reg = <0x52>;
-> +          pagesize = <32>;
-> +          wp-gpios = <&gpio1 3 0>;
-> +          num-addresses = <8>;
-> +      };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 296de2b51c83..320fc8bba872 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2699,7 +2699,7 @@ M:	Bartosz Golaszewski <bgolaszewski@baylibre.com>
->  L:	linux-i2c@vger.kernel.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/eeprom/at24.txt
-> +F:	Documentation/devicetree/bindings/eeprom/at24.yaml
->  F:	drivers/misc/eeprom/at24.c
->  
->  ATA OVER ETHERNET (AOE) DRIVER
-> -- 
-> 2.23.0
-> 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2TVr8ACgkQ3SOs138+
+s6Gmxw//XyHpBaZ6nH9r5G6qR4tc5ltdQB1dqjsetQiQ3GP40BUwO9mtMUUgcfI/
+rdgUFAuLtiTH5m5XHYyCmBIWHi38bwTStJ4x0f7zg7IAfabhlRrTDPsaUSJuN+tt
+JL5RYKy9LjGIt8B3FusJWBgMMhAhmLf4vTTBqMRaK1vAd7XFqz0LAz+weUs11aZ8
+gauUBP2qZ6n+lL5ahAStY/0GC9gos1iNzgsvG6tZD3JyWQe6xwKvrroSq+s/iQUL
+V00s28QIe+zsQMl9f47mkJoAY5d55heIehG7oaYWPYsJS83yeHlW7YRi+CseyZwa
+o8ZSi3FqILEuO+yjH+h2nD8bpKltfhBwi4VUzn0sFAzz4btFkt1J0JYClKpF+Fwx
+msvSehNfgZt0JDJaQ6ACCBEVkcfCXe0pXX8BwLYW83V9gKWnklf97DKvFKmg4HMd
+/2JeVHouwG20VkQcjnYBTOpBv+08DKG0D19ZgviHnibUeTTu6mlpbCD2T6DzkLUE
+mGInzNLfgLfflCSeOusBazYQGy9DrGNhqGpnREXDY8NwZEUyA1EkHSl6BCOc6RaI
+VexLVXa11R0fNZRNJk2H2/MU9H/MWUUC+jRJQ+4X/ScGYtWjkJSe8LJ0KmgA2/5/
+gmqCqriJyFLot6c/z1kmNoSo2q2iedr7i4XKaUKrnf28LTQlRxk=
+=aSWM
+-----END PGP SIGNATURE-----
+
+--rJwd6BRFiFCcLxzm--
