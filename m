@@ -2,106 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF1DC334A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D92C334D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733109AbfJALsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:48:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53130 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfJALsM (ORCPT
+        id S2387418AbfJALsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:48:23 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:54963 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbfJALsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:48:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Zrg6BngKS6o+5PSZfNmDViyOQ6WxCm6/6L9VMBrS+Ao=; b=oobNDfW22f8t
-        dHSmFIHpY804aCILp746q8H23HJkQkGWZ8iCNIGsBx009h7dbXFBIpn7yyH4akJCTc3EN6/m/V+Mn
-        JxcuzLrHuQDVqRKIQueR+NS2Ig58S2abZp/eOJks56Cw2BV58VGKrTG4HnvrhUXqPDc6XiBH3OzcM
-        XDUCU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iFGdU-0004cg-GL; Tue, 01 Oct 2019 11:48:08 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id F120227429C0; Tue,  1 Oct 2019 12:48:07 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: pcap-regulator: remove unused variable 'SW3_table'" to the regulator tree
-In-Reply-To: <20190928085540.45332-1-yuehaibing@huawei.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191001114807.F120227429C0@ypsilon.sirena.org.uk>
-Date:   Tue,  1 Oct 2019 12:48:07 +0100 (BST)
+        Tue, 1 Oct 2019 07:48:19 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 5E57B1BF208;
+        Tue,  1 Oct 2019 11:48:16 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 13:48:16 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v1 1/4] lib/vsprintf: Print time64_t in human readable
+ format
+Message-ID: <20191001114816.GA4106@piout.net>
+References: <20190104193009.30907-1-andriy.shevchenko@linux.intel.com>
+ <20190108152528.utr3a5huran52gsf@pathway.suse.cz>
+ <20190110215858.GG2362@piout.net>
+ <20190726132037.GX9224@smile.fi.intel.com>
+ <20190930200809.GK3913@piout.net>
+ <20191001113655.GI32742@smile.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001113655.GI32742@smile.fi.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 01/10/2019 14:36:55+0300, Andy Shevchenko wrote:
+> On Mon, Sep 30, 2019 at 10:08:09PM +0200, Alexandre Belloni wrote:
+> > > > Maybe be rtc_str should take a struct tm instead of an rtc_time so
+> > > > time64_to_rtc_time always uses time64_to_tm.
+> > > 
+> > > Because this one, while sounding plausible, maybe too invasive on current
+> > > state of affairs.
+> > 
+> > Well, if the kernel struct tm had an int tm_year instead of long
+> > tm_year, then you could simply cast a struct rtc_time to a struct tm.
+> 
+> I don't think so. It will be error prone from endianess prospective on
+> 64-bit platforms.
+> 
 
-   regulator: pcap-regulator: remove unused variable 'SW3_table'
+I don't get why, as long as the first members of both structs are the
+same, this should work.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 182a1d8bc4ed30f5e0bb7fb52606fa1888430ca4 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 28 Sep 2019 16:55:40 +0800
-Subject: [PATCH] regulator: pcap-regulator: remove unused variable 'SW3_table'
-
-drivers/regulator/pcap-regulator.c:89:27: warning:
- SW3_table defined but not used [-Wunused-const-variable=]
-
-It is never used, so can be removed.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190928085540.45332-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/pcap-regulator.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/regulator/pcap-regulator.c b/drivers/regulator/pcap-regulator.c
-index c2469263db95..0345f38f6f78 100644
---- a/drivers/regulator/pcap-regulator.c
-+++ b/drivers/regulator/pcap-regulator.c
-@@ -86,10 +86,6 @@ static const unsigned int SW1_table[] = {
- 
- #define SW2_table SW1_table
- 
--static const unsigned int SW3_table[] = {
--	4000000, 4500000, 5000000, 5500000,
--};
--
- struct pcap_regulator {
- 	const u8 reg;
- 	const u8 en;
 -- 
-2.20.1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
