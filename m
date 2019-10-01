@@ -2,86 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63C59C36EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AFD9C36F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:20:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388929AbfJAOSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:18:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:50656 "EHLO foss.arm.com"
+        id S2388983AbfJAOUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:20:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbfJAOSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:18:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDD671000;
-        Tue,  1 Oct 2019 07:18:47 -0700 (PDT)
-Received: from [10.37.8.149] (unknown [10.37.8.149])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24E0F3F71A;
-        Tue,  1 Oct 2019 07:18:45 -0700 (PDT)
-Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        id S2388512AbfJAOUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:20:43 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0DA421855;
+        Tue,  1 Oct 2019 14:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569939643;
+        bh=24fhhR5+md0mOeWNqDkBGyechQDCTAZku95IGy5Kpq4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Jdn5igzjnGX4prnKpEQ8P1d+jyX9se7sEYUPNxIR9MYZeZqVKZAfyH6mXOH4fCNEh
+         JjHQv7fjkLwYVD0zlQkch0rQghb8GHS4zeKXGu65/O8F9Ed+EJFms67kJfX9Kicc7Y
+         a2kAezvPOFD0qedCPm1KM0ntFTjOY3NWCCk9gXa8=
+Date:   Tue, 1 Oct 2019 15:20:38 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         ard.biesheuvel@linaro.org, ndesaulniers@google.com,
         tglx@linutronix.de
+Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
+Message-ID: <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
 References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
  <20190926214342.34608-1-vincenzo.frascino@arm.com>
  <20190926214342.34608-2-vincenzo.frascino@arm.com>
  <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck>
  <20191001132731.GG41399@arrakis.emea.arm.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
-Date:   Tue, 1 Oct 2019 15:20:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20191001132731.GG41399@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/1/19 2:27 PM, Catalin Marinas wrote:
-> On Tue, Oct 01, 2019 at 02:14:23PM +0100, Will Deacon wrote:
->> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
->>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>> index 37c610963eee..0e5beb928af5 100644
->>> --- a/arch/arm64/Kconfig
->>> +++ b/arch/arm64/Kconfig
->>> @@ -110,7 +110,7 @@ config ARM64
->>>  	select GENERIC_STRNLEN_USER
->>>  	select GENERIC_TIME_VSYSCALL
->>>  	select GENERIC_GETTIMEOFDAY
->>> -	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
->>> +	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT && COMPATCC_IS_ARM_GCC)
->>>  	select HANDLE_DOMAIN_IRQ
->>>  	select HARDIRQS_SW_RESEND
->>>  	select HAVE_PCI
->>> @@ -313,6 +313,9 @@ config KASAN_SHADOW_OFFSET
->>>  	default 0xeffffff900000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
->>>  	default 0xffffffffffffffff
->>>  
->>> +config COMPATCC_IS_ARM_GCC
->>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
->>
->> I've seen toolchains where the first part of the tuple is "armv7-", so they
->> won't get detected here. However, do we really need to detect this? If
->> somebody passes a duff compiler, then the build will fail in the same way as
->> if they passed it to CROSS_COMPILE=.
+On Tue, Oct 01, 2019 at 03:20:35PM +0100, Vincenzo Frascino wrote:
+> On 10/1/19 2:27 PM, Catalin Marinas wrote:
+> > On Tue, Oct 01, 2019 at 02:14:23PM +0100, Will Deacon wrote:
+> >> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
+> >>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> >>> index 37c610963eee..0e5beb928af5 100644
+> >>> --- a/arch/arm64/Kconfig
+> >>> +++ b/arch/arm64/Kconfig
+> >>> @@ -110,7 +110,7 @@ config ARM64
+> >>>  	select GENERIC_STRNLEN_USER
+> >>>  	select GENERIC_TIME_VSYSCALL
+> >>>  	select GENERIC_GETTIMEOFDAY
+> >>> -	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
+> >>> +	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT && COMPATCC_IS_ARM_GCC)
+> >>>  	select HANDLE_DOMAIN_IRQ
+> >>>  	select HARDIRQS_SW_RESEND
+> >>>  	select HAVE_PCI
+> >>> @@ -313,6 +313,9 @@ config KASAN_SHADOW_OFFSET
+> >>>  	default 0xeffffff900000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
+> >>>  	default 0xffffffffffffffff
+> >>>  
+> >>> +config COMPATCC_IS_ARM_GCC
+> >>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
+> >>
+> >> I've seen toolchains where the first part of the tuple is "armv7-", so they
+> >> won't get detected here. However, do we really need to detect this? If
+> >> somebody passes a duff compiler, then the build will fail in the same way as
+> >> if they passed it to CROSS_COMPILE=.
+> > 
+> > Not sure what happens if we pass an aarch64 compiler. Can we end up with
+> > a 64-bit compat vDSO?
+> > 
 > 
-> Not sure what happens if we pass an aarch64 compiler. Can we end up with
-> a 64-bit compat vDSO?
-> 
+> I agree with Catalin here. The problem is not only when you pass and aarch64
+> toolchain but even an x86 and so on.
 
-I agree with Catalin here. The problem is not only when you pass and aarch64
-toolchain but even an x86 and so on.
+I disagree. What happens if you do:
 
-If the problem is related to armv7- we can change the rule as "arm.*-gcc" which
-should detect them as well. Do you know what is the triple that an armv7-
-toolchain prints?
+$ make ARCH=arm64 CROSS_COMPILE=x86_64-linux-gnu-
 
--- 
-Regards,
-Vincenzo
+on your x86 box?
+
+> If the problem is related to armv7- we can change the rule as "arm.*-gcc" which
+> should detect them as well. Do you know what is the triple that an armv7-
+> toolchain prints?
+
+'fraid not, since I don't have one to hand. I think you'd end up matching
+arm*-gcc, which is pretty broad.
+
+Will
