@@ -2,55 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43F77C3599
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 977DAC359D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 15:27:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388419AbfJAN1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 09:27:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57346 "EHLO mail.kernel.org"
+        id S2388439AbfJAN1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 09:27:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388261AbfJAN1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 09:27:10 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        id S2388261AbfJAN1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 09:27:23 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B89520842;
-        Tue,  1 Oct 2019 13:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74D8A205F4;
+        Tue,  1 Oct 2019 13:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569936430;
-        bh=sfei3fNmNvi6lTi6MMR5a3wHggKkRsIZ/qgKoTItACc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JwpnvP758agt5PqeUSvUvJuo7UAvnivP7LNCqdbn0vx6FUf0HvSz0QmWxM480PmDV
-         7UwXRrNNCcVXTqrIQpvLYCvx9cYOtvop5xs2JLS6pgSGiYCI14sb+lPYkOpptXC9HL
-         e7DZ23oDhuuOix0WQi8LBGnMLuTJFbbq+ZTvjmAI=
-Date:   Tue, 1 Oct 2019 14:27:06 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
-        catalin.marinas@arm.com, tglx@linutronix.de
-Subject: Re: [PATCH v3 0/5]arm64: vdso32: Address various issues
-Message-ID: <20191001132705.fvwi5jbte4la7t7u@willie-the-truck>
-References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
- <20190926214342.34608-1-vincenzo.frascino@arm.com>
+        s=default; t=1569936442;
+        bh=hvuSU/zgSxL7X5McKtfL/85CgXAWQjA1PQjtADmotiw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=PVl8ichgRH2Kry9emAcsBbZ3LVJ+BXT3BKBgqVD7LlciVOm0Yy/aHX7MX1Rjp1MC+
+         txtKjbJ6YDnqZQPdw+SBr8J/Hw6rzAM1gCdbOzNkFgzG9wKOHKa064QGC0f4zR5Mq/
+         gohadmur2spYz1z4zJEil6lV6/IG6t4VzozqcEAA=
+Date:   Tue, 1 Oct 2019 08:27:21 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH] pci: prevent putting pcie devices into lower device
+ states on certain intel bridges
+Message-ID: <20191001132721.GA46491@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190926214342.34608-1-vincenzo.frascino@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CACO55tuk4SA6-xUtJ-oRePy8MPXYAp2cfmSPxwW3J5nQuX3y2g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 10:43:37PM +0100, Vincenzo Frascino wrote:
-> this patch series is meant to address the various compilation issues you
-> reported about arm64 vdso32.
+On Mon, Sep 30, 2019 at 06:36:12PM +0200, Karol Herbst wrote:
+> On Mon, Sep 30, 2019 at 6:30 PM Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> >
+> > On Mon, Sep 30, 2019 at 06:05:14PM +0200, Karol Herbst wrote:
+> > > still happens with your patch applied. The machine simply gets shut down.
+> > >
+> > > dmesg can be found here:
+> > > https://gist.githubusercontent.com/karolherbst/40eb091c7b7b33ef993525de660f1a3b/raw/2380e31f566e93e5ba7c87ef545420965d4c492c/gistfile1.txt
+> >
+> > Looking your dmesg:
+> >
+> > Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: DCB version 4.1
+> > Sep 30 17:24:27 kernel: nouveau 0000:01:00.0: DRM: MM: using COPY for buffer copies
+> > Sep 30 17:24:27 kernel: [drm] Initialized nouveau 1.3.1 20120801 for 0000:01:00.0 on minor 1
+> >
+> > I would assume it runtime suspends here. Then it wakes up because of PCI
+> > access from userspace:
+> >
+> > Sep 30 17:24:42 kernel: pci_raw_set_power_state: 56 callbacks suppressed
+> >
+> > and for some reason it does not get resumed properly. There are also few
+> > warnings from ACPI that might be relevant:
+> >
+> > Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.GFX0._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
+> > Sep 30 17:24:27 kernel: ACPI Warning: \_SB.PCI0.PEG0.PEGP._DSM: Argument #4 type mismatch - Found [Buffer], ACPI requires [Package] (20190509/nsarguments-59)
+> 
+> afaik this is the case for essentially every laptop out there.
 
-Thanks, I've commented on the patches. Also, when you respin, please can
-you drop the "As reported by Will Deacon ..." lines from the commit messages
-and just add a Reported-by tag instead?
+I think we should look into this a little bit.
+acpi_ns_check_argument_types() checks the argument type and prints
+this message, but AFAICT it doesn't actually fix anything or prevent
+execution of the method, so I have no idea what happens when we
+actually execute the _DSM.
 
-Thanks,
+If we execute this _DSM as part of power management, and the _DSM
+doesn't work right, it would be no surprise that we have problems.
 
-Will
+Maybe we could learn something by turning on ACPI_DB_PARSE output (see
+Documentation/firmware-guide/acpi/debug.rst).
+
+You must have an acpidump already from all your investigation.  Can
+you put it somewhere, e.g., bugzilla.kernel.org, and include a URL?
