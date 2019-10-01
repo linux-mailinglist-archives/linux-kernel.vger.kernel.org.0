@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA8F0C3B05
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9893C3B07
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730543AbfJAQlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:41:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52402 "EHLO mail.kernel.org"
+        id S1730731AbfJAQlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:41:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730503AbfJAQlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:00 -0400
+        id S1730601AbfJAQlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:41:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0875205C9;
-        Tue,  1 Oct 2019 16:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99A0421872;
+        Tue,  1 Oct 2019 16:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948060;
-        bh=kgzfr/vRrO0hm5BZsVAdICd2cayTt5lbLSD11QS0AvY=;
+        s=default; t=1569948065;
+        bh=+/GPWSjFANCOmijUlq3Ycvx8UhI7FFqWIqqYSVoJUU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H0ivQ6sx74z70wmqZ5/5DERn38fIJkPL0OfLTz/gp1y2lLH2D2k9GJo4UzI0dumBq
-         Zd3V/WDe2GLztSwXySitnQQBDpApvFmVhHw2EZw0bdxdWT6tYegLEaGnDs5r5H4jyt
-         DTSpiM3DcgQ81HBCkXvLLDk/ApDKtuOHTy4VZwfk=
+        b=CtONktcpgG7bHkRp8X8RUnfTlA9s6m3vgxNBnCLrO3JhcpZrELxsOOn1KRZu6QATW
+         dewQzkPFP8ingcCIVITfjLXcXdgNE+CCcujQP8KHeBankE5hQGhaLxUCEMbigTDuhv
+         ht/CaBpBGHGj4Sn7Jjk3sLQ5WH854GjSEirMnxHE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 59/71] perf unwind: Fix libunwind build failure on i386 systems
-Date:   Tue,  1 Oct 2019 12:39:09 -0400
-Message-Id: <20191001163922.14735-59-sashal@kernel.org>
+Cc:     Hans Andersson <hans.andersson@cellavision.se>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 62/71] net: phy: micrel: add Asym Pause workaround for KSZ9021
+Date:   Tue,  1 Oct 2019 12:39:12 -0400
+Message-Id: <20191001163922.14735-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
 References: <20191001163922.14735-1-sashal@kernel.org>
@@ -48,49 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Hans Andersson <hans.andersson@cellavision.se>
 
-[ Upstream commit 26acf400d2dcc72c7e713e1f55db47ad92010cc2 ]
+[ Upstream commit 407d8098cb1ab338199f4753162799a488d87d23 ]
 
-Naresh Kamboju reported, that on the i386 build pr_err()
-doesn't get defined properly due to header ordering:
+The Micrel KSZ9031 PHY may fail to establish a link when the Asymmetric
+Pause capability is set. This issue is described in a Silicon Errata
+(DS80000691D or DS80000692D), which advises to always disable the
+capability.
 
-  perf-in.o: In function `libunwind__x86_reg_id':
-  tools/perf/util/libunwind/../../arch/x86/util/unwind-libunwind.c:109:
-  undefined reference to `pr_err'
+Micrel KSZ9021 has no errata, but has the same issue with Asymmetric Pause.
+This patch apply the same workaround as the one for KSZ9031.
 
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 3aed3e2a143c ("net: phy: micrel: add Asym Pause workaround")
+Signed-off-by: Hans Andersson <hans.andersson@cellavision.se>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/unwind-libunwind.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/phy/micrel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/arch/x86/util/unwind-libunwind.c b/tools/perf/arch/x86/util/unwind-libunwind.c
-index 05920e3edf7a7..47357973b55b2 100644
---- a/tools/perf/arch/x86/util/unwind-libunwind.c
-+++ b/tools/perf/arch/x86/util/unwind-libunwind.c
-@@ -1,11 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <errno.h>
-+#include "../../util/debug.h"
- #ifndef REMOTE_UNWIND_LIBUNWIND
- #include <libunwind.h>
- #include "perf_regs.h"
- #include "../../util/unwind.h"
--#include "../../util/debug.h"
- #endif
- 
- #ifdef HAVE_ARCH_X86_64_SUPPORT
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 3c8186f269f9e..2fea5541c35a8 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -763,6 +763,8 @@ static int ksz9031_get_features(struct phy_device *phydev)
+ 	 * Whenever the device's Asymmetric Pause capability is set to 1,
+ 	 * link-up may fail after a link-up to link-down transition.
+ 	 *
++	 * The Errata Sheet is for ksz9031, but ksz9021 has the same issue
++	 *
+ 	 * Workaround:
+ 	 * Do not enable the Asymmetric Pause capability bit.
+ 	 */
+@@ -1076,6 +1078,7 @@ static struct phy_driver ksphy_driver[] = {
+ 	/* PHY_GBIT_FEATURES */
+ 	.driver_data	= &ksz9021_type,
+ 	.probe		= kszphy_probe,
++	.get_features	= ksz9031_get_features,
+ 	.config_init	= ksz9021_config_init,
+ 	.ack_interrupt	= kszphy_ack_interrupt,
+ 	.config_intr	= kszphy_config_intr,
 -- 
 2.20.1
 
