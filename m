@@ -2,66 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 421B3C36EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4616C3721
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388955AbfJAOUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:20:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727055AbfJAOUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:20:17 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F2332086A;
-        Tue,  1 Oct 2019 14:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569939617;
-        bh=UBnUQs50xSOkAzYN97eAZdHXL9k0XEWd0kn+PTRxajU=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=prT1Fl0YizlgUboDPPxpvbZVV3SIGE00+dMlBtgmbgqP2s4Y36KEsx6rGTtadGOQy
-         wKEwLgLclodCRs1bQzLK2lTFrNTfTrz8axTBqpJujYH8suF7TejEbyvBtq6fAdqGJJ
-         5rgpw0aRNPnRhd4yp/6vJ7feBYTNdsFNcX1x2N+Q=
-Date:   Tue, 1 Oct 2019 16:19:50 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     =?ISO-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-cc:     linux-input@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] HID: fix error message in hid_open_report()
-In-Reply-To: <5866b49b330a750b44003ebd9f532541dcb13f18.1566587656.git.mirq-linux@rere.qmqm.pl>
-Message-ID: <nycvar.YFH.7.76.1910011619280.13160@cbobk.fhfr.pm>
-References: <5866b49b330a750b44003ebd9f532541dcb13f18.1566587656.git.mirq-linux@rere.qmqm.pl>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S2389112AbfJAOWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:22:43 -0400
+Received: from cmccmta3.chinamobile.com ([221.176.66.81]:3110 "EHLO
+        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389057AbfJAOWm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:22:42 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.17]) by rmmx-syy-dmz-app12-12012 (RichMail) with SMTP id 2eec5d9361056ba-944a6; Tue, 01 Oct 2019 22:21:57 +0800 (CST)
+X-RM-TRANSID: 2eec5d9361056ba-944a6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost (unknown[223.105.0.241])
+        by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee95d936104c3a-05422;
+        Tue, 01 Oct 2019 22:21:57 +0800 (CST)
+X-RM-TRANSID: 2ee95d936104c3a-05422
+From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+To:     Shuah Khan <shuah@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>
+Cc:     Julian Anastasov <ja@ssi.bg>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Subject: [PATCH v3 0/3] selftests: netfilter: introduce test cases for ipvs
+Date:   Tue,  1 Oct 2019 22:19:56 +0800
+Message-Id: <1569939599-1872-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Aug 2019, Michał Mirosław wrote:
+This series patch include test cases for ipvs.
 
-> On HID report descriptor parsing error the code displays bogus
-> pointer instead of error offset (subtracts start=NULL from end).
-> Make the message more useful by displaying correct error offset
-> and include total buffer size for reference.
-> 
-> This was carried over from ancient times - "Fixed" commit just
-> promoted the message from DEBUG to ERROR.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 8c3d52fc393b ("HID: make parser more verbose about parsing errors by default")
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> 
-> ---
-> v2: fixed printf() warning spotted by Jiri Kosina <jikos@kernel.org>
+The test topology is who as below:
++--------------------------------------------------------------+
+|                      |                                       |
+|         ns0          |         ns1                           |
+|      -----------     |     -----------    -----------        |
+|      | veth01  | --------- | veth10  |    | veth12  |        |
+|      -----------    peer   -----------    -----------        |
+|           |          |                        |              |
+|      -----------     |                        |              |
+|      |  br0    |     |-----------------  peer |--------------|
+|      -----------     |                        |              |
+|           |          |                        |              |
+|      ----------     peer   ----------      -----------       |
+|      |  veth02 | --------- |  veth20 |     | veth12  |       |
+|      ----------      |     ----------      -----------       |
+|                      |         ns2                           |
+|                      |                                       |
++--------------------------------------------------------------+
 
-Applied, thank you.
+Test results:
+# selftests: netfilter: ipvs.sh
+# Testing DR mode...
+# Testing NAT mode...
+# Testing Tunnel mode...
+# ipvs.sh: PASS
+ok 6 selftests: netfilter: ipvs.sh
+
+Haishuang Yan (3):
+  selftests: netfilter: add ipvs test script
+  selftests: netfilter: add ipvs nat test case
+  selftests: netfilter: add ipvs tunnel test case
+
+ tools/testing/selftests/netfilter/Makefile |   2 +-
+ tools/testing/selftests/netfilter/ipvs.sh  | 234 +++++++++++++++++++++++++++++
+ 2 files changed, 235 insertions(+), 1 deletion(-)
+ create mode 100755 tools/testing/selftests/netfilter/ipvs.sh
 
 -- 
-Jiri Kosina
-SUSE Labs
+1.8.3.1
+
+
 
