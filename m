@@ -2,120 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30691C324D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:22:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDA1AC3256
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbfJALVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:21:49 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44022 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731303AbfJALVs (ORCPT
+        id S1731782AbfJALVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:21:54 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:54946 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731641AbfJALVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:21:48 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91BJMdV134962;
-        Tue, 1 Oct 2019 11:21:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2019-08-05; bh=SZSjO6UNaZjumDTG5dmovcI4DXMpTOl7kZ7b++1MnZg=;
- b=JJL3Lir4saN5IQpMnoz8keJ7VHriQJoQelVTKKtN9O1Utf6j/1ZiDaq31hglj93UzB5a
- 09hZuKZ+bhzI78yUlpeS5JGE489b7tHQcwwiSTXEZh9lq1zBlnM9kjUW4D/7IIpDP096
- lR/4hIUZzNzaoNGdhvz3j33JhgyNcixr9nUXDXuzY7y+/gdi0HxVbv/rxrz+M3BGUltK
- THZKcQMAz6XWAxiiXs1GPXiv+BgcUnTVU0xWV9HHCFsag+gML26Mzj/y0OL5XBfsVN3g
- I+Uk5AdlxbdLMEZzDsH0UA8InM0yI5tGcbJE33ejqNo8nrh2CHli8pQtykJqIYtYRC1q xw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2va05rn1au-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 11:21:29 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91BI8SW046498;
-        Tue, 1 Oct 2019 11:21:29 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2vbnqcq6ht-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 11:21:28 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x91BLR8j014531;
-        Tue, 1 Oct 2019 11:21:27 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Oct 2019 04:21:27 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3594.4.18\))
-Subject: Re: [PATCH 14/15] mm: Align THP mappings for non-DAX
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20191001104558.rdcqhjdz7frfuhca@box>
-Date:   Tue, 1 Oct 2019 05:21:26 -0600
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Tue, 1 Oct 2019 07:21:52 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iFGDr-0000H5-Tt; Tue, 01 Oct 2019 13:21:40 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 91EB51C070D;
+        Tue,  1 Oct 2019 13:21:39 +0200 (CEST)
+Date:   Tue, 01 Oct 2019 11:21:39 -0000
+From:   "tip-bot2 for Tony W Wang-oc" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/core] x86/mce: Add Zhaoxin CMCI support
+Cc:     "Tony W Wang-oc" <TonyWWang-oc@zhaoxin.com>,
+        Borislav Petkov <bp@suse.de>, CooperYan@zhaoxin.com,
+        DavidWang@zhaoxin.com, HerryYang@zhaoxin.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "linux-edac" <linux-edac@vger.kernel.org>, QiyuanWang@zhaoxin.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, "x86-ml" <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A935F599-BB18-40C3-90DD-47B7700743D6@oracle.com>
-References: <20190925005214.27240-1-willy@infradead.org>
- <20190925005214.27240-15-willy@infradead.org>
- <20191001104558.rdcqhjdz7frfuhca@box>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-X-Mailer: Apple Mail (2.3594.4.18)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910010104
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010104
+In-Reply-To: <1568787573-1297-4-git-send-email-TonyWWang-oc@zhaoxin.com>
+References: <1568787573-1297-4-git-send-email-TonyWWang-oc@zhaoxin.com>
+MIME-Version: 1.0
+Message-ID: <156992889955.9978.11127376798004332178.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit has been merged into the ras/core branch of tip:
 
+Commit-ID:     5a3d56a034be9e8e87a6cb9ed3f2928184db1417
+Gitweb:        https://git.kernel.org/tip/5a3d56a034be9e8e87a6cb9ed3f2928184db1417
+Author:        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+AuthorDate:    Wed, 18 Sep 2019 14:19:32 +08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 01 Oct 2019 12:33:09 +02:00
 
-> On Oct 1, 2019, at 4:45 AM, Kirill A. Shutemov <kirill@shutemov.name> =
-wrote:
->=20
-> On Tue, Sep 24, 2019 at 05:52:13PM -0700, Matthew Wilcox wrote:
->>=20
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index cbe7d0619439..670a1780bd2f 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -563,8 +563,6 @@ unsigned long thp_get_unmapped_area(struct file =
-*filp, unsigned long addr,
->>=20
->> 	if (addr)
->> 		goto out;
->> -	if (!IS_DAX(filp->f_mapping->host) || =
-!IS_ENABLED(CONFIG_FS_DAX_PMD))
->> -		goto out;
->>=20
->> 	addr =3D __thp_get_unmapped_area(filp, len, off, flags, =
-PMD_SIZE);
->> 	if (addr)
->=20
-> I think you reducing ASLR without any real indication that THP is =
-relevant
-> for the VMA. We need to know if any huge page allocation will be
-> *attempted* for the VMA or the file.
+x86/mce: Add Zhaoxin CMCI support
 
-Without a properly aligned address the code will never even attempt =
-allocating
-a THP.
+All newer Zhaoxin CPUs support CMCI and are compatible with Intel's
+Machine-Check Architecture. Add that support for Zhaoxin CPUs.
 
-I don't think rounding an address to one that would be properly aligned =
-to map
-to a THP if possible is all that detrimental to ASLR and without the =
-ability to
-pick an aligned address it's rather unlikely anyone would ever map =
-anything to
-a THP unless they explicitly designate an address with MAP_FIXED.
+ [ bp: Massage comments and export intel_init_cmci(). ]
 
-If you do object to the slight reduction of the ASLR address space, what
-alternative would you prefer to see?
+Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: CooperYan@zhaoxin.com
+Cc: DavidWang@zhaoxin.com
+Cc: HerryYang@zhaoxin.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: QiyuanWang@zhaoxin.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1568787573-1297-4-git-send-email-TonyWWang-oc@zhaoxin.com
+---
+ arch/x86/kernel/cpu/mce/core.c     | 27 +++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/mce/intel.c    |  6 ++++--
+ arch/x86/kernel/cpu/mce/internal.h |  2 ++
+ 3 files changed, 33 insertions(+), 2 deletions(-)
 
-    -- Bill=
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index a780fe0..1e6b8a4 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1777,6 +1777,29 @@ static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
+ 	}
+ }
+ 
++static void mce_zhaoxin_feature_init(struct cpuinfo_x86 *c)
++{
++	struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
++
++	/*
++	 * These CPUs have MCA bank 8 which reports only one error type called
++	 * SVAD (System View Address Decoder). The reporting of that error is
++	 * controlled by IA32_MC8.CTL.0.
++	 *
++	 * If enabled, prefetching on these CPUs will cause SVAD MCE when
++	 * virtual machines start and result in a system  panic. Always disable
++	 * bank 8 SVAD error by default.
++	 */
++	if ((c->x86 == 7 && c->x86_model == 0x1b) ||
++	    (c->x86_model == 0x19 || c->x86_model == 0x1f)) {
++		if (this_cpu_read(mce_num_banks) > 8)
++			mce_banks[8].ctl = 0;
++	}
++
++	intel_init_cmci();
++	mce_adjust_timer = cmci_intel_adjust_timer;
++}
++
+ static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
+ {
+ 	switch (c->x86_vendor) {
+@@ -1798,6 +1821,10 @@ static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
+ 		mce_centaur_feature_init(c);
+ 		break;
+ 
++	case X86_VENDOR_ZHAOXIN:
++		mce_zhaoxin_feature_init(c);
++		break;
++
+ 	default:
+ 		break;
+ 	}
+diff --git a/arch/x86/kernel/cpu/mce/intel.c b/arch/x86/kernel/cpu/mce/intel.c
+index 88cd959..fb6e990 100644
+--- a/arch/x86/kernel/cpu/mce/intel.c
++++ b/arch/x86/kernel/cpu/mce/intel.c
+@@ -85,8 +85,10 @@ static int cmci_supported(int *banks)
+ 	 * initialization is vendor keyed and this
+ 	 * makes sure none of the backdoors are entered otherwise.
+ 	 */
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
+ 		return 0;
++
+ 	if (!boot_cpu_has(X86_FEATURE_APIC) || lapic_get_maxlvt() < 6)
+ 		return 0;
+ 	rdmsrl(MSR_IA32_MCG_CAP, cap);
+@@ -423,7 +425,7 @@ void cmci_disable_bank(int bank)
+ 	raw_spin_unlock_irqrestore(&cmci_discover_lock, flags);
+ }
+ 
+-static void intel_init_cmci(void)
++void intel_init_cmci(void)
+ {
+ 	int banks;
+ 
+diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
+index 43031db..a7ee230 100644
+--- a/arch/x86/kernel/cpu/mce/internal.h
++++ b/arch/x86/kernel/cpu/mce/internal.h
+@@ -45,11 +45,13 @@ unsigned long cmci_intel_adjust_timer(unsigned long interval);
+ bool mce_intel_cmci_poll(void);
+ void mce_intel_hcpu_update(unsigned long cpu);
+ void cmci_disable_bank(int bank);
++void intel_init_cmci(void);
+ #else
+ # define cmci_intel_adjust_timer mce_adjust_timer_default
+ static inline bool mce_intel_cmci_poll(void) { return false; }
+ static inline void mce_intel_hcpu_update(unsigned long cpu) { }
+ static inline void cmci_disable_bank(int bank) { }
++static inline void intel_init_cmci(void) { }
+ #endif
+ 
+ void mce_timer_kick(unsigned long interval);
