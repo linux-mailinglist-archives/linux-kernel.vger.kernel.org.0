@@ -2,70 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4AFC343A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A5DC3440
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732847AbfJAMbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 08:31:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52346 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726137AbfJAMbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 08:31:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 96CE5AD95;
-        Tue,  1 Oct 2019 12:31:08 +0000 (UTC)
-Date:   Tue, 1 Oct 2019 14:30:44 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     jikos@kernel.org, jpoimboe@redhat.com, pmladek@suse.com
-cc:     joe.lawrence@redhat.com, nstange@suse.de,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] livepatch: Clear relocation targets on a
- module removal
-In-Reply-To: <20190905124514.8944-1-mbenes@suse.cz>
-Message-ID: <alpine.LSU.2.21.1910011428001.6105@pobox.suse.cz>
-References: <20190905124514.8944-1-mbenes@suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S2387651AbfJAMcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 08:32:25 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56282 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726137AbfJAMcZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 08:32:25 -0400
+X-UUID: d84f881d32554addb10ab7d01c848247-20191001
+X-UUID: d84f881d32554addb10ab7d01c848247-20191001
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <mark-mc.lee@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1705135427; Tue, 01 Oct 2019 20:32:21 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 1 Oct 2019 20:32:17 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 1 Oct 2019 20:32:17 +0800
+From:   MarkLee <Mark-MC.Lee@mediatek.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Sean Wang <sean.wang@mediatek.com>,
+        John Crispin <john@phrozen.org>,
+        Felix Fietkau <nbd@openwrt.org>,
+        Nelson Chang <nelson.chang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rene van Dorst <opensource@vdorst.com>,
+        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, MarkLee <Mark-MC.Lee@mediatek.com>
+Subject: [PATCH net 0/2] Update MT7629 to support PHYLINK API
+Date:   Tue, 1 Oct 2019 20:31:48 +0800
+Message-ID: <20191001123150.23135-1-Mark-MC.Lee@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019, Miroslav Benes wrote:
+This patch target to update mt7629 eth driver and dts to
+support PHYLINK API
 
-> Updated version with Petr's feedback. It looks a bit different and
-> better now (I would say). Not that it should be considered before we
-> decide what to do with late module patching, but I finished it before
-> the discussion started and someone could be interested.
-> 
-> v1: http://lore.kernel.org/r/20190719122840.15353-1-mbenes@suse.cz
-> 
-> Tested on x86_64, ppc64le and s390x. Cross-compiled on arm64 to verify
-> that nothing is broken.
-> 
-> [1] 20180602161151.apuhs2dygsexmcg2@treble
-> [2] 1561019068-132672-1-git-send-email-cj.chengjian@huawei.com
-> [3] 20180607092949.1706-1-mbenes@suse.cz
-> 
-> Miroslav Benes (3):
->   livepatch: Clear relocation targets on a module removal
->   livepatch: Unify functions for writing and clearing object relocations
->   livepatch: Clean up klp_update_object_relocations() return paths
-> 
->  arch/powerpc/kernel/module_64.c | 45 +++++++++++++++++++++++++
->  arch/s390/kernel/module.c       |  8 +++++
->  arch/x86/kernel/module.c        | 43 ++++++++++++++++++++++++
->  include/linux/moduleloader.h    |  7 ++++
->  kernel/livepatch/core.c         | 58 ++++++++++++++++++++++++---------
->  5 files changed, 146 insertions(+), 15 deletions(-)
+MarkLee (2):
+  net: ethernet: mediatek: Fix MT7629 missing GMII mode support
+  arm: dts: mediatek: Fix mt7629 dts to reflect the latest dt-binding
 
-Ping.
+ arch/arm/boot/dts/mt7629-rfb.dts            | 13 ++++++++++++-
+ arch/arm/boot/dts/mt7629.dtsi               |  2 --
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c |  1 +
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
-If I remember correctly, we decided to have this as a temporary solution 
-before better late module patching is implemented. Feedback is welcome.
-I'll then resend with arch maintainters CCed.
+-- 
+2.17.1
 
-Thanks
-Miroslav
