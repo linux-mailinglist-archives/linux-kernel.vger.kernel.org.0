@@ -2,66 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B31C34A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB8DC34A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 14:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387920AbfJAMqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 08:46:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:14517 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfJAMqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 08:46:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 05:46:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
-   d="scan'208";a="205057409"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 01 Oct 2019 05:46:39 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 01 Oct 2019 15:46:38 +0300
-Date:   Tue, 1 Oct 2019 15:46:38 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Lukas Wunner <lukas@wunner.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
+        id S2387992AbfJAMqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 08:46:49 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33689 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732692AbfJAMqs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 08:46:48 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191001124646euoutp028a40dd55ea74a1c31c6434a032a4fce4~JhqlLzbxH1849418494euoutp02Y
+        for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2019 12:46:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191001124646euoutp028a40dd55ea74a1c31c6434a032a4fce4~JhqlLzbxH1849418494euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569934006;
+        bh=g4kxurFt+usEuNVWHXBojGkOdXeORyctrr+zEEwPBu8=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=P8/SIVsNjNe/JZMbyaBNZJ8Oqa7+xidf8ZmHQB13IOrdFZiR9eZfSiadHYRPlCc4F
+         KLvOFYVZrf1KhuyOL2m2yz90ds1ccfINns/EXfDPgBv433C5SswU2SEZGe/aLdjUUd
+         HKEOCGLZm9tEHStL7zdP8NQ6pcTRY3dDZ25TiG+I=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191001124646eucas1p17f969e2e45fd7cf51001bfa59319fa21~Jhqk9tmbk1929719297eucas1p1H;
+        Tue,  1 Oct 2019 12:46:46 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 03.B5.04469.6BA439D5; Tue,  1
+        Oct 2019 13:46:46 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781~JhqkniZMT1512015120eucas1p2f;
+        Tue,  1 Oct 2019 12:46:46 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191001124646eusmtrp1aab8f1b17880523fae614ca86bb66c11~Jhqkm5lRA0994609946eusmtrp1V;
+        Tue,  1 Oct 2019 12:46:46 +0000 (GMT)
+X-AuditID: cbfec7f2-54fff70000001175-9c-5d934ab63bdb
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2F.2C.04166.6BA439D5; Tue,  1
+        Oct 2019 13:46:46 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191001124645eusmtip1af28125b5d52687f5dcd1fab59205eb7~JhqkIJMge2139721397eusmtip1B;
+        Tue,  1 Oct 2019 12:46:45 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 01/22] thunderbolt: Introduce tb_switch_is_icm()
-Message-ID: <20191001124638.GL2714@lahna.fi.intel.com>
-References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
- <20191001113830.13028-2-mika.westerberg@linux.intel.com>
- <20191001121005.GA2951658@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001121005.GA2951658@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] PM / devfreq: exynos-ppmu: remove useless assignment
+Date:   Tue,  1 Oct 2019 14:46:41 +0200
+Message-Id: <20191001124641.22896-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsWy7djPc7rbvCbHGvz/IWOxccZ6VovrX56z
+        Wpw/v4Hd4vKuOWwWn3uPMFrMOL+PyWLtkbvsFrcbV7A5cHhsWtXJ5tG3ZRWjx+dNcgHMUVw2
+        Kak5mWWpRfp2CVwZ225+Yys4wlbx/f9+9gbG3axdjJwcEgImEhumTGYBsYUEVjBKrO3w7GLk
+        ArK/MEo8ujKNBcL5zCjxc+sduI412y5DJZYzSjy+f54druXm6o3MIFVsAoYSXW+72LoYOThE
+        BOIl1n+1AgkzCzxklOibYAJiCwu4Skz61g+2mkVAVeLeirtgrbwCthKnpt5mh1gmL7F6wwFm
+        CPsMm8T9RlkI20Xi3JkzUDXCEq+Ob4GyZSROT+4BO05CoJlR4uG5tewQTg+jxOWmGYwQVdYS
+        h49fZAU5jllAU2L9Ln2IsKPEsabZYGEJAT6JG28FIW7mk5i0bTozRJhXoqNNCKJaTWLW8XVw
+        aw9euAR1pofEhM6PYFOEBGIlLjfmTGCUm4WwagEj4ypG8dTS4tz01GLDvNRyveLE3OLSvHS9
+        5PzcTYzA6D/97/inHYxfLyUdYhTgYFTi4bV4PjFWiDWxrLgy9xCjBAezkgivzZ9JsUK8KYmV
+        ValF+fFFpTmpxYcYpTlYlMR5qxkeRAsJpCeWpGanphakFsFkmTg4pRoYBZfxSx89dFXqvaSr
+        wewbXNzHL5Rqq0xKM9+yufhmz+mbO3qezGB4dPvB5ec/7pp/CMm6WfJjwjuZGvl+M6k3c5g+
+        7CmRL5Rd3sgT2dZzhkNmxoo7889LfJTV8D3eX7ZJ6sCmPRtfL9W185q9/vSm+h6RCimJ5RtX
+        BXF9mHuxRlzO6cdkr73GuUosxRmJhlrMRcWJACcpSnn6AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsVy+t/xu7rbvCbHGuzfwmGxccZ6VovrX56z
+        Wpw/v4Hd4vKuOWwWn3uPMFrMOL+PyWLtkbvsFrcbV7A5cHhsWtXJ5tG3ZRWjx+dNcgHMUXo2
+        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZ225+Yys4
+        wlbx/f9+9gbG3axdjJwcEgImEmu2XWbpYuTiEBJYyiix9+4lZoiEjMTJaQ1QRcISf651sUEU
+        fWKUaG3sZANJsAkYSnS97QKzRQQSJR70PGcHKWIWeMwo0XjuOztIQljAVWLSt34WEJtFQFXi
+        3oq7YBt4BWwlTk29zQ6xQV5i9YYDzBMYeRYwMqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQI
+        DL5tx35u3sF4aWPwIUYBDkYlHt4JLyfGCrEmlhVX5h5ilOBgVhLhtfkzKVaINyWxsiq1KD++
+        qDQntfgQoynQ8onMUqLJ+cDIyCuJNzQ1NLewNDQ3Njc2s1AS5+0QOBgjJJCeWJKanZpakFoE
+        08fEwSnVwKjFHeiudoBNag5TkVQNy/oNVtO4qvb7OtdbrFj94vUnRp9t85iE+RJ/ZfLdnur4
+        KKjif/BCBoMre/m+5Z8MYbdPbf0uWLCE+c+7KKV/j+423X7Vpn5euVy9wbJlYeadG78Y1Pme
+        CxmIOF371N94aPf+ClNBW7XEDyr8nELeR3uLfb14J5adU2Ipzkg01GIuKk4EAEmDSFRUAgAA
+X-CMS-MailID: 20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781
+References: <CGME20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 02:10:05PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Oct 01, 2019 at 02:38:09PM +0300, Mika Westerberg wrote:
-> > We currently differentiate between SW CM and ICM by looking directly at
-> 
-> You should spell out what "SW CM" and "ICM" means please :)
+The error code is propagated to the caller, so there is no need to keep
+it additionally in the unused variable.
 
-Indeed, sorry about that. I will spell them out in next version.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/devfreq/event/exynos-ppmu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-SW CM is Software Connection manager, essentially
-drivers/thunderbolt/tb.c.
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index 87b42055e6bc..85c7a77bf3f0 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -673,7 +673,6 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
+ 	for (i = 0; i < info->num_events; i++) {
+ 		edev[i] = devm_devfreq_event_add_edev(&pdev->dev, &desc[i]);
+ 		if (IS_ERR(edev[i])) {
+-			ret = PTR_ERR(edev[i]);
+ 			dev_err(&pdev->dev,
+ 				"failed to add devfreq-event device\n");
+ 			return PTR_ERR(edev[i]);
+-- 
+2.17.1
 
-ICM is the Firmware Connection manager, essentially what is done in
-drivers/thunderbolt/icm.c. I think the I in ICM comes from Internal.
