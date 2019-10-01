@@ -2,81 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 942C0C3BA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02CC7C3BF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390459AbfJAQqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:46:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
+        id S2388567AbfJAQrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390427AbfJAQpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:45:54 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726956AbfJAQrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:47:03 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C65082190F;
-        Tue,  1 Oct 2019 16:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A536F20659;
+        Tue,  1 Oct 2019 16:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948353;
-        bh=lM3s+irMFNzqa9XyylWt6mj++/lJaQnnIA+xn6KRqk0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jsc5DPKpe/5rMefHH48hNGk9gi1L++/Ta3q5hUBjl4CC47Y5yGUGtWCPdh4Nyr770
-         T2+mkywv13XCBNti2eegdKFUi0fbiOT1RYXIVMuVTn85L+lgNvbKYTYV7/1Se3UrWM
-         FKSwzEfT5LZADIdOBLYng8QduYIclfPzdovBvY9k=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 15/15] sch_netem: fix a divide by zero in tabledist()
-Date:   Tue,  1 Oct 2019 12:45:33 -0400
-Message-Id: <20191001164533.16915-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164533.16915-1-sashal@kernel.org>
-References: <20191001164533.16915-1-sashal@kernel.org>
+        s=default; t=1569948423;
+        bh=JJ7gDG/KutG+i9qf0bFYfM+IUFqtjNVsTgvgalBoxf4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n+MevooD/Y954ryuPnnAl+0+Zq2uKrhxzZTbolBu/i9o/zKOEX4H36Tuu0z4eyDn/
+         Y5ggKuu+7ovuOJw2z3rF9yTMrRzgSbmPal9VvuzLj/i95/F+lUfVA1Prs+gaE+EAWk
+         Ei+64VscEu5RoGOeA3OeGSVNOgveAV1TdLXEBsQg=
+Date:   Tue, 1 Oct 2019 17:46:58 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
+Message-ID: <20191001164657.l2wz3ghq6icm3lim@willie-the-truck>
+References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
+ <20190926214342.34608-1-vincenzo.frascino@arm.com>
+ <20190926214342.34608-2-vincenzo.frascino@arm.com>
+ <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck>
+ <20191001132731.GG41399@arrakis.emea.arm.com>
+ <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
+ <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
+ <7558914c-fc2d-d05a-ccbe-76ef451670ae@arm.com>
+ <20191001144353.5rn3bkcc6eyfclh7@willie-the-truck>
+ <20191001153056.GO41399@arrakis.emea.arm.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191001153056.GO41399@arrakis.emea.arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+On Tue, Oct 01, 2019 at 04:30:56PM +0100, Catalin Marinas wrote:
+> On Tue, Oct 01, 2019 at 03:43:54PM +0100, Will Deacon wrote:
+> > > >>>> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
+> > > >>>>> +config COMPATCC_IS_ARM_GCC
+> > > >>>>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
+> [...]
+> > My point was that we don't attempt to sanitise the compiler passed via
+> > CROSS_COMPILE, so I don't think we should do anything special for COMPATCC
+> > either.
+> 
+> What I really want from kbuild with this patch is:
+> 
+> 1. Not to warn me that I don't have a CROSS_COMPILE_COMPAT set
+> 
+> 2. Not to give me a compilation error if the makefile made up a COMPATCC
+>    that doesn't work
+> 
+> Since we dropped the Kconfig option for the compat gcc prefix (which I
+> didn't like anyway), COMPATCC is now initialised to
+> (CROSS_COMPILE_COMPAT)gcc. This means that it is valid compiler (and
+> it's an aarch64 compiler on my machine). The COMPATCC_IS_ARM_GCC
+> silently disables the compat vDSO for this case rather than giving me a
+> build error if we don't have such checks.
+> 
+> In the long run, I wouldn't mandate CROSS_COMPILE_COMPAT to always be
+> set for the compat vDSO since with clang we could use the same compiler
+> binary for both native and compat (with different flags). That's once we
+> cleaned up the headers.
 
-[ Upstream commit b41d936b5ecfdb3a4abc525ce6402a6c49cffddc ]
+But we'll still need it even with clang so that the relevant triple can be
+passed to the --target option. The top-level Makefile already does this:
 
-syzbot managed to crash the kernel in tabledist() loading
-an empty distribution table.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n544
 
-	t = dist->table[rnd % dist->size];
+so I think we should do the same thing for the compat vdso as well, which
+would allow us to remove this complexity by requiring that
+CROSS_COMPILE_COMPAT identifies the cross-compiler to use in exactly the
+same way as CROSS_COMPILE does.
 
-Simply return an error when such load is attempted.
+Am I missing something here?
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/sched/sch_netem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
-index 7acf1f2b8dfc3..2a431628af591 100644
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -713,7 +713,7 @@ static int get_dist_table(struct Qdisc *sch, const struct nlattr *attr)
- 	int i;
- 	size_t s;
- 
--	if (n > NETEM_DIST_MAX)
-+	if (!n || n > NETEM_DIST_MAX)
- 		return -EINVAL;
- 
- 	s = sizeof(struct disttable) + n * sizeof(s16);
--- 
-2.20.1
-
+Will
