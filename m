@@ -2,111 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E91C3EAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D243C3EB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 19:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730634AbfJARfJ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 1 Oct 2019 13:35:09 -0400
-Received: from ms.lwn.net ([45.79.88.28]:38408 "EHLO ms.lwn.net"
+        id S1731016AbfJARgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 13:36:31 -0400
+Received: from ms.lwn.net ([45.79.88.28]:38418 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbfJARfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 13:35:09 -0400
+        id S1730809AbfJARgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 13:36:31 -0400
 Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id CDC3B491;
-        Tue,  1 Oct 2019 17:35:07 +0000 (UTC)
-Date:   Tue, 1 Oct 2019 11:35:06 -0600
+        by ms.lwn.net (Postfix) with ESMTPSA id 44341316;
+        Tue,  1 Oct 2019 17:36:30 +0000 (UTC)
+Date:   Tue, 1 Oct 2019 11:36:29 -0600
 From:   Jonathan Corbet <corbet@lwn.net>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Jani Nikula <jani.nikula@linux.intel.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 0/2] docs: Programmatically render MAINTAINERS into ReST
-Message-ID: <20191001113506.12720205@lwn.net>
-In-Reply-To: <20191001120930.5d388839@coco.lan>
+Message-ID: <20191001113629.6cdb1abb@lwn.net>
+In-Reply-To: <201910010916.8B8248222@keescook>
 References: <20190924230208.12414-1-keescook@chromium.org>
         <20191001083147.3a1b513f@lwn.net>
-        <20191001120930.5d388839@coco.lan>
+        <201910010916.8B8248222@keescook>
 Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 Oct 2019 12:09:30 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+On Tue, 1 Oct 2019 09:27:29 -0700
+Kees Cook <keescook@chromium.org> wrote:
 
-> >   Sphinx parallel build error:
-> >   UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 8: ordinal not in range(128)
-> > 
-> > For extra fun, the build process simply hangs, requiring a ^C to blow it
-> > away.  You've managed to get new behavior out of Sphinx that I've not seen
-> > before, congratulations :)
-> > 
-> > This almost certainly has to do with the fact that I'm (intentionally)
-> > running the Python2 Sphinx build here.  Something's not doing unicode that
-> > should be.
-> > 
-> > I would suggest that we might just want to repair this before merging this
-> > feature.  Either that, or we bite the bullet and deprecate the use of
-> > Python 2 entirely - something that's probably not too far into our future
-> > regardless.  Anybody have thoughts on that matter?  
+> On Tue, Oct 01, 2019 at 08:31:47AM -0600, Jonathan Corbet wrote:
+> > On a separate note...it occurred to me, rather belatedly as usual, that
+> > last time we discussed doing this that there was some opposition to adding
+> > a second MAINTAINERS parser to the kernel; future changes to the format of
+> > that file may force both to be adjusted, and somebody will invariably
+> > forget one.  Addressing that, if we feel a need to do so, probably requires
+> > tweaking get_maintainer.pl to output the information in a useful format.  
 > 
-> I'm almost sure we got this already. If I'm not mistaken, the solution
-> is to add the encoding line after shebang.
+> That's a reasonable point, but I would make two observations:
+> 
+> - get_maintainers.pl is written in Perl and I really don't want to write
+>   more Perl. ;)
 
-As mentioned before, that's not it.  The problem is that we're feeding
-UTF8 into Sphinx as an ordinary str, then sphinx is trying to decode it
-as ASCII. The attached hack makes things work.
+Trust me, I get it!
 
-Kees, I can either just keep this fix (breaking bisectability of the docs
-build :) or you can send a new version - up to you.
+> - the parsing methods in get_maintainers is much more focused on the
+>   file/pattern matching and is blind to the structure of the rest
+>   of the document (it only examines '^[A-Z]:' and blank lines), and
+>   does so "on demand", in that it hunts through the entire MAINTAINERS
+>   file contents for each path match.
+> 
+> So I don't think it's suitable to merge functionality here...
 
-Thanks,
+Makes sense to me.  If anybody out there objects, speak now ...
 
 jon
-
-From c32bfbb07a7840662ba3b367c61b7f2946028b27 Mon Sep 17 00:00:00 2001
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Tue, 1 Oct 2019 11:26:20 -0600
-Subject: [PATCH] docs: make maintainers_include work with Python 2
-
-The MAINTAINERS file contains UTF-8 data, so Python 2 code has to be
-explicit about moving it into the Unicode realm.  Explicitly decode all
-data from the file as soon as we read it.
-
-This hack can go away once we deprecate Python 2 support.
-
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/sphinx/maintainers_include.py | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/sphinx/maintainers_include.py b/Documentation/sphinx/maintainers_include.py
-index de62dd3dabd5..705ba9fd5336 100755
---- a/Documentation/sphinx/maintainers_include.py
-+++ b/Documentation/sphinx/maintainers_include.py
-@@ -19,6 +19,7 @@ u"""
- 
- import re
- import os.path
-+import sys
- 
- from docutils import statemachine
- from docutils.utils.error_reporting import ErrorString
-@@ -60,6 +61,8 @@ class MaintainersInclude(Include):
-         field_content = ""
- 
-         for line in open(path):
-+            if sys.version_info.major == 2:
-+                line = unicode(line, 'utf-8')
-             # Have we reached the end of the preformatted Descriptions text?
-             if descriptions and line.startswith('Maintainers'):
-                 descriptions = False
--- 
-2.21.0
-
