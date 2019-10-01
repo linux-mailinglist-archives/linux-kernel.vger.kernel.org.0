@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27233C3B46
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5936CC3B4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732699AbfJAQn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:43:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55430 "EHLO mail.kernel.org"
+        id S1732791AbfJAQnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:43:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732646AbfJAQnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:43:23 -0400
+        id S1732678AbfJAQnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:43:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7909721D80;
-        Tue,  1 Oct 2019 16:43:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4734222CC;
+        Tue,  1 Oct 2019 16:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948202;
-        bh=aaNRKxMCl//SOoWE0xPCzikii769S93wd/C/5cBbHWM=;
+        s=default; t=1569948204;
+        bh=gSx/kE23fzHUe4o9lTlqP2NnAB1nJWy1UhDsuCg7TD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ulJexPFxZDdZaAVInYoBUWs0ZsixoQPGgnr6Gf8dXkeG9dg9rkrmfrYRiUkomJGbi
-         AHcSKIqLgenQ+6Xkz46fO4POzQcHZHRJBta3WvmU3Hk2hK4jLUUvwFRFVz8+51vYER
-         +8jZkJ7rl0GncHAWT5UI4iRef8rtaFB9Sb3I0Y3k=
+        b=AYCsRSSCYwGaMQx1tXI95eY9fCHdSl8zQA66vcMJnv9A8zg7IFojIL2T99r58mB/y
+         1+wJXnfko6FM03D2aE8ewrF8CJSopXi8xM28vCIuxFxSP42Rg5wRxhsfRl56X3TnHY
+         yHI+95qpdo7nZR9cUEKTyEGnKLaVLT/SoDes+fIk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Erqi Chen <chenerqi@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 09/43] ceph: reconnect connection if session hang in opening state
-Date:   Tue,  1 Oct 2019 12:42:37 -0400
-Message-Id: <20191001164311.15993-9-sashal@kernel.org>
+Cc:     Ryan Chen <ryan_chen@aspeedtech.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Sasha Levin <sashal@kernel.org>, linux-watchdog@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 11/43] watchdog: aspeed: Add support for AST2600
+Date:   Tue,  1 Oct 2019 12:42:39 -0400
+Message-Id: <20191001164311.15993-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164311.15993-1-sashal@kernel.org>
 References: <20191001164311.15993-1-sashal@kernel.org>
@@ -44,44 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erqi Chen <chenerqi@gmail.com>
+From: Ryan Chen <ryan_chen@aspeedtech.com>
 
-[ Upstream commit 71a228bc8d65900179e37ac309e678f8c523f133 ]
+[ Upstream commit b3528b4874480818e38e4da019d655413c233e6a ]
 
-If client mds session is evicted in CEPH_MDS_SESSION_OPENING state,
-mds won't send session msg to client, and delayed_work skip
-CEPH_MDS_SESSION_OPENING state session, the session hang forever.
+The ast2600 can be supported by the same code as the ast2500.
 
-Allow ceph_con_keepalive to reconnect a session in OPENING to avoid
-session hang. Also, ensure that we skip sessions in RESTARTING and
-REJECTED states since those states can't be resurrected by issuing
-a keepalive.
-
-Link: https://tracker.ceph.com/issues/41551
-Signed-off-by: Erqi Chen chenerqi@gmail.com
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20190819051738.17370-3-joel@jms.id.au
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/mds_client.c | 4 +++-
+ drivers/watchdog/aspeed_wdt.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index bfcf11c70bfad..09db6d08614d2 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -3640,7 +3640,9 @@ static void delayed_work(struct work_struct *work)
- 				pr_info("mds%d hung\n", s->s_mds);
- 			}
- 		}
--		if (s->s_state < CEPH_MDS_SESSION_OPEN) {
-+		if (s->s_state == CEPH_MDS_SESSION_NEW ||
-+		    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
-+		    s->s_state == CEPH_MDS_SESSION_REJECTED) {
- 			/* this mds is failed or recovering, just wait */
- 			ceph_put_mds_session(s);
- 			continue;
+diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+index 1abe4d021fd27..ffde179a9bb2c 100644
+--- a/drivers/watchdog/aspeed_wdt.c
++++ b/drivers/watchdog/aspeed_wdt.c
+@@ -38,6 +38,7 @@ static const struct aspeed_wdt_config ast2500_config = {
+ static const struct of_device_id aspeed_wdt_of_table[] = {
+ 	{ .compatible = "aspeed,ast2400-wdt", .data = &ast2400_config },
+ 	{ .compatible = "aspeed,ast2500-wdt", .data = &ast2500_config },
++	{ .compatible = "aspeed,ast2600-wdt", .data = &ast2500_config },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, aspeed_wdt_of_table);
+@@ -264,7 +265,8 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+ 		set_bit(WDOG_HW_RUNNING, &wdt->wdd.status);
+ 	}
+ 
+-	if (of_device_is_compatible(np, "aspeed,ast2500-wdt")) {
++	if ((of_device_is_compatible(np, "aspeed,ast2500-wdt")) ||
++		(of_device_is_compatible(np, "aspeed,ast2600-wdt"))) {
+ 		u32 reg = readl(wdt->base + WDT_RESET_WIDTH);
+ 
+ 		reg &= config->ext_pulse_width_mask;
 -- 
 2.20.1
 
