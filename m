@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8947C3B17
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87CF2C3B19
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731237AbfJAQll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 12:41:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53258 "EHLO mail.kernel.org"
+        id S1731343AbfJAQlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 12:41:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731157AbfJAQli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:38 -0400
+        id S1731199AbfJAQlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:41:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1983621855;
-        Tue,  1 Oct 2019 16:41:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09D9621D80;
+        Tue,  1 Oct 2019 16:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948097;
-        bh=+mT8/3hA2cfjUIcBsN2OvGqB9yxy2MWscjrV4RnpD/A=;
+        s=default; t=1569948099;
+        bh=96b2onGv28cdNj7i+3WmhLHrCDzhcsySVqat5jNh7Ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZJYRQC5xfJSHFLqUC1V83mYoeiW8qj1E6y11jxRXcwHoJq1DPSvHel8C3sTzOp5R+
-         M9R/ICq16oGF7eMhq+V3iOqlqXQUZwn68pYkChV1hncf8wE33YrkCMzbldzkBm3d02
-         +jej1mRKrWIDML38jX2o2YI4h1UHEtowiOmLLLAI=
+        b=xXkBh6i5VHKePXIXD5ZoFtVcbONIr0FtA7HwyeeQLhMshhDgedHIMBTEk0nPsbz/B
+         0ZIvu4heW+P52KxX55C6pnrpl8sENIekCP5VF7EAHWy9GCD7ouGZqcnDmEI6hIcuIe
+         rnW9ZHSvTC+PJt1/j98mawBtsBkpCIvOFNrrgJ5Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Igor Druzhinin <igor.druzhinin@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 09/63] xen/pci: reserve MCFG areas earlier
-Date:   Tue,  1 Oct 2019 12:40:31 -0400
-Message-Id: <20191001164125.15398-9-sashal@kernel.org>
+Cc:     Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 11/63] ceph: fix directories inode i_blkbits initialization
+Date:   Tue,  1 Oct 2019 12:40:33 -0400
+Message-Id: <20191001164125.15398-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
 References: <20191001164125.15398-1-sashal@kernel.org>
@@ -43,88 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Druzhinin <igor.druzhinin@citrix.com>
+From: Luis Henriques <lhenriques@suse.com>
 
-[ Upstream commit a4098bc6eed5e31e0391bcc068e61804c98138df ]
+[ Upstream commit 750670341a24cb714e624e0fd7da30900ad93752 ]
 
-If MCFG area is not reserved in E820, Xen by default will defer its usage
-until Dom0 registers it explicitly after ACPI parser recognizes it as
-a reserved resource in DSDT. Having it reserved in E820 is not
-mandatory according to "PCI Firmware Specification, rev 3.2" (par. 4.1.2)
-and firmware is free to keep a hole in E820 in that place. Xen doesn't know
-what exactly is inside this hole since it lacks full ACPI view of the
-platform therefore it's potentially harmful to access MCFG region
-without additional checks as some machines are known to provide
-inconsistent information on the size of the region.
+When filling an inode with info from the MDS, i_blkbits is being
+initialized using fl_stripe_unit, which contains the stripe unit in
+bytes.  Unfortunately, this doesn't make sense for directories as they
+have fl_stripe_unit set to '0'.  This means that i_blkbits will be set
+to 0xff, causing an UBSAN undefined behaviour in i_blocksize():
 
-Now xen_mcfg_late() runs after acpi_init() which is too late as some basic
-PCI enumeration starts exactly there as well. Trying to register a device
-prior to MCFG reservation causes multiple problems with PCIe extended
-capability initializations in Xen (e.g. SR-IOV VF BAR sizing). There are
-no convenient hooks for us to subscribe to so register MCFG areas earlier
-upon the first invocation of xen_add_device(). It should be safe to do once
-since all the boot time buses must have their MCFG areas in MCFG table
-already and we don't support PCI bus hot-plug.
+  UBSAN: Undefined behaviour in ./include/linux/fs.h:731:12
+  shift exponent 255 is too large for 32-bit type 'int'
 
-Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Fix this by initializing i_blkbits to CEPH_BLOCK_SHIFT if fl_stripe_unit
+is zero.
+
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/pci.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ fs/ceph/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/xen/pci.c b/drivers/xen/pci.c
-index 3eeb9bea76300..224df03ce42e3 100644
---- a/drivers/xen/pci.c
-+++ b/drivers/xen/pci.c
-@@ -17,6 +17,8 @@
- #include "../pci/pci.h"
- #ifdef CONFIG_PCI_MMCONFIG
- #include <asm/pci_x86.h>
-+
-+static int xen_mcfg_late(void);
- #endif
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index ca3821b0309f7..b1e49fcf7754f 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -805,7 +805,12 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
  
- static bool __read_mostly pci_seg_supported = true;
-@@ -28,7 +30,18 @@ static int xen_add_device(struct device *dev)
- #ifdef CONFIG_PCI_IOV
- 	struct pci_dev *physfn = pci_dev->physfn;
- #endif
--
-+#ifdef CONFIG_PCI_MMCONFIG
-+	static bool pci_mcfg_reserved = false;
-+	/*
-+	 * Reserve MCFG areas in Xen on first invocation due to this being
-+	 * potentially called from inside of acpi_init immediately after
-+	 * MCFG table has been finally parsed.
-+	 */
-+	if (!pci_mcfg_reserved) {
-+		xen_mcfg_late();
-+		pci_mcfg_reserved = true;
-+	}
-+#endif
- 	if (pci_seg_supported) {
- 		struct {
- 			struct physdev_pci_device_add add;
-@@ -201,7 +214,7 @@ static int __init register_xen_pci_notifier(void)
- arch_initcall(register_xen_pci_notifier);
+ 	/* update inode */
+ 	inode->i_rdev = le32_to_cpu(info->rdev);
+-	inode->i_blkbits = fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
++	/* directories have fl_stripe_unit set to zero */
++	if (le32_to_cpu(info->layout.fl_stripe_unit))
++		inode->i_blkbits =
++			fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
++	else
++		inode->i_blkbits = CEPH_BLOCK_SHIFT;
  
- #ifdef CONFIG_PCI_MMCONFIG
--static int __init xen_mcfg_late(void)
-+static int xen_mcfg_late(void)
- {
- 	struct pci_mmcfg_region *cfg;
- 	int rc;
-@@ -240,8 +253,4 @@ static int __init xen_mcfg_late(void)
- 	}
- 	return 0;
- }
--/*
-- * Needs to be done after acpi_init which are subsys_initcall.
-- */
--subsys_initcall_sync(xen_mcfg_late);
- #endif
+ 	__ceph_update_quota(ci, iinfo->max_bytes, iinfo->max_files);
+ 
 -- 
 2.20.1
 
