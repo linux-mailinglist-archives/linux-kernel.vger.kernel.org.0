@@ -2,69 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2D0EC3A5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE3E7C3A5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 18:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389915AbfJAQVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2389939AbfJAQVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 1 Oct 2019 12:21:25 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:33466 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389775AbfJAQVZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mga17.intel.com ([192.55.52.151]:54870 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389776AbfJAQVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 1 Oct 2019 12:21:25 -0400
-Received: by mail-pf1-f202.google.com with SMTP id z4so10639761pfn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2019 09:21:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=zGjQR/sTKc3smldtiGbvkknjnXT+JplA/pSqSqfQKlI=;
-        b=G+DasL0iJZ5kBOTu/zg5lhBzEt6jZOfAi1wnx0r7cOAZ7BldGdYXaJI63ngD6HwE+O
-         td2ExZht8/oykOJ6vj3MIg3yGym9/ezKCc3UmfSjNgdhuBL1BlabvNzMYb2E3ZmK4lmR
-         xKQSP9pNUpOfgoU/c44mv2JlOPpsdNSPsp6QouWh475Br8GI5iE0CIHgwsannd+OKyWt
-         kctUWW68POaqfmJytgwPWY5G+l1LIwfEbaTs2bpLH0Umzhe8ZJmbA42UbPso+f2qtHUY
-         ulHHgYlPaHHs5q5C7uw6TN6jFgZV8vOqg7CfY4xxzi79Ymw1jMuYTQHemWXww+T+xqMs
-         yHPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=zGjQR/sTKc3smldtiGbvkknjnXT+JplA/pSqSqfQKlI=;
-        b=F2ao1a3KlCiAUyWxH0zAZtz1W5wGKGsUV0Kf2roIudbE/7QziIFVPNa/eFZ2qyvLD3
-         Ft39+PtOc71LbQT0hXfuLXF5JxhlAm6l31dybhVyUriwd7Myi7SvmJkOWzCDDZKxEeU3
-         GQ21rxpoSMclW9PJZEComU0xCC+uJaYf6y+5oI0+PUsZiG1rsCPcXaZZFB9keqDlDvY1
-         dSOUoC10q/oiQWfDoER5BliZtkEinn7OjTdDSJnEBg2AUZrHnFYY5c1bIkM4CpLKvFVT
-         NHWNsyiRehEQbhNQUz2IOq4nNqua7qdVdTWbvHcSbclsp8dg71EJbfr2h2CsrbCnlBND
-         JIrg==
-X-Gm-Message-State: APjAAAVHgILGn0VceD8hiS5hNcLRjiX4mzPG08NsZ+gTSkbhHhwi7WcT
-        1krZNbJ8Olbq6VEZAB9OZ0G54CQRQaisylK4eSw=
-X-Google-Smtp-Source: APXvYqyhx8xunEJibdqSSZMbfsVIGbOyET72Al96jQRFry9WCb7OIOKmE3DHCN3SHdahPhXrl18UgoKkM5icUQv7144=
-X-Received: by 2002:a63:d846:: with SMTP id k6mr31013518pgj.378.1569946884027;
- Tue, 01 Oct 2019 09:21:24 -0700 (PDT)
-Date:   Tue,  1 Oct 2019 09:21:21 -0700
-In-Reply-To: <20191001104253.fci7s3sn5ov3h56d@willie-the-truck>
-Message-Id: <20191001162121.67109-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <20191001104253.fci7s3sn5ov3h56d@willie-the-truck>
-X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
-Subject: Re: [PATCH] Partially revert "compiler: enable CONFIG_OPTIMIZE_INLINING
- forcibly"
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     will@kernel.org
-Cc:     arnd@arndb.de, catalin.marinas@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk, nsaenzjulienne@suse.de,
-        torvalds@linux-foundation.org, yamada.masahiro@socionext.com,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2019 09:21:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,571,1559545200"; 
+   d="scan'208";a="221059554"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Oct 2019 09:21:24 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>
+Subject: [PATCH] KVM: nVMX: Fix consistency check on injected exception error code
+Date:   Tue,  1 Oct 2019 09:21:23 -0700
+Message-Id: <20191001162123.26992-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> So you'd prefer I do something like the diff below?
+Current versions of Intel's SDM incorrectly state that "bits 31:15 of
+the VM-Entry exception error-code field" must be zero.  In reality, bits
+31:16 must be zero, i.e. error codes are 16-bit values.
 
-Yes, I find that diff preferable.  Use __always_inline only when absolutely
-necessary.  Even then, it sounds like this is a workaround for one compiler,
-so it should probably also have a comment. (I don't mind changing this for
-all compilers).
+The bogus error code check manifests as an unexpected VM-Entry failure
+due to an invalid code field (error number 7) in L1, e.g. when injecting
+a #GP with error_code=0x9f00.
+
+Nadav previously reported the bug[*], both to KVM and Intel, and fixed
+the associated kvm-unit-test.
+
+[*] https://patchwork.kernel.org/patch/11124749/
+
+Reported-by: Nadav Amit <namit@vmware.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/kvm/vmx/nested.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 41abc62c9a8a..e76eb4f07f6c 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -2610,7 +2610,7 @@ static int nested_check_vm_entry_controls(struct kvm_vcpu *vcpu,
+ 
+ 		/* VM-entry exception error code */
+ 		if (CC(has_error_code &&
+-		       vmcs12->vm_entry_exception_error_code & GENMASK(31, 15)))
++		       vmcs12->vm_entry_exception_error_code & GENMASK(31, 16)))
+ 			return -EINVAL;
+ 
+ 		/* VM-entry interruption-info field: reserved bits */
+-- 
+2.22.0
+
