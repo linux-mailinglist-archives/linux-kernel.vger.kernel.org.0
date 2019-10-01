@@ -2,113 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3211CC378D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B334C3792
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:36:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388993AbfJAOfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:35:07 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52340 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbfJAOfG (ORCPT
+        id S2389053AbfJAOgW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 1 Oct 2019 10:36:22 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:37232 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727143AbfJAOgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:35:06 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r19so3682280wmh.2;
-        Tue, 01 Oct 2019 07:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k26dovb4oQGdd7w6o3TR40KUEyF5ft7G3GUL+iaF6Bo=;
-        b=Xht2cWoQheQyGHryEWbV0cak41WzdwV/ZmRMZE1qYxv6U3rsu5aHFE+QCHhbMoja46
-         r7Y3MFuOBMAd2q2lMPVAvSRbyBsIKotpshJQyJUlI7le14yErMDZwwyGYKqy90RQoBpY
-         0ymknZVXklXxg0xCAgK3pNVt+mFPKjIXmrmyVkoUsnoNxGiz/brKm3Psd2/nRa+s5tBa
-         n0hFY2822Wh2kmVwpEJP+2YeSnzSFUFq69vG2Nr0btpEhhPYAK2bL3js4PEQemRWxBJ4
-         ZsYNCJ62Zkptt0SsGjdlNOHp3ClFECcQDepibbIyjHx0Z71MUIgtSIlGJFZYrXkvhjMK
-         D/jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k26dovb4oQGdd7w6o3TR40KUEyF5ft7G3GUL+iaF6Bo=;
-        b=qFvXcZ7WK3wh2bcFM9lAvf3kT22u4OqT2A+de0DbH4g8h+ajxpUJoCxSZMi72PhfGY
-         NUGBzmKaVuihpis00kQMeIiepKQ9h1BKdvbHM9rF+cH3OWANZ9tRSPQSK4n4a4OffTBV
-         5I/ioLnHGlmdEpB/Z8+RXJJ/puobBoS3poPcs1ckSYdylfMH00bh5L79qY+eeOM+84Qt
-         ez3NKnpfmJWo6HIXyJmZc6nYjCYvOHrpCnky8GOFwXECdRV1HZpOo5Ia2OJbIlBrfGuT
-         Wfe3NfdA9OWwGXuFGXxmjYhEltEagS8dQg5KAjCMxnas9pDxgBHoXob1smN83OFO2hyX
-         ET4A==
-X-Gm-Message-State: APjAAAXS/naZMOXFtmE3ubRH2lrze61Ej1wEMJE9fSgij8xq0dMhAyp9
-        XKY6JyvZPMdEibeZRaFgArU=
-X-Google-Smtp-Source: APXvYqz/9a3rVokHHZK1hmvWkgmQibfuWhrwgHdIFniAPzbQ3ku5JC22LcJ5ZHhm6QKuDHoTk7AYug==
-X-Received: by 2002:a05:600c:295d:: with SMTP id n29mr3873471wmd.36.1569940503859;
-        Tue, 01 Oct 2019 07:35:03 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id c18sm18622360wrn.45.2019.10.01.07.35.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 07:35:02 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 16:35:01 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Philippe Schenker <philippe.schenker@toradex.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Tue, 1 Oct 2019 10:36:22 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-217-OO_eyhEkOW2W7nALFS7WXw-1; Tue, 01 Oct 2019 15:36:10 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 1 Oct 2019 15:36:09 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 1 Oct 2019 15:36:09 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Dan Carpenter' <dan.carpenter@oracle.com>,
+        Denis Efremov <efremov@linux.com>
+CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Jes Sorensen <jes.sorensen@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RESEND PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30
- modules
-Message-ID: <20191001143501.GA3566931@ulmo>
-References: <20190814105318.21902-1-philippe.schenker@toradex.com>
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: RE: [PATCH] staging: rtl8723bs: hal: Fix memcpy calls
+Thread-Topic: [PATCH] staging: rtl8723bs: hal: Fix memcpy calls
+Thread-Index: AQHVd36LU5ikVLKK6EuvH5wLNYQtMKdEMyLwgAGeKE+AAAh2kA==
+Date:   Tue, 1 Oct 2019 14:36:09 +0000
+Message-ID: <8d2e8196cae74ec4ae20e9c23e898207@AcuMS.aculab.com>
+References: <20190930110141.29271-1-efremov@linux.com>
+ <37b195b700394e95aa8329afc9f60431@AcuMS.aculab.com>
+ <e4051dcb-10dc-ff17-ec0b-6f51dccdb5bf@linux.com>
+ <20191001135649.GH22609@kadam>
+In-Reply-To: <20191001135649.GH22609@kadam>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
-Content-Disposition: inline
-In-Reply-To: <20190814105318.21902-1-philippe.schenker@toradex.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MC-Unique: OO_eyhEkOW2W7nALFS7WXw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> From: Dan Carpenter
+> Sent: 01 October 2019 14:57
+> Subject: Re: [PATCH] staging: rtl8723bs: hal: Fix memcpy calls
+...
+> That's true for glibc memcpy() but not for the kernel memcpy().  In the
+> kernel there are lots of places which do a zero size memcpy().
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And probably from NULL (or even garbage) pointers.
 
-On Wed, Aug 14, 2019 at 10:53:38AM +0000, Philippe Schenker wrote:
-> Add the stmpe-adc DT node as found on Toradex T30 modules
->=20
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
->=20
-> ---
->=20
->  arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
->  arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
->  3 files changed, 42 insertions(+), 24 deletions(-)
+After all a pointer to the end of an array (a + ARRAY_SIZE(a)) is valid
+but must not be dereferenced - so memcpy() can't dereference it's
+source address when the length is zero.
 
-Applied to for-5.5/arm/dt , thanks.
+> The glibc attitude is "the standard allows us to put knives here" so
+> let's put knives everywhere in the path.  And the GCC attitude is let's
+> silently remove NULL checks instead of just printing a warning that the
+> NULL check isn't required...  It could really make someone despondent.
 
-Thierry
+gcc is the one that add knives...
 
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
+This reminds me of me of a compiler that decided to optimise away
+checks for function addresses being NULL.
+At almost exactly the same time that ELF allowed for undefined weak symbols.
+Checking whether a function was actually present was non-trivial.
 
------BEGIN PGP SIGNATURE-----
+	David
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2TZBIACgkQ3SOs138+
-s6Hftw/9GSzpANShuy2Bl8XDU0wfm4ImQZHn+gvloV9ychIEQKAJuFYroWjvf1kc
-x/NskhwR081Ap9AfiDk9KWEg2Xe4fnfQmI+zFAPDSEee+OMmvMaTEfY0xYQOAe7l
-OrhXiNadMZKXohIKA2L7lKEGiUsbojTVOh7RSfxTzjCirS+3FWnHnozRVL0Cwwwx
-8lkBdHnUSvJMLrjB7JmE5hFJHIdxmwtkp5YmnQCp+708xMmdy1c3G3kffiyiyrAM
-//qYyzPtduSVEbrBcmQX/22+dOHi9HKPSgzmStqn40j4gioBp06TmRmLe+wdOu90
-G8ZO8tdyFU7TpWwCU8BAZXkpb5C64vZNxjyKDZeLZ4hk2pgu+dQ9hTiJQywyM/oa
-/1Hn/AX43COH++K5KBcVWhu5LvzYMRL7GZzlkiOOGuR9k3F/ig7Qx6DMrnjFPlqI
-m7t4nqqZTlDEzDa53yoVVVdXXiDsKwi8nEOfeIiuEBlU6w6nPf+nui3DBWA3Zkn2
-2XS2Lq2G1qttg5xv1naf5geG5a7Vop+3goArJKpCLNzac/2Vzrkm9kKNyVBre5pz
-dobkYxt5O3x/y7+DIqnpmCV37Gx/9juYh2EH+C3lWCsWiGqzMZxELLU0E1qX9FqR
-O0lbuoWfYfzEuoLEILEfjo1lxpziqUOw1condM59Se6u9R5A+uo=
-=/g0r
------END PGP SIGNATURE-----
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
---PNTmBPCT7hxwcZjr--
