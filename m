@@ -2,129 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4DD4C3330
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C14CC332D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 13:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732566AbfJALoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 07:44:09 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42934 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfJALoI (ORCPT
+        id S2387868AbfJALnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 07:43:08 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43857 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732551AbfJALnH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 07:44:08 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91BdPOA108493;
-        Tue, 1 Oct 2019 11:43:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=lnG8BPnD8/6NBUc+rdead5ZSBxoJDpmqlmAuxokp6ew=;
- b=K5qq1ykNGM47h3h3GrvkRvm75Pz6r9gTAUhYA/YsPo/4MUd/2Z+J62R1xZsR1k02jWVW
- QqRVwJxLfc/GKSMcFGvu5B620UbRdQQtPiK2v8Jqk2ie6n46yVJdot4qEWEBzHdQ2e+d
- klqH2Qy+MlROrjUZv1agAvRPHz/d67eewh7T86Y6V1tjdenal6F9xCZhSBlkc2Qb8nWM
- RIV+lhx6DrV+Ceg+QFBbocK5FBoHWDpCUAY+X/lsTqmsm4bhwEzj2sJmKXiONUsy52Xi
- 3Mf5P+DCWCW+pT+vYaIgok+BA9h4ItRxqrQaEBoKthDjer3A05Cwg1+z12z+oUTJ3VKA Rw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2v9yfq56qb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 11:43:46 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x91Bcs8N019888;
-        Tue, 1 Oct 2019 11:41:46 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2vbsm1txud-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 11:41:45 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x91BfcM9029174;
-        Tue, 1 Oct 2019 11:41:39 GMT
-Received: from tomti.i.net-space.pl (/10.175.183.114)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Oct 2019 04:41:38 -0700
-Date:   Tue, 1 Oct 2019 13:41:33 +0200
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, bp@alien8.de, corbet@lwn.net,
-        dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
-        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        mingo@redhat.com, ross.philipson@oracle.com, tglx@linutronix.de
-Subject: Re: [PATCH v2 1/3] x86/boot: Introduce the kernel_info
-Message-ID: <20191001114133.xy5nuhepzzixhuh4@tomti.i.net-space.pl>
-References: <20190704163612.14311-1-daniel.kiper@oracle.com>
- <20190704163612.14311-2-daniel.kiper@oracle.com>
- <5633066F-01BE-437D-A564-150FD48B6D92@zytor.com>
- <20190930150110.ekir52wu3w67v2fk@tomti.i.net-space.pl>
- <c9eb5a39-ced5-b35d-616d-6ffbe15c1396@zytor.com>
+        Tue, 1 Oct 2019 07:43:07 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o44so11219832ota.10;
+        Tue, 01 Oct 2019 04:43:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qBJxEX/eYnXyleU23su6cmwpDx2vW/AsucVLt4T1oY4=;
+        b=SrsvjXJAyeqsNBsGElZzT0KGkSpYuK7sgq24G1As8ftzrIo5rti/JbqiykhlyXFgf5
+         JiFMXxcYB46QQFKQLv51qlcLKR76vvmZMb850QW7WDRNCv1NaxCNfhN2NIpuCsEwtQRA
+         JYZ11SzpZo2SicOb9h7OS9vCAlbNGmdFze4CGAGhwV0j4O0j/rpfoiv/+o2MnCtivnfR
+         wOPs4SM40cggEScQYnNGPwtxAehpP1Tv1FczsjQINj/xGtGPVshdS9ySoOiEKKNcWYuu
+         itY6TkXQOduNJ0j/lIG1r7bOP4MKbPQ72ef0+U50YJ1YHj7gVznkrbm1d37kUAjurMrI
+         8TXQ==
+X-Gm-Message-State: APjAAAXQ56GkXLcwBCBnG/O/fGmPNIHRqrJcbGnjZ9X5LtmjBGifsg+b
+        6oHsot2LswliCmgOb6DWkFS3Xu+4Wg==
+X-Google-Smtp-Source: APXvYqzG8a5/BqVOShp3MMjA8cBOESjkC8SFtqntj1uGWf40TDhUIGK4H9QgRbGE2/PDdzHrHHNLYw==
+X-Received: by 2002:a9d:3b26:: with SMTP id z35mr17205216otb.182.1569930186825;
+        Tue, 01 Oct 2019 04:43:06 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q199sm5116011oic.16.2019.10.01.04.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2019 04:43:06 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 06:43:05 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Gareth Williams <gareth.williams.jx@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gareth Williams <gareth.williams.jx@renesas.com>
+Subject: Re: [PATCH v2 1/4] dt: spi: Add Renesas RZ/N1 binding documentation
+Message-ID: <20191001114305.GA27944@bogus>
+References: <1568793876-9009-1-git-send-email-gareth.williams.jx@renesas.com>
+ <1568793876-9009-2-git-send-email-gareth.williams.jx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c9eb5a39-ced5-b35d-616d-6ffbe15c1396@zytor.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=813
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910010108
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9396 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=887 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910010108
+In-Reply-To: <1568793876-9009-2-git-send-email-gareth.williams.jx@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 10:18:43AM -0700, H. Peter Anvin wrote:
-> On 2019-09-30 08:01, Daniel Kiper wrote:
-> >
-> > OK.
-> >
-> >> field for the entire .kernel_info section, thus ensuring it is a
-> >> single self-contained blob.
-> >
-> > .rodata.kernel_info contains its total size immediately behind the
-> > "InfO" header. Do you suggest that we should add the size of
-> > .rodata.kernel_info into setup_header too?
-> >
->
-> No, what I want is a chunked architecture for kernel_info.
->
-> That is:
->
-> /* Common chunk header */
-> struct kernel_info_header {
-> 	uint32_t magic;
-> 	uint32_t len;
-> };
->
-> /* Top-level chunk, always first */
-> #define KERNEL_INFO_MAGIC 0x45fdbe4f
->
-> struct kernel_info {
-> 	struct kernel_info_header hdr;
-> 	uint32_t total_size;		/* Total size of all chunks */
->
-> 	/* Various fixed-sized data objects, OR offsets to other chunks */
-> };
+On Wed, 18 Sep 2019 09:04:33 +0100, Gareth Williams wrote:
+> From: Phil Edworthy <phil.edworthy@renesas.com>
+> 
+> The Renesas RZ/N1 SPI Controller is based on the Synopsys DW SSI, but has
+> additional registers for software CS control and DMA. This patch does not
+> address the changes required for DMA support, it simply adds the compatible
+> string. The CS functionality is not very useful and also not needed as
+> Linux can use gpios for the CS signals.
+> 
+> Add a compatible string to handle any unforeseen issues that may arise, and
+> pave the way for DMA support.
+> 
+> Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> Note: All the other manufacturers detail their compatible strings in
+> snps,dw-apb-ssi.txt. I think it makes sense for rzn1 to be in it's own file
+> due to the changes made to the peripheral for DMA support.
+> 
+> v2:
+>  - No changes.
+> ---
+>  Documentation/devicetree/bindings/spi/renesas,rzn1-spi.txt | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/renesas,rzn1-spi.txt
+> 
 
-OK, so, this is more or less what I had in my v3 patch before sending
-this email. So, it looks that I am on good track. Great! Though I am not
-sure that we should have magic for chunked objects. If yes could you
-explain why? I would just leave len for chunked objects.
-
-> Also "InfO" is a pretty hideous magic. In general, all-ASCII magics have much
-> higher risk of collision than *RANDOM* binary numbers. However, for a chunked
-> architecture they do have the advantage that they can be used also as a human
-> name or file name for the chunk, e.,g. in sysfs, so maybe something like
-> "LnuX" or even "LToP" for the top-level chunk might make sense.
->
-> How does that sound?
-
-Well, your proposals are more cryptic, especially the second one, than
-mine but I tend to agree that more *RANDOM* magics are better. So,
-I would choose "LToP" if you decipher it for me. Linux Top?
-
-Daniel
+Reviewed-by: Rob Herring <robh@kernel.org>
