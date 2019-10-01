@@ -2,186 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCF4C385D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E90A6C3850
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2019 16:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389445AbfJAO7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 10:59:15 -0400
-Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:20472 "EHLO
-        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727194AbfJAO7O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 10:59:14 -0400
-Received: from pps.filterd (m0170395.ppops.net [127.0.0.1])
-        by mx0b-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91EdswL015326;
-        Tue, 1 Oct 2019 10:59:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=sqH/a2bF4Hj9eML4oBYR/Te05wFz7EleJ/g6nv0L5yw=;
- b=mfqSB9qSt0DiiAWuXM+W5Mi9QVzcUhYWXKrVhbb5J37Ou+VVy30a+xPynHsb48Y0yqA4
- 393kHtk/1anCXwn3xvKzC5SiFGBzo996JFoZiqijwn8PuBaIRUk4H3LhmtDM9Jh/9wu5
- XGPG0xOGcPToDWucNebKkpoyCdw4/hnpdd2UvZaAlz+TLAOKthO/R7MvLWUHsC2PfShS
- /MsAf0NHDY2pIyi8lK/ru2ry6TYPILH/kwTrpiT136PWS08GkcBRrMCqVDrtsUp8YnTF
- LmXktUQ4s22z9+wFdKJSGTetQKM57gRuhRM+KKIeUqC9A73AEt4kA0BCv011teIMkw1L gA== 
-Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
-        by mx0b-00154904.pphosted.com with ESMTP id 2va46nds3m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Oct 2019 10:59:09 -0400
-Received: from pps.filterd (m0134318.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x91Ebllj052890;
-        Tue, 1 Oct 2019 10:59:09 -0400
-Received: from ausxipps306.us.dell.com (AUSXIPPS306.us.dell.com [143.166.148.156])
-        by mx0a-00154901.pphosted.com with ESMTP id 2va25fg4qf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Oct 2019 10:59:08 -0400
-X-LoopCount0: from 10.166.132.127
-X-PREM-Routing: D-Outbound
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="382040259"
-From:   <Mario.Limonciello@dell.com>
-To:     <gregkh@linuxfoundation.org>, <mika.westerberg@linux.intel.com>
-CC:     <linux-usb@vger.kernel.org>, <andreas.noever@gmail.com>,
-        <michael.jamet@intel.com>, <YehezkelShB@gmail.com>,
-        <rajmohan.mani@intel.com>,
-        <nicholas.johnson-opensource@outlook.com.au>, <lukas@wunner.de>,
-        <stern@rowland.harvard.edu>, <anthony.wong@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
-Thread-Topic: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
-Thread-Index: AQHVeEzShOhklesInk+gx9St4A7986dGEBMAgAAF8oCAAB1JAP//rPeA
-Date:   Tue, 1 Oct 2019 14:59:06 +0000
-Message-ID: <924ce4d5862c4d859e238c0e706a3d5b@AUSX13MPC105.AMER.DELL.COM>
-References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
- <20191001113830.13028-18-mika.westerberg@linux.intel.com>
- <20191001124748.GH2954373@kroah.com>
- <20191001130905.GO2714@lahna.fi.intel.com>
- <20191001145354.GA3366714@kroah.com>
-In-Reply-To: <20191001145354.GA3366714@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-10-01T14:59:04.7528531Z;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
- aiplabel=External Public
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2389576AbfJAO6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 10:58:03 -0400
+Received: from foss.arm.com ([217.140.110.172]:51790 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389029AbfJAO6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:58:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B41E1000;
+        Tue,  1 Oct 2019 07:58:02 -0700 (PDT)
+Received: from [10.37.8.149] (unknown [10.37.8.149])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE5A73F71A;
+        Tue,  1 Oct 2019 07:58:00 -0700 (PDT)
+Subject: Re: [PATCH v3 1/5] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
+        tglx@linutronix.de
+References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
+ <20190926214342.34608-1-vincenzo.frascino@arm.com>
+ <20190926214342.34608-2-vincenzo.frascino@arm.com>
+ <20191001131420.y3fsydlo7pg6ykfs@willie-the-truck>
+ <20191001132731.GG41399@arrakis.emea.arm.com>
+ <ed7d1465-2d7b-d57c-c1b1-215af1ba7a6f@arm.com>
+ <20191001142038.ptwyfbesfrz3kkoz@willie-the-truck>
+ <7558914c-fc2d-d05a-ccbe-76ef451670ae@arm.com>
+ <20191001144353.5rn3bkcc6eyfclh7@willie-the-truck>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <7306ead0-a9b6-98d0-e775-c677eeeb55a5@arm.com>
+Date:   Tue, 1 Oct 2019 15:59:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-01_07:2019-10-01,2019-10-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0
- impostorscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- mlxlogscore=999 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1908290000 definitions=main-1910010132
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 bulkscore=0 mlxscore=0 spamscore=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 impostorscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1910010132
+In-Reply-To: <20191001144353.5rn3bkcc6eyfclh7@willie-the-truck>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/1/19 3:43 PM, Will Deacon wrote:
+> On Tue, Oct 01, 2019 at 03:37:49PM +0100, Vincenzo Frascino wrote:
+>> On 10/1/19 3:20 PM, Will Deacon wrote:
+>>> On Tue, Oct 01, 2019 at 03:20:35PM +0100, Vincenzo Frascino wrote:
+>>>> On 10/1/19 2:27 PM, Catalin Marinas wrote:
+>>>>> On Tue, Oct 01, 2019 at 02:14:23PM +0100, Will Deacon wrote:
+>>>>>> On Thu, Sep 26, 2019 at 10:43:38PM +0100, Vincenzo Frascino wrote:
+>>>>>>> +config COMPATCC_IS_ARM_GCC
+>>>>>>> +	def_bool $(success,$(COMPATCC) --version | head -n 1 | grep -q "arm-.*-gcc")
+>>>>>>
+>>>>>> I've seen toolchains where the first part of the tuple is "armv7-", so they
+>>>>>> won't get detected here. However, do we really need to detect this? If
+>>>>>> somebody passes a duff compiler, then the build will fail in the same way as
+>>>>>> if they passed it to CROSS_COMPILE=.
+>>>>>
+>>>>> Not sure what happens if we pass an aarch64 compiler. Can we end up with
+>>>>> a 64-bit compat vDSO?
+>>>>>
+>>>>
+>>>> I agree with Catalin here. The problem is not only when you pass and aarch64
+>>>> toolchain but even an x86 and so on.
+>>>
+>>> I disagree. What happens if you do:
+>>>
+>>> $ make ARCH=arm64 CROSS_COMPILE=x86_64-linux-gnu-
+>>>
+>>> on your x86 box?
+>>>
+>>
+>> The kernel compilation breaks as follows:
+>>
+>> x86_64-linux-gnu-gcc: error: unrecognized command line option ‘-mlittle-endian’;
+>> did you mean ‘-fconvert=little-endian’?
+>> /data1/Projects/LinuxKernel/linux/scripts/Makefile.build:265: recipe for target
+>> 'scripts/mod/empty.o' failed
+>> make[2]: *** [scripts/mod/empty.o] Error 1
+>> /data1/Projects/LinuxKernel/linux/Makefile:1128: recipe for target 'prepare0' failed
+>> make[1]: *** [prepare0] Error 2
+>> make[1]: Leaving directory '/data1/Projects/LinuxKernel/linux-out'
+>> Makefile:179: recipe for target 'sub-make' failed
+>> make: *** [sub-make] Error 2
+>>
+>> Similar issue in the compat vdso library compilation if I do (without the check):
+>>
+>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+>> CROSS_COMPILE_COMPAT=x86_64-linux-gnu-
+>>
+>> With this check the compilation completes correctly but the compat vdso does not
+>> get built (unless my environment is playing me tricks ;) ).
+> 
+> My point was that we don't attempt to sanitise the compiler passed via
+> CROSS_COMPILE, so I don't think we should do anything special for COMPATCC
+> either.
+>
 
+I agree on this, but the point I was trying to make is that the kernel should
+still be able to build even if the compiler for compat vdso is not correct.
 
-> -----Original Message-----
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Sent: Tuesday, October 1, 2019 9:54 AM
-> To: Mika Westerberg
-> Cc: linux-usb@vger.kernel.org; Andreas Noever; Michael Jamet; Yehezkel Be=
-rnat;
-> Rajmohan Mani; Nicholas Johnson; Lukas Wunner; Alan Stern; Limonciello, M=
-ario;
-> Anthony Wong; linux-kernel@vger.kernel.org
-> Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> On Tue, Oct 01, 2019 at 04:09:05PM +0300, Mika Westerberg wrote:
-> > On Tue, Oct 01, 2019 at 02:47:48PM +0200, Greg Kroah-Hartman wrote:
-> > > > -	  Thunderbolt Controller driver. This driver is required if you
-> > > > -	  want to hotplug Thunderbolt devices on Apple hardware or on PCs
-> > > > -	  with Intel Falcon Ridge or newer.
-> > > > +	  USB4 (Thunderbolt) driver. USB4 is the public spec based on
-> > > > +	  Thunderbolt 3 protocol. This driver is required if you want to
-> > > > +	  hotplug Thunderbolt and USB4 compliant devices on Apple
-> > > > +	  hardware or on PCs with Intel Falcon Ridge or newer.
-> > >
-> > > Wait, did "old" thunderbolt just get re-branded as USB4?
-> >
-> > Not but the driver started supporting USB4 as well :)
-> >
-> > USB4 is pretty much public spec of Thunderbolt 3 but with some
-> > differences in register layouts (this is because Thunderbolt uses some
-> > vendor specific capabilities which are now moved to more "standard"
-> > places).
->=20
-> Ok, then we need to rename the Kconfig option as well, otherwise no one
-> will "know" that this changed, so they will not be prompted for it.
->=20
-> > > Because if I have an "old" laptop that needs Thunderbolt support, how=
- am
-> > > I going to know it is now called USB4 instead?
-> >
-> > Well the Kconfig option tries to have both names there:
-> >
-> >   tristate "USB4 (Thunderbolt) support"
-> >
-> > and then
-> >
-> >   USB4 (Thunderbolt) driver. USB4 is the public spec based on
-> >   Thunderbolt 3 protocol. This driver is required if you want to hotplu=
-g
-> >   Thunderbolt and USB4 compliant devices on Apple hardware or on PCs
-> >   with Intel Falcon Ridge or newer.
-> >
-> > and the Kconfig option is still CONFIG_THUNDERBOLT. I know this is
-> > confusing but I don't have better ideas how we can advertise both. I
-> > borrowed this "format" from firewire.
->=20
-> CONFIG_USB4 instead?
+I do not have a strong opinion though.
 
-How about CONFIG_USB4_PCIE?
+> Will
+> 
 
-I think that will help align that certain aspects of USB4 can be built opti=
-onally.
-
->=20
-> > > Shouldn't there just be a new USB4 option that only enables/builds th=
-e
-> > > USB4 stuff if selected?  Why would I want all of this additional code=
- on
-> > > my old system if it's not going to do anything at all?
-> >
-> > USB4 devices are backward compatible with Thunderbolt 3 so you should b=
-e
-> > able to plug in USB4 device to your old Thunderbolt 3 laptop for
-> > example. It goes the other way as well. Some things are optional but fo=
-r
-> > example USB4 hubs must support also Thunderbolt 3.
-> >
-
-If PCIe tunnels are an optional feature in USB4, how can it be mandatory to=
- support
-Thunderbolt 3?
-
-> > Does that clarify?
->=20
-> Yes, it does, looks like marketing just renamed an old functioning
-> system into a "brand new one!" :)
->=20
-> thanks,
->=20
-> greg k-h
+-- 
+Regards,
+Vincenzo
