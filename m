@@ -2,114 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A23AC8A78
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D9BC8A80
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:05:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbfJBOFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:05:43 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:52362 "EHLO inva021.nxp.com"
+        id S1728017AbfJBOFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:05:47 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50364 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726087AbfJBOFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:05:43 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C7E920067F;
-        Wed,  2 Oct 2019 16:05:40 +0200 (CEST)
+        id S1726373AbfJBOFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 10:05:44 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A8D741A02D1;
+        Wed,  2 Oct 2019 16:05:41 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B46E200141;
-        Wed,  2 Oct 2019 16:05:40 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B3E01A0048;
+        Wed,  2 Oct 2019 16:05:41 +0200 (CEST)
 Received: from fsr-ub1664-121.ea.freescale.net (fsr-ub1664-121.ea.freescale.net [10.171.82.171])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C8B962060C;
-        Wed,  2 Oct 2019 16:05:39 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0FE102060C;
+        Wed,  2 Oct 2019 16:05:41 +0200 (CEST)
 From:   Laurentiu Palcu <laurentiu.palcu@nxp.com>
-To:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
+        NXP Linux Team <linux-imx@nxp.com>
 Cc:     agx@sigxcpu.org, l.stach@pengutronix.de,
         Laurentiu Palcu <laurentiu.palcu@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/5] Add support for iMX8MQ Display Controller Subsystem
-Date:   Wed,  2 Oct 2019 17:04:52 +0300
-Message-Id: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
+        Abel Vesa <abel.vesa@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 1/5] clk: imx8mq: Add VIDEO2_PLL clock
+Date:   Wed,  2 Oct 2019 17:04:53 +0300
+Message-Id: <1570025100-5634-2-git-send-email-laurentiu.palcu@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
+References: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This clock is needed by DCSS when high resolutions are used.
 
-This patchset adds initial DCSS support for iMX8MQ chip. Initial support
-includes only graphics plane support (no video planes), no HDR10 capabilities,
-no graphics decompression (only linear, tiled and super-tiled buffers allowed).
+Signed-off-by: Laurentiu Palcu <laurentiu.palcu@nxp.com>
+CC: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mq.c             | 4 ++++
+ include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Support for the rest of the features will be added incrementally, in subsequent
-patches.
-
-The patchset was tested with both HDP driver (not yet upstreamed) and MIPI-DSI
-(drivers already on the dri-devel ML).
-
-Thanks,
-Laurentiu
-
-Changes in v2:
- * Removed '0x' in node's unit-address both in DT and yaml;
- * Made the address region size lowercase, to be consistent;
- * Removed some left-over references to P010;
- * Added a Kconfig dependency of DRM && ARCH_MXC. This will also silence compilation
-   issues reported by kbuild for other architectures;
-
-
-Laurentiu Palcu (5):
-  clk: imx8mq: Add VIDEO2_PLL clock
-  drm/imx: compile imx directory by default
-  drm/imx: Add initial support for DCSS on iMX8MQ
-  dt-bindings: display: imx: add bindings for DCSS
-  arm64: dts: imx8mq: add DCSS node
-
- .../bindings/display/imx/nxp,imx8mq-dcss.yaml      |  86 +++
- arch/arm64/boot/dts/freescale/imx8mq.dtsi          |  25 +
- drivers/clk/imx/clk-imx8mq.c                       |   4 +
- drivers/gpu/drm/Makefile                           |   2 +-
- drivers/gpu/drm/imx/Kconfig                        |   2 +
- drivers/gpu/drm/imx/Makefile                       |   1 +
- drivers/gpu/drm/imx/dcss/Kconfig                   |   8 +
- drivers/gpu/drm/imx/dcss/Makefile                  |   6 +
- drivers/gpu/drm/imx/dcss/dcss-blkctl.c             |  75 ++
- drivers/gpu/drm/imx/dcss/dcss-crtc.c               | 223 ++++++
- drivers/gpu/drm/imx/dcss/dcss-ctxld.c              | 447 +++++++++++
- drivers/gpu/drm/imx/dcss/dcss-dev.c                | 286 +++++++
- drivers/gpu/drm/imx/dcss/dcss-dev.h                | 195 +++++
- drivers/gpu/drm/imx/dcss/dcss-dpr.c                | 548 ++++++++++++++
- drivers/gpu/drm/imx/dcss/dcss-drv.c                | 182 +++++
- drivers/gpu/drm/imx/dcss/dcss-dtg.c                | 438 +++++++++++
- drivers/gpu/drm/imx/dcss/dcss-kms.c                | 321 ++++++++
- drivers/gpu/drm/imx/dcss/dcss-kms.h                |  52 ++
- drivers/gpu/drm/imx/dcss/dcss-plane.c              | 418 +++++++++++
- drivers/gpu/drm/imx/dcss/dcss-scaler.c             | 826 +++++++++++++++++++++
- drivers/gpu/drm/imx/dcss/dcss-ss.c                 | 179 +++++
- include/dt-bindings/clock/imx8mq-clock.h           |   4 +-
- 22 files changed, 4326 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
- create mode 100644 drivers/gpu/drm/imx/dcss/Kconfig
- create mode 100644 drivers/gpu/drm/imx/dcss/Makefile
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-blkctl.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-crtc.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-ctxld.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dev.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dev.h
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dpr.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-drv.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dtg.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-kms.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-kms.h
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-plane.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-scaler.c
- create mode 100644 drivers/gpu/drm/imx/dcss/dcss-ss.c
-
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 41fc9c6..05ece7b 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -38,6 +38,7 @@ static const char * const sys1_pll_out_sels[] = {"sys1_pll1_ref_sel", };
+ static const char * const sys2_pll_out_sels[] = {"sys1_pll1_ref_sel", "sys2_pll1_ref_sel", };
+ static const char * const sys3_pll_out_sels[] = {"sys3_pll1_ref_sel", "sys2_pll1_ref_sel", };
+ static const char * const dram_pll_out_sels[] = {"dram_pll1_ref_sel", };
++static const char * const video2_pll_out_sels[] = {"video2_pll1_ref_sel", };
+ 
+ /* CCM ROOT */
+ static const char * const imx8mq_a53_sels[] = {"osc_25m", "arm_pll_out", "sys2_pll_500m", "sys2_pll_1000m",
+@@ -311,6 +312,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+ 	clks[IMX8MQ_SYS2_PLL1_REF_SEL]	= imx_clk_mux("sys2_pll1_ref_sel", base + 0x3c, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 	clks[IMX8MQ_SYS3_PLL1_REF_SEL]	= imx_clk_mux("sys3_pll1_ref_sel", base + 0x48, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 	clks[IMX8MQ_DRAM_PLL1_REF_SEL]	= imx_clk_mux("dram_pll1_ref_sel", base + 0x60, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
++	clks[IMX8MQ_VIDEO2_PLL1_REF_SEL] = imx_clk_mux("video2_pll1_ref_sel", base + 0x54, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 
+ 	clks[IMX8MQ_ARM_PLL_REF_DIV]	= imx_clk_divider("arm_pll_ref_div", "arm_pll_ref_sel", base + 0x28, 5, 6);
+ 	clks[IMX8MQ_GPU_PLL_REF_DIV]	= imx_clk_divider("gpu_pll_ref_div", "gpu_pll_ref_sel", base + 0x18, 5, 6);
+@@ -346,6 +348,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+ 	clks[IMX8MQ_SYS2_PLL_OUT] = imx_clk_sccg_pll("sys2_pll_out", sys2_pll_out_sels, ARRAY_SIZE(sys2_pll_out_sels), 0, 0, 1, base + 0x3c, CLK_IS_CRITICAL);
+ 	clks[IMX8MQ_SYS3_PLL_OUT] = imx_clk_sccg_pll("sys3_pll_out", sys3_pll_out_sels, ARRAY_SIZE(sys3_pll_out_sels), 0, 0, 1, base + 0x48, CLK_IS_CRITICAL);
+ 	clks[IMX8MQ_DRAM_PLL_OUT] = imx_clk_sccg_pll("dram_pll_out", dram_pll_out_sels, ARRAY_SIZE(dram_pll_out_sels), 0, 0, 0, base + 0x60, CLK_IS_CRITICAL);
++	clks[IMX8MQ_VIDEO2_PLL_OUT] = imx_clk_sccg_pll("video2_pll_out", video2_pll_out_sels, ARRAY_SIZE(video2_pll_out_sels), 0, 0, 0, base + 0x54, 0);
++
+ 	/* SYS PLL fixed output */
+ 	clks[IMX8MQ_SYS1_PLL_40M] = imx_clk_fixed_factor("sys1_pll_40m", "sys1_pll_out", 1, 20);
+ 	clks[IMX8MQ_SYS1_PLL_80M] = imx_clk_fixed_factor("sys1_pll_80m", "sys1_pll_out", 1, 10);
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
+index 6546367..35b9ed9 100644
+--- a/include/dt-bindings/clock/imx8mq-clock.h
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -403,5 +403,7 @@
+ #define IMX8MQ_CLK_SNVS_ROOT			264
+ #define IMX8MQ_CLK_GIC				265
+ 
+-#define IMX8MQ_CLK_END				266
++#define IMX8MQ_VIDEO2_PLL1_REF_SEL		266
++
++#define IMX8MQ_CLK_END				267
+ #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
 -- 
 2.7.4
 
