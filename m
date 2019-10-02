@@ -2,120 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42667C9195
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC6ABC918B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbfJBTKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:10:02 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:60726 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729704AbfJBTJz (ORCPT
+        id S1729701AbfJBTJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:09:50 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:36064 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729337AbfJBTJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:09:55 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iFk0L-0000qJ-HV; Wed, 02 Oct 2019 21:09:41 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E26151C03A9;
-        Wed,  2 Oct 2019 21:09:40 +0200 (CEST)
-Date:   Wed, 02 Oct 2019 19:09:40 -0000
-From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/rdrand: Sanity-check RDRAND output
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@suse.de>, Pu Wen <puwen@hygon.cn>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com>
-References: <CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com>
+        Wed, 2 Oct 2019 15:09:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id BDE753F31A;
+        Wed,  2 Oct 2019 21:09:45 +0200 (CEST)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Vv50zyjE;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.1
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VgvaLYn_a4rC; Wed,  2 Oct 2019 21:09:44 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 0B70E3F247;
+        Wed,  2 Oct 2019 21:09:41 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 20E7036005C;
+        Wed,  2 Oct 2019 21:09:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1570043381; bh=un9Yli6t+rpUOQrchmJq2mc/5qmOJ2r/ZU8Lu7dWySs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Vv50zyjEH94ORp4kXZ+FlQiRtzGFnTsl5Oj1OPFHbWYQApu4nh74c4WjqkEPdCxtV
+         NGuOhQVfYQSTsXzmy927FMiSXbUIunG2gIf6kzqFKRGk/8iTcmH1cF7vMLbTmHLS4e
+         Lz+7feRjwvV6itx+zr37L1X8S00HCTcyw5/U5RUg=
+Subject: Re: [PATCH v3 3/7] mm: Add write-protect and clean utilities for
+ address space ranges
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>
+References: <20191002134730.40985-1-thomas_os@shipmail.org>
+ <20191002134730.40985-4-thomas_os@shipmail.org>
+ <CAHk-=wic5vXCxpH-+UTtmH_t-EDBKrKnDhxQk=t_N20aiWnqUg@mail.gmail.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <516814a5-a616-b15e-ac87-26ede681da85@shipmail.org>
+Date:   Wed, 2 Oct 2019 21:09:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Message-ID: <157004338078.9978.6255400681793760670.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <CAHk-=wic5vXCxpH-+UTtmH_t-EDBKrKnDhxQk=t_N20aiWnqUg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cpu branch of tip:
+On 10/2/19 8:06 PM, Linus Torvalds wrote:
+> On Wed, Oct 2, 2019 at 6:48 AM Thomas Hellström (VMware)
+> <thomas_os@shipmail.org> wrote:
+>> From: Thomas Hellstrom <thellstrom@vmware.com>
+>>
+>> Add two utilities to a) write-protect and b) clean all ptes pointing into
+>> a range of an address space.
+> This one I still don't exactly love.
+>
+> I'm not entirely sure what rubs me the wrong way, but part of it is
+> naming. We don't use the name "as", because it reads as (sic) an
+> English word.
+>
+> The name we use for address_space pointers is "mapping", both for
+> variables and for existing functions.
+>
+> See for example "pte_same_as_swp()" which uses "as" as the _word_ 'as'.
+>
+> Contrast that with "unmap_mapping_range()" or
+> "mapping_set_unevictable()" or "read_mapping_page()" or
+> "invalidate_mapping_pages()", that all work on address spaces.
+>
+> So please don't use 'as' as shorthand for that - eithe rin the
+> function names or the filename.
+>
+> I'm not sure if that's the _only_ thing that raises my heckles when I
+> read this patch, but I think it might be. So I'm not saying "ack with
+> naming change", but I suspect that if the naming was changed, it would
+> look much better to me.
+>
+> Yes, it's a bit more typing. But I really think
+> "clean_mapping_dirty_pages()" is just not only more in line with the
+> mm naming, I think it's a lot more legible and understandable than
+> "as_dirty_clean()", which just makes me go "what the heck does that
+> function do?"
+>
+> And I really think it needs more than just "as" -> "mapping".
+> "mapping_dirty_clean()" still makes me go "what?" in a way that
+> "clean_mapping_dirty_pages()" does not. One name reads as a series or
+> random words, the other reads as a "this is what the function does".
+>
+> I know I sometimes get hung up about naming, but I do think naming
+> matters.  A descriptive name that just reads as what the function does
+> makes it much easier to read the logic of code, imnsho.
+>
+>                Linus
 
-Commit-ID:     7879fc4bdc7506d37bd67b6fc29442c53c06dfda
-Gitweb:        https://git.kernel.org/tip/7879fc4bdc7506d37bd67b6fc29442c53c06dfda
-Author:        Borislav Petkov <bp@suse.de>
-AuthorDate:    Sun, 25 Aug 2019 22:50:18 +02:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Tue, 01 Oct 2019 19:55:32 +02:00
+Yes I typically tend towards using a "namespace_object_operation" naming 
+scheme, with "as_dirty" being the namespace here,
 
-x86/rdrand: Sanity-check RDRAND output
+But I'll give it a shot to see if I can rename it more in line with the 
+above.
 
-It turned out recently that on certain AMD F15h and F16h machines, due
-to the BIOS dropping the ball after resume, yet again, RDRAND would not
-function anymore:
+Looking at Matthew's suggestion but lining up with 
+"unmap_mapping_range()", perhaps we could use "clean_mapping_range" and 
+"wp_mapping_range"?
 
-  c49a0a80137c ("x86/CPU/AMD: Clear RDRAND CPUID bit on AMD family 15h/16h")
+Thanks,
 
-Add a silly test to the CPU bringup path, to sanity-check the random
-data RDRAND returns and scream as loudly as possible if that returned
-random data doesn't change.
+Thomas
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com
----
- arch/x86/kernel/cpu/rdrand.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/rdrand.c b/arch/x86/kernel/cpu/rdrand.c
-index 5c900f9..c4be620 100644
---- a/arch/x86/kernel/cpu/rdrand.c
-+++ b/arch/x86/kernel/cpu/rdrand.c
-@@ -29,7 +29,8 @@ __setup("nordrand", x86_rdrand_setup);
- #ifdef CONFIG_ARCH_RANDOM
- void x86_init_rdrand(struct cpuinfo_x86 *c)
- {
--	unsigned long tmp;
-+	unsigned int changed = 0;
-+	unsigned long tmp, prev;
- 	int i;
- 
- 	if (!cpu_has(c, X86_FEATURE_RDRAND))
-@@ -42,5 +43,24 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
- 			return;
- 		}
- 	}
-+
-+	/*
-+	 * Stupid sanity-check whether RDRAND does *actually* generate
-+	 * some at least random-looking data.
-+	 */
-+	prev = tmp;
-+	for (i = 0; i < SANITY_CHECK_LOOPS; i++) {
-+		if (rdrand_long(&tmp)) {
-+			if (prev != tmp)
-+				changed++;
-+
-+			prev = tmp;
-+		}
-+	}
-+
-+	if (WARN_ON_ONCE(!changed))
-+		pr_emerg(
-+"RDRAND gives funky smelling output, might consider not using it by booting with \"nordrand\"");
-+
- }
- #endif
