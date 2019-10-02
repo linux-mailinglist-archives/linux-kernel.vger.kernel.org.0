@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34118C4A51
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 11:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 736F0C4A5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 11:16:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfJBJPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 05:15:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41126 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfJBJPg (ORCPT
+        id S1727257AbfJBJP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 05:15:59 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35619 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfJBJPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 05:15:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h7so18746500wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 02:15:34 -0700 (PDT)
+        Wed, 2 Oct 2019 05:15:37 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y21so6138244wmi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 02:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jr85PqBhcGLPuS9IfqPXvfyfH/vk/S6Kq+krrnohXK8=;
-        b=b9E91j2tOGQa80OiDbPQZnp1ooHtiOfWBRpCp09EX6LbNb5gHKXXM3bJcvLmmGHzJm
-         2hjBzxfvYCJzv5du2SdsDj3BkDJpw3SSmBx0xxtkT0uSibO7MfeQv4tKi5ZFVf/arAS/
-         lSRMBDgX+BlxnsxXU8Be+xJ17IraB4IWK+1hNcZrj8/2tbQ02PuGU1ahPeR4SceY0i+1
-         BxpBTdZPUeK2XhKWn9hcfayYDkjyv0BpvTW2lT23CYLjNwnek3vVnrAcbCFKtNAzLkkb
-         XhvtWXr+ZjdjZMhd/YYi2jf46ptvH8vW6EjqYzlDQ+PKMY8ndnNyvcftmj4/do/E0GA/
-         Yh0A==
+        bh=FPzLmAFxVlvoWlrn/cPfzD8ybuBQrABYqNe+NltmaKc=;
+        b=TjVT0D6D0IDve5evcKRh6oxGsg70BRR503/nwR27ckewQi1eA7EoYNYe69MKOT/mrw
+         IwsSwedW0AarjTBKsAb5oEBFz6Wuj7bBy4CaR+nE1y5oYJEF1aFYT3TCv3aURhSHLVev
+         VbcjX+F0OBK8G78rKEhs59ebi0KtuuuszxbZcFfphI7Im+mEOzBs3nJbkzBbrlxsQLts
+         fBoaZluHMUnbkFpavdfrqISEOvILhKJDwiEW8A9536Afgrhj7uQoUmOolVhaqh0yo17z
+         LlXhY43TWJNBti5XJbAIX3Z0FYOWaRJh6zEPPYftj10rasuNDz7noeB1U6dzImMEq/vx
+         MjnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jr85PqBhcGLPuS9IfqPXvfyfH/vk/S6Kq+krrnohXK8=;
-        b=NyLG6Yt1Tfy1E73uGDrw96TiP0oUwbDs+Hc8nYjN3yrlSWjNuhjuWjqhGiPWtsqeAk
-         KoyxC8fCV+TESJP3M2poPozxJVDzItsgiXLv10a1kVnR4ArfRLr4YwRBzFsC22R9T/UH
-         G9VIHhyUWxvOj46MqiUAetoij0rnDcYmOaU5NW/6nDCGSevZHoymjCmvu67HTAEQNfkF
-         HAlbnJxzgXxtI2BFHpMMVPZAOCt32wVUT9+e6UuigDKwKSnUBxBgk0GIhm4J5XEoWaSJ
-         QoEh1PfKjxHgwmtUCimq6461v8IWm9G3qsy+OjwLMgeBR+jBoBz+BIlmfbMi7TrEsmnj
-         NeGQ==
-X-Gm-Message-State: APjAAAUrMpPURtuz/ROB6VGw83x2nuCt7/7jVcEzNsrn62k7os+nQGMr
-        qVmJzy8tvWyZVQ2XvELuzSVmhQ==
-X-Google-Smtp-Source: APXvYqwKRhrOpTNo/XjxTlReO7lIbiWJmOmqE5Fky5rIUFB1VKrTGBOJpqMWNd1dHNrGCWAWnmvVJQ==
-X-Received: by 2002:a05:6000:1046:: with SMTP id c6mr1996636wrx.189.1570007733410;
-        Wed, 02 Oct 2019 02:15:33 -0700 (PDT)
+        bh=FPzLmAFxVlvoWlrn/cPfzD8ybuBQrABYqNe+NltmaKc=;
+        b=OC4LyvgokKsMOEbIwoIMnFwiqRsKGnj1izNZACP3CJdXDwE4ElNOdC/1q5625BR0pY
+         v14oLvPk8JSRJtoGYQKN99HEj+tRbRH0Yney4Yfqpeqyy4dBRmwZGKW44oov2J1GuPq2
+         4LrLzA/ChhyyPDaiO43/8nTDmhTThUKsGMChdfn5rBpgG0TtutlASyPkBcZE6jAWaVOZ
+         376yMyQhw7qBOsgKCH8QLeObayIGOa2c3HcqGgfZSQ19g0Ad1c8RWoB18co/7W7lTop7
+         VgpvR7a522p+jsW5W3eaDpttuCYPlqjoB9FheNQW86TsmqHvydunlVGKHEeBDLSPGYKI
+         w9Xg==
+X-Gm-Message-State: APjAAAVb3SLUW2fLjghWz+qf9pY/wWP5K/mS4I78PEswB/ynF7hxjLCY
+        No6wWA/bv7/ISae8z0avePyY0Q==
+X-Google-Smtp-Source: APXvYqyAeNIzYfZDnXVDS34M/KFIdc9BCM3rsZxBblu5PD/ay+OI5yEHpjToOgd8l9an0xWnyWUp6Q==
+X-Received: by 2002:a7b:c92d:: with SMTP id h13mr2060315wml.169.1570007734515;
+        Wed, 02 Oct 2019 02:15:34 -0700 (PDT)
 Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id r13sm32913737wrn.0.2019.10.02.02.15.32
+        by smtp.googlemail.com with ESMTPSA id r13sm32913737wrn.0.2019.10.02.02.15.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 02:15:32 -0700 (PDT)
+        Wed, 02 Oct 2019 02:15:33 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/7] dt-bindings: clk: axg-audio: add sm1 bindings
-Date:   Wed,  2 Oct 2019 11:15:23 +0200
-Message-Id: <20191002091529.17112-2-jbrunet@baylibre.com>
+Subject: [PATCH v3 2/7] dt-bindings: clock: meson: add sm1 resets to the axg-audio controller
+Date:   Wed,  2 Oct 2019 11:15:24 +0200
+Message-Id: <20191002091529.17112-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191002091529.17112-1-jbrunet@baylibre.com>
 References: <20191002091529.17112-1-jbrunet@baylibre.com>
@@ -64,49 +64,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the compatible and clock ids of the sm1 audio clock controller
+Add the reset id of the sm1 audio clock controller
 
 Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../bindings/clock/amlogic,axg-audio-clkc.txt          |  3 ++-
- include/dt-bindings/clock/axg-audio-clkc.h             | 10 ++++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ .../reset/amlogic,meson-g12a-audio-reset.h        | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-index b3957d10d241..3a8948c04bc9 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-@@ -7,7 +7,8 @@ devices.
- Required Properties:
+diff --git a/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h b/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
+index 14b78dabed0e..f805129ca7af 100644
+--- a/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
++++ b/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
+@@ -35,4 +35,19 @@
+ #define AUD_RESET_TOHDMITX	24
+ #define AUD_RESET_CLKTREE	25
  
- - compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D,
--		  "amlogic,g12a-audio-clkc" for G12A.
-+		  "amlogic,g12a-audio-clkc" for G12A,
-+		  "amlogic,sm1-audio-clkc" for S905X3.
- - reg		: physical base address of the clock controller and length of
- 		  memory mapped region.
- - clocks	: a list of phandle + clock-specifier pairs for the clocks listed
-diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-index 75901c636893..f561f5c5ef8f 100644
---- a/include/dt-bindings/clock/axg-audio-clkc.h
-+++ b/include/dt-bindings/clock/axg-audio-clkc.h
-@@ -80,5 +80,15 @@
- #define AUD_CLKID_TDM_SCLK_PAD0		160
- #define AUD_CLKID_TDM_SCLK_PAD1		161
- #define AUD_CLKID_TDM_SCLK_PAD2		162
-+#define AUD_CLKID_TOP			163
-+#define AUD_CLKID_TORAM			164
-+#define AUD_CLKID_EQDRC			165
-+#define AUD_CLKID_RESAMPLE_B		166
-+#define AUD_CLKID_TOVAD			167
-+#define AUD_CLKID_LOCKER		168
-+#define AUD_CLKID_SPDIFIN_LB		169
-+#define AUD_CLKID_FRDDR_D		170
-+#define AUD_CLKID_TODDR_D		171
-+#define AUD_CLKID_LOOPBACK_B		172
- 
- #endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
++/* SM1 added resets */
++#define AUD_RESET_RESAMPLE_B	26
++#define AUD_RESET_TOVAD		27
++#define AUD_RESET_LOCKER	28
++#define AUD_RESET_SPDIFIN_LB	29
++#define AUD_RESET_FRATV		30
++#define AUD_RESET_FRHDMIRX	31
++#define AUD_RESET_FRDDR_D	32
++#define AUD_RESET_TODDR_D	33
++#define AUD_RESET_LOOPBACK_B	34
++#define AUD_RESET_EARCTX	35
++#define AUD_RESET_EARCRX	36
++#define AUD_RESET_FRDDR_E	37
++#define AUD_RESET_TODDR_E	38
++
+ #endif
 -- 
 2.21.0
 
