@@ -2,101 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6AC2C4A0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87640C4A1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfJBI4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 04:56:52 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:59028 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726250AbfJBI4w (ORCPT
+        id S1727364AbfJBI6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 04:58:09 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53294 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfJBI6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 04:56:52 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3BA00634C87;
-        Wed,  2 Oct 2019 11:56:24 +0300 (EEST)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1iFaQo-00028Q-LB; Wed, 02 Oct 2019 11:56:22 +0300
-Date:   Wed, 2 Oct 2019 11:56:22 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        jacopo+renesas@jmondi.org, kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: max9286: Pass default bus type when parsing
- fwnode endpoint
-Message-ID: <20191002085622.GN896@valkosipuli.retiisi.org.uk>
-References: <20191001145503.5170-1-manivannan.sadhasivam@linaro.org>
- <20191002075432.bkee4fl6cfcr25iv@uno.localdomain>
+        Wed, 2 Oct 2019 04:58:08 -0400
+Received: by mail-wm1-f66.google.com with SMTP id i16so6262784wmd.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 01:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YGigccZRHcOe6mnr3dySXizOwIoRRgR/GRDjKzSx57Y=;
+        b=nMHtAt3zgJxjcaQ6D3dcCo7jyxkk3j51b2aUZHJnFspegFYzV/XJHUA2BEz4Lko2n8
+         dqcl8flDFKoNFHFDBjAcIPf+YIHoa8paJHgnaj1iFrtgkXcuiiMaRoRssIQ9cSMMMzDE
+         GJ2twjskYndZ0JhiuAgtKGPcitjppwJ9sMljnzL6oRuD37awsadGvXALO5VzYvtXBGH8
+         KYH8At9E7Y74tH2Dp0B5o5Ceh3MUYNpQndOxo04eAt3PDKr+0mhnRLP6QfAwnqvOyNrB
+         z8vEITM4UFxUtL1bGQ6IEnL854xC2vufXbgAf/uDuJ1s/ExH35l5icK1Gn+ciPtM1zW6
+         TMUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YGigccZRHcOe6mnr3dySXizOwIoRRgR/GRDjKzSx57Y=;
+        b=VdW9Ph+YKzaGcwZ4qlZ/sR40S0Hys1HNylzSqOIrDCX6/ANWN0bRbMZsOKk3GwBKDV
+         Gj9WR3CoyfYAZVz61+u9rgnAjpLWOLfhk4B7t+QMXT1NhFYnmrh2+r1hAX1ACkAT1D0x
+         nFwho07SvoLSDtT8y2HJW4gvYJqicjnTGtOpkCbXhWyQrlyae98YwnW+i90BqaDUSx7C
+         I4ZjXJI7r/OFrIGTZzFC3kU6s+XX5umkUXxWu2YslKWHjGD0Vg0f1qqox28r/BXsciOs
+         l1lClefQk4HuFMzC7egDCHat39RdUW3vuGrftT9uxVTjvpd64x2yiw1nZ8Deo5kY2ZkZ
+         66vg==
+X-Gm-Message-State: APjAAAV6E3GcY4QhU6HvIISGeMDUZFcXXYnqOQEnT7RB26k4PAlLUsgS
+        yAn7dWwps0LzNYMZrcNiMisLgQ==
+X-Google-Smtp-Source: APXvYqzyVRb6WScpGMgQlwmQaYkvHsLLv7VL9IVwN03FBI5LC9wI3I9G5Y60sn88O85AiijPGWtoqw==
+X-Received: by 2002:a05:600c:2151:: with SMTP id v17mr1859179wml.56.1570006686541;
+        Wed, 02 Oct 2019 01:58:06 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id b186sm10115616wmd.16.2019.10.02.01.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 01:58:05 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/4] iio: pressure: bmp280: code shrink
+Date:   Wed,  2 Oct 2019 10:57:55 +0200
+Message-Id: <20191002085759.13337-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002075432.bkee4fl6cfcr25iv@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo, Manivannan,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On Wed, Oct 02, 2019 at 09:54:32AM +0200, Jacopo Mondi wrote:
-> Hello Manivannan,
-> 
-> On Tue, Oct 01, 2019 at 08:25:03PM +0530, Manivannan Sadhasivam wrote:
-> > The caller of v4l2_fwnode_endpoint_alloc_parse() is expected to pass a
-> > valid bus_type parameter for proper working of this API. Hence, pass
-> > V4L2_MBUS_CSI2_DPHY as the bus_type parameter as this driver only supports
-> > MIPI CSI2 for now. Without this commit, the API fails on 96Boards
-> > Dragonboard410c connected to MAX9286 deserializer.
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >
-> > This patch depends on the latest "MAX9286 GMSL Support" series posted
-> > by Kieran Bingham.
-> >
-> >  drivers/media/i2c/max9286.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> > index 9390edf5ad9c..6e1299f15493 100644
-> > --- a/drivers/media/i2c/max9286.c
-> > +++ b/drivers/media/i2c/max9286.c
-> > @@ -976,7 +976,9 @@ static int max9286_parse_dt(struct max9286_device *max9286)
-> >
-> >  		/* For the source endpoint just parse the bus configuration. */
-> >  		if (ep.port == MAX9286_SRC_PAD) {
-> > -			struct v4l2_fwnode_endpoint vep;
-> > +			struct v4l2_fwnode_endpoint vep = {
-> > +				.bus_type = V4L2_MBUS_CSI2_DPHY
-> > +			};
-> 
-> Isn't the bus_type just an hint ? __v4l2_fwnode_endpoint_parse()
-> should try to parse CSI2 first, and should be able to to deduct the bus
-> type from the properties specified in DT...
+This series contains a couple changes that shrink the driver both in
+terms of LOC as well as actual generated code.
 
-It's basically telling the V4L2 fwnode parser to parse that bus only, and
-not guess what the caller wanted.
+Bartosz Golaszewski (4):
+  iio: pressure: bmp280: use bulk regulator ops
+  iio: pressure: bmp280: use devm_iio_device_register()
+  iio: pressure: bmp280: remove stray newline
+  iio: pressure: bmp280: use devm action and remove labels from probe
 
-This is what drivers should actually be doing. It also allows setting the
-defaults that many drivers declare in their DT bindings but very few
-actually implement.
-
-> 
-> Anyway, I'm not against this change, the contrary actually, I'm just
-> afraid it might hide some more subtile bug, as we don't need this on
-> our platforms...
-
-I'd expect it to be safer this way, as there's no guessing involved.
+ drivers/iio/pressure/bmp280-core.c | 114 +++++++++++++----------------
+ drivers/iio/pressure/bmp280-i2c.c  |   6 --
+ drivers/iio/pressure/bmp280-spi.c  |   6 --
+ drivers/iio/pressure/bmp280.h      |   1 -
+ 4 files changed, 51 insertions(+), 76 deletions(-)
 
 -- 
-Regards,
+2.23.0
 
-Sakari Ailus
