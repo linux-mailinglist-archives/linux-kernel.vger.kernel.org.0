@@ -2,118 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F07C87C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4146BC87AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfJBMDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:03:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50644 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfJBMDB (ORCPT
+        id S1728171AbfJBMBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:01:47 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:46876 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725875AbfJBMBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:03:01 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92BwidV115138;
-        Wed, 2 Oct 2019 12:02:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=5f9WP1t5ZUCUnAU3TFbU22auufKBsGd2ReO5WAV1EVQ=;
- b=gsoanE9ypOdaIJvz2Lmkws6zLs50sjloWhfxTGFIniRY5XGdYQxqfshsvI7qZ7QVVoaH
- YtY0w9g6HoZWV8rDGohb4keAR73zQY2nhrKRUYtwJ8FXZhoC3nUU7wi5fXKVvhf2IdxC
- bEufY9WBp3AkTmNLA2/vkFkUqoDzL8KGVYgE1hY/dd7JTL3+AwK+Hgwbt2TsjkI4G73O
- CNlx9HpqUTjesEmSJUTAyolzL8wPV9u4GRDqgQoym0z1ro3D/0py18majTtuN2oneM8O
- qiZL+FisqUOl4WUi+mwM+qs3h+3VAU/ZhKhK+DTtBzTT1xifbJzmzI7Yr2GtH8vvEdp3 wQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2v9yfqcen5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Oct 2019 12:02:30 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92Bw3kx076918;
-        Wed, 2 Oct 2019 12:00:29 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2vckyntqya-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Oct 2019 12:00:29 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x92C0OHP020718;
-        Wed, 2 Oct 2019 12:00:24 GMT
-Received: from tomti.i.net-space.pl (/10.175.221.225)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 02 Oct 2019 05:00:23 -0700
-Date:   Wed, 2 Oct 2019 14:00:18 +0200
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, bp@alien8.de, corbet@lwn.net,
-        dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
-        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        mingo@redhat.com, ross.philipson@oracle.com, tglx@linutronix.de
-Subject: Re: [PATCH v2 1/3] x86/boot: Introduce the kernel_info
-Message-ID: <20191002120018.d7wbpf3zusl4dcsc@tomti.i.net-space.pl>
-References: <20190704163612.14311-1-daniel.kiper@oracle.com>
- <20190704163612.14311-2-daniel.kiper@oracle.com>
- <5633066F-01BE-437D-A564-150FD48B6D92@zytor.com>
- <20190930150110.ekir52wu3w67v2fk@tomti.i.net-space.pl>
- <c9eb5a39-ced5-b35d-616d-6ffbe15c1396@zytor.com>
- <20191001114133.xy5nuhepzzixhuh4@tomti.i.net-space.pl>
- <dda802de-2efe-3d22-7816-6da36bf9ebf8@zytor.com>
+        Wed, 2 Oct 2019 08:01:47 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com [104.133.0.98] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x92C1GcC011091
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 2 Oct 2019 08:01:17 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0215B42088C; Wed,  2 Oct 2019 08:01:15 -0400 (EDT)
+Date:   Wed, 2 Oct 2019 08:01:15 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, a.darwish@linutronix.de,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@opentech.at>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: x86/random: Speculation to the rescue
+Message-ID: <20191002120115.GA13880@mit.edu>
+References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
+ <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
+ <20191001161448.GA1918@darwi-home-pc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <dda802de-2efe-3d22-7816-6da36bf9ebf8@zytor.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910020115
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910020115
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191001161448.GA1918@darwi-home-pc>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 03:28:01PM -0700, H. Peter Anvin wrote:
-> On 2019-10-01 04:41, Daniel Kiper wrote:
-> >
-> > OK, so, this is more or less what I had in my v3 patch before sending
-> > this email. So, it looks that I am on good track. Great! Though I am not
-> > sure that we should have magic for chunked objects. If yes could you
-> > explain why? I would just leave len for chunked objects.
-> >
->
-> It makes it easier to validate the contents (bugs happen...), and would allow
-> for multiple chunks that could come from different object files if it ever
-> becomes necessary for some reason.
+On Tue, Oct 01, 2019 at 06:15:02PM +0200, Ahmed S. Darwish wrote:
+> 
+> Using the "ent" tool, [2] also used to test randomness in the Stephen
+> Müller LRNG paper, on a 500000-byte file, produced the following
+> results:
 
-OK.
+The "ent" tool is really, really useless.  If you take any CRNG, even
+intialized with a known seed, "ent" will say that it's *GREAT*!
 
-> We could also just say that dynamic chunks don't even have pointers, and let
-> the boot loader just walk the list.
+If you don't believe me, disable all entropy inputs into the CRNG,
+initialize it with "THE NSA IS OUR LORD AND MASTER", and then run it.
+You'll get substantially the same results.  (And if we didn't the Cha
+Cha 20 encryption algorithm would be totally broken).
 
-Yeah... That seams simpler. I will do that.
-
-> >> Also "InfO" is a pretty hideous magic. In general, all-ASCII magics have much
-> >> higher risk of collision than *RANDOM* binary numbers. However, for a chunked
-> >> architecture they do have the advantage that they can be used also as a human
-> >> name or file name for the chunk, e.,g. in sysfs, so maybe something like
-> >> "LnuX" or even "LToP" for the top-level chunk might make sense.
-> >>
-> >> How does that sound?
-> >
-> > Well, your proposals are more cryptic, especially the second one, than
-> > mine but I tend to agree that more *RANDOM* magics are better. So,
-> > I would choose "LToP" if you decipher it for me. Linux Top?
-> >
->
-> Yes, Linux top [structure].
-
-Thx!
-
-Daniel
+       		  	    	     	     - Ted
