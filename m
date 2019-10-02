@@ -2,264 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6355C8AA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:14:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ACF6C8AAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbfJBOOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:14:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41925 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfJBOOM (ORCPT
+        id S1728085AbfJBOPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:15:10 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54624 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfJBOPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:14:12 -0400
-Received: by mail-wr1-f68.google.com with SMTP id q9so1075730wrm.8;
-        Wed, 02 Oct 2019 07:14:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1NOrxGO9sDfoAK9z5f8PBvguSPeKYle0P3g3YxqTBJ0=;
-        b=WZ+qOh6eqMP3twz0vO+H1aYtJYBerwhiv+LdMxwbyqzQjQCmkOOhvCmRoUPX0Wu8YW
-         2PGQPezxKV8aVXMDxF2PfSlNndx5A9KgTsx4bCQU8dnq28MY8y4sboDup4g3FmXddI3D
-         6CKohJx83mfbN2sMdvKMO/GxwCPBzA6PdU9jyfbxacJB7Gli14wbi4Gq4p7Pc2yPybIj
-         85cJPr9GeprsgbG3ypjvosJgW42Q+ysSlVSWdZLkJ4CYQVuREiH115zrSLJbC9vKnk0g
-         y2q97QFWgS+llBrQnuYi6Hr+4kdhtMwnTZPpw6MCMHUTrOC7eob24Gki/sX6PPFyPufd
-         xTQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1NOrxGO9sDfoAK9z5f8PBvguSPeKYle0P3g3YxqTBJ0=;
-        b=jBdB2PHFf8rrXQlf/+a0U2Y+/y6E3Uqf9Gn8rwRVWzUWAdVOn2XuF3VPPcIIicELak
-         fEpVzwOxhqn+ZSsEpMlGXhXLPmkkwu5ZEj7N8ADiBuvaeY8MsvB853AAS7Cqc59PXjDx
-         RmKf9VLOCv+vH7rJHLhnk+sl3ZryF+Zd0eTlt6Y/4LwEeWU8mTDJhfY1z5Dvi51u5/zh
-         c+75WP65zm/YFoqf8TXwFjo7ZLl1oodYFv9tsg8UPpqtpFuzATeeoNt8aM2SCRQKSpH+
-         cJFb0KPD62yKg856CwluZOtYyaavhJw7kHrbbxGUho+Yg/F3eMGE5HdPPgz4iQhV3MfI
-         Q/MQ==
-X-Gm-Message-State: APjAAAW2L5CN9nV2lN76BvKohFHu2vTpnnynTpt83svNC2b43XcvsDil
-        Rj38lCSqQoXNx0JZMt6x728=
-X-Google-Smtp-Source: APXvYqyTtjZVFnEwDn/qGwcbvGmTDhoYwVzdLSZnJun7VvbsQAhiidoXG67yOu4GrAIZmzUptVVK6w==
-X-Received: by 2002:adf:ff8a:: with SMTP id j10mr3012338wrr.334.1570025649617;
-        Wed, 02 Oct 2019 07:14:09 -0700 (PDT)
-Received: from Limone.filmuniversitaet.de ([195.37.64.251])
-        by smtp.googlemail.com with ESMTPSA id d193sm8781121wmd.0.2019.10.02.07.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 07:14:08 -0700 (PDT)
-From:   Gon Solo <gonsolo@gmail.com>
-To:     mchehab+samsung@kernel.org
-Cc:     sean@mess.org, crope@iki.fi, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Gon Solo <gonsolo@gmail.com>
-Subject: [PATCH] si2157: Add support for Logilink VG0022A.
-Date:   Wed,  2 Oct 2019 16:13:59 +0200
-Message-Id: <20191002141359.30166-2-gonsolo@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191002141359.30166-1-gonsolo@gmail.com>
-References: <20191001205203.4b1a5fb6@coco.lan>
- <20191002141359.30166-1-gonsolo@gmail.com>
+        Wed, 2 Oct 2019 10:15:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92E3k6I030132;
+        Wed, 2 Oct 2019 14:15:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=oIGo+6lfdt1NE+MmHc8xi4BmyOlaNMtmo+JMIXO3xnM=;
+ b=O8nRxt/MN8fkkTIebTXcBRgtb9jbmuoPI9FZB20pWY720Fapq2EkeWhaFU9peVB9dDPr
+ ZHuoFqfRZXGLtmcNpSnfBfWlq3zbyjjBP0dvbGhe3wCQKfnFNyb28NnfrYvvnBKJokmY
+ KwiHbGWkAx3yRbi5fKkY+5hAG+t3O4erCe4/86uJsjHjCs4Lq1pI9Xc70SJAmSPHmp8O
+ A7Ljk4KQOX2Q07QeVUC8BFUooBvk/k+vpwEuzBai7DqWZmrpYnFNKHC/3QSnnyaM9Jwc
+ UuJyNCAZ2EACIb9g1y70dwNipwoZnU2+lvDBN6ovceLPXZMTndLzFX2GSI9wbomgW52S 5w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2v9yfqd7x8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 14:15:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92E4BJ3046750;
+        Wed, 2 Oct 2019 14:15:00 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2vcg61cq8b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 14:15:00 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x92EEwXZ029339;
+        Wed, 2 Oct 2019 14:14:59 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Oct 2019 07:14:58 -0700
+Subject: Re: [Xen-devel] [PATCH] x86/xen: Return from panic notifier
+To:     Jan Beulich <jbeulich@suse.com>
+Cc:     james@dingwall.me.uk, xen-devel@lists.xenproject.org,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+References: <20191001151633.1659-1-boris.ostrovsky@oracle.com>
+ <9b3f955c-ad76-601f-2b58-fa9dc4608c72@suse.com>
+ <924f41b2-7779-9c56-9b71-56523756ecdc@oracle.com>
+ <5650904d-b616-5ee7-216a-a0ac28d7426d@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ mQINBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABtDNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT6JAjgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uuQINBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABiQIfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <9d6b6b00-a3b1-95b4-7633-597c0094ab90@oracle.com>
+Date:   Wed, 2 Oct 2019 10:14:54 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5650904d-b616-5ee7-216a-a0ac28d7426d@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=959
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910020136
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910020136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----
- drivers/media/tuners/si2157.c         | 68 +++++++++++++++++----------
- drivers/media/tuners/si2157_priv.h    |  1 +
- drivers/media/usb/dvb-usb-v2/af9035.c | 47 ++++++++++++++++++
- 3 files changed, 90 insertions(+), 26 deletions(-)
+On 10/2/19 9:42 AM, Jan Beulich wrote:
+>
+> I can only guess that the thinking probably was that e.g. external
+> dumping (by the tool stack) would be more reliable (including but
+> not limited to this meaning less change of state from when the
+> original crash reason was detected) than having the domain dump
+> itself.
 
-diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
-index e87040d6eca7..8f9df2485d51 100644
---- a/drivers/media/tuners/si2157.c
-+++ b/drivers/media/tuners/si2157.c
-@@ -66,6 +66,24 @@ static int si2157_cmd_execute(struct i2c_client *client, struct si2157_cmd *cmd)
- 	return ret;
- }
- 
-+static int si2157_power_up(struct si2157_dev *dev, struct i2c_client *client)
-+{
-+	struct si2157_cmd cmd;
-+
-+	if (dev->chiptype == SI2157_CHIPTYPE_SI2146) {
-+		memcpy(cmd.args, "\xc0\x05\x01\x00\x00\x0b\x00\x00\x01", 9);
-+		cmd.wlen = 9;
-+	} else if (dev->chiptype == SI2157_CHIPTYPE_SI2141) {
-+		memcpy(cmd.args, "\xc0\x00\x0d\x0e\x00\x01\x01\x01\x01\x03", 10);
-+		cmd.wlen = 10;
-+	} else {
-+		memcpy(cmd.args, "\xc0\x00\x0c\x00\x00\x01\x01\x01\x01\x01\x01\x02\x00\x00\x01", 15);
-+		cmd.wlen = 15;
-+	}
-+	cmd.rlen = 1;
-+	return si2157_cmd_execute(client, &cmd);
-+}
-+
- static int si2157_init(struct dvb_frontend *fe)
- {
- 	struct i2c_client *client = fe->tuner_priv;
-@@ -75,7 +93,7 @@ static int si2157_init(struct dvb_frontend *fe)
- 	struct si2157_cmd cmd;
- 	const struct firmware *fw;
- 	const char *fw_name;
--	unsigned int uitmp, chip_id;
-+	unsigned int uitmp;
- 
- 	dev_dbg(&client->dev, "\n");
- 
-@@ -93,19 +111,7 @@ static int si2157_init(struct dvb_frontend *fe)
- 	if (uitmp == dev->if_frequency / 1000)
- 		goto warm;
- 
--	/* power up */
--	if (dev->chiptype == SI2157_CHIPTYPE_SI2146) {
--		memcpy(cmd.args, "\xc0\x05\x01\x00\x00\x0b\x00\x00\x01", 9);
--		cmd.wlen = 9;
--	} else if (dev->chiptype == SI2157_CHIPTYPE_SI2141) {
--		memcpy(cmd.args, "\xc0\x00\x0d\x0e\x00\x01\x01\x01\x01\x03", 10);
--		cmd.wlen = 10;
--	} else {
--		memcpy(cmd.args, "\xc0\x00\x0c\x00\x00\x01\x01\x01\x01\x01\x01\x02\x00\x00\x01", 15);
--		cmd.wlen = 15;
--	}
--	cmd.rlen = 1;
--	ret = si2157_cmd_execute(client, &cmd);
-+	ret = si2157_power_up(dev, client);
- 	if (ret)
- 		goto err;
- 
-@@ -118,17 +124,6 @@ static int si2157_init(struct dvb_frontend *fe)
- 			goto err;
- 	}
- 
--	/* query chip revision */
--	memcpy(cmd.args, "\x02", 1);
--	cmd.wlen = 1;
--	cmd.rlen = 13;
--	ret = si2157_cmd_execute(client, &cmd);
--	if (ret)
--		goto err;
--
--	chip_id = cmd.args[1] << 24 | cmd.args[2] << 16 | cmd.args[3] << 8 |
--			cmd.args[4] << 0;
--
- 	#define SI2177_A30 ('A' << 24 | 77 << 16 | '3' << 8 | '0' << 0)
- 	#define SI2158_A20 ('A' << 24 | 58 << 16 | '2' << 8 | '0' << 0)
- 	#define SI2148_A20 ('A' << 24 | 48 << 16 | '2' << 8 | '0' << 0)
-@@ -137,7 +132,7 @@ static int si2157_init(struct dvb_frontend *fe)
- 	#define SI2146_A10 ('A' << 24 | 46 << 16 | '1' << 8 | '0' << 0)
- 	#define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
- 
--	switch (chip_id) {
-+	switch (dev->chip_id) {
- 	case SI2158_A20:
- 	case SI2148_A20:
- 		fw_name = SI2158_A20_FIRMWARE;
-@@ -456,6 +451,27 @@ static int si2157_probe(struct i2c_client *client,
- 	memcpy(&fe->ops.tuner_ops, &si2157_ops, sizeof(struct dvb_tuner_ops));
- 	fe->tuner_priv = client;
- 
-+	ret = si2157_power_up(dev, client);
-+	if (ret)
-+		goto err;
-+	/* query chip revision */
-+	/* hack: do it here because after the si2168 gets 0101, commands will
-+	 * still be executed here but no result
-+	 */
-+	memcpy(cmd.args, "\x02", 1);
-+	cmd.wlen = 1;
-+	cmd.rlen = 13;
-+	ret = si2157_cmd_execute(client, &cmd);
-+	if (ret)
-+		goto err_kfree;
-+	dev->chip_id = cmd.args[1] << 24 |
-+		cmd.args[2] << 16 |
-+		cmd.args[3] << 8 |
-+		cmd.args[4] << 0;
-+	dev_info(&client->dev, "found a 'Silicon Labs Si21%d-%c%c%c'\n",
-+		cmd.args[2], cmd.args[1], cmd.args[3], cmd.args[4]);
-+
-+
- #ifdef CONFIG_MEDIA_CONTROLLER
- 	if (cfg->mdev) {
- 		dev->mdev = cfg->mdev;
-diff --git a/drivers/media/tuners/si2157_priv.h b/drivers/media/tuners/si2157_priv.h
-index 2bda903358da..9ab7c88b01b4 100644
---- a/drivers/media/tuners/si2157_priv.h
-+++ b/drivers/media/tuners/si2157_priv.h
-@@ -28,6 +28,7 @@ struct si2157_dev {
- 	u8 chiptype;
- 	u8 if_port;
- 	u32 if_frequency;
-+	u32 chip_id;
- 	struct delayed_work stat_work;
- 
- #if defined(CONFIG_MEDIA_CONTROLLER)
-diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
-index 3afd18733614..83e243df59b9 100644
---- a/drivers/media/usb/dvb-usb-v2/af9035.c
-+++ b/drivers/media/usb/dvb-usb-v2/af9035.c
-@@ -1246,6 +1246,51 @@ static int it930x_frontend_attach(struct dvb_usb_adapter *adap)
- 
- 	msleep(200);
- 
-+	if (le16_to_cpu(d->udev->descriptor.idVendor) == USB_VID_DEXATEK) {
-+
-+		ret = af9035_wr_reg_mask(d, 0xd8b7, 0x01, 0x01);
-+		if (ret < 0)
-+			goto err;
-+
-+		/* I2C master bus 2 clock speed 300k */
-+		ret = af9035_wr_reg(d, 0x00f6a7, 0x07);
-+		if (ret < 0)
-+			goto err;
-+
-+		/* I2C master bus 1,3 clock speed 300k */
-+		ret = af9035_wr_reg(d, 0x00f103, 0x07);
-+		if (ret < 0)
-+			goto err;
-+
-+		/* set gpio11 low */
-+		ret = af9035_wr_reg_mask(d, 0xd8d4, 0x01, 0x01);
-+		if (ret < 0)
-+			goto err;
-+
-+		ret = af9035_wr_reg_mask(d, 0xd8d5, 0x01, 0x01);
-+		if (ret < 0)
-+			goto err;
-+
-+		ret = af9035_wr_reg_mask(d, 0xd8d3, 0x01, 0x01);
-+		if (ret < 0)
-+			goto err;
-+
-+		/* Tuner enable using gpiot2_en, gpiot2_on and gpiot2_o (reset) */
-+		ret = af9035_wr_reg_mask(d, 0xd8b8, 0x01, 0x01);
-+		if (ret < 0)
-+			goto err;
-+
-+		ret = af9035_wr_reg_mask(d, 0xd8b9, 0x01, 0x01);
-+		if (ret < 0)
-+			goto err;
-+
-+		ret = af9035_wr_reg_mask(d, 0xd8b7, 0x00, 0x01);
-+		if (ret < 0)
-+			goto err;
-+
-+		msleep(200);
-+	}
-+
- 	ret = af9035_wr_reg_mask(d, 0xd8b7, 0x01, 0x01);
- 	if (ret < 0)
- 		goto err;
-@@ -2119,6 +2164,8 @@ static const struct usb_device_id af9035_id_table[] = {
- 	/* IT930x devices */
- 	{ DVB_USB_DEVICE(USB_VID_ITETECH, USB_PID_ITETECH_IT9303,
- 		&it930x_props, "ITE 9303 Generic", NULL) },
-+	{ DVB_USB_DEVICE(USB_VID_DEXATEK, 0x0100,
-+		&it930x_props, "Logilink VG0022A", NULL) },
- 	{ DVB_USB_DEVICE(USB_VID_AVERMEDIA, USB_PID_AVERMEDIA_TD310,
- 		&it930x_props, "AVerMedia TD310 DVB-T2", NULL) },
- 	{ }
--- 
-2.20.1
 
+We could register an external dumper (controlled by a boot option
+perhaps, off by default) that will call directly into hypervisor with
+SHUTDOWN_crash. That will guarantee that we will complete the notifier
+chain without relying on priorities. (Of course this still won't address
+a possible new feature in panic() that might be called post-dumping)
+
+If you think it's worth doing this can be easily added.
+
+-boris
+
+> True. I guess more control over the behavior needs to be given to
+> the admin, as either approach has its up- and downsides
+>
