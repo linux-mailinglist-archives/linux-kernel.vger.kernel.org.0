@@ -2,74 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 461C6C9125
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 20:53:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E45BDC9132
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 20:54:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbfJBSxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 14:53:33 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42236 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728000AbfJBSxd (ORCPT
+        id S1729084AbfJBSyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 14:54:40 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38470 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728946AbfJBSyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 14:53:33 -0400
-Received: by mail-qt1-f195.google.com with SMTP id w14so12397qto.9
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 11:53:32 -0700 (PDT)
+        Wed, 2 Oct 2019 14:54:39 -0400
+Received: by mail-io1-f68.google.com with SMTP id u8so59397968iom.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 11:54:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3r5iSDLGZ8r+gXNiaBNLJJqk1fe5WwzEJBwQCe2vUck=;
+        b=Aa7u5mROY4zwTVOvdlxTPP3QwR2ijNoJH5ND5RovBs+s2OzhvsmGt5KxyaUEjSdHSC
+         W9YvwlknPtpfuQ9B3bGNnXbVYl9sWxZh15Pa6dKQgVm5v41CnC/ltU93piXMvDWVQvrP
+         OPvRvmIGu+dHYh3aISWuf/zKrN5ggBkAseDdEy3JYg/aAydf46hqIUovk9TnLDZvKNcA
+         a+uXvcKAjOAiiDPPeBmh3y5v3lyT5JgZc3qUssO/YMkMCcjYuuWWleNiiTWVEJlhQai3
+         PUp++kJyAKCOMYL9mCsxNXxgtG3Vn2Hs17Gby/M5oO6ArPZr1WlkjH9HQ5PA/DTAHFzr
+         6gug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OgMn8hpZTEDtXKP05G/wCdRDIlvQDI9VA80s3qnQFrQ=;
-        b=bUZDb3W8+XUWTBN6BdUdPZGJSsOi/WfDyiPxtWNOF9SjccoYCybT71UtGBSdnzoHdh
-         vBQkx0LmwHCEStXdQ3YD/KSwMXEyGPt5ncX2gvT0W8h6nfQhs3HwMgk1we1NFq7miz83
-         HRS1DRA7ZVd7mkJfD/yi/6YVNvhmtWla3X3Qims7xeUAyGlQ4qU92SEt9jjVllNCzRIE
-         Pu2qpXnxRZWJO8gufmxeHrTNvHbOUrOckgz71Qt6W+Vt3LDt00cYhZ3FPIeqZFGnrswS
-         4LdVgowA/+iiDdq1+PIDiFrGsJFQyR8PchkAcFARqQsyRseP8ViPwG5j+vpxF1Si7P8F
-         eFVg==
-X-Gm-Message-State: APjAAAV9IkqtY0RIPripVIjfaF/ZuFGpKq7GKRCksbBqY2B7IqgfuCHm
-        TkpBmGnY96wZEL6Ook/nJLU2g11LJMli00UcRlk=
-X-Google-Smtp-Source: APXvYqxAl+Rxh2NCLtdzmTkMG+IYTvU3DliWCdDujCeb72QNPVpAcUeZwzPLzn0JfNoMiKtrgiWXhaCj8wvWNzjbU3s=
-X-Received: by 2002:ac8:1a2e:: with SMTP id v43mr5699655qtj.204.1570042412182;
- Wed, 02 Oct 2019 11:53:32 -0700 (PDT)
+        bh=3r5iSDLGZ8r+gXNiaBNLJJqk1fe5WwzEJBwQCe2vUck=;
+        b=c50m3S5dbCbA4jjKbuzC9SxW276sRzuF+K1n25FiieBn2AxcLRiIb2y2xB5ozPeYFy
+         Yh3UxNCGNXNovGXJ2h1Bp8hpX5H3WYBgyIar/aZS9BmJHMM90u4AO4MA8op6AJ211+JS
+         oUbPo5Azhn5obYoLVtAjp7Mel5lizQzjizzScJWjzpUhQNPI8NlMWDaS6b+PTh6jXehQ
+         cWEhzpQQ5VyjgGz3xh+AVNQSJSGUsYSOGpHzJIh1tk/RH0RHQ5WfBnPSZ2p3yAz7UWB2
+         Fnt2MDyLB3f93MhzvjjqPQHcAdLfEWGkY4GJ+yjnvZTSpUGFZqeYzgagnmW1TpemL/yw
+         Iz0A==
+X-Gm-Message-State: APjAAAX6K68+rPf9qjAcSXHZXnIn3LfXlB2L2ImCzqQV9BBjrNa2rY/M
+        I0EWpxWh4aX/o4V3PD8fQz2xpmCl+cRfEWl+IlxjzA==
+X-Google-Smtp-Source: APXvYqxGU7SB9vUY0cnrSpSxwIk1DQWFrlBUnyKTd4pXrWzuO00cefZQd4xbUvKX+JT3ealXOPiNXIb4qxPV2/+Q7mM=
+X-Received: by 2002:a92:8e4f:: with SMTP id k15mr6063919ilh.108.1570042477811;
+ Wed, 02 Oct 2019 11:54:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191002120136.1777161-1-arnd@arndb.de> <CADnq5_MLg=J5dmSGzx8jC=1--d2S3HJzWH3EHhyzT6da5a3wcA@mail.gmail.com>
-In-Reply-To: <CADnq5_MLg=J5dmSGzx8jC=1--d2S3HJzWH3EHhyzT6da5a3wcA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 2 Oct 2019 20:53:16 +0200
-Message-ID: <CAK8P3a33yAirHFnZq5GCSJFDM3dpub6vTMyTdpnV429WsP5Eyg@mail.gmail.com>
-Subject: Re: [PATCH 0/6] amdgpu build fixes
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
+References: <20190927021927.23057-1-weijiang.yang@intel.com> <20190927021927.23057-5-weijiang.yang@intel.com>
+In-Reply-To: <20190927021927.23057-5-weijiang.yang@intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Wed, 2 Oct 2019 11:54:26 -0700
+Message-ID: <CALMp9eS1V2fRcwogcEkHonvVAgfc9dU=7A4V-D0Rcoc=v82VAw@mail.gmail.com>
+Subject: Re: [PATCH v7 4/7] KVM: VMX: Load Guest CET via VMCS when CET is
+ enabled in Guest
+To:     Yang Weijiang <weijiang.yang@intel.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 8:47 PM Alex Deucher <alexdeucher@gmail.com> wrote:
+On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
 >
-> On Wed, Oct 2, 2019 at 8:02 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > Here are a couple of build fixes from my backlog in the randconfig
-> > tree. It would be good to get them all into linux-5.4.
-> >
-> >      Arnd
-> >
-> > Arnd Bergmann (6):
-> >   drm/amdgpu: make pmu support optional, again
-> >   drm/amdgpu: hide another #warning
-> >   drm/amdgpu: display_mode_vba_21: remove uint typedef
-> >   drm/amd/display: fix dcn21 Makefile for clang
-> >   [RESEND] drm/amd/display: hide an unused variable
-> >   [RESEND] drm/amdgpu: work around llvm bug #42576
+> "Load Guest CET state" bit controls whether Guest CET states
+> will be loaded at Guest entry. Before doing that, KVM needs
+> to check if CPU CET feature is enabled on host and available
+> to Guest.
 >
-> I've applied 1-5 and I'll send them for 5.4.  There still seems to be
-> some debate about 6.
+> Note: SHSTK and IBT features share one control MSR:
+> MSR_IA32_{U,S}_CET, which means it's difficult to hide
+> one feature from another in the case of SHSTK != IBT,
+> after discussed in community, it's agreed to allow Guest
+> control two features independently as it won't introduce
+> security hole.
+>
+> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index f720baa7a9ba..ba1a83d11e69 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -44,6 +44,7 @@
+>  #include <asm/spec-ctrl.h>
+>  #include <asm/virtext.h>
+>  #include <asm/vmx.h>
+> +#include <asm/cet.h>
+>
+>  #include "capabilities.h"
+>  #include "cpuid.h"
+> @@ -2918,6 +2919,37 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+>         vmcs_writel(GUEST_CR3, guest_cr3);
+>  }
+>
+> +static int set_cet_bit(struct kvm_vcpu *vcpu, unsigned long cr4)
 
-Awesome, thanks a lot!
+Nit: This function does not appear to set CR4.CET, as the name would imply.
 
-      Arnd
+> +{
+> +       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +       const u64 cet_bits = XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL;
+> +       bool cet_xss = vmx_xsaves_supported() &&
+> +                      (kvm_supported_xss() & cet_bits);
+> +       bool cet_cpuid = guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
+> +                        guest_cpuid_has(vcpu, X86_FEATURE_IBT);
+> +       bool cet_on = !!(cr4 & X86_CR4_CET);
+> +
+> +       if (cet_on && vmx->nested.vmxon)
+> +               return 1;
+
+This constraint doesn't appear to be architected. Also, this prevents
+enabling CR4.CET when in VMX operation, but what about the other way
+around (i.e. entering VMX operation with CR4.CET enabled)?
+
+> +       if (cet_on && !cpu_x86_cet_enabled())
+> +               return 1;
+
+This seems odd. Why is kernel support for (SHSTK or IBT) required for
+the guest to use (SHSTK or IBT)? If there's a constraint, shouldn't it
+be 1:1? (i.e. kernel support for SHSTK is required for the guest to
+use SHSTK and kernel support for IBT is required for the guest to use
+IBT?) Either way, enforcement of this constraint seems late, here,
+when the guest is trying to set CR4 to a value that, per the guest
+CPUID information, should be legal. Shouldn't this constraint be
+applied when setting the guest CPUID information, disallowing the
+enumeration of SHSTK and/or IBT support on a platform where these
+features are unavailable or disabled in the kernel?
+
+> +       if (cet_on && !cet_xss)
+> +               return 1;
+
+Again, this constraint seems like it's being applied too late.
+Returning 1 here will result in the guest's MOV-to-CR4 raising #GP,
+even though there is no architected reason for it to do so.
+
+> +       if (cet_on && !cet_cpuid)
+> +               return 1;
+
+What about the constraint that CR4.CET can't be set when CR0.WP is
+clear? (And the reverse needs to be handled in vmx_set_cr0).
+
+> +       if (cet_on)
+> +               vmcs_set_bits(VM_ENTRY_CONTROLS,
+> +                             VM_ENTRY_LOAD_GUEST_CET_STATE);
+
+Have we ensured that this VM-entry control is supported on the platform?
+
+> +       else
+> +               vmcs_clear_bits(VM_ENTRY_CONTROLS,
+> +                               VM_ENTRY_LOAD_GUEST_CET_STATE);
+> +       return 0;
+> +}
+> +
+>  int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>  {
+>         struct vcpu_vmx *vmx = to_vmx(vcpu);
+> @@ -2958,6 +2990,9 @@ int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>                         return 1;
+>         }
+>
+> +       if (set_cet_bit(vcpu, cr4))
+> +               return 1;
+> +
+>         if (vmx->nested.vmxon && !nested_cr4_valid(vcpu, cr4))
+>                 return 1;
+>
+> --
+> 2.17.2
+>
