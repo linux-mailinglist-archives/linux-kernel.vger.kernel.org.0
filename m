@@ -2,127 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 558E4C910B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 20:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25259C9117
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 20:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbfJBSpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 14:45:11 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33696 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbfJBSpL (ORCPT
+        id S1728975AbfJBSrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 14:47:25 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34989 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfJBSrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 14:45:11 -0400
-Received: by mail-pg1-f195.google.com with SMTP id q1so24747pgb.0;
-        Wed, 02 Oct 2019 11:45:10 -0700 (PDT)
+        Wed, 2 Oct 2019 14:47:24 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y21so28718wmi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 11:47:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=13XjhSMoHUotvnT/6gwxwCtrPn3U5+PA5KF+bM08Ss0=;
-        b=YRfnqiN3dWX/UrQ6CZOPA/blP8louSmAQ6zZCzZP0U2fmjHo1pHrlyc+dPrVes9OL5
-         qYOEc8n7g2QXcas0+eyI9fXplBpjNuvhSiubE2FCT41tjt1oKujdHC7fbqyXjooCdkLv
-         cY5pKiqwv+gW4sqMwaowfquV60QrJbIRf3AO6FTP1msiql0PpC4He+32d9yt0zY3tVoV
-         FxqwNe7IvDy5Oa4151la5BatjlGZpyrZ3U58Kb84JB1MHEFWPX5vkZJyWUPY9Vn2aIgN
-         Xpx9wj3bksnWsIqPcoDzo1P9+GJLOa2s7waBCAYOXM9p84c+bcBPzYgAR1gcsapAZsHk
-         ErWA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rl3HwNc1oPPqrMvALhFW3tFOkISeqhdk4UKaPBcY6s0=;
+        b=azaA/Cc2WKbblHOERF1vzi7jLDwr6FIH836aAU4kxozXuaEVRWIrk2ayHEmJ6MP8iG
+         7aXeTyQcvL6Gq6M2WGSQ/28uNNEuh5Sk+Wb8lDMJmtg0U19KU+TfSM06N54QFV2ytHLe
+         6TT3WglYH2oMlHLNMc7jNg6rKJ1RPE2OwuMjUwULL45KaOhLj1AmJc94IldmDG/TcJjt
+         pQ4D0y7Tc374OZ59vjD0p2XegEz5DAT3wo/h/xf07hKe86jRbIZWEu4h6FoQw2xYq16R
+         aqpoMgBsr5nb1p67OTE9jmExlVs4fzMYAHkcKW6TThhd8akohCbf7npIwFg9mSvvsdm7
+         dFWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=13XjhSMoHUotvnT/6gwxwCtrPn3U5+PA5KF+bM08Ss0=;
-        b=EF8qo+N+MC9SJBQrzlFy1EIr8/UWorUMcmI3PnDeGQkP4ZDtStAQ2nsjZsdu/m370Q
-         WiKWzZslHYnEhsFBhQ+h9VdcVu0knMhqZVwK20LgJRuRwKiH+6IfIplRE6G9dRfO9Jh2
-         1b6VhqqrixWc8NF1z3gXJzInNzrflhxonReXh5vlDKiHXBgCdenkIIoXiYOc7jLvBd/9
-         WCH6uLpHIi62ERMiuvzOEw1cznA2hGOYCWAhLN3FENZDV1+Kd9HegRtT3qcHJ+1oRbBg
-         pEhHL2bl3NW/cxbzH7hUreVj673QEpBCmTBP59QIB2XhlTTBP+PXRjRUHaDj45Ex1nVY
-         6K0Q==
-X-Gm-Message-State: APjAAAX4m5aEA5U+nT3sPng+DmmPzNxT192N7MruoQ5r/l7Zr5oMxEzx
-        h6SeuNMdM62QNJsr6sAOtlfz5E90
-X-Google-Smtp-Source: APXvYqx80cVbYWHFmM2bz4jjyJYogCOlPZwpPDUVGOIM8XYwhneMKU4TZJmTvcQKOEFP+f+2/jwNUg==
-X-Received: by 2002:a62:8142:: with SMTP id t63mr6402522pfd.246.1570041910288;
-        Wed, 02 Oct 2019 11:45:10 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:2790])
-        by smtp.gmail.com with ESMTPSA id q2sm176804pfg.144.2019.10.02.11.45.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Oct 2019 11:45:09 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 11:45:08 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Florent Revest <revest@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH] samples/bpf: Fix broken samples.
-Message-ID: <20191002184506.iauttcpgyzcplope@ast-mbp.dhcp.thefacebook.com>
-References: <20191002174632.28610-1-kpsingh@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rl3HwNc1oPPqrMvALhFW3tFOkISeqhdk4UKaPBcY6s0=;
+        b=XHTd2+j/KLbIqCVdtW7CgoLlrwaVQJzCLM+GRX4Ofca2qD4Sff85Rr2D0HYoYsgnbY
+         vnXGIiRVUtv93jEmI7OrYyXMXEzYYijDxujEFoF4mkS/0+Qke8BV5MjAg522pn7RiL+G
+         X90JL1AEjZvYrNloL6c96nq3SCMHbrB7QYFZXIK2R2CbtibDRQVtSJdVibaalrAUY7Bb
+         w7MDJmCmUg8zkwlM8b0Ce/QF/Qz6aVGYbDi8nOzP9HeHgLBzIhbDJDS8W7RglSjZ8tPb
+         yL377lj25t1qU4RvXhOwyIhixxL45w4aFOr1ZGvQkVYVMN27O5YDz2NoppTOGIsmu8ID
+         AXtg==
+X-Gm-Message-State: APjAAAVcrLT8ANZzpq9taDHEFBaixK48MgXpYu1+VmwW6d0LSrOY9JtC
+        VL+pCRZMDVhBI04In3QcHmAaQ0uL069sUfn4Jok=
+X-Google-Smtp-Source: APXvYqyadvQZt/5r+wPSV1oq1Tc7kuGgYq0Qtbq3Xvtf/2EtBqF6rMDvmldFOj48UiW4aroqZt4JfknMTY9l3qmJeMM=
+X-Received: by 2002:a1c:1a45:: with SMTP id a66mr3986539wma.102.1570042042540;
+ Wed, 02 Oct 2019 11:47:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002174632.28610-1-kpsingh@chromium.org>
-User-Agent: NeoMutt/20180223
+References: <20191002120136.1777161-1-arnd@arndb.de>
+In-Reply-To: <20191002120136.1777161-1-arnd@arndb.de>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 2 Oct 2019 14:47:10 -0400
+Message-ID: <CADnq5_MLg=J5dmSGzx8jC=1--d2S3HJzWH3EHhyzT6da5a3wcA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] amdgpu build fixes
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 07:46:32PM +0200, KP Singh wrote:
-> From: KP Singh <kpsingh@google.com>
-> 
-> Rename asm_goto_workaround.h to asm_workaround.h and add a
-> workaround for the newly added "asm_inline" in:
-> 
->   commit eb111869301e ("compiler-types.h: add asm_inline definition")
-> 
-> Add missing include for <linux/perf_event.h> which was removed from
-> perf-sys.h in:
-> 
->   commit 91854f9a077e ("perf tools: Move everything related to
-> 	               sys_perf_event_open() to perf-sys.h")
-> 
-> Co-developed-by: Florent Revest <revest@google.com>
-> Signed-off-by: Florent Revest <revest@google.com>
-> Signed-off-by: KP Singh <kpsingh@google.com>
-> ---
->  samples/bpf/Makefile                            |  2 +-
->  .../{asm_goto_workaround.h => asm_workaround.h} | 17 ++++++++++++++---
->  samples/bpf/task_fd_query_user.c                |  1 +
->  3 files changed, 16 insertions(+), 4 deletions(-)
->  rename samples/bpf/{asm_goto_workaround.h => asm_workaround.h} (46%)
-> 
-> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-> index 42b571cde177..ab2b4d7ecb4b 100644
-> --- a/samples/bpf/Makefile
-> +++ b/samples/bpf/Makefile
-> @@ -289,7 +289,7 @@ $(obj)/%.o: $(src)/%.c
->  		-Wno-gnu-variable-sized-type-not-at-end \
->  		-Wno-address-of-packed-member -Wno-tautological-compare \
->  		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
-> -		-I$(srctree)/samples/bpf/ -include asm_goto_workaround.h \
-> +		-I$(srctree)/samples/bpf/ -include asm_workaround.h \
->  		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
->  ifeq ($(DWARF2BTF),y)
->  	$(BTF_PAHOLE) -J $@
-> diff --git a/samples/bpf/asm_goto_workaround.h b/samples/bpf/asm_workaround.h
-> similarity index 46%
-> rename from samples/bpf/asm_goto_workaround.h
-> rename to samples/bpf/asm_workaround.h
-> index 7409722727ca..7c99ea6ae98c 100644
-> --- a/samples/bpf/asm_goto_workaround.h
-> +++ b/samples/bpf/asm_workaround.h
-> @@ -1,9 +1,10 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  /* Copyright (c) 2019 Facebook */
-> -#ifndef __ASM_GOTO_WORKAROUND_H
-> -#define __ASM_GOTO_WORKAROUND_H
-> +#ifndef __ASM_WORKAROUND_H
-> +#define __ASM_WORKAROUND_H
+On Wed, Oct 2, 2019 at 8:02 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Here are a couple of build fixes from my backlog in the randconfig
+> tree. It would be good to get them all into linux-5.4.
+>
+>      Arnd
+>
+> Arnd Bergmann (6):
+>   drm/amdgpu: make pmu support optional, again
+>   drm/amdgpu: hide another #warning
+>   drm/amdgpu: display_mode_vba_21: remove uint typedef
+>   drm/amd/display: fix dcn21 Makefile for clang
+>   [RESEND] drm/amd/display: hide an unused variable
+>   [RESEND] drm/amdgpu: work around llvm bug #42576
 
-I don't think rename is necessary.
-This file already has a hack for volatile().
-Just add asm_inline hack to it.
+I've applied 1-5 and I'll send them for 5.4.  There still seems to be
+some debate about 6.
 
+Thanks.
+
+Alex
+
+>
+>  drivers/gpu/drm/amd/amdgpu/Makefile                 |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c              |  1 +
+>  drivers/gpu/drm/amd/amdgpu/soc15.c                  |  2 --
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c   |  2 ++
+>  drivers/gpu/drm/amd/display/dc/dcn21/Makefile       | 12 +++++++++++-
+>  .../amd/display/dc/dml/dcn21/display_mode_vba_21.c  | 13 +++++--------
+>  6 files changed, 20 insertions(+), 12 deletions(-)
+>
+> --
+> 2.20.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
