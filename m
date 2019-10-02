@@ -2,63 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53E5DC8AC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C319C8AD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbfJBOR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:17:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46292 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727708AbfJBOR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:17:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9E62AAC7B;
-        Wed,  2 Oct 2019 14:17:56 +0000 (UTC)
-Message-ID: <1570025874.2472.14.camel@suse.com>
-Subject: Re: [RFC PATCH 05/22] thunderbolt: Add helper macros to iterate
- over switch ports
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-usb@vger.kernel.org
-Cc:     Anthony Wong <anthony.wong@canonical.com>,
-        Mario.Limonciello@dell.com,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>
-Date:   Wed, 02 Oct 2019 16:17:54 +0200
-In-Reply-To: <20191001113830.13028-6-mika.westerberg@linux.intel.com>
-References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
-         <20191001113830.13028-6-mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728172AbfJBOSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:18:17 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38450 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728080AbfJBOSQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 10:18:16 -0400
+Received: by mail-ed1-f66.google.com with SMTP id l21so15410047edr.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 07:18:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1fxLpOvxXjmYD9btfQy/Q69rKcNISxOaD+GEumCPo2Y=;
+        b=M0CGhE7fvba+3sfLMywUWvxthwUABn1pfs/nG71DIGE6llAqL48cSUKBqCJXAv/bK4
+         3s9dVWdEW6MGNWrNMbrewR+P3kTT36bEpTNZ7jB7ELJFO74woE3zAQNo8yf81otGx9np
+         SuEYJ/RtzN/Wu+TrudFOrKTuuhBpLS2mvqJTVGNld+3dDmIW6/bN4aQ0uwLbkdmn/uvC
+         NZ6PjPl5d3qAflqjfNiL1QiVN8ILAAKSn+hANSQ+vIFc1j8+tvURPV4+hCPewLISbmeV
+         nZ7gTCZM5vGtGstE/uOEw4LcOImx3foPoFhpptWEQcRApzZwNpo7Pnn7GjqUtCTGPLGV
+         dU8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1fxLpOvxXjmYD9btfQy/Q69rKcNISxOaD+GEumCPo2Y=;
+        b=PNEwJt7xgNSSq9mVmknzGLSuPyYOfLsMIdaFFYnKH65wwxuYUR3aGh1QpOQKxZGzB6
+         8sKR0gk9Fw7F7sHq/DnkJOqKojHgWzXiJqEqh5QqHL6NDaOHFXs7zmsw6EL48eUw5zmG
+         BSWregTrF8FrgTrfShaEQtq7haYIpGFwP93tNQP4p2mvLjZwrpGFPrddbJt8u8cjdB+8
+         HXwynB7IduRuOer/hgQN/9FdpCz+zaPdxQgjaSz86HIGIdWwADFb4BOJHwl0mhyvnZ5E
+         lp5AIpM6O+sMQ1aRW5FZ+nN6rl5zJ8UyKi19WVuzkUdHVooNgKzGw0P+zQTGKYFRpGKX
+         ptiQ==
+X-Gm-Message-State: APjAAAUb/881ZZulMvZ8NQXnE/2yDJa26TPy1dKXZ9N5BLIzHSkqZ0C4
+        1N2dF9rzwSmNGo2X9zc6nOsXtBFPhaAE1w==
+X-Google-Smtp-Source: APXvYqwzQCj4RcHWe9o2dtTIHvxFq6emx/0SCFncRGSHXKEzOKo92Y/YHzeOoyawc0mNLSdPyTt7bg==
+X-Received: by 2002:a17:906:7e06:: with SMTP id e6mr3271372ejr.149.1570025893804;
+        Wed, 02 Oct 2019 07:18:13 -0700 (PDT)
+Received: from lophozonia ([85.195.192.192])
+        by smtp.gmail.com with ESMTPSA id c24sm2254422ejp.43.2019.10.02.07.18.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 07:18:13 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 16:18:10 +0200
+From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: Re: [PATCH v3 3/4] iommu/ioasid: Add custom allocators
+Message-ID: <20191002141810.GA407870@lophozonia>
+References: <1569972805-27664-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1569972805-27664-4-git-send-email-jacob.jun.pan@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1569972805-27664-4-git-send-email-jacob.jun.pan@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, den 01.10.2019, 14:38 +0300 schrieb Mika Westerberg:
-> @@ -1975,10 +1972,8 @@ void tb_switch_suspend(struct tb_switch *sw)
->         if (err)
->                 return;
->  
-> -       for (i = 1; i <= sw->config.max_port_number; i++) {
-> -               if (tb_port_has_remote(&sw->ports[i]))
-> -                       tb_switch_suspend(sw->ports[i].remote->sw);
-> -       }
-> +       tb_switch_for_each_remote_port(sw, i)
-> +               tb_switch_suspend(sw->ports[i].remote->sw);
+Hi Jacob,
 
-This macro looks a bit prone to misunderstanding.
-I guess the function would be better if the test could be seen.
+There seem to be a mix-up here, the changes from your v2 are lost and
+patches 1 and 3 are back to v1. Assuming this isn't intended, I'll
+review v2 of this patch since it looked good to me overall.
 
-	Regards
-		Oliver
+Thanks,
+Jean
 
