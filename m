@@ -2,166 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D670DC89C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 15:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6744C89C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 15:33:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfJBNet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 09:34:49 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.210]:32004 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726976AbfJBNet (ORCPT
+        id S1726710AbfJBNdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 09:33:54 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54299 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfJBNdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 09:34:49 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id F198E69972
-        for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2019 08:32:54 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id FekQifHCb3Qi0FekQiDtNG; Wed, 02 Oct 2019 08:32:54 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kHKsNwF9Ka8xiepdAJj7uetI4LP94/I8beN6oS0PN7s=; b=ktUgks2m+5GUUkmWUwnbEQxmcy
-        9bC2du8Zqc/PzGQ/79p+WbOUnlE4BJIKBYvkiiqZ3hjXNVceleq2DNsSwpjfJEQdKXXLyUDtFFbHT
-        Y9vY+0glCBMEkOqJH6R/FoznZ3JK7ikhj9+bH3qmMQ+kXoz1nqhMsXx0Q9asth+Z25BIq/Y3K3L7Y
-        HhttwsBR/q973sY1K2Y02mpTbNoW/WDuroqQCprbHMxHj9JU66iHH7CQVpFaXHYOhtbQ23d78dL5W
-        NlzW/AqnAloOHtUpb+GQAiLYm/AoS7eRj3nQ9Ejgy+9V9rh0PNecMKv0/O7Qb7T/SwXZxfqhnrTUl
-        3Dc6nOLw==;
-Received: from [187.192.22.73] (port=47872 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iFekQ-000dlA-9i; Wed, 02 Oct 2019 08:32:54 -0500
-To:     "Liu, Leo" <Leo.Liu@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191001171635.GA17306@embeddedor>
- <192815d9-5ecb-09a7-4624-5fd36126890d@amd.com>
- <823b10a3-fe0e-2e8c-02c3-534944dbe6d2@embeddedor.com>
- <dc76a52b-09a2-7ab9-b53e-52500f4f8669@amd.com>
- <3c6ebf4a-8cba-40e2-7d70-c4d5006a160b@embeddedor.com>
- <23314fce-800c-552f-e879-464f9709d12b@amd.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] drm/amdgpu: fix structurally dead code vcn_v2_5_hw_init
-Message-ID: <36766293-28b1-8903-bde8-5f04082c8b89@embeddedor.com>
-Date:   Wed, 2 Oct 2019 08:32:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 2 Oct 2019 09:33:54 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p7so7230970wmp.4;
+        Wed, 02 Oct 2019 06:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=C2ZdCqwmctahUnIjBSN/Q/RPRZtg+DYynqp31Zv7If4=;
+        b=saxHJAYK4fZ7OzId92NunP9Z5Jt+Be9zct4aVUpad8ChoBIQ1RYD1p9g9D1jYgWhEY
+         CQeA0DLmm4K8eczRaCcPyDWwGjhIZ+QA32hYdxaZ17Ucrjp/9QvFdNsTJWTgQq9upble
+         FloVYmVRZOo3DaEsxHOuRy+9CZ2wtnCOdbnCegTnyTTV8OBiORFZ2GoAj4N26EUReiDO
+         dvAG5ctjA9wj4vz95XwyVlOyPgtp1TILrf11fZ4WuKDmIt/uCc7bQxYBA5CTcKa9d8SB
+         Ht/9I93WQBSR7uzfS8euw49KsIxey1WWDB8T0GNKfclPL21T5MTPUYzO+CVHQ+OwJDV7
+         MuOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=C2ZdCqwmctahUnIjBSN/Q/RPRZtg+DYynqp31Zv7If4=;
+        b=VgT4N+ItGVMjnha3mTIAkMMtjKybgxmwvrVLUf/lcl0bTiGKulmGoVvCkhG9uddhOh
+         7vee60oIQHKtfc7DEGyWSGWH57yO4L3be1J2WwX1YeXn+ZppGb+9KPaTz5cXNgu9QEYb
+         QiNBvQzeS2vWeygkgMavSZ1EPvaKy7d29KFsruSWhPK9xnn7paKpivHhogLE2ydNqK0K
+         8/kXRYJRzU1f3T0wPcIkMpzCG5sSu1aiEwtaWRhAQo2pWDGtXB4FFuKyzSnIeKWo2h1e
+         FnKLN//b2VUQ8tF5ZULszFWaKYXg/SW99MLb/VXCAJ7anB0YkDfKzeTuRcYe9QKRc3ar
+         kCcQ==
+X-Gm-Message-State: APjAAAW+/jKjY+b9chdHgEfDbFmnbl5MFuIQrWb1ELn9iWBLT7+RNFEO
+        75PDar3mLJtuQS+vxrKnLtJMet4uiKIjOQ==
+X-Google-Smtp-Source: APXvYqwn6Z9RYlG/ZJ/5RxF01YtmOb7r4KGjSWoiFYXbh43S/a9raLlS4H/uCUp+WyoHKXFfzCEqQA==
+X-Received: by 2002:a05:600c:20e:: with SMTP id 14mr2810628wmi.73.1570023228320;
+        Wed, 02 Oct 2019 06:33:48 -0700 (PDT)
+Received: from LHFYY6Y2.criteois.lan ([91.199.242.236])
+        by smtp.gmail.com with ESMTPSA id q19sm45176832wra.89.2019.10.02.06.33.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 06:33:47 -0700 (PDT)
+From:   Jeremy MAURO <jeremy.mauro@gmail.com>
+X-Google-Original-From: Jeremy MAURO <j.mauro@criteo.com>
+Cc:     j.mauro@criteo.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION SCRIPTS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] scripts/sphinx-pre-install: allow checking for multiple missing files
+Date:   Wed,  2 Oct 2019 15:33:39 +0200
+Message-Id: <20191002133340.10854-1-j.mauro@criteo.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191002073526.228fc7e1@coco.lan>
+References: <20191002073526.228fc7e1@coco.lan>
 MIME-Version: 1.0
-In-Reply-To: <23314fce-800c-552f-e879-464f9709d12b@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.22.73
-X-Source-L: No
-X-Exim-ID: 1iFekQ-000dlA-9i
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [187.192.22.73]:47872
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current implementation take a simple file as first argument, this
+change allows to take a list as a first argument.
 
+Some file could have a different path according distribution version
 
-On 10/1/19 17:21, Liu, Leo wrote:
+Signed-off-by: Jeremy MAURO <j.mauro@criteo.com>
+---
+Changes in v2:
+- Change the commit message
 
->>>> OK. So, maybe we can add a comment pointing that out?
->>> That could be better.
->>>
->> Great. I'm glad it's not a bug.  I'll write a patch for that so other
->> people don't waste time taking a look.
-> 
-> Thanks, just sent two patches to add comment, and long with the patch to 
-> make VCN ring ready properly.
-> 
+ scripts/sphinx-pre-install | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-Awesome. Thank you. I would just add a commit log to this patch:
+diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
+index 3b638c0e1a4f..b5077ae63a4b 100755
+--- a/scripts/sphinx-pre-install
++++ b/scripts/sphinx-pre-install
+@@ -124,11 +124,13 @@ sub add_package($$)
+ 
+ sub check_missing_file($$$)
+ {
+-	my $file = shift;
++	my $files = shift;
+ 	my $package = shift;
+ 	my $is_optional = shift;
+ 
+-	return if(-e $file);
++	for (@$files) {
++		return if(-e $_);
++	}
+ 
+ 	add_package($package, $is_optional);
+ }
+@@ -343,10 +345,10 @@ sub give_debian_hints()
+ 	);
+ 
+ 	if ($pdf) {
+-		check_missing_file("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
++		check_missing_file(["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"],
+ 				   "fonts-dejavu", 2);
+ 
+-		check_missing_file("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
++		check_missing_file(["/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc"],
+ 				   "fonts-noto-cjk", 2);
+ 	}
+ 
+@@ -413,7 +415,7 @@ sub give_redhat_hints()
+ 	}
+ 
+ 	if ($pdf) {
+-		check_missing_file("/usr/share/fonts/google-noto-cjk/NotoSansCJK-Regular.ttc",
++		check_missing_file(["/usr/share/fonts/google-noto-cjk/NotoSansCJK-Regular.ttc"],
+ 				   "google-noto-sans-cjk-ttc-fonts", 2);
+ 	}
+ 
+@@ -498,7 +500,7 @@ sub give_mageia_hints()
+ 	$map{"latexmk"} = "texlive-collection-basic";
+ 
+ 	if ($pdf) {
+-		check_missing_file("/usr/share/fonts/google-noto-cjk/NotoSansCJK-Regular.ttc",
++		check_missing_file(["/usr/share/fonts/google-noto-cjk/NotoSansCJK-Regular.ttc"],
+ 				   "google-noto-sans-cjk-ttc-fonts", 2);
+ 	}
+ 
+@@ -528,7 +530,7 @@ sub give_arch_linux_hints()
+ 	check_pacman_missing(\@archlinux_tex_pkgs, 2) if ($pdf);
+ 
+ 	if ($pdf) {
+-		check_missing_file("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
++		check_missing_file(["/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc"],
+ 				   "noto-fonts-cjk", 2);
+ 	}
+ 
+@@ -549,11 +551,11 @@ sub give_gentoo_hints()
+ 		"rsvg-convert"		=> "gnome-base/librsvg",
+ 	);
+ 
+-	check_missing_file("/usr/share/fonts/dejavu/DejaVuSans.ttf",
++	check_missing_file(["/usr/share/fonts/dejavu/DejaVuSans.ttf"],
+ 			   "media-fonts/dejavu", 2) if ($pdf);
+ 
+ 	if ($pdf) {
+-		check_missing_file("/usr/share/fonts/noto-cjk/NotoSansCJKsc-Regular.otf",
++		check_missing_file(["/usr/share/fonts/noto-cjk/NotoSansCJKsc-Regular.otf"],
+ 				   "media-fonts/noto-cjk", 2);
+ 	}
+ 
+-- 
+2.23.0
 
-[PATCH 2/2] drm/amdgpu: add a comment to VCN 2.5 encode ring
-
-I'd update the subject to: drm/amdgpu: add code comment in vcn_v2_5_hw_init
-and add this as a commit log: Add a comment to VCN 2.5 encode ring
-
-Also, I think it's important to follow the process and CC all the people and lists
-below:
-
-$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c
-Alex Deucher <alexander.deucher@amd.com> (supporter:RADEON and AMDGPU DRM DRIVERS)
-"Christian König" <christian.koenig@amd.com> (supporter:RADEON and AMDGPU DRM DRIVERS)
-"David (ChunMing) Zhou" <David1.Zhou@amd.com> (supporter:RADEON and AMDGPU DRM DRIVERS)
-David Airlie <airlied@linux.ie> (maintainer:DRM DRIVERS)
-Daniel Vetter <daniel@ffwll.ch> (maintainer:DRM DRIVERS)
-amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS)
-dri-devel@lists.freedesktop.org (open list:DRM DRIVERS)
-linux-kernel@vger.kernel.org (open list)
-
-Thanks
---
-Gustavo
