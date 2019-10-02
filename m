@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44DCC9306
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64786C92F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbfJBUqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 16:46:19 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42335 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbfJBUqT (ORCPT
+        id S1727943AbfJBUne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 16:43:34 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50298 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfJBUne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 16:46:19 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y23so268175lje.9
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:46:18 -0700 (PDT)
+        Wed, 2 Oct 2019 16:43:34 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 5so323110wmg.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:43:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CZoX6/kAyBlNzPm3PxVJHHET8XR6oaEdHzpQ1JHxlxk=;
-        b=WgH48i53OT8OxyAS10xRgTGen79hUl3stcfXDufRhIUV4G8traFDMLYOcDbmARGtri
-         tU39pf48gI+/cvvec8i+m09klNO/DTKi0Xs0KDdSSGqqIUqlnGTnz+5xBoxTqitRtY8f
-         KX6a88Kh0m0W4klfZBa6hR0r/gM5QP+f5tEIM=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L5vlv/4PVMuZFTAVdMzkm/pNR4YsqLi5rbXALgcvCec=;
+        b=BErLan2F89eY2za6Apl8JLGWsak7jnYHZQ0Dqq9RoEt6rzO86blUjFfhVSYUvD0vNf
+         MGadSonQtSoQxMXBaTWxa2SR+BVdCH68JvFTQyZcVU4Xxyk6Fs1nJpypsklCa0dianf3
+         5HrSmU9DHlm0MJhJZEYJMCGbNMi7tD3mfYUTtYUEUEEfSwy1Xb7UYqImyCR5FnprHEmN
+         TEDzBsGrRUs1Uh9Dx4B0XQveA4oFWYaWyL0gwTndzrGpMbsTHhDIAT0UYYbi1NsYsnC6
+         jfRUiszqxO6WNqxfxfIxOhbWgmnbwTu4jG+6AXDRYnxBoKCw8GYnMgkA7fVjhAiuYTh9
+         stZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CZoX6/kAyBlNzPm3PxVJHHET8XR6oaEdHzpQ1JHxlxk=;
-        b=Ueuoz+9gDD7U+W/hdlxBc2VpPCbnYpKprpFqmGDg/FKrArJk1E4tCBqjkoNQy6VJyR
-         uhG1t0bZb8zkVDsZKGxFv/tPHZy1u1f1q1vQxN6vIBYOmZQ1LMuoOznD5xJK9dopBbvc
-         Zl+SR61rUo1QZlhC+l2JRv9xBRjZc5ulyFKwcCx3fZ0axANV45KpYDGboFgKOpBahZ8p
-         UuV8Nr31+DzlmHPrK1KOdVU2NjWw7hf819u+TZt/7au3fe/6psjTlRw9YuQej/OJbuCk
-         U9VP/7oDtmt4uPeNS1uzFI6cvOeLhdfMgORiLjcqf6UI6MQpIbQif1hEpraqL0+9Fotm
-         ZepA==
-X-Gm-Message-State: APjAAAWnAgyiyDPjBBbD14kqctvCZvQQAs8YakOYEBr4srcI5N4H7dU7
-        nwL1qgK8OMJCXPNaqv/0rQIGHI/VjRU=
-X-Google-Smtp-Source: APXvYqyWRYucdmohIUxBgGSVEGGQ+Bf4KdIeyVRObbB0lGx3o19quydB6d3iMcmHg8eNl6jFXGpt/g==
-X-Received: by 2002:a2e:1b5c:: with SMTP id b89mr3756710ljb.182.1570049177615;
-        Wed, 02 Oct 2019 13:46:17 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id o15sm34565lff.22.2019.10.02.13.46.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2019 13:46:17 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id d17so97693lfa.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:46:17 -0700 (PDT)
-X-Received: by 2002:ac2:47f8:: with SMTP id b24mr3502326lfp.134.1570048796885;
- Wed, 02 Oct 2019 13:39:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L5vlv/4PVMuZFTAVdMzkm/pNR4YsqLi5rbXALgcvCec=;
+        b=c/36470Qri+4UY6DkUJCHOfhbMLO0zqZViDSqSN3Ku35voG6eLVTprHy2DWb6W4sql
+         YtKnZVix7DtSL6kpyueGD8HvkbZoUCN2Ck9N0teK+4JIE4YQdOFV1aLAcwLq74oYQcii
+         U35H30EpbPpGs7hJqNMGQlxlsP5DE1SrlKWdbkwe1s0GbspVXrplFjzUhedxV2+hDExx
+         r4cTjhtD2fC45VCR2zGJ1foy33iqBYEPtPQs5Zp0noJECOPpd0Pui8xYQmY5lJ/KgadE
+         qIo9AHv2FTaR9yvZt+R7+IwtiswNbk1syT033QDmEIs5x8DadDePSrdZfsP/N6rvLhG4
+         yutQ==
+X-Gm-Message-State: APjAAAXE+L7s6DXJPHcwInsuSRLGyOUS6qIx1XFT0nRQvel44bPHFyS/
+        DjOGsI0dSrAIuJeNNKLEgPVWWg==
+X-Google-Smtp-Source: APXvYqx2K6ZmJVhOIH/nmomKLUjhvND/v/dGOKTnUcHEw2QZSjuzOTZ8jWjPgwSn74VjzHsxhj1Vng==
+X-Received: by 2002:a1c:4384:: with SMTP id q126mr4671234wma.153.1570049010064;
+        Wed, 02 Oct 2019 13:43:30 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
+        by smtp.gmail.com with ESMTPSA id u83sm8504559wme.0.2019.10.02.13.43.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 13:43:29 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 21:43:26 +0100
+From:   Matthias Maennich <maennich@google.com>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Will Deacon <will@kernel.org>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] module: various bug-fixes and clean-ups for module
+ namespace
+Message-ID: <20191002204326.GA178871@google.com>
+References: <20190927093603.9140-1-yamada.masahiro@socionext.com>
+ <20190927134108.GC187147@google.com>
+ <20191002185701.GA29041@linux-8ccs>
 MIME-Version: 1.0
-References: <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
- <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
- <20190930121803.n34i63scet2ec7ll@willie-the-truck> <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
- <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
- <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
- <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
- <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
- <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 2 Oct 2019 13:39:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
-Message-ID: <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
-Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191002185701.GA29041@linux-8ccs>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 5:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Wed, Oct 02, 2019 at 08:57:02PM +0200, Jessica Yu wrote:
+>+++ Matthias Maennich [27/09/19 14:41 +0100]:
+>>On Fri, Sep 27, 2019 at 06:35:56PM +0900, Masahiro Yamada wrote:
+>>>
+>>>I was hit by some problems caused by the module namespace feature
+>>>that was merged recently. At least, the breakage of
+>>>external module builds is a fatal one. I just took a look at the code
+>>>closer, and I noticed some more issues and improvements.
+>>>
+>>>I hope these patches are mostly OK.
+>>>The 4th patch might have room for argument since it is a trade-off
+>>>of "cleaner implermentation" vs "code size".
+>>>
+>>Thanks Masahiro for taking the time to improve the implementation of the
+>>symbol namespaces. These are all good points that you addressed!
 >
-> >
-> > Then use the C preprocessor to force the inlining.  I'm sorry it's not
-> > as pretty as static inline functions.
->
-> Which makes us lose the baby^H^H^H^Htype checking performed
-> on function parameters, requiring to add more ugly checks.
+>Agreed, thanks Masahiro for fixing up all the rough edges! Your series
+>of fixes look good to me, I will queue this up on modules-next this
+>week with the exception of patch 4 - Matthias, you are planning to
+>submit a patch that would supercede patch 04/07, right?
 
-I'm 100% agreed on this.
+I will most likely create a patch on top of 04/07 and will submit
+everything as a separate series.
 
-If the inline change is being pushed by people who say "you should
-have used macros instead if you wanted inlining", then I will just
-revert that stupid commit that is causing problems.
+Cheers,
+Matthias
 
-No, the preprocessor is not the answer.
-
-That said, code that relies on inlining for _correctness_ should use
-"__always_inline" and possibly even have a comment about why.
-
-But I am considering just undoing commit 9012d011660e ("compiler:
-allow all arches to enable CONFIG_OPTIMIZE_INLINING") entirely. The
-advantages are questionable, and when the advantages are balanced
-against actual regressions and the arguments are "use macros", that
-just shows how badly thought out this was.
-
-                Linus
