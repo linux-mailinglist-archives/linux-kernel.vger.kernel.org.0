@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40497C8F32
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28870C8F34
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbfJBRDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 13:03:06 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36337 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbfJBRDE (ORCPT
+        id S1728454AbfJBRDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:03:12 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54490 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728284AbfJBRDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:03:04 -0400
-Received: by mail-wm1-f68.google.com with SMTP id m18so7744111wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:03:03 -0700 (PDT)
+        Wed, 2 Oct 2019 13:03:05 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p7so8003623wmp.4
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:03:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4R1pFMiYgGmsrKFaVjsr4CfqOpIjL8+dlsXA4/2/eWc=;
-        b=QzNqSGXXrkEMylsWIdkVp1QE2PoiBzEzoPHXnSdEzwqM/i27K0EnnoMQsy8oXtMzMz
-         G0erLAZr3GqGCvyIN8vGCo1Krf2cnDHjKo3F7i7O5lXp4LCRDLFmixDQGL/pRcovDnZ+
-         3+2YpF6bpI7mdXb0Wd1buJ3VF8yhLlhvl1oykTsRmencBi8cUrv3ZQ3XmvO6T9HyzNLD
-         bfk1YRitp5l8qLsK0SwBDbY2qlbu5ykgoNdccKNDD9+bchQOb8XeKGZfT+NGPc/DSqE+
-         HgIMAkgs2/+RKb6rZx5/nRGjPvpHvDbu2fZ5xa4BmpmUrjIvjyjnBqSJm7EyBd+TkqNO
-         heMw==
+        bh=ay1R6FhENJS8iuSt2hpBFZDMGFIotJho7ukRf5r3dck=;
+        b=MWVzQOQN+uVNRPqyDGE93yTy5SoALgAqpLtzI7wvkE7DSnqH4tkxj6RbzO4XraolUb
+         ma9o+W+VQJ0XgwIgfsDHYifdihGE9/VS3e1vL+8r3uQn876yl+lXcwg8MepgJpWnCdfA
+         IL7Dvc/R5z9kD1C/6i9E2SsUg5rjAxoaXZtjMOkWGaGsTThQcGCoNX+jSAe2MB6Esmit
+         8R7SCTcZnZe3S6O+W21LtAzfagisBoyWTBUiNtzrqb1pGX7hINXwmSLYnTA4m0tf0FA6
+         CQmrWF/DLXj2KE9iXXop4VOauA3jsJQIRqBe+UqaojMJdyN1saBYLO1QWZgF4bJ8zPGr
+         bgpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4R1pFMiYgGmsrKFaVjsr4CfqOpIjL8+dlsXA4/2/eWc=;
-        b=MrN1pqTrENb4vEmo1YkMPsVzhiRntbQAfW9lIXu1fktlUcjvYqulDaq4+SJVldzFwu
-         r8IX4y1Cg1JcXz97HNZldhIAnvSdg6wlnDCG6KRKwFz5Nw/9eo6M47YU9TzpZwUzBY+S
-         Bisjig+rkDEUymrBQN3MF/AVHO4+X3Cr5UQyz6KRUEll2vfEidE7hx3VwGKxUAM4f8wE
-         BJKyu7d5sol9LgU4xiv5BzanTHKzjxfs8/KenUOUzVPOBsnLTR549TsgooHkHpyc9AIG
-         a3JrMeI+Fsh6dLbCbShK8q9TQ/4eG5ulncI5nYQY+m45w8MugFuNfB0BDsTT037EYika
-         wK2A==
-X-Gm-Message-State: APjAAAU1p12pVSs6HLv531tQPa0SmeEUoln4UPUrdzOBxO0BLL4zmKC8
-        xlAX33rbl7EQjrdI1r8K+uAP3A==
-X-Google-Smtp-Source: APXvYqzpviBQxFnllxgLIMD5etZwxvfroogQ32SBiQEuYxpYuHJZHwqSJFyGGMaiLTknVGRotdfxLw==
-X-Received: by 2002:a05:600c:290c:: with SMTP id i12mr3808333wmd.77.1570035782386;
-        Wed, 02 Oct 2019 10:03:02 -0700 (PDT)
+        bh=ay1R6FhENJS8iuSt2hpBFZDMGFIotJho7ukRf5r3dck=;
+        b=MNobgB0jNuZrMpYGHetcXLe9l/mFtDVZRm43hws3juwGH949xbt9zk0wYMYpwAJc8P
+         u/QS9wsBnH6XlO2Dc8o7SU5e4QZaTnT2dTmjwKZu+U2qf6F83z+AI9YymUTlKGd+rgSO
+         U1zR50Szfls1gl6ObtxRTcWJxtivKw4VXFuNPCzFTXsse6Sk82FIq5csSYhCbw41SsPj
+         LZufcpolwWacmmFzwkMyoja5JXstM3YqLjJ1uKVLODZN4dusD+8WSy+G3PDjFIzg+X5O
+         OOPEkGO77iNI3WNUtDBQx2vRKT2MiGFDi9YSMwxmSNcfwM3XVVd+RikPbKknRlI1E5xv
+         wBug==
+X-Gm-Message-State: APjAAAUsw5hobtVM1QJGqGJJ8r0M0RQy7LUB+lqsVmrJAhrZb8s61Hlh
+        aE2XCLz0MoKX8MrYE7YrcTOBkA==
+X-Google-Smtp-Source: APXvYqz22BjvpDGrKPhqCAJTVhgzXE+CXeU8J/gVwlnoocSXs5j7yKxbBPTecnnvvmjh8rOlPzlRpQ==
+X-Received: by 2002:a1c:c14a:: with SMTP id r71mr3812504wmf.46.1570035783552;
+        Wed, 02 Oct 2019 10:03:03 -0700 (PDT)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id b62sm11188575wmc.13.2019.10.02.10.03.01
+        by smtp.gmail.com with ESMTPSA id b62sm11188575wmc.13.2019.10.02.10.03.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 10:03:01 -0700 (PDT)
+        Wed, 02 Oct 2019 10:03:02 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Alban Bedel <albeu@free.fr>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4/6] gpio: ath79: use devm_platform_ioremap_resource()
-Date:   Wed,  2 Oct 2019 19:02:47 +0200
-Message-Id: <20191002170249.17366-5-brgl@bgdev.pl>
+Subject: [PATCH 5/6] gpio: htc-egpio: use devm_platform_ioremap_resource()
+Date:   Wed,  2 Oct 2019 19:02:48 +0200
+Message-Id: <20191002170249.17366-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191002170249.17366-1-brgl@bgdev.pl>
 References: <20191002170249.17366-1-brgl@bgdev.pl>
@@ -71,37 +71,30 @@ using devm_platform_ioremap_resource().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-ath79.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-htc-egpio.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-index f1a5ea9b3de2..53fae02c40ad 100644
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -226,7 +226,6 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct ath79_gpio_ctrl *ctrl;
- 	struct gpio_irq_chip *girq;
--	struct resource *res;
- 	u32 ath79_gpio_count;
- 	bool oe_inverted;
- 	int err;
-@@ -256,12 +255,9 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
+index 6eb56f7ab9c9..2d4b0b888f66 100644
+--- a/drivers/gpio/gpio-htc-egpio.c
++++ b/drivers/gpio/gpio-htc-egpio.c
+@@ -281,14 +281,9 @@ static int __init egpio_probe(struct platform_device *pdev)
+ 		ei->chained_irq = res->start;
  
+ 	/* Map egpio chip into virtual address space. */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res)
--		return -EINVAL;
--	ctrl->base = devm_ioremap_nocache(dev, res->start, resource_size(res));
--	if (!ctrl->base)
--		return -ENOMEM;
-+	ctrl->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(ctrl->base))
-+		return PTR_ERR(ctrl->base);
++	ei->base_addr = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(ei->base_addr))
+ 		goto fail;
+-	ei->base_addr = devm_ioremap_nocache(&pdev->dev, res->start,
+-					     resource_size(res));
+-	if (!ei->base_addr)
+-		goto fail;
+-	pr_debug("EGPIO phys=%08x virt=%p\n", (u32)res->start, ei->base_addr);
  
- 	raw_spin_lock_init(&ctrl->lock);
- 	err = bgpio_init(&ctrl->gc, dev, 4,
+ 	if ((pdata->bus_width != 16) && (pdata->bus_width != 32))
+ 		goto fail;
 -- 
 2.23.0
 
