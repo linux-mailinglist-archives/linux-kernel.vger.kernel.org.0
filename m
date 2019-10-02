@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46DDC919B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D8DC91CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbfJBTKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:10:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35936 "EHLO
+        id S1729149AbfJBTIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:08:10 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35200 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729333AbfJBTIR (ORCPT
+        by vger.kernel.org with ESMTP id S1728763AbfJBTIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:17 -0400
+        Wed, 2 Oct 2019 15:08:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyx-00035v-Q5; Wed, 02 Oct 2019 20:08:15 +0100
+        id 1iFjyn-00035B-4k; Wed, 02 Oct 2019 20:08:05 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyp-0003fU-MK; Wed, 02 Oct 2019 20:08:07 +0100
+        id 1iFjym-0003aF-Ul; Wed, 02 Oct 2019 20:08:04 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Avri Altman" <avri.altman@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Stanley Chu" <stanley.chu@mediatek.com>
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Alan Stern" <stern@rowland.harvard.edu>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.955969694@decadent.org.uk>
+Message-ID: <lsq.1570043211.160890792@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 70/87] scsi: ufs: Avoid runtime suspend possibly
- being blocked forever
+Subject: [PATCH 3.16 06/87] USB: Fix slab-out-of-bounds write in
+ usb_get_bos_descriptor
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,67 +48,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stanley Chu <stanley.chu@mediatek.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 24e2e7a19f7e4b83d0d5189040d997bce3596473 upstream.
+commit a03ff54460817c76105f81f3aa8ef655759ccc9a upstream.
 
-UFS runtime suspend can be triggered after pm_runtime_enable() is invoked
-in ufshcd_pltfrm_init(). However if the first runtime suspend is triggered
-before binding ufs_hba structure to ufs device structure via
-platform_set_drvdata(), then UFS runtime suspend will be no longer
-triggered in the future because its dev->power.runtime_error was set in the
-first triggering and does not have any chance to be cleared.
+The syzkaller USB fuzzer found a slab-out-of-bounds write bug in the
+USB core, caused by a failure to check the actual size of a BOS
+descriptor.  This patch adds a check to make sure the descriptor is at
+least as large as it is supposed to be, so that the code doesn't
+inadvertently access memory beyond the end of the allocated region
+when assigning to dev->bos->desc->bNumDeviceCaps later on.
 
-To be more clear, dev->power.runtime_error is set if hba is NULL in
-ufshcd_runtime_suspend() which returns -EINVAL to rpm_callback() where
-dev->power.runtime_error is set as -EINVAL. In this case, any future
-rpm_suspend() for UFS device fails because rpm_check_suspend_allowed()
-fails due to non-zero
-dev->power.runtime_error.
-
-To resolve this issue, make sure the first UFS runtime suspend get valid
-"hba" in ufshcd_runtime_suspend(): Enable UFS runtime PM only after hba is
-successfully bound to UFS device structure.
-
-Fixes: 62694735ca95 ([SCSI] ufs: Add runtime PM support for UFS host controller driver)
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.16:
- - ufshcd_pltrfm_probe() doesn't allocate or free the host structure
- - Adjust context]
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: syzbot+71f1e64501a309fcc012@syzkaller.appspotmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/scsi/ufs/ufshcd-pltfrm.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/usb/core/config.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/ufs/ufshcd-pltfrm.c
-+++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
-@@ -150,22 +150,19 @@ static int ufshcd_pltfrm_probe(struct pl
- 		goto out;
- 	}
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -897,8 +897,8 @@ int usb_get_bos_descriptor(struct usb_de
  
--	pm_runtime_set_active(&pdev->dev);
--	pm_runtime_enable(&pdev->dev);
--
- 	err = ufshcd_init(dev, &hba, mmio_base, irq);
- 	if (err) {
- 		dev_err(dev, "Intialization failed\n");
--		goto out_disable_rpm;
-+		goto out;
- 	}
- 
- 	platform_set_drvdata(pdev, hba);
- 
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+
- 	return 0;
- 
--out_disable_rpm:
--	pm_runtime_disable(&pdev->dev);
--	pm_runtime_set_suspended(&pdev->dev);
- out:
- 	return err;
- }
+ 	/* Get BOS descriptor */
+ 	ret = usb_get_descriptor(dev, USB_DT_BOS, 0, bos, USB_DT_BOS_SIZE);
+-	if (ret < USB_DT_BOS_SIZE) {
+-		dev_err(ddev, "unable to get BOS descriptor\n");
++	if (ret < USB_DT_BOS_SIZE || bos->bLength < USB_DT_BOS_SIZE) {
++		dev_err(ddev, "unable to get BOS descriptor or descriptor too short\n");
+ 		if (ret >= 0)
+ 			ret = -ENOMSG;
+ 		kfree(bos);
 
