@@ -2,76 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52978C9486
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 00:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1078C948A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 01:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbfJBWzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 18:55:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34670 "EHLO mx1.redhat.com"
+        id S1727976AbfJBXAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 19:00:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbfJBWzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 18:55:37 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F2BD18C890B;
-        Wed,  2 Oct 2019 22:55:37 +0000 (UTC)
-Received: from intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com (intel-purley-fpgabmp-02.ml3.eng.bos.redhat.com [10.19.176.206])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8007910016EB;
-        Wed,  2 Oct 2019 22:55:36 +0000 (UTC)
-From:   Scott Wood <swood@redhat.com>
-To:     Frederic Weisbecker <fweisbec@gmail.com>,
+        id S1725799AbfJBXAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 19:00:17 -0400
+Subject: Re: [GIT PULL] membarrier fix
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570057217;
+        bh=vONXL17em5UB+nro01cYXPD21vKvunDRIiy41UJNEbo=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=rJ9SewITYFN5sKku/qiZwBCrkTisNOav0imiBHx5jCQt/ho+cMCcDELSkZyjJXol2
+         oPjUCyMcDXqWQYwmko8DIFaR/a7X+VSDbaEksmMyfrdHBiupHDhptq4QVdd3ma46Xo
+         tlTPaZkBbwbs0l9qmhz7zLvmMyuJw+Y7ec/66Z8U=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191002220406.GA50484@gmail.com>
+References: <20191002220406.GA50484@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191002220406.GA50484@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ sched-urgent-for-linus
+X-PR-Tracked-Commit-Id: 73956fc07dd7b25d4a33ab3fdd6247c60d0b237c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 714366f87336b2a3f1cca9a6ba8632d6403283ad
+Message-Id: <157005721714.372.7336279851109350503.pr-tracker-bot@kernel.org>
+Date:   Wed, 02 Oct 2019 23:00:17 +0000
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Scott Wood <swood@redhat.com>
-Subject: [PATCH] tick-sched: Update nohz load even if tick already stopped
-Date:   Wed,  2 Oct 2019 18:55:35 -0400
-Message-Id: <1570056935-12442-1-git-send-email-swood@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Wed, 02 Oct 2019 22:55:37 +0000 (UTC)
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The way loadavg is tracked during nohz only pays attention to the load
-upon entering nohz.  This can be particularly noticeable if nohz is
-entered while non-idle, and then the cpu goes idle and stays that way for
-a long time.  We've had reports of a loadavg near 150 on a mostly idle
-system.
+The pull request you sent on Thu, 3 Oct 2019 00:04:06 +0200:
 
-Calling calc_load_nohz_start() regardless of whether the tick is already
-stopped addresses the issue when going idle.  Tracking load changes when
-not going idle (e.g. multiple SCHED_FIFO tasks coming and going) is not
-addressed by this patch.
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
 
-Signed-off-by: Scott Wood <swood@redhat.com>
----
- kernel/time/tick-sched.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/714366f87336b2a3f1cca9a6ba8632d6403283ad
 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 955851748dc3..f177d8168400 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -763,6 +763,9 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
- 		ts->do_timer_last = 0;
- 	}
- 
-+	/* Even if the tick was already stopped, load may have changed */
-+	calc_load_nohz_start();
-+
- 	/* Skip reprogram of event if its not changed */
- 	if (ts->tick_stopped && (expires == ts->next_tick)) {
- 		/* Sanity check: make sure clockevent is actually programmed */
-@@ -783,7 +786,6 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
- 	 * the scheduler tick in nohz_restart_sched_tick.
- 	 */
- 	if (!ts->tick_stopped) {
--		calc_load_nohz_start();
- 		quiet_vmstat();
- 
- 		ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
+Thank you!
+
 -- 
-1.8.3.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
