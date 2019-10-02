@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D8DC91CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 241E8C91B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729149AbfJBTIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:08:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35200 "EHLO
+        id S1729490AbfJBTLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:11:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35764 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728763AbfJBTIH (ORCPT
+        by vger.kernel.org with ESMTP id S1729294AbfJBTIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:07 -0400
+        Wed, 2 Oct 2019 15:08:15 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-00035B-4k; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyu-00035v-Ea; Wed, 02 Oct 2019 20:08:12 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjym-0003aF-Ul; Wed, 02 Oct 2019 20:08:04 +0100
+        id 1iFjyq-0003gN-BF; Wed, 02 Oct 2019 20:08:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Alan Stern" <stern@rowland.harvard.edu>
+        "David S. Miller" <davem@davemloft.net>,
+        "YueHaibing" <yuehaibing@huawei.com>,
+        "Jay Vosburgh" <jay.vosburgh@canonical.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.160890792@decadent.org.uk>
+Message-ID: <lsq.1570043211.282268254@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 06/87] USB: Fix slab-out-of-bounds write in
- usb_get_bos_descriptor
+Subject: [PATCH 3.16 81/87] bonding: Add vlan tx offload to hw_enc_features
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,36 +48,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit a03ff54460817c76105f81f3aa8ef655759ccc9a upstream.
+commit d595b03de2cb0bdf9bcdf35ff27840cc3a37158f upstream.
 
-The syzkaller USB fuzzer found a slab-out-of-bounds write bug in the
-USB core, caused by a failure to check the actual size of a BOS
-descriptor.  This patch adds a check to make sure the descriptor is at
-least as large as it is supposed to be, so that the code doesn't
-inadvertently access memory beyond the end of the allocated region
-when assigning to dev->bos->desc->bNumDeviceCaps later on.
+As commit 30d8177e8ac7 ("bonding: Always enable vlan tx offload")
+said, we should always enable bonding's vlan tx offload, pass the
+vlan packets to the slave devices with vlan tci, let them to handle
+vlan implementation.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: syzbot+71f1e64501a309fcc012@syzkaller.appspotmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Now if encapsulation protocols like VXLAN is used, skb->encapsulation
+may be set, then the packet is passed to vlan device which based on
+bonding device. However in netif_skb_features(), the check of
+hw_enc_features:
+
+	 if (skb->encapsulation)
+                 features &= dev->hw_enc_features;
+
+clears NETIF_F_HW_VLAN_CTAG_TX/NETIF_F_HW_VLAN_STAG_TX. This results
+in same issue in commit 30d8177e8ac7 like this:
+
+vlan_dev_hard_start_xmit
+  -->dev_queue_xmit
+    -->validate_xmit_skb
+      -->netif_skb_features //NETIF_F_HW_VLAN_CTAG_TX is cleared
+      -->validate_xmit_vlan
+        -->__vlan_hwaccel_push_inside //skb->tci is cleared
+...
+ --> bond_start_xmit
+   --> bond_xmit_hash //BOND_XMIT_POLICY_ENCAP34
+     --> __skb_flow_dissect // nhoff point to IP header
+        -->  case htons(ETH_P_8021Q)
+             // skb_vlan_tag_present is false, so
+             vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
+             //vlan point to ip header wrongly
+
+Fixes: b2a103e6d0af ("bonding: convert to ndo_fix_features")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/config.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -897,8 +897,8 @@ int usb_get_bos_descriptor(struct usb_de
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1083,7 +1083,9 @@ static void bond_compute_features(struct
  
- 	/* Get BOS descriptor */
- 	ret = usb_get_descriptor(dev, USB_DT_BOS, 0, bos, USB_DT_BOS_SIZE);
--	if (ret < USB_DT_BOS_SIZE) {
--		dev_err(ddev, "unable to get BOS descriptor\n");
-+	if (ret < USB_DT_BOS_SIZE || bos->bLength < USB_DT_BOS_SIZE) {
-+		dev_err(ddev, "unable to get BOS descriptor or descriptor too short\n");
- 		if (ret >= 0)
- 			ret = -ENOMSG;
- 		kfree(bos);
+ done:
+ 	bond_dev->vlan_features = vlan_features;
+-	bond_dev->hw_enc_features = enc_features;
++	bond_dev->hw_enc_features = enc_features |
++				    NETIF_F_HW_VLAN_CTAG_TX |
++				    NETIF_F_HW_VLAN_STAG_TX;
+ 	bond_dev->hard_header_len = max_hard_header_len;
+ 	bond_dev->gso_max_segs = gso_max_segs;
+ 	netif_set_gso_max_size(bond_dev, gso_max_size);
 
