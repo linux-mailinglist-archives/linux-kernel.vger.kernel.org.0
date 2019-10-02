@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26048C919E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C992BC917D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729843AbfJBTK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:10:26 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35902 "EHLO
+        id S1729605AbfJBTJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:09:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36110 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729321AbfJBTIR (ORCPT
+        by vger.kernel.org with ESMTP id S1729381AbfJBTIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:17 -0400
+        Wed, 2 Oct 2019 15:08:22 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyx-000365-MX; Wed, 02 Oct 2019 20:08:15 +0100
+        id 1iFjyx-00035x-Q7; Wed, 02 Oct 2019 20:08:15 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyp-0003eu-9A; Wed, 02 Oct 2019 20:08:07 +0100
+        id 1iFjyp-0003fB-Ep; Wed, 02 Oct 2019 20:08:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,24 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Naohiro Aota" <naohiro.aota@wdc.com>,
-        "David Sterba" <dsterba@suse.com>,
-        "Filipe Manana" <fdmanana@suse.com>
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Ravi Bangoria" <ravi.bangoria@linux.vnet.ibm.com>,
+        "Stephane Eranian" <eranian@google.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Young Xiao" <92siuyang@gmail.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "Jiri Olsa" <jolsa@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Will Deacon" <will.deacon@arm.com>,
+        "Frederic Weisbecker" <fweisbec@gmail.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.469797181@decadent.org.uk>
+Message-ID: <lsq.1570043211.918554389@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 63/87] btrfs: start readahead also in seed devices
+Subject: [PATCH 3.16 66/87] perf/core: Fix perf_sample_regs_user() mm check
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,44 +58,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naohiro Aota <naohiro.aota@wdc.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit c4e0540d0ad49c8ceab06cceed1de27c4fe29f6e upstream.
+commit 085ebfe937d7a7a5df1729f35a12d6d655fea68c upstream.
 
-Currently, btrfs does not consult seed devices to start readahead. As a
-result, if readahead zone is added to the seed devices, btrfs_reada_wait()
-indefinitely wait for the reada_ctl to finish.
+perf_sample_regs_user() uses 'current->mm' to test for the presence of
+userspace, but this is insufficient, consider use_mm().
 
-You can reproduce the hung by modifying btrfs/163 to have larger initial
-file size (e.g. xfs_io pwrite 4M instead of current 256K).
+A better test is: '!(current->flags & PF_KTHREAD)', exec() clears
+PF_KTHREAD after it sets the new ->mm but before it drops to userspace
+for the first time.
 
-Fixes: 7414a03fbf9e ("btrfs: initial readahead code and prototypes")
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Possibly obsoletes: bf05fc25f268 ("powerpc/perf: Fix oops when kthread execs user process")
+
+Reported-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Reported-by: Young Xiao <92siuyang@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 4018994f3d87 ("perf: Add ability to attach user level registers dump to sample")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/reada.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/reada.c
-+++ b/fs/btrfs/reada.c
-@@ -764,6 +764,7 @@ static void __reada_start_machine(struct
- 	u64 total = 0;
- 	int i;
- 
-+again:
- 	do {
- 		enqueued = 0;
- 		mutex_lock(&fs_devices->device_list_mutex);
-@@ -776,6 +777,10 @@ static void __reada_start_machine(struct
- 		mutex_unlock(&fs_devices->device_list_mutex);
- 		total += enqueued;
- 	} while (enqueued && total < 10000);
-+	if (fs_devices->seed) {
-+		fs_devices = fs_devices->seed;
-+		goto again;
-+	}
- 
- 	if (enqueued == 0)
- 		return;
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4581,7 +4581,7 @@ static void perf_sample_regs_user(struct
+ 				  struct pt_regs *regs)
+ {
+ 	if (!user_mode(regs)) {
+-		if (current->mm)
++		if (!(current->flags & PF_KTHREAD))
+ 			regs = task_pt_regs(current);
+ 		else
+ 			regs = NULL;
 
