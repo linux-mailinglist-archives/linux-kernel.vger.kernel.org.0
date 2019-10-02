@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66339C91DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F16CC9211
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730045AbfJBTL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:11:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35582 "EHLO
+        id S1730247AbfJBTNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:13:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35258 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729194AbfJBTIM (ORCPT
+        by vger.kernel.org with ESMTP id S1729034AbfJBTII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:12 -0400
+        Wed, 2 Oct 2019 15:08:08 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyr-00035r-Cv; Wed, 02 Oct 2019 20:08:09 +0100
+        id 1iFjyn-00035R-Ld; Wed, 02 Oct 2019 20:08:05 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-0003dn-Gr; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyn-0003ap-8m; Wed, 02 Oct 2019 20:08:05 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Joakim Zhang" <qiangqing.zhang@nxp.com>,
-        "Dong Aisheng" <aisheng.dong@nxp.com>,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>
+        "Joe Burmeister" <joe.burmeister@devtank.co.uk>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.365040761@decadent.org.uk>
+Message-ID: <lsq.1570043211.417578783@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 49/87] can: flexcan: fix timeout when set small bitrate
+Subject: [PATCH 3.16 13/87] tty: max310x: Fix external crystal register setup
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,53 +47,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joakim Zhang <qiangqing.zhang@nxp.com>
+From: Joe Burmeister <joe.burmeister@devtank.co.uk>
 
-commit 247e5356a709eb49a0d95ff2a7f07dac05c8252c upstream.
+commit 5d24f455c182d5116dd5db8e1dc501115ecc9c2c upstream.
 
-Current we can meet timeout issue when setting a small bitrate like
-10000 as follows on i.MX6UL EVK board (ipg clock = 66MHZ, per clock =
-30MHZ):
+The datasheet states:
 
-| root@imx6ul7d:~# ip link set can0 up type can bitrate 10000
+  Bit 4: ClockEnSet the ClockEn bit high to enable an external clocking
+(crystal or clock generator at XIN). Set the ClockEn bit to 0 to disable
+clocking
+  Bit 1: CrystalEnSet the CrystalEn bit high to enable the crystal
+oscillator. When using an external clock source at XIN, CrystalEn must
+be set low.
 
-A link change request failed with some changes committed already.
-Interface can0 may have been left with an inconsistent configuration,
-please check.
+The bit 4, MAX310X_CLKSRC_EXTCLK_BIT, should be set and was not.
 
-| RTNETLINK answers: Connection timed out
+This was required to make the MAX3107 with an external crystal on our
+board able to send or receive data.
 
-It is caused by calling of flexcan_chip_unfreeze() timeout.
-
-Originally the code is using usleep_range(10, 20) for unfreeze
-operation, but the patch (8badd65 can: flexcan: avoid calling
-usleep_range from interrupt context) changed it into udelay(10) which is
-only a half delay of before, there're also some other delay changes.
-
-After double to FLEXCAN_TIMEOUT_US to 100 can fix the issue.
-
-Meanwhile, Rasmus Villemoes reported that even with a timeout of 100,
-flexcan_probe() fails on the MPC8309, which requires a value of at least
-140 to work reliably. 250 works for everyone.
-
-Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Joe Burmeister <joe.burmeister@devtank.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/can/flexcan.c | 2 +-
+ drivers/tty/serial/max310x.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -157,7 +157,7 @@
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -568,7 +568,7 @@ static int max310x_set_ref_clk(struct ma
+ 	}
  
- #define FLEXCAN_MB_CODE_MASK		(0xf0ffffff)
+ 	/* Configure clock source */
+-	clksrc = xtal ? MAX310X_CLKSRC_CRYST_BIT : MAX310X_CLKSRC_EXTCLK_BIT;
++	clksrc = MAX310X_CLKSRC_EXTCLK_BIT | (xtal ? MAX310X_CLKSRC_CRYST_BIT : 0);
  
--#define FLEXCAN_TIMEOUT_US             (50)
-+#define FLEXCAN_TIMEOUT_US		(250)
- 
- /*
-  * FLEXCAN hardware feature flags
+ 	/* Configure PLL */
+ 	if (pllcfg) {
 
