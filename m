@@ -2,31 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22196C48FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59BBDC4901
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfJBIBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 04:01:20 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18384 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfJBIBQ (ORCPT
+        id S1727402AbfJBIBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 04:01:23 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17307 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbfJBIBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 04:01:16 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d94594d0001>; Wed, 02 Oct 2019 01:01:17 -0700
+        Wed, 2 Oct 2019 04:01:18 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d94594c0000>; Wed, 02 Oct 2019 01:01:16 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 02 Oct 2019 01:01:14 -0700
+  Wed, 02 Oct 2019 01:01:16 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 02 Oct 2019 01:01:14 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 2 Oct
- 2019 08:01:13 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 2 Oct 2019 08:01:14 +0000
+        by hqpgpgate101.nvidia.com on Wed, 02 Oct 2019 01:01:16 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 2 Oct
+ 2019 08:01:16 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 2 Oct
+ 2019 08:01:15 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 2 Oct 2019 08:01:15 +0000
 Received: from jckuo-lt.nvidia.com (Not Verified[10.19.108.102]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d9459480000>; Wed, 02 Oct 2019 01:01:13 -0700
+        id <B5d94594a0000>; Wed, 02 Oct 2019 01:01:15 -0700
 From:   JC Kuo <jckuo@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>
@@ -34,9 +37,9 @@ CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <nkristam@nvidia.com>, <skomatineni@nvidia.com>,
         JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH 3/6] phy: tegra: xusb: Add Tegra194 support
-Date:   Wed, 2 Oct 2019 16:00:48 +0800
-Message-ID: <20191002080051.11142-4-jckuo@nvidia.com>
+Subject: [PATCH 4/6] dt-bindings: phy: tegra: Add Tegra194 support
+Date:   Wed, 2 Oct 2019 16:00:49 +0800
+Message-ID: <20191002080051.11142-5-jckuo@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191002080051.11142-1-jckuo@nvidia.com>
 References: <20191002080051.11142-1-jckuo@nvidia.com>
@@ -44,208 +47,95 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1570003277; bh=bRceuze8u2jL1jSeoB9kLNIN6yGLGNIx96FHi2jiZU8=;
+        t=1570003276; bh=xIRa56stX3owbUbxdta+NzKWZ/tN6XIJqm8j5g4nv0M=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=YOFa0I9Nj4prm0Y++py02kUnb8eW7racp4zEfcK+VCVD2SpzwZT3Fyqm6ZZl9pa1e
-         buXK28WLYvZy8vyVUttIC7DYMAWwzMBVBUg5ggjlSVwU0eCI2/9LwOPplLs6SHgPpl
-         Mq7eBpJYxu+irHItd0EPVVRuWr4aghQIppT6ZU2tWaj1DbCQynlAnFt9HIqodJw1hX
-         YIgjcJ/Oku9q5A40qVbukUSAxB1DKLzcRi9oStRfPx3pVgHdLRgtT6spAJOygA/CVF
-         V64j9TjKt5+STZJph4aaksnQ9ANrVdW1h4Ob04crePi1bL1JEHzB38GOF0Br44UENC
-         ypXpLcQstlz/Q==
+        b=MWuN0Z7jup13PxpDOzGbwAkHJnu9K5ZvPBoeh1mo7NbmApLd4qblcruD2Ik7QYW0F
+         aiyNs3JQR9kzP6jsRGlWeqwf6hRNBt7uR6t3gukWi6+GV57GMAkRamqAdyl/8L3Okx
+         wDiNnnIkDPHTLXpjPJLXvNn3+i+yjSwMtpKRDaliF71rTXS9BrVgmFTjf2HQKDKG98
+         k1cfVUnHcWrZzhUrmyQ5jSwJ71Pl/WghL7fBrJEl8Vt/qK+8LLVWz4zwlvnwmV44i5
+         8DDMT12vvs4bJ4qEWz3YzShYQQn8wE2Yjd06XpRdPMqeqEk8lPb00JYtYQHHq6C07f
+         kzfaTBY+/pNcA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the XUSB pad controller found on Tegra194 SoCs. It is
-mostly similar to the same IP found on Tegra186, but the number of
-pads exposed differs, as do the programming sequences. Because most of
-the Tegra194 XUSB PADCTL registers definition and programming sequence
-are the same as Tegra186, Tegra194 XUSB PADCTL can share the same
-driver, xusb-tegra186.c, with Tegra186 XUSB PADCTL.
+Extend the bindings to cover the set of features found in Tegra194.
+Note that, technically, there are four more supplies connected to the
+XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
+, but the power sequencing requirements of Tegra194 require these to be
+under the control of the PMIC.
 
-Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it
-is possible for some platforms have long signal trace that could not
-provide sufficient electrical environment for Gen 2 speed. This patch
-introduce a new device node property "nvidia,disable-gen2" that can
-be used to specifically disable Gen 2 speed for a particular USB 3.0
-port so that the port can be limited to Gen 1 speed and avoid the
-instability.
+Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it is
+possible for some platforms have long signal trace that could not
+provide sufficient electrical environment for Gen 2 speed. To deal with
+this, a new device node property "nvidia,disable-gen2" was added to
+Tegra194 that be used to specifically disable Gen 2 speed for a
+particular USB 3.0 port so that the port can be limited to Gen 1 speed
+and avoid the instability.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 ---
- drivers/phy/tegra/Makefile        |  1 +
- drivers/phy/tegra/xusb-tegra186.c | 77 +++++++++++++++++++++++++++++++
- drivers/phy/tegra/xusb.c          | 13 ++++++
- drivers/phy/tegra/xusb.h          |  4 ++
- 4 files changed, 95 insertions(+)
+ .../bindings/phy/nvidia,tegra124-xusb-padctl.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
-index 320dd389f34d..89b84067cb4c 100644
---- a/drivers/phy/tegra/Makefile
-+++ b/drivers/phy/tegra/Makefile
-@@ -6,4 +6,5 @@ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) += xusb-tegra124.o
- phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) += xusb-tegra124.o
- phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_210_SOC) += xusb-tegra210.o
- phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) += xusb-tegra186.o
-+phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_194_SOC) += xusb-tegra186.o
- obj-$(CONFIG_PHY_TEGRA194_P2U) += phy-tegra194-p2u.o
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 6f3afaf9398f..4e27acf398b2 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -64,6 +64,13 @@
- #define  SSPX_ELPG_CLAMP_EN_EARLY(x)		BIT(1 + (x) * 3)
- #define  SSPX_ELPG_VCORE_DOWN(x)		BIT(2 + (x) * 3)
+diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+index 9fb682e47c29..3bef37e7c365 100644
+--- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
++++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
+@@ -37,6 +37,7 @@ Required properties:
+   - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
+   - Tegra210: "nvidia,tegra210-xusb-padctl"
+   - Tegra186: "nvidia,tegra186-xusb-padctl"
++  - Tegra194: "nvidia,tegra194-xusb-padctl"
+ - reg: Physical base address and length of the controller's registers.
+ - resets: Must contain an entry for each entry in reset-names.
+ - reset-names: Must include the following entries:
+@@ -62,6 +63,10 @@ For Tegra186:
+ - vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
+ - vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
  
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-+#define XUSB_PADCTL_SS_PORT_CFG			0x2c
-+#define   PORTX_SPEED_SUPPORT_SHIFT(x)		((x) * 4)
-+#define   PORTX_SPEED_SUPPORT_MASK		(0x3)
-+#define     PORT_SPEED_SUPPORT_GEN1		(0x0)
-+#endif
-+
- #define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x)	(0x88 + (x) * 0x40)
- #define  HS_CURR_LEVEL(x)			((x) & 0x3f)
- #define  TERM_SEL				BIT(25)
-@@ -635,6 +642,17 @@ static int tegra186_usb3_phy_power_on(struct phy *phy)
++For Tegra194:
++- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
++  3.3 V.
++- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
  
- 	padctl_writel(padctl, value, XUSB_PADCTL_SS_PORT_CAP);
+ Pad nodes:
+ ==========
+@@ -154,6 +159,11 @@ For Tegra210, the list of valid PHY nodes is given below:
+ - sata: sata-0
+   - functions: "usb3-ss", "sata"
  
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-+	if (padctl->soc == &tegra194_xusb_padctl_soc && port->disable_gen2) {
-+		value = padctl_readl(padctl, XUSB_PADCTL_SS_PORT_CFG);
-+		value &= ~(PORTX_SPEED_SUPPORT_MASK <<
-+			PORTX_SPEED_SUPPORT_SHIFT(index));
-+		value |= (PORT_SPEED_SUPPORT_GEN1 <<
-+			PORTX_SPEED_SUPPORT_SHIFT(index));
-+		padctl_writel(padctl, value, XUSB_PADCTL_SS_PORT_CFG);
-+	}
-+#endif
-+
- 	value = padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM_1);
- 	value &= ~SSPX_ELPG_VCORE_DOWN(index);
- 	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM_1);
-@@ -894,6 +912,65 @@ const struct tegra_xusb_padctl_soc tegra186_xusb_padctl_soc = {
- };
- EXPORT_SYMBOL_GPL(tegra186_xusb_padctl_soc);
++For Tegra194, the list of valid PHY nodes is given below:
++- usb2: usb2-0, usb2-1, usb2-2, usb2-3
++  - functions: "xusb"
++- usb3: usb3-0, usb3-1, usb3-2, usb3-3
++  - functions: "xusb"
  
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-+static const char * const tegra194_xusb_padctl_supply_names[] = {
-+	"avdd-usb",
-+	"vclamp-usb",
-+};
-+
-+static const struct tegra_xusb_lane_soc tegra194_usb2_lanes[] = {
-+	TEGRA186_LANE("usb2-0", 0,  0, 0, usb2),
-+	TEGRA186_LANE("usb2-1", 0,  0, 0, usb2),
-+	TEGRA186_LANE("usb2-2", 0,  0, 0, usb2),
-+	TEGRA186_LANE("usb2-3", 0,  0, 0, usb2),
-+};
-+
-+static const struct tegra_xusb_pad_soc tegra194_usb2_pad = {
-+	.name = "usb2",
-+	.num_lanes = ARRAY_SIZE(tegra194_usb2_lanes),
-+	.lanes = tegra194_usb2_lanes,
-+	.ops = &tegra186_usb2_pad_ops,
-+};
-+
-+static const struct tegra_xusb_lane_soc tegra194_usb3_lanes[] = {
-+	TEGRA186_LANE("usb3-0", 0,  0, 0, usb3),
-+	TEGRA186_LANE("usb3-1", 0,  0, 0, usb3),
-+	TEGRA186_LANE("usb3-2", 0,  0, 0, usb3),
-+	TEGRA186_LANE("usb3-3", 0,  0, 0, usb3),
-+};
-+
-+static const struct tegra_xusb_pad_soc tegra194_usb3_pad = {
-+	.name = "usb3",
-+	.num_lanes = ARRAY_SIZE(tegra194_usb3_lanes),
-+	.lanes = tegra194_usb3_lanes,
-+	.ops = &tegra186_usb3_pad_ops,
-+};
-+
-+static const struct tegra_xusb_pad_soc * const tegra194_pads[] = {
-+	&tegra194_usb2_pad,
-+	&tegra194_usb3_pad,
-+};
-+
-+const struct tegra_xusb_padctl_soc tegra194_xusb_padctl_soc = {
-+	.num_pads = ARRAY_SIZE(tegra194_pads),
-+	.pads = tegra194_pads,
-+	.ports = {
-+		.usb2 = {
-+			.ops = &tegra186_usb2_port_ops,
-+			.count = 4,
-+		},
-+		.usb3 = {
-+			.ops = &tegra186_usb3_port_ops,
-+			.count = 4,
-+		},
-+	},
-+	.ops = &tegra186_xusb_padctl_ops,
-+	.supply_names = tegra194_xusb_padctl_supply_names,
-+	.num_supplies = ARRAY_SIZE(tegra194_xusb_padctl_supply_names),
-+};
-+EXPORT_SYMBOL_GPL(tegra194_xusb_padctl_soc);
-+#endif
-+
- MODULE_AUTHOR("JC Kuo <jckuo@nvidia.com>");
- MODULE_DESCRIPTION("NVIDIA Tegra186 XUSB Pad Controller driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 2ea8497af82a..266c08074b28 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -65,6 +65,12 @@ static const struct of_device_id tegra_xusb_padctl_of_match[] = {
- 		.compatible = "nvidia,tegra186-xusb-padctl",
- 		.data = &tegra186_xusb_padctl_soc,
- 	},
-+#endif
-+#if defined(CONFIG_ARCH_TEGRA_194_SOC)
-+	{
-+		.compatible = "nvidia,tegra194-xusb-padctl",
-+		.data = &tegra194_xusb_padctl_soc,
-+	},
- #endif
- 	{ }
- };
-@@ -739,6 +745,13 @@ static int tegra_xusb_usb3_port_parse_dt(struct tegra_xusb_usb3_port *usb3)
+ Port nodes:
+ ===========
+@@ -221,6 +231,9 @@ Optional properties:
+   is internal. In the absence of this property the port is considered to be
+   external.
  
- 	usb3->internal = of_property_read_bool(np, "nvidia,internal");
- 
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
-+	if (port->padctl->soc == &tegra194_xusb_padctl_soc) {
-+		usb3->disable_gen2 = of_property_read_bool(np,
-+							"nvidia,disable-gen2");
-+	}
-+#endif
++- nvidia,disable-gen2: A boolean property whose presence determines that a port
++  should be limited to USB 3.1 Gen 1. This properlty is only for Tegra194.
 +
- 	usb3->supply = devm_regulator_get(&port->dev, "vbus");
- 	return PTR_ERR_OR_ZERO(usb3->supply);
- }
-diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index 093076ca27fd..6b71978ba15d 100644
---- a/drivers/phy/tegra/xusb.h
-+++ b/drivers/phy/tegra/xusb.h
-@@ -332,6 +332,7 @@ struct tegra_xusb_usb3_port {
- 	bool context_saved;
- 	unsigned int port;
- 	bool internal;
-+	bool disable_gen2;
+ For Tegra124 and Tegra132, the XUSB pad controller exposes the following
+ ports:
+ - 3x USB2: usb2-0, usb2-1, usb2-2
+@@ -233,6 +246,9 @@ For Tegra210, the XUSB pad controller exposes the following ports:
+ - 2x HSIC: hsic-0, hsic-1
+ - 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
  
- 	u32 tap1;
- 	u32 amp;
-@@ -444,5 +445,8 @@ extern const struct tegra_xusb_padctl_soc tegra210_xusb_padctl_soc;
- #if defined(CONFIG_ARCH_TEGRA_186_SOC)
- extern const struct tegra_xusb_padctl_soc tegra186_xusb_padctl_soc;
- #endif
-+#if defined(CONFIG_ARCH_TEGRA_194_SOC)
-+extern const struct tegra_xusb_padctl_soc tegra194_xusb_padctl_soc;
-+#endif
++For Tegra194, the XUSB pad controller exposes the following ports:
++- 4x USB2: usb2-0, usb2-1, usb2-2, usb2-3
++- 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
  
- #endif /* __PHY_TEGRA_XUSB_H */
+ Examples:
+ =========
 -- 
 2.17.1
 
