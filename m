@@ -2,120 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B681C91A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD1F7C9226
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbfJBTKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:10:30 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47194 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729835AbfJBTK2 (ORCPT
+        id S1729160AbfJBTQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:16:34 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:57406 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726669AbfJBTQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:10:28 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 45C75802F8; Wed,  2 Oct 2019 21:10:10 +0200 (CEST)
-Date:   Wed, 2 Oct 2019 21:10:23 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-pm@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Subject: Re: [PATCH v1] PM / Domains: Add tracepoints
-Message-ID: <20191002191023.GD13492@amd>
-References: <20190926150406.v1.1.I07a769ad7b00376777c9815fb169322cde7b9171@changeid>
- <20190927044239.589e7c4c@oasis.local.home>
- <20191001163542.GB87296@google.com>
- <20191001130343.4480afe3@gandalf.local.home>
- <20191001174235.GC87296@google.com>
- <20191001140846.65d7866c@gandalf.local.home>
- <20191001193701.GD87296@google.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EY/WZ/HvNxOox07X"
-Content-Disposition: inline
-In-Reply-To: <20191001193701.GD87296@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 2 Oct 2019 15:16:33 -0400
+Received: from mr5.cc.vt.edu (inbound.smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x92JGWXl025353
+        for <linux-kernel@vger.kernel.org>; Wed, 2 Oct 2019 15:16:32 -0400
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+        by mr5.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x92JGRP0003524
+        for <linux-kernel@vger.kernel.org>; Wed, 2 Oct 2019 15:16:32 -0400
+Received: by mail-qt1-f200.google.com with SMTP id i10so314134qtq.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 12:16:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
+         :message-id;
+        bh=4CMlpYrN8diNNsNoFQmvsP2oa4AEZl4aDzgp/marTlA=;
+        b=Z0RScsrzkLHvbbxWFZqxARpBYTQu8rF58SVFixSBz7L0O5yT9NCzBGiAr0Gv80vZZp
+         YeUGCpfREmNA/b7uxx9XeeliYrrwIkLvuxwnJDzLaisi7+SEvjaFGjB9IvIH5p5eu7zZ
+         fD6/XgGy+9DyS4YJIq1pCbgc+Tm4bXxVBxaIetGQtf1icx1t5aWamd1Wnf2cbRIFMlV+
+         MPqWHtFmeUnoW3+AHqsK7XO/4Z0SbbDtwDmuAlXV7wKyh/c9g4S4JFsrV8n65cRJKu0+
+         rciUCUobhEWoYYTdRMq3cMuVurWxg5RmzOG/desXfLfn2MqrElCDqEt33uKNcr6H1lsW
+         RbMg==
+X-Gm-Message-State: APjAAAXYPfXDQuq9S4OeQyd4hBDVTerdvHQaXtcchBtoOiW8KAiwOh87
+        XcNEHzeJxS34qQp5pY0EbFkPyAIIWRnnWihajufFoDoykjhb+TNnrZFb7bv7jsTA1omBookc7EB
+        44o8IGm4fRhhq1zFy5CkvVtgU8y88fLAYHUc=
+X-Received: by 2002:ac8:2fe5:: with SMTP id m34mr5232175qta.224.1570043786640;
+        Wed, 02 Oct 2019 12:16:26 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzkwVZPcXYKi4Jv+iqb5hMX6PYRd4iZbasi8to50k/E5HcZysC0giTxd9BhaVaFD5kjJAJPBw==
+X-Received: by 2002:ac8:2fe5:: with SMTP id m34mr5232151qta.224.1570043786333;
+        Wed, 02 Oct 2019 12:16:26 -0700 (PDT)
+Received: from turing-police ([2601:5c0:c001:4341::9ca])
+        by smtp.gmail.com with ESMTPSA id p2sm56019qkk.60.2019.10.02.12.16.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 12:16:25 -0700 (PDT)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     gregkh@linuxfoundation.org
+cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/staging/exfat - fix fs_sync() calls.
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Wed, 02 Oct 2019 15:16:24 -0400
+Message-ID: <11092.1570043784@turing-police>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The majority of them were totally backwards.  Change the logic
+so that if DELAYED_SYNC *isn't* in the config, we actually flush to disk
+before flagging the file system as clean.
 
---EY/WZ/HvNxOox07X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That leaves two calls in the DELAYED_SYNC case.  More detailed
+analysis is needed to make sure that's what's really needed, or if other
+call sites also need a fs_sync() call.  This patch is at least "less wrong"
+than the code was, but further changes should be another patch.
 
-On Tue 2019-10-01 12:37:01, Matthias Kaehlcke wrote:
-> On Tue, Oct 01, 2019 at 02:08:46PM -0400, Steven Rostedt wrote:
-> > On Tue, 1 Oct 2019 10:42:35 -0700
-> > Matthias Kaehlcke <mka@chromium.org> wrote:
-> >=20
-> > > On Tue, Oct 01, 2019 at 01:03:43PM -0400, Steven Rostedt wrote:
-> > > > On Tue, 1 Oct 2019 09:35:42 -0700
-> > > > Matthias Kaehlcke <mka@chromium.org> wrote:
-> > > >  =20
-> > > > > How about this instead:
-> > > > >=20
-> > > > >   Add tracepoints for genpd_power_on, genpd_power_off and
-> > > > >   genpd_set_performance_state. The tracepoints can help with
-> > > > >   understanding power domain behavior of a given device, which
-> > > > >   may be particularly interesting for battery powered devices
-> > > > >   and suspend/resume. =20
-> > > >=20
-> > > > Do you have a use case example to present? =20
-> > >=20
-> > > TBH I'm not looking into a specific use case right now. While
-> > > peeking around in /sys/kernel/debug/tracing/events to learn more
-> > > about existing tracepoints that might be relevant for my work
-> > > I noticed the absence of genpd ones and it seemed a good idea to
-> > > add them preemptively. Conceptually they seem similar to the
-> > > existing regulator_enable/disable and cpu_idle tracepoints.
-> > >=20
-> > > As an abstract use case I could see power analysis on battery
-> > > powered devices during suspend. genpd_power_on/off allow to see
-> > > which power domains remain on during suspend, and might give
-> > > insights for possible power saving options. Examples could be that
-> > > a power domain stays unexpectedly on due to a misconfiguration, or
-> > > two power domains remain on when it could be only one if you just
-> > > moved that one pin/port over to the other domain in the next
-> > > hardware revision.
-> >=20
-> > If the power management maintainers have no issues with adding these,
-> > then neither do I ;-)  It would be them who would pull them in anyway.
->=20
-> Ok, I'll send a new version with the changes you suggested and some more
-> info in the commit message, unless PM maintainers raise concerns before
-> that.
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-Dunno. Adding tracepoints because someone might need them for, umm,
-something... I'd wait until they are actually needed.
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 5f6caee819a6..2526044569ee 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -458,7 +458,7 @@ static int ffsUmountVol(struct super_block *sb)
+ 	/* acquire the lock for file system critical section */
+ 	down(&p_fs->v_sem);
+ 
+-	fs_sync(sb, false);
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ 
+ 	if (p_fs->vol_type == EXFAT) {
+@@ -666,8 +666,8 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+ 	/* create a new file */
+ 	ret = create_file(inode, &dir, &uni_name, mode, fid);
+ 
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
+@@ -1039,8 +1039,8 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+ 		release_entry_set(es);
+ 	}
+ 
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
+@@ -1179,8 +1179,8 @@ static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
+ 	if (fid->rwoffset > fid->size)
+ 		fid->rwoffset = fid->size;
+ 
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
+@@ -1327,8 +1327,8 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
+ 						num_entries + 1);
+ 	}
+ out:
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
+@@ -1389,8 +1389,8 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
+ 	fid->start_clu = CLUSTER_32(~0);
+ 	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
+ 
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
+@@ -1478,8 +1478,8 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
+ 		release_entry_set(es);
+ 	}
+ 
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
+@@ -1916,8 +1916,8 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
+ 
+ 	ret = create_dir(inode, &dir, &uni_name, fid);
+ 
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
+@@ -2177,8 +2177,8 @@ static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
+ 	fid->start_clu = CLUSTER_32(~0);
+ 	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
+ 
+-#ifdef CONFIG_EXFAT_DELAYED_SYNC
+-	fs_sync(sb, false);
++#ifndef CONFIG_EXFAT_DELAYED_SYNC
++	fs_sync(sb, true);
+ 	fs_set_vol_flags(sb, VOL_CLEAN);
+ #endif
+ 
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---EY/WZ/HvNxOox07X
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEUEARECAAYFAl2U9h8ACgkQMOfwapXb+vJlCgCXdBSL7hbDfn+LcSCp5VzPLAl6
-fQCaA5CKSoT22nF69BPs91zdN1eNR6I=
-=lSwj
------END PGP SIGNATURE-----
-
---EY/WZ/HvNxOox07X--
