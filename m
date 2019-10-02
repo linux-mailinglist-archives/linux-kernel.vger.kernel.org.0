@@ -2,94 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82753C8F22
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 18:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484D0C8F47
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:05:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfJBQ7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 12:59:52 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37752 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfJBQ7v (ORCPT
+        id S1728721AbfJBRD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:03:57 -0400
+Received: from excelsior.roeckx.be ([195.234.45.115]:47097 "EHLO
+        excelsior.roeckx.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728178AbfJBRDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:59:51 -0400
-Received: by mail-io1-f68.google.com with SMTP id b19so30505093iob.4;
-        Wed, 02 Oct 2019 09:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=edH88JJdhvk/m92MPK7nfCg4Dk9GmYl/C4LQHI6oVcg=;
-        b=V4N2hGEp0d2Y39s7wVpn/Bk4EUviruUwYOflGFl1F9b8QascqJIKG49jxSvZaziNes
-         cTF0rcV/QtekP7KHzbfAqN6glQunPtXZbBrtH6fK7fnxdq++jQk5E+NTlTBO4/LBqUjE
-         NnqNcXZISZQPFkfdWGRzY5xOEtlgEtyKAm37qr8Yn0N+WzmwGTpnwORjMFznPZc682hG
-         oMan9P6a/rKvuFONLlyBxzKC3qTigKG0YC7Rh0NJnla50L3Uzv+dzHQ7Z9Idr6TbvKd0
-         VrVWtske+SzTOIiOtdYUcKFS3aOEZr2yjZ4NPOXlRGSVc5evScbtaEXW8f85mQpAt/TN
-         XtMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=edH88JJdhvk/m92MPK7nfCg4Dk9GmYl/C4LQHI6oVcg=;
-        b=Delca1bDpyx8EOeqRvVoVIxJ2Kp+y7d4HRTO7sHbHiJyfI2oQSCdFJxG0CPuh2xoEV
-         gBke6+5N7WJUH+epD99PSAxOIaGNND2Q6o2IudUNf7++H17QybqFeh3QRlGLxTrMMDrw
-         OmGYtikVkfnfu+hP+f0yizvQHe1TY35g31HsTOtVYfBluCbAwqv8CQsy5jf20yDX/jzZ
-         EruxthZ2ThaXuMTH5gDaJcU31zK35uxtVMD0yqhvYgMfDv/OcSSzTCtVeuRN6x46y8bQ
-         NYp7rJeoOWuF/rKwxTf/3hJd/bX5ZP8D/k7GX/hTwHPvFadlKrPS220RVr4nfgFRrPAD
-         0+nw==
-X-Gm-Message-State: APjAAAWuW6fCZnUIHl6EgHgCup+q2Zk9RsolW1MMGKE2Rdh7+/DmVHpq
-        meuOtkdknPp9c+r4chjMLcdgCNphuXmZTPndZsE=
-X-Google-Smtp-Source: APXvYqyTHRFovhUojBsEb0XHEq2pPC73Ho0l0/Gbp4i+D9nBP1s8h7A2c86r1V5mGH1264/hx7ZE9D4VBS1dqX8IETA=
-X-Received: by 2002:a5e:8216:: with SMTP id l22mr1172841iom.252.1570035590957;
- Wed, 02 Oct 2019 09:59:50 -0700 (PDT)
+        Wed, 2 Oct 2019 13:03:55 -0400
+X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Oct 2019 13:03:55 EDT
+Received: from intrepid.roeckx.be (localhost [127.0.0.1])
+        by excelsior.roeckx.be (Postfix) with ESMTP id C5ECCA8A0291;
+        Wed,  2 Oct 2019 16:55:37 +0000 (UTC)
+Received: by intrepid.roeckx.be (Postfix, from userid 1000)
+        id AC1F61FE0C11; Wed,  2 Oct 2019 18:55:34 +0200 (CEST)
+Date:   Wed, 2 Oct 2019 18:55:33 +0200
+From:   Kurt Roeckx <kurt@roeckx.be>
+To:     linux-kernel@vger.kernel.org
+Cc:     Theodore Ts'o <tytso@mit.edu>
+Subject: Stop breaking the CSRNG
+Message-ID: <20191002165533.GA18282@roeckx.be>
 MIME-Version: 1.0
-References: <ec7d3fdb-445b-7f4e-d6e6-77c6ae9a5732@web.de> <20190930210114.6557-1-navid.emamdoost@gmail.com>
- <20191002092221.GJ2751@suse.cz>
-In-Reply-To: <20191002092221.GJ2751@suse.cz>
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Wed, 2 Oct 2019 11:59:40 -0500
-Message-ID: <CAEkB2ERBSfAad=EChgH+X9vrPGjH8_sBvb2W9ur8n1Fnh_NuUg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: affs: fix a memory leak in affs_remount
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Sterba <dsterba@suse.com>,
-        Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks David,
+Hi,
 
-On Wed, Oct 2, 2019 at 4:22 AM David Sterba <dsterba@suse.cz> wrote:
->
-> On Mon, Sep 30, 2019 at 04:01:10PM -0500, Navid Emamdoost wrote:
-> > In affs_remount if data is provided it is duplicated into new_opts.
-> > The allocated memory for new_opts is only released if pare_options fail.
-> > The release for new_opts is added.
->
-> A variable that is allocated and freed without use should ring a bell to
-> look closer at the code. There's a bit of history behind new_options,
-> originally there was save/replace options on the VFS layer so the 'data'
-> passed must not change (thus strdup), this got cleaned up in later
-> patches. But not completely.
->
-> There's no reason to do the strdup in cases where the filesystem does
-> not need to reuse the 'data' again, because strsep would modify it
-> directly.
->
-> So new_opts should be removed.
+As OpenSSL, we want cryptograhic secure random numbers. Before
+getrandom(), Linux never provided a good API for that, both
+/dev/random and /dev/urandom have problems. getrandom() fixed
+that, so we switched to it were available.
 
-I will send a new patch with the unused variable removed.
+It was possible to combine /dev/random and /dev/urandom, and get
+something that worked properly. You could call select() on
+/dev/random and know that both were initialized when it returned.
+But then select() started returning before /dev/random was
+initialized, so that if you switch to /dev/urnadom, it's still
+uninitialized.
+
+A solution for that was that you could instead read 1 byte from
+/dev/random, and then switch to /dev/urandom. But that also stopped
+working, /dev/urandom can still be uninitialized when you can read from
+/dev/random. So there no longer is a way to wait for /dev/urandom
+to be initialized.
+
+As a result of that, we now refuse to use /dev/urandom on recent
+kernels, and require to use of getrandom(). (To make this work with
+older userspace, this means we need to import all the different
+__NR_getrandom defines, and do the system call ourself.)
+
+But it seems people are now thinking about breaking getrandom() too,
+to let it return data when it's not initialized by default. Please
+don't.
+
+If you think such a mode is useful for some applications, let them set
+a flag, instead of the reverse.
 
 
--- 
-Navid.
+Kurt
+
