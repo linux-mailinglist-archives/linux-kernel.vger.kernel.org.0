@@ -2,229 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E328FC9345
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 23:07:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B164AC932C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 23:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbfJBVHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 17:07:39 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43069 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbfJBVHi (ORCPT
+        id S1729175AbfJBVA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 17:00:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40338 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729030AbfJBVAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 17:07:38 -0400
-Received: by mail-yw1-f66.google.com with SMTP id q7so211178ywe.10
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 14:07:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T2JVXi2n7aIjQPfd/y2Qza7rCOQAGt2XVrhneTlTFqk=;
-        b=a48bnacKL3bHQCAPTzjpwOWeh35mQfcT2+1l7mws8a+hPVifJauAclcUDowffjOciD
-         7uzBDNymTolORf/fs9l5zGGzRzz1hSg5yfarrk9unbU0agAgkyHjNdV3ca808h83hVDC
-         ZA1LnWCehKYL3I+DIx90V/bnighUg2HmkiHF3mnXA6EWwd/FZPqiJolqmmcQqE/499oN
-         JR4bJoR0fgCl2zzIeZ9BkOiXp5m1FinDcASY+l3yvJgazfbBMi1M1GskUfbZPFh0l8Yh
-         7FdZxNMS7krkjz8dI7du0pR8FAcyCuE7SyvDXqOi1NeqBG+KoqNaZ0sB8BP/lu+hpQQI
-         IcNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T2JVXi2n7aIjQPfd/y2Qza7rCOQAGt2XVrhneTlTFqk=;
-        b=Ldql7yepOR2HExH5sgDIQtjiOqSGB0k+VEB64gjJxEtcWcl9BfC0yLADox9tOZYHS8
-         bYzXLPoccVbyfVpnKQVx+lQRkCxSM23KDeib+yRRmaJ8pMCnann1ndMukVkE+jp7Bl82
-         yp6cTJPt2bNdKtIaB+vZ/9+wC+BiZYZy6+jNs+zO5hcDdGFqTSVPXdbNpFQCyyXn1e1S
-         Bdy1zj2eV7DSCr5ruauDoW+SMGJ+Wu6zsS7lOICflCC7Oi74xqI3Xq7JjA1rT5HF2afQ
-         cMXfD5KYGxyaMt4eBp3tM3T/Q1uGoih99G9dON+WcEvBZe5Bq3Qsi9Q6yiuFD/QUmNZe
-         iR6w==
-X-Gm-Message-State: APjAAAX9n0th+imLW/YvOes5/y5HP0t25Tyo+PL9lJxQf1c1XN3OR1ot
-        9+aDxdGc0llFEvPpUDsnuTcv/Xl6
-X-Google-Smtp-Source: APXvYqxQG7JoTZe++unblzzw8DbGcJPVmKkoeWAmTU6aYGL0Bsopdb5SJ5BUGIJMnPAvqXIcPAZY4A==
-X-Received: by 2002:a81:2b0a:: with SMTP id r10mr4266896ywr.301.1570050457102;
-        Wed, 02 Oct 2019 14:07:37 -0700 (PDT)
-Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
-        by smtp.gmail.com with ESMTPSA id p199sm100939ywe.1.2019.10.02.14.07.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2019 14:07:36 -0700 (PDT)
-Received: by mail-yw1-f53.google.com with SMTP id d192so231960ywa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 14:07:36 -0700 (PDT)
-X-Received: by 2002:a81:6f8a:: with SMTP id k132mr4013325ywc.275.1570050020507;
- Wed, 02 Oct 2019 14:00:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <00000000000051e9280593f2dc9f@google.com>
-In-Reply-To: <00000000000051e9280593f2dc9f@google.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Wed, 2 Oct 2019 16:59:44 -0400
-X-Gmail-Original-Message-ID: <CA+FuTSedj9+UJKLfuER+FuEmQvWNqsDfO5i+Z6vit0OoLv=NLA@mail.gmail.com>
-Message-ID: <CA+FuTSedj9+UJKLfuER+FuEmQvWNqsDfO5i+Z6vit0OoLv=NLA@mail.gmail.com>
-Subject: Re: general protection fault in veth_get_stats64
-To:     syzbot <syzbot+3f3e5e77d793c7a6fe6c@syzkaller.appspotmail.com>
-Cc:     airlied@linux.ie, andriy.shevchenko@linux.intel.com,
-        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
-        bskeggs@redhat.com, daniel@ffwll.ch,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        dri-devel@lists.freedesktop.org, David Ahern <dsahern@gmail.com>,
-        f.fainelli@gmail.com, guoren@kernel.org, hawk@kernel.org,
-        idosch@mellanox.com, Jakub Kicinski <jakub.kicinski@netronome.com>,
-        John Fastabend <john.fastabend@gmail.com>, jwi@linux.ibm.com,
-        Martin Lau <kafai@fb.com>, kimbrownkd@gmail.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        nouveau@lists.freedesktop.org, petrm@mellanox.com,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        toshiaki.makita1@gmail.com, wanghai26@huawei.com,
-        Yonghong Song <yhs@fb.com>, yuehaibing@huawei.com,
-        jiri@mellanox.com
+        Wed, 2 Oct 2019 17:00:25 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x92KpZtE069676
+        for <linux-kernel@vger.kernel.org>; Wed, 2 Oct 2019 17:00:24 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vd1sg2nqa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 17:00:24 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 2 Oct 2019 22:00:22 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 2 Oct 2019 22:00:17 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x92L0FGx50855996
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Oct 2019 21:00:15 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC16F11C050;
+        Wed,  2 Oct 2019 21:00:14 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A8B3E11C06C;
+        Wed,  2 Oct 2019 21:00:12 +0000 (GMT)
+Received: from dhcp-9-31-103-196.watson.ibm.com (unknown [9.31.103.196])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Oct 2019 21:00:12 +0000 (GMT)
+Subject: Re: [PATCH v6 8/9] ima: deprecate permit_directio, instead use
+ appraise_flag
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Date:   Wed, 02 Oct 2019 17:00:12 -0400
+In-Reply-To: <1569594360-7141-9-git-send-email-nayna@linux.ibm.com>
+References: <1569594360-7141-1-git-send-email-nayna@linux.ibm.com>
+         <1569594360-7141-9-git-send-email-nayna@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19100221-0016-0000-0000-000002B372CE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19100221-0017-0000-0000-00003314799D
+Message-Id: <1570050012.4421.50.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-02_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=763 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910020165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 3:56 PM syzbot
-<syzbot+3f3e5e77d793c7a6fe6c@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    a32db7e1 Add linux-next specific files for 20191002
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=175ab7cd600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=599cf05035799eef
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3f3e5e77d793c7a6fe6c
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f8b943600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16981a25600000
->
-> The bug was bisected to:
->
-> commit 84da111de0b4be15bd500deff773f5116f39f7be
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Sat Sep 21 17:07:42 2019 +0000
->
->      Merge tag 'for-linus-hmm' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17c55847600000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=14255847600000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10255847600000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+3f3e5e77d793c7a6fe6c@syzkaller.appspotmail.com
-> Fixes: 84da111de0b4 ("Merge tag 'for-linus-hmm' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma")
->
-> RSP: 002b:00007fff0ba6c998 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004424a9
-> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 0000000000000002 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-> R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 8605 Comm: syz-executor330 Not tainted 5.4.0-rc1-next-20191002
-> #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:veth_stats_rx drivers/net/veth.c:322 [inline]
-> RIP: 0010:veth_get_stats64+0x523/0x900 drivers/net/veth.c:356
-> Code: 89 85 60 ff ff ff e8 6c 74 31 fd 49 63 c7 48 69 c0 c0 02 00 00 48 03
-> 85 60 ff ff ff 48 8d b8 a0 01 00 00 48 89 fa 48 c1 ea 03 <42> 80 3c 32 00
-> 0f 85 c9 02 00 00 48 8d b8 a8 01 00 00 48 8b 90 a0
-> RSP: 0018:ffff88809996ed00 EFLAGS: 00010202
-> RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff84418daf
-> RDX: 0000000000000034 RSI: ffffffff84418e04 RDI: 00000000000001a0
-> RBP: ffff88809996ede0 R08: ffff888093182180 R09: ffffed1013202d6a
-> R10: ffffed1013202d69 R11: ffff888099016b4f R12: 0000000000000000
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-> FS:  0000000001f4a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000140 CR3: 000000009a80b000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   dev_get_stats+0x8e/0x280 net/core/dev.c:9220
->   rtnl_fill_stats+0x4d/0xac0 net/core/rtnetlink.c:1191
->   rtnl_fill_ifinfo+0x10ad/0x3af0 net/core/rtnetlink.c:1717
->   rtmsg_ifinfo_build_skb+0xc9/0x1a0 net/core/rtnetlink.c:3635
->   rtmsg_ifinfo_event.part.0+0x43/0xe0 net/core/rtnetlink.c:3667
->   rtmsg_ifinfo_event net/core/rtnetlink.c:3678 [inline]
->   rtmsg_ifinfo+0x8d/0xa0 net/core/rtnetlink.c:3676
->   __dev_notify_flags+0x235/0x2c0 net/core/dev.c:7757
->   rtnl_configure_link+0x175/0x250 net/core/rtnetlink.c:2968
->   __rtnl_newlink+0x10c4/0x16d0 net/core/rtnetlink.c:3285
->   rtnl_newlink+0x69/0xa0 net/core/rtnetlink.c:3325
->   rtnetlink_rcv_msg+0x463/0xb00 net/core/rtnetlink.c:5386
->   netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
->   rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5404
->   netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
->   netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
->   netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
->   sock_sendmsg_nosec net/socket.c:638 [inline]
->   sock_sendmsg+0xd7/0x130 net/socket.c:658
->   ___sys_sendmsg+0x803/0x920 net/socket.c:2312
->   __sys_sendmsg+0x105/0x1d0 net/socket.c:2357
->   __do_sys_sendmsg net/socket.c:2366 [inline]
->   __se_sys_sendmsg net/socket.c:2364 [inline]
->   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2364
->   do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4424a9
-> Code: e8 9c 07 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007fff0ba6c998 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004424a9
-> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 0000000000000002 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-> R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> ---[ end trace cc6dec8a4962bfff ]---
-> RIP: 0010:veth_stats_rx drivers/net/veth.c:322 [inline]
-> RIP: 0010:veth_get_stats64+0x523/0x900 drivers/net/veth.c:356
-> Code: 89 85 60 ff ff ff e8 6c 74 31 fd 49 63 c7 48 69 c0 c0 02 00 00 48 03
-> 85 60 ff ff ff 48 8d b8 a0 01 00 00 48 89 fa 48 c1 ea 03 <42> 80 3c 32 00
-> 0f 85 c9 02 00 00 48 8d b8 a8 01 00 00 48 8b 90 a0
-> RSP: 0018:ffff88809996ed00 EFLAGS: 00010202
-> RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff84418daf
-> RDX: 0000000000000034 RSI: ffffffff84418e04 RDI: 00000000000001a0
-> RBP: ffff88809996ede0 R08: ffff888093182180 R09: ffffed1013202d6a
-> R10: ffffed1013202d69 R11: ffff888099016b4f R12: 0000000000000000
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-> FS:  0000000001f4a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000140 CR3: 000000009a80b000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Hi Nayna,
 
-Syzbot CC:ed a lot of people directly on this report. Perhaps because
-of the bisection?
+On Fri, 2019-09-27 at 10:25 -0400, Nayna Jain wrote:
+> This patch deprecates the existing permit_directio flag, instead adds
+> it as possible value to appraise_flag parameter.
+> For eg.
+> appraise_flag=permit_directio
 
-Specific to the report: I think this may be introduced with the
-alternative names for network interfaces patchset.
+Defining a generic "appraise_flag=", which supports different options,
+is the right direction.  I would really like to depreciate the
+"permit_directio" flag, not just change the policy syntax.  For now,
+let's drop this change.
 
-The reproducer
+Mimi
 
-fails on      76c9ac0ee878 net: rtnetlink: add possibility to use
-alternative names as message handle
-passes on be2644aac3e1 tcp: add ipv6_addr_v4mapped_loopback() helper
-
-Leaving
-
-76c9ac0ee878 net: rtnetlink: add possibility to use alternative names
-as message handle
-cc6090e985d7 net: rtnetlink: introduce helper to get net_device
-instance by ifname
-7af12cba4ef0 net: rtnetlink: unify the code in __rtnl_newlink get dev
-with the rest
-88f4fb0c7496 net: rtnetlink: put alternative names to getlink message
-36fbf1e52bd3 net: rtnetlink: add linkprop commands to add and delete
-alternative ifnames
-ff92741270bf net: introduce name_node struct to be used in hashlist
-6958c97a488c net: procfs: use index hashlist instead of name hashlist
-be2
