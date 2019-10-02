@@ -2,130 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A33DC9358
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 23:14:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C3FDC935F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 23:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbfJBVOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 17:14:42 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44796 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729293AbfJBVOm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 17:14:42 -0400
-Received: by mail-pl1-f196.google.com with SMTP id q15so409812pll.11
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 14:14:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iHYXT2MapQxKdVQ7MnzMSwJjofrDGs/mMoboG0lEVTY=;
-        b=q9BbE0GObEk4vG/jJQ0YhLUz1bCBYIbTLNZetkjn6SHRgl3kt8KZJrGK1Tsh2z6ny3
-         rvHM0yq5mK/VsmL5dflFyowjNdGsZLa3DqmZurfCRLnoFFe9PLQFznn2ekPcO1ZQ7h4/
-         LT2HcpG8jJCe3Qz0l/FHM95jgQSltvUcOmtvBNFNJFU4E+e4Bzh/5pm7ylzLg8Wjl4H0
-         f+qkN1H/r8SXX07bGvr+mIDfaUG7pZ62TyLGVWu7gva2uU8wXztk/EI4fmdyTi5jufU7
-         xItUvO0XmbH9ob6UK2tvmz4vHwQ1KmB61cN//NqcoJgAFvtlE3ZHuok5RFNzlVOHEXNy
-         2Iyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iHYXT2MapQxKdVQ7MnzMSwJjofrDGs/mMoboG0lEVTY=;
-        b=WokvJqGOSuT/IEr0n05DIg4w1eYfdvUQZLEUYAfw+j5/xCIEApgqb4JdwU+/4Z5JSW
-         84JzGiw4j3aysvlCJCXsJ4dl5SuBhlS5TFRBAkSXEIlaBqXK0W095mNifeiwycE4IsEd
-         vKIsnyE7HFuwrZOTyFFlOekBkm/s87fQc4eJnUSW6SoQaQdFTGB768WVCLOsNBQTj7W5
-         tFIIBhwGV4edIxyU5l4wiiXw4wXVwkZ74s0fWhYxRZy1SOMOEC34L5ueYDwFHq9IQ8Zs
-         g+CosKdGMQkMQdnxjfj57GRPRiZ9meCe8NzwxMasXcMy9MuKXyOTjdtPcCcrBCEUHXPJ
-         ysNQ==
-X-Gm-Message-State: APjAAAVEFTenHNRUyjmjjVE/4Len3wzUClBjJEoBdm6637sWxull3wRY
-        avX6kccG1DC4C/4CMqlcC4o+vPRSoCueVVCPA4917A==
-X-Google-Smtp-Source: APXvYqxscMTSRx/XiSzosNRZGgs61rijzLWHJd6F0wCfXuLQb53BowxR8X4US85qSpRvMEwBdGgmXlVN1rxd4bJrnCY=
-X-Received: by 2002:a17:902:7c08:: with SMTP id x8mr5677826pll.119.1570050880892;
- Wed, 02 Oct 2019 14:14:40 -0700 (PDT)
+        id S1729465AbfJBVQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 17:16:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:55014 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728981AbfJBVQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 17:16:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10C1D1000;
+        Wed,  2 Oct 2019 14:16:00 -0700 (PDT)
+Received: from [192.168.1.124] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 243E53F534;
+        Wed,  2 Oct 2019 14:15:58 -0700 (PDT)
+Subject: Re: [PATCH] dma-mapping: Lift address space checks out of debug code
+To:     Kees Cook <keescook@chromium.org>, Christoph Hellwig <hch@lst.de>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Semmle Security Reports <security-reports@semmle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <201910021341.7819A660@keescook>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <7a5dc7aa-66ec-0249-e73f-285b8807cb73@arm.com>
+Date:   Wed, 2 Oct 2019 22:15:43 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20191002120136.1777161-1-arnd@arndb.de> <20191002120136.1777161-5-arnd@arndb.de>
-In-Reply-To: <20191002120136.1777161-5-arnd@arndb.de>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 2 Oct 2019 14:14:29 -0700
-Message-ID: <CAKwvOdmjM80XP7VH83iLn=8mz6W1+SbXST2FChEnH0LSRRm4pA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] drm/amd/display: fix dcn21 Makefile for clang
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        amd-gfx@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <201910021341.7819A660@keescook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 5:03 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Just like all the other variants, this one passes invalid
-> compile-time options with clang after the new code got
-> merged:
->
-> clang: error: unknown argument: '-mpreferred-stack-boundary=4'
-> scripts/Makefile.build:265: recipe for target 'drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.o' failed
->
-> Use the same variant that we have for dcn20 to fix compilation.
->
-> Fixes: eced51f9babb ("drm/amd/display: Add hubp block for Renoir (v2)")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi Kees,
 
-Thanks for the patch!
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-(Though I think it's already been merged)
-
-Alex, do you know why the AMDGPU driver uses a different stack
-alignment (16B) than the rest of the x86 kernel?  (see
-arch/x86/Makefile which uses 8B stack alignment).
-
+On 2019-10-02 9:46 pm, Kees Cook wrote:
+> As we've seen from USB and other areas, we need to always do runtime
+> checks for DMA operating on memory regions that might be remapped. This
+> consolidates the (existing!) checks and makes them on by default. A
+> warning will be triggered for any drivers still using DMA on the stack
+> (as has been seen in a few recent reports).
+> 
+> Suggested-by: Laura Abbott <labbott@redhat.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 > ---
->  drivers/gpu/drm/amd/display/dc/dcn21/Makefile | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-> index 8cd9de8b1a7a..ef673bffc241 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
-> @@ -3,7 +3,17 @@
->
->  DCN21 = dcn21_hubp.o dcn21_hubbub.o dcn21_resource.o
->
-> -CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -msse -mpreferred-stack-boundary=4
-> +ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
-> +       cc_stack_align := -mpreferred-stack-boundary=4
-> +else ifneq ($(call cc-option, -mstack-alignment=16),)
-> +       cc_stack_align := -mstack-alignment=16
-> +endif
+>   include/linux/dma-debug.h   |  8 --------
+>   include/linux/dma-mapping.h |  8 +++++++-
+>   kernel/dma/debug.c          | 16 ----------------
+>   3 files changed, 7 insertions(+), 25 deletions(-)
+> 
+> diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
+> index 4208f94d93f7..2af9765d9af7 100644
+> --- a/include/linux/dma-debug.h
+> +++ b/include/linux/dma-debug.h
+> @@ -18,9 +18,6 @@ struct bus_type;
+>   
+>   extern void dma_debug_add_bus(struct bus_type *bus);
+>   
+> -extern void debug_dma_map_single(struct device *dev, const void *addr,
+> -				 unsigned long len);
+> -
+>   extern void debug_dma_map_page(struct device *dev, struct page *page,
+>   			       size_t offset, size_t size,
+>   			       int direction, dma_addr_t dma_addr);
+> @@ -75,11 +72,6 @@ static inline void dma_debug_add_bus(struct bus_type *bus)
+>   {
+>   }
+>   
+> -static inline void debug_dma_map_single(struct device *dev, const void *addr,
+> -					unsigned long len)
+> -{
+> -}
+> -
+>   static inline void debug_dma_map_page(struct device *dev, struct page *page,
+>   				      size_t offset, size_t size,
+>   				      int direction, dma_addr_t dma_addr)
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index 4a1c4fca475a..2d6b8382eab1 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -583,7 +583,13 @@ static inline unsigned long dma_get_merge_boundary(struct device *dev)
+>   static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+>   		size_t size, enum dma_data_direction dir, unsigned long attrs)
+>   {
+> -	debug_dma_map_single(dev, ptr, size);
+> +	/* DMA must never operate on stack or other remappable places. */
+> +	WARN_ONCE(is_vmalloc_addr(ptr) || !virt_addr_valid(ptr),
+
+This stands to absolutely cripple I/O performance on arm64, because 
+every valid call will end up going off and scanning the memblock list, 
+which is not something we want on a fastpath in non-debug 
+configurations. We'd need a much better solution to the "pfn_valid() vs. 
+EFI no-map" problem before this might be viable.
+
+Robin.
+
+> +		"%s %s: driver maps %lu bytes from %s area\n",
+> +		dev ? dev_driver_string(dev) : "unknown driver",
+> +		dev ? dev_name(dev) : "unknown device", size,
+> +		is_vmalloc_addr(ptr) ? "vmalloc" : "invalid");
 > +
-> +CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -msse $(cc_stack_align)
-> +
-> +ifdef CONFIG_CC_IS_CLANG
-> +CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o += -msse2
-> +endif
->
->  AMD_DAL_DCN21 = $(addprefix $(AMDDALPATH)/dc/dcn21/,$(DCN21))
->
-> --
-> 2.20.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20191002120136.1777161-5-arnd%40arndb.de.
-
-
-
--- 
-Thanks,
-~Nick Desaulniers
+>   	return dma_map_page_attrs(dev, virt_to_page(ptr), offset_in_page(ptr),
+>   			size, dir, attrs);
+>   }
+> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> index 099002d84f46..aa1e6a1990b2 100644
+> --- a/kernel/dma/debug.c
+> +++ b/kernel/dma/debug.c
+> @@ -1232,22 +1232,6 @@ static void check_sg_segment(struct device *dev, struct scatterlist *sg)
+>   #endif
+>   }
+>   
+> -void debug_dma_map_single(struct device *dev, const void *addr,
+> -			    unsigned long len)
+> -{
+> -	if (unlikely(dma_debug_disabled()))
+> -		return;
+> -
+> -	if (!virt_addr_valid(addr))
+> -		err_printk(dev, NULL, "device driver maps memory from invalid area [addr=%p] [len=%lu]\n",
+> -			   addr, len);
+> -
+> -	if (is_vmalloc_addr(addr))
+> -		err_printk(dev, NULL, "device driver maps memory from vmalloc area [addr=%p] [len=%lu]\n",
+> -			   addr, len);
+> -}
+> -EXPORT_SYMBOL(debug_dma_map_single);
+> -
+>   void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
+>   			size_t size, int direction, dma_addr_t dma_addr)
+>   {
+> 
