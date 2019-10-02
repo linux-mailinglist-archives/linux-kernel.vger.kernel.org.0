@@ -2,63 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5AAC87F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E80C8806
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfJBMH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:07:27 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46547 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfJBMH1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:07:27 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u22so25918042qtq.13;
-        Wed, 02 Oct 2019 05:07:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ex6/oNwBMHfkrNehPUjGFzRyUvsWT0jO6XWSq6yiKHU=;
-        b=blLIkbkJS1wd1VJoOY+NYTDPa4rP3aELNg7nAbLLtgA09PDdZdz6JFkaMA19Z40vVy
-         csnme0aIF4TJcOqty6IvdBTOSswNzHT0wJHDxVVOqw5jZBhwVPJFW3Jk537WzEKPaCWW
-         uhJdJ4gg1F5MIZnthRkbilStw4XBj/MmgGA4EWkb0HydsyXiN9BuLHdXryBplTrNTdj7
-         jOUA98/nRf2faOlAmUW5pmfxqA5e5ppxMzEM24LdENMjRk3wzO8Bqa+4CbNqUHKGgPIE
-         NQj6A+LiAh57JaorDt5RbYehTF6RRt1geU3hosMgDZ9L+mJJV1ikNJ27YK3hSbdX0v5y
-         0v6A==
-X-Gm-Message-State: APjAAAUXFsQCQ6MH77zi9k3XMx1vPuUYpm8bBzIw2prAoKMna8pEXPU4
-        mSamnUhf+AV/1vJ2c1fbLHZ4oskoMkJ89tvrOF0=
-X-Google-Smtp-Source: APXvYqzDip6r97ouSV9gLUoJm4dYFmol3Z3MKhIpWC/42PDoJ1Dtw5g0nyG5uRgmTPJa49nIfbTBt3XARkRdXEy+TrM=
-X-Received: by 2002:a05:6214:2b0:: with SMTP id m16mr2662220qvv.45.1570018046381;
- Wed, 02 Oct 2019 05:07:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191002095736.1297224-1-arnd@arndb.de>
-In-Reply-To: <20191002095736.1297224-1-arnd@arndb.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 2 Oct 2019 14:07:09 +0200
-Message-ID: <CAK8P3a2=V4qJ9CDzZMNCzgOh-nD-24AFdoo83+QRNfc60FxD4Q@mail.gmail.com>
-Subject: Re: [PATCH] input: ixp4xx-beeper: include linux/io.h
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Enrico Weigelt <info@metux.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727202AbfJBMMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:12:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49230 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725766AbfJBMMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:12:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6E6F5AC10;
+        Wed,  2 Oct 2019 12:12:43 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id D74DAE04C7; Wed,  2 Oct 2019 14:12:41 +0200 (CEST)
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [PATCH net] mlx5: avoid 64-bit division in dr_icm_pool_mr_create()
+To:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>
+Cc:     Alex Vesker <valex@mellanox.com>, Borislav Petkov <bp@alien8.de>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <20191002121241.D74DAE04C7@unicorn.suse.cz>
+Date:   Wed,  2 Oct 2019 14:12:41 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 11:57 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> asm/io.h may not be included implicitly, causing a rare
-> randconfig build error:
->
-> drivers/input/misc/ixp4xx-beeper.c:48:3: error: implicit declaration of function '__raw_writel' [-Werror,-Wimplicit-function-declaration]
->                 __raw_writel((count & ~IXP4XX_OST_RELOAD_MASK) | IXP4XX_OST_ENABLE,
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Recently added code introduces 64-bit division in dr_icm_pool_mr_create()
+so that build on 32-bit architectures fails with
 
-Please ignore, this does not apply to mainline and is probably only needed
-on top of another patch that I will submit in the future.
+  ERROR: "__umoddi3" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
 
-       Arnd
+As the divisor is always a power of 2, we can use bitwise operation
+instead.
+
+Fixes: 29cf8febd185 ("net/mlx5: DR, ICM pool memory allocator")
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/steering/dr_icm_pool.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_icm_pool.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_icm_pool.c
+index 913f1e5aaaf2..d7c7467e2d53 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_icm_pool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/dr_icm_pool.c
+@@ -137,7 +137,8 @@ dr_icm_pool_mr_create(struct mlx5dr_icm_pool *pool,
+ 
+ 	icm_mr->icm_start_addr = icm_mr->dm.addr;
+ 
+-	align_diff = icm_mr->icm_start_addr % align_base;
++	/* align_base is always a power of 2 */
++	align_diff = icm_mr->icm_start_addr & (align_base - 1);
+ 	if (align_diff)
+ 		icm_mr->used_length = align_base - align_diff;
+ 
+-- 
+2.23.0
+
