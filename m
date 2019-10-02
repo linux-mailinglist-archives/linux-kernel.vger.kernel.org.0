@@ -2,80 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB865C87AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3F07C87C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbfJBMA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:00:29 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40521 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfJBMA2 (ORCPT
+        id S1728303AbfJBMDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:03:01 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50644 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfJBMDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:00:28 -0400
-Received: by mail-lf1-f67.google.com with SMTP id d17so12529092lfa.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 05:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+sr94GOz0pdmFe8NPbOwLVU6p5EmhKwRfQwRJfRbnBs=;
-        b=XYZZEpu74MT695K5Dhx/fEcUDe2G2eFTqT0vM+pZl4strKcLUGQ3PO4W5WWSVxueYL
-         xelWz1hdlNawP22kgoRzj9+gri56rn4GqB2BzyyFyBo5wmMyFhTEsnWIpHJVg71Doawi
-         X0UmzJ2Mg0sZHfbZGLjudQI7fiLTABciu0ckx66x6R7xiSKCO5fuWaMSTUW6PrAiHtWA
-         qXsW2TsXsD+iH8Fe4lJWM9gQlkWrJ1YM3T7Hk3eA/l1lBEhX0turashSToMDo+qTRV0j
-         EArNvVqF48LbX/WbJ3DoCu+mQYUp8glmcRPEUmIZi/vxLDpk2ipehTRQqN0ofY+uL0bj
-         Kp0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+sr94GOz0pdmFe8NPbOwLVU6p5EmhKwRfQwRJfRbnBs=;
-        b=KI46Q/cLKOttxfZRGYVd44Z/dq04JXZ2fBvv21oMEHCW5jx+7l5wkvDtQE0AJlW9Zo
-         1LhHHMAqhwuuUgKw8zxj99zWl4G0cO4PFxYeOJvGIrokdtNFkR+H9aiz0nivtEgN53A6
-         vhgxElerDNAahetDr5T6nhL31gdNv+j8LnnRSznsAufQj9s4D6TYxc/rKyie+KOKsYJm
-         iYEj1NE/9WK4QgNBHm/hfFfS2JlHSKoQTK2dj2dB/xhsufsboIy8+WqzZBfgKu5hTb+c
-         f2qCz3TSsfWziSNAG2OVgIfTofuM/D7R/9W5W4tXI+Mr71xpS7gnSzoudlDMFZAKi03A
-         T3ZA==
-X-Gm-Message-State: APjAAAX5akSq4nDdv8g1irE2c8sMI6wwMzLGlNwDfFPgrajcaZ+BM0ji
-        sZEr8x+CgbBDy3fpbmwJXlKkW/autTAorvtEnwLlBA==
-X-Google-Smtp-Source: APXvYqws7AaUk10K3J+WGNGa9aG6oOMKe/16UpknoRlkcmS+/JnmqWIQR5M1h0Xl7NN+bsfT58Bw3Xn6VFU0J6Gbf1k=
-X-Received: by 2002:a19:14f:: with SMTP id 76mr2052115lfb.92.1570017625360;
- Wed, 02 Oct 2019 05:00:25 -0700 (PDT)
+        Wed, 2 Oct 2019 08:03:01 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92BwidV115138;
+        Wed, 2 Oct 2019 12:02:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=5f9WP1t5ZUCUnAU3TFbU22auufKBsGd2ReO5WAV1EVQ=;
+ b=gsoanE9ypOdaIJvz2Lmkws6zLs50sjloWhfxTGFIniRY5XGdYQxqfshsvI7qZ7QVVoaH
+ YtY0w9g6HoZWV8rDGohb4keAR73zQY2nhrKRUYtwJ8FXZhoC3nUU7wi5fXKVvhf2IdxC
+ bEufY9WBp3AkTmNLA2/vkFkUqoDzL8KGVYgE1hY/dd7JTL3+AwK+Hgwbt2TsjkI4G73O
+ CNlx9HpqUTjesEmSJUTAyolzL8wPV9u4GRDqgQoym0z1ro3D/0py18majTtuN2oneM8O
+ qiZL+FisqUOl4WUi+mwM+qs3h+3VAU/ZhKhK+DTtBzTT1xifbJzmzI7Yr2GtH8vvEdp3 wQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2v9yfqcen5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 12:02:30 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92Bw3kx076918;
+        Wed, 2 Oct 2019 12:00:29 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2vckyntqya-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 12:00:29 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x92C0OHP020718;
+        Wed, 2 Oct 2019 12:00:24 GMT
+Received: from tomti.i.net-space.pl (/10.175.221.225)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Oct 2019 05:00:23 -0700
+Date:   Wed, 2 Oct 2019 14:00:18 +0200
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, bp@alien8.de, corbet@lwn.net,
+        dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
+        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, ross.philipson@oracle.com, tglx@linutronix.de
+Subject: Re: [PATCH v2 1/3] x86/boot: Introduce the kernel_info
+Message-ID: <20191002120018.d7wbpf3zusl4dcsc@tomti.i.net-space.pl>
+References: <20190704163612.14311-1-daniel.kiper@oracle.com>
+ <20190704163612.14311-2-daniel.kiper@oracle.com>
+ <5633066F-01BE-437D-A564-150FD48B6D92@zytor.com>
+ <20190930150110.ekir52wu3w67v2fk@tomti.i.net-space.pl>
+ <c9eb5a39-ced5-b35d-616d-6ffbe15c1396@zytor.com>
+ <20191001114133.xy5nuhepzzixhuh4@tomti.i.net-space.pl>
+ <dda802de-2efe-3d22-7816-6da36bf9ebf8@zytor.com>
 MIME-Version: 1.0
-References: <20191002095736.1297224-1-arnd@arndb.de>
-In-Reply-To: <20191002095736.1297224-1-arnd@arndb.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 2 Oct 2019 14:00:14 +0200
-Message-ID: <CACRpkdaVhhGF-g_95zPg2wvXGcGfYG1YUVVuz5nOsRw8GwGQkw@mail.gmail.com>
-Subject: Re: [PATCH] input: ixp4xx-beeper: include linux/io.h
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Enrico Weigelt <info@metux.net>,
-        Linux Input <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dda802de-2efe-3d22-7816-6da36bf9ebf8@zytor.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910020115
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910020115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 11:57 AM Arnd Bergmann <arnd@arndb.de> wrote:
-
-> asm/io.h may not be included implicitly, causing a rare
-> randconfig build error:
+On Tue, Oct 01, 2019 at 03:28:01PM -0700, H. Peter Anvin wrote:
+> On 2019-10-01 04:41, Daniel Kiper wrote:
+> >
+> > OK, so, this is more or less what I had in my v3 patch before sending
+> > this email. So, it looks that I am on good track. Great! Though I am not
+> > sure that we should have magic for chunked objects. If yes could you
+> > explain why? I would just leave len for chunked objects.
+> >
 >
-> drivers/input/misc/ixp4xx-beeper.c:48:3: error: implicit declaration of function '__raw_writel' [-Werror,-Wimplicit-function-declaration]
->                 __raw_writel((count & ~IXP4XX_OST_RELOAD_MASK) | IXP4XX_OST_ENABLE,
+> It makes it easier to validate the contents (bugs happen...), and would allow
+> for multiple chunks that could come from different object files if it ever
+> becomes necessary for some reason.
+
+OK.
+
+> We could also just say that dynamic chunks don't even have pointers, and let
+> the boot loader just walk the list.
+
+Yeah... That seams simpler. I will do that.
+
+> >> Also "InfO" is a pretty hideous magic. In general, all-ASCII magics have much
+> >> higher risk of collision than *RANDOM* binary numbers. However, for a chunked
+> >> architecture they do have the advantage that they can be used also as a human
+> >> name or file name for the chunk, e.,g. in sysfs, so maybe something like
+> >> "LnuX" or even "LToP" for the top-level chunk might make sense.
+> >>
+> >> How does that sound?
+> >
+> > Well, your proposals are more cryptic, especially the second one, than
+> > mine but I tend to agree that more *RANDOM* magics are better. So,
+> > I would choose "LToP" if you decipher it for me. Linux Top?
+> >
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Yes, Linux top [structure].
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thx!
 
-I am thinking a bit about the future of this driver. Isn't it more
-reasonable to just make a hrtimer-driven PWM and use the existing
-PWM userspace ABI and timer framework in Linux for this?
-Not that there is a generic timer-driven PWM but ... that is
-essentially what this driver is.
-
-Yours,
-Linus Walleij
+Daniel
