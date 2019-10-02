@@ -2,78 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39CB7C8FEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAD5C8FF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbfJBR3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 13:29:39 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54143 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbfJBR3j (ORCPT
+        id S1728808AbfJBRaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:30:14 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:48971 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726669AbfJBRaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:29:39 -0400
-Received: by mail-wm1-f66.google.com with SMTP id i16so8085462wmd.3;
-        Wed, 02 Oct 2019 10:29:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=knUYYHU2RbGFZMJdC/t7iP8HF/H6gnHVaApA8Esfhxo=;
-        b=Z1xOXOi8giWYdBPsef30cFsZDIGE91qMj6llDgJPW4MAnTRsze81s3Kt21KZmE3BSc
-         QGlspolGvKF4BNpt2F3kZ9KF/4itPArZYTl/BNoHNHP//3TfdFxYP8QozdwUA5O6mwfT
-         tm0rnM2XkGoQCEwYUHlRVeCOl2XkRt+1tznNCmAOvGn6oQ1y4LupJCA9LZ+gAE9tZvCF
-         FEDhvfCCq5lXO3BN5I1JrKc/iQfi3EWTk1Z+vpop+uwyzFznEJ2TuO5S8YXmSb0Lb4m1
-         82GSVrKRg4Z1RqNjG16aRMDX7a+k1/Fa132GGVyxOjBKuPVBMoG/s8CB8r28GVipSSCn
-         bSSA==
-X-Gm-Message-State: APjAAAUST5AX9Hs/ljqKDY8T6zIZv4/vdHHvdxSLVVCTV3i0hplH4eCg
-        SEtxQFtToUnpz44AtM5AgJM=
-X-Google-Smtp-Source: APXvYqyH9fArHRTfXWfzqVQgaYVpo3bxfKpOmbUVndDKpAsFqO6SiYYHhg1MSaFN+BTdgbZp7amG7Q==
-X-Received: by 2002:a1c:f004:: with SMTP id a4mr3750737wmb.42.1570037374987;
-        Wed, 02 Oct 2019 10:29:34 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id n8sm11547015wma.7.2019.10.02.10.29.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Oct 2019 10:29:34 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 19:29:31 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v3 3/4] ARM: dts: exynos: map 0x10000 SFR instead of
- 0x100 in DMC Exynos5422
-Message-ID: <20191002172931.GE21463@kozik-lap>
-References: <20191002060455.3834-1-l.luba@partner.samsung.com>
- <CGME20191002060506eucas1p28c9670128f5adfb628d7e84ce55c6e60@eucas1p2.samsung.com>
- <20191002060455.3834-4-l.luba@partner.samsung.com>
+        Wed, 2 Oct 2019 13:30:14 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TdzVj-o_1570037402;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TdzVj-o_1570037402)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 03 Oct 2019 01:30:08 +0800
+Subject: Re: [PATCH] mm: thp: move deferred split queue to memcg's nodeinfo
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
+        hannes@cmpxchg.org, hughd@google.com, shakeelb@google.com,
+        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1569968203-64647-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191002084304.GI15624@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <8eb7b84a-6288-3dc8-e98b-34ea1a8b43d7@linux.alibaba.com>
+Date:   Wed, 2 Oct 2019 10:29:58 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191002060455.3834-4-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191002084304.GI15624@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 08:04:54AM +0200, Lukasz Luba wrote:
-> There is a need to access registers at address offset near 0x10000.
-> These registers are private DMC performance counters, which might be used
-> as interrupt trigger when overflow. Potential usage is to skip polling
-> in devfreq framework and switch to interrupt managed bandwidth control.
-> 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi | 2 +-
 
-Thanks, applied but re-ordered with previous one. Applying first
-interrupts enables the interrupt mode which does not make sense without
-extended mapping
 
-Best regards,
-Krzysztof
+On 10/2/19 1:43 AM, Michal Hocko wrote:
+> On Wed 02-10-19 06:16:43, Yang Shi wrote:
+>> The commit 87eaceb3faa59b9b4d940ec9554ce251325d83fe ("mm: thp: make
+>> deferred split shrinker memcg aware") makes deferred split queue per
+>> memcg to resolve memcg pre-mature OOM problem.  But, all nodes end up
+>> sharing the same queue instead of one queue per-node before the commit.
+>> It is not a big deal for memcg limit reclaim, but it may cause global
+>> kswapd shrink THPs from a different node.
+>>
+>> And, 0-day testing reported -19.6% regression of stress-ng's madvise
+>> test [1].  I didn't see that much regression on my test box (24 threads,
+>> 48GB memory, 2 nodes), with the same test (stress-ng --timeout 1
+>> --metrics-brief --sequential 72  --class vm --exclude spawn,exec), I saw
+>> average -3% (run the same test 10 times then calculate the average since
+>> the test itself may have most 15% variation according to my test)
+>> regression sometimes (not every time, sometimes I didn't see regression
+>> at all).
+>>
+>> This might be caused by deferred split queue lock contention.  With some
+>> configuration (i.e. just one root memcg) the lock contention my be worse
+>> than before (given 2 nodes, two locks are reduced to one lock).
+>>
+>> So, moving deferred split queue to memcg's nodeinfo to make it NUMA
+>> aware again.
+>>
+>> With this change stress-ng's madvise test shows average 4% improvement
+>> sometimes and I didn't see degradation anymore.
+> My concern about this getting more and more complex
+> (http://lkml.kernel.org/r/20191002084014.GH15624@dhcp22.suse.cz) holds
+> here even more. Can we step back and reconsider the whole thing please?
+
+I'm not intended to make this more complicated, but this patch is aimed 
+to fix the NUMA awareness issue. It doesn't tune something further.
+
+>
+>> [1]: https://lore.kernel.org/lkml/20190930084604.GC17687@shao2-debian/
+>>
+>> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Shakeel Butt <shakeelb@google.com>
+>> Cc: David Rientjes <rientjes@google.com>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>>   include/linux/memcontrol.h |  8 ++++----
+>>   mm/huge_memory.c           | 15 +++++++++------
+>>   mm/memcontrol.c            | 29 +++++++++++++++++------------
+>>   3 files changed, 30 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>> index 9b60863..4b5c791 100644
+>> --- a/include/linux/memcontrol.h
+>> +++ b/include/linux/memcontrol.h
+>> @@ -137,6 +137,10 @@ struct mem_cgroup_per_node {
+>>   	bool			congested;	/* memcg has many dirty pages */
+>>   						/* backed by a congested BDI */
+>>   
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +	struct deferred_split deferred_split_queue;
+>> +#endif
+>> +
+>>   	struct mem_cgroup	*memcg;		/* Back pointer, we cannot */
+>>   						/* use container_of	   */
+>>   };
+>> @@ -330,10 +334,6 @@ struct mem_cgroup {
+>>   	struct list_head event_list;
+>>   	spinlock_t event_list_lock;
+>>   
+>> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> -	struct deferred_split deferred_split_queue;
+>> -#endif
+>> -
+>>   	struct mem_cgroup_per_node *nodeinfo[0];
+>>   	/* WARNING: nodeinfo must be the last member here */
+>>   };
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index c5cb6dc..3b78910 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -500,10 +500,11 @@ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+>>   static inline struct deferred_split *get_deferred_split_queue(struct page *page)
+>>   {
+>>   	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
+>> -	struct pglist_data *pgdat = NODE_DATA(page_to_nid(page));
+>> +	int nid = page_to_nid(page);
+>> +	struct pglist_data *pgdat = NODE_DATA(nid);
+>>   
+>>   	if (memcg)
+>> -		return &memcg->deferred_split_queue;
+>> +		return &memcg->nodeinfo[nid]->deferred_split_queue;
+>>   	else
+>>   		return &pgdat->deferred_split_queue;
+>>   }
+>> @@ -2882,12 +2883,13 @@ void deferred_split_huge_page(struct page *page)
+>>   static unsigned long deferred_split_count(struct shrinker *shrink,
+>>   		struct shrink_control *sc)
+>>   {
+>> -	struct pglist_data *pgdata = NODE_DATA(sc->nid);
+>> +	int nid = sc->nid;
+>> +	struct pglist_data *pgdata = NODE_DATA(nid);
+>>   	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>>   
+>>   #ifdef CONFIG_MEMCG
+>>   	if (sc->memcg)
+>> -		ds_queue = &sc->memcg->deferred_split_queue;
+>> +		ds_queue = &sc->memcg->nodeinfo[nid]->deferred_split_queue;
+>>   #endif
+>>   	return READ_ONCE(ds_queue->split_queue_len);
+>>   }
+>> @@ -2895,7 +2897,8 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
+>>   static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>   		struct shrink_control *sc)
+>>   {
+>> -	struct pglist_data *pgdata = NODE_DATA(sc->nid);
+>> +	int nid = sc->nid;
+>> +	struct pglist_data *pgdata = NODE_DATA(nid);
+>>   	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>>   	unsigned long flags;
+>>   	LIST_HEAD(list), *pos, *next;
+>> @@ -2904,7 +2907,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>   
+>>   #ifdef CONFIG_MEMCG
+>>   	if (sc->memcg)
+>> -		ds_queue = &sc->memcg->deferred_split_queue;
+>> +		ds_queue = &sc->memcg->nodeinfo[nid]->deferred_split_queue;
+>>   #endif
+>>   
+>>   	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index c313c49..19d4295 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -4989,6 +4989,12 @@ static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+>>   	pn->on_tree = false;
+>>   	pn->memcg = memcg;
+>>   
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +	spin_lock_init(&pn->deferred_split_queue.split_queue_lock);
+>> +	INIT_LIST_HEAD(&pn->deferred_split_queue.split_queue);
+>> +	pn->deferred_split_queue.split_queue_len = 0;
+>> +#endif
+>> +
+>>   	memcg->nodeinfo[node] = pn;
+>>   	return 0;
+>>   }
+>> @@ -5081,11 +5087,6 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+>>   		memcg->cgwb_frn[i].done =
+>>   			__WB_COMPLETION_INIT(&memcg_cgwb_frn_waitq);
+>>   #endif
+>> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> -	spin_lock_init(&memcg->deferred_split_queue.split_queue_lock);
+>> -	INIT_LIST_HEAD(&memcg->deferred_split_queue.split_queue);
+>> -	memcg->deferred_split_queue.split_queue_len = 0;
+>> -#endif
+>>   	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
+>>   	return memcg;
+>>   fail:
+>> @@ -5419,6 +5420,8 @@ static int mem_cgroup_move_account(struct page *page,
+>>   	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
+>>   	int ret;
+>>   	bool anon;
+>> +	struct deferred_split *ds_queue;
+>> +	int nid = page_to_nid(page);
+>>   
+>>   	VM_BUG_ON(from == to);
+>>   	VM_BUG_ON_PAGE(PageLRU(page), page);
+>> @@ -5466,10 +5469,11 @@ static int mem_cgroup_move_account(struct page *page,
+>>   
+>>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>   	if (compound && !list_empty(page_deferred_list(page))) {
+>> -		spin_lock(&from->deferred_split_queue.split_queue_lock);
+>> +		ds_queue = &from->nodeinfo[nid]->deferred_split_queue;
+>> +		spin_lock(&ds_queue->split_queue_lock);
+>>   		list_del_init(page_deferred_list(page));
+>> -		from->deferred_split_queue.split_queue_len--;
+>> -		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+>> +		ds_queue->split_queue_len--;
+>> +		spin_unlock(&ds_queue->split_queue_lock);
+>>   	}
+>>   #endif
+>>   	/*
+>> @@ -5483,11 +5487,12 @@ static int mem_cgroup_move_account(struct page *page,
+>>   
+>>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>   	if (compound && list_empty(page_deferred_list(page))) {
+>> -		spin_lock(&to->deferred_split_queue.split_queue_lock);
+>> +		ds_queue = &to->nodeinfo[nid]->deferred_split_queue;
+>> +		spin_lock(&ds_queue->split_queue_lock);
+>>   		list_add_tail(page_deferred_list(page),
+>> -			      &to->deferred_split_queue.split_queue);
+>> -		to->deferred_split_queue.split_queue_len++;
+>> -		spin_unlock(&to->deferred_split_queue.split_queue_lock);
+>> +			      &ds_queue->split_queue);
+>> +		ds_queue->split_queue_len++;
+>> +		spin_unlock(&ds_queue->split_queue_lock);
+>>   	}
+>>   #endif
+>>   
+>> -- 
+>> 1.8.3.1
 
