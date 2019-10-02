@@ -2,103 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16019C91F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0987C9215
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730131AbfJBTMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:12:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35402 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729107AbfJBTIK (ORCPT
+        id S1730268AbfJBTOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:14:06 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46192 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729012AbfJBTII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:10 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-00035i-3w; Wed, 02 Oct 2019 20:08:06 +0100
-Received: from ben by deadeye with local (Exim 4.92.1)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-0003bV-HF; Wed, 02 Oct 2019 20:08:05 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "kbuild test robot" <lkp@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.259555730@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 21/87] ipv4/igmp: fix build error if !CONFIG_IP_MULTICAST
-In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Wed, 2 Oct 2019 15:08:08 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q5so11003918pfg.13;
+        Wed, 02 Oct 2019 12:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/qPlGqzwiHfUgsEEnoPvPDRChosCodooY7FGNhUIqb4=;
+        b=oUCtj95vawtZ6VFMXXreO5ecMCUqNCDEHkjPFiP71I/EyVK0idhjd08I5YpAGbN+fR
+         cO32ZA9ZTIeqPm9l+7EjnuAzT6YnCeeAJNEgO3eNMG4HRIVECN1N1Ave9D0q3ksJRnqo
+         /3/bJBnfjU2OLdWbH8u1XT5bPtJB2mwjfAH47vLd8t4yW7rzSgvCHH+0MOWhIimBsVV0
+         dxS5DZdbgVTZ8/YsueQzWUpeCIc9iJN1yK3SRDseJfgy2FI8SPHmyRNKzaAyvOHOjAiT
+         G8bhMflOWCsdt23kKEpKkfPlSn5ulIHTIu4Tnf74hbkBE/nVW7S+I61zQJ7Tk/V47TBe
+         DbVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/qPlGqzwiHfUgsEEnoPvPDRChosCodooY7FGNhUIqb4=;
+        b=Od2Ch1dQTyM/R4d0siTNhYcczOw99W1LeXd5kTBswoqi3yURhj6pESFwgXJCIBd1mB
+         wKspvc3acLITz1GodRCB17/OSvMuLzykfpKjpeKYOkSRkIRFCG/dtRclfs8ToKPXyUbz
+         dhkCt4zE7cq/xjQEgdhN+a+6/PISK4SLv1bKdbvCglAGtIJBGVgJgwbiOrgQZt1RGDLs
+         lRmr4SHTlHx0FMZHaVUclA4jy6I+wJLlULvlNI21FPONgU8ApxQF+Uy3eP22sgGF3GcW
+         z0zolR2R5xr5Hyz0LPUShT9pQg6X2qne3q/ln320Co8x4jPFxXBVTYySYOgNAqsaaxC6
+         hKlg==
+X-Gm-Message-State: APjAAAXvZxXhLCXWba3CE5EKhFbGZd7x5vxEZUYCnmhEliRrks4HYqgX
+        BlPM4cEShvVs2Wd0lJoMzbI=
+X-Google-Smtp-Source: APXvYqyTZ7B8Y/f4lgkbP9JaZCOCcMf3vbwZbJ2Sblih9aO8xyZ5ufr75PLeX8FT5IShKnQT9fGn7g==
+X-Received: by 2002:a17:90a:e38b:: with SMTP id b11mr5866664pjz.138.1570043287656;
+        Wed, 02 Oct 2019 12:08:07 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id s17sm153974pgg.77.2019.10.02.12.08.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Oct 2019 12:08:07 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     bjorn.andersson@linaro.org, agross@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH] arm64: dts: qcom: msm8998-clamshell: Remove retention idle state
+Date:   Wed,  2 Oct 2019 12:07:56 -0700
+Message-Id: <20191002190756.26895-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.75-rc1 review patch.  If anyone has any objections, please let me know.
+The retention idle state does not appear to be supported by the firmware
+present on the msm8998 laptops since the state is advertised as disabled
+in ACPI, and attempting to enable the state in DT is observed to result
+in boot hangs.  Therefore, remove the state from use to address the
+observed issues.
 
-------------------
-
-From: Eric Dumazet <edumazet@google.com>
-
-commit 903869bd10e6719b9df6718e785be7ec725df59f upstream.
-
-ip_sf_list_clear_all() needs to be defined even if !CONFIG_IP_MULTICAST
-
-Fixes: 3580d04aa674 ("ipv4/igmp: fix another memory leak in igmpv3_del_delrec()")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: 2c6d2d3a580a (arm64: dts: qcom: Add Lenovo Miix 630)
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 ---
- net/ipv4/igmp.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ .../boot/dts/qcom/msm8998-clamshell.dtsi      | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -192,6 +192,17 @@ static void ip_ma_put(struct ip_mc_list
- 	     pmc != NULL;					\
- 	     pmc = rtnl_dereference(pmc->next_rcu))
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
+index 9682d4dd7496..1bae90705746 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
+@@ -23,6 +23,43 @@
+ 	};
+ };
  
-+static void ip_sf_list_clear_all(struct ip_sf_list *psf)
-+{
-+	struct ip_sf_list *next;
++/*
++ * The laptop FW does not appear to support the retention state as it is
++ * not advertised as enabled in ACPI, and enabling it in DT can cause boot
++ * hangs.
++ */
++&CPU0 {
++	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
++};
 +
-+	while (psf) {
-+		next = psf->sf_next;
-+		kfree(psf);
-+		psf = next;
-+	}
-+}
++&CPU1 {
++	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
++};
 +
- #ifdef CONFIG_IP_MULTICAST
++&CPU2 {
++	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
++};
++
++&CPU3 {
++	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
++};
++
++&CPU4 {
++	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
++};
++
++&CPU5 {
++	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
++};
++
++&CPU6 {
++	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
++};
++
++&CPU7 {
++	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
++};
++
+ &qusb2phy {
+ 	status = "okay";
  
- /*
-@@ -614,17 +625,6 @@ static void igmpv3_clear_zeros(struct ip
- 	}
- }
- 
--static void ip_sf_list_clear_all(struct ip_sf_list *psf)
--{
--	struct ip_sf_list *next;
--
--	while (psf) {
--		next = psf->sf_next;
--		kfree(psf);
--		psf = next;
--	}
--}
--
- static void kfree_pmc(struct ip_mc_list *pmc)
- {
- 	ip_sf_list_clear_all(pmc->sources);
+-- 
+2.17.1
 
