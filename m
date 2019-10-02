@@ -2,123 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A94D8C8E5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 18:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A614BC8E6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 18:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfJBQ3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 12:29:13 -0400
-Received: from mail-eopbgr690086.outbound.protection.outlook.com ([40.107.69.86]:33349
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725893AbfJBQ3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:29:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JeG8pnKI27sED2lt/Cm3LhfUHRpszzgv3bo/NiSoPaic/dGPOdSUFeZ1sA8I6TIW+kWKd1/+/oie8iT2DyxVe1ljbjj7ZlSKO4vJy2x1vSjnKi+TuXHJlAZaSuOf/q/AmNwJ/c7bHmGVFNhNte6fNZtpJcycpw0KfbM8qjn06BrMj1h10GqFaCaYTLP2+2Us1sLTnexbMcBGs1gmrfjNhVf4wr/vrOoYf65FLahd2aUFXUf1y+31MGlpKZTTXW/MVHaqLzP7DMzoK0dKKeAtzeJYB58E4JUYifsnvmeT0iuLXSRbsKQj9fISUQfEKTJnaxRD6u5CL3HWeyJW6EkheQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TqsS9yAkHZKgkTTaiYIT3edGEKPEbqJuGoXtqtPCSvs=;
- b=aFL2h0/8vLQkmJqUiGL24GCzeKZIVi23+Evg4CPebqTvwfUvfOGGJDCARjTANL4ysN+iyMEt8y10phOEDlFJi3Rz8Gjwg6eJlYbzorpllQbUPG7NbQPUBTR74slBFM8FdLgUs7862eWpvpKmirydEx9xcxujvAZ6X7SE+CRePTa9mL3gXaD9q2YwkATzkseB7u+1RnSoNyG963VM4WmuLjCHf+Pd1mygZvFPxeazBwauhwIHHJEwP4V4d7++TBT9tJ7rv1Y0OCxcge6A0IyKxjAmG9GQcAbWZyC67BJWUPnNl97gaM/layGaokhbP3jHGfIJzK7d87tiriYAHvSWlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
- dkim=pass header.d=silabs.com; arc=none
+        id S1726594AbfJBQcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 12:32:55 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45561 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfJBQcy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 12:32:54 -0400
+Received: by mail-pl1-f195.google.com with SMTP id u12so7256060pls.12
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 09:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TqsS9yAkHZKgkTTaiYIT3edGEKPEbqJuGoXtqtPCSvs=;
- b=jDllI+cwSsvLD4jw+GDof5ttQyYQsl18kr9JmpbER+s1SUuEg4Ins8u/shLAF0aIqoZ/kugqAhQk37FgJ/eCNWJ1OsuzMShP69J2LpeRPwoGJd0r5y1ArvAFbKzhbER7ATr+c6nuhUldCcXjTZ2FFP6ew7xX84eE0cCd6tZjR6I=
-Received: from MN2PR11MB4063.namprd11.prod.outlook.com (10.255.180.22) by
- MN2PR11MB3791.namprd11.prod.outlook.com (20.178.254.78) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.20; Wed, 2 Oct 2019 16:29:09 +0000
-Received: from MN2PR11MB4063.namprd11.prod.outlook.com
- ([fe80::ac8c:fc55:d1e2:465f]) by MN2PR11MB4063.namprd11.prod.outlook.com
- ([fe80::ac8c:fc55:d1e2:465f%5]) with mapi id 15.20.2305.017; Wed, 2 Oct 2019
- 16:29:09 +0000
-From:   Jerome Pouiller <Jerome.Pouiller@silabs.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        David Le Goff <David.Legoff@silabs.com>
-Subject: Re: [PATCH 02/20] staging: wfx: add support for I/O access
-Thread-Topic: [PATCH 02/20] staging: wfx: add support for I/O access
-Thread-Index: AQHVbthYAz5BV9jhoUCLDh42xNi6RaczMoaAgBRsfQA=
-Date:   Wed, 2 Oct 2019 16:29:09 +0000
-Message-ID: <4024590.nSQgSsaaFe@pc-42>
-References: <20190919105153.15285-1-Jerome.Pouiller@silabs.com>
- <20190919105153.15285-3-Jerome.Pouiller@silabs.com>
- <20190919163429.GB27277@lunn.ch>
-In-Reply-To: <20190919163429.GB27277@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jerome.Pouiller@silabs.com; 
-x-originating-ip: [37.71.187.125]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2eb31fd8-11e1-46e2-4d21-08d74755a6fb
-x-ms-traffictypediagnostic: MN2PR11MB3791:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR11MB3791ED0AF9533F49D20B82FE939C0@MN2PR11MB3791.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0178184651
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(366004)(39850400004)(346002)(396003)(136003)(376002)(199004)(189003)(256004)(26005)(14444005)(33716001)(9686003)(6512007)(6916009)(14454004)(478600001)(4326008)(6246003)(107886003)(229853002)(71200400001)(71190400001)(6436002)(6486002)(8676002)(81156014)(81166006)(476003)(8936002)(486006)(86362001)(7736002)(11346002)(3846002)(54906003)(316002)(6116002)(2906002)(25786009)(99286004)(446003)(91956017)(76116006)(76176011)(4744005)(102836004)(5660300002)(66574012)(6506007)(66556008)(64756008)(66476007)(186003)(66946007)(66446008)(66066001)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3791;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: silabs.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WQuT9ru85Fw+Ub7ypbsVbkV5is1kD44Y82p6zyJISqF8pj5t5NxA6+stQ0LXQxvMmJLCO8kuPwj546yJtHU4YuW+JFVbHAYGEeLjORAE8B7KPZPFnDqiMmmJlwi79luy1psh4BjYhRS/iDQXcx8Ejb9QMWXqG3ivL+0CXd1zykQQMTQcb73AK0Cx2HS65gNv0xlkACQPmZneOnqVjg4dnHVIT1yCLJcP1GxVYaCZnN55l3iWhd5kJ0aVPKMIgtpY9cgRoepSLTUR9B0KLXB7JvxvV0NJUnL9jJD4VazP3AkFGuxa1DIMBf+i6aHD6314zlqaaBOyKsz/MBFsPyjMJJ0VaXfoapbItasPSLkz6+jKZpvDBelTTZlRtJOKjDsZuTXMb67FqvWQeUgsbnl7AilRB8kFdstWC7zps2kRems=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <D76D8AC44FFF174E98879F79DC311406@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yHa2ifff61zSzcqlNyC/NW1wPlVFiEX+NgfwBD/73Mo=;
+        b=oJ9hnWECguw7nK8f+kqKEFdwgoKdcYpQ6C2LocCNzbHG4wPPVwsgMTYGbs0DLoeBn9
+         zpt70c81D/l56/svCOr4m8/Q27axDQS5LLI3KYhXMUFkhqNlCNyxIYmawcts1sabiJzs
+         HODRZe6BFZAVOWl2G5Nvm2PTnB2dxGduISeDo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yHa2ifff61zSzcqlNyC/NW1wPlVFiEX+NgfwBD/73Mo=;
+        b=RIFU1FxIWCTB+2EboRP47L5016+yTl+DIG8AaCLABC2sU9vP+lR56S0UCV/NVPEJEB
+         EK0eQQ2IoHLriEmS4TBJXN3xSRxhxzKpI3ZiSpIWI3b2idncdmQlCPvxa5Ng1/RkdAKf
+         KP3T/O63/IXl2AKp8Rcr003xambSPiwZecT4lBlVy4xviQYSmtUIK91Trsx4k1p4uxGs
+         rsxVWAujrnfCXfYxcxHuPrtcZMJ3Gyb30dNIzFeaFgKz+qm0H6eQRnVQjext+cDIs26N
+         4mbPFGdft2rKjhp7DgAe70q3FxQSR2wNrviJ5eoPmSY1ho7pt0GqfHf9PR8F58ma2Vu0
+         +KFw==
+X-Gm-Message-State: APjAAAXNr+iPF72hyguwUmMFlauw6XeB/CoxENazUzHwdPuupW0uAznl
+        ZsXnQBaO2v7ClhkUlBHnCIQwtw==
+X-Google-Smtp-Source: APXvYqzz5c1WsihtUOrz9EhiZpXsZb9IczkyfwU9rquOTW4vCRt+bTdbF/6F+a9Me86FT53hpQX64A==
+X-Received: by 2002:a17:902:144:: with SMTP id 62mr4630720plb.283.1570033974166;
+        Wed, 02 Oct 2019 09:32:54 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id r2sm22666315pfq.60.2019.10.02.09.32.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2019 09:32:52 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 09:32:48 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backlight: pwm_bl: Don't assign levels table repeatedly
+Message-ID: <20191002163248.GE87296@google.com>
+References: <20191001162835.1.I4f2ede1f55ddd1c72b0303b7fd7f73a782fa33e5@changeid>
+ <20191002100737.orm5ghpnw6oe6b3r@holly.lan>
 MIME-Version: 1.0
-X-OriginatorOrg: silabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2eb31fd8-11e1-46e2-4d21-08d74755a6fb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2019 16:29:09.3634
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 54dbd822-5231-4b20-944d-6f4abcd541fb
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zveEeK6gmYX/NPcpOPJa+E8D6619Rq/y6xubiDnrFIdQig1uNEA00n6aR36P4SUWdxv0ojy/vsD0ZnZr+tTr7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3791
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191002100737.orm5ghpnw6oe6b3r@holly.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 19 September 2019 18:34:48 CEST Andrew Lunn wrote:
-> On Thu, Sep 19, 2019 at 10:52:35AM +0000, Jerome Pouiller wrote:
-> > +static int wfx_sdio_copy_from_io(void *priv, unsigned int reg_id,
-> > +                              void *dst, size_t count)
-> > +{
-> > +     struct wfx_sdio_priv *bus =3D priv;
-> > +     unsigned int sdio_addr =3D reg_id << 2;
-> > +     int ret;
+On Wed, Oct 02, 2019 at 11:07:37AM +0100, Daniel Thompson wrote:
+> On Tue, Oct 01, 2019 at 04:29:24PM -0700, Matthias Kaehlcke wrote:
+> > pwm_backlight_probe() re-assigns pb->levels for every brightness
+> > level. This is not needed and was likely not intended, since
+> > neither side of the assignment changes during the loop. Assign
+> > the field only once.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> 
+> Makes sense but this should probably be dropping the curly braces too.
+
+ack, I'll send a new version with the curly braces removed.
+
+> >  drivers/video/backlight/pwm_bl.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> > index 746eebc411df..959436b9e92b 100644
+> > --- a/drivers/video/backlight/pwm_bl.c
+> > +++ b/drivers/video/backlight/pwm_bl.c
+> > @@ -564,6 +564,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> >  	memset(&props, 0, sizeof(struct backlight_properties));
+> >  
+> >  	if (data->levels) {
+> > +		pb->levels = data->levels;
 > > +
-> > +     BUG_ON(reg_id > 7);
->=20
-> Hi Jerome
->=20
-> BUG_ON should only be used when the system is corrupted, and there is
-> no alternative than to stop the machine, so it does not further
-> corrupt itself. Accessing a register which does not exist is not a
-> reason the kill the machine. A WARN() and a return of -EINVAL would be
-> better.
-
-Hi Andrew,
-
-I did not forget your suggestion. However, if everyone is agree with that, =
-I'd=20
-prefer to address it in a next pull request. Indeed, I'd prefer to keep thi=
-s=20
-version in sync with version 2.3.1 published on github.
-
---=20
-J=E9r=F4me Pouiller
-
+> >  		/*
+> >  		 * For the DT case, only when brightness levels is defined
+> >  		 * data->levels is filled. For the non-DT case, data->levels
+> > @@ -572,8 +574,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> >  		for (i = 0; i <= data->max_brightness; i++) {
+> >  			if (data->levels[i] > pb->scale)
+> >  				pb->scale = data->levels[i];
+> > -
+> > -			pb->levels = data->levels;
+> >  		}
+> >  
+> >  		if (pwm_backlight_is_linear(data))
+> > -- 
+> > 2.23.0.444.g18eeb5a265-goog
+> > 
