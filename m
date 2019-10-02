@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8A93C91C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4498CC9201
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbfJBTLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:11:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35614 "EHLO
+        id S1729781AbfJBTNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:13:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35334 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729215AbfJBTIM (ORCPT
+        by vger.kernel.org with ESMTP id S1729086AbfJBTIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:12 -0400
+        Wed, 2 Oct 2019 15:08:09 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyr-00035n-4r; Wed, 02 Oct 2019 20:08:09 +0100
+        id 1iFjyo-00035v-ED; Wed, 02 Oct 2019 20:08:06 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-0003dT-BC; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyn-0003c0-Pq; Wed, 02 Oct 2019 20:08:05 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Robert Hancock" <hancock@sedsystems.ca>,
-        "Guenter Roeck" <linux@roeck-us.net>
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.873035239@decadent.org.uk>
+Message-ID: <lsq.1570043211.502839918@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 45/87] hwmon: (pmbus/core) Treat parameters as paged
- if on multiple pages
+Subject: [PATCH 3.16 27/87] genwqe: Prevent an integer overflow in the ioctl
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,96 +47,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robert Hancock <hancock@sedsystems.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 4a60570dce658e3f8885bbcf852430b99f65aca5 upstream.
+commit 110080cea0d0e4dfdb0b536e7f8a5633ead6a781 upstream.
 
-Some chips have attributes which exist on more than one page but the
-attribute is not presently marked as paged. This causes the attributes
-to be generated with the same label, which makes it impossible for
-userspace to tell them apart.
+There are a couple potential integer overflows here.
 
-Marking all such attributes as paged would result in the page suffix
-being added regardless of whether they were present on more than one
-page or not, which might break existing setups. Therefore, we add a
-second check which treats the attribute as paged, even if not marked as
-such, if it is present on multiple pages.
+	round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
 
-Fixes: b4ce237b7f7d ("hwmon: (pmbus) Introduce infrastructure to detect sensors and limit registers")
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+The first thing is that the "m->size + (...)" addition could overflow,
+and the second is that round_up() overflows to zero if the result is
+within PAGE_SIZE of the type max.
+
+In this code, the "m->size" variable is an u64 but we're saving the
+result in "map_size" which is an unsigned long and genwqe_user_vmap()
+takes an unsigned long as well.  So I have used ULONG_MAX as the upper
+bound.  From a practical perspective unsigned long is fine/better than
+trying to change all the types to u64.
+
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hwmon/pmbus/pmbus_core.c | 34 ++++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
+ drivers/misc/genwqe/card_dev.c   | 2 ++
+ drivers/misc/genwqe/card_utils.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/hwmon/pmbus/pmbus_core.c
-+++ b/drivers/hwmon/pmbus/pmbus_core.c
-@@ -987,14 +987,15 @@ static int pmbus_add_sensor_attrs_one(st
- 				      const struct pmbus_driver_info *info,
- 				      const char *name,
- 				      int index, int page,
--				      const struct pmbus_sensor_attr *attr)
-+				      const struct pmbus_sensor_attr *attr,
-+				      bool paged)
- {
- 	struct pmbus_sensor *base;
- 	int ret;
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -779,6 +779,8 @@ static int genwqe_pin_mem(struct genwqe_
  
- 	if (attr->label) {
- 		ret = pmbus_add_label(data, name, index, attr->label,
--				      attr->paged ? page + 1 : 0);
-+				      paged ? page + 1 : 0);
- 		if (ret)
- 			return ret;
- 	}
-@@ -1026,6 +1027,30 @@ static int pmbus_add_sensor_attrs_one(st
- 	return 0;
- }
+ 	if ((m->addr == 0x0) || (m->size == 0))
+ 		return -EINVAL;
++	if (m->size > ULONG_MAX - PAGE_SIZE - (m->addr & ~PAGE_MASK))
++		return -EINVAL;
  
-+static bool pmbus_sensor_is_paged(const struct pmbus_driver_info *info,
-+				  const struct pmbus_sensor_attr *attr)
-+{
-+	int p;
-+
-+	if (attr->paged)
-+		return true;
-+
-+	/*
-+	 * Some attributes may be present on more than one page despite
-+	 * not being marked with the paged attribute. If that is the case,
-+	 * then treat the sensor as being paged and add the page suffix to the
-+	 * attribute name.
-+	 * We don't just add the paged attribute to all such attributes, in
-+	 * order to maintain the un-suffixed labels in the case where the
-+	 * attribute is only on page 0.
-+	 */
-+	for (p = 1; p < info->pages; p++) {
-+		if (info->func[p] & attr->func)
-+			return true;
+ 	map_addr = (m->addr & PAGE_MASK);
+ 	map_size = round_up(m->size + (m->addr & ~PAGE_MASK), PAGE_SIZE);
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -571,6 +571,10 @@ int genwqe_user_vmap(struct genwqe_dev *
+ 	/* determine space needed for page_list. */
+ 	data = (unsigned long)uaddr;
+ 	offs = offset_in_page(data);
++	if (size > ULONG_MAX - PAGE_SIZE - offs) {
++		m->size = 0;	/* mark unused and not added */
++		return -EINVAL;
 +	}
-+	return false;
-+}
-+
- static int pmbus_add_sensor_attrs(struct i2c_client *client,
- 				  struct pmbus_data *data,
- 				  const char *name,
-@@ -1039,14 +1064,15 @@ static int pmbus_add_sensor_attrs(struct
- 	index = 1;
- 	for (i = 0; i < nattrs; i++) {
- 		int page, pages;
-+		bool paged = pmbus_sensor_is_paged(info, attrs);
+ 	m->nr_pages = DIV_ROUND_UP(offs + size, PAGE_SIZE);
  
--		pages = attrs->paged ? info->pages : 1;
-+		pages = paged ? info->pages : 1;
- 		for (page = 0; page < pages; page++) {
- 			if (!(info->func[page] & attrs->func))
- 				continue;
- 			ret = pmbus_add_sensor_attrs_one(client, data, info,
- 							 name, index, page,
--							 attrs);
-+							 attrs, paged);
- 			if (ret)
- 				return ret;
- 			index++;
+ 	m->page_list = kcalloc(m->nr_pages,
 
