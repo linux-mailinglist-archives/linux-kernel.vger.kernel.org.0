@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241E8C91B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BCAC9175
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729490AbfJBTLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:11:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35764 "EHLO
+        id S1729458AbfJBTI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:08:29 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35624 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729294AbfJBTIP (ORCPT
+        by vger.kernel.org with ESMTP id S1729231AbfJBTIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:15 -0400
+        Wed, 2 Oct 2019 15:08:12 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyu-00035v-Ea; Wed, 02 Oct 2019 20:08:12 +0100
+        id 1iFjyr-00035x-Bv; Wed, 02 Oct 2019 20:08:09 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyq-0003gN-BF; Wed, 02 Oct 2019 20:08:08 +0100
+        id 1iFjyo-0003dY-Bv; Wed, 02 Oct 2019 20:08:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "YueHaibing" <yuehaibing@huawei.com>,
-        "Jay Vosburgh" <jay.vosburgh@canonical.com>
+        "Helge Deller" <deller@gmx.de>,
+        "John David Anglin" <dave.anglin@bell.net>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.282268254@decadent.org.uk>
+Message-ID: <lsq.1570043211.864935705@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 81/87] bonding: Add vlan tx offload to hw_enc_features
+Subject: [PATCH 3.16 46/87] parisc: Use implicit space register selection
+ for loading the coherence index of I/O pdirs
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,59 +48,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: John David Anglin <dave.anglin@bell.net>
 
-commit d595b03de2cb0bdf9bcdf35ff27840cc3a37158f upstream.
+commit 63923d2c3800919774f5c651d503d1dd2adaddd5 upstream.
 
-As commit 30d8177e8ac7 ("bonding: Always enable vlan tx offload")
-said, we should always enable bonding's vlan tx offload, pass the
-vlan packets to the slave devices with vlan tci, let them to handle
-vlan implementation.
+We only support I/O to kernel space. Using %sr1 to load the coherence
+index may be racy unless interrupts are disabled. This patch changes the
+code used to load the coherence index to use implicit space register
+selection. This saves one instruction and eliminates the race.
 
-Now if encapsulation protocols like VXLAN is used, skb->encapsulation
-may be set, then the packet is passed to vlan device which based on
-bonding device. However in netif_skb_features(), the check of
-hw_enc_features:
+Tested on rp3440, c8000 and c3750.
 
-	 if (skb->encapsulation)
-                 features &= dev->hw_enc_features;
-
-clears NETIF_F_HW_VLAN_CTAG_TX/NETIF_F_HW_VLAN_STAG_TX. This results
-in same issue in commit 30d8177e8ac7 like this:
-
-vlan_dev_hard_start_xmit
-  -->dev_queue_xmit
-    -->validate_xmit_skb
-      -->netif_skb_features //NETIF_F_HW_VLAN_CTAG_TX is cleared
-      -->validate_xmit_vlan
-        -->__vlan_hwaccel_push_inside //skb->tci is cleared
-...
- --> bond_start_xmit
-   --> bond_xmit_hash //BOND_XMIT_POLICY_ENCAP34
-     --> __skb_flow_dissect // nhoff point to IP header
-        -->  case htons(ETH_P_8021Q)
-             // skb_vlan_tag_present is false, so
-             vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
-             //vlan point to ip header wrongly
-
-Fixes: b2a103e6d0af ("bonding: convert to ndo_fix_features")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: John David Anglin <dave.anglin@bell.net>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1083,7 +1083,9 @@ static void bond_compute_features(struct
+ drivers/parisc/ccio-dma.c  | 4 +---
+ drivers/parisc/sba_iommu.c | 3 +--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+--- a/drivers/parisc/ccio-dma.c
++++ b/drivers/parisc/ccio-dma.c
+@@ -563,8 +563,6 @@ ccio_io_pdir_entry(u64 *pdir_ptr, space_
+ 	/* We currently only support kernel addresses */
+ 	BUG_ON(sid != KERNEL_SPACE);
  
- done:
- 	bond_dev->vlan_features = vlan_features;
--	bond_dev->hw_enc_features = enc_features;
-+	bond_dev->hw_enc_features = enc_features |
-+				    NETIF_F_HW_VLAN_CTAG_TX |
-+				    NETIF_F_HW_VLAN_STAG_TX;
- 	bond_dev->hard_header_len = max_hard_header_len;
- 	bond_dev->gso_max_segs = gso_max_segs;
- 	netif_set_gso_max_size(bond_dev, gso_max_size);
+-	mtsp(sid,1);
+-
+ 	/*
+ 	** WORD 1 - low order word
+ 	** "hints" parm includes the VALID bit!
+@@ -595,7 +593,7 @@ ccio_io_pdir_entry(u64 *pdir_ptr, space_
+ 	** Grab virtual index [0:11]
+ 	** Deposit virt_idx bits into I/O PDIR word
+ 	*/
+-	asm volatile ("lci %%r0(%%sr1, %1), %0" : "=r" (ci) : "r" (vba));
++	asm volatile ("lci %%r0(%1), %0" : "=r" (ci) : "r" (vba));
+ 	asm volatile ("extru %1,19,12,%0" : "+r" (ci) : "r" (ci));
+ 	asm volatile ("depw  %1,15,12,%0" : "+r" (pa) : "r" (ci));
+ 
+--- a/drivers/parisc/sba_iommu.c
++++ b/drivers/parisc/sba_iommu.c
+@@ -573,8 +573,7 @@ sba_io_pdir_entry(u64 *pdir_ptr, space_t
+ 	pa = virt_to_phys(vba);
+ 	pa &= IOVP_MASK;
+ 
+-	mtsp(sid,1);
+-	asm("lci 0(%%sr1, %1), %0" : "=r" (ci) : "r" (vba));
++	asm("lci 0(%1), %0" : "=r" (ci) : "r" (vba));
+ 	pa |= (ci >> PAGE_SHIFT) & 0xff;  /* move CI (8 bits) into lowest byte */
+ 
+ 	pa |= SBA_PDIR_VALID_BIT;	/* set "valid" bit */
 
