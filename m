@@ -2,93 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 285F4C8A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A23AC8A78
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbfJBOBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:01:43 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41505 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfJBOBm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:01:42 -0400
-Received: by mail-qk1-f195.google.com with SMTP id p10so15057917qkg.8
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 07:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vhowmgkseytW1pHuL0lgJJtUtqRUC7YPO7Hg/w47jj4=;
-        b=f5Z+M3TlEajM14Is5sfbCMdOd2HhlK8i0KmSIAeMyb4aLvRrtXXEXq5FqOgrAJSK2T
-         yAbPBmBn+avTkNPz3tQSGYBZSqdBA1rFyoQ2/yLZbskpWBhmDEbQwkiAYWal6vzP86Ow
-         2iQ2vPs3n+zVFM/UxyNyxEtgUlpfRJ7DyDfkMi/dr9kSNey+knDX9zA6Mv2iZk0rgo4Y
-         pQ6401zA76ug5k1YbtCGXoJJ1TZoHrgVVJlq0A0Fj41rpfwWmnAIkIE7Zidhs10WADig
-         X1IIzF5d3wzTBNiyEt/bYkQ0vvZdRmh7iTmvfq9ctSo73YK1oxqsWkibC0TyZxrx03hb
-         HsFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vhowmgkseytW1pHuL0lgJJtUtqRUC7YPO7Hg/w47jj4=;
-        b=i1EdWJJnavM/mIn5CpaMdKxf0KRUMbiGwxMNDFdwybr2FwcfNo3wefF2Ro9OTLlLR+
-         7c+TeWcYYuO2BG2EXiJ/Yy+3w2dwnghexs/fgumS+egiV/mSXVd0AdQup7lJZgwFbWRT
-         olpjfVDo9muC7xdlvy1HopL8XJI9PLhCV320Pvobfj/wvxWmfN+A5lSYupxTL0/yNijw
-         8xbh8EjjgZkTPcJzBtFsaDIhUg70qOS8sFaVuOJy8pY9hbgigCJObg1fR+UVlR9pD7ML
-         vDgKZoVNlaurc02/q6QQpcLPXxrJbDCM1SRWqPvHZIiDSWSHK/+yCEwS33bUWPM4jdPG
-         4Yog==
-X-Gm-Message-State: APjAAAV7KfGrPimSiyZf4Y6a2WVKhOWw1SUEYtwKdreqhj24aI2Z5GPD
-        SrcwG9JQekr04in5+9GORJf58A==
-X-Google-Smtp-Source: APXvYqyySH0r+WBQZU52aaYxkrLDrFDZU5I5GNsKBRtrlsSyyLyl/sV/Sqxs9OBHY8uGqLsEPmYAlw==
-X-Received: by 2002:a37:6713:: with SMTP id b19mr3658748qkc.301.1570024901663;
-        Wed, 02 Oct 2019 07:01:41 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id p77sm10127501qke.6.2019.10.02.07.01.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Oct 2019 07:01:40 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 10:01:39 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Btrfs: add a extent ref verify tool (static analysis bug report)
-Message-ID: <20191002140138.eug7xvwhlsn5qnby@MacBook-Pro-91.local>
-References: <3d1bcdce-16ae-d490-0a68-19d9d9d41d92@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d1bcdce-16ae-d490-0a68-19d9d9d41d92@canonical.com>
-User-Agent: NeoMutt/20180716
+        id S1727771AbfJBOFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:05:43 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:52362 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726087AbfJBOFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 10:05:43 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C7E920067F;
+        Wed,  2 Oct 2019 16:05:40 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B46E200141;
+        Wed,  2 Oct 2019 16:05:40 +0200 (CEST)
+Received: from fsr-ub1664-121.ea.freescale.net (fsr-ub1664-121.ea.freescale.net [10.171.82.171])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C8B962060C;
+        Wed,  2 Oct 2019 16:05:39 +0200 (CEST)
+From:   Laurentiu Palcu <laurentiu.palcu@nxp.com>
+To:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     agx@sigxcpu.org, l.stach@pengutronix.de,
+        Laurentiu Palcu <laurentiu.palcu@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/5] Add support for iMX8MQ Display Controller Subsystem
+Date:   Wed,  2 Oct 2019 17:04:52 +0300
+Message-Id: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 02:50:51PM +0100, Colin Ian King wrote:
-> Hi,
-> 
-> Static analysis on linux-next with Coverity has picked up a potential
-> issue in file fs/btrfs/ref-verify.c, function process_leaf() in the
-> following commit:
-> 
-> commit fd708b81d972a0714b02a60eb4792fdbf15868c4
-> Author: Josef Bacik <josef@toxicpanda.com>
-> Date:   Fri Sep 29 15:43:50 2017 -0400
-> 
->     Btrfs: add a extent ref verify tool
-> 
-> The potential issue is when on the unlikely event when all the items
-> contain unknown key.types and so ret is not assigned a value. Since ret
-> is not initialized then a garbage value is returned by this function in
-> this unlikely scenario.
-> 
-> In the previous function process_extent_item any unknown key types are
-> flagged up as an error and -EINVAL is returned.  I'm unsure if this kind
-> of error handling should also be applied to function process_leaf with
-> invalid key types too.
-> 
+Hi,
 
-Thanks I'll fix this up.  You can run into block group item key types and we
-don't care about those, so we just need ret = 0;  Thanks,
+This patchset adds initial DCSS support for iMX8MQ chip. Initial support
+includes only graphics plane support (no video planes), no HDR10 capabilities,
+no graphics decompression (only linear, tiled and super-tiled buffers allowed).
 
-Josef
+Support for the rest of the features will be added incrementally, in subsequent
+patches.
+
+The patchset was tested with both HDP driver (not yet upstreamed) and MIPI-DSI
+(drivers already on the dri-devel ML).
+
+Thanks,
+Laurentiu
+
+Changes in v2:
+ * Removed '0x' in node's unit-address both in DT and yaml;
+ * Made the address region size lowercase, to be consistent;
+ * Removed some left-over references to P010;
+ * Added a Kconfig dependency of DRM && ARCH_MXC. This will also silence compilation
+   issues reported by kbuild for other architectures;
+
+
+Laurentiu Palcu (5):
+  clk: imx8mq: Add VIDEO2_PLL clock
+  drm/imx: compile imx directory by default
+  drm/imx: Add initial support for DCSS on iMX8MQ
+  dt-bindings: display: imx: add bindings for DCSS
+  arm64: dts: imx8mq: add DCSS node
+
+ .../bindings/display/imx/nxp,imx8mq-dcss.yaml      |  86 +++
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi          |  25 +
+ drivers/clk/imx/clk-imx8mq.c                       |   4 +
+ drivers/gpu/drm/Makefile                           |   2 +-
+ drivers/gpu/drm/imx/Kconfig                        |   2 +
+ drivers/gpu/drm/imx/Makefile                       |   1 +
+ drivers/gpu/drm/imx/dcss/Kconfig                   |   8 +
+ drivers/gpu/drm/imx/dcss/Makefile                  |   6 +
+ drivers/gpu/drm/imx/dcss/dcss-blkctl.c             |  75 ++
+ drivers/gpu/drm/imx/dcss/dcss-crtc.c               | 223 ++++++
+ drivers/gpu/drm/imx/dcss/dcss-ctxld.c              | 447 +++++++++++
+ drivers/gpu/drm/imx/dcss/dcss-dev.c                | 286 +++++++
+ drivers/gpu/drm/imx/dcss/dcss-dev.h                | 195 +++++
+ drivers/gpu/drm/imx/dcss/dcss-dpr.c                | 548 ++++++++++++++
+ drivers/gpu/drm/imx/dcss/dcss-drv.c                | 182 +++++
+ drivers/gpu/drm/imx/dcss/dcss-dtg.c                | 438 +++++++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.c                | 321 ++++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.h                |  52 ++
+ drivers/gpu/drm/imx/dcss/dcss-plane.c              | 418 +++++++++++
+ drivers/gpu/drm/imx/dcss/dcss-scaler.c             | 826 +++++++++++++++++++++
+ drivers/gpu/drm/imx/dcss/dcss-ss.c                 | 179 +++++
+ include/dt-bindings/clock/imx8mq-clock.h           |   4 +-
+ 22 files changed, 4326 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx8mq-dcss.yaml
+ create mode 100644 drivers/gpu/drm/imx/dcss/Kconfig
+ create mode 100644 drivers/gpu/drm/imx/dcss/Makefile
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-blkctl.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-crtc.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-ctxld.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dev.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dev.h
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dpr.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-drv.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-dtg.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-kms.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-kms.h
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-plane.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-scaler.c
+ create mode 100644 drivers/gpu/drm/imx/dcss/dcss-ss.c
+
+-- 
+2.7.4
+
