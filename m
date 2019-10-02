@@ -2,81 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB38C88DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79B15C88E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:41:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfJBMkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:40:11 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:54006 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfJBMkI (ORCPT
+        id S1727587AbfJBMkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:40:51 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:51493 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726326AbfJBMkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:40:08 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92Ce5ih014742;
-        Wed, 2 Oct 2019 07:40:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570020005;
-        bh=dkmFEQUZc03Vkc8FS2ObjTj3FAgduHGfTpnaLbtgfac=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=xW2stUqfGpSlD32dyqxV/tt3Aj8CrWcRCBMW7urDeNJFIOPVXF+ECtodvccrzV7L2
-         4eOcDKMJoBkLuB3zx9d3z1EpfIe4Gccgpyn/4ejpjbgCw1wBEAKFjRp78r92Vr2g9F
-         KMBGxoPh+YD0eN3nE1sgerHnlQglib/UA6MMKIPs=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x92Ce40P117296
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Oct 2019 07:40:04 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 07:39:54 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 07:40:04 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92Ce48C002060;
-        Wed, 2 Oct 2019 07:40:04 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 5/6] leds: core: Fix devm_classdev_match to reference correct structure
-Date:   Wed, 2 Oct 2019 07:40:41 -0500
-Message-ID: <20191002124042.25593-5-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20191002124042.25593-1-dmurphy@ti.com>
-References: <20191002124042.25593-1-dmurphy@ti.com>
+        Wed, 2 Oct 2019 08:40:51 -0400
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iFdvv-0007Rb-6t; Wed, 02 Oct 2019 14:40:43 +0200
+Date:   Wed, 2 Oct 2019 13:40:41 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM
+        BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE...),
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2835
+        ARM ARCHITECTURE),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2835
+        ARM ARCHITECTURE)
+Subject: Re: [PATCH 5/7] irqchip/irq-bcm2836: Add support for the 7211
+ interrupt controller
+Message-ID: <20191002134041.5a181d96@why>
+In-Reply-To: <20191001224842.9382-6-f.fainelli@gmail.com>
+References: <20191001224842.9382-1-f.fainelli@gmail.com>
+        <20191001224842.9382-6-f.fainelli@gmail.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: f.fainelli@gmail.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, eric@anholt.net, wahrenst@gmx.net, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the devm_classdev_match pointer initilization to the correct
-structure type.
+On Tue,  1 Oct 2019 15:48:40 -0700
+Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/led-class.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The root interrupt controller on 7211 is about identical to the one
+> existing on BCM2836, except that the SMP cross call are done through the
+> standard ARM GIC-400 interrupt controller. This interrupt controller is
+> used for side band wake-up signals though.
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 3f04334d59ee..438774315e6c 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -403,7 +403,7 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_register_ext);
- 
- static int devm_led_classdev_match(struct device *dev, void *res, void *data)
- {
--	struct led_cdev **p = res;
-+	struct led_classdev **p = res;
- 
- 	if (WARN_ON(!p || !*p))
- 		return 0;
+I don't fully grasp how this thing works.
+
+If the 7211 interrupt controller is root and the GIC is used for SGIs,
+this means that the GIC outputs (IRQ/FIQ/VIRQ/VFIQ, times eight) are
+connected to individual inputs to the 7211 controller. Seems totally
+braindead, and unexpectedly so.
+
+If the GIC is root and the 7211 outputs into the GIC all of its
+interrupts as a secondary irqchip, it would at least match an existing
+(and pretty bad) pattern.
+
+So which one of the two is it?
+
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  drivers/irqchip/irq-bcm2836.c | 25 ++++++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-bcm2836.c b/drivers/irqchip/irq-bcm2836.c
+> index 2038693f074c..77fa395c8f6b 100644
+> --- a/drivers/irqchip/irq-bcm2836.c
+> +++ b/drivers/irqchip/irq-bcm2836.c
+> @@ -112,6 +112,8 @@ static int bcm2836_map(struct irq_domain *d, unsigned int irq,
+>  		return -EINVAL;
+>  	}
+>  
+> +	chip->flags |= IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE;
+> +
+>  	irq_set_percpu_devid(irq);
+>  	irq_domain_set_info(d, irq, hw, chip, d->host_data,
+>  			    handle_percpu_devid_irq, NULL, NULL);
+> @@ -216,8 +218,9 @@ static void bcm2835_init_local_timer_frequency(void)
+>  	writel(0x80000000, intc.base + LOCAL_PRESCALER);
+>  }
+>  
+> -static int __init bcm2836_arm_irqchip_l1_intc_of_init(struct device_node *node,
+> -						      struct device_node *parent)
+> +static int __init arm_irqchip_l1_intc_of_init_smp(struct device_node *node,
+> +						  struct device_node *parent,
+> +						  bool smp_init)
+>  {
+>  	intc.base = of_iomap(node, 0);
+>  	if (!intc.base) {
+> @@ -232,11 +235,27 @@ static int __init bcm2836_arm_irqchip_l1_intc_of_init(struct device_node *node,
+>  	if (!intc.domain)
+>  		panic("%pOF: unable to create IRQ domain\n", node);
+>  
+> -	bcm2836_arm_irqchip_smp_init();
+> +	if (smp_init)
+> +		bcm2836_arm_irqchip_smp_init();
+
+Instead of the additional parameter and this check, why don't you just
+move the smp_init() call to bcm2836_arm_irqchip_l1_intc_of_init()
+instead?
+
+>  
+>  	set_handle_irq(bcm2836_arm_irqchip_handle_irq);
+> +
+>  	return 0;
+>  }
+>  
+> +static int __init bcm2836_arm_irqchip_l1_intc_of_init(struct device_node *node,
+> +						      struct device_node *parent)
+> +{
+> +	return arm_irqchip_l1_intc_of_init_smp(node, parent, true);
+> +}
+> +
+> +static int __init bcm7211_arm_irqchip_l1_intc_of_init(struct device_node *node,
+> +						      struct device_node *parent)
+> +{
+> +	return arm_irqchip_l1_intc_of_init_smp(node, parent, false);
+> +}
+> +
+>  IRQCHIP_DECLARE(bcm2836_arm_irqchip_l1_intc, "brcm,bcm2836-l1-intc",
+>  		bcm2836_arm_irqchip_l1_intc_of_init);
+> +IRQCHIP_DECLARE(bcm7211_arm_irqchip_l1_intc, "brcm,bcm7211-l1-intc",
+> +		bcm7211_arm_irqchip_l1_intc_of_init);
+
+
+Thanks,
+
+	M.
 -- 
-2.22.0.214.g8dca754b1e
-
+Without deviation from the norm, progress is not possible.
