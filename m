@@ -2,155 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 698CBC8756
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 13:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A8CC875B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 13:29:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbfJBL2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 07:28:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbfJBL17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 07:27:59 -0400
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F75521783;
-        Wed,  2 Oct 2019 11:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570015678;
-        bh=CaHmIq7vPjwe7nHbx34JvcVJQqWo4bw3l2Epb8/j/CA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ur9Q+s0aiLvLcQ3WVgmxUPDAd5FE1YJGyqRs6WujXwFrxOSIjIVvXA+IHie5bO9V0
-         829KhGw6x552j5D9T6hhzYRJUu0ULUmEZ/7drddS8N04NoMrz1lpLH8wHVZPvlWj5M
-         3fH+5462Gf0dCKnJcAC343Hyq+p/WMvVQ8Ihj3uQ=
-From:   Will Deacon <will@kernel.org>
-To:     linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, andreyknvl@google.com,
-        Will Deacon <will@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>, stable@vger.kernel.org
-Subject: [PATCH] media: uvc: Avoid cyclic entity chains due to malformed USB descriptors
-Date:   Wed,  2 Oct 2019 12:27:53 +0100
-Message-Id: <20191002112753.21630-1-will@kernel.org>
-X-Mailer: git-send-email 2.11.0
+        id S1726626AbfJBL3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 07:29:05 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41451 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfJBL3E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 07:29:04 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w65so4490355oiw.8;
+        Wed, 02 Oct 2019 04:29:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VOqaff5GeEyEytif6Y5wcF5pWtKQsDRF2Z5Wt6x2kVA=;
+        b=V64IvvBD8gj4ndDqKVNGC47tt//yOJs0vw3i79uw3Rns6s7dk8xVAPgA+3T73945rf
+         KhXqGLu79dMbd0LdpQo+6ftqFcX1BpKW44qEiH5N9p3w/uQf/Zb++v7I14ubwsr+hbnM
+         E1G1BzaeANawbrNOQzPMMNC7RRXM53VSzYSLvd9oZj6WUuRMHxIS/GqmNHURmAeilSzu
+         1QvbEvreMxCJZvEcsZMOQZeFivkNGYVoYvn5q0v+XjD9p7OR/F4x1D59pBOmZIeFXRkh
+         c39c1JEYn0xdZhvs0tRbHyRQo6vCCHDM2smqEe3cw4dQL2BiCxco0pnQOafAjAXVbJVX
+         vNyg==
+X-Gm-Message-State: APjAAAUzsih/9lOz8XpLiaqX1y95+CyZcJipTLHjAUkky5PPLkqCLYKb
+        y0lVaAWMgujBM8JBfXkUA6xHsQyA36zL+3pKwBE=
+X-Google-Smtp-Source: APXvYqwBp3ilQomjLD8ZkfMcVQbUDlnkJyZhIFzYiVSft3rQ6dhwA8ZhYPipVW9TH7GEhjRXD/8UtxT0SNmyzkb9b90=
+X-Received: by 2002:aca:f305:: with SMTP id r5mr2323471oih.131.1570015743746;
+ Wed, 02 Oct 2019 04:29:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191001180743.1041-1-geert+renesas@glider.be> <201910021701.JBV8khAI%lkp@intel.com>
+In-Reply-To: <201910021701.JBV8khAI%lkp@intel.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 2 Oct 2019 13:28:51 +0200
+Message-ID: <CAMuHMdWQhvWOMjEpJrXV0nuKUc=wT6Zi_ZLjKco0Lkgeis8NyQ@mail.gmail.com>
+Subject: Re: [PATCH] serial: sh-sci: Use platform_get_irq_optional() for
+ optional interrupts
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>, kbuild-all@01.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Way back in 2017, fuzzing the 4.14-rc2 USB stack with syzkaller kicked
-up the following WARNING from the UVC chain scanning code:
+Hi Kbuild test robot,
 
-  | list_add double add: new=ffff880069084010, prev=ffff880069084010,
-  | next=ffff880067d22298.
-  | ------------[ cut here ]------------
-  | WARNING: CPU: 1 PID: 1846 at lib/list_debug.c:31 __list_add_valid+0xbd/0xf0
-  | Modules linked in:
-  | CPU: 1 PID: 1846 Comm: kworker/1:2 Not tainted
-  | 4.14.0-rc2-42613-g1488251d1a98 #238
-  | Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-  | Workqueue: usb_hub_wq hub_event
-  | task: ffff88006b01ca40 task.stack: ffff880064358000
-  | RIP: 0010:__list_add_valid+0xbd/0xf0 lib/list_debug.c:29
-  | RSP: 0018:ffff88006435ddd0 EFLAGS: 00010286
-  | RAX: 0000000000000058 RBX: ffff880067d22298 RCX: 0000000000000000
-  | RDX: 0000000000000058 RSI: ffffffff85a58800 RDI: ffffed000c86bbac
-  | RBP: ffff88006435dde8 R08: 1ffff1000c86ba52 R09: 0000000000000000
-  | R10: 0000000000000002 R11: 0000000000000000 R12: ffff880069084010
-  | R13: ffff880067d22298 R14: ffff880069084010 R15: ffff880067d222a0
-  | FS:  0000000000000000(0000) GS:ffff88006c900000(0000) knlGS:0000000000000000
-  | CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  | CR2: 0000000020004ff2 CR3: 000000006b447000 CR4: 00000000000006e0
-  | Call Trace:
-  |  __list_add ./include/linux/list.h:59
-  |  list_add_tail+0x8c/0x1b0 ./include/linux/list.h:92
-  |  uvc_scan_chain_forward.isra.8+0x373/0x416
-  | drivers/media/usb/uvc/uvc_driver.c:1471
-  |  uvc_scan_chain drivers/media/usb/uvc/uvc_driver.c:1585
-  |  uvc_scan_device drivers/media/usb/uvc/uvc_driver.c:1769
-  |  uvc_probe+0x77f2/0x8f00 drivers/media/usb/uvc/uvc_driver.c:2104
+On Wed, Oct 2, 2019 at 11:53 AM kbuild test robot <lkp@intel.com> wrote:
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on tty/tty-testing]
+> [cannot apply to v5.4-rc1 next-20191001]
 
-Looking into the output from usbmon, the interesting part is the
-following data packet:
+Strange, this patch applies to all of v5.4-rc1, tty/tty-testing, and
+next-20191001?
 
-  ffff880069c63e00 30710169 C Ci:1:002:0 0 143 = 09028f00 01030080
-  00090403 00000e01 00000924 03000103 7c003328 010204db
+> url:    https://github.com/0day-ci/linux/commits/Geert-Uytterhoeven/serial-sh-sci-Use-platform_get_irq_optional-for-optional-interrupts/20191002-171547
 
-If we drop the lead configuration and interface descriptors, we're left
-with an output terminal descriptor describing a generic display:
+Oh, this is still the old tty/tty-testing before it was rebased to v5.4-rc1,
+i.e. still based on v5.3-rc4.  That explains the build failure.
 
-  /* Output terminal descriptor */
-  buf[0]	09
-  buf[1]	24
-  buf[2]	03	/* UVC_VC_OUTPUT_TERMINAL */
-  buf[3]	00	/* ID */
-  buf[4]	01	/* type == 0x0301 (UVC_OTT_DISPLAY) */
-  buf[5]	03
-  buf[6]	7c
-  buf[7]	00	/* source ID refers to self! */
-  buf[8]	33
+That does not explain why you couldn't apply this patch to v5.4-rc1 and
+next-20191001, though.
 
-The problem with this descriptor is that it is self-referential: the
-source ID of 0 matches itself! This causes the 'struct uvc_entity'
-representing the display to be added to its chain list twice during
-'uvc_scan_chain()': once via 'uvc_scan_chain_entity()' when it is
-processed directly from the 'dev->entities' list and then again
-immediately afterwards when trying to follow the source ID in
-'uvc_scan_chain_forward()'
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+> config: sparc64-allmodconfig (attached as .config)
+> compiler: sparc64-linux-gcc (GCC) 7.4.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.4.0 make.cross ARCH=sparc64
+>
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/tty/serial/sh-sci.c: In function 'sci_init_single':
+> >> drivers/tty/serial/sh-sci.c:2899:24: error: implicit declaration of function 'platform_get_irq_optional'; did you mean 'platform_get_irq_byname'? [-Werror=implicit-function-declaration]
+>        sci_port->irqs[i] = platform_get_irq_optional(dev, i);
+>                            ^~~~~~~~~~~~~~~~~~~~~~~~~
+>                            platform_get_irq_byname
+>    cc1: some warnings being treated as errors
 
-Add a check before adding an entity to a chain list to ensure that the
-entity is not already part of a chain.
+FTR, not reproducible on sparc on v5.4-rc1, current tty/tty-testing, and
+next-20191001.
 
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: <stable@vger.kernel.org>
-Fixes: c0efd232929c ("V4L/DVB (8145a): USB Video Class driver")
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Link: https://lore.kernel.org/linux-media/CAAeHK+z+Si69jUR+N-SjN9q4O+o5KFiNManqEa-PjUta7EOb7A@mail.gmail.com/
-Signed-off-by: Will Deacon <will@kernel.org>
----
+Gr{oetje,eeting}s,
 
-I don't have a way to reproduce the original issue, so this change is
-based purely on inspection. Considering I'm not familiar with USB nor
-UVC, I may well have missed something!
+                        Geert
 
- drivers/media/usb/uvc/uvc_driver.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 66ee168ddc7e..e24420b1750a 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1493,6 +1493,11 @@ static int uvc_scan_chain_forward(struct uvc_video_chain *chain,
- 			break;
- 		if (forward == prev)
- 			continue;
-+		if (forward->chain.next || forward->chain.prev) {
-+			uvc_trace(UVC_TRACE_DESCR, "Found reference to "
-+				"entity %d already in chain.\n", forward->id);
-+			return -EINVAL;
-+		}
- 
- 		switch (UVC_ENTITY_TYPE(forward)) {
- 		case UVC_VC_EXTENSION_UNIT:
-@@ -1574,6 +1579,13 @@ static int uvc_scan_chain_backward(struct uvc_video_chain *chain,
- 				return -1;
- 			}
- 
-+			if (term->chain.next || term->chain.prev) {
-+				uvc_trace(UVC_TRACE_DESCR, "Found reference to "
-+					"entity %d already in chain.\n",
-+					term->id);
-+				return -EINVAL;
-+			}
-+
- 			if (uvc_trace_param & UVC_TRACE_PROBE)
- 				printk(KERN_CONT " %d", term->id);
- 
 -- 
-2.23.0.444.g18eeb5a265-goog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
