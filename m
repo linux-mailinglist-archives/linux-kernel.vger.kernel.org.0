@@ -2,112 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1ACAC8865
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27315C883D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbfJBM0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:26:43 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44791 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfJBM0n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:26:43 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z9so6300394wrl.11;
-        Wed, 02 Oct 2019 05:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zcCfEs3KfOKzCbyLEWqayRRUzXnw9D3ddQV5gJK1ZO0=;
-        b=uepVfLVm8rY+dPdz/rllu5OOvyDpdWYbUVdKmYXZi5OVbbLuxF6i0fnA3WXcyvWw50
-         s+7m7zpRsYez7Ua+uzvIPueJRwv9MPEOlAtGeqmOMBta1CpCHJWw0dqcnLFbbNrmLykE
-         cRpaRnWkxrnkewrij4RJdlUFM4B2uXZghuwBptHB3MOEecJW9w2jtoQ2CY0Na1SK9EFU
-         H2HJ0f3G/D9kFaxPRZEOivva2VNJbx5S8lVh4NikI/NZUO+ZuNvoxmrsuBafQL3kQdUK
-         OJEj7kKL1/Crs8eVTO5Lkt85OM17LMZt04HoSTU3Wqe8Z/5ZNxuFT0etcUtpxzlvdIGZ
-         x3qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zcCfEs3KfOKzCbyLEWqayRRUzXnw9D3ddQV5gJK1ZO0=;
-        b=KfUSc3g6Y3chGi+pb+hy1OWmOo/vUwE1x78h+X/WeENpo89qrhUnzu26sNu4TeuXnm
-         AMGP4L54E4lC8KFfritNISWyu2rEGHmTVhnPbHZLDbw6ngo/qdo1hgoIDbQ792g4JyUQ
-         gIY+1k2cS4/zKJUqvNdpBDc1BZYyGiKfAB2Lcxk0TnAx+5Qgr2kZOYYFARaK9D69F/h0
-         w8KqtYRDOOXDwk8jDj40YkMJyhe+9P0Jbe5oBapwcoyVlPqIM5ngvJX2/UXk+mhQowma
-         5RFrJsEBp5AAYi9Gg5gHh73grKTN8YaEpPijRifsLRBf8yuLnYdEyX4XK/8HPfvIqz+A
-         3oyQ==
-X-Gm-Message-State: APjAAAXD30lyTCE6dYhvMA4yzMWqFnlZ3ZRe2n+DZ5nK8yrME/j7cbfL
-        dcKQmQLRy6vR7IhDDKN4+Bs=
-X-Google-Smtp-Source: APXvYqxoybC6gRPh4GDDplN1z+zsSxPdzEXbKLb/SJ5x93pwy7LiuM71IUPziFfqROC5f5SXCOA3Kg==
-X-Received: by 2002:adf:e387:: with SMTP id e7mr2568520wrm.306.1570019200785;
-        Wed, 02 Oct 2019 05:26:40 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id f186sm6769589wmg.21.2019.10.02.05.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 05:26:39 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 14:26:38 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 2/3] phy: tegra: use regulator_bulk_set_supply_names()
-Message-ID: <20191002122638.GB3908655@ulmo>
-References: <20191001132333.20146-1-brgl@bgdev.pl>
- <20191001132333.20146-3-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
-Content-Disposition: inline
-In-Reply-To: <20191001132333.20146-3-brgl@bgdev.pl>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1726888AbfJBMVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:21:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54792 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725747AbfJBMVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:21:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6CEC4ACC3;
+        Wed,  2 Oct 2019 12:21:13 +0000 (UTC)
+Message-ID: <1570019204.22393.1.camel@suse.cz>
+Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@suse.de, lenb@kernel.org, rjw@rjwysocki.net,
+        x86@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
+        matt@codeblueprint.co.uk, viresh.kumar@linaro.org,
+        juri.lelli@redhat.com, pjt@google.com, vincent.guittot@linaro.org,
+        qperret@qperret.net, dietmar.eggemann@arm.com
+Date:   Wed, 02 Oct 2019 14:26:44 +0200
+In-Reply-To: <20190924160423.GN2369@hirez.programming.kicks-ass.net>
+References: <20190909024216.5942-1-ggherdovich@suse.cz>
+         <20190909024216.5942-2-ggherdovich@suse.cz>
+         <20190924160423.GN2369@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2019-09-24 at 18:04 +0200, Peter Zijlstra wrote:
+> On Mon, Sep 09, 2019 at 04:42:15AM +0200, Giovanni Gherdovich wrote:
+> 
+> > +static void intel_set_cpu_max_freq(void)
+> > +{
+> > +	/*
+> > +	 * TODO: add support for:
+> > +	 *
+> > +	 * - Xeon Phi (KNM, KNL)
+> > +	 * - Xeon Gold/Platinum, Atom Goldmont/Goldmont Plus
+> > +	 * - Atom Silvermont
+> 
+> ISTR I had code for Atom.. what happened with that?
 
---mxv5cy4qt+RJ9ypb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm being overly zealous and I wanted to get a Silvermont machine to test that
+code before sending.
 
-On Tue, Oct 01, 2019 at 03:23:32PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> Use the new regulator helper instead of a for loop.
->=20
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/phy/tegra/xusb.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+The reason is that your code uses MSR_ATOM_CORE_RATIOS and
+MSR_ATOM_CORE_TURBO_RATIOS which are not documented in the SDM. I wanted to
+make sure those have the expected content on at least one machine before using
+them in my code. I have no doubt you, Srinivas and Len (who uses them in
+turbostat) have already checked but you know, more eyeballs.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+I've talked to Len and Srinivas at LPC, they agreed that those two MSR may not
+have made it to the SDM but said the turbostat source code is the reference in
+this case.
 
---mxv5cy4qt+RJ9ypb
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2Ul30ACgkQ3SOs138+
-s6EF5A//Xcp1n7NvMOoJLxPyJaAbj2+9yDBPk8P8XjrOlNnnJKLR/Pi/ZJ3XHx5F
-GUdipz/eE9JwZqsUSbqdBv+77ZeUeSz0SU5B7TNwajOLcInHbbmLqTxbXh+yydC8
-COM6x1+GzPZ/V8c2k1NqQUyKx1xfWe4cEWKIa/Nyssw9YoJfRI4RMZ20NQ2tyYcV
-fEO97xTcG+1ikivOJiqNdJYgSY4GdM5/6gJdHzLk0lBZEDq6EadVvdu/thMloF8i
-mlankGeD5uHIZLZLxw5tnX7TGVJ7kEoIbf8aFdQaFtXVweao8QUGlYaVbFnlPJXT
-/z1n+kLrBI8X6jdbUqzWYrcWI6LzrHSh3xRNdqxqjgW8EppuP1qhcVcdS34Q7/SJ
-dbSivgaTeeGf88Z5RFMXLPxVYpKGsZ3xIi2QSuz6PZG2pJQmWvRlgSZR+ReH/9xg
-YnpBaRCKiAGLpxXTn/ZQNlhca1ZXH90SgPsHEaPSgFB+EencKjbLgvVd3Sq3lNEW
-E2xVPeO+0zwkmwm9alfPI1RP2dUvR37cgEaapu4i+htkcQxb3mctjQrkisixMYYH
-eozSjWqaoKvSzvahgnEpwgd4e+H0qjQSyJ3yK8fWeO1PBmuPH8sOKUtAMnOtoeXN
-Ne0xB7w7DvGhA3+KokaDTdgu4PslLrmmKTQSIKA6BnGhqED6S2k=
-=k7Zf
------END PGP SIGNATURE-----
-
---mxv5cy4qt+RJ9ypb--
+Giovanni
