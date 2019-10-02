@@ -2,107 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A614BC8E6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 18:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 042EEC8E73
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 18:33:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfJBQcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 12:32:55 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45561 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfJBQcy (ORCPT
+        id S1727282AbfJBQdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 12:33:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44070 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfJBQdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:32:54 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u12so7256060pls.12
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 09:32:54 -0700 (PDT)
+        Wed, 2 Oct 2019 12:33:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z9so7293968wrl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 09:33:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yHa2ifff61zSzcqlNyC/NW1wPlVFiEX+NgfwBD/73Mo=;
-        b=oJ9hnWECguw7nK8f+kqKEFdwgoKdcYpQ6C2LocCNzbHG4wPPVwsgMTYGbs0DLoeBn9
-         zpt70c81D/l56/svCOr4m8/Q27axDQS5LLI3KYhXMUFkhqNlCNyxIYmawcts1sabiJzs
-         HODRZe6BFZAVOWl2G5Nvm2PTnB2dxGduISeDo=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oWuxqHH990fVUCMM6jqcLulz0ftwLl/bnFae9PcvIP8=;
+        b=qNkjivrTES56/Lb0XjDQ2f1+acHL7hCLr0wo1luiHenEDywJXL0H9oRpRStksAoLOu
+         5JkCuYENZAc9RXCSLMsmzgabPQRs4LhiuaYbYRJAe9eUEfHceNMGgaovwrUjcSHfSHh6
+         85T7OExyO6u1EPyDwTWGIDgv1G8PSbgAEx31jc7IcJMfRJ2+2ywqGo6HQKn+8Zt0ZBOt
+         qbwWhnmpWRB9toTjePUwj1LVIG9S9lQ4jyRNaDVj3HRjWBlc4SNGtU9J6G65kmpOg43T
+         U96vCFcVMFlQsj/8k/okZgNE9btL+YGbfI30IFIj2fbd74xEHbRtOHDZqh7pNg/awCbb
+         iczQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yHa2ifff61zSzcqlNyC/NW1wPlVFiEX+NgfwBD/73Mo=;
-        b=RIFU1FxIWCTB+2EboRP47L5016+yTl+DIG8AaCLABC2sU9vP+lR56S0UCV/NVPEJEB
-         EK0eQQ2IoHLriEmS4TBJXN3xSRxhxzKpI3ZiSpIWI3b2idncdmQlCPvxa5Ng1/RkdAKf
-         KP3T/O63/IXl2AKp8Rcr003xambSPiwZecT4lBlVy4xviQYSmtUIK91Trsx4k1p4uxGs
-         rsxVWAujrnfCXfYxcxHuPrtcZMJ3Gyb30dNIzFeaFgKz+qm0H6eQRnVQjext+cDIs26N
-         4mbPFGdft2rKjhp7DgAe70q3FxQSR2wNrviJ5eoPmSY1ho7pt0GqfHf9PR8F58ma2Vu0
-         +KFw==
-X-Gm-Message-State: APjAAAXNr+iPF72hyguwUmMFlauw6XeB/CoxENazUzHwdPuupW0uAznl
-        ZsXnQBaO2v7ClhkUlBHnCIQwtw==
-X-Google-Smtp-Source: APXvYqzz5c1WsihtUOrz9EhiZpXsZb9IczkyfwU9rquOTW4vCRt+bTdbF/6F+a9Me86FT53hpQX64A==
-X-Received: by 2002:a17:902:144:: with SMTP id 62mr4630720plb.283.1570033974166;
-        Wed, 02 Oct 2019 09:32:54 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id r2sm22666315pfq.60.2019.10.02.09.32.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2019 09:32:52 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 09:32:48 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] backlight: pwm_bl: Don't assign levels table repeatedly
-Message-ID: <20191002163248.GE87296@google.com>
-References: <20191001162835.1.I4f2ede1f55ddd1c72b0303b7fd7f73a782fa33e5@changeid>
- <20191002100737.orm5ghpnw6oe6b3r@holly.lan>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oWuxqHH990fVUCMM6jqcLulz0ftwLl/bnFae9PcvIP8=;
+        b=mkiV4CB2KiZdVPcwowQz08qJx6pBRw7YDo/6mt34E8ZuEomkMx/5osw76PLe7HjX88
+         yJHyehv80q3YUpM1lDokOe8+3K7BvmYZrFmGAKyvFQuCup2cNrChAzwbahXJ9eoe9c1P
+         gGzk1X/w6E83hbqENEXkoxsK6yrXTfF1qdyabSgCgaxBYGTQstdCVdEbL86kKKLSco5g
+         lfMrt3I6T2ib/DgjCWmnLhbEzN872yjNEQpVvAhe+ZPUXDR41q268iuuXvz2iXzrHPxg
+         qD0q8WYR4XFkiBfFqgHXy9LF4O+1Klntq2uA6crNhcLT3eV7QLlUMYrVq0FEn88+tlx6
+         bznw==
+X-Gm-Message-State: APjAAAW7awyQxf7qzDmdw+bM9QXorslqKyc/6v5G10zchw6VvOxWH511
+        fZ4jOMfg2Uwypo3WBzhcyMyujJL0c/Q5vR95UI0=
+X-Google-Smtp-Source: APXvYqyJQ4kvU7WEh3bv0w5uz9bqzf9VG2CQeCEIBlVvoU8s61BA4sw5HD3OOn5Pew/wZJQal7k6gbo/0T3JrPsxt4c=
+X-Received: by 2002:adf:e951:: with SMTP id m17mr3421662wrn.154.1570034020467;
+ Wed, 02 Oct 2019 09:33:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191002100737.orm5ghpnw6oe6b3r@holly.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191002120136.1777161-1-arnd@arndb.de> <20191002120136.1777161-5-arnd@arndb.de>
+ <CADnq5_PkTwTBbQY9JatZD2_sWjdU5_hK7V2GLfviEvMh_QB12Q@mail.gmail.com>
+ <CAK8P3a0KMT437okhobg=Vzi5LRDgUO7L-x35LczBGXE2jYLg2A@mail.gmail.com>
+ <CADnq5_PWWndBomBOXTYgmFqo+U8f8d8+OdJ5Ym3+a2mgO5=E0A@mail.gmail.com> <CAK8P3a05ZSWcw=XUZrLyjMLY7wCHLKhpe+MF9p5P3URWpAcj+A@mail.gmail.com>
+In-Reply-To: <CAK8P3a05ZSWcw=XUZrLyjMLY7wCHLKhpe+MF9p5P3URWpAcj+A@mail.gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 2 Oct 2019 12:33:27 -0400
+Message-ID: <CADnq5_M9H2R_6KnxutJ2F3ZkZ1FxqPufcyTxwcQ1cdWYFDbdLw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] drm/amd/display: fix dcn21 Makefile for clang
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 11:07:37AM +0100, Daniel Thompson wrote:
-> On Tue, Oct 01, 2019 at 04:29:24PM -0700, Matthias Kaehlcke wrote:
-> > pwm_backlight_probe() re-assigns pb->levels for every brightness
-> > level. This is not needed and was likely not intended, since
-> > neither side of the assignment changes during the loop. Assign
-> > the field only once.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> 
-> Makes sense but this should probably be dropping the curly braces too.
+On Wed, Oct 2, 2019 at 11:39 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Wed, Oct 2, 2019 at 5:12 PM Alex Deucher <alexdeucher@gmail.com> wrote:
+> > On Wed, Oct 2, 2019 at 10:51 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> > >
+> > > Nothing should really change with regards to the -msse flag here, only
+> > > the stack alignment flag changed. Maybe there was some other change
+> > > in your Makefile that conflicts with my my patch?
+> >
+> > This patch on top of yours seems to fix it and aligns better with the
+> > other Makefiles:
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
+> > b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
+> > index ef673bffc241..e71f3ee76cd1 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
+> > +++ b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
+> > @@ -9,10 +9,10 @@ else ifneq ($(call cc-option, -mstack-alignment=16),)
+> >         cc_stack_align := -mstack-alignment=16
+> >  endif
+> >
+> > -CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -msse
+> > $(cc_stack_align)
+> > +CFLAGS_dcn21_resource.o := -mhard-float -msse $(cc_stack_align)
+> >
+> >  ifdef CONFIG_CC_IS_CLANG
+> > -CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o += -msse2
+> > +CFLAGS_dcn21_resource.o += -msse2
+> >  endif
+>
+> Ok, so there is clearly a global change that went into your tree, or
+> is missing from it:
+>
+> I see that as of linux-5.4-rc1, I have commit 54b8ae66ae1a ("kbuild: change
+>  *FLAGS_<basetarget>.o to take the path relative to $(obj)"), which changed
+> all these path names to include the AMDDALPATH.
+>
+> It seems you are either on an older kernel that does not yet have this,
+> or you have applied another patch that reverts it.
 
-ack, I'll send a new version with the curly braces removed.
+Ah, I don't have that patch yet in my tree.  That explains it.
 
-> >  drivers/video/backlight/pwm_bl.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> > index 746eebc411df..959436b9e92b 100644
-> > --- a/drivers/video/backlight/pwm_bl.c
-> > +++ b/drivers/video/backlight/pwm_bl.c
-> > @@ -564,6 +564,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
-> >  	memset(&props, 0, sizeof(struct backlight_properties));
-> >  
-> >  	if (data->levels) {
-> > +		pb->levels = data->levels;
-> > +
-> >  		/*
-> >  		 * For the DT case, only when brightness levels is defined
-> >  		 * data->levels is filled. For the non-DT case, data->levels
-> > @@ -572,8 +574,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
-> >  		for (i = 0; i <= data->max_brightness; i++) {
-> >  			if (data->levels[i] > pb->scale)
-> >  				pb->scale = data->levels[i];
-> > -
-> > -			pb->levels = data->levels;
-> >  		}
-> >  
-> >  		if (pwm_backlight_is_linear(data))
-> > -- 
-> > 2.23.0.444.g18eeb5a265-goog
-> > 
+Alex
