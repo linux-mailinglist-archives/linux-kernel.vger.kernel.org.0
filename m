@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD2CC91D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9B2C91F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730013AbfJBTLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:11:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35598 "EHLO
+        id S1730141AbfJBTM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:12:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35406 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729212AbfJBTIM (ORCPT
+        by vger.kernel.org with ESMTP id S1729110AbfJBTIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:12 -0400
+        Wed, 2 Oct 2019 15:08:10 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyr-000366-G9; Wed, 02 Oct 2019 20:08:09 +0100
+        id 1iFjyo-000368-P0; Wed, 02 Oct 2019 20:08:06 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-0003dx-Lc; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyo-0003cf-0J; Wed, 02 Oct 2019 20:08:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Willem de Bruijn" <willemb@google.com>,
-        syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>
+        "Julian Wiedmann" <jwi@linux.ibm.com>,
+        "Harald Freudenberger" <freude@linux.ibm.com>,
+        "Heiko Carstens" <heiko.carstens@de.ibm.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.899264280@decadent.org.uk>
+Message-ID: <lsq.1570043211.71050877@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 51/87] can: purge socket error queue on sock destruct
+Subject: [PATCH 3.16 35/87] s390/crypto: fix possible sleep during
+ spinlock aquired
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,30 +49,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Harald Freudenberger <freude@linux.ibm.com>
 
-commit fd704bd5ee749d560e86c4f1fd2ef486d8abf7cf upstream.
+commit 1c2c7029c008922d4d48902cc386250502e73d51 upstream.
 
-CAN supports software tx timestamps as of the below commit. Purge
-any queued timestamp packets on socket destroy.
+This patch fixes a complain about possible sleep during
+spinlock aquired
+"BUG: sleeping function called from invalid context at
+include/crypto/algapi.h:426"
+for the ctr(aes) and ctr(des) s390 specific ciphers.
 
-Fixes: 51f31cabe3ce ("ip: support for TX timestamps on UDP and RAW sockets")
-Reported-by: syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Instead of using a spinlock this patch introduces a mutex
+which is save to be held in sleeping context. Please note
+a deadlock is not possible as mutex_trylock() is used.
+
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Reported-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+[bwh: Backported to 3.16:
+ - Replace spin_unlock() on all exit paths
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/can/af_can.c | 1 +
- 1 file changed, 1 insertion(+)
-
---- a/net/can/af_can.c
-+++ b/net/can/af_can.c
-@@ -114,6 +114,7 @@ EXPORT_SYMBOL(can_ioctl);
- static void can_sock_destruct(struct sock *sk)
- {
- 	skb_queue_purge(&sk->sk_receive_queue);
-+	skb_queue_purge(&sk->sk_error_queue);
- }
+--- a/arch/s390/crypto/aes_s390.c
++++ b/arch/s390/crypto/aes_s390.c
+@@ -25,7 +25,7 @@
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+-#include <linux/spinlock.h>
++#include <linux/mutex.h>
+ #include "crypt_s390.h"
  
- static const struct can_proto *can_get_proto(int protocol)
+ #define AES_KEYLEN_128		1
+@@ -33,7 +33,7 @@
+ #define AES_KEYLEN_256		4
+ 
+ static u8 *ctrblk;
+-static DEFINE_SPINLOCK(ctrblk_lock);
++static DEFINE_MUTEX(ctrblk_lock);
+ static char keylen_flag;
+ 
+ struct s390_aes_ctx {
+@@ -785,7 +785,7 @@ static int ctr_aes_crypt(struct blkciphe
+ 	if (!walk->nbytes)
+ 		return ret;
+ 
+-	if (spin_trylock(&ctrblk_lock))
++	if (mutex_trylock(&ctrblk_lock))
+ 		ctrptr = ctrblk;
+ 
+ 	memcpy(ctrptr, walk->iv, AES_BLOCK_SIZE);
+@@ -801,7 +801,7 @@ static int ctr_aes_crypt(struct blkciphe
+ 					       n, ctrptr);
+ 			if (ret < 0 || ret != n) {
+ 				if (ctrptr == ctrblk)
+-					spin_unlock(&ctrblk_lock);
++					mutex_unlock(&ctrblk_lock);
+ 				return -EIO;
+ 			}
+ 			if (n > AES_BLOCK_SIZE)
+@@ -819,7 +819,7 @@ static int ctr_aes_crypt(struct blkciphe
+ 			memcpy(ctrbuf, ctrptr, AES_BLOCK_SIZE);
+ 		else
+ 			memcpy(walk->iv, ctrptr, AES_BLOCK_SIZE);
+-		spin_unlock(&ctrblk_lock);
++		mutex_unlock(&ctrblk_lock);
+ 	} else {
+ 		if (!nbytes)
+ 			memcpy(walk->iv, ctrptr, AES_BLOCK_SIZE);
+--- a/arch/s390/crypto/des_s390.c
++++ b/arch/s390/crypto/des_s390.c
+@@ -17,6 +17,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/crypto.h>
++#include <linux/mutex.h>
+ #include <crypto/algapi.h>
+ #include <crypto/des.h>
+ 
+@@ -25,7 +26,7 @@
+ #define DES3_KEY_SIZE	(3 * DES_KEY_SIZE)
+ 
+ static u8 *ctrblk;
+-static DEFINE_SPINLOCK(ctrblk_lock);
++static DEFINE_MUTEX(ctrblk_lock);
+ 
+ struct s390_des_ctx {
+ 	u8 iv[DES_BLOCK_SIZE];
+@@ -394,7 +395,7 @@ static int ctr_desall_crypt(struct blkci
+ 	if (!walk->nbytes)
+ 		return ret;
+ 
+-	if (spin_trylock(&ctrblk_lock))
++	if (mutex_trylock(&ctrblk_lock))
+ 		ctrptr = ctrblk;
+ 
+ 	memcpy(ctrptr, walk->iv, DES_BLOCK_SIZE);
+@@ -410,7 +411,7 @@ static int ctr_desall_crypt(struct blkci
+ 					       n, ctrptr);
+ 			if (ret < 0 || ret != n) {
+ 				if (ctrptr == ctrblk)
+-					spin_unlock(&ctrblk_lock);
++					mutex_unlock(&ctrblk_lock);
+ 				return -EIO;
+ 			}
+ 			if (n > DES_BLOCK_SIZE)
+@@ -428,7 +429,7 @@ static int ctr_desall_crypt(struct blkci
+ 			memcpy(ctrbuf, ctrptr, DES_BLOCK_SIZE);
+ 		else
+ 			memcpy(walk->iv, ctrptr, DES_BLOCK_SIZE);
+-		spin_unlock(&ctrblk_lock);
++		mutex_unlock(&ctrblk_lock);
+ 	} else {
+ 		if (!nbytes)
+ 			memcpy(walk->iv, ctrptr, DES_BLOCK_SIZE);
 
