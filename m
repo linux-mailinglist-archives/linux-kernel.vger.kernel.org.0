@@ -2,120 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0987C9215
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42667C9195
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730268AbfJBTOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:14:06 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46192 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729012AbfJBTII (ORCPT
+        id S1729775AbfJBTKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:10:02 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60726 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729704AbfJBTJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:08 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q5so11003918pfg.13;
-        Wed, 02 Oct 2019 12:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=/qPlGqzwiHfUgsEEnoPvPDRChosCodooY7FGNhUIqb4=;
-        b=oUCtj95vawtZ6VFMXXreO5ecMCUqNCDEHkjPFiP71I/EyVK0idhjd08I5YpAGbN+fR
-         cO32ZA9ZTIeqPm9l+7EjnuAzT6YnCeeAJNEgO3eNMG4HRIVECN1N1Ave9D0q3ksJRnqo
-         /3/bJBnfjU2OLdWbH8u1XT5bPtJB2mwjfAH47vLd8t4yW7rzSgvCHH+0MOWhIimBsVV0
-         dxS5DZdbgVTZ8/YsueQzWUpeCIc9iJN1yK3SRDseJfgy2FI8SPHmyRNKzaAyvOHOjAiT
-         G8bhMflOWCsdt23kKEpKkfPlSn5ulIHTIu4Tnf74hbkBE/nVW7S+I61zQJ7Tk/V47TBe
-         DbVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/qPlGqzwiHfUgsEEnoPvPDRChosCodooY7FGNhUIqb4=;
-        b=Od2Ch1dQTyM/R4d0siTNhYcczOw99W1LeXd5kTBswoqi3yURhj6pESFwgXJCIBd1mB
-         wKspvc3acLITz1GodRCB17/OSvMuLzykfpKjpeKYOkSRkIRFCG/dtRclfs8ToKPXyUbz
-         dhkCt4zE7cq/xjQEgdhN+a+6/PISK4SLv1bKdbvCglAGtIJBGVgJgwbiOrgQZt1RGDLs
-         lRmr4SHTlHx0FMZHaVUclA4jy6I+wJLlULvlNI21FPONgU8ApxQF+Uy3eP22sgGF3GcW
-         z0zolR2R5xr5Hyz0LPUShT9pQg6X2qne3q/ln320Co8x4jPFxXBVTYySYOgNAqsaaxC6
-         hKlg==
-X-Gm-Message-State: APjAAAXvZxXhLCXWba3CE5EKhFbGZd7x5vxEZUYCnmhEliRrks4HYqgX
-        BlPM4cEShvVs2Wd0lJoMzbI=
-X-Google-Smtp-Source: APXvYqyTZ7B8Y/f4lgkbP9JaZCOCcMf3vbwZbJ2Sblih9aO8xyZ5ufr75PLeX8FT5IShKnQT9fGn7g==
-X-Received: by 2002:a17:90a:e38b:: with SMTP id b11mr5866664pjz.138.1570043287656;
-        Wed, 02 Oct 2019 12:08:07 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id s17sm153974pgg.77.2019.10.02.12.08.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Oct 2019 12:08:07 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     bjorn.andersson@linaro.org, agross@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH] arm64: dts: qcom: msm8998-clamshell: Remove retention idle state
-Date:   Wed,  2 Oct 2019 12:07:56 -0700
-Message-Id: <20191002190756.26895-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 2 Oct 2019 15:09:55 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iFk0L-0000qJ-HV; Wed, 02 Oct 2019 21:09:41 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E26151C03A9;
+        Wed,  2 Oct 2019 21:09:40 +0200 (CEST)
+Date:   Wed, 02 Oct 2019 19:09:40 -0000
+From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/rdrand: Sanity-check RDRAND output
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@suse.de>, Pu Wen <puwen@hygon.cn>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com>
+References: <CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com>
+MIME-Version: 1.0
+Message-ID: <157004338078.9978.6255400681793760670.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The retention idle state does not appear to be supported by the firmware
-present on the msm8998 laptops since the state is advertised as disabled
-in ACPI, and attempting to enable the state in DT is observed to result
-in boot hangs.  Therefore, remove the state from use to address the
-observed issues.
+The following commit has been merged into the x86/cpu branch of tip:
 
-Fixes: 2c6d2d3a580a (arm64: dts: qcom: Add Lenovo Miix 630)
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Commit-ID:     7879fc4bdc7506d37bd67b6fc29442c53c06dfda
+Gitweb:        https://git.kernel.org/tip/7879fc4bdc7506d37bd67b6fc29442c53c06dfda
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Sun, 25 Aug 2019 22:50:18 +02:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 01 Oct 2019 19:55:32 +02:00
+
+x86/rdrand: Sanity-check RDRAND output
+
+It turned out recently that on certain AMD F15h and F16h machines, due
+to the BIOS dropping the ball after resume, yet again, RDRAND would not
+function anymore:
+
+  c49a0a80137c ("x86/CPU/AMD: Clear RDRAND CPUID bit on AMD family 15h/16h")
+
+Add a silly test to the CPU bringup path, to sanity-check the random
+data RDRAND returns and scream as loudly as possible if that returned
+random data doesn't change.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Pu Wen <puwen@hygon.cn>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com
 ---
- .../boot/dts/qcom/msm8998-clamshell.dtsi      | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ arch/x86/kernel/cpu/rdrand.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-index 9682d4dd7496..1bae90705746 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-@@ -23,6 +23,43 @@
- 	};
- };
+diff --git a/arch/x86/kernel/cpu/rdrand.c b/arch/x86/kernel/cpu/rdrand.c
+index 5c900f9..c4be620 100644
+--- a/arch/x86/kernel/cpu/rdrand.c
++++ b/arch/x86/kernel/cpu/rdrand.c
+@@ -29,7 +29,8 @@ __setup("nordrand", x86_rdrand_setup);
+ #ifdef CONFIG_ARCH_RANDOM
+ void x86_init_rdrand(struct cpuinfo_x86 *c)
+ {
+-	unsigned long tmp;
++	unsigned int changed = 0;
++	unsigned long tmp, prev;
+ 	int i;
  
-+/*
-+ * The laptop FW does not appear to support the retention state as it is
-+ * not advertised as enabled in ACPI, and enabling it in DT can cause boot
-+ * hangs.
-+ */
-+&CPU0 {
-+	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
-+};
+ 	if (!cpu_has(c, X86_FEATURE_RDRAND))
+@@ -42,5 +43,24 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
+ 			return;
+ 		}
+ 	}
 +
-+&CPU1 {
-+	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
-+};
++	/*
++	 * Stupid sanity-check whether RDRAND does *actually* generate
++	 * some at least random-looking data.
++	 */
++	prev = tmp;
++	for (i = 0; i < SANITY_CHECK_LOOPS; i++) {
++		if (rdrand_long(&tmp)) {
++			if (prev != tmp)
++				changed++;
 +
-+&CPU2 {
-+	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
-+};
++			prev = tmp;
++		}
++	}
 +
-+&CPU3 {
-+	cpu-idle-states = <&LITTLE_CPU_SLEEP_1>;
-+};
++	if (WARN_ON_ONCE(!changed))
++		pr_emerg(
++"RDRAND gives funky smelling output, might consider not using it by booting with \"nordrand\"");
 +
-+&CPU4 {
-+	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
-+};
-+
-+&CPU5 {
-+	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
-+};
-+
-+&CPU6 {
-+	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
-+};
-+
-+&CPU7 {
-+	cpu-idle-states = <&BIG_CPU_SLEEP_1>;
-+};
-+
- &qusb2phy {
- 	status = "okay";
- 
--- 
-2.17.1
-
+ }
+ #endif
