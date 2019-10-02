@@ -2,206 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1C7AC9302
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D365BC9308
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfJBUpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 16:45:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727846AbfJBUpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 16:45:45 -0400
-Received: from [192.168.1.25] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 777D321848;
-        Wed,  2 Oct 2019 20:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570049144;
-        bh=hv35gJ916It5E5n4NQJZ6lmL2zLdtKh89Gx4VKZT4C4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=1IeAaA31jERyEi5J8bXqM5vUgEanRiXBnjNwZSvkrbF5Ctk6qRtdBcLoPAPbhGGSh
-         tUhyeIJEOGIqlhflGzcq3Sbxy4q9YlHhXLrWbNRhk/ZEy1qVC73lOWQ+i58jG8bjuo
-         iSskn9ScsqrfG3WO7vYfve2WN9WfvlA1sJgJERSk=
-Subject: Re: [PATCHv3] ARM: drivers/amba: release and cleanup the resource to
- allow for deferred probe
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linus.walleij@linaro.org, p.zabel@pengutronix.de,
-        thor.thayer@linux.intel.com
-References: <20191002143551.32288-1-dinguyen@kernel.org>
- <20191002173209.GT25745@shell.armlinux.org.uk>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e3154e63-f52c-f91b-92dc-a86b1697c743@kernel.org>
-Date:   Wed, 2 Oct 2019 15:45:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728682AbfJBUq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 16:46:58 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36142 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfJBUq6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 16:46:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 23so296410pgk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=NXZoaM8JnR0+26PVfw4tVHTn5SdQ45I7gpO85lvpiP0=;
+        b=d/zOukb8JkdaGMJDkXWNp2Q+WzlGXbZZGxLJkrMZ8FFJBwkDoe1BlOgLfvcWlg7OIV
+         FswyVy2UdZ9QywcGA3Shg+vQFos67XMyw9AqTmCvhSNVv+Z7IwtD7IvbVEWeiDoS8aFM
+         McCilSu2GEofjob8stzUmA8e/JlxTLTzVMtbc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=NXZoaM8JnR0+26PVfw4tVHTn5SdQ45I7gpO85lvpiP0=;
+        b=A2tY5/wBLPvzWfuffH8Qs4NYK62zIJb6Tr1ukeLQQVU6uD9LxgRE0UIOpWDhiFS6oP
+         5uVzpeghwxRHy64BR4SDyfxkj4juJ2qZFcIOXA/bDr9vVmsj+iUvkpbY4tY4RsaJgPbs
+         23rmV+sSwDCC5ImfVbosJn9Yi2owV6wzxkIhaljZIqZmlZHqeh7WMdYF8qw43k/H7gW1
+         Fov3hfX3X+lF15toK9+HuyZJOfErWnOTt/4evJ5AonyptGsNzT6neyhp44YezJ+te80L
+         6xIY7MQzyyqiFI6GhPsfOzqOpElve/dyyuzEFftm1u7d9XfA//8CdzQZQCK0VIFuA6gy
+         Kx9Q==
+X-Gm-Message-State: APjAAAXOPyqpoeYqCvMwqmVjsbyON5mW6BV9wWHgxH9Alpq5ntJOqVJM
+        m3QpksP5mDavoVUzNsrhJtYh/A==
+X-Google-Smtp-Source: APXvYqz4cuEetDgLVL9xZEkahkfeg3mPz43ZiRkqQe1eIgZwxKs63wCyjcBd+aYAmiRIbW1RZftzuw==
+X-Received: by 2002:a63:4142:: with SMTP id o63mr6002272pga.426.1570049217206;
+        Wed, 02 Oct 2019 13:46:57 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z13sm359178pfq.121.2019.10.02.13.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 13:46:56 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 13:46:55 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Semmle Security Reports <security-reports@semmle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dma-mapping: Lift address space checks out of debug code
+Message-ID: <201910021341.7819A660@keescook>
 MIME-Version: 1.0
-In-Reply-To: <20191002173209.GT25745@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As we've seen from USB and other areas, we need to always do runtime
+checks for DMA operating on memory regions that might be remapped. This
+consolidates the (existing!) checks and makes them on by default. A
+warning will be triggered for any drivers still using DMA on the stack
+(as has been seen in a few recent reports).
+
+Suggested-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/linux/dma-debug.h   |  8 --------
+ include/linux/dma-mapping.h |  8 +++++++-
+ kernel/dma/debug.c          | 16 ----------------
+ 3 files changed, 7 insertions(+), 25 deletions(-)
+
+diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
+index 4208f94d93f7..2af9765d9af7 100644
+--- a/include/linux/dma-debug.h
++++ b/include/linux/dma-debug.h
+@@ -18,9 +18,6 @@ struct bus_type;
+ 
+ extern void dma_debug_add_bus(struct bus_type *bus);
+ 
+-extern void debug_dma_map_single(struct device *dev, const void *addr,
+-				 unsigned long len);
+-
+ extern void debug_dma_map_page(struct device *dev, struct page *page,
+ 			       size_t offset, size_t size,
+ 			       int direction, dma_addr_t dma_addr);
+@@ -75,11 +72,6 @@ static inline void dma_debug_add_bus(struct bus_type *bus)
+ {
+ }
+ 
+-static inline void debug_dma_map_single(struct device *dev, const void *addr,
+-					unsigned long len)
+-{
+-}
+-
+ static inline void debug_dma_map_page(struct device *dev, struct page *page,
+ 				      size_t offset, size_t size,
+ 				      int direction, dma_addr_t dma_addr)
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 4a1c4fca475a..2d6b8382eab1 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -583,7 +583,13 @@ static inline unsigned long dma_get_merge_boundary(struct device *dev)
+ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+ 		size_t size, enum dma_data_direction dir, unsigned long attrs)
+ {
+-	debug_dma_map_single(dev, ptr, size);
++	/* DMA must never operate on stack or other remappable places. */
++	WARN_ONCE(is_vmalloc_addr(ptr) || !virt_addr_valid(ptr),
++		"%s %s: driver maps %lu bytes from %s area\n",
++		dev ? dev_driver_string(dev) : "unknown driver",
++		dev ? dev_name(dev) : "unknown device", size,
++		is_vmalloc_addr(ptr) ? "vmalloc" : "invalid");
++
+ 	return dma_map_page_attrs(dev, virt_to_page(ptr), offset_in_page(ptr),
+ 			size, dir, attrs);
+ }
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index 099002d84f46..aa1e6a1990b2 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -1232,22 +1232,6 @@ static void check_sg_segment(struct device *dev, struct scatterlist *sg)
+ #endif
+ }
+ 
+-void debug_dma_map_single(struct device *dev, const void *addr,
+-			    unsigned long len)
+-{
+-	if (unlikely(dma_debug_disabled()))
+-		return;
+-
+-	if (!virt_addr_valid(addr))
+-		err_printk(dev, NULL, "device driver maps memory from invalid area [addr=%p] [len=%lu]\n",
+-			   addr, len);
+-
+-	if (is_vmalloc_addr(addr))
+-		err_printk(dev, NULL, "device driver maps memory from vmalloc area [addr=%p] [len=%lu]\n",
+-			   addr, len);
+-}
+-EXPORT_SYMBOL(debug_dma_map_single);
+-
+ void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
+ 			size_t size, int direction, dma_addr_t dma_addr)
+ {
+-- 
+2.17.1
 
 
-On 10/2/19 12:32 PM, Russell King - ARM Linux admin wrote:
-> On Wed, Oct 02, 2019 at 09:35:51AM -0500, Dinh Nguyen wrote:
->> With commit "79bdcb202a35 ARM: 8906/1: drivers/amba: add reset control to
->> amba bus probe", the amba bus driver needs to be deferred probe because the
->> reset driver is probed later. However with a deferred probe, the call to
->> request_resource() in the driver returns -EBUSY. The reason is the driver
->> has not released the resource from the previous probe attempt.
->>
->> This patch fixes how we handle the condition of EPROBE_DEFER that is returned
->> from getting the reset controls. For this condition, the patch will jump
->> to defer_probe, which will iounmap, dev_pm_domain_detach, and release the
->> resource.
->>
->> Fixes: 79bdcb202a35 ("ARM: 8906/1: drivers/amba: add reset control to
->> amba bus probe")
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
->> v3: jump to defer_probe where the driver will unmap and pm_detach the
->>     driver resource for the next probe attempt
->> v2: release the resource when of_reset_control_array_get_optional_shared()
->>     returns EPROBE_DEFER
->> ---
->>  drivers/amba/bus.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
->> index f39f075abff9..4a021b1dab3d 100644
->> --- a/drivers/amba/bus.c
->> +++ b/drivers/amba/bus.c
->> @@ -409,9 +409,12 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
->>  		 */
->>  		rstc = of_reset_control_array_get_optional_shared(dev->dev.of_node);
->>  		if (IS_ERR(rstc)) {
->> -			if (PTR_ERR(rstc) != -EPROBE_DEFER)
->> +			ret = PTR_ERR(rstc);
->> +			if (ret == -EPROBE_DEFER)
->> +				goto defer_probe;
->> +			else
->>  				dev_err(&dev->dev, "Can't get amba reset!\n");
->> -			return PTR_ERR(rstc);
->> +			return ret;
-> 
-> So, if of_reset_control_array_get_optional_shared() returns an error,
-> we end up leaking the ioremap(), the resource claim, the pclk enable
-> and pm domain?  If it returns -EPROBE_DEFER, we end up leaking the
-> pclk enable?
-> 
-> I think this is going to be quicker if I write the patch - I haven't
-> build-tested this yet though.  Please check whether this works for
-> you.
-> 
-> Thanks.
-> 
-> 8<=====
-> From: Russell King <rmk+kernel@armlinux.org.uk>
-> Subject: [PATCH] drivers/amba: fix reset control error handling
-> 
-> With commit 79bdcb202a35 ("ARM: 8906/1: drivers/amba: add reset control
-> to amba bus probe") it is possible for the the amba bus driver to defer
-> probing the device for its IDs because the reset driver may be probed
-> later.
-> 
-> However when a subsequent probe occurs, the call to request_resource()
-> in the driver returns -EBUSY as the driver has not released the resource
-> from the initial probe attempt - or cleaned up any of the preceding
-> actions.
-> 
-> Fix this both for the deferred probe case as well as a failure to get
-> the reset.
-> 
-> Fixes: 79bdcb202a35 ("ARM: 8906/1: drivers/amba: add reset control to amba bus probe")
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> ---
->  drivers/amba/bus.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index f39f075abff9..fe1523664816 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -409,9 +409,11 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
->  		 */
->  		rstc = of_reset_control_array_get_optional_shared(dev->dev.of_node);
->  		if (IS_ERR(rstc)) {
-> -			if (PTR_ERR(rstc) != -EPROBE_DEFER)
-> -				dev_err(&dev->dev, "Can't get amba reset!\n");
-> -			return PTR_ERR(rstc);
-> +			ret = PTR_ERR(rstc);
-> +			if (ret != -EPROBE_DEFER)
-> +				dev_err(&dev->dev, "can't get reset: %d\n",
-> +					ret);
-> +			goto err_reset;
->  		}
->  		reset_control_deassert(rstc);
->  		reset_control_put(rstc);
-> @@ -472,6 +474,12 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
->  	release_resource(&dev->res);
->   err_out:
->  	return ret;
-> +
-> + err_reset:
-> +	amba_put_disable_pclk(dev);
-> +	iounmap(tmp);
-> +	dev_pm_domain_detach(&dev->dev, true);
-> +	goto err_release;
->  }
->  
->  /*
-> 
-
-Tested-by: Dinh Nguyen <dinguyen@kernel.org>
-
-Thanks,
-Dinh
+-- 
+Kees Cook
