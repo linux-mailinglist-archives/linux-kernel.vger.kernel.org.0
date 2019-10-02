@@ -2,67 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4779FC48E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 09:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DCD6C48E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 09:55:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfJBHyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 03:54:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38696 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725852AbfJBHyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 03:54:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 21148ABF4;
-        Wed,  2 Oct 2019 07:54:52 +0000 (UTC)
-Date:   Wed, 2 Oct 2019 09:54:51 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Qian Cai <cai@lca.pw>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
-        cgroups@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] mm/memcontrol.c: fix another unused function warning
-Message-ID: <20191002075451.GG15624@dhcp22.suse.cz>
-References: <20191001142227.1227176-1-arnd@arndb.de>
- <CAKwvOdn7J6bvF=58UkeXA8LVAMt-g76EDFT+j5EWc0LdsyX_CQ@mail.gmail.com>
+        id S1727142AbfJBHze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 03:55:34 -0400
+Received: from mga04.intel.com ([192.55.52.120]:2269 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbfJBHze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 03:55:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 00:55:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,573,1559545200"; 
+   d="scan'208";a="205273107"
+Received: from zeliteleevi.tm.intel.com ([10.237.55.130])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Oct 2019 00:55:32 -0700
+Date:   Wed, 2 Oct 2019 10:55:31 +0300 (EEST)
+From:   Kai Vehmanen <kai.vehmanen@linux.intel.com>
+X-X-Sender: kvehmane@zeliteleevi
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: linux-next: Fixes tag needs some work in the sound-asoc-fixes
+ tree
+In-Reply-To: <20191002082904.4eef7f15@canb.auug.org.au>
+Message-ID: <alpine.DEB.2.21.1910021043590.16459@zeliteleevi>
+References: <20191002082904.4eef7f15@canb.auug.org.au>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7 02160 Espoo
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdn7J6bvF=58UkeXA8LVAMt-g76EDFT+j5EWc0LdsyX_CQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 01-10-19 09:36:24, Nick Desaulniers wrote:
-> On Tue, Oct 1, 2019 at 7:22 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > Removing the mem_cgroup_id_get() stub function introduced a new warning
-> > of the same kind when CONFIG_MMU is disabled:
-> >
-> > mm/memcontrol.c:4929:13: error: unused function 'mem_cgroup_id_get_many' [-Werror,-Wunused-function]
-> >
-> > Address this using a __maybe_unused annotation.
-> >
-> > Note: alternatively, this could be moved into an #ifdef block.  Marking it
-> 
-> Hi Arnd,
-> Thank you for the patch!  I would prefer to move the definition to the
-> correct set of #ifdef guards rather than __maybe_unused.  Maybe move
-> the definition of mem_cgroup_id_get_many() to just before
-> __mem_cgroup_clear_mc()?  I find __maybe_unused to be a code smell.
+Hi,
 
-Agreed!
--- 
-Michal Hocko
-SUSE Labs
+On Wed, 2 Oct 2019, Stephen Rothwell wrote:
+
+> In commit
+> 
+>   e66e52c5b742 ("ASoC: SOF: pcm: fix resource leak in hw_free")
+> 
+> Fixes tag
+> 
+>   Fixes: c29d96c3b9b4 ("ASoC: SOF: reset DMA state in prepare")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> Did you mean
+> 
+> Fixes: 04c8027764bc ("ASoC: SOF: reset DMA state in prepare")
+
+yes, you are correct. This was a mistake in original patch submission, 
+which had a fixes SHA1 pointing to the patch SOF project's git tree and 
+not the merged patch.
+
+Br, Kai
