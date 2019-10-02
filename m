@@ -2,123 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87A0FC8E6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 18:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8204EC8E76
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 18:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfJBQdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 12:33:23 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56688 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfJBQdX (ORCPT
+        id S1727365AbfJBQeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 12:34:17 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28130 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725893AbfJBQeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:33:23 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92GXIMS034417;
-        Wed, 2 Oct 2019 11:33:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570033998;
-        bh=DTUoNDG5N8HN1ZaCfl0a0R825gnKHU8frM18CiQxi5o=;
-        h=From:To:CC:Subject:Date;
-        b=pLzsE7V5DxbmX+logTWc1WDZTxFTXbsV2zE3tFOBWHHlmgT/6eOF8EcDGwxQo5pJj
-         gEv6Z2HE/YbGusvARgwT/mgDlaBpoAmbrqGC+fAYHbpOUuJa0wSp9QCdu08z67Ff4F
-         ZMP8biKK4iUb7Bgj8VQfnoLGx3/P529ItEpTSq4Y=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x92GXI8B076694
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Oct 2019 11:33:18 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 11:33:07 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 11:33:07 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92GXHYN112973;
-        Wed, 2 Oct 2019 11:33:17 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [RFC PATCH] leds: core: Fix LED_COLOR_MAX_ID
-Date:   Wed, 2 Oct 2019 11:34:00 -0500
-Message-ID: <20191002163400.25317-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+        Wed, 2 Oct 2019 12:34:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570034055;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uHp0IRavFv6k75hSfwI8GgILVpxCIaI6kh++kqYoKfc=;
+        b=irgS5jj95G6MC6mBevj0kjxWEhNycyo8cLCdn2s7PqSNuhbUKM0sJSBLG6mV8SFHJwFCwu
+        07fxvOzS7gEX8Mzpc58nO0GM+hV+g3hAvnvVIpsTtNX8NbACdsvPaPWnfL0xtWkvy6FmQr
+        gU6AaIb/M//TRbY9vF/CBtYxkQprfLU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-176-7D7kTEf8ME-SUUVi1BQPlA-1; Wed, 02 Oct 2019 12:34:11 -0400
+Received: by mail-wr1-f69.google.com with SMTP id z1so7695990wrw.21
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 09:34:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I6XFWKpfqvJrdaaj+xbfZj6ljYeuF1ybj7fA5MzV5N0=;
+        b=oHeyQc7drR7aHPxNy3FYC7YecjBpCH68qeeGveyV+07i+WPHGCZpq9O9e3x/LNOEDb
+         4Sq/PrVuNRoTqHhLrB5igEnMaC4LjCkujtrGC6zy77b+dHoPgjlKW8jd9Y8YpZmkGIwV
+         /hvr65Mv5R7WddChlQeht9Oy3oC51FG5lL9wh5qrgaLflRxbrms4Wz0yzTxf4uqPGMps
+         rjc5Lpaz6wJqn8IeQNsf8NRxro7fLALhJ+qz4W6/I52j4KTWG3taiC+YMD2jTRRAVvaA
+         Vd5nXyNQpyYqZQX4XGCFMwHVve4XhmspztapUzSuqBNul21NwwVNX+t0AT9zYOximxJF
+         sBIA==
+X-Gm-Message-State: APjAAAXngLNFNq7IHyZ2LDOUmpi5du6yiszXO3A2dAgPEwxEq/ctjgok
+        hHIBTqm47r9bH7Z1+MqE1U9gCuk3IORCawBj7HokKjtaspFJa7ou/vh0sKFTOZstvGWM0oRbBtR
+        VUJ0utu1wFVtxCivc14fZkjqA
+X-Received: by 2002:adf:ed8f:: with SMTP id c15mr3455838wro.83.1570034050575;
+        Wed, 02 Oct 2019 09:34:10 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzdD+Gk4vCq7Ct5eOLEC/jlIajvKDgUnnwoXlT8qVIQmCU7KJeHnpfiKFNNXuIVKUYACLVmkw==
+X-Received: by 2002:adf:ed8f:: with SMTP id c15mr3455817wro.83.1570034050311;
+        Wed, 02 Oct 2019 09:34:10 -0700 (PDT)
+Received: from t460s.bristot.redhat.com ([193.205.82.15])
+        by smtp.gmail.com with ESMTPSA id 79sm9893462wmb.7.2019.10.02.09.34.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2019 09:34:09 -0700 (PDT)
+Subject: Re: [PATCH 2/3] x86/alternatives,jump_label: Provide better
+ text_poke() batching interface
+To:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Cc:     Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20190827180622.159326993@infradead.org>
+ <20190827181147.110246515@infradead.org>
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+Message-ID: <26c0b59a-18b7-38cd-ed68-520ec604ccb4@redhat.com>
+Date:   Wed, 2 Oct 2019 18:34:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190827181147.110246515@infradead.org>
+Content-Language: en-US
+X-MC-Unique: 7D7kTEf8ME-SUUVi1BQPlA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LED_COLOR_MAX_ID is incorrect.  THe MAX_ID should
-be the last COLOR_ID in the list.  If an array was allocate
-with MAX_ID the allocation would be correct but the meaning
-is wrong.
+Hi Peter,
 
-So for array allocation the code should use LED_NUM_COLOR_IDS
-which will allocate MAX_ID + 1.  Whent the code needs to validate
-that the color ID is not out of bounds then the code should use
-LED_COLOR_MAX_ID.
+On 27/08/2019 20:06, Peter Zijlstra wrote:
+> Adding another text_poke_bp_batch() user made me realize the interface
+> is all sorts of wrong. The text poke vector should be internal to the
+> implementation.
+>=20
+> This then results in a trivial interface:
+>=20
+>   text_poke_queue()  - which has the 'normal' text_poke_bp() interface
+>   text_poke_finish() - which takes no arguments and flushes any
+>                        pending text_poke()s.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/led-core.c           | 4 ++--
- drivers/leds/leds.h               | 2 +-
- include/dt-bindings/leds/common.h | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+I liked the changes. My only concern is about the internal vector. I though=
+t
+about making it internal in the past, but I chose to make it "per use-case"
+because there might cases in which more entries would be needed, without th=
+e
+restriction of using static memory. This might be the ftrace case...
 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index f1f718dbe0f8..4e57d47c97e0 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -25,7 +25,7 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
- LIST_HEAD(leds_list);
- EXPORT_SYMBOL_GPL(leds_list);
- 
--const char * const led_colors[LED_COLOR_ID_MAX] = {
-+const char * const led_colors[LED_NUM_COLOR_IDS] = {
- 	[LED_COLOR_ID_WHITE] = "white",
- 	[LED_COLOR_ID_RED] = "red",
- 	[LED_COLOR_ID_GREEN] = "green",
-@@ -385,7 +385,7 @@ static void led_parse_fwnode_props(struct device *dev,
- 		ret = fwnode_property_read_u32(fwnode, "color", &props->color);
- 		if (ret)
- 			dev_err(dev, "Error parsing 'color' property (%d)\n", ret);
--		else if (props->color >= LED_COLOR_ID_MAX)
-+		else if (props->color > LED_COLOR_ID_MAX)
- 			dev_err(dev, "LED color identifier out of range\n");
- 		else
- 			props->color_present = true;
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 2d9eb48bbed9..2c493efc8f55 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -33,6 +33,6 @@ ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
- extern struct list_head trigger_list;
--extern const char * const led_colors[LED_COLOR_ID_MAX];
-+extern const char * const led_colors[LED_NUM_COLOR_IDS];
- 
- #endif	/* __LEDS_H_INCLUDED */
-diff --git a/include/dt-bindings/leds/common.h b/include/dt-bindings/leds/common.h
-index 9e1256a7c1bf..ce82f0b5f6d6 100644
---- a/include/dt-bindings/leds/common.h
-+++ b/include/dt-bindings/leds/common.h
-@@ -29,7 +29,8 @@
- #define LED_COLOR_ID_VIOLET	5
- #define LED_COLOR_ID_YELLOW	6
- #define LED_COLOR_ID_IR		7
--#define LED_COLOR_ID_MAX	8
-+#define LED_COLOR_ID_MAX	LED_COLOR_ID_IR
-+#define LED_NUM_COLOR_IDS	(LED_COLOR_ID_MAX + 1)
- 
- /* Standard LED functions */
- #define LED_FUNCTION_ACTIVITY "activity"
--- 
-2.22.0.214.g8dca754b1e
+[ more in the next email ].
+
+-- Daniel
 
