@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DEF9C91DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41A1BC9193
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbfJBTMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:12:06 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35592 "EHLO
+        id S1729747AbfJBTJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:09:59 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35980 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729199AbfJBTIM (ORCPT
+        by vger.kernel.org with ESMTP id S1729049AbfJBTIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:12 -0400
+        Wed, 2 Oct 2019 15:08:18 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyr-000368-MN; Wed, 02 Oct 2019 20:08:09 +0100
+        id 1iFjyx-00035s-RP; Wed, 02 Oct 2019 20:08:15 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-0003e2-N4; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyp-0003f0-Av; Wed, 02 Oct 2019 20:08:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -28,14 +28,13 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
         "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Willem de Bruijn" <willemb@google.com>
+        "Ivan Vecera" <ivecera@redhat.com>, "Tianhao" <tizhao@redhat.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.891718382@decadent.org.uk>
+Message-ID: <lsq.1570043211.975377919@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 52/87] ipv6: flowlabel: fl6_sock_lookup() must use
- atomic_inc_not_zero
+Subject: [PATCH 3.16 64/87] be2net: Fix number of Rx queues used for flow
+ hashing
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,46 +48,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Ivan Vecera <ivecera@redhat.com>
 
-commit 65a3c497c0e965a552008db8bc2653f62bc925a1 upstream.
+commit 718f4a2537089ea41903bf357071306163bc7c04 upstream.
 
-Before taking a refcount, make sure the object is not already
-scheduled for deletion.
+Number of Rx queues used for flow hashing returned by the driver is
+incorrect and this bug prevents user to use the last Rx queue in
+indirection table.
 
-Same fix is needed in ipv6_flowlabel_opt()
+Let's say we have a NIC with 6 combined queues:
 
-Fixes: 18367681a10b ("ipv6 flowlabel: Convert np->ipv6_fl_list to RCU.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Willem de Bruijn <willemb@google.com>
+[root@sm-03 ~]# ethtool -l enp4s0f0
+Channel parameters for enp4s0f0:
+Pre-set maximums:
+RX:             5
+TX:             5
+Other:          0
+Combined:       6
+Current hardware settings:
+RX:             0
+TX:             0
+Other:          0
+Combined:       6
+
+Default indirection table maps all (6) queues equally but the driver
+reports only 5 rings available.
+
+[root@sm-03 ~]# ethtool -x enp4s0f0
+RX flow hash indirection table for enp4s0f0 with 5 RX ring(s):
+    0:      0     1     2     3     4     5     0     1
+    8:      2     3     4     5     0     1     2     3
+   16:      4     5     0     1     2     3     4     5
+   24:      0     1     2     3     4     5     0     1
+...
+
+Now change indirection table somehow:
+
+[root@sm-03 ~]# ethtool -X enp4s0f0 weight 1 1
+[root@sm-03 ~]# ethtool -x enp4s0f0
+RX flow hash indirection table for enp4s0f0 with 6 RX ring(s):
+    0:      0     0     0     0     0     0     0     0
+...
+   64:      1     1     1     1     1     1     1     1
+...
+
+Now it is not possible to change mapping back to equal (default) state:
+
+[root@sm-03 ~]# ethtool -X enp4s0f0 equal 6
+Cannot set RX flow hash configuration: Invalid argument
+
+Fixes: 594ad54a2c3b ("be2net: Add support for setting and getting rx flow hash options")
+Reported-by: Tianhao <tizhao@redhat.com>
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv6/ip6_flowlabel.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/emulex/benet/be_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_flowlabel.c
-+++ b/net/ipv6/ip6_flowlabel.c
-@@ -255,9 +255,9 @@ struct ip6_flowlabel * fl6_sock_lookup(s
- 	rcu_read_lock_bh();
- 	for_each_sk_fl_rcu(np, sfl) {
- 		struct ip6_flowlabel *fl = sfl->fl;
--		if (fl->label == label) {
-+
-+		if (fl->label == label && atomic_inc_not_zero(&fl->users)) {
- 			fl->lastuse = jiffies;
--			atomic_inc(&fl->users);
- 			rcu_read_unlock_bh();
- 			return fl;
- 		}
-@@ -619,7 +619,8 @@ int ipv6_flowlabel_opt(struct sock *sk,
- 						goto done;
- 					}
- 					fl1 = sfl->fl;
--					atomic_inc(&fl1->users);
-+					if (!atomic_inc_not_zero(&fl1->users))
-+						fl1 = NULL;
- 					break;
- 				}
- 			}
+--- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
++++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
+@@ -962,7 +962,7 @@ static int be_get_rxnfc(struct net_devic
+ 		cmd->data = be_get_rss_hash_opts(adapter, cmd->flow_type);
+ 		break;
+ 	case ETHTOOL_GRXRINGS:
+-		cmd->data = adapter->num_rx_qs - 1;
++		cmd->data = adapter->num_rx_qs;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 
