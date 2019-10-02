@@ -2,142 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 504FDC9260
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D883C923F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbfJBT1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:27:19 -0400
-Received: from gateway20.websitewelcome.com ([192.185.69.18]:19166 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728000AbfJBT1S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:27:18 -0400
-X-Greylist: delayed 1382 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Oct 2019 15:27:17 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 39718400F9204
-        for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2019 12:57:26 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Fjv4iiVexVUVYFjv4iVQsI; Wed, 02 Oct 2019 14:04:14 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lGuFHxBRnjeWcjmv8+OVj8h6DT2+GVr2Gf8sL4rtDWM=; b=iCsBeVOYQ8y5i0JxkH7to0mWYD
-        nHxhmItBEKPjOco0tAuRVIq+WBxiu994Y2EkTRb704t1zGngb5RkHIe6VV8ImtoUtUJEBmU0Kk1nv
-        UL35BlIIoraV6yiT5wmIuoYClrOIKQ0drO01Qw7V2lA8noPMfgeMfjbllZiffnrr5tzZCs9I7imOd
-        KPdWXoupPZalrpljy6xtAK8Y9VFmEP8Ie2/OGmVaLmSsCb/ARPklUkjJSikxUt/+TQn/fclSf0G9n
-        CjRooX9KKaOo/+3WfV7wo1dG0AfS2sWiuuBJNflXy0Zyy3TQ7g/wBzccnCxpN6fKv43zwgQxCpgC8
-        CVS4/Osw==;
-Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:39692 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1iFjv3-0047wu-MW; Wed, 02 Oct 2019 14:04:13 -0500
-Date:   Wed, 2 Oct 2019 14:03:41 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] md: dm-stripe: Use struct_size() in kmalloc()
-Message-ID: <20191002190341.GA8900@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.252.62
-X-Source-L: No
-X-Exim-ID: 1iFjv3-0047wu-MW
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:39692
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1729141AbfJBTYy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 2 Oct 2019 15:24:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60996 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726076AbfJBTYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 15:24:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6EB2FAD09;
+        Wed,  2 Oct 2019 19:24:51 +0000 (UTC)
+Date:   Wed, 2 Oct 2019 21:08:31 +0200
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH v6 1/4] nvmem: core: add nvmem_device_find
+Message-Id: <20191002210831.f7fa10ad7f055801df26669d@suse.de>
+In-Reply-To: <20191002183327.grhkxlbyu65vvhr4@pburton-laptop>
+References: <20190923114636.6748-1-tbogendoerfer@suse.de>
+        <20190923114636.6748-2-tbogendoerfer@suse.de>
+        <ce44c762-f9a6-b4ef-fa8a-19ee4a6d391f@linaro.org>
+        <20191002183327.grhkxlbyu65vvhr4@pburton-laptop>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Wed, 2 Oct 2019 18:33:28 +0000
+Paul Burton <paul.burton@mips.com> wrote:
 
-struct stripe_c {
-        ...
-        struct stripe stripe[0];
-};
+> Hello,
+> 
+> On Tue, Oct 01, 2019 at 11:11:58AM +0100, Srinivas Kandagatla wrote:
+> > On 23/09/2019 12:46, Thomas Bogendoerfer wrote:
+> > > nvmem_device_find provides a way to search for nvmem devices with
+> > > the help of a match function simlair to bus_find_device.
+> > > 
+> > > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> > > ---
+> > 
+> > Thanks for the patch,
+> > This patch looks good for me.
+> > 
+> > Do you know which tree is going to pick this series up?
+> > 
+> > I can either apply this patch to nvmem tree
+> > 
+> > or here is my Ack for this patch to take it via other trees.
+> > 
+> > Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> Thanks - if you don't mind I'll take this through mips-next along with
+> the following patch that depends on it.
+> 
+> Thomas: I see patch 3 has an issue reported by the kbuild test robot,
 
-In this case alloc_context() and dm_array_too_big() are removed and
-replaced by the direct use of the struct_size() helper in kmalloc().
+yes, that's because kbuild robot tries to build it 32bit. I'm going to make
+it depend on 64bit all possible ioc3 platforms only support 64bit kernels.
 
-Notice that open-coded form is prone to type mistakes.
+>         and still needs acks from the MFD & network maintainers. Can I
+> 	presume it's safe to apply patches 1 & 2 without 3 & 4 in the
+> 	meantime?
 
-This code was detected with the help of Coccinelle.
+yes, thank you.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/md/dm-stripe.c        | 15 +--------------
- include/linux/device-mapper.h |  3 ---
- 2 files changed, 1 insertion(+), 17 deletions(-)
+Thomas.
 
-diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
-index 8547d7594338..63bbcc20f49a 100644
---- a/drivers/md/dm-stripe.c
-+++ b/drivers/md/dm-stripe.c
-@@ -55,19 +55,6 @@ static void trigger_event(struct work_struct *work)
- 	dm_table_event(sc->ti->table);
- }
- 
--static inline struct stripe_c *alloc_context(unsigned int stripes)
--{
--	size_t len;
--
--	if (dm_array_too_big(sizeof(struct stripe_c), sizeof(struct stripe),
--			     stripes))
--		return NULL;
--
--	len = sizeof(struct stripe_c) + (sizeof(struct stripe) * stripes);
--
--	return kmalloc(len, GFP_KERNEL);
--}
--
- /*
-  * Parse a single <dev> <sector> pair
-  */
-@@ -142,7 +129,7 @@ static int stripe_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		return -EINVAL;
- 	}
- 
--	sc = alloc_context(stripes);
-+	sc = kmalloc(struct_size(sc, stripe, stripes), GFP_KERNEL);
- 	if (!sc) {
- 		ti->error = "Memory allocation for striped context "
- 		    "failed";
-diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-index 399ad8632356..2e13826898b2 100644
---- a/include/linux/device-mapper.h
-+++ b/include/linux/device-mapper.h
-@@ -594,9 +594,6 @@ void *dm_vcalloc(unsigned long nmemb, unsigned long elem_size);
-  */
- #define dm_round_up(n, sz) (dm_div_up((n), (sz)) * (sz))
- 
--#define dm_array_too_big(fixed, obj, num) \
--	((num) > (UINT_MAX - (fixed)) / (obj))
--
- /*
-  * Sector offset taken relative to the start of the target instead of
-  * relative to the start of the device.
 -- 
-2.23.0
-
+SUSE Software Solutions Germany GmbH
+HRB 247165 (AG München)
+Geschäftsführer: Felix Imendörffer
