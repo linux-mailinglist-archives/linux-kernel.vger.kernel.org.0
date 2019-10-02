@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84CF3C917A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 873B1C91D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbfJBTJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:09:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36114 "EHLO
+        id S1730022AbfJBTLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:11:52 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35596 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729383AbfJBTIW (ORCPT
+        by vger.kernel.org with ESMTP id S1729202AbfJBTIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:22 -0400
+        Wed, 2 Oct 2019 15:08:12 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyu-000366-ES; Wed, 02 Oct 2019 20:08:12 +0100
+        id 1iFjyr-00035v-D5; Wed, 02 Oct 2019 20:08:09 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyq-0003gC-6b; Wed, 02 Oct 2019 20:08:08 +0100
+        id 1iFjyo-0003dd-Ey; Wed, 02 Oct 2019 20:08:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,18 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Jiri Kosina" <jkosina@suse.cz>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Santosh Shilimkar" <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Zhu Yanjun" <yanjun.zhu@oracle.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.254999440@decadent.org.uk>
+Message-ID: <lsq.1570043211.436412731@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 79/87] cpu/speculation: Warn on unsupported
- mitigations= parameter
+Subject: [PATCH 3.16 47/87] net: rds: fix memory leak in rds_ib_flush_mr_pool
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -52,45 +48,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Zhu Yanjun <yanjun.zhu@oracle.com>
 
-commit 1bf72720281770162c87990697eae1ba2f1d917a upstream.
+commit 85cb928787eab6a2f4ca9d2a798b6f3bed53ced1 upstream.
 
-Currently, if the user specifies an unsupported mitigation strategy on the
-kernel command line, it will be ignored silently.  The code will fall back
-to the default strategy, possibly leaving the system more vulnerable than
-expected.
+When the following tests last for several hours, the problem will occur.
 
-This may happen due to e.g. a simple typo, or, for a stable kernel release,
-because not all mitigation strategies have been backported.
+Server:
+    rds-stress -r 1.1.1.16 -D 1M
+Client:
+    rds-stress -r 1.1.1.14 -s 1.1.1.16 -D 1M -T 30
 
-Inform the user by printing a message.
+The following will occur.
 
-Fixes: 98af8452945c5565 ("cpu/speculation: Add 'mitigations=' cmdline option")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Link: https://lkml.kernel.org/r/20190516070935.22546-1-geert@linux-m68k.org
-[bwh: Backported to 3.16: adjust context]
+"
+Starting up....
+tsks   tx/s   rx/s  tx+rx K/s    mbi K/s    mbo K/s tx us/c   rtt us cpu
+%
+  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
+  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
+  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
+  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
+"
+>From vmcore, we can find that clean_list is NULL.
+
+>From the source code, rds_mr_flushd calls rds_ib_mr_pool_flush_worker.
+Then rds_ib_mr_pool_flush_worker calls
+"
+ rds_ib_flush_mr_pool(pool, 0, NULL);
+"
+Then in function
+"
+int rds_ib_flush_mr_pool(struct rds_ib_mr_pool *pool,
+                         int free_all, struct rds_ib_mr **ibmr_ret)
+"
+ibmr_ret is NULL.
+
+In the source code,
+"
+...
+list_to_llist_nodes(pool, &unmap_list, &clean_nodes, &clean_tail);
+if (ibmr_ret)
+        *ibmr_ret = llist_entry(clean_nodes, struct rds_ib_mr, llnode);
+
+/* more than one entry in llist nodes */
+if (clean_nodes->next)
+        llist_add_batch(clean_nodes->next, clean_tail, &pool->clean_list);
+...
+"
+When ibmr_ret is NULL, llist_entry is not executed. clean_nodes->next
+instead of clean_nodes is added in clean_list.
+So clean_nodes is discarded. It can not be used again.
+The workqueue is executed periodically. So more and more clean_nodes are
+discarded. Finally the clean_list is NULL.
+Then this problem will occur.
+
+Fixes: 1bc144b62524 ("net, rds, Replace xlist in net/rds/xlist.h with llist")
+Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/cpu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/rds/ib_rdma.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -804,6 +804,9 @@ static int __init mitigations_parse_cmdl
- 		cpu_mitigations = CPU_MITIGATIONS_OFF;
- 	else if (!strcmp(arg, "auto"))
- 		cpu_mitigations = CPU_MITIGATIONS_AUTO;
-+	else
-+		pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
-+			arg);
+--- a/net/rds/ib_rdma.c
++++ b/net/rds/ib_rdma.c
+@@ -663,12 +663,14 @@ static int rds_ib_flush_mr_pool(struct r
+ 		wait_clean_list_grace();
  
- 	return 0;
- }
+ 		list_to_llist_nodes(pool, &unmap_list, &clean_nodes, &clean_tail);
+-		if (ibmr_ret)
++		if (ibmr_ret) {
+ 			*ibmr_ret = llist_entry(clean_nodes, struct rds_ib_mr, llnode);
+-
++			clean_nodes = clean_nodes->next;
++		}
+ 		/* more than one entry in llist nodes */
+-		if (clean_nodes->next)
+-			llist_add_batch(clean_nodes->next, clean_tail, &pool->clean_list);
++		if (clean_nodes)
++			llist_add_batch(clean_nodes, clean_tail,
++					&pool->clean_list);
+ 
+ 	}
+ 
 
