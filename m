@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D58C8838
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 004AAC8862
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfJBMU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:20:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54036 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727121AbfJBMUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:20:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E6591AD09;
-        Wed,  2 Oct 2019 12:20:22 +0000 (UTC)
-Message-ID: <1570019152.22393.0.camel@suse.cz>
-Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@suse.de, lenb@kernel.org, rjw@rjwysocki.net,
-        x86@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
-        matt@codeblueprint.co.uk, viresh.kumar@linaro.org,
-        juri.lelli@redhat.com, pjt@google.com, vincent.guittot@linaro.org,
-        qperret@qperret.net, dietmar.eggemann@arm.com
-Date:   Wed, 02 Oct 2019 14:25:52 +0200
-In-Reply-To: <20190924163053.GA4519@hirez.programming.kicks-ass.net>
-References: <20190909024216.5942-1-ggherdovich@suse.cz>
-         <20190909024216.5942-2-ggherdovich@suse.cz>
-         <20190924163053.GA4519@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727404AbfJBM02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:26:28 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43649 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfJBM02 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:26:28 -0400
+Received: by mail-wr1-f66.google.com with SMTP id q17so19429484wrx.10;
+        Wed, 02 Oct 2019 05:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nJJWJKWZ6ot8MB4WrieEngenboHBJCatY61zRdQspzo=;
+        b=rRtNZRaHtyB52yI7QHrLWz3o4Yp8l3xcgAbpJbUpbz5LBwTwLwSSU/JBMljRxmoIUG
+         mYOhl6+8084nVywzjqUUXsI1lDtB1TycUeBZrxvmjnpOsYq0Ce3s0PF/bNcPQOq4KUES
+         J4t9YfB1cj3+dHCUqOYy/SNqEoiYlqNuAeHqjzomytp0MKaEY3Rrq7EgaUuDyfwZ77VI
+         /7y0aIm+Dc6iKQyjCypItjZWu6x+QF64Z/Q9uswF3kXDCJ/accQb8hlBEuPGGpDktcxO
+         EL6+UOSXVqJ5r+WtLEWK0SaoxOx1syq0Waxej2vgt1BxPJ2VBu5XL3FX9soNx6C+/wlU
+         iUAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nJJWJKWZ6ot8MB4WrieEngenboHBJCatY61zRdQspzo=;
+        b=O4mD5gGNJfhuIVNJ3/2zThVBaMU/kBJkejgPy1jmrInuBGGt5VTpBsL+3KY0AObi9M
+         kIMjj5scchORNGUemY7o7ABhbu5c25dandS5+Rjw/OIpzYf5yDTB5mziqaqKTB2zPbWB
+         UdICNDEHd2jVEfWWKElIpKqX0UOeeqX3z0/7AOQ1VknwAsB5luMuAIY+nl+tUkx4nTC+
+         mLRmNhR1cXG5Dx3Fu6j63Hq9aTlgm03ouIKrkjLyEKWCA6MmkFL+9o1lRtEWrzgECRQT
+         9yrNfsfVOwR+qKVTt6jiBBhxssdz0v0zafxC/HbwpVJTRrR89h9lV7uNlpujPihAzSAO
+         VTZQ==
+X-Gm-Message-State: APjAAAXx4wNLfEaNZ2nqYvmdFZjgr14navoz5rjYp4wJI3bMGMt05ez3
+        AtOwEmz53CsEWRCfIUrcW1Y=
+X-Google-Smtp-Source: APXvYqxzTU3I1+6Oxb2cnM6V4fD0XqMMbR0uuWfM5VqGuTXmaGdHk133qBPnxpkiR/Eu881Gb1Rrfg==
+X-Received: by 2002:adf:ea10:: with SMTP id q16mr2625159wrm.356.1570019185839;
+        Wed, 02 Oct 2019 05:26:25 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id r18sm7990520wme.48.2019.10.02.05.26.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 05:26:24 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 14:26:23 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/3] ahci: tegra: use regulator_bulk_set_supply_names()
+Message-ID: <20191002122623.GA3908655@ulmo>
+References: <20191001132333.20146-1-brgl@bgdev.pl>
+ <20191001132333.20146-2-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Disposition: inline
+In-Reply-To: <20191001132333.20146-2-brgl@bgdev.pl>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Peter,
 
-late replies as I wasn't in the office last week.
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2019-09-24 at 18:30 +0200, Peter Zijlstra wrote:
-> On Mon, Sep 09, 2019 at 04:42:15AM +0200, Giovanni Gherdovich wrote:
-> > +static const struct x86_cpu_id has_turbo_ratio_group_limits[] = {
-> > +   ICPU(INTEL_FAM6_ATOM_GOLDMONT),
-> > +   ICPU(INTEL_FAM6_ATOM_GOLDMONT_X),
-> 
-> That's GOLDMONT_D in recent tip kernels.
+On Tue, Oct 01, 2019 at 03:23:31PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>=20
+> Use the new regulator helper instead of a for loop.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/ata/ahci_tegra.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Right, I saw that now.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> 
-> > +   ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS),
-> > +   ICPU(INTEL_FAM6_SKYLAKE_X),
-> 
-> What about KABYLAKE_X and ICELAKE_X ?
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-KABYLAKE_X: does it exist? I couldn't find it in
-arch/x86/include/asm/intel-family.h (the tip tree), I only see KABYLAKE_L and
-KABYLAKE.
+-----BEGIN PGP SIGNATURE-----
 
-ICELAKE_X: well, I don't know really. Does this model have the same semantic
-for MSR_TURBO_RATIO_LIMIT as SKYLAKE_X (which is family = 0x6, model = 0x55)?
-This is for Len B. and Srinivas P. (in CC).
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2Ul2sACgkQ3SOs138+
+s6Ga/w//Yimb8W0dHb5bPycndMDPTCHs3rLOFV/Yl1KXFujPKpcNR8l6VEDs3EQ4
+S9SIZ2ZtKarqXztozASGg1i34FRAZ9k9uvnMKDhSGVmHIE+GJ/2yvG19SrdXAhqk
+ysfZOdiuO9yX+sBXI2wTuzkhInxByhy9Dmi1bk/4mXL4RT4uaafV5GDhV8VcFRUm
+g04drAnwoCkGKk5YfdgLGHgj06EkzdBbh98XrOgRn18juizCSB/cH+yXPUGYDsIA
+NQ5YjX8kPigHc0SSblGKCpq6T+sATD1OrveMF0T8Ug5p9BuimxVNoSlSlen+0B06
+gbcozBapTVJ0obQkuverozJD+UvTO889JxCHwP5IQK7besM/pN4ZlkYFWRHDXk3n
+ezce5wh0VrZ4Z99VkjPimYZRDwJQbN+pQrE6jHlDhSugAhyM+s0f/rW2a9E53ZYf
+f3nh2OQtrhMnZtIliNLuI1EDNWRHB2wt2JOSOmn/F7W11nXtjEZTffdQ1hipbpJV
+FDho9pflIt5d/zBqzidGsyg7asSYVy2Floc7Dlnd+nLDbH/E+EDKTrVa+W+fdmM0
+yuisyQp9Z1lVlSVFn31qS97UYUZkqRHWz/nMHiI4X6J/dMdpwM5kckL98Zft1vEY
+HW+sUz4zelVQaZyhjsrRKiidYqcjy69dkO2Gach7iQv7+9ngHHI=
+=XBi7
+-----END PGP SIGNATURE-----
 
-The latest Software Developer's Manual (SDM) from May 2019 (volume 4, section
-2.17.3, "MSRs Specific to Intel Xeon Processor Scalable Family") mentions only
-"CPUID DisplayFamily_DisplayModel = 06_55H", which is SKYLAKE_X, as having the
-semantic I'm looking for here (in addition to Atom Goldmont's).
-
-The semantic I'm referring to is that MSR_TURBO_RATIO_LIMIT doesn't contain
-turbo levels for the fixed group sizes 1-2-3-4-... cores, the group sizes are
-specified in a different MSR (and could be 2-4-8-12-... for example).
-
-If the SDM is outdated and ICELAKE_X is also in that category, then the
-turbostat source code is outdated too as it has this function to detect this
-feature:
-
-    int has_turbo_ratio_group_limits(int family, int model)
-    {
-
-            if (!genuine_intel)
-                    return 0;
-
-            switch (model) {
-            case INTEL_FAM6_ATOM_GOLDMONT:
-            case INTEL_FAM6_SKYLAKE_X:
-            case INTEL_FAM6_ATOM_GOLDMONT_X:
-                    return 1;
-            }
-            return 0;
-    }
-
-(from the tree lenb/linux.git, branch "turbostat", turbostat version 19.08.31
-not yet merged into mainline)
-
-
-Giovanni
+--wRRV7LY7NUeQGEoC--
