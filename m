@@ -2,108 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD3F9C88C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FECBC88E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfJBMiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:38:55 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:53928 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfJBMiz (ORCPT
+        id S1727558AbfJBMkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:40:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29228 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727191AbfJBMkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:38:55 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92Cch5D014533;
-        Wed, 2 Oct 2019 07:38:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570019923;
-        bh=6k/1/L8qVzBnkiN3DQ8sBlvddq0xsy4C1W0U2GgT2tc=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=ckjObRSwAAxO4JX5G88yKRjMZ2g/hf5dGI8dK+zvxCOePp/Voa9SMYMVL3p0SMoUa
-         NTf2aN8lVDrriaLaQg2fgPtJIwNJSdY8IyPpdueORyrhttt8C8ba1MoRwkVUDpFr44
-         HhoiBQ5NeUiyVtK8SDoBqBy4etam5Lw1B8YwTBHM=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x92CchlD007388
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Oct 2019 07:38:43 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 07:38:43 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 07:38:43 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with SMTP id x92Cch6J093041;
-        Wed, 2 Oct 2019 07:38:43 -0500
-Date:   Wed, 2 Oct 2019 07:40:54 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-CC:     Jacopo Mondi <jacopo@jmondi.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hugues.fruchet@st.com>
-Subject: Re: [Patch 1/3] media: ov5640: add PIXEL_RATE control
-Message-ID: <20191002124054.gqw5l6tdyxqalpod@ti.com>
-References: <20190925152301.21645-1-bparrot@ti.com>
- <20190925152301.21645-2-bparrot@ti.com>
- <20191001075704.GA5449@paasikivi.fi.intel.com>
- <20191001162341.f2o7ruar2nifl5ws@ti.com>
- <20191002075951.afp2xligspqat4ew@uno.localdomain>
- <20191002121438.g3re6v54q4hit2wv@ti.com>
- <20191002123513.GI972@paasikivi.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191002123513.GI972@paasikivi.fi.intel.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 2 Oct 2019 08:40:35 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x92CdmdA107791
+        for <linux-kernel@vger.kernel.org>; Wed, 2 Oct 2019 08:40:34 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vct5vbtcn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 08:40:34 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 2 Oct 2019 13:40:31 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 2 Oct 2019 13:40:27 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x92CeQAt44564610
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Oct 2019 12:40:26 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55CCD52050;
+        Wed,  2 Oct 2019 12:40:26 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.234.231])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id F358452057;
+        Wed,  2 Oct 2019 12:40:24 +0000 (GMT)
+Subject: Re: [PATCH] tpm: Detach page allocation from tpm_buf
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Wed, 02 Oct 2019 08:40:24 -0400
+In-Reply-To: <20190926131227.GA6582@linux.intel.com>
+References: <20190925134842.19305-1-jarkko.sakkinen@linux.intel.com>
+         <20190926124635.GA6040@linux.intel.com>
+         <20190926131227.GA6582@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19100212-0016-0000-0000-000002B3574A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19100212-0017-0000-0000-000033145B91
+Message-Id: <1570020024.4999.104.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=855 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910020120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sakari Ailus <sakari.ailus@linux.intel.com> wrote on Wed [2019-Oct-02 15:35:13 +0300]:
-> Hi Benoit,
+On Thu, 2019-09-26 at 16:12 +0300, Jarkko Sakkinen wrote:
+> On Thu, Sep 26, 2019 at 03:46:35PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Sep 25, 2019 at 04:48:41PM +0300, Jarkko Sakkinen wrote:
+> > > -		tpm_buf_reset(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_RANDOM);
+> > > +		tpm_buf_reset(&buf, data_ptr, PAGE_SIZE,
+> > > +			      TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_EXTEND);
+> > 
+> > Oops.
 > 
-> On Wed, Oct 02, 2019 at 07:14:38AM -0500, Benoit Parrot wrote:
-> > Hi Jacopo,
-> > 
-> > Maybe, I miss spoke when I mentioned a helper I did not intent a framework
-> > level generic function. Just a function to help in this case :)
-> > 
-> > That being said, I re-read the thread you mentioned. And as Hughes pointed
-> > out dynamically generating a "working" link frequency value which can be
-> > used by a CSI2 receiver to properly configure its PHY is not trivial.
-> > 
-> > When I created this patch, I also had another to add V4L2_CID_LINK_FREQ
-> > support. I am testing this against the TI CAL CSI2 receiver, which already
-> > uses the V4L2_CID_PIXEL_RATE value for that purpose, so I also had a patch
-> > to add support for V4L2_CID_LINK_FREQ to that driver as well.
-> > 
-> > Unfortunately, similar to Hughes' findings I was not able to make it "work"
-> > with all supported resolution/framerate.
-> > 
-> > Unlike my V4L2_CID_PIXEL_RATE solution which now works in all mode with the
-> > same receiver.
-> > 
-> > So long story short I dropped the V4L2_CID_LINK_FREQ patch and focused on
-> > V4L2_CID_PIXEL_RATE instead.
+> Maybe we could use random as the probe for TPM version since we anyway
+> send a TPM command as a probe for TPM version:
 > 
-> It shouldn't make a difference which one you use; if you know the bus type
-> (and if it's CSI-2 with D-PHY, number of lanes and how many bits per pixel
-> the media bus format has), you can convert fairly trivially between the
-> two.
-
-Sakari,
-
-Yes I get that, but at this point as they say I will leave that as an
-exercise to the reader...
-
-Benoit
-
+> 1. Try TPM2 get random.
+> 2. If fail, try TPM1 get random.
+> 3. Output random number to klog.
 > 
-> -- 
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
+> Something like 8 bytes would be sufficient. This would make sure that
+> no new change breaks tpm_get_random() and also this would give some
+> feedback that TPM is at least somewhat working.
+
+That involves sending 2 TPM commands.  At what point does this occur?
+ On registration?  Whenever getting a random number?  Is the result
+cached in chip->flags?
+
+Will this delay the TPM initialization, causing IMA to go into "TPM
+bypass mode"?
+
+Mimi
+
