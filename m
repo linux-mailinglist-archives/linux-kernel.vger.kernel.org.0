@@ -2,319 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E039C8A8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D56D3C8A92
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfJBOGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:06:30 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33181 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfJBOGa (ORCPT
+        id S1727920AbfJBOIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:08:13 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53772 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfJBOIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:06:30 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a22so17276892ljd.0;
-        Wed, 02 Oct 2019 07:06:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=f8TmAkt4WsH1N0sba37uvaRLJhu+2pmQZnGHUoAuB7s=;
-        b=cv6gpVhrhqD6vuOLF9pr2k24+yfJTXvbvFdfn97min5Izw2QEfqlwQ1bsd1T+bxWON
-         RoENSTVIx0Z5oMt5gLw+SVhZTTQyEWPEjkBtYKMhVEbwiIExMERN+FrH1rs6fYr6iWdU
-         GUldpvKfz+LhK7qHW5Qt6YiseNn2wklywFRK/Ig0LuOA1YQPAPEj1VYbuWV5LWXLMMAk
-         nf584sEGbJ11rN+Vsa5ZK6EwHdmaIE81A1JRH601xWt6G/oTVRRREu2bJcXDF43WHT5s
-         0obavulZvrK/OadA7FoBHksegibk6T461ZcBsFSCmgbLIogjL8Jif5mfGrYO9z+IfOcA
-         U4aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=f8TmAkt4WsH1N0sba37uvaRLJhu+2pmQZnGHUoAuB7s=;
-        b=GWM3ZRh1fwnrkWiisBcc94AOd5+2n6sVEG0AmHPCgEiNSEgKV5MEhJ4W26ZZFaSWqu
-         7Y7UA87nAToqKKkeiA/mdTrh35BCaizseZy9xNXeXCB0Zssc0h/Zbr3fhpFDnZHK+/p7
-         qPdDDWOqba2LCWVWnBIFjpDNHK0rMHCXuV8ed55KBgo9S4aydyVENQ/DrWFbnSb53tT8
-         n7QpCJ2Vw20MIXb4qaaSodZkwM7L7Q+g8mHDzIhKnuJ3ZrG8o9ZfKi9YxU5/thDF6Il8
-         oVTE48WIhbS/1+uAGY8MzxRNXOAduBHjqbEnzv0CMvHn5zjG3TSubBlH23IYuWbIKQkI
-         OXbA==
-X-Gm-Message-State: APjAAAUKC+X011Mj1H+eeWkHGedkCaAaNO/uSY8N64TZOkPIACHvJVP9
-        f56ja9rY1qpK6RjUMeaqXwhGyfPS
-X-Google-Smtp-Source: APXvYqxk+QHOFXlGClvSMrEIU7hB2ZW8mbYMxhqJVbpQplDjrgxG658UwICFAti9YjGmekJ2v3+lTQ==
-X-Received: by 2002:a2e:442:: with SMTP id 63mr2664436lje.66.1570025186227;
-        Wed, 02 Oct 2019 07:06:26 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.34.231])
-        by smtp.googlemail.com with ESMTPSA id b15sm4683464lfj.84.2019.10.02.07.06.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2019 07:06:25 -0700 (PDT)
-Subject: Re: [PATCH v6 11/19] PM / devfreq: tegra30: Use CPUFreq notifier
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190811212315.12689-1-digetx@gmail.com>
- <CGME20190811212534epcas4p415e9206019385d2bfb3be2c7a328a8df@epcas4p4.samsung.com>
- <20190811212315.12689-12-digetx@gmail.com>
- <2f7a0283-7433-b786-a8c3-7d711aafd721@samsung.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <57b2f772-8849-5180-262f-0ef8936e63bc@gmail.com>
-Date:   Wed, 2 Oct 2019 17:06:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Wed, 2 Oct 2019 10:08:13 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92E3uep070461;
+        Wed, 2 Oct 2019 14:07:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=+FGGI5TvFktU0/JRb3dnLjz/7hh1wncwHFnR3J2FD1U=;
+ b=YMj7eUT/xa6f248L9zN5raJaaIPi2upRO7Tba4zBrhB/FFYYDkLKPeAcFy5TFSfP5k9I
+ 1TmW52eOj6+7BwliM/xSp+aXKkD9Aw8fOFaJQV7NEYzXst+1zeAP0vEdAKLSu90leQQr
+ Ax38400CmkNxEGa3batH2Nvg7Ye3yBx1oVsfqbK75h5gN8BXYyvdPJimVWUXhgBDzAJX
+ 6DAEn+5GvMsY51gaBich2d7ikokUg6Umcvq2MrHBJrGhMLi52DIvpgACn/6+7omszspn
+ A6FoQP/JZkDXPVa+b9YpiKu4IwnWPi+XIZdJ5387AKPtoX42DwvVV9jwP9XLrNXmKxv+ EQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2va05rw3pu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 14:07:53 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92E3SKB024837;
+        Wed, 2 Oct 2019 14:07:53 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2vc9dkju5d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 14:07:53 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x92E7pgg001505;
+        Wed, 2 Oct 2019 14:07:51 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Oct 2019 07:07:50 -0700
+Date:   Wed, 2 Oct 2019 17:07:33 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: xgmac: add missing parentheses to fix
+ precendence error
+Message-ID: <20191002140733.GQ29696@kadam>
+References: <20191002110849.13405-1-colin.king@canonical.com>
+ <20191002133356.GP22609@kadam>
+ <20191002134238.GP29696@kadam>
+ <a995eee6-5b26-f9a9-4d6a-5533da050a3b@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <2f7a0283-7433-b786-a8c3-7d711aafd721@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a995eee6-5b26-f9a9-4d6a-5533da050a3b@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910020136
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910020136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-02.10.2019 03:02, Chanwoo Choi пишет:
-> Hi,
+On Wed, Oct 02, 2019 at 02:53:17PM +0100, Colin Ian King wrote:
+> On 02/10/2019 14:42, Dan Carpenter wrote:
+> > On Wed, Oct 02, 2019 at 04:33:57PM +0300, Dan Carpenter wrote:
+> >> On Wed, Oct 02, 2019 at 12:08:49PM +0100, Colin King wrote:
+> >>> From: Colin Ian King <colin.king@canonical.com>
+> >>>
+> >>> The expression !(hw_cap & XGMAC_HWFEAT_RAVSEL) >> 10 is always zero, so
+> >>> the masking operation is incorrect. Fix this by adding the missing
+> >>> parentheses to correctly bind the negate operator on the entire expression.
+> >>>
+> >>> Addresses-Coverity: ("Operands don't affect result")
+> >>> Fixes: c2b69474d63b ("net: stmmac: xgmac: Correct RAVSEL field interpretation")
+> >>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >>> ---
+> >>>  drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> >>> index 965cbe3e6f51..2e814aa64a5c 100644
+> >>> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> >>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> >>> @@ -369,7 +369,7 @@ static void dwxgmac2_get_hw_feature(void __iomem *ioaddr,
+> >>>  	dma_cap->eee = (hw_cap & XGMAC_HWFEAT_EEESEL) >> 13;
+> >>>  	dma_cap->atime_stamp = (hw_cap & XGMAC_HWFEAT_TSSEL) >> 12;
+> >>>  	dma_cap->av = (hw_cap & XGMAC_HWFEAT_AVSEL) >> 11;
+> >>> -	dma_cap->av &= !(hw_cap & XGMAC_HWFEAT_RAVSEL) >> 10;
+> >>> +	dma_cap->av &= !((hw_cap & XGMAC_HWFEAT_RAVSEL) >> 10);
+> >>
+> >> There is no point to the shift at all.
+> > 
+> > Sorry I meant to say it should be a bitwise NOT, right?  I was just
+> > looking at some other dma_cap stuff that did this same thing...  I can't
+> > find it now...
 > 
-> On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
->> The CPU's client need to take into account that CPUFreq may change
->> while memory activity not, staying high. Thus an appropriate frequency
->> notifier should be used in addition to the clk-notifier.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 173 ++++++++++++++++++++++++++----
->>  1 file changed, 153 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index a2623de56d20..a260812f7744 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -17,6 +17,7 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/pm_opp.h>
->>  #include <linux/reset.h>
->> +#include <linux/workqueue.h>
->>  
->>  #include "governor.h"
->>  
->> @@ -34,6 +35,8 @@
->>  #define ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN		BIT(30)
->>  #define ACTMON_DEV_CTRL_ENB					BIT(31)
->>  
->> +#define ACTMON_DEV_CTRL_STOP					0x00000000
->> +
->>  #define ACTMON_DEV_UPPER_WMARK					0x4
->>  #define ACTMON_DEV_LOWER_WMARK					0x8
->>  #define ACTMON_DEV_INIT_AVG					0xc
->> @@ -159,7 +162,10 @@ struct tegra_devfreq {
->>  
->>  	struct clk		*emc_clock;
->>  	unsigned long		max_freq;
->> -	struct notifier_block	rate_change_nb;
->> +	struct notifier_block	clk_rate_change_nb;
->> +
->> +	struct delayed_work	cpufreq_update_work;
->> +	struct notifier_block	cpu_rate_change_nb;
->>  
->>  	struct tegra_devfreq_device devices[ARRAY_SIZE(actmon_device_configs)];
->>  
->> @@ -207,10 +213,10 @@ static unsigned long do_percent(unsigned long val, unsigned int pct)
->>  	return val * pct / 100;
->>  }
->>  
->> -static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra)
->> +static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
->> +					    unsigned int cpu_freq)
->>  {
->>  	struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
->> -	unsigned int cpu_freq = cpufreq_quick_get(0);
->>  	unsigned int i;
->>  
->>  	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++) {
->> @@ -244,7 +250,8 @@ tegra_actmon_account_cpu_freq(struct tegra_devfreq *tegra,
->>  		return target_freq;
->>  
->>  	if (dev->avg_freq > tegra_actmon_dev_avg_dependency_freq(tegra, dev))
->> -		static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra);
->> +		static_cpu_emc_freq = actmon_cpu_to_emc_rate(
->> +						tegra, cpufreq_quick_get(0));
->>  	else
->>  		static_cpu_emc_freq = 0;
->>  
->> @@ -543,8 +550,8 @@ static irqreturn_t actmon_thread_isr(int irq, void *data)
->>  	return handled ? IRQ_HANDLED : IRQ_NONE;
->>  }
->>  
->> -static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
->> -				       unsigned long action, void *ptr)
->> +static int tegra_actmon_clk_notify_cb(struct notifier_block *nb,
->> +				      unsigned long action, void *ptr)
->>  {
->>  	struct clk_notifier_data *data = ptr;
->>  	struct tegra_devfreq_device *dev;
->> @@ -555,7 +562,7 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
->>  	if (action != POST_RATE_CHANGE)
->>  		return NOTIFY_OK;
->>  
->> -	tegra = container_of(nb, struct tegra_devfreq, rate_change_nb);
->> +	tegra = container_of(nb, struct tegra_devfreq, clk_rate_change_nb);
->>  
->>  	freq = data->new_rate / KHZ;
->>  
->> @@ -586,6 +593,94 @@ static int tegra_actmon_rate_notify_cb(struct notifier_block *nb,
->>  	return NOTIFY_OK;
->>  }
->>  
->> +static void tegra_actmon_delayed_update(struct work_struct *work)
->> +{
->> +	struct tegra_devfreq *tegra = container_of(work, struct tegra_devfreq,
->> +						   cpufreq_update_work.work);
->> +
->> +	mutex_lock(&tegra->devfreq->lock);
->> +	update_devfreq(tegra->devfreq);
->> +	mutex_unlock(&tegra->devfreq->lock);
->> +}
->> +
->> +static unsigned long
->> +tegra_actmon_cpufreq_contribution(struct tegra_devfreq *tegra,
->> +				  unsigned int cpu_freq)
->> +{
->> +	unsigned long freq, static_cpu_emc_freq;
->> +
->> +	/* check whether CPU's freq is taken into account at all */
->> +	freq = tegra_actmon_dev_avg_dependency_freq(tegra,
->> +						    &tegra->devices[MCCPU]);
->> +	if (tegra->devices[MCCPU].avg_freq <= freq)
->> +		return 0;
->> +
->> +	static_cpu_emc_freq = actmon_cpu_to_emc_rate(tegra, cpu_freq);
->> +
->> +	/* compare static CPU-EMC freq with MCALL */
->> +	freq = tegra->devices[MCALL].avg_freq +
->> +	       tegra->devices[MCALL].boost_freq;
->> +
->> +	freq = tegra_actmon_upper_freq(tegra, freq);
->> +
->> +	if (freq == tegra->max_freq || freq >= static_cpu_emc_freq)
->> +		return 0;
->> +
->> +	/* compare static CPU-EMC freq with MCCPU */
->> +	freq = tegra->devices[MCCPU].avg_freq +
->> +	       tegra->devices[MCCPU].boost_freq;
->> +
->> +	freq = tegra_actmon_upper_freq(tegra, freq);
->> +
->> +	if (freq == tegra->max_freq || freq >= static_cpu_emc_freq)
->> +		return 0;
->> +
->> +	return static_cpu_emc_freq;
->> +}
->> +
->> +static int tegra_actmon_cpu_notify_cb(struct notifier_block *nb,
->> +				      unsigned long action, void *ptr)
->> +{
->> +	struct cpufreq_freqs *freqs = ptr;
->> +	struct tegra_devfreq *tegra;
->> +	unsigned long old, new, delay;
->> +
->> +	if (action != CPUFREQ_POSTCHANGE)
->> +		return NOTIFY_OK;
->> +
->> +	tegra = container_of(nb, struct tegra_devfreq, cpu_rate_change_nb);
->> +
->> +	/*
->> +	 * Quickly check whether CPU frequency should be taken into account
->> +	 * at all, without blocking CPUFreq's core.
->> +	 */
->> +	if (mutex_trylock(&tegra->devfreq->lock)) {
->> +		old = tegra_actmon_cpufreq_contribution(tegra, freqs->old);
->> +		new = tegra_actmon_cpufreq_contribution(tegra, freqs->new);
->> +		mutex_unlock(&tegra->devfreq->lock);
->> +
->> +		/*
->> +		 * If CPU's frequency shouldn't be taken into account at
->> +		 * the moment, then there is no need to update the devfreq's
->> +		 * state because ISR will re-check CPU's frequency on the
->> +		 * next interrupt.
->> +		 */
->> +		if (old == new)
->> +			return NOTIFY_OK;
->> +	}
->> +
->> +	/*
->> +	 * CPUFreq driver should support CPUFREQ_ASYNC_NOTIFICATION in order
->> +	 * to allow asynchronous notifications. This means we can't block
->> +	 * here for too long, otherwise CPUFreq's core will complain with a
->> +	 * warning splat.
->> +	 */
->> +	delay = msecs_to_jiffies(ACTMON_SAMPLING_PERIOD);
->> +	schedule_delayed_work(&tegra->cpufreq_update_work, delay);
->> +
->> +	return NOTIFY_OK;
->> +}
->> +
->>  static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->>  					  struct tegra_devfreq_device *dev)
->>  {
->> @@ -617,9 +712,16 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
->>  	device_writel(dev, val, ACTMON_DEV_CTRL);
->>  }
->>  
->> -static void tegra_actmon_start(struct tegra_devfreq *tegra)
->> +static void tegra_actmon_stop_device(struct tegra_devfreq_device *dev)
->> +{
->> +	device_writel(dev, ACTMON_DEV_CTRL_STOP, ACTMON_DEV_CTRL);
->> +	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
->> +}
->> +
->> +static int tegra_actmon_start(struct tegra_devfreq *tegra)
->>  {
->>  	unsigned int i;
->> +	int err;
->>  
->>  	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
->>  		      ACTMON_GLB_PERIOD_CTRL);
->> @@ -627,7 +729,30 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
->>  	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
->>  		tegra_actmon_configure_device(tegra, &tegra->devices[i]);
->>  
->> +	/*
->> +	 * We are estimating CPU's memory bandwidth requirement based on
->> +	 * amount of memory accesses and system's load, judging by CPU's
->> +	 * frequency. We also don't want to receive events about CPU's
->> +	 * frequency transaction when governor is stopped, hence notifier
->> +	 * is registered dynamically.
->> +	 */
->> +	err = cpufreq_register_notifier(&tegra->cpu_rate_change_nb,
->> +					CPUFREQ_TRANSITION_NOTIFIER);
->> +	if (err) {
->> +		dev_err(tegra->devfreq->dev.parent,
->> +			"Failed to register rate change notifier: %d\n", err);
->> +		goto err_stop;
->> +	}
->> +
->>  	enable_irq(tegra->irq);
->> +
->> +	return 0;
->> +
->> +err_stop:
->> +	for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)
->> +		tegra_actmon_stop_device(&tegra->devices[i]);
+> In drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c it is being used like
+> a boolean and not a bitmask'd value:
 > 
-> nitpick:
-> Why don't you contain this for loop statement in the tegra_actmon_stop_device()?
-> I think that you can make it as following:
+>         if (!priv->dma_cap.av)
 > 
-> 	tegra_actmon_stop_device(struct tegra_devfreq *target);
-> 		for (i = 0; i < ARRAY_SIZE(tegra->devices); i++)> +				
-> 			device_writel(dev, ACTMON_DEV_CTRL_STOP, ACTMON_DEV_CTRL);              
-> 			device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS); 
+> so the original logic is to do boolean flag merging rather than bit-wise
+> logic.
 
-I'll change that in v7.
+Oh yeah.  Thanks.  This code is hard to read.
 
-> Except for this, looks good to me. 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+It would be better to just write it like this:
 
-Thanks!
+	if (hw_cap & XGMAC_HWFEAT_AVSEL) && !(hw_cap & XGMAC_HWFEAT_RAVSEL)
+		dma_cap->av = true;
+	else
+		dma_cap->av = false;
+
+All these very shifts are concise but they introduce bugs like this one
+you have found.
+
+regards,
+dan carpenter
+
