@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF748C9190
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D326CC91A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbfJBTJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:09:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35952 "EHLO
+        id S1729917AbfJBTKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:10:47 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35834 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729335AbfJBTIS (ORCPT
+        by vger.kernel.org with ESMTP id S1729310AbfJBTIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:18 -0400
+        Wed, 2 Oct 2019 15:08:16 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyx-000364-Qb; Wed, 02 Oct 2019 20:08:15 +0100
+        id 1iFjyu-00036B-RT; Wed, 02 Oct 2019 20:08:12 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyp-0003fP-K9; Wed, 02 Oct 2019 20:08:07 +0100
+        id 1iFjyq-0003g3-2a; Wed, 02 Oct 2019 20:08:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Dirk van der Merwe" <dirk.vandermerwe@netronome.com>,
-        "Jakub Kicinski" <jakub.kicinski@netronome.com>,
-        "Cong Wang" <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
+        "Paul Burton" <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        "Dmitry Korotin" <dkorotin@wavecomp.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.899326605@decadent.org.uk>
+Message-ID: <lsq.1570043211.121577724@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 69/87] net: netem: fix backlog accounting for
- corrupted GSO frames
+Subject: [PATCH 3.16 77/87] MIPS: Add missing EHB in mtc0 -> mfc0 sequence.
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,78 +47,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Dmitry Korotin <dkorotin@wavecomp.com>
 
-commit 177b8007463c4f36c9a2c7ce7aa9875a4cad9bd5 upstream.
+commit 0b24cae4d535045f4c9e177aa228d4e97bad212c upstream.
 
-When GSO frame has to be corrupted netem uses skb_gso_segment()
-to produce the list of frames, and re-enqueues the segments one
-by one.  The backlog length has to be adjusted to account for
-new frames.
+Add a missing EHB (Execution Hazard Barrier) in mtc0 -> mfc0 sequence.
+Without this execution hazard barrier it's possible for the value read
+back from the KScratch register to be the value from before the mtc0.
 
-The current calculation is incorrect, leading to wrong backlog
-lengths in the parent qdisc (both bytes and packets), and
-incorrect packet backlog count in netem itself.
+Reproducible on P5600 & P6600.
 
-Parent backlog goes negative, netem's packet backlog counts
-all non-first segments twice (thus remaining non-zero even
-after qdisc is emptied).
+The hazard is documented in the MIPS Architecture Reference Manual Vol.
+III: MIPS32/microMIPS32 Privileged Resource Architecture (MD00088), rev
+6.03 table 8.1 which includes:
 
-Move the variables used to count the adjustment into local
-scope to make 100% sure they aren't used at any stage in
-backports.
+   Producer | Consumer | Hazard
+  ----------|----------|----------------------------
+   mtc0     | mfc0     | any coprocessor 0 register
 
-Fixes: 6071bd1aa13e ("netem: Segment GSO packets on enqueue")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dmitry Korotin <dkorotin@wavecomp.com>
+[paul.burton@mips.com:
+  - Commit message tweaks.
+  - Add Fixes tags.
+  - Mark for stable back to v3.15 where P5600 support was introduced.]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 3d8bfdd03072 ("MIPS: Use C0_KScratch (if present) to hold PGD pointer.")
+Fixes: 829dcc0a956a ("MIPS: Add MIPS P5600 probe support")
+Cc: linux-mips@vger.kernel.org
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/sched/sch_netem.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/mips/mm/tlbex.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -440,8 +440,7 @@ static int netem_enqueue(struct sk_buff
- 	struct netem_skb_cb *cb;
- 	struct sk_buff *skb2;
- 	struct sk_buff *segs = NULL;
--	unsigned int len = 0, last_len, prev_len = qdisc_pkt_len(skb);
--	int nb = 0;
-+	unsigned int prev_len = qdisc_pkt_len(skb);
- 	int count = 1;
- 	int rc = NET_XMIT_SUCCESS;
- 	int rc_drop = NET_XMIT_DROP;
-@@ -495,6 +494,7 @@ static int netem_enqueue(struct sk_buff
- 			segs = netem_segment(skb, sch);
- 			if (!segs)
- 				return rc_drop;
-+			qdisc_skb_cb(segs)->pkt_len = segs->len;
- 		} else {
- 			segs = skb;
- 		}
-@@ -575,6 +575,11 @@ static int netem_enqueue(struct sk_buff
- 
- finish_segs:
- 	if (segs) {
-+		unsigned int len, last_len;
-+		int nb = 0;
-+
-+		len = skb->len;
-+
- 		while (segs) {
- 			skb2 = segs->next;
- 			segs->next = NULL;
-@@ -590,9 +595,7 @@ finish_segs:
- 			}
- 			segs = skb2;
- 		}
--		sch->q.qlen += nb;
--		if (nb > 1)
--			qdisc_tree_reduce_backlog(sch, 1 - nb, prev_len - len);
-+		qdisc_tree_reduce_backlog(sch, -nb, prev_len - len);
+--- a/arch/mips/mm/tlbex.c
++++ b/arch/mips/mm/tlbex.c
+@@ -374,6 +374,7 @@ static struct work_registers build_get_w
+ static void build_restore_work_registers(u32 **p)
+ {
+ 	if (scratch_reg >= 0) {
++		uasm_i_ehb(p);
+ 		UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+ 		return;
  	}
- 	return NET_XMIT_SUCCESS;
- }
+@@ -665,10 +666,12 @@ static void build_restore_pagemask(u32 *
+ 			uasm_i_mtc0(p, 0, C0_PAGEMASK);
+ 			uasm_il_b(p, r, lid);
+ 		}
+-		if (scratch_reg >= 0)
++		if (scratch_reg >= 0) {
++			uasm_i_ehb(p);
+ 			UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+-		else
++		} else {
+ 			UASM_i_LW(p, 1, scratchpad_offset(0), 0);
++		}
+ 	} else {
+ 		/* Reset default page size */
+ 		if (PM_DEFAULT_MASK >> 16) {
+@@ -906,10 +909,12 @@ build_get_pgd_vmalloc64(u32 **p, struct
+ 		uasm_i_jr(p, ptr);
+ 
+ 		if (mode == refill_scratch) {
+-			if (scratch_reg >= 0)
++			if (scratch_reg >= 0) {
++				uasm_i_ehb(p);
+ 				UASM_i_MFC0(p, 1, c0_kscratch(), scratch_reg);
+-			else
++			} else {
+ 				UASM_i_LW(p, 1, scratchpad_offset(0), 0);
++			}
+ 		} else {
+ 			uasm_i_nop(p);
+ 		}
+@@ -1215,6 +1220,7 @@ build_fast_tlb_refill_handler (u32 **p,
+ 	UASM_i_MTC0(p, odd, C0_ENTRYLO1); /* load it */
+ 
+ 	if (c0_scratch_reg >= 0) {
++		uasm_i_ehb(p);
+ 		UASM_i_MFC0(p, scratch, c0_kscratch(), c0_scratch_reg);
+ 		build_tlb_write_entry(p, l, r, tlb_random);
+ 		uasm_l_leave(l, *p);
+@@ -1466,12 +1472,14 @@ static void build_setup_pgd(void)
+ 		uasm_i_dinsm(&p, a0, 0, 29, 64 - 29);
+ 		uasm_l_tlbl_goaround1(&l, p);
+ 		UASM_i_SLL(&p, a0, a0, 11);
+-		uasm_i_jr(&p, 31);
+ 		UASM_i_MTC0(&p, a0, C0_CONTEXT);
++		uasm_i_jr(&p, 31);
++		uasm_i_ehb(&p);
+ 	} else {
+ 		/* PGD in c0_KScratch */
+-		uasm_i_jr(&p, 31);
+ 		UASM_i_MTC0(&p, a0, c0_kscratch(), pgd_reg);
++		uasm_i_jr(&p, 31);
++		uasm_i_ehb(&p);
+ 	}
+ #else
+ #ifdef CONFIG_SMP
+@@ -1485,13 +1493,16 @@ static void build_setup_pgd(void)
+ 	UASM_i_LA_mostly(&p, a2, pgdc);
+ 	UASM_i_SW(&p, a0, uasm_rel_lo(pgdc), a2);
+ #endif /* SMP */
+-	uasm_i_jr(&p, 31);
+ 
+ 	/* if pgd_reg is allocated, save PGD also to scratch register */
+-	if (pgd_reg != -1)
++	if (pgd_reg != -1) {
+ 		UASM_i_MTC0(&p, a0, c0_kscratch(), pgd_reg);
+-	else
++		uasm_i_jr(&p, 31);
++		uasm_i_ehb(&p);
++	} else {
++		uasm_i_jr(&p, 31);
+ 		uasm_i_nop(&p);
++	}
+ #endif
+ 	if (p >= tlbmiss_handler_setup_pgd_end)
+ 		panic("tlbmiss_handler_setup_pgd space exceeded");
 
