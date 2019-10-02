@@ -2,169 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3DC9C4B65
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 12:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C793C4B50
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 12:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfJBK1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 06:27:16 -0400
-Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:7012 "EHLO
-        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727807AbfJBK1P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 06:27:15 -0400
-Received: from pps.filterd (m0170392.ppops.net [127.0.0.1])
-        by mx0a-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x92AJp6s030547;
-        Wed, 2 Oct 2019 06:27:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=smtpout1;
- bh=ntR22ytiVGn5A9fSHOxPwnmg9Y4gCQnz9sNO26eQOV4=;
- b=mxhRwDHuLrYio4yRpn3ddZVSDO8TxVtDz0+D4fNUUydpmTZMQFVfyX6RgmEk4uE6+q1Q
- 7tjiechjtKjcVtBs+pSltB5o1hRozTZEzFYwQveiXZ5soya3gsOsVpOlerXCADU7cHtt
- A6ijKEVTMr8s+Y03kWJ1ebomL/H2XUIfakR0Y/zHfzQZwop4HWGAxnvk0CMva1j8caBI
- L8KEaReK+9DMxmWMdk7TecRxbUeS5xudr525hzcz458yXtTfu2Wd+ykHfxVqG3BiNZID
- W4sYD3bfg8cbvnSZ2zo+Ykcwq2AVpnUth69s7ISBHA7LYfiWWFiKgb7yI6UrVXSoW2bw 1A== 
-Received: from mx0b-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-        by mx0a-00154904.pphosted.com with ESMTP id 2va2pet5gn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Oct 2019 06:27:14 -0400
-Received: from pps.filterd (m0090350.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x92AMrro050573;
-        Wed, 2 Oct 2019 06:27:14 -0400
-Received: from ausxipps306.us.dell.com (AUSXIPPS306.us.dell.com [143.166.148.156])
-        by mx0b-00154901.pphosted.com with ESMTP id 2vca1w5psb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Oct 2019 06:27:14 -0400
-X-LoopCount0: from 10.166.134.84
-X-PREM-Routing: D-Outbound
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="382383860"
-From:   <Narendra.K@dell.com>
-To:     <geert@linux-m68k.org>
-CC:     <Mario.Limonciello@dell.com>, <ard.biesheuvel@linaro.org>,
-        <linux-efi@vger.kernel.org>, <mingo@kernel.org>,
-        <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        <james.morse@arm.com>, <tanxiaofei@huawei.com>,
-        <Narendra.K@dell.com>
-Subject: Re: [PATCH 4/5] efi: Export Runtime Configuration Interface table to
- sysfs
-Thread-Topic: [PATCH 4/5] efi: Export Runtime Configuration Interface table to
- sysfs
-Thread-Index: AQHVUR9fTJBv0Z/1EU2zTW0DTQ5+k6dFbG6AgAAA2ACAAAKAgIAACpuAgAA9PgCAAE5zgIAABjuAgAELs4A=
-Date:   Wed, 2 Oct 2019 10:22:10 +0000
-Message-ID: <20191002102159.GA2109@localhost.localdomain>
-References: <20190812150452.27983-1-ard.biesheuvel@linaro.org>
- <20190812150452.27983-5-ard.biesheuvel@linaro.org>
- <CAMuHMdXY5UH4KhcaNVuxa8-+GN-4bjyvCd0wzPYuFBY5Ch=fNA@mail.gmail.com>
- <CAKv+Gu-KPypju6roQaVKP0DHE3aZijVVqLGwNyhiRSNqn1r6-w@mail.gmail.com>
- <CAMuHMdV9m+Dbch46cVNqtn4cyB74qgHa18Qcm=HQv7Wx1rk==w@mail.gmail.com>
- <CAKv+Gu9iLxkJgmxZR+1yvCTj6GiCDuyfN_QiGXEWBHS7uYUbfQ@mail.gmail.com>
- <8446d19dd197447a88eed580601f3c4c@AUSX13MPC105.AMER.DELL.COM>
- <20191001180133.GA2279@localhost.localdomain>
- <CAMuHMdUMh4mCczCOxFtLn3E0Wu84ixFBsFuXk0p9QVXtg4dmoQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUMh4mCczCOxFtLn3E0Wu84ixFBsFuXk0p9QVXtg4dmoQ@mail.gmail.com>
-Accept-Language: en-US
+        id S1727833AbfJBKXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 06:23:53 -0400
+Received: from mail-eopbgr00139.outbound.protection.outlook.com ([40.107.0.139]:7161
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726128AbfJBKXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 06:23:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=exT9tyCLyVdWgWZlwZjptF9Y+GgIZ++KB2fpyD0vEwMC58q6c886cAPBfNAS7Rmnpo6b8lfmNaVplA1beUK1EN5zbsmSxcK27UjMqV91RzqhIp4w34OVeACOQNDcTAoMS5VclMRNZUbBbhtOqWdOgdJKAsItUEq/VFrv0G38Q4cXPAYnPGEN22jzVgwvQNHT37Zr02URRTU4KeqKnpCNiZA+AoScnbxOKk9ax4M8bzQ2SPe6tKoJkxiGFFJ2fd06Ph+Mop6M1SjSYufOp+iCoK7w/S+HiuCGw+AH7oztyuZK/2XHzxJZ6KHwn5/sDdnqeLUgY6EnLdWoerJRQ/Jqsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i6ZQ83+A7Mmm95Dvysl2xOE7jcCYBP45e0UNhynw+wY=;
+ b=O8KhEqNmI/gxnYpmJjH94SXQM0i1cpICpcuiP/cgZdW+w9sIEiV6Ejw0Nl1OZagUg2P2dNVgJeThb6T9qwFIWxGMK/rY841TzpY5pdCkf8k12Tyt9mBYv/DnJcR5QWPgBl8u6Vx0CCyddJE72Hk0ogmWgSKduHgySCUNrB7yZLiV91D0ln8JubwTA8xt1+6PIeVoOe8cJXVLJ2I3ITq4GM2rUo4VngVgDmEgYFmXhwEdwSubANGQ2RM98DrmtVsdXQ5jKf5R/irHUi7HdCe2KCOXZ+vB8rjPKox8sXUIgj+Bdu+J4IGPkMM5G3324K0Pdc8+ldBH7K28qfDzPtf6Yg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
+ dkim=pass header.d=toradex.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i6ZQ83+A7Mmm95Dvysl2xOE7jcCYBP45e0UNhynw+wY=;
+ b=XnBiiw3NoGma4ds81QjBuB1pUXA6sAeHalHle6IPVk1+GOMiv7WEH9Yjs4LRHTf+r5GR88SwFfWo6jlTunZeokzcT8H/baIGxrUUItNWrT7McWQy49J3puAolLxg/S7lUYQBUXCZhhe7CMr+0iHNRxDm0yZmoyHuIpXjAymhboo=
+Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com (52.134.19.20) by
+ VI1PR0502MB4096.eurprd05.prod.outlook.com (52.134.19.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.20; Wed, 2 Oct 2019 10:23:48 +0000
+Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com
+ ([fe80::f427:26bb:85cf:abad]) by VI1PR0502MB3965.eurprd05.prod.outlook.com
+ ([fe80::f427:26bb:85cf:abad%7]) with mapi id 15.20.2305.017; Wed, 2 Oct 2019
+ 10:23:48 +0000
+From:   Philippe Schenker <philippe.schenker@toradex.com>
+To:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+CC:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Subject: Re: [RESEND PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30
+ modules
+Thread-Topic: [RESEND PATCH] ARM: dts: Add stmpe-adc DT node to Toradex T30
+ modules
+Thread-Index: AQHVUo6HlKoSMlWVHkKJ8B1IIQyZPadGJbOAgAFMJAA=
+Date:   Wed, 2 Oct 2019 10:23:48 +0000
+Message-ID: <bb7d6d2309ba9ad781b65e7eecb2cc61c0b91e3e.camel@toradex.com>
+References: <20190814105318.21902-1-philippe.schenker@toradex.com>
+         <20191001143501.GA3566931@ulmo>
+In-Reply-To: <20191001143501.GA3566931@ulmo>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <609E97DE5EAE6D4AB612FBFE021B3135@dell.com>
-Content-Transfer-Encoding: quoted-printable
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=philippe.schenker@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f63f4f24-1a75-4d77-5b29-08d747229d30
+x-ms-traffictypediagnostic: VI1PR0502MB4096:
+x-microsoft-antispam-prvs: <VI1PR0502MB409623A983726AFD7598049FF49C0@VI1PR0502MB4096.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 0178184651
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(396003)(39840400004)(346002)(376002)(189003)(199004)(6512007)(6116002)(3846002)(26005)(256004)(6916009)(6486002)(54906003)(76176011)(66446008)(64756008)(76116006)(102836004)(66946007)(66476007)(66556008)(91956017)(2351001)(66066001)(86362001)(6246003)(2906002)(305945005)(7736002)(6506007)(2501003)(1361003)(25786009)(186003)(8676002)(4326008)(81156014)(71190400001)(5660300002)(71200400001)(6436002)(36756003)(478600001)(476003)(446003)(14454004)(11346002)(99286004)(2616005)(316002)(44832011)(8936002)(486006)(118296001)(229853002)(5640700003)(4744005)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB4096;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ZNG+vKMzWYlRl7fmiTunosAbbmmBl/5StiDScjd5qOD4OF3wRILGyMzyCJWZmsEE0ADFZWGp1wy9ArR2mfHYe/NgSI1g3ozpQgJqQ2CkLW8fEvaGngzMQPasICYs9Ezrxt7r1dg5K3t+VL7+OoSJKEkN8o4JPxmt26GU3K2IQrE1CsgHlSXWZAslBzeW2YP0hJdB+aWsJYJg10D7Co7iETF7bUc1BEbLTgUmLhOWFPRaIchGyh4CqJlzD5G+g5B1aobC8tBPjfE4S0Rg/HeLIvYf9dFrPzgL0HFcqSULqKaTj93gUOvumZuOPaQ0uR3YytpTAGyOMlM64LyytbGT/EGOHCN5hNzAEBX1oXiWkZlzaWUE6ZOQoSzGwNezpm00fUdFjAeOY/IlCwuR9D6OXNxUcKYGaDjeX4WtzwmseBY=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <78943F9AA902334689BC841379E01580@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-02_06:2019-10-01,2019-10-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- mlxscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0
- clxscore=1015 spamscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910020097
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 phishscore=0
- malwarescore=0 bulkscore=0 impostorscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1910020097
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f63f4f24-1a75-4d77-5b29-08d747229d30
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2019 10:23:48.6877
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uHsSJvlRFjOccuQtYl9Os3ZgjFILuj/GfsUIyikhVfBXxttgjR4dmBN8MkznVUklnYtg0TI3SjqTJBMqo8TcFf+Y1qGIAa0K1otXKuMQqY0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0502MB4096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 08:23:51PM +0200, Geert Uytterhoeven wrote:
-[...]
-> > > > > > > > +config EFI_RCI2_TABLE
-> > > > > > > > +       bool "EFI Runtime Configuration Interface Table Ver=
-sion 2 Support"
-[...]
-> > > Is it really a problem to just say n?
-> > >
-> > > I think this seems like a needless change that would slow down adopti=
-on of
-> > > !x86 if Dell EMC PowerEdge systems did start going that route, especi=
-ally
-> > > when it comes to distributions that move glacially slow with picking =
-up new
-> > > kernel code.
-> >
-> > Hi Ard/Geert,
-> >
-> > Any additional thoughts here ?
->=20
-> Sure ;-)
->=20
-> A typical platform-specific sarm/arm64 .config file has almost 3000
-> config options
-> disabled.  Hence that means I have to say "n" almost 3000 times.
-> Fortunately I started doing this several years ago, so I can do this
-> incrementally ;-)
->=20
-> Perhaps someone should try to remove all lines like "depends on ... ||
-> COMPILE_TEST", run "make oldconfig", read all help texts before saying "n=
-",
-> and time the whole operation...
->=20
-> I hope I managed to convince you of the benefits.
-
-Thank you Geert. The description is helpful. I am working on it.=20
-As I understand, the issue is 'make oldconfig' provides a prompt to the use=
-r=20
-and user is expecting that a prompt is not needed as the option is not
-relevant.
-
-I cloned upstream kernel 5.3.2 as it does not have EFI_RCI2_TABLE option
-and generated a .config by calling 'make defconfig'. The .config has
-COMPILE_TEST set to n. I copied it to 5.4-rc1 and added 'depends on COMPILE=
-_TEST'=20
-to drivers/firmware/efi/Kconfig (did not add CONFIG_X86 because it is
-set to y by the defconfig from 5.3.2). 'make oldconfig' still provides a
-prompt for CONFIG_EFI_RCI2_TABLE.=20
-
-I removed 'depends on COMPILE_TEST' from Kconfig and modified it to
-include the below change -
-
-
-config EFI_RCI2_TABLE
-	bool=20
-	prompt "EFI Runtime Configuration Interface Table Version 2 Support" if CO=
-MPILE_TEST
-	default n
-	help
-
-Adding the condition to the 'prompt' section seems to have desired
-result. With this change, 'make oldconfig' did not provide a prompt.=20
-
-It seems like 'make oldconfig' will provide a prompt to the user if the
-CONFIG option is new and providing the prompt does not depend on the
-'depends on' section. It seems to be dependent on the 'prompt' section.
-
-Any thoughts ? If the above understanding is correct, I will work to
-submit a patch with 'prompt' section modified to contain
-
-prompt "EFI Runtime Configuration Interface Table Version 2 Support" if X86=
- || COMPILE_TEST
-
---=20
-With regards,
-Narendra K=
+T24gVHVlLCAyMDE5LTEwLTAxIGF0IDE2OjM1ICswMjAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToN
+Cj4gT24gV2VkLCBBdWcgMTQsIDIwMTkgYXQgMTA6NTM6MzhBTSArMDAwMCwgUGhpbGlwcGUgU2No
+ZW5rZXIgd3JvdGU6DQo+ID4gQWRkIHRoZSBzdG1wZS1hZGMgRFQgbm9kZSBhcyBmb3VuZCBvbiBU
+b3JhZGV4IFQzMCBtb2R1bGVzDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogUGhpbGlwcGUgU2No
+ZW5rZXIgPHBoaWxpcHBlLnNjaGVua2VyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IC0tLQ0KPiA+
+IA0KPiA+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWFwYWxpcy12MS4xLmR0c2kgfCAyMiAr
+KysrKysrKysrKysrKy0tLS0tDQo+ID4gLS0tDQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3Jh
+MzAtYXBhbGlzLmR0c2kgICAgICB8IDIyICsrKysrKysrKysrKysrLS0tLS0NCj4gPiAtLS0NCj4g
+PiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1jb2xpYnJpLmR0c2kgICAgIHwgMjIgKysrKysr
+KysrKysrKystLS0tLQ0KPiA+IC0tLQ0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDQyIGluc2VydGlv
+bnMoKyksIDI0IGRlbGV0aW9ucygtKQ0KPiANCj4gQXBwbGllZCB0byBmb3ItNS41L2FybS9kdCAs
+IHRoYW5rcy4NCj4gDQo+IFRoaWVycnkNCg0KVGhhbmsgeW91IHZlcnkgbXVjaCENCg0KUGhpbGlw
+cGUNCg==
