@@ -2,206 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6DD8C8842
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2CAC8870
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:28:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfJBMW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:22:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55570 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725747AbfJBMW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:22:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 72B1CACC3;
-        Wed,  2 Oct 2019 12:22:23 +0000 (UTC)
-Message-ID: <1570019274.22393.2.camel@suse.cz>
-Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Quentin Perret <qperret@qperret.net>,
-        srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@suse.de, lenb@kernel.org, rjw@rjwysocki.net,
-        x86@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
-        matt@codeblueprint.co.uk, viresh.kumar@linaro.org,
-        juri.lelli@redhat.com, pjt@google.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com
-Date:   Wed, 02 Oct 2019 14:27:54 +0200
-In-Reply-To: <20190924160022.GB2386@hirez.programming.kicks-ass.net>
-References: <20190909024216.5942-1-ggherdovich@suse.cz>
-         <20190909024216.5942-2-ggherdovich@suse.cz>
-         <20190914105708.GA12877@qperret.net> <1568730466.3329.4.camel@suse.cz>
-         <20190924140332.GL2369@hirez.programming.kicks-ass.net>
-         <20190924160022.GB2386@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726488AbfJBM2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:28:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42402 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJBM23 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:28:29 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n14so19415351wrw.9;
+        Wed, 02 Oct 2019 05:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qP9mbplmTy0EguziRYmdZKFvmKZpgiY1goXlhQxV0/8=;
+        b=Xe4ozWCsxpb6DK1agUyM9eUxlP6G03BBFhI5g4JErak3F1hsMTKXmoyANoMKXxS+UF
+         OWRiAkrVC3cQOJczX/+7HhZQ8bMC3apl96os1jO6/JWJEP2BHZpDAF0bRyJQdbd0lmMA
+         afH1TDc/aCLYhrc6UF4IMSf4Noe9cSvoyQYpo0qgpxktdn7I/jv5ztIFWEVBOuEfDveP
+         hKAmMRuOGlokBd9/+TirOM307HbJYDWAZ8Wko3G+bYcw41RSULf9eN0mQPLmeF/+J9tC
+         XwaypBneeu3VeCmfU/DxP1duZ3pCcnwOu5nrzdHsS6ow28T2CVk8VvAAZGEU1cUIX4Z+
+         +hkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qP9mbplmTy0EguziRYmdZKFvmKZpgiY1goXlhQxV0/8=;
+        b=akVGfKDGN9KlaS7GfDnHx98C2QeedcAeu8RIoCS8uh0twWVOZMZKbUY6M/2HaZKsPI
+         38mOkZ2CRPyO1EzbpI9UU6hHXfohMTHuWX0pTdvkFXn+TfZPAxJa1fVRhHgOcknkhb/U
+         JBzse/qoFFdlsRK3kY6I+0R1YyyAD2SDlzfax4U6ew8DL0icpWegiNEXnIno/7b6sIt2
+         9u9PEHk+1AdQkgS/tVRAFdVg6rrYMbUFkh1JAYsEED71D2IR38JmdUfjsW0Bi1aohXuz
+         F8LOoB0G33BszHljgknOYlHF4tPGDitMVI+giV3UgwXEWHKFgimUJKOb1nyg+4fcVOLO
+         2g1g==
+X-Gm-Message-State: APjAAAX5YpK/Xf8BgNQ7EyD7TzARRLtN4fRfLcEXIT3fZkDHf5xGyxPi
+        jnbTBpi+UDekDgGOQiVnsoo=
+X-Google-Smtp-Source: APXvYqw9HA6mSwE4O/MajE0OyTuT/xQaPqMRcrU+p/RXgMiP+Q297cH5ORneUFjHbOQpwrdgestsJw==
+X-Received: by 2002:adf:fe05:: with SMTP id n5mr2716992wrr.355.1570019307315;
+        Wed, 02 Oct 2019 05:28:27 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id e17sm5719759wma.15.2019.10.02.05.28.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 05:28:26 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Timo Alho <talho@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] gpio: max77620: Use correct unit for debounce times
+Date:   Wed,  2 Oct 2019 14:28:23 +0200
+Message-Id: <20191002122825.3948322-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-24 at 18:00 +0200, Peter Zijlstra wrote:
-> On Tue, Sep 24, 2019 at 04:03:32PM +0200, Peter Zijlstra wrote:
-> 
-> > > I'll check what's the cost of static_cpu_has() and if it's non-negligible I'll
-> > > do what you suggest (x86-specific version of arch_scale_freq_invariant().
-> > 
-> > static_cpu_has() is an alternative and ends up being a static branch
-> > (similar to static_key) once the alternative patching runs.
-> 
-> That said; I think you want a static key anyway, because if we can't
-> tell the max_freq we don't want to use the invariant stuff.
-> 
-> Something a little like so on top perhaps.
-> 
-> Also, the below fixes that silly tick_disable stuff.
+From: Thierry Reding <treding@nvidia.com>
 
-Thanks for this patch, I'll add this change in v2.
+The gpiod_set_debounce() function takes the debounce time in
+microseconds. Adjust the switch/case values in the MAX77620 GPIO to use
+the correct unit.
 
-Can you elaborate on what you don't like in the tick_disable mechanism?
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpio-max77620.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-After reading your comments I realized there is a problem, but I'm not sure is
-the same you're addressing.
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 47d05e357e61..faf86ea9c51a 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -192,13 +192,13 @@ static int max77620_gpio_set_debounce(struct max77620_gpio *mgpio,
+ 	case 0:
+ 		val = MAX77620_CNFG_GPIO_DBNC_None;
+ 		break;
+-	case 1 ... 8:
++	case 1000 ... 8000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_8ms;
+ 		break;
+-	case 9 ... 16:
++	case 9000 ... 16000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_16ms;
+ 		break;
+-	case 17 ... 32:
++	case 17000 ... 32000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_32ms;
+ 		break;
+ 	default:
+-- 
+2.23.0
 
-More on this below, under your edit of the function
-x86_arch_scale_freq_tick_disable().
-
-> 
-> ---
-> --- a/arch/x86/include/asm/topology.h
-> +++ b/arch/x86/include/asm/topology.h
-> @@ -196,20 +196,24 @@ static inline void sched_clear_itmt_supp
->  #ifdef CONFIG_SMP
->  #include <asm/cpufeature.h>
->  
-> -#define arch_scale_freq_tick arch_scale_freq_tick
-> -#define arch_scale_freq_capacity arch_scale_freq_capacity
-> +DECLARE_STATIC_KEY_FALSE(arch_scale_freq_key);
-> +
-> +#define arch_scale_freq_invariant() static_branch_likely(&arch_scale_freq_key)
-
-This confused me for a second but then I realized that this #define comes
-before the one in kernel/sched/sched.h where arch_scale_freq_invariant() is
-defined again but guarded against previous definitions, so it all falls into
-place; code from schedutil will see this one.
-
->  
->  DECLARE_PER_CPU(unsigned long, arch_cpu_freq);
->  
->  static inline long arch_scale_freq_capacity(int cpu)
->  {
-> -	if (static_cpu_has(X86_FEATURE_APERFMPERF))
-> +	if (arch_scale_freq_invariant())
->  		return per_cpu(arch_cpu_freq, cpu);
->  
->  	return 1024 /* SCHED_CAPACITY_SCALE */;
->  }
-> +#define arch_scale_freq_capacity arch_scale_freq_capacity
->  
->  extern void arch_scale_freq_tick(void);
-> +#define arch_scale_freq_tick arch_scale_freq_tick
-> +
->  extern void x86_arch_scale_freq_tick_enable(void);
->  extern void x86_arch_scale_freq_tick_disable(void);
->  #else
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -1799,6 +1799,8 @@ void native_play_dead(void)
->   * freq_curr / freq_max to eventually grow >1, in which case we clip it to 1.
->   */
->  
-> +DEFINE_STATIC_KEY_FALSE(arch_scale_freq_key);
-> +
->  static DEFINE_PER_CPU(u64, arch_prev_aperf);
->  static DEFINE_PER_CPU(u64, arch_prev_mperf);
->  static u64 arch_max_freq = SCHED_CAPACITY_SCALE;
-> @@ -1860,6 +1862,8 @@ static void core_set_cpu_max_freq(void)
->  	turbo_ratio = (turbo_ratio >> 24) & 0xFF;   /* 4C turbo ratio */
->  
->  	arch_max_freq = div_u64(turbo_ratio * SCHED_CAPACITY_SCALE, ratio);
-> +
-> +	static_key_enable(&arch_scale_freq_key);
->  }
->  
->  static void intel_set_cpu_max_freq(void)
-> @@ -1876,10 +1880,19 @@ static void intel_set_cpu_max_freq(void)
->  	core_set_cpu_max_freq();
->  }
->  
-> -static void set_cpu_max_freq(void)
-> +static void init_scale_freq(void *arg)
->  {
->  	u64 aperf, mperf;
->  
-> +	rdmsrl(MSR_IA32_APERF, aperf);
-> +	rdmsrl(MSR_IA32_MPERF, mperf);
-> +
-> +	this_cpu_write(arch_prev_aperf, aperf);
-> +	this_cpu_write(arch_prev_mperf, mperf);
-> +}
-> +
-> +static void set_cpu_max_freq(void)
-> +{
->  	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
->  		return;
->  
-> @@ -1891,11 +1904,7 @@ static void set_cpu_max_freq(void)
->  		break;
->  	}
->  
-> -	rdmsrl(MSR_IA32_APERF, aperf);
-> -	rdmsrl(MSR_IA32_MPERF, mperf);
-> -
-> -	this_cpu_write(arch_prev_aperf, aperf);
-> -	this_cpu_write(arch_prev_mperf, mperf);
-> +	init_scale_freq(NULL);
->  }
->  
->  DEFINE_PER_CPU(unsigned long, arch_cpu_freq);
-> @@ -1908,7 +1917,7 @@ void arch_scale_freq_tick(void)
->  	u64 aperf, mperf;
->  	u64 acnt, mcnt;
->  
-> -	if (!static_cpu_has(X86_FEATURE_APERFMPERF) || tick_disable)
-> +	if (!arch_scale_freq_invariant() || tick_disable)
->  		return;
->  
->  	rdmsrl(MSR_IA32_APERF, aperf);
-> @@ -1940,5 +1949,6 @@ void x86_arch_scale_freq_tick_enable(voi
->  
->  void x86_arch_scale_freq_tick_disable(void)
->  {
-> +	on_each_cpu(init_scale_freq, NULL, 1);
->  	tick_disable = true;
-
-I don't see why the call init_scale_freq() here is needed; why would I care of
-what's in arch_prev_[am]perf at this point. arch_scale_freq_tick() will see
-that tick_disable == true and exit early before reading arch_prev_[am]perf.
-
-The problem IMO emerges in the following configuration, which is a bug in the
-patch I sent:
-
-  * arch_scale_freq_invariant() is true (because we have APERF/MPERF)
-  * arch_scale_freq_capacity() is non-trivial (reads arch_cpu_freq)
-  * tick calculations are disabled
-
-In this case arch_scale_freq_capacity() feeds stale data to the function
-update_rq_clock_pelt() in kernel/sched/pelt.h. I initially missed this problem
-because I forgot that PELT signals have more users than just the schedutil
-governor (load balancer etc).
-
-This is exactly the situation produced by patch 2/2 which disables the tick
-calculations for intel_cpufreq (aka intel_pstate=passive).
-
-I think the fix for this is to set arch_cpu_freq (each per-cpu instance of the
-variable) to SCHED_CAPACITY_SCALE here in x86_arch_scale_freq_tick_disable().
-That would render the scaling factor for invariance moot (always 1), just as
-it is w/o scale invariance.
-
-I'm sending v2 with all your amendmends except this last one.
-
-
-Giovanni
