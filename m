@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A10A3C91F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4D7C9179
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbfJBTMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:12:51 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35396 "EHLO
+        id S1729563AbfJBTJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:09:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36120 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729102AbfJBTIK (ORCPT
+        by vger.kernel.org with ESMTP id S1729382AbfJBTIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:10 -0400
+        Wed, 2 Oct 2019 15:08:22 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyp-00036K-1g; Wed, 02 Oct 2019 20:08:07 +0100
+        id 1iFjyo-00035t-BQ; Wed, 02 Oct 2019 20:08:06 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-0003dE-6t; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyn-0003br-NA; Wed, 02 Oct 2019 20:08:05 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,22 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Kai-Heng Feng" <kai.heng.feng@canonical.com>
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        "Vince Weaver" <vincent.weaver@maine.edu>, namhyung@kernel.org,
+        acme@kernel.org, "Jiri Olsa" <jolsa@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Stephane Eranian" <eranian@google.com>,
+        "Ingo Molnar" <mingo@kernel.org>, mark.rutland@arm.com,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Yabin Cui" <yabinc@google.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.784782308@decadent.org.uk>
+Message-ID: <lsq.1570043211.419547842@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 42/87] USB: usb-storage: Add new ID to ums-realtek
+Subject: [PATCH 3.16 25/87] perf/ring_buffer: Add ordering to rb->nest
+ increment
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,34 +56,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 1a6dd3fea131276a4fc44ae77b0f471b0b473577 upstream.
+commit 3f9fbe9bd86c534eba2faf5d840fd44c6049f50e upstream.
 
-There is one more Realtek card reader requires ums-realtek to work
-correctly.
+Similar to how decrementing rb->next too early can cause data_head to
+(temporarily) be observed to go backward, so too can this happen when
+we increment too late.
 
-Add the device ID to support it.
+This barrier() ensures the rb->head load happens after the increment,
+both the one in the 'goto again' path, as the one from
+perf_output_get_handle() -- albeit very unlikely to matter for the
+latter.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Yabin Cui <yabinc@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: mark.rutland@arm.com
+Cc: namhyung@kernel.org
+Fixes: ef60777c9abd ("perf: Optimize the perf_output() path by removing IRQ-disables")
+Link: http://lkml.kernel.org/r/20190517115418.309516009@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/storage/unusual_realtek.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/events/ring_buffer.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/usb/storage/unusual_realtek.h
-+++ b/drivers/usb/storage/unusual_realtek.h
-@@ -28,6 +28,11 @@ UNUSUAL_DEV(0x0bda, 0x0138, 0x0000, 0x99
- 		"USB Card Reader",
- 		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -47,6 +47,15 @@ static void perf_output_put_handle(struc
+ 	unsigned long head;
  
-+UNUSUAL_DEV(0x0bda, 0x0153, 0x0000, 0x9999,
-+		"Realtek",
-+		"USB Card Reader",
-+		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
-+
- UNUSUAL_DEV(0x0bda, 0x0158, 0x0000, 0x9999,
- 		"Realtek",
- 		"USB Card Reader",
+ again:
++	/*
++	 * In order to avoid publishing a head value that goes backwards,
++	 * we must ensure the load of @rb->head happens after we've
++	 * incremented @rb->nest.
++	 *
++	 * Otherwise we can observe a @rb->head value before one published
++	 * by an IRQ/NMI happening between the load and the increment.
++	 */
++	barrier();
+ 	head = local_read(&rb->head);
+ 
+ 	/*
 
