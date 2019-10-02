@@ -2,104 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3CABC8848
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D58C8838
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfJBMYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:24:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:42732 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfJBMYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:24:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C16D28;
-        Wed,  2 Oct 2019 05:24:08 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F5713F71A;
-        Wed,  2 Oct 2019 05:24:06 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 13:23:57 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf/x86/intel/uncore: fix integer overflow on shift of
- a u32 integer
-Message-ID: <20191002122357.GA29018@lakrids.cambridge.arm.com>
-References: <20191002115545.15570-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002115545.15570-1-colin.king@canonical.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+        id S1727315AbfJBMU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:20:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54036 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727121AbfJBMUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:20:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E6591AD09;
+        Wed,  2 Oct 2019 12:20:22 +0000 (UTC)
+Message-ID: <1570019152.22393.0.camel@suse.cz>
+Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@suse.de, lenb@kernel.org, rjw@rjwysocki.net,
+        x86@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
+        matt@codeblueprint.co.uk, viresh.kumar@linaro.org,
+        juri.lelli@redhat.com, pjt@google.com, vincent.guittot@linaro.org,
+        qperret@qperret.net, dietmar.eggemann@arm.com
+Date:   Wed, 02 Oct 2019 14:25:52 +0200
+In-Reply-To: <20190924163053.GA4519@hirez.programming.kicks-ass.net>
+References: <20190909024216.5942-1-ggherdovich@suse.cz>
+         <20190909024216.5942-2-ggherdovich@suse.cz>
+         <20190924163053.GA4519@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 12:55:45PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+Hello Peter,
+
+late replies as I wasn't in the office last week.
+
+On Tue, 2019-09-24 at 18:30 +0200, Peter Zijlstra wrote:
+> On Mon, Sep 09, 2019 at 04:42:15AM +0200, Giovanni Gherdovich wrote:
+> > +static const struct x86_cpu_id has_turbo_ratio_group_limits[] = {
+> > +   ICPU(INTEL_FAM6_ATOM_GOLDMONT),
+> > +   ICPU(INTEL_FAM6_ATOM_GOLDMONT_X),
 > 
-> Shifting the u32 integer result of (pci_dword & SNR_IMC_MMIO_BASE_MASK)
-> will end up with an overflow when pci_dword greater than 0x1ff. Fix this
-> by casting pci_dword to a resource_size_t before masking and shifting it.
+> That's GOLDMONT_D in recent tip kernels.
+
+Right, I saw that now.
+
 > 
-> Addresses-Coverity: ("Unintentional integer overflow")
-
-I don't see that tag in Documentation/process/submitting-patches.rst ;)
-
-IIUC this is unintented truncation of the upper bits due to missing type
-promotion before the shift, rather than overflow (i.e. the value
-wrapping across addition/subtraction), so I think the wording is
-slightly misleading.
-
-Does coverity call that integer overflow?
-
-It might be better to say:
-
-| [PATCH] perf/x86/intel/uncore: don't truncate upper bits of address
-|
-| Shifting the u32 integer result of (pci_dword & SNR_IMC_MMIO_BASE_MASK)
-| by 23 will throw away the upper 23 bits of the potentially 64-bit
-| address. Fix this by casting pci_dword to a resource_size_t before
-| masking and shifting it.
-|
-| Found by coverity ("Unintentional integer overflow").
-
-Otherwise, the patch looks fine to me:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
-
-> Fixes: ee49532b38dd ("perf/x86/intel/uncore: Add IMC uncore support for Snow Ridge")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  arch/x86/events/intel/uncore_snbep.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > +   ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS),
+> > +   ICPU(INTEL_FAM6_SKYLAKE_X),
 > 
-> diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-> index b10a5ec79e48..ed69df1340d9 100644
-> --- a/arch/x86/events/intel/uncore_snbep.c
-> +++ b/arch/x86/events/intel/uncore_snbep.c
-> @@ -4415,7 +4415,7 @@ static void snr_uncore_mmio_init_box(struct intel_uncore_box *box)
->  		return;
->  
->  	pci_read_config_dword(pdev, SNR_IMC_MMIO_BASE_OFFSET, &pci_dword);
-> -	addr = (pci_dword & SNR_IMC_MMIO_BASE_MASK) << 23;
-> +	addr = ((resource_size_t)pci_dword & SNR_IMC_MMIO_BASE_MASK) << 23;
->  
->  	pci_read_config_dword(pdev, SNR_IMC_MMIO_MEM0_OFFSET, &pci_dword);
->  	addr |= (pci_dword & SNR_IMC_MMIO_MEM0_MASK) << 12;
-> -- 
-> 2.20.1
-> 
+> What about KABYLAKE_X and ICELAKE_X ?
+
+KABYLAKE_X: does it exist? I couldn't find it in
+arch/x86/include/asm/intel-family.h (the tip tree), I only see KABYLAKE_L and
+KABYLAKE.
+
+ICELAKE_X: well, I don't know really. Does this model have the same semantic
+for MSR_TURBO_RATIO_LIMIT as SKYLAKE_X (which is family = 0x6, model = 0x55)?
+This is for Len B. and Srinivas P. (in CC).
+
+The latest Software Developer's Manual (SDM) from May 2019 (volume 4, section
+2.17.3, "MSRs Specific to Intel Xeon Processor Scalable Family") mentions only
+"CPUID DisplayFamily_DisplayModel = 06_55H", which is SKYLAKE_X, as having the
+semantic I'm looking for here (in addition to Atom Goldmont's).
+
+The semantic I'm referring to is that MSR_TURBO_RATIO_LIMIT doesn't contain
+turbo levels for the fixed group sizes 1-2-3-4-... cores, the group sizes are
+specified in a different MSR (and could be 2-4-8-12-... for example).
+
+If the SDM is outdated and ICELAKE_X is also in that category, then the
+turbostat source code is outdated too as it has this function to detect this
+feature:
+
+    int has_turbo_ratio_group_limits(int family, int model)
+    {
+
+            if (!genuine_intel)
+                    return 0;
+
+            switch (model) {
+            case INTEL_FAM6_ATOM_GOLDMONT:
+            case INTEL_FAM6_SKYLAKE_X:
+            case INTEL_FAM6_ATOM_GOLDMONT_X:
+                    return 1;
+            }
+            return 0;
+    }
+
+(from the tree lenb/linux.git, branch "turbostat", turbostat version 19.08.31
+not yet merged into mainline)
+
+
+Giovanni
