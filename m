@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75BE5C87C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D71D1C87C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbfJBMC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:02:58 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:53363 "EHLO
+        id S1728317AbfJBMDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:03:09 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:35039 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfJBMC6 (ORCPT
+        with ESMTP id S1725875AbfJBMDJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:02:58 -0400
+        Wed, 2 Oct 2019 08:03:09 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N6srH-1i4Jx02kQB-018Nqd; Wed, 02 Oct 2019 14:02:49 +0200
+ 1N17gw-1i9YkR0zSk-012aQY; Wed, 02 Oct 2019 14:03:01 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Alex Deucher <alexander.deucher@amd.com>,
         Harry Wentland <harry.wentland@amd.com>,
@@ -27,112 +27,76 @@ Cc:     clang-built-linux@googlegroups.com, amd-gfx@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Arnd Bergmann <arnd@arndb.de>,
         Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Subject: [PATCH 3/6] drm/amdgpu: display_mode_vba_21: remove uint typedef
-Date:   Wed,  2 Oct 2019 14:01:24 +0200
-Message-Id: <20191002120136.1777161-4-arnd@arndb.de>
+Subject: [PATCH 4/6] drm/amd/display: fix dcn21 Makefile for clang
+Date:   Wed,  2 Oct 2019 14:01:25 +0200
+Message-Id: <20191002120136.1777161-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191002120136.1777161-1-arnd@arndb.de>
 References: <20191002120136.1777161-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:oBjKGQ3jYf0A2J2ocemwNHrJLF3mvVMEn6zOLTNAGubueuLRYyk
- BpOHFj8UwLoAn+bAxDpM0Us8z6MwyTwhFaeTAJtXgpd1gN2qJVEkpNfIB76daOLbh6I9g1g
- ahi1mLhjBji4qSGK5wctAS/ZXegSzGKfel5KNAxFR+4Ew0SuQO7JYnxKngDUC1t/3w0hgkw
- 0QdnYpJY4kkYs3R/f4iCg==
+X-Provags-ID: V03:K1:iyh+vgBexJi73bPkiI60pHY80NTDCFDTYEIUMn80jY7xmFLFyN1
+ lOYL3f+3oMpNTxy5GNVwJ3KsEs68xZViW7fENNgg3Jn5U+V1egRUjVEO1ktCKff0Pvq9jvM
+ 4GUnHYGOIUtOw3K3Thgb50nUN7iI5JiiL8myJPlaQsN9Bhcd/4wqCRRjdXAaL1TbjWAsBvu
+ 6OdkBy9ayup/rm6WjvHtA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:eSQ5Yr5a9oE=:9FRtoMlN7bwSrOG9f5YY1I
- bpZ3Qlyhsku0LcpbDJu5j1GigQk6vUWd/VoWhAWdlLLxtXK+BCdOiQtpfBiQFZdP8FLJ26cuR
- kV5qGa3w8U+kaC94DSFBi0lHTB2sNsHBjsd2p8WvqTLIZwirBsTcidrQkvC2sa1DPz0RHHLd8
- U9Vnvws8HuDgF+P7zwa3qcikMwSX3nStW4yO3wtkWdKwr6Uglr1x0i8/QF3LCtLtK4FEzrZVg
- bM4cQCIHQZpPin18GxcI5pwvpk2Qgoml/0vjZaUvLxFLn2V4iCWTtG43DqQmNKwH+Uu5EPbFE
- XKXWZUhX8b8lTqAqeEI30b2ahQc932Gp2k9HLD4BRhgWp8Ig9EQRTUgQKWSsTHSTnQtU1cNv+
- 4wMcWJOh0Doxtl6hUiJzmGCWOFc2YYIcQ9ELhsb9uoUBPdrVP4Cjrk1ffgCIZs6HhA7bvk7NE
- EZVguXf2MjBwrvsRdR3dXp5q2dELksAz89Tywytd8DQjNspuSufMllFGCsbJxVOgVSEnevN5g
- fKYidaTAnk8c1QQo9w9YM1DRwbCfHfDbJUTn+5ROSNw8cDuvGt7AjNVZUyBKhRUS3S6hrk7I5
- 34ybrIVzQiMV1ahqKIPXzQ0zPNdkHLSJNEc5Zt0ixZByldmxHwcytbpqPiVd3k++zjnk1lmAh
- Cmv0SEdjvSfss1GwwRbvWZi8aTQH32JG2l9zkRPg7Dnv9F3dDWn4s9meRO7HnvAqZHffcxad3
- vMQ1fsnJ20Ma1FOm07EGM6aLkWoypGrNlbx+lKhhjGOg0kBUxqdy1pVidgfcwS403HhTEwiuL
- BlKxnY8Yx/kkAUL/1tXVJvhmg2XNXfg78iWD6M/9MmC8aZWKvP915zIr6FNADpRBtcjNi4JOp
- 8nnSZfI7XGVLOMcy5tjQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:osAlctbyQR8=:PMoF551m2feK1yVfj5p1si
+ 0NsF0Vw7jCbM3UjyL2s9+FckHGlfjS2CR5RQ8ZjWJhwRIW19TTs3Fw3o/8QRBcxnadhwrtTJs
+ u/bBXHhGLUf9GfY2GQ5YbtfE6Y7lDCTClYdkNAJ8Om7NUJ15ngHT+BeANDCC82sO5P1P7Kqrh
+ 7Apo4JVc9XpchQly/4+AJ0Aoslcr3xTdDH5crjBlFoaDwiir6YfXa8q/A2NB+y9jW5M7x50XF
+ srjEuZqSdlsFcY53m4r47Ckm04Oc6X6P0hzM6HlKXipty1ePvojObDCjOD4A6rOwtGpDymgeZ
+ pBJZtnC0J9T4DuvTuqqKWrZu3V2YoQQAnt7Wau0Ilkrn1k599PEbivZl3lDzXMh3rvlY96RiC
+ AOKVbfVyiCZp7JCioSHddRzgaQEB9GB7kbhKpSoJm7aHxNQtm3IYJ0uZQney+UIZaeQF2euu9
+ YXFAjzM4HyyOrmVMv1aD981VTUfnCH7kdTE68ncoLBAb0fhu3TQrBSZZEuDifhvCNwA1J0twW
+ 2P/Qby4iOItQ+N35i0xNBN0GglcxPdx7QfPYUbI2ihJK7uCKf3vhi2svF336F5xsnoQF6B2zL
+ 1g43JHYgF2hPy4ufjpnwOIW1vm7jMUnQnwY6RuCw/yEPlIqH+quLN6685+4nZoZIEOgk7Jc65
+ UxSLEC7Z69DRdRNoyAErimL5mBLoTsyLuSIbdAMu9Aigcmnu8+xozb1hJsZWGs+rsqXPILL7e
+ w3wNvnPx6deHku0JWxLzCTmFfzWVVjPFMoSWC+xdE1vSuqn0s5+nbd6GGDRxaVRT7IBOycOCh
+ BYn334EnghabAFgHkq9Hz/KzKXLfVdhlTgwqF36uo2mh1mUfOsaoYot2aaMLxAFooFvsTN5TR
+ ov53b8Y7fCwiurBPSYww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The type definition for 'uint' clashes with the generic kernel
-headers:
+Just like all the other variants, this one passes invalid
+compile-time options with clang after the new code got
+merged:
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn21/display_mode_vba_21.c:43:22: error: redefinition of typedef 'uint' is a C11 feature [-Werror,-Wtypedef-redefinition]
-include/linux/types.h:92:23: note: previous definition is here
+clang: error: unknown argument: '-mpreferred-stack-boundary=4'
+scripts/Makefile.build:265: recipe for target 'drivers/gpu/drm/amd/amdgpu/../display/dc/dcn21/dcn21_resource.o' failed
 
-Just remove this type and use plain 'unsigned int' consistently,
-as it is already use almost everywhere in this file.
+Use the same variant that we have for dcn20 to fix compilation.
 
-Fixes: b04641a3f4c5 ("drm/amd/display: Add Renoir DML")
+Fixes: eced51f9babb ("drm/amd/display: Add hubp block for Renoir (v2)")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../amd/display/dc/dml/dcn21/display_mode_vba_21.c  | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dcn21/Makefile | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c b/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
-index 46cda85d3d63..998970e2f84c 100644
---- a/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
-@@ -39,9 +39,6 @@
-  * ways. Unless there is something clearly wrong with it the code should
-  * remain as-is as it provides us with a guarantee from HW that it is correct.
-  */
--
--typedef unsigned int uint;
--
- typedef struct {
- 	amdgpu_dc_double DPPCLK;
- 	amdgpu_dc_double DISPCLK;
-@@ -4774,7 +4771,7 @@ void dml21_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_l
- 				mode_lib->vba.MaximumReadBandwidthWithoutPrefetch = 0.0;
- 				mode_lib->vba.MaximumReadBandwidthWithPrefetch = 0.0;
- 				for (k = 0; k <= mode_lib->vba.NumberOfActivePlanes - 1; k++) {
--					uint m;
-+					unsigned int m;
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
+index 8cd9de8b1a7a..ef673bffc241 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/dcn21/Makefile
+@@ -3,7 +3,17 @@
  
- 					locals->cursor_bw[k] = 0;
- 					locals->cursor_bw_pre[k] = 0;
-@@ -5285,7 +5282,7 @@ static void CalculateWatermarksAndDRAMSpeedChangeSupport(
- 	amdgpu_dc_double SecondMinActiveDRAMClockChangeMarginOneDisplayInVBLank;
- 	amdgpu_dc_double FullDETBufferingTimeYStutterCriticalPlane = 0;
- 	amdgpu_dc_double TimeToFinishSwathTransferStutterCriticalPlane = 0;
--	uint k, j;
-+	unsigned int k, j;
+ DCN21 = dcn21_hubp.o dcn21_hubbub.o dcn21_resource.o
  
- 	mode_lib->vba.TotalActiveDPP = 0;
- 	mode_lib->vba.TotalDCCActiveDPP = 0;
-@@ -5507,7 +5504,7 @@ static void CalculateDCFCLKDeepSleep(
- 		amdgpu_dc_double DPPCLK[],
- 		amdgpu_dc_double *DCFCLKDeepSleep)
- {
--	uint k;
-+	unsigned int k;
- 	amdgpu_dc_double DisplayPipeLineDeliveryTimeLuma;
- 	amdgpu_dc_double DisplayPipeLineDeliveryTimeChroma;
- 	//amdgpu_dc_double   DCFCLKDeepSleepPerPlane[DC__NUM_DPP__MAX];
-@@ -5727,7 +5724,7 @@ static void CalculatePixelDeliveryTimes(
- 		amdgpu_dc_double DisplayPipeRequestDeliveryTimeChromaPrefetch[])
- {
- 	amdgpu_dc_double req_per_swath_ub;
--	uint k;
-+	unsigned int k;
+-CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -msse -mpreferred-stack-boundary=4
++ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
++	cc_stack_align := -mpreferred-stack-boundary=4
++else ifneq ($(call cc-option, -mstack-alignment=16),)
++	cc_stack_align := -mstack-alignment=16
++endif
++
++CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o := -mhard-float -msse $(cc_stack_align)
++
++ifdef CONFIG_CC_IS_CLANG
++CFLAGS_$(AMDDALPATH)/dc/dcn21/dcn21_resource.o += -msse2
++endif
  
- 	for (k = 0; k < NumberOfActivePlanes; ++k) {
- 		if (VRatio[k] <= 1) {
-@@ -5869,7 +5866,7 @@ static void CalculateMetaAndPTETimes(
- 	unsigned int dpte_groups_per_row_chroma_ub;
- 	unsigned int num_group_per_lower_vm_stage;
- 	unsigned int num_req_per_lower_vm_stage;
--	uint k;
-+	unsigned int k;
+ AMD_DAL_DCN21 = $(addprefix $(AMDDALPATH)/dc/dcn21/,$(DCN21))
  
- 	for (k = 0; k < NumberOfActivePlanes; ++k) {
- 		if (GPUVMEnable == true) {
 -- 
 2.20.0
 
