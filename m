@@ -2,131 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD4B8C4A7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 11:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C440C4A84
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 11:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfJBJVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 05:21:15 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:33068 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJBJVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 05:21:14 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id CE6BC3F6BA;
-        Wed,  2 Oct 2019 11:21:10 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=lG5wyc8l;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.1
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id IS1Y-KJ7u8fr; Wed,  2 Oct 2019 11:21:08 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id BD2D53F6AE;
-        Wed,  2 Oct 2019 11:21:02 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 3ED77360058;
-        Wed,  2 Oct 2019 11:21:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570008062; bh=Rg6OP4o/QDF7kwct9j3Hp3SgvBNu7Bw7IgByIFeVLSM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lG5wyc8lQDIxcnSs7OriVvn1LeHWxFlMWPeukWdSGkuyjj7G3P4OCiWue0gORAIUf
-         LZx/cvGYLNTw2DPdP/ZnO6ZB2sUiXQxbFZArSNSGR7GR31+0pqmpK6HXOx5tasvq4J
-         ZmqJkQcWgNu4G84gb9KrSb21Ls+TXeQiSMgYaBIA=
-Subject: Re: Ack to merge through DRM? WAS Re: [PATCH v2 1/5] mm: Add
- write-protect and clean utilities for address space ranges
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20190926115548.44000-1-thomas_os@shipmail.org>
- <20190926115548.44000-2-thomas_os@shipmail.org>
- <85e31bcf-d3c8-2fcf-e659-2c9f82ebedc7@shipmail.org>
- <CAHk-=wifjLeeMEtMPytiMAKiWkqPorjf1P4PbB3dj17Y3Jcqag@mail.gmail.com>
- <a48a93d2-03e9-40d3-3b4c-a301632d3121@shipmail.org>
- <CAHk-=whwN+CvaorsmczZRwFhSV+1x98xg-zajVD1qKmN=9JhBQ@mail.gmail.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <50e83aeb-e971-f0ad-f034-ed592588eba7@shipmail.org>
-Date:   Wed, 2 Oct 2019 11:21:01 +0200
+        id S1727399AbfJBJVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 05:21:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:39678 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfJBJVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 05:21:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA7FA1570;
+        Wed,  2 Oct 2019 02:21:38 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB2F93F706;
+        Wed,  2 Oct 2019 02:21:36 -0700 (PDT)
+Subject: Re: [PATCH v3 04/10] sched/fair: rework load_balance
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>
+References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
+ <1568878421-12301-5-git-send-email-vincent.guittot@linaro.org>
+ <9bfb3252-c268-8c0c-9c72-65f872e9c8b2@arm.com>
+ <CAKfTPtDUFMFnD+RZndx0+8A+V9HV9Hv0TN+p=mAge0VsqS6xmA@mail.gmail.com>
+ <3dca46c5-c395-e2b3-a7e8-e9208ba741c8@arm.com>
+ <CAKfTPtDGxX11=vgJsV-o-jOxgPmbr0VXWmR6LEVuD6WG=VRXyA@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <b2d10a98-6688-3909-1bd9-e5700c521d5d@arm.com>
+Date:   Wed, 2 Oct 2019 11:21:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whwN+CvaorsmczZRwFhSV+1x98xg-zajVD1qKmN=9JhBQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKfTPtDGxX11=vgJsV-o-jOxgPmbr0VXWmR6LEVuD6WG=VRXyA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/19 10:16 PM, Linus Torvalds wrote:
-> On Thu, Sep 26, 2019 at 1:09 PM Thomas Hellström (VMware)
-> <thomas_os@shipmail.org> wrote:
->> That said, if people are OK with me modifying the assert in
->> pud_trans_huge_lock() and make __walk_page_range non-static, it should
->> probably be possible to make it work, yes.
-> I don't think you need to modify that assert at all.
->
-> That thing only exists when there's a "pud_entry" op in the walker,
-> and then you absolutely need to have that mmap_lock.
->
-> As far as I can tell, you fundamentally only ever work on a pte level
-> in your address space walker already and actually have a WARN_ON() on
-> the pud_huge thing, so no pud entry can possibly apply.
->
-> So no, the assert in pud_trans_huge_lock() does not seem to be a
-> reason not to just use the existing page table walkers.
->
-> And once you get rid of the walking, what is left? Just the "iterate
-> over the inode mappings" part. Which could just be done in
-> mm/pagewalk.c, and then you don't even need to remove the static.
->
-> So making it be just another walking in pagewalk.c would seem to be
-> the simplest model.
->
-> Call it "walk_page_mapping()". And talk extensively about how the
-> locking differs a lot from the usual "walk_page_vma()" things.
->
-> The then actual "apply" functions (what a horrid name) could be in the
-> users. They shouldn't be mixed in with the walking functions anyway.
-> They are callbacks, not walkers.
->
->               Linus
+On 02/10/2019 08:44, Vincent Guittot wrote:
+> On Tue, 1 Oct 2019 at 18:53, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 01/10/2019 10:14, Vincent Guittot wrote:
+>>> On Mon, 30 Sep 2019 at 18:24, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>>>
+>>>> Hi Vincent,
+>>>>
+>>>> On 19/09/2019 09:33, Vincent Guittot wrote:
+>>
+>> [...]
+>>
+>>>>> @@ -7347,7 +7362,7 @@ static int detach_tasks(struct lb_env *env)
+>>>>>   {
+>>>>>         struct list_head *tasks = &env->src_rq->cfs_tasks;
+>>>>>         struct task_struct *p;
+>>>>> -     unsigned long load;
+>>>>> +     unsigned long util, load;
+>>>>
+>>>> Minor: Order by length or reduce scope to while loop ?
+>>>
+>>> I don't get your point here
+>>
+>> Nothing dramatic here! Just
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index d0c3aa1dc290..a08f342ead89 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -7333,8 +7333,8 @@ static const unsigned int sched_nr_migrate_break = 32;
+>>  static int detach_tasks(struct lb_env *env)
+>>  {
+>>         struct list_head *tasks = &env->src_rq->cfs_tasks;
+>> -       struct task_struct *p;
+>>         unsigned long load, util;
+>> +       struct task_struct *p;
+> 
+> hmm... I still don't get this.
+> We usually gather pointers instead of interleaving them with other varaiables
 
-Linus, Kirill
+I thought we should always order local variable declarations from
+longest to shortest line but can't find this rule in coding-style.rst
+either.
 
-I've pushed a reworked version based on the pagewalk code here:
-
-https://cgit.freedesktop.org/~thomash/linux/log/?h=pagewalk
-
-(top three patched)
-
-with users included here:
-
-https://cgit.freedesktop.org/~thomash/linux/log/?h=coherent-rebased
-
-Do you think this could work? The reason that the "mm: Add write-protect 
-and clean.." code is still in mm as a set of helpers, is of course that 
-much of the needed functionality is not exported, presumably since we 
-want to keep page table manipulation in mm.
-
-Thanks,
-
-Thomas
-
-
+[...]
