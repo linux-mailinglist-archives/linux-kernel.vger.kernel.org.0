@@ -2,203 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B334C931E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8929EC9324
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:59:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728883AbfJBU6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 16:58:03 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41572 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728900AbfJBU6D (ORCPT
+        id S1729019AbfJBU7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 16:59:04 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:46076 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728495AbfJBU7D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 16:58:03 -0400
-Received: by mail-io1-f68.google.com with SMTP id n26so510744ioj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mxH4ymsGMb4jOpypYiX3Ngcl2ReJUcFD+OtXu9cpO30=;
-        b=Zb7ukMZDW3GVvpTCDpYW5lmOKDSHHWjljNPsTm+oq5S0HxsYLJcaqMCDnQlb/twjub
-         7QRJWuVWopM4Q9UWBp/G+dGWBByImCUEarWQYpMH2N0GyPAEmeVnmq8M3APWN0rNbIA7
-         OqzIA74SRLchR5auxdp0tZeBvOqKbw7sVmrM12w1FkUgv89vQkuUlav91g9qLzIC6wke
-         yWmYYPAMJESjpwdfALypK03bjosTQV08LeSXMhcZjj/OTbVIqkLHX7OMiGYlD3WSAZtf
-         KvDyqKWeGp8mp2N4uOh83Bzh9CvjP7MqUWC1Vf57Mclaly/Dycb4aqy8ptYzjvIqJ4zc
-         mRqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mxH4ymsGMb4jOpypYiX3Ngcl2ReJUcFD+OtXu9cpO30=;
-        b=oZZsvkKtf/C7jUPOJSGOqEYZ8CC0JOmFCUD0C7QXSor3I0Zusvq8vMGSuf8DwTkk+f
-         YxqN/+Q1NvgaHJVkwbWGOKQQKi3afg2XPRCeELDx4Xd9+Tym+W9DJjC5Wa8qUWGHpXDW
-         ykld50SiETOvRuvHao1mWVVsgKc20Z/pTr3EWzCpz2LZ4xqk4f6Bs7Ox8mSxkPWwM/Ta
-         TLK2u7uVjU9HDqWE27xKfS0wDY1jcZb92seZd8ZZvmXxsVeL0q6tXerT8bThhfbKGPqf
-         6Ao9Zd++GZxNBfDI8Qy3SFlLT4bpFZIOxH2cZCtRFeiBbhTdg3QSsk/0RG6jqnV2Li9m
-         JluQ==
-X-Gm-Message-State: APjAAAVxlXeaUHeYrFuCTeMigyFmCoD/1hAMgeKwAGUkDrFNDkhUXhtZ
-        6tPUHiy/wLUP3bqsNJCXf2UCstasz16faWOiIXa0Jg==
-X-Google-Smtp-Source: APXvYqxTRTIwYH44WcXiALssV8QMLilhWTytjwXm9GXdcjbXaUQbGPn9KB0oaZ6gd6fOKVTGVQL0SLlZStUSjNvsn4s=
-X-Received: by 2002:a6b:9085:: with SMTP id s127mr5338252iod.26.1570049882086;
- Wed, 02 Oct 2019 13:58:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190927021927.23057-1-weijiang.yang@intel.com> <20190927021927.23057-8-weijiang.yang@intel.com>
-In-Reply-To: <20190927021927.23057-8-weijiang.yang@intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Wed, 2 Oct 2019 13:57:50 -0700
-Message-ID: <CALMp9eQNDNmmCr8DM-2fMVYvQ-eTEpeE=bW8+BLbfxmBsTmQvg@mail.gmail.com>
-Subject: Re: [PATCH v7 7/7] KVM: x86: Add user-space access interface for CET MSRs
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 2 Oct 2019 16:59:03 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1040)
+        id AB3AF2008710; Wed,  2 Oct 2019 13:59:01 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AB3AF2008710
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1570049941;
+        bh=6cdP5JQykPhsXL1WHCxNWZjQbGC+Xk2I7XWWY4Qki8Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=C+xShXgRsfEkSHmQU/gbe1gObYmhOAelOMco4me/BjCfmQ19V9n4lFEBoytjteixA
+         XAVhb8QIJku5Ki3kNhi26ydMEVBh8fEP9N0S3Wk1xIVm+L07pgsy+pJ1w78gHKft/V
+         22A5Amr+bSpM2BUITmkngh0yYSIy35ynijv2jkPo=
+From:   Steve MacLean <steve.maclean@linux.microsoft.com>
+Cc:     Steve MacLean <Steve.MacLean@Microsoft.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] perf inject --jit: Remove //anon mmap events
+Date:   Wed,  2 Oct 2019 13:58:21 -0700
+Message-Id: <1570049901-115628-1-git-send-email-steve.maclean@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
->
-> There're two different places storing Guest CET states, the states
-> managed with XSAVES/XRSTORS, as restored/saved
-> in previous patch, can be read/write directly from/to the MSRs.
-> For those stored in VMCS fields, they're access via vmcs_read/
-> vmcs_write.
->
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 83 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 44913e4ab558..5265db7cd2af 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1671,6 +1671,49 @@ static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
->         return 0;
->  }
->
-> +static int check_cet_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+From: Steve MacLean <Steve.MacLean@Microsoft.com>
 
-I'd suggest changing return type to bool, since you are essentially
-returning true or false.
+While a JIT is jitting code it will eventually need to commit more pages and
+change these pages to executable permissions.
 
-> +{
-> +       u64 kvm_xss = kvm_supported_xss();
-> +
-> +       switch (msr_info->index) {
-> +       case MSR_IA32_PL0_SSP ... MSR_IA32_PL2_SSP:
-> +               if (!(kvm_xss | XFEATURE_MASK_CET_KERNEL))
-'|' should be '&'
-> +                       return 1;
-> +               if (!msr_info->host_initiated &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> +                       return 1;
-> +               break;
-> +       case MSR_IA32_PL3_SSP:
-> +               if (!(kvm_xss | XFEATURE_MASK_CET_USER))
-'|' should be '&'
-> +                       return 1;
-> +               if (!msr_info->host_initiated &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> +                       return 1;
-> +               break;
-> +       case MSR_IA32_U_CET:
-> +               if (!(kvm_xss | XFEATURE_MASK_CET_USER))
-'|' should be '&'
-> +                       return 1;
-> +               if (!msr_info->host_initiated &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_IBT))
-> +                       return 1;
-> +               break;
-> +       case MSR_IA32_S_CET:
-> +               if (!msr_info->host_initiated &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_IBT))
-> +                       return 1;
-> +               break;
-> +       case MSR_IA32_INT_SSP_TAB:
-> +               if (!msr_info->host_initiated &&
-> +                   !guest_cpuid_has(vcpu, X86_FEATURE_SHSTK))
-> +                       return 1;
-> +               break;
-> +       default:
-> +               return 1;
-> +       }
-> +       return 0;
-> +}
->  /*
->   * Reads an msr value (of 'msr_index') into 'pdata'.
->   * Returns 0 on success, non-0 otherwise.
-> @@ -1788,6 +1831,26 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->                 else
->                         msr_info->data = vmx->pt_desc.guest.addr_a[index / 2];
->                 break;
-> +       case MSR_IA32_S_CET:
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-> +               msr_info->data = vmcs_readl(GUEST_S_CET);
-Have we ensured that this VMCS field exists?
-> +               break;
-> +       case MSR_IA32_INT_SSP_TAB:
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-> +               msr_info->data = vmcs_readl(GUEST_INTR_SSP_TABLE);
-Have we ensured that this VMCS field exists?
-> +               break;
-> +       case MSR_IA32_U_CET:
-Can this be lumped together with MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP, below?
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-> +               rdmsrl(MSR_IA32_U_CET, msr_info->data);
-> +               break;
-> +       case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-> +               rdmsrl(msr_info->index, msr_info->data);
-> +               break;
->         case MSR_TSC_AUX:
->                 if (!msr_info->host_initiated &&
->                     !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
-> @@ -2039,6 +2102,26 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->                 else
->                         vmx->pt_desc.guest.addr_a[index / 2] = data;
->                 break;
-> +       case MSR_IA32_S_CET:
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-Bits 9:6 must be zero.
-> +               vmcs_writel(GUEST_S_CET, data);
-Have we ensured that this VMCS field exists?
-> +               break;
-> +       case MSR_IA32_INT_SSP_TAB:
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-Must be canonical. vCPU must support longmode.
-> +               vmcs_writel(GUEST_INTR_SSP_TABLE, data);
-Have we ensured that this VMCS field exists?
-> +               break;
-> +       case MSR_IA32_U_CET:
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-Bits 9:6 must be zero.
-> +               wrmsrl(MSR_IA32_U_CET, data);
-> +               break;
-> +       case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> +               if (check_cet_msr(vcpu, msr_info))
-> +                       return 1;
-'Data' must be canonical and 4-byte aligned. High dword must be zero
-on vCPUs that don't support longmode.
-> +               wrmsrl(msr_info->index, data);
-> +               break;
->         case MSR_TSC_AUX:
->                 if (!msr_info->host_initiated &&
->                     !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
-> --
-> 2.17.2
->
+Typically the JIT will want these colocated to minimize branch displacements.
+
+The kernel will coalesce these anonymous mapping with identical permissions
+before sending an MMAP event for the new pages. This means the mmap event for
+the new pages will include the older pages.
+
+These anonymous mmap events will obscure the jitdump injected pseudo events.
+This means that the jitdump generated symbols, machine code, debugging info,
+and unwind info will no longer be used.
+
+Observations:
+
+When a process emits a jit dump marker and a jitdump file, the perf-xxx.map
+file represents inferior information which has been superseded by the
+jitdump jit-xxx.dump file.
+
+Further the '//anon*' mmap events are only required for the legacy
+perf-xxx.map mapping.
+
+Summary:
+
+Add rbtree to track which pids have successfully injected a jitdump file.
+
+During "perf inject --jit", discard "//anon*" mmap events for any pid which
+has successfully processed a jitdump file.
+
+Committer testing:
+
+// jitdump case
+perf record <app with jitdump>
+perf inject --jit --input perf.data --output perfjit.data
+
+// verify mmap "//anon" events present initially
+perf script --input perf.data --show-mmap-events | grep '//anon'
+// verify mmap "//anon" events removed
+perf script --input perfjit.data --show-mmap-events | grep '//anon'
+
+// no jitdump case
+perf record <app without jitdump>
+perf inject --jit --input perf.data --output perfjit.data
+
+// verify mmap "//anon" events present initially
+perf script --input perf.data --show-mmap-events | grep '//anon'
+// verify mmap "//anon" events not removed
+perf script --input perfjit.data --show-mmap-events | grep '//anon'
+
+Repro:
+
+This issue was discovered while testing the initial CoreCLR jitdump
+implementation. https://github.com/dotnet/coreclr/pull/26897.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
+---
+ tools/perf/builtin-inject.c |  4 +--
+ tools/perf/util/jitdump.c   | 63 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index c14f40b8..4c921e0 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -261,7 +261,7 @@ static int perf_event__jit_repipe_mmap(struct perf_tool *tool,
+ 	 * if jit marker, then inject jit mmaps and generate ELF images
+ 	 */
+ 	ret = jit_process(inject->session, &inject->output, machine,
+-			  event->mmap.filename, sample->pid, &n);
++			  event->mmap.filename, event->mmap.pid, &n);
+ 	if (ret < 0)
+ 		return ret;
+ 	if (ret) {
+@@ -299,7 +299,7 @@ static int perf_event__jit_repipe_mmap2(struct perf_tool *tool,
+ 	 * if jit marker, then inject jit mmaps and generate ELF images
+ 	 */
+ 	ret = jit_process(inject->session, &inject->output, machine,
+-			  event->mmap2.filename, sample->pid, &n);
++			  event->mmap2.filename, event->mmap2.pid, &n);
+ 	if (ret < 0)
+ 		return ret;
+ 	if (ret) {
+diff --git a/tools/perf/util/jitdump.c b/tools/perf/util/jitdump.c
+index 22d09c4..6a1563f 100644
+--- a/tools/perf/util/jitdump.c
++++ b/tools/perf/util/jitdump.c
+@@ -751,6 +751,59 @@ static int jit_repipe_debug_info(struct jit_buf_desc *jd, union jr_entry *jr)
+ 	return 0;
+ }
+ 
++struct pid_rbtree
++{
++	struct rb_node node;
++	pid_t pid;
++};
++
++static void jit_add_pid(struct rb_root *root, pid_t pid)
++{
++	struct rb_node **new = &(root->rb_node), *parent = NULL;
++	struct pid_rbtree* data = NULL;
++
++	/* Figure out where to put new node */
++	while (*new) {
++		struct pid_rbtree *this = container_of(*new, struct pid_rbtree, node);
++		pid_t nodePid = this->pid;
++
++		parent = *new;
++		if (pid < nodePid)
++			new = &((*new)->rb_left);
++		else if (pid > nodePid)
++			new = &((*new)->rb_right);
++		else
++			return;
++	}
++
++	data = malloc(sizeof(struct pid_rbtree));
++	data->pid = pid;
++
++	/* Add new node and rebalance tree. */
++	rb_link_node(&data->node, parent, new);
++	rb_insert_color(&data->node, root);
++
++	return;
++}
++
++static bool jit_has_pid(struct rb_root *root, pid_t pid)
++{
++	struct rb_node *node = root->rb_node;
++
++	while (node) {
++		struct pid_rbtree *this = container_of(node, struct pid_rbtree, node);
++		pid_t nodePid = this->pid;
++
++		if (pid < nodePid)
++			node = node->rb_left;
++		else if (pid > nodePid)
++			node = node->rb_right;
++		else
++			return 1;
++	}
++	return 0;
++}
++
+ int
+ jit_process(struct perf_session *session,
+ 	    struct perf_data *output,
+@@ -762,12 +815,21 @@ static int jit_repipe_debug_info(struct jit_buf_desc *jd, union jr_entry *jr)
+ 	struct evsel *first;
+ 	struct jit_buf_desc jd;
+ 	int ret;
++	static struct rb_root jitdump_pids = RB_ROOT;
+ 
+ 	/*
+ 	 * first, detect marker mmap (i.e., the jitdump mmap)
+ 	 */
+ 	if (jit_detect(filename, pid))
++	{
++		/*
++		 * Strip //anon* mmaps if we processed a jitdump for this pid
++		 */
++		if (jit_has_pid(&jitdump_pids, pid) && (strncmp(filename, "//anon", 6) == 0))
++			return 1;
++
+ 		return 0;
++	}
+ 
+ 	memset(&jd, 0, sizeof(jd));
+ 
+@@ -786,6 +848,7 @@ static int jit_repipe_debug_info(struct jit_buf_desc *jd, union jr_entry *jr)
+ 
+ 	ret = jit_inject(&jd, filename);
+ 	if (!ret) {
++		jit_add_pid(&jitdump_pids, pid);
+ 		*nbytes = jd.bytes_written;
+ 		ret = 1;
+ 	}
+-- 
+1.8.3.1
+
