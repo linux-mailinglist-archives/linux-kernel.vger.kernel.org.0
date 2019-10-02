@@ -2,70 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78C18C8B3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A612AC8B44
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:30:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbfJBO3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:29:31 -0400
-Received: from mga07.intel.com ([134.134.136.100]:37365 "EHLO mga07.intel.com"
+        id S1728192AbfJBOa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:30:26 -0400
+Received: from mga06.intel.com ([134.134.136.31]:47660 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfJBO3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:29:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726374AbfJBOaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 10:30:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 07:29:30 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 07:30:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
-   d="scan'208";a="190958093"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Oct 2019 07:29:29 -0700
-Date:   Wed, 2 Oct 2019 07:33:38 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 3/4] iommu/ioasid: Add custom allocators
-Message-ID: <20191002073338.6bee15f0@jacob-builder>
-In-Reply-To: <20191002141810.GA407870@lophozonia>
-References: <1569972805-27664-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1569972805-27664-4-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20191002141810.GA407870@lophozonia>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+   d="scan'208";a="205353422"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 02 Oct 2019 07:30:21 -0700
+Received: by lahna (sSMTP sendmail emulation); Wed, 02 Oct 2019 17:30:20 +0300
+Date:   Wed, 2 Oct 2019 17:30:20 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Oliver Neukum <oneukum@suse.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        Mario.Limonciello@dell.com,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>
+Subject: Re: [RFC PATCH 06/22] thunderbolt: Add support for lane bonding
+Message-ID: <20191002143020.GG2819@lahna.fi.intel.com>
+References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
+ <20191001113830.13028-7-mika.westerberg@linux.intel.com>
+ <20191001123808.GA2954373@kroah.com>
+ <20191001125320.GN2714@lahna.fi.intel.com>
+ <1570026066.2472.15.camel@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570026066.2472.15.camel@suse.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Oct 2019 16:18:10 +0200
-Jean-Philippe Brucker <jean-philippe@linaro.org> wrote:
+On Wed, Oct 02, 2019 at 04:21:06PM +0200, Oliver Neukum wrote:
+> Am Dienstag, den 01.10.2019, 15:53 +0300 schrieb Mika Westerberg:
+> > > 
+> > > Are we only going to be allowed to "bond" two links together?  Or will
+> > > we be doing more than 2 in the future?  If more, then we might want to
+> > > think of a different way to specify these...
+> > 
+> > AFAICT only two lanes are available in USB4. This goes over USB type-C
+> > using the two lanes there.
+> > 
+> > Of course I don't know if in future there will be USB4 1.1 or something
+> > that adds more lanes so if you think there is a better way to specify
+> > these, I'm happy to implement that instead :) 
+> 
+> If this ever can become asymmetric this interface is going to turn
+> around and bite.
 
-> Hi Jacob,
-> 
-> There seem to be a mix-up here, the changes from your v2 are lost and
-> patches 1 and 3 are back to v1. Assuming this isn't intended, I'll
-> review v2 of this patch since it looked good to me overall.
-> 
-oops, you are right. please review v2.
-
-Thank you!
-> Thanks,
-> Jean
-> 
+Don't think it can be asymmetric but I'm open to all ideas how to make
+it more flexible :-)
