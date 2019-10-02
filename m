@@ -2,205 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E59C8B72
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C318C8B7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbfJBOkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:40:36 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34598 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbfJBOkf (ORCPT
+        id S1728335AbfJBOlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:41:50 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:53200 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728316AbfJBOlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:40:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a11so20003785wrx.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 07:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=xuPflzsn/0nMabRW/MT553ev9ccDXsf7U9hGD8MKLiQ=;
-        b=fOezBZRIOhBkH0+vOGOc3bn1f17r8HHWo8A5N5YSHRzL4/NECJx88ValUy/FtgO38s
-         wrpkjJPcQaNWYASNYWewe6y7sx5LBiDuBUM7dG+3P/DOmLVVVtfPpbzSc3lGVvsuitsH
-         pt+zI5lzIvDBkRvauPQlVLyDxzXBETF5eU5vGfr6XVPiKCgbd1QHVop9rag2R7cTAXPr
-         XO0RBqOh9es8AVuKG1hWJL4vtGMVZSb1P/uRxHo6L0B7y04cf8gvl+cpjIdE8uOkNlzo
-         i8xMJi8/uES3znh5rQyWSpRNdcbndC0ts2GFvEQPTsvIksQQW3WsfUSbFFT20Srw8Q5R
-         Kxcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=xuPflzsn/0nMabRW/MT553ev9ccDXsf7U9hGD8MKLiQ=;
-        b=mkBnKg2OaIgyjEBU2arK+Q7WuQZcokRzjBX+oap1Xw1Df+vhlW1ioowRmBw0IRmpLG
-         wQN4f9NTNOWn0I15LwCuuFTD6E3uHVYztwVxYMCMrlArDJcHKLXrsJUN88NfCLwMWjB/
-         dviEgX71SQL8qaGOs4WMDB4nejePn//8LbmnrP3PdbAQpHiZJ7aUMsU8zyq6Hn/yIT1T
-         RyGzABs8UByt03sfp9iAs00XgrJQ1VV021GPTA8z6gD43uJMp72XOhexVwPxNVvxW5vn
-         RpI1YvyzRtwuh6xDGmtb42C1SAFYC5Bz8/ebddJDKVTp5GajnozmU9YPjHyUI8/gJ8Fb
-         JxYA==
-X-Gm-Message-State: APjAAAV2K7cRe/ypMoEUPa6QmnW7t+ZFHbhhe0SCQCURwDaDXRyydBS1
-        XJhNDAS6Iu+vxAa2ZMGJImZNAg==
-X-Google-Smtp-Source: APXvYqxQzBe+7CgqDzvsjEknR8XWWPUStRqOZFa+eeAeIp6SkL1kb0FfgkR6tRNbregbg88YHzUFfg==
-X-Received: by 2002:adf:e64e:: with SMTP id b14mr3258477wrn.16.1570027231302;
-        Wed, 02 Oct 2019 07:40:31 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id u10sm5853717wmm.0.2019.10.02.07.40.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 07:40:30 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 15:40:28 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Wed, 2 Oct 2019 10:41:49 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iFfoy-0000co-LJ; Wed, 02 Oct 2019 08:41:40 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iFfox-0000M4-PV; Wed, 02 Oct 2019 08:41:40 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <andi@firstfloor.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Apelete Seketeli <apelete@seketeli.net>,
+        Chee Nouk Phoon <cnphoon@altera.com>,
+        Chris Zankel <chris@zankel.net>,
+        Christian Ruppert <christian.ruppert@abilis.com>,
+        Greg Ungerer <gerg@uclinux.org>, Helge Deller <deller@gmx.de>,
+        Hongliang Tao <taohl@lemote.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Jonas Jensen <jonas.jensen@gmail.com>,
+        Josh Boyer <jwboyer@gmail.com>, Jun Nie <jun.nie@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Ley Foon Tan <lftan@altera.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-sh@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 7/7] backlight: gpio: pull
- gpio_backlight_initial_power_state() into probe
-Message-ID: <20191002144028.6lljre76zxd52oui@holly.lan>
-References: <20191001125837.4472-1-brgl@bgdev.pl>
- <20191001125837.4472-8-brgl@bgdev.pl>
- <20191002103318.6owxberhml6mbtxm@holly.lan>
- <CAMRc=Me8RmYLh9WKYma7XE1H7tEZ8Jd-wsFyKVv_etO0T92zwg@mail.gmail.com>
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Olof Johansson <olof@lixom.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Pierrick Hascoet <pierrick.hascoet@abilis.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Roland Stigge <stigge@antcom.de>,
+        Vineet Gupta <vgupta@synopsys.com>
+References: <8736gcjosv.fsf@x220.int.ebiederm.org>
+        <201910011140.EA0181F13@keescook>
+        <87imp8hyc8.fsf@x220.int.ebiederm.org>
+        <CAK8P3a1zLATC7rzYxSpAK-z=NJ1rw7-3ZgHqCOJUUf6b9HwK1A@mail.gmail.com>
+Date:   Wed, 02 Oct 2019 09:41:00 -0500
+In-Reply-To: <CAK8P3a1zLATC7rzYxSpAK-z=NJ1rw7-3ZgHqCOJUUf6b9HwK1A@mail.gmail.com>
+        (Arnd Bergmann's message of "Wed, 2 Oct 2019 09:31:01 +0200")
+Message-ID: <87a7aji51f.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me8RmYLh9WKYma7XE1H7tEZ8Jd-wsFyKVv_etO0T92zwg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-XM-SPF: eid=1iFfox-0000M4-PV;;;mid=<87a7aji51f.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19IHDVGlAbdPU8dF8uFaTBUUrSZFrNIEnY=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4966]
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Arnd Bergmann <arnd@arndb.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 422 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.5 (0.6%), b_tie_ro: 1.79 (0.4%), parse: 0.65
+        (0.2%), extract_message_metadata: 16 (3.8%), get_uri_detail_list: 1.31
+        (0.3%), tests_pri_-1000: 15 (3.6%), tests_pri_-950: 1.03 (0.2%),
+        tests_pri_-900: 0.96 (0.2%), tests_pri_-90: 30 (7.2%), check_bayes: 29
+        (6.9%), b_tokenize: 8 (2.0%), b_tok_get_all: 11 (2.7%), b_comp_prob:
+        2.1 (0.5%), b_tok_touch_all: 4.3 (1.0%), b_finish: 0.61 (0.1%),
+        tests_pri_0: 240 (56.7%), check_dkim_signature: 0.53 (0.1%),
+        check_dkim_adsp: 10 (2.3%), poll_dns_idle: 100 (23.6%), tests_pri_10:
+        1.63 (0.4%), tests_pri_500: 112 (26.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC][PATCH] sysctl: Remove the sysctl system call
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 01:46:17PM +0200, Bartosz Golaszewski wrote:
-> śr., 2 paź 2019 o 12:33 Daniel Thompson <daniel.thompson@linaro.org> napisał(a):
-> >
-> > On Tue, Oct 01, 2019 at 02:58:37PM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > The probe function in the gpio-backlight driver is quite short. If we
-> > > pull gpio_backlight_initial_power_state() into probe we can drop two
-> > > more fields from struct gpio_backlight and shrink the driver code.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > ---
-> > >  drivers/video/backlight/gpio_backlight.c | 36 ++++++++----------------
-> > >  1 file changed, 12 insertions(+), 24 deletions(-)
-> > >
-> > > diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> > > index 6247687b6330..37ec184f0c5c 100644
-> > > --- a/drivers/video/backlight/gpio_backlight.c
-> > > +++ b/drivers/video/backlight/gpio_backlight.c
-> > > @@ -17,11 +17,8 @@
-> > >  #include <linux/slab.h>
-> > >
-> > >  struct gpio_backlight {
-> > > -     struct device *dev;
-> > >       struct device *fbdev;
-> > > -
-> > >       struct gpio_desc *gpiod;
-> > > -     int def_value;
-> > >  };
-> > >
-> > >  static int gpio_backlight_update_status(struct backlight_device *bl)
-> > > @@ -53,41 +50,24 @@ static const struct backlight_ops gpio_backlight_ops = {
-> > >       .check_fb       = gpio_backlight_check_fb,
-> > >  };
-> > >
-> > > -static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
-> >
-> > I'm inclined to view deleting this function as removing a comment (e.g.
-> > the function name helps us to read the code)!
-> >
-> 
-> Right, but why not just add a comment then?
+Arnd Bergmann <arnd@arndb.de> writes:
 
-I guess you could add a comment but keeping it pulled out in a function
-makes it easier to compare against equivalent code in other drivers
-(such as pwm_bl).
+> On Wed, Oct 2, 2019 at 12:54 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> Kees Cook <keescook@chromium.org> writes:
+>> > On Tue, Oct 01, 2019 at 01:36:32PM -0500, Eric W. Biederman wrote:
+>> >
+>> > I think you can actually take this further and remove (or at least
+>> > empty) the uapi/linux/sysctl.h file too.
+>>
+>> I copied everyone who had put this into a defconfig and I will wait a
+>> little more to see if anyone screams.  I think it is a safe guess that
+>> several of the affected configurations are dead (or at least
+>> unmaintained) as I received 17 bounces when copying everyone.
+>
+> Looking at the arm defconfigs:
+>
+>> arch/arm/configs/axm55xx_defconfig:CONFIG_SYSCTL_SYSCALL=y
+>
+> No notable work on this platform since it got sold to Intel in 2014.
+> I think they still use it but not with mainline kernels that lack support
+> for most drivers and the later chips.
+>
+>> arch/arm/configs/keystone_defconfig:CONFIG_SYSCTL_SYSCALL=y
+>
+> Not that old either, but this hardware is mostly obsoleted by newer variants
+> that we support with the arm64 defconfig.
+>
+>> arch/arm/configs/lpc32xx_defconfig:CONFIG_SYSCTL_SYSCALL=y
+>> arch/arm/configs/moxart_defconfig:CONFIG_SYSCTL_SYSCALL=y
+>
+> Ancient hardware, but still in active use. These tend to have very little
+> RAM, but they both enable CONFIG_PROC_FS.
+>
+>> arch/arm/configs/qcom_defconfig:CONFIG_SYSCTL_SYSCALL=y
+>> arch/arm/configs/zx_defconfig:CONFIG_SYSCTL_SYSCALL=y
+>
+> These are for older Qualcomm and LG chips that tend to be used
+> with Android rather than the defconfig here. Maybe double-check
+> if the official android-common tree enables SYSCTL_SYSCALL.
 
+I just looked quickly at:
+https://android.googlesource.com/kernel/configs/
 
-Daniel.
+I don't see the string SYSCTL mentioned anywhere.  Much less
+SYSCTL_SYSCALL.
 
-
-> The probe function is 50
-> lines long, there's really no need to split it. This will get inlined
-> anyway too.
-> 
-> Bart
-> 
-> > Removing the variables from the context structure is good but why not
-> > just pass them to the function and let the compiler decided whether or
-> > not to inline.
-> >
-> >
-> > Daniel.
-> >
-> >
-> > > -{
-> > > -     struct device_node *node = gbl->dev->of_node;
-> > > -
-> > > -     /* Not booted with device tree or no phandle link to the node */
-> > > -     if (!node || !node->phandle)
-> > > -             return gbl->def_value ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN;
-> > > -
-> > > -     /* if the enable GPIO is disabled, do not enable the backlight */
-> > > -     if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
-> > > -             return FB_BLANK_POWERDOWN;
-> > > -
-> > > -     return FB_BLANK_UNBLANK;
-> > > -}
-> > > -
-> > > -
-> > >  static int gpio_backlight_probe(struct platform_device *pdev)
-> > >  {
-> > >       struct device *dev = &pdev->dev;
-> > >       struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
-> > > +     struct device_node *of_node = dev->of_node;
-> > >       struct backlight_properties props;
-> > >       struct backlight_device *bl;
-> > >       struct gpio_backlight *gbl;
-> > > -     int ret;
-> > > +     int ret, def_value;
-> > >
-> > >       gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
-> > >       if (gbl == NULL)
-> > >               return -ENOMEM;
-> > >
-> > > -     gbl->dev = dev;
-> > > -
-> > >       if (pdata)
-> > >               gbl->fbdev = pdata->fbdev;
-> > >
-> > > -     gbl->def_value = device_property_read_bool(dev, "default-on");
-> > > +     def_value = device_property_read_bool(dev, "default-on");
-> > >
-> > >       gbl->gpiod = devm_gpiod_get(dev, NULL, GPIOD_ASIS);
-> > >       if (IS_ERR(gbl->gpiod)) {
-> > > @@ -109,7 +89,15 @@ static int gpio_backlight_probe(struct platform_device *pdev)
-> > >               return PTR_ERR(bl);
-> > >       }
-> > >
-> > > -     bl->props.power = gpio_backlight_initial_power_state(gbl);
-> > > +     /* Not booted with device tree or no phandle link to the node */
-> > > +     if (!of_node || !of_node->phandle)
-> > > +             bl->props.power = def_value ? FB_BLANK_UNBLANK
-> > > +                                         : FB_BLANK_POWERDOWN;
-> > > +     else if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
-> > > +             bl->props.power = FB_BLANK_POWERDOWN;
-> > > +     else
-> > > +             bl->props.power = FB_BLANK_UNBLANK;
-> > > +
-> > >       bl->props.brightness = 1;
-> > >
-> > >       backlight_update_status(bl);
-> > > --
-> > > 2.23.0
-> > >
+Eric
