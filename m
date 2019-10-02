@@ -2,84 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0912C89FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 15:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD3D7C8A02
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 15:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfJBNmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 09:42:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51522 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725917AbfJBNmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 09:42:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C41EAACA4;
-        Wed,  2 Oct 2019 13:42:19 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] x86/xen: Return from panic notifier
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     james@dingwall.me.uk, xen-devel@lists.xenproject.org,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
-References: <20191001151633.1659-1-boris.ostrovsky@oracle.com>
- <9b3f955c-ad76-601f-2b58-fa9dc4608c72@suse.com>
- <924f41b2-7779-9c56-9b71-56523756ecdc@oracle.com>
-From:   Jan Beulich <jbeulich@suse.com>
-Message-ID: <5650904d-b616-5ee7-216a-a0ac28d7426d@suse.com>
-Date:   Wed, 2 Oct 2019 15:42:26 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727691AbfJBNoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 09:44:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40128 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbfJBNoV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 09:44:21 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92Dhxsp055767;
+        Wed, 2 Oct 2019 13:44:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=BaJ95um3KKSqNF7ksQIDUZ17nwsj4pbKXWWuet88V/4=;
+ b=m7+YUN6Me/CDdeG4Fykh8l7bhBM07SQgUfoVn8ODAlI3+90o14CiGc7E2YjTcHhvQJsg
+ EMAcdOEPtfameewP7QjmgW1g023ncU8mMZfQq6x7KdSqzh2L5vtVtYm48QHCUyfYcOOQ
+ nogUAijf9MdDKZfohhi6xg36L66hwwwtkuykqjJKPaJgPgTLvEcGoMgIpEoE9Cv3unyQ
+ zNxjiN4hq8v/zdI9uJUKy8+zw3fnIgA8hXDlBU26Y3Its8UCHL+ecf1c4jeaEOmcxleE
+ qmQz0qFgpH/1wGz0+te7GcfJDno4GDCKj1ahqweigMuHMlRQ3ECrGgDvKVEGI67wl8Mx sg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2v9xxuw28t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 13:44:07 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x92Dhtrv037305;
+        Wed, 2 Oct 2019 13:44:06 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2vbsm3vjfe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Oct 2019 13:44:06 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x92Dglas017501;
+        Wed, 2 Oct 2019 13:42:47 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Oct 2019 06:42:46 -0700
+Date:   Wed, 2 Oct 2019 16:42:38 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: xgmac: add missing parentheses to fix
+ precendence error
+Message-ID: <20191002134238.GP29696@kadam>
+References: <20191002110849.13405-1-colin.king@canonical.com>
+ <20191002133356.GP22609@kadam>
 MIME-Version: 1.0
-In-Reply-To: <924f41b2-7779-9c56-9b71-56523756ecdc@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002133356.GP22609@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910020132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9397 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910020132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.10.2019 15:24, Boris Ostrovsky wrote:
-> On 10/2/19 3:40 AM, Jan Beulich wrote:
->> On 01.10.2019 17:16, Boris Ostrovsky wrote:
->>> Currently execution of panic() continues until Xen's panic notifier
->>> (xen_panic_event()) is called at which point we make a hypercall that
->>> never returns.
->>>
->>> This means that any notifier that is supposed to be called later as
->>> well as significant part of panic() code (such as pstore writes from
->>> kmsg_dump()) is never executed.
->> Back at the time when this was introduced into the XenoLinux tree,
->> I think this behavior was intentional for at least DomU-s. I wonder
->> whether you wouldn't want your change to further distinguish Dom0
->> and DomU behavior.
+On Wed, Oct 02, 2019 at 04:33:57PM +0300, Dan Carpenter wrote:
+> On Wed, Oct 02, 2019 at 12:08:49PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The expression !(hw_cap & XGMAC_HWFEAT_RAVSEL) >> 10 is always zero, so
+> > the masking operation is incorrect. Fix this by adding the missing
+> > parentheses to correctly bind the negate operator on the entire expression.
+> > 
+> > Addresses-Coverity: ("Operands don't affect result")
+> > Fixes: c2b69474d63b ("net: stmmac: xgmac: Correct RAVSEL field interpretation")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> > index 965cbe3e6f51..2e814aa64a5c 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+> > @@ -369,7 +369,7 @@ static void dwxgmac2_get_hw_feature(void __iomem *ioaddr,
+> >  	dma_cap->eee = (hw_cap & XGMAC_HWFEAT_EEESEL) >> 13;
+> >  	dma_cap->atime_stamp = (hw_cap & XGMAC_HWFEAT_TSSEL) >> 12;
+> >  	dma_cap->av = (hw_cap & XGMAC_HWFEAT_AVSEL) >> 11;
+> > -	dma_cap->av &= !(hw_cap & XGMAC_HWFEAT_RAVSEL) >> 10;
+> > +	dma_cap->av &= !((hw_cap & XGMAC_HWFEAT_RAVSEL) >> 10);
 > 
-> Do you remember what the reason for that was?
+> There is no point to the shift at all.
 
-I can only guess that the thinking probably was that e.g. external
-dumping (by the tool stack) would be more reliable (including but
-not limited to this meaning less change of state from when the
-original crash reason was detected) than having the domain dump
-itself.
+Sorry I meant to say it should be a bitwise NOT, right?  I was just
+looking at some other dma_cap stuff that did this same thing...  I can't
+find it now...
 
-> I think having ability to call kmsg_dump() on a panic is a useful thing
-> to have for domUs as well. Besides, there may be other functionality
-> added post-notifiers in panic() in the future. Or another notifier may
-> be registered later with the same lowest priority.
-> 
-> Is there a downside in allowing domUs to fall through panic() all the
-> way to emergency_restart()?
+regards,
+dan carpenter
 
-See above.
-
->>> There is no reason for xen_panic_event() to be this last point in
->>> execution since panic()'s emergency_restart() will call into
->>> xen_emergency_restart() from where we can perform our hypercall.
->> Did you consider, as an alternative, to lower the notifier's
->> priority?
-> 
-> I didn't but that wouldn't help with the original problem that James
-> reported --- we'd still not get to kmsg_dump() call.
-
-True. I guess more control over the behavior needs to be given to
-the admin, as either approach has its up- and downsides
-
-Jan
