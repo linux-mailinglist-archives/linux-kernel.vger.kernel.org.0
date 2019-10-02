@@ -2,94 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5CBC87CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F35EC87BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:02:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbfJBMDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:03:35 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:45483 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfJBMDe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:03:34 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mzhar-1htpHS1ojh-00vhrB; Wed, 02 Oct 2019 14:03:27 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     clang-built-linux@googlegroups.com, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Arnd Bergmann <arnd@arndb.de>, Le Ma <le.ma@amd.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Huang Rui <ray.huang@amd.com>
-Subject: [PATCH 6/6] [RESEND] drm/amdgpu: work around llvm bug #42576
-Date:   Wed,  2 Oct 2019 14:01:27 +0200
-Message-Id: <20191002120136.1777161-7-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191002120136.1777161-1-arnd@arndb.de>
-References: <20191002120136.1777161-1-arnd@arndb.de>
+        id S1728271AbfJBMCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:02:44 -0400
+Received: from mga01.intel.com ([192.55.52.88]:33592 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfJBMCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:02:44 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 05:02:26 -0700
+X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
+   d="scan'208";a="343311408"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 05:02:22 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 7993E20976; Wed,  2 Oct 2019 15:02:20 +0300 (EEST)
+Date:   Wed, 2 Oct 2019 15:02:20 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Rob Herring <robh@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Joe Perches <joe@perches.com>, devicetree@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v7 09/13] lib/vsprintf: Add a note on re-using %pf or %pF
+Message-ID: <20191002120220.GF972@paasikivi.fi.intel.com>
+References: <20190918133419.7969-1-sakari.ailus@linux.intel.com>
+ <20190918133419.7969-10-sakari.ailus@linux.intel.com>
+ <20190924104549.qiayzhr7zikja7sp@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:YNsgZzHNCw392v1rgjHTUEZ8pz20uykSXH754RL9iIOb5deh2YJ
- VniPYenT1ADFLCFsCzgfROvSsNEN3OnGKEcwzAbZX+eQqWv1FYpwjvY8qgQaQWagz6gA/Hj
- n50Orae4/jwItelwmwUM+w8MCNKZ1bodhPFaG7DBNsILr42QtEuWuTsTPF+I9vNTWhFwdKi
- AC2C3ZG7mUNQXMnuZ9GNg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4D48kbU58hA=:M0Ukpx58xOP2bgAOCbesZg
- Ll3K2WKrJMuAIV0rQMg3YrjRgy0vn19WxNhnTpIkrflyRiZWcJOM0wBeRuWKJeyvUs0Rmo5L2
- WT/4Q04J4mCDT0lGHrQHxf0CSt7FRwbIaoymM8ll6+AnjlipM3gBW2vuD399wywXHODhQH/Jj
- kmmHm0vPKelSxnjmyF5QKhW2vPKNuNrxHXBAuShJhblFiaT4Tpite+9Tpqz5t78Mv1d0c4+St
- IPO467Ji+f+nalLEiSfYfSOueaNIp0Zh2ECvF8gYGuCtq4mQgaFQma45iRPDMa0dLQp2LPHv5
- s3HOgLJcrW3+YLL3OgrgSAIqY/JojFmQs6jVGI3Y/iaIHFpiWRvNCCVqhadcZDljlJ6/isT3C
- cWMwh3wga4zB1HZAibk87TdIUOsEWosHOOSejWot8HMi7thZpGsmWSYlpaZpcggNF8Y5ef5cx
- S+AFB9lJCv6tLjnDzT5CItgHD9CSDilvn5DV5AQ2CSUe7CMLtj7FRRuRtxGnzKXWHsDiqUK2X
- dLpSNCwET1M9ENlBeQ5D+BhxBx37HFEUhCYKyJqFJoQbTkGvZkwazmwaChizrxq1gbyD4vDeD
- GqCyA1nhBCBAM2hW+2uyIFVsDMDpeg/OoBtcZMPB8aPwvr2q464wcpu+nmB0VWQnFJx8hRRKp
- kx+eBUDSoB7gkuurGSeum9uDonECxoSFhh//75/Bmdr0Te33FTyRIMUwkUlAfiVlOVC5ga602
- HNuDLNkHHth6E821u1odV2gGvJVg9mgsLl5k0rHpfHXjU15zA2Ww4I8gM2c4ZgC5ypKzC/eg5
- iac5xdsyiVk9Kf4KiWNLvvcteewurG0ZAiyq3Yo5GGXvCGBgLkIfnziVSp+lP21xvwWwPUCJr
- pxfok2TuNB12F2uGor0g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924104549.qiayzhr7zikja7sp@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code in the amdgpu driver triggers a bug when using clang to build
-an arm64 kernel:
+On Tue, Sep 24, 2019 at 12:45:49PM +0200, Petr Mladek wrote:
+> On Wed 2019-09-18 16:34:15, Sakari Ailus wrote:
+> > Add a note warning of re-use of obsolete %pf or %pF extensions.
+> > 
+> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > ---
+> >  lib/vsprintf.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> > index b00b57f9f911f..df59818537b52 100644
+> > --- a/lib/vsprintf.c
+> > +++ b/lib/vsprintf.c
+> > @@ -2008,6 +2008,8 @@ static char *kobject_string(char *buf, char *end, void *ptr,
+> >   * - 'S' For symbolic direct pointers (or function descriptors) with offset
+> >   * - 's' For symbolic direct pointers (or function descriptors) without offset
+> >   * - '[Ss]R' as above with __builtin_extract_return_addr() translation
+> > + * - '[Ff]' Obsolete an now unsupported extension for printing direct pointers
+> > + *	    or function descriptors. Be careful when re-using %pf or %pF!
+> 
+> I am not a native speaker but the sentence is hard to parse to me.
+> Also I miss the word 'symbolic'. IMHO, it described that the output
+> was a symbol name.
+> 
+> What about something like?
+> 
+>   * - '[Ff]' %pf and %pF were obsoleted and later removed in favor of
+>   *	    %ps and %pS. Be careful when re-using these specifiers.
 
-/tmp/sdma_v4_0-f95fd3.s: Assembler messages:
-/tmp/sdma_v4_0-f95fd3.s:44: Error: selected processor does not support `bfc w0,#1,#5'
+Yes, I'll use this in v8.
 
-I expect this to be fixed in llvm soon, but we can also work around
-it by inserting a barrier() that prevents the optimization.
-
-Link: https://bugs.llvm.org/show_bug.cgi?id=42576
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Apparently this bug is still present in both the released clang-9
-and the current development version of clang-10.
-I was hoping we would not need a workaround in clang-9+, but
-it seems that we do.
----
- drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-index 78452cf0115d..39459cd8ddef 100644
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
-@@ -961,6 +961,7 @@ static uint32_t sdma_v4_0_rb_cntl(struct amdgpu_ring *ring, uint32_t rb_cntl)
- 	/* Set ring buffer size in dwords */
- 	uint32_t rb_bufsz = order_base_2(ring->ring_size / 4);
- 
-+	barrier(); /* work around https://bugs.llvm.org/show_bug.cgi?id=42576 */
- 	rb_cntl = REG_SET_FIELD(rb_cntl, SDMA0_GFX_RB_CNTL, RB_SIZE, rb_bufsz);
- #ifdef __BIG_ENDIAN
- 	rb_cntl = REG_SET_FIELD(rb_cntl, SDMA0_GFX_RB_CNTL, RB_SWAP_ENABLE, 1);
 -- 
-2.20.0
-
+Sakari Ailus
+sakari.ailus@linux.intel.com
