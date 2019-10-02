@@ -2,83 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F35EC87BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:02:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 513F5C87D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbfJBMCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:02:44 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33592 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfJBMCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:02:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 05:02:26 -0700
-X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
-   d="scan'208";a="343311408"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 05:02:22 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 7993E20976; Wed,  2 Oct 2019 15:02:20 +0300 (EEST)
-Date:   Wed, 2 Oct 2019 15:02:20 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Joe Perches <joe@perches.com>, devicetree@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v7 09/13] lib/vsprintf: Add a note on re-using %pf or %pF
-Message-ID: <20191002120220.GF972@paasikivi.fi.intel.com>
-References: <20190918133419.7969-1-sakari.ailus@linux.intel.com>
- <20190918133419.7969-10-sakari.ailus@linux.intel.com>
- <20190924104549.qiayzhr7zikja7sp@pathway.suse.cz>
+        id S1728396AbfJBMES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:04:18 -0400
+Received: from mail-lf1-f48.google.com ([209.85.167.48]:36353 "EHLO
+        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728342AbfJBMEP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:04:15 -0400
+Received: by mail-lf1-f48.google.com with SMTP id x80so12553324lff.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 05:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QRH9ZC+8Ny/msHWcjGNR4E0iaqUnOOF/L6UnfzfPUco=;
+        b=f23rjIBkvLQp+jBBwDivqvjjR/UzmHdWYZ4YuKB85ScWs9VNgvA4l82vxQfSKKcZEP
+         itqjeh+PE4szh6m8AkdQaJJxl6kUhJ8wJOarb5IdXg9vbAtL1XMIVR5GAnhstXFNND9/
+         Tp4gkIs5PllRsdkpY0tfIKPIgCcuc2Jev1sSRm073Mp01icxsgnlr84wDdLUSQaXMP+k
+         gdZUX1vY5UU14Jlni8T57B/T5LsGEjD7zT/IkovAMyovfrbBrh+A7DWt3m3hHZSCotdE
+         2TdjRXRHjDwrrJHQpJb0i4AzX8eAXPkFYyS996qsFqApNUZqWLy6/4AJfn9J38+jDwIq
+         Z0Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QRH9ZC+8Ny/msHWcjGNR4E0iaqUnOOF/L6UnfzfPUco=;
+        b=GSk/iLebknH8uhN9cPS4UefUNfKeD2Vcp3szW2gpNZh0lYrW5XtEdvwBQBRoPM/riy
+         pPmoiDr6wDGfUfm0i4EfacbtaaBMKH6wvgHqiqlHsmh71HqRdCFcGJsFcV8uyKwpRO4t
+         yYoZfezsjP6iPyZeaPYNls6zhuyqUqLRSDPXMz5RRTEqSKvLpnxEOAeJ2Oo4rH7OddAU
+         +Pm5x0d9hl9nTgXsZbtiKHYWC6rOZZGOi/CBOZcouNscZMBHhIpkemUdqsL9iJFSB8B3
+         VRatZtMKPwHKYj6vaB1tw1QKZdVhuXl/3xl1z+NwXtzH01aUIGbw2KE5zDqmXNwF1JIO
+         XSKQ==
+X-Gm-Message-State: APjAAAVaiDmNGI1SNJwwHqBzxPBr+pb7HIq6CEKHbe0k8idp4M8hytI8
+        OgtqCPtqRDDIgWFnc5SmBx3RLA==
+X-Google-Smtp-Source: APXvYqyyyNzF3fRohqc2QWfIhha0eeknjrB2f4OKPHr3+Ot91a5QKrvaEtH0TD3WHGORsSn1/bsxrg==
+X-Received: by 2002:ac2:5925:: with SMTP id v5mr2150152lfi.8.1570017852633;
+        Wed, 02 Oct 2019 05:04:12 -0700 (PDT)
+Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
+        by smtp.gmail.com with ESMTPSA id x2sm4833827ljj.94.2019.10.02.05.04.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 05:04:11 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net
+Cc:     kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH bpf-next 0/2] selftest/bpf: remove warns for enable_all_controllers
+Date:   Wed,  2 Oct 2019 15:04:02 +0300
+Message-Id: <20191002120404.26962-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190924104549.qiayzhr7zikja7sp@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 12:45:49PM +0200, Petr Mladek wrote:
-> On Wed 2019-09-18 16:34:15, Sakari Ailus wrote:
-> > Add a note warning of re-use of obsolete %pf or %pF extensions.
-> > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > ---
-> >  lib/vsprintf.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> > index b00b57f9f911f..df59818537b52 100644
-> > --- a/lib/vsprintf.c
-> > +++ b/lib/vsprintf.c
-> > @@ -2008,6 +2008,8 @@ static char *kobject_string(char *buf, char *end, void *ptr,
-> >   * - 'S' For symbolic direct pointers (or function descriptors) with offset
-> >   * - 's' For symbolic direct pointers (or function descriptors) without offset
-> >   * - '[Ss]R' as above with __builtin_extract_return_addr() translation
-> > + * - '[Ff]' Obsolete an now unsupported extension for printing direct pointers
-> > + *	    or function descriptors. Be careful when re-using %pf or %pF!
-> 
-> I am not a native speaker but the sentence is hard to parse to me.
-> Also I miss the word 'symbolic'. IMHO, it described that the output
-> was a symbol name.
-> 
-> What about something like?
-> 
->   * - '[Ff]' %pf and %pF were obsoleted and later removed in favor of
->   *	    %ps and %pS. Be careful when re-using these specifiers.
+This micro series fixes annoying warn described in patches
+while samples/bpf build. Second patch fixes new warn that
+comes after fixing warn of first patch, that was masked.
 
-Yes, I'll use this in v8.
+Ivan Khoronzhuk (2):
+  selftests/bpf: add static to enable_all_controllers()
+  selftests/bpf: correct path to include msg + path
+
+ tools/testing/selftests/bpf/cgroup_helpers.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.17.1
+
