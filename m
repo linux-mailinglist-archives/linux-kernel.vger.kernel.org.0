@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B724C9158
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E80AC915B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:08:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbfJBTIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:08:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35210 "EHLO
+        id S1729363AbfJBTIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:08:19 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35282 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728866AbfJBTIH (ORCPT
+        by vger.kernel.org with ESMTP id S1729059AbfJBTIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:07 -0400
+        Wed, 2 Oct 2019 15:08:09 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-00035D-9B; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyn-00035e-RL; Wed, 02 Oct 2019 20:08:05 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-0003aQ-0m; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyn-0003bG-EA; Wed, 02 Oct 2019 20:08:05 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Shuah Khan" <skhan@linuxfoundation.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Eric Dumazet" <edumazet@google.com>,
+        "Xin Long" <lucien.xin@gmail.com>,
+        "Andrey Konovalov" <andreyknvl@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "WANG Cong" <xiyou.wangcong@gmail.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.527106392@decadent.org.uk>
+Message-ID: <lsq.1570043211.784749873@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 08/87] usbip: usbip_host: fix BUG: sleeping function
- called from invalid context
+Subject: [PATCH 3.16 18/87] igmp: acquire pmc lock for ip_mc_clear_src()
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,241 +50,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shuah Khan <skhan@linuxfoundation.org>
+From: WANG Cong <xiyou.wangcong@gmail.com>
 
-commit 0c9e8b3cad654bfc499c10b652fbf8f0b890af8f upstream.
+commit c38b7d327aafd1e3ad7ff53eefac990673b65667 upstream.
 
-stub_probe() and stub_disconnect() call functions which could call
-sleeping function in invalid context whil holding busid_lock.
+Andrey reported a use-after-free in add_grec():
 
-Fix the problem by refining the lock holds to short critical sections
-to change the busid_priv fields. This fix restructures the code to
-limit the lock holds in stub_probe() and stub_disconnect().
+        for (psf = *psf_list; psf; psf = psf_next) {
+		...
+                psf_next = psf->sf_next;
 
-stub_probe():
+where the struct ip_sf_list's were already freed by:
 
-[15217.927028] BUG: sleeping function called from invalid context at mm/slab.h:418
-[15217.927038] in_atomic(): 1, irqs_disabled(): 0, pid: 29087, name: usbip
-[15217.927044] 5 locks held by usbip/29087:
-[15217.927047]  #0: 0000000091647f28 (sb_writers#6){....}, at: vfs_write+0x191/0x1c0
-[15217.927062]  #1: 000000008f9ba75b (&of->mutex){....}, at: kernfs_fop_write+0xf7/0x1b0
-[15217.927072]  #2: 00000000872e5b4b (&dev->mutex){....}, at: __device_driver_lock+0x3b/0x50
-[15217.927082]  #3: 00000000e74ececc (&dev->mutex){....}, at: __device_driver_lock+0x46/0x50
-[15217.927090]  #4: 00000000b20abbe0 (&(&busid_table[i].busid_lock)->rlock){....}, at: get_busid_priv+0x48/0x60 [usbip_host]
-[15217.927103] CPU: 3 PID: 29087 Comm: usbip Tainted: G        W         5.1.0-rc6+ #40
-[15217.927106] Hardware name: Dell Inc. OptiPlex 790/0HY9JP, BIOS A18 09/24/2013
-[15217.927109] Call Trace:
-[15217.927118]  dump_stack+0x63/0x85
-[15217.927127]  ___might_sleep+0xff/0x120
-[15217.927133]  __might_sleep+0x4a/0x80
-[15217.927143]  kmem_cache_alloc_trace+0x1aa/0x210
-[15217.927156]  stub_probe+0xe8/0x440 [usbip_host]
-[15217.927171]  usb_probe_device+0x34/0x70
+ kfree+0xe8/0x2b0 mm/slub.c:3882
+ ip_mc_clear_src+0x69/0x1c0 net/ipv4/igmp.c:2078
+ ip_mc_dec_group+0x19a/0x470 net/ipv4/igmp.c:1618
+ ip_mc_drop_socket+0x145/0x230 net/ipv4/igmp.c:2609
+ inet_release+0x4e/0x1c0 net/ipv4/af_inet.c:411
+ sock_release+0x8d/0x1e0 net/socket.c:597
+ sock_close+0x16/0x20 net/socket.c:1072
 
-stub_disconnect():
+This happens because we don't hold pmc->lock in ip_mc_clear_src()
+and a parallel mr_ifc_timer timer could jump in and access them.
 
-[15279.182478] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:908
-[15279.182487] in_atomic(): 1, irqs_disabled(): 0, pid: 29114, name: usbip
-[15279.182492] 5 locks held by usbip/29114:
-[15279.182494]  #0: 0000000091647f28 (sb_writers#6){....}, at: vfs_write+0x191/0x1c0
-[15279.182506]  #1: 00000000702cf0f3 (&of->mutex){....}, at: kernfs_fop_write+0xf7/0x1b0
-[15279.182514]  #2: 00000000872e5b4b (&dev->mutex){....}, at: __device_driver_lock+0x3b/0x50
-[15279.182522]  #3: 00000000e74ececc (&dev->mutex){....}, at: __device_driver_lock+0x46/0x50
-[15279.182529]  #4: 00000000b20abbe0 (&(&busid_table[i].busid_lock)->rlock){....}, at: get_busid_priv+0x48/0x60 [usbip_host]
-[15279.182541] CPU: 0 PID: 29114 Comm: usbip Tainted: G        W         5.1.0-rc6+ #40
-[15279.182543] Hardware name: Dell Inc. OptiPlex 790/0HY9JP, BIOS A18 09/24/2013
-[15279.182546] Call Trace:
-[15279.182554]  dump_stack+0x63/0x85
-[15279.182561]  ___might_sleep+0xff/0x120
-[15279.182566]  __might_sleep+0x4a/0x80
-[15279.182574]  __mutex_lock+0x55/0x950
-[15279.182582]  ? get_busid_priv+0x48/0x60 [usbip_host]
-[15279.182587]  ? reacquire_held_locks+0xec/0x1a0
-[15279.182591]  ? get_busid_priv+0x48/0x60 [usbip_host]
-[15279.182597]  ? find_held_lock+0x94/0xa0
-[15279.182609]  mutex_lock_nested+0x1b/0x20
-[15279.182614]  ? mutex_lock_nested+0x1b/0x20
-[15279.182618]  kernfs_remove_by_name_ns+0x2a/0x90
-[15279.182625]  sysfs_remove_file_ns+0x15/0x20
-[15279.182629]  device_remove_file+0x19/0x20
-[15279.182634]  stub_disconnect+0x6d/0x180 [usbip_host]
-[15279.182643]  usb_unbind_device+0x27/0x60
+The RCU lock is there but it is merely for pmc itself, this
+spinlock could actually ensure we don't access them in parallel.
 
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename, context]
+Thanks to Eric and Long for discussion on this bug.
+
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reviewed-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/stub_dev.c | 65 ++++++++++++++++++++++++------------
- 1 file changed, 43 insertions(+), 22 deletions(-)
+ net/ipv4/igmp.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
---- a/drivers/staging/usbip/stub_dev.c
-+++ b/drivers/staging/usbip/stub_dev.c
-@@ -342,9 +342,17 @@ static int stub_probe(struct usb_device
- 	const char *udev_busid = dev_name(&udev->dev);
- 	struct bus_id_priv *busid_priv;
- 	int rc = 0;
-+	char save_status;
+--- a/net/ipv4/igmp.c
++++ b/net/ipv4/igmp.c
+@@ -1880,21 +1880,26 @@ static int ip_mc_add_src(struct in_devic
  
- 	dev_dbg(&udev->dev, "Enter probe\n");
- 
-+	/* Not sure if this is our device. Allocate here to avoid
-+	 * calling alloc while holding busid_table lock.
-+	 */
-+	sdev = stub_device_alloc(udev);
-+	if (!sdev)
-+		return -ENOMEM;
-+
- 	/* check we should claim or not by busid_table */
- 	busid_priv = get_busid_priv(udev_busid);
- 	if (!busid_priv || (busid_priv->status == STUB_BUSID_REMOV) ||
-@@ -359,14 +367,14 @@ static int stub_probe(struct usb_device
- 		 * See driver_probe_device() in driver/base/dd.c
- 		 */
- 		rc = -ENODEV;
--		goto call_put_busid_priv;
-+		goto sdev_free;
- 	}
- 
- 	if (udev->descriptor.bDeviceClass == USB_CLASS_HUB) {
- 		dev_dbg(&udev->dev, "%s is a usb hub device... skip!\n",
- 			 udev_busid);
- 		rc = -ENODEV;
--		goto call_put_busid_priv;
-+		goto sdev_free;
- 	}
- 
- 	if (!strcmp(udev->bus->bus_name, "vhci_hcd")) {
-@@ -375,15 +383,9 @@ static int stub_probe(struct usb_device
- 			udev_busid);
- 
- 		rc = -ENODEV;
--		goto call_put_busid_priv;
-+		goto sdev_free;
- 	}
- 
--	/* ok, this is my device */
--	sdev = stub_device_alloc(udev);
--	if (!sdev) {
--		rc = -ENOMEM;
--		goto call_put_busid_priv;
--	}
- 
- 	dev_info(&udev->dev,
- 		"usbip-host: register new device (bus %u dev %u)\n",
-@@ -393,9 +395,13 @@ static int stub_probe(struct usb_device
- 
- 	/* set private data to usb_device */
- 	dev_set_drvdata(&udev->dev, sdev);
-+
- 	busid_priv->sdev = sdev;
- 	busid_priv->udev = udev;
- 
-+	save_status = busid_priv->status;
-+	busid_priv->status = STUB_BUSID_ALLOC;
-+
- 	/*
- 	 * Claim this hub port.
- 	 * It doesn't matter what value we pass as owner
-@@ -408,15 +414,16 @@ static int stub_probe(struct usb_device
- 		goto err_port;
- 	}
- 
-+	/* release the busid_lock */
-+	put_busid_priv(busid_priv);
-+
- 	rc = stub_add_files(&udev->dev);
- 	if (rc) {
- 		dev_err(&udev->dev, "stub_add_files for %s\n", udev_busid);
- 		goto err_files;
- 	}
--	busid_priv->status = STUB_BUSID_ALLOC;
- 
--	rc = 0;
--	goto call_put_busid_priv;
-+	return 0;
- 
- err_files:
- 	usb_hub_release_port(udev->parent, udev->portnum,
-@@ -426,23 +433,24 @@ err_port:
- 	usb_put_dev(udev);
- 	kthread_stop_put(sdev->ud.eh);
- 
-+	/* we already have busid_priv, just lock busid_lock */
-+	spin_lock(&busid_priv->busid_lock);
- 	busid_priv->sdev = NULL;
-+	busid_priv->status = save_status;
-+sdev_free:
- 	stub_device_free(sdev);
--
--call_put_busid_priv:
-+	/* release the busid_lock */
- 	put_busid_priv(busid_priv);
-+
- 	return rc;
- }
- 
- static void shutdown_busid(struct bus_id_priv *busid_priv)
+ static void ip_mc_clear_src(struct ip_mc_list *pmc)
  {
--	if (busid_priv->sdev && !busid_priv->shutdown_busid) {
--		busid_priv->shutdown_busid = 1;
--		usbip_event_add(&busid_priv->sdev->ud, SDEV_EVENT_REMOVED);
-+	usbip_event_add(&busid_priv->sdev->ud, SDEV_EVENT_REMOVED);
+-	struct ip_sf_list *psf, *nextpsf;
++	struct ip_sf_list *psf, *nextpsf, *tomb, *sources;
  
--		/* wait for the stop of the event handler */
--		usbip_stop_eh(&busid_priv->sdev->ud);
--	}
-+	/* wait for the stop of the event handler */
-+	usbip_stop_eh(&busid_priv->sdev->ud);
- }
- 
- /*
-@@ -474,6 +482,9 @@ static void stub_disconnect(struct usb_d
- 
- 	dev_set_drvdata(&udev->dev, NULL);
- 
-+	/* release busid_lock before call to remove device files */
-+	put_busid_priv(busid_priv);
+-	for (psf = pmc->tomb; psf; psf = nextpsf) {
++	spin_lock_bh(&pmc->lock);
++	tomb = pmc->tomb;
++	pmc->tomb = NULL;
++	sources = pmc->sources;
++	pmc->sources = NULL;
++	pmc->sfmode = MCAST_EXCLUDE;
++	pmc->sfcount[MCAST_INCLUDE] = 0;
++	pmc->sfcount[MCAST_EXCLUDE] = 1;
++	spin_unlock_bh(&pmc->lock);
 +
- 	/*
- 	 * NOTE: rx/tx threads are invoked for each usb_device.
- 	 */
-@@ -484,18 +495,27 @@ static void stub_disconnect(struct usb_d
- 				  (struct usb_dev_state *) udev);
- 	if (rc) {
- 		dev_dbg(&udev->dev, "unable to release port\n");
--		goto call_put_busid_priv;
-+		return;
++	for (psf = tomb; psf; psf = nextpsf) {
+ 		nextpsf = psf->sf_next;
+ 		kfree(psf);
  	}
- 
- 	/* If usb reset is called from event handler */
- 	if (busid_priv->sdev->ud.eh == current)
--		goto call_put_busid_priv;
-+		return;
-+
-+	/* we already have busid_priv, just lock busid_lock */
-+	spin_lock(&busid_priv->busid_lock);
-+	if (!busid_priv->shutdown_busid)
-+		busid_priv->shutdown_busid = 1;
-+	/* release busid_lock */
-+	put_busid_priv(busid_priv);
- 
- 	/* shutdown the current connection */
- 	shutdown_busid(busid_priv);
- 
- 	usb_put_dev(sdev->udev);
- 
-+	/* we already have busid_priv, just lock busid_lock */
-+	spin_lock(&busid_priv->busid_lock);
- 	/* free sdev */
- 	busid_priv->sdev = NULL;
- 	stub_device_free(sdev);
-@@ -504,6 +524,7 @@ static void stub_disconnect(struct usb_d
- 		busid_priv->status = STUB_BUSID_ADDED;
- 
- call_put_busid_priv:
-+	/* release busid_lock */
- 	put_busid_priv(busid_priv);
+-	pmc->tomb = NULL;
+-	for (psf = pmc->sources; psf; psf = nextpsf) {
++	for (psf = sources; psf; psf = nextpsf) {
+ 		nextpsf = psf->sf_next;
+ 		kfree(psf);
+ 	}
+-	pmc->sources = NULL;
+-	pmc->sfmode = MCAST_EXCLUDE;
+-	pmc->sfcount[MCAST_INCLUDE] = 0;
+-	pmc->sfcount[MCAST_EXCLUDE] = 1;
  }
+ 
  
 
