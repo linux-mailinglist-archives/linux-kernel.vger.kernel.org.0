@@ -2,161 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE6F6C8F33
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDD77C8F38
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfJBRDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 13:03:08 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45515 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728332AbfJBRDG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:03:06 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r5so20473672wrm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rDg/oCUqYEzccttXvMqYSX8GdnJPBKI6UdslmgaXVWA=;
-        b=L6N9pRfdNKjGQZwKKv8C2r2Kf7vgpMl3rpb3wSFuKc2vo3d7dN/AYq+ui79H2Ivhn5
-         FaPeKYR4Qu098ARC28xXad1oWZyt0DFoEVfa0GqN7hzDqPPRCewq5ubn6swDWIIOO6wk
-         TLMB0LJDZBrkwJw0z2UXthD8cR1SzIOy6HzL7M8G8ZLxeZ2v9mXeZ9xvWPbmV8syw9oQ
-         W0fE5/ZTjW0Z6PTKQ6VvRQXt+5PGyweQtH4LMoCriizkVvHC3DoWN9ssL24CwLuO0JKc
-         maSflJD7MmHCsdQVoTxpIlWlkcgmZPpbULIJje+x4KJsYxwuXB5Dm7QbJNuNm9R6/3TX
-         19aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rDg/oCUqYEzccttXvMqYSX8GdnJPBKI6UdslmgaXVWA=;
-        b=Il9tjkU8irvuA9RU0ZYNLvpUEk8iId8f2OSwAl0kRnrmh0nZv5P2PrYw359U/ixA1y
-         cKyUvjaHM5yXdhX+CqXLlU6HEqW9RnwYmKifnk4z5yVnQCViM/kCmF3XrdTtynvaTZW+
-         xpnwPNTSgh0LYWqqzCy9dbGLdF1F7lzkCQIEbQcWOkQYZQku009oUpK33AG3ODzud+v4
-         p+skoobUsWOXCqEoOeA/RIaya+iUhwAiUQrLpzoBPY621rAjieHIw4/Wl3iuTtvWc0IJ
-         sTx1IIukbyOF54bNnM3EACL1ZiwTyeJ39jnlUbc8cfdkX+xOFwMorfmlvTc1+sZQ03LY
-         A55g==
-X-Gm-Message-State: APjAAAUxmUAs/a9BJGBL/9+gUSh8VAtsqDXTLYEWpnB/UT11N3kUAEFI
-        2mpgW4zr+rwxv8hznCGY5TFeRQ==
-X-Google-Smtp-Source: APXvYqxjEIGXUeps2oiqIQsb5u8jH5layFZN3LcUfKmBM6o+rFVRX3XpVpwHi0PYv/f2FyJWbfV6og==
-X-Received: by 2002:a5d:560a:: with SMTP id l10mr3625629wrv.387.1570035784721;
-        Wed, 02 Oct 2019 10:03:04 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id b62sm11188575wmc.13.2019.10.02.10.03.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 10:03:04 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alban Bedel <albeu@free.fr>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 6/6] gpio: htc-egpio: remove redundant error message
-Date:   Wed,  2 Oct 2019 19:02:49 +0200
-Message-Id: <20191002170249.17366-7-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191002170249.17366-1-brgl@bgdev.pl>
-References: <20191002170249.17366-1-brgl@bgdev.pl>
+        id S1728510AbfJBRDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:03:18 -0400
+Received: from mga12.intel.com ([192.55.52.136]:32221 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728484AbfJBRDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 13:03:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 10:03:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,249,1566889200"; 
+   d="scan'208";a="343386945"
+Received: from wkadry-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.81.190])
+  by orsmga004.jf.intel.com with ESMTP; 02 Oct 2019 10:03:11 -0700
+Date:   Wed, 2 Oct 2019 20:03:10 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2,RESEND] tpm: Detach page allocation from tpm_buf
+Message-ID: <20191002170253.GA9634@linux.intel.com>
+References: <20191002104530.7679-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002104530.7679-1-jarkko.sakkinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Oct 02, 2019 at 01:45:30PM +0300, Jarkko Sakkinen wrote:
+> As has been seen recently, binding the buffer allocation and tpm_buf
+> together is sometimes far from optimal. The buffer might come from the
+> caller namely when tpm_send() is used by another subsystem. In addition we
+> can stability in call sites w/o rollback (e.g. power events)>
+> 
+> Take allocation out of the tpm_buf framework and make it purely a wrapper
+> for the data buffer.
 
-There's no need to emit an error message on probe failure unless we're
-printing some meaningful info. Otherwise the core driver code will
-inform us about a probe error. Also: the driver currently drops info
-about errors propagated from called functions by default to returning
--EINVAL. This fixes it as well.
+OK, so the reason that the fix for the CC was not included, was that
+it was in my staging area. I had not amended it :-/
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-htc-egpio.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
-index 2d4b0b888f66..8aa23d70b1e6 100644
---- a/drivers/gpio/gpio-htc-egpio.c
-+++ b/drivers/gpio/gpio-htc-egpio.c
-@@ -265,7 +265,6 @@ static int __init egpio_probe(struct platform_device *pdev)
- 	struct gpio_chip  *chip;
- 	unsigned int      irq, irq_end;
- 	int               i;
--	int               ret;
- 
- 	/* Initialize ei data structure. */
- 	ei = devm_kzalloc(&pdev->dev, sizeof(*ei), GFP_KERNEL);
-@@ -275,7 +274,6 @@ static int __init egpio_probe(struct platform_device *pdev)
- 	spin_lock_init(&ei->lock);
- 
- 	/* Find chained irq */
--	ret = -EINVAL;
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (res)
- 		ei->chained_irq = res->start;
-@@ -283,15 +281,17 @@ static int __init egpio_probe(struct platform_device *pdev)
- 	/* Map egpio chip into virtual address space. */
- 	ei->base_addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ei->base_addr))
--		goto fail;
-+		return PTR_ERR(ei->base_addr);
- 
- 	if ((pdata->bus_width != 16) && (pdata->bus_width != 32))
--		goto fail;
-+		return -EINVAL;
-+
- 	ei->bus_shift = fls(pdata->bus_width - 1) - 3;
- 	pr_debug("bus_shift = %d\n", ei->bus_shift);
- 
- 	if ((pdata->reg_width != 8) && (pdata->reg_width != 16))
--		goto fail;
-+		return -EINVAL;
-+
- 	ei->reg_shift = fls(pdata->reg_width - 1);
- 	pr_debug("reg_shift = %d\n", ei->reg_shift);
- 
-@@ -303,10 +303,9 @@ static int __init egpio_probe(struct platform_device *pdev)
- 	ei->chip = devm_kcalloc(&pdev->dev,
- 				ei->nchips, sizeof(struct egpio_chip),
- 				GFP_KERNEL);
--	if (!ei->chip) {
--		ret = -ENOMEM;
--		goto fail;
--	}
-+	if (!ei->chip)
-+		return -ENOMEM;
-+
- 	for (i = 0; i < ei->nchips; i++) {
- 		ei->chip[i].reg_start = pdata->chip[i].reg_start;
- 		ei->chip[i].cached_values = pdata->chip[i].initial_values;
-@@ -316,10 +315,9 @@ static int __init egpio_probe(struct platform_device *pdev)
- 		chip->label = devm_kasprintf(&pdev->dev, GFP_KERNEL,
- 					     "htc-egpio-%d",
- 					     i);
--		if (!chip->label) {
--			ret = -ENOMEM;
--			goto fail;
--		}
-+		if (!chip->label)
-+			return -ENOMEM;
-+
- 		chip->parent          = &pdev->dev;
- 		chip->owner           = THIS_MODULE;
- 		chip->get             = egpio_get;
-@@ -361,10 +359,6 @@ static int __init egpio_probe(struct platform_device *pdev)
- 	}
- 
- 	return 0;
--
--fail:
--	printk(KERN_ERR "EGPIO failed to setup\n");
--	return ret;
- }
- 
- #ifdef CONFIG_PM
--- 
-2.23.0
-
+/Jarkko
