@@ -2,119 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD4BC922C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 504FDC9260
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729326AbfJBTRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:17:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44142 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728995AbfJBTRL (ORCPT
+        id S1729158AbfJBT1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:27:19 -0400
+Received: from gateway20.websitewelcome.com ([192.185.69.18]:19166 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728000AbfJBT1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:17:11 -0400
-Received: by mail-ed1-f67.google.com with SMTP id r16so154892edq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 12:17:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4oGOfktdveo5ZtuoH4C6yPHNIwcTv3+DyM2wCB4zh4U=;
-        b=dAo0QIHTfhTRnlYtaeL9gFzX3qDzreXEhE4rf+FJms1XQb84amNAa8vp3so/P0rIps
-         KN84SQ3T51eDvLkMPS8292geBjpXywMAmzx7uOca+jx9ndkr9cbGzz/16GXRurF3Dp6o
-         dsodWB+N7/WQ/Jyv3/I1NxxsGTV5AUsJZqCBM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4oGOfktdveo5ZtuoH4C6yPHNIwcTv3+DyM2wCB4zh4U=;
-        b=IbRK1vZ5gcuYA+x7AAZcdMu0zzr0FCLnnwn4t3jdAVl/pkYWETGqBZuj0Vde7CyXaG
-         JGj9gf1dbmt3VAJFQc/yXS+6dDdc4NZmrEsgOfNFvuErzr2s/DFUUBUVQMljuJpAolc0
-         WFqEDOOuMLkVaJxnq8efzvQZsMql+h2xp0/YJzsGyHONOt6g+dXQnhKQBvg4wNtV7ITn
-         POXNoVe3uTTq2Y6E6LFHWAp5kWZyIkG1Bd6+n1pi3DgSt6guowuGIKGeQI/sS72gWY6S
-         /w/G4n8MARiLqJ6+sqh0EZQSgZFeOqCQO4FSewUuwpkVJIlxZtmTBfE+nt5kGUEsuoOd
-         JrvA==
-X-Gm-Message-State: APjAAAVGhIsbPGQAdCtDsz9QsBzIQe0sHxQdnrQytJmmpkPoXtmFpZcP
-        aTD4UFTIqBPdKpPaQnYS1H9nmAq75go=
-X-Google-Smtp-Source: APXvYqxc21q3xZdpLrf1tkXfKo6ihP3vYlwZE7tC9X2U0uFDnrfeLpnWv9df3JAOYj1FrucG4bfITw==
-X-Received: by 2002:a17:906:1394:: with SMTP id f20mr4650214ejc.274.1570043829050;
-        Wed, 02 Oct 2019 12:17:09 -0700 (PDT)
-Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
-        by smtp.gmail.com with ESMTPSA id p19sm7996edq.31.2019.10.02.12.17.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 12:17:08 -0700 (PDT)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Cc:     Florent Revest <revest@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Florent Revest <revest@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v2] samples/bpf: Add a workaround for asm_inline
-Date:   Wed,  2 Oct 2019 21:16:52 +0200
-Message-Id: <20191002191652.11432-1-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
+        Wed, 2 Oct 2019 15:27:18 -0400
+X-Greylist: delayed 1382 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Oct 2019 15:27:17 EDT
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 39718400F9204
+        for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2019 12:57:26 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Fjv4iiVexVUVYFjv4iVQsI; Wed, 02 Oct 2019 14:04:14 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=lGuFHxBRnjeWcjmv8+OVj8h6DT2+GVr2Gf8sL4rtDWM=; b=iCsBeVOYQ8y5i0JxkH7to0mWYD
+        nHxhmItBEKPjOco0tAuRVIq+WBxiu994Y2EkTRb704t1zGngb5RkHIe6VV8ImtoUtUJEBmU0Kk1nv
+        UL35BlIIoraV6yiT5wmIuoYClrOIKQ0drO01Qw7V2lA8noPMfgeMfjbllZiffnrr5tzZCs9I7imOd
+        KPdWXoupPZalrpljy6xtAK8Y9VFmEP8Ie2/OGmVaLmSsCb/ARPklUkjJSikxUt/+TQn/fclSf0G9n
+        CjRooX9KKaOo/+3WfV7wo1dG0AfS2sWiuuBJNflXy0Zyy3TQ7g/wBzccnCxpN6fKv43zwgQxCpgC8
+        CVS4/Osw==;
+Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:39692 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iFjv3-0047wu-MW; Wed, 02 Oct 2019 14:04:13 -0500
+Date:   Wed, 2 Oct 2019 14:03:41 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] md: dm-stripe: Use struct_size() in kmalloc()
+Message-ID: <20191002190341.GA8900@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.252.62
+X-Source-L: No
+X-Exim-ID: 1iFjv3-0047wu-MW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:39692
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KP Singh <kpsingh@google.com>
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-This was added in:
+struct stripe_c {
+        ...
+        struct stripe stripe[0];
+};
 
-  commit eb111869301e ("compiler-types.h: add asm_inline definition")
+In this case alloc_context() and dm_array_too_big() are removed and
+replaced by the direct use of the struct_size() helper in kmalloc().
 
-and breaks samples/bpf as clang does not support asm __inline.
+Notice that open-coded form is prone to type mistakes.
 
-Co-developed-by: Florent Revest <revest@google.com>
-Signed-off-by: Florent Revest <revest@google.com>
-Signed-off-by: KP Singh <kpsingh@google.com>
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
+ drivers/md/dm-stripe.c        | 15 +--------------
+ include/linux/device-mapper.h |  3 ---
+ 2 files changed, 1 insertion(+), 17 deletions(-)
 
-Changes since v1:
-
-- Dropped the rename from asm_workaround.h to asm_goto_workaround.h
-- Dropped the fix for task_fd_query_user.c as it is updated in
-  https://lore.kernel.org/bpf/20191001112249.27341-1-bjorn.topel@gmail.com/
-
- samples/bpf/asm_goto_workaround.h | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/samples/bpf/asm_goto_workaround.h b/samples/bpf/asm_goto_workaround.h
-index 7409722727ca..7048bb3594d6 100644
---- a/samples/bpf/asm_goto_workaround.h
-+++ b/samples/bpf/asm_goto_workaround.h
-@@ -3,7 +3,8 @@
- #ifndef __ASM_GOTO_WORKAROUND_H
- #define __ASM_GOTO_WORKAROUND_H
+diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+index 8547d7594338..63bbcc20f49a 100644
+--- a/drivers/md/dm-stripe.c
++++ b/drivers/md/dm-stripe.c
+@@ -55,19 +55,6 @@ static void trigger_event(struct work_struct *work)
+ 	dm_table_event(sc->ti->table);
+ }
  
--/* this will bring in asm_volatile_goto macro definition
-+/*
-+ * This will bring in asm_volatile_goto and asm_inline macro definitions
-  * if enabled by compiler and config options.
+-static inline struct stripe_c *alloc_context(unsigned int stripes)
+-{
+-	size_t len;
+-
+-	if (dm_array_too_big(sizeof(struct stripe_c), sizeof(struct stripe),
+-			     stripes))
+-		return NULL;
+-
+-	len = sizeof(struct stripe_c) + (sizeof(struct stripe) * stripes);
+-
+-	return kmalloc(len, GFP_KERNEL);
+-}
+-
+ /*
+  * Parse a single <dev> <sector> pair
   */
- #include <linux/types.h>
-@@ -13,5 +14,15 @@
- #define asm_volatile_goto(x...) asm volatile("invalid use of asm_volatile_goto")
- #endif
+@@ -142,7 +129,7 @@ static int stripe_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 		return -EINVAL;
+ 	}
  
-+/*
-+ * asm_inline is defined as asm __inline in "include/linux/compiler_types.h"
-+ * if supported by the kernel's CC (i.e CONFIG_CC_HAS_ASM_INLINE) which is not
-+ * supported by CLANG.
-+ */
-+#ifdef asm_inline
-+#undef asm_inline
-+#define asm_inline asm
-+#endif
-+
- #define volatile(x...) volatile("")
- #endif
+-	sc = alloc_context(stripes);
++	sc = kmalloc(struct_size(sc, stripe, stripes), GFP_KERNEL);
+ 	if (!sc) {
+ 		ti->error = "Memory allocation for striped context "
+ 		    "failed";
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 399ad8632356..2e13826898b2 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -594,9 +594,6 @@ void *dm_vcalloc(unsigned long nmemb, unsigned long elem_size);
+  */
+ #define dm_round_up(n, sz) (dm_div_up((n), (sz)) * (sz))
+ 
+-#define dm_array_too_big(fixed, obj, num) \
+-	((num) > (UINT_MAX - (fixed)) / (obj))
+-
+ /*
+  * Sector offset taken relative to the start of the target instead of
+  * relative to the start of the device.
 -- 
-2.20.1
+2.23.0
 
