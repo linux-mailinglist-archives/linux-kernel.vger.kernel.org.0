@@ -2,101 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F19C4991
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B47C4999
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:34:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfJBIdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 04:33:53 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:44090 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfJBIdx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 04:33:53 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x928XoTr028711;
-        Wed, 2 Oct 2019 03:33:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570005231;
-        bh=Lx0PqOkFZnRlGG1vEvlWMVTGc+q6HEDxj3c2tzG4bLs=;
-        h=From:To:CC:Subject:Date;
-        b=ig5Wa0bHgog0DDzmgvazjkSpYC2YGavFl4c7/gUGUm+KvhGYzcBkRcLAjsdv7QT3s
-         XarlGThelfpXo8AAGr5LNBimXDeqrh4mAysaOSmyybopAY2dOSZqnvLoOlsZ/tALI1
-         VJIi7fZSXLFVFT2NRXblKigV84Z6QvOiKpGQxdlk=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x928Xohi093820
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Oct 2019 03:33:50 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 03:33:50 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 03:33:50 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x928Xlts014195;
-        Wed, 2 Oct 2019 03:33:48 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <t-kristo@ti.com>, <mturquette@baylibre.com>
-CC:     <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
-Date:   Wed, 2 Oct 2019 11:34:36 +0300
-Message-ID: <20191002083436.10194-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.23.0
+        id S1727851AbfJBIev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 04:34:51 -0400
+Received: from mga12.intel.com ([192.55.52.136]:57526 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbfJBIev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 04:34:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 01:34:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,573,1559545200"; 
+   d="scan'208";a="205279023"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 02 Oct 2019 01:34:46 -0700
+Received: by lahna (sSMTP sendmail emulation); Wed, 02 Oct 2019 11:34:46 +0300
+Date:   Wed, 2 Oct 2019 11:34:46 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Mario.Limonciello@dell.com
+Cc:     linux-usb@vger.kernel.org, andreas.noever@gmail.com,
+        michael.jamet@intel.com, YehezkelShB@gmail.com,
+        rajmohan.mani@intel.com,
+        nicholas.johnson-opensource@outlook.com.au, lukas@wunner.de,
+        gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
+        anthony.wong@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
+Message-ID: <20191002083446.GF2714@lahna.fi.intel.com>
+References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
+ <20191001113830.13028-18-mika.westerberg@linux.intel.com>
+ <184c95fc476146939b240557e54ee2c9@AUSX13MPC105.AMER.DELL.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <184c95fc476146939b240557e54ee2c9@AUSX13MPC105.AMER.DELL.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ti_clk_register() calls it already so the driver should not create
-duplicated alias.
+On Tue, Oct 01, 2019 at 05:05:09PM +0000, Mario.Limonciello@dell.com wrote:
+> > @@ -322,9 +398,21 @@ static int tb_switch_nvm_add(struct tb_switch *sw)
+> >  	u32 val;
+> >  	int ret;
+> > 
+> > -	if (!sw->dma_port)
+> > +	if (!nvm_readable(sw))
+> >  		return 0;
+> > 
+> > +	/*
+> > +	 * The NVM format of non-Intel hardware is not known so
+> > +	 * currently restrict NVM upgrade for Intel hardware. We may
+> > +	 * relax this in the future when we learn other NVM formats.
+> > +	 */
+> > +	if (sw->config.vendor_id != PCI_VENDOR_ID_INTEL) {
+> > +		dev_info(&sw->dev,
+> > +			 "NVM format of vendor %#x is not known, disabling NVM
+> > upgrade\n",
+> > +			 sw->config.vendor_id);
+> > +		return 0;
+> > +	}
+> > +
+> 
+> Don't you actually have an attribute you can use here for this exact purpose that you
+> could  be setting rather than returning immediately?
+> sw->no_nvm_upgrade
+> 
+> Then potentially you can at least let users "dump out" the nvm on !Intel but don't let
+> it be written until ready to relax further.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
-Hi,
-
-changes since v1:
-- removed unused ret variable
-
-Regards,
-Peter
-
- drivers/clk/ti/clk-dra7-atl.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-index a01ca9395179..f65e16c4f3c4 100644
---- a/drivers/clk/ti/clk-dra7-atl.c
-+++ b/drivers/clk/ti/clk-dra7-atl.c
-@@ -174,7 +174,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- 	struct clk_init_data init = { NULL };
- 	const char **parent_names = NULL;
- 	struct clk *clk;
--	int ret;
- 
- 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
- 	if (!clk_hw) {
-@@ -207,11 +206,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- 	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
- 
- 	if (!IS_ERR(clk)) {
--		ret = ti_clk_add_alias(NULL, clk, node->name);
--		if (ret) {
--			clk_unregister(clk);
--			goto cleanup;
--		}
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 		kfree(parent_names);
- 		return;
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+Problem is that we currently read NVM version and size from a known
+location in the NVM. If we don't know the format we can't do that so
+that would mean we need to expose active NVM with some size and hide
+nvm_version. I would rather have this support included in the kernel
+driver and expose standard set of attributes but no strong feelings from
+one way or another.
