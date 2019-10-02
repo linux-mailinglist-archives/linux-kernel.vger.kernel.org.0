@@ -2,151 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32261C9321
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E328FC9345
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 23:07:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbfJBU6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 16:58:49 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40451 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728055AbfJBU6s (ORCPT
+        id S1729314AbfJBVHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 17:07:39 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:43069 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728918AbfJBVHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 16:58:48 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x127so207556pfb.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:58:48 -0700 (PDT)
+        Wed, 2 Oct 2019 17:07:38 -0400
+Received: by mail-yw1-f66.google.com with SMTP id q7so211178ywe.10
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 14:07:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KX5XeevGScIhOFues3GQkV78ozucGw/LYZ1l8L5X6bo=;
-        b=YM7PrqwY/F7Vm9PudRT17T2mqcMDRwHbIT7qw3mpkzdEEzHkANg4PLltdxVjuLFB4q
-         mOMigow1C99Fxn3258qWATdkH6FCy/iw8I1WAaM+BP4aM7NWNDxHcJANq1Drp3mh+m2H
-         /aEO9TVSFVtczdY6PmO9rseb3o8Dna0PVSt1s=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T2JVXi2n7aIjQPfd/y2Qza7rCOQAGt2XVrhneTlTFqk=;
+        b=a48bnacKL3bHQCAPTzjpwOWeh35mQfcT2+1l7mws8a+hPVifJauAclcUDowffjOciD
+         7uzBDNymTolORf/fs9l5zGGzRzz1hSg5yfarrk9unbU0agAgkyHjNdV3ca808h83hVDC
+         ZA1LnWCehKYL3I+DIx90V/bnighUg2HmkiHF3mnXA6EWwd/FZPqiJolqmmcQqE/499oN
+         JR4bJoR0fgCl2zzIeZ9BkOiXp5m1FinDcASY+l3yvJgazfbBMi1M1GskUfbZPFh0l8Yh
+         7FdZxNMS7krkjz8dI7du0pR8FAcyCuE7SyvDXqOi1NeqBG+KoqNaZ0sB8BP/lu+hpQQI
+         IcNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KX5XeevGScIhOFues3GQkV78ozucGw/LYZ1l8L5X6bo=;
-        b=kW1+iYfDhNtj+W8l8CFNgPhzK2VOy97ZrQHXv64QnY3vm1qJKE80f6GWpHnY5u1foE
-         svnu2ww+guK6WKFsIpNxtTOgLiCK7+HPjQ1kk30yzyCKae7O15foh+8iCLa3R2FjL3V+
-         TTseZqwGcXMPBT/iY6C5zrVZcuSxa8jcHYOhm/moc5TpRnfABn09ItxqIJj8LY4YVLXX
-         CYfdN0Tq2n07QIKNMir/VkdhepezXeOPViejEBFdpoVwYjPNuXjTjzfUvQA1tU6XXQnR
-         iahLC882wHwKD78RkHFFxqDbjldxlNrF5oLJrYRfuIk1SnVoxoRxo/sYOf2pXxYzdwap
-         6qQQ==
-X-Gm-Message-State: APjAAAVJnEIxH4z3InaN6NjM/lRjt0UIZ3l2JQkICIPf/UxUQiO9ULVE
-        z97bjLSKl4fU5vw5Uo2oKlZ1Tg==
-X-Google-Smtp-Source: APXvYqyKNOmRPkS1Q8AKw0jUMUMu27C3e3zFkbZCALS8GZ9yijv6oqy5W8ctOfywkUEq/6vs+Euvuw==
-X-Received: by 2002:aa7:97b0:: with SMTP id d16mr7065724pfq.54.1570049927960;
-        Wed, 02 Oct 2019 13:58:47 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p190sm354504pfb.160.2019.10.02.13.58.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 13:58:47 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 13:58:46 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        contact@xogium.me, Russell King <linux@armlinux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, Feng Tang <feng.tang@intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] panic: Ensure preemption is disabled during panic()
-Message-ID: <201910021355.E578D2FFAF@keescook>
-References: <20191002123538.22609-1-will@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T2JVXi2n7aIjQPfd/y2Qza7rCOQAGt2XVrhneTlTFqk=;
+        b=Ldql7yepOR2HExH5sgDIQtjiOqSGB0k+VEB64gjJxEtcWcl9BfC0yLADox9tOZYHS8
+         bYzXLPoccVbyfVpnKQVx+lQRkCxSM23KDeib+yRRmaJ8pMCnann1ndMukVkE+jp7Bl82
+         yp6cTJPt2bNdKtIaB+vZ/9+wC+BiZYZy6+jNs+zO5hcDdGFqTSVPXdbNpFQCyyXn1e1S
+         Bdy1zj2eV7DSCr5ruauDoW+SMGJ+Wu6zsS7lOICflCC7Oi74xqI3Xq7JjA1rT5HF2afQ
+         cMXfD5KYGxyaMt4eBp3tM3T/Q1uGoih99G9dON+WcEvBZe5Bq3Qsi9Q6yiuFD/QUmNZe
+         iR6w==
+X-Gm-Message-State: APjAAAX9n0th+imLW/YvOes5/y5HP0t25Tyo+PL9lJxQf1c1XN3OR1ot
+        9+aDxdGc0llFEvPpUDsnuTcv/Xl6
+X-Google-Smtp-Source: APXvYqxQG7JoTZe++unblzzw8DbGcJPVmKkoeWAmTU6aYGL0Bsopdb5SJ5BUGIJMnPAvqXIcPAZY4A==
+X-Received: by 2002:a81:2b0a:: with SMTP id r10mr4266896ywr.301.1570050457102;
+        Wed, 02 Oct 2019 14:07:37 -0700 (PDT)
+Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
+        by smtp.gmail.com with ESMTPSA id p199sm100939ywe.1.2019.10.02.14.07.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2019 14:07:36 -0700 (PDT)
+Received: by mail-yw1-f53.google.com with SMTP id d192so231960ywa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 14:07:36 -0700 (PDT)
+X-Received: by 2002:a81:6f8a:: with SMTP id k132mr4013325ywc.275.1570050020507;
+ Wed, 02 Oct 2019 14:00:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002123538.22609-1-will@kernel.org>
+References: <00000000000051e9280593f2dc9f@google.com>
+In-Reply-To: <00000000000051e9280593f2dc9f@google.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Wed, 2 Oct 2019 16:59:44 -0400
+X-Gmail-Original-Message-ID: <CA+FuTSedj9+UJKLfuER+FuEmQvWNqsDfO5i+Z6vit0OoLv=NLA@mail.gmail.com>
+Message-ID: <CA+FuTSedj9+UJKLfuER+FuEmQvWNqsDfO5i+Z6vit0OoLv=NLA@mail.gmail.com>
+Subject: Re: general protection fault in veth_get_stats64
+To:     syzbot <syzbot+3f3e5e77d793c7a6fe6c@syzkaller.appspotmail.com>
+Cc:     airlied@linux.ie, andriy.shevchenko@linux.intel.com,
+        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        bskeggs@redhat.com, daniel@ffwll.ch,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        dri-devel@lists.freedesktop.org, David Ahern <dsahern@gmail.com>,
+        f.fainelli@gmail.com, guoren@kernel.org, hawk@kernel.org,
+        idosch@mellanox.com, Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>, jwi@linux.ibm.com,
+        Martin Lau <kafai@fb.com>, kimbrownkd@gmail.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        nouveau@lists.freedesktop.org, petrm@mellanox.com,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        toshiaki.makita1@gmail.com, wanghai26@huawei.com,
+        Yonghong Song <yhs@fb.com>, yuehaibing@huawei.com,
+        jiri@mellanox.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 01:35:38PM +0100, Will Deacon wrote:
-> Calling 'panic()' on a kernel with CONFIG_PREEMPT=y can leave the
-> calling CPU in an infinite loop, but with interrupts and preemption
-> enabled. From this state, userspace can continue to be scheduled,
-> despite the system being "dead" as far as the kernel is concerned. This
-> is easily reproducible on arm64 when booting with "nosmp" on the command
-> line; a couple of shell scripts print out a periodic "Ping" message
-> whilst another triggers a crash by writing to /proc/sysrq-trigger:
-> 
->   | sysrq: Trigger a crash
->   | Kernel panic - not syncing: sysrq triggered crash
->   | CPU: 0 PID: 1 Comm: init Not tainted 5.2.15 #1
->   | Hardware name: linux,dummy-virt (DT)
->   | Call trace:
->   |  dump_backtrace+0x0/0x148
->   |  show_stack+0x14/0x20
->   |  dump_stack+0xa0/0xc4
->   |  panic+0x140/0x32c
->   |  sysrq_handle_reboot+0x0/0x20
->   |  __handle_sysrq+0x124/0x190
->   |  write_sysrq_trigger+0x64/0x88
->   |  proc_reg_write+0x60/0xa8
->   |  __vfs_write+0x18/0x40
->   |  vfs_write+0xa4/0x1b8
->   |  ksys_write+0x64/0xf0
->   |  __arm64_sys_write+0x14/0x20
->   |  el0_svc_common.constprop.0+0xb0/0x168
->   |  el0_svc_handler+0x28/0x78
->   |  el0_svc+0x8/0xc
->   | Kernel Offset: disabled
->   | CPU features: 0x0002,24002004
->   | Memory Limit: none
->   | ---[ end Kernel panic - not syncing: sysrq triggered crash ]---
->   |  Ping 2!
->   |  Ping 1!
->   |  Ping 1!
->   |  Ping 2!
-> 
-> The issue can also be triggered on x86 kernels if CONFIG_SMP=n, otherwise
-> local interrupts are disabled in 'smp_send_stop()'.
-> 
-> Disable preemption in 'panic()' before re-enabling interrupts.
+On Wed, Oct 2, 2019 at 3:56 PM syzbot
+<syzbot+3f3e5e77d793c7a6fe6c@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    a32db7e1 Add linux-next specific files for 20191002
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=175ab7cd600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=599cf05035799eef
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3f3e5e77d793c7a6fe6c
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f8b943600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16981a25600000
+>
+> The bug was bisected to:
+>
+> commit 84da111de0b4be15bd500deff773f5116f39f7be
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Sat Sep 21 17:07:42 2019 +0000
+>
+>      Merge tag 'for-linus-hmm' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17c55847600000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=14255847600000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10255847600000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+3f3e5e77d793c7a6fe6c@syzkaller.appspotmail.com
+> Fixes: 84da111de0b4 ("Merge tag 'for-linus-hmm' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma")
+>
+> RSP: 002b:00007fff0ba6c998 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004424a9
+> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 0000000000000002 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+> R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 8605 Comm: syz-executor330 Not tainted 5.4.0-rc1-next-20191002
+> #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:veth_stats_rx drivers/net/veth.c:322 [inline]
+> RIP: 0010:veth_get_stats64+0x523/0x900 drivers/net/veth.c:356
+> Code: 89 85 60 ff ff ff e8 6c 74 31 fd 49 63 c7 48 69 c0 c0 02 00 00 48 03
+> 85 60 ff ff ff 48 8d b8 a0 01 00 00 48 89 fa 48 c1 ea 03 <42> 80 3c 32 00
+> 0f 85 c9 02 00 00 48 8d b8 a8 01 00 00 48 8b 90 a0
+> RSP: 0018:ffff88809996ed00 EFLAGS: 00010202
+> RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff84418daf
+> RDX: 0000000000000034 RSI: ffffffff84418e04 RDI: 00000000000001a0
+> RBP: ffff88809996ede0 R08: ffff888093182180 R09: ffffed1013202d6a
+> R10: ffffed1013202d69 R11: ffff888099016b4f R12: 0000000000000000
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  0000000001f4a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000140 CR3: 000000009a80b000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   dev_get_stats+0x8e/0x280 net/core/dev.c:9220
+>   rtnl_fill_stats+0x4d/0xac0 net/core/rtnetlink.c:1191
+>   rtnl_fill_ifinfo+0x10ad/0x3af0 net/core/rtnetlink.c:1717
+>   rtmsg_ifinfo_build_skb+0xc9/0x1a0 net/core/rtnetlink.c:3635
+>   rtmsg_ifinfo_event.part.0+0x43/0xe0 net/core/rtnetlink.c:3667
+>   rtmsg_ifinfo_event net/core/rtnetlink.c:3678 [inline]
+>   rtmsg_ifinfo+0x8d/0xa0 net/core/rtnetlink.c:3676
+>   __dev_notify_flags+0x235/0x2c0 net/core/dev.c:7757
+>   rtnl_configure_link+0x175/0x250 net/core/rtnetlink.c:2968
+>   __rtnl_newlink+0x10c4/0x16d0 net/core/rtnetlink.c:3285
+>   rtnl_newlink+0x69/0xa0 net/core/rtnetlink.c:3325
+>   rtnetlink_rcv_msg+0x463/0xb00 net/core/rtnetlink.c:5386
+>   netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
+>   rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5404
+>   netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+>   netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
+>   netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
+>   sock_sendmsg_nosec net/socket.c:638 [inline]
+>   sock_sendmsg+0xd7/0x130 net/socket.c:658
+>   ___sys_sendmsg+0x803/0x920 net/socket.c:2312
+>   __sys_sendmsg+0x105/0x1d0 net/socket.c:2357
+>   __do_sys_sendmsg net/socket.c:2366 [inline]
+>   __se_sys_sendmsg net/socket.c:2364 [inline]
+>   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2364
+>   do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4424a9
+> Code: e8 9c 07 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 3b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fff0ba6c998 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004424a9
+> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 0000000000000002 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+> R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> ---[ end trace cc6dec8a4962bfff ]---
+> RIP: 0010:veth_stats_rx drivers/net/veth.c:322 [inline]
+> RIP: 0010:veth_get_stats64+0x523/0x900 drivers/net/veth.c:356
+> Code: 89 85 60 ff ff ff e8 6c 74 31 fd 49 63 c7 48 69 c0 c0 02 00 00 48 03
+> 85 60 ff ff ff 48 8d b8 a0 01 00 00 48 89 fa 48 c1 ea 03 <42> 80 3c 32 00
+> 0f 85 c9 02 00 00 48 8d b8 a8 01 00 00 48 8b 90 a0
+> RSP: 0018:ffff88809996ed00 EFLAGS: 00010202
+> RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff84418daf
+> RDX: 0000000000000034 RSI: ffffffff84418e04 RDI: 00000000000001a0
+> RBP: ffff88809996ede0 R08: ffff888093182180 R09: ffffed1013202d6a
+> R10: ffffed1013202d69 R11: ffff888099016b4f R12: 0000000000000000
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  0000000001f4a880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000140 CR3: 000000009a80b000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Is this perhaps the correct solution for what commit c39ea0b9dd24 ("panic:
-avoid the extra noise dmesg") was trying to fix?
+Syzbot CC:ed a lot of people directly on this report. Perhaps because
+of the bisection?
 
-Either way:
+Specific to the report: I think this may be introduced with the
+alternative names for network interfaces patchset.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+The reproducer
 
--Kees
+fails on      76c9ac0ee878 net: rtnetlink: add possibility to use
+alternative names as message handle
+passes on be2644aac3e1 tcp: add ipv6_addr_v4mapped_loopback() helper
 
-> 
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: <stable@vger.kernel.org>
-> Link: https://lore.kernel.org/r/BX1W47JXPMR8.58IYW53H6M5N@dragonstone
-> Reported-by: Xogium <contact@xogium.me>
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
->  kernel/panic.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 47e8ebccc22b..f470a038b05b 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -180,6 +180,7 @@ void panic(const char *fmt, ...)
->  	 * after setting panic_cpu) from invoking panic() again.
->  	 */
->  	local_irq_disable();
-> +	preempt_disable_notrace();
->  
->  	/*
->  	 * It's possible to come here directly from a panic-assertion and
-> -- 
-> 2.23.0.444.g18eeb5a265-goog
-> 
+Leaving
 
--- 
-Kees Cook
+76c9ac0ee878 net: rtnetlink: add possibility to use alternative names
+as message handle
+cc6090e985d7 net: rtnetlink: introduce helper to get net_device
+instance by ifname
+7af12cba4ef0 net: rtnetlink: unify the code in __rtnl_newlink get dev
+with the rest
+88f4fb0c7496 net: rtnetlink: put alternative names to getlink message
+36fbf1e52bd3 net: rtnetlink: add linkprop commands to add and delete
+alternative ifnames
+ff92741270bf net: introduce name_node struct to be used in hashlist
+6958c97a488c net: procfs: use index hashlist instead of name hashlist
+be2
