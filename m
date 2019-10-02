@@ -2,113 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 794D6C88D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E19C88D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfJBMkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:40:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbfJBMkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:40:05 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 430082133F;
-        Wed,  2 Oct 2019 12:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570020003;
-        bh=C27WP3WjY83XjqK00FA77hEI/TbJNxmgHsX3G7ohuJY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r1ISHHmlUa3ArxhsAN1rIrYFbdp7E9Nft088x4rC2BWSc1rug9fMRZiNAEvlaN9sk
-         psxK5zJ4K0fRIworDS+q3PHxoLSWsTxwjQE2GdAQfEPZ2BVH804MSe+aysCm4f7xwy
-         KNwsXlVW8+wyrVavZo30CoO4tzHc6UVNjBTRJcfA=
-Date:   Wed, 2 Oct 2019 08:40:02 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     Michael Kelley <mikelley@microsoft.com>,
-        Wei Hu <weh@microsoft.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "shc_work@mail.ru" <shc_work@mail.ru>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "baijiaju1990@gmail.com" <baijiaju1990@gmail.com>,
-        "info@metux.net" <info@metux.net>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: Re: [PATHC v6] video: hyperv: hyperv_fb: Support deferred IO for
- Hyper-V frame buffer driver
-Message-ID: <20191002124002.GL17454@sasha-vm>
-References: <20190918060227.6834-1-weh@microsoft.com>
- <DM5PR21MB0137DA408FE59E8C1171CFFCD78E0@DM5PR21MB0137.namprd21.prod.outlook.com>
- <DM5PR21MB01375E8543451D4550D622CDD7880@DM5PR21MB0137.namprd21.prod.outlook.com>
- <20191001184828.GF8171@sasha-vm>
- <PU1P153MB0169811097EA55DF795888B2BF9C0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+        id S1727329AbfJBMkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:40:09 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:35524 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbfJBMkH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:40:07 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92Ce4aO077277;
+        Wed, 2 Oct 2019 07:40:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570020004;
+        bh=V5i2WFcuhfe5u3LBdg2gXDOnWB+ykjunjzamA4BciLw=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=ADbsjyBTQUaxS/nzDvILG3lryMg4fpiDTj8PsjRlU5htCc6gQj8in9ht3QB9wt4ow
+         q5LXlM4ERHlgcHbbbK/Nmplc5WZf1wOdkNPkDWZxXgGRfMlVTIVKSjvvPgaQa8tZU5
+         JXDizV1HfVjto15hIcecp9WToeavkwTmY19Yj7hc=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x92Ce4dH009167
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Oct 2019 07:40:04 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
+ 2019 07:39:53 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 2 Oct 2019 07:40:03 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92Ce3mf094920;
+        Wed, 2 Oct 2019 07:40:03 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v2 2/6] leds: flash: Add devm_* functions to the flash class
+Date:   Wed, 2 Oct 2019 07:40:38 -0500
+Message-ID: <20191002124042.25593-2-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
+In-Reply-To: <20191002124042.25593-1-dmurphy@ti.com>
+References: <20191002124042.25593-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <PU1P153MB0169811097EA55DF795888B2BF9C0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 08:09:41AM +0000, Dexuan Cui wrote:
->> -----Original Message-----
->> From: Sasha Levin <sashal@kernel.org>
->> Sent: Tuesday, October 1, 2019 11:48 AM
->>
->> On Fri, Sep 20, 2019 at 05:26:34PM +0000, Michael Kelley wrote:
->> >From: Michael Kelley <mikelley@microsoft.com>  Sent: Wednesday,
->> September 18, 2019 2:48 PM
->> >> >
->> >> > Without deferred IO support, hyperv_fb driver informs the host to refresh
->> >> > the entire guest frame buffer at fixed rate, e.g. at 20Hz, no matter there
->> >> > is screen update or not. This patch supports deferred IO for screens in
->> >> > graphics mode and also enables the frame buffer on-demand refresh. The
->> >> > highest refresh rate is still set at 20Hz.
->> >> >
->> >> > Currently Hyper-V only takes a physical address from guest as the starting
->> >> > address of frame buffer. This implies the guest must allocate contiguous
->> >> > physical memory for frame buffer. In addition, Hyper-V Gen 2 VMs only
->> >> > accept address from MMIO region as frame buffer address. Due to these
->> >> > limitations on Hyper-V host, we keep a shadow copy of frame buffer
->> >> > in the guest. This means one more copy of the dirty rectangle inside
->> >> > guest when doing the on-demand refresh. This can be optimized in the
->> >> > future with help from host. For now the host performance gain from
->> deferred
->> >> > IO outweighs the shadow copy impact in the guest.
->> >> >
->> >> > Signed-off-by: Wei Hu <weh@microsoft.com>
->> >
->> >Sasha -- this patch and one other from Wei Hu for the Hyper-V frame buffer
->> >driver should be ready.  Both patches affect only the Hyper-V frame buffer
->> >driver so can go through the Hyper-V tree.  Can you pick these up?  Thx.
->>
->> I can't get this to apply anywhere, what tree is it based on?
->>
->> --
->> Thanks,
->> Sasha
->
->Hi Sasha,
->Today's hyperv/linux.git's hyperv-next branch's top commit is
->    48b72a2697d5 ("hv_netvsc: Add the support of hibernation").
->
->Please pick up two patches from Wei Hu:
->#1: [PATCH v4] video: hyperv: hyperv_fb: Obtain screen resolution from Hyper-V host
->#2: [PATHC v6] video: hyperv: hyperv_fb: Support deferred IO for Hyper-V frame buffer driver
+Add the missing device managed API for registration and
+unregistration for the LED flash class.
 
-Ah, I guess I was missing the first one. I've queued both for
-hyperv-next, thanks!
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ drivers/leds/led-class-flash.c  | 50 +++++++++++++++++++++++++++++++++
+ include/linux/led-class-flash.h | 14 +++++++++
+ 2 files changed, 64 insertions(+)
 
---
-Thanks,
-Sasha
+diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+index 60c3de5c6b9f..6eeb9effcf65 100644
+--- a/drivers/leds/led-class-flash.c
++++ b/drivers/leds/led-class-flash.c
+@@ -327,6 +327,56 @@ void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_classdev_flash_unregister);
+ 
++static void devm_led_classdev_flash_release(struct device *dev, void *res)
++{
++	led_classdev_flash_unregister(*(struct led_classdev_flash **)res);
++}
++
++int devm_led_classdev_flash_register_ext(struct device *parent,
++				     struct led_classdev_flash *fled_cdev,
++				     struct led_init_data *init_data)
++{
++	struct led_classdev_flash **dr;
++	int ret;
++
++	dr = devres_alloc(devm_led_classdev_flash_release, sizeof(*dr),
++			  GFP_KERNEL);
++	if (!dr)
++		return -ENOMEM;
++
++	ret = led_classdev_flash_register_ext(parent, fled_cdev, init_data);
++	if (ret) {
++		devres_free(dr);
++		return ret;
++	}
++
++	*dr = fled_cdev;
++	devres_add(parent, dr);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(devm_led_classdev_flash_register_ext);
++
++static int devm_led_classdev_flash_match(struct device *dev,
++					      void *res, void *data)
++{
++	struct led_classdev_flash **p = res;
++
++	if (WARN_ON(!p || !*p))
++		return 0;
++
++	return *p == data;
++}
++
++void devm_led_classdev_flash_unregister(struct device *dev,
++					struct led_classdev_flash *fled_cdev)
++{
++	WARN_ON(devres_release(dev,
++			       devm_led_classdev_flash_release,
++			       devm_led_classdev_flash_match, fled_cdev));
++}
++EXPORT_SYMBOL_GPL(devm_led_classdev_flash_unregister);
++
+ static void led_clamp_align(struct led_flash_setting *s)
+ {
+ 	u32 v, offset;
+diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-flash.h
+index 1bd83159fa4c..21a3358a1731 100644
+--- a/include/linux/led-class-flash.h
++++ b/include/linux/led-class-flash.h
+@@ -113,6 +113,20 @@ static inline int led_classdev_flash_register(struct device *parent,
+  */
+ void led_classdev_flash_unregister(struct led_classdev_flash *fled_cdev);
+ 
++int devm_led_classdev_flash_register_ext(struct device *parent,
++				     struct led_classdev_flash *fled_cdev,
++				     struct led_init_data *init_data);
++
++
++static inline int devm_led_classdev_flash_register(struct device *parent,
++				     struct led_classdev_flash *fled_cdev)
++{
++	return devm_led_classdev_flash_register_ext(parent, fled_cdev, NULL);
++}
++
++void devm_led_classdev_flash_unregister(struct device *parent,
++					struct led_classdev_flash *fled_cdev);
++
+ /**
+  * led_set_flash_strobe - setup flash strobe
+  * @fled_cdev: the flash LED to set strobe on
+-- 
+2.22.0.214.g8dca754b1e
+
