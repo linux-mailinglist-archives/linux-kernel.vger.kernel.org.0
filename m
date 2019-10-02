@@ -2,79 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12737C49F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC97EC49DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfJBIuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 04:50:03 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:30907 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfJBIuC (ORCPT
+        id S1727081AbfJBIoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 04:44:10 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44995 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfJBIoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 04:50:02 -0400
-X-Greylist: delayed 341 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Oct 2019 04:50:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1570006200;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=iUttmko10pMSiNzf83MKiTk9CuVcL1m274VDNhwoUvo=;
-        b=fwQnjnwZGpqSYouAPj03EV3kLB+dGJ/RGE5M5UX6f4bOmTXpmL7QDjz9o44g7Pe/nV
-        KwlLnhotooxXgELLLi2HOzeHToCrbYQuIqfzK3W6tpskvn4XY+K6M6pllUhSKqoo/Vvw
-        UidFNpcYmrqDnjvIH36lgIQEmx55paOCwC09aL2RG6MIN+o8SkeCBssl8CDha+0uC1U4
-        ZdKQtPEb3i99mvOMYJiQodU/LiBgQxe7jlAj5h6Efkdfu0/LcESoxdR6V31AMZTuZjon
-        pqYUYEClFPVa1rsYQi1WmN5ZcmgWdTOsdnK+Tq/KKvaFDSX6imJxi41CneU9sOvOBoRK
-        X2Og==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp05-03.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.28.0 AUTH)
-        with ESMTPSA id i07086v928htVNM
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Wed, 2 Oct 2019 10:43:55 +0200 (CEST)
-Date:   Wed, 2 Oct 2019 10:43:55 +0200 (CEST)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Fabien Parent <fparent@baylibre.com>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     drinkcat@chromium.org, wsa@the-dreams.de, hsinyi@chromium.org,
-        matthias.bgg@gmail.com, tglx@linutronix.de, qii.wang@mediatek.com
-Message-ID: <1733244772.936156.1570005835848@webmail.strato.com>
-In-Reply-To: <20190930152846.5062-1-fparent@baylibre.com>
-References: <20190930152846.5062-1-fparent@baylibre.com>
-Subject: Re: [PATCH v2] i2c: i2c-mt65xx: fix NULL ptr dereference
+        Wed, 2 Oct 2019 04:44:09 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z9so5477207wrl.11;
+        Wed, 02 Oct 2019 01:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QP3i5oRbnEcOsn2Nh4j8y0vWxevdrVw2BJcYZbqFbx4=;
+        b=UsrXNzo8+90vsV5ERk4uasjuBQGbONq6vSFSId/rzHWsOKsIH5vuVz+2kTf4k+kfPJ
+         zlPjLQvVdfMDM+hpYnookmcXVT04tpSTVD3T7epCC4T3jmmCHGpGKflcOJXl7ytEwbrc
+         mIhuIwcridGT5YJgVgDGqhCgUm9st82V0u/43S2eQImyRX7+H3iZsdR0Y3fI1IvI99J+
+         CZ09owxjQzF8wkdiQi5FCTl+dQg1fRdAHHq+xjn2aE5MXMfwaXr+b5QvZSRBjxE1/w4t
+         2O20e8iVBfJ2doPgA3UMYCC22SiiotLOiGtRopEopwI0vLT9ybSgrmT/cxBo+AShmR8a
+         7u/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QP3i5oRbnEcOsn2Nh4j8y0vWxevdrVw2BJcYZbqFbx4=;
+        b=WAS3iY4Gc1VQr3DNNBYnACR+LwLSaATz1V4UBlu2ZHnNaZqbo4wC0/TeblfUrKd+15
+         GIUlEhu1+nwLP+pgUrpzbTN1NNWv/GtcicZ1STwsA7Xe7nWMkWUrVGCvhJkpwuYaE9Rq
+         HFC2+FD2anttiAys4TyvqHPWKEdspUtlVWhc+ffvj+fAy+2r31TrbJX+zUt1nPEsCCzN
+         iISeEGWRP9WBUbTMFs1RZ2QcyrlWaKfkYo/pzKiBipp7cff/vNaZxduPLF7DdMbT5+/0
+         V6z5Vo10weRn4edqSHRbI5MvAXVS5RwPs/VVMZd5TASmwPEHjEBMvsU/bL9Vt9k+vLRo
+         b7Cw==
+X-Gm-Message-State: APjAAAXAAz58b1QgVYuSFdWFFPV3K/Xvu/EI5AjTqbfPqvvhE/0bVrNd
+        qTa/CHG6byp9F9MrFmhV1cI=
+X-Google-Smtp-Source: APXvYqzIqo97fauDu2NNtpT95i5jes5tUblWKnlFRoxJmsyAkkvAGFGwphEVnugX59rbhtZRvfWFgw==
+X-Received: by 2002:adf:ce83:: with SMTP id r3mr1869573wrn.219.1570005847043;
+        Wed, 02 Oct 2019 01:44:07 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id y5sm6524440wma.14.2019.10.02.01.44.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Oct 2019 01:44:06 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 10:44:04 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     catalin.marinas@arm.com, davem@davemloft.net,
+        herbert@gondor.apana.org.au, linux@armlinux.org.uk,
+        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        will@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 05/11] ARM: dts: sun8i: H3: Add Crypto Engine node
+Message-ID: <20191002084404.GA3101@Red>
+References: <20191001184141.27956-1-clabbe.montjoie@gmail.com>
+ <20191001184141.27956-6-clabbe.montjoie@gmail.com>
+ <20191002060214.bu67nkd3y6puknrb@gilmour>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.1-Rev20
-X-Originating-IP: 85.212.176.126
-X-Originating-Client: open-xchange-appsuite
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002060214.bu67nkd3y6puknrb@gilmour>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> On September 30, 2019 at 5:28 PM Fabien Parent <fparent@baylibre.com> wrote:
+On Wed, Oct 02, 2019 at 08:02:14AM +0200, Maxime Ripard wrote:
+> On Tue, Oct 01, 2019 at 08:41:35PM +0200, Corentin Labbe wrote:
+> > The Crypto Engine is a hardware cryptographic accelerator that supports
+> > many algorithms.
+> > It could be found on most Allwinner SoCs.
+> >
+> > This patch enables the Crypto Engine on the Allwinner H3 SoC Device-tree.
+> >
+> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/sun8i-h3.dtsi | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+> > index e37c30e811d3..778a23a794c9 100644
+> > --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> > +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> > @@ -153,6 +153,17 @@
+> >  			allwinner,sram = <&ve_sram 1>;
+> >  		};
+> >
+> > +		crypto: crypto@1c15000 {
+> > +			compatible = "allwinner,sun8i-h3-crypto";
+> > +			reg = <0x01c15000 0x1000>;
+> > +			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names = "ce_ns";
 > 
+> That's not documented in the binding (and I guess unnecessary)
 > 
-> Since commit abf4923e97c3 ("i2c: mediatek: disable zero-length transfers
-> for mt8183"), there is a NULL pointer dereference for all the SoCs
-> that don't have any quirk. mtk_i2c_functionality is not checking that
-> the quirks pointer is not NULL before starting to use it.
+
+Hello
+
+Yes this should be removed.
+
+> > +			resets = <&ccu RST_BUS_CE>;
+> > +			reset-names = "bus";
+> > +			clocks = <&ccu CLK_BUS_CE>, <&ccu CLK_CE>;
+> > +			clock-names = "bus", "mod";
 > 
-> This commit add a call to i2c_check_quirks which will check whether
-> the quirks pointer is set, and if so will check if the IP has the
-> NO_ZERO_LEN quirk.
+> Nit: we put the clocks before the resets usually
 > 
-> Fixes: abf4923e97c3 ("i2c: mediatek: disable zero-length transfers for mt8183")
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
 
-Thank you! Tested successfully on Acer R13 Chromebook (mt8173).
+Will do it.
 
-Tested-by: Ulrich Hecht <uli@fpond.eu>
-
-CU
-Uli
+Thanks
+Regards
