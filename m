@@ -2,214 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB4DEC92EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B44DCC9306
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 22:46:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbfJBUgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 16:36:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbfJBUgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 16:36:00 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 680BA21783;
-        Wed,  2 Oct 2019 20:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570048558;
-        bh=0B5UAKaVr2PEXiovBRwTBFLAKLLaWrdReoAFlNZRmqU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=eNVHxVwnLxNx2pl325Hkvbe+FmHZSPE+6zPbsbWy70tnpIV9Olf+rcC20YYo6btFr
-         hADFUNxkVLXW8lv1e3NtoH+hz6Bt+nFy99LCK9QyIav1rtyXg3tytFeYLtPbYNtuzC
-         4nobSrgKHTULcnRgNjWxQHS1ANbcb0+xTNwfh/4w=
-Message-ID: <df9022f0f5d18d71f37ed494a05eaa4509cf0a68.camel@kernel.org>
-Subject: Re: Lease semantic proposal
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Date:   Wed, 02 Oct 2019 16:35:55 -0400
-In-Reply-To: <20191002192711.GA21386@fieldses.org>
-References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
-         <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
-         <20191001181659.GA5500@iweiny-DESK2.sc.intel.com>
-         <2b42cf4ae669cedd061c937103674babad758712.camel@kernel.org>
-         <20191002192711.GA21386@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1728671AbfJBUqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 16:46:19 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42335 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727875AbfJBUqT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 16:46:19 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y23so268175lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CZoX6/kAyBlNzPm3PxVJHHET8XR6oaEdHzpQ1JHxlxk=;
+        b=WgH48i53OT8OxyAS10xRgTGen79hUl3stcfXDufRhIUV4G8traFDMLYOcDbmARGtri
+         tU39pf48gI+/cvvec8i+m09klNO/DTKi0Xs0KDdSSGqqIUqlnGTnz+5xBoxTqitRtY8f
+         KX6a88Kh0m0W4klfZBa6hR0r/gM5QP+f5tEIM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CZoX6/kAyBlNzPm3PxVJHHET8XR6oaEdHzpQ1JHxlxk=;
+        b=Ueuoz+9gDD7U+W/hdlxBc2VpPCbnYpKprpFqmGDg/FKrArJk1E4tCBqjkoNQy6VJyR
+         uhG1t0bZb8zkVDsZKGxFv/tPHZy1u1f1q1vQxN6vIBYOmZQ1LMuoOznD5xJK9dopBbvc
+         Zl+SR61rUo1QZlhC+l2JRv9xBRjZc5ulyFKwcCx3fZ0axANV45KpYDGboFgKOpBahZ8p
+         UuV8Nr31+DzlmHPrK1KOdVU2NjWw7hf819u+TZt/7au3fe/6psjTlRw9YuQej/OJbuCk
+         U9VP/7oDtmt4uPeNS1uzFI6cvOeLhdfMgORiLjcqf6UI6MQpIbQif1hEpraqL0+9Fotm
+         ZepA==
+X-Gm-Message-State: APjAAAWnAgyiyDPjBBbD14kqctvCZvQQAs8YakOYEBr4srcI5N4H7dU7
+        nwL1qgK8OMJCXPNaqv/0rQIGHI/VjRU=
+X-Google-Smtp-Source: APXvYqyWRYucdmohIUxBgGSVEGGQ+Bf4KdIeyVRObbB0lGx3o19quydB6d3iMcmHg8eNl6jFXGpt/g==
+X-Received: by 2002:a2e:1b5c:: with SMTP id b89mr3756710ljb.182.1570049177615;
+        Wed, 02 Oct 2019 13:46:17 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id o15sm34565lff.22.2019.10.02.13.46.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2019 13:46:17 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id d17so97693lfa.7
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 13:46:17 -0700 (PDT)
+X-Received: by 2002:ac2:47f8:: with SMTP id b24mr3502326lfp.134.1570048796885;
+ Wed, 02 Oct 2019 13:39:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
+ <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
+ <20190930121803.n34i63scet2ec7ll@willie-the-truck> <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
+ <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
+ <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
+ <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
+ <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
+ <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 2 Oct 2019 13:39:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
+Message-ID: <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-10-02 at 15:27 -0400, J. Bruce Fields wrote:
-> On Wed, Oct 02, 2019 at 08:28:40AM -0400, Jeff Layton wrote:
-> > On Tue, 2019-10-01 at 11:17 -0700, Ira Weiny wrote:
-> > > On Mon, Sep 23, 2019 at 04:17:59PM -0400, Jeff Layton wrote:
-> > > > On Mon, 2019-09-23 at 12:08 -0700, Ira Weiny wrote:
-> > > > > Since the last RFC patch set[1] much of the discussion of supporting RDMA with
-> > > > > FS DAX has been around the semantics of the lease mechanism.[2]  Within that
-> > > > > thread it was suggested I try and write some documentation and/or tests for the
-> > > > > new mechanism being proposed.  I have created a foundation to test lease
-> > > > > functionality within xfstests.[3] This should be close to being accepted.
-> > > > > Before writing additional lease tests, or changing lots of kernel code, this
-> > > > > email presents documentation for the new proposed "layout lease" semantic.
-> > > > > 
-> > > > > At Linux Plumbers[4] just over a week ago, I presented the current state of the
-> > > > > patch set and the outstanding issues.  Based on the discussion there, well as
-> > > > > follow up emails, I propose the following addition to the fcntl() man page.
-> > > > > 
-> > > > > Thank you,
-> > > > > Ira
-> > > > > 
-> > > > > [1] https://lkml.org/lkml/2019/8/9/1043
-> > > > > [2] https://lkml.org/lkml/2019/8/9/1062
-> > > > > [3] https://www.spinics.net/lists/fstests/msg12620.html
-> > > > > [4] https://linuxplumbersconf.org/event/4/contributions/368/
-> > > > > 
-> > > > > 
-> > > > 
-> > > > Thank you so much for doing this, Ira. This allows us to debate the
-> > > > user-visible behavior semantics without getting bogged down in the
-> > > > implementation details. More comments below:
-> > > 
-> > > Thanks.  Sorry for the delay in response.  Turns out this email was in my
-> > > spam...  :-/  I'll need to work out why.
-> > > 
-> > > > > <fcntl man page addition>
-> > > > > Layout Leases
-> > > > > -------------
-> > > > > 
-> > > > > Layout (F_LAYOUT) leases are special leases which can be used to control and/or
-> > > > > be informed about the manipulation of the underlying layout of a file.
-> > > > > 
-> > > > > A layout is defined as the logical file block -> physical file block mapping
-> > > > > including the file size and sharing of physical blocks among files.  Note that
-> > > > > the unwritten state of a block is not considered part of file layout.
-> > > > > 
-> > > > > **Read layout lease F_RDLCK | F_LAYOUT**
-> > > > > 
-> > > > > Read layout leases can be used to be informed of layout changes by the
-> > > > > system or other users.  This lease is similar to the standard read (F_RDLCK)
-> > > > > lease in that any attempt to change the _layout_ of the file will be reported to
-> > > > > the process through the lease break process.  But this lease is different
-> > > > > because the file can be opened for write and data can be read and/or written to
-> > > > > the file as long as the underlying layout of the file does not change.
-> > > > > Therefore, the lease is not broken if the file is simply open for write, but
-> > > > > _may_ be broken if an operation such as, truncate(), fallocate() or write()
-> > > > > results in changing the underlying layout.
-> > > > > 
-> > > > > **Write layout lease (F_WRLCK | F_LAYOUT)**
-> > > > > 
-> > > > > Write Layout leases can be used to break read layout leases to indicate that
-> > > > > the process intends to change the underlying layout lease of the file.
-> > > > > 
-> > > > > A process which has taken a write layout lease has exclusive ownership of the
-> > > > > file layout and can modify that layout as long as the lease is held.
-> > > > > Operations which change the layout are allowed by that process.  But operations
-> > > > > from other file descriptors which attempt to change the layout will break the
-> > > > > lease through the standard lease break process.  The F_LAYOUT flag is used to
-> > > > > indicate a difference between a regular F_WRLCK and F_WRLCK with F_LAYOUT.  In
-> > > > > the F_LAYOUT case opens for write do not break the lease.  But some operations,
-> > > > > if they change the underlying layout, may.
-> > > > > 
-> > > > > The distinction between read layout leases and write layout leases is that
-> > > > > write layout leases can change the layout without breaking the lease within the
-> > > > > owning process.  This is useful to guarantee a layout prior to specifying the
-> > > > > unbreakable flag described below.
-> > > > > 
-> > > > > 
-> > > > 
-> > > > The above sounds totally reasonable. You're essentially exposing the
-> > > > behavior of nfsd's layout leases to userland. To be clear, will F_LAYOUT
-> > > > leases work the same way as "normal" leases, wrt signals and timeouts?
-> > > 
-> > > That was my intention, yes.
-> > > 
-> > > > I do wonder if we're better off not trying to "or" in flags for this,
-> > > > and instead have a separate set of commands (maybe F_RDLAYOUT,
-> > > > F_WRLAYOUT, F_UNLAYOUT). Maybe I'm just bikeshedding though -- I don't
-> > > > feel terribly strongly about it.
-> > > 
-> > > I'm leaning that was as well.  To make these even more distinct from
-> > > F_SETLEASE.
-> > > 
-> > > > Also, at least in NFSv4, layouts are handed out for a particular byte
-> > > > range in a file. Should we consider doing this with an API that allows
-> > > > for that in the future? Is this something that would be desirable for
-> > > > your RDMA+DAX use-cases?
-> > > 
-> > > I don't see this.  I've thought it would be a nice thing to have but I don't
-> > > know of any hard use case.  But first I'd like to understand how this works for
-> > > NFS.
-> > > 
-> > 
-> > The NFSv4.1 spec allows the client to request the layouts for a
-> > particular range in the file:
-> > 
-> > https://tools.ietf.org/html/rfc5661#page-538
-> > 
-> > The knfsd only hands out whole-file layouts at present. Eventually we
-> > may want to make better use of segmented layouts, at which point we'd
-> > need something like a byte-range lease.
-> > 
-> > > > We could add a new F_SETLEASE variant that takes a struct with a byte
-> > > > range (something like struct flock).
-> > > 
-> > > I think this would be another reason to introduce F_[RD|WR|UN]LAYOUT as a
-> > > command.  Perhaps supporting smaller byte ranges could be added later?
-> > > 
-> > 
-> > I'd definitely not multiplex this over F_SETLEASE. An F_SETLAYOUT cmd
-> > would probably be sufficient, and maybe just reuse
-> > F_RDLCK/F_WRLCK/F_UNLCK for the iomode?
-> > 
-> > For the byte ranges, the catch there is that extending the userland
-> > interface for that later will be difficult.
-> 
-> Why would it be difficult?
-> 
+On Wed, Oct 2, 2019 at 5:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> >
+> > Then use the C preprocessor to force the inlining.  I'm sorry it's not
+> > as pretty as static inline functions.
+>
+> Which makes us lose the baby^H^H^H^Htype checking performed
+> on function parameters, requiring to add more ugly checks.
 
-Legacy userland code that wanted to use byte range enabled layouts would
-have to be rebuilt to take advantage of them. If we require a range from
-the get-go, then they will get the benefit of them once they're
-available.
- 
-> > What I'd probably suggest
-> > (and what would jive with the way pNFS works) would be to go ahead and
-> > add an offset and length to the arguments and result (maybe also
-> > whence?).
-> 
-> Why not add new commands with range arguments later if it turns out to
-> be necessary?
+I'm 100% agreed on this.
 
-We could do that. It'd be a little ugly, IMO, simply because then we'd
-end up with two interfaces that do almost the exact same thing.
+If the inline change is being pushed by people who say "you should
+have used macros instead if you wanted inlining", then I will just
+revert that stupid commit that is causing problems.
 
-Should byte-range layouts at that point conflict with non-byte range
-layouts, or should they be in different "spaces" (a'la POSIX and flock
-locks)? When it's all one interface, those sorts of questions sort of
-answer themselves. When they aren't we'll have to document them clearly
-and I think the result will be more confusing for userland programmers.
+No, the preprocessor is not the answer.
 
-If you felt strongly about leaving those out for now, you could just do
-something similar to what Aleksa is planning for openat2 -- have a
-struct pointer and length as arguments for this cmd, and only have a
-single iomode member in there for now.
+That said, code that relies on inlining for _correctness_ should use
+"__always_inline" and possibly even have a comment about why.
 
-The kernel would have to know how to deal with "legacy" and byte-range-
-enabled variants if we ever extend it, but that's not too hard to
-handle.
--- 
-Jeff Layton <jlayton@kernel.org>
+But I am considering just undoing commit 9012d011660e ("compiler:
+allow all arches to enable CONFIG_OPTIMIZE_INLINING") entirely. The
+advantages are questionable, and when the advantages are balanced
+against actual regressions and the arguments are "use macros", that
+just shows how badly thought out this was.
 
+                Linus
