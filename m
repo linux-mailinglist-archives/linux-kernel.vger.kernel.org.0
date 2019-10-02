@@ -2,180 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8912C4B78
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 12:33:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C69D0C4B80
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 12:35:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbfJBKdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 06:33:23 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35179 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfJBKdX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 06:33:23 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y21so6418612wmi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 03:33:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wUZHS/G+/EfCLIw5f+SykywrhoRFuqH9n5f7oduoqzw=;
-        b=aPJlKuY+eRR4q5p4jV4qCpE0b1aKVkj4+PZrZUlv5v56zXOetpNPtg02as20aFegDv
-         7TeZz7ikn+LWA9jblA9+VZiAVm1XySTwn2milAAYnC2Rzv7xJY//GDYipTlAoQ3KMQ4R
-         CwpYuupqRmGdKbHBvIqoOJDP6OlRiysRgy9YYBruBRJvud2PD7QBdtZ7f2ujAweX5ku2
-         ssysEGjpCUtCqvPzBNgRpqRR3fDgveWyhWxUpQ3dreoWvdrLvl7FOJeJIR3Wx/Q+SQnc
-         IB1CtCW//A0NqLofsKyy8Il33UA302qkDIijV1Rcz7nCZXrsqmtcBOv+PpAGlO4pRa2N
-         zHuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wUZHS/G+/EfCLIw5f+SykywrhoRFuqH9n5f7oduoqzw=;
-        b=BziXVbwHSTDdgqRlP0d/sXTeT8F4Jf3YaxTHmnL5him0YcywfPRiL7hEJazp9bwGZs
-         six+s5BC+ACg5KaY4Y585HwoWbqaDwO3XBws3z0fc1EVkk3q3ldQdnEdTx60mB+8eNYz
-         A2Rfwb0CME2v8anF4EpbmkwKDe4UpHWVmWbfMI0rmaYWYLB2ija60uIty/vsKtUWvkR5
-         l1YZZhOVVOr1oj4gxLHr888qO/TAUH/XPFDzmKRsPhttXviFfeAT7WnmxkpNAi3VbWh8
-         JYr5YeXjRkYSdtFWfvX4uf8024qNaOmWXU+FnqDCl7uVDnIa4P2dKEgbfs6dySzXAGls
-         NLAg==
-X-Gm-Message-State: APjAAAWAuGlUHH546YTkqO9dvsaH8irGbGDYWZMJKP3wE6RUxT4J2FhZ
-        X93AtqNyhXUoBkNTFBHynDdP2Q==
-X-Google-Smtp-Source: APXvYqxcIUrjme+4/WrQIVIVSQ0R4d5tae6DJjxe9DjuXTy5Z9r8cXcOD8GRy4ZpWXRQoBkLG0CdNQ==
-X-Received: by 2002:a1c:2bc7:: with SMTP id r190mr2439604wmr.143.1570012400648;
-        Wed, 02 Oct 2019 03:33:20 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id l10sm26838984wrh.20.2019.10.02.03.33.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 03:33:20 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 11:33:18 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 7/7] backlight: gpio: pull
- gpio_backlight_initial_power_state() into probe
-Message-ID: <20191002103318.6owxberhml6mbtxm@holly.lan>
-References: <20191001125837.4472-1-brgl@bgdev.pl>
- <20191001125837.4472-8-brgl@bgdev.pl>
+        id S1728025AbfJBKfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 06:35:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60374 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725999AbfJBKfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 06:35:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 33B85B028;
+        Wed,  2 Oct 2019 10:35:15 +0000 (UTC)
+Date:   Wed, 2 Oct 2019 12:34:22 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
+Message-ID: <20191002103422.GJ15624@dhcp22.suse.cz>
+References: <20190909193020.GD2063@dhcp22.suse.cz>
+ <20190925070817.GH23050@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1909261149380.39830@chino.kir.corp.google.com>
+ <20190927074803.GB26848@dhcp22.suse.cz>
+ <CAHk-=wgba5zOJtGBFCBP3Oc1m4ma+AR+80s=hy=BbvNr3GqEmA@mail.gmail.com>
+ <20190930112817.GC15942@dhcp22.suse.cz>
+ <20191001054343.GA15624@dhcp22.suse.cz>
+ <fac13297-424f-33b0-e01d-d72b949a73fe@suse.cz>
+ <alpine.DEB.2.21.1910011318050.38265@chino.kir.corp.google.com>
+ <a5abc877-26de-ed3c-eb33-71474301c852@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191001125837.4472-8-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <a5abc877-26de-ed3c-eb33-71474301c852@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 02:58:37PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue 01-10-19 23:54:14, Vlastimil Babka wrote:
+> On 10/1/19 10:31 PM, David Rientjes wrote:
+[...]
+> > If 
+> > hugetlb wants to stress this to the fullest extent possible, it already 
+> > appropriately uses __GFP_RETRY_MAYFAIL.
 > 
-> The probe function in the gpio-backlight driver is quite short. If we
-> pull gpio_backlight_initial_power_state() into probe we can drop two
-> more fields from struct gpio_backlight and shrink the driver code.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/video/backlight/gpio_backlight.c | 36 ++++++++----------------
->  1 file changed, 12 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> index 6247687b6330..37ec184f0c5c 100644
-> --- a/drivers/video/backlight/gpio_backlight.c
-> +++ b/drivers/video/backlight/gpio_backlight.c
-> @@ -17,11 +17,8 @@
->  #include <linux/slab.h>
->  
->  struct gpio_backlight {
-> -	struct device *dev;
->  	struct device *fbdev;
-> -
->  	struct gpio_desc *gpiod;
-> -	int def_value;
->  };
->  
->  static int gpio_backlight_update_status(struct backlight_device *bl)
-> @@ -53,41 +50,24 @@ static const struct backlight_ops gpio_backlight_ops = {
->  	.check_fb	= gpio_backlight_check_fb,
->  };
->  
-> -static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
+> Which doesn't work anymore right now, and should again after this patch.
 
-I'm inclined to view deleting this function as removing a comment (e.g.
-the function name helps us to read the code)!
+I didn't get to fully digest the patch Vlastimil is proposing. (Ab)using
+__GFP_NORETRY is quite subtle but it is already in place with some
+explanation and a reference to THPs. So while I am not really happy it
+is at least something you can reason about.
 
-Removing the variables from the context structure is good but why not
-just pass them to the function and let the compiler decided whether or
-not to inline.
+b39d0ee2632d ("mm, page_alloc: avoid expensive reclaim when compaction
+may not succeed") on the other hand has added a much more wider change
+which has clearly broken hugetlb and any __GFP_RETRY_MAYFAIL user of
+pageblock_order sized allocations. And that is much worse and something
+I was pointing at during the review and those concerns were never really
+addressed before merging.
 
-
-Daniel.
-
-
-> -{
-> -	struct device_node *node = gbl->dev->of_node;
-> -
-> -	/* Not booted with device tree or no phandle link to the node */
-> -	if (!node || !node->phandle)
-> -		return gbl->def_value ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN;
-> -
-> -	/* if the enable GPIO is disabled, do not enable the backlight */
-> -	if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
-> -		return FB_BLANK_POWERDOWN;
-> -
-> -	return FB_BLANK_UNBLANK;
-> -}
-> -
-> -
->  static int gpio_backlight_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
-> +	struct device_node *of_node = dev->of_node;
->  	struct backlight_properties props;
->  	struct backlight_device *bl;
->  	struct gpio_backlight *gbl;
-> -	int ret;
-> +	int ret, def_value;
->  
->  	gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
->  	if (gbl == NULL)
->  		return -ENOMEM;
->  
-> -	gbl->dev = dev;
-> -
->  	if (pdata)
->  		gbl->fbdev = pdata->fbdev;
->  
-> -	gbl->def_value = device_property_read_bool(dev, "default-on");
-> +	def_value = device_property_read_bool(dev, "default-on");
->  
->  	gbl->gpiod = devm_gpiod_get(dev, NULL, GPIOD_ASIS);
->  	if (IS_ERR(gbl->gpiod)) {
-> @@ -109,7 +89,15 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  		return PTR_ERR(bl);
->  	}
->  
-> -	bl->props.power = gpio_backlight_initial_power_state(gbl);
-> +	/* Not booted with device tree or no phandle link to the node */
-> +	if (!of_node || !of_node->phandle)
-> +		bl->props.power = def_value ? FB_BLANK_UNBLANK
-> +					    : FB_BLANK_POWERDOWN;
-> +	else if (gpiod_get_value_cansleep(gbl->gpiod) == 0)
-> +		bl->props.power = FB_BLANK_POWERDOWN;
-> +	else
-> +		bl->props.power = FB_BLANK_UNBLANK;
-> +
->  	bl->props.brightness = 1;
->  
->  	backlight_update_status(bl);
-> -- 
-> 2.23.0
-> 
+In any case this is something to be fixed ASAP. Do you have any better
+proposa? I do not assume you would be proposing yet another revert.
+-- 
+Michal Hocko
+SUSE Labs
