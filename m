@@ -2,164 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1082C8A20
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 15:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 669D9C8A2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 15:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfJBNsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 09:48:00 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:54417 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728031AbfJBNr6 (ORCPT
+        id S1727708AbfJBNt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 09:49:28 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:32874 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfJBNt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 09:47:58 -0400
-X-UUID: a9454dd52135451797b80bf2ba97a4f6-20191002
-X-UUID: a9454dd52135451797b80bf2ba97a4f6-20191002
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <neal.liu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 727753782; Wed, 02 Oct 2019 21:47:52 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 2 Oct 2019 21:47:48 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Oct 2019 21:47:48 +0800
-Message-ID: <1570024070.4002.1.camel@mtkswgap22>
-Subject: Re: [PATCH v4 2/3] dt-bindings: rng: add bindings for MediaTek
- ARMv8 SoCs
-From:   Neal Liu <neal.liu@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Crystal Guo =?UTF-8?Q?=28=E9=83=AD=E6=99=B6=29?= 
-        <Crystal.Guo@mediatek.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Neal Liu <neal.liu@mediatek.com>
-Date:   Wed, 2 Oct 2019 21:47:50 +0800
-In-Reply-To: <1568771054.21700.7.camel@mtkswgap22>
-References: <1561361052-13072-1-git-send-email-neal.liu@mediatek.com>
-         <1561361052-13072-3-git-send-email-neal.liu@mediatek.com>
-         <20190722171320.GA9806@bogus> <1563848465.31451.4.camel@mtkswgap22>
-         <CAL_Jsq+SRhd=-5O2G_CMfJX9Z188kvA05MQOXaU1J8iExwUixQ@mail.gmail.com>
-         <1568771054.21700.7.camel@mtkswgap22>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 2 Oct 2019 09:49:27 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92DnPaO033215;
+        Wed, 2 Oct 2019 08:49:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570024165;
+        bh=m0eTUP8n14qmADnaaZUKpxX5BDyr0r+BD0dj4+lLke8=;
+        h=From:To:CC:Subject:Date;
+        b=JKTt5Ovj8gUBV5ttFNHCY+271Y/ryyXUusikacAsAahxc9rrYUkMy+t7ykfbUFlpa
+         TQyG5cIZ5oLxvkJ5fGCCOtGddqmkV+rrNCTMX5xZ4ymLwcWDelxLJHdRFUjvZuR6dt
+         RbnAySfhhmdc92O516vq8FHQLDOX2x4vYJR8cXfk=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x92DnPob082388
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 2 Oct 2019 08:49:25 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
+ 2019 08:49:14 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 2 Oct 2019 08:49:14 -0500
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92DnOm8035733;
+        Wed, 2 Oct 2019 08:49:24 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v2 0/3] media: ov5640: updates
+Date:   Wed, 2 Oct 2019 08:51:31 -0500
+Message-ID: <20191002135134.12273-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Rob,
+This patch series is a collection of patches we have been carrying for a
+while.
 
-Just a gentle ping.
+First, it adds support for PIXEL_RATE control which is used by some
+CSI2 receiver driver to properly set-up their DPHY.
 
-Neal
+Then we fix an issue related to having extra sensor enable/disable in
+the register array for the 1920x1080 mode.
 
-On Wed, 2019-09-18 at 09:44 +0800, Neal Liu wrote:
-> On Tue, 2019-07-23 at 22:35 +0800, Rob Herring wrote:
-> > On Mon, Jul 22, 2019 at 8:21 PM Neal Liu <neal.liu@mediatek.com> wrote:
-> > >
-> > 
-> > Please don't top post to lists.
-> > 
-> > > Dear Rob,
-> > >         You can check my driver for detail:
-> > >         http://patchwork.kernel.org/patch/11012475/ or patchset 3/3
-> > 
-> > I could, or you could just answer my question.
-> > 
-> > >
-> > >         This driver is registered as hardware random number generator, and
-> > > combines with rng-core.
-> > >         We want to add one rng hw based on the dts. Is this proper or do you
-> > > have other suggestion to meet this requirement?
-> > 
-> > It depends. There doesn't appear to be any resource configuration, so
-> > why does it need to be in DT. DT is not the only way instantiate
-> > drivers.
-> > 
-> > Rob
-> > 
-> 
-> We would like to consult more about this patch.
-> We cannot figure out what method should be used instead of DT.
-> The interface to access firmware is "smc" and firmware function only
-> exists on certain platforms.
-> Some DT has similar way, like:
-> http://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts#L470
-> 
-> 	firmware {
-> 		optee {
-> 			compatible = "linaro,optee-tz";
-> 			method = "smc";
-> 		};
-> 	};
-> 
-> Is there any way to instantiate driver on certain platforms without DT?
-> Could you give us some examples?
-> Thanks
-> 
-> > >
-> > >         Thanks
-> > >
-> > >
-> > > On Tue, 2019-07-23 at 01:13 +0800, Rob Herring wrote:
-> > > > On Mon, Jun 24, 2019 at 03:24:11PM +0800, Neal Liu wrote:
-> > > > > Document the binding used by the MediaTek ARMv8 SoCs random
-> > > > > number generator with TrustZone enabled.
-> > > > >
-> > > > > Signed-off-by: Neal Liu <neal.liu@mediatek.com>
-> > > > > ---
-> > > > >  .../devicetree/bindings/rng/mtk-sec-rng.txt        |   10 ++++++++++
-> > > > >  1 file changed, 10 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/rng/mtk-sec-rng.txt b/Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
-> > > > > new file mode 100644
-> > > > > index 0000000..c04ce15
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
-> > > > > @@ -0,0 +1,10 @@
-> > > > > +MediaTek random number generator with TrustZone enabled
-> > > > > +
-> > > > > +Required properties:
-> > > > > +- compatible : Should be "mediatek,mtk-sec-rng"
-> > > >
-> > > > What's the interface to access this?
-> > > >
-> > > > A node with a 'compatible' and nothing else is a sign of something that
-> > > > a parent device should instantiate and doesn't need to be in DT. IOW,
-> > > > what do complete bindings for firmware functions look like?
-> > > >
-> > > > > +
-> > > > > +Example:
-> > > > > +
-> > > > > +hwrng: hwrng {
-> > > > > +   compatible = "mediatek,mtk-sec-rng";
-> > > > > +}
-> > > > > --
-> > > > > 1.7.9.5
-> > > > >
-> > > >
-> > > > _______________________________________________
-> > > > Linux-mediatek mailing list
-> > > > Linux-mediatek@lists.infradead.org
-> > > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> > >
-> > >
-> 
+Finally we restrict the largest resolution which should only be
+available at the lowest FPS.
 
+Changes since v1:
+- Addressed comment from Sakari.
+  added a function to calculate the pixel rate and remove the need to
+  cache its value
+
+Benoit Parrot (3):
+  media: ov5640: add PIXEL_RATE control
+  media: ov5640: Fix 1920x1080 mode to remove extra enable/disable
+  media: ov5640: Make 2592x1944 mode only available at 15 fps
+
+ drivers/media/i2c/ov5640.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
 
