@@ -2,73 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 016A6C47B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 08:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6141AC47A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 08:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfJBGSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 02:18:33 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:52231 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfJBGS1 (ORCPT
+        id S1727377AbfJBGR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 02:17:28 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:48694 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727042AbfJBGR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 02:18:27 -0400
-Received: from twspam01.aspeedtech.com (localhost [127.0.0.2] (may be forged))
-        by twspam01.aspeedtech.com with ESMTP id x925vE0K005824
-        for <linux-kernel@vger.kernel.org>; Wed, 2 Oct 2019 13:57:14 +0800 (GMT-8)
-        (envelope-from chiawei_wang@aspeedtech.com)
-Received: from mail.aspeedtech.com (twmbx02.aspeed.com [192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id x925uHxR005679;
-        Wed, 2 Oct 2019 13:56:17 +0800 (GMT-8)
-        (envelope-from chiawei_wang@aspeedtech.com)
-Received: from localhost.localdomain (192.168.100.253) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.620.29; Wed, 2 Oct
- 2019 14:12:13 +0800
-From:   "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>
-To:     <jae.hyun.yoo@linux.intel.com>
-CC:     <jason.m.bills@linux.intel.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <joel@jms.id.au>, <andrew@aj.id.au>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <chiawei_wang@aspeedtech.com>,
-        <ryan_chen@aspeedtech.com>
-Subject: [PATCH 2/2] dt-bindings: peci: aspeed: Add AST2600 compatible
-Date:   Wed, 2 Oct 2019 14:12:00 +0800
-Message-ID: <20191002061200.29888-3-chiawei_wang@aspeedtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191002061200.29888-1-chiawei_wang@aspeedtech.com>
-References: <20191002061200.29888-1-chiawei_wang@aspeedtech.com>
+        Wed, 2 Oct 2019 02:17:27 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x9260iVl065604;
+        Wed, 2 Oct 2019 14:00:44 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 2 Oct 2019
+ 14:16:11 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     <alankao@andestech.com>, <paul.walmsley@sifive.com>,
+        <palmer@sifive.com>, <aou@eecs.berkeley.edu>,
+        <aryabinin@virtuozzo.com>, <glider@google.com>,
+        <dvyukov@google.com>, <alexios.zavras@intel.com>,
+        <allison@lohutok.net>, <Anup.Patel@wdc.com>, <tglx@linutronix.de>,
+        <gregkh@linuxfoundation.org>, <atish.patra@wdc.com>,
+        <kstewart@linuxfoundation.org>, <linux-riscv@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kasan-dev@googlegroups.com>,
+        <linux-mm@kvack.org>
+CC:     Nick Hu <nickhu@andestech.com>
+Subject: [PATCH v2 0/2] KASAN support for RISC-V
+Date:   Wed, 2 Oct 2019 14:16:03 +0800
+Message-ID: <cover.1569995450.git.nickhu@andestech.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [192.168.100.253]
-X-ClientProxiedBy: TWMBX01.aspeed.com (192.168.0.23) To TWMBX02.aspeed.com
- (192.168.0.24)
+X-Originating-IP: [10.0.15.65]
 X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com x925uHxR005679
+X-MAIL: ATCSQR.andestech.com x9260iVl065604
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the AST2600 PECI controller compatible string.
+KASAN is an important runtime memory debugging feature in linux kernel
+which can detect use-after-free and out-of- bounds problems.
 
-Signed-off-by: Chia-Wei, Wang <chiawei_wang@aspeedtech.com>
----
- Documentation/devicetree/bindings/peci/peci-aspeed.txt | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+  - Remove the porting of memmove and exclude the check instead.
+  - Fix some code noted by Christoph Hellwig
 
-diff --git a/Documentation/devicetree/bindings/peci/peci-aspeed.txt b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
-index cdca73a3b7d8..cddd2d2aa58f 100644
---- a/Documentation/devicetree/bindings/peci/peci-aspeed.txt
-+++ b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
-@@ -4,6 +4,7 @@ Required properties:
- - compatible        : Should be one of:
- 			"aspeed,ast2400-peci"
- 			"aspeed,ast2500-peci"
-+			"aspeed,ast2600-peci"
- - reg               : Should contain PECI controller registers location and
- 		      length.
- - #address-cells    : Should be <1> required to define a client address.
+Nick Hu (2):
+  kasan: Archs don't check memmove if not support it.
+  riscv: Add KASAN support
+
+ arch/riscv/Kconfig                  |   1 +
+ arch/riscv/include/asm/kasan.h      |  27 ++++++++
+ arch/riscv/include/asm/pgtable-64.h |   5 ++
+ arch/riscv/include/asm/string.h     |   9 +++
+ arch/riscv/kernel/head.S            |   3 +
+ arch/riscv/kernel/riscv_ksyms.c     |   2 +
+ arch/riscv/kernel/setup.c           |   5 ++
+ arch/riscv/kernel/vmlinux.lds.S     |   1 +
+ arch/riscv/lib/memcpy.S             |   5 +-
+ arch/riscv/lib/memset.S             |   5 +-
+ arch/riscv/mm/Makefile              |   6 ++
+ arch/riscv/mm/kasan_init.c          | 104 ++++++++++++++++++++++++++++
+ mm/kasan/common.c                   |   2 +
+ 13 files changed, 171 insertions(+), 4 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kasan.h
+ create mode 100644 arch/riscv/mm/kasan_init.c
+
 -- 
-2.17.1
+2.17.0
 
