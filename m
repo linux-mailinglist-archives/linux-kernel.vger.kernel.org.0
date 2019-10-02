@@ -2,91 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FFFC9102
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 20:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FEC0C910D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 20:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbfJBSl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 14:41:56 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46252 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfJBSl4 (ORCPT
+        id S1728981AbfJBSpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 14:45:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55412 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbfJBSpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 14:41:56 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92Ifprj046365;
-        Wed, 2 Oct 2019 13:41:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570041711;
-        bh=+spmMCalRYp1KmZp1TuVW9ikVfMlhtrnfO2BlXZmNic=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=sBQB5FHAnbY4HxsNIIJNE8aBVT9EGOv1BA9RHeZGtr2S1TaSeglDO+urtugUajqbX
-         aD59zBde8G7x3HY1rjNTeBj3xjUBto/70rsw8/0H/HQcVGgikhi0xGYrIAr+QngKvl
-         YqKdhp7uBUJzg7+QBymimWuSB8QD22M1Ip6g85sI=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x92Ifpp9107814
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Oct 2019 13:41:51 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 13:41:40 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 13:41:40 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92IfoM3129258;
-        Wed, 2 Oct 2019 13:41:50 -0500
-Subject: Re: [RFC PATCH] leds: core: Fix LED_COLOR_MAX_ID
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191002163400.25317-1-dmurphy@ti.com>
- <20191002183603.GC13492@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <fae233c1-7c5b-7468-33c1-5309c036fd66@ti.com>
-Date:   Wed, 2 Oct 2019 13:42:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 2 Oct 2019 14:45:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5+G2tHFgFoiZj/Z+Rg08oIFehuXIST+miBzS2rXIaJs=; b=a3HEDIFJaMWYyFaI2rSAB3WF2
+        2vwfgQamUoLTbyC9bY81Bv/L4/QQVTqQDEU5vhqAC+zWJC1LF4qB6KycP5CULppF+SX5w5kbh5cRU
+        R3fJ2KU1QwaCpqTEgcKdizEbN+fMKHYj9qdrvPxE7uD9k2t7XYpX7x/6HqVWNWfjNgQ6e7owr00VL
+        N2Sh53ZySmhxBroVSescCXjMPjPAmoXgnDEjBbTTxw30PoybKtynzABKoA5b2aXkrDxec35Zt1Dsa
+        3b4QOKY0vpoefvc80/iRJ4qvv4XM+r64Gr0vmJPW4FFURucUPk19iIbF07cSenzkvfA6vjNFzw3ow
+        YOfuxJkeg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iFjcU-00015N-Ml; Wed, 02 Oct 2019 18:45:02 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BE50D9802BF; Wed,  2 Oct 2019 20:45:00 +0200 (CEST)
+Date:   Wed, 2 Oct 2019 20:45:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Giovanni Gherdovich <ggherdovich@suse.cz>
+Cc:     Quentin Perret <qperret@qperret.net>,
+        srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@suse.de, lenb@kernel.org, rjw@rjwysocki.net,
+        x86@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
+        matt@codeblueprint.co.uk, viresh.kumar@linaro.org,
+        juri.lelli@redhat.com, pjt@google.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com
+Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
+Message-ID: <20191002184500.GF4643@worktop.programming.kicks-ass.net>
+References: <20190909024216.5942-1-ggherdovich@suse.cz>
+ <20190909024216.5942-2-ggherdovich@suse.cz>
+ <20190914105708.GA12877@qperret.net>
+ <1568730466.3329.4.camel@suse.cz>
+ <20190924140332.GL2369@hirez.programming.kicks-ass.net>
+ <20190924160022.GB2386@hirez.programming.kicks-ass.net>
+ <1570019274.22393.2.camel@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20191002183603.GC13492@amd>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570019274.22393.2.camel@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Wed, Oct 02, 2019 at 02:27:54PM +0200, Giovanni Gherdovich wrote:
+> On Tue, 2019-09-24 at 18:00 +0200, Peter Zijlstra wrote:
+> > On Tue, Sep 24, 2019 at 04:03:32PM +0200, Peter Zijlstra wrote:
+> > 
+> > > > I'll check what's the cost of static_cpu_has() and if it's non-negligible I'll
+> > > > do what you suggest (x86-specific version of arch_scale_freq_invariant().
+> > > 
+> > > static_cpu_has() is an alternative and ends up being a static branch
+> > > (similar to static_key) once the alternative patching runs.
+> > 
+> > That said; I think you want a static key anyway, because if we can't
+> > tell the max_freq we don't want to use the invariant stuff.
+> > 
+> > Something a little like so on top perhaps.
+> > 
+> > Also, the below fixes that silly tick_disable stuff.
+> 
+> Thanks for this patch, I'll add this change in v2.
+> 
+> Can you elaborate on what you don't like in the tick_disable mechanism?
 
-On 10/2/19 1:36 PM, Pavel Machek wrote:
-> On Wed 2019-10-02 11:34:00, Dan Murphy wrote:
->> The LED_COLOR_MAX_ID is incorrect.  THe MAX_ID should
->> be the last COLOR_ID in the list.  If an array was allocate
->> with MAX_ID the allocation would be correct but the meaning
->> is wrong.
->>
->> So for array allocation the code should use LED_NUM_COLOR_IDS
->> which will allocate MAX_ID + 1.  Whent the code needs to validate
->> that the color ID is not out of bounds then the code should use
->> LED_COLOR_MAX_ID.
-> Renaming original define might have been okay. Having two defines is
-> not. I'd say we can keep it as is...
+Mostly because I dislike intel_pstate active mode a lot, but also
+because it makes PELT behave differently between pstate and !pstate.
 
-OK.  It was just not logical that MAX_ID will always be 1 more then the 
-actual MAX_ID.
+> > +static void init_scale_freq(void *arg)
+> >  {
+> >  	u64 aperf, mperf;
+> >  
+> > +	rdmsrl(MSR_IA32_APERF, aperf);
+> > +	rdmsrl(MSR_IA32_MPERF, mperf);
+> > +
+> > +	this_cpu_write(arch_prev_aperf, aperf);
+> > +	this_cpu_write(arch_prev_mperf, mperf);
+> > +}
+> > +
 
-So every ID boundary check will need to be ">=" as opposed to ">" which 
-means we have to take care in reviews to make sure this is what is intended.
+> > @@ -1940,5 +1949,6 @@ void x86_arch_scale_freq_tick_enable(voi
+> >  
+> >  void x86_arch_scale_freq_tick_disable(void)
+> >  {
+> > +	on_each_cpu(init_scale_freq, NULL, 1);
+> >  	tick_disable = true;
+> 
+> I don't see why the call init_scale_freq() here is needed; why would I care of
+> what's in arch_prev_[am]perf at this point. arch_scale_freq_tick() will see
+> that tick_disable == true and exit early before reading arch_prev_[am]perf.
 
-But it was just a RFC so I am not pushing this fix.  It would mean I 
-would have to re-touch the MC framework patches.
-
-Dan
-
-
->
-> 								Pavel
-> 								
+You're right, we should reset the prev values on enable. Otherwise the
+first tick after enable will see 'weird' values.
