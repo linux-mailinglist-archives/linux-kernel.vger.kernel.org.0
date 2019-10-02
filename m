@@ -2,95 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93BC0C9042
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CFA4C904B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbfJBRwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 13:52:50 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45062 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbfJBRwt (ORCPT
+        id S1728592AbfJBR4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:56:24 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41208 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfJBR4X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:52:49 -0400
-Received: by mail-lf1-f67.google.com with SMTP id r134so13369259lff.12
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0VOcSracTGyf4mK2cc8NxpSFCIaTLGVQfCgFGzC2+os=;
-        b=Da0ulCjd0PWlr56Q/iV7hdkQdtwUT8ixbTGX4LSwlckf+LITNN+ccC7tnrfWsIqQ4r
-         JnegAs8ZTFN9xZOuObzFgcKxcd186SCrtXmPd6NGd53CGHLFSbmJJuT9KnKj5cBidD3J
-         5wEL+dn/3c15t74OVss9Lc34yPo5x+E/J4t6Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0VOcSracTGyf4mK2cc8NxpSFCIaTLGVQfCgFGzC2+os=;
-        b=GCrDONg4BUCyrbD5xAX7DHnHaeiIcVTdl0NVFIqe2WOrCnr3KeK3AY0fNb+ZfgOilU
-         hDb4oagnllhwVkwKwBPTOW/ArPqXrdjPeL9Li3zA9e1nc3XGUQ9TzSrExVoQhL85Smj1
-         uY9j/Lvx5SyDTJOBFlzE6BXV2O6LPv+LIiSw1Fodq7pCr3nwVyy6IS2DY0SDRhZzrCbw
-         pQHcO0kEKD1gCMWGzd6MvoE/YRKMPd0UAL0ACXeHY+IBD0Z5bVhnQkFbXs/vkNTp2KJX
-         xRy+KiNAOjzAEqv2Wy9yosjy/283HJELgxZc3+awF6dbjCJIPC6J1oV9mOlCQyhsbe6p
-         Jj4g==
-X-Gm-Message-State: APjAAAXNx29wZr5ReCEMC2gE9Y+GJ9AunxeE8T1zjPpxBoTJn/eSUT2Z
-        vXzEPT8giSzr4wrU1AfZ78FrPX9BYi4=
-X-Google-Smtp-Source: APXvYqxbsmygGqfqY+yp8zJ/I07y7HUzxmlL34sTtJ/UEZ8Vw4b/F6feanj9/+DN7zS9LGqe11Ik3g==
-X-Received: by 2002:a19:ca07:: with SMTP id a7mr3337630lfg.181.1570038767091;
-        Wed, 02 Oct 2019 10:52:47 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id c69sm25722ljf.32.2019.10.02.10.52.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2019 10:52:46 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id f5so18080621ljg.8
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:52:45 -0700 (PDT)
-X-Received: by 2002:a2e:551:: with SMTP id 78mr3363688ljf.48.1570038765543;
- Wed, 02 Oct 2019 10:52:45 -0700 (PDT)
+        Wed, 2 Oct 2019 13:56:23 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92HuHNn033885;
+        Wed, 2 Oct 2019 12:56:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570038977;
+        bh=WWqddxMTH1VbvnJRV1r6UtNPgtyQrYro1vwSuxEhtvw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=CbXROert5YQ7Gi+dUMSJa4GxrfgszIXN4Vty4/JL3VzCUa3Fm+qBBET9wYkFxIXVR
+         vifqiCbGMuNbKEtXpYfKa4t/qiSwc6kWt6KAiTIK6WnU5f+DiyfBT+IyQLOOkpUxT9
+         GRXKkC5IlHaRccmWK1oHjj6P1tboZzaCuoQ+WzRg=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92HuHYV006863;
+        Wed, 2 Oct 2019 12:56:17 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
+ 2019 12:56:06 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 2 Oct 2019 12:56:06 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92HuG8B023172;
+        Wed, 2 Oct 2019 12:56:16 -0500
+Subject: Re: [PATCH -next 2/2] leds: add /sys/class/leds/<led>/current-trigger
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>
+References: <1570029181-11102-1-git-send-email-akinobu.mita@gmail.com>
+ <1570029181-11102-3-git-send-email-akinobu.mita@gmail.com>
+ <ec4d9d2c-6f8d-97a6-41d7-832a3fc1ca72@ti.com>
+ <589ba4d7-31f5-c789-d5ca-c13650cf5b03@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <79102915-5510-40e7-b4be-073e1c85bda6@ti.com>
+Date:   Wed, 2 Oct 2019 12:57:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191002134730.40985-1-thomas_os@shipmail.org> <20191002134730.40985-3-thomas_os@shipmail.org>
-In-Reply-To: <20191002134730.40985-3-thomas_os@shipmail.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 2 Oct 2019 10:52:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whjJ-jOz0SDJXt-+=ezjFy8ZCGXrqnnsoVocO+toxWSmw@mail.gmail.com>
-Message-ID: <CAHk-=whjJ-jOz0SDJXt-+=ezjFy8ZCGXrqnnsoVocO+toxWSmw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] mm: Add a walk_page_mapping() function to the
- pagewalk code
-To:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <589ba4d7-31f5-c789-d5ca-c13650cf5b03@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 6:47 AM Thomas Hellstr=C3=B6m (VMware)
-<thomas_os@shipmail.org> wrote:
+Jacek
+
+On 10/2/19 12:46 PM, Jacek Anaszewski wrote:
+> Dan,
 >
-> From: Thomas Hellstrom <thellstrom@vmware.com>
+> On 10/2/19 5:47 PM, Dan Murphy wrote:
+>> Akinobu
+>>
+>> On 10/2/19 10:13 AM, Akinobu Mita wrote:
+>>> Reading /sys/class/leds/<led>/trigger returns all available LED triggers.
+>>> However, this violates the "one value per file" rule of sysfs.
+>>>
+>>> This provides /sys/class/leds/<led>/current-trigger which is almost
+>>> identical to /sys/class/leds/<led>/trigger.  The only difference is that
+>>> 'current-trigger' only shows the current trigger name.
+>>>
+>>> This new file follows the "one value per file" rule of sysfs.
+>>> We can find all available LED triggers by listing the
+>>> /sys/devices/virtual/led-trigger/ directory.
+>>>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>>> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>> Cc: Pavel Machek <pavel@ucw.cz>
+>>> Cc: Dan Murphy <dmurphy@ti.com>
+>>> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+>>> ---
+>>>    Documentation/ABI/testing/sysfs-class-led | 13 +++++++++++
+>>>    drivers/leds/led-class.c                  | 10 ++++++++
+>>>    drivers/leds/led-triggers.c               | 38
+>>> +++++++++++++++++++++++++++----
+>>>    drivers/leds/leds.h                       |  5 ++++
+>>>    4 files changed, 62 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-class-led
+>>> b/Documentation/ABI/testing/sysfs-class-led
+>>> index 5f67f7a..fdfed3f 100644
+>>> --- a/Documentation/ABI/testing/sysfs-class-led
+>>> +++ b/Documentation/ABI/testing/sysfs-class-led
+>>> @@ -61,3 +61,16 @@ Description:
+>>>            gpio and backlight triggers. In case of the backlight trigger,
+>>>            it is useful when driving a LED which is intended to indicate
+>>>            a device in a standby like state.
+>>> +
+>>> +What:        /sys/class/leds/<led>/current-trigger
+>>> +Date:        September 2019
+>>> +KernelVersion:    5.5
+>>> +Contact:    linux-leds@vger.kernel.org
+>>> +Description:
+>>> +        Set the trigger for this LED. A trigger is a kernel based source
+>>> +        of LED events.
+>>> +        Writing the trigger name to this file will change the current
+>>> +        trigger. Trigger specific parameters can appear in
+>>> +        /sys/class/leds/<led> once a given trigger is selected. For
+>>> +        their documentation see sysfs-class-led-trigger-*.
+>>> +        Reading this file will return the current LED trigger name.
+>> Why do we need this new file can't we just update the current trigger
+>> file implementation?
+> We can't change existing ABI. It doesn't matter if it is documented
+> or not - it's in place for very long time and you can't guarantee there
+> are no users relying on triggers file show format.
+
+So if it has been in place for a very long time why do we need another 
+ABI that does sorta the same thing?
+
+This seems to be a bit confusing and extra.
+
+Maybe this ABI should be RO where a user can read the current-trigger as 
+a single value per file but writing the trigger still
+
+is done through the old ABI.
+
+Dan
+
+
 >
-> For users that want to travers all page table entries pointing into a
-> region of a struct address_space mapping, introduce a walk_page_mapping()
-> function.
-
-This looks non-offensive to me.
-
-My main reaction was "oh, really good that we split up the walker ops
-from the mm_walk structure, this would have been much uglier before
-that" due to the added vma entry/exit ops.
-
-           Linus
+>> I don't see any documentation that states that the read of the trigger
+>> file will print a list of known triggers.
+>>
+>> And writing to the trigger file still works so I would think the _show
+>> just needs to be fixed.
+>>
+>> Besides this patch does not fix the issue in the commit message that the
+>> trigger file still violates the one value per file rule.
+>>
+>> Dan
+>>
+>>
