@@ -2,83 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 727DFC9027
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 734D1C902A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbfJBRqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 13:46:42 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44813 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbfJBRqm (ORCPT
+        id S1728687AbfJBRqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:46:49 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39072 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728629AbfJBRqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:46:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i14so12227985pgt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:46:42 -0700 (PDT)
+        Wed, 2 Oct 2019 13:46:48 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a15so16060061edt.6
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:46:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=e09g4DE4GMBAg/LjnbwQq27CQNtOo7EPR5oJ0HS2cqg=;
-        b=tPwomXx9uELPa6HaIJ+/E2c2pNZUBjZgwoXe+GSk/+PxubNo+giOXWasw0tzbm3nBz
-         f7EFDGNPFGlCsOhF3YQybOfjz9/Khu0pWWjtkJKNAwprBHAegBd5vrKoINsFL48pFM+P
-         j8ytCRJyvzx3XQtE3ZyExB+lC0yDI+RIY6Bcy1V+NUM2pK027zbJ9REWZ/1vsZ97kaUa
-         xdCbGuRk+VUO9abBlnhqbR9Fjs8JwpA42CwNU1V473pNNZFG+hNuzRydyPd1F2HXYwEO
-         jFPlgDx7lhry6LoWKHd5IqUZJHp47KKl3W01VNpnofNBpI6ueMTk7kE3o2Y2SHj7JyPq
-         BkgQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JZzjEbxaLFF1tUuJ1VMjmL8gObXUEiWGpMSquU9Ax2E=;
+        b=Z+FbIHwlu/DoLjLAX0nBIgP/HtZhGA9qeFHDoEkuDPWG2I2ZKIMfaw7I88fyWh7Pkb
+         CPG3RTw8QDO2O7/0Ua2wr1A4YZnwItDoqWXfu7S0qcEkJzrF8CkY8hh6tK41a4upSDjF
+         KmNDOAgEpnMWxSUeLzLAveyFDIZeoBUONmX80=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=e09g4DE4GMBAg/LjnbwQq27CQNtOo7EPR5oJ0HS2cqg=;
-        b=IFOXyDMj8aMnMWoF2yqhxuNK+vO+NGBt8mcwmfhlUb3gN5URGR+vgO5avYGQr+hpdn
-         2So/kXjkDamWoVjExAqKRBns/U7Jmnnl8JyBPvCUZQ99EbSud/xrANSXJp74Fu43pe3f
-         UDIjeXTev0rWEDFjyFwNKGUxudsQBnzD30rQXrwmZ6VXCvnIY+0vbK9FtdWhMiFcMVsy
-         qxsfo3gjp1DNtl23miAOWJKPE6kIOdC5A5CxF/l0efIO3iaBKiMa6vbXfL+Vto0N8zNB
-         lRW2W5HepBdHkKaIJkzzd3+piojLNUttTj6RjibKNnyKsCguaArv3S39NE3XWIC5/YgN
-         shHg==
-X-Gm-Message-State: APjAAAWIsXnyplpZ+EXYq2Acx7onvqtBLQYtqnBHbbj4jXrqzVtdfp23
-        C22ct66EZAhnwvuk8rsXHN4=
-X-Google-Smtp-Source: APXvYqxY7kb2N/WuKOe4+BNcW7O6HglZX64dx4Fz/DXyylZOIMn/uwmIIjhO0q1VxQIGR5nl/OG5ug==
-X-Received: by 2002:a63:fb55:: with SMTP id w21mr5003272pgj.267.1570038401462;
-        Wed, 02 Oct 2019 10:46:41 -0700 (PDT)
-Received: from localhost.localdomain ([103.241.225.67])
-        by smtp.gmail.com with ESMTPSA id 202sm74561pfu.161.2019.10.02.10.46.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Oct 2019 10:46:40 -0700 (PDT)
-From:   aliasgar.surti500@gmail.com
-To:     rpeterso@redhat.com, agruenba@redhat.com, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     Aliasgar Surti <aliasgar.surti500@gmail.com>
-Subject: [PATCH] gfs2: removed unnecessary semicolon
-Date:   Wed,  2 Oct 2019 23:16:31 +0530
-Message-Id: <20191002174631.15919-1-aliasgar.surti500@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JZzjEbxaLFF1tUuJ1VMjmL8gObXUEiWGpMSquU9Ax2E=;
+        b=AMJuzYYMYjUuGq1wyuJrtQLgHmg/mrmuDPEjgbC38p9sNbw7Nj4zdUU8a1uRhA6Rj3
+         WVy5bM6lQmr9PJIZaDh470R4gkVDZBBm8xD5w75hWKeepK2f6OETwwhxK/BquaIK7Yia
+         i2dfZspskwNnNPUNQBSDM3V7286XMVCeBZXmDRr0hliFoBBxnps8E8WB33+cm8xBegLz
+         yoPtDJzLDsmLV1uRAW4reEd0UVy9tzD232fP/d19K3xyMAMYzijFXBs5oiDtsmib9ZeR
+         VW+retddzgL3UBNcFbQRRBReDLy8G0EUq5S2znDio0H+bykwmz01P2QsNeH4AdgRk0aT
+         mBoQ==
+X-Gm-Message-State: APjAAAXWdhU/CGmx0x9N2Ov+pw7EGS4nmkoozvX8umnTP1qlnEeHvr1H
+        87eGGOOghZzOxfm6sGR7Aku21NbuvEs=
+X-Google-Smtp-Source: APXvYqxPacqa+6X/8OT1eDR/vEf0bUWxvUoMQjqgzvUGa08sM87WYvd49c5hrffKeb2gY3rveOA7Vg==
+X-Received: by 2002:a17:906:b804:: with SMTP id dv4mr4032576ejb.243.1570038406376;
+        Wed, 02 Oct 2019 10:46:46 -0700 (PDT)
+Received: from kpsingh-kernel.localdomain (77-56-209-237.dclient.hispeed.ch. [77.56.209.237])
+        by smtp.gmail.com with ESMTPSA id j8sm3931874edy.44.2019.10.02.10.46.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 10:46:45 -0700 (PDT)
+From:   KP Singh <kpsingh@chromium.org>
+To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Cc:     Florent Revest <revest@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Florent Revest <revest@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH] samples/bpf: Fix broken samples.
+Date:   Wed,  2 Oct 2019 19:46:32 +0200
+Message-Id: <20191002174632.28610-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aliasgar Surti <aliasgar.surti500@gmail.com>
+From: KP Singh <kpsingh@google.com>
 
-There is use of unnecessary semicolon after switch case.
-Removed the semicolon.
+Rename asm_goto_workaround.h to asm_workaround.h and add a
+workaround for the newly added "asm_inline" in:
 
-Signed-off-by: Aliasgar Surti <aliasgar.surti500@gmail.com>
+  commit eb111869301e ("compiler-types.h: add asm_inline definition")
+
+Add missing include for <linux/perf_event.h> which was removed from
+perf-sys.h in:
+
+  commit 91854f9a077e ("perf tools: Move everything related to
+	               sys_perf_event_open() to perf-sys.h")
+
+Co-developed-by: Florent Revest <revest@google.com>
+Signed-off-by: Florent Revest <revest@google.com>
+Signed-off-by: KP Singh <kpsingh@google.com>
 ---
- fs/gfs2/recovery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ samples/bpf/Makefile                            |  2 +-
+ .../{asm_goto_workaround.h => asm_workaround.h} | 17 ++++++++++++++---
+ samples/bpf/task_fd_query_user.c                |  1 +
+ 3 files changed, 16 insertions(+), 4 deletions(-)
+ rename samples/bpf/{asm_goto_workaround.h => asm_workaround.h} (46%)
 
-diff --git a/fs/gfs2/recovery.c b/fs/gfs2/recovery.c
-index c529f8749a89..f4aa8551277b 100644
---- a/fs/gfs2/recovery.c
-+++ b/fs/gfs2/recovery.c
-@@ -326,7 +326,7 @@ void gfs2_recover_func(struct work_struct *work)
+diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+index 42b571cde177..ab2b4d7ecb4b 100644
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@ -289,7 +289,7 @@ $(obj)/%.o: $(src)/%.c
+ 		-Wno-gnu-variable-sized-type-not-at-end \
+ 		-Wno-address-of-packed-member -Wno-tautological-compare \
+ 		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
+-		-I$(srctree)/samples/bpf/ -include asm_goto_workaround.h \
++		-I$(srctree)/samples/bpf/ -include asm_workaround.h \
+ 		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
+ ifeq ($(DWARF2BTF),y)
+ 	$(BTF_PAHOLE) -J $@
+diff --git a/samples/bpf/asm_goto_workaround.h b/samples/bpf/asm_workaround.h
+similarity index 46%
+rename from samples/bpf/asm_goto_workaround.h
+rename to samples/bpf/asm_workaround.h
+index 7409722727ca..7c99ea6ae98c 100644
+--- a/samples/bpf/asm_goto_workaround.h
++++ b/samples/bpf/asm_workaround.h
+@@ -1,9 +1,10 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /* Copyright (c) 2019 Facebook */
+-#ifndef __ASM_GOTO_WORKAROUND_H
+-#define __ASM_GOTO_WORKAROUND_H
++#ifndef __ASM_WORKAROUND_H
++#define __ASM_WORKAROUND_H
  
- 		default:
- 			goto fail;
--		};
-+		}
+-/* this will bring in asm_volatile_goto macro definition
++/*
++ * This will bring in asm_volatile_goto and asm_inline macro definitions
+  * if enabled by compiler and config options.
+  */
+ #include <linux/types.h>
+@@ -13,5 +14,15 @@
+ #define asm_volatile_goto(x...) asm volatile("invalid use of asm_volatile_goto")
+ #endif
  
- 		error = gfs2_glock_nq_init(ip->i_gl, LM_ST_SHARED,
- 					   LM_FLAG_NOEXP | GL_NOCACHE, &ji_gh);
++/*
++ * asm_inline is defined as asm __inline in "include/linux/compiler_types.h"
++ * if supported by the kernel's CC (i.e CONFIG_CC_HAS_ASM_INLINE) which is not
++ * supported by CLANG.
++ */
++#ifdef asm_inline
++#undef asm_inline
++#define asm_inline asm
++#endif
++
+ #define volatile(x...) volatile("")
+ #endif
+diff --git a/samples/bpf/task_fd_query_user.c b/samples/bpf/task_fd_query_user.c
+index e39938058223..4c31b305e6ef 100644
+--- a/samples/bpf/task_fd_query_user.c
++++ b/samples/bpf/task_fd_query_user.c
+@@ -13,6 +13,7 @@
+ #include <sys/resource.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <linux/perf_event.h>
+ 
+ #include "libbpf.h"
+ #include "bpf_load.h"
 -- 
-2.17.1
+2.20.1
 
