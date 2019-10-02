@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 446A5C91C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D40BC91AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfJBTII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:08:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35212 "EHLO
+        id S1729931AbfJBTKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:10:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35772 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728918AbfJBTIH (ORCPT
+        by vger.kernel.org with ESMTP id S1729296AbfJBTIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:07 -0400
+        Wed, 2 Oct 2019 15:08:16 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-00035C-8t; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyv-00036L-1e; Wed, 02 Oct 2019 20:08:13 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjym-0003aL-Vi; Wed, 02 Oct 2019 20:08:04 +0100
+        id 1iFjyp-0003fj-Rj; Wed, 02 Oct 2019 20:08:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Maximilian Luz" <luzmaximilian@gmail.com>
+        "Jan Kara" <jack@suse.cz>, "Ewan D. Milne" <emilne@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.635404747@decadent.org.uk>
+Message-ID: <lsq.1570043211.546562940@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 07/87] USB: Add LPM quirk for Surface Dock GigE adapter
+Subject: [PATCH 3.16 73/87] scsi: vmw_pscsi: Fix use-after-free in
+ pvscsi_queue_lck()
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,35 +48,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maximilian Luz <luzmaximilian@gmail.com>
+From: Jan Kara <jack@suse.cz>
 
-commit ea261113385ac0a71c2838185f39e8452d54b152 upstream.
+commit 240b4cc8fd5db138b675297d4226ec46594d9b3b upstream.
 
-Without USB_QUIRK_NO_LPM ethernet will not work and rtl8152 will
-complain with
+Once we unlock adapter->hw_lock in pvscsi_queue_lck() nothing prevents just
+queued scsi_cmnd from completing and freeing the request. Thus cmd->cmnd[0]
+dereference can dereference already freed request leading to kernel crashes
+or other issues (which one of our customers observed). Store cmd->cmnd[0]
+in a local variable before unlocking adapter->hw_lock to fix the issue.
 
-    r8152 <device...>: Stop submitting intr, status -71
-
-Adding the quirk resolves this. As the dock is externally powered, this
-should not have any drawbacks.
-
-Signed-off-by: Maximilian Luz <luzmaximilian@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/vmw_pvscsi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -64,6 +64,9 @@ static const struct usb_device_id usb_qu
- 	/* Microsoft LifeCam-VX700 v2.0 */
- 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -754,6 +754,7 @@ static int pvscsi_queue_lck(struct scsi_
+ 	struct pvscsi_adapter *adapter = shost_priv(host);
+ 	struct pvscsi_ctx *ctx;
+ 	unsigned long flags;
++	unsigned char op;
  
-+	/* Microsoft Surface Dock Ethernet (RTL8153 GigE) */
-+	{ USB_DEVICE(0x045e, 0x07c6), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
- 	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
+ 	spin_lock_irqsave(&adapter->hw_lock, flags);
  
+@@ -766,13 +767,14 @@ static int pvscsi_queue_lck(struct scsi_
+ 	}
+ 
+ 	cmd->scsi_done = done;
++	op = cmd->cmnd[0];
+ 
+ 	dev_dbg(&cmd->device->sdev_gendev,
+-		"queued cmd %p, ctx %p, op=%x\n", cmd, ctx, cmd->cmnd[0]);
++		"queued cmd %p, ctx %p, op=%x\n", cmd, ctx, op);
+ 
+ 	spin_unlock_irqrestore(&adapter->hw_lock, flags);
+ 
+-	pvscsi_kick_io(adapter, cmd->cmnd[0]);
++	pvscsi_kick_io(adapter, op);
+ 
+ 	return 0;
+ }
 
