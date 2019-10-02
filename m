@@ -2,130 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476DBC927A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 052A6C9286
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbfJBTgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:36:13 -0400
-Received: from mailoutvs35.siol.net ([185.57.226.226]:42394 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727594AbfJBTgL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:36:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id DBBFC523B2B;
-        Wed,  2 Oct 2019 21:36:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id HIr41ruBPwmH; Wed,  2 Oct 2019 21:36:07 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 8994F523B0A;
-        Wed,  2 Oct 2019 21:36:07 +0200 (CEST)
-Received: from localhost.localdomain (cpe-86-58-59-25.static.triera.net [86.58.59.25])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 3F4AE523B34;
-        Wed,  2 Oct 2019 21:36:05 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, paul.kocialkowski@bootlin.com
-Cc:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        gregkh@linuxfoundation.org, wens@csie.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] media: cedrus: Use helpers to access capture queue
-Date:   Wed,  2 Oct 2019 21:35:53 +0200
-Message-Id: <20191002193553.1633467-4-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191002193553.1633467-1-jernej.skrabec@siol.net>
-References: <20191002193553.1633467-1-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        id S1729020AbfJBTiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:38:50 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10181 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726087AbfJBTih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 15:38:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 12:38:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,249,1566889200"; 
+   d="scan'208";a="275456097"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 02 Oct 2019 12:38:34 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>
+Cc:     "Yi Liu" <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 0/4] User API for nested shared virtual address (SVA)
+Date:   Wed,  2 Oct 2019 12:42:39 -0700
+Message-Id: <1570045363-24856-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Accessing capture queue structue directly is not safe. Use helpers for
-that.
+This set consists of IOMMU APIs to support SVA in the guest, a.k.a nested
+SVA. As the complete SVA support is complex, we break down the enabling
+effort into three stages:
+1. PCI device direct assignment
+2. Fault handling, especially page request service support
+3. Mediated device assignment
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/staging/media/sunxi/cedrus/cedrus.h      | 8 ++++++--
- drivers/staging/media/sunxi/cedrus/cedrus_h264.c | 8 ++++++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
+Each stage includes common API and vendor specific IOMMU driver changes. This
+series is the common uAPI for stage #1. It is intended to build consensus on
+the interface which all vendors reply on.
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h b/drivers/stagin=
-g/media/sunxi/cedrus/cedrus.h
-index 986e059e3202..c45fb9a7ad07 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus.h
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
-@@ -197,12 +197,16 @@ static inline dma_addr_t cedrus_buf_addr(struct vb2=
-_buffer *buf,
- static inline dma_addr_t cedrus_dst_buf_addr(struct cedrus_ctx *ctx,
- 					     int index, unsigned int plane)
- {
--	struct vb2_buffer *buf;
-+	struct vb2_buffer *buf =3D NULL;
-+	struct vb2_queue *vq;
-=20
- 	if (index < 0)
- 		return 0;
-=20
--	buf =3D ctx->fh.m2m_ctx->cap_q_ctx.q.bufs[index];
-+	vq =3D v4l2_m2m_get_vq(ctx->fh.m2m_ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
-+	if (vq)
-+		buf =3D vb2_get_buffer(vq, index);
-+
- 	return buf ? cedrus_buf_addr(buf, &ctx->dst_fmt, plane) : 0;
- }
-=20
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c b/drivers/s=
-taging/media/sunxi/cedrus/cedrus_h264.c
-index 4a0e69855c7f..4650982c69a8 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-@@ -97,7 +97,7 @@ static void cedrus_write_frame_list(struct cedrus_ctx *=
-ctx,
- 	const struct v4l2_ctrl_h264_decode_params *decode =3D run->h264.decode_=
-params;
- 	const struct v4l2_ctrl_h264_slice_params *slice =3D run->h264.slice_par=
-ams;
- 	const struct v4l2_ctrl_h264_sps *sps =3D run->h264.sps;
--	struct vb2_queue *cap_q =3D &ctx->fh.m2m_ctx->cap_q_ctx.q;
-+	struct vb2_queue *cap_q;
- 	struct cedrus_buffer *output_buf;
- 	struct cedrus_dev *dev =3D ctx->dev;
- 	unsigned long used_dpbs =3D 0;
-@@ -105,6 +105,8 @@ static void cedrus_write_frame_list(struct cedrus_ctx=
- *ctx,
- 	unsigned int output =3D 0;
- 	unsigned int i;
-=20
-+	cap_q =3D v4l2_m2m_get_vq(ctx->fh.m2m_ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE)=
-;
-+
- 	memset(pic_list, 0, sizeof(pic_list));
-=20
- 	for (i =3D 0; i < ARRAY_SIZE(decode->dpb); i++) {
-@@ -168,12 +170,14 @@ static void _cedrus_write_ref_list(struct cedrus_ct=
-x *ctx,
- 				   enum cedrus_h264_sram_off sram)
- {
- 	const struct v4l2_ctrl_h264_decode_params *decode =3D run->h264.decode_=
-params;
--	struct vb2_queue *cap_q =3D &ctx->fh.m2m_ctx->cap_q_ctx.q;
-+	struct vb2_queue *cap_q;
- 	struct cedrus_dev *dev =3D ctx->dev;
- 	u8 sram_array[CEDRUS_MAX_REF_IDX];
- 	unsigned int i;
- 	size_t size;
-=20
-+	cap_q =3D v4l2_m2m_get_vq(ctx->fh.m2m_ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE)=
-;
-+
- 	memset(sram_array, 0, sizeof(sram_array));
-=20
- 	for (i =3D 0; i < num_ref; i++) {
---=20
-2.23.0
+This series is extracted from the complete stage1 set which includes VT-d code.
+https://lkml.org/lkml/2019/8/15/951
+
+Changes:
+ - Use spinlock instead of mutex to protect ioasid custom allocators. This is
+   to support callers in atomic context
+ - Added more padding to guest PASID bind data for future extensions, suggested
+   by Joerg.
+After much thinking, I did not do name change from PASID to IOASID in the uAPI,
+considering we have been using PASID in the rest of uAPIs. IOASID will remain
+used within the kernel.
+
+For more discussions lead to this series, checkout LPC 2019 VFIO/IOMMU/PCI
+microconference materials.
+https://linuxplumbersconf.org/event/4/sessions/66/#20190909
+
+
+Change log:
+v4:    - minor patch regroup and fixes based on review from Jean
+v3:    - include errno.h in ioasid.h to fix compile error
+       - rebased to v5.4-rc1, no change
+ 
+v2:
+	- Addressed review comments by Jean on IOASID custom allocators, locking
+	fix, misc control flow fix.
+	- Fixed a compile error with missing header errno.h
+	- Updated Jean-Philiippe's new email and updateded reviewed-by tag
+
+Jacob Pan (2):
+  iommu/ioasid: Add custom allocators
+  iommu: Introduce guest PASID bind function
+
+Jean-Philippe Brucker (1):
+  iommu: Add I/O ASID allocator
+
+Yi L Liu (1):
+  iommu: Introduce cache_invalidate API
+
+ drivers/iommu/Kconfig      |   4 +
+ drivers/iommu/Makefile     |   1 +
+ drivers/iommu/ioasid.c     | 422 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/iommu/iommu.c      |  30 ++++
+ include/linux/ioasid.h     |  76 ++++++++
+ include/linux/iommu.h      |  36 ++++
+ include/uapi/linux/iommu.h | 169 ++++++++++++++++++
+ 7 files changed, 738 insertions(+)
+ create mode 100644 drivers/iommu/ioasid.c
+ create mode 100644 include/linux/ioasid.h
+
+-- 
+2.7.4
 
