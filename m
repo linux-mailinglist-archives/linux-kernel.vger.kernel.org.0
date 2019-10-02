@@ -2,110 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68C3CC49F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8CDC4A09
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:56:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfJBIt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 04:49:26 -0400
-Received: from mga11.intel.com ([192.55.52.93]:57077 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfJBIt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 04:49:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 01:49:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,573,1559545200"; 
-   d="scan'208";a="205281421"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 02 Oct 2019 01:49:21 -0700
-Received: by lahna (sSMTP sendmail emulation); Wed, 02 Oct 2019 11:49:21 +0300
-Date:   Wed, 2 Oct 2019 11:49:21 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Oliver Neukum <oneukum@suse.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Mario.Limonciello@dell.com,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Lukas Wunner <lukas@wunner.de>
-Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
-Message-ID: <20191002084921.GJ2714@lahna.fi.intel.com>
-References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
- <20191001113830.13028-18-mika.westerberg@linux.intel.com>
- <20191001124748.GH2954373@kroah.com>
- <20191001130905.GO2714@lahna.fi.intel.com>
- <20191001145354.GA3366714@kroah.com>
- <20191001150734.GA2714@lahna.fi.intel.com>
- <1569947262.2639.15.camel@suse.com>
- <20191002083034.GE2714@lahna.fi.intel.com>
- <20191002083954.GD1687317@kroah.com>
+        id S1727257AbfJBI4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 04:56:00 -0400
+Received: from www62.your-server.de ([213.133.104.62]:39636 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfJBIz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 04:55:59 -0400
+Received: from [2a02:120b:2c12:c120:71a0:62dd:894c:fd0e] (helo=localhost)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1iFaQL-0004eR-MZ; Wed, 02 Oct 2019 10:55:53 +0200
+Date:   Wed, 2 Oct 2019 10:55:53 +0200
+From:   Daniel Borkmann <daniel@iogearbox.net>
+To:     Brian Vazquez <brianvv.kernel@gmail.com>
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Brian Vazquez <brianvv@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH bpf 2/2] selftests/bpf: test_progs: don't leak server_fd
+ in test_sockopt_inherit
+Message-ID: <20191002085553.GA6226@pc-66.home>
+References: <20191001173728.149786-1-brianvv@google.com>
+ <20191001173728.149786-3-brianvv@google.com>
+ <CAEf4BzYxs6Ace8s64ML3pA9H4y0vgdWv_vDF57oy3i-O_G7c-g@mail.gmail.com>
+ <CABCgpaWbPN+2vSNdynHtmDxrgGbyzHa_D-y4-X8hLrQYbhTx=A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191002083954.GD1687317@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CABCgpaWbPN+2vSNdynHtmDxrgGbyzHa_D-y4-X8hLrQYbhTx=A@mail.gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25589/Tue Oct  1 10:30:33 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 10:39:54AM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Oct 02, 2019 at 11:30:34AM +0300, Mika Westerberg wrote:
-> > On Tue, Oct 01, 2019 at 06:27:42PM +0200, Oliver Neukum wrote:
-> > > Am Dienstag, den 01.10.2019, 18:07 +0300 schrieb Mika Westerberg:
-> > > 
-> > > Hi,
-> > > 
-> > > > OK, but does that break existing .configs? I mean if you have already
-> > > > CONFIG_THUNDERBOLT in your .config/defconfig does it now just get
-> > > > dropped silently?
-> > > 
-> > > People will have to look at this new stuff anyway.
-> > > 
-> > > > For example firewire has CONFIG_FIREWIRE even though the "standard" name
-> > > > is IEEE 1394. I was thinking maybe we can do the same for
-> > > > USB4/Thunderbolt
-> > > 
-> > > USB and Thunderbolt used to be distinct protocols. Whereas Firewire
-> > > was just a colloquial name for IEEE1394. Please be wordy here.
-> > > "Unified support for USB4 and Thunderbolt4"
-> > 
-> > OK.
-> > 
-> > I've been thinking this bit more and since Thunderbolt will stick around
-> > as well (it basically implements all the optional USB4 features and
-> > more) so would it make sense to have the Kconfig option be
-> > CONFIG_THUNDERBOLT_USB4 (or CONFIG_USB4_THUNDERBOLT)? That should cover
-> > both.
+On Tue, Oct 01, 2019 at 08:42:30PM -0700, Brian Vazquez wrote:
+> Thanks for reviewing the patches Andrii!
 > 
-> I would stick with CONFIG_USB4 but put both in the Kconfig text.  Again,
-> it will be easier to handle this over time.
+> Although Daniel fixed them and applied them correctly.
 
-OK, thanks Greg!
+After last kernel/maintainer summit at LPC, I reworked all my patchwork scripts [0]
+which I use for bpf trees in order to further reduce manual work and add more sanity
+checks at the same time. Therefore, the broken Fixes: tag was a good test-case. ;-)
 
-> > Comments?
-> > 
-> > Also does anyone have any thoughts about keeping the driver under
-> > drivers/thunderbolt vs. moving it under usb like
-> > drivers/usb/thunderbolt? I'm thinking if anyone not familiar with this
-> > tries to enable support for USB4 so the first place he/she probably
-> > looks is under "USB support" menuconfig entry.
-> 
-> You are not sharing/needing any of the drivers/usb/ code just yet,
-> right? 
+Thanks,
+Daniel
 
-Yes, that's correct.
+  [0] https://git.kernel.org/pub/scm/linux/kernel/git/dborkman/pw.git/
 
-> I imagine that will happen "soon" and when it does, then sure,
-> moving stuff is fine with me.
-
-OK thanks!
+> On Tue, Oct 1, 2019 at 8:20 PM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Tue, Oct 1, 2019 at 10:40 AM Brian Vazquez <brianvv@google.com> wrote:
+> > >
+> >
+> > I don't think there is a need to add "test_progs:" to subject, "
+> > test_sockopt_inherit" is specific enough ;)
+> >
+> > > server_fd needs to be close if pthread can't be created.
+> >
+> > typo: closed
+> >
+> > > Fixes: e3e02e1d9c24 ("selftests/bpf: test_progs: convert test_sockopt_inherit")
+> > > Cc: Stanislav Fomichev <sdf@google.com>
+> > > Signed-off-by: Brian Vazquez <brianvv@google.com>
+> > > ---
+> >
+> > Acked-by: Andrii Nakryiko <andriin@fb.com>
+> >
+> > >  tools/testing/selftests/bpf/prog_tests/sockopt_inherit.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
