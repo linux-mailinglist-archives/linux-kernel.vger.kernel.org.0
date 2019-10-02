@@ -2,63 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C70C4538
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 02:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6ABCC4549
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 03:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729560AbfJBA5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 20:57:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726030AbfJBA5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 20:57:44 -0400
-Received: from dragon (unknown [45.56.119.157])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14CC620842;
-        Wed,  2 Oct 2019 00:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569977863;
-        bh=MG19YeAOY8LCvIuIz4SQI0njSnM6m5/3C+dLNtuySv0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e0AaBsHhbgJbbTWaxd924N4N5TkZV/Z/owgmD037LXSP7CbXzmVZW0sHmyJLyjuT5
-         /jYm6JmI/Gtrh7R3c8XISpyMKlHcBC7ZqyNIA/WKkHe/3gR5l5IIjZ8a0uudxq8xMs
-         6jNC3TT7TKDiQkfFFO3JG5dZOktqSDFSUF92vpjg=
-Date:   Wed, 2 Oct 2019 08:57:25 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Jiafei Pan <jiafei.pan@nxp.com>, "Y.b. Lu" <yangbo.lu@nxp.com>,
-        Ashish Kumar <ashish.kumar@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v5] arm64: dts: ls1028a: Add esdhc node in dts
-Message-ID: <20191002005723.GA18972@dragon>
-References: <20190815033901.18696-1-yinbo.zhu@nxp.com>
- <20190819131033.GH5999@X250>
- <VI1PR04MB4158E2E8C626FCABF089E15AE9840@VI1PR04MB4158.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB4158E2E8C626FCABF089E15AE9840@VI1PR04MB4158.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1729584AbfJBBIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 21:08:18 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55080 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbfJBBIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Oct 2019 21:08:17 -0400
+Received: from localhost (unknown [IPv6:2603:3023:50c:85e1:b5c5:ae11:3e54:6a07])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4903C14C612AE;
+        Tue,  1 Oct 2019 18:08:17 -0700 (PDT)
+Date:   Tue, 01 Oct 2019 21:08:14 -0400 (EDT)
+Message-Id: <20191001.210814.415335033876213685.davem@davemloft.net>
+To:     johan@kernel.org
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] hso: fix NULL-deref on tty open
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190930151241.25646-1-johan@kernel.org>
+References: <20190930151241.25646-1-johan@kernel.org>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 01 Oct 2019 18:08:17 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 03:02:04AM +0000, Yinbo Zhu wrote:
-> Hi Shawn Guo,
+From: Johan Hovold <johan@kernel.org>
+Date: Mon, 30 Sep 2019 17:12:41 +0200
+
+> Fix NULL-pointer dereference on tty open due to a failure to handle a
+> missing interrupt-in endpoint when probing modem ports:
 > 
-> I see that you had merged my patch, but I don't see that in 
-> url = git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git master branch.
-> Please help check.
+> 	BUG: kernel NULL pointer dereference, address: 0000000000000006
+> 	...
+> 	RIP: 0010:tiocmget_submit_urb+0x1c/0xe0 [hso]
+> 	...
+> 	Call Trace:
+> 	hso_start_serial_device+0xdc/0x140 [hso]
+> 	hso_serial_open+0x118/0x1b0 [hso]
+> 	tty_open+0xf1/0x490
+> 
+> Fixes: 542f54823614 ("tty: Modem functions for the HSO driver")
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-My master branch will only get updated to each -rc1 tag when merge
-window closes.  I just updated it to v5.4-rc1, and it should has your
-patch now.
-
-Shawn
+Applied, thanks.
