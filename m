@@ -2,121 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8D6C9490
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 01:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2A8AC9493
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 01:03:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfJBXDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 19:03:08 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40930 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728379AbfJBXDH (ORCPT
+        id S1728410AbfJBXDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 19:03:47 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36432 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727990AbfJBXDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 19:03:07 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x127so441372pfb.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 16:03:05 -0700 (PDT)
+        Wed, 2 Oct 2019 19:03:46 -0400
+Received: by mail-io1-f66.google.com with SMTP id b136so1223587iof.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 16:03:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=Kx1lQ6Xuj0lo4gXMSS/qxuv9enZ5ijN/jq6CI+qCygs=;
-        b=Ell4lfoPjQ/U64uUNXZ1rWWz41pBKUiRnxxBUmzrplg1vOXSoFHUHs+cLMF4fl/2/I
-         qhtxDkZZPYsZYz490rSFFz3RVb0eTfQV1FQChEZ7Rw7ohYw3TzvTpSl0c8t/nOTC2d8/
-         qmZH0MYjsv4H4kGXvKG82vqQ0zkgVjGVe2IItfZzV5A2UwtbFV2v6TL7NmdILOV7z3mV
-         PQv37bFpgeDQjoLjPcgLR4RQ62LjyU5mCxEi5bR8pOxOQdlFAENR7ZiqMZKdrdhv5C9f
-         6CoapBroe9c3nzmT2bW0WiBc9QAIdHPlTLLRkEtc6Eu+346qX/M6s7tXNFGc+JwITWhR
-         PiGg==
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oV/9b2AKj59V2uwPpS7RJHBFX/8QSHfj0AU6FMbpQCA=;
+        b=dK+p1sIqIAJ8RGyefAphtb6lEwlpOLd/UkICw4usv/JjWR6t1kHw7a+p1pq3Qsqkj9
+         URSJmGJkWDsHaeuLD2TGa7MWq+2juzA/OirywcxzN3IXLaSzy7LVKAXYH0Q+B54Ejfr4
+         6PWic2A87QP2n0FYWCnFub7PPs/KIdmW0Lp+A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=Kx1lQ6Xuj0lo4gXMSS/qxuv9enZ5ijN/jq6CI+qCygs=;
-        b=RoMB/pcJWREQGD6pLNWFyeZvbDmTSy3JEl4UtRMS+HMFgxjP3Bfib1Q0FK7Si/eD/c
-         HM7gQbRSrtiWMhATiPrPycJZ2yjDLJMvErCLt3phto5Jmni5XVjiFEiH/0w4Yor1/dQx
-         OoShf4n1pVwaUnwWQZP3UZr1DuDlCJiK527NE+7hn4Dczi2xNsQPV4UtU3zVvZnbOOk1
-         OvkAhxM4k8ZGdbz4z0YnPlP/6eVG4muoK7e9aj6u1MMsT9PkDhKBgztNZZ3i7bAZIP37
-         9Jtvn+k1hoRvCwaR8/KE6DkSJSsAU7veiATafQaA9aPHYglYkTbfLBNxa05lHPCsKuL9
-         jBsg==
-X-Gm-Message-State: APjAAAVYOotTHe04lb7w4IOXZhHQOAz54taehOeYZ3pRoO3TG/C+Xxv0
-        GhKW+zpKuxy6xENU1tBZ9Xg6uW6nOLI=
-X-Google-Smtp-Source: APXvYqze6T/pvyncy2GIGKjzFCBiih1dWCjaT09cVEUfiHqI5i28yaqW2t6FRRhXydBoOryGEzmLnQ==
-X-Received: by 2002:a17:90a:2301:: with SMTP id f1mr7086902pje.121.1570057385215;
-        Wed, 02 Oct 2019 16:03:05 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id s1sm317223pjs.31.2019.10.02.16.03.04
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oV/9b2AKj59V2uwPpS7RJHBFX/8QSHfj0AU6FMbpQCA=;
+        b=AA+0pihlEooT9/rD85AeGnKLertLET4Uo8+6fiaiXDe3d1gD74TAA7+vE0onnJ4jFB
+         nKhJHBaBp19qKTaphHBR0ADsum7pTnRn44TUkStZKJ424B/UjjhzTI2VSFdvzpxi0aG3
+         sWtopCPcU7HNlX6+IKkgINXxs/zRqGoxaKfdyY5BnOe2fC54zR7O9q2+62HTWxNqKxpd
+         aFaU0ObY1FdVnz0y8/fmDpdZUq2VAaaYGXLAd7dNj7t5gq5CGwWTf0Euqpo75JMtiQej
+         19B5A70E/gmGO60SGb7amQn98NhOWJFV0WPXKptEDF+vQAGNJc49oD+OUNvbrqPCHLMY
+         BIzQ==
+X-Gm-Message-State: APjAAAXE0gytKTkQhc+4MV7y91+Ost+szZeq+Nn9DP8q876bkswEPQVc
+        Wir4XoPJOqL9Tyj1Ci7xkljK7A==
+X-Google-Smtp-Source: APXvYqygZWjkzv74/ZqaLQIipRxpUSbpqKXqXE5cRKwBIa0D4JgiRCE/Hg8dKE+sssxzkBGZVNthGA==
+X-Received: by 2002:a92:b74f:: with SMTP id c15mr6837193ilm.43.1570057425858;
+        Wed, 02 Oct 2019 16:03:45 -0700 (PDT)
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id 128sm212298iox.35.2019.10.02.16.03.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 16:03:04 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 16:03:03 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>
-cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: [rfc] mm, hugetlb: allow hugepage allocations to excessively
- reclaim
-Message-ID: <alpine.DEB.2.21.1910021556270.187014@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 02 Oct 2019 16:03:45 -0700 (PDT)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, shuah@kernel.org
+Cc:     Shuah Khan <skhan@linuxfoundation.org>, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] selftests: kvm: Fix libkvm build error
+Date:   Wed,  2 Oct 2019 17:03:43 -0600
+Message-Id: <20191002230343.5243-1-skhan@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hugetlb allocations use __GFP_RETRY_MAYFAIL to aggressively attempt to get 
-hugepages that the user needs.  Commit b39d0ee2632d ("mm, page_alloc: 
-avoid expensive reclaim when compaction may not succeed") intends to 
-improve allocator behind for thp allocations to prevent excessive amounts 
-of reclaim especially when constrained to a single node.
+Fix the following build error from "make TARGETS=kvm kselftest":
 
-Since hugetlb allocations have explicitly preferred to loop and do reclaim 
-and compaction, exempt them from this new behavior at least for the time 
-being.  It is not shown that hugetlb allocation success rate has been 
-impacted by commit b39d0ee2632d but hugetlb allocations are admittedly 
-beyond the scope of what the patch is intended to address (thp 
-allocations).
+libkvm.a(assert.o): relocation R_X86_64_32 against `.rodata.str1.1' can not be used when making a PIE object; recompile with -fPIC
 
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Signed-off-by: David Rientjes <rientjes@google.com>
+This error is seen when build is done from the main Makefile using
+kselftest target. In this case KBUILD_CPPFLAGS and CC_OPTION_CFLAGS
+are defined. When build is invoked using:
+
+"make -C tools/testing/selftests/kvm" KBUILD_CPPFLAGS and CC_OPTION_CFLAGS
+aren't defined.
+
+There is no need to pass in KBUILD_CPPFLAGS and CC_OPTION_CFLAGS for the
+check to determine if --no-pie is necessary1s, which is the when these
+two aren't defined when "make -C tools/testing/selftests/kvm" runs.
+
+Fix it by simplifying the no-pie-option logic. With this change, bith
+build variations work.
+
+"make TARGETS=kvm kselftest"
+"make -C tools/testing/selftests/kvm"
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 ---
- Mike, you eluded that you may want to opt hugetlbfs out of this for the
- time being in https://marc.info/?l=linux-kernel&m=156771690024533 --
- not sure if you want to allow this excessive amount of reclaim for 
- hugetlb allocations or not given the swap storms Andrea has shown is
- possible (and nr_hugepages_mempolicy does exist), but hugetlbfs was not
- part of the problem we are trying to address here so no objection to
- opting it out.  
+ tools/testing/selftests/kvm/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- You might want to consider how expensive hugetlb allocations can become
- and disruptive to the system if it does not yield additional hugepages,
- but that can be done at any time later as a general improvement rather
- than part of a series aimed at thp.
-
- mm/page_alloc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4467,12 +4467,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 		if (page)
- 			goto got_pg;
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 62c591f87dab..02d20aab9440 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -48,8 +48,9 @@ CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
+ 	-I$(LINUX_HDR_PATH) -Iinclude -I$(<D) -Iinclude/$(UNAME_M) -I..
  
--		 if (order >= pageblock_order && (gfp_mask & __GFP_IO)) {
-+		 if (order >= pageblock_order && (gfp_mask & __GFP_IO) &&
-+		     !(gfp_mask & __GFP_RETRY_MAYFAIL)) {
- 			/*
- 			 * If allocating entire pageblock(s) and compaction
- 			 * failed because all zones are below low watermarks
- 			 * or is prohibited because it recently failed at this
--			 * order, fail immediately.
-+			 * order, fail immediately unless the allocator has
-+			 * requested compaction and reclaim retry.
- 			 *
- 			 * Reclaim is
- 			 *  - potentially very expensive because zones are far
+ no-pie-option := $(call try-run, echo 'int main() { return 0; }' | \
+-        $(CC) -Werror $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -no-pie -x c - -o "$$TMP", -no-pie)
++        $(CC) -Werror -no-pie -x c - -o "$$TMP", -no-pie)
+ 
++#
+ # On s390, build the testcases KVM-enabled
+ pgste-option = $(call try-run, echo 'int main() { return 0; }' | \
+ 	$(CC) -Werror -Wl$(comma)--s390-pgste -x c - -o "$$TMP",-Wl$(comma)--s390-pgste)
+-- 
+2.20.1
+
