@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F16CC9211
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D46DDC919B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730247AbfJBTNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:13:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35258 "EHLO
+        id S1729829AbfJBTKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:10:18 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35936 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729034AbfJBTII (ORCPT
+        by vger.kernel.org with ESMTP id S1729333AbfJBTIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:08 -0400
+        Wed, 2 Oct 2019 15:08:17 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-00035R-Ld; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyx-00035v-Q5; Wed, 02 Oct 2019 20:08:15 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-0003ap-8m; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyp-0003fU-MK; Wed, 02 Oct 2019 20:08:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Joe Burmeister" <joe.burmeister@devtank.co.uk>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Avri Altman" <avri.altman@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Stanley Chu" <stanley.chu@mediatek.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.417578783@decadent.org.uk>
+Message-ID: <lsq.1570043211.955969694@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 13/87] tty: max310x: Fix external crystal register setup
+Subject: [PATCH 3.16 70/87] scsi: ufs: Avoid runtime suspend possibly
+ being blocked forever
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,40 +49,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Burmeister <joe.burmeister@devtank.co.uk>
+From: Stanley Chu <stanley.chu@mediatek.com>
 
-commit 5d24f455c182d5116dd5db8e1dc501115ecc9c2c upstream.
+commit 24e2e7a19f7e4b83d0d5189040d997bce3596473 upstream.
 
-The datasheet states:
+UFS runtime suspend can be triggered after pm_runtime_enable() is invoked
+in ufshcd_pltfrm_init(). However if the first runtime suspend is triggered
+before binding ufs_hba structure to ufs device structure via
+platform_set_drvdata(), then UFS runtime suspend will be no longer
+triggered in the future because its dev->power.runtime_error was set in the
+first triggering and does not have any chance to be cleared.
 
-  Bit 4: ClockEnSet the ClockEn bit high to enable an external clocking
-(crystal or clock generator at XIN). Set the ClockEn bit to 0 to disable
-clocking
-  Bit 1: CrystalEnSet the CrystalEn bit high to enable the crystal
-oscillator. When using an external clock source at XIN, CrystalEn must
-be set low.
+To be more clear, dev->power.runtime_error is set if hba is NULL in
+ufshcd_runtime_suspend() which returns -EINVAL to rpm_callback() where
+dev->power.runtime_error is set as -EINVAL. In this case, any future
+rpm_suspend() for UFS device fails because rpm_check_suspend_allowed()
+fails due to non-zero
+dev->power.runtime_error.
 
-The bit 4, MAX310X_CLKSRC_EXTCLK_BIT, should be set and was not.
+To resolve this issue, make sure the first UFS runtime suspend get valid
+"hba" in ufshcd_runtime_suspend(): Enable UFS runtime PM only after hba is
+successfully bound to UFS device structure.
 
-This was required to make the MAX3107 with an external crystal on our
-board able to send or receive data.
-
-Signed-off-by: Joe Burmeister <joe.burmeister@devtank.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 62694735ca95 ([SCSI] ufs: Add runtime PM support for UFS host controller driver)
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[bwh: Backported to 3.16:
+ - ufshcd_pltrfm_probe() doesn't allocate or free the host structure
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/max310x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd-pltfrm.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -568,7 +568,7 @@ static int max310x_set_ref_clk(struct ma
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -150,22 +150,19 @@ static int ufshcd_pltfrm_probe(struct pl
+ 		goto out;
  	}
  
- 	/* Configure clock source */
--	clksrc = xtal ? MAX310X_CLKSRC_CRYST_BIT : MAX310X_CLKSRC_EXTCLK_BIT;
-+	clksrc = MAX310X_CLKSRC_EXTCLK_BIT | (xtal ? MAX310X_CLKSRC_CRYST_BIT : 0);
+-	pm_runtime_set_active(&pdev->dev);
+-	pm_runtime_enable(&pdev->dev);
+-
+ 	err = ufshcd_init(dev, &hba, mmio_base, irq);
+ 	if (err) {
+ 		dev_err(dev, "Intialization failed\n");
+-		goto out_disable_rpm;
++		goto out;
+ 	}
  
- 	/* Configure PLL */
- 	if (pllcfg) {
+ 	platform_set_drvdata(pdev, hba);
+ 
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++
+ 	return 0;
+ 
+-out_disable_rpm:
+-	pm_runtime_disable(&pdev->dev);
+-	pm_runtime_set_suspended(&pdev->dev);
+ out:
+ 	return err;
+ }
 
