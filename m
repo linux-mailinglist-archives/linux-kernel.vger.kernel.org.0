@@ -2,89 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BDF3C8CE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 17:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1563AC8CE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 17:29:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbfJBP2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 11:28:48 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39034 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbfJBP2s (ORCPT
+        id S1727121AbfJBP3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 11:29:50 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:60490 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbfJBP3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 11:28:48 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v4so10527818pff.6
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 08:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LmPSSnl7oLfjGfTevWKF5nXawA8GgW4CyXCX6bgUzQ4=;
-        b=BaDPoJQQVln/hwSWT1CTz1bja93uK6DzuCN8vMSY2Ybiq8MaGIDAypfNlUNnyp+fok
-         2kMXuT+NUuvlomBUbRn5X7HXLNPNKvCtZ+/y1P0hSXI08oncay2zGvrX6rQ1VMeMgC+1
-         QY30hPdub0KcRJlSo5KnElf61FhY5nXbdd99Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LmPSSnl7oLfjGfTevWKF5nXawA8GgW4CyXCX6bgUzQ4=;
-        b=BSTP2E7AdKJ4EpDNfgWlKTrn4GyEFtHW5MoTaI+kVr8AgU9Ak8OrSoYOW7YyYFm/6h
-         oREFUq+ydh08uXYOdOtvh2UpJoLfeGIE8YY0khjBuo3zbWE+KSDp1vCjneChD4WnGQRJ
-         v8TjxpP99SyBbZGKjeWcp6bjRNJJ3MyRL3ZBd1qb/HiyHXyebeLh+bzSPPCGO828t8gj
-         1D6N6ULwbEN9BvwXpqaXowDKiueMNVuGfOLf+d68hn+jKNdZ37ov1d1jkYq91Mbzsu/T
-         YVbyW2/3lT2iKB855i+Qg6WW/QB1zYg9carzhVI1aBfT+4fsdewSQHzCL/B34dn5MyVt
-         EgkQ==
-X-Gm-Message-State: APjAAAW/8DBablhxBgN2TjYyy+ZDqTMu7mp4m2LGwfo1w8fu4RzqGMW5
-        4IMqA3RKycSzVUyKLQYrPiz0JeKKZr8=
-X-Google-Smtp-Source: APXvYqwAoQvOz21uGWIZpseoql17b2IzK7tPeAurYqQtFfTgTH/bfDoI3eQhpHuCdzlQlW4B+qWbfg==
-X-Received: by 2002:a65:534a:: with SMTP id w10mr4318773pgr.375.1570030126903;
-        Wed, 02 Oct 2019 08:28:46 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id c8sm18647245pgw.37.2019.10.02.08.28.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 08:28:46 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Paul McKenney <paulmck@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "David S. Miller" <davem@davemloft.net>,
+        Wed, 2 Oct 2019 11:29:49 -0400
+Received: from ramsan ([84.194.98.4])
+        by laurent.telenet-ops.be with bizsmtp
+        id 8fVn2100n05gfCL01fVnvm; Wed, 02 Oct 2019 17:29:48 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iFgZX-0000sZ-LH; Wed, 02 Oct 2019 17:29:47 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iFgZX-00031d-Is; Wed, 02 Oct 2019 17:29:47 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH] MAINTAINERS: Add me for Linux Kernel memory consistency model (LKMM)
-Date:   Wed,  2 Oct 2019 11:28:37 -0400
-Message-Id: <20191002152837.97191-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] mmc: renesas_sdhi: Do not use platform_get_irq() to count interrupts
+Date:   Wed,  2 Oct 2019 17:29:46 +0200
+Message-Id: <20191002152946.11586-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quite interested in the LKMM, I have submitted patches before and used
-it a lot. I would like to be a part of the maintainers for this project.
+As platform_get_irq() now prints an error when the interrupt does not
+exist, counting interrupts by looping until failure causes the printing
+of scary messages like:
 
-Cc: Paul McKenney <paulmck@kernel.org>
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+    renesas_sdhi_internal_dmac ee140000.sd: IRQ index 1 not found
 
+Fix this by using the platform_irq_count() helper to avoid touching
+non-existent interrupts.
+
+Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to platform_get_irq*()")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+v2:
+  - Add Reviewed-by, Tested-by,
+  - Return failure in case num_irqs is zero, as before.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 296de2b51c83..ecf6d265a88d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9473,6 +9473,7 @@ M:	David Howells <dhowells@redhat.com>
- M:	Jade Alglave <j.alglave@ucl.ac.uk>
- M:	Luc Maranget <luc.maranget@inria.fr>
- M:	"Paul E. McKenney" <paulmck@kernel.org>
-+M:	Joel Fernandes <joel@joelfernandes.org>
- R:	Akira Yokosawa <akiyks@gmail.com>
- R:	Daniel Lustig <dlustig@nvidia.com>
- L:	linux-kernel@vger.kernel.org
+This is a fix for v5.4-rc1.
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 31 +++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index d4ada5cca2d14f6a..234551a68739b65b 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -646,8 +646,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	struct tmio_mmc_dma *dma_priv;
+ 	struct tmio_mmc_host *host;
+ 	struct renesas_sdhi *priv;
++	int num_irqs, irq, ret, i;
+ 	struct resource *res;
+-	int irq, ret, i;
+ 	u16 ver;
+ 
+ 	of_data = of_device_get_match_data(&pdev->dev);
+@@ -825,24 +825,31 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		host->hs400_complete = renesas_sdhi_hs400_complete;
+ 	}
+ 
+-	i = 0;
+-	while (1) {
++	num_irqs = platform_irq_count(pdev);
++	if (num_irqs < 0) {
++		ret = num_irqs;
++		goto eirq;
++	}
++
++	/* There must be at least one IRQ source */
++	if (!num_irqs) {
++		ret = -ENXIO;
++		goto eirq;
++	}
++
++	for (i = 0; i < num_irqs; i++) {
+ 		irq = platform_get_irq(pdev, i);
+-		if (irq < 0)
+-			break;
+-		i++;
++		if (irq < 0) {
++			ret = irq;
++			goto eirq;
++		}
++
+ 		ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_irq, 0,
+ 				       dev_name(&pdev->dev), host);
+ 		if (ret)
+ 			goto eirq;
+ 	}
+ 
+-	/* There must be at least one IRQ source */
+-	if (!i) {
+-		ret = irq;
+-		goto eirq;
+-	}
+-
+ 	dev_info(&pdev->dev, "%s base at 0x%08lx max clock rate %u MHz\n",
+ 		 mmc_hostname(host->mmc), (unsigned long)
+ 		 (platform_get_resource(pdev, IORESOURCE_MEM, 0)->start),
 -- 
-2.23.0.444.g18eeb5a265-goog
+2.17.1
 
