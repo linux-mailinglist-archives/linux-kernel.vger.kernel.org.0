@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C992BC917D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 506E0C91BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbfJBTJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:09:20 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36110 "EHLO
+        id S1729551AbfJBTLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:11:36 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35612 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729381AbfJBTIW (ORCPT
+        by vger.kernel.org with ESMTP id S1729214AbfJBTIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:22 -0400
+        Wed, 2 Oct 2019 15:08:12 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyx-00035x-Q7; Wed, 02 Oct 2019 20:08:15 +0100
+        id 1iFjyr-00036H-Pg; Wed, 02 Oct 2019 20:08:09 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyp-0003fB-Ep; Wed, 02 Oct 2019 20:08:07 +0100
+        id 1iFjyo-0003eG-RI; Wed, 02 Oct 2019 20:08:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,24 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Ravi Bangoria" <ravi.bangoria@linux.vnet.ibm.com>,
-        "Stephane Eranian" <eranian@google.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Young Xiao" <92siuyang@gmail.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "Jiri Olsa" <jolsa@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Will Deacon" <will.deacon@arm.com>,
-        "Frederic Weisbecker" <fweisbec@gmail.com>
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        "Dave Martin" <Dave.Martin@arm.com>,
+        "Andrew Jones" <drjones@redhat.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.918554389@decadent.org.uk>
+Message-ID: <lsq.1570043211.182854195@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 66/87] perf/core: Fix perf_sample_regs_user() mm check
+Subject: [PATCH 3.16 55/87] KVM: arm64: Filter out invalid core register
+ IDs in KVM_GET_REG_LIST
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,49 +49,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Dave Martin <Dave.Martin@arm.com>
 
-commit 085ebfe937d7a7a5df1729f35a12d6d655fea68c upstream.
+commit df205b5c63281e4f32caac22adda18fd68795e80 upstream.
 
-perf_sample_regs_user() uses 'current->mm' to test for the presence of
-userspace, but this is insufficient, consider use_mm().
+Since commit d26c25a9d19b ("arm64: KVM: Tighten guest core register
+access from userspace"), KVM_{GET,SET}_ONE_REG rejects register IDs
+that do not correspond to a single underlying architectural register.
 
-A better test is: '!(current->flags & PF_KTHREAD)', exec() clears
-PF_KTHREAD after it sets the new ->mm but before it drops to userspace
-for the first time.
+KVM_GET_REG_LIST was not changed to match however: instead, it
+simply yields a list of 32-bit register IDs that together cover the
+whole kvm_regs struct.  This means that if userspace tries to use
+the resulting list of IDs directly to drive calls to KVM_*_ONE_REG,
+some of those calls will now fail.
 
-Possibly obsoletes: bf05fc25f268 ("powerpc/perf: Fix oops when kthread execs user process")
+This was not the intention.  Instead, iterating KVM_*_ONE_REG over
+the list of IDs returned by KVM_GET_REG_LIST should be guaranteed
+to work.
 
-Reported-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Reported-by: Young Xiao <92siuyang@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 4018994f3d87 ("perf: Add ability to attach user level registers dump to sample")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+This patch fixes the problem by splitting validate_core_offset()
+into a backend core_reg_size_from_offset() which does all of the
+work except for checking that the size field in the register ID
+matches, and kvm_arm_copy_reg_indices() and num_core_regs() are
+converted to use this to enumerate the valid offsets.
+
+kvm_arm_copy_reg_indices() now also sets the register ID size field
+appropriately based on the value returned, so the register ID
+supplied to userspace is fully qualified for use with the register
+access ioctls.
+
+Fixes: d26c25a9d19b ("arm64: KVM: Tighten guest core register access from userspace")
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Reviewed-by: Andrew Jones <drjones@redhat.com>
+Tested-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+[bwh: Backported to 3.16:
+ - Don't add unused vcpu parameter
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4581,7 +4581,7 @@ static void perf_sample_regs_user(struct
- 				  struct pt_regs *regs)
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -46,9 +46,8 @@ static u64 core_reg_offset_from_id(u64 i
+ 	return id & ~(KVM_REG_ARCH_MASK | KVM_REG_SIZE_MASK | KVM_REG_ARM_CORE);
+ }
+ 
+-static int validate_core_offset(const struct kvm_one_reg *reg)
++static int core_reg_size_from_offset(u64 off)
  {
- 	if (!user_mode(regs)) {
--		if (current->mm)
-+		if (!(current->flags & PF_KTHREAD))
- 			regs = task_pt_regs(current);
- 		else
- 			regs = NULL;
+-	u64 off = core_reg_offset_from_id(reg->id);
+ 	int size;
+ 
+ 	switch (off) {
+@@ -78,13 +77,26 @@ static int validate_core_offset(const st
+ 		return -EINVAL;
+ 	}
+ 
+-	if (KVM_REG_SIZE(reg->id) == size &&
+-	    IS_ALIGNED(off, size / sizeof(__u32)))
+-		return 0;
++	if (IS_ALIGNED(off, size / sizeof(__u32)))
++		return size;
+ 
+ 	return -EINVAL;
+ }
+ 
++static int validate_core_offset(const struct kvm_one_reg *reg)
++{
++	u64 off = core_reg_offset_from_id(reg->id);
++	int size = core_reg_size_from_offset(off);
++
++	if (size < 0)
++		return -EINVAL;
++
++	if (KVM_REG_SIZE(reg->id) != size)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static int get_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+ {
+ 	/*
+@@ -197,10 +209,33 @@ unsigned long kvm_arm_num_regs(struct kv
+ int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *uindices)
+ {
+ 	unsigned int i;
+-	const u64 core_reg = KVM_REG_ARM64 | KVM_REG_SIZE_U64 | KVM_REG_ARM_CORE;
+ 
+ 	for (i = 0; i < sizeof(struct kvm_regs) / sizeof(__u32); i++) {
+-		if (put_user(core_reg | i, uindices))
++		u64 reg = KVM_REG_ARM64 | KVM_REG_ARM_CORE | i;
++		int size = core_reg_size_from_offset(i);
++
++		if (size < 0)
++			continue;
++
++		switch (size) {
++		case sizeof(__u32):
++			reg |= KVM_REG_SIZE_U32;
++			break;
++
++		case sizeof(__u64):
++			reg |= KVM_REG_SIZE_U64;
++			break;
++
++		case sizeof(__uint128_t):
++			reg |= KVM_REG_SIZE_U128;
++			break;
++
++		default:
++			WARN_ON(1);
++			continue;
++		}
++
++		if (put_user(reg, uindices))
+ 			return -EFAULT;
+ 		uindices++;
+ 	}
 
