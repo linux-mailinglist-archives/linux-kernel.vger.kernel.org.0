@@ -2,69 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3861DC8F4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE46C8F2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbfJBREF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 13:04:05 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55595 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728790AbfJBREB (ORCPT
+        id S1728055AbfJBRDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:03:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38338 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfJBRC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:04:01 -0400
-Received: by mail-wm1-f67.google.com with SMTP id a6so7977181wma.5
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:03:59 -0700 (PDT)
+        Wed, 2 Oct 2019 13:02:59 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w12so20531163wro.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ba3w9kcbGuMtfRQk+/aw/wvXJx7RCk+NpcTgMqWmzhU=;
-        b=wzK2Kr+8eqFEvQyxP/6nAjwnHPAGzZ8Pr5KF1g4HtEl208yl3hYOPNrU07OMhhzVWi
-         MJKwplxNEH4QgfCZUR4dvDzREYAmCwTg8QcRqVIc+N86yPlchCpdJwH64aDYPis9zk8m
-         TdMyTqaPHvXe6DL+R17NO7Ew8ajZCG6HeEYnB+26TI7BCFOg37ZX69Ifm9cCZnNvptFv
-         dh27JTl0lOOYsJXWAQYHiDsnQ/ysVdZ3EghjNhZgsmHbWK3V+X6gAGNnlR3zit/Lp1L8
-         mebYi0KthRj672fvFN5LuLKZYDX6z4czZY0Slv+AbT5SR4PFSvdKM/FhltbeInqz6vfK
-         msew==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j6mEZW97cwRM3vW7U2lOpw/fWWoNmGcPeVDFJW5o5aI=;
+        b=a2Gbtd+4W12wuYhZwNclrG1CiaE+Ig5ZKGP7L2XIgw2aMZEt5v/lArhsfbIH0rlNyg
+         8VNYvFqtCW5eDYw37XpGCiasH2cgZpTSFxRG6OjqQBzQHGpS+IP3piTuKe+HBdIGG7pR
+         Gy18ypVO/6vOJxxoJF1y3/sxycQ6cKb0rN0qUjq4rBIDNWSN4kWBiY5T7fmu0vw1IUIQ
+         Mdw1BETnD9crNfwgo+dt0G5BcEGpwohvE793VDVImLQTNlXj5Nu2941+maXLXQQilTZh
+         wbeHu96UYwNJ0ux/6BtvU4YU+6uIbZHy1wmfj7Xb72Wk9VKSR1T3Uthmq5wkHSGKdV2b
+         m6qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ba3w9kcbGuMtfRQk+/aw/wvXJx7RCk+NpcTgMqWmzhU=;
-        b=TkoK0m4/NqkZmEAsLVIwvvNEpnkVlMGflKpcOuTQ1LRcdCqhZ0JQJpMvpTYVWgxObh
-         O7zhWbqkZFwK9Ny3Gw4X+ZDyXnKZFpdllhw29N3TnrfprdSDCc6wxISgkSXdvOOa5Ryh
-         n0GGrfFkGV1+Cl2lEjahBy71+lXQ6zUreO8uw9qH64pen8zOjAnoBiPcA11Y2rHfMt8p
-         DdsNavTho8baoX46x6JStmwn1jjPUjObmo11kKZ22SBCUsPAQlOM0voaPPUClkKyZ0af
-         JZRU9hBlnLzAwsq+K2MbSTByr6RqAKGofbRx62scEL6hIBn/ly1pRNJV4j1NkO8apKjT
-         VgBA==
-X-Gm-Message-State: APjAAAUhPzrpHY29rv7vm9fhBbOq9ub94nE6d8malalV6zfHq7VWSOHn
-        JLhQzIUBMzz4aGuJcs+vv4WCFw==
-X-Google-Smtp-Source: APXvYqwXbGLwgYQFbrU4EXNJ7vjxZWidobcE/CUTFY2F3Qa/HMp0yBUXkU17d/wY4mHe9PxlJXUcgw==
-X-Received: by 2002:a05:600c:2115:: with SMTP id u21mr3610780wml.168.1570035839244;
-        Wed, 02 Oct 2019 10:03:59 -0700 (PDT)
-Received: from sudo.home ([2a01:cb1d:112:6f00:f145:3252:fc29:76c9])
-        by smtp.gmail.com with ESMTPSA id f18sm7085459wmh.43.2019.10.02.10.03.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Oct 2019 10:03:58 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Dave Young <dyoung@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Lyude Paul <lyude@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Octavian Purdila <octavian.purdila@intel.com>,
-        Peter Jones <pjones@redhat.com>, Scott Talbert <swt@techie.net>
-Subject: [PATCH 7/7] efi/x86: do not clean dummy variable in kexec path
-Date:   Wed,  2 Oct 2019 18:59:04 +0200
-Message-Id: <20191002165904.8819-8-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191002165904.8819-1-ard.biesheuvel@linaro.org>
-References: <20191002165904.8819-1-ard.biesheuvel@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j6mEZW97cwRM3vW7U2lOpw/fWWoNmGcPeVDFJW5o5aI=;
+        b=cTu5hSTeLWejMbr0ZmdS48ptASTZQ5KeJWZjzpI7Bjr0QuXpBB/BWj5ccKtilYNIu0
+         jemHTuMBY/5NpD5m+RsA62CdZWfmV5MkGEBDRt/bzSRXoIOCQJ6Lhl6Iivp27EcuYxXg
+         P59PhwB9FMfObOkjPuVEqVqtFET7NYkh5gB5/m59wbOhx2z9h3VJJMQk+bjxMje8XpmJ
+         zOBxZH5JmE3U4hpTogJJ6pwQ5Ss7mHmqnoeCYbxL4WdnoMIB98F0QCB+Cv6Opo7ux0Sd
+         IzrD1/1kGLU/BAJzg/K+yYQ8RxK+xDFrUodPd4odkfYxmAEVh28atcyRFU8G9EgI1HDi
+         C/Ew==
+X-Gm-Message-State: APjAAAXJRW/+2ViUEHbJAiD3oTCx4qOWQu4LFxt3Gc/byfObcd5jW6nP
+        dla/PJeLHxJxbnBl/AwmZw1bsANkUnE=
+X-Google-Smtp-Source: APXvYqyfHPaXuTDHKR0G+6d4PXNieCa79JUKUPWeNcTxzobXu39t6AQ29qJUgKxoLoO72YNBEn6chw==
+X-Received: by 2002:adf:e988:: with SMTP id h8mr3531294wrm.354.1570035776511;
+        Wed, 02 Oct 2019 10:02:56 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id b62sm11188575wmc.13.2019.10.02.10.02.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 10:02:55 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alban Bedel <albeu@free.fr>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/6] gpio: replace nocache ioremap functions with devm_platform_ioremap_resource()
+Date:   Wed,  2 Oct 2019 19:02:43 +0200
+Message-Id: <20191002170249.17366-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,41 +62,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Young <dyoung@redhat.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-kexec reboot fails randomly in UEFI based kvm guest.  The firmware
-just reset while calling efi_delete_dummy_variable();  Unfortunately
-I don't know how to debug the firmware, it is also possible a potential
-problem on real hardware as well although nobody reproduced it.
+According to Arnd Bergmann:
 
-The intention of efi_delete_dummy_variable is to trigger garbage collection
-when entering virtual mode.  But SetVirtualAddressMap can only run once
-for each physical reboot, thus kexec_enter_virtual_mode is not necessarily
-a good place to clean dummy object.
+"The only architecture that actually has a difference between
+ioremap() and ioremap_nocache() seems to be ia64. I would
+generally assume that any driver using ioremap_nocache()
+that is not ia64 specific should just use ioremap()."
 
-Drop efi_delete_dummy_variable so that kexec reboot can work.
+This series converts all users of nocache ioremap variants that aren't
+ia64-specific to using devm_platform_ioremap_resource().
 
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Acked-by: Matthew Garrett <mjg59@google.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/platform/efi/efi.c | 3 ---
- 1 file changed, 3 deletions(-)
+Most of these don't call request_mem_region() currently, which
+devm_platform_ioremap_resource() does implicitly, so testing would
+be appreciated.
 
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index c202e1b07e29..425e025341db 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -917,9 +917,6 @@ static void __init kexec_enter_virtual_mode(void)
- 
- 	if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
- 		runtime_code_page_mkexec();
--
--	/* clean DUMMY object */
--	efi_delete_dummy_variable();
- #endif
- }
- 
+Included are two minor fixes for xgene and htc-egpio.
+
+Bartosz Golaszewski (6):
+  gpio: xgene: remove redundant error message
+  gpio: xgene: use devm_platform_ioremap_resource()
+  gpio: em: use devm_platform_ioremap_resource()
+  gpio: ath79: use devm_platform_ioremap_resource()
+  gpio: htc-egpio: use devm_platform_ioremap_resource()
+  gpio: htc-egpio: remove redundant error message
+
+ drivers/gpio/gpio-ath79.c     | 10 +++-------
+ drivers/gpio/gpio-em.c        | 20 ++++++++-----------
+ drivers/gpio/gpio-htc-egpio.c | 37 ++++++++++++-----------------------
+ drivers/gpio/gpio-xgene.c     | 27 ++++++-------------------
+ 4 files changed, 30 insertions(+), 64 deletions(-)
+
 -- 
-2.20.1
+2.23.0
 
