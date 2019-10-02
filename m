@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 873B1C91D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F22C91AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbfJBTLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:11:52 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35596 "EHLO
+        id S1729952AbfJBTK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:10:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35784 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729202AbfJBTIM (ORCPT
+        by vger.kernel.org with ESMTP id S1729302AbfJBTIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:12 -0400
+        Wed, 2 Oct 2019 15:08:15 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyr-00035v-D5; Wed, 02 Oct 2019 20:08:09 +0100
+        id 1iFjyu-000364-EQ; Wed, 02 Oct 2019 20:08:12 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-0003dd-Ey; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyq-0003gI-94; Wed, 02 Oct 2019 20:08:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Santosh Shilimkar" <santosh.shilimkar@oracle.com>,
+        "Jiri Pirko" <jiri@resnulli.us>,
         "David S. Miller" <davem@davemloft.net>,
-        "Zhu Yanjun" <yanjun.zhu@oracle.com>
+        "Jiri Pirko" <jiri@mellanox.com>,
+        "YueHaibing" <yuehaibing@huawei.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.436412731@decadent.org.uk>
+Message-ID: <lsq.1570043211.524954219@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 47/87] net: rds: fix memory leak in rds_ib_flush_mr_pool
+Subject: [PATCH 3.16 80/87] bonding: Always enable vlan tx offload
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,89 +49,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhu Yanjun <yanjun.zhu@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 85cb928787eab6a2f4ca9d2a798b6f3bed53ced1 upstream.
+commit 30d8177e8ac776d89d387fad547af6a0f599210e upstream.
 
-When the following tests last for several hours, the problem will occur.
+We build vlan on top of bonding interface, which vlan offload
+is off, bond mode is 802.3ad (LACP) and xmit_hash_policy is
+BOND_XMIT_POLICY_ENCAP34.
 
-Server:
-    rds-stress -r 1.1.1.16 -D 1M
-Client:
-    rds-stress -r 1.1.1.14 -s 1.1.1.16 -D 1M -T 30
+Because vlan tx offload is off, vlan tci is cleared and skb push
+the vlan header in validate_xmit_vlan() while sending from vlan
+devices. Then in bond_xmit_hash, __skb_flow_dissect() fails to
+get information from protocol headers encapsulated within vlan,
+because 'nhoff' is points to IP header, so bond hashing is based
+on layer 2 info, which fails to distribute packets across slaves.
 
-The following will occur.
+This patch always enable bonding's vlan tx offload, pass the vlan
+packets to the slave devices with vlan tci, let them to handle
+vlan implementation.
 
-"
-Starting up....
-tsks   tx/s   rx/s  tx+rx K/s    mbi K/s    mbo K/s tx us/c   rtt us cpu
-%
-  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
-  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
-  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
-  1      0      0       0.00       0.00       0.00    0.00 0.00 -1.00
-"
->From vmcore, we can find that clean_list is NULL.
-
->From the source code, rds_mr_flushd calls rds_ib_mr_pool_flush_worker.
-Then rds_ib_mr_pool_flush_worker calls
-"
- rds_ib_flush_mr_pool(pool, 0, NULL);
-"
-Then in function
-"
-int rds_ib_flush_mr_pool(struct rds_ib_mr_pool *pool,
-                         int free_all, struct rds_ib_mr **ibmr_ret)
-"
-ibmr_ret is NULL.
-
-In the source code,
-"
-...
-list_to_llist_nodes(pool, &unmap_list, &clean_nodes, &clean_tail);
-if (ibmr_ret)
-        *ibmr_ret = llist_entry(clean_nodes, struct rds_ib_mr, llnode);
-
-/* more than one entry in llist nodes */
-if (clean_nodes->next)
-        llist_add_batch(clean_nodes->next, clean_tail, &pool->clean_list);
-...
-"
-When ibmr_ret is NULL, llist_entry is not executed. clean_nodes->next
-instead of clean_nodes is added in clean_list.
-So clean_nodes is discarded. It can not be used again.
-The workqueue is executed periodically. So more and more clean_nodes are
-discarded. Finally the clean_list is NULL.
-Then this problem will occur.
-
-Fixes: 1bc144b62524 ("net, rds, Replace xlist in net/rds/xlist.h with llist")
-Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Fixes: 278339a42a1b ("bonding: propogate vlan_features to bonding master")
+Suggested-by: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/rds/ib_rdma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/bonding/bond_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/rds/ib_rdma.c
-+++ b/net/rds/ib_rdma.c
-@@ -663,12 +663,14 @@ static int rds_ib_flush_mr_pool(struct r
- 		wait_clean_list_grace();
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -4038,13 +4038,13 @@ void bond_setup(struct net_device *bond_
+ 	bond_dev->features |= NETIF_F_NETNS_LOCAL;
  
- 		list_to_llist_nodes(pool, &unmap_list, &clean_nodes, &clean_tail);
--		if (ibmr_ret)
-+		if (ibmr_ret) {
- 			*ibmr_ret = llist_entry(clean_nodes, struct rds_ib_mr, llnode);
--
-+			clean_nodes = clean_nodes->next;
-+		}
- 		/* more than one entry in llist nodes */
--		if (clean_nodes->next)
--			llist_add_batch(clean_nodes->next, clean_tail, &pool->clean_list);
-+		if (clean_nodes)
-+			llist_add_batch(clean_nodes, clean_tail,
-+					&pool->clean_list);
+ 	bond_dev->hw_features = BOND_VLAN_FEATURES |
+-				NETIF_F_HW_VLAN_CTAG_TX |
+ 				NETIF_F_HW_VLAN_CTAG_RX |
+ 				NETIF_F_HW_VLAN_CTAG_FILTER;
  
- 	}
+ 	bond_dev->hw_features &= ~(NETIF_F_ALL_CSUM & ~NETIF_F_HW_CSUM);
+ 	bond_dev->hw_features |= NETIF_F_GSO_UDP_TUNNEL;
+ 	bond_dev->features |= bond_dev->hw_features;
++	bond_dev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_STAG_TX;
+ }
  
+ /*
 
