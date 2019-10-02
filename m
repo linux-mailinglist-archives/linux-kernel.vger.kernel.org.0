@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09BF9C91E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEDC8C9182
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730083AbfJBTMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:12:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35478 "EHLO
+        id S1729627AbfJBTJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:09:29 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36066 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729155AbfJBTIK (ORCPT
+        by vger.kernel.org with ESMTP id S1729364AbfJBTIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:10 -0400
+        Wed, 2 Oct 2019 15:08:19 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-00035Q-LB; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyx-00036K-Qc; Wed, 02 Oct 2019 20:08:15 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-0003ak-5j; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyp-0003eZ-2W; Wed, 02 Oct 2019 20:08:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,18 +27,20 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Michael Rodin" <mrodin@de.adit-jv.com>,
-        "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "George G. Davis" <george_davis@mentor.com>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        "Simon Horman" <horms+renesas@verge.net.au>,
-        "Eugeniu Rosca" <erosca@de.adit-jv.com>
+        "Joseph Qi" <joseph.qi@linux.alibaba.com>,
+        "Changwei Ge" <gechangwei@live.cn>,
+        "Joel Becker" <jlbec@evilplan.org>,
+        "Wengang Wang" <wen.gang.wang@oracle.com>,
+        "Junxiao Bi" <junxiao.bi@oracle.com>,
+        "Mark Fasheh" <mark@fasheh.com>, "Jun Piao" <piaojun@huawei.com>,
+        "Daniel Sobe" <daniel.sobe@nxp.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Gang He" <ghe@suse.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.904590300@decadent.org.uk>
+Message-ID: <lsq.1570043211.332720807@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 12/87] serial: sh-sci: disable DMA for uart_console
+Subject: [PATCH 3.16 59/87] fs/ocfs2: fix race in ocfs2_dentry_attach_lock()
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -52,44 +54,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "George G. Davis" <george_davis@mentor.com>
+From: Wengang Wang <wen.gang.wang@oracle.com>
 
-commit 099506cbbc79c0bd52b19cb6b930f256dabc3950 upstream.
+commit be99ca2716972a712cde46092c54dee5e6192bf8 upstream.
 
-As noted in commit 84b40e3b57ee ("serial: 8250: omap: Disable DMA for
-console UART"), UART console lines use low-level PIO only access functions
-which will conflict with use of the line when DMA is enabled, e.g. when
-the console line is also used for systemd messages. So disable DMA
-support for UART console lines.
+ocfs2_dentry_attach_lock() can be executed in parallel threads against the
+same dentry.  Make that race safe.  The race is like this:
 
-Reported-by: Michael Rodin <mrodin@de.adit-jv.com>
-Link: https://patchwork.kernel.org/patch/10929511/
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: George G. Davis <george_davis@mentor.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
+            thread A                               thread B
+
+(A1) enter ocfs2_dentry_attach_lock,
+seeing dentry->d_fsdata is NULL,
+and no alias found by
+ocfs2_find_local_alias, so kmalloc
+a new ocfs2_dentry_lock structure
+to local variable "dl", dl1
+
+               .....
+
+                                    (B1) enter ocfs2_dentry_attach_lock,
+                                    seeing dentry->d_fsdata is NULL,
+                                    and no alias found by
+                                    ocfs2_find_local_alias so kmalloc
+                                    a new ocfs2_dentry_lock structure
+                                    to local variable "dl", dl2.
+
+                                                   ......
+
+(A2) set dentry->d_fsdata with dl1,
+call ocfs2_dentry_lock() and increase
+dl1->dl_lockres.l_ro_holders to 1 on
+success.
+              ......
+
+                                    (B2) set dentry->d_fsdata with dl2
+                                    call ocfs2_dentry_lock() and increase
+				    dl2->dl_lockres.l_ro_holders to 1 on
+				    success.
+
+                                                  ......
+
+(A3) call ocfs2_dentry_unlock()
+and decrease
+dl2->dl_lockres.l_ro_holders to 0
+on success.
+             ....
+
+                                    (B3) call ocfs2_dentry_unlock(),
+                                    decreasing
+				    dl2->dl_lockres.l_ro_holders, but
+				    see it's zero now, panic
+
+Link: http://lkml.kernel.org/r/20190529174636.22364-1-wen.gang.wang@oracle.com
+Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
+Reported-by: Daniel Sobe <daniel.sobe@nxp.com>
+Tested-by: Daniel Sobe <daniel.sobe@nxp.com>
+Reviewed-by: Changwei Ge <gechangwei@live.cn>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/sh-sci.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/ocfs2/dcache.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1600,6 +1600,13 @@ static void sci_request_dma(struct uart_
+--- a/fs/ocfs2/dcache.c
++++ b/fs/ocfs2/dcache.c
+@@ -310,6 +310,18 @@ int ocfs2_dentry_attach_lock(struct dent
  
- 	dev_dbg(port->dev, "%s: port %d\n", __func__, port->line);
- 
-+	/*
-+	 * DMA on console may interfere with Kernel log messages which use
-+	 * plain putchar(). So, simply don't use it with a console.
-+	 */
-+	if (uart_console(port))
-+		return;
+ out_attach:
+ 	spin_lock(&dentry_attach_lock);
++	if (unlikely(dentry->d_fsdata && !alias)) {
++		/* d_fsdata is set by a racing thread which is doing
++		 * the same thing as this thread is doing. Leave the racing
++		 * thread going ahead and we return here.
++		 */
++		spin_unlock(&dentry_attach_lock);
++		iput(dl->dl_inode);
++		ocfs2_lock_res_free(&dl->dl_lockres);
++		kfree(dl);
++		return 0;
++	}
 +
- 	if (s->cfg->dma_slave_tx <= 0 || s->cfg->dma_slave_rx <= 0)
- 		return;
- 
+ 	dentry->d_fsdata = dl;
+ 	dl->dl_count++;
+ 	spin_unlock(&dentry_attach_lock);
 
