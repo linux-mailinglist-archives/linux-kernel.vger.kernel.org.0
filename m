@@ -2,194 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19931C48F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 09:58:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 078B3C491F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 10:04:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfJBH6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 03:58:13 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:43737 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfJBH6M (ORCPT
+        id S1727499AbfJBIEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 04:04:14 -0400
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:38744 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726162AbfJBIEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 03:58:12 -0400
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 88340240003;
-        Wed,  2 Oct 2019 07:58:07 +0000 (UTC)
-Date:   Wed, 2 Oct 2019 09:59:51 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Benoit Parrot <bparrot@ti.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hugues.fruchet@st.com
-Subject: Re: [Patch 1/3] media: ov5640: add PIXEL_RATE control
-Message-ID: <20191002075951.afp2xligspqat4ew@uno.localdomain>
-References: <20190925152301.21645-1-bparrot@ti.com>
- <20190925152301.21645-2-bparrot@ti.com>
- <20191001075704.GA5449@paasikivi.fi.intel.com>
- <20191001162341.f2o7ruar2nifl5ws@ti.com>
+        Wed, 2 Oct 2019 04:04:13 -0400
+X-Greylist: delayed 644 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Oct 2019 04:04:13 EDT
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E49C2C0505;
+        Wed,  2 Oct 2019 07:53:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1570002809; bh=ZwchJV/hwBcbtxRPC9nW0ViWeKZEfdyL4rfZRkOLwvU=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=cm5wq/VNeiLKa3+zvzp3I4ZaZLkm0GgmNBZpzf2iffrvxfh/Yvr+RTP6VgjNz9bBk
+         BJNmIqMaJCLux7ezZCLVQqWX8c8/5J8e4dd6kRhWF3YCgjidgawaLnnfqdThsnR3qi
+         4gOY2SnAOO/+bG5LxFE4o1VFVZjsFSDjp+b5zaEZ/XK0XR9dW4+qZj1G75cYFOwte8
+         /4ArvXpvrgQJqziQra6YrpVKuawwrBtMPEcMrUCRZ5bLGOFgWswGEFMYkpmXaipB1z
+         yGWYUb5VSanslGe6TWq6NpwgwQD9OolxSC7iea8/KF2kPFIj88Kyv0AplgTN8hKSlB
+         pr6bX7GuB2UsA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 64018A0079;
+        Wed,  2 Oct 2019 07:53:13 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 2 Oct 2019 00:52:15 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 2 Oct 2019 00:52:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=He7nF96q2ceA3bU6DVkhVPdSeN0/auZnRNAMR7TQMd13NX3ePbE2+nPqcQJMuQ668r3FjpObSxHeM9B1H4P5utE5DGjGY+YKeRo2gOhA+2+hZNzZW1GIMEkSAOLMImROIngFp02Fs3K0xCZkv1+MEWCxDTtIJNl/Sw6Q5xFTrs5coySmgNkigkdmdo/mWsa1yQ5kvBLuZSWxu4mwdYfH0N5g5IMdiCpL0UY2FHbx3BmMY3SptZRfEPHAvFNkPkKi65jzlLEmUXVB9Kg1dG4obNXFpKGhH7CWY/6qL+Lvp3S1mRDcpOWmSbPewCsiG6PjOB0p91soVL4s6hHp0eALkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZwchJV/hwBcbtxRPC9nW0ViWeKZEfdyL4rfZRkOLwvU=;
+ b=fa1JqiEwCO2br70t+DJAejtIOq0qt2+PRs7k8GRiE/bHSH0djLvqKptPg9UqXBW7ci7dW5jV6LobJJYYxKRfo/jtIO9sLmgzAVmA2//prdCKZgpACzObcwFLLSixLQmX6TawaDrCyX+Ia3dh9gXvGbamLUcfisKGycUSQvHNJwO6uFi/4sWQRGvH1b5Z37LBPs5xuewhO6VW5uLPC1+nhhvM4nedT2z2bv+E1c25ePh3WohVe+dxcc/OTkLRUBo9zMpl6CEGOCJQPvI668CaxYPUeqcC3dwKKRNu7YHmXbhTBSClIo4JF5U1UwCgVbgAZsFVQqJrQpEoY+vYEWEgqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZwchJV/hwBcbtxRPC9nW0ViWeKZEfdyL4rfZRkOLwvU=;
+ b=Aj2N/BXsvkmw9amUQsehbBdvJvX7ns/hDqseLBwbnKV3iXMcUqgR73Jc5/w2k4N3c4CtuugDC0hZwcFHlbkTbaIQwURYcDaFoCfYXKZK3q1ZPHmt6UCanmkiuZA27pjgo65jDX+qCg8b1KyNz58ui1NCMyUUcsObQa26Xa5lfPY=
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com (20.179.67.145) by
+ BN8PR12MB3363.namprd12.prod.outlook.com (20.178.212.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.17; Wed, 2 Oct 2019 07:52:13 +0000
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::59fc:d942:487d:15b8]) by BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::59fc:d942:487d:15b8%7]) with mapi id 15.20.2305.023; Wed, 2 Oct 2019
+ 07:52:13 +0000
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Hans Andersson <haan@cellavision.se>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>
+CC:     "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>,
+        "alexandre.torgue@st.com" <alexandre.torgue@st.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans Andersson <hans.andersson@cellavision.se>
+Subject: RE: [PATCH] net: stmmac: Read user ID muliple times if needed.
+Thread-Topic: [PATCH] net: stmmac: Read user ID muliple times if needed.
+Thread-Index: AQHVePAsjhS3U+43VE+DGhKYpgL3F6dG8LMA
+Date:   Wed, 2 Oct 2019 07:52:13 +0000
+Message-ID: <BN8PR12MB3266ED591171A79825090BE0D39C0@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <20191002070721.9916-1-haan@cellavision.se>
+In-Reply-To: <20191002070721.9916-1-haan@cellavision.se>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=joabreu@synopsys.com; 
+x-originating-ip: [83.174.63.141]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 53c8e645-0ba6-4d3b-3f69-08d7470d703c
+x-ms-traffictypediagnostic: BN8PR12MB3363:
+x-microsoft-antispam-prvs: <BN8PR12MB3363F6A0E9D29D5551EE3E20D39C0@BN8PR12MB3363.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0178184651
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(346002)(376002)(396003)(39860400002)(199004)(189003)(25786009)(66946007)(256004)(7696005)(86362001)(71200400001)(71190400001)(99286004)(2501003)(7736002)(305945005)(76176011)(478600001)(6246003)(4326008)(33656002)(186003)(26005)(102836004)(476003)(14454004)(446003)(486006)(6506007)(11346002)(558084003)(8676002)(3846002)(6116002)(81156014)(81166006)(8936002)(229853002)(2906002)(52536014)(9686003)(55016002)(54906003)(5660300002)(316002)(6436002)(66066001)(66446008)(66556008)(7416002)(110136005)(64756008)(74316002)(66476007)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB3363;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 0oGFrpG1H59KoEraUJBtFJt0hGb0eThNrJzBcD1F04XMHg+GSyNgFZM/j4w/7BXjzJYFNL17U6Z9R300x4MFg9dVWiU9No8BgP7WTiLA8KIGxnuYG0B+WaokUeD60g/RkY7cIqNf3++2eSXIBkDvj7mkEcpJs7hUJxnloYvXNX6+0S4U62IO4l7pbilBdvlC6zMme2CQBEX+sbPiRkXV5lZGscnsvlg8hUFkn7WfEOIHPgRaAitWoCQ12Oju5Vkz3hRGB0futoc22Micfh7qITFxIqUHRX7bVuMObHYQhR9uid+RVqfDKIBb46WV97XJe8hTp2PLhVijMoYpuKRRo4kIfgY6yVLGGiX/1LUkglKJNKJnCuH6LT2AYcTzEuyuZCxJXIA8iTos06oxLMLjfBPOE0X7Lwjg0VwnJY5Cfps=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ikhqxt5tabr5x7tv"
-Content-Disposition: inline
-In-Reply-To: <20191001162341.f2o7ruar2nifl5ws@ti.com>
-User-Agent: NeoMutt/20180716
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53c8e645-0ba6-4d3b-3f69-08d7470d703c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2019 07:52:13.8558
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Zuwc/pVJylVfdRupVgidR9eaK49YIX4lEN6QPZSueniE7w4eOSN8PkfWgjWQH3SJu4eef/OSeX3eSIF+l4uKXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3363
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Hans Andersson <haan@cellavision.se>
+Date: Oct/02/2019, 08:07:21 (UTC+00:00)
 
---ikhqxt5tabr5x7tv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+> When we read user ID / Synopsys ID we might still be in reset,
+> so read muliple times if needed.
 
-Hi Benoit,
-  +Hugues
+We shouldn't even try to read it if IP is in reset ...=20
 
-If you're considering an helper, this thread might be useful to you:
-https://patchwork.kernel.org/patch/11019673/
-
-Thanks
-   j
-
-On Tue, Oct 01, 2019 at 11:23:41AM -0500, Benoit Parrot wrote:
-> Hi Sakari,
->
-> Thanks for the review.
->
-> Sakari Ailus <sakari.ailus@linux.intel.com> wrote on Tue [2019-Oct-01 10:57:04 +0300]:
-> > Hi Benoit,
-> >
-> > On Wed, Sep 25, 2019 at 10:22:59AM -0500, Benoit Parrot wrote:
-> > > Add v4l2 controls to report the pixel rates of each mode. This is
-> > > needed by some CSI2 receiver in order to perform proper DPHY
-> > > configuration.
-> > >
-> > > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > > ---
-> > >  drivers/media/i2c/ov5640.c | 25 +++++++++++++++++++++++++
-> > >  1 file changed, 25 insertions(+)
-> > >
-> > > diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-> > > index 500d9bbff10b..c2a44f30d56e 100644
-> > > --- a/drivers/media/i2c/ov5640.c
-> > > +++ b/drivers/media/i2c/ov5640.c
-> > > @@ -193,6 +193,9 @@ struct ov5640_mode_info {
-> > >
-> > >  struct ov5640_ctrls {
-> > >  	struct v4l2_ctrl_handler handler;
-> > > +	struct {
-> > > +		struct v4l2_ctrl *pixel_rate;
-> > > +	};
-> > >  	struct {
-> > >  		struct v4l2_ctrl *auto_exp;
-> > >  		struct v4l2_ctrl *exposure;
-> > > @@ -241,6 +244,7 @@ struct ov5640_dev {
-> > >  	const struct ov5640_mode_info *last_mode;
-> > >  	enum ov5640_frame_rate current_fr;
-> > >  	struct v4l2_fract frame_interval;
-> > > +	u64 pixel_rate;
-> > >
-> > >  	struct ov5640_ctrls ctrls;
-> > >
-> > > @@ -2202,6 +2206,7 @@ static int ov5640_set_fmt(struct v4l2_subdev *sd,
-> > >  	const struct ov5640_mode_info *new_mode;
-> > >  	struct v4l2_mbus_framefmt *mbus_fmt = &format->format;
-> > >  	struct v4l2_mbus_framefmt *fmt;
-> > > +	u64 rate;
-> > >  	int ret;
-> > >
-> > >  	if (format->pad != 0)
-> > > @@ -2233,6 +2238,12 @@ static int ov5640_set_fmt(struct v4l2_subdev *sd,
-> > >  	if (mbus_fmt->code != sensor->fmt.code)
-> > >  		sensor->pending_fmt_change = true;
-> > >
-> > > +	rate = sensor->current_mode->vtot * sensor->current_mode->htot;
-> > > +	rate *= ov5640_framerates[sensor->current_fr];
-> > > +	sensor->pixel_rate = rate;
-> > > +
-> > > +	__v4l2_ctrl_s_ctrl_int64(sensor->ctrls.pixel_rate,
-> > > +				 sensor->pixel_rate);
-> > >  out:
-> > >  	mutex_unlock(&sensor->lock);
-> > >  	return ret;
-> > > @@ -2657,6 +2668,13 @@ static int ov5640_init_controls(struct ov5640_dev *sensor)
-> > >  	/* we can use our own mutex for the ctrl lock */
-> > >  	hdl->lock = &sensor->lock;
-> > >
-> > > +	/* Clock related controls */
-> > > +	ctrls->pixel_rate =
-> > > +		v4l2_ctrl_new_std(hdl, ops,
-> > > +				  V4L2_CID_PIXEL_RATE, 0, INT_MAX, 1,
-> > > +				  55969920);
-> >
-> > Could you calculate this value instead of using a seemingly random number?
->
-> Yes I guess I could, especially if I make a helper function for it :).
->
-> >
-> > > +	ctrls->pixel_rate->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > > +
-> > >  	/* Auto/manual white balance */
-> > >  	ctrls->auto_wb = v4l2_ctrl_new_std(hdl, ops,
-> > >  					   V4L2_CID_AUTO_WHITE_BALANCE,
-> > > @@ -2782,6 +2800,7 @@ static int ov5640_s_frame_interval(struct v4l2_subdev *sd,
-> > >  	struct ov5640_dev *sensor = to_ov5640_dev(sd);
-> > >  	const struct ov5640_mode_info *mode;
-> > >  	int frame_rate, ret = 0;
-> > > +	u64 rate;
-> > >
-> > >  	if (fi->pad != 0)
-> > >  		return -EINVAL;
-> > > @@ -2816,6 +2835,12 @@ static int ov5640_s_frame_interval(struct v4l2_subdev *sd,
-> > >  		sensor->frame_interval = fi->interval;
-> > >  		sensor->current_mode = mode;
-> > >  		sensor->pending_mode_change = true;
-> > > +
-> > > +		rate = sensor->current_mode->vtot * sensor->current_mode->htot;
-> > > +		rate *= ov5640_framerates[sensor->current_fr];
-> > > +		sensor->pixel_rate = rate;
-> >
-> > I think it'd be better to have a function to calculate the value instead of
-> > duplicating the code here.
->
-> Yes I'll create a helper function.
->
-> Benoit
->
-> >
-> > > +		__v4l2_ctrl_s_ctrl_int64(sensor->ctrls.pixel_rate,
-> > > +					 sensor->pixel_rate);
-> > >  	}
-> > >  out:
-> > >  	mutex_unlock(&sensor->lock);
-> >
-> > --
-> > Kind regards,
-> >
-> > Sakari Ailus
-> > sakari.ailus@linux.intel.com
-
---ikhqxt5tabr5x7tv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl2UWPYACgkQcjQGjxah
-VjyMUBAAv63bbrUWjsL9pUBz7wdu92GfRg/kGitLLZQHVYMs8q0YxiA31AE+vnpY
-fPrDu45KjWSq1IFFX/NaS90fnWXQ9jYslhyyYQiG1zz2Gvw1XiLQD7CkjnNiAr/i
-IJGNcm2I2av/w4eEM4J+QdLgR4k4AHyOptXD+D/xJAOKWjBXehl2PSFCPY7DKDOv
-Or4PFzplX15a14GNHAqgjjATOKKw7yv+I9uLX1BazX2CHvGyeuqm4A5Q7HL1BnWu
-zm5kmuw6p7d5Zgy3eT36u6vixx+w1MpZVzLq1ZqipO4bo0QdvW6a0Ik8jUXxKnjd
-rMpJ/WJkTkf9juSNcaN7ewSy7hGTpBztjwBzZIFr6KiuYdPn1w11QCR1BORiVYFh
-YmMgm0sfmSkauu4LftQaLmMMlfl5p9KzRxjnTc0fkZsst5jrjdSZ+1m9dXXhAz9n
-0A6X3e1RkmnwsvgTmhYh02ICgMipYo6haH+4frS6ABnbhvCd5TdLaVeauwqbiKSH
-2gamkDttXB11urVdKP/fE0qO1ScSktjkEkrkNTqEo9APin8u4jtW3OpFJOWX+DN/
-F4YMhQ6ZdfK6GfI4iCBmXk0nl5RNiwB9orxinZTLt10rJip38PYO8+LKcThZNHrF
-+GNsZF5N2OZBRwi1Bx8u14Iok0pdoZIXm7nGtGYAHi1i6s5Z4jE=
-=1XCp
------END PGP SIGNATURE-----
-
---ikhqxt5tabr5x7tv--
+---
+Thanks,
+Jose Miguel Abreu
