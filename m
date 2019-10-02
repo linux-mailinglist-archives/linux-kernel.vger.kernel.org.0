@@ -2,90 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D37DC884D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA21CC8886
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbfJBMYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:24:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57254 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726635AbfJBMYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:24:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 91B0CACC3;
-        Wed,  2 Oct 2019 12:24:17 +0000 (UTC)
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-Cc:     x86@kernel.org, linux-pm@vger.kernel.org,
+        id S1726364AbfJBMab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:30:31 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:50785 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJBMaa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:30:30 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost.localdomain (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id D35FBE0013;
+        Wed,  2 Oct 2019 12:30:26 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@qperret.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Doug Smythies <dsmythies@telus.net>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>
-Subject: [PATCH v2 2/2] cpufreq: intel_pstate: Conditional frequency invariant accounting
-Date:   Wed,  2 Oct 2019 14:29:26 +0200
-Message-Id: <20191002122926.385-3-ggherdovich@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191002122926.385-1-ggherdovich@suse.cz>
-References: <20191002122926.385-1-ggherdovich@suse.cz>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 0/7] Introduce max12xx ADC support
+Date:   Wed,  2 Oct 2019 14:30:18 +0200
+Message-Id: <20191002123025.21413-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Hello, here is a patchset updating the existing max1027.c driver (for
+10-bit max1027/29/31 ADCs) with a few corrections/improvements and
+then introducing their 12-bit cousins named max1227/29/31.
 
-intel_pstate has two operating modes: active and passive. In "active"
-mode, the in-built scaling governor is used and in "passive" mode,
-the driver can be used with any governor like "schedutil". In "active"
-mode the utilization values from schedutil is not used and there is
-a requirement from high performance computing use cases, not to read
-any APERF/MPERF MSRs. In this case no need to use CPU cycles for
-frequency invariant accounting by reading APERF/MPERF MSRs.
-With this change frequency invariant account is only enabled in
-"passive" mode.
+As on my hardware setup the "start conversion" and "end of conversion"
+pin are not wired (which is absolutely fine for this chip), I also
+updated the driver and the bindings to support optional interrupts. In
+this case, triggered buffers are not available and the user must poll
+the value from sysfs.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Giovanni Gherdovich <ggherdovich@suse.cz>
----
- drivers/cpufreq/intel_pstate.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks,
+Miquèl
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 9f02de9a1b47..c7d9149e99ee 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2493,6 +2493,8 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
- {
- 	int ret;
- 
-+	x86_arch_scale_freq_tick_disable();
-+
- 	memset(&global, 0, sizeof(global));
- 	global.max_perf_pct = 100;
- 
-@@ -2505,6 +2507,9 @@ static int intel_pstate_register_driver(struct cpufreq_driver *driver)
- 
- 	global.min_perf_pct = min_perf_pct_min();
- 
-+	if (driver == &intel_cpufreq)
-+		x86_arch_scale_freq_tick_enable();
-+
- 	return 0;
- }
- 
+
+Miquel Raynal (7):
+  iio: adc: max1027: Add debugfs register read support
+  iio: adc: max1027: Make it optional to use interrupts
+  iio: adc: max1027: Reset the device at probe time
+  iio: adc: max1027: Prepare the introduction of different resolutions
+  iio: adc: max1027: Introduce 12-bit devices support
+  dt-bindings: iio: adc: max1027: Mark interrupts as optional
+  dt-bindings: iio: adc: max1027: Document max12xx series compatibles
+
+ .../bindings/iio/adc/max1027-adc.txt          |  12 +-
+ drivers/iio/adc/Kconfig                       |   4 +-
+ drivers/iio/adc/max1027.c                     | 190 +++++++++++-------
+ 3 files changed, 133 insertions(+), 73 deletions(-)
+
 -- 
-2.16.4
+2.20.1
 
