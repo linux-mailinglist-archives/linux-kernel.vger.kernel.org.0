@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEDC8C9182
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B9DC91D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729627AbfJBTJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:09:29 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36066 "EHLO
+        id S1730034AbfJBTLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:11:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35608 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729364AbfJBTIT (ORCPT
+        by vger.kernel.org with ESMTP id S1729213AbfJBTIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:19 -0400
+        Wed, 2 Oct 2019 15:08:12 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyx-00036K-Qc; Wed, 02 Oct 2019 20:08:15 +0100
+        id 1iFjyr-00036B-NH; Wed, 02 Oct 2019 20:08:09 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyp-0003eZ-2W; Wed, 02 Oct 2019 20:08:07 +0100
+        id 1iFjyo-0003e7-No; Wed, 02 Oct 2019 20:08:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,20 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Joseph Qi" <joseph.qi@linux.alibaba.com>,
-        "Changwei Ge" <gechangwei@live.cn>,
-        "Joel Becker" <jlbec@evilplan.org>,
-        "Wengang Wang" <wen.gang.wang@oracle.com>,
-        "Junxiao Bi" <junxiao.bi@oracle.com>,
-        "Mark Fasheh" <mark@fasheh.com>, "Jun Piao" <piaojun@huawei.com>,
-        "Daniel Sobe" <daniel.sobe@nxp.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Gang He" <ghe@suse.com>
+        "Jann Horn" <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Oleg Nesterov" <oleg@redhat.com>,
+        "Kees Cook" <keescook@chromium.org>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.332720807@decadent.org.uk>
+Message-ID: <lsq.1570043211.8393023@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 59/87] fs/ocfs2: fix race in ocfs2_dentry_attach_lock()
+Subject: [PATCH 3.16 53/87] ptrace: restore smp_rmb() in __ptrace_may_access()
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -54,94 +49,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wengang Wang <wen.gang.wang@oracle.com>
+From: Jann Horn <jannh@google.com>
 
-commit be99ca2716972a712cde46092c54dee5e6192bf8 upstream.
+commit f6581f5b55141a95657ef5742cf6a6bfa20a109f upstream.
 
-ocfs2_dentry_attach_lock() can be executed in parallel threads against the
-same dentry.  Make that race safe.  The race is like this:
+Restore the read memory barrier in __ptrace_may_access() that was deleted
+a couple years ago. Also add comments on this barrier and the one it pairs
+with to explain why they're there (as far as I understand).
 
-            thread A                               thread B
-
-(A1) enter ocfs2_dentry_attach_lock,
-seeing dentry->d_fsdata is NULL,
-and no alias found by
-ocfs2_find_local_alias, so kmalloc
-a new ocfs2_dentry_lock structure
-to local variable "dl", dl1
-
-               .....
-
-                                    (B1) enter ocfs2_dentry_attach_lock,
-                                    seeing dentry->d_fsdata is NULL,
-                                    and no alias found by
-                                    ocfs2_find_local_alias so kmalloc
-                                    a new ocfs2_dentry_lock structure
-                                    to local variable "dl", dl2.
-
-                                                   ......
-
-(A2) set dentry->d_fsdata with dl1,
-call ocfs2_dentry_lock() and increase
-dl1->dl_lockres.l_ro_holders to 1 on
-success.
-              ......
-
-                                    (B2) set dentry->d_fsdata with dl2
-                                    call ocfs2_dentry_lock() and increase
-				    dl2->dl_lockres.l_ro_holders to 1 on
-				    success.
-
-                                                  ......
-
-(A3) call ocfs2_dentry_unlock()
-and decrease
-dl2->dl_lockres.l_ro_holders to 0
-on success.
-             ....
-
-                                    (B3) call ocfs2_dentry_unlock(),
-                                    decreasing
-				    dl2->dl_lockres.l_ro_holders, but
-				    see it's zero now, panic
-
-Link: http://lkml.kernel.org/r/20190529174636.22364-1-wen.gang.wang@oracle.com
-Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
-Reported-by: Daniel Sobe <daniel.sobe@nxp.com>
-Tested-by: Daniel Sobe <daniel.sobe@nxp.com>
-Reviewed-by: Changwei Ge <gechangwei@live.cn>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: bfedb589252c ("mm: Add a user_ns owner to mm_struct and fix ptrace permission checks")
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ocfs2/dcache.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ kernel/cred.c   |  9 +++++++++
+ kernel/ptrace.c | 10 ++++++++++
+ 2 files changed, 19 insertions(+)
 
---- a/fs/ocfs2/dcache.c
-+++ b/fs/ocfs2/dcache.c
-@@ -310,6 +310,18 @@ int ocfs2_dentry_attach_lock(struct dent
- 
- out_attach:
- 	spin_lock(&dentry_attach_lock);
-+	if (unlikely(dentry->d_fsdata && !alias)) {
-+		/* d_fsdata is set by a racing thread which is doing
-+		 * the same thing as this thread is doing. Leave the racing
-+		 * thread going ahead and we return here.
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -439,6 +439,15 @@ int commit_creds(struct cred *new)
+ 		if (task->mm)
+ 			set_dumpable(task->mm, suid_dumpable);
+ 		task->pdeath_signal = 0;
++		/*
++		 * If a task drops privileges and becomes nondumpable,
++		 * the dumpability change must become visible before
++		 * the credential change; otherwise, a __ptrace_may_access()
++		 * racing with this change may be able to attach to a task it
++		 * shouldn't be able to attach to (as if the task had dropped
++		 * privileges without becoming nondumpable).
++		 * Pairs with a read barrier in __ptrace_may_access().
 +		 */
-+		spin_unlock(&dentry_attach_lock);
-+		iput(dl->dl_inode);
-+		ocfs2_lock_res_free(&dl->dl_lockres);
-+		kfree(dl);
-+		return 0;
-+	}
-+
- 	dentry->d_fsdata = dl;
- 	dl->dl_count++;
- 	spin_unlock(&dentry_attach_lock);
+ 		smp_wmb();
+ 	}
+ 
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -324,6 +324,16 @@ static int __ptrace_may_access(struct ta
+ 	return -EPERM;
+ ok:
+ 	rcu_read_unlock();
++	/*
++	 * If a task drops privileges and becomes nondumpable (through a syscall
++	 * like setresuid()) while we are trying to access it, we must ensure
++	 * that the dumpability is read after the credentials; otherwise,
++	 * we may be able to attach to a task that we shouldn't be able to
++	 * attach to (as if the task had dropped privileges without becoming
++	 * nondumpable).
++	 * Pairs with a write barrier in commit_creds().
++	 */
++	smp_rmb();
+ 	mm = task->mm;
+ 	if (mm &&
+ 	    ((get_dumpable(mm) != SUID_DUMP_USER) &&
 
