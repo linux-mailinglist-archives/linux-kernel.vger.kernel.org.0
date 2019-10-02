@@ -2,70 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C97FC8AFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2329C8AC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:18:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfJBOTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:19:39 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:34866 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbfJBOTg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:19:36 -0400
-Received: by mail-qt1-f196.google.com with SMTP id m15so26577877qtq.2;
-        Wed, 02 Oct 2019 07:19:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:subject:references
-         :in-reply-to:mime-version:content-transfer-encoding:cc:cc:to;
-        bh=Aw49m87vLYKWapGwlahs95wS8wqERdSTZivFro+pae8=;
-        b=oQm3mMqx7xtQeRt+PK6bQLydj5sWAuK910kbKkizWxrxcna7gHeozaCucu+U5Hehxc
-         p1CMBaARLHuLh5YzGmKynTXcaWWmyxVM+yr9yeAKUaFSPrzVFF11fbIshhJh+HFb1fhe
-         O5dfIjDCaPYtqXhPp2xBfwAB17ckSAL9q8TFKO/VBdWge4Um40CIlEVgiaWwbubQJwWE
-         8RjE089qy+CQOUwQX/TyE8o+/9c7OVeUA6/QNQ22suIlNK7GSP6eQLs5SiuOySwSU4Zi
-         Nbps1KyI+v1qX9UW/dR9eAMtdttD1192uTPe0lihGNIQPRsXQ02iWs9vAx97SQs+9gvx
-         5PfA==
-X-Gm-Message-State: APjAAAV0cCDxmLB50eknWeZHhZTa9YtuIHv9Tt80ejjPG7tTfLSQAm7J
-        pg51wI9puB9w+8SNrsvdjYjg2vPgrg==
-X-Google-Smtp-Source: APXvYqxGW0CQmSSFo2Z8PDeszHd0R6w6TerOsl1sCm1tUFyZqFcaBxSiTg56+jd0El/fESmXWgfaeA==
-X-Received: by 2002:a0c:fb07:: with SMTP id c7mr3074506qvp.29.1570025974463;
-        Wed, 02 Oct 2019 07:19:34 -0700 (PDT)
-Received: from localhost ([132.205.230.8])
-        by smtp.gmail.com with ESMTPSA id u43sm13174870qte.19.2019.10.02.07.19.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 07:19:33 -0700 (PDT)
-Message-ID: <5d94b1f5.1c69fb81.40e1e.4206@mx.google.com>
-Date:   Wed, 02 Oct 2019 09:19:30 -0500
-From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/3] bindings: rename links to mason USB2/USB3 DT files
-References: <b87385b2ac6ce6c75df82062fce2976149bbaa6b.1569330078.git.mchehab+samsung@kernel.org> <9ca2d136a1f79c878fff1208f9b536b0b613c0d5.1569330078.git.mchehab+samsung@kernel.org>
-In-Reply-To: <9ca2d136a1f79c878fff1208f9b536b0b613c0d5.1569330078.git.mchehab+samsung@kernel.org>
+        id S1728145AbfJBOSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:18:01 -0400
+Received: from mga14.intel.com ([192.55.52.115]:23502 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727771AbfJBOSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 10:18:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 07:17:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
+   d="scan'208";a="182060537"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga007.jf.intel.com with ESMTP; 02 Oct 2019 07:17:59 -0700
+Date:   Wed, 2 Oct 2019 07:22:08 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.com>
+Cc:     "Yi Liu" <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 0/4] User API for nested shared virtual address (SVA)
+Message-ID: <20191002072208.243995a1@jacob-builder>
+In-Reply-To: <1569972805-27664-1-git-send-email-jacob.jun.pan@linux.intel.com>
+References: <1569972805-27664-1-git-send-email-jacob.jun.pan@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>, corbet@lwn.net
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Sep 2019 10:01:29 -0300, Mauro Carvalho Chehab wrote:
-> Those files got renamed, but another DT file still points to the older
-> places.
+Hi Jean,
+
+Just wondering if you have more comments on ioasid custom allocator, v3
+is largely the same as v2 other than shuffling header within the set.
+
+Thanks,
+
+Jacob
+
+On Tue,  1 Oct 2019 16:33:21 -0700
+Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+
+> This set consists of IOMMU APIs to support SVA in the guest, a.k.a
+> nested SVA. As the complete SVA support is complex, we break down the
+> enabling effort into three stages:
+> 1. PCI device direct assignment
+> 2. Fault handling, especially page request service support
+> 3. Mediated device assignment
 > 
-> Fixes: 87a55485f2fc ("dt-bindings: phy: meson-g12a-usb3-pcie-phy: convert to yaml")
-> Fixes: da86d286cce8 ("dt-bindings: phy: meson-g12a-usb2-phy: convert to yaml")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  Documentation/devicetree/bindings/usb/amlogic,dwc3.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Each stage includes common API and vendor specific IOMMU driver
+> changes. This series is the common uAPI for stage #1. It is intended
+> to build consensus on the interface which all vendors reply on.
+> 
+> This series is extracted from the complete stage1 set which includes
+> VT-d code. https://lkml.org/lkml/2019/8/15/951
+> 
+> Changes:
+>  - Use spinlock instead of mutex to protect ioasid custom allocators.
+> This is to support callers in atomic context
+>  - Added more padding to guest PASID bind data for future extensions,
+> suggested by Joerg.
+> After much thinking, I did not do name change from PASID to IOASID in
+> the uAPI, considering we have been using PASID in the rest of uAPIs.
+> IOASID will remain used within the kernel.
+> 
+> For more discussions lead to this series, checkout LPC 2019
+> VFIO/IOMMU/PCI microconference materials.
+> https://linuxplumbersconf.org/event/4/sessions/66/#20190909
+> 
+> 
+> Change log:
+> v3:    - include errno.h in ioasid.h to fix compile error
+>        - rebased to v5.4-rc1, no change
+>  
+> v2:
+> 	- Addressed review comments by Jean on IOASID custom
+> allocators, locking fix, misc control flow fix.
+> 	- Fixed a compile error with missing header errno.h
+> 	- Updated Jean-Philiippe's new email and updateded
+> reviewed-by tag
+> 
+> 
+> Jacob Pan (2):
+>   iommu/ioasid: Add custom allocators
+>   iommu: Introduce guest PASID bind function
+> 
+> Jean-Philippe Brucker (1):
+>   iommu: Add I/O ASID allocator
+> 
+> Yi L Liu (1):
+>   iommu: Introduce cache_invalidate API
+> 
+>  drivers/iommu/Kconfig      |   4 +
+>  drivers/iommu/Makefile     |   1 +
+>  drivers/iommu/ioasid.c     | 432
+> +++++++++++++++++++++++++++++++++++++++++++++
+> drivers/iommu/iommu.c      |  30 ++++ include/linux/ioasid.h     |
+> 76 ++++++++ include/linux/iommu.h      |  36 ++++
+>  include/uapi/linux/iommu.h | 169 ++++++++++++++++++
+>  7 files changed, 748 insertions(+)
+>  create mode 100644 drivers/iommu/ioasid.c
+>  create mode 100644 include/linux/ioasid.h
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
-
+[Jacob Pan]
