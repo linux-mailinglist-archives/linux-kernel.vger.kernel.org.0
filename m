@@ -2,100 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CDE6C4A26
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 11:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3579AC4A37
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 11:07:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfJBJAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 05:00:45 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39965 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJBJAo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 05:00:44 -0400
-Received: by mail-io1-f67.google.com with SMTP id h144so55061244iof.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 02:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8OMb6qYz7L39aWv7huGiD2tvBbT7Ji7GJd30UEGa+oU=;
-        b=XAemzTfZ5XTN/w/nxCS7Stgtb84tkodIy5FcsHED/wIXFB68x1T84J/iRef3lIzVa4
-         fnzEuGlZckmxDnTqZ+Mq/yOgQrL/lOSg3RiWSZjPsv+OzgBAMy2BjMLaZ9Y53O3ZFG82
-         VGgyS/ChXqJQ9XqFmU1oaDphAfsJbO4SE/cFAH1gD+Z608Rzu8hr9fKMWwwSo/MtyPlT
-         LgmT5DtzoM7getSdU5n1/TBljBlFye3lZO0BpJ6Gib74zZGiusnBPV3gGwaiU3Fcb4jx
-         CrsAZKpUl7lBQPAzDizJpVsNJaBGcMGELRQlhWwEgPYgsP7X9wUGi8v4w/Ry7G6cQPXX
-         L0Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8OMb6qYz7L39aWv7huGiD2tvBbT7Ji7GJd30UEGa+oU=;
-        b=K61cVZicRwMAJzQ5bzRu6vpFMbmaJSUf+hQ4ynulsVq72UN7gqmySKJUgDEmEafM7s
-         vu5pyW/fpranS/WmVHsccZJIj7pkqP4To2vIiDe5atbae5wFwDrQpG8acmDqBcF+cckB
-         0FHqv1nKEqKkyFTUNZ0K6sXfX4nKKaz0/Ru5HZ2d19OulBmbgZH5SgLl9yzkRLkDYC/z
-         y2Bcmh/3sbAJVDDnRXq8Uu3cIBRWiIHchTU03d6ByXsUx0OqK06V8eFzle19tLqt1OUQ
-         4SEYH47Nn2lsC7U/sXERSmUtbIaqrp5lXXuJX5iQ3kTNXI8twRQTtVi3K/puigloX9OJ
-         1g4g==
-X-Gm-Message-State: APjAAAWJcoiZiGqY31jeJpCDSDI9qjCdEV3A+DFvVh+UULHXdathTWnK
-        v06tSSS4JWTytvlRe2wdzU8u4MEHHPWlpOsEAO72xZrw9vc=
-X-Google-Smtp-Source: APXvYqwEzjF0lbQ2ABgEhpFVDzqJdfpxcmC8WbxgaqLG7Ibv/dVo8qc6NFmWgAb3blXoWa15bzoJ2xyQyu2JM1jS9Iw=
-X-Received: by 2002:a92:98d3:: with SMTP id a80mr2849757ill.167.1570006843856;
- Wed, 02 Oct 2019 02:00:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1568224032.git.hns@goldelico.com> <20190916162816.GF52127@atomide.com>
- <DAF6ACB4-AD7E-4528-9F4B-C54104B5E260@goldelico.com>
-In-Reply-To: <DAF6ACB4-AD7E-4528-9F4B-C54104B5E260@goldelico.com>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Wed, 2 Oct 2019 11:00:32 +0200
-Message-ID: <CAKohpo=44UkJ3RBjtB8F3=1D9HzicULh303jF2uowiboa2328g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] OMAP3: convert opp-v1 to opp-v2 and read speed
- binned / 720MHz grade bits
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?UTF-8?Q?Andr=C3=A9_Roth?= <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Enric Balletbo i Serra <eballetbo@gmail.com>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Teresa Remmet <t.remmet@phytec.de>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726775AbfJBJHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 05:07:16 -0400
+Received: from mga06.intel.com ([134.134.136.31]:50995 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbfJBJHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 05:07:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 02:07:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,573,1559545200"; 
+   d="scan'208";a="343268371"
+Received: from brentlu-desk0.itwn.intel.com ([10.5.253.11])
+  by orsmga004.jf.intel.com with ESMTP; 02 Oct 2019 02:07:12 -0700
+From:   Brent Lu <brent.lu@intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Brent Lu <brent.lu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: bdw-rt5677: enable runtime channel merge
+Date:   Wed,  2 Oct 2019 17:04:32 +0800
+Message-Id: <1570007072-23049-1-git-send-email-brent.lu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Sep 2019 at 16:35, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->
-> Hi Tony,
->
-> > Am 16.09.2019 um 18:28 schrieb Tony Lindgren <tony@atomide.com>:
-> >
-> > * H. Nikolaus Schaller <hns@goldelico.com> [190911 17:48]:
-> >> CHANGES V3:
-> >> * make omap36xx control the abb-ldo and properly switch mode
-> >>  (suggested by Adam Ford <aford173@gmail.com>)
-> >> * add a note about enabling the turbo-mode OPPs
-> >
-> > Looks good to me, when applying, please provide a
-> > minimal immutable branch maybe against v5.3 or v5.4-rc1,
-> > that I can also merge in if needed for the dts changes.
->
-> Should I resend a v4 with your Acked-By added?
+In the DAI link "Capture PCM", the FE DAI "Capture Pin" supports 4-channel
+capture but the BE DAI supports only 2-channel capture. To fix the channel
+mismatch, we need to enable the runtime channel merge for this DAI link.
 
-I will pick them up in a few days. I was waiting for rc1 to get released and
-am on vacation right now. Tony already provided his Acks.
+Signed-off-by: Brent Lu <brent.lu@intel.com>
+---
+ sound/soc/intel/boards/bdw-rt5677.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---
-viresh
+diff --git a/sound/soc/intel/boards/bdw-rt5677.c b/sound/soc/intel/boards/bdw-rt5677.c
+index 4a4d335..8d07038 100644
+--- a/sound/soc/intel/boards/bdw-rt5677.c
++++ b/sound/soc/intel/boards/bdw-rt5677.c
+@@ -273,6 +273,7 @@ static struct snd_soc_dai_link bdw_rt5677_dais[] = {
+ 		},
+ 		.dpcm_capture = 1,
+ 		.dpcm_playback = 1,
++		.dpcm_merged_chan = 1,
+ 		SND_SOC_DAILINK_REG(fe, dummy, platform),
+ 	},
+ 
+-- 
+2.7.4
+
