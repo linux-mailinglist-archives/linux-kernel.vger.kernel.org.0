@@ -2,74 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD21C8D50
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 17:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A0EC8D23
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 17:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbfJBPst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 11:48:49 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51661 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbfJBPss (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 11:48:48 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 7so7770115wme.1;
-        Wed, 02 Oct 2019 08:48:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L+hxNaDSGun9WXAKThcVXAhiXWk+/gt73mQz7EUTjWo=;
-        b=BqaLRTTncpF84Gsoz/HZErrAv5pXFEmj9k5QwkKYcLmnV3EsaaP05XRx5yD1rGh12e
-         fcKKrdwpwqjGRKI7yr9/ef7BRmo6dIdh8gEJpYLSLDqV4cCyK7S84M9QuK++8/2hlkfr
-         JWpze7jLEOdilE7ZO1KCzbUdjOfDE7cOewqzj0/2U/S2eV6Pw2w5ycbm2AMG+1VWNSeu
-         IUGgcdocJR7U2xvhrkCqYk/+9CvUZJQR+OGm+tsrI6L6Cxp7WG1OVLriA8zNYRqqDD89
-         zwuK/t1qNe8FOqZuXCA77xd/4/qQvOm5i8lFE7hN83rJdrkXhkcI5SI5geYNdGRT2vad
-         O2fA==
-X-Gm-Message-State: APjAAAVDaKmNlbEXct84nZYNSjPODn/6FddVpspfx1qd2YcauSdM2vla
-        3EO7yeMrwDCXd7xFxzV8LcXkkuav
-X-Google-Smtp-Source: APXvYqzw/rAoksd2h8xVjx1/aL0+itOfDm4AXqGRq+B96m/2GvsWHUhTmg85JDurWQYKSx+2fLR1AQ==
-X-Received: by 2002:a7b:cf1a:: with SMTP id l26mr3644534wmg.38.1570031326159;
-        Wed, 02 Oct 2019 08:48:46 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id q15sm42255773wrg.65.2019.10.02.08.48.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Oct 2019 08:48:45 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 17:48:43 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        mark.rutland@arm.com, robh@kernel.org, a.hajda@samsung.com
-Subject: Re: [PATCH v2 resend] ARM: dts: exynos: remove obsolete IRQ lines
-Message-ID: <20191002154843.GB4072@kozik-lap>
-References: <CAJKOXPcs5K46U9mF8evCpbEap_j0Sd5kUk-xiWjwyihAL7te=Q@mail.gmail.com>
- <CGME20190919134622eucas1p1947abc201f86d414bd0b0635f2d91cfe@eucas1p1.samsung.com>
- <20190919134547.11671-1-m.szyprowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190919134547.11671-1-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728898AbfJBPnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 11:43:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38754 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725875AbfJBPnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 11:43:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5296DAC7D;
+        Wed,  2 Oct 2019 15:43:45 +0000 (UTC)
+Message-ID: <1570031352.22393.4.camel@suse.cz>
+Subject: Re: [PATCH v2 1/2] x86,sched: Add support for frequency invariance
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, x86@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Quentin Perret <qperret@qperret.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Doug Smythies <dsmythies@telus.net>
+Date:   Wed, 02 Oct 2019 17:49:12 +0200
+In-Reply-To: <201910022359.6gxzMDqF%lkp@intel.com>
+References: <20191002122926.385-2-ggherdovich@suse.cz>
+         <201910022359.6gxzMDqF%lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 03:45:47PM +0200, Marek Szyprowski wrote:
-> From: Maciej Falkowski <m.falkowski@samsung.com>
+On Wed, 2019-10-02 at 23:23 +0800, kbuild test robot wrote:
+> Hi Giovanni,
 > 
-> In commit 7222e8db2d50 ("iommu/exynos: Fix build errors") Exynos3250
-> iommu driver stopped supporting two IRQ lines. The second IRQ line in DTS
-> is ignored and is not needed.
+> Thank you for the patch! Yet something to improve:
 > 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> [auto build test ERROR on tip/sched/core]
+> [cannot apply to v5.4-rc1 next-20191002]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+Noted, thanks.
+
+Indeed this patch applies to the master branch of the "tip" tree,
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git , and depends on
+5ebb34edbefa8 "x86/intel: Aggregate microserver naming".
+
+I'll use '--base' in the future.
+
+
+Giovanni
+
+> 
+> url:    https://github.com/0day-ci/linux/commits/Giovanni-Gherdovich/Add-support-for-frequency-invariance-for-some-x86/20191002-221807
+> config: x86_64-defconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.4.0-13) 7.4.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+> > > arch/x86/kernel/smpboot.c:1834:7: error: 'INTEL_FAM6_ATOM_GOLDMONT_D' undeclared here (not in a function); did you mean 'INTEL_FAM6_ATOM_GOLDMONT_X'?
+> 
+>      ICPU(INTEL_FAM6_ATOM_GOLDMONT_D),
+>           ^
+>    arch/x86/kernel/smpboot.c:1824:25: note: in definition of macro 'ICPU'
+>      { X86_VENDOR_INTEL, 6, model, X86_FEATURE_APERFMPERF, 0}
+>                             ^~~~~
+> 
+> vim +1834 arch/x86/kernel/smpboot.c
+> 
+>   1831	
+>   1832	static const struct x86_cpu_id has_turbo_ratio_group_limits[] = {
+>   1833		ICPU(INTEL_FAM6_ATOM_GOLDMONT),
+> > 1834		ICPU(INTEL_FAM6_ATOM_GOLDMONT_D),
+> 
+>   1835		ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS),
+>   1836		ICPU(INTEL_FAM6_SKYLAKE_X),
+>   1837		{}
+>   1838	};
+>   1839	
+> 
 > ---
->  arch/arm/boot/dts/exynos3250.dtsi | 9 +++------
-
-Thanks, applied.
-
-Best regards,
-Krzysztof
-
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
