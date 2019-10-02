@@ -2,63 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 656BBC8D29
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 17:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE52C8D25
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 17:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfJBPoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 11:44:03 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40388 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfJBPoD (ORCPT
+        id S1728907AbfJBPn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 11:43:58 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56218 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfJBPn6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 11:44:03 -0400
-Received: by mail-qt1-f193.google.com with SMTP id f7so26936404qtq.7
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 08:44:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tAIJJR+PL4OsNdtu93o9d73AsK7qCRhCtZmm3iIWByY=;
-        b=Pq8zTMyY9e1Avy+pakQEJkBbN0zDRB2PeRgCkhRQPD+YgCLgRfhpCGIYOpuIjAbBhO
-         V4/Wb841Xi4MpECyI3WNOhbMS5LKCWTh5Q89Fs5TArexkMqqbXELRSQrMK51WwEc2hjz
-         Dx2YmSMA6vh3qMvQFAjzCsqC8VKcZqB3bLEVQdWTOND2VROBkRCoze1y1aLWgk7Bar34
-         p0RFVjDhQTobKjDWVJLrl1DOaEYc2OLNfe8VIyYiPMGH8fqcQmu24EdCGC/JByDm/lYc
-         Bx6MVK0FffNqttnAkz+paC167LUSRt2HQ6Hk1Va20+cSX3htTnrFsdCknG9yd7Ha/wST
-         iWJw==
-X-Gm-Message-State: APjAAAWCFnt3gX3C5r+TwqJ+C3f7FqGCwKjwiNntEE8lEzUVm8ZtvdnC
-        kQco1b6gNnRbmSeiVxt+uKBsOa9CH/xfpcYcUQmlJw/vP0g=
-X-Google-Smtp-Source: APXvYqzii929WbfPX4FXMBdzp6fHaCuSvuYADEJeFoQAbPJxlc9m57ZW9U3VSq5G4WPzsRBt662/ck/bbKCvC8XlN6I=
-X-Received: by 2002:ac8:4a01:: with SMTP id x1mr4717582qtq.304.1570031041123;
- Wed, 02 Oct 2019 08:44:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <1569945867-82243-1-git-send-email-john.garry@huawei.com> <1569945867-82243-4-git-send-email-john.garry@huawei.com>
-In-Reply-To: <1569945867-82243-4-git-send-email-john.garry@huawei.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 2 Oct 2019 17:43:45 +0200
-Message-ID: <CAK8P3a1rAKF2k0iuPirF+_La_VEmEbQ+D0XAfdcy=6K-Q1fu9g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] bus: hisi_lpc: Expand build test coverage
-To:     John Garry <john.garry@huawei.com>
-Cc:     Wei Xu <xuwei5@hisilicon.com>, Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 2 Oct 2019 11:43:58 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id 6287428A27B
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     kernel@collabora.com,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: Fix comment doc for format_modifiers
+Date:   Wed,  2 Oct 2019 17:43:49 +0200
+Message-Id: <20191002154349.26895-1-andrzej.p@collabora.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 6:07 PM John Garry <john.garry@huawei.com> wrote:
->
-> Currently the driver will only ever be built for ARM64 because it selects
-> CONFIG_INDIRECT_PIO, which itself depends on ARM64.
->
-> Expand build test coverage for the driver to other architectures by only
-> selecting CONFIG_INDIRECT_PIO for ARM64, when we really want it.
->
-> Signed-off-by: John Garry <john.garry@huawei.com>
+To human readers
 
-Good idea, but doesn't this cause a link failure against
-logic_pio_register_range() when INDIRECT_PIO is disabled?
+"array of struct drm_format modifiers" is almost indistinguishable from
+"array of struct drm_format_modifiers", especially given that
+struct drm_format_modifier does exist.
 
-      Arnd
+And indeed the parameter passes an array of uint64_t rather than an array
+of structs, but the first words of the comment suggest that it passes
+an array of structs.
+
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+---
+ drivers/gpu/drm/drm_plane.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index d6ad60ab0d38..df05d8a0dd63 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -160,7 +160,7 @@ static int create_in_format_blob(struct drm_device *dev, struct drm_plane *plane
+  * @funcs: callbacks for the new plane
+  * @formats: array of supported formats (DRM_FORMAT\_\*)
+  * @format_count: number of elements in @formats
+- * @format_modifiers: array of struct drm_format modifiers terminated by
++ * @format_modifiers: array of modifiers of struct drm_format terminated by
+  *                    DRM_FORMAT_MOD_INVALID
+  * @type: type of plane (overlay, primary, cursor)
+  * @name: printf style format string for the plane name, or NULL for default name
+-- 
+2.17.1
+
