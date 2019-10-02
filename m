@@ -2,86 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB221C8834
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:20:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6A4C883F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:21:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfJBMUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:20:23 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33526 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfJBMUW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:20:22 -0400
-Received: by mail-qk1-f195.google.com with SMTP id x134so14742126qkb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 05:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C1s9Qnx4QYX1Pe4YvbI9Mrmen/6O6spmAXKtAR6a1ZE=;
-        b=An5AsPzQ4GR89OtegxJb25YpLgigqWoWCZiR6bHJ3Oy8G7LBFQ9lHWHv97ZAOvUMRf
-         qBFoIIkJBF+lGTGRADqXCQnQv0dJaQ2Tb3simsA0gp/q7XK87lnc/I6Wb4hCrsL9cr2U
-         tnWFx1OSik5XrzVuMTGjNbGDd9gVKtHxu5iQ5kgXr9zINb3tz18A91zKydbJEYyeX1jg
-         j6CPcHp/e6Gs6xMaXa0S87DG++j5DyklgYFQNdvOm57ylruD9P2xJlnRk+wMLEqlCy4L
-         mJX2IcfNwDDViWo4vKL+Rv3ig7gfVLQE5+QqKxAV6w2qdCg4/8JIaWw4fTGT2tF0GkL/
-         cHkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C1s9Qnx4QYX1Pe4YvbI9Mrmen/6O6spmAXKtAR6a1ZE=;
-        b=Ecz8rPS0yjPe9EVj3bHgSa41CvEXHpP2flUcO5SkKfWSkYMOH34+g5Q+AuyQzKoEa4
-         L8719eILcinIdXI+lxuAvKhpxRaWjqtmv0AONcYNwYSKaixcLCyMHZ0KOlNpRL2lDGqI
-         LtoxeZXIUawE0Z91kYAmr2pMwY6IzENtY2DFk6ujRRte4vzcZ30L8WMigSYxv6qdu5RS
-         XDatveEi8y6vtU8BOOMJeQUOFsiTrdYf8cjN/15Dy965Fc1ykWL05mjkgfMybwqPZDjH
-         VCad7nSCIARE8SvoiVbYOnuIOAzO3kPmFEVAMncd9PS1sTYF5urzwVWY+Mx8SYaz3zWC
-         u8Fw==
-X-Gm-Message-State: APjAAAU1ur22vjAJCd9ZPiCTDoL+iS2WIVT8aU07ECVmcEjk96lPVz46
-        Zg2vTidy9C5Aq1vBp2fYw2gAYO0Y9OLh2C8OYg/FeQ==
-X-Google-Smtp-Source: APXvYqySws1GAC2DEPn4qcev8riMOaMww0CmrYHzV/wKuehgOE3MUUOakPXd6Z5eg0QtzaNjHsPHjYFRsekMDu+WfOc=
-X-Received: by 2002:ae9:e30a:: with SMTP id v10mr3437798qkf.369.1570018821860;
- Wed, 02 Oct 2019 05:20:21 -0700 (PDT)
+        id S1727055AbfJBMVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:21:41 -0400
+Received: from mga12.intel.com ([192.55.52.136]:7742 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbfJBMVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:21:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 05:21:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
+   d="scan'208";a="205328880"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 02 Oct 2019 05:21:37 -0700
+Received: by lahna (sSMTP sendmail emulation); Wed, 02 Oct 2019 15:21:36 +0300
+Date:   Wed, 2 Oct 2019 15:21:36 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        AceLan Kao <acelan.kao@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: System hangs if NVMe/SSD is removed during suspend
+Message-ID: <20191002122136.GD2819@lahna.fi.intel.com>
 MIME-Version: 1.0
-References: <20190917074007.92259-1-chiu@endlessm.com> <20191002043018.65FD86118F@smtp.codeaurora.org>
-In-Reply-To: <20191002043018.65FD86118F@smtp.codeaurora.org>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Wed, 2 Oct 2019 20:20:11 +0800
-Message-ID: <CAB4CAwfQB5V59xdO_70-tVMWLKTZ3_4x_atkBD+i16GSFjQjRw@mail.gmail.com>
-Subject: Re: [PATCH v7] rtl8xxxu: Improve TX performance of RTL8723BU on
- rtl8xxxu driver
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Jes Sorensen <Jes.Sorensen@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 12:30 PM Kalle Valo <kvalo@codeaurora.org> wrote:
-> New warning:
->
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c: In function 'rtl8xxxu_refresh_rate_mask':
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:5907:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->     if (priv->tx_paths == 2 && priv->rx_paths == 2)
->        ^
-> drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:5911:3: note: here
->    case (WIRELESS_MODE_B | WIRELESS_MODE_G | WIRELESS_MODE_N_24G):
->    ^~~~
->
-> Patch set to Changes Requested.
->
-> --
-> https://patchwork.kernel.org/patch/11148163/
->
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
->
+Hi Tejun,
 
-Thanks for pointing this out, I've sent a v8 version to fix it.
+In a system with Thunderbolt connected NVMe or SSD entering system
+suspend, detaching the NVMe/SSD and resuming the system hangs (see also
+https://bugzilla.kernel.org/show_bug.cgi?id=204385).
 
-Chris
+Triggering sysrq-w I see this:
+
+[  113.093783] Workqueue: nvme-wq nvme_remove_dead_ctrl_work [nvme]
+[  113.095156] Call Trace:
+[  113.096234]  ? __schedule+0x2c5/0x630
+[  113.097409]  ? wait_for_completion+0xa4/0x120
+[  113.098639]  schedule+0x3e/0xc0
+[  113.099769]  schedule_timeout+0x1c9/0x320
+[  113.100973]  ? resched_curr+0x1f/0xd0
+[  113.102146]  ? wait_for_completion+0xa4/0x120
+[  113.103379]  wait_for_completion+0xc3/0x120
+[  113.104595]  ? wake_up_q+0x60/0x60
+[  113.105749]  __flush_work+0x131/0x1e0
+[  113.106925]  ? flush_workqueue_prep_pwqs+0x130/0x130
+[  113.108215]  bdi_unregister+0xb9/0x130
+[  113.109403]  del_gendisk+0x2d2/0x2e0
+[  113.110580]  nvme_ns_remove+0xed/0x110 [nvme_core]
+[  113.111853]  nvme_remove_namespaces+0x96/0xd0 [nvme_core]
+[  113.113177]  nvme_remove+0x5b/0x160 [nvme]
+[  113.114391]  pci_device_remove+0x36/0x90
+[  113.115590]  device_release_driver_internal+0xdf/0x1c0
+[  113.116893]  nvme_remove_dead_ctrl_work+0x14/0x30 [nvme]
+[  113.118217]  process_one_work+0x1c2/0x3f0
+[  113.119434]  worker_thread+0x48/0x3e0
+[  113.120619]  kthread+0x100/0x140
+[  113.121772]  ? current_work+0x30/0x30
+[  113.122955]  ? kthread_park+0x80/0x80
+[  113.124142]  ret_from_fork+0x35/0x40
+
+The exact place is in wb_shutdown():
+
+        /*
+         * Drain work list and shutdown the delayed_work.  !WB_registered
+         * tells wb_workfn() that @wb is dying and its work_list needs to
+         * be drained no matter what.
+         */
+        mod_delayed_work(bdi_wq, &wb->dwork, 0);
+        flush_delayed_work(&wb->dwork);
+
+Now bdi_wq is marked as WQ_FREEZABLE and at this time we are still
+resuming devices so I think it is still frozen. This basically results
+that the resume process is waiting for bdi_unregister() but it cannot
+progress because its workqueue is still frozen.
+
+I saw you "dealt" similar situation for libata with commit 85fbd722ad0f
+("libata, freezer: avoid block device removal while system is frozen")
+and that there was discussion around this here:
+
+  https://marc.info/?l=linux-kernel&m=138695698516487
+
+but from that discussion I don't see more generic solution to be
+implemented.
+
+Any ideas we should fix this properly?
+
+I mean nowadays Thunderbolt connected storage is quite common and I
+suppose situation like this might wery well happen, say you have a dock
+with SSD connected and you disconnect it when the laptop is suspended.
+
+I've been using following hack to prevent the issue but I'm quite sure
+there is a better solution ;-)
+
+Thanks in advance!
+
+ drivers/ata/libata-scsi.c | 2 ++
+ mm/backing-dev.c          | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 76d0f9de767b..3fea8d72f6f9 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -4791,6 +4791,7 @@ void ata_scsi_hotplug(struct work_struct *work)
+ 		return;
+ 	}
+ 
++#if 0
+ 	/*
+ 	 * XXX - UGLY HACK
+ 	 *
+@@ -4810,6 +4811,7 @@ void ata_scsi_hotplug(struct work_struct *work)
+ #ifdef CONFIG_FREEZER
+ 	while (pm_freezing)
+ 		msleep(10);
++#endif
+ #endif
+ 
+ 	DPRINTK("ENTER\n");
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index e8e89158adec..8e77711d5dd0 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -236,8 +236,8 @@ static int __init default_bdi_init(void)
+ {
+ 	int err;
+ 
+-	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_FREEZABLE |
+-					      WQ_UNBOUND | WQ_SYSFS, 0);
++	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_UNBOUND |
++					      WQ_SYSFS, 0);
+ 	if (!bdi_wq)
+ 		return -ENOMEM;
