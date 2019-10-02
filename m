@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F6B7C8F37
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40497C8F32
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 19:03:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbfJBRDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 13:03:17 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36935 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfJBRDD (ORCPT
+        id S1728338AbfJBRDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 13:03:06 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36337 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbfJBRDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:03:03 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f22so7738248wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:03:02 -0700 (PDT)
+        Wed, 2 Oct 2019 13:03:04 -0400
+Received: by mail-wm1-f68.google.com with SMTP id m18so7744111wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 10:03:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ssSGrDoEZXjC6vgHTplGH5VegZUKxz/uV2LEv4gtU9A=;
-        b=Y/tPOogzRhUsBcTwTzXUpCbmuvxZ3KvnL73hp9GwV9FY6WfOwPwoqsKTE8vZD4RzHt
-         e/XpWlMT0xwZtFnTrrFm5FIZx+vssgmb7m4HeJe9n9XoOIIIfaOsabQh4R1KFe6jnk3d
-         El/pNBmQqhtIFukCw4X3ui7E0Pd587xFmqR7XeiLK7I1XYpVv9iyxBVffh4zgY0F8C9d
-         noflppDrZkRvrj8ww2YrDcg/Khk1ccnY+kB+R9j9X/nFscAS4oD22dyZb+qEMkml2WNq
-         e8SgA6dNBBJ/p+sUm89G2sN7mwYf56ktUjqM4LJIDdjVippWood/orglHiGVoerjw8tE
-         8uKQ==
+        bh=4R1pFMiYgGmsrKFaVjsr4CfqOpIjL8+dlsXA4/2/eWc=;
+        b=QzNqSGXXrkEMylsWIdkVp1QE2PoiBzEzoPHXnSdEzwqM/i27K0EnnoMQsy8oXtMzMz
+         G0erLAZr3GqGCvyIN8vGCo1Krf2cnDHjKo3F7i7O5lXp4LCRDLFmixDQGL/pRcovDnZ+
+         3+2YpF6bpI7mdXb0Wd1buJ3VF8yhLlhvl1oykTsRmencBi8cUrv3ZQ3XmvO6T9HyzNLD
+         bfk1YRitp5l8qLsK0SwBDbY2qlbu5ykgoNdccKNDD9+bchQOb8XeKGZfT+NGPc/DSqE+
+         HgIMAkgs2/+RKb6rZx5/nRGjPvpHvDbu2fZ5xa4BmpmUrjIvjyjnBqSJm7EyBd+TkqNO
+         heMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ssSGrDoEZXjC6vgHTplGH5VegZUKxz/uV2LEv4gtU9A=;
-        b=afMWSMA2meys3ea1lD2o9k3OFeSI2/WvbWGoCHiyQk6HvDDM3P0OyGbuH74fjKDE/n
-         4U/Y0bVh5s5r9CA6PDqrM8BGZhZ4DlI8k3XzhIV1UK9P10dQdiKA1apQ4xYht1YP7qcT
-         56BiyPLQ75GBuSRGKBYLcZoU13f6LusgTGH0Ek28/9Wt0mRBqCY0VmLH/Do3gZB0NwgK
-         ECWSVc/jSeC00bQVQ5+QpU77y/rrytEvX/z6VCIWChVcHlG8iqL+XLC1NbNU2FzJneRL
-         EgiWq5L5EOFM+bv6ZOCW7qCW/X9ucil5DHQDIV164MKuEslR7wlhZklghvVXRCnJoK1v
-         1R8g==
-X-Gm-Message-State: APjAAAXUBViyMG/hCssllQWFCizI4kVXiY0D4ugOA4wE0MmY6whd3m+w
-        0olYjmgezibDLZHPFa9mSMT8Rg==
-X-Google-Smtp-Source: APXvYqxSag048je5/Sf/lXiTUZWfGX0HUpCiIJloHGTbYyS9k10IQQh6x04dsCgii2F1d5i49hUYMA==
-X-Received: by 2002:a05:600c:2308:: with SMTP id 8mr3867317wmo.67.1570035781189;
-        Wed, 02 Oct 2019 10:03:01 -0700 (PDT)
+        bh=4R1pFMiYgGmsrKFaVjsr4CfqOpIjL8+dlsXA4/2/eWc=;
+        b=MrN1pqTrENb4vEmo1YkMPsVzhiRntbQAfW9lIXu1fktlUcjvYqulDaq4+SJVldzFwu
+         r8IX4y1Cg1JcXz97HNZldhIAnvSdg6wlnDCG6KRKwFz5Nw/9eo6M47YU9TzpZwUzBY+S
+         Bisjig+rkDEUymrBQN3MF/AVHO4+X3Cr5UQyz6KRUEll2vfEidE7hx3VwGKxUAM4f8wE
+         BJKyu7d5sol9LgU4xiv5BzanTHKzjxfs8/KenUOUzVPOBsnLTR549TsgooHkHpyc9AIG
+         a3JrMeI+Fsh6dLbCbShK8q9TQ/4eG5ulncI5nYQY+m45w8MugFuNfB0BDsTT037EYika
+         wK2A==
+X-Gm-Message-State: APjAAAU1p12pVSs6HLv531tQPa0SmeEUoln4UPUrdzOBxO0BLL4zmKC8
+        xlAX33rbl7EQjrdI1r8K+uAP3A==
+X-Google-Smtp-Source: APXvYqzpviBQxFnllxgLIMD5etZwxvfroogQ32SBiQEuYxpYuHJZHwqSJFyGGMaiLTknVGRotdfxLw==
+X-Received: by 2002:a05:600c:290c:: with SMTP id i12mr3808333wmd.77.1570035782386;
+        Wed, 02 Oct 2019 10:03:02 -0700 (PDT)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id b62sm11188575wmc.13.2019.10.02.10.03.00
+        by smtp.gmail.com with ESMTPSA id b62sm11188575wmc.13.2019.10.02.10.03.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 10:03:00 -0700 (PDT)
+        Wed, 02 Oct 2019 10:03:01 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Alban Bedel <albeu@free.fr>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 3/6] gpio: em: use devm_platform_ioremap_resource()
-Date:   Wed,  2 Oct 2019 19:02:46 +0200
-Message-Id: <20191002170249.17366-4-brgl@bgdev.pl>
+Subject: [PATCH 4/6] gpio: ath79: use devm_platform_ioremap_resource()
+Date:   Wed,  2 Oct 2019 19:02:47 +0200
+Message-Id: <20191002170249.17366-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191002170249.17366-1-brgl@bgdev.pl>
 References: <20191002170249.17366-1-brgl@bgdev.pl>
@@ -71,55 +71,37 @@ using devm_platform_ioremap_resource().
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-em.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/gpio/gpio-ath79.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-index 620f25b7efb4..674ebebaf90b 100644
---- a/drivers/gpio/gpio-em.c
-+++ b/drivers/gpio/gpio-em.c
-@@ -269,7 +269,7 @@ static void em_gio_irq_domain_remove(void *data)
- static int em_gio_probe(struct platform_device *pdev)
- {
- 	struct em_gio_priv *p;
--	struct resource *io[2], *irq[2];
-+	struct resource *irq[2];
- 	struct gpio_chip *gpio_chip;
- 	struct irq_chip *irq_chip;
- 	struct device *dev = &pdev->dev;
-@@ -285,25 +285,21 @@ static int em_gio_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, p);
- 	spin_lock_init(&p->sense_lock);
- 
--	io[0] = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	io[1] = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	irq[0] = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	irq[1] = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
- 
--	if (!io[0] || !io[1] || !irq[0] || !irq[1]) {
-+	if (!irq[0] || !irq[1]) {
- 		dev_err(dev, "missing IRQ or IOMEM\n");
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index f1a5ea9b3de2..53fae02c40ad 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -226,7 +226,6 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+ 	struct device_node *np = dev->of_node;
+ 	struct ath79_gpio_ctrl *ctrl;
+ 	struct gpio_irq_chip *girq;
+-	struct resource *res;
+ 	u32 ath79_gpio_count;
+ 	bool oe_inverted;
+ 	int err;
+@@ -256,12 +255,9 @@ static int ath79_gpio_probe(struct platform_device *pdev)
  		return -EINVAL;
  	}
  
--	p->base0 = devm_ioremap_nocache(dev, io[0]->start,
--					resource_size(io[0]));
--	if (!p->base0)
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -EINVAL;
+-	ctrl->base = devm_ioremap_nocache(dev, res->start, resource_size(res));
+-	if (!ctrl->base)
 -		return -ENOMEM;
-+	p->base0 = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(p->base0))
-+		return PTR_ERR(p->base0);
++	ctrl->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(ctrl->base))
++		return PTR_ERR(ctrl->base);
  
--	p->base1 = devm_ioremap_nocache(dev, io[1]->start,
--				   resource_size(io[1]));
--	if (!p->base1)
--		return -ENOMEM;
-+	p->base1 = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(p->base1))
-+		return PTR_ERR(p->base1);
- 
- 	if (of_property_read_u32(dev->of_node, "ngpios", &ngpios)) {
- 		dev_err(dev, "Missing ngpios OF property\n");
+ 	raw_spin_lock_init(&ctrl->lock);
+ 	err = bgpio_init(&ctrl->gc, dev, 4,
 -- 
 2.23.0
 
