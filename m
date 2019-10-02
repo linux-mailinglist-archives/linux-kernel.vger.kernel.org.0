@@ -2,21 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D6B9C87BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BE5C87C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfJBMCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:02:40 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:38469 "EHLO
+        id S1728286AbfJBMC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:02:58 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:53363 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfJBMCk (ORCPT
+        with ESMTP id S1725875AbfJBMC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:02:40 -0400
+        Wed, 2 Oct 2019 08:02:58 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MQ5nE-1iSsrQ1Bbs-00M5vI; Wed, 02 Oct 2019 14:02:32 +0200
+ 1N6srH-1i4Jx02kQB-018Nqd; Wed, 02 Oct 2019 14:02:49 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Alex Deucher <alexander.deucher@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         David Airlie <airlied@linux.ie>,
@@ -24,68 +26,113 @@ To:     Alex Deucher <alexander.deucher@amd.com>,
 Cc:     clang-built-linux@googlegroups.com, amd-gfx@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Arnd Bergmann <arnd@arndb.de>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Roman Li <Roman.Li@amd.com>, Huang Rui <ray.huang@amd.com>,
-        Evan Quan <evan.quan@amd.com>,
-        Prike Liang <Prike.Liang@amd.com>
-Subject: [PATCH 2/6] drm/amdgpu: hide another #warning
-Date:   Wed,  2 Oct 2019 14:01:23 +0200
-Message-Id: <20191002120136.1777161-3-arnd@arndb.de>
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Subject: [PATCH 3/6] drm/amdgpu: display_mode_vba_21: remove uint typedef
+Date:   Wed,  2 Oct 2019 14:01:24 +0200
+Message-Id: <20191002120136.1777161-4-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191002120136.1777161-1-arnd@arndb.de>
 References: <20191002120136.1777161-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:NGWmbgtBQPd36ajMsUKwWTLmLmAiDhXD+Mtxk8YE6bumOY91z5j
- ElTVg9ErXeu19zyaJjHShChe33oD/sZNS+NC2xYgJxGSP+Cv3fiUPnJQyoF55GFnKYLRXfE
- 2W6ePyEZZZnJqvhJcnEYxyIsGj4XVU0SqmkvNUws9vUBxgum1tpeEkHDr3eU9mOfpWs5/qK
- c2OuGSj7VRRq4HZWHmlZg==
+X-Provags-ID: V03:K1:oBjKGQ3jYf0A2J2ocemwNHrJLF3mvVMEn6zOLTNAGubueuLRYyk
+ BpOHFj8UwLoAn+bAxDpM0Us8z6MwyTwhFaeTAJtXgpd1gN2qJVEkpNfIB76daOLbh6I9g1g
+ ahi1mLhjBji4qSGK5wctAS/ZXegSzGKfel5KNAxFR+4Ew0SuQO7JYnxKngDUC1t/3w0hgkw
+ 0QdnYpJY4kkYs3R/f4iCg==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tHfRN4OBGvs=:fW2ZMTKDtL5J46tSOTYwo7
- hI7G13ULkv0U0gsFqYPM7VIrS2vVTeLAAKk8Zocotl1a26VnKSzf9ACjbySMHLqn/YLFLM/an
- jeeK1w0O6FziurC6udZLBxSQ+w0xuShgNAS0dmb85TNlZUEbFIPBKcifVb3SOOLztBaPCGUoS
- NoehdFJs+5F06tEFkYh7RwCws57iJl9IDF36NDU172d0j651NCYKxiRTwuVJwq8v1pMMgNB5F
- GsyPI9invPbWQ3Qabv8Vl541BCJz9kq9SiLAynFCEGBppk4/2heBNKiysrhzUyY1GCFXFTpyR
- jm8R4mSKoHnYymZBfQmM21Ya5YRoWOxjZlL5b29/a/vCjHR60Mbhn6O4fWvYjFyKZM+oeDBHm
- jvmamJcUpz4LrKYPTScimQTnJiMNSF6TegjnGok+Avkuq6CXLEt76q7OcOrdcL3RlIj8N3Z93
- 0Mcr4Ca4s6pOIPFYp2MpBCsdAc496jndQymEUZ1kzL+QHE2Vm189XY8O8uy3FO62o9wg6jW8r
- 20Z2Rigz+n98Qn70o/GL7dR0t6pn5/+Ah8CUB8BUj7UuRb4B5Y1r204f9PrdCZoJd1bxNtGv1
- T/35lymzxTtG0LHfNqneYlv6dW8w81olD7OcLsd8EpnRNH21ddoiXrNZzEMkRJYeEK2UZvYN6
- v4BAKGf6lXNAe8dPzPVonqnshdSOGTOcS/U6YliDF3sFT3NUiOwme5Svxk92FTSkEJ+jGVWle
- zPH8uxRgIf9rDysK359hEjmf07lC2vhIYljzmzZSr4bZGDx2dka+aX71oDLFS+QXMs3GTAdRB
- gGHLG73VBU/aKAB1EmzCuuwYNDAJcYU/AGCdbyVwGlLKwDQX9iLOiFzUNQOoVeVwDVO2oo8tH
- jD/cUlQlPEXbqVI5PSqg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:eSQ5Yr5a9oE=:9FRtoMlN7bwSrOG9f5YY1I
+ bpZ3Qlyhsku0LcpbDJu5j1GigQk6vUWd/VoWhAWdlLLxtXK+BCdOiQtpfBiQFZdP8FLJ26cuR
+ kV5qGa3w8U+kaC94DSFBi0lHTB2sNsHBjsd2p8WvqTLIZwirBsTcidrQkvC2sa1DPz0RHHLd8
+ U9Vnvws8HuDgF+P7zwa3qcikMwSX3nStW4yO3wtkWdKwr6Uglr1x0i8/QF3LCtLtK4FEzrZVg
+ bM4cQCIHQZpPin18GxcI5pwvpk2Qgoml/0vjZaUvLxFLn2V4iCWTtG43DqQmNKwH+Uu5EPbFE
+ XKXWZUhX8b8lTqAqeEI30b2ahQc932Gp2k9HLD4BRhgWp8Ig9EQRTUgQKWSsTHSTnQtU1cNv+
+ 4wMcWJOh0Doxtl6hUiJzmGCWOFc2YYIcQ9ELhsb9uoUBPdrVP4Cjrk1ffgCIZs6HhA7bvk7NE
+ EZVguXf2MjBwrvsRdR3dXp5q2dELksAz89Tywytd8DQjNspuSufMllFGCsbJxVOgVSEnevN5g
+ fKYidaTAnk8c1QQo9w9YM1DRwbCfHfDbJUTn+5ROSNw8cDuvGt7AjNVZUyBKhRUS3S6hrk7I5
+ 34ybrIVzQiMV1ahqKIPXzQ0zPNdkHLSJNEc5Zt0ixZByldmxHwcytbpqPiVd3k++zjnk1lmAh
+ Cmv0SEdjvSfss1GwwRbvWZi8aTQH32JG2l9zkRPg7Dnv9F3dDWn4s9meRO7HnvAqZHffcxad3
+ vMQ1fsnJ20Ma1FOm07EGM6aLkWoypGrNlbx+lKhhjGOg0kBUxqdy1pVidgfcwS403HhTEwiuL
+ BlKxnY8Yx/kkAUL/1tXVJvhmg2XNXfg78iWD6M/9MmC8aZWKvP915zIr6FNADpRBtcjNi4JOp
+ 8nnSZfI7XGVLOMcy5tjQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An earlier patch of mine disabled some #warning statements
-that get in the way of build testing, but then another
-instance was added around the same time.
+The type definition for 'uint' clashes with the generic kernel
+headers:
 
-Remove that as well.
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn21/display_mode_vba_21.c:43:22: error: redefinition of typedef 'uint' is a C11 feature [-Werror,-Wtypedef-redefinition]
+include/linux/types.h:92:23: note: previous definition is here
 
-Fixes: b5203d16aef4 ("drm/amd/amdgpu: hide #warning for missing DC config")
-Fixes: e1c14c43395c ("drm/amdgpu: Enable DC on Renoir")
+Just remove this type and use plain 'unsigned int' consistently,
+as it is already use almost everywhere in this file.
+
+Fixes: b04641a3f4c5 ("drm/amd/display: Add Renoir DML")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/amd/amdgpu/soc15.c | 2 --
- 1 file changed, 2 deletions(-)
+ .../amd/display/dc/dml/dcn21/display_mode_vba_21.c  | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/soc15.c b/drivers/gpu/drm/amd/amdgpu/soc15.c
-index f70658a536a9..a337d980b434 100644
---- a/drivers/gpu/drm/amd/amdgpu/soc15.c
-+++ b/drivers/gpu/drm/amd/amdgpu/soc15.c
-@@ -771,8 +771,6 @@ int soc15_set_ip_blocks(struct amdgpu_device *adev)
- #if defined(CONFIG_DRM_AMD_DC)
-                 else if (amdgpu_device_has_dc_support(adev))
-                         amdgpu_device_ip_block_add(adev, &dm_ip_block);
--#else
--#       warning "Enable CONFIG_DRM_AMD_DC for display support on SOC15."
- #endif
- 		amdgpu_device_ip_block_add(adev, &vcn_v2_0_ip_block);
- 		break;
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c b/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
+index 46cda85d3d63..998970e2f84c 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
++++ b/drivers/gpu/drm/amd/display/dc/dml/dcn21/display_mode_vba_21.c
+@@ -39,9 +39,6 @@
+  * ways. Unless there is something clearly wrong with it the code should
+  * remain as-is as it provides us with a guarantee from HW that it is correct.
+  */
+-
+-typedef unsigned int uint;
+-
+ typedef struct {
+ 	amdgpu_dc_double DPPCLK;
+ 	amdgpu_dc_double DISPCLK;
+@@ -4774,7 +4771,7 @@ void dml21_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_l
+ 				mode_lib->vba.MaximumReadBandwidthWithoutPrefetch = 0.0;
+ 				mode_lib->vba.MaximumReadBandwidthWithPrefetch = 0.0;
+ 				for (k = 0; k <= mode_lib->vba.NumberOfActivePlanes - 1; k++) {
+-					uint m;
++					unsigned int m;
+ 
+ 					locals->cursor_bw[k] = 0;
+ 					locals->cursor_bw_pre[k] = 0;
+@@ -5285,7 +5282,7 @@ static void CalculateWatermarksAndDRAMSpeedChangeSupport(
+ 	amdgpu_dc_double SecondMinActiveDRAMClockChangeMarginOneDisplayInVBLank;
+ 	amdgpu_dc_double FullDETBufferingTimeYStutterCriticalPlane = 0;
+ 	amdgpu_dc_double TimeToFinishSwathTransferStutterCriticalPlane = 0;
+-	uint k, j;
++	unsigned int k, j;
+ 
+ 	mode_lib->vba.TotalActiveDPP = 0;
+ 	mode_lib->vba.TotalDCCActiveDPP = 0;
+@@ -5507,7 +5504,7 @@ static void CalculateDCFCLKDeepSleep(
+ 		amdgpu_dc_double DPPCLK[],
+ 		amdgpu_dc_double *DCFCLKDeepSleep)
+ {
+-	uint k;
++	unsigned int k;
+ 	amdgpu_dc_double DisplayPipeLineDeliveryTimeLuma;
+ 	amdgpu_dc_double DisplayPipeLineDeliveryTimeChroma;
+ 	//amdgpu_dc_double   DCFCLKDeepSleepPerPlane[DC__NUM_DPP__MAX];
+@@ -5727,7 +5724,7 @@ static void CalculatePixelDeliveryTimes(
+ 		amdgpu_dc_double DisplayPipeRequestDeliveryTimeChromaPrefetch[])
+ {
+ 	amdgpu_dc_double req_per_swath_ub;
+-	uint k;
++	unsigned int k;
+ 
+ 	for (k = 0; k < NumberOfActivePlanes; ++k) {
+ 		if (VRatio[k] <= 1) {
+@@ -5869,7 +5866,7 @@ static void CalculateMetaAndPTETimes(
+ 	unsigned int dpte_groups_per_row_chroma_ub;
+ 	unsigned int num_group_per_lower_vm_stage;
+ 	unsigned int num_req_per_lower_vm_stage;
+-	uint k;
++	unsigned int k;
+ 
+ 	for (k = 0; k < NumberOfActivePlanes; ++k) {
+ 		if (GPUVMEnable == true) {
 -- 
 2.20.0
 
