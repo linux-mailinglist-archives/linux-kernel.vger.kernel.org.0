@@ -2,141 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6ABC918B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B681C91A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbfJBTJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:09:50 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:36064 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729337AbfJBTJs (ORCPT
+        id S1729880AbfJBTKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:10:30 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47194 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729835AbfJBTK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:09:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id BDE753F31A;
-        Wed,  2 Oct 2019 21:09:45 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Vv50zyjE;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.1
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VgvaLYn_a4rC; Wed,  2 Oct 2019 21:09:44 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 0B70E3F247;
-        Wed,  2 Oct 2019 21:09:41 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 20E7036005C;
-        Wed,  2 Oct 2019 21:09:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570043381; bh=un9Yli6t+rpUOQrchmJq2mc/5qmOJ2r/ZU8Lu7dWySs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Vv50zyjEH94ORp4kXZ+FlQiRtzGFnTsl5Oj1OPFHbWYQApu4nh74c4WjqkEPdCxtV
-         NGuOhQVfYQSTsXzmy927FMiSXbUIunG2gIf6kzqFKRGk/8iTcmH1cF7vMLbTmHLS4e
-         Lz+7feRjwvV6itx+zr37L1X8S00HCTcyw5/U5RUg=
-Subject: Re: [PATCH v3 3/7] mm: Add write-protect and clean utilities for
- address space ranges
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>
-References: <20191002134730.40985-1-thomas_os@shipmail.org>
- <20191002134730.40985-4-thomas_os@shipmail.org>
- <CAHk-=wic5vXCxpH-+UTtmH_t-EDBKrKnDhxQk=t_N20aiWnqUg@mail.gmail.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <516814a5-a616-b15e-ac87-26ede681da85@shipmail.org>
-Date:   Wed, 2 Oct 2019 21:09:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 2 Oct 2019 15:10:28 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 45C75802F8; Wed,  2 Oct 2019 21:10:10 +0200 (CEST)
+Date:   Wed, 2 Oct 2019 21:10:23 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-pm@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Subject: Re: [PATCH v1] PM / Domains: Add tracepoints
+Message-ID: <20191002191023.GD13492@amd>
+References: <20190926150406.v1.1.I07a769ad7b00376777c9815fb169322cde7b9171@changeid>
+ <20190927044239.589e7c4c@oasis.local.home>
+ <20191001163542.GB87296@google.com>
+ <20191001130343.4480afe3@gandalf.local.home>
+ <20191001174235.GC87296@google.com>
+ <20191001140846.65d7866c@gandalf.local.home>
+ <20191001193701.GD87296@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wic5vXCxpH-+UTtmH_t-EDBKrKnDhxQk=t_N20aiWnqUg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EY/WZ/HvNxOox07X"
+Content-Disposition: inline
+In-Reply-To: <20191001193701.GD87296@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/2/19 8:06 PM, Linus Torvalds wrote:
-> On Wed, Oct 2, 2019 at 6:48 AM Thomas Hellström (VMware)
-> <thomas_os@shipmail.org> wrote:
->> From: Thomas Hellstrom <thellstrom@vmware.com>
->>
->> Add two utilities to a) write-protect and b) clean all ptes pointing into
->> a range of an address space.
-> This one I still don't exactly love.
->
-> I'm not entirely sure what rubs me the wrong way, but part of it is
-> naming. We don't use the name "as", because it reads as (sic) an
-> English word.
->
-> The name we use for address_space pointers is "mapping", both for
-> variables and for existing functions.
->
-> See for example "pte_same_as_swp()" which uses "as" as the _word_ 'as'.
->
-> Contrast that with "unmap_mapping_range()" or
-> "mapping_set_unevictable()" or "read_mapping_page()" or
-> "invalidate_mapping_pages()", that all work on address spaces.
->
-> So please don't use 'as' as shorthand for that - eithe rin the
-> function names or the filename.
->
-> I'm not sure if that's the _only_ thing that raises my heckles when I
-> read this patch, but I think it might be. So I'm not saying "ack with
-> naming change", but I suspect that if the naming was changed, it would
-> look much better to me.
->
-> Yes, it's a bit more typing. But I really think
-> "clean_mapping_dirty_pages()" is just not only more in line with the
-> mm naming, I think it's a lot more legible and understandable than
-> "as_dirty_clean()", which just makes me go "what the heck does that
-> function do?"
->
-> And I really think it needs more than just "as" -> "mapping".
-> "mapping_dirty_clean()" still makes me go "what?" in a way that
-> "clean_mapping_dirty_pages()" does not. One name reads as a series or
-> random words, the other reads as a "this is what the function does".
->
-> I know I sometimes get hung up about naming, but I do think naming
-> matters.  A descriptive name that just reads as what the function does
-> makes it much easier to read the logic of code, imnsho.
->
->                Linus
 
-Yes I typically tend towards using a "namespace_object_operation" naming 
-scheme, with "as_dirty" being the namespace here,
+--EY/WZ/HvNxOox07X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But I'll give it a shot to see if I can rename it more in line with the 
-above.
+On Tue 2019-10-01 12:37:01, Matthias Kaehlcke wrote:
+> On Tue, Oct 01, 2019 at 02:08:46PM -0400, Steven Rostedt wrote:
+> > On Tue, 1 Oct 2019 10:42:35 -0700
+> > Matthias Kaehlcke <mka@chromium.org> wrote:
+> >=20
+> > > On Tue, Oct 01, 2019 at 01:03:43PM -0400, Steven Rostedt wrote:
+> > > > On Tue, 1 Oct 2019 09:35:42 -0700
+> > > > Matthias Kaehlcke <mka@chromium.org> wrote:
+> > > >  =20
+> > > > > How about this instead:
+> > > > >=20
+> > > > >   Add tracepoints for genpd_power_on, genpd_power_off and
+> > > > >   genpd_set_performance_state. The tracepoints can help with
+> > > > >   understanding power domain behavior of a given device, which
+> > > > >   may be particularly interesting for battery powered devices
+> > > > >   and suspend/resume. =20
+> > > >=20
+> > > > Do you have a use case example to present? =20
+> > >=20
+> > > TBH I'm not looking into a specific use case right now. While
+> > > peeking around in /sys/kernel/debug/tracing/events to learn more
+> > > about existing tracepoints that might be relevant for my work
+> > > I noticed the absence of genpd ones and it seemed a good idea to
+> > > add them preemptively. Conceptually they seem similar to the
+> > > existing regulator_enable/disable and cpu_idle tracepoints.
+> > >=20
+> > > As an abstract use case I could see power analysis on battery
+> > > powered devices during suspend. genpd_power_on/off allow to see
+> > > which power domains remain on during suspend, and might give
+> > > insights for possible power saving options. Examples could be that
+> > > a power domain stays unexpectedly on due to a misconfiguration, or
+> > > two power domains remain on when it could be only one if you just
+> > > moved that one pin/port over to the other domain in the next
+> > > hardware revision.
+> >=20
+> > If the power management maintainers have no issues with adding these,
+> > then neither do I ;-)  It would be them who would pull them in anyway.
+>=20
+> Ok, I'll send a new version with the changes you suggested and some more
+> info in the commit message, unless PM maintainers raise concerns before
+> that.
 
-Looking at Matthew's suggestion but lining up with 
-"unmap_mapping_range()", perhaps we could use "clean_mapping_range" and 
-"wp_mapping_range"?
+Dunno. Adding tracepoints because someone might need them for, umm,
+something... I'd wait until they are actually needed.
 
-Thanks,
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Thomas
+--EY/WZ/HvNxOox07X
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iEUEARECAAYFAl2U9h8ACgkQMOfwapXb+vJlCgCXdBSL7hbDfn+LcSCp5VzPLAl6
+fQCaA5CKSoT22nF69BPs91zdN1eNR6I=
+=lSwj
+-----END PGP SIGNATURE-----
+
+--EY/WZ/HvNxOox07X--
