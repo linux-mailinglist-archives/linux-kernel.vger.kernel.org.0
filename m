@@ -2,239 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E166C4B7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 12:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC61FC4B82
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 12:35:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfJBKfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 06:35:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
+        id S1728039AbfJBKfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 06:35:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:40956 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbfJBKfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 06:35:10 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9FDF218DE;
-        Wed,  2 Oct 2019 10:35:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570012509;
-        bh=brnNpYIs7Q+Xu8m+TvEnNG+OdQyAGoF7mmBZLbGsUr8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oQ5ZInHBi+IvAVJ+Ax9yk+aBJU5/p5AiMmW8t9cJ7IIcvmJ3mKisl1se7eSa+zm80
-         61haUjOag0XcmZcZ69pOQmBtxXvDwxI65HJSw9k4oibtuoDyK7A2HBOOU89LYP6S5k
-         ZMJ6MO9Cb5BiwLMUJlTO0led5RSDVqKrqeXmee0A=
-Date:   Wed, 2 Oct 2019 12:35:06 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     catalin.marinas@arm.com, davem@davemloft.net,
-        herbert@gondor.apana.org.au, linux@armlinux.org.uk,
-        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
-        will@kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 02/11] crypto: Add Allwinner sun8i-ce Crypto Engine
-Message-ID: <20191002103506.zdoyhhzmroa6smwl@gilmour>
-References: <20191001184141.27956-1-clabbe.montjoie@gmail.com>
- <20191001184141.27956-3-clabbe.montjoie@gmail.com>
+        id S1725999AbfJBKfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 06:35:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88AA11000;
+        Wed,  2 Oct 2019 03:35:19 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F1FC3F739;
+        Wed,  2 Oct 2019 03:35:17 -0700 (PDT)
+Subject: Re: [PATCH] iommu/mediatek: Move the tlb_sync into tlb_flush
+To:     Tomasz Figa <tfiga@chromium.org>, Yong Wu <yong.wu@mediatek.com>
+Cc:     youlin.pei@mediatek.com, anan.sun@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        cui.zhang@mediatek.com,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>, chao.hao@mediatek.com,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1569822142-14303-1-git-send-email-yong.wu@mediatek.com>
+ <CAAFQd5C+FM3n-Ww4C+qDD1QZOGZrqEYw4EvYECfadGcDH0fmew@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <366b0bda-d874-9109-5c83-ff27301f3486@arm.com>
+Date:   Wed, 2 Oct 2019 11:35:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bmfwxxf5fnjaabw6"
-Content-Disposition: inline
-In-Reply-To: <20191001184141.27956-3-clabbe.montjoie@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAAFQd5C+FM3n-Ww4C+qDD1QZOGZrqEYw4EvYECfadGcDH0fmew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/10/2019 06:18, Tomasz Figa wrote:
+> Hi Yong,
+> 
+> On Mon, Sep 30, 2019 at 2:42 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>>
+>> The commit 4d689b619445 ("iommu/io-pgtable-arm-v7s: Convert to IOMMU API
+>> TLB sync") help move the tlb_sync of unmap from v7s into the iommu
+>> framework. It helps add a new function "mtk_iommu_iotlb_sync", But it
+>> lacked the dom->pgtlock, then it will cause the variable
+>> "tlb_flush_active" may be changed unexpectedly, we could see this warning
+>> log randomly:
+>>
+> 
+> Thanks for the patch! Please see my comments inline.
+> 
+>> mtk-iommu 10205000.iommu: Partial TLB flush timed out, falling back to
+>> full flush
+>>
+>> To fix this issue, we can add dom->pgtlock in the "mtk_iommu_iotlb_sync".
+>> And when checking this issue, we find that __arm_v7s_unmap call
+>> io_pgtable_tlb_add_flush consecutively when it is supersection/largepage,
+>> this also is potential unsafe for us. There is no tlb flush queue in the
+>> MediaTek M4U HW. The HW always expect the tlb_flush/tlb_sync one by one.
+>> If v7s don't always gurarantee the sequence, Thus, In this patch I move
+>> the tlb_sync into tlb_flush(also rename the function deleting "_nosync").
+>> and we don't care if it is leaf, rearrange the callback functions. Also,
+>> the tlb flush/sync was already finished in v7s, then iotlb_sync and
+>> iotlb_sync_all is unnecessary.
+> 
+> Performance-wise, we could do much better. Instead of synchronously
+> syncing at the end of mtk_iommu_tlb_add_flush(), we could sync at the
+> beginning, if there was any previous flush still pending. We would
+> also have to keep the .iotlb_sync() callback, to take care of waiting
+> for the last flush. That would allow better pipelining with CPU in
+> cases like this:
+> 
+> for (all pages in range) {
+>     change page table();
+>     flush();
+> }
+> 
+> "change page table()" could execute while the IOMMU is flushing the
+> previous change.
 
---bmfwxxf5fnjaabw6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+FWIW, given that the underlying invalidation mechanism is range-based, 
+this driver would be an ideal candidate for making use of the new 
+iommu_gather mechanism. As a fix for stable, though, simply ensuring 
+that add_flush syncs any pending invalidation before issuing a new one 
+sounds like a good idea (and probably a simpler patch too).
 
-Hi,
+[...]
+>> @@ -574,8 +539,7 @@ static int mtk_iommu_of_xlate(struct device *dev, struct of_phandle_args *args)
+>>          .detach_dev     = mtk_iommu_detach_device,
+>>          .map            = mtk_iommu_map,
+>>          .unmap          = mtk_iommu_unmap,
+>> -       .flush_iotlb_all = mtk_iommu_flush_iotlb_all,
+> 
+> Don't we still want .flush_iotlb_all()? I think it should be more
+> efficient in some cases than doing a big number of single flushes.
+> (That said, the previous implementation didn't do any flush at all. It
+> just waited for previously queued flushes to happen. Was that
+> expected?)
 
-On Tue, Oct 01, 2019 at 08:41:32PM +0200, Corentin Labbe wrote:
-> +	/* CTS and recent CE (H6) need length in bytes, in word otherwise */
-> +	if (ce->variant->model == CE_v2)
-> +		cet->t_dlen = areq->cryptlen;
+Commit 07fdef34d2be ("iommu/arm-smmu-v3: Implement flush_iotlb_all 
+hook") has an explanation of what the deal was there - similarly, it's 
+probably worth this driver implementing it properly as well now (but 
+that's really a separate patch).
 
-It's entirely redundant withe the compatible.
-
-How about using something like has_t_dlen or whatever name you find
-best in the variant structure?
-
-> +static int sun8i_ce_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *res;
-> +	u32 v;
-> +	int err, i, ce_method, id, irq;
-> +	unsigned long cr;
-> +	struct sun8i_ce_dev *ce;
-> +
-> +	ce = devm_kzalloc(&pdev->dev, sizeof(*ce), GFP_KERNEL);
-> +	if (!ce)
-> +		return -ENOMEM;
-> +
-> +	ce->dev = &pdev->dev;
-> +	platform_set_drvdata(pdev, ce);
-> +
-> +	ce->variant = of_device_get_match_data(&pdev->dev);
-> +	if (!ce->variant) {
-> +		dev_err(&pdev->dev, "Missing Crypto Engine variant\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	ce->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(ce->base))
-> +		return PTR_ERR(ce->base);
-> +
-> +	for (i = 0; i < CE_MAX_CLOCKS; i++) {
-> +		if (!ce->variant->ce_clks[i].name)
-> +			continue;
-> +		ce->ceclks[i] = devm_clk_get(&pdev->dev, ce->variant->ce_clks[i].name);
-> +		if (IS_ERR(ce->ceclks[i])) {
-> +			err = PTR_ERR(ce->ceclks[i]);
-> +			dev_err(&pdev->dev, "Cannot get %s CE clock err=%d\n",
-> +				ce->variant->ce_clks[i].name, err);
-> +			return err;
-> +		}
-> +		cr = clk_get_rate(ce->ceclks[i]);
-> +		if (!cr)
-> +			return -EINVAL;
-> +		if (ce->variant->ce_clks[i].freq > 0 &&
-> +		    cr != ce->variant->ce_clks[i].freq) {
-> +			dev_info(&pdev->dev, "Set %s clock to %lu (%lu Mhz) from %lu (%lu Mhz)\n",
-> +				 ce->variant->ce_clks[i].name,
-> +				 ce->variant->ce_clks[i].freq,
-> +				 ce->variant->ce_clks[i].freq / 1000000,
-> +				 cr, cr / 1000000);
-> +			err = clk_set_rate(ce->ceclks[i], ce->variant->ce_clks[i].freq);
-> +			if (err)
-> +				dev_err(&pdev->dev, "Fail to set %s clk speed to %lu hz\n",
-> +					ce->variant->ce_clks[i].name,
-> +					ce->variant->ce_clks[i].freq);
-> +		}
-> +		if (ce->variant->ce_clks[i].max_freq > 0 &&
-> +		    cr > ce->variant->ce_clks[i].max_freq)
-> +			dev_warn(&pdev->dev, "Frequency for %s (%lu hz) is higher than datasheet's recommandation (%lu hz)",
-> +				 ce->variant->ce_clks[i].name, cr,
-> +				 ce->variant->ce_clks[i].max_freq);
-> +	}
-> +
-> +	/* Get Non Secure IRQ */
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		dev_err(ce->dev, "Cannot get CryptoEngine Non-secure IRQ\n");
-> +		return irq;
-> +	}
-> +
-> +	ce->reset = devm_reset_control_get_optional(&pdev->dev, "bus");
-> +	if (IS_ERR(ce->reset)) {
-> +		if (PTR_ERR(ce->reset) == -EPROBE_DEFER)
-> +			return PTR_ERR(ce->reset);
-> +		dev_err(&pdev->dev, "No reset control found\n");
-> +		return PTR_ERR(ce->reset);
-> +	}
-> +
-> +	mutex_init(&ce->mlock);
-> +
-> +	err = allocate_chanlist(ce);
-> +	if (err)
-> +		return err;
-> +
-> +	err = sun8i_ce_pm_init(ce);
-> +	if (err)
-> +		goto error_pm;
-> +
-> +	err = devm_request_irq(&pdev->dev, irq, ce_irq_handler, 0,
-> +			       "sun8i-ce-ns", ce);
-> +	if (err) {
-> +		dev_err(ce->dev, "Cannot request CryptoEngine Non-secure IRQ (err=%d)\n", err);
-> +		goto error_irq;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(ce_algs); i++) {
-> +		ce_algs[i].ce = ce;
-> +		switch (ce_algs[i].type) {
-> +		case CRYPTO_ALG_TYPE_SKCIPHER:
-> +			id = ce_algs[i].ce_algo_id;
-> +			ce_method = ce->variant->alg_cipher[id];
-> +			if (ce_method == CE_ID_NOTSUPP) {
-> +				dev_info(ce->dev,
-> +					 "DEBUG: Algo of %s not supported\n",
-> +					 ce_algs[i].alg.skcipher.base.cra_name);
-> +				ce_algs[i].ce = NULL;
-> +				break;
-> +			}
-> +			id = ce_algs[i].ce_blockmode;
-> +			ce_method = ce->variant->op_mode[id];
-> +			if (ce_method == CE_ID_NOTSUPP) {
-> +				dev_info(ce->dev, "DEBUG: Blockmode of %s not supported\n",
-> +					 ce_algs[i].alg.skcipher.base.cra_name);
-> +				ce_algs[i].ce = NULL;
-> +				break;
-> +			}
-> +			dev_info(ce->dev, "DEBUG: Register %s\n",
-> +				 ce_algs[i].alg.skcipher.base.cra_name);
-> +			err = crypto_register_skcipher(&ce_algs[i].alg.skcipher);
-> +			if (err) {
-> +				dev_err(ce->dev, "Fail to register %s\n",
-> +					ce_algs[i].alg.skcipher.base.cra_name);
-> +				ce_algs[i].ce = NULL;
-> +				goto error_alg;
-> +			}
-> +			break;
-> +		default:
-> +			ce_algs[i].ce = NULL;
-> +			dev_err(ce->dev, "ERROR: tryed to register an unknown algo\n");
-> +		}
-> +	}
-> +
-> +	err = pm_runtime_get_sync(ce->dev);
-> +	if (err < 0)
-> +		goto error_alg;
-> +
-> +	v = readl(ce->base + CE_CTR);
-> +	v >>= CE_DIE_ID_SHIFT;
-> +	v &= CE_DIE_ID_MASK;
-> +	dev_info(&pdev->dev, "CryptoEngine Die ID %x\n", v);
-> +
-> +	pm_runtime_put_sync(ce->dev);
-> +
-> +#ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
-> +	/* Ignore error of debugfs */
-> +	ce->dbgfs_dir = debugfs_create_dir("sun8i-ce", NULL);
-> +	ce->dbgfs_stats = debugfs_create_file("stats", 0444,
-> +					      ce->dbgfs_dir, ce,
-> +					      &sun8i_ce_debugfs_fops);
-> +#endif
-> +	return 0;
-> +error_alg:
-> +	unregister_algs(ce);
-> +	i = MAXFLOW;
-> +error_irq:
-> +	sun8i_ce_pm_exit(ce);
-> +error_pm:
-> +	free_chanlist(ce, i);
-> +	return err;
-> +}
-
-It's still pretty long. Can you move the clocks, algo initialisation
-(and debugfs maybe?) to a function of their own?
-
-Maxime
-
---bmfwxxf5fnjaabw6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZR9WgAKCRDj7w1vZxhR
-xfjVAP91tltcU83h8GVTqSvoqqTWADm4H5LeA3sI7p7k+z8ovQEAlHdQIwX6SuiQ
-DQJAlSoeZZ7cZRgoANODDLBzmpD1Pgo=
-=42mB
------END PGP SIGNATURE-----
-
---bmfwxxf5fnjaabw6--
+Robin.
