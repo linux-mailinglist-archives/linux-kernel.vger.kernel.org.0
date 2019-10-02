@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1E6BC9160
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2B82C9164
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbfJBTIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:08:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36040 "EHLO
+        id S1728985AbfJBTId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:08:33 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35836 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729356AbfJBTIT (ORCPT
+        by vger.kernel.org with ESMTP id S1729307AbfJBTIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:19 -0400
+        Wed, 2 Oct 2019 15:08:16 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyu-000365-Kv; Wed, 02 Oct 2019 20:08:13 +0100
+        id 1iFjyt-00035n-SX; Wed, 02 Oct 2019 20:08:12 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyq-0003g8-4Y; Wed, 02 Oct 2019 20:08:08 +0100
+        id 1iFjyq-0003hB-SF; Wed, 02 Oct 2019 20:08:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,18 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        rkrcmar@redhat.com,
-        "Alejandro Jimenez" <alejandro.j.jimenez@oracle.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Mark Kanda" <mark.kanda@oracle.com>,
-        "Liam Merwick" <liam.merwick@oracle.com>, bp@alien8.de,
-        kvm@vger.kernel.org, "Paolo Bonzini" <pbonzini@redhat.com>
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Eric Biggers" <ebiggers@kernel.org>,
+        syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.306085585@decadent.org.uk>
+Message-ID: <lsq.1570043211.119489746@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 78/87] x86/speculation: Allow guests to use SSBD even
- if host does not
+Subject: [PATCH 3.16 86/87] lib/mpi: Fix karactx leak in mpi_powm
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -52,67 +48,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-commit c1f7fec1eb6a2c86d01bc22afce772c743451d88 upstream.
+commit c8ea9fce2baf7b643384f36f29e4194fa40d33a6 upstream.
 
-The bits set in x86_spec_ctrl_mask are used to calculate the guest's value
-of SPEC_CTRL that is written to the MSR before VMENTRY, and control which
-mitigations the guest can enable.  In the case of SSBD, unless the host has
-enabled SSBD always on mode (by passing "spec_store_bypass_disable=on" in
-the kernel parameters), the SSBD bit is not set in the mask and the guest
-can not properly enable the SSBD always on mitigation mode.
+Sometimes mpi_powm will leak karactx because a memory allocation
+failure causes a bail-out that skips the freeing of karactx.  This
+patch moves the freeing of karactx to the end of the function like
+everything else so that it can't be skipped.
 
-This has been confirmed by running the SSBD PoC on a guest using the SSBD
-always on mitigation mode (booted with kernel parameter
-"spec_store_bypass_disable=on"), and verifying that the guest is vulnerable
-unless the host is also using SSBD always on mode. In addition, the guest
-OS incorrectly reports the SSB vulnerability as mitigated.
-
-Always set the SSBD bit in x86_spec_ctrl_mask when the host CPU supports
-it, allowing the guest to use SSBD whether or not the host has chosen to
-enable the mitigation in any of its modes.
-
-Fixes: be6fcb5478e9 ("x86/bugs: Rework spec_ctrl base and mask logic")
-Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
-Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: bp@alien8.de
-Cc: rkrcmar@redhat.com
-Cc: kvm@vger.kernel.org
-Link: https://lkml.kernel.org/r/1560187210-11054-1-git-send-email-alejandro.j.jimenez@oracle.com
+Reported-by: syzbot+f7baccc38dcc1e094e77@syzkaller.appspotmail.com
+Fixes: cdec9cb5167a ("crypto: GnuPG based MPI lib - source files...")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ lib/mpi/mpi-pow.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -960,6 +960,16 @@ static enum ssb_mitigation __init __ssb_
+--- a/lib/mpi/mpi-pow.c
++++ b/lib/mpi/mpi-pow.c
+@@ -36,6 +36,7 @@
+ int mpi_powm(MPI res, MPI base, MPI exp, MPI mod)
+ {
+ 	mpi_ptr_t mp_marker = NULL, bp_marker = NULL, ep_marker = NULL;
++	struct karatsuba_ctx karactx = {};
+ 	mpi_ptr_t xp_marker = NULL;
+ 	mpi_ptr_t tspace = NULL;
+ 	mpi_ptr_t rp, ep, mp, bp;
+@@ -163,13 +164,11 @@ int mpi_powm(MPI res, MPI base, MPI exp,
+ 		int c;
+ 		mpi_limb_t e;
+ 		mpi_limb_t carry_limb;
+-		struct karatsuba_ctx karactx;
+ 
+ 		xp = xp_marker = mpi_alloc_limb_space(2 * (msize + 1));
+ 		if (!xp)
+ 			goto enomem;
+ 
+-		memset(&karactx, 0, sizeof karactx);
+ 		negative_result = (ep[0] & 1) && base->sign;
+ 
+ 		i = esize - 1;
+@@ -293,8 +292,6 @@ int mpi_powm(MPI res, MPI base, MPI exp,
+ 		if (mod_shift_cnt)
+ 			mpihelp_rshift(rp, rp, rsize, mod_shift_cnt);
+ 		MPN_NORMALIZE(rp, rsize);
+-
+-		mpihelp_release_karatsuba_ctx(&karactx);
  	}
  
- 	/*
-+	 * If SSBD is controlled by the SPEC_CTRL MSR, then set the proper
-+	 * bit in the mask to allow guests to use the mitigation even in the
-+	 * case where the host does not enable it.
-+	 */
-+	if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
-+	    static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+		x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
-+	}
-+
-+	/*
- 	 * We have three CPU feature flags that are in play here:
- 	 *  - X86_BUG_SPEC_STORE_BYPASS - CPU is susceptible.
- 	 *  - X86_FEATURE_SSBD - CPU is able to turn off speculative store bypass
-@@ -976,7 +986,6 @@ static enum ssb_mitigation __init __ssb_
- 			x86_amd_ssb_disable();
- 		} else {
- 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
--			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
- 		}
- 	}
+ 	if (negative_result && rsize) {
+@@ -311,6 +308,7 @@ int mpi_powm(MPI res, MPI base, MPI exp,
+ leave:
+ 	rc = 0;
+ enomem:
++	mpihelp_release_karatsuba_ctx(&karactx);
+ 	if (assign_rp)
+ 		mpi_assign_limb_space(res, rp, size);
+ 	if (mp_marker)
 
