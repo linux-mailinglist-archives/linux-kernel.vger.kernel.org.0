@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B02AC8893
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6DBC88A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfJBMar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:30:47 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:38115 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbfJBMaj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:30:39 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost.localdomain (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id CFB03E001F;
-        Wed,  2 Oct 2019 12:30:36 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 7/7] dt-bindings: iio: adc: max1027: Document max12xx series compatibles
-Date:   Wed,  2 Oct 2019 14:30:25 +0200
-Message-Id: <20191002123025.21413-8-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191002123025.21413-1-miquel.raynal@bootlin.com>
-References: <20191002123025.21413-1-miquel.raynal@bootlin.com>
+        id S1726444AbfJBMdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:33:10 -0400
+Received: from mga03.intel.com ([134.134.136.65]:27022 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725766AbfJBMdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 08:33:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 05:33:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
+   d="scan'208";a="205330025"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Oct 2019 05:33:05 -0700
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] software node: API documentation
+Date:   Wed,  2 Oct 2019 15:33:03 +0300
+Message-Id: <20191002123305.80012-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -41,33 +38,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the bindings documentation with new Maxim ADCs compatibles.
+Hi,
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- .../devicetree/bindings/iio/adc/max1027-adc.txt        | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+I'm sending this as an RFC first. I would like to wait for the API
+change Dmitry proposed [1] before we add the final API documentation
+for the software nodes.
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt b/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-index 7b23d68f655c..1b703a01d882 100644
---- a/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-@@ -1,7 +1,13 @@
--* Maxim 1027/1029/1031 Analog to Digital Converter (ADC)
-+* Maxim 1027/1029/1031/1227/1229/1231 Analog to Digital Converter (ADC)
- 
- Required properties:
--  - compatible: Should be "maxim,max1027" or "maxim,max1029" or "maxim,max1031"
-+  - compatible: Should be one of:
-+    * "maxim,max1027"
-+    * "maxim,max1029"
-+    * "maxim,max1031"
-+    * "maxim,max1227"
-+    * "maxim,max1229"
-+    * "maxim,max1231"
-   - reg: SPI chip select number for the device
- 
- Optional properties:
+At this point I would like to know if the generic use is explained
+clearly enough and if there is anything missing that should be added.
+
+[1] https://lkml.org/lkml/2019/9/11/8
+
+thanks,
+
+Heikki Krogerus (2):
+  software node: Add missing kernel-doc function descriptions
+  software node: Add documentation
+
+ Documentation/driver-api/software_node.rst | 197 +++++++++++++++++++++
+ drivers/base/swnode.c                      |  23 +++
+ 2 files changed, 220 insertions(+)
+ create mode 100644 Documentation/driver-api/software_node.rst
+
 -- 
-2.20.1
+2.23.0
 
