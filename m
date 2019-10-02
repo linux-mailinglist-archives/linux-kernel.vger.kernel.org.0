@@ -2,127 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2329C8AC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53F77C8B15
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 16:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbfJBOSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 10:18:01 -0400
-Received: from mga14.intel.com ([192.55.52.115]:23502 "EHLO mga14.intel.com"
+        id S1727889AbfJBOU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 10:20:58 -0400
+Received: from mga07.intel.com ([134.134.136.100]:36612 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727771AbfJBOSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:18:00 -0400
+        id S1726214AbfJBOU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 10:20:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 07:17:59 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 07:20:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
-   d="scan'208";a="182060537"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga007.jf.intel.com with ESMTP; 02 Oct 2019 07:17:59 -0700
-Date:   Wed, 2 Oct 2019 07:22:08 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 0/4] User API for nested shared virtual address (SVA)
-Message-ID: <20191002072208.243995a1@jacob-builder>
-In-Reply-To: <1569972805-27664-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1569972805-27664-1-git-send-email-jacob.jun.pan@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+   d="scan'208";a="391592758"
+Received: from zhizhuan-mobl.ccr.corp.intel.com (HELO [10.255.28.55]) ([10.255.28.55])
+  by fmsmga005.fm.intel.com with ESMTP; 02 Oct 2019 07:20:53 -0700
+Subject: Re: [kbuild-all] Re: [PATCH] serial: sh-sci: Use
+ platform_get_irq_optional() for optional interrupts
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        kbuild test robot <lkp@intel.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>, kbuild-all@01.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191001180743.1041-1-geert+renesas@glider.be>
+ <201910021701.JBV8khAI%lkp@intel.com>
+ <CAMuHMdWQhvWOMjEpJrXV0nuKUc=wT6Zi_ZLjKco0Lkgeis8NyQ@mail.gmail.com>
+From:   "Chen, Rong A" <rong.a.chen@intel.com>
+Message-ID: <26cf2dd9-2788-bc23-03c4-beb8ed68ef97@intel.com>
+Date:   Wed, 2 Oct 2019 22:20:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAMuHMdWQhvWOMjEpJrXV0nuKUc=wT6Zi_ZLjKco0Lkgeis8NyQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+Hi Geert,
 
-Just wondering if you have more comments on ioasid custom allocator, v3
-is largely the same as v2 other than shuffling header within the set.
+Thanks for your clarification. we are on vacation this week, and we'll 
+take a look asap.
 
-Thanks,
+Best Regards,
+Rong Chen
 
-Jacob
+On 10/2/2019 7:28 PM, Geert Uytterhoeven wrote:
+> Hi Kbuild test robot,
+>
+> On Wed, Oct 2, 2019 at 11:53 AM kbuild test robot <lkp@intel.com> wrote:
+>> I love your patch! Yet something to improve:
+>>
+>> [auto build test ERROR on tty/tty-testing]
+>> [cannot apply to v5.4-rc1 next-20191001]
+> Strange, this patch applies to all of v5.4-rc1, tty/tty-testing, and
+> next-20191001?
+>
+>> url:    https://github.com/0day-ci/linux/commits/Geert-Uytterhoeven/serial-sh-sci-Use-platform_get_irq_optional-for-optional-interrupts/20191002-171547
+> Oh, this is still the old tty/tty-testing before it was rebased to v5.4-rc1,
+> i.e. still based on v5.3-rc4.  That explains the build failure.
+>
+> That does not explain why you couldn't apply this patch to v5.4-rc1 and
+> next-20191001, though.
+>
+>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+>> config: sparc64-allmodconfig (attached as .config)
+>> compiler: sparc64-linux-gcc (GCC) 7.4.0
+>> reproduce:
+>>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>          chmod +x ~/bin/make.cross
+>>          # save the attached .config to linux build tree
+>>          GCC_VERSION=7.4.0 make.cross ARCH=sparc64
+>>
+>> If you fix the issue, kindly add following tag
+>> Reported-by: kbuild test robot <lkp@intel.com>
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>     drivers/tty/serial/sh-sci.c: In function 'sci_init_single':
+>>>> drivers/tty/serial/sh-sci.c:2899:24: error: implicit declaration of function 'platform_get_irq_optional'; did you mean 'platform_get_irq_byname'? [-Werror=implicit-function-declaration]
+>>         sci_port->irqs[i] = platform_get_irq_optional(dev, i);
+>>                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+>>                             platform_get_irq_byname
+>>     cc1: some warnings being treated as errors
+> FTR, not reproducible on sparc on v5.4-rc1, current tty/tty-testing, and
+> next-20191001.
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
 
-On Tue,  1 Oct 2019 16:33:21 -0700
-Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-
-> This set consists of IOMMU APIs to support SVA in the guest, a.k.a
-> nested SVA. As the complete SVA support is complex, we break down the
-> enabling effort into three stages:
-> 1. PCI device direct assignment
-> 2. Fault handling, especially page request service support
-> 3. Mediated device assignment
-> 
-> Each stage includes common API and vendor specific IOMMU driver
-> changes. This series is the common uAPI for stage #1. It is intended
-> to build consensus on the interface which all vendors reply on.
-> 
-> This series is extracted from the complete stage1 set which includes
-> VT-d code. https://lkml.org/lkml/2019/8/15/951
-> 
-> Changes:
->  - Use spinlock instead of mutex to protect ioasid custom allocators.
-> This is to support callers in atomic context
->  - Added more padding to guest PASID bind data for future extensions,
-> suggested by Joerg.
-> After much thinking, I did not do name change from PASID to IOASID in
-> the uAPI, considering we have been using PASID in the rest of uAPIs.
-> IOASID will remain used within the kernel.
-> 
-> For more discussions lead to this series, checkout LPC 2019
-> VFIO/IOMMU/PCI microconference materials.
-> https://linuxplumbersconf.org/event/4/sessions/66/#20190909
-> 
-> 
-> Change log:
-> v3:    - include errno.h in ioasid.h to fix compile error
->        - rebased to v5.4-rc1, no change
->  
-> v2:
-> 	- Addressed review comments by Jean on IOASID custom
-> allocators, locking fix, misc control flow fix.
-> 	- Fixed a compile error with missing header errno.h
-> 	- Updated Jean-Philiippe's new email and updateded
-> reviewed-by tag
-> 
-> 
-> Jacob Pan (2):
->   iommu/ioasid: Add custom allocators
->   iommu: Introduce guest PASID bind function
-> 
-> Jean-Philippe Brucker (1):
->   iommu: Add I/O ASID allocator
-> 
-> Yi L Liu (1):
->   iommu: Introduce cache_invalidate API
-> 
->  drivers/iommu/Kconfig      |   4 +
->  drivers/iommu/Makefile     |   1 +
->  drivers/iommu/ioasid.c     | 432
-> +++++++++++++++++++++++++++++++++++++++++++++
-> drivers/iommu/iommu.c      |  30 ++++ include/linux/ioasid.h     |
-> 76 ++++++++ include/linux/iommu.h      |  36 ++++
->  include/uapi/linux/iommu.h | 169 ++++++++++++++++++
->  7 files changed, 748 insertions(+)
->  create mode 100644 drivers/iommu/ioasid.c
->  create mode 100644 include/linux/ioasid.h
-> 
-
-[Jacob Pan]
