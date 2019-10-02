@@ -2,110 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF70C457C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 03:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7A33C4589
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 03:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729695AbfJBBY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 1 Oct 2019 21:24:57 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46160 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729681AbfJBBY5 (ORCPT
+        id S1729736AbfJBB1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 1 Oct 2019 21:27:43 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:44643 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729723AbfJBB1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Oct 2019 21:24:57 -0400
-Received: by mail-io1-f65.google.com with SMTP id c6so52935145ioo.13;
-        Tue, 01 Oct 2019 18:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WW4/xkSDQIhkfsesG9YoLnUMFaDJjWvzNHAEkW7fJkA=;
-        b=SELtzi6LjPYxNmk8TonlToYJ4dYGk/DN/z7VRaW2PzJqDnDQaeOgeMZP8OI+vQnSpw
-         O4xP5NaXSwqj7tsClZcMPkxop33TffDN5xUboR3xabL07aaIv48fVdZlk4PaEvQT7Qsu
-         T1U2kVyrfKhSP77hvAjdDypCgFCwkYs9LbYyG76k7NGbQ/wCwAZgJP/qyj8d5Mecfluc
-         nTya1o8pxjDteRZSM7GQMakA071DvylNWInlaTtqBevulSTwArJxz8rnBm37bPnzTHyo
-         LXzOTKZvZyqJQ8D6me/wa1HxQmXhOefjLqRI3O80Z782g7ub22+sA1zFlpRJiPWEvGjd
-         EyFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WW4/xkSDQIhkfsesG9YoLnUMFaDJjWvzNHAEkW7fJkA=;
-        b=RJcuHXfOFw132Q4b+pYQuXV4atxgh2JFKk9x3KMZFsPh/3x1V/9OY12c/Gk7Hc0hBF
-         SdPk5E6yhB4WaobIcaTndZdvsuAT0oXSe6k0voq5ppEfyo+EHaOzUnLRSyJB7qBtBpoT
-         XODRJr7FxjoVI6pSi59cBN0WAnKitKOCA9hObGxw/SyIcZDHl7n0q+2FpE7MB9bFUqXD
-         o7KKk0AGT0J7jWArBGNjecprRIpmY7UBLCLqX40npL+MC8qrEaOt/LhiJ9a241IX7ByV
-         8c9kNqx/XB6ZBBTEwBh0oVg9kEWd/NGob3+/c8DgtIcTZ0calBLoKWOJBUjBTRnzYjn5
-         vDfA==
-X-Gm-Message-State: APjAAAVIUmV4uwMwAcVSSTFROCWqHBowPnspbzwO7ehF1yeQfGCYQg4L
-        53nWHzN+XE+VzCo9tAxK9TM/Yljbr8ekk20dVUTMepB08rc=
-X-Google-Smtp-Source: APXvYqwPE/tA65lT7b97m29565vMbtiutIr7UlQrMhri6hjabguFSCCYzFrADLTzw+T2Q2e4tXm6uRC+6WwGY65gP3w=
-X-Received: by 2002:a92:d641:: with SMTP id x1mr1188239ilp.272.1569979495933;
- Tue, 01 Oct 2019 18:24:55 -0700 (PDT)
+        Tue, 1 Oct 2019 21:27:42 -0400
+Received: from dimstar.local.net (n122-110-44-45.sun2.vic.optusnet.com.au [122.110.44.45])
+        by mail105.syd.optusnet.com.au (Postfix) with SMTP id 91F86363099
+        for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2019 11:27:27 +1000 (AEST)
+Received: (qmail 6573 invoked by uid 501); 2 Oct 2019 01:27:26 -0000
+Date:   Wed, 2 Oct 2019 11:27:26 +1000
+From:   Duncan Roe <duncan_roe@optusnet.com.au>
+To:     Julian Anastasov <ja@ssi.bg>
+Cc:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] selftests: netfilter: introduce test cases for
+ ipvs
+Message-ID: <20191002012726.GB9810@dimstar.local.net>
+Mail-Followup-To: Julian Anastasov <ja@ssi.bg>,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+References: <1569939599-1872-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+ <alpine.LFD.2.21.1910012133330.3887@ja.home.ssi.bg>
 MIME-Version: 1.0
-References: <CAH2r5mspD=iMnO-CuyHMf3jmS0zm7fbqNOXe0cqMcKsXfLAu-Q@mail.gmail.com>
- <20191001231017.67txq4dhrvhyzbu5@desk.local> <CAH2r5mvnYtmfpHY+jeUbN4JehQwY1XfBWYVNSLO+wx1wkAA6gA@mail.gmail.com>
- <20191002001859.qeyo3btl7tosz3vo@desk.local>
-In-Reply-To: <20191002001859.qeyo3btl7tosz3vo@desk.local>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 1 Oct 2019 20:24:45 -0500
-Message-ID: <CAH2r5mtzAgcJTrGuderq4DEHBXtPujcQ8DWJUzM0w=hHX8WbJQ@mail.gmail.com>
-Subject: Re: Many unexpected warnings with current sparse
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Paulo Alcantara <paulo@paulo.ac>,
-        David Howells <dhowells@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-sparse@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.21.1910012133330.3887@ja.home.ssi.bg>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=4DzML1vCOQ6Odsy8BUtSXQ==:117 a=4DzML1vCOQ6Odsy8BUtSXQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=TCTL6qu2tCVPfYteyd8A:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 7:19 PM Luc Van Oostenryck
-<luc.vanoostenryck@gmail.com> wrote:
+On Tue, Oct 01, 2019 at 09:34:13PM +0300, Julian Anastasov wrote:
 >
-> On Tue, Oct 01, 2019 at 06:14:23PM -0500, Steve French wrote:
-> > It may be related to the following sparse make warning:
+> 	Hello,
+>
+> On Tue, 1 Oct 2019, Haishuang Yan wrote:
+>
+> > This series patch include test cases for ipvs.
 > >
-> > No rule to make target
-> > '/usr/include/x86_64-linux-gnu/bits/huge_val.h', needed by
-> > 'sparse-llvm.o'
+> > The test topology is who as below:
+> > +--------------------------------------------------------------+
+> > |                      |                                       |
+> > |         ns0          |         ns1                           |
+> > |      -----------     |     -----------    -----------        |
+> > |      | veth01  | --------- | veth10  |    | veth12  |        |
+> > |      -----------    peer   -----------    -----------        |
+> > |           |          |                        |              |
+> > |      -----------     |                        |              |
+> > |      |  br0    |     |-----------------  peer |--------------|
+> > |      -----------     |                        |              |
+> > |           |          |                        |              |
+> > |      ----------     peer   ----------      -----------       |
+> > |      |  veth02 | --------- |  veth20 |     | veth12  |       |
+> > |      ----------      |     ----------      -----------       |
+> > |                      |         ns2                           |
+> > |                      |                                       |
+> > +--------------------------------------------------------------+
 > >
-> > I don't see huge_val.h in the Ubuntu 19 version of libc6-dev
+> > Test results:
+> > # selftests: netfilter: ipvs.sh
+> > # Testing DR mode...
+> > # Testing NAT mode...
+> > # Testing Tunnel mode...
+> > # ipvs.sh: PASS
+> > ok 6 selftests: netfilter: ipvs.sh
+> >
+> > Haishuang Yan (3):
+> >   selftests: netfilter: add ipvs test script
+> >   selftests: netfilter: add ipvs nat test case
+> >   selftests: netfilter: add ipvs tunnel test case
 >
-> Yes, I've been bitten myself by this. It's fixed since a little while.
-> So, just doing a clean build or removing all the deps (.*.d)
-> should allow you to build sparse.
+> Acked-by: Julian Anastasov <ja@ssi.bg>
 >
-> I've verified the problem with asm and __inline in quota.h:
-> it's autodetected by kconfig (CC_HAS_ASM_INLINE) so the exact config
-> doesn't matter (only gcc's version does) but in all cases recent
-> versions of sparse don't have a problem with it
+> >  tools/testing/selftests/netfilter/Makefile |   2 +-
+> >  tools/testing/selftests/netfilter/ipvs.sh  | 234 +++++++++++++++++++++++++++++
+> >  2 files changed, 235 insertions(+), 1 deletion(-)
+> >  create mode 100755 tools/testing/selftests/netfilter/ipvs.sh
+>
+> Regards
+>
+> --
+> Julian Anastasov <ja@ssi.bg>
 
-Removed the dependencies and rebuilt as you suggested and it worked ...
-and even better ... with the noise removed I now see two real bugs
-(endian conversion missing on two lines) and only one possible problem
-with sparse/gcc itself
+I still prefer #!/bin/sh in 1/3. You never know what's in someone's environment
 
-Sparse now flags this line from one of Paulo's DFS features merged last year:
-
-      struct smb_vol fake_vol = {0};
-
-with
-
-      "warning: Using plain integer as NULL pointer"
-
-What is the recommended way to initialize a struct to avoid the sparse warning?
-
-
-And what about the "namespace" warnings from the fscache (cache.o)
-code that now show up?  I hadn't seen those before.
-Any easy way to remove them?
-
-"WARNING: module cifs uses symbol sigprocmask from namespace
-fs/cifs/cache.o: $(deps_/home/sfrench/cifs-2.6/fs/cifs/cache.o), but
-does not import it."
--- 
-Thanks,
-
-Steve
+Cheers ... Duncan.
