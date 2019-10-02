@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 513F5C87D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 745CBC87D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 14:05:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfJBMES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 08:04:18 -0400
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:36353 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728342AbfJBMEP (ORCPT
+        id S1725747AbfJBMER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 08:04:17 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35473 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbfJBMEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 08:04:15 -0400
-Received: by mail-lf1-f48.google.com with SMTP id x80so12553324lff.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 05:04:13 -0700 (PDT)
+        Wed, 2 Oct 2019 08:04:16 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m7so16858331lji.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 05:04:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QRH9ZC+8Ny/msHWcjGNR4E0iaqUnOOF/L6UnfzfPUco=;
-        b=f23rjIBkvLQp+jBBwDivqvjjR/UzmHdWYZ4YuKB85ScWs9VNgvA4l82vxQfSKKcZEP
-         itqjeh+PE4szh6m8AkdQaJJxl6kUhJ8wJOarb5IdXg9vbAtL1XMIVR5GAnhstXFNND9/
-         Tp4gkIs5PllRsdkpY0tfIKPIgCcuc2Jev1sSRm073Mp01icxsgnlr84wDdLUSQaXMP+k
-         gdZUX1vY5UU14Jlni8T57B/T5LsGEjD7zT/IkovAMyovfrbBrh+A7DWt3m3hHZSCotdE
-         2TdjRXRHjDwrrJHQpJb0i4AzX8eAXPkFYyS996qsFqApNUZqWLy6/4AJfn9J38+jDwIq
-         Z0Ng==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Y95OajR8Z4EhoKVV/d/GtPK38UmcXtK59LFx+wA+Kn4=;
+        b=OmP5kq+z+zbFpIxkBNzdy160yYdL/tMN7p+YDlhaPbcErQwKwPUXwv2VJg5sUXmyup
+         ygBxLJXG5geeSgJTdIEycdXlvcJ4VTiDNeCAcPjC9oX6zR5voiv5Ww3rBRcWuZD7otui
+         XmJuS4uPT/e5ZSoyF4+mdfA9VFyOem72gpoqPJVVo9aWJuI2LHax7Cs3gE8ErSWQazFK
+         JaESnbyXsinx1R/cgxTvkqrAHVdAH6gFw5ZUBlVLwH3Uwfnogt6FlnURjAsPrds0wVmq
+         reyXAR9+mGKS3WAcXU8dMUB8XLZ00ncKR8c6OPrSVvIyojBl/q0L730b+Ns7dEOXDGfS
+         0eeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QRH9ZC+8Ny/msHWcjGNR4E0iaqUnOOF/L6UnfzfPUco=;
-        b=GSk/iLebknH8uhN9cPS4UefUNfKeD2Vcp3szW2gpNZh0lYrW5XtEdvwBQBRoPM/riy
-         pPmoiDr6wDGfUfm0i4EfacbtaaBMKH6wvgHqiqlHsmh71HqRdCFcGJsFcV8uyKwpRO4t
-         yYoZfezsjP6iPyZeaPYNls6zhuyqUqLRSDPXMz5RRTEqSKvLpnxEOAeJ2Oo4rH7OddAU
-         +Pm5x0d9hl9nTgXsZbtiKHYWC6rOZZGOi/CBOZcouNscZMBHhIpkemUdqsL9iJFSB8B3
-         VRatZtMKPwHKYj6vaB1tw1QKZdVhuXl/3xl1z+NwXtzH01aUIGbw2KE5zDqmXNwF1JIO
-         XSKQ==
-X-Gm-Message-State: APjAAAVaiDmNGI1SNJwwHqBzxPBr+pb7HIq6CEKHbe0k8idp4M8hytI8
-        OgtqCPtqRDDIgWFnc5SmBx3RLA==
-X-Google-Smtp-Source: APXvYqyyyNzF3fRohqc2QWfIhha0eeknjrB2f4OKPHr3+Ot91a5QKrvaEtH0TD3WHGORsSn1/bsxrg==
-X-Received: by 2002:ac2:5925:: with SMTP id v5mr2150152lfi.8.1570017852633;
-        Wed, 02 Oct 2019 05:04:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Y95OajR8Z4EhoKVV/d/GtPK38UmcXtK59LFx+wA+Kn4=;
+        b=KE6KCWiScmqSn72EeSKlgewvVTYsz9Yl5agzy9ChDlssf4WYoTDZpnbej86KkvjqPm
+         THDr4QS80f8sGhYpK55vGDi4r3AthZF4xFm45i/j+S96059c74Z3XeKfvi6xHgvb/iO1
+         P4S3SKxjgFCb1xc5Yj8dRmr4Ypc44F7A7/QB/v0IqGnZfXvbSdgzEIKtayPaGhZQIzRl
+         UKwGoTKEKYXIB+MYT9m+/hKtqb2gH4EG0GDsqfcMLnk/yPiMonXLhP40HCq5vfs8I33J
+         f2YtiboKDcB4NAEqRIS8CLFmiOgYugJGbNuhiAt6bQKpmLbivUlxx1sqx+NMK+l/E9k4
+         xHzA==
+X-Gm-Message-State: APjAAAWSLNWpSoGFkwT2Fvask514m4nm+sxiGyKCwUlfuGAyMnmXfTwp
+        GKZ3/l75c2bRpO/jYKYLhLkeDw==
+X-Google-Smtp-Source: APXvYqwCgHv5cQQHT5flHSQGpsA/3qpFgY9BqKRSoHwTcS8bpTuL/U1VGR2qPBiljcvG8ANgpwX2YQ==
+X-Received: by 2002:a2e:5c09:: with SMTP id q9mr2285090ljb.4.1570017853751;
+        Wed, 02 Oct 2019 05:04:13 -0700 (PDT)
 Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id x2sm4833827ljj.94.2019.10.02.05.04.11
+        by smtp.gmail.com with ESMTPSA id x2sm4833827ljj.94.2019.10.02.05.04.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 05:04:11 -0700 (PDT)
+        Wed, 02 Oct 2019 05:04:13 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net
 Cc:     kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
         linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH bpf-next 0/2] selftest/bpf: remove warns for enable_all_controllers
-Date:   Wed,  2 Oct 2019 15:04:02 +0300
-Message-Id: <20191002120404.26962-1-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH bpf-next 1/2] selftests/bpf: add static to enable_all_controllers()
+Date:   Wed,  2 Oct 2019 15:04:03 +0300
+Message-Id: <20191002120404.26962-2-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191002120404.26962-1-ivan.khoronzhuk@linaro.org>
+References: <20191002120404.26962-1-ivan.khoronzhuk@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -63,17 +65,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This micro series fixes annoying warn described in patches
-while samples/bpf build. Second patch fixes new warn that
-comes after fixing warn of first patch, that was masked.
+Add static to enable_all_controllers() to get rid from annoying warn:
 
-Ivan Khoronzhuk (2):
-  selftests/bpf: add static to enable_all_controllers()
-  selftests/bpf: correct path to include msg + path
+samples/bpf/../../tools/testing/selftests/bpf/cgroup_helpers.c:44:5:
+warning: no previous prototype for ‘enable_all_controllers’
+[-Wmissing-prototypes]
+ int enable_all_controllers(char *cgroup_path)
 
- tools/testing/selftests/bpf/cgroup_helpers.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+while samples/bpf build.
 
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
+ tools/testing/selftests/bpf/cgroup_helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/bpf/cgroup_helpers.c b/tools/testing/selftests/bpf/cgroup_helpers.c
+index e95c33e333a4..4d74f3c4619b 100644
+--- a/tools/testing/selftests/bpf/cgroup_helpers.c
++++ b/tools/testing/selftests/bpf/cgroup_helpers.c
+@@ -41,7 +41,7 @@
+  *
+  * If successful, 0 is returned.
+  */
+-int enable_all_controllers(char *cgroup_path)
++static int enable_all_controllers(char *cgroup_path)
+ {
+ 	char path[PATH_MAX + 1];
+ 	char buf[PATH_MAX];
 -- 
 2.17.1
 
