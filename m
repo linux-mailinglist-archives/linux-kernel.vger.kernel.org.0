@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86A15C9166
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB8FC9161
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbfJBTIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:08:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35646 "EHLO
+        id S1729534AbfJBTIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:08:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36126 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729236AbfJBTIN (ORCPT
+        by vger.kernel.org with ESMTP id S1729385AbfJBTIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:13 -0400
+        Wed, 2 Oct 2019 15:08:22 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyr-000365-Kl; Wed, 02 Oct 2019 20:08:09 +0100
+        id 1iFjyu-000368-RX; Wed, 02 Oct 2019 20:08:12 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-0003eB-Oe; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyq-0003fy-10; Wed, 02 Oct 2019 20:08:08 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,21 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Russell King" <rmk+kernel@armlinux.org.uk>,
-        "Wolfram Sang" <wsa@the-dreams.de>
+        mpe@ellerman.id.au, "Ravi Bangoria" <ravi.bangoria@linux.ibm.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Ingo Molnar" <mingo@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        "Stephane Eranian" <eranian@google.com>, maddy@linux.vnet.ibm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        "Vince Weaver" <vincent.weaver@maine.edu>, acme@kernel.org,
+        "Jiri Olsa" <jolsa@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.787427591@decadent.org.uk>
+Message-ID: <lsq.1570043211.910896713@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 54/87] i2c: acorn: fix i2c warning
+Subject: [PATCH 3.16 76/87] perf/ioctl: Add check for the sample_period value
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,30 +55,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-commit ca21f851cc9643af049226d57fabc3c883ea648e upstream.
+commit 913a90bc5a3a06b1f04c337320e9aeee2328dd77 upstream.
 
-The Acorn i2c driver (for RiscPC) triggers the "i2c adapter has no name"
-warning in the I2C core driver, resulting in the RTC being inaccessible.
-Fix this.
+perf_event_open() limits the sample_period to 63 bits. See:
 
-Fixes: 2236baa75f70 ("i2c: Sanity checks on adapter registration")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+  0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
+
+Make ioctl() consistent with it.
+
+Also on PowerPC, negative sample_period could cause a recursive
+PMIs leading to a hang (reported when running perf-fuzzer).
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.vnet.ibm.com
+Cc: mpe@ellerman.id.au
+Fixes: 0819b2e30ccb ("perf: Limit perf_event_attr::sample_period to 63 bits")
+Link: https://lkml.kernel.org/r/20190604042953.914-1-ravi.bangoria@linux.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/i2c/busses/i2c-acorn.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/events/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/i2c/busses/i2c-acorn.c
-+++ b/drivers/i2c/busses/i2c-acorn.c
-@@ -83,6 +83,7 @@ static struct i2c_algo_bit_data ioc_data
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -3823,6 +3823,9 @@ static int perf_event_period(struct perf
+ 	if (perf_event_check_period(event, value))
+ 		return -EINVAL;
  
- static struct i2c_adapter ioc_ops = {
- 	.nr			= 0,
-+	.name			= "ioc",
- 	.algo_data		= &ioc_data,
- };
++	if (!event->attr.freq && (value & (1ULL << 63)))
++		return -EINVAL;
++
+ 	task = ctx->task;
+ 	pe.value = value;
  
 
