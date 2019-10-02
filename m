@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0427C916D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F917C9197
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2019 21:11:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbfJBTIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 15:08:21 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35314 "EHLO
+        id S1729790AbfJBTKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 15:10:13 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35966 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729076AbfJBTIJ (ORCPT
+        by vger.kernel.org with ESMTP id S1729342AbfJBTIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 15:08:09 -0400
+        Wed, 2 Oct 2019 15:08:18 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyo-00035y-Gh; Wed, 02 Oct 2019 20:08:06 +0100
+        id 1iFjyx-000366-Re; Wed, 02 Oct 2019 20:08:16 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iFjyn-0003cB-Rb; Wed, 02 Oct 2019 20:08:05 +0100
+        id 1iFjyp-0003fF-GS; Wed, 02 Oct 2019 20:08:07 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Catalina Mocanu" <catalina.mocanu@gmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Ronnie Sahlberg" <lsahlber@redhat.com>,
+        "Pavel Shilovsky" <pshilov@microsoft.com>,
+        "Steve French" <stfrench@microsoft.com>
 Date:   Wed, 02 Oct 2019 20:06:51 +0100
-Message-ID: <lsq.1570043211.136218297@decadent.org.uk>
+Message-ID: <lsq.1570043211.694878814@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 29/87] staging: iio: cdc: Don't put an else right
- after a return
+Subject: [PATCH 3.16 67/87] SMB3: retry on STATUS_INSUFFICIENT_RESOURCES
+ instead of failing write
 In-Reply-To: <lsq.1570043210.379046399@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,45 +49,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Catalina Mocanu <catalina.mocanu@gmail.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit 288903f6b91e759b0a813219acd376426cbb8f14 upstream.
+commit 8d526d62db907e786fd88948c75d1833d82bd80e upstream.
 
-This fixes the following checkpatch.pl warning:
-WARNING: else is not generally useful after a break or return.
+Some servers such as Windows 10 will return STATUS_INSUFFICIENT_RESOURCES
+as the number of simultaneous SMB3 requests grows (even though the client
+has sufficient credits).  Return EAGAIN on STATUS_INSUFFICIENT_RESOURCES
+so that we can retry writes which fail with this status code.
 
-While at it, remove new line for symmetry with the rest of the code.
+This (for example) fixes large file copies to Windows 10 on fast networks.
 
-Signed-off-by: Catalina Mocanu <catalina.mocanu@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/iio/cdc/ad7150.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ fs/cifs/smb2maperror.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/iio/cdc/ad7150.c
-+++ b/drivers/staging/iio/cdc/ad7150.c
-@@ -143,19 +143,15 @@ static int ad7150_read_event_config(stru
- 	case IIO_EV_TYPE_MAG_ADAPTIVE:
- 		if (dir == IIO_EV_DIR_RISING)
- 			return adaptive && (threshtype == 0x1);
--		else
--			return adaptive && (threshtype == 0x0);
-+		return adaptive && (threshtype == 0x0);
- 	case IIO_EV_TYPE_THRESH_ADAPTIVE:
- 		if (dir == IIO_EV_DIR_RISING)
- 			return adaptive && (threshtype == 0x3);
--		else
--			return adaptive && (threshtype == 0x2);
--
-+		return adaptive && (threshtype == 0x2);
- 	case IIO_EV_TYPE_THRESH:
- 		if (dir == IIO_EV_DIR_RISING)
- 			return !adaptive && (threshtype == 0x1);
--		else
--			return !adaptive && (threshtype == 0x0);
-+		return !adaptive && (threshtype == 0x0);
- 	default:
- 		break;
- 	}
+--- a/fs/cifs/smb2maperror.c
++++ b/fs/cifs/smb2maperror.c
+@@ -455,7 +455,7 @@ static const struct status_to_posix_erro
+ 	{STATUS_FILE_INVALID, -EIO, "STATUS_FILE_INVALID"},
+ 	{STATUS_ALLOTTED_SPACE_EXCEEDED, -EIO,
+ 	"STATUS_ALLOTTED_SPACE_EXCEEDED"},
+-	{STATUS_INSUFFICIENT_RESOURCES, -EREMOTEIO,
++	{STATUS_INSUFFICIENT_RESOURCES, -EAGAIN,
+ 				"STATUS_INSUFFICIENT_RESOURCES"},
+ 	{STATUS_DFS_EXIT_PATH_FOUND, -EIO, "STATUS_DFS_EXIT_PATH_FOUND"},
+ 	{STATUS_DEVICE_DATA_ERROR, -EIO, "STATUS_DEVICE_DATA_ERROR"},
 
