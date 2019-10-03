@@ -2,128 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD691C96EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 05:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 160AEC9701
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 05:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbfJCDWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 23:22:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46464 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbfJCDWj (ORCPT
+        id S1728665AbfJCDjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 23:39:55 -0400
+Received: from bmailout2.hostsharing.net ([83.223.78.240]:42323 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728540AbfJCDjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 23:22:39 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q5so747307pfg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 20:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Qcbatkrbyyrp3eBE32fuNXC7/HcaftiTNzoulB+n+F0=;
-        b=vA9rJV6W6StGzq8ac3QtjivxEU9aoBXxLYIHjyDMcFzWXLUuKJR6aLVf8SrVkfbmGx
-         1alqxZaX/KTfcm2X/rJpq3MCA3BbDSQgyrtWgtMk2BvtyLbzuVkey5qqOIDMdbNb+5zL
-         0QSW2Umv2uJ12YiDOQ73F2ufn8fUJgbKxNCV7AvBHGVIH72OVQCoGMT8+p35apaUVLye
-         7obZ3IabS34qjjCLeP0XLoP2vUDuVIs2qejPcLp9tDZ/Jr4xk0b0lKfMylA73QHevBE8
-         OzpwUj3WJ248qonmDXzkU8aTrKDi5bxHfWdb2MQbg1BW/6Mv4yEtgtNmuVwbIgMZVY0w
-         YWbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Qcbatkrbyyrp3eBE32fuNXC7/HcaftiTNzoulB+n+F0=;
-        b=uENhOSKbw1K67Jg7ZEgtjt30PmgMByV+cMpk+gk+ZvWsyIZSZurqNtzaYuwR3nNIet
-         CzHeq37nw6Zzf3TdsnHn0zlJqdNI1/H/9Jm9WEj04ABzdH9h8EFhTPCLNw1trpp4FDqs
-         jsExLS339u+zpTOEsjS6T636g7OKY74/YJrCYaUWeVEAlL8F9BlNkanjfJTZyc0K9iZT
-         qY3d6Z34AH7SqxqAmeuHocCvtZoWOmsaVvz2ZkLa4Ct7L1gMD+tyKHMLzADxTk5oigTG
-         yGeZyg29BUskj/NNQRIwNo7XfwUQeJDEHu4gvJP5Jc6vI7l/bNpXxd5oFgkODGweRKmE
-         qyTQ==
-X-Gm-Message-State: APjAAAWPru5mpfb9K7LtIGNKWn9DFqNWhdpg6m+PnybtXFD+yY7yoh0n
-        kSOSjvWAiMBsYti7476D6r3uxoKj77s=
-X-Google-Smtp-Source: APXvYqx2lOV0eh+Ow8KeLKSt9Zas93Pb/ThAgFgUhO+p+JCOUsHOJLJdQpDh8zxXHDvsj/W+AjVgAw==
-X-Received: by 2002:a63:5005:: with SMTP id e5mr7521362pgb.442.1570072957845;
-        Wed, 02 Oct 2019 20:22:37 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id d76sm801914pga.80.2019.10.02.20.22.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 20:22:36 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [RFC][PATCH] dt-bindings: usb: rt1711h: Add connector bindings
-Date:   Thu,  3 Oct 2019 03:22:32 +0000
-Message-Id: <20191003032232.115832-1-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 2 Oct 2019 23:39:55 -0400
+X-Greylist: delayed 360 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Oct 2019 23:39:54 EDT
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id A3F072802D270;
+        Thu,  3 Oct 2019 05:33:52 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 5C045351CB; Thu,  3 Oct 2019 05:33:52 +0200 (CEST)
+Date:   Thu, 3 Oct 2019 05:33:52 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     "Alex G." <mr.nuke.me@gmail.com>
+Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] PCI: pciehp: Do not turn off slot if presence comes
+ up after link
+Message-ID: <20191003033352.d5ywkrskpkhafvc4@wunner.de>
+References: <20191001211419.11245-1-stuart.w.hayes@gmail.com>
+ <20191002041315.6dpqpis5zikosyyc@wunner.de>
+ <c494a7c4-8323-e75f-6a3f-5f342ce7b1c7@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c494a7c4-8323-e75f-6a3f-5f342ce7b1c7@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add connector binding documentation for Richtek RT1711H Type-C
-chip driver
+On Wed, Oct 02, 2019 at 05:13:58PM -0500, Alex G. wrote:
+> On 10/1/19 11:13 PM, Lukas Wunner wrote:
+> > On Tue, Oct 01, 2019 at 05:14:16PM -0400, Stuart Hayes wrote:
+> > > This patch set is based on a patch set [1] submitted many months ago by
+> > > Alexandru Gagniuc, who is no longer working on it.
+> > 
+> > I'm not sure if it's appropriate to change the author and
+> > omit Alex' Signed-off-by.
+> 
+> Legally Dell owns the patches. I have no objection on my end.
 
-It was noted by Rob Herring that the rt1711h binding docs
-doesn't include the connector binding.
+From a kernel community POV, I don't think it matters (in this case)
+who legally owns the copyright to the contributed code.  It's just that
+we go to great lengths to provide proper attribution even for small
+contributions (e.g. Tested-by).
 
-Thus this patch adds such documentation following the details
-in Documentation/devicetree/bindings/usb/typec-tcpci.txt
+The benefit to the community is that we know who to cc if that portion
+of the code is changed again and someone knowledgable should take a look.
 
-CC: ShuFan Lee <shufan_lee@richtek.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- .../bindings/usb/richtek,rt1711h.txt          | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
+The benefit to contributors is that they can change jobs and their past
+contributions are still visible in the git history and attributed to
+their names.  By contrast, if you've worked on closed source code and
+changed jobs, that work isn't visible to future employers or even yourself,
+and it may happen that someone else takes credit for your past work
+without you even knowing about it or being able to stop that.
+(I've seen it before.)
 
-diff --git a/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt b/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt
-index d4cf53c071d9..e3fc57e605ed 100644
---- a/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt
-+++ b/Documentation/devicetree/bindings/usb/richtek,rt1711h.txt
-@@ -6,10 +6,39 @@ Required properties:
-  - interrupts : <a b> where a is the interrupt number and b represents an
-    encoding of the sense and level information for the interrupt.
- 
-+Required sub-node:
-+- connector: The "usb-c-connector" attached to the tcpci chip, the bindings
-+  of connector node are specified in
-+  Documentation/devicetree/bindings/connector/usb-connector.txt
-+
- Example :
- rt1711h@4e {
- 	compatible = "richtek,rt1711h";
- 	reg = <0x4e>;
- 	interrupt-parent = <&gpio26>;
- 	interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+
-+	usb_con: connector {
-+		compatible = "usb-c-connector";
-+		label = "USB-C";
-+		data-role = "dual";
-+		power-role = "dual";
-+		try-power-role = "sink";
-+		source-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)>;
-+		sink-pdos = <PDO_FIXED(5000, 2000, PDO_FIXED_USB_COMM)
-+			     PDO_VAR(5000, 12000, 2000)>;
-+		op-sink-microwatt = <10000000>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <1>;
-+				usb_con_ss: endpoint {
-+					remote-endpoint = <&usb3_data_ss>;
-+				};
-+			};
-+		};
-+	};
- };
--- 
-2.17.1
+In this case, there should be a S-o-b line for Alex preceding that
+for Stuart, and the author of the commit should be Alex unless a
+significant portion of the patch was changed.
 
+Thanks,
+
+Lukas
