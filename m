@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82774CAD81
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1076CAD7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388466AbfJCRnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:43:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38514 "EHLO mail.kernel.org"
+        id S2390593AbfJCRnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:43:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730621AbfJCP4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:56:34 -0400
+        id S1730690AbfJCP4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:56:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1883D207FF;
-        Thu,  3 Oct 2019 15:56:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAACA20830;
+        Thu,  3 Oct 2019 15:56:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118193;
-        bh=fH7xEbLSbHI/G2E3fCNaLnww3DvBBPdljFfySDZlM1s=;
+        s=default; t=1570118197;
+        bh=9zw12UQm7V/vEeQcMHuxi5xBI7Fc+TKHsLppDEfOcmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zsU6sq2S3UQDAj9qEPKF/y1dNgp4zXlv0WyhX31Dqdkd522KayDRReEzj08CnmRDA
-         ab8Fpc6WyawYHx8BZZ7/a2RQRdFMicznUgzaMLgscllTLpWzM4MMMvyFVgY1INh19x
-         ekKf941jQ6Ezpw0BLqTOEB2DvMnZRT8rTN+u0Uwc=
+        b=tAULlERoHCYyjI/WiF3/tsK+Wepy50aJ7g8l9LvzHqRJL+DMeL3cSJypGHuwBBJqU
+         HLUxyDj7YbIL9uJbZeFczRhh7uQYvWv3eDlUnueWw8LRZqXc2Qs4Ag7ecz149Zpntj
+         N2liEtMUaHJ3qKYqMzxFxdFu4hMCiupJM7wZhf7M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 23/99] openvswitch: change type of UPCALL_PID attribute to NLA_UNSPEC
-Date:   Thu,  3 Oct 2019 17:52:46 +0200
-Message-Id: <20191003154305.326578184@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.4 24/99] sch_netem: fix a divide by zero in tabledist()
+Date:   Thu,  3 Oct 2019 17:52:47 +0200
+Message-Id: <20191003154305.598741452@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -44,40 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit ea8564c865299815095bebeb4b25bef474218e4c ]
+[ Upstream commit b41d936b5ecfdb3a4abc525ce6402a6c49cffddc ]
 
-userspace openvswitch patch "(dpif-linux: Implement the API
-functions to allow multiple handler threads read upcall)"
-changes its type from U32 to UNSPEC, but leave the kernel
-unchanged
+syzbot managed to crash the kernel in tabledist() loading
+an empty distribution table.
 
-and after kernel 6e237d099fac "(netlink: Relax attr validation
-for fixed length types)", this bug is exposed by the below
-warning
+	t = dist->table[rnd % dist->size];
 
-	[   57.215841] netlink: 'ovs-vswitchd': attribute type 5 has an invalid length.
+Simply return an error when such load is attempted.
 
-Fixes: 5cd667b0a456 ("openvswitch: Allow each vport to have an array of 'port_id's")
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/datapath.c |    2 +-
+ net/sched/sch_netem.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -2152,7 +2152,7 @@ static const struct nla_policy vport_pol
- 	[OVS_VPORT_ATTR_STATS] = { .len = sizeof(struct ovs_vport_stats) },
- 	[OVS_VPORT_ATTR_PORT_NO] = { .type = NLA_U32 },
- 	[OVS_VPORT_ATTR_TYPE] = { .type = NLA_U32 },
--	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_U32 },
-+	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_UNSPEC },
- 	[OVS_VPORT_ATTR_OPTIONS] = { .type = NLA_NESTED },
- };
+--- a/net/sched/sch_netem.c
++++ b/net/sched/sch_netem.c
+@@ -713,7 +713,7 @@ static int get_dist_table(struct Qdisc *
+ 	int i;
+ 	size_t s;
  
+-	if (n > NETEM_DIST_MAX)
++	if (!n || n > NETEM_DIST_MAX)
+ 		return -EINVAL;
+ 
+ 	s = sizeof(struct disttable) + n * sizeof(s16);
 
 
