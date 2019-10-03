@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A6BCA3FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A469CA40C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390014AbfJCQUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:20:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48714 "EHLO mail.kernel.org"
+        id S2390145AbfJCQV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:21:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389992AbfJCQUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:20:48 -0400
+        id S2387531AbfJCQV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:21:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 162422054F;
-        Thu,  3 Oct 2019 16:20:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5FD820865;
+        Thu,  3 Oct 2019 16:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119647;
-        bh=TEG5FMLOPxC2m3iJa7OAlqaOJOc/fweVtH3XyEcLuQE=;
+        s=default; t=1570119685;
+        bh=7n/bnm44tk55aPpC2doMGd/MG4S/j4Yhxz4B8NLgg+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HxH6VGXmPlVQexKQE1GVNdLrGH45Mq3Cjg6MySjyUg4G4SFV2elStCN5VjK5BA1SS
-         8tqlgEaz+jzIw8KWjkQS1eo2oWX0EzXSmUWZzN1rKIYGwpTJ+/jBaLckG/N0wtENhj
-         8yShK90ACDbmfppIYtfcjoJcTNo1ZE7gmc2KqWA0=
+        b=BjwsizAtam0G33Vy5v63A+BeAleU50uFcZSaa6EiHVq+r/tGSQCoCndkjZF9PgP3l
+         ukYQemPdGEhlOrzXpNbIG7H5daa6P4o+zP187IEsoiQ+ZPCedzM5Jpfg1BHYFAsfx1
+         yqenfJL8IB8xC/DrnYlu2i6h2OAeiiU4M05cnz3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Eidelman <anton@lightbitslabs.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 114/211] nvme-multipath: fix ana log nsid lookup when nsid is not found
-Date:   Thu,  3 Oct 2019 17:53:00 +0200
-Message-Id: <20191003154513.499252504@linuxfoundation.org>
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 116/211] iommu/amd: Silence warnings under memory pressure
+Date:   Thu,  3 Oct 2019 17:53:02 +0200
+Message-Id: <20191003154513.850058278@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -47,79 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Eidelman <anton@lightbitslabs.com>
+From: Qian Cai <cai@lca.pw>
 
-[ Upstream commit e01f91dff91c7b16a6e3faf2565017d497a73f83 ]
+[ Upstream commit 3d708895325b78506e8daf00ef31549476e8586a ]
 
-ANA log parsing invokes nvme_update_ana_state() per ANA group desc.
-This updates the state of namespaces with nsids in desc->nsids[].
+When running heavy memory pressure workloads, the system is throwing
+endless warnings,
 
-Both ctrl->namespaces list and desc->nsids[] array are sorted by nsid.
-Hence nvme_update_ana_state() performs a single walk over ctrl->namespaces:
-- if current namespace matches the current desc->nsids[n],
-  this namespace is updated, and n is incremented.
-- the process stops when it encounters the end of either
-  ctrl->namespaces end or desc->nsids[]
+smartpqi 0000:23:00.0: AMD-Vi: IOMMU mapping error in map_sg (io-pages:
+5 reason: -12)
+Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40
+07/10/2019
+swapper/10: page allocation failure: order:0, mode:0xa20(GFP_ATOMIC),
+nodemask=(null),cpuset=/,mems_allowed=0,4
+Call Trace:
+ <IRQ>
+ dump_stack+0x62/0x9a
+ warn_alloc.cold.43+0x8a/0x148
+ __alloc_pages_nodemask+0x1a5c/0x1bb0
+ get_zeroed_page+0x16/0x20
+ iommu_map_page+0x477/0x540
+ map_sg+0x1ce/0x2f0
+ scsi_dma_map+0xc6/0x160
+ pqi_raid_submit_scsi_cmd_with_io_request+0x1c3/0x470 [smartpqi]
+ do_IRQ+0x81/0x170
+ common_interrupt+0xf/0xf
+ </IRQ>
 
-In case desc->nsids[n] does not match any of ctrl->namespaces,
-the remaining nsids following desc->nsids[n] will not be updated.
-Such situation was considered abnormal and generated WARN_ON_ONCE.
+because the allocation could fail from iommu_map_page(), and the volume
+of this call could be huge which may generate a lot of serial console
+output and cosumes all CPUs.
 
-However ANA log MAY contain nsids not (yet) found in ctrl->namespaces.
-For example, lets consider the following scenario:
-- nvme0 exposes namespaces with nsids = [2, 3] to the host
-- a new namespace nsid = 1 is added dynamically
-- also, a ANA topology change is triggered
-- NS_CHANGED aen is generated and triggers scan_work
-- before scan_work discovers nsid=1 and creates a namespace, a NOTICE_ANA
-  aen was issues and ana_work receives ANA log with nsids=[1, 2, 3]
+Fix it by silencing the warning in this call site, and there is still a
+dev_err() later to notify the failure.
 
-Result: ana_work fails to update ANA state on existing namespaces [2, 3]
-
-Solution:
-Change the way nvme_update_ana_state() namespace list walk
-checks the current namespace against desc->nsids[n] as follows:
-a) ns->head->ns_id < desc->nsids[n]: keep walking ctrl->namespaces.
-b) ns->head->ns_id == desc->nsids[n]: match, update the namespace
-c) ns->head->ns_id >= desc->nsids[n]: skip to desc->nsids[n+1]
-
-This enables correct operation in the scenario described above.
-This also allows ANA log to contain nsids currently invisible
-to the host, i.e. inactive nsids.
-
-Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
-Reviewed-by:   James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/iommu/amd_iommu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index f57feb8fdea45..892ef52122329 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -404,14 +404,16 @@ static int nvme_update_ana_state(struct nvme_ctrl *ctrl,
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 69c269dc4f1bf..1f2ed44de2438 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2563,7 +2563,9 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
  
- 	down_write(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
--		if (ns->head->ns_id != le32_to_cpu(desc->nsids[n]))
-+		unsigned nsid = le32_to_cpu(desc->nsids[n]);
-+
-+		if (ns->head->ns_id < nsid)
- 			continue;
--		nvme_update_ns_ana_state(desc, ns);
-+		if (ns->head->ns_id == nsid)
-+			nvme_update_ns_ana_state(desc, ns);
- 		if (++n == nr_nsids)
- 			break;
- 	}
- 	up_write(&ctrl->namespaces_rwsem);
--	WARN_ON_ONCE(n < nr_nsids);
- 	return 0;
- }
+ 			bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
+ 			phys_addr = (sg_phys(s) & PAGE_MASK) + (j << PAGE_SHIFT);
+-			ret = iommu_map_page(domain, bus_addr, phys_addr, PAGE_SIZE, prot, GFP_ATOMIC);
++			ret = iommu_map_page(domain, bus_addr, phys_addr,
++					     PAGE_SIZE, prot,
++					     GFP_ATOMIC | __GFP_NOWARN);
+ 			if (ret)
+ 				goto out_unmap;
  
 -- 
 2.20.1
