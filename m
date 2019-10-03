@@ -2,114 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77FD8CB12F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 713CDCB134
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733157AbfJCVdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 17:33:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39727 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731694AbfJCVdy (ORCPT
+        id S1733291AbfJCVey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 17:34:54 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:57781 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731371AbfJCVey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 17:33:54 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v17so3598270wml.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 14:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WqLu0wakUs3wLW/I7o/nZ1HroZMOcAjOwf4CjhO+KeY=;
-        b=SU3vbsQ6OHP3PG8vkkVhBcWke1RWVX76BBLoh371ZnNseL8IPXWuUGs8Aawlr7RpB1
-         OhrN3ieOxkzztglV/yzpowrX4psibNxJXJlYePix7tD7J1IqNmVEkFQHpaImI+SJw+fL
-         Qi+eFZDQbJZsRWvepgaLrxHz5iKcyph7k+468NLpj1+Xkc2829Qd76LtjKfibN9nNXLq
-         SNFXX3G5dtcqpf/41ELgEut0HkWdZfSqF65GOSbmfjS+BlIId4xiH8HRfQclYS1FE5ay
-         F0Vu/yPgPWokiZrw2+UdoNnU6d8v867EKDBCXwHsRUn0yTCFaPoNK5g1zBK6A1siE2rm
-         3y8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WqLu0wakUs3wLW/I7o/nZ1HroZMOcAjOwf4CjhO+KeY=;
-        b=uRkL+FfD/EwyTsfy/mnD6lpF4P7yYxwLL+ONWPs12+gYwOR/hi+XevnWtle8r5T99b
-         CCiTLegZEojombC33IDBiz7+NEuymLxKDyz+DIWMiJjGOQaBziUjQq4mo9EBmXXHihIx
-         3Y6tVCg1bA8oUJKe7Cbd5hKiZVgAi4lOQww5XJqzvrVY4iQy4o7LRz+BTQBf6uMP2kvl
-         MsvvbCrpewoNYPlldrguCeetYv0o/08QLnDfdeQISiomvagJKRHiDSo2gwLwMkPRx3LO
-         6G4mJFb0kK54StC4eKTag5R7k39ieuqZz3UZV1WUH+gVIFI5A8Tl4bL2OYFPk06MEzjI
-         DPKQ==
-X-Gm-Message-State: APjAAAUYqwzdy1b3dFSAJ9TdJCY6AHQhxqJAaWxwBcUrMV50CNtCf9g/
-        svdLHSf0ZY5TFV771QpaJXnhnixNHEL7peM7eQiLcw==
-X-Google-Smtp-Source: APXvYqy0aDLcBSZThcU2euPdqUC7jbpYAO1vXBYibNhLeJuIpnrowDBFsgcoWmV4/OIiW/ottBpZY0dyuBAWgcYMMGw=
-X-Received: by 2002:a05:600c:48b:: with SMTP id d11mr3500415wme.153.1570138431210;
- Thu, 03 Oct 2019 14:33:51 -0700 (PDT)
+        Thu, 3 Oct 2019 17:34:54 -0400
+Received: from localhost (lfbn-lyo-1-146-42.w86-202.abo.wanadoo.fr [86.202.229.42])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id AB04B100005;
+        Thu,  3 Oct 2019 21:34:52 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 23:34:52 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: Add support for century bits to m41t62 (rv4162) RTC
+ devices
+Message-ID: <20191003213452.GT4106@piout.net>
+References: <20190911154803.15969-1-lukma@denx.de>
+ <20191003114831.GR4106@piout.net>
+ <20191003142150.3d73a9d7@jawa>
+ <20191003123538.GS4106@piout.net>
+ <20191003151434.49762715@jawa>
+ <20191003134329.GB575@piout.net>
+ <20191003161054.1eeae401@jawa>
+ <20191003142341.GD575@piout.net>
+ <20191003164906.2f4a1676@jawa>
 MIME-Version: 1.0
-References: <20191002231617.3670-1-john.stultz@linaro.org> <20191002231617.3670-3-john.stultz@linaro.org>
- <20191003112618.GA2420393@kroah.com> <CALAqxLWm_u3KsXHn4a6PdBCOKM1vs5k0xS3G5jY+M-=HBqUJag@mail.gmail.com>
- <9cfccb6a-fba1-61a3-3eb6-3009c2f5e747@redhat.com>
-In-Reply-To: <9cfccb6a-fba1-61a3-3eb6-3009c2f5e747@redhat.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 3 Oct 2019 14:33:38 -0700
-Message-ID: <CALAqxLX3uSJKvRwzcQznaF4WK52BcM5Bh+PNXHmfDe1aTSUL8Q@mail.gmail.com>
-Subject: Re: [RFC][PATCH 2/3] usb: roles: Add usb role switch notifier.
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Yu Chen <chenyu56@huawei.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191003164906.2f4a1676@jawa>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 1:56 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> On 03-10-2019 22:45, John Stultz wrote:
-> > The HiKey960 has only one USB controller, but in order to support both
-> > USB-C gadget/OTG and USB-A (host only) ports. When the USB-C
-> > connection is attached, it powers down and disconnects the hub. When
-> > the USB-C connection is detached, it powers the hub on and connects
-> > the controller to the hub.
->
-> When you say one controller, do you mean 1 host and 1 gadget controller,
-> or is this one of these lovely devices where a gadget controller gets
-> abused as / confused with a proper host controller?
+On 03/10/2019 16:49:06+0200, Lukasz Majewski wrote:
+> Hi Alexandre,
+> I'm rather thinking about following use cases:
+> 
+> I. Adjusting time:
+> 
+> 1. I start with time < 01.01.2099
+> 
+> 2. I issue ioctl to set the time to e.g. 2100
+> 
+> 	- When driver receives such request I setup century bits
+> 
+> 	- and also perform in kernel driver time correction (and store
+> 	  corrected time in RTC)
+> 
+> 3. Subsequent reads from rtc use century bits to provide the time
+> (after year 2100). Century bits are set, so the correction may be
+> performed if needed.
+> 
+> 
+> II. The system is started at year 2098 and is supposed to run for e.g. 3
+> years:
+> 
+> 1. The time is read from the rtc - the "passing" of centuries need to
+> be detected.
+> 
+> From the documentation [1] (point 4.5):
+> 
+> "The two century bits, CB1 and CB0, are bits 7 and 6, respectively, in
+> the Month / Century register at address 06h. Together, they comprise a
+> 2 - bit counter which increments at the turn of each century. CB1 is
+> the most significant bit."
+> 
+> If those bits increment when we pass century boundaries, we can detect
+> this fact and correct time when ioctl is issued.
+> 
 
-I'm not totally sure myself, but I believe it's the latter, as the
-host ports have to be disabled in order for the gadet/otg port to
-function.
+No, you can't because you simply don't know if you still need to
+correct the time or if you already did it the last time the system was
+started.
 
-There was a similar situation w/ the original HiKey board (dwc2
-controller) as well, though the switching was done fully in hardware
-and we only needed some minor tweaks to the driver to keep the state
-transitions straight.
+Example:
 
-> And since you are doing a usb-role-switch driver, I guess that the
-> role-switch is integrated inside the SoC, so you only get one pair
-> of USB datalines to the outside ?
+Date is set to 2100-02-28, some time pass, the rtc now thinks it is
+2100-02-29. You correct it to 2100-03-01, fine.
+Now, date is set to 2100-02-28, the system is shutdown, some time pass,
+it starts on 2100-03-02, the rtc thinks 2100-03-01 you can't correct it
+because you can't know whether a day has been missed.
 
-I believe so, but again, I don't have a ton of knowledge about the SoC
-details, Chen Yu would probably be the right person to answer, but I
-don't know if he's doing upstreaming anymore.
 
-> This does seem rather special, it might help if you can provide a diagram
-> with both the relevant bits inside the SoC as well as what lives outside
-> the Soc. even if it is in ASCII art...
+> > The only useful range for an RTC is its fully contiguous range. 
+> 
+> Does the automatic increment of century bits count to "contiguous
+> range" ?
+> 
 
-There is a schematic pdf here:
-https://github.com/96boards/documentation/raw/master/consumer/hikey/hikey960/hardware-docs/HiKey960_Schematics.pdf
+No, because of the leap day issue.
 
-The larger block diagram on page 3 might be helpful, but you can find
-more details on the usb hub bits on page 17 and 18.
 
-thanks
--john
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
