@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32027CA4E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3D51CA4EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388424AbfJCQ3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:29:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34182 "EHLO mail.kernel.org"
+        id S2391368AbfJCQ3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:29:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391587AbfJCQ3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:29:07 -0400
+        id S2391374AbfJCQ3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:29:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 783F52054F;
-        Thu,  3 Oct 2019 16:29:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C4842054F;
+        Thu,  3 Oct 2019 16:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120147;
-        bh=XqTrBwG3jzWgXqa8Ap4eF4CPHXPDO+58ycrQVeMj+3M=;
+        s=default; t=1570120157;
+        bh=eMPlCWxTQpyconOk0Sr//jZgoyEkKBpyv80QPkFVPI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y8VELSuCwuCnsd3H6nETF+cRLK07k1bu006XlQpyj7rHOPQ1jBykMyuAj2663VDqi
-         WxfzDQ4L20pFauRKp85rYXwTVOEhEZpkhPAbhVWCqUYhmavQnSzhTugAu9XvVoxAu8
-         PGI/+fYwaTu+4Oeu48Isiny6ozV/Ch6HhwkcjN+o=
+        b=eyrrpRpZ0mKF2JGcHSGdoBPWIPmv8KSFlQJyQDcBFA1My8q2dj6nznTVlU7ofyWmu
+         p+gJnjHZZzu10O2SJKv3Rj98LdI7YdGpswO1L5hEf/Kjn4oDzsQ4lH7s46CJ/2BQzV
+         Vxfrvz1Xwm1uJ9rrMQ/g+IpEMj5Do7bEkbhBrnbM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        syzbot+2d4fc2a0c45ad8da7e99@syzkaller.appspotmail.com
-Subject: [PATCH 5.2 113/313] media: radio/si470x: kill urb on error
-Date:   Thu,  3 Oct 2019 17:51:31 +0200
-Message-Id: <20191003154543.976663170@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        Peter Collingbourne <pcc@google.com>
+Subject: [PATCH 5.2 116/313] powerpc/Makefile: Always pass --synthetic to nm if supported
+Date:   Thu,  3 Oct 2019 17:51:34 +0200
+Message-Id: <20191003154544.299239130@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,57 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 0d616f2a3fdbf1304db44d451d9f07008556923b ]
+[ Upstream commit 117acf5c29dd89e4c86761c365b9724dba0d9763 ]
 
-In the probe() function radio->int_in_urb was not killed if an
-error occurred in the probe sequence. It was also missing in
-the disconnect.
+Back in 2004 we added logic to arch/ppc64/Makefile to pass
+the --synthetic option to nm, if it was supported by nm.
 
-This caused this syzbot issue:
+Then in 2005 when arch/ppc64 and arch/ppc were merged, the logic to
+add --synthetic was moved inside an #ifdef CONFIG_PPC64 block within
+arch/powerpc/Makefile, and has remained there since.
 
-https://syzkaller.appspot.com/bug?extid=2d4fc2a0c45ad8da7e99
+That was fine, though crufty, until recently when a change to
+init/Kconfig added a config time check that uses $(NM). On powerpc
+that leads to an infinite loop because Kconfig uses $(NM) to calculate
+some values, then the powerpc Makefile changes $(NM), which Kconfig
+notices and restarts.
 
-Reported-and-tested-by: syzbot+2d4fc2a0c45ad8da7e99@syzkaller.appspotmail.com
+The original commit that added --synthetic simply said:
+  On new toolchains we need to use nm --synthetic or we miss code
+  symbols.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+And the nm man page says that the --synthetic option causes nm to:
+  Include synthetic symbols in the output. These are special symbols
+  created by the linker for various purposes.
+
+So it seems safe to always pass --synthetic if nm supports it, ie. on
+32-bit and 64-bit, it just means 32-bit kernels might have more
+symbols reported (and in practice I see no extra symbols). Making it
+unconditional avoids the #ifdef CONFIG_PPC64, which in turn avoids the
+infinite loop.
+
+Debugged-by: Peter Collingbourne <pcc@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/radio/si470x/radio-si470x-usb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/powerpc/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/radio/si470x/radio-si470x-usb.c b/drivers/media/radio/si470x/radio-si470x-usb.c
-index 58e622d573733..3dccce398113a 100644
---- a/drivers/media/radio/si470x/radio-si470x-usb.c
-+++ b/drivers/media/radio/si470x/radio-si470x-usb.c
-@@ -734,7 +734,7 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
- 	/* start radio */
- 	retval = si470x_start_usb(radio);
- 	if (retval < 0)
--		goto err_all;
-+		goto err_buf;
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index c345b79414a96..403f7e193833a 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -39,13 +39,11 @@ endif
+ uname := $(shell uname -m)
+ KBUILD_DEFCONFIG := $(if $(filter ppc%,$(uname)),$(uname),ppc64)_defconfig
  
- 	/* set initial frequency */
- 	si470x_set_freq(radio, 87.5 * FREQ_MUL); /* available in all regions */
-@@ -749,6 +749,8 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
+-ifdef CONFIG_PPC64
+ new_nm := $(shell if $(NM) --help 2>&1 | grep -- '--synthetic' > /dev/null; then echo y; else echo n; fi)
  
- 	return 0;
- err_all:
-+	usb_kill_urb(radio->int_in_urb);
-+err_buf:
- 	kfree(radio->buffer);
- err_ctrl:
- 	v4l2_ctrl_handler_free(&radio->hdl);
-@@ -822,6 +824,7 @@ static void si470x_usb_driver_disconnect(struct usb_interface *intf)
- 	mutex_lock(&radio->lock);
- 	v4l2_device_disconnect(&radio->v4l2_dev);
- 	video_unregister_device(&radio->videodev);
-+	usb_kill_urb(radio->int_in_urb);
- 	usb_set_intfdata(intf, NULL);
- 	mutex_unlock(&radio->lock);
- 	v4l2_device_put(&radio->v4l2_dev);
+ ifeq ($(new_nm),y)
+ NM		:= $(NM) --synthetic
+ endif
+-endif
+ 
+ # BITS is used as extension for files which are available in a 32 bit
+ # and a 64 bit version to simplify shared Makefiles.
 -- 
 2.20.1
 
