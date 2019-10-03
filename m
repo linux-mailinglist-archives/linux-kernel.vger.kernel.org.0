@@ -2,174 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F3C5CA2CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A24CA34E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733144AbfJCQJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:09:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40944 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733130AbfJCQJS (ORCPT
+        id S2388602AbfJCQO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:14:27 -0400
+Received: from bout01.mta.xmission.com ([166.70.11.15]:50250 "EHLO
+        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388575AbfJCQOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:09:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=urZ8lihnNIb8UAfT+LX/L3lCi7pvbQhtMnEgBxPHSbI=; b=DlhEsireXtR/zTup5aTEHnevD
-        QqyPCYchDetqL28cohfZf3sEs0ad4YMZIHuOy5Byw3JPTvFZbFwixbPw+2E1uxAGpd79bOBfXzeI8
-        B1CDUUCNqA+brWodchUcgETKSa+4sHPCGW9U8SXBZMDnU6iKuNJVbDRR/QY8pEboAfcIsnS+EbjVt
-        /FI/y6aX8+2wGb26acBA24HzsFoR4WZqNGVvgYNE2G0cIgrbUarIeyngmUqCnAt6y9bHtBZ4N8HZY
-        cpLDT2M5XeOYnskkQWwrfzifTlI2de9h6PL/Ax3uFYKT8KhJCeMned2deUTnF667GA4lOQpA2ig8N
-        /I/+dXVIw==;
-Received: from 177.133.68.49.dynamic.adsl.gvt.net.br ([177.133.68.49] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iG3fF-0004Vj-KQ; Thu, 03 Oct 2019 16:09:14 +0000
-Date:   Thu, 3 Oct 2019 13:09:09 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Gon Solo <gonsolo@gmail.com>
-Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
-Message-ID: <20191003130909.01d29b77@coco.lan>
-In-Reply-To: <20191003160336.GA5125@Limone>
-References: <20191002142744.GA3475@gofer.mess.org>
-        <CANL0fFS9TGKJH2rfkXzak78BaLazTNO7GoZhSb4vLBsDrmz3FQ@mail.gmail.com>
-        <20191002150650.GA4227@gofer.mess.org>
-        <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
-        <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
-        <20191002154922.7f1cfc76@coco.lan>
-        <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
-        <20191003080539.2b13c03b@coco.lan>
-        <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
-        <20191003120238.75811da6@coco.lan>
-        <20191003160336.GA5125@Limone>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 3 Oct 2019 12:14:22 -0400
+Received: from mx01.mta.xmission.com ([166.70.13.211])
+        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1iG3Dz-0007yB-3W; Thu, 03 Oct 2019 09:41:03 -0600
+Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
+        by mx01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1iG3Dw-0003hb-Uu; Thu, 03 Oct 2019 09:41:03 -0600
+Received: from hacktheplanet (c-68-50-34-150.hsd1.in.comcast.net [68.50.34.150])
+        by plesk14.xmission.com (Postfix) with ESMTPSA id 47CDD1266F5;
+        Thu,  3 Oct 2019 15:40:59 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 11:40:53 -0400
+From:   Scott Bauer <sbauer@plzdonthack.me>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, axboe <axboe@kernel.dk>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        jonathan.derrick@intel.com, revanth.rajashekar@intel.com
+Message-ID: <20191003154053.GA2450@hacktheplanet>
+References: <82f70133-7242-d113-f041-9b89694685c0@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <82f70133-7242-d113-f041-9b89694685c0@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-XM-SPF: eid=1iG3Dw-0003hb-Uu;;;mid=<20191003154053.GA2450@hacktheplanet>;;;hst=mx01.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
+X-SA-Exim-Connect-IP: 166.70.198.161
+X-SA-Exim-Mail-From: sbauer@plzdonthack.me
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMNoVowels,XMSubLong,XM_UncommonTLD01
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4787]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.5 XM_UncommonTLD01 Less-common TLD
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Randy Dunlap <rdunlap@infradead.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1998 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.7 (0.1%), b_tie_ro: 1.90 (0.1%), parse: 1.23
+        (0.1%), extract_message_metadata: 27 (1.3%), get_uri_detail_list: 2.1
+        (0.1%), tests_pri_-1000: 9 (0.5%), tests_pri_-950: 1.85 (0.1%),
+        tests_pri_-900: 1.57 (0.1%), tests_pri_-90: 25 (1.2%), check_bayes: 23
+        (1.2%), b_tokenize: 10 (0.5%), b_tok_get_all: 6 (0.3%), b_comp_prob:
+        1.91 (0.1%), b_tok_touch_all: 2.3 (0.1%), b_finish: 0.63 (0.0%),
+        tests_pri_0: 422 (21.1%), check_dkim_signature: 0.80 (0.0%),
+        check_dkim_adsp: 57 (2.8%), poll_dns_idle: 1528 (76.5%), tests_pri_10:
+        2.1 (0.1%), tests_pri_500: 1502 (75.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/2] block: sed-opal: fix sparse warning: convert __be64
+ data
+X-SA-Exim-Version: 4.2.1 (built Mon, 03 Jun 2019 09:49:16 -0600)
+X-SA-Exim-Scanned: Yes (on mx01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 3 Oct 2019 18:03:36 +0200
-Gon Solo <gonsolo@gmail.com> escreveu:
+On Wed, Oct 02, 2019 at 07:23:15PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> sparse warns about incorrect type when using __be64 data.
+> It is not being converted to CPU-endian but it should be.
+> 
+> Fixes these sparse warnings:
+> 
+> ../block/sed-opal.c:375:20: warning: incorrect type in assignment (different base types)
+> ../block/sed-opal.c:375:20:    expected unsigned long long [usertype] align
+> ../block/sed-opal.c:375:20:    got restricted __be64 const [usertype] alignment_granularity
+> ../block/sed-opal.c:376:25: warning: incorrect type in assignment (different base types)
+> ../block/sed-opal.c:376:25:    expected unsigned long long [usertype] lowest_lba
+> ../block/sed-opal.c:376:25:    got restricted __be64 const [usertype] lowest_aligned_lba
+> 
+> Fixes: 455a7b238cd6 ("block: Add Sed-opal library")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Scott Bauer <scott.bauer@intel.com>
+> Cc: Rafael Antognolli <rafael.antognolli@intel.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: linux-block@vger.kernel.org
 
-> > With the original patch you proposed, what are the logs?  
-> 
-> With the following patch applied to media_tree master:
-> 
-> diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
-> index e87040d6eca7..4c1ab0b6876a 100644
-> --- a/drivers/media/tuners/si2157.c
-> +++ b/drivers/media/tuners/si2157.c
-> @@ -129,13 +129,14 @@ static int si2157_init(struct dvb_frontend *fe)
->  	chip_id = cmd.args[1] << 24 | cmd.args[2] << 16 | cmd.args[3] << 8 |
->  			cmd.args[4] << 0;
->  
-> -	#define SI2177_A30 ('A' << 24 | 77 << 16 | '3' << 8 | '0' << 0)
-> -	#define SI2158_A20 ('A' << 24 | 58 << 16 | '2' << 8 | '0' << 0)
-> -	#define SI2148_A20 ('A' << 24 | 48 << 16 | '2' << 8 | '0' << 0)
-> -	#define SI2157_A30 ('A' << 24 | 57 << 16 | '3' << 8 | '0' << 0)
-> -	#define SI2147_A30 ('A' << 24 | 47 << 16 | '3' << 8 | '0' << 0)
-> -	#define SI2146_A10 ('A' << 24 | 46 << 16 | '1' << 8 | '0' << 0)
-> -	#define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
-> +	#define SI2177_A30 ('A' << 24 |  77 << 16 | '3' << 8 | '0' << 0)
-> +	#define SI2158_A20 ('A' << 24 |  58 << 16 | '2' << 8 | '0' << 0)
-> +	#define SI2148_A20 ('A' << 24 |  48 << 16 | '2' << 8 | '0' << 0)
-> +	#define SI2157_A30 ('A' << 24 |  57 << 16 | '3' << 8 | '0' << 0)
-> +	#define SI2147_A30 ('A' << 24 |  47 << 16 | '3' << 8 | '0' << 0)
-> +	#define SI2146_A10 ('A' << 24 |  46 << 16 | '1' << 8 | '0' << 0)
-> +	#define SI2141_A10 ('A' << 24 |  41 << 16 | '1' << 8 | '0' << 0)
-> +	#define SI_BOGUS   (255 << 24 | 255 << 16 | 255 << 8 | 255 << 0)
->  
->  	switch (chip_id) {
->  	case SI2158_A20:
-> @@ -148,6 +149,10 @@ static int si2157_init(struct dvb_frontend *fe)
->  	case SI2177_A30:
->  		fw_name = SI2157_A30_FIRMWARE;
->  		break;
-> +	case SI_BOGUS:
-> +		dev_info(&client->dev, "Bogus chip version, trying with no firmware\n");
-> +		fw_name = NULL;
-> +		break;
->  	case SI2157_A30:
->  	case SI2147_A30:
->  	case SI2146_A10:
-> @@ -225,6 +230,7 @@ static int si2157_init(struct dvb_frontend *fe)
->  
->  	dev_info(&client->dev, "firmware version: %c.%c.%d\n",
->  			cmd.args[6], cmd.args[7], cmd.args[8]);
->  warm:
->  	/* init statistics in order signal app which are supported */
->  	c->strength.len = 1;
-> diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
-> index 3afd18733614..a8d59cf06b1e 100644
-> --- a/drivers/media/usb/dvb-usb-v2/af9035.c
-> +++ b/drivers/media/usb/dvb-usb-v2/af9035.c
-> @@ -1197,6 +1197,11 @@ static int af9035_frontend_attach(struct dvb_usb_adapter *adap)
->  	return ret;
->  }
->  
-> +/* I2C speed register = (1000000000 / (24.4 * 16 * I2C_speed))
-> + * 7 equals ~400k, 26 ~100k and 260 ~10k.
-> + * */
-> +#define I2C_SPEED_REGISTER 7
-> +
->  static int it930x_frontend_attach(struct dvb_usb_adapter *adap)
->  {
->  	struct state *state = adap_to_priv(adap);
-> @@ -1208,13 +1213,13 @@ static int it930x_frontend_attach(struct dvb_usb_adapter *adap)
->  
->  	dev_dbg(&intf->dev, "adap->id=%d\n", adap->id);
->  
-> -	/* I2C master bus 2 clock speed 300k */
-> -	ret = af9035_wr_reg(d, 0x00f6a7, 0x07);
-> +	/* I2C master bus 2 clock speed */
-> +	ret = af9035_wr_reg(d, 0x00f6a7, I2C_SPEED_REGISTER);
->  	if (ret < 0)
->  		goto err;
->  
-> -	/* I2C master bus 1,3 clock speed 300k */
-> -	ret = af9035_wr_reg(d, 0x00f103, 0x07);
-> +	/* I2C master bus 1,3 clock speed */
-> +	ret = af9035_wr_reg(d, 0x00f103, I2C_SPEED_REGISTER);
->  	if (ret < 0)
->  		goto err;
->  
-> @@ -2119,6 +2124,8 @@ static const struct usb_device_id af9035_id_table[] = {
->  	/* IT930x devices */
->  	{ DVB_USB_DEVICE(USB_VID_ITETECH, USB_PID_ITETECH_IT9303,
->  		&it930x_props, "ITE 9303 Generic", NULL) },
-> +	{ DVB_USB_DEVICE(USB_VID_DEXATEK, 0x0100,
-> +		&it930x_props, "Logilink VG0022A", NULL) },
->  	{ DVB_USB_DEVICE(USB_VID_AVERMEDIA, USB_PID_AVERMEDIA_TD310,
->  		&it930x_props, "AVerMedia TD310 DVB-T2", NULL) },
->  	{ }
-> 
-> the Messages at boot time are
-> 
-> [    4.262882] si2168 1-0067: Silicon Labs Si2168-B40 successfully identified
-> [    4.262884] si2168 1-0067: firmware version: B 4.0.2
-> [    4.262902] usb 2-1: DVB: registering adapter 0 frontend 0 (Silicon Labs Si2168)...
-> [    4.262908] dvbdev: dvb_create_media_entity: media entity 'Silicon Labs Si2168' registered.
-> [    4.289776] si2157 2-0063: Silicon Labs Si2147/2148/2157/2158 successfully attached
-> 
-> and the messages when running vlc (successfully) are
-> 
-> [  486.537128] si2168 1-0067: downloading firmware from file 'dvb-demod-si2168-b40-01.fw'
-> [  487.795436] si2168 1-0067: firmware version: B 4.0.25
-> [  487.807614] si2157 2-0063: Bogus chip version, trying with no firmware
-> [  487.807618] si2157 2-0063: found a 'Silicon Labs Si21255-\xff\xff\xff'
-> [  487.833876] si2157 2-0063: firmware version: \xff.\xff.255
-
-No, I mean with the first patch you sent to the ML, with the powerup
-hack.
++ Jon and Revanth,
 
 
-Thanks,
-Mauro
+These look fine. They're currently unused, but may be useful in the future for sysfs or what ever else we add in.
