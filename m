@@ -2,92 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F44ECACC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377CACACCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730415AbfJCR27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:28:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45960 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbfJCR2y (ORCPT
+        id S1730707AbfJCR3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:29:45 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33842 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730558AbfJCR3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:28:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Wz+eQC+UzzXMO3cj6KoEK+ua1IHt4po3SKhJunCXvhM=; b=aAHu99PJWJmhLCkdoetR5x6ta
-        87wZuBvCNTp9yc+7nwoM+YWCKCDYIZUwaQ/0RjdY3iyYUXe06VD2IPAG+SZCbM8T1GTA9ib9tqwlK
-        A0eCQqyz59SwSrd9q69UHO0jaXLnFKH9eed5iy6fa6pX0oOIughCg4D02AdwUXiYYuork=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iG4uI-0005un-5I; Thu, 03 Oct 2019 17:28:50 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6B72B2740210; Thu,  3 Oct 2019 18:28:49 +0100 (BST)
-Date:   Thu, 3 Oct 2019 18:28:49 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.3 204/344] SoC: simple-card-utils: set 0Hz to sysclk
- when shutdown
-Message-ID: <20191003172849.GB6090@sirena.co.uk>
-References: <20191003154540.062170222@linuxfoundation.org>
- <20191003154600.389003319@linuxfoundation.org>
+        Thu, 3 Oct 2019 13:29:43 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r22so2488973lfm.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:29:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8ZVEazC37+BdYsUUwYDYhErEg09v7WhRGEkqCbHO0ks=;
+        b=RPXZgCaexY2Zm6d9kF62WZV2HjWT9s5h167SaV6Ngphi1rMoYR5sDMd7JP8nFxcvYF
+         Eh4EV5kyIIxb7dH3ZX7onDXYIrgX6swFRJoYDqwN7BI9I/QqzG6azoIIoIa4evdilqxu
+         0mEQ0+Fig1AOcYuhpzqpY17x0W0NtiJ8K/bx0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8ZVEazC37+BdYsUUwYDYhErEg09v7WhRGEkqCbHO0ks=;
+        b=bOysl/DHEiH1u1jePUyIlB3kasliDO8RxlRBbMc80Pxn7eISduLzZ1PUsgaOZb8e7Y
+         TznNMO7b1i+6hOFNvn2uED3QnZTRJjJwxxgveUUSn0dmEbBhzFRkL80uNkMDWZzH1ziK
+         7Ju5bqX3qmB7gMU9YL7k7sBFP8bPxGK7H2G3F0swsXdmX+aBCI9mioCo/LN5cCd7rTGr
+         UU9S0/lv8Nk1rDcBiV+LR0bKrQurzyCgvqGcLJ4hKN6U7ArFEI/zEXgShelpKduEbABb
+         mD7SSnw7AvJ2ZN0LB8oIYXj+M6uZjb2K5qolZVnpKfrDyz3vFrVexc6bBvcmEnlJpO5q
+         Nc/Q==
+X-Gm-Message-State: APjAAAWH2K8P3BaWZVq+pvF9UB6Czj268SXfER2E2md4IgMaxtr2QOaX
+        TJJ8agZVCqqZtmRWZSg1hNz5QBTFYis=
+X-Google-Smtp-Source: APXvYqySGpa9YqXEGaXK4qiQBELLkq3ar6hDwxIs/hBA07QUzW2/CE89VajNWRNkmbVt42641u/AQA==
+X-Received: by 2002:ac2:4a8f:: with SMTP id l15mr6501282lfp.21.1570123780236;
+        Thu, 03 Oct 2019 10:29:40 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id z20sm781495ljk.63.2019.10.03.10.29.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2019 10:29:38 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id q64so3644617ljb.12
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:29:38 -0700 (PDT)
+X-Received: by 2002:a2e:86d5:: with SMTP id n21mr6811909ljj.1.1570123777769;
+ Thu, 03 Oct 2019 10:29:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
-Content-Disposition: inline
-In-Reply-To: <20191003154600.389003319@linuxfoundation.org>
-X-Cookie: Reactor error - core dumped!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
+ <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
+ <20190930121803.n34i63scet2ec7ll@willie-the-truck> <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
+ <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
+ <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
+ <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
+ <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
+ <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
+ <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
+ <CAK7LNARM2jVSdgCDJWDbvVxYLiUR_CFgTPg0nxzbCszSKcx+pg@mail.gmail.com>
+ <CAHk-=wiMm3rN15WmiAqMHjC-pakL_b8qgWsPPri0+YLFORT-ZA@mail.gmail.com> <CAK7LNATSoOD0g=Aarui6Y26E_YB035NsaPpHxqtBNyw0K0UXVw@mail.gmail.com>
+In-Reply-To: <CAK7LNATSoOD0g=Aarui6Y26E_YB035NsaPpHxqtBNyw0K0UXVw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 3 Oct 2019 10:29:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj9Dbom1x7qDfrXgNbjdFa_84bAUMdGigs4sELQQW28wg@mail.gmail.com>
+Message-ID: <CAHk-=wj9Dbom1x7qDfrXgNbjdFa_84bAUMdGigs4sELQQW28wg@mail.gmail.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 3, 2019 at 10:24 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> I just want to annotate __always_inline for the case
+> "2. code that if not inlined is somehow not correct."
 
---jq0ap7NbKX2Kqbes
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oh, I support that entirely - if only for documentation.
 
-On Thu, Oct 03, 2019 at 05:52:49PM +0200, Greg Kroah-Hartman wrote:
-> From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
->=20
-> [ Upstream commit 2458adb8f92ad4d07ef7ab27c5bafa1d3f4678d6 ]
->=20
-> This patch set 0Hz to sysclk when shutdown the card.
->=20
-> Some codecs set rate constraints that derives from sysclk. This
-> mechanism works correctly if machine drivers give fixed frequency.
->=20
-> But simple-audio and audio-graph card set variable clock rate if
-> 'mclk-fs' property exists. In this case, rate constraints will go
-> bad scenario. For example a codec accepts three limited rates
-> (mclk / 256, mclk / 384, mclk / 512).
+But I do *not* support the dismissal of the architecture maintainers
+concerns about "does it work?" and apparently known compiler bugs.
 
-This is a new feature which seems out of scope for stable - I thought
-I'd raised this already?
+> Again, not saying "use a macro".
 
---jq0ap7NbKX2Kqbes
-Content-Type: application/pgp-signature; name="signature.asc"
+Other people did, though.
 
------BEGIN PGP SIGNATURE-----
+And there seemed to be little balancing of the pain vs the gain. The
+gain really isn't that obvious. If the code shrinks by a couple of kB,
+is that good or bad? Maybe it is smaller, but is it _better_?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2WL9AACgkQJNaLcl1U
-h9CewQf/XkRvV56xTjFgd5erQO5OFt76kRZB7GSNctBEKI0RZ1HDaoQJ9tDirQpn
-OaDgs8oshhyKspmUZVZUwjMJeMGD4IH4iTAZEq3CPMNuOpN866sWT6vXCy0iwIJT
-+OXYW79Wox1bTRrqV4GNMYdM8DDCk0CKiQ0rmhjYcsiKzVwW5q0kx73D382oCEpS
-v+XvC4eSN+VJJWN9eAwgCAZGM85LWu2IfpQJEmXM7e0BqhCLmw5rdmysA+wYPqYS
-PLFt1wka73AKlZ6mfFw5jA3yLoQa6lOw+ZFgdfXu0loJggRdhAfasHXlYPmJZOZG
-c0qf0Bq6P+IgU0Ot6T9mBoHb3VQTfw==
-=Goot
------END PGP SIGNATURE-----
-
---jq0ap7NbKX2Kqbes--
+            Linus
