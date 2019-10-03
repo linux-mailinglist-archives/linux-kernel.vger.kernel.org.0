@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00539CAAFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E55CAA7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390825AbfJCRQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:16:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53550 "EHLO mail.kernel.org"
+        id S2393392AbfJCRG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:06:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389869AbfJCQYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:24:05 -0400
+        id S2392301AbfJCQiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:38:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 836F12054F;
-        Thu,  3 Oct 2019 16:24:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA54320830;
+        Thu,  3 Oct 2019 16:38:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119845;
-        bh=XmbnGcaONG9HpypkGHQkc7eQpNqgmmYMiBsIZ+oy6Xk=;
+        s=default; t=1570120694;
+        bh=tD7IAs/rUecrJB9NGa8Try+goo14BMYdLlRlOp0L1Xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=11hD+IM9y6MOGFApoG7muc4fmSGQYr20iwQK8Kn72/cmT48rbKnFJgPrazS8Kkygj
-         LjUoMD9b7opM+YINAFssFWQItcqHAPMuNnsZ8VD07YAJPHQxSB9UWIvUexBTYLB0Fk
-         E4l8dbSjVxTeD/XJRqHMpxoRpSfPehxg3Ekf02JE=
+        b=S9PbQIJIxd3op7fhtpW4SdD+XmoCluMOk9sXZrCvuuAsYtZZuh7OqnKYHyMwHHTv0
+         Emg+7h7AZ9ZfD0yvk2kfK5ifBdmq+zMKBIDAl2KAsNhmidP31eowV0ggT3FU8e9/g4
+         xXMU1pVogP9/zF12jF33q7H2vYAPyGd9QXTRuQH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Song Liu <songliubraving@fb.com>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>
-Subject: [PATCH 4.19 198/211] md: only call set_in_sync() when it is expected to succeed.
-Date:   Thu,  3 Oct 2019 17:54:24 +0200
-Message-Id: <20191003154529.445841708@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 5.2 289/313] SUNRPC: Dequeue the request from the receive queue while were re-encoding
+Date:   Thu,  3 Oct 2019 17:54:27 +0200
+Message-Id: <20191003154601.565296834@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +44,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit 480523feae581ab714ba6610388a3b4619a2f695 upstream.
+commit cc204d01262a69218b2d0db5cdea371de85871d9 upstream.
 
-Since commit 4ad23a976413 ("MD: use per-cpu counter for
-writes_pending"), set_in_sync() is substantially more expensive: it
-can wait for a full RCU grace period which can be 10s of milliseconds.
+Ensure that we dequeue the request from the transport receive queue
+while we're re-encoding to prevent issues like use-after-free when
+we release the bvec.
 
-So we should only call it when the cost is justified.
-
-md_check_recovery() currently calls set_in_sync() every time it finds
-anything to do (on non-external active arrays).  For an array
-performing resync or recovery, this will be quite often.
-Each call will introduce a delay to the md thread, which can noticeable
-affect IO submission latency.
-
-In md_check_recovery() we only need to call set_in_sync() if
-'safemode' was non-zero at entry, meaning that there has been not
-recent IO.  So we save this "safemode was nonzero" state, and only
-call set_in_sync() if it was non-zero.
-
-This measurably reduces mean and maximum IO submission latency during
-resync/recovery.
-
-Reported-and-tested-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Fixes: 4ad23a976413 ("MD: use per-cpu counter for writes_pending")
-Cc: stable@vger.kernel.org (v4.12+)
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Fixes: 7536908982047 ("SUNRPC: Ensure the bvecs are reset when we re-encode...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.20+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/md.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/sunrpc/xprt.h |    1 
+ net/sunrpc/clnt.c           |    6 ++--
+ net/sunrpc/xprt.c           |   54 +++++++++++++++++++++++++-------------------
+ 3 files changed, 35 insertions(+), 26 deletions(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8807,6 +8807,7 @@ void md_check_recovery(struct mddev *mdd
+--- a/include/linux/sunrpc/xprt.h
++++ b/include/linux/sunrpc/xprt.h
+@@ -346,6 +346,7 @@ bool			xprt_prepare_transmit(struct rpc_
+ void			xprt_request_enqueue_transmit(struct rpc_task *task);
+ void			xprt_request_enqueue_receive(struct rpc_task *task);
+ void			xprt_request_wait_receive(struct rpc_task *task);
++void			xprt_request_dequeue_xprt(struct rpc_task *task);
+ bool			xprt_request_need_retransmit(struct rpc_task *task);
+ void			xprt_transmit(struct rpc_task *task);
+ void			xprt_end_transmit(struct rpc_task *task);
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -1785,6 +1785,7 @@ rpc_xdr_encode(struct rpc_task *task)
+ 		     req->rq_rbuffer,
+ 		     req->rq_rcvsize);
  
- 	if (mddev_trylock(mddev)) {
- 		int spares = 0;
-+		bool try_set_sync = mddev->safemode != 0;
++	req->rq_reply_bytes_recvd = 0;
+ 	req->rq_snd_buf.head[0].iov_len = 0;
+ 	xdr_init_encode(&xdr, &req->rq_snd_buf,
+ 			req->rq_snd_buf.head[0].iov_base, req);
+@@ -1804,6 +1805,8 @@ call_encode(struct rpc_task *task)
+ 	if (!rpc_task_need_encode(task))
+ 		goto out;
+ 	dprint_status(task);
++	/* Dequeue task from the receive queue while we're encoding */
++	xprt_request_dequeue_xprt(task);
+ 	/* Encode here so that rpcsec_gss can use correct sequence number. */
+ 	rpc_xdr_encode(task);
+ 	/* Did the encode result in an error condition? */
+@@ -2437,9 +2440,6 @@ call_decode(struct rpc_task *task)
+ 		return;
+ 	case -EAGAIN:
+ 		task->tk_status = 0;
+-		xdr_free_bvec(&req->rq_rcv_buf);
+-		req->rq_reply_bytes_recvd = 0;
+-		req->rq_rcv_buf.len = 0;
+ 		if (task->tk_client->cl_discrtry)
+ 			xprt_conditional_disconnect(req->rq_xprt,
+ 						    req->rq_connect_cookie);
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -1296,6 +1296,36 @@ xprt_request_dequeue_transmit(struct rpc
+ }
  
- 		if (!mddev->external && mddev->safemode == 1)
- 			mddev->safemode = 0;
-@@ -8852,7 +8853,7 @@ void md_check_recovery(struct mddev *mdd
- 			}
- 		}
+ /**
++ * xprt_request_dequeue_xprt - remove a task from the transmit+receive queue
++ * @task: pointer to rpc_task
++ *
++ * Remove a task from the transmit and receive queues, and ensure that
++ * it is not pinned by the receive work item.
++ */
++void
++xprt_request_dequeue_xprt(struct rpc_task *task)
++{
++	struct rpc_rqst	*req = task->tk_rqstp;
++	struct rpc_xprt *xprt = req->rq_xprt;
++
++	if (test_bit(RPC_TASK_NEED_XMIT, &task->tk_runstate) ||
++	    test_bit(RPC_TASK_NEED_RECV, &task->tk_runstate) ||
++	    xprt_is_pinned_rqst(req)) {
++		spin_lock(&xprt->queue_lock);
++		xprt_request_dequeue_transmit_locked(task);
++		xprt_request_dequeue_receive_locked(task);
++		while (xprt_is_pinned_rqst(req)) {
++			set_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
++			spin_unlock(&xprt->queue_lock);
++			xprt_wait_on_pinned_rqst(req);
++			spin_lock(&xprt->queue_lock);
++			clear_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
++		}
++		spin_unlock(&xprt->queue_lock);
++	}
++}
++
++/**
+  * xprt_request_prepare - prepare an encoded request for transport
+  * @req: pointer to rpc_rqst
+  *
+@@ -1719,28 +1749,6 @@ void xprt_retry_reserve(struct rpc_task
+ 	xprt_do_reserve(xprt, task);
+ }
  
--		if (!mddev->external && !mddev->in_sync) {
-+		if (try_set_sync && !mddev->external && !mddev->in_sync) {
- 			spin_lock(&mddev->lock);
- 			set_in_sync(mddev);
- 			spin_unlock(&mddev->lock);
+-static void
+-xprt_request_dequeue_all(struct rpc_task *task, struct rpc_rqst *req)
+-{
+-	struct rpc_xprt *xprt = req->rq_xprt;
+-
+-	if (test_bit(RPC_TASK_NEED_XMIT, &task->tk_runstate) ||
+-	    test_bit(RPC_TASK_NEED_RECV, &task->tk_runstate) ||
+-	    xprt_is_pinned_rqst(req)) {
+-		spin_lock(&xprt->queue_lock);
+-		xprt_request_dequeue_transmit_locked(task);
+-		xprt_request_dequeue_receive_locked(task);
+-		while (xprt_is_pinned_rqst(req)) {
+-			set_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
+-			spin_unlock(&xprt->queue_lock);
+-			xprt_wait_on_pinned_rqst(req);
+-			spin_lock(&xprt->queue_lock);
+-			clear_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
+-		}
+-		spin_unlock(&xprt->queue_lock);
+-	}
+-}
+-
+ /**
+  * xprt_release - release an RPC request slot
+  * @task: task which is finished with the slot
+@@ -1764,7 +1772,7 @@ void xprt_release(struct rpc_task *task)
+ 		task->tk_ops->rpc_count_stats(task, task->tk_calldata);
+ 	else if (task->tk_client)
+ 		rpc_count_iostats(task, task->tk_client->cl_metrics);
+-	xprt_request_dequeue_all(task, req);
++	xprt_request_dequeue_xprt(task);
+ 	spin_lock_bh(&xprt->transport_lock);
+ 	xprt->ops->release_xprt(xprt, task);
+ 	if (xprt->ops->release_request)
 
 
