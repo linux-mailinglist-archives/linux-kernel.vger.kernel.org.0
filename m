@@ -2,71 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 104D7CA0F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3B48CA0F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:15:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbfJCPMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:12:42 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41416 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbfJCPMl (ORCPT
+        id S1729806AbfJCPPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:15:07 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40476 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbfJCPPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:12:41 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d16so4058239qtq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 08:12:41 -0700 (PDT)
+        Thu, 3 Oct 2019 11:15:06 -0400
+Received: by mail-io1-f65.google.com with SMTP id h144so6356391iof.7;
+        Thu, 03 Oct 2019 08:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:date:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=doUapdd+t8q28td1ePGT0x1egG3GBDqT1obBNFclp3s=;
-        b=rkB+TAk0/GCkhRFGSfrPcLIYCh+incOaFYSQbR+OLj7OWhc5Z2PqpULOAkSmVNxxij
-         wzMaza2E5WbwRzTD/Lel4kN2ahqEbAPqgUZlq9UeiLWNaAzkHimKD/WaN0zN5i381oYx
-         dC2IM5CafP3P8MDghHhys5AM29Mej4tVGd8siWDjscUbjbHpVPuNIP2q4pxomQl6Mk7t
-         8Wh2Cu0ZNoWLeOJx+cjH7SRPRJvTHn2Pxz8Lh0pIDljlR2IZP9y92BoSLn563o3aDcJJ
-         F94D7sYAYUUqTIzVxbfjpQ/3Kb9sTkAP4x/zE+ZTRNC/u6o8RvPuD215lvofkNcA6QAA
-         RaiQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BFFGExXDIOP688HODdFkIiqsjWnVg60lYlZNG2xLq9A=;
+        b=oTWdxx7pbev64Bc7cqoj93/GvY/xdreUbNKmZoAn9Mm89tX3kb25USyQObqSfrp3kx
+         ErPyyOF3wXzdSXFAd8XLrpZyY781HEpnH2+JFBT5xNRaHNN+xwFWHK50JDMqknxS+R7b
+         uf4FXTQRR0tBSKlGgQVqHv+/uSYfKzmbdihfmWVfxh/Y2tl5uOwrrbF2DVUcj6j39tDe
+         onO6tPj2IuSkL6qLS1shxUYGiuwxP5XdvTKcMidZ2V7RMT7tB4B0vgnTgRmDUISinHTe
+         WieVn4gnC7Pl2+AA7MvreRdNo92mhkoAK78OU9UW3C9bUH2LY2v5N1j0KNBigkoCsvDZ
+         GyOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=doUapdd+t8q28td1ePGT0x1egG3GBDqT1obBNFclp3s=;
-        b=AQb9LcHsbE3MNFGnEfrtC9Jrba3mY+bV8m+0VPJBzKtmVtKjfki2VocWyui6VukwGi
-         u3gbeL6h2GQTSNKHbR/ex/+Tr9fyKWQdop0kek55ylDrosUWytTVF+s5wTE6Jyj8fSR1
-         R3C11axAyVjNVPyMatk2rcmOVK64AtvXFLJBo4JsU5XzHbDFC6bS1zjP3NkE4RwZqbYR
-         5XJJmKuzphphayWu6eGVWeYMY1qr1eJDer7Xx/d87E9DPp0uWnvJQnoEpPZWyB4ZjGuE
-         9e06RA4ZUEDPYtzMYsz07rCkb/qU+Z6rrINUt8oTNa0+EErwuNAORJPtDYUYmRQWAMB1
-         602g==
-X-Gm-Message-State: APjAAAXnnnWjlGBI6XUGf0l61gYIrS2eAEsV+kmUHduErwzdQ+ellWtU
-        8gkAdCTIkKwWBV1awsxuFL80XxMq37A=
-X-Google-Smtp-Source: APXvYqxccZzwmhoM6CSMB64CFMTyUpNKgcyYZ8ETRu6+Nd+/8C02qvSJzmaH1gfcTc7CzwEhi14q8A==
-X-Received: by 2002:aed:38c7:: with SMTP id k65mr10637835qte.251.1570115560373;
-        Thu, 03 Oct 2019 08:12:40 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id b16sm2155084qtk.65.2019.10.03.08.12.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Oct 2019 08:12:39 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Thu, 3 Oct 2019 11:12:38 -0400
-To:     Greg Kroah-Hartman <grekh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: 5.3.y stable branch has been bumped to 5.3.3?
-Message-ID: <20191003151237.GA2887046@rani.riverdale.lan>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BFFGExXDIOP688HODdFkIiqsjWnVg60lYlZNG2xLq9A=;
+        b=k+uyQc1QP1ow1gqzqHBPli5cqGgchA6+SkQYRv2sMbjiK5oT13MPHYhBtwOdHB3CDq
+         kVCpojl1/wNbz3XTJiJC1WXc6wFTaX/2i+IRKY4yaZKJi41jM3om7AH5wQ1Z8qjZuj3j
+         IDcD93IR8plaex2N1qajO0tnoiiN/bnMIwUW3qwgRw14quq6WsDORrTL/bOFQdOXzXSn
+         ItV8dFFH7dEpRyqVGkg/RQhf99+9m41yvIJxIvxUfmuLu1HcFDLEfjNsI2FZr0kJl9qk
+         93EC9JijrxDPs2sfOVG4JHhzxCILmFi1GVMZTuOo4ewDHwT15B/WtjbPDJqlGhRIcV1c
+         Qw4g==
+X-Gm-Message-State: APjAAAWLckyGA2T83TUPxZkN7+Sfxa86FYg3Py0Y7fwRKI2OMayShGHW
+        tEQO7UeVP130SCfnNAee8MBb6up07xSwQyFj0Hg=
+X-Google-Smtp-Source: APXvYqzJ/zX2nd/XPq84jrI516/U/wJV0qmtgohJTozU6PDbDv+UccxtLygnD08lGJmOfk56Dh9QLU+VvnjWNPsmk0o=
+X-Received: by 2002:a92:15c4:: with SMTP id 65mr10840441ilv.173.1570115705615;
+ Thu, 03 Oct 2019 08:15:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAH2r5mv49T9gwwoJxKJfkgdi6xbf+hDALUiAJHghGikgUNParw@mail.gmail.com>
+ <CAH2r5mtVW=3-2L+0QFJAqBG+uj2sYmF=dtzT_kqwK59cu94vGw@mail.gmail.com> <20191003104356.GA77584@google.com>
+In-Reply-To: <20191003104356.GA77584@google.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 3 Oct 2019 10:14:53 -0500
+Message-ID: <CAH2r5msF5DF2ac+-V0xRR-8RYeQdwpsS1iBLHM6iKTB+aEVc5Q@mail.gmail.com>
+Subject: Re: nsdeps not working on modules in 5.4-rc1
+To:     Matthias Maennich <maennich@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jessica Yu <jeyu@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg, I'm seeing what looks like an extra commit [1] in the 5.3.y branch
-post the 5.3.2 tag, bumping version in the Makefile to 5.3.3.
-Historically the version bump has only happened once all the stable
-patches have been applied and the new version is getting tagged -- is
-this a mistake or intentional change in process to pre-bump the version?
+On Thu, Oct 3, 2019 at 5:43 AM Matthias Maennich <maennich@google.com> wrote:
+>
+> Hi Steve!
+>
+> On Wed, Oct 02, 2019 at 06:54:26PM -0500, Steve French wrote:
+> >And running the build differently, from the root of the git tree
+> >(5.4-rc1) rather than using the Ubuntu 5.4-rc1 headers also fails
+> >
+> >e.g. "make  M=fs/cifs modules nsdeps"
+> >
+> >...
+> >  LD [M]  fs/cifs/cifs.o
+> >  Building modules, stage 2.
+> >  MODPOST 1 modules
+> >WARNING: module cifs uses symbol sigprocmask from namespace
+> >_fs/cifs/cache.o), but does not import it.
+> >...
+> >WARNING: module cifs uses symbol posix_test_lock from namespace
+> >cifs/cache.o), but does not import it.
+> >  CC [M]  fs/cifs/cifs.mod.o
+> >  LD [M]  fs/cifs/cifs.ko
+> >  Building modules, stage 2.
+> >  MODPOST 1 modules
+> >./scripts/nsdeps: 34: local: ./fs/cifs/cifsfs.c: bad variable name
+> >make: *** [Makefile:1710: nsdeps] Error 2
+>
+> Thanks for reporting this. It appears to me you hit a bug that was
+> recently discovered: when building with `make M=some/subdirectory`,
+> modpost is misbehaving. Can you try whether this patch series solves
+> your problems:
+> https://lore.kernel.org/lkml/20191003075826.7478-1-yamada.masahiro@socionext.com/
+> In particular patch 2/6 out of the series.
+>
+> Cheers,
+> Matthias
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.3.y&id=9c30694424ee15cc30a23f92a913d5322b9e5bd3
 
-Thanks.
+Applying just patch 2 and doing "make" from the root of the git tree
+(5.4-rc1), at the tail end of the build I got
+
+...
+Kernel: arch/x86/boot/bzImage is ready  (#87)
+  Building modules, stage 2.
+  MODPOST 5340 modules
+free(): invalid pointer
+Aborted (core dumped)
+make[1]: *** [scripts/Makefile.modpost:94: __modpost] Error 134
+make: *** [Makefile:1303: modules] Error 2
+
+With patch 2 and doing make M=fs/cifs nsdeps from the root of the git tree I get
+
+$ make M=fs/cifs nsdeps
+  Building modules, stage 2.
+  MODPOST 1 modules
+  Building modules, stage 2.
+  MODPOST 1 modules
+./scripts/nsdeps: 34: local: ./fs/cifs/cifsfs.c: bad variable name
+make: *** [Makefile:1710: nsdeps] Error 2
+
+
+-- 
+Thanks,
+
+Steve
