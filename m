@@ -2,249 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C78F9CAD2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7568CAD40
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388635AbfJCRgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:36:20 -0400
-Received: from mga11.intel.com ([192.55.52.93]:13339 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387524AbfJCRgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:36:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 10:36:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="192188491"
-Received: from spandruv-mobl3.jf.intel.com ([10.254.33.3])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Oct 2019 10:36:16 -0700
-Message-ID: <dfb172a0a8003f90fd185b7b154164b8b49bbaa9.camel@linux.intel.com>
-Subject: Re: [PATCH v2 1/2] x86,sched: Add support for frequency invariance
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
-        Len Brown <lenb@kernel.org>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@qperret.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Doug Smythies <dsmythies@telus.net>
-Date:   Thu, 03 Oct 2019 10:36:16 -0700
-In-Reply-To: <20191003121537.GR4536@hirez.programming.kicks-ass.net>
-References: <20191002122926.385-1-ggherdovich@suse.cz>
-         <20191002122926.385-2-ggherdovich@suse.cz> <1906426.HDqaVa71mF@kreacher>
-         <20191003121537.GR4536@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S2388108AbfJCRhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:37:31 -0400
+Received: from mail-eopbgr750057.outbound.protection.outlook.com ([40.107.75.57]:2467
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730903AbfJCRh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:37:29 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JvoJYeFZob9CQW7+q7DwMSzDgQsK7oC1Zwt9YJQ94ovCI4ZtVRBrTcrKFrihuYOG/5OgIG41FJXZEbrx/hzq46glmJuZ6uI9zJOSzMTJW1iMs3eM8EldM8ycQQnvl7rVsUlapGQa/MmWEJDIqkks2jiOUcbjeTfmEuTowfta9jxrmuCN9SfKsq19rKDVYaTF+C1HwjwTkEC+/U6/ix3hR1K9M4GZAmI8PB7fETVEGx3eoeAksIvGWMgSRZCgfzH2jbZbtk/Z7AuXr14ho3kEih6PErmC5vCmEcOqNk3iBqm2pofCu8aE3jAFKDGT/hqcvLcpWZalbsYdoKygRUGjrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=71YIgX99KqOgeSo0184uz1KGCFt2fnmphDVC4OqlITI=;
+ b=FyBmWDrJcswQgNq3+vAKX+nuisCCHtIfVi24gQ1ZHI1LwsPVGy50keB9IUEXUF6CL78EigJUHjF2xV2S1/XeVp8RHi7HJD+0zjAdqfnYQBKJwBIrF+p2wli6OKnPgrTwloO+LtQL0gO06Ha4uDF1p0DMv3PLag4mJc2DYFNrHx7zmS3zsYaIz/xRfxGpSsiVAMZMkIbhvXmE9PJNLeUSJJF+4QWKmvKVxpr9JBNR9F9sLobl3vbsvtdVdUzMYgCAS1elkTB/C6vQTdw9QoV/fVehiBoOCOwNJi+SQD1h8ARCo7Hki+jE+goh2f2RUc/LhpjYNm21989LkOAi/QgzQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=71YIgX99KqOgeSo0184uz1KGCFt2fnmphDVC4OqlITI=;
+ b=aS3geIw+Chogm0IVM5/09hDKsoHHHEmr9JxSoC1qfojaSZb/azGB38Mush122M0gXoC/3p01eBcJXAdddUvfke+ojaiX7pI2CXOTH0D2vl8dJ8nnvl1mC4KjYNNTPL4wrqv/VRbFNAP/h60WdmWZBm3T9PlQ3xAvn37ZJMNWuCY=
+Received: from DM6PR12MB3451.namprd12.prod.outlook.com (20.178.198.218) by
+ DM6PR12MB2843.namprd12.prod.outlook.com (20.176.116.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.20; Thu, 3 Oct 2019 17:37:23 +0000
+Received: from DM6PR12MB3451.namprd12.prod.outlook.com
+ ([fe80::2970:ffc7:bab:4e32]) by DM6PR12MB3451.namprd12.prod.outlook.com
+ ([fe80::2970:ffc7:bab:4e32%3]) with mapi id 15.20.2305.023; Thu, 3 Oct 2019
+ 17:37:23 +0000
+From:   Sanjay R Mehta <sanmehta@amd.com>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     "Hook, Gary" <Gary.Hook@amd.com>,
+        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
+        "Kumar, Rajesh" <Rajesh1.Kumar@amd.com>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+Subject: Re: [PATCH 1/4] dma: Add PTDMA Engine driver support
+Thread-Topic: [PATCH 1/4] dma: Add PTDMA Engine driver support
+Thread-Index: AQHVcqoYFCdjRu+vbE6D9/1LZkEgHqc7Mr0AgA4KRQA=
+Date:   Thu, 3 Oct 2019 17:37:23 +0000
+Message-ID: <cc998ff8-ec01-c9e9-47c3-338fd113921e@amd.com>
+References: <1569310272-29153-1-git-send-email-Sanju.Mehta@amd.com>
+ <20190924191240.GD3824@vkoul-mobl>
+In-Reply-To: <20190924191240.GD3824@vkoul-mobl>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: PN1PR01CA0074.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c00:1::14) To DM6PR12MB3451.namprd12.prod.outlook.com
+ (2603:10b6:5:3b::26)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Sanju.Mehta@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [49.206.13.118]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2416bd75-4066-4279-dab9-08d748285979
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: DM6PR12MB2843:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR12MB284368143B32219E7F65CACDE59F0@DM6PR12MB2843.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-forefront-prvs: 01792087B6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(376002)(136003)(366004)(199004)(189003)(4326008)(476003)(6512007)(8936002)(2616005)(11346002)(446003)(5660300002)(8676002)(486006)(81166006)(66066001)(6116002)(3846002)(478600001)(25786009)(81156014)(6916009)(31686004)(6436002)(229853002)(14454004)(316002)(6246003)(6486002)(102836004)(54906003)(55236004)(7416002)(31696002)(186003)(26005)(386003)(2906002)(6506007)(53546011)(52116002)(36756003)(76176011)(99286004)(14444005)(256004)(64756008)(66446008)(66946007)(71190400001)(66556008)(66476007)(71200400001)(7736002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2843;H:DM6PR12MB3451.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: IHb6BPRWZ+nlxDZu7Ok/Nc9WkNlar5SPTkORuO2yTvO3g774ElMrH4XgZS6zcmeVGZyioJ19gSB9c8Kj2o3a2ZYo/MgHTtY3nrDhFTGxzBOTpjQ/Cdrg7fyzg+YQxZMl6QiYCU6BHluVGcCYMREaWZeg9K3VvfS0wwRDN9egeOYmpzXJd0sjdmpecvE9cJMY6Cj5yrys/NRANssPgsiRWoJBKIdvqj1r3DN5wGWLgW7Vecs4+cGsr2vbERZnt9fz6waBiI/xnk/Ww4Op6ElDIvllZgasWZEGPRfLYK0e51yH1rQ2KYN1aVYeUoItxR3nbWV82oar1juoGMB/mS+nwX8w6n/thwKCTWaDqOQ0Tqbwjgfc+5jrSA0Ht+WLcYgo5W7DnqxCX2Dl+qg0btmQIKgTmozrAmSGYBXUpX3BVlA=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8833B7F812327C41B020D7E5FBAD0C94@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2416bd75-4066-4279-dab9-08d748285979
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2019 17:37:23.7631
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dWm/Rne799vxL4yxIamXyBCoWnAAgEqvBPi5t1IReLuGSFcpazRbWFDhI8HNbCwSaw0S2BgSs3ZI6x63fy73Ww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2843
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-10-03 at 14:15 +0200, Peter Zijlstra wrote:
-> On Thu, Oct 03, 2019 at 12:27:52PM +0200, Rafael J. Wysocki wrote:
-> > On Wednesday, October 2, 2019 2:29:25 PM CEST Giovanni Gherdovich
-> > wrote:
-> > > +static bool turbo_disabled(void)
-> > > +{
-> > > +	u64 misc_en;
-> > > +	int err;
-> > > +
-> > > +	err = rdmsrl_safe(MSR_IA32_MISC_ENABLE, &misc_en);
-> > > +	if (err)
-> > > +		return false;
-> > > +
-> > > +	return (misc_en & MSR_IA32_MISC_ENABLE_TURBO_DISABLE);
-> > > +}
-> > 
-> > This setting may be updated by the platform firmware (BIOS) in some
-> > cases
-> > (see kernel.org BZ 200759, for example), so in general checking it
-> > once
-> > at the init time is not enough.
-> 
-> Is there anything sane we can do if the BIOS frobs stuff like that
-> under
-> our feet? Other than yell bloody murder, that is?
-On  this platform which this BZ is talking about, you will get an ACPI
-notification about this change. But the notification will happen for
-only one CPU, but it needs to be accounted for all CPUs.
-
-Thanks,
-Srinivas
-
-> 
-> > > +
-> > > +#include <asm/cpu_device_id.h>
-> > > +#include <asm/intel-family.h>
-> > > +
-> > > +#define ICPU(model) \
-> > > +	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_APERFMPERF, 0}
-> > > +
-> > > +static const struct x86_cpu_id has_knl_turbo_ratio_limits[] = {
-> > > +	ICPU(INTEL_FAM6_XEON_PHI_KNL),
-> > > +	ICPU(INTEL_FAM6_XEON_PHI_KNM),
-> > > +	{}
-> > > +};
-> > > +
-> > > +static const struct x86_cpu_id has_turbo_ratio_group_limits[] =
-> > > {
-> > > +	ICPU(INTEL_FAM6_ATOM_GOLDMONT),
-> > > +	ICPU(INTEL_FAM6_ATOM_GOLDMONT_D),
-> > > +	ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS),
-> > > +	ICPU(INTEL_FAM6_SKYLAKE_X),
-> > > +	{}
-> > > +};
-> > > +
-> > > +static void core_set_cpu_max_freq(void)
-> > > +{
-> > > +	u64 ratio, turbo_ratio;
-> > > +	int err;
-> > > +
-> > > +	if (smp_processor_id() != 0)
-> > > +		return;
-> > > +
-> > > +	if (turbo_disabled() ||
-> > > +		x86_match_cpu(has_knl_turbo_ratio_limits) ||
-> > > +		x86_match_cpu(has_turbo_ratio_group_limits))
-> > > +		return;
-> > > +
-> > 
-> > I would move the checks above directly to intel_set_cpu_max_freq().
-> 
-> The reason it is here, is that..
-> 
-> > > +	err = rdmsrl_safe(MSR_PLATFORM_INFO, &ratio);
-> > > +	if (err)
-> > > +		return;
-> > > +
-> > > +	err = rdmsrl_safe(MSR_TURBO_RATIO_LIMIT, &turbo_ratio);
-> > > +	if (err)
-> > > +		return;
-> > > +
-> > > +	ratio = (ratio >> 8) & 0xFF;                /* max P state
-> > > ratio */
-> > > +	turbo_ratio = (turbo_ratio >> 24) & 0xFF;   /* 4C turbo ratio
-> > > */
-> > > +
-> > > +	arch_max_freq = div_u64(turbo_ratio * SCHED_CAPACITY_SCALE,
-> > > ratio);
-> > > +
-> > > +	static_branch_enable(&arch_scale_freq_key);
-> > > +}
-> > > +
-> > > +static void intel_set_cpu_max_freq(void)
-> > > +{
-> > > +	/*
-> > > +	 * TODO: add support for:
-> > > +	 *
-> > > +	 * - Xeon Phi (KNM, KNL)
-> > > +	 * - Xeon Gold/Platinum, Atom Goldmont/Goldmont Plus
-> > > +	 * - Atom Silvermont
-> > > +	 *
-> > > +	 * which all now get by default arch_max_freq =
-> > > SCHED_CAPACITY_SCALE
-> > > +	 */
-> > > +	core_set_cpu_max_freq();
-> 
-> This used to read something like:
-> 
-> 	if (core_set_cpu_max_freq())
-> 		return;
-> 
-> 	if (atom_set_cpu_max_freq())
-> 		return;
-> 
-> 	...
-> 
-> and then those checks make sense, because we're failing the 'core'
-> way,
-> but another way might work.
-> 
-> But in this version the atom version has gone missing -- I've
-> suggested
-> it be put back as an additional patch.
-> 
-> Also, the SKX way still needs to be written..
-> 
-> > > +}
-> > > +
-> > > +static void init_scale_freq(void *arg)
-> > > +{
-> > > +	u64 aperf, mperf;
-> > > +
-> > > +	rdmsrl(MSR_IA32_APERF, aperf);
-> > > +	rdmsrl(MSR_IA32_MPERF, mperf);
-> > > +
-> > > +	this_cpu_write(arch_prev_aperf, aperf);
-> > > +	this_cpu_write(arch_prev_mperf, mperf);
-> > > +}
-> > > +
-> > > +static void set_cpu_max_freq(void)
-> > > +{
-> > > +	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
-> > > +		return;
-> > > +
-> > > +	switch (boot_cpu_data.x86_vendor) {
-> > > +	case X86_VENDOR_INTEL:
-> > > +		intel_set_cpu_max_freq();
-> > > +		break;
-> > > +	default:
-> > > +		break;
-> > > +	}
-> > 
-> > Why is the switch () needed?
-> > 
-> > It seems that
-> > 
-> > 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-> > 		intel_set_cpu_max_freq();
-> > 
-> > would do the trick.
-> 
-> I was hoping to grow X86_VENDOR_AMD bits..
-> 
-> > > +
-> > > +	init_scale_freq(NULL);
-> > > +}
-> > > +
-> > > +DEFINE_PER_CPU(unsigned long, arch_cpu_freq);
-> > > +
-> > > +static bool tick_disable;
-> > > +
-> > > +void arch_scale_freq_tick(void)
-> > > +{
-> > > +	u64 freq;
-> > > +	u64 aperf, mperf;
-> > > +	u64 acnt, mcnt;
-> > > +
-> > > +	if (!arch_scale_freq_invariant() || tick_disable)
-> > > +		return;
-> > > +
-> > 
-> > This may be a silly question, but can using tick_disable be
-> > avoided?
-> > 
-> > I guess it is there, because disabling the static branch from
-> > x86_arch_scale_freq_tick_disable() would be unsafe, but I'm not
-> > sure why that would be the case?
-> 
-> There's not enough state -- we can of course fix that.
-> 
-> That is, if you disable it, we don't know if we should enable it
-> again
-> later or if it was disabled because we failed to initialize it
-> earlier.
-
+DQpPbiA5LzI1LzIwMTkgMTI6NDIgQU0sIFZpbm9kIEtvdWwgd3JvdGU6DQo+IFtDQVVUSU9OOiBF
+eHRlcm5hbCBFbWFpbF0NCj4NCj4gT24gMjQtMDktMTksIDA3OjMxLCBNZWh0YSwgU2FuanUgd3Jv
+dGU6DQo+PiBGcm9tOiBTYW5qYXkgUiBNZWh0YSA8c2FuanUubWVodGFAYW1kLmNvbT4NCj4+DQo+
+PiBUaGlzIGlzIHRoZSBkcml2ZXIgZm9yIHRoZSBBTUQgcGFzc3Rocm91Z2ggRE1BIEVuZ2luZQ0K
+PiBQbGVhc2UgZml4IHRocmVhZGluZyBmb3IgeW91ciBzZXJpZXMsIHRoZXkgYXJlIGFsbCBvdmVy
+IG15IGluYm94IDooDQpUaGlzIHdpbGwgYmUgdGFrZW4gY2FyZSBpbiBuZXh0IHZlcnNpb24gb2Yg
+cGF0Y2ggc2V0Lg0KPg0KPj4gKyNpbmNsdWRlICJwdGRtYS5oIg0KPj4gKw0KPj4gKy8qIFVuaW9u
+IHRvIGRlZmluZSB0aGUgZnVuY3Rpb24gZmllbGQgKGNtZF9yZWcxL2R3b3JkMCkgKi8NCj4+ICt1
+bmlvbiBwdF9mdW5jdGlvbiB7DQo+PiArICAgICBzdHJ1Y3Qgew0KPj4gKyAgICAgICAgICAgICB1
+MTYgYnl0ZXN3YXA6MjsNCj4+ICsgICAgICAgICAgICAgdTE2IGJpdHdpc2U6MzsNCj4+ICsgICAg
+ICAgICAgICAgdTE2IHJlZmxlY3Q6MjsNCj4+ICsgICAgICAgICAgICAgdTE2IHJzdmQ6ODsNCj4+
+ICsgICAgIH0gcHQ7DQo+PiArICAgICB1MTYgcmF3Ow0KPj4gK307DQo+IFNvIElJVUMgeW91IGFy
+ZSB1c2luZyB0aGlzIHRvIHdyaXRlIHRvIGh3IHJlZ2lzdGVycywgd2hhdCBpcyB3cm9uZyB3aXRo
+DQo+IGRlZmluaW5nIGJpdCBmaWVsZHMgZm9yIHJlZ2lzdGVycyB1c2luZyBCSVQgYW5kIEdFTk1B
+U0sgYW5kIHRoZW4gd3JpdGUNCj4gdGhlIHNldHRpbmdzIHRvIHRoZSBoYXJkd2FyZS4gVGhhdCBJ
+TUhPIGxvb2tzIG11Y2ggbmVhdGVyIQ0KQWdyZWVkLiBUaGlzIHdpbGwgYmUgdGFrZW4gY2FyZSBp
+biBuZXh0IHZlcnNpb24gb2YgcGF0Y2ggc2V0Lg0KPg0KPj4gK3N0YXRpYyBpbmxpbmUgdTMyIGxv
+d19hZGRyZXNzKHVuc2lnbmVkIGxvbmcgYWRkcikNCj4+ICt7DQo+PiArICAgICByZXR1cm4gKHU2
+NClhZGRyICYgMHgwZmZmZmZmZmY7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbmxpbmUgdTMy
+IGhpZ2hfYWRkcmVzcyh1bnNpZ25lZCBsb25nIGFkZHIpDQo+PiArew0KPj4gKyAgICAgcmV0dXJu
+ICgodTY0KWFkZHIgPj4gMzIpICYgMHgwMDAwMGZmZmY7DQo+PiArfQ0KPiBVc2UgbG93ZXJfMzJf
+Yml0cygpIGFuZCB1cHBlcl8zMl9iaXRzKCkgcGxlYXNlLiBBbHNvIGNoZWNrIHRoZSBBUElzIGlu
+DQo+IGtlcm5lbCBhbmQgZG9uJ3QgaW52ZW50IHlvdXIgb3duIQ0KQWdyZWVkLiBUaGlzIHdpbGwg
+YmUgdGFrZW4gY2FyZSBpbiBuZXh0IHZlcnNpb24gb2YgcGF0Y2ggc2V0Lg0KPg0KPj4gK2ludCBw
+dF9jb3JlX3BlcmZvcm1fcGFzc3RocnUoc3RydWN0IHB0X29wICpvcCkNCj4+ICt7DQo+PiArICAg
+ICBzdHJ1Y3QgcHRkbWFfZGVzYyBkZXNjOw0KPj4gKyAgICAgdW5pb24gcHRfZnVuY3Rpb24gZnVu
+Y3Rpb247DQo+PiArICAgICBzdHJ1Y3QgcHRfZG1hX2luZm8gKnNhZGRyID0gJm9wLT5zcmMudS5k
+bWE7DQo+PiArDQo+PiArICAgICBtZW1zZXQoJmRlc2MsIDAsIFFfREVTQ19TSVpFKTsNCj4+ICsN
+Cj4+ICsgICAgIFBUX0NNRF9FTkdJTkUoJmRlc2MpID0gUFRfRU5HSU5FX1BBU1NUSFJVOw0KPj4g
+Kw0KPj4gKyAgICAgUFRfQ01EX1NPQygmZGVzYykgPSAwOw0KPj4gKyAgICAgUFRfQ01EX0lPQygm
+ZGVzYykgPSAxOw0KPj4gKyAgICAgUFRfQ01EX0lOSVQoJmRlc2MpID0gMDsNCj4+ICsgICAgIFBU
+X0NNRF9FT00oJmRlc2MpID0gb3AtPmVvbTsNCj4+ICsgICAgIFBUX0NNRF9QUk9UKCZkZXNjKSA9
+IDA7DQo+PiArDQo+PiArICAgICBmdW5jdGlvbi5yYXcgPSAwOw0KPj4gKyAgICAgUFRfQllURVNX
+QVAoJmZ1bmN0aW9uKSA9IG9wLT5wYXNzdGhydS5ieXRlX3N3YXA7DQo+PiArICAgICBQVF9CSVRX
+SVNFKCZmdW5jdGlvbikgPSBvcC0+cGFzc3RocnUuYml0X21vZDsNCj4+ICsgICAgIFBUX0NNRF9G
+VU5DVElPTigmZGVzYykgPSBmdW5jdGlvbi5yYXc7DQo+PiArDQo+PiArICAgICBQVF9DTURfTEVO
+KCZkZXNjKSA9IHNhZGRyLT5sZW5ndGg7DQo+PiArDQo+PiArICAgICBQVF9DTURfU1JDX0xPKCZk
+ZXNjKSA9IHB0X2FkZHJfbG8oJm9wLT5zcmMudS5kbWEpOw0KPj4gKyAgICAgUFRfQ01EX1NSQ19I
+SSgmZGVzYykgPSBwdF9hZGRyX2hpKCZvcC0+c3JjLnUuZG1hKTsNCj4+ICsgICAgIFBUX0NNRF9T
+UkNfTUVNKCZkZXNjKSA9IFBUX01FTVRZUEVfU1lTVEVNOw0KPj4gKw0KPj4gKyAgICAgUFRfQ01E
+X0RTVF9MTygmZGVzYykgPSBwdF9hZGRyX2xvKCZvcC0+ZHN0LnUuZG1hKTsNCj4+ICsgICAgIFBU
+X0NNRF9EU1RfSEkoJmRlc2MpID0gcHRfYWRkcl9oaSgmb3AtPmRzdC51LmRtYSk7DQo+PiArICAg
+ICBQVF9DTURfRFNUX01FTSgmZGVzYykgPSBQVF9NRU1UWVBFX1NZU1RFTTsNCj4gVGhpcyByZWFs
+bHkgbG9va3MgYmFkLCBhcyBJIHNpYWQgcGxlYXNlIHVzZSBiaXRzIGFuZCBnZW5tYXNrcy4gQWxz
+byBzZWUNCj4gaG93IG90aGVyIGRyaXZlciBoYW5kbGVzIHJlZ2lzdGVycyB0cmFuc3BhcmVudGx5
+IQ0KQWdyZWVkLiBUaGlzIHdpbGwgYmUgdGFrZW4gY2FyZSBpbiBuZXh0IHZlcnNpb24gb2YgcGF0
+Y2ggc2V0Lg0KPg0KPj4gK3N0YXRpYyBpcnFyZXR1cm5fdCBwdF9jb3JlX2lycV9oYW5kbGVyKGlu
+dCBpcnEsIHZvaWQgKmRhdGEpDQo+PiArew0KPj4gKyAgICAgc3RydWN0IHB0X2RldmljZSAqcHQg
+PSAoc3RydWN0IHB0X2RldmljZSAqKWRhdGE7DQo+PiArDQo+PiArICAgICBwdF9jb3JlX2Rpc2Fi
+bGVfcXVldWVfaW50ZXJydXB0cyhwdCk7DQo+PiArICAgICB0YXNrbGV0X3NjaGVkdWxlKCZwdC0+
+aXJxX3Rhc2tsZXQpOw0KPiBXaHkgYXJlIHlvdSBub3Qgc3VibWl0dGluZyB0eG4gaW4gSVNSLCB5
+b3UgYXJlIGtlZXBpbmcgZG1hZW5naW5lIGlkbGUNCj4gZm9yIHRhc2tsZXQhDQpBZ3JlZWQuIFRo
+aXMgd2lsbCBiZSB0YWtlbiBjYXJlIGluIG5leHQgdmVyc2lvbiBvZiBwYXRjaCBzZXQuDQo+DQo+
+PiArICAgICBjbWRfcS0+cWlkeCA9IDA7DQo+PiArICAgICAvKiBQcmVzZXQgc29tZSByZWdpc3Rl
+ciB2YWx1ZXMgYW5kIG1hc2tzIHRoYXQgYXJlIHF1ZXVlDQo+PiArICAgICAgKiBudW1iZXIgZGVw
+ZW5kZW50DQo+PiArICAgICAgKi8NCj4ga2VybmVsIHN0eWxlIGlzDQo+IC8qDQo+ICAqIHRoaXMg
+aXMgYSBtdWx0aSBsaW5lIGNvbW1lbnQNCj4gICogbm90aWNlIGZpcnN0IGFuZCBsYXN0IGxpbmUN
+Cj4gICovDQo+DQo+PiArICAgICBjbWRfcS0+cmVnX2NvbnRyb2wgPSBwdC0+aW9fcmVncyArIENN
+RF9RX1NUQVRVU19JTkNSOw0KPj4gKyAgICAgY21kX3EtPnJlZ190YWlsX2xvID0gY21kX3EtPnJl
+Z19jb250cm9sICsgQ01EX1FfVEFJTF9MT19CQVNFOw0KPj4gKyAgICAgY21kX3EtPnJlZ19oZWFk
+X2xvID0gY21kX3EtPnJlZ19jb250cm9sICsgQ01EX1FfSEVBRF9MT19CQVNFOw0KPj4gKyAgICAg
+Y21kX3EtPnJlZ19pbnRfZW5hYmxlID0gY21kX3EtPnJlZ19jb250cm9sICsNCj4+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIENNRF9RX0lOVF9FTkFCTEVfQkFTRTsNCj4+ICsgICAgIGNt
+ZF9xLT5yZWdfaW50ZXJydXB0X3N0YXR1cyA9IGNtZF9xLT5yZWdfY29udHJvbCArDQo+PiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBDTURfUV9JTlRFUlJVUFRfU1RBVFVTX0JB
+U0U7DQo+PiArICAgICBjbWRfcS0+cmVnX3N0YXR1cyA9IGNtZF9xLT5yZWdfY29udHJvbCArIENN
+RF9RX1NUQVRVU19CQVNFOw0KPj4gKyAgICAgY21kX3EtPnJlZ19pbnRfc3RhdHVzID0gY21kX3Et
+PnJlZ19jb250cm9sICsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIENNRF9RX0lO
+VF9TVEFUVVNfQkFTRTsNCj4+ICsgICAgIGNtZF9xLT5yZWdfZG1hX3N0YXR1cyA9IGNtZF9xLT5y
+ZWdfY29udHJvbCArDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBDTURfUV9ETUFf
+U1RBVFVTX0JBU0U7DQo+PiArICAgICBjbWRfcS0+cmVnX2RtYV9yZWFkX3N0YXR1cyA9IGNtZF9x
+LT5yZWdfY29udHJvbCArDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIENN
+RF9RX0RNQV9SRUFEX1NUQVRVU19CQVNFOw0KPj4gKyAgICAgY21kX3EtPnJlZ19kbWFfd3JpdGVf
+c3RhdHVzID0gY21kX3EtPnJlZ19jb250cm9sICsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIENNRF9RX0RNQV9XUklURV9TVEFUVVNfQkFTRTsNCj4+ICsNCj4+ICsgICAg
+IGluaXRfd2FpdHF1ZXVlX2hlYWQoJmNtZF9xLT5pbnRfcXVldWUpOw0KPj4gKw0KPj4gKyAgICAg
+ZGV2X2RiZyhkZXYsICJxdWV1ZSBhdmFpbGFibGVcbiIpOw0KPiBOb2lzZQ0KVGhpcyB3aWxsIGJl
+IHRha2VuIGNhcmUgaW4gbmV4dCB2ZXJzaW9uIG9mIHBhdGNoIHNldC4NCj4NCj4+ICsNCj4+ICsg
+ICAgIC8qIFR1cm4gb2ZmIHRoZSBxdWV1ZXMgYW5kIGRpc2FibGUgaW50ZXJydXB0cyB1bnRpbCBy
+ZWFkeSAqLw0KPj4gKyAgICAgcHRfY29yZV9kaXNhYmxlX3F1ZXVlX2ludGVycnVwdHMocHQpOw0K
+Pj4gKw0KPj4gKyAgICAgY21kX3EtPnFjb250cm9sID0gMDsgLyogU3RhcnQgd2l0aCBub3RoaW5n
+ICovDQo+PiArICAgICBpb3dyaXRlMzIoY21kX3EtPnFjb250cm9sLCBjbWRfcS0+cmVnX2NvbnRy
+b2wpOw0KPj4gKw0KPj4gKyAgICAgaW9yZWFkMzIoY21kX3EtPnJlZ19pbnRfc3RhdHVzKTsNCj4+
+ICsgICAgIGlvcmVhZDMyKGNtZF9xLT5yZWdfc3RhdHVzKTsNCj4+ICsNCj4+ICsgICAgIC8qIENs
+ZWFyIHRoZSBpbnRlcnJ1cHQgc3RhdHVzICovDQo+PiArICAgICBpb3dyaXRlMzIoU1VQUE9SVEVE
+X0lOVEVSUlVQVFMsIGNtZF9xLT5yZWdfaW50ZXJydXB0X3N0YXR1cyk7DQo+PiArDQo+PiArICAg
+ICBkZXZfZGJnKGRldiwgIlJlcXVlc3RpbmcgYW4gSVJRLi4uXG4iKTsNCj4+ICsgICAgIC8qIFJl
+cXVlc3QgYW4gaXJxICovDQo+PiArICAgICByZXQgPSByZXF1ZXN0X2lycShwdC0+cHRfaXJxLCBw
+dF9jb3JlX2lycV9oYW5kbGVyLCAwLCAicHQiLCBwdCk7DQo+PiArICAgICBpZiAocmV0KSB7DQo+
+PiArICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAidW5hYmxlIHRvIGFsbG9jYXRlIGFuIElSUVxu
+Iik7DQo+PiArICAgICAgICAgICAgIGdvdG8gZV9wb29sOw0KPj4gKyAgICAgfQ0KPj4gKyAgICAg
+LyogSW5pdGlhbGl6ZSB0aGUgSVNSIHRhc2tsZXQgKi8NCj4+ICsgICAgIHRhc2tsZXRfaW5pdCgm
+cHQtPmlycV90YXNrbGV0LCBwdF9jb3JlX2lycV9iaCwNCj4+ICsgICAgICAgICAgICAgICAgICAo
+dW5zaWduZWQgbG9uZylwdCk7DQo+PiArDQo+PiArICAgICBkZXZfZGJnKGRldiwgIkNvbmZpZ3Vy
+aW5nIHZpcnR1YWwgcXVldWVzLi4uXG4iKTsNCj4+ICsgICAgIC8qIENvbmZpZ3VyZSBzaXplIG9m
+IGVhY2ggdmlydHVhbCBxdWV1ZSBhY2Nlc3NpYmxlIHRvIGhvc3QgKi8NCj4+ICsNCj4+ICsgICAg
+IGNtZF9xLT5xY29udHJvbCAmPSB+KENNRF9RX1NJWkUgPDwgQ01EX1FfU0hJRlQpOw0KPj4gKyAg
+ICAgY21kX3EtPnFjb250cm9sIHw9IFFVRVVFX1NJWkVfVkFMIDw8IENNRF9RX1NISUZUOw0KPj4g
+Kw0KPj4gKyAgICAgY21kX3EtPnFkbWFfdGFpbCA9IGNtZF9xLT5xYmFzZV9kbWE7DQo+PiArICAg
+ICBkbWFfYWRkcl9sbyA9IGxvd19hZGRyZXNzKGNtZF9xLT5xZG1hX3RhaWwpOw0KPj4gKyAgICAg
+aW93cml0ZTMyKCh1MzIpZG1hX2FkZHJfbG8sIGNtZF9xLT5yZWdfdGFpbF9sbyk7DQo+PiArICAg
+ICBpb3dyaXRlMzIoKHUzMilkbWFfYWRkcl9sbywgY21kX3EtPnJlZ19oZWFkX2xvKTsNCj4+ICsN
+Cj4+ICsgICAgIGRtYV9hZGRyX2hpID0gaGlnaF9hZGRyZXNzKGNtZF9xLT5xZG1hX3RhaWwpOw0K
+Pj4gKyAgICAgY21kX3EtPnFjb250cm9sIHw9IChkbWFfYWRkcl9oaSA8PCAxNik7DQo+PiArICAg
+ICBpb3dyaXRlMzIoY21kX3EtPnFjb250cm9sLCBjbWRfcS0+cmVnX2NvbnRyb2wpOw0KPj4gKw0K
+Pj4gKyAgICAgZGV2X2RiZyhkZXYsICJTdGFydGluZyB0aHJlYWRzLi4uXG4iKTsNCj4+ICsgICAg
+IC8qIENyZWF0ZSBhIGt0aHJlYWQgZm9yIGNvbW1hbmQgcXVldWUgKi8NCj4+ICsNCj4+ICsgICAg
+IGt0aHJlYWQgPSBrdGhyZWFkX2NyZWF0ZShwdF9jbWRfcXVldWVfdGhyZWFkLCBjbWRfcSwgInB0
+LXEiKTsNCj4gV2h5IGRvIHlvdSBuZWVkIGEgdGhyZWFkLCB5b3UgYWxyZWFkeSBoYXZlIGEgdGFz
+a2xldD8NCkFncmVlZC4gVGhpcyB3aWxsIGJlIHRha2VuIGNhcmUgaW4gbmV4dCB2ZXJzaW9uIG9m
+IHBhdGNoIHNldC4NCj4NCj4NCj4gT2theSBhbSBzdG9wcGluZyBoZXJlLiBUaGVyZSBhcmUgKip0
+b25zKiogb2Ygc3R5bGUgaXNzdWVzIHdpdGggdGhlDQo+IHNlcmllcy4gRm9yIHRoaXMgcGF0Y2gg
+YWxvbmUgY2hlY2twYXRjaCB0ZWxscyBtZToNCj4NCj4gdG90YWw6IDE4NCBlcnJvcnMsIDEyIHdh
+cm5pbmdzLCAzMSBjaGVja3MsIDE1OTMgbGluZXMgY2hlY2tlZA0KSXQgYXBwZWFycyB0aGF0IE1T
+IGV4Y2hhbmdlIHJlZm9ybWF0dGVkIHRoZSBwYXRjaCBhbmQgdGhlIGVycm9ycyBhcmUgYmVjYXVz
+ZSBvZiBTcGVjaWFsIGNoYXJhY3RlcnMuIE5vdyB0aGF0IEkgYW0gYXdhcmUgb2YgdGhlIGlzc3Vl
+LCB0aGlzIHdpbGwgYmUgYWRkcmVzc2VkIGluIG5leHQgdmVyc2lvbiBvZiBwYXRjaCBzZXQuDQo+
+DQo+IDEuIFBsZWFzZSAqKkZJWCoqIHRoZSBlcnJvcnMNCj4gMi4gSSBzdXNwZWN0IHRhYiBzcGFj
+ZXMgYXJlIHdyb25nICh3ZSB1c2UgOCkNCj4gMy4gUmVhZCBEb2N1bWVudGF0aW9uL3Byb2Nlc3Mv
+Y29kaW5nLXN0eWxlLnJzdCwgaWYgZG9uZSwgcmUgcmVhZCBpdA0KPiBhZ2Fpbg0KPiA0LiBVc2Ug
+ZG1hZW5naW5lIEFQSXMgYW5kIHZpcnR1YWwgZG1hIGxheWVyDQo+IDUuIERvbnQgaW52ZW50IHlv
+dXIgb3duIHN0dWZmLCBrZXJuZWwgYWxyZWFkeSBoYXMgc3R1ZmYgdG8gZGVhbCB3aXRoDQo+IG1v
+c3QgY29tbW9uIHRobmdzLCBubyB5b3VyIGNhc2UgaXMgbm90IHVuaXF1ZS4NCj4gNi4gQ2hlY2sg
+b3RoZXIgZHJpdmVycyBvbiBob3cgdG8gZG8gdGhpbmdzDQo+IDcuIE1ha2Ugc3VyZSB5b3Ugc2Vu
+ZCBhIHNlcmllcyBhcyBhdGhyZWFkLCBpZiBpbiBkb3VidCBzZW5kIHRvIHlvdXJzZWxmIQ0KU3Vy
+ZS4gQWxsIG9mIHlvdXIgc3VnZ2VzdGlvbiB3aWxsIGJlIGFkZHJlc3NlZCBpbiBuZXh0IHZlcnNp
+b24gb2YgcGF0Y2ggc2V0Lg0KPg0KPiBUaGFua3MNCj4gLS0NCj4gflZpbm9kDQo=
