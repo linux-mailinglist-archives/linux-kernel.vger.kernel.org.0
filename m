@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5745DCAA00
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D89FCCAAB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389347AbfJCQRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:17:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43874 "EHLO mail.kernel.org"
+        id S2393486AbfJCRLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:11:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389315AbfJCQRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:17:46 -0400
+        id S2391824AbfJCQbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:31:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 881F12133F;
-        Thu,  3 Oct 2019 16:17:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22473207FF;
+        Thu,  3 Oct 2019 16:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119466;
-        bh=vJKFOdMHhMYIRmfZn3Kky3KbozDQMjZPWqMyn6/4Bbg=;
+        s=default; t=1570120281;
+        bh=FhMqtDm73GhvjtyVWDtKRVY17JuvvD8eg/8rpvN6FjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gaw6vlqFAk8cNrLL9gxLzABoQwD/QELfSyKXLUGROjgBHWOLWdOWR+++cnPfBlFOJ
-         w1iO0BZ7S1U4wyrFIieRRB0Il3or+8Kifm9QHAsBF6krMm7+lbUDnJndSl/LUpQyqp
-         hSsNR3cpXBHcl0mYEwh0lrA1UQTGM7fApu6ACax8=
+        b=t5qX/lYLYvhtV071V6TIESL8fj/zH8zaqEFmocuhF+lu7omz3VuEUyCfBBcLbl0Xy
+         c/knxl9czEiKTK+ngvjU4UYVuiOtitztPQHPISuROwQY80YJWXW9AuvOkKjSL2MtgE
+         Z+Ki+hFPmY538/eTlsxeQeyWcwqOMJ11X2puQNBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 036/211] media: i2c: ov5640: Check for devm_gpiod_get_optional() error
-Date:   Thu,  3 Oct 2019 17:51:42 +0200
-Message-Id: <20191003154455.341506213@linuxfoundation.org>
+Subject: [PATCH 5.2 125/313] s390/kasan: provide uninstrumented __strlen
+Date:   Thu,  3 Oct 2019 17:51:43 +0200
+Message-Id: <20191003154545.235854416@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 8791a102ce579346cea9d2f911afef1c1985213c ]
+[ Upstream commit f45f7b5bdaa4828ce871cf03f7c01599a0de57a5 ]
 
-The power down and reset GPIO are optional, but the return value
-from devm_gpiod_get_optional() needs to be checked and propagated
-in the case of error, so that probe deferral can work.
+s390 kasan code uses sclp_early_printk to report initialization
+failures. The code doing that should not be instrumented, because kasan
+shadow memory has not been set up yet. Even though sclp_early_core.c is
+compiled with instrumentation disabled it uses strlen function, which
+is instrumented and would produce shadow memory access if used. To
+avoid that, introduce uninstrumented __strlen function to be used
+instead.
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Before commit 7e0d92f00246 ("s390/kasan: improve string/memory functions
+checks") few string functions (including strlen) were escaping kasan
+instrumentation due to usage of platform specific versions which are
+implemented in inline assembly.
+
+Fixes: 7e0d92f00246 ("s390/kasan: improve string/memory functions checks")
+Acked-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov5640.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/s390/include/asm/string.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-index d5c0ffc55d46a..a3bbef682fb8e 100644
---- a/drivers/media/i2c/ov5640.c
-+++ b/drivers/media/i2c/ov5640.c
-@@ -2787,9 +2787,14 @@ static int ov5640_probe(struct i2c_client *client,
- 	/* request optional power down pin */
- 	sensor->pwdn_gpio = devm_gpiod_get_optional(dev, "powerdown",
- 						    GPIOD_OUT_HIGH);
-+	if (IS_ERR(sensor->pwdn_gpio))
-+		return PTR_ERR(sensor->pwdn_gpio);
+diff --git a/arch/s390/include/asm/string.h b/arch/s390/include/asm/string.h
+index 70d87db54e627..4c0690fc5167e 100644
+--- a/arch/s390/include/asm/string.h
++++ b/arch/s390/include/asm/string.h
+@@ -71,11 +71,16 @@ extern void *__memmove(void *dest, const void *src, size_t n);
+ #define memcpy(dst, src, len) __memcpy(dst, src, len)
+ #define memmove(dst, src, len) __memmove(dst, src, len)
+ #define memset(s, c, n) __memset(s, c, n)
++#define strlen(s) __strlen(s)
 +
- 	/* request optional reset pin */
- 	sensor->reset_gpio = devm_gpiod_get_optional(dev, "reset",
- 						     GPIOD_OUT_HIGH);
-+	if (IS_ERR(sensor->reset_gpio))
-+		return PTR_ERR(sensor->reset_gpio);
++#define __no_sanitize_prefix_strfunc(x) __##x
  
- 	v4l2_i2c_subdev_init(&sensor->sd, client, &ov5640_subdev_ops);
+ #ifndef __NO_FORTIFY
+ #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
+ #endif
  
++#else
++#define __no_sanitize_prefix_strfunc(x) x
+ #endif /* defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__) */
+ 
+ void *__memset16(uint16_t *s, uint16_t v, size_t count);
+@@ -163,8 +168,8 @@ static inline char *strcpy(char *dst, const char *src)
+ }
+ #endif
+ 
+-#ifdef __HAVE_ARCH_STRLEN
+-static inline size_t strlen(const char *s)
++#if defined(__HAVE_ARCH_STRLEN) || (defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__))
++static inline size_t __no_sanitize_prefix_strfunc(strlen)(const char *s)
+ {
+ 	register unsigned long r0 asm("0") = 0;
+ 	const char *tmp = s;
 -- 
 2.20.1
 
