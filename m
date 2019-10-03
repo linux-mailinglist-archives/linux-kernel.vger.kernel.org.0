@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FA1CA5BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1690CCA7BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391105AbfJCQgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:36:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45486 "EHLO mail.kernel.org"
+        id S2405991AbfJCQvK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:51:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404395AbfJCQgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:36:17 -0400
+        id S2405146AbfJCQu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:50:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38FE121783;
-        Thu,  3 Oct 2019 16:36:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 939B820865;
+        Thu,  3 Oct 2019 16:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120575;
-        bh=S4+I5ESyQyS/UgATDeHyzIwu+16lRIeDNWwtMrdWlCc=;
+        s=default; t=1570121459;
+        bh=nXQIQUChDQTJepmXhuT4OoVw16fDzfRJkyUABc3APIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g3VJ6mZ5k15PBYYDIYuwlb/QWODd7VAsR8xi7T/NZGfIMwd7VbTfq3GfJhjnYDyMr
-         4rkS/G61YtReEzgmfzVQG9QuVik1YWRpmxhGdX07/sojM+G2jg2k+LatSbJeDjvql3
-         XJMmtIF+hMi5INaI2M2l40EX/WJf7nIvr1Us2Rrs=
+        b=txNQnknvRXHd2IBjLif/cvIggVGWZN3vEU9DjF0fXDkrOMkpWZv/OTGtEFkCgCMSq
+         m934wYGylGUZCfvaJw8Qu90g39+QdHmI1uapa40GEHpLLsRRWkIT13Rk1J5K5LuxML
+         d+Z5Lfv5dZwM0w0IintsJWeQIpPZ4LUuZvG8bJjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.2 272/313] rtw88: pci: Rearrange the memory usage for skb in RX ISR
-Date:   Thu,  3 Oct 2019 17:54:10 +0200
-Message-Id: <20191003154559.844199542@linuxfoundation.org>
+        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Nadav Amit <namit@vmware.com>, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 5.3 286/344] iommu/vt-d: Fix wrong analysis whether devices share the same bus
+Date:   Thu,  3 Oct 2019 17:54:11 +0200
+Message-Id: <20191003154608.066370067@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,124 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Nadav Amit <namit@vmware.com>
 
-commit ee6db78f5db9bfe426c57a1ec9713827ebccd2d4 upstream.
+commit 2c70010867f164d1b30e787e360e05d10cc40046 upstream.
 
-Testing with RTL8822BE hardware, when available memory is low, we
-frequently see a kernel panic and system freeze.
+set_msi_sid_cb() is used to determine whether device aliases share the
+same bus, but it can provide false indications that aliases use the same
+bus when in fact they do not. The reason is that set_msi_sid_cb()
+assumes that pdev is fixed, while actually pci_for_each_dma_alias() can
+call fn() when pdev is set to a subordinate device.
 
-First, rtw_pci_rx_isr encounters a memory allocation failure (trimmed):
+As a result, running an VM on ESX with VT-d emulation enabled can
+results in the log warning such as:
 
-rx routine starvation
-WARNING: CPU: 7 PID: 9871 at drivers/net/wireless/realtek/rtw88/pci.c:822 rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
-[ 2356.580313] RIP: 0010:rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
+  DMAR: [INTR-REMAP] Request device [00:11.0] fault index 3b [fault reason 38] Blocked an interrupt request due to source-id verification failure
 
-Then we see a variety of different error conditions and kernel panics,
-such as this one (trimmed):
+This seems to cause additional ata errors such as:
+  ata3.00: qc timeout (cmd 0xa1)
+  ata3.00: failed to IDENTIFY (I/O error, err_mask=0x4)
 
-rtw_pci 0000:02:00.0: pci bus timeout, check dma status
-skbuff: skb_over_panic: text:00000000091b6e66 len:415 put:415 head:00000000d2880c6f data:000000007a02b1ea tail:0x1df end:0xc0 dev:<NULL>
-------------[ cut here ]------------
-kernel BUG at net/core/skbuff.c:105!
-invalid opcode: 0000 [#1] SMP NOPTI
-RIP: 0010:skb_panic+0x43/0x45
+These timeouts also cause boot to be much longer and other errors.
 
-When skb allocation fails and the "rx routine starvation" is hit, the
-function returns immediately without updating the RX ring. At this
-point, the RX ring may continue referencing an old skb which was already
-handed off to ieee80211_rx_irqsafe(). When it comes to be used again,
-bad things happen.
+Fix it by checking comparing the alias with the previous one instead.
 
-This patch allocates a new, data-sized skb first in RX ISR. After
-copying the data in, we pass it to the upper layers. However, if skb
-allocation fails, we effectively drop the frame. In both cases, the
-original, full size ring skb is reused.
-
-In addition, to fixing the kernel crash, the RX routine should now
-generally behave better under low memory conditions.
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204053
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 3f0c625c6ae71 ("iommu/vt-d: Allow interrupts from the entire bus for aliased devices")
+Cc: stable@vger.kernel.org
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtw88/pci.c |   49 +++++++++++++------------------
- 1 file changed, 22 insertions(+), 27 deletions(-)
+ drivers/iommu/intel_irq_remapping.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtw88/pci.c
-+++ b/drivers/net/wireless/realtek/rtw88/pci.c
-@@ -763,6 +763,7 @@ static void rtw_pci_rx_isr(struct rtw_de
- 	u32 pkt_offset;
- 	u32 pkt_desc_sz = chip->rx_pkt_desc_sz;
- 	u32 buf_desc_sz = chip->rx_buf_desc_sz;
-+	u32 new_len;
- 	u8 *rx_desc;
- 	dma_addr_t dma;
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -376,13 +376,13 @@ static int set_msi_sid_cb(struct pci_dev
+ {
+ 	struct set_msi_sid_data *data = opaque;
  
-@@ -790,40 +791,34 @@ static void rtw_pci_rx_isr(struct rtw_de
- 		pkt_offset = pkt_desc_sz + pkt_stat.drv_info_sz +
- 			     pkt_stat.shift;
- 
--		if (pkt_stat.is_c2h) {
--			/* keep rx_desc, halmac needs it */
--			skb_put(skb, pkt_stat.pkt_len + pkt_offset);
-+		/* allocate a new skb for this frame,
-+		 * discard the frame if none available
-+		 */
-+		new_len = pkt_stat.pkt_len + pkt_offset;
-+		new = dev_alloc_skb(new_len);
-+		if (WARN_ONCE(!new, "rx routine starvation\n"))
-+			goto next_rp;
++	if (data->count == 0 || PCI_BUS_NUM(alias) == PCI_BUS_NUM(data->alias))
++		data->busmatch_count++;
 +
-+		/* put the DMA data including rx_desc from phy to new skb */
-+		skb_put_data(new, skb->data, new_len);
+ 	data->pdev = pdev;
+ 	data->alias = alias;
+ 	data->count++;
  
--			/* pass offset for further operation */
--			*((u32 *)skb->cb) = pkt_offset;
--			skb_queue_tail(&rtwdev->c2h_queue, skb);
-+		if (pkt_stat.is_c2h) {
-+			 /* pass rx_desc & offset for further operation */
-+			*((u32 *)new->cb) = pkt_offset;
-+			skb_queue_tail(&rtwdev->c2h_queue, new);
- 			ieee80211_queue_work(rtwdev->hw, &rtwdev->c2h_work);
- 		} else {
--			/* remove rx_desc, maybe use skb_pull? */
--			skb_put(skb, pkt_stat.pkt_len);
--			skb_reserve(skb, pkt_offset);
+-	if (PCI_BUS_NUM(alias) == pdev->bus->number)
+-		data->busmatch_count++;
 -
--			/* alloc a smaller skb to mac80211 */
--			new = dev_alloc_skb(pkt_stat.pkt_len);
--			if (!new) {
--				new = skb;
--			} else {
--				skb_put_data(new, skb->data, skb->len);
--				dev_kfree_skb_any(skb);
--			}
--			/* TODO: merge into rx.c */
--			rtw_rx_stats(rtwdev, pkt_stat.vif, skb);
-+			/* remove rx_desc */
-+			skb_pull(new, pkt_offset);
-+
-+			rtw_rx_stats(rtwdev, pkt_stat.vif, new);
- 			memcpy(new->cb, &rx_status, sizeof(rx_status));
- 			ieee80211_rx_irqsafe(rtwdev->hw, new);
- 		}
+ 	return 0;
+ }
  
--		/* skb delivered to mac80211, alloc a new one in rx ring */
--		new = dev_alloc_skb(RTK_PCI_RX_BUF_SIZE);
--		if (WARN(!new, "rx routine starvation\n"))
--			return;
--
--		ring->buf[cur_rp] = new;
--		rtw_pci_reset_rx_desc(rtwdev, new, ring, cur_rp, buf_desc_sz);
-+next_rp:
-+		/* new skb delivered to mac80211, re-enable original skb DMA */
-+		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
- 
- 		/* host read next element in ring */
- 		if (++cur_rp >= ring->r.len)
 
 
