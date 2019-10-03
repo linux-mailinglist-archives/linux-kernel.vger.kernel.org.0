@@ -2,276 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED006CA965
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA15CA9A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392559AbfJCQmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:42:03 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36993 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389868AbfJCQl6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:41:58 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y5so2128834pfo.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MISJlJaBtFFImzW51FlZ2qBGeso4c1E39oXCASoBNDs=;
-        b=lr6AYQJIgnwyB7CwEqqjWDeQ9SsqVwsCdDapXVnps1l33RshyzxmKLbE797W6iLl0z
-         c88v9cK8+7ZGOqqXXM4++rUrt3XwsJJDtfu3IIe5aZHXMk3TH1y4EqZQvoiSnHfdB9Cf
-         wMzHvqN6FwpbJ+hPU/4yhFzPlPyXM3/WtDMU4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MISJlJaBtFFImzW51FlZ2qBGeso4c1E39oXCASoBNDs=;
-        b=NRwDVfPkjIRgf/d5n8MT43nkubh3nLgdW0qQ3kO1cVvv/KODHMk/dd6cdu/aL27aed
-         X9aWuVmzHb96VOiTzokQNIpCy5Pu4AFgzZSejZ2AAyloZXnUbb6GnPzoWNj1JmEn1HJ3
-         tEwjwWv0teBJcKEbZRX+/lF5M8EDm0VeKjiRqTVj97xyRGRXF9rBpLfyclLtYcb7O9kq
-         +hFR3/0n3UgdYk1cUPaADzOMR70MUqNgqmWfN9gHHARF83GiPCu453FXU1nT7xWRcF6p
-         OoKSC+bAgHU18X8HDfQNizsMfO0G1PFaS8Sl31eCBibcIUWG+DtdnT726W44SnT5IMgx
-         020w==
-X-Gm-Message-State: APjAAAWlj0dwPyCzYsFF3WFa9pG2Ww2ZZwzBZWwoLW5//c1mt4YWuteU
-        LFMdYDOgiMStG4cWi+o70AIMGA==
-X-Google-Smtp-Source: APXvYqxmFA99XijlyILdYbdhLdTgH03fa06ehVPjZcS3nkRSbv5LJHGq4R3QE4o0s14IFNIpKdzkwg==
-X-Received: by 2002:a17:90b:f11:: with SMTP id br17mr11589381pjb.80.1570120916856;
-        Thu, 03 Oct 2019 09:41:56 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id x18sm3280507pge.76.2019.10.03.09.41.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2019 09:41:56 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] ARM: dts: rockchip: Use interpolated brightness tables for veyron
-Date:   Thu,  3 Oct 2019 09:41:52 -0700
-Message-Id: <20191003094137.v2.1.Ic9fd698810ea569c465350154da40b85d24f805b@changeid>
-X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
+        id S2392844AbfJCQpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:45:46 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55350 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390402AbfJCQpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:45:42 -0400
+Received: from zn.tnic (p200300EC2F0F5D00F0B6154A9AF851AA.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:5d00:f0b6:154a:9af8:51aa])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0EBC61EC0503;
+        Thu,  3 Oct 2019 18:45:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1570121136;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eIkPCeTvcN78j8vweFeN2Nr3nk3iKgIhVmOywuUW9/M=;
+        b=XWyVnN3Hnw3ZyTL4XgOzMreKMhkPulfwnXD1mttsER3/l8E7tfOwYc+ObMHMUdYfH1glId
+        O7tKS29RD2qU8cboLOfagoGjGU1QORTSGArxvzRZhOQPs9Dyrh65tnk+E5cokgz+Aymvus
+        hvfoU6NbYJIvWKB5LRGu7anv5uYgt9c=
+Date:   Thu, 3 Oct 2019 18:45:27 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        linux-edac@vger.kernel.org, x86@kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.2 078/313] RAS: Fix prototype warnings
+Message-ID: <20191003164527.GB11675@zn.tnic>
+References: <20191003154533.590915454@linuxfoundation.org>
+ <20191003154540.526612763@linuxfoundation.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191003154540.526612763@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use interpolated brightness tables (added by commit 573fe6d1c25
-("backlight: pwm_bl: Linear interpolation between
-brightness-levels") for veyron, instead of specifying every single
-step. Some devices/panels have intervals that are smaller than
-the specified 'num-interpolated-steps', the driver interprets
-these intervals as a single step.
+On Thu, Oct 03, 2019 at 05:50:56PM +0200, Greg Kroah-Hartman wrote:
+> From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+> 
+> [ Upstream commit 0a54b809a3a2c31e1055b45b03708eb730222be1 ]
+> 
+> When building with C=2 and/or W=1, legitimate warnings are issued about
+> missing prototypes:
+> 
+>     CHECK   drivers/ras/debugfs.c
+>   drivers/ras/debugfs.c:4:15: warning: symbol 'ras_debugfs_dir' was not declared. Should it be static?
+>   drivers/ras/debugfs.c:8:5: warning: symbol 'ras_userspace_consumers' was not declared. Should it be static?
+>   drivers/ras/debugfs.c:38:12: warning: symbol 'ras_add_daemon_trace' was not declared. Should it be static?
+>   drivers/ras/debugfs.c:54:13: warning: symbol 'ras_debugfs_init' was not declared. Should it be static?
+>     CC      drivers/ras/debugfs.o
+>   drivers/ras/debugfs.c:8:5: warning: no previous prototype for 'ras_userspace_consumers' [-Wmissing-prototypes]
+>       8 | int ras_userspace_consumers(void)
+>         |     ^~~~~~~~~~~~~~~~~~~~~~~
+>   drivers/ras/debugfs.c:38:12: warning: no previous prototype for 'ras_add_daemon_trace' [-Wmissing-prototypes]
+>      38 | int __init ras_add_daemon_trace(void)
+>         |            ^~~~~~~~~~~~~~~~~~~~
+>   drivers/ras/debugfs.c:54:13: warning: no previous prototype for 'ras_debugfs_init' [-Wmissing-prototypes]
+>      54 | void __init ras_debugfs_init(void)
+>         |             ^~~~~~~~~~~~~~~~
+> 
+> Provide the proper includes.
+> 
+>  [ bp: Take care of the same warnings for cec.c too. ]
+> 
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: linux-edac@vger.kernel.org
+> Cc: x86@kernel.org
+> Link: http://lkml.kernel.org/r/7168.1565218769@turing-police
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/ras/cec.c     | 1 +
+>  drivers/ras/debugfs.c | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+> index f5795adc5a6e1..8037c490f3ba7 100644
+> --- a/drivers/ras/cec.c
+> +++ b/drivers/ras/cec.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <linux/mm.h>
+>  #include <linux/gfp.h>
+> +#include <linux/ras.h>
+>  #include <linux/kernel.h>
+>  #include <linux/workqueue.h>
+>  
+> diff --git a/drivers/ras/debugfs.c b/drivers/ras/debugfs.c
+> index 9c1b717efad86..0d4f985afbf37 100644
+> --- a/drivers/ras/debugfs.c
+> +++ b/drivers/ras/debugfs.c
+> @@ -1,5 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  #include <linux/debugfs.h>
+> +#include <linux/ras.h>
+> +#include "debugfs.h"
+>  
+>  struct dentry *ras_debugfs_dir;
+>  
+> -- 
 
-Another option would be to switch to a perceptual brightness curve
-(CIE 1931), with the caveat that it would change the behavior of
-the backlight. Also the concept of a minimum brightness level is
-currently not supported for CIE 1931 curves.
+Definitely not stable material.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-
-Changes in v2:
-- added 0 as first step for devices/panels that require a minimum
-  PWM duty cycle
-- increased 'num-interpolated-steps' values by one, it's not the
-  number of steps between levels, but that number +1
-
- arch/arm/boot/dts/rk3288-veyron-edp.dtsi   | 35 ++--------------------
- arch/arm/boot/dts/rk3288-veyron-jaq.dts    | 35 ++--------------------
- arch/arm/boot/dts/rk3288-veyron-minnie.dts | 35 ++--------------------
- arch/arm/boot/dts/rk3288-veyron-tiger.dts  | 35 ++--------------------
- 4 files changed, 8 insertions(+), 132 deletions(-)
-
-diff --git a/arch/arm/boot/dts/rk3288-veyron-edp.dtsi b/arch/arm/boot/dts/rk3288-veyron-edp.dtsi
-index b12e061c5f7f..300a7e32c978 100644
---- a/arch/arm/boot/dts/rk3288-veyron-edp.dtsi
-+++ b/arch/arm/boot/dts/rk3288-veyron-edp.dtsi
-@@ -41,39 +41,8 @@
- 
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
--		brightness-levels = <
--			  0   1   2   3   4   5   6   7
--			  8   9  10  11  12  13  14  15
--			 16  17  18  19  20  21  22  23
--			 24  25  26  27  28  29  30  31
--			 32  33  34  35  36  37  38  39
--			 40  41  42  43  44  45  46  47
--			 48  49  50  51  52  53  54  55
--			 56  57  58  59  60  61  62  63
--			 64  65  66  67  68  69  70  71
--			 72  73  74  75  76  77  78  79
--			 80  81  82  83  84  85  86  87
--			 88  89  90  91  92  93  94  95
--			 96  97  98  99 100 101 102 103
--			104 105 106 107 108 109 110 111
--			112 113 114 115 116 117 118 119
--			120 121 122 123 124 125 126 127
--			128 129 130 131 132 133 134 135
--			136 137 138 139 140 141 142 143
--			144 145 146 147 148 149 150 151
--			152 153 154 155 156 157 158 159
--			160 161 162 163 164 165 166 167
--			168 169 170 171 172 173 174 175
--			176 177 178 179 180 181 182 183
--			184 185 186 187 188 189 190 191
--			192 193 194 195 196 197 198 199
--			200 201 202 203 204 205 206 207
--			208 209 210 211 212 213 214 215
--			216 217 218 219 220 221 222 223
--			224 225 226 227 228 229 230 231
--			232 233 234 235 236 237 238 239
--			240 241 242 243 244 245 246 247
--			248 249 250 251 252 253 254 255>;
-+		brightness-levels = <0 255>;
-+		num-interpolated-steps = <255>;
- 		default-brightness-level = <128>;
- 		enable-gpios = <&gpio7 RK_PA2 GPIO_ACTIVE_HIGH>;
- 		pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/rk3288-veyron-jaq.dts b/arch/arm/boot/dts/rk3288-veyron-jaq.dts
-index 80386203e85b..a4966e505a2f 100644
---- a/arch/arm/boot/dts/rk3288-veyron-jaq.dts
-+++ b/arch/arm/boot/dts/rk3288-veyron-jaq.dts
-@@ -20,39 +20,8 @@
- 
- &backlight {
- 	/* Jaq panel PWM must be >= 3%, so start non-zero brightness at 8 */
--	brightness-levels = <
--		  0
--		  8   9  10  11  12  13  14  15
--		 16  17  18  19  20  21  22  23
--		 24  25  26  27  28  29  30  31
--		 32  33  34  35  36  37  38  39
--		 40  41  42  43  44  45  46  47
--		 48  49  50  51  52  53  54  55
--		 56  57  58  59  60  61  62  63
--		 64  65  66  67  68  69  70  71
--		 72  73  74  75  76  77  78  79
--		 80  81  82  83  84  85  86  87
--		 88  89  90  91  92  93  94  95
--		 96  97  98  99 100 101 102 103
--		104 105 106 107 108 109 110 111
--		112 113 114 115 116 117 118 119
--		120 121 122 123 124 125 126 127
--		128 129 130 131 132 133 134 135
--		136 137 138 139 140 141 142 143
--		144 145 146 147 148 149 150 151
--		152 153 154 155 156 157 158 159
--		160 161 162 163 164 165 166 167
--		168 169 170 171 172 173 174 175
--		176 177 178 179 180 181 182 183
--		184 185 186 187 188 189 190 191
--		192 193 194 195 196 197 198 199
--		200 201 202 203 204 205 206 207
--		208 209 210 211 212 213 214 215
--		216 217 218 219 220 221 222 223
--		224 225 226 227 228 229 230 231
--		232 233 234 235 236 237 238 239
--		240 241 242 243 244 245 246 247
--		248 249 250 251 252 253 254 255>;
-+	brightness-levels = <0 8 255>;
-+	num-interpolated-steps = <247>;
- };
- 
- &rk808 {
-diff --git a/arch/arm/boot/dts/rk3288-veyron-minnie.dts b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-index 55955b082501..c833716dbe48 100644
---- a/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-+++ b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-@@ -38,39 +38,8 @@
- 
- &backlight {
- 	/* Minnie panel PWM must be >= 1%, so start non-zero brightness at 3 */
--	brightness-levels = <
--			  0   3   4   5   6   7
--			  8   9  10  11  12  13  14  15
--			 16  17  18  19  20  21  22  23
--			 24  25  26  27  28  29  30  31
--			 32  33  34  35  36  37  38  39
--			 40  41  42  43  44  45  46  47
--			 48  49  50  51  52  53  54  55
--			 56  57  58  59  60  61  62  63
--			 64  65  66  67  68  69  70  71
--			 72  73  74  75  76  77  78  79
--			 80  81  82  83  84  85  86  87
--			 88  89  90  91  92  93  94  95
--			 96  97  98  99 100 101 102 103
--			104 105 106 107 108 109 110 111
--			112 113 114 115 116 117 118 119
--			120 121 122 123 124 125 126 127
--			128 129 130 131 132 133 134 135
--			136 137 138 139 140 141 142 143
--			144 145 146 147 148 149 150 151
--			152 153 154 155 156 157 158 159
--			160 161 162 163 164 165 166 167
--			168 169 170 171 172 173 174 175
--			176 177 178 179 180 181 182 183
--			184 185 186 187 188 189 190 191
--			192 193 194 195 196 197 198 199
--			200 201 202 203 204 205 206 207
--			208 209 210 211 212 213 214 215
--			216 217 218 219 220 221 222 223
--			224 225 226 227 228 229 230 231
--			232 233 234 235 236 237 238 239
--			240 241 242 243 244 245 246 247
--			248 249 250 251 252 253 254 255>;
-+	brightness-levels = <0 3 255>;
-+	num-interpolated-steps = <252>;
- };
- 
- &i2c_tunnel {
-diff --git a/arch/arm/boot/dts/rk3288-veyron-tiger.dts b/arch/arm/boot/dts/rk3288-veyron-tiger.dts
-index 27557203ae33..bebb230e592f 100644
---- a/arch/arm/boot/dts/rk3288-veyron-tiger.dts
-+++ b/arch/arm/boot/dts/rk3288-veyron-tiger.dts
-@@ -23,39 +23,8 @@
- 
- &backlight {
- 	/* Tiger panel PWM must be >= 1%, so start non-zero brightness at 3 */
--	brightness-levels = <
--		  0   3   4   5   6   7
--		  8   9  10  11  12  13  14  15
--		 16  17  18  19  20  21  22  23
--		 24  25  26  27  28  29  30  31
--		 32  33  34  35  36  37  38  39
--		 40  41  42  43  44  45  46  47
--		 48  49  50  51  52  53  54  55
--		 56  57  58  59  60  61  62  63
--		 64  65  66  67  68  69  70  71
--		 72  73  74  75  76  77  78  79
--		 80  81  82  83  84  85  86  87
--		 88  89  90  91  92  93  94  95
--		 96  97  98  99 100 101 102 103
--		104 105 106 107 108 109 110 111
--		112 113 114 115 116 117 118 119
--		120 121 122 123 124 125 126 127
--		128 129 130 131 132 133 134 135
--		136 137 138 139 140 141 142 143
--		144 145 146 147 148 149 150 151
--		152 153 154 155 156 157 158 159
--		160 161 162 163 164 165 166 167
--		168 169 170 171 172 173 174 175
--		176 177 178 179 180 181 182 183
--		184 185 186 187 188 189 190 191
--		192 193 194 195 196 197 198 199
--		200 201 202 203 204 205 206 207
--		208 209 210 211 212 213 214 215
--		216 217 218 219 220 221 222 223
--		224 225 226 227 228 229 230 231
--		232 233 234 235 236 237 238 239
--		240 241 242 243 244 245 246 247
--		248 249 250 251 252 253 254 255>;
-+	brightness-levels = <0 3 255>;
-+	num-interpolated-steps = <252>;
- };
- 
- &backlight_regulator {
 -- 
-2.23.0.444.g18eeb5a265-goog
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
