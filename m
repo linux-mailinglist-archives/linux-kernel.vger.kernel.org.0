@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BBCBCA219
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E91DCA2B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731935AbfJCQB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:01:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46416 "EHLO mail.kernel.org"
+        id S1732008AbfJCQIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:08:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731048AbfJCQBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:01:53 -0400
+        id S1733066AbfJCQIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:08:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E52320700;
-        Thu,  3 Oct 2019 16:01:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B47C20865;
+        Thu,  3 Oct 2019 16:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118512;
-        bh=MIecuNNRxGS+on9SL/GewOgrOrgNIMHtj3KVEuhl5CI=;
+        s=default; t=1570118900;
+        bh=gitncEDTBUhnPPA56dyRUqyNxPoxb89DpDn2W1E+FUE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OBJ5/o4MgSnTjTwq0zHwd/JvAdGZskCAklobknWSwHVmCOHP+SAoE+ct2RlZHQQd0
-         8Zav4DLKbB5CGNsU62IBsdGtF+5ZYp83DtNO6ArDwZfC6nUcZaggeOAH/eOpXG3liy
-         69OsfHgppsQwG1D6pdMZm2EqqWN1zzgzchFTlq2A=
+        b=JCM2vzfYrbPintt5cZC3C8LzIp+ZpwKfzPiLPvGlSwnbhfcuD3Yu8aXC2/UNt8qCL
+         qi62ZDD6vedngUxjU/MUVw2+p4ihsJs4sKmKR1G0An4ZnQZMt++slHU5XBrIU1tNb7
+         Fz34b5uSTbB9Q81+HDVQ+YncHyES3cKGZhsN/z/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 007/129] crypto: talitos - fix missing break in switch statement
+        stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 052/185] nfc: enforce CAP_NET_RAW for raw sockets
 Date:   Thu,  3 Oct 2019 17:52:10 +0200
-Message-Id: <20191003154322.503362886@linuxfoundation.org>
+Message-Id: <20191003154449.544737709@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Ori Nimron <orinimron123@gmail.com>
 
-commit 5fc194ea6d34dfad9833d3043ce41d6c52aff39a upstream.
+[ Upstream commit 3a359798b176183ef09efb7a3dc59abad1cc7104 ]
 
-Add missing break statement in order to prevent the code from falling
-through to case CRYPTO_ALG_TYPE_AHASH.
+When creating a raw AF_NFC socket, CAP_NET_RAW needs to be checked
+first.
 
-Fixes: aeb4c132f33d ("crypto: talitos - Convert to new AEAD interface")
-Cc: stable@vger.kernel.org
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Ori Nimron <orinimron123@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/talitos.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/nfc/llcp_sock.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -3043,6 +3043,7 @@ static int talitos_remove(struct platfor
- 			break;
- 		case CRYPTO_ALG_TYPE_AEAD:
- 			crypto_unregister_aead(&t_alg->algt.alg.aead);
-+			break;
- 		case CRYPTO_ALG_TYPE_AHASH:
- 			crypto_unregister_ahash(&t_alg->algt.alg.hash);
- 			break;
+--- a/net/nfc/llcp_sock.c
++++ b/net/nfc/llcp_sock.c
+@@ -1012,10 +1012,13 @@ static int llcp_sock_create(struct net *
+ 	    sock->type != SOCK_RAW)
+ 		return -ESOCKTNOSUPPORT;
+ 
+-	if (sock->type == SOCK_RAW)
++	if (sock->type == SOCK_RAW) {
++		if (!capable(CAP_NET_RAW))
++			return -EPERM;
+ 		sock->ops = &llcp_rawsock_ops;
+-	else
++	} else {
+ 		sock->ops = &llcp_sock_ops;
++	}
+ 
+ 	sk = nfc_llcp_sock_alloc(sock, sock->type, GFP_ATOMIC, kern);
+ 	if (sk == NULL)
 
 
