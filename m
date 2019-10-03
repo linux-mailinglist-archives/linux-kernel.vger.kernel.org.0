@@ -2,140 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D30ACA055
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 16:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD532CA059
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 16:30:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730656AbfJCO3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 10:29:53 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42112 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfJCO3x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 10:29:53 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: bbrezillon)
-        with ESMTPSA id 33AF328E8BE
-Date:   Thu, 3 Oct 2019 16:29:43 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-i3c@lists.infradead.org, bbrezillon@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, pgaj@cadence.com,
-        Joao.Pinto@synopsys.com, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] i3c: master: make sure ->boardinfo is
- initialized in add_i3c_dev_locked()
-Message-ID: <20191003162943.4a0d0274@collabora.com>
-In-Reply-To: <ed18fd927b5759a6a1edb351113ceca615283189.1567608245.git.vitor.soares@synopsys.com>
-References: <cover.1567608245.git.vitor.soares@synopsys.com>
-        <ed18fd927b5759a6a1edb351113ceca615283189.1567608245.git.vitor.soares@synopsys.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1730675AbfJCO34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 10:29:56 -0400
+Received: from ms.lwn.net ([45.79.88.28]:60784 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbfJCO3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 10:29:55 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 70EFC300;
+        Thu,  3 Oct 2019 14:29:54 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 08:29:53 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     David Miller <davem@davemloft.net>
+Cc:     j.neuschaefer@gmx.net, linux-doc@vger.kernel.org,
+        jeffrey.t.kirsher@intel.com, snelson@pensando.io,
+        drivers@pensando.io, intel-wired-lan@lists.osuosl.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: networking: device drivers: Remove stray
+ asterisks
+Message-ID: <20191003082953.396ebc1a@lwn.net>
+In-Reply-To: <20191002.172526.1832563406015085740.davem@davemloft.net>
+References: <20191002150956.16234-1-j.neuschaefer@gmx.net>
+        <20191002.172526.1832563406015085740.davem@davemloft.net>
+Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  5 Sep 2019 12:00:35 +0200
-Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+On Wed, 02 Oct 2019 17:25:26 -0700 (PDT)
+David Miller <davem@davemloft.net> wrote:
 
-> The newdev->boardinfo assignment was missing in
-> i3c_master_add_i3c_dev_locked() and hence the ->of_node info isn't
-> propagated to i3c_dev_desc.
+> Jon, how do you want to handle changes like this?
+
+In whatever way works best.  Documentation should make our lives easier,
+not get in the way :)
+
+> I mean, there are unlikely to be conflicts from something like this so it
+> could simply go via the documentation tree.
 > 
-> Fix this by trying to initialize device i3c_dev_boardinfo if available.
-> 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
-> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-> ---
-> Change in v3:
->   - None
-> 
-> Changes in v2:
->   - Change commit message
->   - Change i3c_master_search_i3c_boardinfo(newdev) to
->   i3c_master_init_i3c_dev_boardinfo(newdev)
->   - Add fixes, stable tags
-> 
->  drivers/i3c/master.c | 27 +++++++++++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> index 586e34f..9fb99bc 100644
-> --- a/drivers/i3c/master.c
-> +++ b/drivers/i3c/master.c
-> @@ -1798,6 +1798,22 @@ i3c_master_search_i3c_dev_duplicate(struct i3c_dev_desc *refdev)
->  	return NULL;
->  }
->  
-> +static void i3c_master_init_i3c_dev_boardinfo(struct i3c_dev_desc *dev)
-> +{
-> +	struct i3c_master_controller *master = i3c_dev_get_master(dev);
-> +	struct i3c_dev_boardinfo *boardinfo;
-> +
-> +	if (dev->boardinfo)
-> +		return;
-> +
-> +	list_for_each_entry(boardinfo, &master->boardinfo.i3c, node) {
-> +		if (dev->info.pid == boardinfo->pid) {
-> +			dev->boardinfo = boardinfo;
-> +			return;
-> +		}
-> +	}
-> +}
-> +
->  /**
->   * i3c_master_add_i3c_dev_locked() - add an I3C slave to the bus
->   * @master: master used to send frames on the bus
-> @@ -1818,8 +1834,9 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
->  				  u8 addr)
->  {
->  	struct i3c_device_info info = { .dyn_addr = addr };
-> -	struct i3c_dev_desc *newdev, *olddev;
->  	u8 old_dyn_addr = addr, expected_dyn_addr;
-> +	enum i3c_addr_slot_status addrstatus;
-> +	struct i3c_dev_desc *newdev, *olddev;
->  	struct i3c_ibi_setup ibireq = { };
->  	bool enable_ibi = false;
->  	int ret;
-> @@ -1878,6 +1895,8 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
->  	if (ret)
->  		goto err_detach_dev;
->  
-> +	i3c_master_init_i3c_dev_boardinfo(newdev);
-> +
->  	/*
->  	 * Depending on our previous state, the expected dynamic address might
->  	 * differ:
-> @@ -1895,7 +1914,11 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
->  	else
->  		expected_dyn_addr = newdev->info.dyn_addr;
->  
-> -	if (newdev->info.dyn_addr != expected_dyn_addr) {
-> +	addrstatus = i3c_bus_get_addr_slot_status(&master->bus,
-> +						  expected_dyn_addr);
-> +
-> +	if (newdev->info.dyn_addr != expected_dyn_addr &&
-> +	    addrstatus == I3C_ADDR_SLOT_FREE) {
+> Acked-by: David S. Miller <davem@davemloft.net>
 
-First, this change shouldn't be part of this patch, since the commit
-message only mentions the boardinfo init stuff, not the extra 'is slot
-free check'. Plus, I want the fix to be backported so we should avoid
-any unneeded deps.
+OK, I'll go ahead and apply it, then.
 
-But even with those 2 things addressed, I'm still convinced the
-'free desc when device is not reachable' change you do in patch 1 is
-not that great, and the fact that you can't pre-reserve the address to
-make sure no one uses it until the device had a chance to show up tends
-to prove me right.
+Thanks,
 
-Can we please do what I suggest and solve the "not enough dev slots"
-problem later on (if we really have to).
-
->  		/*
->  		 * Try to apply the expected dynamic address. If it fails, keep
->  		 * the address assigned by the master.
-
+jon
