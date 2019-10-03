@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C978C9678
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B59EC9676
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfJCBrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 21:47:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47716 "EHLO mail.kernel.org"
+        id S1728079AbfJCBrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 21:47:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbfJCBrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727501AbfJCBrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 2 Oct 2019 21:47:33 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DF53222C7;
+        by mail.kernel.org (Postfix) with ESMTPSA id ECCCE222C6;
         Thu,  3 Oct 2019 01:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570067252;
-        bh=qtBn42AgWJ/rI3ej7GIoXis4NYZunL4lVU1bCqYG+XE=;
+        s=default; t=1570067253;
+        bh=R+zo9I1mubtG3diDjh8Lku6UQCrP3wdMPlHyM/++ND0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AxpHhGGXyxn+dkHAVmU4yvjcl4Vrkz3QGcoeCxxxczXl3UDHq9Lnatl0wtRlSc6ot
-         PrmeMWMdt3IaCxTEPgg7BBk7weB+msdWP9fQf/VUTwt30hhspVpXgK4oRL6cqihYjB
-         fjX35JE85te+uSGAVSu1jcriw5lmHVLJgSLq7J+4=
+        b=u4gjXP0tg/2bMt2euad4lPndRXnwb0jLGi8R+qpSOADQyFnwlT1UHa1O4Z9s0Zz3W
+         8qXCJXcevL6oNzDqgPluZGzqscDWWC/hHsrmOjgkyAtnEA2GGMvtr3LhprdE5Y2Atv
+         g6RS1Nr7epfOReccYfWINwA+O0mzrfmqf//qFJJQ=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -31,10 +31,12 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 7/9] rcutorture: Make in-kernel-loop testing more brutal
-Date:   Wed,  2 Oct 2019 18:47:26 -0700
-Message-Id: <20191003014728.13496-7-paulmck@kernel.org>
+        "Wolfgang M. Reimer" <linuxball@gmail.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 8/9] locking: locktorture: Do not include rwlock.h directly
+Date:   Wed,  2 Oct 2019 18:47:27 -0700
+Message-Id: <20191003014728.13496-8-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191003014710.GA13323@paulmck-ThinkPad-P72>
 References: <20191003014710.GA13323@paulmck-ThinkPad-P72>
@@ -43,39 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@linux.ibm.com>
+From: "Wolfgang M. Reimer" <linuxball@gmail.com>
 
-The rcu_torture_fwd_prog_nr() tests the ability of RCU to tolerate
-in-kernel busy loops.  It invokes rcu_torture_fwd_prog_cond_resched()
-within its delay loop, which, in PREEMPT && NO_HZ_FULL kernels results
-in the occasional direct call to schedule().  Now, this direct call to
-schedule() is appropriate for call_rcu() flood testing, in which either
-the kernel should restrain itself or userspace transitions will supply
-the needed restraint.  But in pure in-kernel loops, the occasional
-cond_resched() should do the job.
+Including rwlock.h directly will cause kernel builds to fail
+if CONFIG_PREEMPT_RT is defined. The correct header file
+(rwlock_rt.h OR rwlock.h) will be included by spinlock.h which
+is included by locktorture.c anyway.
 
-This commit therefore makes rcu_torture_fwd_prog_nr() use cond_resched()
-instead of rcu_torture_fwd_prog_cond_resched() in order to increase the
-brutality of this aspect of rcutorture testing.
+Remove the include of linux/rwlock.h.
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Wolfgang M. Reimer <linuxball@gmail.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Acked-by: Davidlohr Bueso <dbueso@suse.de>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/locking/locktorture.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index a9e97c3..f1339ee 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1811,7 +1811,7 @@ static void rcu_torture_fwd_prog_nr(int *tested, int *tested_tries)
- 		udelay(10);
- 		cur_ops->readunlock(idx);
- 		if (!fwd_progress_need_resched || need_resched())
--			rcu_torture_fwd_prog_cond_resched(1);
-+			cond_resched();
- 	}
- 	(*tested_tries)++;
- 	if (!time_before(jiffies, stopat) &&
+diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+index 8dd9002..99475a6 100644
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
+@@ -16,7 +16,6 @@
+ #include <linux/kthread.h>
+ #include <linux/sched/rt.h>
+ #include <linux/spinlock.h>
+-#include <linux/rwlock.h>
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+ #include <linux/smp.h>
 -- 
 2.9.5
 
