@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B763CA1D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C42CA1DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731402AbfJCP7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:59:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42842 "EHLO mail.kernel.org"
+        id S1731427AbfJCP7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:59:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731378AbfJCP7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:59:42 -0400
+        id S1731389AbfJCP7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:59:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AF5A21D81;
-        Thu,  3 Oct 2019 15:59:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3154E21D81;
+        Thu,  3 Oct 2019 15:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118380;
-        bh=h0rsyqVWWEVXXs6hc1a5kbfGdU7JSDnYzCi6ysQNAjw=;
+        s=default; t=1570118383;
+        bh=kEUcyf9ce6ZSDzVBodKAh4owIQCPHcgVn4yCbQNmwCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x+SPhiLvgXVdkNPsxvVftd7DhjHEL8V3/5iMHwnNktOh6Cx3BLr/nS2Zo2tjK51gP
-         fWkWINAqEqyI4/wME2g4k6mHz/obFZZPgBPqcQXHyb0gtq9OF2KwNWEUsIK/TPj/ko
-         VNgBO+Hqswpk2hwSqj9TTIJVF2IGqknsrISBZ5BA=
+        b=AmTbd0zdeQo/pi6HHIujZBYBYiAORavXNpyde+CPqlZpJdiWoj9Sa/nGqfcX0vHmL
+         5ZlDRmnTIgkqp2nKzBMwQGj6qrab0377UXjl5Y2SOCZ7XgrWL9ZSDybcgseJsoJ/QE
+         FVIJ+X/SADfIrR53J3r/2QNJVMCiMYSKHyDc9Lp8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-        Doug Reiland <doug.reiland@intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Peter Xu <peterx@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 83/99] KVM: x86: Manually calculate reserved bits when loading PDPTRS
-Date:   Thu,  3 Oct 2019 17:53:46 +0200
-Message-Id: <20191003154336.641144460@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.4 92/99] quota: fix wrong condition in is_quota_modification()
+Date:   Thu,  3 Oct 2019 17:53:55 +0200
+Message-Id: <20191003154340.152105218@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -46,75 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit 16cfacc8085782dab8e365979356ce1ca87fd6cc upstream.
+commit 6565c182094f69e4ffdece337d395eb7ec760efc upstream.
 
-Manually generate the PDPTR reserved bit mask when explicitly loading
-PDPTRs.  The reserved bits that are being tracked by the MMU reflect the
-current paging mode, which is unlikely to be PAE paging in the vast
-majority of flows that use load_pdptrs(), e.g. CR0 and CR4 emulation,
-__set_sregs(), etc...  This can cause KVM to incorrectly signal a bad
-PDPTR, or more likely, miss a reserved bit check and subsequently fail
-a VM-Enter due to a bad VMCS.GUEST_PDPTR.
+Quoted from
+commit 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
 
-Add a one off helper to generate the reserved bits instead of sharing
-code across the MMU's calculations and the PDPTR emulation.  The PDPTR
-reserved bits are basically set in stone, and pushing a helper into
-the MMU's calculation adds unnecessary complexity without improving
-readability.
+" At LSF we decided that if we truncate up from isize we shouldn't trim
+  fallocated blocks that were fallocated with KEEP_SIZE and are past the
+ new i_size.  This patch fixes ext4 to do this. "
 
-Oppurtunistically fix/update the comment for load_pdptrs().
+And generic/092 of fstest have covered this case for long time, however
+is_quota_modification() didn't adjust based on that rule, so that in
+below condition, we will lose to quota block change:
+- fallocate blocks beyond EOF
+- remount
+- truncate(file_path, file_size)
 
-Note, the buggy commit also introduced a deliberate functional change,
-"Also remove bit 5-6 from rsvd_bits_mask per latest SDM.", which was
-effectively (and correctly) reverted by commit cd9ae5fe47df ("KVM: x86:
-Fix page-tables reserved bits").  A bit of SDM archaeology shows that
-the SDM from late 2008 had a bug (likely a copy+paste error) where it
-listed bits 6:5 as AVL and A for PDPTEs used for 4k entries but reserved
-for 2mb entries.  I.e. the SDM contradicted itself, and bits 6:5 are and
-always have been reserved.
+Fix it.
 
-Fixes: 20c466b56168d ("KVM: Use rsvd_bits_mask in load_pdptrs()")
-Cc: stable@vger.kernel.org
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Reported-by: Doug Reiland <doug.reiland@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Link: https://lore.kernel.org/r/20190911093650.35329-1-yuchao0@huawei.com
+Fixes: 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
+CC: stable@vger.kernel.org
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ include/linux/quotaops.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -523,8 +523,14 @@ static int kvm_read_nested_guest_page(st
- 				       data, offset, len, access);
- }
- 
-+static inline u64 pdptr_rsvd_bits(struct kvm_vcpu *vcpu)
-+{
-+	return rsvd_bits(cpuid_maxphyaddr(vcpu), 63) | rsvd_bits(5, 8) |
-+	       rsvd_bits(1, 2);
-+}
-+
- /*
-- * Load the pae pdptrs.  Return true is they are all valid.
-+ * Load the pae pdptrs.  Return 1 if they are all valid, 0 otherwise.
-  */
- int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -21,7 +21,7 @@ static inline struct quota_info *sb_dqop
+ /* i_mutex must being held */
+ static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
  {
-@@ -543,8 +549,7 @@ int load_pdptrs(struct kvm_vcpu *vcpu, s
- 	}
- 	for (i = 0; i < ARRAY_SIZE(pdpte); ++i) {
- 		if (is_present_gpte(pdpte[i]) &&
--		    (pdpte[i] &
--		     vcpu->arch.mmu.guest_rsvd_check.rsvd_bits_mask[0][2])) {
-+		    (pdpte[i] & pdptr_rsvd_bits(vcpu))) {
- 			ret = 0;
- 			goto out;
- 		}
+-	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
++	return (ia->ia_valid & ATTR_SIZE) ||
+ 		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
+ 		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
+ }
 
 
