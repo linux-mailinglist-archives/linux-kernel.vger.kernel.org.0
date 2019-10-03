@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69BF4CA60A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF6CCA63B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404722AbfJCQjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:39:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49106 "EHLO mail.kernel.org"
+        id S2404634AbfJCQlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:41:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404041AbfJCQjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:39:15 -0400
+        id S2392502AbfJCQlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:41:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 165082070B;
-        Thu,  3 Oct 2019 16:39:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D356206BB;
+        Thu,  3 Oct 2019 16:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120753;
-        bh=8+lmPgBjYpQcwYx55SQ8PdxzuWuMMuuKkoFHrZUWAIA=;
+        s=default; t=1570120878;
+        bh=00OTd1dz2jgplco0ubuPDUqryUSVd6/BFS1qtabzsTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ek+jnfEsZ4y4Jg4UvXSq43W+J/twd5q36tPYiQfrzsDl8RLQKdBL+e5sGLUFe7Ejt
-         sZT52XywEKWyjfs1ZOz2ns0uc+EhFXAhLzMQ/bA8ZnCwKJhE5Tod3MaBYalDldCWZA
-         JuVajcA6girwcjCUiLrzF49RqFBt7Zm/3+9S6MCQ=
+        b=s8/Op+RjiwgVOAyOIqjn7KWydp3qOPAzg1cxb3pq97tctQOMDogoPgv0bxmldQjl5
+         P+dxUIRSc+bVIq5qk/DApuigfU1EqkJLOJTVzR1Eqo4B6e48QCjKGBBk7ekPSOhKoc
+         txF7AWtLhtsaX4t25PNM5/EmVg7c2x8t5I3UJ7r0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 025/344] net/sched: cbs: Fix not adding cbs instance to list
-Date:   Thu,  3 Oct 2019 17:49:50 +0200
-Message-Id: <20191003154542.570762257@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Anastasov <ja@ssi.bg>,
+        David Ahern <dsahern@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 5.3 026/344] ipv4: Revert removal of rt_uses_gateway
+Date:   Thu,  3 Oct 2019 17:49:51 +0200
+Message-Id: <20191003154542.662890537@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,169 +44,196 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 3e8b9bfa110896f95d602d8c98d5f9d67e41d78c ]
+[ Upstream commit 77d5bc7e6a6cf8bbeca31aab7f0c5449a5eee762 ]
 
-When removing a cbs instance when offloading is enabled, the crash
-below can be observed.
+Julian noted that rt_uses_gateway has a more subtle use than 'is gateway
+set':
+    https://lore.kernel.org/netdev/alpine.LFD.2.21.1909151104060.2546@ja.home.ssi.bg/
 
-The problem happens because that when offloading is enabled, the cbs
-instance is not added to the list.
+Revert that part of the commit referenced in the Fixes tag.
 
-Also, the current code doesn't handle correctly the case when offload
-is disabled without removing the qdisc: if the link speed changes the
-credit calculations will be wrong. When we create the cbs instance
-with offloading enabled, it's not added to the notification list, when
-later we disable offloading, it's not in the list, so link speed
-changes will not affect it.
+Currently, there are no u8 holes in 'struct rtable'. There is a 4-byte hole
+in the second cacheline which contains the gateway declaration. So move
+rt_gw_family down to the gateway declarations since they are always used
+together, and then re-use that u8 for rt_uses_gateway. End result is that
+rtable size is unchanged.
 
-The solution for both issues is the same, add the cbs instance being
-created unconditionally to the global list, even if the link state
-notification isn't useful "right now".
-
-Crash log:
-
-[518758.189866] BUG: kernel NULL pointer dereference, address: 0000000000000000
-[518758.189870] #PF: supervisor read access in kernel mode
-[518758.189871] #PF: error_code(0x0000) - not-present page
-[518758.189872] PGD 0 P4D 0
-[518758.189874] Oops: 0000 [#1] SMP PTI
-[518758.189876] CPU: 3 PID: 4825 Comm: tc Not tainted 5.2.9 #1
-[518758.189877] Hardware name: Gigabyte Technology Co., Ltd. Z390 AORUS ULTRA/Z390 AORUS ULTRA-CF, BIOS F7 03/14/2019
-[518758.189881] RIP: 0010:__list_del_entry_valid+0x29/0xa0
-[518758.189883] Code: 90 48 b8 00 01 00 00 00 00 ad de 55 48 8b 17 4c 8b 47 08 48 89 e5 48 39 c2 74 27 48 b8 00 02 00 00 00 00 ad de 49 39 c0 74 2d <49> 8b 30 48 39 fe 75 3d 48 8b 52 08 48 39 f2 75 4c b8 01 00 00 00
-[518758.189885] RSP: 0018:ffffa27e43903990 EFLAGS: 00010207
-[518758.189887] RAX: dead000000000200 RBX: ffff8bce69f0f000 RCX: 0000000000000000
-[518758.189888] RDX: 0000000000000000 RSI: ffff8bce69f0f064 RDI: ffff8bce69f0f1e0
-[518758.189890] RBP: ffffa27e43903990 R08: 0000000000000000 R09: ffff8bce69e788c0
-[518758.189891] R10: ffff8bce62acd400 R11: 00000000000003cb R12: ffff8bce69e78000
-[518758.189892] R13: ffff8bce69f0f140 R14: 0000000000000000 R15: 0000000000000000
-[518758.189894] FS:  00007fa1572c8f80(0000) GS:ffff8bce6e0c0000(0000) knlGS:0000000000000000
-[518758.189895] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[518758.189896] CR2: 0000000000000000 CR3: 000000040a398006 CR4: 00000000003606e0
-[518758.189898] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[518758.189899] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[518758.189900] Call Trace:
-[518758.189904]  cbs_destroy+0x32/0xa0 [sch_cbs]
-[518758.189906]  qdisc_destroy+0x45/0x120
-[518758.189907]  qdisc_put+0x25/0x30
-[518758.189908]  qdisc_graft+0x2c1/0x450
-[518758.189910]  tc_get_qdisc+0x1c8/0x310
-[518758.189912]  ? get_page_from_freelist+0x91a/0xcb0
-[518758.189914]  rtnetlink_rcv_msg+0x293/0x360
-[518758.189916]  ? kmem_cache_alloc_node_trace+0x178/0x260
-[518758.189918]  ? __kmalloc_node_track_caller+0x38/0x50
-[518758.189920]  ? rtnl_calcit.isra.0+0xf0/0xf0
-[518758.189922]  netlink_rcv_skb+0x48/0x110
-[518758.189923]  rtnetlink_rcv+0x10/0x20
-[518758.189925]  netlink_unicast+0x15b/0x1d0
-[518758.189926]  netlink_sendmsg+0x1ea/0x380
-[518758.189929]  sock_sendmsg+0x2f/0x40
-[518758.189930]  ___sys_sendmsg+0x295/0x2f0
-[518758.189932]  ? ___sys_recvmsg+0x151/0x1e0
-[518758.189933]  ? do_wp_page+0x7e/0x450
-[518758.189935]  __sys_sendmsg+0x48/0x80
-[518758.189937]  __x64_sys_sendmsg+0x1a/0x20
-[518758.189939]  do_syscall_64+0x53/0x1f0
-[518758.189941]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[518758.189942] RIP: 0033:0x7fa15755169a
-[518758.189944] Code: 48 c7 c0 ff ff ff ff eb be 0f 1f 80 00 00 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 18 b8 2e 00 00 00 c5 fc 77 0f 05 <48> 3d 00 f0 ff ff 77 5e c3 0f 1f 44 00 00 48 83 ec 28 89 54 24 1c
-[518758.189946] RSP: 002b:00007ffda58b60b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[518758.189948] RAX: ffffffffffffffda RBX: 000055e4b836d9a0 RCX: 00007fa15755169a
-[518758.189949] RDX: 0000000000000000 RSI: 00007ffda58b6128 RDI: 0000000000000003
-[518758.189951] RBP: 00007ffda58b6190 R08: 0000000000000001 R09: 000055e4b9d848a0
-[518758.189952] R10: 0000000000000000 R11: 0000000000000246 R12: 000000005d654b49
-[518758.189953] R13: 0000000000000000 R14: 00007ffda58b6230 R15: 00007ffda58b6210
-[518758.189955] Modules linked in: sch_cbs sch_etf sch_mqprio netlink_diag unix_diag e1000e igb intel_pch_thermal thermal video backlight pcc_cpufreq
-[518758.189960] CR2: 0000000000000000
-[518758.189961] ---[ end trace 6a13f7aaf5376019 ]---
-[518758.189963] RIP: 0010:__list_del_entry_valid+0x29/0xa0
-[518758.189964] Code: 90 48 b8 00 01 00 00 00 00 ad de 55 48 8b 17 4c 8b 47 08 48 89 e5 48 39 c2 74 27 48 b8 00 02 00 00 00 00 ad de 49 39 c0 74 2d <49> 8b 30 48 39 fe 75 3d 48 8b 52 08 48 39 f2 75 4c b8 01 00 00 00
-[518758.189967] RSP: 0018:ffffa27e43903990 EFLAGS: 00010207
-[518758.189968] RAX: dead000000000200 RBX: ffff8bce69f0f000 RCX: 0000000000000000
-[518758.189969] RDX: 0000000000000000 RSI: ffff8bce69f0f064 RDI: ffff8bce69f0f1e0
-[518758.189971] RBP: ffffa27e43903990 R08: 0000000000000000 R09: ffff8bce69e788c0
-[518758.189972] R10: ffff8bce62acd400 R11: 00000000000003cb R12: ffff8bce69e78000
-[518758.189973] R13: ffff8bce69f0f140 R14: 0000000000000000 R15: 0000000000000000
-[518758.189975] FS:  00007fa1572c8f80(0000) GS:ffff8bce6e0c0000(0000) knlGS:0000000000000000
-[518758.189976] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[518758.189977] CR2: 0000000000000000 CR3: 000000040a398006 CR4: 00000000003606e0
-[518758.189979] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[518758.189980] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-Fixes: e0a7683d30e9 ("net/sched: cbs: fix port_rate miscalculation")
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1550c171935d ("ipv4: Prepare rtable for IPv6 gateway")
+Reported-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Reviewed-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_cbs.c |   30 +++++++++++++-----------------
- 1 file changed, 13 insertions(+), 17 deletions(-)
+ drivers/infiniband/core/addr.c  |    2 +-
+ include/net/route.h             |    3 ++-
+ net/ipv4/inet_connection_sock.c |    4 ++--
+ net/ipv4/ip_forward.c           |    2 +-
+ net/ipv4/ip_output.c            |    2 +-
+ net/ipv4/route.c                |   36 +++++++++++++++++++++---------------
+ net/ipv4/xfrm4_policy.c         |    1 +
+ 7 files changed, 29 insertions(+), 21 deletions(-)
 
---- a/net/sched/sch_cbs.c
-+++ b/net/sched/sch_cbs.c
-@@ -392,7 +392,6 @@ static int cbs_init(struct Qdisc *sch, s
- {
- 	struct cbs_sched_data *q = qdisc_priv(sch);
- 	struct net_device *dev = qdisc_dev(sch);
--	int err;
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -352,7 +352,7 @@ static bool has_gateway(const struct dst
  
- 	if (!opt) {
- 		NL_SET_ERR_MSG(extack, "Missing CBS qdisc options  which are mandatory");
-@@ -404,6 +403,10 @@ static int cbs_init(struct Qdisc *sch, s
- 	if (!q->qdisc)
- 		return -ENOMEM;
+ 	if (family == AF_INET) {
+ 		rt = container_of(dst, struct rtable, dst);
+-		return rt->rt_gw_family == AF_INET;
++		return rt->rt_uses_gateway;
+ 	}
  
-+	spin_lock(&cbs_list_lock);
-+	list_add(&q->cbs_list, &cbs_list);
-+	spin_unlock(&cbs_list_lock);
-+
- 	qdisc_hash_add(q->qdisc, false);
+ 	rt6 = container_of(dst, struct rt6_info, dst);
+--- a/include/net/route.h
++++ b/include/net/route.h
+@@ -53,10 +53,11 @@ struct rtable {
+ 	unsigned int		rt_flags;
+ 	__u16			rt_type;
+ 	__u8			rt_is_input;
+-	u8			rt_gw_family;
++	__u8			rt_uses_gateway;
  
- 	q->queue = sch->dev_queue - netdev_get_tx_queue(dev, 0);
-@@ -413,17 +416,7 @@ static int cbs_init(struct Qdisc *sch, s
+ 	int			rt_iif;
  
- 	qdisc_watchdog_init(&q->watchdog, sch);
++	u8			rt_gw_family;
+ 	/* Info on neighbour */
+ 	union {
+ 		__be32		rt_gw4;
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -560,7 +560,7 @@ struct dst_entry *inet_csk_route_req(con
+ 	rt = ip_route_output_flow(net, fl4, sk);
+ 	if (IS_ERR(rt))
+ 		goto no_route;
+-	if (opt && opt->opt.is_strictroute && rt->rt_gw_family)
++	if (opt && opt->opt.is_strictroute && rt->rt_uses_gateway)
+ 		goto route_err;
+ 	rcu_read_unlock();
+ 	return &rt->dst;
+@@ -598,7 +598,7 @@ struct dst_entry *inet_csk_route_child_s
+ 	rt = ip_route_output_flow(net, fl4, sk);
+ 	if (IS_ERR(rt))
+ 		goto no_route;
+-	if (opt && opt->opt.is_strictroute && rt->rt_gw_family)
++	if (opt && opt->opt.is_strictroute && rt->rt_uses_gateway)
+ 		goto route_err;
+ 	return &rt->dst;
  
--	err = cbs_change(sch, opt, extack);
--	if (err)
--		return err;
+--- a/net/ipv4/ip_forward.c
++++ b/net/ipv4/ip_forward.c
+@@ -123,7 +123,7 @@ int ip_forward(struct sk_buff *skb)
+ 
+ 	rt = skb_rtable(skb);
+ 
+-	if (opt->is_strictroute && rt->rt_gw_family)
++	if (opt->is_strictroute && rt->rt_uses_gateway)
+ 		goto sr_failed;
+ 
+ 	IPCB(skb)->flags |= IPSKB_FORWARDED;
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -499,7 +499,7 @@ int __ip_queue_xmit(struct sock *sk, str
+ 	skb_dst_set_noref(skb, &rt->dst);
+ 
+ packet_routed:
+-	if (inet_opt && inet_opt->opt.is_strictroute && rt->rt_gw_family)
++	if (inet_opt && inet_opt->opt.is_strictroute && rt->rt_uses_gateway)
+ 		goto no_route;
+ 
+ 	/* OK, we know where to send it, allocate and build IP header. */
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -635,6 +635,7 @@ static void fill_route_from_fnhe(struct
+ 
+ 	if (fnhe->fnhe_gw) {
+ 		rt->rt_flags |= RTCF_REDIRECTED;
++		rt->rt_uses_gateway = 1;
+ 		rt->rt_gw_family = AF_INET;
+ 		rt->rt_gw4 = fnhe->fnhe_gw;
+ 	}
+@@ -1313,7 +1314,7 @@ static unsigned int ipv4_mtu(const struc
+ 	mtu = READ_ONCE(dst->dev->mtu);
+ 
+ 	if (unlikely(ip_mtu_locked(dst))) {
+-		if (rt->rt_gw_family && mtu > 576)
++		if (rt->rt_uses_gateway && mtu > 576)
+ 			mtu = 576;
+ 	}
+ 
+@@ -1569,6 +1570,7 @@ static void rt_set_nexthop(struct rtable
+ 		struct fib_nh_common *nhc = FIB_RES_NHC(*res);
+ 
+ 		if (nhc->nhc_gw_family && nhc->nhc_scope == RT_SCOPE_LINK) {
++			rt->rt_uses_gateway = 1;
+ 			rt->rt_gw_family = nhc->nhc_gw_family;
+ 			/* only INET and INET6 are supported */
+ 			if (likely(nhc->nhc_gw_family == AF_INET))
+@@ -1634,6 +1636,7 @@ struct rtable *rt_dst_alloc(struct net_d
+ 		rt->rt_iif = 0;
+ 		rt->rt_pmtu = 0;
+ 		rt->rt_mtu_locked = 0;
++		rt->rt_uses_gateway = 0;
+ 		rt->rt_gw_family = 0;
+ 		rt->rt_gw4 = 0;
+ 		INIT_LIST_HEAD(&rt->rt_uncached);
+@@ -2694,6 +2697,7 @@ struct dst_entry *ipv4_blackhole_route(s
+ 		rt->rt_genid = rt_genid_ipv4(net);
+ 		rt->rt_flags = ort->rt_flags;
+ 		rt->rt_type = ort->rt_type;
++		rt->rt_uses_gateway = ort->rt_uses_gateway;
+ 		rt->rt_gw_family = ort->rt_gw_family;
+ 		if (rt->rt_gw_family == AF_INET)
+ 			rt->rt_gw4 = ort->rt_gw4;
+@@ -2778,21 +2782,23 @@ static int rt_fill_info(struct net *net,
+ 		if (nla_put_in_addr(skb, RTA_PREFSRC, fl4->saddr))
+ 			goto nla_put_failure;
+ 	}
+-	if (rt->rt_gw_family == AF_INET &&
+-	    nla_put_in_addr(skb, RTA_GATEWAY, rt->rt_gw4)) {
+-		goto nla_put_failure;
+-	} else if (rt->rt_gw_family == AF_INET6) {
+-		int alen = sizeof(struct in6_addr);
+-		struct nlattr *nla;
+-		struct rtvia *via;
 -
--	if (!q->offload) {
--		spin_lock(&cbs_list_lock);
--		list_add(&q->cbs_list, &cbs_list);
--		spin_unlock(&cbs_list_lock);
--	}
+-		nla = nla_reserve(skb, RTA_VIA, alen + 2);
+-		if (!nla)
++	if (rt->rt_uses_gateway) {
++		if (rt->rt_gw_family == AF_INET &&
++		    nla_put_in_addr(skb, RTA_GATEWAY, rt->rt_gw4)) {
+ 			goto nla_put_failure;
 -
--	return 0;
-+	return cbs_change(sch, opt, extack);
- }
- 
- static void cbs_destroy(struct Qdisc *sch)
-@@ -431,15 +424,18 @@ static void cbs_destroy(struct Qdisc *sc
- 	struct cbs_sched_data *q = qdisc_priv(sch);
- 	struct net_device *dev = qdisc_dev(sch);
- 
--	spin_lock(&cbs_list_lock);
--	list_del(&q->cbs_list);
--	spin_unlock(&cbs_list_lock);
-+	/* Nothing to do if we couldn't create the underlying qdisc */
-+	if (!q->qdisc)
-+		return;
- 
- 	qdisc_watchdog_cancel(&q->watchdog);
- 	cbs_disable_offload(dev, q);
- 
--	if (q->qdisc)
--		qdisc_put(q->qdisc);
-+	spin_lock(&cbs_list_lock);
-+	list_del(&q->cbs_list);
-+	spin_unlock(&cbs_list_lock);
+-		via = nla_data(nla);
+-		via->rtvia_family = AF_INET6;
+-		memcpy(via->rtvia_addr, &rt->rt_gw6, alen);
++		} else if (rt->rt_gw_family == AF_INET6) {
++			int alen = sizeof(struct in6_addr);
++			struct nlattr *nla;
++			struct rtvia *via;
 +
-+	qdisc_put(q->qdisc);
- }
++			nla = nla_reserve(skb, RTA_VIA, alen + 2);
++			if (!nla)
++				goto nla_put_failure;
++
++			via = nla_data(nla);
++			via->rtvia_family = AF_INET6;
++			memcpy(via->rtvia_addr, &rt->rt_gw6, alen);
++		}
+ 	}
  
- static int cbs_dump(struct Qdisc *sch, struct sk_buff *skb)
+ 	expires = rt->dst.expires;
+--- a/net/ipv4/xfrm4_policy.c
++++ b/net/ipv4/xfrm4_policy.c
+@@ -85,6 +85,7 @@ static int xfrm4_fill_dst(struct xfrm_ds
+ 	xdst->u.rt.rt_flags = rt->rt_flags & (RTCF_BROADCAST | RTCF_MULTICAST |
+ 					      RTCF_LOCAL);
+ 	xdst->u.rt.rt_type = rt->rt_type;
++	xdst->u.rt.rt_uses_gateway = rt->rt_uses_gateway;
+ 	xdst->u.rt.rt_gw_family = rt->rt_gw_family;
+ 	if (rt->rt_gw_family == AF_INET)
+ 		xdst->u.rt.rt_gw4 = rt->rt_gw4;
 
 
