@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA8A1CAD64
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3484ACAD28
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389928AbfJCRko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:40:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43226 "EHLO mail.kernel.org"
+        id S2388231AbfJCRfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:35:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731423AbfJCP7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:59:49 -0400
+        id S1732688AbfJCQGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:06:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6497D222CB;
-        Thu,  3 Oct 2019 15:59:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 253FE20865;
+        Thu,  3 Oct 2019 16:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118388;
-        bh=nv5tyfbfrOt8/5M/vZRl8GRVLkrUHUar+IwteF0cp3Y=;
+        s=default; t=1570118766;
+        bh=5jHB2655A0aKZTUK9XPQmVwDEQFv6VWnKehmxaLLIhI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j6+G/mLSFuonIBjZmJay27UjgEAR7FqXXxSWNdKTwaCfYYJTehyTW8PWVgJ37g+Br
-         JMj550TmgCJ980Ug7sBSxLctrQyPGPs0dZCKY1UGBsCeJOYx42VgXkDN31xV5c1L0G
-         7BBQtbYyWrqhO3tryb+LXOfJrxtYKI0/OUF89ywg=
+        b=ufaKsDP+eF8/Rf6zXyVJdA6XVBpLttTSUxKsyIpgu+5qfmpOIeF3ppaByTuB1DrhI
+         JGgzfUHPkXbT0HyGeM389RD9WsrR+CbspWkY3M8JVAsIKIdfrqBGanvtQ2B6xN3I1g
+         bTueB1e5Seif8zBaJESiPYi5wDhQUT4SwVyEnkEs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.4 94/99] i2c: riic: Clear NACK in tend isr
-Date:   Thu,  3 Oct 2019 17:53:57 +0200
-Message-Id: <20191003154341.692437022@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 117/129] btrfs: Relinquish CPUs in btrfs_compare_trees
+Date:   Thu,  3 Oct 2019 17:54:00 +0200
+Message-Id: <20191003154413.378597779@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit a71e2ac1f32097fbb2beab098687a7a95c84543e upstream.
+commit 6af112b11a4bc1b560f60a618ac9c1dcefe9836e upstream.
 
-The NACKF flag should be cleared in INTRIICNAKI interrupt processing as
-description in HW manual.
+When doing any form of incremental send the parent and the child trees
+need to be compared via btrfs_compare_trees. This  can result in long
+loop chains without ever relinquishing the CPU. This causes softlockup
+detector to trigger when comparing trees with a lot of items. Example
+report:
 
-This issue shows up quickly when PREEMPT_RT is applied and a device is
-probed that is not plugged in (like a touchscreen controller). The result
-is endless interrupts that halt system boot.
+watchdog: BUG: soft lockup - CPU#0 stuck for 24s! [snapperd:16153]
+CPU: 0 PID: 16153 Comm: snapperd Not tainted 5.2.9-1-default #1 openSUSE Tumbleweed (unreleased)
+Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+pstate: 40000005 (nZcv daif -PAN -UAO)
+pc : __ll_sc_arch_atomic_sub_return+0x14/0x20
+lr : btrfs_release_extent_buffer_pages+0xe0/0x1e8 [btrfs]
+sp : ffff00001273b7e0
+Call trace:
+ __ll_sc_arch_atomic_sub_return+0x14/0x20
+ release_extent_buffer+0xdc/0x120 [btrfs]
+ free_extent_buffer.part.0+0xb0/0x118 [btrfs]
+ free_extent_buffer+0x24/0x30 [btrfs]
+ btrfs_release_path+0x4c/0xa0 [btrfs]
+ btrfs_free_path.part.0+0x20/0x40 [btrfs]
+ btrfs_free_path+0x24/0x30 [btrfs]
+ get_inode_info+0xa8/0xf8 [btrfs]
+ finish_inode_if_needed+0xe0/0x6d8 [btrfs]
+ changed_cb+0x9c/0x410 [btrfs]
+ btrfs_compare_trees+0x284/0x648 [btrfs]
+ send_subvol+0x33c/0x520 [btrfs]
+ btrfs_ioctl_send+0x8a0/0xaf0 [btrfs]
+ btrfs_ioctl+0x199c/0x2288 [btrfs]
+ do_vfs_ioctl+0x4b0/0x820
+ ksys_ioctl+0x84/0xb8
+ __arm64_sys_ioctl+0x28/0x38
+ el0_svc_common.constprop.0+0x7c/0x188
+ el0_svc_handler+0x34/0x90
+ el0_svc+0x8/0xc
 
-Fixes: 310c18a41450 ("i2c: riic: add driver")
-Cc: stable@vger.kernel.org
-Reported-by: Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fix this by adding a call to cond_resched at the beginning of the main
+loop in btrfs_compare_trees.
+
+Fixes: 7069830a9e38 ("Btrfs: add btrfs_compare_trees function")
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-riic.c |    1 +
+ fs/btrfs/ctree.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -212,6 +212,7 @@ static irqreturn_t riic_tend_isr(int irq
- 	if (readb(riic->base + RIIC_ICSR2) & ICSR2_NACKF) {
- 		/* We got a NACKIE */
- 		readb(riic->base + RIIC_ICDRR);	/* dummy read */
-+		riic_clear_set_bit(riic, ICSR2_NACKF, 0, RIIC_ICSR2);
- 		riic->err = -ENXIO;
- 	} else if (riic->bytes_left) {
- 		return IRQ_NONE;
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -5467,6 +5467,7 @@ int btrfs_compare_trees(struct btrfs_roo
+ 	advance_left = advance_right = 0;
+ 
+ 	while (1) {
++		cond_resched();
+ 		if (advance_left && !left_end_reached) {
+ 			ret = tree_advance(left_root, left_path, &left_level,
+ 					left_root_level,
 
 
