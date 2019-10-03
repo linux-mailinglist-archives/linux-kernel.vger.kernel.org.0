@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47F04CA398
+	by mail.lfdr.de (Postfix) with ESMTP id B0891CA399
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389125AbfJCQQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:16:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42214 "EHLO mail.kernel.org"
+        id S2388361AbfJCQRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:17:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389106AbfJCQQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:16:52 -0400
+        id S2387779AbfJCQQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:16:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33CF020865;
-        Thu,  3 Oct 2019 16:16:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EC1B20865;
+        Thu,  3 Oct 2019 16:16:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119411;
-        bh=g5n/f2orquoWGH33QaUBF3fe0GsS1SbY/85pMcYcF4E=;
+        s=default; t=1570119417;
+        bh=DM6CKKGHX4IgKpzSLPPrNa7vM4k4yCQtzVToryn8A5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pwM6At4Dn4bvuI5Hs8tr1ymbD/ICVXNiyr8XgmYJUpCBga7hiDWZWXqOYg0hh2Zgy
-         vt52O0fh6gatthz+cCtUr+QbK4TQ2ThIR8QnFEp2IWLXtqi+JKY2Eh7qw2mjDouQbd
-         sfLNqtQlH028kDr0RG9kU87lq7Lb1Q+PXhP560k8=
+        b=IptwCjO6Qcst30Pq22wK9R6Fhk81zY2yTOgULJ7RdR+qlzqMCVWuIbhkBO49BTAEk
+         3QGukHvt6gotAGR01sNoQ3djBBlApLPuSr2fxUJIn8KBQYU8TP/ccLVeAv3+ehuerJ
+         r7h1d4FyZPR/TzJV9OOicJdnUBfkL71alOWD0ncw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        Song Liu <songliubraving@fb.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 055/211] md: dont call spare_active in md_reap_sync_thread if all member devices cant work
-Date:   Thu,  3 Oct 2019 17:52:01 +0200
-Message-Id: <20191003154500.825598265@linuxfoundation.org>
+Subject: [PATCH 4.19 057/211] media: media/platform: fsl-viu.c: fix build for MICROBLAZE
+Date:   Thu,  3 Oct 2019 17:52:03 +0200
+Message-Id: <20191003154501.340506559@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -45,43 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guoqing Jiang <jgq516@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 0d8ed0e9bf9643f27f4816dca61081784dedb38d ]
+[ Upstream commit 6898dd580a045341f844862ceb775144156ec1af ]
 
-When add one disk to array, the md_reap_sync_thread is responsible
-to activate the spare and set In_sync flag for the new member in
-spare_active().
+arch/microblaze/ defines out_be32() and in_be32(), so don't do that
+again in the driver source.
 
-But if raid1 has one member disk A, and disk B is added to the array.
-Then we offline A before all the datas are synchronized from A to B,
-obviously B doesn't have the latest data as A, but B is still marked
-with In_sync flag.
+Fixes these build warnings:
 
-So let's not call spare_active under the condition, otherwise B is
-still showed with 'U' state which is not correct.
+../drivers/media/platform/fsl-viu.c:36: warning: "out_be32" redefined
+../arch/microblaze/include/asm/io.h:50: note: this is the location of the previous definition
+../drivers/media/platform/fsl-viu.c:37: warning: "in_be32" redefined
+../arch/microblaze/include/asm/io.h:53: note: this is the location of the previous definition
 
-Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Fixes: 29d750686331 ("media: fsl-viu: allow building it with COMPILE_TEST")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/platform/fsl-viu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index fb5d702e43b5b..73758b3679a11 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8948,7 +8948,8 @@ void md_reap_sync_thread(struct mddev *mddev)
- 	/* resync has finished, collect result */
- 	md_unregister_thread(&mddev->sync_thread);
- 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
--	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery)) {
-+	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
-+	    mddev->degraded != mddev->raid_disks) {
- 		/* success...*/
- 		/* activate any spares */
- 		if (mddev->pers->spare_active(mddev)) {
+diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
+index 0273302aa7412..83086eea14500 100644
+--- a/drivers/media/platform/fsl-viu.c
++++ b/drivers/media/platform/fsl-viu.c
+@@ -37,7 +37,7 @@
+ #define VIU_VERSION		"0.5.1"
+ 
+ /* Allow building this driver with COMPILE_TEST */
+-#ifndef CONFIG_PPC
++#if !defined(CONFIG_PPC) && !defined(CONFIG_MICROBLAZE)
+ #define out_be32(v, a)	iowrite32be(a, (void __iomem *)v)
+ #define in_be32(a)	ioread32be((void __iomem *)a)
+ #endif
 -- 
 2.20.1
 
