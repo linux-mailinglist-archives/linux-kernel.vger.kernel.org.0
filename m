@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3F1DCA5E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F158CA749
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404642AbfJCQhp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:37:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47102 "EHLO mail.kernel.org"
+        id S2406202AbfJCQwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:52:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404627AbfJCQhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:37:42 -0400
+        id S2406184AbfJCQw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:52:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D45C2086A;
-        Thu,  3 Oct 2019 16:37:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EB6020867;
+        Thu,  3 Oct 2019 16:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120661;
-        bh=UGqMufujAPeYf8XfJuRbDlboz+r/vDuLTwr5F1tDuSA=;
+        s=default; t=1570121547;
+        bh=AVrR9+tsKYdOfYBrPs/yN9cRUzxjuwMAG5sQEM8OOFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wNnKXvnPwVr8S9KJAkA6DRR8y2OA/ay/ocVRXhtLRhYb8KD4HlXcd/G64Nqqxmdce
-         HXqqsjHe2mK4I056am/fL/8YDZhd+I06faD2ErSNJIpqdMql8z/63TgISgUn7wqEFD
-         xoAsOlcgY+F/6RgJStLBI4V5VFlLFFZMzyZMvXNo=
+        b=sDQHhVDHmysfAYUumR9sV/P4w1sVg/e3WvqU3eqPpXSRFa+VzGIOwrVbaXMvmJVOY
+         WW/m9eTHS2mA8Ogh0DDL9VWTPpTIXUg+6dkcreBejKz6SdM3sbM/8pMcYXwA6HLfnL
+         NbzbfB6w/8yk53HOJhnqnO1znYaOgDtuM8daixQE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.2 305/313] hwrng: core - dont wait on add_early_randomness()
-Date:   Thu,  3 Oct 2019 17:54:43 +0200
-Message-Id: <20191003154603.241542353@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.3 319/344] ACPI / LPSS: Save/restore LPSS private registers also on Lynxpoint
+Date:   Thu,  3 Oct 2019 17:54:44 +0200
+Message-Id: <20191003154610.524307055@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Vivier <lvivier@redhat.com>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-commit 78887832e76541f77169a24ac238fccb51059b63 upstream.
+commit 57b3006492a4c11b2d4a772b5b2905d544a32037 upstream.
 
-add_early_randomness() is called by hwrng_register() when the
-hardware is added. If this hardware and its module are present
-at boot, and if there is no data available the boot hangs until
-data are available and can't be interrupted.
+My assumption in commit b53548f9d9e4 ("spi: pxa2xx: Remove LPSS private
+register restoring during resume") that Intel Lynxpoint and compatible
+based chipsets may not need LPSS private registers saving and restoring
+over suspend/resume cycle turned out to be false on Intel Broadwell.
 
-For instance, in the case of virtio-rng, in some cases the host can be
-not able to provide enough entropy for all the guests.
+Curtis Malainey sent a patch bringing above change back and reported the
+LPSS SPI Chip Select control was lost over suspend/resume cycle on
+Broadwell machine.
 
-We can have two easy ways to reproduce the problem but they rely on
-misconfiguration of the hypervisor or the egd daemon:
+Instead of reverting above commit lets add LPSS private register
+saving/restoring also for all LPSS SPI, I2C and UART controllers on
+Lynxpoint and compatible chipset to make sure context is not lost in
+case nothing else preserves it like firmware or if LPSS is always on.
 
-- if virtio-rng device is configured to connect to the egd daemon of the
-host but when the virtio-rng driver asks for data the daemon is not
-connected,
-
-- if virtio-rng device is configured to connect to the egd daemon of the
-host but the egd daemon doesn't provide data.
-
-The guest kernel will hang at boot until the virtio-rng driver provides
-enough data.
-
-To avoid that, call rng_get_data() in non-blocking mode (wait=0)
-from add_early_randomness().
-
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-Fixes: d9e797261933 ("hwrng: add randomness to system from rng...")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: b53548f9d9e4 ("spi: pxa2xx: Remove LPSS private register restoring during resume")
+Reported-by: Curtis Malainey <cujomalainey@chromium.org>
+Tested-by: Curtis Malainey <cujomalainey@chromium.org>
+Cc: 5.0+ <stable@vger.kernel.org> # 5.0+
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/hw_random/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/acpi_lpss.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -67,7 +67,7 @@ static void add_early_randomness(struct
- 	size_t size = min_t(size_t, 16, rng_buffer_size());
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -219,12 +219,13 @@ static void bsw_pwm_setup(struct lpss_pr
+ }
  
- 	mutex_lock(&reading_mutex);
--	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
-+	bytes_read = rng_get_data(rng, rng_buffer, size, 0);
- 	mutex_unlock(&reading_mutex);
- 	if (bytes_read > 0)
- 		add_device_randomness(rng_buffer, bytes_read);
+ static const struct lpss_device_desc lpt_dev_desc = {
+-	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR,
++	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR
++			| LPSS_SAVE_CTX,
+ 	.prv_offset = 0x800,
+ };
+ 
+ static const struct lpss_device_desc lpt_i2c_dev_desc = {
+-	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_LTR,
++	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_LTR | LPSS_SAVE_CTX,
+ 	.prv_offset = 0x800,
+ };
+ 
+@@ -236,7 +237,8 @@ static struct property_entry uart_proper
+ };
+ 
+ static const struct lpss_device_desc lpt_uart_dev_desc = {
+-	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR,
++	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR
++			| LPSS_SAVE_CTX,
+ 	.clk_con_id = "baudclk",
+ 	.prv_offset = 0x800,
+ 	.setup = lpss_uart_setup,
 
 
