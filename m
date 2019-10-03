@@ -2,40 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB449CAC70
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4762CAC75
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387565AbfJCQKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:10:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59220 "EHLO mail.kernel.org"
+        id S1730269AbfJCQKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:10:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387552AbfJCQKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:10:06 -0400
+        id S2387585AbfJCQKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:10:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6212D21783;
-        Thu,  3 Oct 2019 16:10:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89D88207FF;
+        Thu,  3 Oct 2019 16:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119004;
-        bh=j67NKNp1md3REwfcpHfBf9dbvu5Cj75dKsr8XcqXwBo=;
+        s=default; t=1570119013;
+        bh=++ww0M8FldhONH/sKfUkcOspcDTMgTrhuVQH5MzsDWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K77vLWfztfW16ds3GLVz00VwGud4csFaSl9e8jX+RYWeesd+pwRvjcOxIlLveaO4w
-         OaW19isi51091EZIII7od/pOqBKt6dUIYBQ75RttShyYiFEmOGSSnR79UG7TinBOAN
-         7LcqHrtONrhCyyOfKBk9+Zi6JZru80zNKyLtDLG0=
+        b=tzvFHoCZrr6Db+GfCUPcWT0hY2OKXqqbLXPbqvt5yFiFWHckn25tWOMZ0mCTZMxuz
+         aR8G5JWmrPs7Sru4l/7oid0Q6uis1JVMau4qY2MqDxYfSMWyWja6EX8KQtv37AeJqs
+         g0vq0Air8MDfoc/XjAYNF2vw0yIZvSXrJ1Ox8JGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 091/185] media: i2c: ov5645: Fix power sequence
-Date:   Thu,  3 Oct 2019 17:52:49 +0200
-Message-Id: <20191003154458.980232033@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 094/185] net: lpc-enet: fix printk format strings
+Date:   Thu,  3 Oct 2019 17:52:52 +0200
+Message-Id: <20191003154459.576180428@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -48,120 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 092e8eb90a7dc7dd210cd4e2ea36075d0a7f96af ]
+[ Upstream commit de6f97b2bace0e2eb6c3a86e124d1e652a587b56 ]
 
-This is mostly a port of Jacopo's fix:
+compile-testing this driver on other architectures showed
+multiple warnings:
 
-  commit aa4bb8b8838ffcc776a79f49a4d7476b82405349
-  Author: Jacopo Mondi <jacopo@jmondi.org>
-  Date:   Fri Jul 6 05:51:52 2018 -0400
+  drivers/net/ethernet/nxp/lpc_eth.c: In function 'lpc_eth_drv_probe':
+  drivers/net/ethernet/nxp/lpc_eth.c:1337:19: warning: format '%d' expects argument of type 'int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
 
-  media: ov5640: Re-work MIPI startup sequence
+  drivers/net/ethernet/nxp/lpc_eth.c:1342:19: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
 
-In the OV5645 case, the changes are:
+Use format strings that work on all architectures.
 
-- At set_power(1) time power up MIPI Tx/Rx and set data and clock lanes in
-  LP11 during 'sleep' and 'idle' with MIPI clock in non-continuous mode.
-- At set_power(0) time power down MIPI Tx/Rx (in addition to the current
-  power down of regulators and clock gating).
-- At s_stream time enable/disable the MIPI interface output.
-
-With this commit the sensor is able to enter LP-11 mode during power up,
-as expected by some CSI-2 controllers.
-
-Many thanks to Fabio Estevam for his help debugging this issue.
-
-Tested-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Link: https://lore.kernel.org/r/20190809144043.476786-10-arnd@arndb.de
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov5645.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/nxp/lpc_eth.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-index 2d96c18497593..de15a13443e47 100644
---- a/drivers/media/i2c/ov5645.c
-+++ b/drivers/media/i2c/ov5645.c
-@@ -53,6 +53,8 @@
- #define		OV5645_CHIP_ID_HIGH_BYTE	0x56
- #define OV5645_CHIP_ID_LOW		0x300b
- #define		OV5645_CHIP_ID_LOW_BYTE		0x45
-+#define OV5645_IO_MIPI_CTRL00		0x300e
-+#define OV5645_PAD_OUTPUT00		0x3019
- #define OV5645_AWB_MANUAL_CONTROL	0x3406
- #define		OV5645_AWB_MANUAL_ENABLE	BIT(0)
- #define OV5645_AEC_PK_MANUAL		0x3503
-@@ -63,6 +65,7 @@
- #define		OV5645_ISP_VFLIP		BIT(2)
- #define OV5645_TIMING_TC_REG21		0x3821
- #define		OV5645_SENSOR_MIRROR		BIT(1)
-+#define OV5645_MIPI_CTRL00		0x4800
- #define OV5645_PRE_ISP_TEST_SETTING_1	0x503d
- #define		OV5645_TEST_PATTERN_MASK	0x3
- #define		OV5645_SET_TEST_PATTERN(x)	((x) & OV5645_TEST_PATTERN_MASK)
-@@ -129,7 +132,6 @@ static const struct reg_value ov5645_global_init_setting[] = {
- 	{ 0x3503, 0x07 },
- 	{ 0x3002, 0x1c },
- 	{ 0x3006, 0xc3 },
--	{ 0x300e, 0x45 },
- 	{ 0x3017, 0x00 },
- 	{ 0x3018, 0x00 },
- 	{ 0x302e, 0x0b },
-@@ -358,7 +360,10 @@ static const struct reg_value ov5645_global_init_setting[] = {
- 	{ 0x3a1f, 0x14 },
- 	{ 0x0601, 0x02 },
- 	{ 0x3008, 0x42 },
--	{ 0x3008, 0x02 }
-+	{ 0x3008, 0x02 },
-+	{ OV5645_IO_MIPI_CTRL00, 0x40 },
-+	{ OV5645_MIPI_CTRL00, 0x24 },
-+	{ OV5645_PAD_OUTPUT00, 0x70 }
- };
+diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+index 08381ef8bdb48..41d30f55c946b 100644
+--- a/drivers/net/ethernet/nxp/lpc_eth.c
++++ b/drivers/net/ethernet/nxp/lpc_eth.c
+@@ -1371,13 +1371,14 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	pldat->dma_buff_base_p = dma_handle;
  
- static const struct reg_value ov5645_setting_sxga[] = {
-@@ -743,13 +748,9 @@ static int ov5645_s_power(struct v4l2_subdev *sd, int on)
- 				goto exit;
- 			}
+ 	netdev_dbg(ndev, "IO address space     :%pR\n", res);
+-	netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
++	netdev_dbg(ndev, "IO address size      :%zd\n",
++			(size_t)resource_size(res));
+ 	netdev_dbg(ndev, "IO address (mapped)  :0x%p\n",
+ 			pldat->net_base);
+ 	netdev_dbg(ndev, "IRQ number           :%d\n", ndev->irq);
+-	netdev_dbg(ndev, "DMA buffer size      :%d\n", pldat->dma_buff_size);
+-	netdev_dbg(ndev, "DMA buffer P address :0x%08x\n",
+-			pldat->dma_buff_base_p);
++	netdev_dbg(ndev, "DMA buffer size      :%zd\n", pldat->dma_buff_size);
++	netdev_dbg(ndev, "DMA buffer P address :%pad\n",
++			&pldat->dma_buff_base_p);
+ 	netdev_dbg(ndev, "DMA buffer V address :0x%p\n",
+ 			pldat->dma_buff_base_v);
  
--			ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
--					       OV5645_SYSTEM_CTRL0_STOP);
--			if (ret < 0) {
--				ov5645_set_power_off(ov5645);
--				goto exit;
--			}
-+			usleep_range(500, 1000);
- 		} else {
-+			ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x58);
- 			ov5645_set_power_off(ov5645);
- 		}
- 	}
-@@ -1069,11 +1070,20 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
- 			dev_err(ov5645->dev, "could not sync v4l2 controls\n");
- 			return ret;
- 		}
-+
-+		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x45);
-+		if (ret < 0)
-+			return ret;
-+
- 		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
- 				       OV5645_SYSTEM_CTRL0_START);
- 		if (ret < 0)
- 			return ret;
- 	} else {
-+		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x40);
-+		if (ret < 0)
-+			return ret;
-+
- 		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
- 				       OV5645_SYSTEM_CTRL0_STOP);
- 		if (ret < 0)
+@@ -1424,8 +1425,8 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_out_unregister_netdev;
+ 
+-	netdev_info(ndev, "LPC mac at 0x%08x irq %d\n",
+-	       res->start, ndev->irq);
++	netdev_info(ndev, "LPC mac at 0x%08lx irq %d\n",
++	       (unsigned long)res->start, ndev->irq);
+ 
+ 	phydev = ndev->phydev;
+ 
 -- 
 2.20.1
 
