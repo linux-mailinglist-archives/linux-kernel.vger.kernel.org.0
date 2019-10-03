@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF1CCA761
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583ABCA763
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393081AbfJCQxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:53:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41618 "EHLO mail.kernel.org"
+        id S2393201AbfJCQxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:53:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406434AbfJCQxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:53:33 -0400
+        id S2392392AbfJCQxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:53:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B34820867;
-        Thu,  3 Oct 2019 16:53:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 580FE2070B;
+        Thu,  3 Oct 2019 16:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121612;
-        bh=+DVWTkRncnAFYcTVWYorCgHrV49Hd2VG5eUzOOfe5Qo=;
+        s=default; t=1570121614;
+        bh=1/khuy4O3zZHpw9LAei40BNaPZ3LL9+GHfckPbkNiRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LRuKX5QLjpJ1V58e6GJwe6S/GjWfbL+8g8JIIcNDfw74ARYdsVOVXGZtUEV7ng7nk
-         GAwRPBv4nYYeqSzUqZphP3uJnxgfwDaFbyHD1/yn52m1U9afjYrinu9JXfmlTeZi86
-         rJcu+X8MYQN72LNmWGinr7VtW2RlQvaKkY2wJZDg=
+        b=rPFQag060fy0KhHewUhRlwpo+N6KwiPUZHW6OqUxdWdjDECbLVJy5pm829KLzcB2j
+         7ge3pFcIC2YlzgLejUg8zMM2Z2kyqWZ+TrJiOKlDOk/EpG5wnxlOe7Nb4HhS7H4eae
+         c25qTen6CnKazpwOX+tZsbmaxtrEDH+4ZgmZmPwA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 5.3 306/344] smb3: fix leak in "open on server" perf counter
-Date:   Thu,  3 Oct 2019 17:54:31 +0200
-Message-Id: <20191003154609.500567688@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ding Xiang <dingxiang@cmss.chinamobile.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.3 307/344] ovl: Fix dereferencing possible ERR_PTR()
+Date:   Thu,  3 Oct 2019 17:54:32 +0200
+Message-Id: <20191003154609.569642324@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -43,61 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve French <stfrench@microsoft.com>
+From: Ding Xiang <dingxiang@cmss.chinamobile.com>
 
-commit d2f15428d6a0ebfc0edc364094d7c4a2de7037ed upstream.
+commit 97f024b9171e74c4443bbe8a8dce31b917f97ac5 upstream.
 
-We were not bumping up the "open on server" (num_remote_opens)
-counter (in some cases) on opens of the share root so
-could end up showing as a negative value.
+if ovl_encode_real_fh() fails, no memory was allocated
+and the error in the error-valued pointer should be returned.
 
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Fixes: 9b6faee07470 ("ovl: check ERR_PTR() return value from ovl_encode_fh()")
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+Cc: <stable@vger.kernel.org> # v4.16+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2ops.c |    5 +++++
- fs/cifs/smb2pdu.c |    1 +
- 2 files changed, 6 insertions(+)
+ fs/overlayfs/export.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -743,6 +743,8 @@ int open_shroot(unsigned int xid, struct
- 	if (rc)
- 		goto oshr_exit;
+--- a/fs/overlayfs/export.c
++++ b/fs/overlayfs/export.c
+@@ -227,9 +227,8 @@ static int ovl_d_to_fh(struct dentry *de
+ 	/* Encode an upper or lower file handle */
+ 	fh = ovl_encode_real_fh(enc_lower ? ovl_dentry_lower(dentry) :
+ 				ovl_dentry_upper(dentry), !enc_lower);
+-	err = PTR_ERR(fh);
+ 	if (IS_ERR(fh))
+-		goto fail;
++		return PTR_ERR(fh);
  
-+	atomic_inc(&tcon->num_remote_opens);
-+
- 	o_rsp = (struct smb2_create_rsp *)rsp_iov[0].iov_base;
- 	oparms.fid->persistent_fid = o_rsp->PersistentFileId;
- 	oparms.fid->volatile_fid = o_rsp->VolatileFileId;
-@@ -1168,6 +1170,7 @@ smb2_set_ea(const unsigned int xid, stru
- 
- 	rc = compound_send_recv(xid, ses, flags, 3, rqst,
- 				resp_buftype, rsp_iov);
-+	/* no need to bump num_remote_opens because handle immediately closed */
- 
-  sea_exit:
- 	kfree(ea);
-@@ -1489,6 +1492,8 @@ smb2_ioctl_query_info(const unsigned int
- 				resp_buftype, rsp_iov);
- 	if (rc)
- 		goto iqinf_exit;
-+
-+	/* No need to bump num_remote_opens since handle immediately closed */
- 	if (qi.flags & PASSTHRU_FSCTL) {
- 		pqi = (struct smb_query_info __user *)arg;
- 		io_rsp = (struct smb2_ioctl_rsp *)rsp_iov[1].iov_base;
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2351,6 +2351,7 @@ int smb311_posix_mkdir(const unsigned in
- 	rqst.rq_iov = iov;
- 	rqst.rq_nvec = n_iov;
- 
-+	/* no need to inc num_remote_opens because we close it just below */
- 	trace_smb3_posix_mkdir_enter(xid, tcon->tid, ses->Suid, CREATE_NOT_FILE,
- 				    FILE_WRITE_ATTRIBUTES);
- 	/* resource #4: response buffer */
+ 	err = -EOVERFLOW;
+ 	if (fh->len > buflen)
 
 
