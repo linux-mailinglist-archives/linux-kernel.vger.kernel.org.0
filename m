@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E20CABD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3757CACF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731601AbfJCQAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44490 "EHLO mail.kernel.org"
+        id S1731181AbfJCRcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:32:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729183AbfJCQAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:39 -0400
+        id S1730823AbfJCQIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:08:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1837B20700;
-        Thu,  3 Oct 2019 16:00:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BF2320865;
+        Thu,  3 Oct 2019 16:08:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118438;
-        bh=qzG6mCQpLxLIoCbBJuTAvVzD7OE70ySI0GNPu4Bq79Y=;
+        s=default; t=1570118916;
+        bh=dN6+/uKXWq+iF1R17oTdBOC8Uzm9ThThdUa5PTr1FtY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A4uAFCYzgQ0hdV7Kb/T1rxQDz7fhy8Keubs+gAdcy8CkFXILhXv4QI9PvqM/17Znr
-         Kkw54l4c1bE2AllZNeLrhJRMjNrUv9j623lOsGNj7d8m1Ag+D3VH5P4O7xz2COidad
-         O4Xg8aOGp2tQ+qNzjK9b/uGJhdBEanm+Z4mJGsxI=
+        b=KVCKStx0846gXadzRB2kB7iQnGO+h2GWXLmlAJqIQmryFAzq/ifDJ8Y+B2LexyhMq
+         DhMKdik+OyodHG0ZIVYkn4YY5iQ8x1qZKWD3/+rR8ukj036R9QfunokuWwTKcZoOrF
+         RCBr5d8hiugDkfQYQHjQeviKhG6V1wLVJSY8loV0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Arkadiusz=20Mi=C5=9Bkiewicz?= <arekm@maven.pl>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 012/129] mac80211: Print text for disassociation reason
-Date:   Thu,  3 Oct 2019 17:52:15 +0200
-Message-Id: <20191003154323.946752777@linuxfoundation.org>
+Subject: [PATCH 4.14 058/185] media: dib0700: fix link error for dibx000_i2c_set_speed
+Date:   Thu,  3 Oct 2019 17:52:16 +0200
+Message-Id: <20191003154450.386437023@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arkadiusz Miskiewicz <a.miskiewicz@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 68506e9af132a6b5735c1dd4b11240da0cf5eeae ]
+[ Upstream commit 765bb8610d305ee488b35d07e2a04ae52fb2df9c ]
 
-When disassociation happens only numeric reason is printed
-in ieee80211_rx_mgmt_disassoc(). Add text variant, too.
+When CONFIG_DVB_DIB9000 is disabled, we can still compile code that
+now fails to link against dibx000_i2c_set_speed:
 
-Signed-off-by: Arkadiusz Miśkiewicz <arekm@maven.pl>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+drivers/media/usb/dvb-usb/dib0700_devices.o: In function `dib01x0_pmu_update.constprop.7':
+dib0700_devices.c:(.text.unlikely+0x1c9c): undefined reference to `dibx000_i2c_set_speed'
+
+The call sites are both through dib01x0_pmu_update(), which gets passed
+an 'i2c' pointer from dib9000_get_i2c_master(), which has returned
+NULL. Checking this pointer seems to be a good idea anyway, and it avoids
+the link failure in most cases.
+
+Sean Young found another case that is not fixed by that, where certain
+gcc versions leave an unused function in place that causes the link error,
+but adding an explict IS_ENABLED() check also solves this.
+
+Fixes: b7f54910ce01 ("V4L/DVB (4647): Added module for DiB0700 based devices")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/mlme.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/usb/dvb-usb/dib0700_devices.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index f462f026fc6aa..090e2aa8630e8 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -2869,8 +2869,9 @@ static void ieee80211_rx_mgmt_disassoc(struct ieee80211_sub_if_data *sdata,
+diff --git a/drivers/media/usb/dvb-usb/dib0700_devices.c b/drivers/media/usb/dvb-usb/dib0700_devices.c
+index 9be1e658ef47e..969358f57d91a 100644
+--- a/drivers/media/usb/dvb-usb/dib0700_devices.c
++++ b/drivers/media/usb/dvb-usb/dib0700_devices.c
+@@ -2438,9 +2438,13 @@ static int dib9090_tuner_attach(struct dvb_usb_adapter *adap)
+ 		8, 0x0486,
+ 	};
  
- 	reason_code = le16_to_cpu(mgmt->u.disassoc.reason_code);
- 
--	sdata_info(sdata, "disassociated from %pM (Reason: %u)\n",
--		   mgmt->sa, reason_code);
-+	sdata_info(sdata, "disassociated from %pM (Reason: %u=%s)\n",
-+		   mgmt->sa, reason_code,
-+		   ieee80211_get_reason_code_string(reason_code));
- 
- 	ieee80211_set_disassoc(sdata, 0, 0, false, NULL);
++	if (!IS_ENABLED(CONFIG_DVB_DIB9000))
++		return -ENODEV;
+ 	if (dvb_attach(dib0090_fw_register, adap->fe_adap[0].fe, i2c, &dib9090_dib0090_config) == NULL)
+ 		return -ENODEV;
+ 	i2c = dib9000_get_i2c_master(adap->fe_adap[0].fe, DIBX000_I2C_INTERFACE_GPIO_1_2, 0);
++	if (!i2c)
++		return -ENODEV;
+ 	if (dib01x0_pmu_update(i2c, data_dib190, 10) != 0)
+ 		return -ENODEV;
+ 	dib0700_set_i2c_speed(adap->dev, 1500);
+@@ -2516,10 +2520,14 @@ static int nim9090md_tuner_attach(struct dvb_usb_adapter *adap)
+ 		0, 0x00ef,
+ 		8, 0x0406,
+ 	};
++	if (!IS_ENABLED(CONFIG_DVB_DIB9000))
++		return -ENODEV;
+ 	i2c = dib9000_get_tuner_interface(adap->fe_adap[0].fe);
+ 	if (dvb_attach(dib0090_fw_register, adap->fe_adap[0].fe, i2c, &nim9090md_dib0090_config[0]) == NULL)
+ 		return -ENODEV;
+ 	i2c = dib9000_get_i2c_master(adap->fe_adap[0].fe, DIBX000_I2C_INTERFACE_GPIO_1_2, 0);
++	if (!i2c)
++		return -ENODEV;
+ 	if (dib01x0_pmu_update(i2c, data_dib190, 10) < 0)
+ 		return -ENODEV;
  
 -- 
 2.20.1
