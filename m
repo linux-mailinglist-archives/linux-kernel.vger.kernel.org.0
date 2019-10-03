@@ -2,105 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FDC3C9E59
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E1EC9E66
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729865AbfJCMZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 08:25:40 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39725 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729732AbfJCMZi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 08:25:38 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v17so2141278wml.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 05:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lleiCD1v15l9Knq/O5s6uOY5ExpJMMfHSdvlMxr6Vcg=;
-        b=tjbXHeyN83Cp9mfYg6tMmuCTa8iJlm2AtRkNUAUmvZfqMRXO5ErwNPiTFg4RqiSmNU
-         yooE7YjhTsk6R+xdORaqzFj93gsbin6YREP/vTW3MYm3K6INWohS159Do2xjVpfAyZlS
-         bIOr7lEJ0ctcpwpPkFVL1HrxJDl+QCATHH0it9BDav0K3QgoKkA+68bdBrS44aaW7IbG
-         By5pWfvKjz9FRXc6r/bBROrmFb060ZG8E+/C+c0XXJZLjXHT6RgpLVPOmlJ+t6eeypD3
-         YCiaUng9m7nfEPZVqSRVoYUOR65TQgBXgk+/NcLaCHaJp5bOb9uTiaFpuhW5VQUAvWmO
-         AA4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lleiCD1v15l9Knq/O5s6uOY5ExpJMMfHSdvlMxr6Vcg=;
-        b=jLpJV1SuGHT2Cpo1/XIpZsTcN5007938ITYnksEbuWSazU5pkt8DwgFt1PrWw5FE6I
-         w26Jofa0TI+cpNQGtMSplNfrJ7N9pLIu7LKzGnvey3nP0OUBCdHFu5YaMF07nks6Y0r8
-         UC9rfa8+YMDVDp78ebeXcOoBvElFxe1jAPs7t2ykMuR988iJhb+/BNm9eNlqZWrAjYOH
-         PUBflX0dc8h4oxOQ44wHwZvO9+6lVhyKvcyDbFUxMuxFklWLl8HPon67cn5KwyleLc8Z
-         5uCaC4CBaZIMkJB45/i+yYH5A6R+enDokZEC/+bep0OZXeA4C0KHnnUKFq2JxtHO5KVa
-         mCXg==
-X-Gm-Message-State: APjAAAUB0MuhfohXTSF11/UBlZFsJQKYFDrx/F3TPj8v7xmpxs9hITh5
-        T0dxe2NIEH68BB08nmRxvLk=
-X-Google-Smtp-Source: APXvYqyEuPiddb/r4iV5RZ/2bLpIuHN1lQrx6jlHqD0XiQXyNIrRs+ECucgSNcu+GQPyJYAj6JwrOg==
-X-Received: by 2002:a7b:c108:: with SMTP id w8mr6875006wmi.8.1570105537024;
-        Thu, 03 Oct 2019 05:25:37 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id f17sm2699322wru.29.2019.10.03.05.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 05:25:36 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/4] staging: rtl8188eu: cleanup comments in update_hw_ht_param
-Date:   Thu,  3 Oct 2019 14:25:14 +0200
-Message-Id: <20191003122514.1760-5-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003122514.1760-1-straube.linux@gmail.com>
-References: <20191003122514.1760-1-straube.linux@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729548AbfJCM1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 08:27:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37854 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727242AbfJCM1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 08:27:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ED4A2AD49;
+        Thu,  3 Oct 2019 12:27:32 +0000 (UTC)
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] MIPS: SGI-IP27: remove not used stuff inherited from IRIX
+Date:   Thu,  3 Oct 2019 14:27:23 +0200
+Message-Id: <20191003122724.12239-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup comments in update_hw_ht_param to follow kernel coding style
-and avoid line length over 80 characters.
+Most of the SN/SN0 header files are inherited from IRIX header files,
+but not all of that stuff is useful for Linux. Remove not used parts.
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 ---
- drivers/staging/rtl8188eu/core/rtw_ap.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ arch/mips/include/asm/sn/arch.h     | 8 --------
+ arch/mips/include/asm/sn/sn0/arch.h | 2 --
+ arch/mips/include/asm/sn/types.h    | 3 ---
+ 3 files changed, 13 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_ap.c b/drivers/staging/rtl8188eu/core/rtw_ap.c
-index 97cab71cef23..9aa44c921aca 100644
---- a/drivers/staging/rtl8188eu/core/rtw_ap.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_ap.c
-@@ -567,20 +567,17 @@ static void update_hw_ht_param(struct adapter *padapter)
+diff --git a/arch/mips/include/asm/sn/arch.h b/arch/mips/include/asm/sn/arch.h
+index 3f1fb1454749..97fa2b6440a1 100644
+--- a/arch/mips/include/asm/sn/arch.h
++++ b/arch/mips/include/asm/sn/arch.h
+@@ -19,8 +19,6 @@
  
- 	DBG_88E("%s\n", __func__);
+ #define cputonasid(cpu)		(sn_cpu_info[(cpu)].p_nasid)
+ #define cputoslice(cpu)		(sn_cpu_info[(cpu)].p_slice)
+-#define makespnum(_nasid, _slice)					\
+-		(((_nasid) << CPUS_PER_NODE_SHFT) | (_slice))
  
--	/* handle A-MPDU parameter field */
--	/*
--		ampdu_params_info [1:0]:Max AMPDU Len => 0:8k , 1:16k, 2:32k, 3:64k
--		ampdu_params_info [4:2]:Min MPDU Start Spacing
--	*/
-+	/* handle A-MPDU parameter field
-+	 * ampdu_params_info [1:0]:Max AMPDU Len => 0:8k , 1:16k, 2:32k, 3:64k
-+	 * ampdu_params_info [4:2]:Min MPDU Start Spacing
-+	 */
- 	max_ampdu_len = pmlmeinfo->HT_caps.ampdu_params_info & 0x03;
- 	min_mpdu_spacing = (pmlmeinfo->HT_caps.ampdu_params_info & 0x1c) >> 2;
+ #define INVALID_NASID		(nasid_t)-1
+ #define INVALID_CNODEID		(cnodeid_t)-1
+@@ -47,12 +45,6 @@ extern nasid_t compact_to_nasid_node[MAX_COMPACT_NODES];
+  * will continue to work.  Don't use the arrays above directly.
+  */
  
- 	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_MIN_SPACE, &min_mpdu_spacing);
- 	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_FACTOR, &max_ampdu_len);
+-#define NASID_TO_REGION(nnode)		\
+-    ((nnode) >> \
+-     (is_fine_dirmode() ? NASID_TO_FINEREG_SHFT : NASID_TO_COARSEREG_SHFT))
+-
+-extern cnodeid_t nasid_to_compact_node[MAX_NASIDS];
+-extern nasid_t compact_to_nasid_node[MAX_COMPACT_NODES];
+ extern cnodeid_t cpuid_to_compact_node[MAXCPUS];
  
--	/*  */
--	/*  Config SM Power Save setting */
--	/*  */
-+	/* Config SM Power Save setting */
- 	pmlmeinfo->SM_PS = (le16_to_cpu(pmlmeinfo->HT_caps.cap_info) & 0x0C) >> 2;
- 	if (pmlmeinfo->SM_PS == WLAN_HT_CAP_SM_PS_STATIC)
- 		DBG_88E("%s(): WLAN_HT_CAP_SM_PS_STATIC\n", __func__);
+ #define NASID_TO_COMPACT_NODEID(nnode)	(nasid_to_compact_node[nnode])
+diff --git a/arch/mips/include/asm/sn/sn0/arch.h b/arch/mips/include/asm/sn/sn0/arch.h
+index 425a67e6a947..ea8a6983f6a4 100644
+--- a/arch/mips/include/asm/sn/sn0/arch.h
++++ b/arch/mips/include/asm/sn/sn0/arch.h
+@@ -66,7 +66,5 @@
+ #define SLOT_MIN_MEM_SIZE	(32*1024*1024)
+ 
+ #define CPUS_PER_NODE		2	/* CPUs on a single hub */
+-#define CPUS_PER_NODE_SHFT	1	/* Bits to shift in the node number */
+-#define CPUS_PER_SUBNODE	2	/* CPUs on a single hub PI */
+ 
+ #endif /* _ASM_SN_SN0_ARCH_H */
+diff --git a/arch/mips/include/asm/sn/types.h b/arch/mips/include/asm/sn/types.h
+index 6d24d4e8b9ed..f9d0bc2007c3 100644
+--- a/arch/mips/include/asm/sn/types.h
++++ b/arch/mips/include/asm/sn/types.h
+@@ -12,13 +12,10 @@
+ #include <linux/types.h>
+ 
+ typedef unsigned long	cpuid_t;
+-typedef unsigned long	cnodemask_t;
+ typedef signed short	nasid_t;	/* node id in numa-as-id space */
+ typedef signed short	cnodeid_t;	/* node id in compact-id space */
+ typedef signed char	partid_t;	/* partition ID type */
+ typedef signed short	moduleid_t;	/* user-visible module number type */
+-typedef signed short	cmoduleid_t;	/* kernel compact module id type */
+-typedef unsigned char	clusterid_t;	/* Clusterid of the cell */
+ 
+ typedef dev_t		vertex_hdl_t;	/* hardware graph vertex handle */
+ 
 -- 
-2.23.0
+2.16.4
 
