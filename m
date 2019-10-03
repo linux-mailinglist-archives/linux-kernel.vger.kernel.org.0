@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0B92CAAAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D3FFCAB5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393464AbfJCRL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:11:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38708 "EHLO mail.kernel.org"
+        id S2391273AbfJCRUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:20:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403843AbfJCQbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:31:38 -0400
+        id S2389572AbfJCQSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:18:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 715302133F;
-        Thu,  3 Oct 2019 16:31:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73FAE2133F;
+        Thu,  3 Oct 2019 16:18:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120298;
-        bh=1qcIqWVNgDnORZDuw7aMihN8tv/7ZLu/i1Km/FS0zBg=;
+        s=default; t=1570119490;
+        bh=izJSz9zwaSm5xge40Tyl2gKrXmgr/JkniLuCjKggVes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y/C3uoQZXJ4kku/Wz5zjSwvS81fkRBFjggOnCnP5Ur9evriVx4hhiugL2OYQfucXg
-         xR7dPW2Mq+EaRfi/hAQLA7H8pZg7PXZfHbJ/KBuXN8cb7+0Pa5CP1new2nhkE89XJB
-         tSO+1T5zNJDbYNMHgKwERjTf6gqtp17VYiA4qpuk=
+        b=E7DVvZPoeaC5kEZv0pwC+2S9ixtLKFrxVXeeUj9MknuDTJIdElg2Gcuf1OFudyW+q
+         yDNhBitfxKjnba/8x4xnRjWyMLodShIYtOwtaivkKLmGv/6fi2I0JKJGsHyLKjuIoR
+         SEV7qmtiuI0gspTnaoe8RHOkV8HRrUADB7t83Cko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 171/313] ACPI / PCI: fix acpi_pci_irq_enable() memory leak
-Date:   Thu,  3 Oct 2019 17:52:29 +0200
-Message-Id: <20191003154549.846979728@linuxfoundation.org>
+Subject: [PATCH 4.19 085/211] ASoC: uniphier: Fix double reset assersion when transitioning to suspend state
+Date:   Thu,  3 Oct 2019 17:52:31 +0200
+Message-Id: <20191003154506.476502103@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-[ Upstream commit 29b49958cf73b439b17fa29e9a25210809a6c01c ]
+[ Upstream commit c372a35550c8d60f673b20210eea58a06d6d38cb ]
 
-In acpi_pci_irq_enable(), 'entry' is allocated by kzalloc() in
-acpi_pci_irq_check_entry() (invoked from acpi_pci_irq_lookup()). However,
-it is not deallocated if acpi_pci_irq_valid() returns false, leading to a
-memory leak. To fix this issue, free 'entry' before returning 0.
+When transitioning to supend state, uniphier_aio_dai_suspend() is called
+and asserts reset lines and disables clocks.
 
-Fixes: e237a5518425 ("x86/ACPI/PCI: Recognize that Interrupt Line 255 means "not connected"")
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+However, if there are two or more DAIs, uniphier_aio_dai_suspend() are
+called multiple times, and double reset assersion will cause.
+
+This patch defines the counter that has the number of DAIs at first, and
+whenever uniphier_aio_dai_suspend() are called, it decrements the
+counter. And only if the counter is zero, it asserts reset lines and
+disables clocks.
+
+In the same way, uniphier_aio_dai_resume() are called, it increments the
+counter after deasserting reset lines and enabling clocks.
+
+Fixes: 139a34200233 ("ASoC: uniphier: add support for UniPhier AIO CPU DAI driver")
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Link: https://lore.kernel.org/r/1566281764-14059-1-git-send-email-hayashi.kunihiko@socionext.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/pci_irq.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/uniphier/aio-cpu.c | 31 +++++++++++++++++++++----------
+ sound/soc/uniphier/aio.h     |  1 +
+ 2 files changed, 22 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/acpi/pci_irq.c b/drivers/acpi/pci_irq.c
-index d2549ae65e1b6..dea8a60e18a4c 100644
---- a/drivers/acpi/pci_irq.c
-+++ b/drivers/acpi/pci_irq.c
-@@ -449,8 +449,10 @@ int acpi_pci_irq_enable(struct pci_dev *dev)
- 		 * No IRQ known to the ACPI subsystem - maybe the BIOS /
- 		 * driver reported one, then use it. Exit in any case.
- 		 */
--		if (!acpi_pci_irq_valid(dev, pin))
-+		if (!acpi_pci_irq_valid(dev, pin)) {
-+			kfree(entry);
- 			return 0;
-+		}
+diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
+index ee90e6c3937ce..2ae582a99b636 100644
+--- a/sound/soc/uniphier/aio-cpu.c
++++ b/sound/soc/uniphier/aio-cpu.c
+@@ -424,8 +424,11 @@ int uniphier_aio_dai_suspend(struct snd_soc_dai *dai)
+ {
+ 	struct uniphier_aio *aio = uniphier_priv(dai);
  
- 		if (acpi_isa_register_gsi(dev))
- 			dev_warn(&dev->dev, "PCI INT %c: no GSI\n",
+-	reset_control_assert(aio->chip->rst);
+-	clk_disable_unprepare(aio->chip->clk);
++	aio->chip->num_wup_aios--;
++	if (!aio->chip->num_wup_aios) {
++		reset_control_assert(aio->chip->rst);
++		clk_disable_unprepare(aio->chip->clk);
++	}
+ 
+ 	return 0;
+ }
+@@ -439,13 +442,15 @@ int uniphier_aio_dai_resume(struct snd_soc_dai *dai)
+ 	if (!aio->chip->active)
+ 		return 0;
+ 
+-	ret = clk_prepare_enable(aio->chip->clk);
+-	if (ret)
+-		return ret;
++	if (!aio->chip->num_wup_aios) {
++		ret = clk_prepare_enable(aio->chip->clk);
++		if (ret)
++			return ret;
+ 
+-	ret = reset_control_deassert(aio->chip->rst);
+-	if (ret)
+-		goto err_out_clock;
++		ret = reset_control_deassert(aio->chip->rst);
++		if (ret)
++			goto err_out_clock;
++	}
+ 
+ 	aio_iecout_set_enable(aio->chip, true);
+ 	aio_chip_init(aio->chip);
+@@ -458,7 +463,7 @@ int uniphier_aio_dai_resume(struct snd_soc_dai *dai)
+ 
+ 		ret = aio_init(sub);
+ 		if (ret)
+-			goto err_out_clock;
++			goto err_out_reset;
+ 
+ 		if (!sub->setting)
+ 			continue;
+@@ -466,11 +471,16 @@ int uniphier_aio_dai_resume(struct snd_soc_dai *dai)
+ 		aio_port_reset(sub);
+ 		aio_src_reset(sub);
+ 	}
++	aio->chip->num_wup_aios++;
+ 
+ 	return 0;
+ 
++err_out_reset:
++	if (!aio->chip->num_wup_aios)
++		reset_control_assert(aio->chip->rst);
+ err_out_clock:
+-	clk_disable_unprepare(aio->chip->clk);
++	if (!aio->chip->num_wup_aios)
++		clk_disable_unprepare(aio->chip->clk);
+ 
+ 	return ret;
+ }
+@@ -619,6 +629,7 @@ int uniphier_aio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(chip->rst);
+ 
+ 	chip->num_aios = chip->chip_spec->num_dais;
++	chip->num_wup_aios = chip->num_aios;
+ 	chip->aios = devm_kcalloc(dev,
+ 				  chip->num_aios, sizeof(struct uniphier_aio),
+ 				  GFP_KERNEL);
+diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
+index ca6ccbae0ee8c..a7ff7e556429b 100644
+--- a/sound/soc/uniphier/aio.h
++++ b/sound/soc/uniphier/aio.h
+@@ -285,6 +285,7 @@ struct uniphier_aio_chip {
+ 
+ 	struct uniphier_aio *aios;
+ 	int num_aios;
++	int num_wup_aios;
+ 	struct uniphier_aio_pll *plls;
+ 	int num_plls;
+ 
 -- 
 2.20.1
 
