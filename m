@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 764CBCAD24
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5245CAC1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388505AbfJCRfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:35:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53338 "EHLO mail.kernel.org"
+        id S1732641AbfJCQFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731848AbfJCQGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:13 -0400
+        id S1732611AbfJCQFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7572A21A4C;
-        Thu,  3 Oct 2019 16:06:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B376521A4C;
+        Thu,  3 Oct 2019 16:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118772;
-        bh=ySS2nkVRZ3AUrygpTactXdqeqMMVlSOWgYwCDjj95hc=;
+        s=default; t=1570118745;
+        bh=y443mZgJMPW97Mpfp8ZziGu2lKXh9L7Mmoa5z5wOjxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r1XCj/U1gDZzvOO/Ya3zCOiuxLsmkPX+myWAjNrbR1JCVj58HaHrC3lrgAeQgtD1o
-         N6OEApN+HeCIwYjeemGo/ofbW6c/NmvbC0s/ESZFTGnj81c8wAVtE6+OTQpeQQW3CU
-         wk6guNptbfwR3ssi/KvWB6e1BZBqMwSKisTK9Pls=
+        b=QNWM9LQMUMniAOOfJRVIppXgGZkUscNxG7vQ7SR3iu4H62Uf/j01ycOHkYDNeKDxE
+         RqxWj/z4XGWstImy9Lwde1LEFIBDafvhxkACU5Kijfji5Jj4Qs9t02Uy8xbWJA5cKv
+         /s2Iei5xaGXOSb1BUFVnOKmVCULWO7WYeswEeZRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Kenzior <denkenz@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 119/129] cfg80211: Purge frame registrations on iftype change
-Date:   Thu,  3 Oct 2019 17:54:02 +0200
-Message-Id: <20191003154414.815124153@linuxfoundation.org>
+        stable@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 124/129] hwrng: core - dont wait on add_early_randomness()
+Date:   Thu,  3 Oct 2019 17:54:07 +0200
+Message-Id: <20191003154416.111926355@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
 References: <20191003154318.081116689@linuxfoundation.org>
@@ -43,41 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Kenzior <denkenz@gmail.com>
+From: Laurent Vivier <lvivier@redhat.com>
 
-commit c1d3ad84eae35414b6b334790048406bd6301b12 upstream.
+commit 78887832e76541f77169a24ac238fccb51059b63 upstream.
 
-Currently frame registrations are not purged, even when changing the
-interface type.  This can lead to potentially weird situations where
-frames possibly not allowed on a given interface type remain registered
-due to the type switching happening after registration.
+add_early_randomness() is called by hwrng_register() when the
+hardware is added. If this hardware and its module are present
+at boot, and if there is no data available the boot hangs until
+data are available and can't be interrupted.
 
-The kernel currently relies on userspace apps to actually purge the
-registrations themselves, this is not something that the kernel should
-rely on.
+For instance, in the case of virtio-rng, in some cases the host can be
+not able to provide enough entropy for all the guests.
 
-Add a call to cfg80211_mlme_purge_registrations() to forcefully remove
-any registrations left over prior to switching the iftype.
+We can have two easy ways to reproduce the problem but they rely on
+misconfiguration of the hypervisor or the egd daemon:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-Link: https://lore.kernel.org/r/20190828211110.15005-1-denkenz@gmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+- if virtio-rng device is configured to connect to the egd daemon of the
+host but when the virtio-rng driver asks for data the daemon is not
+connected,
+
+- if virtio-rng device is configured to connect to the egd daemon of the
+host but the egd daemon doesn't provide data.
+
+The guest kernel will hang at boot until the virtio-rng driver provides
+enough data.
+
+To avoid that, call rng_get_data() in non-blocking mode (wait=0)
+from add_early_randomness().
+
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+Fixes: d9e797261933 ("hwrng: add randomness to system from rng...")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/util.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/hw_random/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -1051,6 +1051,7 @@ int cfg80211_change_iface(struct cfg8021
- 		}
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@ -88,7 +88,7 @@ static void add_early_randomness(struct
+ 	size_t size = min_t(size_t, 16, rng_buffer_size());
  
- 		cfg80211_process_rdev_events(rdev);
-+		cfg80211_mlme_purge_registrations(dev->ieee80211_ptr);
- 	}
- 
- 	err = rdev_change_virtual_intf(rdev, dev, ntype, flags, params);
+ 	mutex_lock(&reading_mutex);
+-	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
++	bytes_read = rng_get_data(rng, rng_buffer, size, 0);
+ 	mutex_unlock(&reading_mutex);
+ 	if (bytes_read > 0)
+ 		add_device_randomness(rng_buffer, bytes_read);
 
 
