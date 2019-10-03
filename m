@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16329CA5D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F83CA73E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403875AbfJCQhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:37:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46618 "EHLO mail.kernel.org"
+        id S2393110AbfJCQwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:52:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404537AbfJCQhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:37:15 -0400
+        id S2406150AbfJCQwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:52:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E1A6215EA;
-        Thu,  3 Oct 2019 16:37:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A4352070B;
+        Thu,  3 Oct 2019 16:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120634;
-        bh=uAVntkjPLgHA5UmSzzCWhj6ohpZsu17PsT4M5wIMo7M=;
+        s=default; t=1570121520;
+        bh=5Bb89N5oXv2dC+H8SkfOlk0iDEwpe8+f4bD2UlOZwvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CpZxkbpSo+0LF3G1cbP7OPIujnP3KNJyURjyoFVC40IyCN2n2efLXmqL6dftT9Iwl
-         b/GCiXK/qavPAPxGN6/6bywX6DMy5Q9ALE/b9mHsw/UJClplWFn385972iP960K5Lj
-         KGoeTc0K7B42jzE3v0OGMJHsmy5thAA4AMFbu1A4=
+        b=bkuu3CQVRnmZziCiw6sQieX4ylEgeg54CcPPeNY+pGmju/N2HgIDuTpaDMMeud8Ba
+         zYTMpzPzxBCOjtbPHFVYM4Z0pYxJLovpxwL2D170wHSr6jOBPW+06oUN+5efyQnBk7
+         fhi15VB35uWk+mkYlhZG8pvvEhihmekjTOzztLOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Subject: [PATCH 5.2 296/313] /dev/mem: Bail out upon SIGKILL.
-Date:   Thu,  3 Oct 2019 17:54:34 +0200
-Message-Id: <20191003154602.334688993@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.3 310/344] Btrfs: fix use-after-free when using the tree modification log
+Date:   Thu,  3 Oct 2019 17:54:35 +0200
+Message-Id: <20191003154609.790548130@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,112 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 8619e5bdeee8b2c685d686281f2d2a6017c4bc15 upstream.
+commit efad8a853ad2057f96664328a0d327a05ce39c76 upstream.
 
-syzbot found that a thread can stall for minutes inside read_mem() or
-write_mem() after that thread was killed by SIGKILL [1]. Reading from
-iomem areas of /dev/mem can be slow, depending on the hardware.
-While reading 2GB at one read() is legal, delaying termination of killed
-thread for minutes is bad. Thus, allow reading/writing /dev/mem and
-/dev/kmem to be preemptible and killable.
+At ctree.c:get_old_root(), we are accessing a root's header owner field
+after we have freed the respective extent buffer. This results in an
+use-after-free that can lead to crashes, and when CONFIG_DEBUG_PAGEALLOC
+is set, results in a stack trace like the following:
 
-  [ 1335.912419][T20577] read_mem: sz=4096 count=2134565632
-  [ 1335.943194][T20577] read_mem: sz=4096 count=2134561536
-  [ 1335.978280][T20577] read_mem: sz=4096 count=2134557440
-  [ 1336.011147][T20577] read_mem: sz=4096 count=2134553344
-  [ 1336.041897][T20577] read_mem: sz=4096 count=2134549248
+  [ 3876.799331] stack segment: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+  [ 3876.799363] CPU: 0 PID: 15436 Comm: pool Not tainted 5.3.0-rc3-btrfs-next-54 #1
+  [ 3876.799385] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+  [ 3876.799433] RIP: 0010:btrfs_search_old_slot+0x652/0xd80 [btrfs]
+  (...)
+  [ 3876.799502] RSP: 0018:ffff9f08c1a2f9f0 EFLAGS: 00010286
+  [ 3876.799518] RAX: ffff8dd300000000 RBX: ffff8dd85a7a9348 RCX: 000000038da26000
+  [ 3876.799538] RDX: 0000000000000000 RSI: ffffe522ce368980 RDI: 0000000000000246
+  [ 3876.799559] RBP: dae1922adadad000 R08: 0000000008020000 R09: ffffe522c0000000
+  [ 3876.799579] R10: ffff8dd57fd788c8 R11: 000000007511b030 R12: ffff8dd781ddc000
+  [ 3876.799599] R13: ffff8dd9e6240578 R14: ffff8dd6896f7a88 R15: ffff8dd688cf90b8
+  [ 3876.799620] FS:  00007f23ddd97700(0000) GS:ffff8dda20200000(0000) knlGS:0000000000000000
+  [ 3876.799643] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [ 3876.799660] CR2: 00007f23d4024000 CR3: 0000000710bb0005 CR4: 00000000003606f0
+  [ 3876.799682] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  [ 3876.799703] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  [ 3876.799723] Call Trace:
+  [ 3876.799735]  ? do_raw_spin_unlock+0x49/0xc0
+  [ 3876.799749]  ? _raw_spin_unlock+0x24/0x30
+  [ 3876.799779]  resolve_indirect_refs+0x1eb/0xc80 [btrfs]
+  [ 3876.799810]  find_parent_nodes+0x38d/0x1180 [btrfs]
+  [ 3876.799841]  btrfs_check_shared+0x11a/0x1d0 [btrfs]
+  [ 3876.799870]  ? extent_fiemap+0x598/0x6e0 [btrfs]
+  [ 3876.799895]  extent_fiemap+0x598/0x6e0 [btrfs]
+  [ 3876.799913]  do_vfs_ioctl+0x45a/0x700
+  [ 3876.799926]  ksys_ioctl+0x70/0x80
+  [ 3876.799938]  ? trace_hardirqs_off_thunk+0x1a/0x20
+  [ 3876.799953]  __x64_sys_ioctl+0x16/0x20
+  [ 3876.799965]  do_syscall_64+0x62/0x220
+  [ 3876.799977]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  [ 3876.799993] RIP: 0033:0x7f23e0013dd7
+  (...)
+  [ 3876.800056] RSP: 002b:00007f23ddd96ca8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+  [ 3876.800078] RAX: ffffffffffffffda RBX: 00007f23d80210f8 RCX: 00007f23e0013dd7
+  [ 3876.800099] RDX: 00007f23d80210f8 RSI: 00000000c020660b RDI: 0000000000000003
+  [ 3876.800626] RBP: 000055fa2a2a2440 R08: 0000000000000000 R09: 00007f23ddd96d7c
+  [ 3876.801143] R10: 00007f23d8022000 R11: 0000000000000246 R12: 00007f23ddd96d80
+  [ 3876.801662] R13: 00007f23ddd96d78 R14: 00007f23d80210f0 R15: 00007f23ddd96d80
+  (...)
+  [ 3876.805107] ---[ end trace e53161e179ef04f9 ]---
 
-Theoretically, reading/writing /dev/mem and /dev/kmem can become
-"interruptible". But this patch chose "killable". Future patch will make
-them "interruptible" so that we can revert to "killable" if some program
-regressed.
+Fix that by saving the root's header owner field into a local variable
+before freeing the root's extent buffer, and then use that local variable
+when needed.
 
-[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Link: https://lore.kernel.org/r/1566825205-10703-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 30b0463a9394d9 ("Btrfs: fix accessing the root pointer in tree mod log functions")
+CC: stable@vger.kernel.org # 3.10+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mem.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ fs/btrfs/ctree.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -97,6 +97,13 @@ void __weak unxlate_dev_mem_ptr(phys_add
- }
- #endif
- 
-+static inline bool should_stop_iteration(void)
-+{
-+	if (need_resched())
-+		cond_resched();
-+	return fatal_signal_pending(current);
-+}
-+
- /*
-  * This funcion reads the *physical* memory. The f_pos points directly to the
-  * memory location.
-@@ -175,6 +182,8 @@ static ssize_t read_mem(struct file *fil
- 		p += sz;
- 		count -= sz;
- 		read += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 	kfree(bounce);
- 
-@@ -251,6 +260,8 @@ static ssize_t write_mem(struct file *fi
- 		p += sz;
- 		count -= sz;
- 		written += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 
- 	*ppos += written;
-@@ -468,6 +479,10 @@ static ssize_t read_kmem(struct file *fi
- 			read += sz;
- 			low_count -= sz;
- 			count -= sz;
-+			if (should_stop_iteration()) {
-+				count = 0;
-+				break;
-+			}
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -1343,6 +1343,7 @@ get_old_root(struct btrfs_root *root, u6
+ 	struct tree_mod_elem *tm;
+ 	struct extent_buffer *eb = NULL;
+ 	struct extent_buffer *eb_root;
++	u64 eb_root_owner = 0;
+ 	struct extent_buffer *old;
+ 	struct tree_mod_root *old_root = NULL;
+ 	u64 old_generation = 0;
+@@ -1380,6 +1381,7 @@ get_old_root(struct btrfs_root *root, u6
+ 			free_extent_buffer(old);
  		}
- 	}
- 
-@@ -492,6 +507,8 @@ static ssize_t read_kmem(struct file *fi
- 			buf += sz;
- 			read += sz;
- 			p += sz;
-+			if (should_stop_iteration())
-+				break;
- 		}
- 		free_page((unsigned long)kbuf);
- 	}
-@@ -544,6 +561,8 @@ static ssize_t do_write_kmem(unsigned lo
- 		p += sz;
- 		count -= sz;
- 		written += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 
- 	*ppos += written;
-@@ -595,6 +614,8 @@ static ssize_t write_kmem(struct file *f
- 			buf += sz;
- 			virtr += sz;
- 			p += sz;
-+			if (should_stop_iteration())
-+				break;
- 		}
- 		free_page((unsigned long)kbuf);
+ 	} else if (old_root) {
++		eb_root_owner = btrfs_header_owner(eb_root);
+ 		btrfs_tree_read_unlock(eb_root);
+ 		free_extent_buffer(eb_root);
+ 		eb = alloc_dummy_extent_buffer(fs_info, logical);
+@@ -1396,7 +1398,7 @@ get_old_root(struct btrfs_root *root, u6
+ 	if (old_root) {
+ 		btrfs_set_header_bytenr(eb, eb->start);
+ 		btrfs_set_header_backref_rev(eb, BTRFS_MIXED_BACKREF_REV);
+-		btrfs_set_header_owner(eb, btrfs_header_owner(eb_root));
++		btrfs_set_header_owner(eb, eb_root_owner);
+ 		btrfs_set_header_level(eb, old_root->level);
+ 		btrfs_set_header_generation(eb, old_generation);
  	}
 
 
