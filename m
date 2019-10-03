@@ -2,80 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF472CA2E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB60CA2F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387631AbfJCQKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:10:24 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33808 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387601AbfJCQKT (ORCPT
+        id S1732607AbfJCQKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:10:51 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45219 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387724AbfJCQKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:10:19 -0400
-Received: by mail-pl1-f193.google.com with SMTP id k7so1752572pll.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:10:18 -0700 (PDT)
+        Thu, 3 Oct 2019 12:10:48 -0400
+Received: by mail-pl1-f194.google.com with SMTP id u12so1728456pls.12
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=message-id:mime-version:content-transfer-encoding:in-reply-to
          :references:from:to:cc:subject:user-agent:date;
-        bh=v9Xix4ukYpxBHBe1n3DXedqcwTHB0Vaz/YT0zLakIIo=;
-        b=EvjKgRekrDRXydliKainNvs1EDKpTaQC9hbAsmM3L4SgVhnCamPwwGeWgzLCmD/6ZN
-         YJihKrj4Aua03JcGiXSnnv9gCPNFzimjX/dj6do1v8Tarr4QDToU5Y7qaBlDo7r0dOjB
-         7MqZGdDBTEaz9H1tW70rmHCyl63UhJarLzgIk=
+        bh=/uux4QaLIxBgIS+S90+1Po/wEnZf/E4w+wy45KhyTSY=;
+        b=UrI0SMgaaYbIISJ6/D8xRZ4Lk/gZoGdz0emX9xVpLMpkthMjLeCbmaU65NX8oYdJvd
+         np8cgUQj2oR4WuMDHF9iJzr5P5yiG+GzNApMl/DPqi6kdXqj34g/c9KTEnb8EmdO5wc5
+         22dxnYWmPxhzWdfW5bWKUKI2yJBgdCBKc1jU4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:mime-version
          :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
          :user-agent:date;
-        bh=v9Xix4ukYpxBHBe1n3DXedqcwTHB0Vaz/YT0zLakIIo=;
-        b=CPELijN4UdoJQOBVp46+sZe/+On1Tce9Twss9HSO1zD7n03OJRBM/0xvz3AtP+TX3Z
-         bQlJ5JR451e+7AgXOdTudOB26N8j2FToeZ/S+czUUScPObn3oSXGi4CXKDu902fBTqc/
-         tx7SZzOOUKHvknVI+JvvYz5/ToP/aDQ81PRKowdYy/zIECL+JiIy6gmcz4IeE4LotkV9
-         kkyWhBq0P9tU/HMyXrFOBy9FsbcacXWY8SOJenqehnf5ODl39q+J/kBQTIjtW0Aac/Tn
-         5D9kYsc0ACkrGM7s6I19+qRNltSjuhZr1vQeGSbdOuZC9pL+CTNkgvXIx4lU4vwwKivf
-         pIQA==
-X-Gm-Message-State: APjAAAWZQEplBN1jivHmKQLGAGtNmJh19Nmx1LVdJGuBQGa7BdmCgpeV
-        Ng2J7fbzux3OgeSsZwYZnWpBpw==
-X-Google-Smtp-Source: APXvYqwv9TynoMmQOqZjRuUUV4/ZHjd2t53y5sK2b6fAukPfOM6uRj4H5n6IfZmi7UusPIcmhIpQeQ==
-X-Received: by 2002:a17:902:ba82:: with SMTP id k2mr9926433pls.293.1570119017817;
-        Thu, 03 Oct 2019 09:10:17 -0700 (PDT)
+        bh=/uux4QaLIxBgIS+S90+1Po/wEnZf/E4w+wy45KhyTSY=;
+        b=Gt93pYaGQRPqoK/jOX37RbM2+SMvGme65FIU3ieiCezGsBMspTbSpT2IPS/cUn19zw
+         DHk0P4n3oMG+0c1kSB4gu1GsYkuqLfBC49/4APPQ2W+j32ezU2S59frebnFZR+t4KkDR
+         Pm+t21ubuyj0nrYC1o2NVr1ED8jJ+uFpJ95MsxdPXQp4+wu0wgA3A4luiSo/P9K3E2ZK
+         oOf9CqcBao/fl7GExeiXdAexK5lIJnBUj5Vn3N4APiiVHGfr6HZe1LR/hyLbRgERk41Y
+         jGGKZcGVjhwCsrdEWBRzqWLX4DVqpiLI+eeL0LEKozBUR5mxLmTksbL0LW2iE6DDoKO7
+         xqrg==
+X-Gm-Message-State: APjAAAXxjptmvSZw4iSHimPqCn8ax6BGr15TVHacUXHbDOrkIED6NwF2
+        kNpNPzyE72hAi02UL2S1I4O0fQ==
+X-Google-Smtp-Source: APXvYqwZH1M6/LhbGuuzz592WQ9OjilbEDeLMqV+Nwj//lGPPbOMeQP4nSTTUjncGz1/gK/4ggJ8eQ==
+X-Received: by 2002:a17:902:ff18:: with SMTP id f24mr10300646plj.173.1570119047382;
+        Thu, 03 Oct 2019 09:10:47 -0700 (PDT)
 Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b69sm3516011pfb.132.2019.10.03.09.10.17
+        by smtp.gmail.com with ESMTPSA id z13sm3540938pfg.172.2019.10.03.09.10.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 09:10:17 -0700 (PDT)
-Message-ID: <5d961d69.1c69fb81.43b1b.addf@mx.google.com>
+        Thu, 03 Oct 2019 09:10:45 -0700 (PDT)
+Message-ID: <5d961d85.1c69fb81.b9642.b721@mx.google.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191001180743.1041-1-geert+renesas@glider.be>
-References: <20191001180743.1041-1-geert+renesas@glider.be>
+In-Reply-To: <20191001181109.1355-1-geert+renesas@glider.be>
+References: <20191001181109.1355-1-geert+renesas@glider.be>
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] serial: sh-sci: Use platform_get_irq_optional() for optional interrupts
+Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: Use platform_get_irq_optional() for optional irq
 User-Agent: alot/0.8.1
-Date:   Thu, 03 Oct 2019 09:10:16 -0700
+Date:   Thu, 03 Oct 2019 09:10:44 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-10-01 11:07:43)
+Quoting Geert Uytterhoeven (2019-10-01 11:11:09)
 > As platform_get_irq() now prints an error when the interrupt does not
-> exist, scary warnings may be printed for optional interrupts:
+> exist, a scary warning may be printed for an optional interrupt:
 >=20
->     sh-sci e6550000.serial: IRQ index 1 not found
->     sh-sci e6550000.serial: IRQ index 2 not found
->     sh-sci e6550000.serial: IRQ index 3 not found
->     sh-sci e6550000.serial: IRQ index 4 not found
->     sh-sci e6550000.serial: IRQ index 5 not found
+>     phy_rcar_gen3_usb2 ee0a0200.usb-phy: IRQ index 0 not found
 >=20
-> Fix this by calling platform_get_irq_optional() instead for all but the
-> first interrupts, which are optional.
+> Fix this by calling platform_get_irq_optional() instead.
 >=20
 > Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to =
 platform_get_irq*()")
