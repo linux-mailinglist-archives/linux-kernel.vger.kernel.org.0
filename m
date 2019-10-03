@@ -2,63 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 614E8C986B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 08:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B98AC9878
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 08:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfJCGpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 02:45:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47756 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfJCGpQ (ORCPT
+        id S1727452AbfJCGqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 02:46:02 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33981 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfJCGqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 02:45:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 036B36118D; Thu,  3 Oct 2019 06:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570085115;
-        bh=ddn1c+BnNBD6lRBn/L5g+wqfrNnO9jM0DJsrX1V0GnU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=g2i2g5HL8MaZado17xz/mvM3+t5XrHjkW69tRgMSO74pwrrpp3q5N839/zMYmVu5H
-         Fjnt7HL7QdexEs3ur6hU0kgocVkLey2Wjc+9QIERB0ViYBZvfV0eGJIY5fO6SeT2C/
-         d4PSuZC//cXdYng/ofrXhDDibqdtEsaJIh+S/seI=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 41D646074F;
-        Thu,  3 Oct 2019 06:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570085113;
-        bh=ddn1c+BnNBD6lRBn/L5g+wqfrNnO9jM0DJsrX1V0GnU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XOq5jo14T6wz1Tod0HWMs3uwRvFAnfAy/rPvdEX935sKpm+IHTmeCCedo6AAm/za0
-         LYbofXHYIlOFAj84aWnlajSlHE82QPO/RnSK9clUXK6/re1YtqBP5sKRPn8roRKPcb
-         FWGaiuApxfgU/ZQXn6yMM4kFbN8bjMVauZmPWfeY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41D646074F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCH] arm64: dts: qcom: msm8998: Disable coresight by default
-Date:   Thu,  3 Oct 2019 12:14:49 +0530
-Message-Id: <20191003064449.2201-1-saiprakash.ranjan@codeaurora.org>
-X-Mailer: git-send-email 2.23.0
+        Thu, 3 Oct 2019 02:46:02 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b128so1107507pfa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 23:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tmedhzX9C+cN8nQlDlRuERilhLkK7PZoYSIAR3+m8Og=;
+        b=UlIYKajkWrpON8MaHPgN7XHZDHJbOBa85ryXrpg2AQ4pavpCqkCc8RsWPqMMSIBkw/
+         sB0z2HVCWKGIHFCBf2SrufCZhwoSyh5DYyjEFygGztaYKCR3A7mgmFjz87dQ1b1IR6AY
+         rksgIwmeq/xMyCqS60GUxfNLTEpyrjYwTXmVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tmedhzX9C+cN8nQlDlRuERilhLkK7PZoYSIAR3+m8Og=;
+        b=Bc6hfB5Qw7AiqkWt87e1K9QS7IAUA52ClidiQ7hUU0s/jUTGHkWeg4s4CSwTl2OZCo
+         Pl7yvJ66kMurwUtwh4fKr3FTDcJqbtOqy/LB3mKgfKeamJ8fw4JctjledhF2SictykVN
+         uWswlCcbsNTF1N/zggixSOcVoX5P95AtkgBmfc04OAzAvDu7+aPc/5gnIM/Q+P4z7N+m
+         7F7HdIIGpK5lnUQqqYDXLf3Vf5KVW3e7hozGaOjQ554bt7SPqZX+YqDFkdDQjvGhrbRQ
+         /OTE1QbSOqxVTeYQG9gcbq+9ceVBGXGK66HFNNOU1Z6IT0J+wyO0byzGv4nkmw1TwYnh
+         vKBg==
+X-Gm-Message-State: APjAAAWZTMR6yXOzzD14RhiLWNqyOhGh5RqKbiV4IH60jS82DfIq2uLK
+        Q2/nBRMseYXJdzv1/XQbA5MtLw==
+X-Google-Smtp-Source: APXvYqxQCK4/7MbbkBagZV2vOcHKusaEK4mXaxvR66zcwNTDIsrsGqkeRKcQ4QxTDvq2Kmwy+8UUQw==
+X-Received: by 2002:a63:4762:: with SMTP id w34mr8014842pgk.202.1570085160475;
+        Wed, 02 Oct 2019 23:46:00 -0700 (PDT)
+Received: from localhost.localdomain ([49.206.203.121])
+        by smtp.gmail.com with ESMTPSA id b18sm1423294pfi.157.2019.10.02.23.45.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 23:45:59 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     michael@amarulasolutions.com, Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v11 0/7] drm/sun4i: dsi: Fixes/updates (A33 reworked!)
+Date:   Thu,  3 Oct 2019 12:15:20 +0530
+Message-Id: <20191003064527.15128-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,325 +62,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Boot failure has been reported on MSM8998 based laptop when
-coresight is enabled. This is most likely due to lack of
-firmware support for coresight on production device when
-compared to debug device like MTP where this issue is not
-observed. So disable coresight by default for MSM8998 and
-enable it only for MSM8998 MTP.
+This is v11 version changes for previous series[1].
 
-Reported-and-tested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Fixes: 783abfa2249a ("arm64: dts: qcom: msm8998: Add Coresight support")
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 68 +++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/msm8998.dtsi     | 51 +++++++++++------
- 2 files changed, 102 insertions(+), 17 deletions(-)
+This series dropped the tcon->dclk_min_div and tcon->dclk_max_div
+patches, since the discussion on the respective threads[2][3] 
+not finalized or not agree on both the ends.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-index 108667ce4f31..8d15572d18e6 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -27,6 +27,66 @@
- 	status = "okay";
- };
- 
-+&etf {
-+	status = "okay";
-+};
-+
-+&etm1 {
-+	status = "okay";
-+};
-+
-+&etm2 {
-+	status = "okay";
-+};
-+
-+&etm3 {
-+	status = "okay";
-+};
-+
-+&etm4 {
-+	status = "okay";
-+};
-+
-+&etm5 {
-+	status = "okay";
-+};
-+
-+&etm6 {
-+	status = "okay";
-+};
-+
-+&etm7 {
-+	status = "okay";
-+};
-+
-+&etm8 {
-+	status = "okay";
-+};
-+
-+&etr {
-+	status = "okay";
-+};
-+
-+&funnel1 {
-+	status = "okay";
-+};
-+
-+&funnel2 {
-+	status = "okay";
-+};
-+
-+&funnel3 {
-+	status = "okay";
-+};
-+
-+&funnel4 {
-+	status = "okay";
-+};
-+
-+&funnel5 {
-+	status = "okay";
-+};
-+
- &pm8005_lsid1 {
- 	pm8005-regulators {
- 		compatible = "qcom,pm8005-regulators";
-@@ -51,6 +111,10 @@
- 	vdda-phy-dpdm-supply = <&vreg_l24a_3p075>;
- };
- 
-+&replicator1 {
-+	status = "okay";
-+};
-+
- &rpm_requests {
- 	pm8998-regulators {
- 		compatible = "qcom,rpm-pm8998-regulators";
-@@ -249,6 +313,10 @@
- 	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
- };
- 
-+&stm {
-+	status = "okay";
-+};
-+
- &ufshc {
- 	vcc-supply = <&vreg_l20a_2p95>;
- 	vccq-supply = <&vreg_l26a_1p2>;
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index c6f81431983e..ffb64fc239ee 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -998,11 +998,12 @@
- 			#interrupt-cells = <0x2>;
- 		};
- 
--		stm@6002000 {
-+		stm: stm@6002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x06002000 0x1000>,
- 			      <0x16280000 0x180000>;
- 			reg-names = "stm-base", "stm-data-base";
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1016,9 +1017,10 @@
- 			};
- 		};
- 
--		funnel@6041000 {
-+		funnel1: funnel@6041000 {
- 			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
- 			reg = <0x06041000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1045,9 +1047,10 @@
- 			};
- 		};
- 
--		funnel@6042000 {
-+		funnel2: funnel@6042000 {
- 			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
- 			reg = <0x06042000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1075,9 +1078,10 @@
- 			};
- 		};
- 
--		funnel@6045000 {
-+		funnel3: funnel@6045000 {
- 			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
- 			reg = <0x06045000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1113,9 +1117,10 @@
- 			};
- 		};
- 
--		replicator@6046000 {
-+		replicator1: replicator@6046000 {
- 			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
- 			reg = <0x06046000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1137,9 +1142,10 @@
- 			};
- 		};
- 
--		etf@6047000 {
-+		etf: etf@6047000 {
- 			compatible = "arm,coresight-tmc", "arm,primecell";
- 			reg = <0x06047000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1163,9 +1169,10 @@
- 			};
- 		};
- 
--		etr@6048000 {
-+		etr: etr@6048000 {
- 			compatible = "arm,coresight-tmc", "arm,primecell";
- 			reg = <0x06048000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1181,9 +1188,10 @@
- 			};
- 		};
- 
--		etm@7840000 {
-+		etm1: etm@7840000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07840000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1200,9 +1208,10 @@
- 			};
- 		};
- 
--		etm@7940000 {
-+		etm2: etm@7940000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07940000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1219,9 +1228,10 @@
- 			};
- 		};
- 
--		etm@7a40000 {
-+		etm3: etm@7a40000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07a40000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1238,9 +1248,10 @@
- 			};
- 		};
- 
--		etm@7b40000 {
-+		etm4: etm@7b40000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07b40000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1257,9 +1268,10 @@
- 			};
- 		};
- 
--		funnel@7b60000 { /* APSS Funnel */
-+		funnel4: funnel@7b60000 { /* APSS Funnel */
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07b60000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1343,9 +1355,10 @@
- 			};
- 		};
- 
--		funnel@7b70000 {
-+		funnel5: funnel@7b70000 {
- 			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
- 			reg = <0x07b70000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1369,9 +1382,10 @@
- 			};
- 		};
- 
--		etm@7c40000 {
-+		etm5: etm@7c40000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07c40000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1385,9 +1399,10 @@
- 			};
- 		};
- 
--		etm@7d40000 {
-+		etm6: etm@7d40000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07d40000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1401,9 +1416,10 @@
- 			};
- 		};
- 
--		etm@7e40000 {
-+		etm7: etm@7e40000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07e40000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
-@@ -1417,9 +1433,10 @@
- 			};
- 		};
- 
--		etm@7f40000 {
-+		etm8: etm@7f40000 {
- 			compatible = "arm,coresight-etm4x", "arm,primecell";
- 			reg = <0x07f40000 0x1000>;
-+			status = "disabled";
- 
- 			clocks = <&rpmcc RPM_SMD_QDSS_CLK>, <&rpmcc RPM_SMD_QDSS_A_CLK>;
- 			clock-names = "apb_pclk", "atclk";
+This series mostly the commit messages changes suggested by Chen-Yu.
+
+Most of these issues are reproduced while supporting Allwinner A64
+MIPI-DSI [4] but to confirm it with other SoC this series is reworked
+on A33 since the controller tested it A33 as of now.
+
+Since we don't have proper evidence and documentation for dsi controller
+in Allwinner, these changes are more likely to rely on new working BSP
+codes (even the initial driver written as per this rule).
+
+All these fixes/updates are tested in "bananapi,s070wv20-ct16" panel
+on Allwinner A33, the same panel timings are available in panel-simple
+in mainline tree.
+
+Changes for v11:
+- Drop DCLK dividers patches
+- Updated the commit message changes suggested by Chen-Yu
+- rebased on linux-next
+Changes for v10:
+- reworked previous "Fixes/updates" patches on A33
+- reworked previous A64 DSI fixes on A33
+- added proper detailed commit messages with logs
+- tested on BPI-M2M board.
+Changes for v9:
+- rebase on drm-misc
+- update commit messages
+- add hsync_porch overflow patch
+Changes for v8:
+- rebase on master
+- rework on commit messages
+- rework video start delay
+- include drq changes from previous version
+Changes for v7:
+- rebase on master
+- collect Merlijn Wajer Tested-by credits.
+Changes for v6:
+- fixed all burst mode patches as per previous version comments
+- rebase on master
+- update proper commit message
+- dropped unneeded comments
+- order the patches that make review easy
+Changes for v5, v4, v3, v2:
+- use existing driver code construct for hblk computation
+- create separate function for vblk computation
+- cleanup commit messages
+- update proper commit messages
+- fixed checkpatch warnings/errors
+- use proper return value for tcon0 probe
+- add logic to get tcon0 divider values
+- simplify timings code to support burst mode
+- fix drq computation return values
+- rebase on master
+
+Any inputs?
+Jagan.
+
+[1] https://patchwork.freedesktop.org/series/60847/
+[2] https://patchwork.freedesktop.org/patch/305923/?series=60847&rev=1
+[3] https://patchwork.kernel.org/patch/10779937/
+[4] https://patchwork.freedesktop.org/series/57834/
+
+Jagan Teki (7):
+  drm/sun4i: dsi: Fix TCON DRQ set bits
+  drm/sun4i: dsi: Update start value in video start delay
+  drm/sun4i: dsi: Fix video start delay computation
+  dt-bindings: sun6i-dsi: Add VCC-DSI supply property
+  drm/sun4i: sun6i_mipi_dsi: Add VCC-DSI regulator support
+  [DO NOT MERGE] drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
+  [DO NOT MERGE] ARM: dts: sun8i: bananapi-m2m: Enable Bananapi S070WV20-CT16 DSI panel
+
+ .../display/allwinner,sun6i-a31-mipi-dsi.yaml |   3 +
+ arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  |  40 +++
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../panel/panel-bananapi-s070wv20-icn6211.c   | 293 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        |  32 +-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   2 +
+ 7 files changed, 376 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.18.0.321.gffc6fa0e3
 
