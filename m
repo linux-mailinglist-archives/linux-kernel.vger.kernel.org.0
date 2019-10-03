@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9659FCA7A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D77DCA5F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406149AbfJCQv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:51:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39428 "EHLO mail.kernel.org"
+        id S2404792AbfJCQiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406133AbfJCQv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:51:56 -0400
+        id S2404183AbfJCQiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:38:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2FC62054F;
-        Thu,  3 Oct 2019 16:51:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E7B72070B;
+        Thu,  3 Oct 2019 16:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121515;
-        bh=YFcpQ5DlkoOtVD/DRuruBohEHaSxFNyUrtc9wrJsp8g=;
+        s=default; t=1570120691;
+        bh=uhbaKLWlkBR1MGVt+PBtDFsl8Khc+T7Mn7gXEEVFRhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JpSJYrnINUllIl4GQ2ZzlzvNqK90TfydbrXnMg3Fte0dXThCGDnrKp8kYNgVx1d1U
-         qoG5kMoBra4oIngWZ5gk3K7csO2OMF07Jqu05dRdkpJzDJugWu/Od4laKCOLrFxRkp
-         owuzWaZCvgw3HgUXlo8Anb81CiqjJbTTZ3oa+9BU=
+        b=jTXV705SUizATEAua/CjK0sgPeoLOr4e3wNVWeBVxT1vsTZ4CQ5E9UFoE2Hxp8BNX
+         M2u1ZrSweXSWUgh3JpgOA5jOgd5oidzUk0mes5vpH6PENE33+gLfE0EI8icm0mvYKT
+         YKrf3/CECOHak2YqjlSex8fxb2fZHsNx6TicQ0qU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rakesh Pillai <pillair@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.3 300/344] ath10k: fix channel info parsing for non tlv target
-Date:   Thu,  3 Oct 2019 17:54:25 +0200
-Message-Id: <20191003154609.079936462@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.2 288/313] Btrfs: fix race setting up and completing qgroup rescan workers
+Date:   Thu,  3 Oct 2019 17:54:26 +0200
+Message-Id: <20191003154601.462968395@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,95 +44,202 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rakesh Pillai <pillair@codeaurora.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 6be6c04bcc2e8770b8637632789ff15765124894 upstream.
+commit 13fc1d271a2e3ab8a02071e711add01fab9271f6 upstream.
 
-The tlv targets such as WCN3990 send more data in the chan info event, which is
-not sent by the non tlv targets. There is a minimum size check in the wmi event
-for non-tlv targets and hence we cannot update the common channel info
-structure as it was done in commit 13104929d2ec ("ath10k: fill the channel
-survey results for WCN3990 correctly"). This broke channel survey results on
-10.x firmware versions.
+There is a race between setting up a qgroup rescan worker and completing
+a qgroup rescan worker that can lead to callers of the qgroup rescan wait
+ioctl to either not wait for the rescan worker to complete or to hang
+forever due to missing wake ups. The following diagram shows a sequence
+of steps that illustrates the race.
 
-If the common channel info structure is updated, the size check for chan info
-event for non-tlv targets will fail and return -EPROTO and we see the below
-error messages
+        CPU 1                                                         CPU 2                                  CPU 3
 
-   ath10k_pci 0000:01:00.0: failed to parse chan info event: -71
+ btrfs_ioctl_quota_rescan()
+  btrfs_qgroup_rescan()
+   qgroup_rescan_init()
+    mutex_lock(&fs_info->qgroup_rescan_lock)
+    spin_lock(&fs_info->qgroup_lock)
 
-Add tlv specific channel info structure and restore the original size of the
-common channel info structure to mitigate this issue.
+    fs_info->qgroup_flags |=
+      BTRFS_QGROUP_STATUS_FLAG_RESCAN
 
-Tested HW: WCN3990
-	   QCA9887
-Tested FW: WLAN.HL.3.1-00784-QCAHLSWMTPLZ-1
-	   10.2.4-1.0-00037
+    init_completion(
+      &fs_info->qgroup_rescan_completion)
 
-Fixes: 13104929d2ec ("ath10k: fill the channel survey results for WCN3990 correctly")
-Cc: stable@vger.kernel.org # 5.0
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+    fs_info->qgroup_rescan_running = true
+
+    mutex_unlock(&fs_info->qgroup_rescan_lock)
+    spin_unlock(&fs_info->qgroup_lock)
+
+    btrfs_init_work()
+     --> starts the worker
+
+                                                        btrfs_qgroup_rescan_worker()
+                                                         mutex_lock(&fs_info->qgroup_rescan_lock)
+
+                                                         fs_info->qgroup_flags &=
+                                                           ~BTRFS_QGROUP_STATUS_FLAG_RESCAN
+
+                                                         mutex_unlock(&fs_info->qgroup_rescan_lock)
+
+                                                         starts transaction, updates qgroup status
+                                                         item, etc
+
+                                                                                                           btrfs_ioctl_quota_rescan()
+                                                                                                            btrfs_qgroup_rescan()
+                                                                                                             qgroup_rescan_init()
+                                                                                                              mutex_lock(&fs_info->qgroup_rescan_lock)
+                                                                                                              spin_lock(&fs_info->qgroup_lock)
+
+                                                                                                              fs_info->qgroup_flags |=
+                                                                                                                BTRFS_QGROUP_STATUS_FLAG_RESCAN
+
+                                                                                                              init_completion(
+                                                                                                                &fs_info->qgroup_rescan_completion)
+
+                                                                                                              fs_info->qgroup_rescan_running = true
+
+                                                                                                              mutex_unlock(&fs_info->qgroup_rescan_lock)
+                                                                                                              spin_unlock(&fs_info->qgroup_lock)
+
+                                                                                                              btrfs_init_work()
+                                                                                                               --> starts another worker
+
+                                                         mutex_lock(&fs_info->qgroup_rescan_lock)
+
+                                                         fs_info->qgroup_rescan_running = false
+
+                                                         mutex_unlock(&fs_info->qgroup_rescan_lock)
+
+							 complete_all(&fs_info->qgroup_rescan_completion)
+
+Before the rescan worker started by the task at CPU 3 completes, if
+another task calls btrfs_ioctl_quota_rescan(), it will get -EINPROGRESS
+because the flag BTRFS_QGROUP_STATUS_FLAG_RESCAN is set at
+fs_info->qgroup_flags, which is expected and correct behaviour.
+
+However if other task calls btrfs_ioctl_quota_rescan_wait() before the
+rescan worker started by the task at CPU 3 completes, it will return
+immediately without waiting for the new rescan worker to complete,
+because fs_info->qgroup_rescan_running is set to false by CPU 2.
+
+This race is making test case btrfs/171 (from fstests) to fail often:
+
+  btrfs/171 9s ... - output mismatch (see /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad)
+#      --- tests/btrfs/171.out     2018-09-16 21:30:48.505104287 +0100
+#      +++ /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad      2019-09-19 02:01:36.938486039 +0100
+#      @@ -1,2 +1,3 @@
+#       QA output created by 171
+#      +ERROR: quota rescan failed: Operation now in progress
+#       Silence is golden
+#      ...
+#      (Run 'diff -u /home/fdmanana/git/hub/xfstests/tests/btrfs/171.out /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad'  to see the entire diff)
+
+That is because the test calls the btrfs-progs commands "qgroup quota
+rescan -w", "qgroup assign" and "qgroup remove" in a sequence that makes
+calls to the rescan start ioctl fail with -EINPROGRESS (note the "btrfs"
+commands 'qgroup assign' and 'qgroup remove' often call the rescan start
+ioctl after calling the qgroup assign ioctl,
+btrfs_ioctl_qgroup_assign()), since previous waits didn't actually wait
+for a rescan worker to complete.
+
+Another problem the race can cause is missing wake ups for waiters,
+since the call to complete_all() happens outside a critical section and
+after clearing the flag BTRFS_QGROUP_STATUS_FLAG_RESCAN. In the sequence
+diagram above, if we have a waiter for the first rescan task (executed
+by CPU 2), then fs_info->qgroup_rescan_completion.wait is not empty, and
+if after the rescan worker clears BTRFS_QGROUP_STATUS_FLAG_RESCAN and
+before it calls complete_all() against
+fs_info->qgroup_rescan_completion, the task at CPU 3 calls
+init_completion() against fs_info->qgroup_rescan_completion which
+re-initilizes its wait queue to an empty queue, therefore causing the
+rescan worker at CPU 2 to call complete_all() against an empty queue,
+never waking up the task waiting for that rescan worker.
+
+Fix this by clearing BTRFS_QGROUP_STATUS_FLAG_RESCAN and setting
+fs_info->qgroup_rescan_running to false in the same critical section,
+delimited by the mutex fs_info->qgroup_rescan_lock, as well as doing the
+call to complete_all() in that same critical section. This gives the
+protection needed to avoid rescan wait ioctl callers not waiting for a
+running rescan worker and the lost wake ups problem, since setting that
+rescan flag and boolean as well as initializing the wait queue is done
+already in a critical section delimited by that mutex (at
+qgroup_rescan_init()).
+
+Fixes: 57254b6ebce4ce ("Btrfs: add ioctl to wait for qgroup rescan completion")
+Fixes: d2c609b834d62f ("btrfs: properly track when rescan worker is running")
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c |    2 +-
- drivers/net/wireless/ath/ath10k/wmi-tlv.h |   16 ++++++++++++++++
- drivers/net/wireless/ath/ath10k/wmi.h     |    8 --------
- 3 files changed, 17 insertions(+), 9 deletions(-)
+ fs/btrfs/qgroup.c |   33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -841,7 +841,7 @@ static int ath10k_wmi_tlv_op_pull_ch_inf
- 					     struct wmi_ch_info_ev_arg *arg)
- {
- 	const void **tb;
--	const struct wmi_chan_info_event *ev;
-+	const struct wmi_tlv_chan_info_event *ev;
- 	int ret;
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3154,9 +3154,6 @@ out:
+ 	btrfs_free_path(path);
  
- 	tb = ath10k_wmi_tlv_parse_alloc(ar, skb->data, skb->len, GFP_ATOMIC);
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.h
-@@ -1615,6 +1615,22 @@ struct chan_info_params {
- 
- #define WMI_TLV_FLAG_MGMT_BUNDLE_TX_COMPL	BIT(9)
- 
-+struct wmi_tlv_chan_info_event {
-+	__le32 err_code;
-+	__le32 freq;
-+	__le32 cmd_flags;
-+	__le32 noise_floor;
-+	__le32 rx_clear_count;
-+	__le32 cycle_count;
-+	__le32 chan_tx_pwr_range;
-+	__le32 chan_tx_pwr_tp;
-+	__le32 rx_frame_count;
-+	__le32 my_bss_rx_cycle_count;
-+	__le32 rx_11b_mode_data_duration;
-+	__le32 tx_frame_cnt;
-+	__le32 mac_clk_mhz;
-+} __packed;
-+
- struct wmi_tlv_mgmt_tx_compl_ev {
- 	__le32 desc_id;
- 	__le32 status;
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -6533,14 +6533,6 @@ struct wmi_chan_info_event {
- 	__le32 noise_floor;
- 	__le32 rx_clear_count;
- 	__le32 cycle_count;
--	__le32 chan_tx_pwr_range;
--	__le32 chan_tx_pwr_tp;
--	__le32 rx_frame_count;
--	__le32 my_bss_rx_cycle_count;
--	__le32 rx_11b_mode_data_duration;
--	__le32 tx_frame_cnt;
--	__le32 mac_clk_mhz;
+ 	mutex_lock(&fs_info->qgroup_rescan_lock);
+-	if (!btrfs_fs_closing(fs_info))
+-		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_RESCAN;
 -
- } __packed;
+ 	if (err > 0 &&
+ 	    fs_info->qgroup_flags & BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT) {
+ 		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT;
+@@ -3172,16 +3169,30 @@ out:
+ 	trans = btrfs_start_transaction(fs_info->quota_root, 1);
+ 	if (IS_ERR(trans)) {
+ 		err = PTR_ERR(trans);
++		trans = NULL;
+ 		btrfs_err(fs_info,
+ 			  "fail to start transaction for status update: %d",
+ 			  err);
+-		goto done;
+ 	}
+-	ret = update_qgroup_status_item(trans);
+-	if (ret < 0) {
+-		err = ret;
+-		btrfs_err(fs_info, "fail to update qgroup status: %d", err);
++
++	mutex_lock(&fs_info->qgroup_rescan_lock);
++	if (!btrfs_fs_closing(fs_info))
++		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_RESCAN;
++	if (trans) {
++		ret = update_qgroup_status_item(trans);
++		if (ret < 0) {
++			err = ret;
++			btrfs_err(fs_info, "fail to update qgroup status: %d",
++				  err);
++		}
+ 	}
++	fs_info->qgroup_rescan_running = false;
++	complete_all(&fs_info->qgroup_rescan_completion);
++	mutex_unlock(&fs_info->qgroup_rescan_lock);
++
++	if (!trans)
++		return;
++
+ 	btrfs_end_transaction(trans);
  
- struct wmi_10_4_chan_info_event {
+ 	if (btrfs_fs_closing(fs_info)) {
+@@ -3192,12 +3203,6 @@ out:
+ 	} else {
+ 		btrfs_err(fs_info, "qgroup scan failed with %d", err);
+ 	}
+-
+-done:
+-	mutex_lock(&fs_info->qgroup_rescan_lock);
+-	fs_info->qgroup_rescan_running = false;
+-	mutex_unlock(&fs_info->qgroup_rescan_lock);
+-	complete_all(&fs_info->qgroup_rescan_completion);
+ }
+ 
+ /*
 
 
