@@ -2,198 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D52DFCB047
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B4ECB03D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389288AbfJCUjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 16:39:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24069 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729278AbfJCUjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 16:39:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 13:39:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="392078344"
-Received: from skuppusw-desk.jf.intel.com (HELO skuppusw-desk.amr.corp.intel.com) ([10.54.74.33])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Oct 2019 13:39:47 -0700
-Date:   Thu, 3 Oct 2019 13:37:26 -0700
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-Subject: Re: [PATCH v7 1/7] PCI/ATS: Fix pci_prg_resp_pasid_required()
- dependency issues
-Message-ID: <20191003203726.GA14637@skuppusw-desk.amr.corp.intel.com>
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-References: <abfb75fc-6f88-7117-b0d8-1a374ee99d3e@linux.intel.com>
- <20191003190413.GA182793@google.com>
+        id S2389026AbfJCUhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 16:37:46 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42014 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbfJCUhp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 16:37:45 -0400
+Received: by mail-oi1-f195.google.com with SMTP id i185so3841811oif.9
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 13:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dDo4o+KAvY5sr/pnubCDYIV+K4Ff/iB9FuRG+d3osIk=;
+        b=DVBHxTvb3jy9Hdh53nbhNksRXqsoBIbMD2MdH6p09K0SQfUK2/aqMMcfxgJvARCAUD
+         hC+KMejJL8CT+692KQPoLGckpxwDnTwnN6xvGfQq7Nl4WRxrs48oPjbHTwYhA8cyXfu3
+         +cPJ2Y6G0bAF5M0jdFaE+lymffS3ukq3tuLQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dDo4o+KAvY5sr/pnubCDYIV+K4Ff/iB9FuRG+d3osIk=;
+        b=Ss1kTQGK09JBTcGmj8ykTGVx1aATCSBhNse0lR6xovQJNmTKKa3ARqT+uUWK0oIkK4
+         /Bguy2IkLeYyfZvHiraBJlej4ZN+0DKc1JwBUej+zc7H6+GfK3ySk+bFeijwwSE6H/sA
+         QjyLGgZR7yRV5InVSsOWDM6EXQzQ2sdROtAmE4mil50qKwgfvofLNpzBxblMqoHxBNGs
+         U5D9+D2mOXDTkkUXLLhOC0DaQk4QmfZ+vkl1XhkRFUQHsTozCGfpvGarh5mR6Lqjzn3L
+         AnnoDBfL0DfdakC/9L/nZVI/oswXmxQsdHQ6/xuFz2V6+L5uy/fPR5ThKDcarYuWyks9
+         TaJw==
+X-Gm-Message-State: APjAAAWws87X1CBOBW/oGeCRDZ9NnrmLhRJLwF4QqQb4knfN1XLiYjzt
+        nHde8hmASeCuyvCRypN7puMj6wjpHCA=
+X-Google-Smtp-Source: APXvYqwYujbMIF+0dJOapSZV1WvPPqDI7KM2L9wL2Ccr7ciQ7MAs4VNvfRTXTm5bX7NfYDcBjpKxZA==
+X-Received: by 2002:aca:b9d4:: with SMTP id j203mr4395735oif.19.1570135064115;
+        Thu, 03 Oct 2019 13:37:44 -0700 (PDT)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
+        by smtp.gmail.com with ESMTPSA id r187sm1125420oie.17.2019.10.03.13.37.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2019 13:37:43 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id k25so3824119oiw.13
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 13:37:43 -0700 (PDT)
+X-Received: by 2002:aca:7509:: with SMTP id q9mr4051833oic.111.1570135062854;
+ Thu, 03 Oct 2019 13:37:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003190413.GA182793@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190925203209.79941-1-ncrews@chromium.org> <20191001195342.GH4106@piout.net>
+ <CAE_wzQ8ugGgRsjfQwfncxhmy4EDOxKdoNm8CJ5AF=Mc5N6X7WQ@mail.gmail.com>
+ <20191002103236.GM4106@piout.net> <CAE_wzQ9AodXUEANpDEQM+VYMVuxWmLoF0_1k-m5HdAfx+=01-A@mail.gmail.com>
+In-Reply-To: <CAE_wzQ9AodXUEANpDEQM+VYMVuxWmLoF0_1k-m5HdAfx+=01-A@mail.gmail.com>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Thu, 3 Oct 2019 14:37:31 -0600
+X-Gmail-Original-Message-ID: <CAHX4x84a1HpUvSJ6XeopJQuMZEM-Af_No2nHhi8q62eB+ZXxmA@mail.gmail.com>
+Message-ID: <CAHX4x84a1HpUvSJ6XeopJQuMZEM-Af_No2nHhi8q62eB+ZXxmA@mail.gmail.com>
+Subject: Re: [PATCH v3] rtc: wilco-ec: Handle reading invalid times
+To:     Dmitry Torokhov <dtor@google.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Daniel Kurtz <djkurtz@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 02:04:13PM -0500, Bjorn Helgaas wrote:
-> On Thu, Oct 03, 2019 at 10:20:24AM -0700, Kuppuswamy Sathyanarayanan wrote:
-> > Hi Bjorn,
-> > 
-> > Thanks for looking into this patch set.
-> > 
-> > On 9/5/19 12:18 PM, Bjorn Helgaas wrote:
-> > > On Wed, Aug 28, 2019 at 03:14:01PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> > > > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > > > 
-> > > > Since pci_prg_resp_pasid_required() function has dependency on both
-> > > > PASID and PRI, define it only if both CONFIG_PCI_PRI and
-> > > > CONFIG_PCI_PASID config options are enabled.
-> > > > 
-> > > > Fixes: e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required()
-> > > > interface.")
-> > > [Don't split tags, including "Fixes:" across lines]
-> > > 
-> > > This definitely doesn't fix e5567f5f6762.  That commit added
-> > > pci_prg_resp_pasid_required(), but with no dependency on
-> > > CONFIG_PCI_PRI or CONFIG_PCI_PASID.
-> > > 
-> > > This patch is only required when a subsequent patch is applied.  It
-> > > should be squashed into the commit that requires it so it's obvious
-> > > why it's needed.
-> > > 
-> > > I've been poking at this series, and I'll post a v8 soon with this and
-> > > other fixes.
-> > In your v8 submission you did not merge this patch. You did not use
-> > pri_cap or pasid_cap cached values. Instead you have re-read the
-> > value from register. Is this intentional?
-> > 
-> > Since this function will be called for every VF device we might loose some
-> > performance benefit.
-> 
-> This particular patch doesn't do any caching.  IIRC it fiddles with
-> ifdefs to solve a problem that would be introduced by a future patch.
-> I don't remember the exact details, but I think the series I merged
-> doesn't have that problem.  If it does, let me know the details and we
-> can fix it.
-This patch by itself does not do any caching. But your caching patch
-missed modifying this function to use cached values. Please check the
-current implementation of this function. It still reads
-PCI_EXT_CAP_ID_PRI register instead of using cached value. Please let
-me know your comments.
+On Wed, Oct 2, 2019 at 9:20 AM Dmitry Torokhov <dtor@google.com> wrote:
+>
+> On Wed, Oct 2, 2019 at 3:32 AM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> >
+> > On 01/10/2019 13:42:24-0700, Dmitry Torokhov wrote:
+> > > On Tue, Oct 1, 2019 at 12:53 PM Alexandre Belloni
+> > > <alexandre.belloni@bootlin.com> wrote:
+> > > >
+> > > > Hi Nick,
+> > > >
+> > > > On 25/09/2019 14:32:09-0600, Nick Crews wrote:
+> > > > > If the RTC HW returns an invalid time, the rtc_year_days()
+> > > > > call would crash. This patch adds error logging in this
+> > > > > situation, and removes the tm_yday and tm_wday calculations.
+> > > > > These fields should not be relied upon by userspace
+> > > > > according to man rtc, and thus we don't need to calculate
+> > > > > them.
+> > > > >
+> > > > > Signed-off-by: Nick Crews <ncrews@chromium.org>
+> > > > > ---
+> > > > >  drivers/rtc/rtc-wilco-ec.c | 13 +++++++++----
+> > > > >  1 file changed, 9 insertions(+), 4 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+> > > > > index 8ad4c4e6d557..53da355d996a 100644
+> > > > > --- a/drivers/rtc/rtc-wilco-ec.c
+> > > > > +++ b/drivers/rtc/rtc-wilco-ec.c
+> > > > > @@ -110,10 +110,15 @@ static int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+> > > > >       tm->tm_mday     = rtc.day;
+> > > > >       tm->tm_mon      = rtc.month - 1;
+> > > > >       tm->tm_year     = rtc.year + (rtc.century * 100) - 1900;
+> > > > > -     tm->tm_yday     = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+> > > > > -
+> > > > > -     /* Don't compute day of week, we don't need it. */
+> > > > > -     tm->tm_wday = -1;
+> > > > > +     /* Ignore other tm fields, man rtc says userspace shouldn't use them. */
+> > > > > +
+> > > > > +     if (rtc_valid_tm(tm)) {
+> > > > > +             dev_err(dev,
+> > > > > +                      "Time from RTC is invalid: second=%u, minute=%u, hour=%u, day=%u, month=%u, year=%u, century=%u",
+> > > > > +                      rtc.second, rtc.minute, rtc.hour, rtc.day, rtc.month,
+> > > > > +                      rtc.year, rtc.century);
+> > > >
+> > > > Do you mind using %ptR? At this point you already filled the tm struct
+> > > > anyway and if you print century separately, you can infer tm_year.
+> > >
+> > > I do not think this is a good idea: we have just established that tm
+> > > does not contain valid data. Does %ptR guarantee that it handles junk
+> > > better than, let's say, rtc_year_days(), and does not crash when
+> > > presented with garbage?
+> > >
+> >
+> > It is safe to use. You can also use %ptRr if you want to ensure no
+> > extra operations are done on the value before printing them out.
+>
+> OK, I'll keeo this in mind then.
 
-int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-{
-    u16 status;
-    int pri;
+I will resend this using %ptRr, chromium is using 4.19 so I didn't see
+that this was added.
 
-    if (pdev->is_virtfn)
-        pdev = pci_physfn(pdev);
+>
+> >
+> > I'm still not convinced it is useful to have an error in dmesg when the
+> > time is invalid, as long as userspace knows it is invalid. What is the
+> > course of action for the end user when that happens?
+>
+> Report it, or, in our case, we will see it in the feedback logs.
+> However I do agree that it is not the best option, even if we report
+> error to userspace I am not sure if it will handle it properly. What
+> userspace is supposed to do when presented with -EIO or similar?
 
-    pri = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
-    if (!pri)
-        return 0;
+Yes, we will be able to see this in feedback logs, which would be valuable.
 
-    pci_read_config_word(pdev, pri + PCI_PRI_STATUS, &status);
+>
+> Nick, do we know the root cause of the EC/RTC reporting invalid time?
 
-    if (status & PCI_PRI_STATUS_PASID)
-        return 1;
+No, I haven't really looked into it deeply. It's not limited to the RTC
+interface though, it's a problem with the EC or EC communication
+in general, as I've noticed similar occasional errors with the other EC
+drivers.
 
-    return 0;
-}
-EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
-
-If caching is applied to this function then we need this #ifdef
-dependency correction patch.
-
-> 
-> I did include the caching patches for both PRI and PASID capabilities,
-> but they're only performance optimizations so I moved them to the end
-> so the functional fixes would be smaller and earlier in the series.
-> 
-> > > > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > > > ---
-> > > >   drivers/pci/ats.c       | 10 ++++++----
-> > > >   include/linux/pci-ats.h | 12 +++++++++---
-> > > >   2 files changed, 15 insertions(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-> > > > index e18499243f84..cdd936d10f68 100644
-> > > > --- a/drivers/pci/ats.c
-> > > > +++ b/drivers/pci/ats.c
-> > > > @@ -395,6 +395,8 @@ int pci_pasid_features(struct pci_dev *pdev)
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(pci_pasid_features);
-> > > > +#ifdef CONFIG_PCI_PRI
-> > > > +
-> > > >   /**
-> > > >    * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
-> > > >    *				 status.
-> > > > @@ -402,10 +404,8 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
-> > > >    *
-> > > >    * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
-> > > >    *
-> > > > - * Even though the PRG response PASID status is read from PRI Status
-> > > > - * Register, since this API will mainly be used by PASID users, this
-> > > > - * function is defined within #ifdef CONFIG_PCI_PASID instead of
-> > > > - * CONFIG_PCI_PRI.
-> > > > + * Since this API has dependency on both PRI and PASID, protect it
-> > > > + * with both CONFIG_PCI_PRI and CONFIG_PCI_PASID.
-> > > >    */
-> > > >   int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-> > > >   {
-> > > > @@ -425,6 +425,8 @@ int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
-> > > > +#endif
-> > > > +
-> > > >   #define PASID_NUMBER_SHIFT	8
-> > > >   #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
-> > > >   /**
-> > > > diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
-> > > > index 1ebb88e7c184..1a0bdaee2f32 100644
-> > > > --- a/include/linux/pci-ats.h
-> > > > +++ b/include/linux/pci-ats.h
-> > > > @@ -40,7 +40,6 @@ void pci_disable_pasid(struct pci_dev *pdev);
-> > > >   void pci_restore_pasid_state(struct pci_dev *pdev);
-> > > >   int pci_pasid_features(struct pci_dev *pdev);
-> > > >   int pci_max_pasids(struct pci_dev *pdev);
-> > > > -int pci_prg_resp_pasid_required(struct pci_dev *pdev);
-> > > >   #else  /* CONFIG_PCI_PASID */
-> > > > @@ -67,11 +66,18 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
-> > > >   	return -EINVAL;
-> > > >   }
-> > > > +#endif /* CONFIG_PCI_PASID */
-> > > > +
-> > > > +#if defined(CONFIG_PCI_PRI) && defined(CONFIG_PCI_PASID)
-> > > > +
-> > > > +int pci_prg_resp_pasid_required(struct pci_dev *pdev);
-> > > > +
-> > > > +#else /* CONFIG_PCI_PASID && CONFIG_PCI_PRI */
-> > > > +
-> > > >   static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
-> > > >   {
-> > > >   	return 0;
-> > > >   }
-> > > > -#endif /* CONFIG_PCI_PASID */
-> > > > -
-> > > > +#endif
-> > > >   #endif /* LINUX_PCI_ATS_H*/
-> > > > -- 
-> > > > 2.21.0
-> > > > 
-> > -- 
-> > Sathyanarayanan Kuppuswamy
-> > Linux kernel developer
-> > 
-
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+>
+> Thanks,
+> Dmitry
