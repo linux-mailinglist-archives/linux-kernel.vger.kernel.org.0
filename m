@@ -2,88 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF05C9DCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC84FC9DDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbfJCLv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:51:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbfJCLv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:51:57 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C283F215EA;
-        Thu,  3 Oct 2019 11:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570103517;
-        bh=gh2BwGChFgakU2b0Nn81nUTVrkAdKDXGZpJ4cMB1VM8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vdRXrRY18lwTNPL/y9J3Ef9MtoUxJKfG7fmE8fGIKEmTJwfJgZg9XqdaEirRiSA7m
-         jJGvAiJG+M24eY4h79ygx5XcyBA6YdhlxUebj78LxuLisK8hmiFGAvZbLraxmzkfiy
-         mwPt9B8wLzyBWOxnSpuFkGW23MvVWm0YcPCQs+wQ=
-Date:   Thu, 3 Oct 2019 13:51:54 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] media: dt-bindings: media: Fixup Allwinner A10 CSI
- binding
-Message-ID: <20191003115154.6f2jgj3dnqsved2y@gilmour>
-References: <b47ec7088aa4b07458519ab151de92df552a9302.1570101510.git.amit.kucheria@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nmzxrjrlzz4yd5h2"
-Content-Disposition: inline
-In-Reply-To: <b47ec7088aa4b07458519ab151de92df552a9302.1570101510.git.amit.kucheria@linaro.org>
-User-Agent: NeoMutt/20180716
+        id S1730255AbfJCLzP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 3 Oct 2019 07:55:15 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45182 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729671AbfJCLzP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 07:55:15 -0400
+Received: from mail-pf1-f197.google.com ([209.85.210.197])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1iFzhQ-0002NX-I0
+        for linux-kernel@vger.kernel.org; Thu, 03 Oct 2019 11:55:12 +0000
+Received: by mail-pf1-f197.google.com with SMTP id z4so1965009pfn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 04:55:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zkgjaNihidQzev45YtvaiCCwUzaOEPHNobyPBYPD3js=;
+        b=expl3NZ2m+Yz7TpPAI7Y2jq3GRW+0vi37snWasOt1ZBhrnxaXRL7jLd0qMvK3FDBHc
+         3jJe5iG/M3oxsypClxkPyAncHCQc2fIOBfPzNgLDUkDpHWAY3192QqyAJORU2LJ+wByt
+         mhFtEpZyN9YVGqyX6McQm0soy0bB3aGAJcqNmHYwCNBd0gVr419o8RfiyUC3sxzPPVmX
+         LJ0FpAvpwXXBI/n/42YSqtofsT4MzE3C+riepGiy8UofbAHxFtSs31g5yKm6uquxL51d
+         5zMUqx52K8TdsjBJn4rFYPiD90rex94kTRDtcguqyeYLUnefA+YbTao1JIU4TnwhtVFk
+         wSDw==
+X-Gm-Message-State: APjAAAVBJqjAsRrlk97VaxwIDDRoWjQVLC/x+XoRG1EVMI0yTIvBFVlo
+        vd44wLockbvc1Bq24TQRjN5FHBjKz1kvbkxI3eEYAg1+b9abD19vcmCpUaKHGnNytbwbbLQf0xW
+        HxhRW1xXFNV920P0c94QIMkvrLnoInx3MohcsCX9CXQ==
+X-Received: by 2002:a63:ff14:: with SMTP id k20mr6054153pgi.302.1570103711114;
+        Thu, 03 Oct 2019 04:55:11 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqy8bF/GDPJnP/8mvPp9hx1ElP0npS/Ztseid8l2upqoO+fPdPwoPU9GSCA+STVkngzsQhIypQ==
+X-Received: by 2002:a63:ff14:: with SMTP id k20mr6054122pgi.302.1570103710722;
+        Thu, 03 Oct 2019 04:55:10 -0700 (PDT)
+Received: from 2001-b011-380f-3c42-0c4b-be14-8894-cacf.dynamic-ip6.hinet.net (2001-b011-380f-3c42-0c4b-be14-8894-cacf.dynamic-ip6.hinet.net. [2001:b011:380f:3c42:c4b:be14:8894:cacf])
+        by smtp.gmail.com with ESMTPSA id j128sm3618554pfg.51.2019.10.03.04.55.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Oct 2019 04:55:10 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3594.4.18\))
+Subject: Re: [PATCH] Revert "usb: Avoid unnecessary LPM enabling and disabling
+ during suspend and resume"
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <Pine.LNX.4.44L0.1910021146260.1552-100000@iolanthe.rowland.org>
+Date:   Thu, 3 Oct 2019 19:55:06 +0800
+Cc:     mathias.nyman@intel.com, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <123BCB7F-5ABA-4DDD-9599-46D3240903F6@canonical.com>
+References: <Pine.LNX.4.44L0.1910021146260.1552-100000@iolanthe.rowland.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+X-Mailer: Apple Mail (2.3594.4.18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---nmzxrjrlzz4yd5h2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi,
+> On Oct 2, 2019, at 23:47, Alan Stern <stern@rowland.harvard.edu> wrote:
+> 
+> On Wed, 2 Oct 2019, Kai-Heng Feng wrote:
+> 
+>> This reverts commit d590c23111505635e1beb01006612971e5ede8aa.
+>> 
+>> Dell WD15 dock has a topology like this:
+>> /:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 10000M
+>>    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/7p, 5000M
+>>            |__ Port 2: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
+>> 
+>> Their IDs:
+>> Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+>> Bus 004 Device 002: ID 0424:5537 Standard Microsystems Corp.
+>> Bus 004 Device 004: ID 0bda:8153 Realtek Semiconductor Corp.
+>> 
+>> Ethernet cannot be detected after plugging ethernet cable to the dock,
+>> the hub and roothub get runtime resumed and runtime suspended
+>> immediately:
+>> ...
+> 
+>> After some trial and errors, the issue goes away if LPM on the SMSC hub
+>> is disabled. Digging further, enabling and disabling LPM during runtime
+>> resume and runtime suspend respectively can solve the issue.
+>> 
+>> So bring back the old LPM behavior, which the SMSC hub inside Dell WD15
+>> depends on.
+>> 
+>> Fixes: d590c2311150 ("usb: Avoid unnecessary LPM enabling and disabling during suspend and resume")
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> 
+> Maybe it would be better to have a VID/PID-specific quirk for this?
 
-On Thu, Oct 03, 2019 at 04:52:24PM +0530, Amit Kucheria wrote:
-> This new binding fails dt_binding_check due to a typo. Fix it up.
->
-> linux.git/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml: $id: path/filename 'arm/allwinner,sun4i-a10-csi.yaml' doesn't match actual filename
-> linux.git/Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts' failed
-> make[2]: *** [Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts] Error 1
-> make[2]: *** Waiting for unfinished jobs....
-> linux.git/Makefile:1284: recipe for target 'dt_binding_check' failed
-> make[1]: *** [dt_binding_check] Error 2
->
-> Fixes: c5e8f4ccd7750 ("media: dt-bindings: media: Add Allwinner A10 CSI binding")
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Re-reading the spec, I think we need some clarification:
+"If the value is 3, then host software wants to selectively suspend the
+device connected to this port. The hub shall transition the link to U3
+from any of the other U states using allowed link state transitions.
+If the port is not already in the U0 state, then it shall transition the
+port to the U0 state and then initiate the transition to U3."
 
-Thanks for your patch.
+The phrase "then it shall transition the port to the U0 state" what does "it" here refer to?
+Is it the hub or the software?
+If it's the former then it's indeed a buggy hub, but if it's the latter I think reverting the commit is the right thing to do.
 
-It has already been submitted though:
-https://lore.kernel.org/linux-arm-kernel/1568808060-17516-1-git-send-email-pragnesh.patel@sifive.com/
+Kai-Heng
 
-I'm not sure why it hasn't been applied yet though :/
+> 
+> Alan Stern
+> 
 
-Maxime
->
-
---nmzxrjrlzz4yd5h2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZXg2gAKCRDj7w1vZxhR
-xS0OAP0SU5JvkUNzuu7h9+tNkONFA7iQwgl1sR9AZpJjgOiFJAEAoJeO4CR/ZOBa
-0Vu6m/HmNJojnOFoY2ILvkflVt+Zlwg=
-=RF+5
------END PGP SIGNATURE-----
-
---nmzxrjrlzz4yd5h2--
