@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E5C8CA58B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC46CA58D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404100AbfJCQf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:35:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44282 "EHLO mail.kernel.org"
+        id S2404267AbfJCQfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404074AbfJCQfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:35:22 -0400
+        id S2404097AbfJCQf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43D582070B;
-        Thu,  3 Oct 2019 16:35:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C9C020830;
+        Thu,  3 Oct 2019 16:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120521;
-        bh=ZsSQ/Q9nhpssLAIx6yD5sSkzGLXOhaVzTnt0SeF9+v0=;
+        s=default; t=1570120527;
+        bh=60vSsisF/vTpEUWXN2OtyUqye/8pSQ8hFzP0MuHfmlA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DkWCfsnQl6SHN44K/2Sg1DZ2SRNJYmdEh5IbHnNSvqCZsBj7yjDpMYyuhn2t8dDst
-         1hJv0B05pBk6Z7U5LOvMdic9SJm3IHp+hnu4dLOM51j4j29lKBsM4CojxPRMcBmVed
-         OFrYswMqUUvKncPHnhCL7jSLRjP+6+zS7g3Ekigg=
+        b=kGI0iF+/4hyJelo+2rttYCWR/qKyvvsoilAf7qiegRdFwddFcP5+sd6lH+w3vXCP4
+         wKyMUNEmCIKFzM3/ZENZVijNhkWMPQByFMypqOatUPp7rTblbho+Yf5jxizZWUKsev
+         GlUYG/6KA0fayIjb+DsItcs7ObCrhC7yuoU1serE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lihua Yao <ylhuajnu@outlook.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 5.2 254/313] ARM: samsung: Fix system restart on S3C6410
-Date:   Thu,  3 Oct 2019 17:53:52 +0200
-Message-Id: <20191003154558.054311010@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.2 256/313] arm64: tlb: Ensure we execute an ISB following walk cache invalidation
+Date:   Thu,  3 Oct 2019 17:53:54 +0200
+Message-Id: <20191003154558.256083626@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -43,31 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lihua Yao <ylhuajnu@outlook.com>
+From: Will Deacon <will@kernel.org>
 
-commit 16986074035cc0205472882a00d404ed9d213313 upstream.
+commit 51696d346c49c6cf4f29e9b20d6e15832a2e3408 upstream.
 
-S3C6410 system restart is triggered by watchdog reset.
+05f2d2f83b5a ("arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable")
+added a new TLB invalidation helper which is used when freeing
+intermediate levels of page table used for kernel mappings, but is
+missing the required ISB instruction after completion of the TLBI
+instruction.
+
+Add the missing barrier.
 
 Cc: <stable@vger.kernel.org>
-Fixes: 9f55342cc2de ("ARM: dts: s3c64xx: Fix infinite interrupt in soft mode")
-Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 05f2d2f83b5a ("arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable")
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/plat-samsung/watchdog-reset.c |    1 +
+ arch/arm64/include/asm/tlbflush.h |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/arm/plat-samsung/watchdog-reset.c
-+++ b/arch/arm/plat-samsung/watchdog-reset.c
-@@ -62,6 +62,7 @@ void samsung_wdt_reset(void)
- #ifdef CONFIG_OF
- static const struct of_device_id s3c2410_wdt_match[] = {
- 	{ .compatible = "samsung,s3c2410-wdt" },
-+	{ .compatible = "samsung,s3c6410-wdt" },
- 	{},
- };
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -251,6 +251,7 @@ static inline void __flush_tlb_kernel_pg
+ 	dsb(ishst);
+ 	__tlbi(vaae1is, addr);
+ 	dsb(ish);
++	isb();
+ }
+ #endif
  
 
 
