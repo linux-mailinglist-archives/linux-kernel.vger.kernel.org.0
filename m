@@ -2,177 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED84C9E1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D58B3C9E24
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbfJCML2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 08:11:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51876 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729462AbfJCML0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 08:11:26 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D95818C7780;
-        Thu,  3 Oct 2019 12:11:26 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A30355C226;
-        Thu,  3 Oct 2019 12:11:25 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, srinivas.pandruvada@linux.intel.com,
-        Prarit Bhargava <prarit@redhat.com>
-Subject: [PATCH v2 7/7] intel-speed-select: Implement base-freq commands on CascadeLake-N
-Date:   Thu,  3 Oct 2019 08:11:12 -0400
-Message-Id: <20191003121112.25870-8-prarit@redhat.com>
-In-Reply-To: <20191003121112.25870-1-prarit@redhat.com>
-References: <20191003121112.25870-1-prarit@redhat.com>
+        id S1729883AbfJCMML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 08:12:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60598 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729733AbfJCMML (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 08:12:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Z6z+KsbbvfNDmZ8hWhm3ZrpQ2X1uMleoDabYVy67j9Q=; b=js3Fmk4c6buCzxnUeBl6k2K0M
+        MN2liDvDktfLQ1nJX89ieB+sCpLVkGxzYRQHUs1Jv6G/MBpSCY0mUpSjCSxCuL2T3MQrEVbpG2uW9
+        b3/1trU0q9tTzqyTuUJ1vurX5dOyhA18s/dtvs0R/wYceaWSW7Mgem1HQcZs0ePkrMf26RrXKaetF
+        W6pg3esZATuDHnToGMg8IYo5+7UX+4qn4mXLfxpqgwQMKCdDsCMwWo5DQCMTFidVqkOsOTztJrITU
+        fxCP51Dp7LFiNakWNO0jehMcyBDUAJQrvQFdtKR/AL9rHla3yfBHRy+H2NQfOXwQFmdOOLCz4v34I
+        tkDohY8vQ==;
+Received: from 177.133.68.49.dynamic.adsl.gvt.net.br ([177.133.68.49] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iFzxl-000839-MY; Thu, 03 Oct 2019 12:12:06 +0000
+Date:   Thu, 3 Oct 2019 09:12:01 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Gon Solo <gonsolo@gmail.com>
+Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
+Message-ID: <20191003091201.7e94c617@coco.lan>
+In-Reply-To: <20191003120143.GA2995@Limone>
+References: <20191002141359.30166-2-gonsolo@gmail.com>
+        <20191002142744.GA3475@gofer.mess.org>
+        <CANL0fFS9TGKJH2rfkXzak78BaLazTNO7GoZhSb4vLBsDrmz3FQ@mail.gmail.com>
+        <20191002150650.GA4227@gofer.mess.org>
+        <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
+        <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
+        <20191002154922.7f1cfc76@coco.lan>
+        <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
+        <CANL0fFTwJ4yRO+5q6WkL0+DtwdrRti6r_WY1intisYJhs5En8w@mail.gmail.com>
+        <20191003081742.0933264b@coco.lan>
+        <20191003120143.GA2995@Limone>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Thu, 03 Oct 2019 12:11:26 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add functionality for base-freq info|enable|disable info on CascadeLake-N.
+Em Thu, 3 Oct 2019 14:01:43 +0200
+Gon Solo <gonsolo@gmail.com> escreveu:
 
-The enable command always returns success, and the disable command always
-returns failed because SST-BF cannot be enabled or disabled from the OS on
-CascadeLake-N.
+> Hi!
+> 
+>  
+> > Btw, could you please try the enclosed hack and post the results?  
+>  
+> [  210.178948] si2168 1-0067: downloading firmware from file 'dvb-demod-si2168-b40-01.fw'
+> [  212.404011] si2168 1-0067: firmware version: B 4.0.25
+> [  212.656467] si2157 2-0063: Needed to wait 100 ms to get chip version
+> [  212.656470] si2157 2-0063: Unable to retrieve chip version
 
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
----
- .../x86/intel-speed-select/isst-config.c      | 68 +++++++++++++------
- 1 file changed, 48 insertions(+), 20 deletions(-)
+well, you could try to increase the timeout - although 100 ms seems a lot
+of time to me.
 
-diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index d9b580139a07..7c7f0551eda1 100644
---- a/tools/power/x86/intel-speed-select/isst-config.c
-+++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -836,7 +836,7 @@ static void clx_n_config(void)
- 	ctdp_level->fact_enabled = 0;
- }
- 
--static void dump_cn_config_for_cpu(int cpu, void *arg1, void *arg2,
-+static void dump_clx_n_config_for_cpu(int cpu, void *arg1, void *arg2,
- 				   void *arg3, void *arg4)
- {
- 	isst_ctdp_display_information(cpu, outf, tdp_level, &clx_n_pkg_dev);
-@@ -876,7 +876,7 @@ static void dump_isst_config(int arg)
- 	if (!is_clx_n_platform())
- 		fn = dump_isst_config_for_cpu;
- 	else
--		fn = dump_cn_config_for_cpu;
-+		fn = dump_clx_n_config_for_cpu;
- 
- 	isst_ctdp_display_information_start(outf);
- 
-@@ -951,6 +951,18 @@ static void set_tdp_level(int arg)
- 	isst_ctdp_display_information_end(outf);
- }
- 
-+static void clx_n_dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2,
-+				       void *arg3, void *arg4)
-+{
-+	struct isst_pbf_info *pbf_info;
-+	struct isst_pkg_ctdp_level_info *ctdp_level;
-+
-+	ctdp_level = &clx_n_pkg_dev.ctdp_level[0];
-+	pbf_info = &ctdp_level->pbf_info;
-+
-+	isst_pbf_display_information(cpu, outf, tdp_level, pbf_info);
-+}
-+
- static void dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 				    void *arg4)
- {
-@@ -968,6 +980,8 @@ static void dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 
- static void dump_pbf_config(int arg)
- {
-+	void *fn;
-+
- 	if (cmd_help) {
- 		fprintf(stderr,
- 			"Print Intel(R) Speed Select Technology base frequency configuration for a TDP level\n");
-@@ -981,13 +995,18 @@ static void dump_pbf_config(int arg)
- 		exit(1);
- 	}
- 
-+	if (!is_clx_n_platform())
-+		fn = dump_pbf_config_for_cpu;
-+	else
-+		fn = clx_n_dump_pbf_config_for_cpu;
-+
- 	isst_ctdp_display_information_start(outf);
-+
- 	if (max_target_cpus)
--		for_each_online_target_cpu_in_set(dump_pbf_config_for_cpu, NULL,
--						  NULL, NULL, NULL);
-+		for_each_online_target_cpu_in_set(fn, NULL, NULL, NULL, NULL);
- 	else
--		for_each_online_package_in_set(dump_pbf_config_for_cpu, NULL,
--					       NULL, NULL, NULL);
-+		for_each_online_package_in_set(fn, NULL, NULL, NULL, NULL);
-+
- 	isst_ctdp_display_information_end(outf);
- }
- 
-@@ -1165,21 +1184,27 @@ static void set_pbf_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 	int ret;
- 	int status = *(int *)arg4;
- 
--	ret = isst_set_pbf_fact_status(cpu, 1, status);
--	if (ret) {
--		perror("isst_set_pbf");
--	} else {
--		if (status) {
--			if (auto_mode)
--				ret = set_pbf_core_power(cpu);
--			isst_display_result(cpu, outf, "base-freq", "enable",
--					    ret);
--		} else {
--			if (auto_mode)
--				isst_pm_qos_config(cpu, 0, 0);
--			isst_display_result(cpu, outf, "base-freq", "disable",
--					    ret);
-+	if (!is_clx_n_platform()) {
-+		ret = isst_set_pbf_fact_status(cpu, 1, status);
-+		if (ret) {
-+			perror("isst_set_pbf");
-+			return;
- 		}
-+	} else {
-+		if (status == 0)
-+			ret = -1;
-+		else
-+			ret = 0;
-+	}
-+
-+	if (status) {
-+		if (auto_mode)
-+			ret = set_pbf_core_power(cpu);
-+		isst_display_result(cpu, outf, "base-freq", "enable", ret);
-+	} else {
-+		if (auto_mode)
-+			isst_pm_qos_config(cpu, 0, 0);
-+		isst_display_result(cpu, outf, "base-freq", "disable", ret);
- 	}
- }
- 
-@@ -1645,6 +1670,9 @@ static void get_clos_assoc(int arg)
- 
- static struct process_cmd_struct clx_n_cmds[] = {
- 	{ "perf-profile", "info", dump_isst_config, 0 },
-+	{ "base-freq", "info", dump_pbf_config, 0 },
-+	{ "base-freq", "enable", set_pbf_enable, 1 },
-+	{ "base-freq", "disable", set_pbf_enable, 0 },
- 	{ NULL, NULL, NULL, 0 }
- };
- 
--- 
-2.18.1
-
+Thanks,
+Mauro
