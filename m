@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C729ECA4EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C7F7CA4EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391446AbfJCQ3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:29:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34730 "EHLO mail.kernel.org"
+        id S2391452AbfJCQ31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:29:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389331AbfJCQ3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:29:21 -0400
+        id S2391430AbfJCQ3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:29:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E458B222BE;
-        Thu,  3 Oct 2019 16:29:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A6352054F;
+        Thu,  3 Oct 2019 16:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120160;
-        bh=1yjOP+y2VDBuHbUnkJ0x7XMZLigsvLv6f6vVBFKWGfQ=;
+        s=default; t=1570120163;
+        bh=YQCsBXeCa08TPq18aZLL+PQPhGsFsnWxhGKvatllFvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uhn1CrOuPHqeZFkZcOUahy9d033BHc8moGZG/LrrJ8CQfMqjGEhmc+w5kZw+pxLEP
-         GU+UYQaF5y1rRYTysRqnaRFxTg7HKmec8Igy2l6TNAZhf8nSIerc4SNzVvsqXSO6HU
-         62QmyI0W7m9tDPnDzKcPxPUEH1NB6N64DwmNzRRE=
+        b=ukma396EXLeG5tuGsGc9MyqC+r9WuVjqxyjN9RVmrLm02iEEK+yuQjSHBzeDk0G/Z
+         imFQ3EHxBtRjzC1BgebiIxw7LeEhmkHtoT5DCuKr+thZQOR4qjKDWmYW835fYtN0yp
+         la25VzEiPff2m5xEDOrfWZjFbhdolC+BpGMBPbMU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Alessio Balsini <balsini@android.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 081/313] ACPI / processor: dont print errors for processorIDs == 0xff
-Date:   Thu,  3 Oct 2019 17:50:59 +0200
-Message-Id: <20191003154540.827797213@linuxfoundation.org>
+Subject: [PATCH 5.2 082/313] loop: Add LOOP_SET_DIRECT_IO to compat ioctl
+Date:   Thu,  3 Oct 2019 17:51:00 +0200
+Message-Id: <20191003154540.934198633@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,66 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Alessio Balsini <balsini@android.com>
 
-[ Upstream commit 2c2b005f549544c13ef4cfb0e4842949066889bc ]
+[ Upstream commit fdbe4eeeb1aac219b14f10c0ed31ae5d1123e9b8 ]
 
-Some platforms define their processors in this manner:
-    Device (SCK0)
-    {
-	Name (_HID, "ACPI0004" /* Module Device */)  // _HID: Hardware ID
-	Name (_UID, "CPUSCK0")  // _UID: Unique ID
-	Processor (CP00, 0x00, 0x00000410, 0x06){}
-	Processor (CP01, 0x02, 0x00000410, 0x06){}
-	Processor (CP02, 0x04, 0x00000410, 0x06){}
-	Processor (CP03, 0x06, 0x00000410, 0x06){}
-	Processor (CP04, 0x01, 0x00000410, 0x06){}
-	Processor (CP05, 0x03, 0x00000410, 0x06){}
-	Processor (CP06, 0x05, 0x00000410, 0x06){}
-	Processor (CP07, 0x07, 0x00000410, 0x06){}
-	Processor (CP08, 0xFF, 0x00000410, 0x06){}
-	Processor (CP09, 0xFF, 0x00000410, 0x06){}
-	Processor (CP0A, 0xFF, 0x00000410, 0x06){}
-	Processor (CP0B, 0xFF, 0x00000410, 0x06){}
-...
+Enabling Direct I/O with loop devices helps reducing memory usage by
+avoiding double caching.  32 bit applications running on 64 bits systems
+are currently not able to request direct I/O because is missing from the
+lo_compat_ioctl.
 
-The processors marked as 0xff are invalid, there are only 8 of them in
-this case.
+This patch fixes the compatibility issue mentioned above by exporting
+LOOP_SET_DIRECT_IO as additional lo_compat_ioctl() entry.
+The input argument for this ioctl is a single long converted to a 1-bit
+boolean, so compatibility is preserved.
 
-So do not print an error on ids == 0xff, just print an info message.
-Actually, we could return ENODEV even on the first CPU with ID 0xff, but
-ACPI spec does not forbid the 0xff value to be a processor ID. Given
-0xff could be a correct one, we would break working systems if we
-returned ENODEV.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Alessio Balsini <balsini@android.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_processor.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/block/loop.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 24f065114d424..2c4dda0787e84 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -279,9 +279,13 @@ static int acpi_processor_get_info(struct acpi_device *device)
- 	}
- 
- 	if (acpi_duplicate_processor_id(pr->acpi_id)) {
--		dev_err(&device->dev,
--			"Failed to get unique processor _UID (0x%x)\n",
--			pr->acpi_id);
-+		if (pr->acpi_id == 0xff)
-+			dev_info_once(&device->dev,
-+				"Entry not well-defined, consider updating BIOS\n");
-+		else
-+			dev_err(&device->dev,
-+				"Failed to get unique processor _UID (0x%x)\n",
-+				pr->acpi_id);
- 		return -ENODEV;
- 	}
- 
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index e1739efca37eb..8e32930f65a1d 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1763,6 +1763,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
+ 	case LOOP_SET_FD:
+ 	case LOOP_CHANGE_FD:
+ 	case LOOP_SET_BLOCK_SIZE:
++	case LOOP_SET_DIRECT_IO:
+ 		err = lo_ioctl(bdev, mode, cmd, arg);
+ 		break;
+ 	default:
 -- 
 2.20.1
 
