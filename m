@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A27A5CA1F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06E45CA1E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731579AbfJCQAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44158 "EHLO mail.kernel.org"
+        id S1730668AbfJCQAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:00:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731580AbfJCQA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:27 -0400
+        id S1729858AbfJCQAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 686E120700;
-        Thu,  3 Oct 2019 16:00:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C916721848;
+        Thu,  3 Oct 2019 16:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118426;
-        bh=F5QrHJ8dW3ius4QmW17jT6/U5gly7/R3QyccOZun8hY=;
+        s=default; t=1570118405;
+        bh=WnnVwo0vVu77Z5Zp+V5yFZGva1AVLUgAKB4IXhlJmYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u820+P7YAWfjMvZ6/im9M3GcUs/ZmERNkgliYHqxduh5h58nhpOhaJ7xujdkOFraz
-         Kwc8b1IhNh4uMU4/pUAiVQ8OvyGdJ84RuSTl9q+Nj5NZ1QGBJN8J4YrZh5vpMUeFWL
-         LW8F4BJlon3SRhM4yC7jmM2AyTq7Ckzz6BlifnFA=
+        b=P6RY2DLD3s/kdlTw96/CvaJEd2kpAuyYPWCo5pjQ+bVB7T9dR2qKqH9oxf84dkCSH
+         QXI4GKZ5ATZI+T9QWI8vix6PmdZ+BI9A5MJt5/9f0Zs5gH2srLOJRF8sIKEHr3xvK3
+         swwaJiZrpufEJe8jREc3frZqGArYNU15vmPCN/qQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Lunev <den@virtuozzo.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 82/99] KVM: x86: set ctxt->have_exception in x86_decode_insn()
-Date:   Thu,  3 Oct 2019 17:53:45 +0200
-Message-Id: <20191003154336.086758733@linuxfoundation.org>
+        stable@vger.kernel.org, Rui Salvaterra <rsalvaterra@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.4 84/99] media: sn9c20x: Add MSI MS-1039 laptop to flip_dmi_table
+Date:   Thu,  3 Oct 2019 17:53:47 +0200
+Message-Id: <20191003154337.063405867@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -46,53 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit c8848cee74ff05638e913582a476bde879c968ad upstream.
+commit 7e0bb5828311f811309bed5749528ca04992af2f upstream.
 
-x86_emulate_instruction() takes into account ctxt->have_exception flag
-during instruction decoding, but in practice this flag is never set in
-x86_decode_insn().
+Like a bunch of other MSI laptops the MS-1039 uses a 0c45:627b
+SN9C201 + OV7660 webcam which is mounted upside down.
 
-Fixes: 6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
+Add it to the sn9c20x flip_dmi_table to deal with this.
+
 Cc: stable@vger.kernel.org
-Cc: Denis Lunev <den@virtuozzo.com>
-Cc: Roman Kagan <rkagan@virtuozzo.com>
-Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
-Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Rui Salvaterra <rsalvaterra@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/emulate.c |    2 ++
- arch/x86/kvm/x86.c     |    6 ++++++
- 2 files changed, 8 insertions(+)
+ drivers/media/usb/gspca/sn9c20x.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5245,6 +5245,8 @@ done_prefixes:
- 					ctxt->memopp->addr.mem.ea + ctxt->_eip);
- 
- done:
-+	if (rc == X86EMUL_PROPAGATE_FAULT)
-+		ctxt->have_exception = true;
- 	return (rc != X86EMUL_CONTINUE) ? EMULATION_FAILED : EMULATION_OK;
- }
- 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5487,6 +5487,12 @@ int x86_emulate_instruction(struct kvm_v
- 						emulation_type))
- 				return EMULATE_DONE;
- 			if (ctxt->have_exception) {
-+				/*
-+				 * #UD should result in just EMULATION_FAILED, and trap-like
-+				 * exception should not be encountered during decode.
-+				 */
-+				WARN_ON_ONCE(ctxt->exception.vector == UD_VECTOR ||
-+					     exception_type(ctxt->exception.vector) == EXCPT_TRAP);
- 				inject_emulated_exception(vcpu);
- 				return EMULATE_DONE;
- 			}
+--- a/drivers/media/usb/gspca/sn9c20x.c
++++ b/drivers/media/usb/gspca/sn9c20x.c
+@@ -139,6 +139,13 @@ static const struct dmi_system_id flip_d
+ 		}
+ 	},
+ 	{
++		.ident = "MSI MS-1039",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "MICRO-STAR INT'L CO.,LTD."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "MS-1039"),
++		}
++	},
++	{
+ 		.ident = "MSI MS-1632",
+ 		.matches = {
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "MSI"),
 
 
