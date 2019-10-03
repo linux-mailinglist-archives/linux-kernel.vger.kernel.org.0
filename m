@@ -2,83 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2CFD1967B4
+	by mail.lfdr.de (Postfix) with ESMTP id 586681967B3
 	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgC1QqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:46:13 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50106 "EHLO mx.sdf.org"
+        id S1727639AbgC1QqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:46:11 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50100 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727614AbgC1QnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:25 -0400
+        id S1727620AbgC1Qn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:26 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhKv0008118
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhPTa005210
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:20 GMT
+        Sat, 28 Mar 2020 16:43:25 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhKpM009093;
-        Sat, 28 Mar 2020 16:43:20 GMT
-Message-Id: <202003281643.02SGhKpM009093@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhPmY017434;
+        Sat, 28 Mar 2020 16:43:25 GMT
+Message-Id: <202003281643.02SGhPmY017434@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Thu, 3 Oct 2019 04:55:27 -0400
-Subject: [RFC PATCH v1 34/50] mm/slub.c: Use cheaper prandom source in
- shuffle_freelist
+Date:   Thu, 3 Oct 2019 05:51:56 -0400
+Subject: [RFC PATCH v1 46/50] mm/shuffle.c: use get_random_max()
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Thomas Garnier <thgarnie@chromium.org>,
-        Yu Zhao <yuzhao@google.com>, Sean Rees <sean@erifax.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>, Qian Cai <cai@lca.pw>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pre-generated permutation which we're choosing a random starting
-offset into was itself generated with prandom (in freelist_randomize()),
-so there's not much point using a crypto-quality generator here.
-
-Also, prandom_u32_max() uses a multiplicative algorithm for generating
-random integers in a range, which is faster than modulo.
-
-TODO: Figure out a better algorithm for the whole thing.  A single
-permutation with a random starting point is a bit limiting.
-Can we make a full shuffle fast enough. or do we need to stick
-with something less general?
-
-We could easily add an outer offset: off2 + random_seq[off1 + i]
-
-Perhaps instead of just a random starting point, a random start
-and step?  Unfortunately, the step must be relatively prime to the
-count, and the latter is not chosen to make things convenient.
-But it's easy enough to precompute a list of possible steps.
-Or we could at least allow steps of +1 and -1.
-
-Should random_seq be changed periodically?  It's a separately
-allocated structure, so it's easy to allocate a new one and swap
-it out atomically.
-
-or even an Enigma-style double rotor:
-page[i] = off3 + random_seq2[off2 + random_seq1[off1 + i]]
+Now that we have it, this is an example of where it helps.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Thomas Garnier <thgarnie@chromium.org>
-Cc: Yu Zhao <yuzhao@google.com>
-Cc: Sean Rees <sean@erifax.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
 ---
- mm/slub.c | 2 +-
+ mm/shuffle.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 8eafccf759409..94d765666cff0 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1580,7 +1580,7 @@ static bool shuffle_freelist(struct kmem_cache *s, struct page *page)
- 		return false;
- 
- 	freelist_count = oo_objects(s->oo);
--	pos = get_random_int() % freelist_count;
-+	pos = prandom_u32_max(freelist_count);
- 
- 	page_limit = page->objects * s->size;
- 	start = fixup_red_left(s, page_address(page));
+diff --git a/mm/shuffle.c b/mm/shuffle.c
+index b3fe97fd66541..e0ed247f8d907 100644
+--- a/mm/shuffle.c
++++ b/mm/shuffle.c
+@@ -135,7 +135,7 @@ void __meminit __shuffle_zone(struct zone *z)
+ 			 * in the zone.
+ 			 */
+ 			j = z->zone_start_pfn +
+-				ALIGN_DOWN(get_random_long() % z->spanned_pages,
++				ALIGN_DOWN(get_random_max(z->spanned_pages),
+ 						order_pages);
+ 			page_j = shuffle_valid_page(j, order);
+ 			if (page_j && page_j != page_i)
 -- 
 2.26.0
 
