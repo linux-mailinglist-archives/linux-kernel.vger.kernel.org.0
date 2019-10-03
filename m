@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6386CA88F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F04CA894
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391504AbfJCQ2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:28:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33026 "EHLO mail.kernel.org"
+        id S2391582AbfJCQ3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389346AbfJCQ2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:28:33 -0400
+        id S2391569AbfJCQ3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:29:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67B822133F;
-        Thu,  3 Oct 2019 16:28:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C871020700;
+        Thu,  3 Oct 2019 16:29:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120111;
-        bh=R84mSIxpEX1AcPIuhZJU0uwLWQyn3K4b+Mpvg9kxH0k=;
+        s=default; t=1570120141;
+        bh=wKwjfWM+JCA0f7UO0uWQrgxnwNMKaVWWUO0lVQf5ynI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NT6i6wtNm8SCLOgQduDjP8S0Uk7yLmvHyr1eGkSE1y8Kt0L3vdS3rq8b7ctiHE4ZC
-         xLfysMGmm7oz9+A4NPFEIu/Ymkr+z01KIHme+jqYa7iUdSDpHYVfLbSRs64EqKimWk
-         OLrV/h9DYSt6a5ApRxWtzSaUTm1+10AbZF+dBa/8=
+        b=a76UlBZjg2nPOoBDw6Nj0Xip40gFPqEazOMpXwD6ukCJumhqYCCDx5OuN5QKUeCjY
+         iGb8vI2MFUzXVPCa2GGx6XVLJvt2TachjVIxtj3g0FSxx6x45mqeUb3JT2Cfrnaa2v
+         E6tDpyR6dQIii7Q9q4olJURI5LJMmf9m+YaTSEvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org, Stefan Agner <stefan.agner@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 101/313] ARM: xscale: fix multi-cpu compilation
-Date:   Thu,  3 Oct 2019 17:51:19 +0200
-Message-Id: <20191003154542.856795646@linuxfoundation.org>
+Subject: [PATCH 5.2 111/313] ARM: dts: imx7-colibri: disable HS400
+Date:   Thu,  3 Oct 2019 17:51:29 +0200
+Message-Id: <20191003154543.769491448@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -43,56 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Stefan Agner <stefan.agner@toradex.com>
 
-[ Upstream commit c7b68049943079550d4e6af0f10aa3aabd64131a ]
+[ Upstream commit a95fbda08ee20cd063ce5826e0df95a2c22ea8c5 ]
 
-Building a combined ARMv4+XScale kernel produces these
-and other build failures:
+Force HS200 by masking bit 63 of the SDHCI capability register.
+The i.MX ESDHC driver uses SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400. With
+that the stack checks bit 63 to descide whether HS400 is available.
+Using sdhci-caps-mask allows to mask bit 63. The stack then selects
+HS200 as operating mode.
 
-/tmp/copypage-xscale-3aa821.s: Assembler messages:
-/tmp/copypage-xscale-3aa821.s:167: Error: selected processor does not support `pld [r7,#0]' in ARM mode
-/tmp/copypage-xscale-3aa821.s:168: Error: selected processor does not support `pld [r7,#32]' in ARM mode
-/tmp/copypage-xscale-3aa821.s:169: Error: selected processor does not support `pld [r1,#0]' in ARM mode
-/tmp/copypage-xscale-3aa821.s:170: Error: selected processor does not support `pld [r1,#32]' in ARM mode
-/tmp/copypage-xscale-3aa821.s:171: Error: selected processor does not support `pld [r7,#64]' in ARM mode
-/tmp/copypage-xscale-3aa821.s:176: Error: selected processor does not support `ldrd r4,r5,[r7],#8' in ARM mode
-/tmp/copypage-xscale-3aa821.s:180: Error: selected processor does not support `strd r4,r5,[r1],#8' in ARM mode
+This prevents rare communication errors with minimal effect on
+performance:
+	sdhci-esdhc-imx 30b60000.usdhc: warning! HS400 strobe DLL
+		status REF not lock!
 
-Add an explict .arch armv5 in the inline assembly to allow the ARMv5
-specific instructions regardless of the compiler -march= target.
-
-Link: https://lore.kernel.org/r/20190809163334.489360-5-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+Reviewed-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/copypage-xscale.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx7-colibri.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mm/copypage-xscale.c b/arch/arm/mm/copypage-xscale.c
-index 61d834157bc05..382e1c2855e85 100644
---- a/arch/arm/mm/copypage-xscale.c
-+++ b/arch/arm/mm/copypage-xscale.c
-@@ -42,6 +42,7 @@ static void mc_copy_user_page(void *from, void *to)
- 	 * when prefetching destination as well.  (NP)
- 	 */
- 	asm volatile ("\
-+.arch xscale					\n\
- 	pld	[%0, #0]			\n\
- 	pld	[%0, #32]			\n\
- 	pld	[%1, #0]			\n\
-@@ -106,8 +107,9 @@ void
- xscale_mc_clear_user_highpage(struct page *page, unsigned long vaddr)
- {
- 	void *ptr, *kaddr = kmap_atomic(page);
--	asm volatile(
--	"mov	r1, %2				\n\
-+	asm volatile("\
-+.arch xscale					\n\
-+	mov	r1, %2				\n\
- 	mov	r2, #0				\n\
- 	mov	r3, #0				\n\
- 1:	mov	ip, %0				\n\
+diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
+index 895fbde4d4333..c1ed83131b495 100644
+--- a/arch/arm/boot/dts/imx7-colibri.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri.dtsi
+@@ -323,6 +323,7 @@
+ 	vmmc-supply = <&reg_module_3v3>;
+ 	vqmmc-supply = <&reg_DCDC3>;
+ 	non-removable;
++	sdhci-caps-mask = <0x80000000 0x0>;
+ };
+ 
+ &iomuxc {
 -- 
 2.20.1
 
