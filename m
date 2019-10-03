@@ -2,45 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E1C2CA30F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5DA3CA2E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387924AbfJCQLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:11:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33666 "EHLO mail.kernel.org"
+        id S2387594AbfJCQKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:10:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732595AbfJCQLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:11:47 -0400
+        id S2387579AbfJCQKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:10:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 395F120700;
-        Thu,  3 Oct 2019 16:11:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDB7D20865;
+        Thu,  3 Oct 2019 16:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119106;
-        bh=ngAFsvRQTmDQ6XeWgxtiUf4Guo/NsDxTmvv99F4HdJY=;
+        s=default; t=1570119010;
+        bh=7xF1xYmOlay9Ze+szq0md9RS0t+LoDPP2wL641ILDTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=elsWhCIbFvg6wfKrMoyK4Hm9ZXkOgCYyBgboPwmQTSO4LKNAVtG+RmriZ8JVBz4/6
-         GSCn1H09wUkwYGrg+DkDivakSJNMi+NzNuWi4sYmt+DNpMp+Ir7pUnMb9px8AmQXRN
-         +18pBqboIlN9Lj9xT6tMr/s7jg7juKRo5rhaL4NU=
+        b=yXDn2w1brUqZVOZIiqo/IHFqMigZiNGlZhaP9gE8Xybb1qCbp0RMEia+RzjZpBVw3
+         mt/wYeYpaeR/LlMuimujaG25kCahOkbamIS5dQhGcol3Xo/2s5i1Vekzgr3gGE+78S
+         /IiSI93xnP2+xty1VZwYWox9kR6u7z+VNhqc1CFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tan Xiaojun <tanxiaojun@huawei.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 090/185] perf record: Support aarch64 random socket_id assignment
-Date:   Thu,  3 Oct 2019 17:52:48 +0200
-Message-Id: <20191003154458.685856484@linuxfoundation.org>
+Subject: [PATCH 4.14 093/185] media: imx: mipi csi-2: Dont fail if initial state times-out
+Date:   Thu,  3 Oct 2019 17:52:51 +0200
+Message-Id: <20191003154459.482636264@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -53,78 +48,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tan Xiaojun <tanxiaojun@huawei.com>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit 0a4d8fb229dd78f9e0752817339e19e903b37a60 ]
+[ Upstream commit 0d5078c7172c46db6c58718d817b9fcf769554b4 ]
 
-Same as in the commit 01766229533f ("perf record: Support s390 random
-socket_id assignment"), aarch64 also have this problem.
+Not all sensors will be able to guarantee a proper initial state.
+This may be either because the driver is not properly written,
+or (probably unlikely) because the hardware won't support it.
 
-Without this fix:
+While the right solution in the former case is to fix the sensor
+driver, the real world not always allows right solutions, due to lack
+of available documentation and support on these sensors.
 
-  [root@localhost perf]# ./perf report --header -I -v
-  ...
-  socket_id number is too big.You may need to upgrade the perf tool.
+Let's relax this requirement, and allow the driver to support stream start,
+even if the sensor initial sequence wasn't the expected.
 
-  # ========
-  # captured on    : Thu Aug  1 22:58:38 2019
-  # header version : 1
-  ...
-  # Core ID and Socket ID information is not available
-  ...
+Also improve the warning message to better explain the problem and provide
+a hint that the sensor driver needs to be fixed.
 
-With this fix:
-  [root@localhost perf]# ./perf report --header -I -v
-  ...
-  cpumask list: 0-31
-  cpumask list: 32-63
-  cpumask list: 64-95
-  cpumask list: 96-127
-
-  # ========
-  # captured on    : Thu Aug  1 22:58:38 2019
-  # header version : 1
-  ...
-  # CPU 0: Core ID 0, Socket ID 36
-  # CPU 1: Core ID 1, Socket ID 36
-  ...
-  # CPU 126: Core ID 126, Socket ID 8442
-  # CPU 127: Core ID 127, Socket ID 8442
-  ...
-
-Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Link: http://lkml.kernel.org/r/1564717737-21602-1-git-send-email-tanxiaojun@huawei.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Reviewed-by: Steve Longerbeam <slongerbeam@gmail.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/header.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/media/imx/imx6-mipi-csi2.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 6da7afa7d328e..e1fe446f65daa 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1882,8 +1882,10 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
- 	/* On s390 the socket_id number is not related to the numbers of cpus.
- 	 * The socket_id number might be higher than the numbers of cpus.
- 	 * This depends on the configuration.
-+	 * AArch64 is the same.
- 	 */
--	if (ph->env.arch && !strncmp(ph->env.arch, "s390", 4))
-+	if (ph->env.arch && (!strncmp(ph->env.arch, "s390", 4)
-+			  || !strncmp(ph->env.arch, "aarch64", 7)))
- 		do_core_id_test = false;
+diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/staging/media/imx/imx6-mipi-csi2.c
+index 5061f3f524fd5..c28f65c5427d1 100644
+--- a/drivers/staging/media/imx/imx6-mipi-csi2.c
++++ b/drivers/staging/media/imx/imx6-mipi-csi2.c
+@@ -247,7 +247,7 @@ static int __maybe_unused csi2_dphy_wait_ulp(struct csi2_dev *csi2)
+ }
  
- 	for (i = 0; i < (u32)cpu_nr; i++) {
+ /* Waits for low-power LP-11 state on data and clock lanes. */
+-static int csi2_dphy_wait_stopstate(struct csi2_dev *csi2)
++static void csi2_dphy_wait_stopstate(struct csi2_dev *csi2)
+ {
+ 	u32 mask, reg;
+ 	int ret;
+@@ -258,11 +258,9 @@ static int csi2_dphy_wait_stopstate(struct csi2_dev *csi2)
+ 	ret = readl_poll_timeout(csi2->base + CSI2_PHY_STATE, reg,
+ 				 (reg & mask) == mask, 0, 500000);
+ 	if (ret) {
+-		v4l2_err(&csi2->sd, "LP-11 timeout, phy_state = 0x%08x\n", reg);
+-		return ret;
++		v4l2_warn(&csi2->sd, "LP-11 wait timeout, likely a sensor driver bug, expect capture failures.\n");
++		v4l2_warn(&csi2->sd, "phy_state = 0x%08x\n", reg);
+ 	}
+-
+-	return 0;
+ }
+ 
+ /* Wait for active clock on the clock lane. */
+@@ -320,9 +318,7 @@ static int csi2_start(struct csi2_dev *csi2)
+ 	csi2_enable(csi2, true);
+ 
+ 	/* Step 5 */
+-	ret = csi2_dphy_wait_stopstate(csi2);
+-	if (ret)
+-		goto err_assert_reset;
++	csi2_dphy_wait_stopstate(csi2);
+ 
+ 	/* Step 6 */
+ 	ret = v4l2_subdev_call(csi2->src_sd, video, s_stream, 1);
 -- 
 2.20.1
 
