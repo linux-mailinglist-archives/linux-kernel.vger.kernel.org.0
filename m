@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A51CA6CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 854C3CA6D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405273AbfJCQrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:47:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32870 "EHLO mail.kernel.org"
+        id S2405558AbfJCQrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:47:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405194AbfJCQrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:47:32 -0400
+        id S2405525AbfJCQrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:47:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C06592086A;
-        Thu,  3 Oct 2019 16:47:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7341820865;
+        Thu,  3 Oct 2019 16:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121251;
-        bh=vNmoFFEBAwmRbkNPotkq14fYmjwQEJC6ATGtg3SyS7o=;
+        s=default; t=1570121262;
+        bh=OOYbtDl++mAga3Ve0irijuGjJiSWW+eTKM4eu1A5L8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bh+AWL6oVOBx5S/xsF3ltWV4pJWla4yL6FQIP6TwYjfUEynUvr70rGUHPrt2v/FTk
-         dMIbipsQ3EuK//f0GBqvn8a5Qrw/fUvns6ZZ6ocrsJAby7S5wKbK2R5aNaK26lMMZO
-         e+kP5NbxerbIQo2VuLHqPMaloNbpa3pJ8Fio0ows=
+        b=dmaOrg9IpUSx48tyB/Krv2f3i1ZgOOwLltlPK6sXb5WiAFv2w0mSkMdFjAwr7LAlc
+         A4t16dYz0ceorZwFlZf3OiAPCxQfx/4VvSXShmuYXsIJ8sYOleBUUM5XUmD6YPff4Z
+         q8od3fvejAPk0CIVEGEfj1kWErWHbMjqziSCqkdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        Song Liu <songliubraving@fb.com>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 210/344] raid5: dont set STRIPE_HANDLE to stripe which is in batch list
-Date:   Thu,  3 Oct 2019 17:52:55 +0200
-Message-Id: <20191003154601.005425530@linuxfoundation.org>
+Subject: [PATCH 5.3 213/344] mmc: sdhci: Fix incorrect switch to HS mode
+Date:   Thu,  3 Oct 2019 17:52:58 +0200
+Message-Id: <20191003154601.306159884@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,73 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+From: Al Cooper <alcooperx@gmail.com>
 
-[ Upstream commit 6ce220dd2f8ea71d6afc29b9a7524c12e39f374a ]
+[ Upstream commit c894e33ddc1910e14d6f2a2016f60ab613fd8b37 ]
 
-If stripe in batch list is set with STRIPE_HANDLE flag, then the stripe
-could be set with STRIPE_ACTIVE by the handle_stripe function. And if
-error happens to the batch_head at the same time, break_stripe_batch_list
-is called, then below warning could happen (the same report in [1]), it
-means a member of batch list was set with STRIPE_ACTIVE.
+When switching from any MMC speed mode that requires 1.8v
+(HS200, HS400 and HS400ES) to High Speed (HS) mode, the system
+ends up configured for SDR12 with a 50MHz clock which is an illegal
+mode.
 
-[7028915.431770] stripe state: 2001
-[7028915.431815] ------------[ cut here ]------------
-[7028915.431828] WARNING: CPU: 18 PID: 29089 at drivers/md/raid5.c:4614 break_stripe_batch_list+0x203/0x240 [raid456]
-[...]
-[7028915.431879] CPU: 18 PID: 29089 Comm: kworker/u82:5 Tainted: G           O    4.14.86-1-storage #4.14.86-1.2~deb9
-[7028915.431881] Hardware name: Supermicro SSG-2028R-ACR24L/X10DRH-iT, BIOS 3.1 06/18/2018
-[7028915.431888] Workqueue: raid5wq raid5_do_work [raid456]
-[7028915.431890] task: ffff9ab0ef36d7c0 task.stack: ffffb72926f84000
-[7028915.431896] RIP: 0010:break_stripe_batch_list+0x203/0x240 [raid456]
-[7028915.431898] RSP: 0018:ffffb72926f87ba8 EFLAGS: 00010286
-[7028915.431900] RAX: 0000000000000012 RBX: ffff9aaa84a98000 RCX: 0000000000000000
-[7028915.431901] RDX: 0000000000000000 RSI: ffff9ab2bfa15458 RDI: ffff9ab2bfa15458
-[7028915.431902] RBP: ffff9aaa8fb4e900 R08: 0000000000000001 R09: 0000000000002eb4
-[7028915.431903] R10: 00000000ffffffff R11: 0000000000000000 R12: ffff9ab1736f1b00
-[7028915.431904] R13: 0000000000000000 R14: ffff9aaa8fb4e900 R15: 0000000000000001
-[7028915.431906] FS:  0000000000000000(0000) GS:ffff9ab2bfa00000(0000) knlGS:0000000000000000
-[7028915.431907] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[7028915.431908] CR2: 00007ff953b9f5d8 CR3: 0000000bf4009002 CR4: 00000000003606e0
-[7028915.431909] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[7028915.431910] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[7028915.431910] Call Trace:
-[7028915.431923]  handle_stripe+0x8e7/0x2020 [raid456]
-[7028915.431930]  ? __wake_up_common_lock+0x89/0xc0
-[7028915.431935]  handle_active_stripes.isra.58+0x35f/0x560 [raid456]
-[7028915.431939]  raid5_do_work+0xc6/0x1f0 [raid456]
+This happens because the SDHCI_CTRL_VDD_180 bit in the
+SDHCI_HOST_CONTROL2 register is left set and when this bit is
+set, the speed mode is controlled by the SDHCI_CTRL_UHS field
+in the SDHCI_HOST_CONTROL2 register. The SDHCI_CTRL_UHS field
+will end up being set to 0 (SDR12) by sdhci_set_uhs_signaling()
+because there is no UHS mode being set.
 
-Also commit 59fc630b8b5f9f ("RAID5: batch adjacent full stripe write")
-said "If a stripe is added to batch list, then only the first stripe
-of the list should be put to handle_list and run handle_stripe."
+The fix is to change sdhci_set_uhs_signaling() to set the
+SDHCI_CTRL_UHS field to SDR25 (which is the same as HS) for
+any switch to HS mode.
 
-So don't set STRIPE_HANDLE to stripe which is already in batch list,
-otherwise the stripe could be put to handle_list and run handle_stripe,
-then the above warning could be triggered.
+This was found on a new eMMC controller that does strict checking
+of the speed mode and the corresponding clock rate. It caused the
+switch to HS400 mode to fail because part of the sequence to switch
+to HS400 requires a switch from HS200 to HS before going to HS400.
 
-[1]. https://www.spinics.net/lists/raid/msg62552.html
-
-Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Al Cooper <alcooperx@gmail.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/raid5.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 3de4e13bde984..21514edb2bea3 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -5718,7 +5718,8 @@ static bool raid5_make_request(struct mddev *mddev, struct bio * bi)
- 				do_flush = false;
- 			}
- 
--			set_bit(STRIPE_HANDLE, &sh->state);
-+			if (!sh->batch_head)
-+				set_bit(STRIPE_HANDLE, &sh->state);
- 			clear_bit(STRIPE_DELAYED, &sh->state);
- 			if ((!sh->batch_head || sh == sh->batch_head) &&
- 			    (bi->bi_opf & REQ_SYNC) &&
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index a5dc5aae973e6..c66e66fbaeb40 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1849,7 +1849,9 @@ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
+ 	else if (timing == MMC_TIMING_UHS_SDR12)
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
+-	else if (timing == MMC_TIMING_UHS_SDR25)
++	else if (timing == MMC_TIMING_SD_HS ||
++		 timing == MMC_TIMING_MMC_HS ||
++		 timing == MMC_TIMING_UHS_SDR25)
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
+ 	else if (timing == MMC_TIMING_UHS_SDR50)
+ 		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
 -- 
 2.20.1
 
