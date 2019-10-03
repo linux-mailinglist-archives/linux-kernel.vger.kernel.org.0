@@ -2,142 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39F95CA773
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 139A9CA612
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405703AbfJCQyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:54:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42270 "EHLO mail.kernel.org"
+        id S2404866AbfJCQjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:39:37 -0400
+Received: from ms.lwn.net ([45.79.88.28]:33084 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406443AbfJCQyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:54:02 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S2404841AbfJCQjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:39:33 -0400
+Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF52F2054F;
-        Thu,  3 Oct 2019 16:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121641;
-        bh=bZJtXnWKIwTghB+VFs86L/ux7EzLBnk1sMsSQutWN+8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H+o54SUu19AJuEWdoQtYuc0pP61c6jszsgqy9V6yAZm2N6VxxhQW3oP+GaNyPd8HW
-         Obj6BN14WyNNHN67cuKkWi7ovxAxHSu70/4x8+jNmFU8aLF1xqtTcf7U64OdYrbhwl
-         2jDcUbmKEU9JLKtbmHPLk8lxk/if1H8tCyNZ8tUE=
-Date:   Thu, 3 Oct 2019 18:02:03 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     stern@rowland.harvard.edu, mathias.nyman@intel.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: Add a new quirk to let buggy hub enable and
- disable LPM during suspend and resume
-Message-ID: <20191003160203.GA3438281@kroah.com>
-References: <20191002151512.28517-1-kai.heng.feng@canonical.com>
- <20191003155640.12632-1-kai.heng.feng@canonical.com>
+        by ms.lwn.net (Postfix) with ESMTPSA id BBCE65A0;
+        Thu,  3 Oct 2019 16:39:32 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 10:39:31 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-kernel@vger.kernel.org, libc-alpha@sourceware.org,
+        Christian Brauner <christian@brauner.io>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Alessia Mantegazza <amantegazza@vaga.pv.it>,
+        Guillaume Dore <corwin@poussif.eu>, linux-doc@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-abi@vger.kernel.org,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: [PATCH] Documentation: update about adding syscalls
+Message-ID: <20191003103931.52683cb6@lwn.net>
+In-Reply-To: <20191002151437.5367-1-christian.brauner@ubuntu.com>
+References: <20191002151437.5367-1-christian.brauner@ubuntu.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003155640.12632-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 11:56:40PM +0800, Kai-Heng Feng wrote:
-> Dell WD15 dock has a topology like this:
-> /:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 10000M
->     |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/7p, 5000M
->             |__ Port 2: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
+[Expanding CC a bit; this is the sort of change I'm reluctant to take
+without being sure it reflects what the community thinks.]
+
+On Wed,  2 Oct 2019 17:14:37 +0200
+Christian Brauner <christian.brauner@ubuntu.com> wrote:
+
+> Add additional information on how to ensure that syscalls with structure
+> arguments are extensible and add a section about naming conventions to
+> follow when adding revised versions of already existing syscalls.
 > 
-> Their IDs:
-> Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-> Bus 004 Device 002: ID 0424:5537 Standard Microsystems Corp.
-> Bus 004 Device 004: ID 0bda:8153 Realtek Semiconductor Corp.
-> 
-> Ethernet cannot be detected after plugging ethernet cable to the dock,
-> the hub and roothub get runtime resumed and runtime suspended
-> immediately:
-> ...
-> [  433.315169] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-> [  433.315204] usb usb4: usb auto-resume
-> [  433.315226] hub 4-0:1.0: hub_resume
-> [  433.315239] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10202e2, return 0x10343
-> [  433.315264] usb usb4-port1: status 0343 change 0001
-> [  433.315279] xhci_hcd 0000:3a:00.0: clear port1 connect change, portsc: 0x10002e2
-> [  433.315293] xhci_hcd 0000:3a:00.0: Get port status 4-2 read: 0x2a0, return 0x2a0
-> [  433.317012] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-> [  433.422282] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
-> 
-> At this point the SMSC hub (usb 4-1) enters into compliance mode
-> (USB_SS_PORT_LS_COMP_MOD), and USB core tries to warm-reset it,
-> 
-> [  433.422307] usb usb4-port1: do warm reset
-> [  433.422311] usb 4-1: device reset not allowed in state 8
-> [  433.422339] hub 4-0:1.0: state 7 ports 2 chg 0002 evt 0000
-> [  433.422346] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
-> [  433.422356] usb usb4-port1: do warm reset
-> [  433.422358] usb 4-1: device reset not allowed in state 8
-> [  433.422428] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 0 status  = 0xf0002e2
-> [  433.422455] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 1 status  = 0xe0002a0
-> [  433.422465] hub 4-0:1.0: hub_suspend
-> [  433.422475] usb usb4: bus auto-suspend, wakeup 1
-> [  433.426161] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-> [  433.466209] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.510204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.554051] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.598235] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.642154] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.686204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.730205] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.774203] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.818207] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.862040] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-> [  433.862053] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-> [  433.862077] xhci_hcd 0000:3a:00.0: xhci_suspend: stopping port polling.
-> [  433.862096] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-> [  433.862312] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_suspend: 0
-> [  433.862445] xhci_hcd 0000:3a:00.0: PME# enabled
-> [  433.902376] xhci_hcd 0000:3a:00.0: restoring config space at offset 0xc (was 0x0, writing 0x20)
-> [  433.902395] xhci_hcd 0000:3a:00.0: restoring config space at offset 0x4 (was 0x100000, writing 0x100403)
-> [  433.902490] xhci_hcd 0000:3a:00.0: PME# disabled
-> [  433.902504] xhci_hcd 0000:3a:00.0: enabling bus mastering
-> [  433.902547] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-> [  433.902649] pcieport 0000:00:1b.0: PME: Spurious native interrupt!
-> [  433.902839] xhci_hcd 0000:3a:00.0: Port change event, 4-1, id 3, portsc: 0xb0202e2
-> [  433.902842] xhci_hcd 0000:3a:00.0: resume root hub
-> [  433.902845] xhci_hcd 0000:3a:00.0: handle_port_status: starting port polling.
-> [  433.902877] xhci_hcd 0000:3a:00.0: xhci_resume: starting port polling.
-> [  433.902889] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-> [  433.902891] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-> [  433.902919] usb usb4: usb wakeup-resume
-> [  433.902942] usb usb4: usb auto-resume
-> [  433.902966] hub 4-0:1.0: hub_resume
-> ...
-> 
-> However the warm-reset never success, the asserted PCI PME keeps the
-> runtime-resume, warm-reset and runtime-suspend loop which never bring it back
-> and causing spurious interrupts floods.
-> 
-> After some trial and errors, the issue goes away if LPM on the SMSC hub
-> is disabled. Digging further, enabling and disabling LPM during runtime
-> resume and runtime suspend respectively can solve the issue.
-> 
-> So bring back the old LPM behavior as a quirk and use it for the SMSC
-> hub to solve the issue.
-> 
-> Fixes: d590c2311150 ("usb: Avoid unnecessary LPM enabling and disabling during suspend and resume")
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Co-Developed-by: Aleksa Sarai <cyphar@cyphar.com>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt |  3 +++
->  drivers/usb/core/hub.c                          | 15 +++++++++++++++
->  drivers/usb/core/quirks.c                       |  6 ++++++
->  include/linux/usb/quirks.h                      |  3 +++
->  4 files changed, 27 insertions(+)
+>  Documentation/process/adding-syscalls.rst | 82 +++++++++++++++++++----
+>  1 file changed, 70 insertions(+), 12 deletions(-)
+> 
+> diff --git a/Documentation/process/adding-syscalls.rst b/Documentation/process/adding-syscalls.rst
+> index 1c3a840d06b9..93e0221fbb9a 100644
+> --- a/Documentation/process/adding-syscalls.rst
+> +++ b/Documentation/process/adding-syscalls.rst
+> @@ -79,7 +79,7 @@ flags, and reject the system call (with ``EINVAL``) if it does::
+>  For more sophisticated system calls that involve a larger number of arguments,
+>  it's preferred to encapsulate the majority of the arguments into a structure
+>  that is passed in by pointer.  Such a structure can cope with future extension
+> -by including a size argument in the structure::
+> +by either including a size argument in the structure::
+>  
+>      struct xyzzy_params {
+>          u32 size; /* userspace sets p->size = sizeof(struct xyzzy_params) */
+> @@ -87,20 +87,56 @@ by including a size argument in the structure::
+>          u64 param_2;
+>          u64 param_3;
+>      };
+> +    int sys_xyzzy(struct xyzzy_params __user *uarg);
+> +    /* in case of -E2BIG, p->size is set to the in-kernel size and thus all
+> +       extensions after that offset are unsupported. */
 
-What changed from v1?  That should go below the --- line.
+That comment kind of threw me for a loop - this is the first mention of
+E2BIG and readers may not just know what's being talked about.  Especially
+since the comment suggests *not* actually returning an error.
 
-Can you send v3 please?
+> -As long as any subsequently added field, say ``param_4``, is designed so that a
+> -zero value gives the previous behaviour, then this allows both directions of
+> -version mismatch:
+> +or by including a separate argument that specifies the size::
+>  
+> - - To cope with a later userspace program calling an older kernel, the kernel
+> -   code should check that any memory beyond the size of the structure that it
+> -   expects is zero (effectively checking that ``param_4 == 0``).
+> - - To cope with an older userspace program calling a newer kernel, the kernel
+> -   code can zero-extend a smaller instance of the structure (effectively
+> -   setting ``param_4 = 0``).
+> +    struct xyzzy_params {
+> +        u32 param_1;
+> +        u64 param_2;
+> +        u64 param_3;
+> +    };
+> +    /* userspace sets @usize = sizeof(struct xyzzy_params) */
+> +    int sys_xyzzy(struct xyzzy_params __user *uarg, size_t usize);
+> +    /* in case of -E2BIG, userspace has to attempt smaller @usize values
+> +       to figure out which extensions are unsupported. */
 
-thanks,
+Here too.  But what I'm really wondering about now is: you're describing
+different behavior for what are essentially two cases of the same thing.
+Why should the kernel simply accept the smaller size if the size is
+embedded in the structure itself, but return an error and force user space
+to retry if it's a separate argument?
 
-greg k-h
+I guess maybe because in the latter case the kernel can't easily return
+the size it's actually using?  I think that should be explicit if so.
+
+Thanks,
+
+jon
+
+[Rest left untrimmed for context]
+
+> +Which model you choose to use is down to personal taste. However, please only
+> +pick one (for a counter-example, see :manpage:`sched_getattr(2)`).
+> +
+> +Then, any extensions can be implemented by appending fields to the structure.
+> +However, all new fields must be designed such that their zero value results in
+> +identical behaviour to the pre-extension syscall. This allows for compatibility
+> +between different-vintage kernels and userspace, no matter which is newer:
+> +
+> + - If the userspace is newer, then the older kernel can check whether the
+> +   fields it doesn't understand are zero-valued. If they are, then it can
+> +   safely ignore them (since any future extensions will be backwards-compatible
+> +   as described above). If they aren't, then the kernel doesn't support the
+> +   feature and can give an error (``-E2BIG`` is traditional).
+> +
+> + - If the userspace is older, then the kernel can treat all extensions that
+> +   userspace is unaware of as having their zero-value (and effectively
+> +   zero-extend the userspace structure when copying it for in-kernel usage).
+>  
+> -See :manpage:`perf_event_open(2)` and the ``perf_copy_attr()`` function (in
+> -``kernel/events/core.c``) for an example of this approach.
+> + - If they're the same version, just use the structure as-is.
+> +
+> +As with the simpler flag-only syscalls, you must always check that any unknown
+> +values for flag-like parameters in the passed structure are zeroed.
+> +
+> +It is also critical to ensure your syscall handles larger-sized arguments from
+> +the outset, otherwise userspace will have to do additional (fairly pointless)
+> +fallbacks for some old kernels. An example where this mistake was made is
+> +:manpage:`rt_sigprocmask(2)` (where any unknown-sized arguments are
+> +unconditionally rejected).
+> +
+> +To help implement this correctly, there is a helper function
+> +``copy_struct_from_user()`` which handles the compatibility requirements for
+> +you. For examples using this helper, see :manpage:`perf_event_open(2)` (which
+> +uses the embedded-size model) and :manpage:`clone3(2)` (which uses the
+> +separate-argument model).
+>  
+>  
+>  Designing the API: Other Considerations
+> @@ -173,6 +209,28 @@ registers.  (This concern does not apply if the arguments are part of a
+>  structure that's passed in by pointer.)
+>  
+>  
+> +Designing the API: Revisions of syscalls
+> +-----------------------------------------------
+> +
+> +Syscalls that were not designed to be extensible or syscalls that use a flag
+> +argument for extensions running out of bits (e.g. :manpage:`clone(2)`)
+> +sometimes need to be replaced.
+> +
+> +If the revised syscall provides a superset (or a reasonably large subset, such
+> +as when a feature that turned out to be a design mistake is dropped) of the
+> +features of the old syscall it is common practice to give it the same name with
+> +a number appended. Examples for this include ``dup2``/``dup3``,
+> +``epoll_create``/``epoll_create1`` and others.
+> +
+> +For some syscalls the appended number indicates the number of arguments
+> +(``accept``/``accept4``) for others the number of the revision
+> +(``clone``/``clone3``, ``epoll_create``/``epoll_create1``). Recent discussions
+> +around new syscalls (such as ``clone3``) have pointed to a consensus around
+> +naming syscalls revisions by appending the number of the revision to the
+> +syscall name. That means, if you were to post a revised version of the
+> +``openat`` syscall it should be named ``openat2``.
+> +
+> +
+>  Proposing the API
+>  -----------------
+>  
