@@ -2,103 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2871CC9D9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B33C9D95
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:43:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730244AbfJCLms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:42:48 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34330 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730229AbfJCLms (ORCPT
+        id S1730192AbfJCLmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:42:15 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:33536 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfJCLmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:42:48 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a11so2604979wrx.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 04:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jT+9een9mM2KMQc2NI2nr4Y5VakV7H0J0wclQgkUils=;
-        b=fwQKUaUFQ6a/78eZtJv4rTrh8NiDMuR7wU5XIhUa32e5TXH0+uEfqBrFFkdozLykq1
-         GQSrne3+R37jhPKfIGFJf311r73w02PYfez7FjwTcAvND4U6++vYOlaw9c7WX4E2oyY2
-         nikycED8a/vkMoQonBwpaQpGZVVqHZtSoxd6HWOawqobtNEPaBTphaIe8FghuMyKs8M7
-         Si1Ey/dynw5twF+TVb6+G/a0w5QVMtNTUe+ZkLXqRKR5eM/AqOW7nzpR5fVSezqZ8q7p
-         32T39Ez4eEhSJ4vkH30VuovExTH5yDqeqWSaWP4tiMu+75u2sBIPXVp+uzQum8/3hiUN
-         VJwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jT+9een9mM2KMQc2NI2nr4Y5VakV7H0J0wclQgkUils=;
-        b=jzmHcgliOnRyepkFtF2ArO8KfZGE8/dH9SZNU5Zu81skCQF/SirMvl/6ZyN9sMVIwg
-         s7dWa+k3YNY+/xqBECjrd1I9bOGO05Nw3F7AANyyzAjN/O8594bHaEJO1FxhrrfjPrBo
-         QnzThCYJqUXFJNhQb98ZzmN/n3tI2fM3IhcF0OhISx9NhAP9SN0BdhMyWV/hAzewF9yl
-         MX9MbCizGBD/KB4yGQ3eve604h9fpXcLUK/Z3mTKeATu2Ptvqi6HrZRyr+1M4//pY1LG
-         spQUQw0IvM24JJCYHCqy9dakEbiHDfb671dfUuDqK9LHsxvwFhpgMar5OVM4pZqvC0MF
-         oinw==
-X-Gm-Message-State: APjAAAXLhTsRINVXy9fU8yvY0MFAfbfVnVlMh+hVgWQ4chDjacNTTho0
-        FC15+/AKhsO77PsUMBHjIXoTLg==
-X-Google-Smtp-Source: APXvYqz82V76dcSOpmIIaTo777Rc74WPo1TLzktFeak8EAx8pWm//EW5b77wEGmszSGc+Q2Gg+GDIw==
-X-Received: by 2002:a5d:6704:: with SMTP id o4mr6839593wru.365.1570102966533;
-        Thu, 03 Oct 2019 04:42:46 -0700 (PDT)
-Received: from dell ([2.27.167.122])
-        by smtp.gmail.com with ESMTPSA id 36sm3014735wrp.30.2019.10.03.04.42.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Oct 2019 04:42:46 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 12:42:42 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     daniel.thompson@linaro.org, jingoohan1@gmail.com,
-        jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] backlight: lm3630a: Add an enable gpio for the
- HWEN pin
-Message-ID: <20191003114242.GE21172@dell>
-References: <20190912213257.24147-1-andreas@kemnade.info>
- <20190912213257.24147-3-andreas@kemnade.info>
+        Thu, 3 Oct 2019 07:42:15 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x93Bg5o1078189;
+        Thu, 3 Oct 2019 06:42:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570102925;
+        bh=oz/bIvQ4rqWyufq6vJCniBBXFBd9FPenYQM05c8kSkc=;
+        h=From:To:CC:Subject:Date;
+        b=uVfssUzlirsigRojwClcbNOiE9BqrhxcG9kE+myhSDPnPIxTdGD0faqq9z6fIpsOb
+         Iqx9J4XdEeyJ1C2OpWIUPU37ftkiNRvzBYgKN34wKOshh2l5VkmzU/Em8TgkYhlzMO
+         0GRhAmmcCfis8iC6bN9meplhWkBvu1bUZrB014Mk=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x93Bg5x8108385
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Oct 2019 06:42:05 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 3 Oct
+ 2019 06:42:04 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 3 Oct 2019 06:42:04 -0500
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x93Bg1G9053789;
+        Thu, 3 Oct 2019 06:42:02 -0500
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>,
+        <t-kristo@ti.com>, <faiz_abbas@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am654-base-board: Add disable-wp for mmc0
+Date:   Thu, 3 Oct 2019 17:12:51 +0530
+Message-ID: <20191003114251.20533-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190912213257.24147-3-andreas@kemnade.info>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Sep 2019, Andreas Kemnade wrote:
+MMC0_SDWP is not connected to the card. Indicate this by adding a
+disable-wp flag.
 
-> For now just enable it in the probe function to allow I2C
-> access. Disabling also means resetting the register values
-> to default and according to the datasheet does not give
-> power savings.
-> 
-> Tested on Kobo Clara HD.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> Reviewed-by: Dan Murphy <dmurphy@ti.com>
-> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
-> changes in v2:
-> - simplification
-> - correct gpio direction initialisation
-> 
-> changes in v3:
-> - removed legacy include
-> 
->  drivers/video/backlight/lm3630a_bl.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thanks.
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+index 1102b84f853d..143474119328 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+@@ -221,6 +221,7 @@
+ 	bus-width = <8>;
+ 	non-removable;
+ 	ti,driver-strength-ohm = <50>;
++	disable-wp;
+ };
+ 
+ &dwc3_1 {
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.19.2
+
