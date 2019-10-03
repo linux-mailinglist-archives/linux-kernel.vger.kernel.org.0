@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D78FCAB58
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD70CAB1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388789AbfJCQPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:15:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35606 "EHLO mail.kernel.org"
+        id S2391354AbfJCRRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:17:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388297AbfJCQND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:13:03 -0400
+        id S2390274AbfJCQWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:22:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17EAC2054F;
-        Thu,  3 Oct 2019 16:13:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B01692054F;
+        Thu,  3 Oct 2019 16:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119182;
-        bh=Y11zvhIK8E89btix8E6YbczENk9krIRsc+ILQ8r1z8g=;
+        s=default; t=1570119737;
+        bh=ZsSQ/Q9nhpssLAIx6yD5sSkzGLXOhaVzTnt0SeF9+v0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ws5d6dSvbOm/MfjzNvDyB7PT3+gqPswJP18oqzOVTIjvTyhKIt1OWZe0YzXEUuzvK
-         slQN2c0bJOKUCerNlc5HsRWPilDefr8f6XonhiTsRUqXQbXBofUd3rY3zwQE6TM/BV
-         AlS+18TNn3P0wvlki4LIXxVQTPAEuRBRVCEV8+/U=
+        b=nOmSzuDL6yDV26E4p98SGN/3IGuVgpv1HPMQAfcwiiCwGpj/a4sSj56mab4vyP3aJ
+         nArKxV9pfLt88ipHh19TBEuBAkcCcWTk/AeyuQR3TtivcCYXj5yxBB1oCpmB63OGcA
+         3FRwwq26xaegBPOX2gr+cD6Td67fT9N5J48t2irY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 155/185] ASoC: Intel: NHLT: Fix debug print format
-Date:   Thu,  3 Oct 2019 17:53:53 +0200
-Message-Id: <20191003154514.289731616@linuxfoundation.org>
+        stable@vger.kernel.org, Lihua Yao <ylhuajnu@outlook.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.19 174/211] ARM: samsung: Fix system restart on S3C6410
+Date:   Thu,  3 Oct 2019 17:54:00 +0200
+Message-Id: <20191003154526.656368734@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,34 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+From: Lihua Yao <ylhuajnu@outlook.com>
 
-commit 855a06da37a773fd073d51023ac9d07988c87da8 upstream.
+commit 16986074035cc0205472882a00d404ed9d213313 upstream.
 
-oem_table_id is 8 chars long, so we need to limit it, otherwise it
-may print some unprintable characters into dmesg.
+S3C6410 system restart is triggered by watchdog reset.
 
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
-Link: https://lore.kernel.org/r/20190827141712.21015-7-amadeuszx.slawinski@linux.intel.com
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Fixes: 9f55342cc2de ("ARM: dts: s3c64xx: Fix infinite interrupt in soft mode")
+Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/skylake/skl-nhlt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/plat-samsung/watchdog-reset.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/soc/intel/skylake/skl-nhlt.c
-+++ b/sound/soc/intel/skylake/skl-nhlt.c
-@@ -215,7 +215,7 @@ int skl_nhlt_update_topology_bin(struct
- 	struct hdac_bus *bus = ebus_to_hbus(&skl->ebus);
- 	struct device *dev = bus->dev;
- 
--	dev_dbg(dev, "oem_id %.6s, oem_table_id %8s oem_revision %d\n",
-+	dev_dbg(dev, "oem_id %.6s, oem_table_id %.8s oem_revision %d\n",
- 		nhlt->header.oem_id, nhlt->header.oem_table_id,
- 		nhlt->header.oem_revision);
+--- a/arch/arm/plat-samsung/watchdog-reset.c
++++ b/arch/arm/plat-samsung/watchdog-reset.c
+@@ -62,6 +62,7 @@ void samsung_wdt_reset(void)
+ #ifdef CONFIG_OF
+ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	{ .compatible = "samsung,s3c2410-wdt" },
++	{ .compatible = "samsung,s3c6410-wdt" },
+ 	{},
+ };
  
 
 
