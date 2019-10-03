@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6896DCA74C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCEA1CA5EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406225AbfJCQwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:52:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40344 "EHLO mail.kernel.org"
+        id S2404651AbfJCQiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:38:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406209AbfJCQwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:52:36 -0400
+        id S2392281AbfJCQh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:37:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 473D321783;
-        Thu,  3 Oct 2019 16:52:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFB5321783;
+        Thu,  3 Oct 2019 16:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121555;
-        bh=ZRce7myZfk1QI63VqGi7nz03HZhFbaacZxkzZTBauw0=;
+        s=default; t=1570120675;
+        bh=bJcao7SPBQMuapxEuG3Dz/UmDhKG/EGCDtv2S5A7S9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nkJ5ejQYK5UYiW8nfglbqh50SjaUglw9iBNPpVFqgt/JiyGOJtiQGQJDl5PN7DEEq
-         9pHMlAUdt1k3T6gj/KZKqy7Fx5vhOp01DlXflVGfoDH1s35y3SfjCfnUPIrIjWbtBD
-         40qgLdsqLgJ0TKLbvrgqAyQp+/TYvmbMhnayyRWc=
+        b=nnPjpilhh+lgrgozkawVBHgHmR9BeEkfbvioNpLfmYASomKZpz6UXL83Fo5LvdRJg
+         xrPH9pJB3zOSBnUWtq0Jb6oNmqX1hIf1ooQGmopwxEdZmCxDnMORXkadFlzDqrnnDY
+         3RFTvjZr0HifYCzckYlwnoUJy09kB58Vz4rZxNsE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Song Liu <songliubraving@fb.com>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>
-Subject: [PATCH 5.3 322/344] md: only call set_in_sync() when it is expected to succeed.
-Date:   Thu,  3 Oct 2019 17:54:47 +0200
-Message-Id: <20191003154610.763756994@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        NeilBrown <neilb@suse.de>, Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 310/313] md/raid0: avoid RAID0 data corruption due to layout confusion.
+Date:   Thu,  3 Oct 2019 17:54:48 +0200
+Message-Id: <20191003154603.729871177@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +45,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: NeilBrown <neilb@suse.de>
 
-commit 480523feae581ab714ba6610388a3b4619a2f695 upstream.
+[ Upstream commit c84a1372df929033cb1a0441fb57bd3932f39ac9 ]
 
-Since commit 4ad23a976413 ("MD: use per-cpu counter for
-writes_pending"), set_in_sync() is substantially more expensive: it
-can wait for a full RCU grace period which can be 10s of milliseconds.
+If the drives in a RAID0 are not all the same size, the array is
+divided into zones.
+The first zone covers all drives, to the size of the smallest.
+The second zone covers all drives larger than the smallest, up to
+the size of the second smallest - etc.
 
-So we should only call it when the cost is justified.
+A change in Linux 3.14 unintentionally changed the layout for the
+second and subsequent zones.  All the correct data is still stored, but
+each chunk may be assigned to a different device than in pre-3.14 kernels.
+This can lead to data corruption.
 
-md_check_recovery() currently calls set_in_sync() every time it finds
-anything to do (on non-external active arrays).  For an array
-performing resync or recovery, this will be quite often.
-Each call will introduce a delay to the md thread, which can noticeable
-affect IO submission latency.
+It is not possible to determine what layout to use - it depends which
+kernel the data was written by.
+So we add a module parameter to allow the old (0) or new (1) layout to be
+specified, and refused to assemble an affected array if that parameter is
+not set.
 
-In md_check_recovery() we only need to call set_in_sync() if
-'safemode' was non-zero at entry, meaning that there has been not
-recent IO.  So we save this "safemode was nonzero" state, and only
-call set_in_sync() if it was non-zero.
-
-This measurably reduces mean and maximum IO submission latency during
-resync/recovery.
-
-Reported-and-tested-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Fixes: 4ad23a976413 ("MD: use per-cpu counter for writes_pending")
-Cc: stable@vger.kernel.org (v4.12+)
-Signed-off-by: NeilBrown <neilb@suse.com>
+Fixes: 20d0189b1012 ("block: Introduce new bio_split()")
+cc: stable@vger.kernel.org (3.14+)
+Acked-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Signed-off-by: NeilBrown <neilb@suse.de>
 Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/raid0.c | 33 ++++++++++++++++++++++++++++++++-
+ drivers/md/raid0.h | 14 ++++++++++++++
+ 2 files changed, 46 insertions(+), 1 deletion(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8910,6 +8910,7 @@ void md_check_recovery(struct mddev *mdd
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index bf5cf184a260b..297bbc0f41f05 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -19,6 +19,9 @@
+ #include "raid0.h"
+ #include "raid5.h"
  
- 	if (mddev_trylock(mddev)) {
- 		int spares = 0;
-+		bool try_set_sync = mddev->safemode != 0;
++static int default_layout = 0;
++module_param(default_layout, int, 0644);
++
+ #define UNSUPPORTED_MDDEV_FLAGS		\
+ 	((1L << MD_HAS_JOURNAL) |	\
+ 	 (1L << MD_JOURNAL_CLEAN) |	\
+@@ -139,6 +142,19 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
+ 	}
+ 	pr_debug("md/raid0:%s: FINAL %d zones\n",
+ 		 mdname(mddev), conf->nr_strip_zones);
++
++	if (conf->nr_strip_zones == 1) {
++		conf->layout = RAID0_ORIG_LAYOUT;
++	} else if (default_layout == RAID0_ORIG_LAYOUT ||
++		   default_layout == RAID0_ALT_MULTIZONE_LAYOUT) {
++		conf->layout = default_layout;
++	} else {
++		pr_err("md/raid0:%s: cannot assemble multi-zone RAID0 with default_layout setting\n",
++		       mdname(mddev));
++		pr_err("md/raid0: please set raid.default_layout to 1 or 2\n");
++		err = -ENOTSUPP;
++		goto abort;
++	}
+ 	/*
+ 	 * now since we have the hard sector sizes, we can make sure
+ 	 * chunk size is a multiple of that sector size
+@@ -547,10 +563,12 @@ static void raid0_handle_discard(struct mddev *mddev, struct bio *bio)
  
- 		if (!mddev->external && mddev->safemode == 1)
- 			mddev->safemode = 0;
-@@ -8955,7 +8956,7 @@ void md_check_recovery(struct mddev *mdd
- 			}
- 		}
+ static bool raid0_make_request(struct mddev *mddev, struct bio *bio)
+ {
++	struct r0conf *conf = mddev->private;
+ 	struct strip_zone *zone;
+ 	struct md_rdev *tmp_dev;
+ 	sector_t bio_sector;
+ 	sector_t sector;
++	sector_t orig_sector;
+ 	unsigned chunk_sects;
+ 	unsigned sectors;
  
--		if (!mddev->external && !mddev->in_sync) {
-+		if (try_set_sync && !mddev->external && !mddev->in_sync) {
- 			spin_lock(&mddev->lock);
- 			set_in_sync(mddev);
- 			spin_unlock(&mddev->lock);
+@@ -584,8 +602,21 @@ static bool raid0_make_request(struct mddev *mddev, struct bio *bio)
+ 		bio = split;
+ 	}
+ 
++	orig_sector = sector;
+ 	zone = find_zone(mddev->private, &sector);
+-	tmp_dev = map_sector(mddev, zone, sector, &sector);
++	switch (conf->layout) {
++	case RAID0_ORIG_LAYOUT:
++		tmp_dev = map_sector(mddev, zone, orig_sector, &sector);
++		break;
++	case RAID0_ALT_MULTIZONE_LAYOUT:
++		tmp_dev = map_sector(mddev, zone, sector, &sector);
++		break;
++	default:
++		WARN("md/raid0:%s: Invalid layout\n", mdname(mddev));
++		bio_io_error(bio);
++		return true;
++	}
++
+ 	bio_set_dev(bio, tmp_dev->bdev);
+ 	bio->bi_iter.bi_sector = sector + zone->dev_start +
+ 		tmp_dev->data_offset;
+diff --git a/drivers/md/raid0.h b/drivers/md/raid0.h
+index 540e65d92642d..3816e5477db1e 100644
+--- a/drivers/md/raid0.h
++++ b/drivers/md/raid0.h
+@@ -8,11 +8,25 @@ struct strip_zone {
+ 	int	 nb_dev;	/* # of devices attached to the zone */
+ };
+ 
++/* Linux 3.14 (20d0189b101) made an unintended change to
++ * the RAID0 layout for multi-zone arrays (where devices aren't all
++ * the same size.
++ * RAID0_ORIG_LAYOUT restores the original layout
++ * RAID0_ALT_MULTIZONE_LAYOUT uses the altered layout
++ * The layouts are identical when there is only one zone (all
++ * devices the same size).
++ */
++
++enum r0layout {
++	RAID0_ORIG_LAYOUT = 1,
++	RAID0_ALT_MULTIZONE_LAYOUT = 2,
++};
+ struct r0conf {
+ 	struct strip_zone	*strip_zone;
+ 	struct md_rdev		**devlist; /* lists of rdevs, pointed to
+ 					    * by strip_zone->dev */
+ 	int			nr_strip_zones;
++	enum r0layout		layout;
+ };
+ 
+ #endif
+-- 
+2.20.1
+
 
 
