@@ -2,201 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5B3C9700
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 05:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A472FC9706
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 05:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbfJCDja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 23:39:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43670 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728540AbfJCDj3 (ORCPT
+        id S1728671AbfJCDrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 23:47:40 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:47998 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbfJCDrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 23:39:29 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v27so844663pgk.10;
-        Wed, 02 Oct 2019 20:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E74AgWlIWK4quOmyTjQa6z3KmOpT3mcnqQYrU2yNDoM=;
-        b=cA5J+YJxCc5P1Qwx8TAT0OMpJZ1QI7l916cMcwZ3bpY5tsB0TqgNvhqH6QB3v36E7q
-         F7gcp/tCyEHN0yjzafN5RBmsCPebwS9Udgas1Q9R++AXTg4tae854+YreVaB3aPBtg9M
-         BYxuc8h++Ee+jkOpd0LzNAH5XvjQ/vHFaStt3T/YBaFT8axOmbhp+fGgPomIH2ZWUUCV
-         JffVnDhgO4GIJJdkE0ESzf7/XjLQDmIGLfVm7VSpDQ5SpRgW45lvacGbzSWHu7tEMKn8
-         A70CEAJrX8JjXGoQN79SJJOr9/WiGL+VohsVRXSFTgvsWLcDoo11zw7/cTAhLKEXrwE3
-         FqyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E74AgWlIWK4quOmyTjQa6z3KmOpT3mcnqQYrU2yNDoM=;
-        b=VyWRiyUYh/FYEz+9nwfjItw8OuXKeUYEGtYyA/dc37DVlsWmW+8ILqHxPrKFeBXVaR
-         2W0YiU2F/uPjsCpq/EC9VJjUbbgqVPVsRV61ATmfZvCT+Z5Qd50xw5uyFedyMsKnF4zb
-         TN+li+/7MD3WEkh3Yg43duETNzxh/WhR6EfVXmN3qytk7/dpCRz6rOTA8XXUn6ojmpWL
-         bt8EdA/MYGW/FRl1Gp46Ey4s6ouanplsaqpcnc9/4A0nNQQTTlb/3xD0CDl4+qCoOuBF
-         BOy2vfYUpXuA/5FcDYyeJSJbScYUapf8BHycpafFzNDlwUxUAxXks/UDNja8uFwvEzMV
-         XcqQ==
-X-Gm-Message-State: APjAAAVjrcD5/Ko3iXm61US5IoO1S0Z1r4YO80QIirHtopMAhcW3XK8X
-        an1/fIsx29cqNZe1wVoViek=
-X-Google-Smtp-Source: APXvYqx3eGIVOiVRaXeGXTDBXfPTQoXIba8mM9xJUrE+Ncp6eYYLqxwRTC3DcqMo85oRTGHOgSCEOQ==
-X-Received: by 2002:a62:14c2:: with SMTP id 185mr8371105pfu.47.1570073968536;
-        Wed, 02 Oct 2019 20:39:28 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w6sm936399pfj.17.2019.10.02.20.39.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Oct 2019 20:39:27 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 20:39:26 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Nicolas Boichat <nicolas@boichat.ch>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: applesmc: switch to using input device polling
- mode
-Message-ID: <20191003033926.GA1301@roeck-us.net>
-References: <20191002214345.GA108728@dtor-ws>
+        Wed, 2 Oct 2019 23:47:39 -0400
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191003034737epoutp0498faa11ec894b728fce92dc082a8ad67~KBmaZGkc61199611996epoutp04m
+        for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2019 03:47:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191003034737epoutp0498faa11ec894b728fce92dc082a8ad67~KBmaZGkc61199611996epoutp04m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1570074457;
+        bh=tTh2NtH07enJ+dDervgN540zaAt+pL+NURH7Sj9WmCU=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=kJLy8X3J5uWkRgpaTn17TbQlUeddl9ym/f/tLa6A+iESYb+YRiKG+IS0954pNPkHt
+         GU5TzKRB/C5nFxSkymHDBxCeEMPeuV+g5kLGUL2iHTHP3crluzMiUHl7YhAExMv1Km
+         YLhQ7Cujee+blVtEdZwAqOtm4thjqskwa2ertVmM=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20191003034736epcas5p228d6b0d2bcaa67e3b28ad5f31da49aac~KBmZJAK7C1708017080epcas5p2L;
+        Thu,  3 Oct 2019 03:47:36 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        36.01.04647.85F659D5; Thu,  3 Oct 2019 12:47:36 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191003034736epcas5p318b4c193365b47531868fc7808a92e5a~KBmYvnHxp2209022090epcas5p3L;
+        Thu,  3 Oct 2019 03:47:36 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191003034736epsmtrp1fb0ac8c9cbff68c06efeeee35edd55a6~KBmYu2pEs1111611116epsmtrp1E;
+        Thu,  3 Oct 2019 03:47:36 +0000 (GMT)
+X-AuditID: b6c32a49-72bff70000001227-fc-5d956f580100
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6A.56.03889.75F659D5; Thu,  3 Oct 2019 12:47:35 +0900 (KST)
+Received: from pankjsharma02 (unknown [107.111.85.32]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191003034734epsmtip198aa7d5ebc91b1db3ea302bba1d9652b~KBmXDqebo2519925199epsmtip1K;
+        Thu,  3 Oct 2019 03:47:34 +0000 (GMT)
+From:   "pankj.sharma" <pankj.sharma@samsung.com>
+To:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Cc:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
+        <eugen.hristev@microchip.com>, <ludovic.desroches@microchip.com>,
+        <pankaj.dubey@samsung.com>, <rcsekar@samsung.com>,
+        "'Sriram Dash'" <sriram.dash@samsung.com>
+In-Reply-To: <1569411904-6319-1-git-send-email-pankj.sharma@samsung.com>
+Subject: RE: [PATCH] can: m_can: add support for one shot mode
+Date:   Thu, 3 Oct 2019 09:17:32 +0530
+Message-ID: <010501d5799d$4b372830$e1a57890$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002214345.GA108728@dtor-ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK+j4JJ4HkhOxWJfJCfQUyc5gk6xQFleCA9pWrvZjA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIKsWRmVeSWpSXmKPExsWy7bCmlm5E/tRYg+9NkhZzzrewWBz4cZzF
+        YtX3qcwWl3fNYbN4sfY6q8X6RVNYLI4tELNYtPULu8WsCztYLW6sZ7dYem8nqwO3x5aVN5k8
+        Pl66zehx58dSRo/+vwYefVtWMXp83iQXwBbFZZOSmpNZllqkb5fAlXH/znSWgpsSFT1vfrA0
+        MLaLdDFyckgImEj8fXSPtYuRi0NIYDejxJLLPcwQzidGic4fsxlBqoQEvjFKTF6kA9Ox+PBm
+        qI69jBKLb19hg3BeM0r0bfvKBlLFJqAvMaXpLwuILSIQLXFj9wWwscwCrxglfu87wQqS4BTw
+        kPh99DQ7iC0sYCcx+cMEsDiLgIrEyy03wWxeAUuJ/mW7oWxBiZMzn4ANZRbQlli28DUzxEkK
+        Ej+fLmOFWGYl0XL+ODtEjbjEy6NH2EEWSwh0s0tsOXiJFaLBRWLLvx9MELawxKvjW9ghbCmJ
+        l/1tUHa2xMLd/UDLOIDsCom2GcIQYXuJA1fmgIWZBTQl1u/Sh1jFJ9H7+wkTRDWvREebEES1
+        msTUp+8YIWwZiTuPNrNBlHhIHLpfOIFRcRaSv2Yh+WsWkvtnIexawMiyilEytaA4Nz212LTA
+        MC+1XK84Mbe4NC9dLzk/dxMjOGFpee5gnHXO5xCjAAejEg/vjHtTYoVYE8uKK3MPMUpwMCuJ
+        8F5aDxTiTUmsrEotyo8vKs1JLT7EKM3BoiTOO4n1aoyQQHpiSWp2ampBahFMlomDU6qBUbF2
+        3bl/50PSuI57P/+afPyofGy5jbjTkaXmTx5byy7rf5m5LdEvL+hD5rNNguqLvIpZZt5z3/rL
+        aOXb+7Fv3CdkuXmUqFYfeLL61526e5/uOU65wmls8tMwOWnP5u1MmQ/e1zndqc6OEWJQsjzM
+        Lvjhxkup9DU3mRK++XnfPspvL5azVyvzmhJLcUaioRZzUXEiAJkcHKdUAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSnG54/tRYgz0fzC3mnG9hsTjw4ziL
+        xarvU5ktLu+aw2bxYu11Vov1i6awWBxbIGaxaOsXdotZF3awWtxYz26x9N5OVgdujy0rbzJ5
+        fLx0m9Hjzo+ljB79fw08+rasYvT4vEkugC2KyyYlNSezLLVI3y6BK2NL+z/WghfiFf+XfWFr
+        YJwi3MXIySEhYCKx+PBm1i5GLg4hgd2MEo37XzJ3MXIAJWQkFn+uhqgRllj57zk7RM1LRol1
+        N5axgiTYBPQlpjT9ZQGxRQRiJToeN7CB2MwCnxglVs30hGiYySixe/1/ZpAEp4CHxO+jp9lB
+        bGEBO4nJHyaADWIRUJF4ueUmmM0rYCnRv2w3lC0ocXLmExaIodoSvQ9bGWHsZQtfM0NcpyDx
+        8ynEQSICVhIt54+zQ9SIS7w8eoR9AqPwLCSjZiEZNQvJqFlIWhYwsqxilEwtKM5Nzy02LDDK
+        Sy3XK07MLS7NS9dLzs/dxAiOPS2tHYwnTsQfYhTgYFTi4Z1xb0qsEGtiWXFl7iFGCQ5mJRHe
+        S+uBQrwpiZVVqUX58UWlOanFhxilOViUxHnl849FCgmkJ5akZqemFqQWwWSZODilGhitFu68
+        vaBfyjLYyLi5prIg3zpORuTySht1Nr6nOrf2Wu+bcESx7WSL3cxn/gZCjZNXLN05P0t0U3ia
+        Zk75kx2q02YvSXY49mJnzYOLP78zvpFPaHia7r6g9KiN89qW7W+tvG5OuLVF7ICKcZZTxzmx
+        2E5DGyWZfdPs35bvdq7duHpLf3l0cqoSS3FGoqEWc1FxIgCBFn/ruQIAAA==
+X-CMS-MailID: 20191003034736epcas5p318b4c193365b47531868fc7808a92e5a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20190925114609epcas5p305e259619c7fe8cdc75d9fd27f34e758
+References: <CGME20190925114609epcas5p305e259619c7fe8cdc75d9fd27f34e758@epcas5p3.samsung.com>
+        <1569411904-6319-1-git-send-email-pankj.sharma@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 02:43:45PM -0700, Dmitry Torokhov wrote:
-> Now that instances of input_dev support polling mode natively,
-> we no longer need to create input_polled_dev instance.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Gentle Ping
 
-Applied to hwmon-next.
-
-I don't know what 0-day is complaining about; the code builds
-fine for me with the supposedly failing configuration. We'll
-see if we get into trouble when the patch shows up in -next.
-
-Guenter
-
+> -----Original Message-----
+> From: Pankaj Sharma <pankj.sharma=40samsung.com>
+> Subject: =5BPATCH=5D can: m_can: add support for one shot mode
+>=20
+> According to the CAN Specification (see ISO 11898-1:2015, 8.3.4 Recovery
+> Management), the M_CAN provides means for automatic retransmission of
+> frames that have lost arbitration or that have been disturbed by errors d=
+uring
+> transmission. By default automatic retransmission is enabled.
+>=20
+> The Bosch MCAN controller has support for disabling automatic retransmiss=
+ion.
+>=20
+> To support time-triggered communication as described in ISO 11898-1:2015,
+> chapter 9.2, the automatic retransmission may be disabled via CCCR.DAR.
+>=20
+> CAN_CTRLMODE_ONE_SHOT is used for disabling automatic retransmission.
+>=20
+> Signed-off-by: Pankaj Sharma <pankj.sharma=40samsung.com>
+> Signed-off-by: Sriram Dash <sriram.dash=40samsung.com>
 > ---
->  drivers/hwmon/Kconfig    |  1 -
->  drivers/hwmon/applesmc.c | 38 ++++++++++++++++++--------------------
->  2 files changed, 18 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 650dd71f9724..c5adca9cd465 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -299,7 +299,6 @@ config SENSORS_APPLESMC
->  	depends on INPUT && X86
->  	select NEW_LEDS
->  	select LEDS_CLASS
-> -	select INPUT_POLLDEV
->  	help
->  	  This driver provides support for the Apple System Management
->  	  Controller, which provides an accelerometer (Apple Sudden Motion
-> diff --git a/drivers/hwmon/applesmc.c b/drivers/hwmon/applesmc.c
-> index 183ff3d25129..ec93b8d673f5 100644
-> --- a/drivers/hwmon/applesmc.c
-> +++ b/drivers/hwmon/applesmc.c
-> @@ -19,7 +19,7 @@
->  
->  #include <linux/delay.h>
->  #include <linux/platform_device.h>
-> -#include <linux/input-polldev.h>
-> +#include <linux/input.h>
->  #include <linux/kernel.h>
->  #include <linux/slab.h>
->  #include <linux/module.h>
-> @@ -140,7 +140,7 @@ static s16 rest_y;
->  static u8 backlight_state[2];
->  
->  static struct device *hwmon_dev;
-> -static struct input_polled_dev *applesmc_idev;
-> +static struct input_dev *applesmc_idev;
->  
->  /*
->   * Last index written to key_at_index sysfs file, and value to use for all other
-> @@ -681,9 +681,8 @@ static void applesmc_calibrate(void)
->  	rest_x = -rest_x;
->  }
->  
-> -static void applesmc_idev_poll(struct input_polled_dev *dev)
-> +static void applesmc_idev_poll(struct input_dev *idev)
->  {
-> -	struct input_dev *idev = dev->input;
->  	s16 x, y;
->  
->  	if (applesmc_read_s16(MOTION_SENSOR_X_KEY, &x))
-> @@ -1134,7 +1133,6 @@ static int applesmc_create_nodes(struct applesmc_node_group *groups, int num)
->  /* Create accelerometer resources */
->  static int applesmc_create_accelerometer(void)
->  {
-> -	struct input_dev *idev;
->  	int ret;
->  
->  	if (!smcreg.has_accelerometer)
-> @@ -1144,37 +1142,38 @@ static int applesmc_create_accelerometer(void)
->  	if (ret)
->  		goto out;
->  
-> -	applesmc_idev = input_allocate_polled_device();
-> +	applesmc_idev = input_allocate_device();
->  	if (!applesmc_idev) {
->  		ret = -ENOMEM;
->  		goto out_sysfs;
->  	}
->  
-> -	applesmc_idev->poll = applesmc_idev_poll;
-> -	applesmc_idev->poll_interval = APPLESMC_POLL_INTERVAL;
-> -
->  	/* initial calibrate for the input device */
->  	applesmc_calibrate();
->  
->  	/* initialize the input device */
-> -	idev = applesmc_idev->input;
-> -	idev->name = "applesmc";
-> -	idev->id.bustype = BUS_HOST;
-> -	idev->dev.parent = &pdev->dev;
-> -	idev->evbit[0] = BIT_MASK(EV_ABS);
-> -	input_set_abs_params(idev, ABS_X,
-> +	applesmc_idev->name = "applesmc";
-> +	applesmc_idev->id.bustype = BUS_HOST;
-> +	applesmc_idev->dev.parent = &pdev->dev;
-> +	input_set_abs_params(applesmc_idev, ABS_X,
->  			-256, 256, APPLESMC_INPUT_FUZZ, APPLESMC_INPUT_FLAT);
-> -	input_set_abs_params(idev, ABS_Y,
-> +	input_set_abs_params(applesmc_idev, ABS_Y,
->  			-256, 256, APPLESMC_INPUT_FUZZ, APPLESMC_INPUT_FLAT);
->  
-> -	ret = input_register_polled_device(applesmc_idev);
-> +	ret = input_setup_polling(applesmc_idev, applesmc_idev_poll);
-> +	if (ret)
-> +		goto out_idev;
+>  drivers/net/can/m_can/m_can.c =7C 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
+c
+> index deb274a19ba0..e7165404ba8a 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> =40=40 -150,6 +150,7 =40=40 enum m_can_mram_cfg =7B
+>  =23define CCCR_CME_CANFD_BRS	0x2
+>  =23define CCCR_TXP		BIT(14)
+>  =23define CCCR_TEST		BIT(7)
+> +=23define CCCR_DAR		BIT(6)
+>  =23define CCCR_MON		BIT(5)
+>  =23define CCCR_CSR		BIT(4)
+>  =23define CCCR_CSA		BIT(3)
+> =40=40 -1123,7 +1124,7 =40=40 static void m_can_chip_config(struct net_de=
+vice
+> *dev)
+>  	if (priv->version =3D=3D 30) =7B
+>  	/* Version 3.0.x */
+>=20
+> -		cccr &=3D =7E(CCCR_TEST =7C CCCR_MON =7C
+> +		cccr &=3D =7E(CCCR_TEST =7C CCCR_MON =7C CCCR_DAR =7C
+>  			(CCCR_CMR_MASK << CCCR_CMR_SHIFT) =7C
+>  			(CCCR_CME_MASK << CCCR_CME_SHIFT));
+>=20
+> =40=40 -1133,7 +1134,7 =40=40 static void m_can_chip_config(struct net_de=
+vice
+> *dev)
+>  	=7D else =7B
+>  	/* Version 3.1.x or 3.2.x */
+>  		cccr &=3D =7E(CCCR_TEST =7C CCCR_MON =7C CCCR_BRSE =7C CCCR_FDOE
+> =7C
+> -			  CCCR_NISO);
+> +			  CCCR_NISO =7C CCCR_DAR);
+>=20
+>  		/* Only 3.2.x has NISO Bit implemented */
+>  		if (priv->can.ctrlmode & CAN_CTRLMODE_FD_NON_ISO) =40=40 -
+> 1153,6 +1154,10 =40=40 static void m_can_chip_config(struct net_device *d=
+ev)
+>  	if (priv->can.ctrlmode & CAN_CTRLMODE_LISTENONLY)
+>  		cccr =7C=3D CCCR_MON;
+>=20
+> +	/* Disable Auto Retransmission (all versions) */
+> +	if (priv->can.ctrlmode & CAN_CTRLMODE_ONE_SHOT)
+> +		cccr =7C=3D CCCR_DAR;
 > +
-> +	input_set_poll_interval(applesmc_idev, APPLESMC_POLL_INTERVAL);
-> +
-> +	ret = input_register_device(applesmc_idev);
->  	if (ret)
->  		goto out_idev;
->  
->  	return 0;
->  
->  out_idev:
-> -	input_free_polled_device(applesmc_idev);
-> +	input_free_device(applesmc_idev);
->  
->  out_sysfs:
->  	applesmc_destroy_nodes(accelerometer_group);
-> @@ -1189,8 +1188,7 @@ static void applesmc_release_accelerometer(void)
->  {
->  	if (!smcreg.has_accelerometer)
->  		return;
-> -	input_unregister_polled_device(applesmc_idev);
-> -	input_free_polled_device(applesmc_idev);
-> +	input_unregister_device(applesmc_idev);
->  	applesmc_destroy_nodes(accelerometer_group);
->  }
->  
+>  	/* Write config */
+>  	m_can_write(priv, M_CAN_CCCR, cccr);
+>  	m_can_write(priv, M_CAN_TEST, test);
+> =40=40 -1291,7 +1296,8 =40=40 static int m_can_dev_setup(struct platform_=
+device
+> *pdev, struct net_device *dev,
+>  	priv->can.ctrlmode_supported =3D CAN_CTRLMODE_LOOPBACK =7C
+>  					CAN_CTRLMODE_LISTENONLY =7C
+>  					CAN_CTRLMODE_BERR_REPORTING =7C
+> -					CAN_CTRLMODE_FD;
+> +					CAN_CTRLMODE_FD =7C
+> +					CAN_CTRLMODE_ONE_SHOT;
+>=20
+>  	/* Set properties depending on M_CAN version */
+>  	switch (priv->version) =7B
+> --
+> 2.17.1
+
+
