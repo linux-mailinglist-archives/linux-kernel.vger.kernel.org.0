@@ -2,143 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A3BCABD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80188CABD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731658AbfJCQAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:54 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35863 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731644AbfJCQAw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:52 -0400
-Received: by mail-qt1-f193.google.com with SMTP id o12so4329190qtf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:00:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WHlhVUvFqch680wlgcRKCc65z2j3hwVlcjsPrmD0yPY=;
-        b=n69rlZo+yOLc/EmziRkwRlvjCx5SWOGz+Ap4YoTfo+AQCgGMj+280TsW+KTXzRGpJq
-         KExcaSPjwVtN5UxZtTVkiTu1oFtZmDjjSFUhzoUymytly2b2c7LXQXsspaEsT/yCIUgn
-         OhIB9Kx5HSQL6/Z/NrN9ytAYBs2PYzCDJb9mEcY6UlF7wElr1dvhv+yrCRbUoiOIUTb2
-         pLEmUqWtC7aeHQgGzgTGpsUjQBHUsbaZG/7/CwBtRCkpFnCGwsCO2YK1CSP/N/6VhAl9
-         sol16PrnH5BIq5WXRJSq6DtqXaDkY20X/vutZUCbwnrQ5NU5W/Xwnx51FyAp3kMMhqA0
-         Ihcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WHlhVUvFqch680wlgcRKCc65z2j3hwVlcjsPrmD0yPY=;
-        b=GXCpZeqU/KIESorKlCabPvpCW9baet0OGcjmWT0Eeo3T9j2pqJQdyrH2pktZ/hGU4T
-         aRf+LSFNAP3pZ5FGEaYvhUfDB5IP8T6+peCbn7vOJ3+8gVkCOHCgCu+5VYXaFPgrvDCX
-         p76ZdWn0QI72voz6HsxNVO3Teb3KNpBiwQy0eVjM3SJJDGA8JDfz9MHyoXdbR2MkMzbI
-         66Tpz/+4fhCbnN9r9926AJsenCRMZvmdJz+TXUrEs9coFVPvKxBK1924XaZug9ymG0QB
-         vkj6+Wo7DIsu14jfrhC43QslJd+kuDcBB8tDu/OyVcB/LYLY328fD6jo3zjAMfhjWJ/S
-         PKeA==
-X-Gm-Message-State: APjAAAWJJKOTm8BB8tUoAFOJdc2G/vOHGQsXgm2vFsiYUBQ1Xl59WiTc
-        RV5XElS0NeFlaKGSbHNZVq6OM/3zjG8xGjvix2xXeQ==
-X-Google-Smtp-Source: APXvYqwCdMxh4briDkus03w+Fevn/52BFVCaS0a+4l2orABcmLrmeDyvK2IkpeXW659l+oihpmAV+V5OsnmKp5OGgns=
-X-Received: by 2002:ac8:7642:: with SMTP id i2mr10304461qtr.57.1570118450459;
- Thu, 03 Oct 2019 09:00:50 -0700 (PDT)
+        id S1731631AbfJCQAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:00:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:47794 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730237AbfJCQAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DDCA337;
+        Thu,  3 Oct 2019 09:00:45 -0700 (PDT)
+Received: from arrakis.emea.arm.com (unknown [10.1.196.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E40B13F739;
+        Thu,  3 Oct 2019 09:00:43 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 17:00:41 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
+        will@kernel.org, tglx@linutronix.de, luto@kernel.org
+Subject: Re: [PATCH v4 1/6] arm64: vdso32: Fix syncconfig errors.
+Message-ID: <20191003160041.GI21629@arrakis.emea.arm.com>
+References: <20191002144156.2174-1-vincenzo.frascino@arm.com>
+ <20191002144156.2174-2-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-References: <CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com>
- <20191001211948.GA42035@google.com> <CANpmjNNp=zVzM2iGcQwVYxzNHYjBo==_2nito4Dw=kHopy=0Sg@mail.gmail.com>
- <CACT4Y+bNun9zAcUEAm9TC6C_e9W9dd3+Eq9GwPWun1zzQOtHAg@mail.gmail.com>
-In-Reply-To: <CACT4Y+bNun9zAcUEAm9TC6C_e9W9dd3+Eq9GwPWun1zzQOtHAg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 3 Oct 2019 18:00:38 +0200
-Message-ID: <CACT4Y+Zaz9+t6LDW5csyezeHQ+whM-wPcta+REa0ESDj4JXPGQ@mail.gmail.com>
-Subject: Re: Kernel Concurrency Sanitizer (KCSAN)
-To:     Marco Elver <elver@google.com>,
-        Christian Brauner <christian@brauner.io>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Paul Turner <pjt@google.com>, Daniel Axtens <dja@axtens.net>,
-        Anatol Pomazau <anatol@google.com>,
-        Will Deacon <willdeacon@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002144156.2174-2-vincenzo.frascino@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 3:13 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Wed, Oct 2, 2019 at 9:52 PM Marco Elver <elver@google.com> wrote:
-> >
-> > Hi Joel,
-> >
-> > On Tue, 1 Oct 2019 at 23:19, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > >
-> > > On Fri, Sep 20, 2019 at 04:18:57PM +0200, Marco Elver wrote:
-> > > > Hi all,
-> > > >
-> > > > We would like to share a new data-race detector for the Linux kernel:
-> > > > Kernel Concurrency Sanitizer (KCSAN) --
-> > > > https://github.com/google/ktsan/wiki/KCSAN  (Details:
-> > > > https://github.com/google/ktsan/blob/kcsan/Documentation/dev-tools/kcsan.rst)
-> > > >
-> > > > To those of you who we mentioned at LPC that we're working on a
-> > > > watchpoint-based KTSAN inspired by DataCollider [1], this is it (we
-> > > > renamed it to KCSAN to avoid confusion with KTSAN).
-> > > > [1] http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf
-> > > >
-> > > > In the coming weeks we're planning to:
-> > > > * Set up a syzkaller instance.
-> > > > * Share the dashboard so that you can see the races that are found.
-> > > > * Attempt to send fixes for some races upstream (if you find that the
-> > > > kcsan-with-fixes branch contains an important fix, please feel free to
-> > > > point it out and we'll prioritize that).
-> > > >
-> > > > There are a few open questions:
-> > > > * The big one: most of the reported races are due to unmarked
-> > > > accesses; prioritization or pruning of races to focus initial efforts
-> > > > to fix races might be required. Comments on how best to proceed are
-> > > > welcome. We're aware that these are issues that have recently received
-> > > > attention in the context of the LKMM
-> > > > (https://lwn.net/Articles/793253/).
-> > > > * How/when to upstream KCSAN?
-> > >
-> > > Looks exciting. I think based on our discussion at LPC, you mentioned
-> > > one way of pruning is if the compiler generated different code with _ONCE
-> > > annotations than what would have otherwise been generated. Is that still on
-> > > the table, for the purposing of pruning the reports?
-> >
-> > This might be interesting at first, but it's not entirely clear how
-> > feasible it is. It's also dangerous, because the real issue would be
-> > ignored. It may be that one compiler version on a particular
-> > architecture generates the same code, but any change in compiler or
-> > architecture and this would no longer be true. Let me know if you have
-> > any more ideas.
-> >
-> > Best,
-> > -- Marco
-> >
-> > > Also appreciate a CC on future patches as well.
-> > >
-> > > thanks,
-> > >
-> > >  - Joel
-> > >
-> > >
-> > > >
-> > > > Feel free to test and send feedback.
->
-> FYI https://twitter.com/grsecurity/status/1179736828880048128 :)
+On Wed, Oct 02, 2019 at 03:41:51PM +0100, Vincenzo Frascino wrote:
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Reported-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> Tested-by: Catalin Marinas <catalin.marinas@arm.com>
 
-+Christian opts in for _all_ reports for
-kernel/{fork,exit,pid,signal}.c and friends.
-Just wanted it to be written down for future reference :)
+If you changed the patch, please drop my reviewed/tested-by.
+
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 84a3d502c5a5..dfa6a5cb99e4 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -53,20 +53,12 @@ $(warning Detected assembler with broken .inst; disassembly will be unreliable)
+>    endif
+>  endif
+>  
+> +COMPATCC ?= $(CROSS_COMPILE_COMPAT)gcc
+> +export COMPATCC
+> +
+>  ifeq ($(CONFIG_GENERIC_COMPAT_VDSO), y)
+> -  CROSS_COMPILE_COMPAT ?= $(CONFIG_CROSS_COMPILE_COMPAT_VDSO:"%"=%)
+> -
+> -  ifeq ($(CONFIG_CC_IS_CLANG), y)
+> -    $(warning CROSS_COMPILE_COMPAT is clang, the compat vDSO will not be built)
+> -  else ifeq ($(strip $(CROSS_COMPILE_COMPAT)),)
+> -    $(warning CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built)
+> -  else ifeq ($(shell which $(CROSS_COMPILE_COMPAT)gcc 2> /dev/null),)
+> -    $(error $(CROSS_COMPILE_COMPAT)gcc not found, check CROSS_COMPILE_COMPAT)
+> -  else
+> -    export CROSS_COMPILE_COMPAT
+> -    export CONFIG_COMPAT_VDSO := y
+> -    compat_vdso := -DCONFIG_COMPAT_VDSO=1
+> -  endif
+> +  export CONFIG_COMPAT_VDSO := y
+> +  compat_vdso := -DCONFIG_COMPAT_VDSO=1
+>  endif
+
+With this change, if I don't have any CROSS_COMPILE_COMPAT in my
+environment, the kernel fails to build because COMPATCC becomes gcc
+which cannot build the vdso32. What I really want is not to warn me, nor
+fail to build the kernel when I don't care about the compat vDSO (e.g. I
+have a 64-bit only machine).
+
+What saved us before was the COMPATCC_IS_ARM_GCC check and a selection
+of the GENERIC_COMPAT_VDSO dependent on this check. This was now dropped
+from the previous version of the patch. We could add something like
+COMPATCC_CAN_LINK.
+
+-- 
+Catalin
