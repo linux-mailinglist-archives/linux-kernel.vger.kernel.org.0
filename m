@@ -2,165 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF02DCAB02
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C19CAB63
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732106AbfJCRZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:25:54 -0400
-Received: from mga04.intel.com ([192.55.52.120]:34645 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730428AbfJCRZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:25:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 10:22:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="191329490"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Oct 2019 10:22:44 -0700
-Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
-        by linux.intel.com (Postfix) with ESMTP id CC766580378;
-        Thu,  3 Oct 2019 10:22:44 -0700 (PDT)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v7 1/7] PCI/ATS: Fix pci_prg_resp_pasid_required()
- dependency issues
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-References: <cover.1567029860.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <ef40dbdc4eae32490caec47bed5b57eeb438dd80.1567029860.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20190905191854.GE103977@google.com>
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <abfb75fc-6f88-7117-b0d8-1a374ee99d3e@linux.intel.com>
-Date:   Thu, 3 Oct 2019 10:20:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2391735AbfJCRUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:20:55 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35401 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391402AbfJCRUu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:20:50 -0400
+Received: by mail-io1-f66.google.com with SMTP id q10so7432696iop.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:20:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ROjHpOzRZ1zg7WsRiQrsstI6c6vwOIlKKBBg25nDNqk=;
+        b=D0335bC8HZS3gKgpq9/MbcCeRnChpkvTNsagSyEn+nX4Q66b/GjQa+jGa9VLRijhdp
+         +4/K9Xg0Y7HYA9njZsMwMHuWibsQjQplH/6OqiU61hWQkDwovpFzOc3vX4RSV+onmoFU
+         fuOmeep+KClIz8DgBwxcYEUZAADoyGsGTjAAJrTFOS2aDEfXnY6UeJUBwxB7pYvaKfuA
+         ccIQNpadl8Bg6CmlpzaRIKH0JtcRMCYEfpaGnTi1mJEsfEVKeFJsahJ6HOyyiQLEMRYP
+         S9sRthmJeuN/dM72n/06mzHCc/HGiDGvfjUK3EoE2KcEr53m4Wkf4JVgVjuxJAguKgqz
+         HHDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ROjHpOzRZ1zg7WsRiQrsstI6c6vwOIlKKBBg25nDNqk=;
+        b=p5g7BPPbvAYEY8nj/Y0qAt3uu3yesFsJXOe55GbXz8QxtoizoxSfD//wE+MKNDqH//
+         E+1mp4C7hL9WIgIEeEbWKypQ41ZwdexFPtHMsUkfgm+1SQVD/QK5BC+d3AWh0iH948vw
+         4pZQx2BVMtNfN9vkXlHdQBe6tDx6OWRWYAzz9oNfOotTF9CW+klkXj4e75hqXjpRbGhg
+         PWRoDwUhCeYOfx83le/WcZbX5msV9/Raly0aJFZVj9hFwAolsRysTLF5iRTGSJ5xmLwv
+         36pWcbM7ny/dtcu/FtairCBCqkeSCb0YW8O5b0JgzzRXaxXg59I0+N6tX5s1KFV9PrqO
+         AJOw==
+X-Gm-Message-State: APjAAAWZZfwCgT0xdZAO1agI8gOmQW+tGhSXr4IXVRgwGVlrzcyIC4RR
+        LfS6pg4wBWj8UYtkpRS3xQR79tN+7Mm2DkoZOZuoaQ==
+X-Google-Smtp-Source: APXvYqzL90yczrm6KgnTH/j6j0Ki2GG5BtxT9O9oxONR7BoG3dTFpzTDIl8D91aHq8CRqKKtzfaEeKbF7TDeeU5YvrY=
+X-Received: by 2002:a02:ba17:: with SMTP id z23mr10366196jan.24.1570123249112;
+ Thu, 03 Oct 2019 10:20:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190905191854.GE103977@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <1570097418-42233-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <1570097418-42233-1-git-send-email-pbonzini@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Thu, 3 Oct 2019 10:20:38 -0700
+Message-ID: <CALMp9eRFUeSB035VEC61CzAg6PY=aApjyiQoSnRydH788COL4w@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: x86: omit absent pmu MSRs from MSR list
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-
-Thanks for looking into this patch set.
-
-On 9/5/19 12:18 PM, Bjorn Helgaas wrote:
-> On Wed, Aug 28, 2019 at 03:14:01PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> Since pci_prg_resp_pasid_required() function has dependency on both
->> PASID and PRI, define it only if both CONFIG_PCI_PRI and
->> CONFIG_PCI_PASID config options are enabled.
->>
->> Fixes: e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required()
->> interface.")
-> [Don't split tags, including "Fixes:" across lines]
+On Thu, Oct 3, 2019 at 3:10 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> This definitely doesn't fix e5567f5f6762.  That commit added
-> pci_prg_resp_pasid_required(), but with no dependency on
-> CONFIG_PCI_PRI or CONFIG_PCI_PASID.
+> INTEL_PMC_MAX_GENERIC is currently 32, which exceeds the 18 contiguous
+> MSR indices reserved by Intel for event selectors.  Since some machines
+> actually have MSRs past the reserved range, these may survive the
+Not past, but *within* the reserved range.
+> filtering of msrs_to_save array and would be rejected by KVM_GET/SET_MSR.
+> To avoid this, cut the list to whatever CPUID reports for the host's
+> architectural PMU.
 >
-> This patch is only required when a subsequent patch is applied.  It
-> should be squashed into the commit that requires it so it's obvious
-> why it's needed.
+> Reported-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Cc: Jim Mattson <jmattson@google.com>
+> Fixes: e2ada66ec418 ("kvm: x86: Add Intel PMU MSRs to msrs_to_save[]", 2019-08-21)
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>  arch/x86/kvm/x86.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 >
-> I've been poking at this series, and I'll post a v8 soon with this and
-> other fixes.
-In your v8 submission you did not merge this patch. You did not use
-pri_cap or pasid_cap cached values. Instead you have re-read the
-value from register. Is this intentional?
-
-Since this function will be called for every VF device we might loose 
-some performance benefit.
-
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 8072acaaf028..31607174f442 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -5105,13 +5105,14 @@ long kvm_arch_vm_ioctl(struct file *filp,
 >
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->> ---
->>   drivers/pci/ats.c       | 10 ++++++----
->>   include/linux/pci-ats.h | 12 +++++++++---
->>   2 files changed, 15 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
->> index e18499243f84..cdd936d10f68 100644
->> --- a/drivers/pci/ats.c
->> +++ b/drivers/pci/ats.c
->> @@ -395,6 +395,8 @@ int pci_pasid_features(struct pci_dev *pdev)
->>   }
->>   EXPORT_SYMBOL_GPL(pci_pasid_features);
->>   
->> +#ifdef CONFIG_PCI_PRI
->> +
->>   /**
->>    * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
->>    *				 status.
->> @@ -402,10 +404,8 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
->>    *
->>    * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
->>    *
->> - * Even though the PRG response PASID status is read from PRI Status
->> - * Register, since this API will mainly be used by PASID users, this
->> - * function is defined within #ifdef CONFIG_PCI_PASID instead of
->> - * CONFIG_PCI_PRI.
->> + * Since this API has dependency on both PRI and PASID, protect it
->> + * with both CONFIG_PCI_PRI and CONFIG_PCI_PASID.
->>    */
->>   int pci_prg_resp_pasid_required(struct pci_dev *pdev)
->>   {
->> @@ -425,6 +425,8 @@ int pci_prg_resp_pasid_required(struct pci_dev *pdev)
->>   }
->>   EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
->>   
->> +#endif
->> +
->>   #define PASID_NUMBER_SHIFT	8
->>   #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
->>   /**
->> diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
->> index 1ebb88e7c184..1a0bdaee2f32 100644
->> --- a/include/linux/pci-ats.h
->> +++ b/include/linux/pci-ats.h
->> @@ -40,7 +40,6 @@ void pci_disable_pasid(struct pci_dev *pdev);
->>   void pci_restore_pasid_state(struct pci_dev *pdev);
->>   int pci_pasid_features(struct pci_dev *pdev);
->>   int pci_max_pasids(struct pci_dev *pdev);
->> -int pci_prg_resp_pasid_required(struct pci_dev *pdev);
->>   
->>   #else  /* CONFIG_PCI_PASID */
->>   
->> @@ -67,11 +66,18 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
->>   	return -EINVAL;
->>   }
->>   
->> +#endif /* CONFIG_PCI_PASID */
->> +
->> +#if defined(CONFIG_PCI_PRI) && defined(CONFIG_PCI_PASID)
->> +
->> +int pci_prg_resp_pasid_required(struct pci_dev *pdev);
->> +
->> +#else /* CONFIG_PCI_PASID && CONFIG_PCI_PRI */
->> +
->>   static inline int pci_prg_resp_pasid_required(struct pci_dev *pdev)
->>   {
->>   	return 0;
->>   }
->> -#endif /* CONFIG_PCI_PASID */
->> -
->> +#endif
->>   
->>   #endif /* LINUX_PCI_ATS_H*/
->> -- 
->> 2.21.0
->>
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
-
+>  static void kvm_init_msr_list(void)
+>  {
+> +       struct x86_pmu_capability x86_pmu;
+>         u32 dummy[2];
+>         unsigned i, j;
+>
+>         BUILD_BUG_ON_MSG(INTEL_PMC_MAX_FIXED != 4,
+>                          "Please update the fixed PMCs in msrs_to_save[]");
+> -       BUILD_BUG_ON_MSG(INTEL_PMC_MAX_GENERIC != 32,
+> -                        "Please update the generic perfctr/eventsel MSRs in msrs_to_save[]");
+> +
+> +       perf_get_x86_pmu_capability(&x86_pmu);
+>
+>         for (i = j = 0; i < ARRAY_SIZE(msrs_to_save); i++) {
+>                 if (rdmsr_safe(msrs_to_save[i], &dummy[0], &dummy[1]) < 0)
+> @@ -5153,6 +5154,15 @@ static void kvm_init_msr_list(void)
+>                                 intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * 2)
+>                                 continue;
+>                         break;
+> +               case MSR_ARCH_PERFMON_PERFCTR0 ... MSR_ARCH_PERFMON_PERFCTR0 + 31:
+You've truncated the list I originally provided, so I think this need
+only go to MSR_ARCH_PERFMON_PERFCTR0 + 17. Otherwise, we could lose
+some valuable MSRs.
+> +                       if (msrs_to_save[i] - MSR_ARCH_PERFMON_PERFCTR0 >=
+> +                           min(INTEL_PMC_MAX_GENERIC, x86_pmu.num_counters_gp))
+Why involve INTEL_PMC_MAX_GENERIC here?
+> +                               continue;
+> +                       break;
+> +               case MSR_ARCH_PERFMON_EVENTSEL0 ... MSR_ARCH_PERFMON_EVENTSEL0 + 31:
+Same as the two comments above.
+> +                       if (msrs_to_save[i] - MSR_ARCH_PERFMON_EVENTSEL0 >=
+> +                           min(INTEL_PMC_MAX_GENERIC, x86_pmu.num_counters_gp))
+> +                               continue;
+>                 }
+>                 default:
+>                         break;
+> --
+> 1.8.3.1
+>
