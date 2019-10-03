@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1F3CA1E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AAC5CA26C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731530AbfJCQAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43820 "EHLO mail.kernel.org"
+        id S1732146AbfJCQFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729732AbfJCQAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:12 -0400
+        id S1732509AbfJCQFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DAD020700;
-        Thu,  3 Oct 2019 16:00:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B44C1222C4;
+        Thu,  3 Oct 2019 16:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118410;
-        bh=gAU5FFtkt4JrXlIGSESoZ5d/KBuNhSLtdre5Bf76G9s=;
+        s=default; t=1570118702;
+        bh=gHPactWG+w/JGF64GsqYssuxSho10xWheYVPpehPuEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KpKJ/KldvB/cbwFx4GJGN5L49kEsBOgyFeiQWtYi5XlHi0MGAE2W/aBy5kAOA+Y58
-         dMKptTLW0DPtvbu5rSEb5+dVZeUfS3WtxenU3+mWSZoaF+F+ktlSqM0Kglf8mQ4tcE
-         2XBYdTKTAYGfk/pTi1sJueC7bwC7EwBgasInrC3Y=
+        b=nN6f/uj+j/RZYQLdv2yFxrLgi7W3mCDq6NtA7NuI3ybO2hF53LInpr3jUtd4dbQvB
+         N8XKDw53UbCiZqk7aggToZs+9zAtMX+f5at3TvV5A7pP4VQkEfs0OLK75W4BGTVVqy
+         epbF8X0sqN08ajV4pF5kZIvLgN6ycxgCz2aZpzjQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 4.4 86/99] ARM: zynq: Use memcpy_toio instead of memcpy on smp bring-up
+        stable@vger.kernel.org, Denis Lunev <den@virtuozzo.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 106/129] KVM: x86: set ctxt->have_exception in x86_decode_insn()
 Date:   Thu,  3 Oct 2019 17:53:49 +0200
-Message-Id: <20191003154338.035880919@linuxfoundation.org>
+Message-Id: <20191003154407.847490867@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luis Araneda <luaraneda@gmail.com>
+From: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
 
-commit b7005d4ef4f3aa2dc24019ffba03a322557ac43d upstream.
+commit c8848cee74ff05638e913582a476bde879c968ad upstream.
 
-This fixes a kernel panic on memcpy when
-FORTIFY_SOURCE is enabled.
+x86_emulate_instruction() takes into account ctxt->have_exception flag
+during instruction decoding, but in practice this flag is never set in
+x86_decode_insn().
 
-The initial smp implementation on commit aa7eb2bb4e4a
-("arm: zynq: Add smp support")
-used memcpy, which worked fine until commit ee333554fed5
-("ARM: 8749/1: Kconfig: Add ARCH_HAS_FORTIFY_SOURCE")
-enabled overflow checks at runtime, producing a read
-overflow panic.
-
-The computed size of memcpy args are:
-- p_size (dst): 4294967295 = (size_t) -1
-- q_size (src): 1
-- size (len): 8
-
-Additionally, the memory is marked as __iomem, so one of
-the memcpy_* functions should be used for read/write.
-
-Fixes: aa7eb2bb4e4a ("arm: zynq: Add smp support")
-Signed-off-by: Luis Araneda <luaraneda@gmail.com>
+Fixes: 6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
 Cc: stable@vger.kernel.org
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Cc: Denis Lunev <den@virtuozzo.com>
+Cc: Roman Kagan <rkagan@virtuozzo.com>
+Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
+Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-zynq/platsmp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/emulate.c |    2 ++
+ arch/x86/kvm/x86.c     |    6 ++++++
+ 2 files changed, 8 insertions(+)
 
---- a/arch/arm/mach-zynq/platsmp.c
-+++ b/arch/arm/mach-zynq/platsmp.c
-@@ -65,7 +65,7 @@ int zynq_cpun_start(u32 address, int cpu
- 			* 0x4: Jump by mov instruction
- 			* 0x8: Jumping address
- 			*/
--			memcpy((__force void *)zero, &zynq_secondary_trampoline,
-+			memcpy_toio(zero, &zynq_secondary_trampoline,
- 							trampoline_size);
- 			writel(address, zero + trampoline_size);
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5257,6 +5257,8 @@ done_prefixes:
+ 					ctxt->memopp->addr.mem.ea + ctxt->_eip);
  
+ done:
++	if (rc == X86EMUL_PROPAGATE_FAULT)
++		ctxt->have_exception = true;
+ 	return (rc != X86EMUL_CONTINUE) ? EMULATION_FAILED : EMULATION_OK;
+ }
+ 
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5765,6 +5765,12 @@ int x86_emulate_instruction(struct kvm_v
+ 						emulation_type))
+ 				return EMULATE_DONE;
+ 			if (ctxt->have_exception) {
++				/*
++				 * #UD should result in just EMULATION_FAILED, and trap-like
++				 * exception should not be encountered during decode.
++				 */
++				WARN_ON_ONCE(ctxt->exception.vector == UD_VECTOR ||
++					     exception_type(ctxt->exception.vector) == EXCPT_TRAP);
+ 				inject_emulated_exception(vcpu);
+ 				return EMULATE_DONE;
+ 			}
 
 
