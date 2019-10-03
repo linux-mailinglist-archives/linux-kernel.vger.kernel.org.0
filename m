@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D608CA29D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B6CDCA2A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732094AbfJCQHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:07:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54880 "EHLO mail.kernel.org"
+        id S1732955AbfJCQHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:07:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732896AbfJCQHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:07:11 -0400
+        id S1732953AbfJCQH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:07:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B9A3215EA;
-        Thu,  3 Oct 2019 16:07:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF36721783;
+        Thu,  3 Oct 2019 16:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118831;
-        bh=mHXwAPPYFfViVZ1f2smTpzXkHdCN1X+YpOEyrOCoclY=;
+        s=default; t=1570118847;
+        bh=r0NyGKfVp7kWPQ7tIqsR5FE0KOaG9y5lxXoDbToXw3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9+oHrm6+MCXbVMlrmJ4XQG4rkon6JDyOAVSz09g88ItGqabxW9m0WCLcgrd4wG4i
-         xHWLQpXwRHpsl1EASYU6LFbrolgfhV3MUw6PeOtDrhKHJKHxpqX6PP0alwgaLOdRgU
-         EmHU++Wg3i9YiAe1C6EhkrHEfjNWKtk+OgT0x57E=
+        b=hAEoFtJWHBFXNHL38o//vJD87U/AaBhIonW5ETelc9KObl0CTlgzanteHhU13HNX1
+         p4sRfUc2vO6M7JJuaenpiogJGLITz6DLqntnPSe2WolTBntMWTHn9O0pO2xgZ7gcok
+         IPrJj/VKdqJezv+7Nw+hUHKPXkt96CyrL2gNPEuA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Kacper=20Piwi=C5=84ski?= <cosiekvfj@o2.pl>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 025/185] Revert "f2fs: avoid out-of-range memory access"
-Date:   Thu,  3 Oct 2019 17:51:43 +0200
-Message-Id: <20191003154443.366504907@linuxfoundation.org>
+Subject: [PATCH 4.14 030/185] ACPI: video: Add new hw_changes_brightness quirk, set it on PB Easynote MZ35
+Date:   Thu,  3 Oct 2019 17:51:48 +0200
+Message-Id: <20191003154444.571196923@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,59 +46,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit a37d0862d17411edb67677a580a6f505ec2225f6 ]
+[ Upstream commit 4f7f96453b462b3de0fa18d18fe983960bb5ee7f ]
 
-As Pavel Machek reported:
+Some machines change the brightness themselves when a brightness hotkey
+gets pressed, despite us telling them not to. This causes the brightness to
+go two steps up / down when the hotkey is pressed. This is esp. a problem
+on older machines with only a few brightness levels.
 
-"We normally use -EUCLEAN to signal filesystem corruption. Plus, it is
-good idea to report it to the syslog and mark filesystem as "needing
-fsck" if filesystem can do that."
+This commit adds a new hw_changes_brightness quirk which makes
+acpi_video_device_notify() only call backlight_force_update(...,
+BACKLIGHT_UPDATE_HOTKEY) and not do anything else, notifying userspace
+that the brightness was changed and leaving it at that fixing the dual
+step problem.
 
-Still we need improve the original patch with:
-- use unlikely keyword
-- add message print
-- return EUCLEAN
-
-However, after rethink this patch, I don't think we should add such
-condition check here as below reasons:
-- We have already checked the field in f2fs_sanity_check_ckpt(),
-- If there is fs corrupt or security vulnerability, there is nothing
-to guarantee the field is integrated after the check, unless we do
-the check before each of its use, however no filesystem does that.
-- We only have similar check for bitmap, which was added due to there
-is bitmap corruption happened on f2fs' runtime in product.
-- There are so many key fields in SB/CP/NAT did have such check
-after f2fs_sanity_check_{sb,cp,..}.
-
-So I propose to revert this unneeded check.
-
-This reverts commit 56f3ce675103e3fb9e631cfb4131fc768bc23e9a.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204077
+Reported-by: Kacper Piwiński <cosiekvfj@o2.pl>
+Tested-by: Kacper Piwiński <cosiekvfj@o2.pl>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/segment.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/acpi/acpi_video.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 18d51c36a5e32..70bd15cadb44e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2612,11 +2612,6 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
- 		seg_i = CURSEG_I(sbi, i);
- 		segno = le32_to_cpu(ckpt->cur_data_segno[i]);
- 		blk_off = le16_to_cpu(ckpt->cur_data_blkoff[i]);
--		if (blk_off > ENTRIES_IN_SUM) {
--			f2fs_bug_on(sbi, 1);
--			f2fs_put_page(page, 1);
--			return -EFAULT;
--		}
- 		seg_i->next_segno = segno;
- 		reset_curseg(sbi, i, 0);
- 		seg_i->alloc_type = ckpt->alloc_type[i];
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index e39a1489cc729..7df7abde1fcb7 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -73,6 +73,12 @@ module_param(report_key_events, int, 0644);
+ MODULE_PARM_DESC(report_key_events,
+ 	"0: none, 1: output changes, 2: brightness changes, 3: all");
+ 
++static int hw_changes_brightness = -1;
++module_param(hw_changes_brightness, int, 0644);
++MODULE_PARM_DESC(hw_changes_brightness,
++	"Set this to 1 on buggy hw which changes the brightness itself when "
++	"a hotkey is pressed: -1: auto, 0: normal 1: hw-changes-brightness");
++
+ /*
+  * Whether the struct acpi_video_device_attrib::device_id_scheme bit should be
+  * assumed even if not actually set.
+@@ -418,6 +424,14 @@ static int video_set_report_key_events(const struct dmi_system_id *id)
+ 	return 0;
+ }
+ 
++static int video_hw_changes_brightness(
++	const struct dmi_system_id *d)
++{
++	if (hw_changes_brightness == -1)
++		hw_changes_brightness = 1;
++	return 0;
++}
++
+ static const struct dmi_system_id video_dmi_table[] = {
+ 	/*
+ 	 * Broken _BQC workaround http://bugzilla.kernel.org/show_bug.cgi?id=13121
+@@ -542,6 +556,21 @@ static const struct dmi_system_id video_dmi_table[] = {
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "Vostro V131"),
+ 		},
+ 	},
++	/*
++	 * Some machines change the brightness themselves when a brightness
++	 * hotkey gets pressed, despite us telling them not to. In this case
++	 * acpi_video_device_notify() should only call backlight_force_update(
++	 * BACKLIGHT_UPDATE_HOTKEY) and not do anything else.
++	 */
++	{
++	 /* https://bugzilla.kernel.org/show_bug.cgi?id=204077 */
++	 .callback = video_hw_changes_brightness,
++	 .ident = "Packard Bell EasyNote MZ35",
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "Packard Bell"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "EasyNote MZ35"),
++		},
++	},
+ 	{}
+ };
+ 
+@@ -1624,6 +1653,14 @@ static void acpi_video_device_notify(acpi_handle handle, u32 event, void *data)
+ 	bus = video_device->video;
+ 	input = bus->input;
+ 
++	if (hw_changes_brightness > 0) {
++		if (video_device->backlight)
++			backlight_force_update(video_device->backlight,
++					       BACKLIGHT_UPDATE_HOTKEY);
++		acpi_notifier_call_chain(device, event, 0);
++		return;
++	}
++
+ 	switch (event) {
+ 	case ACPI_VIDEO_NOTIFY_CYCLE_BRIGHTNESS:	/* Cycle brightness */
+ 		brightness_switch_event(video_device, event);
 -- 
 2.20.1
 
