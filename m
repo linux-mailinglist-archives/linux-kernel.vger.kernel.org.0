@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10826CA50C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37852CA512
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389501AbfJCQah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:30:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36732 "EHLO mail.kernel.org"
+        id S2391788AbfJCQaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:30:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391766AbfJCQae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:30:34 -0400
+        id S2391190AbfJCQal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:30:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B6D920867;
-        Thu,  3 Oct 2019 16:30:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C68C720830;
+        Thu,  3 Oct 2019 16:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120233;
-        bh=EMm/DFERg7gGpc6ZK4Hzzr9d6eNec1wYcIFHfvS9e2M=;
+        s=default; t=1570120241;
+        bh=/rangsZ0ELaQluOZKEg4V40zOt8+RCVaCUrHYUx7Wvw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UwmNVxGak4fLBlv+tziudmwG3S7vbeQocy59dO4MkLpZDdLe68bThlCokU7XB8XGc
-         +IIkJxhfPBJ8Gsf577dN3T1+lat3lusunP9/WcGnf8Sm9svyc3Y4hEat8cB55BTyjA
-         MmWdgiGuTsXgY4DE47Si0TwobVj4vV+m1fSgbwNg=
+        b=SDqnRZmnDbmFmTc2wv7VsCygL5KaHGjtW3Aqa3WmYZvtYtkzKXEvLzE3RRNTix9xI
+         3PGb4pGvj7tFgHUmhnfC2xuEqMBgQ7vSjEW7r1RWB9AwqhHM9Bs6iIU5NZOTUOe64p
+         UTXXe1CEo81/p+VwbXLZhAbdXIP0waK1D92Dq164=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 146/313] perf report: Fix --ns time sort key output
-Date:   Thu,  3 Oct 2019 17:52:04 +0200
-Message-Id: <20191003154547.292040072@linuxfoundation.org>
+        stable@vger.kernel.org, Eddie James <eajames@linux.ibm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 148/313] media: aspeed-video: address a protential usage of an unitialized var
+Date:   Thu,  3 Oct 2019 17:52:06 +0200
+Message-Id: <20191003154547.501267239@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,62 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-[ Upstream commit 3dab6ac080dcd7f71cb9ceb84ad7dafecd6f7c07 ]
+[ Upstream commit 31b8b0bd6e55c3ea5a08bb8141fa5d3c90600e3b ]
 
-If the user specified --ns, the column to print the sort time stamp
-wasn't wide enough to actually print the full nanoseconds.
+While this might not occur in practice, if the device is doing
+the right thing, it would be teoretically be possible to have
+both hsync_counter and vsync_counter negatives.
 
-Widen the time key column width when --ns is specified.
+If this ever happen, ctrl will be undefined, but the driver
+will still call:
 
-Before:
+	aspeed_video_update(video, VE_CTRL, 0, ctrl);
 
-  % perf record -a sleep 1
-  % perf report --sort time,overhead,symbol --stdio --ns
-  ...
-       2.39%  187851.10000  [k] smp_call_function_single   -      -
-       1.53%  187851.10000  [k] intel_idle                 -      -
-       0.59%  187851.10000  [.] __wcscmp_ifunc             -      -
-       0.33%  187851.10000  [.] 0000000000000000           -      -
-       0.28%  187851.10000  [k] cpuidle_enter_state        -      -
+Change the code to prevent this to happen.
 
-After:
+This was warned by cppcheck:
 
-  % perf report --sort time,overhead,symbol --stdio --ns
-  ...
-       2.39%  187851.100000000  [k] smp_call_function_single   -      -
-       1.53%  187851.100000000  [k] intel_idle                 -      -
-       0.59%  187851.100000000  [.] __wcscmp_ifunc             -      -
-       0.33%  187851.100000000  [.] 0000000000000000           -      -
-       0.28%  187851.100000000  [k] cpuidle_enter_state        -      -
+	[drivers/media/platform/aspeed-video.c:653]: (error) Uninitialized variable: ctrl
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20190823210338.12360-2-andi@firstfloor.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/hist.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/aspeed-video.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 7ace7a10054d8..966c248d6a3a1 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -193,7 +193,10 @@ void hists__calc_col_len(struct hists *hists, struct hist_entry *h)
- 	hists__new_col_len(hists, HISTC_MEM_LVL, 21 + 3);
- 	hists__new_col_len(hists, HISTC_LOCAL_WEIGHT, 12);
- 	hists__new_col_len(hists, HISTC_GLOBAL_WEIGHT, 12);
--	hists__new_col_len(hists, HISTC_TIME, 12);
-+	if (symbol_conf.nanosecs)
-+		hists__new_col_len(hists, HISTC_TIME, 16);
-+	else
-+		hists__new_col_len(hists, HISTC_TIME, 12);
+diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
+index de0f192afa8b1..388c32a11345d 100644
+--- a/drivers/media/platform/aspeed-video.c
++++ b/drivers/media/platform/aspeed-video.c
+@@ -632,7 +632,7 @@ static void aspeed_video_check_and_set_polarity(struct aspeed_video *video)
+ 	}
  
- 	if (h->srcline) {
- 		len = MAX(strlen(h->srcline), strlen(sort_srcline.se_header));
+ 	if (hsync_counter < 0 || vsync_counter < 0) {
+-		u32 ctrl;
++		u32 ctrl = 0;
+ 
+ 		if (hsync_counter < 0) {
+ 			ctrl = VE_CTRL_HSYNC_POL;
+@@ -652,7 +652,8 @@ static void aspeed_video_check_and_set_polarity(struct aspeed_video *video)
+ 				V4L2_DV_VSYNC_POS_POL;
+ 		}
+ 
+-		aspeed_video_update(video, VE_CTRL, 0, ctrl);
++		if (ctrl)
++			aspeed_video_update(video, VE_CTRL, 0, ctrl);
+ 	}
+ }
+ 
 -- 
 2.20.1
 
