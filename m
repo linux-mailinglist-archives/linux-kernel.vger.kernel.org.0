@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 884DDCA81F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A8B1CA821
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390104AbfJCQVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:21:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49344 "EHLO mail.kernel.org"
+        id S2390165AbfJCQVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:21:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390076AbfJCQVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:21:09 -0400
+        id S2390125AbfJCQVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:21:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E5DD20659;
-        Thu,  3 Oct 2019 16:21:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CF3E20659;
+        Thu,  3 Oct 2019 16:21:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119668;
-        bh=yket5TpcSZGOX03eYAQZxGgqyOJjlPy5rHxOb8Ugevo=;
+        s=default; t=1570119682;
+        bh=BaDAgkkOFgT+WQJwC5jLKMwjDio2r3/yL/TbFia8kOo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GC2kCqK6tmbbY9mJzrk79bwzoOOYZitH91ji1n4pF4o95QSooyUb7M1vQP6WiRQ0N
-         CLsX2/wSMgpntUpOv/b4g66SVnsw10ChJ2U6Ac0LhcDlRLRLzfGPZrkv+4iI/vpwEl
-         xgXqZZyum630cA56eEdfz10xY9n+UjxscqpMlE1U=
+        b=ne8hlVP20R/AYQ80qldV+Z1tvxT8QFNepXnT4oO2/6d9h3uDsRZFCWjVwAJEuf5/2
+         vsmHTWQdX4DHnlUplrhjMYEaMgmEeJzPlIv8xsfMIzT0OLKBqt0hrUHGSEqp9uiVXp
+         rE74bGvE29KGuqRJaTeAUuVm71sYjJ6yNCHZCDBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.19 148/211] iwlwifi: fw: dont send GEO_TX_POWER_LIMIT command to FW version 36
-Date:   Thu,  3 Oct 2019 17:53:34 +0200
-Message-Id: <20191003154521.591995103@linuxfoundation.org>
+        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 152/211] scsi: qla2xxx: Fix Relogin to prevent modifying scan_state flag
+Date:   Thu,  3 Oct 2019 17:53:38 +0200
+Message-Id: <20191003154522.656461639@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -43,45 +44,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Quinn Tran <qutran@marvell.com>
 
-commit fddbfeece9c7882cc47754c7da460fe427e3e85b upstream.
+commit 8b5292bcfcacf15182a77a973a98d310e76fd58b upstream.
 
-The intention was to have the GEO_TX_POWER_LIMIT command in FW version
-36 as well, but not all 8000 family got this feature enabled.  The
-8000 family is the only one using version 36, so skip this version
-entirely.  If we try to send this command to the firmwares that do not
-support it, we get a BAD_COMMAND response from the firmware.
+Relogin fails to move forward due to scan_state flag indicating device is
+not there. Before relogin process, Session delete process accidently
+modified the scan_state flag.
 
-This fixes https://bugzilla.kernel.org/show_bug.cgi?id=204151.
+[mkp: typos plus corrected Fixes: sha as reported by sfr]
 
-Cc: stable@vger.kernel.org # 4.19+
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 2dee5521028c ("scsi: qla2xxx: Fix login state machine freeze")
+Cc: stable@vger.kernel.org
+Signed-off-by: Quinn Tran <qutran@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c   |   25 ++++++++++++++++++++-----
+ drivers/scsi/qla2xxx/qla_os.c     |    1 +
+ drivers/scsi/qla2xxx/qla_target.c |    1 -
+ 3 files changed, 21 insertions(+), 6 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -843,11 +843,13 @@ static bool iwl_mvm_sar_geo_support(stru
- 	 * firmware versions.  Unfortunately, we don't have a TLV API
- 	 * flag to rely on, so rely on the major version which is in
- 	 * the first byte of ucode_ver.  This was implemented
--	 * initially on version 38 and then backported to 36, 29 and
--	 * 17.
-+	 * initially on version 38 and then backported to29 and 17.
-+	 * The intention was to have it in 36 as well, but not all
-+	 * 8000 family got this feature enabled.  The 8000 family is
-+	 * the only one using version 36, so skip this version
-+	 * entirely.
- 	 */
- 	return IWL_UCODE_SERIAL(mvm->fw->ucode_ver) >= 38 ||
--	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 36 ||
- 	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 29 ||
- 	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 17;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -216,8 +216,13 @@ qla2x00_async_login(struct scsi_qla_host
+ 	struct srb_iocb *lio;
+ 	int rval = QLA_FUNCTION_FAILED;
+ 
+-	if (!vha->flags.online)
+-		goto done;
++	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT) ||
++	    fcport->loop_id == FC_NO_LOOP_ID) {
++		ql_log(ql_log_warn, vha, 0xffff,
++		    "%s: %8phC - not sending command.\n",
++		    __func__, fcport->port_name);
++		return rval;
++	}
+ 
+ 	sp = qla2x00_get_sp(vha, fcport, GFP_KERNEL);
+ 	if (!sp)
+@@ -1123,8 +1128,13 @@ int qla24xx_async_gpdb(struct scsi_qla_h
+ 	struct port_database_24xx *pd;
+ 	struct qla_hw_data *ha = vha->hw;
+ 
+-	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT))
++	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT) ||
++	    fcport->loop_id == FC_NO_LOOP_ID) {
++		ql_log(ql_log_warn, vha, 0xffff,
++		    "%s: %8phC - not sending command.\n",
++		    __func__, fcport->port_name);
+ 		return rval;
++	}
+ 
+ 	fcport->disc_state = DSC_GPDB;
+ 
+@@ -1904,8 +1914,11 @@ qla24xx_handle_plogi_done_event(struct s
+ 		return;
+ 	}
+ 
+-	if (fcport->disc_state == DSC_DELETE_PEND)
++	if ((fcport->disc_state == DSC_DELETE_PEND) ||
++	    (fcport->disc_state == DSC_DELETED)) {
++		set_bit(RELOGIN_NEEDED, &vha->dpc_flags);
+ 		return;
++	}
+ 
+ 	if (ea->sp->gen2 != fcport->login_gen) {
+ 		/* target side must have changed it. */
+@@ -6557,8 +6570,10 @@ qla2x00_abort_isp_cleanup(scsi_qla_host_
+ 	}
+ 
+ 	/* Clear all async request states across all VPs. */
+-	list_for_each_entry(fcport, &vha->vp_fcports, list)
++	list_for_each_entry(fcport, &vha->vp_fcports, list) {
+ 		fcport->flags &= ~(FCF_LOGIN_NEEDED | FCF_ASYNC_SENT);
++		fcport->scan_state = 0;
++	}
+ 	spin_lock_irqsave(&ha->vport_slock, flags);
+ 	list_for_each_entry(vp, &ha->vp_list, list) {
+ 		atomic_inc(&vp->vref_count);
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -4864,6 +4864,7 @@ void qla24xx_create_new_sess(struct scsi
+ 	if (fcport) {
+ 		fcport->id_changed = 1;
+ 		fcport->scan_state = QLA_FCPORT_FOUND;
++		fcport->chip_reset = vha->hw->base_qpair->chip_reset;
+ 		memcpy(fcport->node_name, e->u.new_sess.node_name, WWN_SIZE);
+ 
+ 		if (pla) {
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -1216,7 +1216,6 @@ static void qla24xx_chk_fcp_state(struct
+ 		sess->logout_on_delete = 0;
+ 		sess->logo_ack_needed = 0;
+ 		sess->fw_login_state = DSC_LS_PORT_UNAVAIL;
+-		sess->scan_state = 0;
+ 	}
  }
+ 
 
 
