@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2CEACA8CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 472BFCA8BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391990AbfJCQdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:33:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41106 "EHLO mail.kernel.org"
+        id S2391861AbfJCQcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:32:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391965AbfJCQdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:33:13 -0400
+        id S2403884AbfJCQb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:31:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE5A82070B;
-        Thu,  3 Oct 2019 16:33:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CA8B2086A;
+        Thu,  3 Oct 2019 16:31:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120392;
-        bh=gDoMJ/kb/DKmiZLAj1iPf+wvICmVlOUmxNJiEv9/iT8=;
+        s=default; t=1570120316;
+        bh=u0T2dyeWQ2iXGTmKLsR8pupBhDmMNegGZokKL2UQOkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=neNk76OvEx8VyHydzwhKBjR0i+e09MFZkw0hCYPgJgCfo5MN3/8Y30yFHgrHeDM+N
-         +Zzd912en8h1io/pWinTNqKDmXWxAir6UzLq75sIpo8GLOXtEA6aVV7uQCtX95paOV
-         oaMmfvkat3GHdvmC7GOsVJqrGmF1HxeA7KPiTmEc=
+        b=tXmv5wXSTzyMYcwG+ZfIvkhsHhgb1WcuZNMAyZ2cvAbJEMWOWW89ItiB1SkKPQFOl
+         v035RwJdBXcjquP19EkYPGA0fsAtOGeNWD0Tzi/E9U5k58gv69/rRcXuXJANH7P4HU
+         FQAGxaav8ANrqRXZL6QPXpLo4Pu0LQ9lJeIh8L2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick McLean <chutzpah@gentoo.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 167/313] libtraceevent: Change users plugin directory
-Date:   Thu,  3 Oct 2019 17:52:25 +0200
-Message-Id: <20191003154549.424121554@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Yunsheng Lin <linyunsheng@huawei.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 178/313] x86/mm: Fix cpumask_of_node() error condition
+Date:   Thu,  3 Oct 2019 17:52:36 +0200
+Message-Id: <20191003154550.530954607@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -50,68 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit e97fd1383cd77c467d2aed7fa4e596789df83977 ]
+[ Upstream commit bc04a049f058a472695aa22905d57e2b1f4c77d9 ]
 
-To be compliant with XDG user directory layout, the user's plugin
-directory is changed from ~/.traceevent/plugins to
-~/.local/lib/traceevent/plugins/
+When CONFIG_DEBUG_PER_CPU_MAPS=y we validate that the @node argument of
+cpumask_of_node() is a valid node_id. It however forgets to check for
+negative numbers. Fix this by explicitly casting to unsigned int.
 
-Suggested-by: Patrick McLean <chutzpah@gentoo.org>
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Patrick McLean <chutzpah@gentoo.org>
-Cc: linux-trace-devel@vger.kernel.org
-Link: https://lore.kernel.org/linux-trace-devel/20190313144206.41e75cf8@patrickm/
-Link: http://lore.kernel.org/linux-trace-devel/20190801074959.22023-4-tz.stoyanov@gmail.com
-Link: http://lore.kernel.org/lkml/20190805204355.344622683@goodmis.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  (unsigned)node >= nr_node_ids
+
+verifies: 0 <= node < nr_node_ids
+
+Also ammend the error message to match the condition.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Yunsheng Lin <linyunsheng@huawei.com>
+Link: https://lkml.kernel.org/r/20190903075352.GY2369@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/traceevent/Makefile       | 6 +++---
- tools/lib/traceevent/event-plugin.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/mm/numa.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 3292c290654f6..86ce17a1f7fb6 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -62,15 +62,15 @@ set_plugin_dir := 1
- 
- # Set plugin_dir to preffered global plugin location
- # If we install under $HOME directory we go under
--# $(HOME)/.traceevent/plugins
-+# $(HOME)/.local/lib/traceevent/plugins
- #
- # We dont set PLUGIN_DIR in case we install under $HOME
- # directory, because by default the code looks under:
--# $(HOME)/.traceevent/plugins by default.
-+# $(HOME)/.local/lib/traceevent/plugins by default.
- #
- ifeq ($(plugin_dir),)
- ifeq ($(prefix),$(HOME))
--override plugin_dir = $(HOME)/.traceevent/plugins
-+override plugin_dir = $(HOME)/.local/lib/traceevent/plugins
- set_plugin_dir := 0
- else
- override plugin_dir = $(libdir)/traceevent/plugins
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index 8ca28de9337a5..e1f7ddd5a6cf0 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -18,7 +18,7 @@
- #include "event-utils.h"
- #include "trace-seq.h"
- 
--#define LOCAL_PLUGIN_DIR ".traceevent/plugins"
-+#define LOCAL_PLUGIN_DIR ".local/lib/traceevent/plugins/"
- 
- static struct registered_plugin_options {
- 	struct registered_plugin_options	*next;
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index e6dad600614c2..4123100e0eafe 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -861,9 +861,9 @@ void numa_remove_cpu(int cpu)
+  */
+ const struct cpumask *cpumask_of_node(int node)
+ {
+-	if (node >= nr_node_ids) {
++	if ((unsigned)node >= nr_node_ids) {
+ 		printk(KERN_WARNING
+-			"cpumask_of_node(%d): node > nr_node_ids(%u)\n",
++			"cpumask_of_node(%d): (unsigned)node >= nr_node_ids(%u)\n",
+ 			node, nr_node_ids);
+ 		dump_stack();
+ 		return cpu_none_mask;
 -- 
 2.20.1
 
