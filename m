@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90D09CA327
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDC6CA328
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbfJCQMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:12:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35046 "EHLO mail.kernel.org"
+        id S2388125AbfJCQMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:12:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388092AbfJCQMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:12:41 -0400
+        id S2388112AbfJCQMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:12:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A9E220700;
-        Thu,  3 Oct 2019 16:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 037E020865;
+        Thu,  3 Oct 2019 16:12:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119160;
-        bh=N9uKcJosbxuA8yjplpPHJhd3laP5PA0VuKho5o6Ctss=;
+        s=default; t=1570119166;
+        bh=3yddxp/vFdZ4ENu0ylnkR9jwYRR7o/rqNiHIgmu0RGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CEwDWT1zAEpfyRSliCPYjtHM77S3txNLeHAnolLPa/F4jeHyGdsZcTCRVCa6oVFXG
-         qvyLb0RjEUGyCOy/5M4+8e+vkUXnynT+IFwasPHHEgPY6oL6EpBZzfWjXcIZDxP32W
-         IN2BWXGXq7gXu7goQtTI2tJUq9XdgWeJvxnDLPQY=
+        b=1Qmw+8VGSLQTV4hykhSd+JcRsHuOa8hxnI2mhcJGcYovep/CB7iQ35J4NkkY/ZLDf
+         GoKjuA2ro4BSRewHQngbgZvty4hLLf2o3FzfSq1fggL70P8QEOvypted9PW3s1RMLb
+         3ak1JdhMVlicbS0ex125QfB5YHIpfF6Rj0JQFH+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
-        Phil Scarr <phil.scarr@pm.me>
-Subject: [PATCH 4.14 148/185] parisc: Disable HP HSC-PCI Cards to prevent kernel crash
-Date:   Thu,  3 Oct 2019 17:53:46 +0200
-Message-Id: <20191003154512.411333182@linuxfoundation.org>
+        stable@vger.kernel.org, Denis Lunev <den@virtuozzo.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 150/185] KVM: x86: always stop emulation on page fault
+Date:   Thu,  3 Oct 2019 17:53:48 +0200
+Message-Id: <20191003154513.292205405@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -43,73 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helge Deller <deller@gmx.de>
+From: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
 
-commit 5fa1659105fac63e0f3c199b476025c2e04111ce upstream.
+commit 8530a79c5a9f4e29e6ffb35ec1a79d81f4968ec8 upstream.
 
-The HP Dino PCI controller chip can be used in two variants: as on-board
-controller (e.g. in B160L), or on an Add-On card ("Card-Mode") to bridge
-PCI components to systems without a PCI bus, e.g. to a HSC/GSC bus.  One
-such Add-On card is the HP HSC-PCI Card which has one or more DEC Tulip
-PCI NIC chips connected to the on-card Dino PCI controller.
+inject_emulated_exception() returns true if and only if nested page
+fault happens. However, page fault can come from guest page tables
+walk, either nested or not nested. In both cases we should stop an
+attempt to read under RIP and give guest to step over its own page
+fault handler.
 
-Dino in Card-Mode has a big disadvantage: All PCI memory accesses need
-to go through the DINO_MEM_DATA register, so Linux drivers will not be
-able to use the ioremap() function. Without ioremap() many drivers will
-not work, one example is the tulip driver which then simply crashes the
-kernel if it tries to access the ports on the HP HSC card.
+This is also visible when an emulated instruction causes a #GP fault
+and the VMware backdoor is enabled.  To handle the VMware backdoor,
+KVM intercepts #GP faults; with only the next patch applied,
+x86_emulate_instruction() injects a #GP but returns EMULATE_FAIL
+instead of EMULATE_DONE.   EMULATE_FAIL causes handle_exception_nmi()
+(or gp_interception() for SVM) to re-inject the original #GP because it
+thinks emulation failed due to a non-VMware opcode.  This patch prevents
+the issue as x86_emulate_instruction() will return EMULATE_DONE after
+injecting the #GP.
 
-This patch disables the HP HSC card if it finds one, and as such
-fixes the kernel crash on a HP D350/2 machine.
-
-Signed-off-by: Helge Deller <deller@gmx.de>
-Noticed-by: Phil Scarr <phil.scarr@pm.me>
+Fixes: 6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
 Cc: stable@vger.kernel.org
+Cc: Denis Lunev <den@virtuozzo.com>
+Cc: Roman Kagan <rkagan@virtuozzo.com>
+Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
+Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/parisc/dino.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/x86/kvm/x86.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/parisc/dino.c
-+++ b/drivers/parisc/dino.c
-@@ -160,6 +160,15 @@ struct dino_device
- 	(struct dino_device *)__pdata; })
- 
- 
-+/* Check if PCI device is behind a Card-mode Dino. */
-+static int pci_dev_is_behind_card_dino(struct pci_dev *dev)
-+{
-+	struct dino_device *dino_dev;
-+
-+	dino_dev = DINO_DEV(parisc_walk_tree(dev->bus->bridge));
-+	return is_card_dino(&dino_dev->hba.dev->id);
-+}
-+
- /*
-  * Dino Configuration Space Accessor Functions
-  */
-@@ -442,6 +451,21 @@ static void quirk_cirrus_cardbus(struct
- }
- DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_CIRRUS, PCI_DEVICE_ID_CIRRUS_6832, quirk_cirrus_cardbus );
- 
-+#ifdef CONFIG_TULIP
-+static void pci_fixup_tulip(struct pci_dev *dev)
-+{
-+	if (!pci_dev_is_behind_card_dino(dev))
-+		return;
-+	if (!(pci_resource_flags(dev, 1) & IORESOURCE_MEM))
-+		return;
-+	pr_warn("%s: HP HSC-PCI Cards with card-mode Dino not yet supported.\n",
-+		pci_name(dev));
-+	/* Disable this card by zeroing the PCI resources */
-+	memset(&dev->resource[0], 0, sizeof(dev->resource[0]));
-+	memset(&dev->resource[1], 0, sizeof(dev->resource[1]));
-+}
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_DEC, PCI_ANY_ID, pci_fixup_tulip);
-+#endif /* CONFIG_TULIP */
- 
- static void __init
- dino_bios_init(void)
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5892,8 +5892,10 @@ int x86_emulate_instruction(struct kvm_v
+ 			if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
+ 						emulation_type))
+ 				return EMULATE_DONE;
+-			if (ctxt->have_exception && inject_emulated_exception(vcpu))
++			if (ctxt->have_exception) {
++				inject_emulated_exception(vcpu);
+ 				return EMULATE_DONE;
++			}
+ 			if (emulation_type & EMULTYPE_SKIP)
+ 				return EMULATE_FAIL;
+ 			return handle_emulation_failure(vcpu);
 
 
