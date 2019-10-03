@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43974CAC19
+	by mail.lfdr.de (Postfix) with ESMTP id AD345CAC1A
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732563AbfJCQFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:05:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52200 "EHLO mail.kernel.org"
+        id S1732575AbfJCQFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732550AbfJCQFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:05:30 -0400
+        id S1731703AbfJCQFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B94A1207FF;
-        Thu,  3 Oct 2019 16:05:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79BD321A4C;
+        Thu,  3 Oct 2019 16:05:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118729;
-        bh=7RMS4YktEnGBSooX125/Dw0SiOsFPkU0E3b2XtdJMjs=;
+        s=default; t=1570118731;
+        bh=RjgmkSOMi2xT5X4blqGQ8ZeCdi9HMfHkXvSSXsfQvR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p0Ai2GNhSmP67CbXW5M3HzuwHilm7221Q102XPZ9v2GIke3WkH2vTnWl4kT0c0BGc
-         VaZPBtV0JwkIlVde5IlK90kAcuetYt+1as2lVnJtEWfkeaK6drX2INzNF3GGtCKHtx
-         nP5bywSRZOjokRnZP3Q3gYVUmA5ArVJpPvujMMgE=
+        b=o2LOf0sEeq7zDg2yv6eBGHUGuCtR5J8PViJSTLD1dRxmtZAJHsT8pVYVaWqdcbZhu
+         1PEcXQaG8Gm4vf1pu6u6T0Cu5rNuS5jqDjovQxw0DTxdXIh6mxwN/qAfp5lvifEyxt
+         s+5SsTlRX30orQJZLaxOFaT4SaQV/bAfER8FWqRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick McLean <chutzpah@gentoo.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 079/129] libtraceevent: Change users plugin directory
-Date:   Thu,  3 Oct 2019 17:53:22 +0200
-Message-Id: <20191003154355.281204555@linuxfoundation.org>
+Subject: [PATCH 4.9 080/129] ARM: dts: exynos: Mark LDO10 as always-on on Peach Pit/Pi Chromebooks
+Date:   Thu,  3 Oct 2019 17:53:23 +0200
+Message-Id: <20191003154355.384873192@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
 References: <20191003154318.081116689@linuxfoundation.org>
@@ -50,68 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit e97fd1383cd77c467d2aed7fa4e596789df83977 ]
+[ Upstream commit 5b0eeeaa37615df37a9a30929b73e9defe61ca84 ]
 
-To be compliant with XDG user directory layout, the user's plugin
-directory is changed from ~/.traceevent/plugins to
-~/.local/lib/traceevent/plugins/
+Commit aff138bf8e37 ("ARM: dts: exynos: Add TMU nodes regulator supply
+for Peach boards") assigned LDO10 to Exynos Thermal Measurement Unit,
+but it turned out that it supplies also some other critical parts and
+board freezes/crashes when it is turned off.
 
-Suggested-by: Patrick McLean <chutzpah@gentoo.org>
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Patrick McLean <chutzpah@gentoo.org>
-Cc: linux-trace-devel@vger.kernel.org
-Link: https://lore.kernel.org/linux-trace-devel/20190313144206.41e75cf8@patrickm/
-Link: http://lore.kernel.org/linux-trace-devel/20190801074959.22023-4-tz.stoyanov@gmail.com
-Link: http://lore.kernel.org/lkml/20190805204355.344622683@goodmis.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+The mentioned commit made Exynos TMU a consumer of that regulator and in
+typical case Exynos TMU driver keeps it enabled from early boot. However
+there are such configurations (example is multi_v7_defconfig), in which
+some of the regulators are compiled as modules and are not available
+from early boot. In such case it may happen that LDO10 is turned off by
+regulator core, because it has no consumers yet (in this case consumer
+drivers cannot get it, because the supply regulators for it are not yet
+available). This in turn causes the board to crash. This patch restores
+'always-on' property for the LDO10 regulator.
+
+Fixes: aff138bf8e37 ("ARM: dts: exynos: Add TMU nodes regulator supply for Peach boards")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/traceevent/Makefile       | 6 +++---
- tools/lib/traceevent/event-plugin.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 7851df1490e0a..cc3315da6dc39 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -54,15 +54,15 @@ set_plugin_dir := 1
- 
- # Set plugin_dir to preffered global plugin location
- # If we install under $HOME directory we go under
--# $(HOME)/.traceevent/plugins
-+# $(HOME)/.local/lib/traceevent/plugins
- #
- # We dont set PLUGIN_DIR in case we install under $HOME
- # directory, because by default the code looks under:
--# $(HOME)/.traceevent/plugins by default.
-+# $(HOME)/.local/lib/traceevent/plugins by default.
- #
- ifeq ($(plugin_dir),)
- ifeq ($(prefix),$(HOME))
--override plugin_dir = $(HOME)/.traceevent/plugins
-+override plugin_dir = $(HOME)/.local/lib/traceevent/plugins
- set_plugin_dir := 0
- else
- override plugin_dir = $(libdir)/traceevent/plugins
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index a16756ae35267..5fe7889606a23 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -30,7 +30,7 @@
- #include "event-parse.h"
- #include "event-utils.h"
- 
--#define LOCAL_PLUGIN_DIR ".traceevent/plugins"
-+#define LOCAL_PLUGIN_DIR ".local/lib/traceevent/plugins/"
- 
- static struct registered_plugin_options {
- 	struct registered_plugin_options	*next;
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index ec4a00f1ce01e..8b754ae8c8f7d 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -427,6 +427,7 @@
+ 				regulator-name = "vdd_ldo10";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+ 				};
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 01f466816fea7..1f90df2d7ecd8 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -427,6 +427,7 @@
+ 				regulator-name = "vdd_ldo10";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+ 				};
 -- 
 2.20.1
 
