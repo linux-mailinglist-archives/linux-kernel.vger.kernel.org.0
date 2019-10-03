@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89B3ECA5B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9530CA718
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404316AbfJCQfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:35:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44586 "EHLO mail.kernel.org"
+        id S2405919AbfJCQua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:50:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404284AbfJCQfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:35:38 -0400
+        id S2392223AbfJCQuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:50:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 692412070B;
-        Thu,  3 Oct 2019 16:35:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 583CF2070B;
+        Thu,  3 Oct 2019 16:50:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120537;
-        bh=nXQIQUChDQTJepmXhuT4OoVw16fDzfRJkyUABc3APIs=;
+        s=default; t=1570121423;
+        bh=VaJEsh5UkLakPlc6ctisliyWBlDu3TrANxzQLBFR4vY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lQ1BPX3xVY0pD7RpBslwtIv6pJ4wz7NrB2Hs6cRHceR+2CS3WOPxr+q/X7GSEwci0
-         +NRYA0kuJvJeeIgo5RZ5dI5BP5C4dPQ6lHpC93ZepldOImAD7j+gON+1uNSLl35rNx
-         1oJB7JC/7HT5wjS4WLw/dLapFZSE2LSTW2awN7iA=
+        b=iVQkkdKxYieE5+kvW86IyVoh2m20c63Xo8OdxNO4gfE9dVZOSTxteaXikHZuRHZuJ
+         d/zkIDRzgW3GQIWKaONqq4Kdo/hZvLzuCZ5DW34OZ9uKnygrHkN0ehxdCHeqPgOUIa
+         /0ikgeCAkKiT9qafinEP6Eg6lMx5lt1zVC8J/HbI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Nadav Amit <namit@vmware.com>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 5.2 260/313] iommu/vt-d: Fix wrong analysis whether devices share the same bus
-Date:   Thu,  3 Oct 2019 17:53:58 +0200
-Message-Id: <20191003154558.642942460@linuxfoundation.org>
+        stable@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.3 274/344] spi: spi-fsl-dspi: Exit the ISR with IRQ_NONE when its not ours
+Date:   Thu,  3 Oct 2019 17:53:59 +0200
+Message-Id: <20191003154607.205922020@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,62 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nadav Amit <namit@vmware.com>
+From: Vladimir Oltean <olteanv@gmail.com>
 
-commit 2c70010867f164d1b30e787e360e05d10cc40046 upstream.
+commit d41f36a6464a85c06ad920703d878e4491d2c023 upstream.
 
-set_msi_sid_cb() is used to determine whether device aliases share the
-same bus, but it can provide false indications that aliases use the same
-bus when in fact they do not. The reason is that set_msi_sid_cb()
-assumes that pdev is fixed, while actually pci_for_each_dma_alias() can
-call fn() when pdev is set to a subordinate device.
+The DSPI interrupt can be shared between two controllers at least on the
+LX2160A. In that case, the driver for one controller might misbehave and
+consume the other's interrupt. Fix this by actually checking if any of
+the bits in the status register have been asserted.
 
-As a result, running an VM on ESX with VT-d emulation enabled can
-results in the log warning such as:
-
-  DMAR: [INTR-REMAP] Request device [00:11.0] fault index 3b [fault reason 38] Blocked an interrupt request due to source-id verification failure
-
-This seems to cause additional ata errors such as:
-  ata3.00: qc timeout (cmd 0xa1)
-  ata3.00: failed to IDENTIFY (I/O error, err_mask=0x4)
-
-These timeouts also cause boot to be much longer and other errors.
-
-Fix it by checking comparing the alias with the previous one instead.
-
-Fixes: 3f0c625c6ae71 ("iommu/vt-d: Allow interrupts from the entire bus for aliased devices")
+Fixes: 13aed2392741 ("spi: spi-fsl-dspi: use IRQF_SHARED mode to request IRQ")
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Link: https://lore.kernel.org/r/20190822212450.21420-2-olteanv@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel_irq_remapping.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi-fsl-dspi.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -376,13 +376,13 @@ static int set_msi_sid_cb(struct pci_dev
- {
- 	struct set_msi_sid_data *data = opaque;
- 
-+	if (data->count == 0 || PCI_BUS_NUM(alias) == PCI_BUS_NUM(data->alias))
-+		data->busmatch_count++;
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -886,9 +886,11 @@ static irqreturn_t dspi_interrupt(int ir
+ 					trans_mode);
+ 			}
+ 		}
 +
- 	data->pdev = pdev;
- 	data->alias = alias;
- 	data->count++;
++		return IRQ_HANDLED;
+ 	}
  
--	if (PCI_BUS_NUM(alias) == pdev->bus->number)
--		data->busmatch_count++;
--
- 	return 0;
+-	return IRQ_HANDLED;
++	return IRQ_NONE;
  }
  
+ static const struct of_device_id fsl_dspi_dt_ids[] = {
 
 
