@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC94CA8C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B19B6CA8CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390713AbfJCQcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:32:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39538 "EHLO mail.kernel.org"
+        id S2403985AbfJCQcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:32:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391855AbfJCQcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:32:08 -0400
+        id S2391132AbfJCQct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:32:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EEF520830;
-        Thu,  3 Oct 2019 16:32:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97A662133F;
+        Thu,  3 Oct 2019 16:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120327;
-        bh=SDsplUQ38BrLxov/WNrXRt5KjDvvNUs5suzHFutubz8=;
+        s=default; t=1570120368;
+        bh=dWZQeEXELj4oPCyvPKatzqbyZkyD3e/BEQa+Mm6YXN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3ifNWZ2/xVgOHyViG1hWKvYdcCZBbEQ4P8MpcgbLzjmji3P4PPgO8ELTwhUI3DbQ
-         f9bsEE2BRvnRXhuVdSheef3gkyG/7GJOtAnInZ2yIKPJ78eiARzsZzo/wolMdq428B
-         8YtlkWKKplZKLZKfZmWgi8acfvQOWwrJcaZLhOQ0=
+        b=eUA/a6j3qT3l/QoSqU5tPdI//iQhN6/YLBRaUA4qzpM+ZHBUWHecjJGMHJzZkJu+F
+         CqGgKip6LiXmjPP8sHEGQZik8r++W/spBWrK6IodxuAxorXEOHgl+lfafat0D1DK0n
+         JrUDDnAAKNfGx3mvBu9SJGj0j3yfH8UlHvIqIWK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiaxing Luo <luojiaxing@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 181/313] irqchip/gic-v3-its: Fix LPI release for Multi-MSI devices
-Date:   Thu,  3 Oct 2019 17:52:39 +0200
-Message-Id: <20191003154550.817976036@linuxfoundation.org>
+        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 195/313] mmc: mtk-sd: Re-store SDIO IRQs mask at system resume
+Date:   Thu,  3 Oct 2019 17:52:53 +0200
+Message-Id: <20191003154552.181623706@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,52 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <maz@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-[ Upstream commit c9c96e30ecaa0aafa225aa1a5392cb7db17c7a82 ]
+[ Upstream commit 1c81d69d4c98aab56c5a7d5a810f84aefdb37e9b ]
 
-When allocating a range of LPIs for a Multi-MSI capable device,
-this allocation extended to the closest power of 2.
+In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
+the driver. However, this still means msdc_runtime_suspend|resume() gets
+called during system suspend/resume, via pm_runtime_force_suspend|resume().
 
-But on the release path, the interrupts are released one by
-one. This results in not releasing the "extra" range, leaking
-the its_device. Trying to reprobe the device will then fail.
+This means during system suspend/resume, the register context of the mtk-sd
+device most likely loses its register context, even in cases when SDIO IRQs
+have been enabled.
 
-Fix it by releasing the LPIs the same way we allocate them.
+To re-enable the SDIO IRQs during system resume, the mtk-sd driver
+currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
+the SDIO card, but this isn't the recommended solution. Instead, it's
+better to deal with this locally in the mtk-sd driver, so let's do that.
 
-Fixes: 8208d1708b88 ("irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size")
-Reported-by: Jiaxing Luo <luojiaxing@huawei.com>
-Tested-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/f5e948aa-e32f-3f74-ae30-31fee06c2a74@huawei.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/mmc/host/mtk-sd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 20e5482d91b94..fca8b90028522 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2641,14 +2641,13 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
- 	struct its_node *its = its_dev->its;
- 	int i;
- 
-+	bitmap_release_region(its_dev->event_map.lpi_map,
-+			      its_get_event_id(irq_domain_get_irq_data(domain, virq)),
-+			      get_count_order(nr_irqs));
-+
- 	for (i = 0; i < nr_irqs; i++) {
- 		struct irq_data *data = irq_domain_get_irq_data(domain,
- 								virq + i);
--		u32 event = its_get_event_id(data);
--
--		/* Mark interrupt index as unused */
--		clear_bit(event, its_dev->event_map.lpi_map);
--
- 		/* Nuke the entry in the domain */
- 		irq_domain_reset_irq_data(data);
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 33f4b6387ef71..978c8ccce7e31 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -2421,6 +2421,9 @@ static void msdc_restore_reg(struct msdc_host *host)
+ 	} else {
+ 		writel(host->save_para.pad_tune, host->base + tune_reg);
  	}
++
++	if (sdio_irq_claimed(host->mmc))
++		__msdc_enable_sdio_irq(host, 1);
+ }
+ 
+ static int msdc_runtime_suspend(struct device *dev)
 -- 
 2.20.1
 
