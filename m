@@ -2,70 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DC4C9A6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 11:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CED77C9A6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 11:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbfJCJJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 05:09:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52602 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727357AbfJCJJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 05:09:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DFFDAB14B;
-        Thu,  3 Oct 2019 09:09:11 +0000 (UTC)
-Date:   Thu, 3 Oct 2019 11:08:47 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     jikos@kernel.org, jpoimboe@redhat.com, joe.lawrence@redhat.com,
-        nstange@suse.de, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/3] livepatch: Clean up klp_update_object_relocations()
- return paths
-In-Reply-To: <20191002134623.b6mwrvenrywgwdce@pathway.suse.cz>
-Message-ID: <alpine.LSU.2.21.1910031100150.9011@pobox.suse.cz>
-References: <20190905124514.8944-1-mbenes@suse.cz> <20190905124514.8944-4-mbenes@suse.cz> <20191002134623.b6mwrvenrywgwdce@pathway.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1729048AbfJCJJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 05:09:44 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:40777 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727382AbfJCJJo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 05:09:44 -0400
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x9399S8L014758;
+        Thu, 3 Oct 2019 18:09:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x9399S8L014758
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1570093769;
+        bh=0n5cPsF5haYRPkr2VgOQDasD7KbvcEkObY/W1AYYxoY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GuSlTaVFdcOm8THyLoUFPJnfg+ogQL59HMlirt/bBWqEw/zNFDYvaQ2ZIEdY64AjF
+         /aDBMeHvuIt/w59QaX2bvM24qqRDs9k86wVvVZ7Aaw9IKAj8QvgzOOjP9Sily3oEfQ
+         7Wuf2/+c/JOIugBUHL+NepI7WG/G9aVlpmSdGsxuo6PorzwoGOLZx6DznQaEDBqkN6
+         0qS5Y1Ktcmt2vu3B1T99VBKlarbs/g2HExixnBjqDYOsHFcEaDUG4euQ15bzvnnijW
+         kJo3hRHSUj6nZfTK1d1vwyeSly2P9aQSZGo5ATW6HfP5p8jVbhG55q3F2eK7w8mCyM
+         gLTkT0WeCNsGg==
+X-Nifty-SrcIP: [209.85.222.48]
+Received: by mail-ua1-f48.google.com with SMTP id l13so644170uap.8;
+        Thu, 03 Oct 2019 02:09:29 -0700 (PDT)
+X-Gm-Message-State: APjAAAX1pNLQ6SH4g+LeDIjXrOTAGIjxShMFPZ18sSRyqxPeaL6hFTiK
+        doZt8eHVL2OlMwdgWb2BA/dTEU6Z0rl6vDeo7ig=
+X-Google-Smtp-Source: APXvYqzaRxwD3DovY3SLF0jFPnex4EWJSi1FdvFEvcljAurmm9CUYLadWL/Tqls0CAy/5bUcYvaJJeSOLZCyUN3Tq/0=
+X-Received: by 2002:a9f:21f6:: with SMTP id 109mr2062792uac.109.1570093768250;
+ Thu, 03 Oct 2019 02:09:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <be8059f4-8e8f-cd18-0978-a9c861f6396b@linuxfoundation.org>
+ <CAHk-=wgs+UoZWfHGENWSVBd57Z-Vp0Nqe68R6wkDb5zF+cfvDg@mail.gmail.com>
+ <CAKRRn-edxk9Du70A27V=d3Na73fh=fVvGEVsQRGROrQm05YRrA@mail.gmail.com>
+ <CAFd5g45ROPm-1SD5cD772gqESaP3D8RbBhSiJXZzbaA+2hFdHA@mail.gmail.com>
+ <CAHk-=wgMuNLBhJR_nFHrpViHbz2ErQ-fJV6B9o0+wym+Wk+r0w@mail.gmail.com> <20190922112555.GB122003@gmail.com>
+In-Reply-To: <20190922112555.GB122003@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 3 Oct 2019 18:08:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASr7e7Hc2_CBanfN06-WP3mFn9qByuTbyzZ+HTrEwUXkA@mail.gmail.com>
+Message-ID: <CAK7LNASr7e7Hc2_CBanfN06-WP3mFn9qByuTbyzZ+HTrEwUXkA@mail.gmail.com>
+Subject: Re: [GIT PULL] Kselftest update for Linux 5.4-rc1
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Oct 2019, Petr Mladek wrote:
+On Sun, Sep 22, 2019 at 8:26 PM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> > On Fri, Sep 20, 2019 at 9:35 AM Brendan Higgins
+> > <brendanhiggins@google.com> wrote:
+> > >
+> > > Sorry about that. I am surprised that none of the other reviewers
+> > > brought this up.
+> >
+> > I think I'm "special".
+> >
+> > There was some other similar change a few years ago, which I
+> > absolutely hated because of how it broke autocomplete for me. Very few
+> > other people seemed to react to it.
+>
+> FWIW, I am obsessively sensitive to autocomplete and overall source code
+> file hieararchy and nomenclature details as well, so it's not just you.
+>
+> Beyond the muscle memory aspect, nonsensical naming and inanely flat file
+> hierarchies annoy kernel developers and makes it harder for newbies to
+> understand the kernel source as well.
+>
+> The less clutter, the more organization, the better - and there's very
+> few valid technical reasons to add any new files or directories to the
+> top level directory - we should probably *remove* quite a few.
+>
+> For example 'firmware/' was recently moved to drivers/firmware/, and in a
+> similar fashion about a third of the remaining 22 directories should
+> probably be moved too:
+>
+>   drwxr-xr-x    arch
+>   drwxr-xr-x    block
+>   drwxr-xr-x    certs           # move to build/certs/ dir
+>   drwxr-xr-x    crypto          # move to kernel/crypto/ or security/crypto/
+>   drwxr-xr-x    Documentation
+>   drwxr-xr-x    drivers
+>   drwxr-xr-x    fs
+>   drwxr-xr-x    include
+>   drwxr-xr-x    init
+>   drwxr-xr-x    ipc             # move to kernel/ipc/
+>   drwxr-xr-x    kernel
+>   drwxr-xr-x    lib
+>   drwxr-xr-x    LICENSES
+>   drwxr-xr-x    mm
+>   drwxr-xr-x    net
+>   drwxr-xr-x    samples         # move to Documentation/samples/
+>   drwxr-xr-x    scripts         # move to build/scripts/
+>   drwxr-xr-x    security
+>   drwxr-xr-x    sound           # move to drivers/sound/
+>   drwxr-xr-x    tools
+>   drwxr-xr-x    usr             # move to build/usr/
+>   drwxr-xr-x    virt            # move to the already existing drivers/virt/
+>
+>   -rw-r--r--    COPYING
+>   -rw-r--r--    CREDITS
+>   -rw-r--r--    Kbuild
+>   -rw-r--r--    Kconfig
+>   -rw-r--r--    MAINTAINERS
+>   -rw-r--r--    Makefile
+>   -rw-r--r--    README
+>
+> There's a few borderline ones:
+>
+>  - 'block' could in principle move to drivers/block/core/ but it's fine
+>    at the top level too I think.
+>
+>  - 'init' could in principle be moved to kernel/init/ - but it's not
+>    wrong at the top level either.
+>
+> The remaining top level hierarchy would look pretty sweet and short:
+>
+>   drwxr-xr-x    arch
+>   drwxr-xr-x    block
+>   drwxr-xr-x    build             # new
 
-> On Thu 2019-09-05 14:45:14, Miroslav Benes wrote:
-> > Signed-off-by: Miroslav Benes <mbenes@suse.cz>
-> 
-> This might depend on personal preferences.
+I am opposed to the "build".
 
-True.
+The build tools will go too deep, like build/scripts/kconfig ?
 
-> What was the motivation
-> for this patch, please? Did it just follow some common
-> style in this source file?
+I often use checkpatch.pl, get_maintainer.pl etc.
 
-We had it like this once, so it is only going back to the original code. 
-And yes, I think it is better.
+Do I have to type build/scripts/checkpatch.pl ?
 
-Commit b56b36ee6751 ("livepatch: Cleanup module page permission changes") 
-changed it due to the error handling. Commit 255e732c61db ("livepatch: use 
-arch_klp_init_object_loaded() to finish arch-specific tasks") removed the 
-reason for the change but did not cleanup the rest.
 
-> To make it clear. I have no real preference. I just want to avoid
-> some back and forth changes of the code depending on who touches
-> it at the moment.
 
-I have no real preference either. I noticed something I did not like while 
-touching the code and that's it.
 
-> I would prefer to either remove this patch or explain the motivation
-> in the commit message. Beside that
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Ok, thanks.
-Miroslav
+
+>   drwxr-xr-x    Documentation
+>   drwxr-xr-x    drivers
+>   drwxr-xr-x    fs
+>   drwxr-xr-x    include
+>   drwxr-xr-x    init
+>   drwxr-xr-x    kernel
+>   drwxr-xr-x    lib
+>   drwxr-xr-x    LICENSES
+>   drwxr-xr-x    mm
+>   drwxr-xr-x    net
+>   drwxr-xr-x    security
+>   drwxr-xr-x    tools
+>
+>   -rw-r--r--    COPYING
+>   -rw-r--r--    CREDITS
+>   -rw-r--r--    Kbuild
+>   -rw-r--r--    Kconfig
+>   -rw-r--r--    MAINTAINERS
+>   -rw-r--r--    Makefile
+>   -rw-r--r--    README
+>
+> I'm volunteering to do this (in a scripted, repeatable, reviewable,
+> tweakable and "easy to execute in a quiet moment" fashion), although
+> I also expect you to balk at the churn. :-)
+>
+> Thanks,
+>
+>         Ingo
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
