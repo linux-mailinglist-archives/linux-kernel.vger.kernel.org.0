@@ -2,90 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9019C96AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 04:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89270C96B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 04:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbfJCCXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 22:23:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34118 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727978AbfJCCXT (ORCPT
+        id S1728261AbfJCCaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 22:30:46 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:39839 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727641AbfJCCap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 22:23:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:Cc:From:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U7ID//fmK0I3/mly5XIM1JAun9eRn8qOXb/xC1yOZ7s=; b=NaPJx9TMnJtomA/xHlMbJXJx/
-        Kv5U6nRpEOmnvcwREafAzIkHSylrg5f9ndQnIXh6YOr3uIZNpOMrYhBQsD4qgBssYZsmn6ROzYX4E
-        fh1mOxtv0iFAcnMtHgaeGZertTYtI5+i/3Fp7DSDFZX1//+MWqeODnzAq6+I3nn1er7tMfD80t+gD
-        Yn/IXRUf/sYyJCS39srLolLw6nsxh6Bg1ncociCRUQsgArB3ZhfMhbQNU3ngh6dxQfGmRRD8yoIO2
-        tXtNiYrU8pWys8SxfjzORRVqeynIkzLaKx0tObmgvXshcGRJsijadIfxBB72hoBe6zL5bQnry7kWn
-        QeaBdRTAg==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iFqlv-0007r3-Mb; Thu, 03 Oct 2019 02:23:15 +0000
-To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, axboe <axboe@kernel.dk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Cc:     Scott Bauer <scott.bauer@intel.com>,
-        Rafael Antognolli <rafael.antognolli@intel.com>
-Subject: [PATCH 2/2] block: sed-opal: fix sparse warning: convert __be64 data
-Message-ID: <82f70133-7242-d113-f041-9b89694685c0@infradead.org>
-Date:   Wed, 2 Oct 2019 19:23:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 2 Oct 2019 22:30:45 -0400
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x932UWK9009002;
+        Thu, 3 Oct 2019 11:30:32 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x932UWK9009002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1570069832;
+        bh=QxHhOEkIkq/jgs8YrzxW3BX+4WyvGRMGDurXlzbJLNc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QFPRw2wfVMCji3syDnpvCHwp8kK0dVYzk3nYnJEO4D7lTvXFUqNfSp8LYr8vGd7A1
+         B2sUDfm+2re1JvhvcokT3R98T1NHZzxvSOcE2j8EG9rWDOC3K50yyzZgXsm24CdS2B
+         bp2dXf7lBAYdy6XLlL2ZxNPDCvE1mfSVLyoCvfnpe/QEO8wgHxUr6R2pNeY1jUDqwZ
+         UIsnQLWxhI3mStgM3IuZRUfGOcZZRrllCfrtMv37XwOKTpCQQjfQEu96zoVUhkCFIN
+         GjkvLaj5mD90crUci0xY+xV9BS8wyaRKffUn+CiDMhoz5/pLJ7yLJ4XB9l104I9Z/n
+         DVLHn8V+g5Thg==
+X-Nifty-SrcIP: [209.85.222.48]
+Received: by mail-ua1-f48.google.com with SMTP id n63so410418uan.2;
+        Wed, 02 Oct 2019 19:30:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAUSfBFRLB7XIPTPDAuw4MboeL9iGbS2RjBYuP1fjt906ons2CGt
+        lpO+7qsbtoL4daxckTZSx/EOE1qwYJaxx+VKvYI=
+X-Google-Smtp-Source: APXvYqyPyKxRpctDgXuUq/UtQJslEs0EOOS02aE4Im9+sSa0rLz2rp4unVI8jUbCTn2oElIg69i7KQzg5ObTVtqtVRM=
+X-Received: by 2002:a9f:2213:: with SMTP id 19mr952585uad.25.1570069831431;
+ Wed, 02 Oct 2019 19:30:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190720120526.7722-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190720120526.7722-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 3 Oct 2019 11:29:55 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATW+pS4WY_P=ZQirPO_byQXREFZ7yKrCnPLxUH5EeNhQQ@mail.gmail.com>
+Message-ID: <CAK7LNATW+pS4WY_P=ZQirPO_byQXREFZ7yKrCnPLxUH5EeNhQQ@mail.gmail.com>
+Subject: Re: [PATCH] block: pg: add header include guard
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi
 
-sparse warns about incorrect type when using __be64 data.
-It is not being converted to CPU-endian but it should be.
-
-Fixes these sparse warnings:
-
-../block/sed-opal.c:375:20: warning: incorrect type in assignment (different base types)
-../block/sed-opal.c:375:20:    expected unsigned long long [usertype] align
-../block/sed-opal.c:375:20:    got restricted __be64 const [usertype] alignment_granularity
-../block/sed-opal.c:376:25: warning: incorrect type in assignment (different base types)
-../block/sed-opal.c:376:25:    expected unsigned long long [usertype] lowest_lba
-../block/sed-opal.c:376:25:    got restricted __be64 const [usertype] lowest_aligned_lba
-
-Fixes: 455a7b238cd6 ("block: Add Sed-opal library")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Scott Bauer <scott.bauer@intel.com>
-Cc: Rafael Antognolli <rafael.antognolli@intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
----
-If this code is known to work as is, it would be nice to have an
-explanation of it.  Oh: maybe it's just that these fields are not
-used after they are saved/set.
-
- block/sed-opal.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- lnx-54-rc1.orig/block/sed-opal.c
-+++ lnx-54-rc1/block/sed-opal.c
-@@ -372,8 +372,8 @@ static void check_geometry(struct opal_d
- {
- 	const struct d0_geometry_features *geo = data;
- 
--	dev->align = geo->alignment_granularity;
--	dev->lowest_lba = geo->lowest_aligned_lba;
-+	dev->align = be64_to_cpu(geo->alignment_granularity);
-+	dev->lowest_lba = be64_to_cpu(geo->lowest_aligned_lba);
- }
- 
- static int execute_step(struct opal_dev *dev,
+On Sat, Jul 20, 2019 at 9:06 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Add a header include guard just in case.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 
+Ping?
+
+
+> ---
+>
+>  include/uapi/linux/pg.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/pg.h b/include/uapi/linux/pg.h
+> index 364c350e85cd..62b6f69bd9fb 100644
+> --- a/include/uapi/linux/pg.h
+> +++ b/include/uapi/linux/pg.h
+> @@ -35,6 +35,9 @@
+>
+>  */
+>
+> +#ifndef _UAPI_LINUX_PG_H
+> +#define _UAPI_LINUX_PG_H
+> +
+>  #define PG_MAGIC       'P'
+>  #define PG_RESET       'Z'
+>  #define PG_COMMAND     'C'
+> @@ -61,4 +64,4 @@ struct pg_read_hdr {
+>
+>  };
+>
+> -/* end of pg.h */
+> +#endif /* _UAPI_LINUX_PG_H */
+> --
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
