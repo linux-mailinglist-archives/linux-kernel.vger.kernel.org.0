@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CFB1CA683
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B21CA685
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405382AbfJCQoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:44:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56580 "EHLO mail.kernel.org"
+        id S2405394AbfJCQof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:44:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392744AbfJCQoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:44:30 -0400
+        id S2405377AbfJCQoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:44:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 951092054F;
-        Thu,  3 Oct 2019 16:44:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42181206BB;
+        Thu,  3 Oct 2019 16:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121069;
-        bh=fKDOifOsBYF0DMQPzAQ/DZmDI8+D34sivsnDb+H7i50=;
+        s=default; t=1570121071;
+        bh=bFLCTGyYohymiALd+WKgy6NVhCk0aLlPxI6AHXlCS/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VXB5jI/cF9NJmkxBno2dJEldYkwQYZLGntn6RuaV4dNEL9pCIQoXs2MDKJR95+0hm
-         z7qTK++bs04qsrhf0Ne++x4kyZ4z5dl75lhIAyjoFjhFBXcVSfXmPDXV7h7g7PwExa
-         0XCxwXiV3UixRaBQT99zXsV3K0QG6j8I0RSiqXL4=
+        b=MTrJThkwPBbIsy806+kzW99656kAueRDrTX6r7Y06CPTX57BLjYJdDBihxJQuaeAu
+         LKtwhF/twRK3kKIjJBnq/8geKiGd2Q0sGnC2tGuvdnXlGd+0Cy80+WEEmiBJPg1DOB
+         Hurj3m6csy6tUUCqipDGNXHnYJ6mcyA5Y8hyAvLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 107/344] media: i2c: tda1997x: prevent potential NULL pointer access
-Date:   Thu,  3 Oct 2019 17:51:12 +0200
-Message-Id: <20191003154550.774976696@linuxfoundation.org>
+Subject: [PATCH 5.3 108/344] media: fdp1: Reduce FCP not found message level to debug
+Date:   Thu,  3 Oct 2019 17:51:13 +0200
+Message-Id: <20191003154550.859307945@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -46,51 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 2f822f1da08ac5c93e351e79d22920f08fa51baf ]
+[ Upstream commit 4fd22938569c14f6092c05880ca387409d78355f ]
 
-i2c_new_dummy() can fail returning a NULL pointer. This is not checked
-and the returned pointer is blindly used. Convert to
-devm_i2c_new_dummy_client() which returns an ERR_PTR and also add a
-validity check. Using devm_* here also fixes a leak because the dummy
-client was not released in the probe error path.
+When support for the IPMMU is not enabled, the FDP driver may be
+probe-deferred multiple times, causing several messages to be printed
+like:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+    rcar_fdp1 fe940000.fdp1: FCP not found (-517)
+    rcar_fdp1 fe944000.fdp1: FCP not found (-517)
+
+Fix this by reducing the message level to debug level, as is done in the
+VSP1 driver.
+
+Fixes: 4710b752e029f3f8 ("[media] v4l: Add Renesas R-Car FDP1 Driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/tda1997x.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar_fdp1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
-index a62ede0966361..5e68182001ecc 100644
---- a/drivers/media/i2c/tda1997x.c
-+++ b/drivers/media/i2c/tda1997x.c
-@@ -2691,7 +2691,13 @@ static int tda1997x_probe(struct i2c_client *client,
- 	}
- 
- 	ret = 0x34 + ((io_read(sd, REG_SLAVE_ADDR)>>4) & 0x03);
--	state->client_cec = i2c_new_dummy(client->adapter, ret);
-+	state->client_cec = devm_i2c_new_dummy_device(&client->dev,
-+						      client->adapter, ret);
-+	if (IS_ERR(state->client_cec)) {
-+		ret = PTR_ERR(state->client_cec);
-+		goto err_free_mutex;
-+	}
-+
- 	v4l_info(client, "CEC slave address 0x%02x\n", ret);
- 
- 	ret = tda1997x_core_init(sd);
-@@ -2798,7 +2804,6 @@ static int tda1997x_remove(struct i2c_client *client)
- 	media_entity_cleanup(&sd->entity);
- 	v4l2_ctrl_handler_free(&state->hdl);
- 	regulator_bulk_disable(TDA1997X_NUM_SUPPLIES, state->supplies);
--	i2c_unregister_device(state->client_cec);
- 	cancel_delayed_work(&state->delayed_work_enable_hpd);
- 	mutex_destroy(&state->page_lock);
- 	mutex_destroy(&state->lock);
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index 43aae9b6bb20e..c23ec127c2776 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -2306,7 +2306,7 @@ static int fdp1_probe(struct platform_device *pdev)
+ 		fdp1->fcp = rcar_fcp_get(fcp_node);
+ 		of_node_put(fcp_node);
+ 		if (IS_ERR(fdp1->fcp)) {
+-			dev_err(&pdev->dev, "FCP not found (%ld)\n",
++			dev_dbg(&pdev->dev, "FCP not found (%ld)\n",
+ 				PTR_ERR(fdp1->fcp));
+ 			return PTR_ERR(fdp1->fcp);
+ 		}
 -- 
 2.20.1
 
