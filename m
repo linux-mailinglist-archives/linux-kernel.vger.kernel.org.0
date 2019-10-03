@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B816CA8B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 042E8CA8B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391810AbfJCQay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:30:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
+        id S2403805AbfJCQbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:31:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388282AbfJCQar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:30:47 -0400
+        id S2403790AbfJCQbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:31:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29C912054F;
-        Thu,  3 Oct 2019 16:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ADF12054F;
+        Thu,  3 Oct 2019 16:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120246;
-        bh=aRnDWCac5Rp2zw7MueiQHhEBPV+CE2W1Bm3OSFT9eFw=;
+        s=default; t=1570120260;
+        bh=jFyrjGVt0cRFDQk6Fgliyx+XUAerjBChFSMocGjBCxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0I2lh1P7DFBtKcrUy/roZqP0zBLFoz06UsqW4XMdlGmUHuwPcnvG24cPD6BteGIaS
-         zbMQDhHl0J3SsHIib1HIzXc8IoTkf6gGqApFN4wUsEjBrwGQqTjEdmbxKNuaQIzagy
-         bphry6iV9qIgYiQDU7/urd84SUMEZjEejTsvJMyg=
+        b=n3Yz1a8BZiugnHDVZHE0rszeDztU33YLZXM/oXP1CAe1AF4GSR3i0nC08Pr5FIzKl
+         FdYJR3zsIuilOCb3matsxXapsEhu1YhdA9EkrZjvkbGZ06R56FqCSgQHxq8PRyk7eh
+         WqdkS90kzLJshF+8AE0miV5F+k7Vma1g63Uapu8k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Dan Murphy <dmurphy@ti.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 150/313] leds: lm3532: Fixes for the driver for stability
-Date:   Thu,  3 Oct 2019 17:52:08 +0200
-Message-Id: <20191003154547.709338957@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 155/313] arm64: kpti: ensure patched kernel text is fetched from PoU
+Date:   Thu,  3 Oct 2019 17:52:13 +0200
+Message-Id: <20191003154548.190098694@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,85 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Murphy <dmurphy@ti.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 6559ac32998248182572e1ccae79dc2eb40ac7c6 ]
+[ Upstream commit f32c7a8e45105bd0af76872bf6eef0438ff12fb2 ]
 
-Fixed misspelled words, added error check during probe
-on the init of the registers, and fixed ALS/I2C control
-mode.
+While the MMUs is disabled, I-cache speculation can result in
+instructions being fetched from the PoC. During boot we may patch
+instructions (e.g. for alternatives and jump labels), and these may be
+dirty at the PoU (and stale at the PoC).
 
-Fixes: bc1b8492c764 ("leds: lm3532: Introduce the lm3532 LED driver")
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Thus, while the MMU is disabled in the KPTI pagetable fixup code we may
+load stale instructions into the I-cache, potentially leading to
+subsequent crashes when executing regions of code which have been
+modified at runtime.
+
+Similarly to commit:
+
+  8ec41987436d566f ("arm64: mm: ensure patched kernel text is fetched from PoU")
+
+... we can invalidate the I-cache after enabling the MMU to prevent such
+issues.
+
+The KPTI pagetable fixup code itself should be clean to the PoC per the
+boot protocol, so no maintenance is required for this code.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: James Morse <james.morse@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/leds-lm3532.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ arch/arm64/mm/proc.S | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-index 180895b83b888..e55a64847fe2f 100644
---- a/drivers/leds/leds-lm3532.c
-+++ b/drivers/leds/leds-lm3532.c
-@@ -40,7 +40,7 @@
- #define LM3532_REG_ZN_3_LO	0x67
- #define LM3532_REG_MAX		0x7e
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index 7dbf2be470f6c..28a8f7b87ff06 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -286,6 +286,15 @@ skip_pgd:
+ 	msr	sctlr_el1, x18
+ 	isb
  
--/* Contorl Enable */
-+/* Control Enable */
- #define LM3532_CTRL_A_ENABLE	BIT(0)
- #define LM3532_CTRL_B_ENABLE	BIT(1)
- #define LM3532_CTRL_C_ENABLE	BIT(2)
-@@ -302,7 +302,7 @@ static int lm3532_led_disable(struct lm3532_led *led_data)
- 	int ret;
- 
- 	ret = regmap_update_bits(led_data->priv->regmap, LM3532_REG_ENABLE,
--					 ctrl_en_val, ~ctrl_en_val);
-+					 ctrl_en_val, 0);
- 	if (ret) {
- 		dev_err(led_data->priv->dev, "Failed to set ctrl:%d\n", ret);
- 		return ret;
-@@ -321,7 +321,7 @@ static int lm3532_brightness_set(struct led_classdev *led_cdev,
- 
- 	mutex_lock(&led->priv->lock);
- 
--	if (led->mode == LM3532_BL_MODE_ALS) {
-+	if (led->mode == LM3532_ALS_CTRL) {
- 		if (brt_val > LED_OFF)
- 			ret = lm3532_led_enable(led);
- 		else
-@@ -542,11 +542,14 @@ static int lm3532_parse_node(struct lm3532_data *priv)
- 		}
- 
- 		if (led->mode == LM3532_BL_MODE_ALS) {
-+			led->mode = LM3532_ALS_CTRL;
- 			ret = lm3532_parse_als(priv);
- 			if (ret)
- 				dev_err(&priv->client->dev, "Failed to parse als\n");
- 			else
- 				lm3532_als_configure(priv, led);
-+		} else {
-+			led->mode = LM3532_I2C_CTRL;
- 		}
- 
- 		led->num_leds = fwnode_property_read_u32_array(child,
-@@ -590,7 +593,13 @@ static int lm3532_parse_node(struct lm3532_data *priv)
- 			goto child_out;
- 		}
- 
--		lm3532_init_registers(led);
-+		ret = lm3532_init_registers(led);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "register init err: %d\n",
-+				ret);
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
- 
- 		i++;
- 	}
++	/*
++	 * Invalidate the local I-cache so that any instructions fetched
++	 * speculatively from the PoC are discarded, since they may have
++	 * been dynamically patched at the PoU.
++	 */
++	ic	iallu
++	dsb	nsh
++	isb
++
+ 	/* Set the flag to zero to indicate that we're all done */
+ 	str	wzr, [flag_ptr]
+ 	ret
 -- 
 2.20.1
 
