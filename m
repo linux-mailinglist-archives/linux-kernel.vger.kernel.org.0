@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7761ECA5F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2453CA760
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404697AbfJCQiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:38:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47948 "EHLO mail.kernel.org"
+        id S2390216AbfJCQxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:53:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404789AbfJCQiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:38:17 -0400
+        id S2405232AbfJCQx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:53:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71CB520830;
-        Thu,  3 Oct 2019 16:38:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B23B20862;
+        Thu,  3 Oct 2019 16:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120696;
-        bh=RgbKOuX3h2QbdzinijI7/wH56GttneKB9fd77dI5Lzs=;
+        s=default; t=1570121606;
+        bh=2r6Gcn4ynoi7nHE5VY0dGQ3H1kKpKuws4yoTIyKcVZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kRGOpQqp/GQSS6J0IWt/4mQDxlRaWK5BTwCSTVFtAFV/KW+/NlQjmjxOatKpCwjRZ
-         pTdml9f1hC1VqQSSr1geBbVGmuJmlSJB9yV2K+1KCPayXGw+lkAi9uKJOTJw9TpQHt
-         Gm/zJvvfeqh5OJ81hlkdMadQZllBFJTA/g3Sbxtk=
+        b=jeKvKGf0DCzPSbRL1VlbLNeoXjHJGQwt8s6binPMFbMqVRLQxmscu3rXCxoYf7t9v
+         ajJKEbRB77z9d6JJ+hkN0sWao35jvMTsHdqxR/bgeUvCmjyC1555kU2K/Le2bh0wwG
+         PcfG0AneC+Tokso+QHlIfoPIMy3mysRv7Rua05lg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.2 290/313] SUNRPC: Fix buffer handling of GSS MIC without slack
-Date:   Thu,  3 Oct 2019 17:54:28 +0200
-Message-Id: <20191003154601.664343882@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 5.3 304/344] smb3: allow disabling requesting leases
+Date:   Thu,  3 Oct 2019 17:54:29 +0200
+Message-Id: <20191003154609.355782187@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,86 +44,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit 5f1bc39979d868a0358c683864bec3fc8395440b upstream.
+commit 3e7a02d47872081f4b6234a9f72500f1d10f060c upstream.
 
-The GSS Message Integrity Check data for krb5i may lie partially in the XDR
-reply buffer's pages and tail.  If so, we try to copy the entire MIC into
-free space in the tail.  But as the estimations of the slack space required
-for authentication and verification have improved there may be less free
-space in the tail to complete this copy -- see commit 2c94b8eca1a2
-("SUNRPC: Use au_rslack when computing reply buffer size").  In fact, there
-may only be room in the tail for a single copy of the MIC, and not part of
-the MIC and then another complete copy.
+In some cases to work around server bugs or performance
+problems it can be helpful to be able to disable requesting
+SMB2.1/SMB3 leases on a particular mount (not to all servers
+and all shares we are mounted to). Add new mount parm
+"nolease" which turns off requesting leases on directory
+or file opens.  Currently the only way to disable leases is
+globally through a module load parameter. This is more
+granular.
 
-The real world failure reported is that `ls` of a directory on NFS may
-sometimes return -EIO, which can be traced back to xdr_buf_read_netobj()
-failing to find available free space in the tail to copy the MIC.
-
-Fix this by checking for the case of the MIC crossing the boundaries of
-head, pages, and tail. If so, shift the buffer until the MIC is contained
-completely within the pages or tail.  This allows the remainder of the
-function to create a sub buffer that directly address the complete MIC.
-
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Cc: stable@vger.kernel.org # v5.1
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Suggested-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/xdr.c |   27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ fs/cifs/cifsfs.c   |    2 ++
+ fs/cifs/cifsglob.h |    2 ++
+ fs/cifs/connect.c  |    9 ++++++++-
+ fs/cifs/smb2pdu.c  |    2 +-
+ 4 files changed, 13 insertions(+), 2 deletions(-)
 
---- a/net/sunrpc/xdr.c
-+++ b/net/sunrpc/xdr.c
-@@ -1237,16 +1237,29 @@ xdr_encode_word(struct xdr_buf *buf, uns
- EXPORT_SYMBOL_GPL(xdr_encode_word);
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -433,6 +433,8 @@ cifs_show_options(struct seq_file *s, st
+ 	cifs_show_security(s, tcon->ses);
+ 	cifs_show_cache_flavor(s, cifs_sb);
  
- /* If the netobj starting offset bytes from the start of xdr_buf is contained
-- * entirely in the head or the tail, set object to point to it; otherwise
-- * try to find space for it at the end of the tail, copy it there, and
-- * set obj to point to it. */
-+ * entirely in the head, pages, or tail, set object to point to it; otherwise
-+ * shift the buffer until it is contained entirely within the pages or tail.
-+ */
- int xdr_buf_read_netobj(struct xdr_buf *buf, struct xdr_netobj *obj, unsigned int offset)
- {
- 	struct xdr_buf subbuf;
-+	unsigned int boundary;
- 
- 	if (xdr_decode_word(buf, offset, &obj->len))
- 		return -EFAULT;
--	if (xdr_buf_subsegment(buf, &subbuf, offset + 4, obj->len))
-+	offset += 4;
-+
-+	/* Is the obj partially in the head? */
-+	boundary = buf->head[0].iov_len;
-+	if (offset < boundary && (offset + obj->len) > boundary)
-+		xdr_shift_buf(buf, boundary - offset);
-+
-+	/* Is the obj partially in the pages? */
-+	boundary += buf->page_len;
-+	if (offset < boundary && (offset + obj->len) > boundary)
-+		xdr_shrink_pagelen(buf, boundary - offset);
-+
-+	if (xdr_buf_subsegment(buf, &subbuf, offset, obj->len))
- 		return -EFAULT;
- 
- 	/* Is the obj contained entirely in the head? */
-@@ -1258,11 +1271,7 @@ int xdr_buf_read_netobj(struct xdr_buf *
- 	if (subbuf.tail[0].iov_len == obj->len)
++	if (tcon->no_lease)
++		seq_puts(s, ",nolease");
+ 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER)
+ 		seq_puts(s, ",multiuser");
+ 	else if (tcon->ses->user_name)
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -576,6 +576,7 @@ struct smb_vol {
+ 	bool noblocksnd:1;
+ 	bool noautotune:1;
+ 	bool nostrictsync:1; /* do not force expensive SMBflush on every sync */
++	bool no_lease:1;     /* disable requesting leases */
+ 	bool fsc:1;	/* enable fscache */
+ 	bool mfsymlinks:1; /* use Minshall+French Symlinks */
+ 	bool multiuser:1;
+@@ -1082,6 +1083,7 @@ struct cifs_tcon {
+ 	bool need_reopen_files:1; /* need to reopen tcon file handles */
+ 	bool use_resilient:1; /* use resilient instead of durable handles */
+ 	bool use_persistent:1; /* use persistent instead of durable handles */
++	bool no_lease:1;    /* Do not request leases on files or directories */
+ 	__le32 capabilities;
+ 	__u32 share_flags;
+ 	__u32 maximal_access;
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -74,7 +74,7 @@ enum {
+ 	Opt_user_xattr, Opt_nouser_xattr,
+ 	Opt_forceuid, Opt_noforceuid,
+ 	Opt_forcegid, Opt_noforcegid,
+-	Opt_noblocksend, Opt_noautotune,
++	Opt_noblocksend, Opt_noautotune, Opt_nolease,
+ 	Opt_hard, Opt_soft, Opt_perm, Opt_noperm,
+ 	Opt_mapposix, Opt_nomapposix,
+ 	Opt_mapchars, Opt_nomapchars, Opt_sfu,
+@@ -134,6 +134,7 @@ static const match_table_t cifs_mount_op
+ 	{ Opt_noforcegid, "noforcegid" },
+ 	{ Opt_noblocksend, "noblocksend" },
+ 	{ Opt_noautotune, "noautotune" },
++	{ Opt_nolease, "nolease" },
+ 	{ Opt_hard, "hard" },
+ 	{ Opt_soft, "soft" },
+ 	{ Opt_perm, "perm" },
+@@ -1713,6 +1714,9 @@ cifs_parse_mount_options(const char *mou
+ 		case Opt_noautotune:
+ 			vol->noautotune = 1;
+ 			break;
++		case Opt_nolease:
++			vol->no_lease = 1;
++			break;
+ 		case Opt_hard:
+ 			vol->retry = 1;
+ 			break;
+@@ -3250,6 +3254,8 @@ static int match_tcon(struct cifs_tcon *
  		return 0;
+ 	if (tcon->handle_timeout != volume_info->handle_timeout)
+ 		return 0;
++	if (tcon->no_lease != volume_info->no_lease)
++		return 0;
+ 	return 1;
+ }
  
--	/* use end of tail as storage for obj:
--	 * (We don't copy to the beginning because then we'd have
--	 * to worry about doing a potentially overlapping copy.
--	 * This assumes the object is at most half the length of the
--	 * tail.) */
-+	/* Find a contiguous area in @buf to hold all of @obj */
- 	if (obj->len > buf->buflen - buf->len)
- 		return -ENOMEM;
- 	if (buf->tail[0].iov_len != 0)
+@@ -3464,6 +3470,7 @@ cifs_get_tcon(struct cifs_ses *ses, stru
+ 	tcon->nocase = volume_info->nocase;
+ 	tcon->nohandlecache = volume_info->nohandlecache;
+ 	tcon->local_lease = volume_info->local_lease;
++	tcon->no_lease = volume_info->no_lease;
+ 	INIT_LIST_HEAD(&tcon->pending_opens);
+ 
+ 	spin_lock(&cifs_tcp_ses_lock);
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2458,7 +2458,7 @@ SMB2_open_init(struct cifs_tcon *tcon, s
+ 	iov[1].iov_len = uni_path_len;
+ 	iov[1].iov_base = path;
+ 
+-	if (!server->oplocks)
++	if ((!server->oplocks) || (tcon->no_lease))
+ 		*oplock = SMB2_OPLOCK_LEVEL_NONE;
+ 
+ 	if (!(server->capabilities & SMB2_GLOBAL_CAP_LEASING) ||
 
 
