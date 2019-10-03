@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E87CA1F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E34CA273
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731126AbfJCQA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
+        id S1732538AbfJCQFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731563AbfJCQAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:24 -0400
+        id S1731287AbfJCQFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9B6F20700;
-        Thu,  3 Oct 2019 16:00:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B507C21D81;
+        Thu,  3 Oct 2019 16:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118424;
-        bh=v5z7osx8ZrhN/0iHMnVEgaI9K9aFHg+JY9Ifsi+bC+c=;
+        s=default; t=1570118721;
+        bh=bNImInskFkEsiy3tjaGLK/ZZjqJE5MRAbprW6BDTjo8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WmgscjCcuOwgP07YJm4DvttoqWUIHRMV64y8+7h6+7AfZd6gRz67L3fI5RVFd8n1w
-         AWcERSBA8NXsmdKvaCmsNdwv2sMdURo6zMfcW9r7oLFoJDjIhSZzzMG0abCPJp9eY7
-         nLNnLRQMkIrw0jW4pEH1ZiQGqsz2PvGveTxTAPKM=
+        b=uI/NerBSpMz0obLdb0ZvwOdcmk7fKcv0trBnQEqPugFkz0jtvoqX3ZERf4Ys3kzL/
+         w6swQyZ/YWNQ5A4hZfozUUkM9ft8vYepu/ubgSYIW1SH1j7XV4p0DEL3cGwUk8EDR0
+         VzQU0YuJNqJUxCpfr2anoYze7yNmsVb8biMdD7xE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.4 91/99] ext4: fix punch hole for inline_data file systems
-Date:   Thu,  3 Oct 2019 17:53:54 +0200
-Message-Id: <20191003154339.624879548@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 112/129] alarmtimer: Use EOPNOTSUPP instead of ENOTSUPP
+Date:   Thu,  3 Oct 2019 17:53:55 +0200
+Message-Id: <20191003154410.109449692@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,49 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
 
-commit c1e8220bd316d8ae8e524df39534b8a412a45d5e upstream.
+commit f18ddc13af981ce3c7b7f26925f099e7c6929aba upstream.
 
-If a program attempts to punch a hole on an inline data file, we need
-to convert it to a normal file first.
+ENOTSUPP is not supposed to be returned to userspace. This was found on an
+OpenPower machine, where the RTC does not support set_alarm.
 
-This was detected using ext4/032 using the adv configuration.  Simple
-reproducer:
+On that system, a clock_nanosleep(CLOCK_REALTIME_ALARM, ...) results in
+"524 Unknown error 524"
 
-mke2fs -Fq -t ext4 -O inline_data /dev/vdc
-mount /vdc
-echo "" > /vdc/testfile
-xfs_io -c 'truncate 33554432' /vdc/testfile
-xfs_io -c 'fpunch 0 1048576' /vdc/testfile
-umount /vdc
-e2fsck -fy /dev/vdc
+Replace it with EOPNOTSUPP which results in the expected "95 Operation not
+supported" error.
 
+Fixes: 1c6b39ad3f01 (alarmtimers: Return -ENOTSUPP if no RTC device is present)
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Link: https://lkml.kernel.org/r/20190903171802.28314-1-cascardo@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ kernel/time/alarmtimer.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3705,6 +3705,15 @@ int ext4_punch_hole(struct inode *inode,
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -544,7 +544,7 @@ static int alarm_timer_create(struct k_i
+ 	enum  alarmtimer_type type;
  
- 	trace_ext4_punch_hole(inode, offset, length, 0);
+ 	if (!alarmtimer_get_rtcdev())
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
  
-+	ext4_clear_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
-+	if (ext4_has_inline_data(inode)) {
-+		down_write(&EXT4_I(inode)->i_mmap_sem);
-+		ret = ext4_convert_inline_data(inode);
-+		up_write(&EXT4_I(inode)->i_mmap_sem);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/*
- 	 * Write out all dirty pages to avoid race conditions
- 	 * Then release them.
+ 	if (!capable(CAP_WAKE_ALARM))
+ 		return -EPERM;
+@@ -772,7 +772,7 @@ static int alarm_timer_nsleep(const cloc
+ 	struct restart_block *restart;
+ 
+ 	if (!alarmtimer_get_rtcdev())
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	if (flags & ~TIMER_ABSTIME)
+ 		return -EINVAL;
 
 
