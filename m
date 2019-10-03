@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 326D4CA28A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA5CCA27D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732745AbfJCQGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:06:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53546 "EHLO mail.kernel.org"
+        id S1732620AbfJCQFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732730AbfJCQGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:20 -0400
+        id S1732585AbfJCQFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA6F121783;
-        Thu,  3 Oct 2019 16:06:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA68C215EA;
+        Thu,  3 Oct 2019 16:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118780;
-        bh=U3cSNGwvy96rqIcgZucrgWm//sFCVaq6bqSnn3Ebk50=;
+        s=default; t=1570118742;
+        bh=kEUcyf9ce6ZSDzVBodKAh4owIQCPHcgVn4yCbQNmwCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c/jCvKYuomFWAJXrlpbFX1/Z/P1ae9fma8LoQSeqGzEB51cptAuhTxDM9cJ5mXdzb
-         807k20ryo3Uto7IubPAoHJ81HT9cgUdk67EbToYdAeU8cvqTEHbYCsoe4Ruk5lAxd8
-         XQvYBiB8heurIC631zz+2Vx+rzf5fiMa3IqsPF78=
+        b=fSIIcZSWtl5i9KDff6jHHx74AcrcDwu2TfStvHOSsdWIc55mCop/BmPs3lm7VW3rd
+         ktzviS2SheGRi0RcWfdkmePPlIoOLqjqfgxag93YEks5cwFAa7FgErS05LaJFbChmA
+         fQ9QMeUDfrTB5pbvK7eRAyG9hfC8vULi+pzX8K3Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 122/129] ext4: fix punch hole for inline_data file systems
-Date:   Thu,  3 Oct 2019 17:54:05 +0200
-Message-Id: <20191003154415.763594742@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.9 123/129] quota: fix wrong condition in is_quota_modification()
+Date:   Thu,  3 Oct 2019 17:54:06 +0200
+Message-Id: <20191003154415.939074938@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
 References: <20191003154318.081116689@linuxfoundation.org>
@@ -42,49 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit c1e8220bd316d8ae8e524df39534b8a412a45d5e upstream.
+commit 6565c182094f69e4ffdece337d395eb7ec760efc upstream.
 
-If a program attempts to punch a hole on an inline data file, we need
-to convert it to a normal file first.
+Quoted from
+commit 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
 
-This was detected using ext4/032 using the adv configuration.  Simple
-reproducer:
+" At LSF we decided that if we truncate up from isize we shouldn't trim
+  fallocated blocks that were fallocated with KEEP_SIZE and are past the
+ new i_size.  This patch fixes ext4 to do this. "
 
-mke2fs -Fq -t ext4 -O inline_data /dev/vdc
-mount /vdc
-echo "" > /vdc/testfile
-xfs_io -c 'truncate 33554432' /vdc/testfile
-xfs_io -c 'fpunch 0 1048576' /vdc/testfile
-umount /vdc
-e2fsck -fy /dev/vdc
+And generic/092 of fstest have covered this case for long time, however
+is_quota_modification() didn't adjust based on that rule, so that in
+below condition, we will lose to quota block change:
+- fallocate blocks beyond EOF
+- remount
+- truncate(file_path, file_size)
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fix it.
+
+Link: https://lore.kernel.org/r/20190911093650.35329-1-yuchao0@huawei.com
+Fixes: 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
+CC: stable@vger.kernel.org
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/linux/quotaops.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3957,6 +3957,15 @@ int ext4_punch_hole(struct inode *inode,
- 
- 	trace_ext4_punch_hole(inode, offset, length, 0);
- 
-+	ext4_clear_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
-+	if (ext4_has_inline_data(inode)) {
-+		down_write(&EXT4_I(inode)->i_mmap_sem);
-+		ret = ext4_convert_inline_data(inode);
-+		up_write(&EXT4_I(inode)->i_mmap_sem);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/*
- 	 * Write out all dirty pages to avoid race conditions
- 	 * Then release them.
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -21,7 +21,7 @@ static inline struct quota_info *sb_dqop
+ /* i_mutex must being held */
+ static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
+ {
+-	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
++	return (ia->ia_valid & ATTR_SIZE) ||
+ 		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
+ 		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
+ }
 
 
