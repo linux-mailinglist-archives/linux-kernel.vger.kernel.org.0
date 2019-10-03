@@ -2,124 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C063BCAA9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE97DCAA8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392922AbfJCRJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:09:54 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46163 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392069AbfJCQd5 (ORCPT
+        id S2393269AbfJCRIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:08:16 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42486 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404097AbfJCQfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:33:57 -0400
-Received: by mail-io1-f68.google.com with SMTP id c6so6921095ioo.13
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vSzWQER5y5opa0aJ4MNu5LXS/KkmMha6dUD+zB4fTwE=;
-        b=emQhVB24XLr5BXEivKVZdF/OYgPI4jLyARvsgHmtsfPryC7NNw4xZ7y8+Ly+f+pcqp
-         nFm+YJcR9yTQWQAcBQKhMgIm/q9ulHGq1ipujQ4uLrXK7vxiuvcW2LAMpkw273JxLa8Y
-         +oLVYO8cHiINBKSMLjUgWBzGqDjJlMKZ5SeylzlD6PlMVAUlgrzWPvvCbe5UFGP/zJWS
-         sQKOil7+nwQzPU1iSzRuJq+VXCxZFOH1Y2IwLmpZLpPanu7llPrzsUjnWE70/xCbknHk
-         lwDtpoFdsZd3f4abReMXj+VTU7/vIr8dURHwE1kUw2X5aCPFPgVNR87PcNY48iMO6mV+
-         yq6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vSzWQER5y5opa0aJ4MNu5LXS/KkmMha6dUD+zB4fTwE=;
-        b=ELuNE+GJWsHuLAEPG5PXl9ojX/XCm3OeWi74Ezscdhl07DAtsTXUcFRVUsp6X2x0p+
-         SdN2bFdtaTLGoxP/dUTmMFnGDT06nhYfuML88pQg9Ya9DOrLx7BCUtcjAobOnkaIXxvA
-         l3AdUQyX+s8PyGbBlTJ4CZBRar4udE+FFSzLgOzHf2z67el5qPAvMbXxrx1ZCXSy4e9I
-         ssecY12/jOui6UVAbG73vk6+wYc23pgPlBEsc4O2bQcwNCbwf+SmSOdMKPj2lJPVBhDK
-         Ni3Uw1zvug0NrP6/p0N/3y1Y51LicyW5ZMgQIx1pf//M3bhfoNVbH2he3Evh5WHMyiiL
-         uPww==
-X-Gm-Message-State: APjAAAUtJ3TL5PzuCPJdE1fiUmUn5Ui6/8FCVRgx73lOjLT5Z+w3Sonc
-        ODY4IT2nud4qdkeEXpBrgHCG9K6Hiz1cgc96ZH6GHJYZ
-X-Google-Smtp-Source: APXvYqzo9w6kW4utleP6LQr3HRFZ0WTj8yeWIQzu8zffqECqrqFCwDTHG6oQSKqheElwImm16Xoi+ydgolWeI9o1siE=
-X-Received: by 2002:a92:b09:: with SMTP id b9mr7458488ilf.26.1570120436364;
- Thu, 03 Oct 2019 09:33:56 -0700 (PDT)
+        Thu, 3 Oct 2019 12:35:33 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id CAAE033AE1C;
+        Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id k_jYdgfrH5Lv; Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 36A5033AE16;
+        Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 36A5033AE16
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1570120531;
+        bh=6vFLz6hjT/E6jAGrCza0pDvCRKmeewzGZqcKlSfdW4A=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=WiHMjRyu9CrlZZmS1uV+PBnIFNCHRHBU6xcvtIcfVgLOHYL4GmGfCx3jyqzAUOTTT
+         QltC1AZkRd0yqNiqz/cN2GqlaTiOdvJSaHuP8KRlCwjdM7ESdmlnWCK8eA2pl5QlUv
+         k1+m6wNt1lLkGPmctjlSUshWEmIl3OFYoqR9lk+SrKyORpVTltPP+OpzlOPwhDMwEC
+         QPDhttXiavrQuPUQpc+VbGSjEBBZj/pQqGNg/ScbD7dwCPxtSd86493PAIRSxtAumC
+         SQLggu4OkLjLIt9+iUs9/qu1id2y74ys6eljERcGDQrUd/q6JQVHfKFD1PgPKKCZY8
+         GoUIjY/U7vZNg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 8mFuFfAugPSn; Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 135EF33AE0D;
+        Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
+Date:   Thu, 3 Oct 2019 12:35:30 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     paulmck <paulmck@kernel.org>
+Cc:     rcu <rcu@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        dipankar <dipankar@in.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        rostedt <rostedt@goodmis.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Shane M Seymour <shane.seymour@hpe.com>,
+        Martin <martin.petersen@oracle.com>
+Message-ID: <644598334.955.1570120530976.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20191003014310.13262-1-paulmck@kernel.org>
+References: <20191003014153.GA13156@paulmck-ThinkPad-P72> <20191003014310.13262-1-paulmck@kernel.org>
+Subject: Re: [PATCH tip/core/rcu 1/9] rcu: Upgrade rcu_swap_protected() to
+ rcu_replace()
 MIME-Version: 1.0
-References: <20190927021927.23057-1-weijiang.yang@intel.com>
- <CALMp9eQ13Lve+9+61qCF1-7mQkeLLnhDufd-geKtz=34+YJdEg@mail.gmail.com> <20191003130145.GA25798@local-michael-cet-test.sh.intel.com>
-In-Reply-To: <20191003130145.GA25798@local-michael-cet-test.sh.intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Thu, 3 Oct 2019 09:33:45 -0700
-Message-ID: <CALMp9eQUiLNmF6oF5uEuT-VhRnzp3S9rsnAE0jpK+=38LQBHQA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] Introduce support for Guest CET feature
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3847 (ZimbraWebClient - FF69 (Linux)/8.8.15_GA_3847)
+Thread-Topic: Upgrade rcu_swap_protected() to rcu_replace()
+Thread-Index: RcnUW8sQqVWa96y2rcR60UQZx5RREw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 5:59 AM Yang Weijiang <weijiang.yang@intel.com> wrote:
->
-> On Wed, Oct 02, 2019 at 03:40:20PM -0700, Jim Mattson wrote:
-> > On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> > >
-> > > Control-flow Enforcement Technology (CET) provides protection against
-> > > Return/Jump-Oriented Programming (ROP/JOP) attack. It includes two
-> > > sub-features: Shadow Stack (SHSTK) and Indirect Branch Tracking (IBT).
-> > >
-> > > KVM modification is required to support Guest CET feature.
-> > > This patch serial implemented CET related CPUID/XSAVES enumeration, MSRs
-> > > and VMEntry configuration etc.so that Guest kernel can setup CET
-> > > runtime infrastructure based on them. Some MSRs and related feature
-> > > flags used in the patches reference the definitions in kernel patch.
-> >
-> > I am still trying to make my way through the 358 page (!) spec for
-> > this feature, but I already have some questions/comments about this
-> > series:
-> >
-> > 1. Does CET "just work" with shadow paging? Shadow paging knows
-> > nothing about "shadow-stack pages," and it's not clear to me how
-> > shadow-stack pages will interact with dirty tracking.
-> > 2. I see non-trivial changes to task switch under CET. Does
-> > emulator_do_task_switch need to be updated?
-> > 3. What about all of the emulator routines that emulate control
-> > transfers (e.g. em_jmp_{far,abs}, em_call_(near_abs,far},
-> > em_ret_{far,far_imm,near_imm}, etc)? Don't these have to be modified
-> > to work correctly when CR4.CET is set?
-> > 4. You don't use the new "enable supervisor shadow stack control" bit
-> > in the EPTP. I assume that this is entirely optional, right?
-> > 5. I think the easiest way to handle the nested issue (rather than
-> > your explicit check for vmxon when setting CR4.CET when the vCPU is in
-> > VMX operation) is just to leave CR4.CET out of IA32_VMX_CR4_FIXED1
-> > (which is already the case).
-> > 6. The function, exception_class(), in x86.c, should be updated to
-> > categorize #CP as contributory.
-> > 7. The function, x86_exception_has_error_code(), in x86.h, should be
-> > updated to include #CP.
-> > 8. There appear to be multiple changes to SMM that you haven't
-> > implemented (e.g saving/restoring the SSP registers in/from SMRAM.
-> >
-> > CET is quite complex. Without any tests, I don't see how you can have
-> > any confidence in the correctness of this patch series.
-> Thanks Jim for the detailed comments.
->
-> I missed adding test platform and
-> result introduction in cover letter. This serial of patch has passed CET
-> test in guest on Intel x86 emulator platform and develop machine.
-> Some feature mentioned in the spec. has not been implemented yet. e.g.,
-> "supervisor shadow stack control".
+----- On Oct 2, 2019, at 9:43 PM, paulmck paulmck@kernel.org wrote:
 
-What I should have said is that I'd like to see kvm-unit-tests to
-exercise the new functionality, even if no one outside Intel can run
-them yet.
+> From: "Paul E. McKenney" <paulmck@kernel.org>
+> 
+> Although the rcu_swap_protected() macro follows the example of swap(),
+> the interactions with RCU make its update of its argument somewhat
+> counter-intuitive.  This commit therefore introduces an rcu_replace()
+> that returns the old value of the RCU pointer instead of doing the
+> argument update.  Once all the uses of rcu_swap_protected() are updated
+> to instead use rcu_replace(), rcu_swap_protected() will be removed.
 
-> CET feature itself is complex, most of the enabling work is
-> inside kernel, the role of KVM is to expose CET related CPUID and MSRs
-> etc. to guest, and make guest take over control of the MSRs directly so that
-> CET can work efficiently for guest. There're QEMU patches for CET too.
->
-> I'll review your comments carefully, thank you again!
+We expose the rcu_xchg_pointer() API in liburcu (Userspace RCU) project.
+Any reason for not going that way and keep the kernel and user-space RCU
+APIs alike ?
+
+It's of course fine if they diverge, but we might want to at least consider
+if using the same API name would be OK.
+
+Thanks,
+
+Mathieu
+
+
+> 
+> Link:
+> https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Bart Van Assche <bart.vanassche@wdc.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Hannes Reinecke <hare@suse.de>
+> Cc: Johannes Thumshirn <jthumshirn@suse.de>
+> Cc: Shane M Seymour <shane.seymour@hpe.com>
+> Cc: Martin K. Petersen <martin.petersen@oracle.com>
+> ---
+> include/linux/rcupdate.h | 18 ++++++++++++++++++
+> 1 file changed, 18 insertions(+)
+> 
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 75a2ede..3b73287 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -383,6 +383,24 @@ do {									      \
+> } while (0)
+> 
+> /**
+> + * rcu_replace() - replace an RCU pointer, returning its old value
+> + * @rcu_ptr: RCU pointer, whose old value is returned
+> + * @ptr: regular pointer
+> + * @c: the lockdep conditions under which the dereference will take place
+> + *
+> + * Perform a replacement, where @rcu_ptr is an RCU-annotated
+> + * pointer and @c is the lockdep argument that is passed to the
+> + * rcu_dereference_protected() call used to read that pointer.  The old
+> + * value of @rcu_ptr is returned, and @rcu_ptr is set to @ptr.
+> + */
+> +#define rcu_replace(rcu_ptr, ptr, c)					\
+> +({									\
+> +	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
+> +	rcu_assign_pointer((rcu_ptr), (ptr));				\
+> +	__tmp;								\
+> +})
+> +
+> +/**
+>  * rcu_swap_protected() - swap an RCU and a regular pointer
+>  * @rcu_ptr: RCU pointer
+>  * @ptr: regular pointer
+> --
+> 2.9.5
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
