@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01EECABBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FB3CACCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfJCP7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:59:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42104 "EHLO mail.kernel.org"
+        id S1730605AbfJCR3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:29:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729160AbfJCP7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:59:09 -0400
+        id S2388043AbfJCQM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:12:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A06320830;
-        Thu,  3 Oct 2019 15:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E334A215EA;
+        Thu,  3 Oct 2019 16:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118348;
-        bh=fik+i5HOycM4aEtSccDBSMO6kukqh4PeAR2iNgi49dk=;
+        s=default; t=1570119147;
+        bh=lJ6ETzuUgh+usujMpgSo9zVOaxUbPzms0ZR6mLWa65U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HdopCgV3LXuEa2LN3iYWJWlLHNQCdpn2sInW3zEVoW9/XWBWo1WP7tW3w2UexfHEe
-         eDnDxzr41l7K/WFAXC60Kg0YU3Y/JMph046xU1l8PLJzDuX1quqDhOwnYUvtdEHgpV
-         eWxDtWk/um4zb+36oq07IXNfXn9A9N4kSjgTMvjM=
+        b=oGtUYRZbI7RfJPARGSTt1I8Ato+BcyZlzXssB447kJ2eSsYvB+EeaPc5joh2Q02Fb
+         mO1keQz22hgGuEUr1V3Qsg6Z5QVa5P81hSKQV1R85W7wTU1v3LojPnp07mCq6TDHCu
+         Teay70Jm7DT3Edw2N2FJDFFQnnACTj5gV0IUrNgc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, rostedt@goodmis.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 77/99] ALSA: firewire-tascam: check intermediate state of clock status and retry
-Date:   Thu,  3 Oct 2019 17:53:40 +0200
-Message-Id: <20191003154334.566717289@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.14 143/185] printk: Do not lose last line in kmsg buffer dump
+Date:   Thu,  3 Oct 2019 17:53:41 +0200
+Message-Id: <20191003154510.225988177@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,110 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-commit e1a00b5b253a4f97216b9a33199a863987075162 upstream.
+commit c9dccacfccc72c32692eedff4a27a4b0833a2afd upstream.
 
-2 bytes in MSB of register for clock status is zero during intermediate
-state after changing status of sampling clock in models of TASCAM FireWire
-series. The duration of this state differs depending on cases. During the
-state, it's better to retry reading the register for current status of
-the clock.
+kmsg_dump_get_buffer() is supposed to select all the youngest log
+messages which fit into the provided buffer.  It determines the correct
+start index by using msg_print_text() with a NULL buffer to calculate
+the size of each entry.  However, when performing the actual writes,
+msg_print_text() only writes the entry to the buffer if the written len
+is lesser than the size of the buffer.  So if the lengths of the
+selected youngest log messages happen to precisely fill up the provided
+buffer, the last log message is not included.
 
-In current implementation, the intermediate state is checked only when
-getting current sampling transmission frequency, then retry reading.
-This care is required for the other operations to read the register.
+We don't want to modify msg_print_text() to fill up the buffer and start
+returning a length which is equal to the size of the buffer, since
+callers of its other users, such as kmsg_dump_get_line(), depend upon
+the current behaviour.
 
-This commit moves the codes of check and retry into helper function
-commonly used for operations to read the register.
+Instead, fix kmsg_dump_get_buffer() to compensate for this.
 
-Fixes: e453df44f0d6 ("ALSA: firewire-tascam: add PCM functionality")
-Cc: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Link: https://lore.kernel.org/r/20190910135152.29800-3-o-takashi@sakamocchi.jp
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+For example, with the following two final prints:
+
+[    6.427502] AAAAAAAAAAAAA
+[    6.427769] BBBBBBBB12345
+
+A dump of a 64-byte buffer filled by kmsg_dump_get_buffer(), before this
+patch:
+
+ 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 35 32 32 31 39 37  <0>[    6.522197
+ 00000010: 5d 20 41 41 41 41 41 41 41 41 41 41 41 41 41 0a  ] AAAAAAAAAAAAA.
+ 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+ 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+
+After this patch:
+
+ 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 34 35 36 36 37 38  <0>[    6.456678
+ 00000010: 5d 20 42 42 42 42 42 42 42 42 31 32 33 34 35 0a  ] BBBBBBBB12345.
+ 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+ 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+
+Link: http://lkml.kernel.org/r/20190711142937.4083-1-vincent.whitchurch@axis.com
+Fixes: e2ae715d66bf4bec ("kmsg - kmsg_dump() use iterator to receive log buffer content")
+To: rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org
+Cc: <stable@vger.kernel.org> # v3.5+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/tascam/tascam-stream.c |   42 ++++++++++++++++++++++------------
- 1 file changed, 28 insertions(+), 14 deletions(-)
+ kernel/printk/printk.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/firewire/tascam/tascam-stream.c
-+++ b/sound/firewire/tascam/tascam-stream.c
-@@ -9,20 +9,37 @@
- #include <linux/delay.h>
- #include "tascam.h"
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3189,7 +3189,7 @@ bool kmsg_dump_get_buffer(struct kmsg_du
+ 	/* move first record forward until length fits into the buffer */
+ 	seq = dumper->cur_seq;
+ 	idx = dumper->cur_idx;
+-	while (l > size && seq < dumper->next_seq) {
++	while (l >= size && seq < dumper->next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
  
-+#define CLOCK_STATUS_MASK      0xffff0000
-+#define CLOCK_CONFIG_MASK      0x0000ffff
-+
- #define CALLBACK_TIMEOUT 500
- 
- static int get_clock(struct snd_tscm *tscm, u32 *data)
- {
-+	int trial = 0;
- 	__be32 reg;
- 	int err;
- 
--	err = snd_fw_transaction(tscm->unit, TCODE_READ_QUADLET_REQUEST,
--				 TSCM_ADDR_BASE + TSCM_OFFSET_CLOCK_STATUS,
--				 &reg, sizeof(reg), 0);
--	if (err >= 0)
-+	while (trial++ < 5) {
-+		err = snd_fw_transaction(tscm->unit, TCODE_READ_QUADLET_REQUEST,
-+				TSCM_ADDR_BASE + TSCM_OFFSET_CLOCK_STATUS,
-+				&reg, sizeof(reg), 0);
-+		if (err < 0)
-+			return err;
-+
- 		*data = be32_to_cpu(reg);
-+		if (*data & CLOCK_STATUS_MASK)
-+			break;
-+
-+		// In intermediate state after changing clock status.
-+		msleep(50);
-+	}
- 
--	return err;
-+	// Still in the intermediate state.
-+	if (trial >= 5)
-+		return -EAGAIN;
-+
-+	return 0;
- }
- 
- static int set_clock(struct snd_tscm *tscm, unsigned int rate,
-@@ -35,7 +52,7 @@ static int set_clock(struct snd_tscm *ts
- 	err = get_clock(tscm, &data);
- 	if (err < 0)
- 		return err;
--	data &= 0x0000ffff;
-+	data &= CLOCK_CONFIG_MASK;
- 
- 	if (rate > 0) {
- 		data &= 0x000000ff;
-@@ -80,17 +97,14 @@ static int set_clock(struct snd_tscm *ts
- 
- int snd_tscm_stream_get_rate(struct snd_tscm *tscm, unsigned int *rate)
- {
--	u32 data = 0x0;
--	unsigned int trials = 0;
-+	u32 data;
- 	int err;
- 
--	while (data == 0x0 || trials++ < 5) {
--		err = get_clock(tscm, &data);
--		if (err < 0)
--			return err;
-+	err = get_clock(tscm, &data);
-+	if (err < 0)
-+		return err;
- 
--		data = (data & 0xff000000) >> 24;
--	}
-+	data = (data & 0xff000000) >> 24;
- 
- 	/* Check base rate. */
- 	if ((data & 0x0f) == 0x01)
+ 		l -= msg_print_text(msg, true, NULL, 0);
 
 
