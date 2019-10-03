@@ -2,76 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 178C6CA0F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F00F1CA103
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbfJCPO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:14:57 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:45988 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbfJCPO4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:14:56 -0400
-Received: by mail-qk1-f195.google.com with SMTP id z67so2679289qkb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 08:14:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kXqhe9MS39gp9iJHADv7S5Hk2iunhpB1wPpQreZu69c=;
-        b=IjFfdS8r3/G8O3ddsLBPDV2vlhrdy221gHJ97jkkYRUDY7cA3GESBee0NWk/WdHhia
-         kMCJCtUV+5vIVb0PFheGiAT/HCNVt+mYo1tkHk6LvLSsJxq0U8uIVqTDNYOgO0elfInh
-         k+wQHhCckljTMVxF9NSG/d1DpPV7b8pp868eibpn47R8emyRO4vpUOUudayeJ8ePt4Zy
-         Y3B6OCb+98oWl19S34W6dzvYGaGGmI6NJ5AXyDfpmCIa8ZM5xZcWk0epYmxEs3pdA1yS
-         eP64ImzDo7Y/rFQ95+sOdC1nzOmkJtE8opJymg6rd14enM1pXtFcQebF/yh3fkgC1XPR
-         52Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kXqhe9MS39gp9iJHADv7S5Hk2iunhpB1wPpQreZu69c=;
-        b=lWBlPucarox52MAxDar1Jdzt+tnjSCmyrDeVGxU7omYiKKmxcRbDtZ+J0Bc0CgSGNe
-         BZShV5KtsZfh5Wdfo85lQyYyZezRfNK7iCrRyTcxiOfs61BHYUvSSATyplQdLxmYpCgG
-         aTGd62iOLqDe6WpS42zgAsF7sqVqHfGkluQFtVAJ2nfBiiQk0GpeGF1Qsa4kqvJN/PEk
-         p3yheGXde3Ae0DgM9h3GLYnM9oYiu3NfBqWeK0bzd5adtnzbgaWn5abhjb6c9ihNZRhu
-         e6EMU3DExhE5tT1JxvoLvtyLczSczmr7r8za3qjuHdCWHQND0WL2C7nhh+7EShBtGCvB
-         vIVg==
-X-Gm-Message-State: APjAAAUc5JNnqUth4mJyvYBdrlx2aVn03P5gU/mxX8TDo1icC2HT9b+M
-        rMo00v4W45obY6wFU+i5hpyiQ8K5yzM=
-X-Google-Smtp-Source: APXvYqwcTgy8QDPg9/016fXCEEE1PQvGMdLYuiY4uhh9lyY8WzHU8APjyQHe1WtkXon65QurnYSjoA==
-X-Received: by 2002:a37:4c14:: with SMTP id z20mr5016501qka.296.1570115695403;
-        Thu, 03 Oct 2019 08:14:55 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id q126sm1559952qkf.47.2019.10.03.08.14.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Oct 2019 08:14:55 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Thu, 3 Oct 2019 11:14:53 -0400
-To:     Greg Kroah-Hartman <grekh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: 5.3.y stable branch has been bumped to 5.3.3?
-Message-ID: <20191003151453.GB2887046@rani.riverdale.lan>
-References: <20191003151237.GA2887046@rani.riverdale.lan>
+        id S1729895AbfJCPP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:15:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726364AbfJCPP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:15:58 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78C542133F;
+        Thu,  3 Oct 2019 15:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570115758;
+        bh=TYOnIuRjzhdf6d/+AussWQ/jrj8Mub0Q/qfG0zOFxO0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O9Bv8u+dZ3vkxt9uu7BIYGOCnTaR8sUQzSd2GMf//E/hio6zBr/ZX3/1uNSKXwmwC
+         He33ej1ByT54C6yQ0ToG1Dv7oO7FsaLJ8XSqG2Rygxs6e8hX08T58RwyUpstqrfuPQ
+         n+HknfP9I6Vj4Kwin0VcsSvZ2UWnfgIdax1nR+No=
+Date:   Thu, 3 Oct 2019 17:15:55 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] drm/mcde: Fix reference to DOC comment
+Message-ID: <20191003151555.64qabct3jmd74ypi@gilmour>
+References: <20191002153827.23026-1-j.neuschaefer@gmx.net>
+ <CACRpkdZ0ekYtZ4bZ-A4NZN6HO6XJzwpdZ_HjUL=FoWfG08UBtg@mail.gmail.com>
+ <CACRpkdYDuAx6OhFYiXT+79a1NphtfPQfyY=o7jKi0Bas5vr7+g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7wxihfagc5o75k2e"
 Content-Disposition: inline
-In-Reply-To: <20191003151237.GA2887046@rani.riverdale.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACRpkdYDuAx6OhFYiXT+79a1NphtfPQfyY=o7jKi0Bas5vr7+g@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 11:12:37AM -0400, Arvind Sankar wrote:
-> Hi Greg, I'm seeing what looks like an extra commit [1] in the 5.3.y branch
-> post the 5.3.2 tag, bumping version in the Makefile to 5.3.3.
-> Historically the version bump has only happened once all the stable
-> patches have been applied and the new version is getting tagged -- is
-> this a mistake or intentional change in process to pre-bump the version?
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-5.3.y&id=9c30694424ee15cc30a23f92a913d5322b9e5bd3
-> 
-> Thanks.
 
-Err, sorry about the noise, just saw your note from Tuesday.
+--7wxihfagc5o75k2e
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Thu, Oct 03, 2019 at 04:39:39PM +0200, Linus Walleij wrote:
+> On Thu, Oct 3, 2019 at 4:34 PM Linus Walleij <linus.walleij@linaro.org> w=
+rote:
+> > On Wed, Oct 2, 2019 at 5:39 PM Jonathan Neusch=E4fer
+> > <j.neuschaefer@gmx.net> wrote:
+> >
+> > > The :doc: reference did not match the DOC comment's name.
+> > >
+> > > Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
+> > > Signed-off-by: Jonathan Neusch=E4fer <j.neuschaefer@gmx.net>
+> >
+> > Both patches applied!
+>
+> ...but I can't push the changes:
+>
+> $ dim push-branch drm-misc-next
+> dim: 9fa1f9734e40 ("Revert "drm/sun4i: dsi: Change the start delay
+> calculation""): committer Signed-off-by missing.
+> dim: ERROR: issues in commits detected, aborting
+>
+> Not even my commit, apart from that it looks like it does have
+> the committer Signed-off-by. I'm confused and don't know what
+> to do... anyone has some hints?
+
+Yeah, it's pretty weird, I just pushed without any trouble.
+
+Did you rebase or something?
+
+Maxime
+
+--7wxihfagc5o75k2e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZYQqwAKCRDj7w1vZxhR
+xfd6AQD/zc6r1v0NTQoKgRKELqgow/1Hm8wGjF422mloLB4VLQEAyokgh0l6DFKA
+QgASZMRMHm9asS0gq4v//8nwRHxrUAc=
+=ahDz
+-----END PGP SIGNATURE-----
+
+--7wxihfagc5o75k2e--
