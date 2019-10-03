@@ -2,87 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5017BCAD75
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0FDECAD7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390321AbfJCRmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:42:02 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:39776 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731045AbfJCRl7 (ORCPT
+        id S2390494AbfJCRmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:42:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52354 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730924AbfJCRmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:41:59 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Te19PA9_1570124498;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Te19PA9_1570124498)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 04 Oct 2019 01:41:56 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     mgorman@techsingularity.net, hannes@cmpxchg.org, mhocko@suse.com,
-        akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: vmscan: remove unused scan_control parameter from pageout()
-Date:   Fri,  4 Oct 2019 01:41:38 +0800
-Message-Id: <1570124498-19300-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 3 Oct 2019 13:42:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nf/a9nA4bn0QDOAEh3Gtmr3XveoV2qcS349ATkCN8DY=; b=b7R1gJJMOHY2rx1890LyO+KeD
+        j8fuNvwP0oW4Sm1dpQwB5Jbu8zLmqoOpj/XL51LiBqaWJXYW22+URM5FLmzDn1hH1f2Slpt1N7xtR
+        iFYGLSKGIzENlbQnNXFS5jgC/OB5SoH6RFoB6hliL2b+i92/+DAcUS/40J1DjaxEoKqLud5dcGwcj
+        +L9Si9h5LNxUaQACOWqs/z0NhVKqTSt6Rdxgk2zHFwRiV7DmTcAzX3IuuGTT49qE58Rl31kwBtx0V
+        gCScwHvoBTeHJajYcAAWKXlbrZSWqHUMB8ggNscNG8FIvxtpunyCxRBrIYKxqt4Ajrwq4j8d6DLL/
+        BYEkFJsCg==;
+Received: from 177.133.68.49.dynamic.adsl.gvt.net.br ([177.133.68.49] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iG57W-0005Nu-Ch; Thu, 03 Oct 2019 17:42:30 +0000
+Date:   Thu, 3 Oct 2019 14:42:25 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Gon Solo <gonsolo@gmail.com>
+Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
+Message-ID: <20191003144225.0137bf6c@coco.lan>
+In-Reply-To: <20191003162326.GA2727@Limone>
+References: <20191002150650.GA4227@gofer.mess.org>
+        <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
+        <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
+        <20191002154922.7f1cfc76@coco.lan>
+        <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
+        <20191003080539.2b13c03b@coco.lan>
+        <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
+        <20191003120238.75811da6@coco.lan>
+        <20191003160336.GA5125@Limone>
+        <20191003130909.01d29b77@coco.lan>
+        <20191003162326.GA2727@Limone>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since lumpy reclaim was removed in v3.5 scan_control is not used by
-may_write_to_{queue|inode} and pageout() anymore, remove the unused
-parameter.
+Em Thu, 3 Oct 2019 18:23:26 +0200
+Gon Solo <gonsolo@gmail.com> escreveu:
 
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- mm/vmscan.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+> > No, I mean with the first patch you sent to the ML, with the powerup
+> > hack.  
+> 
+> Boot time:
+> 
+> [    4.653257] si2168 1-0067: Silicon Labs Si2168-B40 successfully identified
+> [    4.653259] si2168 1-0067: firmware version: B 4.0.2
+> [    4.653279] usb 2-1: DVB: registering adapter 0 frontend 0 (Silicon Labs Si2168)...
+> [    4.653284] dvbdev: dvb_create_media_entity: media entity 'Silicon Labs Si2168' registered.
+> ...
+> [    4.694785] si2157 2-0063: found a 'Silicon Labs Si2147-A30'
+> [    4.694787] si2157 2-0063: Silicon Labs Si2147/2148/2157/2158 successfully attached
+> [    4.717814] usb 2-1: dvb_usb_v2: 'Logilink VG0022A' successfully initialized and connected
+> [    4.717880] usbcore: registered new interface driver dvb_usb_af9035
+> 
+> VLC time:
+> 
+> [  175.490609] si2168 1-0067: downloading firmware from file 'dvb-demod-si2168-b40-01.fw'
+> [  176.746585] si2168 1-0067: firmware version: B 4.0.25
+> [  176.781570] si2157 2-0063: firmware version: \xff.\xff.255
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index e5d52d6..17489b8 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -774,7 +774,7 @@ static inline int is_page_cache_freeable(struct page *page)
- 	return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
- }
- 
--static int may_write_to_inode(struct inode *inode, struct scan_control *sc)
-+static int may_write_to_inode(struct inode *inode)
- {
- 	if (current->flags & PF_SWAPWRITE)
- 		return 1;
-@@ -822,8 +822,7 @@ static void handle_write_error(struct address_space *mapping,
-  * pageout is called by shrink_page_list() for each dirty page.
-  * Calls ->writepage().
-  */
--static pageout_t pageout(struct page *page, struct address_space *mapping,
--			 struct scan_control *sc)
-+static pageout_t pageout(struct page *page, struct address_space *mapping)
- {
- 	/*
- 	 * If the page is dirty, only perform writeback if that write
-@@ -859,7 +858,7 @@ static pageout_t pageout(struct page *page, struct address_space *mapping,
- 	}
- 	if (mapping->a_ops->writepage == NULL)
- 		return PAGE_ACTIVATE;
--	if (!may_write_to_inode(mapping->host, sc))
-+	if (!may_write_to_inode(mapping->host))
- 		return PAGE_KEEP;
- 
- 	if (clear_page_dirty_for_io(page)) {
-@@ -1396,7 +1395,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 			 * starts and then write it out here.
- 			 */
- 			try_to_unmap_flush_dirty();
--			switch (pageout(page, mapping, sc)) {
-+			switch (pageout(page, mapping)) {
- 			case PAGE_KEEP:
- 				goto keep_locked;
- 			case PAGE_ACTIVATE:
--- 
-1.8.3.1
+Weird... it sounds that, after si2168 has its firmware updated, it
+starts interfering at si2157. Perhaps there's a bug at si2168 I2C
+gate mux logic. Are you using a new Kernel like 5.2?
 
+I guess the best is to enable the debug logs in order to see what's
+happening on both cases.
+
+You can enable all debug messages (after loading the modules) with:
+
+	# for i in $(cat /sys/kernel/debug/dynamic_debug/control |grep -E '(si21|af9035)' |cut -d' ' -f 1); do echo "file $i +p" >>/sys/kernel/debug/dynamic_debug/control; done
+
+You could also try to disable the firmware upload at si2168 and see
+if the si2157 reads will succeed.
+
+
+Thanks,
+Mauro
