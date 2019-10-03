@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E8A6CAA65
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A4ACAA5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393279AbfJCREb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:04:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51340 "EHLO mail.kernel.org"
+        id S2393306AbfJCREA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:04:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404990AbfJCQlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:41:00 -0400
+        id S2405019AbfJCQlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:41:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CB262054F;
-        Thu,  3 Oct 2019 16:40:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C746A206BB;
+        Thu,  3 Oct 2019 16:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120860;
-        bh=DWKtDScol93RdvJbv9yCwIQTJp8Y0GXPef1Cydqd2G8=;
+        s=default; t=1570120881;
+        bh=sdetFIu/vglHNyZ++5unS1hl9C7aa1xoN9g5WAshOfA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V9+1wupIFhNVoFtcxtSZB/NohI5WxOB6SpFOu20mMv8bSDQbJCYRHxSVoGbat/MBE
-         wMqkBHw5PRpgjjot9mVLqlq/MH7wBiDMNGefnJESfZEn0n2ci4nwoEPqsDt18eZxIm
-         0B9MDG6YzTgliQATc0r91GPp2VzaYh/vInJVsxHU=
+        b=ucQbKL/ibIUeuc1c8COAXZz3WU4KlQPaoWE6V6hu6zZFqlSRHNK1dJjiiknsC6EnZ
+         kzlsmQVB2xQODPkDJ3+Xq0lXCr+1wT6rbNUcwzi3zeQkf3ktOPkClTz04LW0P0iTH6
+         NiXd1gZK6mzwi1/J6a2H5JstExv464MbNTFxkttI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+        stable@vger.kernel.org,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, lizefan@huawei.com,
-        longman@redhat.com, luca.abeni@santannapisa.it,
-        rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
+        claudio@evidence.eu.com, lizefan@huawei.com, longman@redhat.com,
+        luca.abeni@santannapisa.it, mathieu.poirier@linaro.org,
+        rostedt@goodmis.org, tj@kernel.org,
+        tommaso.cucinotta@santannapisa.it, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 063/344] sched/core: Fix CPU controller for !RT_GROUP_SCHED
-Date:   Thu,  3 Oct 2019 17:50:28 +0200
-Message-Id: <20191003154546.321555460@linuxfoundation.org>
+Subject: [PATCH 5.3 065/344] sched/deadline: Fix bandwidth accounting at all levels after offline migration
+Date:   Thu,  3 Oct 2019 17:50:30 +0200
+Message-Id: <20191003154546.509422864@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -53,77 +54,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Juri Lelli <juri.lelli@redhat.com>
 
-[ Upstream commit a07db5c0865799ebed1f88be0df50c581fb65029 ]
+[ Upstream commit 59d06cea1198d665ba11f7e8c5f45b00ff2e4812 ]
 
-On !CONFIG_RT_GROUP_SCHED configurations it is currently not possible to
-move RT tasks between cgroups to which CPU controller has been attached;
-but it is oddly possible to first move tasks around and then make them
-RT (setschedule to FIFO/RR).
+If a task happens to be throttled while the CPU it was running on gets
+hotplugged off, the bandwidth associated with the task is not correctly
+migrated with it when the replenishment timer fires (offline_migration).
 
-E.g.:
+Fix things up, for this_bw, running_bw and total_bw, when replenishment
+timer fires and task is migrated (dl_task_offline_migration()).
 
-  # mkdir /sys/fs/cgroup/cpu,cpuacct/group1
-  # chrt -fp 10 $$
-  # echo $$ > /sys/fs/cgroup/cpu,cpuacct/group1/tasks
-  bash: echo: write error: Invalid argument
-  # chrt -op 0 $$
-  # echo $$ > /sys/fs/cgroup/cpu,cpuacct/group1/tasks
-  # chrt -fp 10 $$
-  # cat /sys/fs/cgroup/cpu,cpuacct/group1/tasks
-  2345
-  2598
-  # chrt -p 2345
-  pid 2345's current scheduling policy: SCHED_FIFO
-  pid 2345's current scheduling priority: 10
-
-Also, as Michal noted, it is currently not possible to enable CPU
-controller on unified hierarchy with !CONFIG_RT_GROUP_SCHED (if there
-are any kernel RT threads in root cgroup, they can't be migrated to the
-newly created CPU controller's root in cgroup_update_dfl_csses()).
-
-Existing code comes with a comment saying the "we don't support RT-tasks
-being in separate groups". Such comment is however stale and belongs to
-pre-RT_GROUP_SCHED times. Also, it doesn't make much sense for
-!RT_GROUP_ SCHED configurations, since checks related to RT bandwidth
-are not performed at all in these cases.
-
-Make moving RT tasks between CPU controller groups viable by removing
-special case check for RT (and DEADLINE) tasks.
-
+Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Michal Koutný <mkoutny@suse.com>
-Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Acked-by: Tejun Heo <tj@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bristot@redhat.com
+Cc: claudio@evidence.eu.com
 Cc: lizefan@huawei.com
 Cc: longman@redhat.com
 Cc: luca.abeni@santannapisa.it
+Cc: mathieu.poirier@linaro.org
 Cc: rostedt@goodmis.org
-Link: https://lkml.kernel.org/r/20190719063455.27328-1-juri.lelli@redhat.com
+Cc: tj@kernel.org
+Cc: tommaso.cucinotta@santannapisa.it
+Link: https://lkml.kernel.org/r/20190719140000.31694-5-juri.lelli@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 4 ----
- 1 file changed, 4 deletions(-)
+ kernel/sched/deadline.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 7fa8e74ad2ab4..d38f007afea74 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6980,10 +6980,6 @@ static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
- #ifdef CONFIG_RT_GROUP_SCHED
- 		if (!sched_rt_can_attach(css_tg(css), task))
- 			return -EINVAL;
--#else
--		/* We don't support RT-tasks being in separate groups */
--		if (task->sched_class != &fair_sched_class)
--			return -EINVAL;
- #endif
- 		/*
- 		 * Serialize against wake_up_new_task() such that if its
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 46122edd8552c..20951112b6cdd 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -529,6 +529,7 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq);
+ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p)
+ {
+ 	struct rq *later_rq = NULL;
++	struct dl_bw *dl_b;
+ 
+ 	later_rq = find_lock_later_rq(p, rq);
+ 	if (!later_rq) {
+@@ -557,6 +558,38 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
+ 		double_lock_balance(rq, later_rq);
+ 	}
+ 
++	if (p->dl.dl_non_contending || p->dl.dl_throttled) {
++		/*
++		 * Inactive timer is armed (or callback is running, but
++		 * waiting for us to release rq locks). In any case, when it
++		 * will fire (or continue), it will see running_bw of this
++		 * task migrated to later_rq (and correctly handle it).
++		 */
++		sub_running_bw(&p->dl, &rq->dl);
++		sub_rq_bw(&p->dl, &rq->dl);
++
++		add_rq_bw(&p->dl, &later_rq->dl);
++		add_running_bw(&p->dl, &later_rq->dl);
++	} else {
++		sub_rq_bw(&p->dl, &rq->dl);
++		add_rq_bw(&p->dl, &later_rq->dl);
++	}
++
++	/*
++	 * And we finally need to fixup root_domain(s) bandwidth accounting,
++	 * since p is still hanging out in the old (now moved to default) root
++	 * domain.
++	 */
++	dl_b = &rq->rd->dl_bw;
++	raw_spin_lock(&dl_b->lock);
++	__dl_sub(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
++	raw_spin_unlock(&dl_b->lock);
++
++	dl_b = &later_rq->rd->dl_bw;
++	raw_spin_lock(&dl_b->lock);
++	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(later_rq->rd->span));
++	raw_spin_unlock(&dl_b->lock);
++
+ 	set_task_cpu(p, later_rq->cpu);
+ 	double_unlock_balance(later_rq, rq);
+ 
 -- 
 2.20.1
 
