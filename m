@@ -2,82 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48F1BC98D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 09:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C8CBC98E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 09:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfJCHI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 03:08:56 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40700 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbfJCHIz (ORCPT
+        id S1727771AbfJCHRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 03:17:20 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:39174 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725879AbfJCHRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 03:08:55 -0400
-Received: by mail-io1-f66.google.com with SMTP id h144so3104533iof.7
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 00:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MJcg8zs78d3rXBpOETE+0j+ZuAl6FfPdDEzxoa0/CIM=;
-        b=nACueev+gvO9mg6+kv1iNYsTn/JE4CpNo2ZDPqlFFMewbPYZuyhqh+JsqDzfu+L5Q0
-         G+AcFl0zPkVgkkKTRCM+7KwBBBHh02sUORkOzzEY79ofQJI2HdySEGQOecxJIFanfVRk
-         L6f6wnSuchiE7pN6azWsIbtOZgr+hYD6XZ1jg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MJcg8zs78d3rXBpOETE+0j+ZuAl6FfPdDEzxoa0/CIM=;
-        b=CZszxZjOY+oEgUqhFGdGM21jG/TbPuWJnBarain8PS9i2vRZmtZ6NyakbKPyodMxat
-         4boucWCc0PUNV8Qn+z/h1UJqFW1KZWYsUgqjle1EAO7I3ISYPSUH9pbU6KYgq9uQTIIs
-         hFboVehIaEt4xFMhLY0HS0DBNtcU/zSZWongBp7fHTFXwKF3I9VJocQdtn8LB4wKJfcy
-         GGVKPE0yXLzGvO3FgDDPPRPkKZ99Bkh02i72mcIwC57YqxCynIaxSYeUJFe+FYlDkxA6
-         KYMmoJ1SgUkEn8kWHnQdpNlJgcKLrszf78lL6+rbj41g2f+7s9NeNiyws+QoLLjq745T
-         UJJA==
-X-Gm-Message-State: APjAAAVLGOqk/pbqPnlyPhNeYfh+3i4Xw9ZBZY5abTL3/ifca4g9jHOx
-        a2t8s5uNcTyIfaotF+zvEYb1pTBDpTclD8VDWaGtOQ==
-X-Google-Smtp-Source: APXvYqyiHoQKtNpYFtcrgyC7ulZRFo5mIyezyvwwYkMn+/z8HGvh/7OVxThakVCi9reOehN1EsA8FIXbO7De8LVxF2E=
-X-Received: by 2002:a02:ce5c:: with SMTP id y28mr8189675jar.79.1570086534678;
- Thu, 03 Oct 2019 00:08:54 -0700 (PDT)
+        Thu, 3 Oct 2019 03:17:20 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 9D432634C87;
+        Thu,  3 Oct 2019 10:16:47 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1iFvLy-0002Ge-4R; Thu, 03 Oct 2019 10:16:46 +0300
+Date:   Thu, 3 Oct 2019 10:16:46 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     mchehab@kernel.org, robh+dt@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        c.barrett@framos.com, a.brela@framos.com
+Subject: Re: [PATCH v3 2/3] media: i2c: Add IMX290 CMOS image sensor driver
+Message-ID: <20191003071646.GZ896@valkosipuli.retiisi.org.uk>
+References: <20190830091943.22646-1-manivannan.sadhasivam@linaro.org>
+ <20190830091943.22646-3-manivannan.sadhasivam@linaro.org>
+ <20190923092209.GL5525@valkosipuli.retiisi.org.uk>
+ <20191001184200.GA7739@Mani-XPS-13-9360>
+ <20191002103715.GR896@valkosipuli.retiisi.org.uk>
+ <20191003053338.GA7868@Mani-XPS-13-9360>
 MIME-Version: 1.0
-References: <20191001080253.6135-1-icenowy@aosc.io> <20191001080253.6135-2-icenowy@aosc.io>
-In-Reply-To: <20191001080253.6135-2-icenowy@aosc.io>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 3 Oct 2019 12:38:43 +0530
-Message-ID: <CAMty3ZCjrM4MajJLyLwt-31mNnfVWghwatogtwVOvCt4gY0LZA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 1/3] Revert "drm/sun4i: dsi: Change the
- start delay calculation"
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191003053338.GA7868@Mani-XPS-13-9360>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 1:33 PM Icenowy Zheng <icenowy@aosc.io> wrote:
->
-> This reverts commit da676c6aa6413d59ab0a80c97bbc273025e640b2.
->
-> The original commit adds a start parameter to the calculation of the
-> start delay according to some old BSP versions from Allwinner. However,
-> there're two ways to add this delay -- add it in DSI controller or add
-> it in the TCON. Add it in both controllers won't work.
->
-> The code before this commit is picked from new versions of BSP kernel,
-> which has a comment for the 1 that says "put start_delay to tcon". By
-> checking the sun4i_tcon0_mode_set_cpu() in sun4i_tcon driver, it has
-> already added this delay, so we shouldn't repeat to add the delay in DSI
-> controller, otherwise the timing won't match.
+Hi Manivannan,
 
-Thanks for this change. look like this is proper reason for adding +
-1. also adding bsp code links here might help for future reference.
+On Thu, Oct 03, 2019 at 11:03:38AM +0530, Manivannan Sadhasivam wrote:
+....
+> > > > > +static int imx290_set_gain(struct imx290 *imx290, u32 value)
+> > > > > +{
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	u32 adjusted_value = (value * 10) / 3;
+> > > > 
+> > > > What's the purpose of this? Why not to use the value directly?
+> > > > 
+> > > 
+> > > The gain register accepts the value 10/3 of the actual gain required. Hence,
+> > > we need to manually do the calculation before updating the value. I can
+> > > add a comment here to clarify.
+> > 
+> > It's better to use the register value directly. Otherwise the granularity
+> > won't be available to the user space.
+> > 
+> 
+> The sensor datasheet clearly defines that the 10/3'rd of the expected gain
+> should be set to this register. So, IMO we should be setting the value as
 
-Otherwise,
+The unit of that gain is decibels, but the controls do not have a unit.
+Register value is really preferred here.
 
-Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
+> mentioned in the datasheet. I agree that we are missing the userspace
+> granularity here but sticking to the device limitation shouldn't be a problem.
+> As I said, I'll add a comment here to clarify.
+
+The comment isn't visible in the uAPI.
+
+> 
+> > > 
+> > > > > +
+> > > > > +	ret = imx290_write_buffered_reg(imx290, IMX290_GAIN, 1, adjusted_value);
+> > > > > +	if (ret)
+> > > > > +		dev_err(imx290->dev, "Unable to write gain\n");
+> > > > > +
+> > > > > +	return ret;
+> > > > > +}
+> > > > > +
+> > > > > +static int imx290_set_power_on(struct imx290 *imx290)
+> > > > > +{
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	ret = clk_prepare_enable(imx290->xclk);
+> > > > 
+> > > > Please move the code from this function to the runtime PM runtime suspend
+> > > > callback. The same for imx290_set_power_off().
+> > > > 
+> > > 
+> > > May I know why? I think since this is being used only once, you're suggesting
+> > > to move to the callback function itself but please see the comment below. I
+> > > will reuse this function to power on the device during probe.
+> > 
+> > Yes, you can call the same function from probe, even if it's used as a
+> > runtime PM callback.
+> > 
+> > There's no need to have a function that acts as a wrapper for calling it
+> > with a different type of an argument.
+> > 
+> 
+> You mean directly calling imx290_runtime_resume() from probe is fine?
+
+Yes. Feel free to call it e.g. imx290_power_on or something.
+
+-- 
+Regards,
+
+Sakari Ailus
