@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E55CAA7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4FC9CAB0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393392AbfJCRG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:06:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47892 "EHLO mail.kernel.org"
+        id S2391914AbfJCRQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:16:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392301AbfJCQiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:38:15 -0400
+        id S2390588AbfJCQXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:23:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA54320830;
-        Thu,  3 Oct 2019 16:38:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BB0C2054F;
+        Thu,  3 Oct 2019 16:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120694;
-        bh=tD7IAs/rUecrJB9NGa8Try+goo14BMYdLlRlOp0L1Xk=;
+        s=default; t=1570119812;
+        bh=TJDCL/OzCzUm1R6VioSOIvxqDHPnNF2nC0aYF3S27Po=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S9PbQIJIxd3op7fhtpW4SdD+XmoCluMOk9sXZrCvuuAsYtZZuh7OqnKYHyMwHHTv0
-         Emg+7h7AZ9ZfD0yvk2kfK5ifBdmq+zMKBIDAl2KAsNhmidP31eowV0ggT3FU8e9/g4
-         xXMU1pVogP9/zF12jF33q7H2vYAPyGd9QXTRuQH8=
+        b=Kk0keye6z0j0yOCYSAF4LPHasJMrr7kpKAUVkgc+a4YeQ2+8QI6BFxfaVe54glYcw
+         z6j5CZfVE3XGHC6AGU6VIMRPy8crp4kN5ipz8v7+ZCaa5iOse6cBUoPEr1rYir6vwT
+         xF5zcQkIqmKZHb0U3h0VpH21yxyAPKfEuGUZkSH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.2 289/313] SUNRPC: Dequeue the request from the receive queue while were re-encoding
-Date:   Thu,  3 Oct 2019 17:54:27 +0200
-Message-Id: <20191003154601.565296834@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.19 203/211] quota: fix wrong condition in is_quota_modification()
+Date:   Thu,  3 Oct 2019 17:54:29 +0200
+Message-Id: <20191003154530.006484306@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,141 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit cc204d01262a69218b2d0db5cdea371de85871d9 upstream.
+commit 6565c182094f69e4ffdece337d395eb7ec760efc upstream.
 
-Ensure that we dequeue the request from the transport receive queue
-while we're re-encoding to prevent issues like use-after-free when
-we release the bvec.
+Quoted from
+commit 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
 
-Fixes: 7536908982047 ("SUNRPC: Ensure the bvecs are reset when we re-encode...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.20+
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+" At LSF we decided that if we truncate up from isize we shouldn't trim
+  fallocated blocks that were fallocated with KEEP_SIZE and are past the
+ new i_size.  This patch fixes ext4 to do this. "
+
+And generic/092 of fstest have covered this case for long time, however
+is_quota_modification() didn't adjust based on that rule, so that in
+below condition, we will lose to quota block change:
+- fallocate blocks beyond EOF
+- remount
+- truncate(file_path, file_size)
+
+Fix it.
+
+Link: https://lore.kernel.org/r/20190911093650.35329-1-yuchao0@huawei.com
+Fixes: 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
+CC: stable@vger.kernel.org
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/sunrpc/xprt.h |    1 
- net/sunrpc/clnt.c           |    6 ++--
- net/sunrpc/xprt.c           |   54 +++++++++++++++++++++++++-------------------
- 3 files changed, 35 insertions(+), 26 deletions(-)
+ include/linux/quotaops.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/sunrpc/xprt.h
-+++ b/include/linux/sunrpc/xprt.h
-@@ -346,6 +346,7 @@ bool			xprt_prepare_transmit(struct rpc_
- void			xprt_request_enqueue_transmit(struct rpc_task *task);
- void			xprt_request_enqueue_receive(struct rpc_task *task);
- void			xprt_request_wait_receive(struct rpc_task *task);
-+void			xprt_request_dequeue_xprt(struct rpc_task *task);
- bool			xprt_request_need_retransmit(struct rpc_task *task);
- void			xprt_transmit(struct rpc_task *task);
- void			xprt_end_transmit(struct rpc_task *task);
---- a/net/sunrpc/clnt.c
-+++ b/net/sunrpc/clnt.c
-@@ -1785,6 +1785,7 @@ rpc_xdr_encode(struct rpc_task *task)
- 		     req->rq_rbuffer,
- 		     req->rq_rcvsize);
- 
-+	req->rq_reply_bytes_recvd = 0;
- 	req->rq_snd_buf.head[0].iov_len = 0;
- 	xdr_init_encode(&xdr, &req->rq_snd_buf,
- 			req->rq_snd_buf.head[0].iov_base, req);
-@@ -1804,6 +1805,8 @@ call_encode(struct rpc_task *task)
- 	if (!rpc_task_need_encode(task))
- 		goto out;
- 	dprint_status(task);
-+	/* Dequeue task from the receive queue while we're encoding */
-+	xprt_request_dequeue_xprt(task);
- 	/* Encode here so that rpcsec_gss can use correct sequence number. */
- 	rpc_xdr_encode(task);
- 	/* Did the encode result in an error condition? */
-@@ -2437,9 +2440,6 @@ call_decode(struct rpc_task *task)
- 		return;
- 	case -EAGAIN:
- 		task->tk_status = 0;
--		xdr_free_bvec(&req->rq_rcv_buf);
--		req->rq_reply_bytes_recvd = 0;
--		req->rq_rcv_buf.len = 0;
- 		if (task->tk_client->cl_discrtry)
- 			xprt_conditional_disconnect(req->rq_xprt,
- 						    req->rq_connect_cookie);
---- a/net/sunrpc/xprt.c
-+++ b/net/sunrpc/xprt.c
-@@ -1296,6 +1296,36 @@ xprt_request_dequeue_transmit(struct rpc
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -22,7 +22,7 @@ static inline struct quota_info *sb_dqop
+ /* i_mutex must being held */
+ static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
+ {
+-	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
++	return (ia->ia_valid & ATTR_SIZE) ||
+ 		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
+ 		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
  }
- 
- /**
-+ * xprt_request_dequeue_xprt - remove a task from the transmit+receive queue
-+ * @task: pointer to rpc_task
-+ *
-+ * Remove a task from the transmit and receive queues, and ensure that
-+ * it is not pinned by the receive work item.
-+ */
-+void
-+xprt_request_dequeue_xprt(struct rpc_task *task)
-+{
-+	struct rpc_rqst	*req = task->tk_rqstp;
-+	struct rpc_xprt *xprt = req->rq_xprt;
-+
-+	if (test_bit(RPC_TASK_NEED_XMIT, &task->tk_runstate) ||
-+	    test_bit(RPC_TASK_NEED_RECV, &task->tk_runstate) ||
-+	    xprt_is_pinned_rqst(req)) {
-+		spin_lock(&xprt->queue_lock);
-+		xprt_request_dequeue_transmit_locked(task);
-+		xprt_request_dequeue_receive_locked(task);
-+		while (xprt_is_pinned_rqst(req)) {
-+			set_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
-+			spin_unlock(&xprt->queue_lock);
-+			xprt_wait_on_pinned_rqst(req);
-+			spin_lock(&xprt->queue_lock);
-+			clear_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
-+		}
-+		spin_unlock(&xprt->queue_lock);
-+	}
-+}
-+
-+/**
-  * xprt_request_prepare - prepare an encoded request for transport
-  * @req: pointer to rpc_rqst
-  *
-@@ -1719,28 +1749,6 @@ void xprt_retry_reserve(struct rpc_task
- 	xprt_do_reserve(xprt, task);
- }
- 
--static void
--xprt_request_dequeue_all(struct rpc_task *task, struct rpc_rqst *req)
--{
--	struct rpc_xprt *xprt = req->rq_xprt;
--
--	if (test_bit(RPC_TASK_NEED_XMIT, &task->tk_runstate) ||
--	    test_bit(RPC_TASK_NEED_RECV, &task->tk_runstate) ||
--	    xprt_is_pinned_rqst(req)) {
--		spin_lock(&xprt->queue_lock);
--		xprt_request_dequeue_transmit_locked(task);
--		xprt_request_dequeue_receive_locked(task);
--		while (xprt_is_pinned_rqst(req)) {
--			set_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
--			spin_unlock(&xprt->queue_lock);
--			xprt_wait_on_pinned_rqst(req);
--			spin_lock(&xprt->queue_lock);
--			clear_bit(RPC_TASK_MSG_PIN_WAIT, &task->tk_runstate);
--		}
--		spin_unlock(&xprt->queue_lock);
--	}
--}
--
- /**
-  * xprt_release - release an RPC request slot
-  * @task: task which is finished with the slot
-@@ -1764,7 +1772,7 @@ void xprt_release(struct rpc_task *task)
- 		task->tk_ops->rpc_count_stats(task, task->tk_calldata);
- 	else if (task->tk_client)
- 		rpc_count_iostats(task, task->tk_client->cl_metrics);
--	xprt_request_dequeue_all(task, req);
-+	xprt_request_dequeue_xprt(task);
- 	spin_lock_bh(&xprt->transport_lock);
- 	xprt->ops->release_xprt(xprt, task);
- 	if (xprt->ops->release_request)
 
 
