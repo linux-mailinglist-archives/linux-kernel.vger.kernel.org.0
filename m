@@ -2,66 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35913CAE61
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 865A1CAE64
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730532AbfJCSmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 14:42:22 -0400
-Received: from jpvw.nl ([80.127.100.2]:44970 "EHLO jpvw.nl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729029AbfJCSmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:42:22 -0400
-Received: from localhost ([127.0.0.1] helo=jpvw.nl)
-        by jpvw.nl with esmtp (Exim 4.92)
-        (envelope-from <jp@jpvw.nl>)
-        id 1iG63P-0001bX-Tx; Thu, 03 Oct 2019 20:42:19 +0200
-Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
-To:     Gon Solo <gonsolo@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     crope@iki.fi, Sean Young <sean@mess.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-References: <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
- <20191002154922.7f1cfc76@coco.lan>
- <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
- <20191003080539.2b13c03b@coco.lan>
- <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
- <20191003120238.75811da6@coco.lan> <20191003160336.GA5125@Limone>
- <20191003130909.01d29b77@coco.lan> <20191003162326.GA2727@Limone>
- <20191003144225.0137bf6c@coco.lan> <20191003183200.GA2631@Limone>
-From:   JP <jp@jpvw.nl>
-Message-ID: <e468b867-1b45-8220-a5d2-ac40fdb4e0e6@jpvw.nl>
-Date:   Thu, 3 Oct 2019 20:42:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191003183200.GA2631@Limone>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1731784AbfJCSn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 14:43:59 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33927 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728458AbfJCSn7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 14:43:59 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y35so2309958pgl.1;
+        Thu, 03 Oct 2019 11:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Qpkf4pRPP/92fmyPDaKs5CESi45rzrC2XHktLGH5/ao=;
+        b=mQXxIaOKdN6JK5aQhYUaQKMqsV2/e/lMnTwo7EUQ9o6UCYZ6q7Pz7E/Lhbk0i3tK78
+         Kkg9T3Ikyu6Qgk4c8KGGly208XTA+bBd57feUZ+Ad+z2bmJth2e1CFpYcOxInq/wGTzo
+         S0U5SipxruBIpD7ZL0Gw+CgZpsjx3ssxMVZBeaLnec6p7axc3cvH+rDyPSOMYKcWgiGU
+         wmIWx8VzxkK6NWhRG38s/Px68uhyWQSJ7GRN5e2FYORYMlXphd2N3UmDvpROg8N8Fcnz
+         jSe+HfUPkYuR2kwvy08FFNknNQh7RGuj3PHsPDdVpNu0wLGmsz3hgKyRofle6MmzSqSw
+         RRTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Qpkf4pRPP/92fmyPDaKs5CESi45rzrC2XHktLGH5/ao=;
+        b=ocRG6oAXiwPehnwyktjFSnN+zZKaEknV4Jb1T9cJ4JKDHgLeYmNF1x80EX7DlZniqj
+         lWXMItAYjUr3JDFRr9Xa264FP0QrQFrtl+O/9jtL/MzwyKWs2mCUpRFUdCkjKIKYZkB1
+         isHP9SSApnlUbF9cN5BVjG2DGARZlSW5hspLiuyorwzINoNXGvW91DlQhtuMgNHBA8/6
+         jcwLSITARhtVPPi72sIDktmm7ZamIO2+kgzuJQfv64N6Hk1zoIcBfLvwmT/IW284ZhkO
+         7hIOpjniDOE4l+/Q9QzUm0U0+GzXUNyMUEjeT0Y2ZtraN5kCSyUynylQXVuZTymhAwof
+         JC/A==
+X-Gm-Message-State: APjAAAW+N++2lSNXN0/G1e3bbH4Gt6gVkdUeDyTMquoRC2Yddxv3le70
+        IJDgYdiwIqxP0w7qlF/gUGud86Cd
+X-Google-Smtp-Source: APXvYqxzejd6dugMgKCos/oINwGWJ54l9935YQjwtMXpquhTyQswtx0Nlw/AKUWVtkZTBh772tLgZA==
+X-Received: by 2002:aa7:9508:: with SMTP id b8mr12481404pfp.36.1570128237845;
+        Thu, 03 Oct 2019 11:43:57 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id x9sm3568268pje.27.2019.10.03.11.43.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 11:43:56 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list), hkallweit1@gmail.com,
+        bcm-kernel-feedback-list@broadcom.com,
+        manasa.mudireddy@broadcom.com, ray.jui@broadcom.com,
+        olteanv@gmail.com, rafal@milecki.pl
+Subject: [PATCH 0/2] net: phy: broadcom: RGMII delays fixes
+Date:   Thu,  3 Oct 2019 11:43:50 -0700
+Message-Id: <20191003184352.24356-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
+This patch series fixes the BCM54210E RGMII delay configuration which
+could only have worked in a PHY_INTERFACE_MODE_RGMII configuration.
+There is a forward declaration added such that the first patch can be
+picked up for -stable and apply fine all the way back to when the bug
+was introduced.
 
-On 10/3/19 8:32 PM, Gon Solo wrote:
->> You could also try to disable the firmware upload at si2168 and see
->> if the si2157 reads will succeed.
-> I disabled the upload and while vlc wasn't working anymore I got the
-> following messages:
->
-> [  168.196656] si2157 2-0063: found a 'Silicon Labs Si2147-A30'
-> [  168.223009] si2157 2-0063: firmware version: 3.0.5
->
->
-> It really seems that the firmware upload is the culprit.
+The second patch eliminates duplicated code that used a different kind
+of logic and did not use existing constants defined.
 
-try other firmware?
-http://palosaari.fi/linux/v4l-dvb/firmware/Si2168/
->
-> g
->
->
+Thanks
+
+Florian Fainelli (2):
+  net: phy: broadcom: Fix RGMII delays configuration for BCM54210E
+  net: phy: broadcom: Use bcm54xx_config_clock_delay() for BCM54612E
+
+ drivers/net/phy/broadcom.c | 32 ++++----------------------------
+ 1 file changed, 4 insertions(+), 28 deletions(-)
+
+-- 
+2.17.1
 
