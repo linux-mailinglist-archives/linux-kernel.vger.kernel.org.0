@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD6A2CA2BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9470CCA1F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbfJCQIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56722 "EHLO mail.kernel.org"
+        id S1731597AbfJCQAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:00:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733155AbfJCQI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:29 -0400
+        id S1731585AbfJCQAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BB9420865;
-        Thu,  3 Oct 2019 16:08:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1593020700;
+        Thu,  3 Oct 2019 16:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118908;
-        bh=SJoa6ch7YWT88IzJRbD/Ujj7hZoK2RBN31oGU40WAAU=;
+        s=default; t=1570118432;
+        bh=WFPSs1XY6ltViKwCO9RVIRh0ygbXm+W+QOBH+Hvw6PI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mrYIfnLToqoIiUwjUIYIpObsg/4kiE+w150gRY09R+xaaX+McKXHLPzr6XgD21LSQ
-         Z8fyrRCuGzWUjD6IM2kKOzcVFJfkB33CyQ2DXhg2IoBGnelPLPqZIridXC0P6UqQdg
-         0fe23WICrsOc2dachQoCniTYXuG8U5Z0+zI1/VqQ=
+        b=ynk2SwzrxZeFgTkHRf+htBU9tq6vQJ/StmFO+kkaSLr/gLgyJzpN6PFVEo/UnYy0d
+         8mQAq0/85fvkjrafo+A0b7Av9AF40MbuYuBvxnRaOD3aoJm/FBN7kZVQ0iZ+MSnogM
+         zLzUvKiZaIjoj9R68ta3bAIvdXpimw/B6vcpXWVQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 055/185] ASoC: sgtl5000: Fix charge pump source assignment
+        "Shih-Yuan Lee (FourDollars)" <fourdollars@debian.org>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 010/129] ALSA: hda - Add laptop imic fixup for ASUS M9V laptop
 Date:   Thu,  3 Oct 2019 17:52:13 +0200
-Message-Id: <20191003154449.941253223@linuxfoundation.org>
+Message-Id: <20191003154323.369301414@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,55 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+From: Shih-Yuan Lee (FourDollars) <fourdollars@debian.org>
 
-[ Upstream commit b6319b061ba279577fd7030a9848fbd6a17151e3 ]
+commit 7b485d175631be676424aedb8cd2f66d0c93da78 upstream.
 
-If VDDA != VDDIO and any of them is greater than 3.1V, charge pump
-source can be assigned automatically [1].
+The same fixup to enable laptop imic is needed for ASUS M9V with AD1986A
+codec like another HP machine.
 
-[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
+Signed-off-by: Shih-Yuan Lee (FourDollars) <fourdollars@debian.org>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190920134052.GA8035@localhost
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Link: https://lore.kernel.org/r/20190719100524.23300-7-oleksandr.suvorov@toradex.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/sgtl5000.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ sound/pci/hda/patch_analog.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index 0b11a2e01b2fc..b649675d190d2 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -1084,12 +1084,17 @@ static int sgtl5000_set_power_regs(struct snd_soc_codec *codec)
- 					SGTL5000_INT_OSC_EN);
- 		/* Enable VDDC charge pump */
- 		ana_pwr |= SGTL5000_VDDC_CHRGPMP_POWERUP;
--	} else if (vddio >= 3100 && vdda >= 3100) {
-+	} else {
- 		ana_pwr &= ~SGTL5000_VDDC_CHRGPMP_POWERUP;
--		/* VDDC use VDDIO rail */
--		lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
--		lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
--			    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		/*
-+		 * if vddio == vdda the source of charge pump should be
-+		 * assigned manually to VDDIO
-+		 */
-+		if (vddio == vdda) {
-+			lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
-+			lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
-+				    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		}
- 	}
+--- a/sound/pci/hda/patch_analog.c
++++ b/sound/pci/hda/patch_analog.c
+@@ -370,6 +370,7 @@ static const struct hda_fixup ad1986a_fi
  
- 	snd_soc_write(codec, SGTL5000_CHIP_LINREG_CTRL, lreg_ctrl);
--- 
-2.20.1
-
+ static const struct snd_pci_quirk ad1986a_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x30af, "HP B2800", AD1986A_FIXUP_LAPTOP_IMIC),
++	SND_PCI_QUIRK(0x1043, 0x1153, "ASUS M9V", AD1986A_FIXUP_LAPTOP_IMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1443, "ASUS Z99He", AD1986A_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x1043, 0x1447, "ASUS A8JN", AD1986A_FIXUP_EAPD),
+ 	SND_PCI_QUIRK_MASK(0x1043, 0xff00, 0x8100, "ASUS P5", AD1986A_FIXUP_3STACK),
 
 
