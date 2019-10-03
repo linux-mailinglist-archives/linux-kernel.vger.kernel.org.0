@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5CFACA8F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 717EBCA8FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404084AbfJCQfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:35:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
+        id S2404306AbfJCQfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404058AbfJCQfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:35:19 -0400
+        id S2404296AbfJCQfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C55D2070B;
-        Thu,  3 Oct 2019 16:35:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1173220830;
+        Thu,  3 Oct 2019 16:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120519;
-        bh=ajBjYAZiKmXhY3kJWE4D+XSVieiVoPua4IlPs8TFonc=;
+        s=default; t=1570120540;
+        bh=Uph2YJu1QxiotIDjSDdeMb4eb9iuxxVBVTRCknHujQY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rq2O06wPa/qdPB8F5f8ZYIjb7PxlRYQRafUXaMvZ2B6JRNKrcUeZgG17oYkKNj4WC
-         4nyY3xJCplqkc+Zs4l4XCubdHf8PU1FyvMaHgbBsuiN3D+ha9MTpZJTGf4loxx2byo
-         xKvnXHa8fBHXGx5zyI9znTg1LKNaGs27Pkf27DEE=
+        b=ttCRe3JOvASHMG88ohUB8hIXkPrCKUGbO46OFa6kKOdr9yPQ2xjxmGA1zIKCt75c+
+         vUTAilqfsUs/grYQYBdT82+pPtD/Q/AMlomehwEr0K9KGX4n49YfnY0R/VQUO2u/Xv
+         7rAaYPhxVtVEVAraOBuNeHo3+ruwbS1HxQjjmqt8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.2 253/313] ASoC: Intel: Fix use of potentially uninitialized variable
-Date:   Thu,  3 Oct 2019 17:53:51 +0200
-Message-Id: <20191003154557.950873648@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 5.2 261/313] regulator: Defer init completion for a while after late_initcall
+Date:   Thu,  3 Oct 2019 17:53:59 +0200
+Message-Id: <20191003154558.747758307@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -46,37 +43,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+From: Mark Brown <broonie@kernel.org>
 
-commit 810f3b860850148788fc1ed8a6f5f807199fed65 upstream.
+commit 55576cf1853798e86f620766e23b604c9224c19c upstream.
 
-If ipc->ops.reply_msg_match is NULL, we may end up using uninitialized
-mask value.
+The kernel has no way of knowing when we have finished instantiating
+drivers, between deferred probe and systems that build key drivers as
+modules we might be doing this long after userspace has booted. This has
+always been a bit of an issue with regulator_init_complete since it can
+power off hardware that's not had it's driver loaded which can result in
+user visible effects, the main case is powering off displays. Practically
+speaking it's not been an issue in real systems since most systems that
+use the regulator API are embedded and build in key drivers anyway but
+with Arm laptops coming on the market it's becoming more of an issue so
+let's do something about it.
 
-reported by smatch:
-sound/soc/intel/common/sst-ipc.c:266 sst_ipc_reply_find_msg() error: uninitialized symbol 'mask'.
+In the absence of any better idea just defer the powering off for 30s
+after late_initcall(), this is obviously a hack but it should mask the
+issue for now and it's no more arbitrary than late_initcall() itself.
+Ideally we'd have some heuristics to detect if we're on an affected
+system and tune or skip the delay appropriately, and there may be some
+need for a command line option to be added.
 
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
-Link: https://lore.kernel.org/r/20190827141712.21015-3-amadeuszx.slawinski@linux.intel.com
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20190904124250.25844-1-broonie@kernel.org
 Signed-off-by: Mark Brown <broonie@kernel.org>
+Tested-by: Lee Jones <lee.jones@linaro.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/common/sst-ipc.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/regulator/core.c |   42 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 11 deletions(-)
 
---- a/sound/soc/intel/common/sst-ipc.c
-+++ b/sound/soc/intel/common/sst-ipc.c
-@@ -222,6 +222,8 @@ struct ipc_message *sst_ipc_reply_find_m
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5486,7 +5486,7 @@ static int __init regulator_init(void)
+ /* init early to allow our consumers to complete system booting */
+ core_initcall(regulator_init);
  
- 	if (ipc->ops.reply_msg_match != NULL)
- 		header = ipc->ops.reply_msg_match(header, &mask);
-+	else
-+		mask = (u64)-1;
+-static int __init regulator_late_cleanup(struct device *dev, void *data)
++static int regulator_late_cleanup(struct device *dev, void *data)
+ {
+ 	struct regulator_dev *rdev = dev_to_rdev(dev);
+ 	const struct regulator_ops *ops = rdev->desc->ops;
+@@ -5535,18 +5535,9 @@ unlock:
+ 	return 0;
+ }
  
- 	if (list_empty(&ipc->rx_list)) {
- 		dev_err(ipc->dev, "error: rx list empty but received 0x%llx\n",
+-static int __init regulator_init_complete(void)
++static void regulator_init_complete_work_function(struct work_struct *work)
+ {
+ 	/*
+-	 * Since DT doesn't provide an idiomatic mechanism for
+-	 * enabling full constraints and since it's much more natural
+-	 * with DT to provide them just assume that a DT enabled
+-	 * system has full constraints.
+-	 */
+-	if (of_have_populated_dt())
+-		has_full_constraints = true;
+-
+-	/*
+ 	 * Regulators may had failed to resolve their input supplies
+ 	 * when were registered, either because the input supply was
+ 	 * not registered yet or because its parent device was not
+@@ -5563,6 +5554,35 @@ static int __init regulator_init_complet
+ 	 */
+ 	class_for_each_device(&regulator_class, NULL, NULL,
+ 			      regulator_late_cleanup);
++}
++
++static DECLARE_DELAYED_WORK(regulator_init_complete_work,
++			    regulator_init_complete_work_function);
++
++static int __init regulator_init_complete(void)
++{
++	/*
++	 * Since DT doesn't provide an idiomatic mechanism for
++	 * enabling full constraints and since it's much more natural
++	 * with DT to provide them just assume that a DT enabled
++	 * system has full constraints.
++	 */
++	if (of_have_populated_dt())
++		has_full_constraints = true;
++
++	/*
++	 * We punt completion for an arbitrary amount of time since
++	 * systems like distros will load many drivers from userspace
++	 * so consumers might not always be ready yet, this is
++	 * particularly an issue with laptops where this might bounce
++	 * the display off then on.  Ideally we'd get a notification
++	 * from userspace when this happens but we don't so just wait
++	 * a bit and hope we waited long enough.  It'd be better if
++	 * we'd only do this on systems that need it, and a kernel
++	 * command line option might be useful.
++	 */
++	schedule_delayed_work(&regulator_init_complete_work,
++			      msecs_to_jiffies(30000));
+ 
+ 	return 0;
+ }
 
 
