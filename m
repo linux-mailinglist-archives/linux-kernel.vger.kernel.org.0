@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AFDFCAB49
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7143ACA9C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389757AbfJCRUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:20:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46020 "EHLO mail.kernel.org"
+        id S2405135AbfJCQrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:47:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388239AbfJCQTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:19:07 -0400
+        id S2391908AbfJCQrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:47:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 838EE21A4C;
-        Thu,  3 Oct 2019 16:19:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E83F20865;
+        Thu,  3 Oct 2019 16:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119547;
-        bh=lAXoCvK9UQCg0kKCfkhoaIjzPBFySSpdewTqTsr5tNk=;
+        s=default; t=1570121237;
+        bh=5eDikgOSaSe6iEg5YcefwyC0Wju1DF4Oj1szVWREBus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xVsQ5p3un3YSbiPrRw4it2OfkXzmOt5qrMslFD/9w2bpade0vVJpZ89B+pT147YHP
-         HE1kegcwIFZeOPmcY6C4JEN1Nm4Oms4KsoUlOPQzysOVDY4VrSIryQhmojgRtk4E5x
-         j3NNlnrp9blsj8FuY23jikErYWeY9Ag2B/plH1fA=
+        b=YuUQJhDhGJFMf4KHgw1ZTdRVexGhwKo4LYug0ywSINCLrY9hIZOvhzjfGcixRf/9w
+         fTOuRaUIDLVkKxakaSHMtLGaEky7+W5LWO0zV9CYCDbCTktmxacP8w96TypE5ZNkak
+         YwYEDHHNn1g1cnMJJ3/RKWZMlmsPO9moaZAT9EtM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Arthur She <arthur.she@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 104/211] media: ov9650: add a sanity check
+Subject: [PATCH 5.3 205/344] ASoC: dmaengine: Make the pcm->name equal to pcm->id if the name is not set
 Date:   Thu,  3 Oct 2019 17:52:50 +0200
-Message-Id: <20191003154510.531808346@linuxfoundation.org>
+Message-Id: <20191003154600.493014307@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit 093347abc7a4e0490e3c962ecbde2dc272a8f708 ]
+[ Upstream commit 2ec42f3147e1610716f184b02e65d7f493eed925 ]
 
-As pointed by cppcheck:
+Some tools use the snd_pcm_info_get_name() to try to identify PCMs or for
+other purposes.
 
-	[drivers/media/i2c/ov9650.c:706]: (error) Shifting by a negative value is undefined behaviour
-	[drivers/media/i2c/ov9650.c:707]: (error) Shifting by a negative value is undefined behaviour
-	[drivers/media/i2c/ov9650.c:721]: (error) Shifting by a negative value is undefined behaviour
+Currently it is left empty with the dmaengine-pcm, in this case copy the
+pcm->id string as pcm->name.
 
-Prevent mangling with gains with invalid values.
+For example IGT is using this to find the HDMI PCM for testing audio on it.
 
-As pointed by Sylvester, this should never happen in practice,
-as min value of V4L2_CID_GAIN control is 16 (gain is always >= 16
-and m is always >= 0), but it is too hard for a static analyzer
-to get this, as the logic with validates control min/max is
-elsewhere inside V4L2 core.
-
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Reported-by: Arthur She <arthur.she@linaro.org>
+Link: https://lore.kernel.org/r/20190906055524.7393-1-peter.ujfalusi@ti.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov9650.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/soc-generic-dmaengine-pcm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
-index 5bea31cd41aa1..33a21d585dc9c 100644
---- a/drivers/media/i2c/ov9650.c
-+++ b/drivers/media/i2c/ov9650.c
-@@ -716,6 +716,11 @@ static int ov965x_set_gain(struct ov965x *ov965x, int auto_gain)
- 		for (m = 6; m >= 0; m--)
- 			if (gain >= (1 << m) * 16)
- 				break;
-+
-+		/* Sanity check: don't adjust the gain with a negative value */
-+		if (m < 0)
-+			return -EINVAL;
-+
- 		rgain = (gain - ((1 << m) * 16)) / (1 << m);
- 		rgain |= (((1 << m) - 1) << 4);
+diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
+index 748f5f641002e..d93db2c2b5270 100644
+--- a/sound/soc/soc-generic-dmaengine-pcm.c
++++ b/sound/soc/soc-generic-dmaengine-pcm.c
+@@ -306,6 +306,12 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
  
+ 		if (!dmaengine_pcm_can_report_residue(dev, pcm->chan[i]))
+ 			pcm->flags |= SND_DMAENGINE_PCM_FLAG_NO_RESIDUE;
++
++		if (rtd->pcm->streams[i].pcm->name[0] == '\0') {
++			strncpy(rtd->pcm->streams[i].pcm->name,
++				rtd->pcm->streams[i].pcm->id,
++				sizeof(rtd->pcm->streams[i].pcm->name));
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
