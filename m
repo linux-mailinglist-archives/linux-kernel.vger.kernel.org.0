@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D285CA874
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1EFBCA88B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389718AbfJCQ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:27:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58338 "EHLO mail.kernel.org"
+        id S2391396AbfJCQ2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:28:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391152AbfJCQ0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:26:52 -0400
+        id S2391399AbfJCQ2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:28:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 905A921783;
-        Thu,  3 Oct 2019 16:26:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50DE82054F;
+        Thu,  3 Oct 2019 16:28:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120012;
-        bh=F4rztFgCqKKRmbrrJxmKuN9khu59p00GQ5J9kN3Bezw=;
+        s=default; t=1570120095;
+        bh=ifZ3V7ZCH5w23cboU3vYYYsrlUpjnatzjxURontzwQI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HHqoEc8AVGIlSrHs6ghWa+/wAGIOsfcBMI7ImiKslHVZVUAnozWhqMFDXdBLZP9LL
-         krA/n9C5h7xWGJwJKgfrGKjm0NuCE2WfEqGb4DIgGla1Y/Unqi1BPlGmokvR5HwuR3
-         0JdAwAHnm9FW/RJMaF/d7aNml7nzFYjP13rz8JTQ=
+        b=ShcKZ7A69GVCUkXzNEnaGjggn7d3fhRPmDtkfg7luYE+Z7miFQM+Or9DsFhsrj6MA
+         tGVlC7tDr5JjODKCHb0H07qIh9zYWsBV3dfe540zrp+unbO+vHhGIKEnaWdsYleLWj
+         gjBNKPEAvcsj5qu6N/+8ofe0VMg98SSONFaTrhNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+01a77b82edaa374068e1@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        linux-edac@vger.kernel.org, x86@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 064/313] media: iguanair: add sanity checks
-Date:   Thu,  3 Oct 2019 17:50:42 +0200
-Message-Id: <20191003154539.257277195@linuxfoundation.org>
+Subject: [PATCH 5.2 078/313] RAS: Fix prototype warnings
+Date:   Thu,  3 Oct 2019 17:50:56 +0200
+Message-Id: <20191003154540.526612763@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -46,59 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit ab1cbdf159beba7395a13ab70bc71180929ca064 ]
+[ Upstream commit 0a54b809a3a2c31e1055b45b03708eb730222be1 ]
 
-The driver needs to check the endpoint types, too, as opposed
-to the number of endpoints. This also requires moving the check earlier.
+When building with C=2 and/or W=1, legitimate warnings are issued about
+missing prototypes:
 
-Reported-by: syzbot+01a77b82edaa374068e1@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+    CHECK   drivers/ras/debugfs.c
+  drivers/ras/debugfs.c:4:15: warning: symbol 'ras_debugfs_dir' was not declared. Should it be static?
+  drivers/ras/debugfs.c:8:5: warning: symbol 'ras_userspace_consumers' was not declared. Should it be static?
+  drivers/ras/debugfs.c:38:12: warning: symbol 'ras_add_daemon_trace' was not declared. Should it be static?
+  drivers/ras/debugfs.c:54:13: warning: symbol 'ras_debugfs_init' was not declared. Should it be static?
+    CC      drivers/ras/debugfs.o
+  drivers/ras/debugfs.c:8:5: warning: no previous prototype for 'ras_userspace_consumers' [-Wmissing-prototypes]
+      8 | int ras_userspace_consumers(void)
+        |     ^~~~~~~~~~~~~~~~~~~~~~~
+  drivers/ras/debugfs.c:38:12: warning: no previous prototype for 'ras_add_daemon_trace' [-Wmissing-prototypes]
+     38 | int __init ras_add_daemon_trace(void)
+        |            ^~~~~~~~~~~~~~~~~~~~
+  drivers/ras/debugfs.c:54:13: warning: no previous prototype for 'ras_debugfs_init' [-Wmissing-prototypes]
+     54 | void __init ras_debugfs_init(void)
+        |             ^~~~~~~~~~~~~~~~
+
+Provide the proper includes.
+
+ [ bp: Take care of the same warnings for cec.c too. ]
+
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac@vger.kernel.org
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/7168.1565218769@turing-police
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/rc/iguanair.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/ras/cec.c     | 1 +
+ drivers/ras/debugfs.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/media/rc/iguanair.c b/drivers/media/rc/iguanair.c
-index ea05e125016a7..872d6441e512c 100644
---- a/drivers/media/rc/iguanair.c
-+++ b/drivers/media/rc/iguanair.c
-@@ -413,6 +413,10 @@ static int iguanair_probe(struct usb_interface *intf,
- 	int ret, pipein, pipeout;
- 	struct usb_host_interface *idesc;
+diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+index f5795adc5a6e1..8037c490f3ba7 100644
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/mm.h>
+ #include <linux/gfp.h>
++#include <linux/ras.h>
+ #include <linux/kernel.h>
+ #include <linux/workqueue.h>
  
-+	idesc = intf->altsetting;
-+	if (idesc->desc.bNumEndpoints < 2)
-+		return -ENODEV;
-+
- 	ir = kzalloc(sizeof(*ir), GFP_KERNEL);
- 	rc = rc_allocate_device(RC_DRIVER_IR_RAW);
- 	if (!ir || !rc) {
-@@ -427,18 +431,13 @@ static int iguanair_probe(struct usb_interface *intf,
- 	ir->urb_in = usb_alloc_urb(0, GFP_KERNEL);
- 	ir->urb_out = usb_alloc_urb(0, GFP_KERNEL);
+diff --git a/drivers/ras/debugfs.c b/drivers/ras/debugfs.c
+index 9c1b717efad86..0d4f985afbf37 100644
+--- a/drivers/ras/debugfs.c
++++ b/drivers/ras/debugfs.c
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ #include <linux/debugfs.h>
++#include <linux/ras.h>
++#include "debugfs.h"
  
--	if (!ir->buf_in || !ir->packet || !ir->urb_in || !ir->urb_out) {
-+	if (!ir->buf_in || !ir->packet || !ir->urb_in || !ir->urb_out ||
-+	    !usb_endpoint_is_int_in(&idesc->endpoint[0].desc) ||
-+	    !usb_endpoint_is_int_out(&idesc->endpoint[1].desc)) {
- 		ret = -ENOMEM;
- 		goto out;
- 	}
+ struct dentry *ras_debugfs_dir;
  
--	idesc = intf->altsetting;
--
--	if (idesc->desc.bNumEndpoints < 2) {
--		ret = -ENODEV;
--		goto out;
--	}
--
- 	ir->rc = rc;
- 	ir->dev = &intf->dev;
- 	ir->udev = udev;
 -- 
 2.20.1
 
