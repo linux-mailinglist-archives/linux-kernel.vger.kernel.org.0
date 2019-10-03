@@ -2,98 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A776C96BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 04:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F82C96C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 04:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfJCChZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 22:37:25 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:53302 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbfJCChY (ORCPT
+        id S1727488AbfJCCl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 22:41:26 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37980 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfJCCl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 22:37:24 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id x932aVWg021578;
-        Thu, 3 Oct 2019 11:36:31 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x932aVWg021578
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1570070192;
-        bh=LP0Xhzi9qR0mSHkbibcTK1g5jYagA5pJi1SkU63VT2o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=rTKfKaN9GTJhMkdu60OPQQahUz+dR52OCXatwL1Ce27MtOKPPuo8MKXmXoFdGIt7f
-         34uizYl/Oi3YgeHKAmxUYYbAUe66vg1qo2ItPKYWIsg55RzV8W5xBUYXaJ5wIqhPp5
-         Ps0+UzbDFDI43iYUWugk8Y+YOQGtTfYokWZkmdp+vPfqOLNQpV5YsWWx8p3kmv+tsw
-         fgVwzyP9UoznjLV3rdDsQQ/zpMUzDHI44Oxwda47osKeOsJareKvH/FVJsxnJNyDFo
-         NTMKhdQT4yb0ePoNkbt0y/Gnb8CrKugemudlYD+DUvxllSVC8mM4CVmt047mnyxUEl
-         at5SncHoB9G5w==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kbuild: update compile-test header list for v5.4-rc2
-Date:   Thu,  3 Oct 2019 11:36:29 +0900
-Message-Id: <20191003023629.13175-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 2 Oct 2019 22:41:26 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h195so732194pfe.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 19:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8ik2FpcEJAsoEvjrY43tv4BSijy6cgxBkC74pPVSQvc=;
+        b=lFIsUPcb41NKPdp4EgmWrADZYfKQQsZ+7y5rYs528l8YyBmRWhsZy8D03K+dIHFstB
+         f0ANfEdlaIy9MVtRqB7KCQiWx9euBclylhrjzh07/1MPALgdNoN2r/DBgJqnVTM6eKfa
+         Lr3ULr3sLy3/T45rX1AVyYGKnNbF1meCPSVjE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8ik2FpcEJAsoEvjrY43tv4BSijy6cgxBkC74pPVSQvc=;
+        b=hytLtP7H+isEyc7e7mo7ZJ2PvPjDRNzgSKUMkjeyEjsttWPb8jhJOtFNh4vyAOZJS+
+         FRsI/nhVLTOxWyimsHrHjmY0qldL9WQ0khAVJcPZdS6jf2eLfP9lCVPjZhichzVQUaoj
+         Tul2a2Wh8sGNLQawDQUE+qzLb2JACXtx+wFEl60J4Big8ltK3OUAeYb4wZpTmQOP2muG
+         jAMRFJwLcq+A13TGNlbZIIEc5WV6CIuD+RLxSY5yI+FQ3qa+15FIvyIZmkDm6uouwuNJ
+         5GwZDf95WFDg+bu6XS4ASc901iFFxgAmX58Axw3CnNoZgVH1O9XQl2wy7d1iyIMlRR4D
+         vMZA==
+X-Gm-Message-State: APjAAAXj4A1IbiP0KqmsJ5yViamHQ5N7Q0VaE4dK+o/MfSRrK87oqwTZ
+        WGQw7rre66aUet5kNSpm2OyfWw==
+X-Google-Smtp-Source: APXvYqxJVgDreArUVY03HVqiDLVC5vH8pPyk7nTuF4POPhIr0JYAUyImOqHc9nQTHShRhq3wpa/DGg==
+X-Received: by 2002:a17:90a:a6e:: with SMTP id o101mr8071533pjo.71.1570070485018;
+        Wed, 02 Oct 2019 19:41:25 -0700 (PDT)
+Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
+        by smtp.gmail.com with ESMTPSA id y10sm754646pfe.148.2019.10.02.19.41.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 19:41:24 -0700 (PDT)
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Aaro Koskinen <aaro.koskinen@nokia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC] reboot: hotplug cpus in migrate_to_reboot_cpu()
+Date:   Thu,  3 Oct 2019 10:41:01 +0800
+Message-Id: <20191003024101.57700-1-hsinyi@chromium.org>
+X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 6dc280ebeed2 ("coda: remove uapi/linux/coda_psdev.h") removed
-a header in question. Some more build errors were fixed. Add more
-headers into the test coverage.
+Currently system reboots use arch specific codes (eg. smp_send_stop) to
+offline non reboot cpus. Some arch like arm64, arm, and x86... set offline
+masks to cpu without really offlining them. Thus it causes some race
+condition and kernel warning comes out sometimes when system reboots. We
+can do cpu hotplug in migrate_to_reboot_cpu() to avoid this issue.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
 ---
+kernel warnings at reboot:
+[1] https://lore.kernel.org/lkml/20190820100843.3028-1-hsinyi@chromium.org/
+[2] https://lore.kernel.org/lkml/20190727164450.GA11726@roeck-us.net/
+---
+ kernel/cpu.c    | 35 +++++++++++++++++++++++++++++++++++
+ kernel/reboot.c | 18 ------------------
+ 2 files changed, 35 insertions(+), 18 deletions(-)
 
-Changes in v2:
-  - remove linux/coda_psdev.h as well
-
- usr/include/Makefile | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/usr/include/Makefile b/usr/include/Makefile
-index c9449aaf438d..57b20f7b6729 100644
---- a/usr/include/Makefile
-+++ b/usr/include/Makefile
-@@ -29,13 +29,11 @@ header-test- += linux/android/binderfs.h
- header-test-$(CONFIG_CPU_BIG_ENDIAN) += linux/byteorder/big_endian.h
- header-test-$(CONFIG_CPU_LITTLE_ENDIAN) += linux/byteorder/little_endian.h
- header-test- += linux/coda.h
--header-test- += linux/coda_psdev.h
- header-test- += linux/elfcore.h
- header-test- += linux/errqueue.h
- header-test- += linux/fsmap.h
- header-test- += linux/hdlc/ioctl.h
- header-test- += linux/ivtv.h
--header-test- += linux/jffs2.h
- header-test- += linux/kexec.h
- header-test- += linux/matroxfb.h
- header-test- += linux/netfilter_ipv4/ipt_LOG.h
-@@ -55,20 +53,12 @@ header-test- += linux/v4l2-mediabus.h
- header-test- += linux/v4l2-subdev.h
- header-test- += linux/videodev2.h
- header-test- += linux/vm_sockets.h
--header-test- += scsi/scsi_bsg_fc.h
--header-test- += scsi/scsi_netlink.h
--header-test- += scsi/scsi_netlink_fc.h
- header-test- += sound/asequencer.h
- header-test- += sound/asoc.h
- header-test- += sound/asound.h
- header-test- += sound/compress_offload.h
- header-test- += sound/emu10k1.h
- header-test- += sound/sfnt_info.h
--header-test- += sound/sof/eq.h
--header-test- += sound/sof/fw.h
--header-test- += sound/sof/header.h
--header-test- += sound/sof/manifest.h
--header-test- += sound/sof/trace.h
- header-test- += xen/evtchn.h
- header-test- += xen/gntdev.h
- header-test- += xen/privcmd.h
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index fc28e17940e0..2f4d51fe91e3 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -31,6 +31,7 @@
+ #include <linux/relay.h>
+ #include <linux/slab.h>
+ #include <linux/percpu-rwsem.h>
++#include <linux/reboot.h>
+ 
+ #include <trace/events/power.h>
+ #define CREATE_TRACE_POINTS
+@@ -1366,6 +1367,40 @@ int __boot_cpu_id;
+ 
+ #endif /* CONFIG_SMP */
+ 
++void migrate_to_reboot_cpu(void)
++{
++	/* The boot cpu is always logical cpu 0 */
++	int cpu = reboot_cpu;
++
++	/* Make certain the cpu I'm about to reboot on is online */
++	if (!cpu_online(cpu))
++		cpu = cpumask_first(cpu_online_mask);
++
++	/* Prevent races with other tasks migrating this task */
++	current->flags |= PF_NO_SETAFFINITY;
++
++	/* Make certain I only run on the appropriate processor */
++	set_cpus_allowed_ptr(current, cpumask_of(cpu));
++
++	/* Hotplug other cpus if possible */
++	if (IS_ENABLED(CONFIG_HOTPLUG_CPU)) {
++		int i, err;
++
++		cpu_maps_update_begin();
++
++		for_each_online_cpu(i) {
++			if (i == cpu)
++				continue;
++			err = _cpu_down(i, 0, CPUHP_OFFLINE);
++			if (err)
++				pr_info("Failed to offline cpu %d\n", i);
++		}
++		cpu_hotplug_disabled++;
++
++		cpu_maps_update_done();
++	}
++}
++
+ /* Boot processor state steps */
+ static struct cpuhp_step cpuhp_hp_states[] = {
+ 	[CPUHP_OFFLINE] = {
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index c4d472b7f1b4..f0046be34a60 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -215,24 +215,6 @@ void do_kernel_restart(char *cmd)
+ 	atomic_notifier_call_chain(&restart_handler_list, reboot_mode, cmd);
+ }
+ 
+-void migrate_to_reboot_cpu(void)
+-{
+-	/* The boot cpu is always logical cpu 0 */
+-	int cpu = reboot_cpu;
+-
+-	cpu_hotplug_disable();
+-
+-	/* Make certain the cpu I'm about to reboot on is online */
+-	if (!cpu_online(cpu))
+-		cpu = cpumask_first(cpu_online_mask);
+-
+-	/* Prevent races with other tasks migrating this task */
+-	current->flags |= PF_NO_SETAFFINITY;
+-
+-	/* Make certain I only run on the appropriate processor */
+-	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+-}
+-
+ /**
+  *	kernel_restart - reboot the system
+  *	@cmd: pointer to buffer containing command to execute for restart
 -- 
-2.17.1
+2.23.0.444.g18eeb5a265-goog
 
