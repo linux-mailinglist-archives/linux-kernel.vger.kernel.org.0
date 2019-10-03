@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2B8C9634
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1AF3C9636
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfJCBdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 21:33:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42386 "EHLO mail.kernel.org"
+        id S1728315AbfJCBdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 21:33:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726354AbfJCBdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727327AbfJCBdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 2 Oct 2019 21:33:08 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8572D222C3;
+        by mail.kernel.org (Postfix) with ESMTPSA id D50D4222C5;
         Thu,  3 Oct 2019 01:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570066387;
-        bh=0O6/KxBqWs9ZFW/AB5xNVcImW8d46jKwPeTl36k/sPQ=;
+        s=default; t=1570066388;
+        bh=D5IRy4XAkIH9bJC8ATB9LlP4bTezolHHmz5Uw0fMFZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gNKRvF/EroRe3cuQmy2yWLeVaMSY+josLwMxAV183QsuV/aNuHcqj3nx1oa75RGds
-         wJDLRW226CIZqDE99oDuqQeltguJvL0bzbQfWl7DI0m0BqcMT2NbcEV1+K+WfBVnvO
-         xyxX/cYyPgnY71aPLCMbNRy4esPT8Ipwio1Y1cSs=
+        b=SvwI8SfNB1nnNkNj2TH95nxbhVRuFhmJGd/SVP0yIzvKGyaBB6CWuLZCrv0/ANtgJ
+         lgwvXRLFwWJ3moheW24StWBr8lXdOJEktiFn6xsWnHJ6j030n8UVyS2N75PG2eGBOd
+         1/wYAHInK5m04Edx3G5TDBKhPBYF8zj3z3kXt6zw=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -31,11 +31,10 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        kbuild test robot <lkp@intel.com>,
         "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 2/8] rcu: Several rcu_segcblist functions can be static
-Date:   Wed,  2 Oct 2019 18:32:59 -0700
-Message-Id: <20191003013305.12854-2-paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 3/8] workqueue: Convert for_each_wq to use built-in list check
+Date:   Wed,  2 Oct 2019 18:33:00 -0700
+Message-Id: <20191003013305.12854-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191003013243.GA12705@paulmck-ThinkPad-P72>
 References: <20191003013243.GA12705@paulmck-ThinkPad-P72>
@@ -44,50 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-None of rcu_segcblist_set_len(), rcu_segcblist_add_len(), or
-rcu_segcblist_xchg_len() are used outside of kernel/rcu/rcu_segcblist.c.
-This commit therefore makes them static.
+Because list_for_each_entry_rcu() can now check for holding a
+lock as well as for being in an RCU read-side critical section,
+this commit replaces the workqueue_sysfs_unregister() function's
+use of assert_rcu_or_wq_mutex() and list_for_each_entry_rcu() with
+list_for_each_entry_rcu() augmented with a lockdep_is_held() optional
+argument.
 
-Fixes: ab2ef5c7b4d1 ("rcu/nocb: Atomic ->len field in rcu_segcblist structure")
-Signed-off-by: kbuild test robot <lkp@intel.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/rcu_segcblist.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/workqueue.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/rcu/rcu_segcblist.c b/kernel/rcu/rcu_segcblist.c
-index 495c58c..cbc87b8 100644
---- a/kernel/rcu/rcu_segcblist.c
-+++ b/kernel/rcu/rcu_segcblist.c
-@@ -88,7 +88,7 @@ struct rcu_head *rcu_cblist_dequeue(struct rcu_cblist *rclp)
- }
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index bc2e09a..e501c79 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -364,11 +364,6 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
+ 			 !lockdep_is_held(&wq_pool_mutex),		\
+ 			 "RCU or wq_pool_mutex should be held")
  
- /* Set the length of an rcu_segcblist structure. */
--void rcu_segcblist_set_len(struct rcu_segcblist *rsclp, long v)
-+static void rcu_segcblist_set_len(struct rcu_segcblist *rsclp, long v)
- {
- #ifdef CONFIG_RCU_NOCB_CPU
- 	atomic_long_set(&rsclp->len, v);
-@@ -104,7 +104,7 @@ void rcu_segcblist_set_len(struct rcu_segcblist *rsclp, long v)
-  * This increase is fully ordered with respect to the callers accesses
-  * both before and after.
+-#define assert_rcu_or_wq_mutex(wq)					\
+-	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
+-			 !lockdep_is_held(&wq->mutex),			\
+-			 "RCU or wq->mutex should be held")
+-
+ #define assert_rcu_or_wq_mutex_or_pool_mutex(wq)			\
+ 	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&			\
+ 			 !lockdep_is_held(&wq->mutex) &&		\
+@@ -425,9 +420,8 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
+  * ignored.
   */
--void rcu_segcblist_add_len(struct rcu_segcblist *rsclp, long v)
-+static void rcu_segcblist_add_len(struct rcu_segcblist *rsclp, long v)
- {
- #ifdef CONFIG_RCU_NOCB_CPU
- 	smp_mb__before_atomic(); /* Up to the caller! */
-@@ -134,7 +134,7 @@ void rcu_segcblist_inc_len(struct rcu_segcblist *rsclp)
-  * with the actual number of callbacks on the structure.  This exchange is
-  * fully ordered with respect to the callers accesses both before and after.
-  */
--long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
-+static long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
- {
- #ifdef CONFIG_RCU_NOCB_CPU
- 	return atomic_long_xchg(&rsclp->len, v);
+ #define for_each_pwq(pwq, wq)						\
+-	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node)		\
+-		if (({ assert_rcu_or_wq_mutex(wq); false; })) { }	\
+-		else
++	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node,		\
++				 lockdep_is_held(&(wq->mutex)))
+ 
+ #ifdef CONFIG_DEBUG_OBJECTS_WORK
+ 
 -- 
 2.9.5
 
