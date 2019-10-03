@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C544CAB24
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92991CA992
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388887AbfJCQQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:16:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40400 "EHLO mail.kernel.org"
+        id S2404971AbfJCQon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:44:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388869AbfJCQPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:15:55 -0400
+        id S2405387AbfJCQol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:44:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BFA92054F;
-        Thu,  3 Oct 2019 16:15:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30C6C2054F;
+        Thu,  3 Oct 2019 16:44:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119354;
-        bh=w+JMfZ2HyJWwo/lkQZIKDcRJmOHuWYVfXivgguIOXQw=;
+        s=default; t=1570121079;
+        bh=jOClb/r4hAIlF8jl1R+bDJik8R31w3LHusHcwDpepHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BS+Iym9o3rhC96MKJF+icnZgSYu6vF98QOVsm7exLv2nLEBkULbNCWz339y/Qo7+e
-         6yiH009LfMppUPHjjxLqyuyhR79RxddqCkVOs1nF6lyiJdKuDcf6+SdTcqW9f84h5f
-         PtAXdqrE+hAoka0M4Xt+jdMoO0ChkI8lX0C7YQLI=
+        b=xW8Bpyy3Uke9TD16JFhuXokukRptXu8N4/H+1CyLQWJOhgvvecx/ZMK5QHVWBYuRh
+         wHsou+99i+iBzYJD+j6E4n+nbwKstfbmDOnKA74q6bRFkJPJuTp2WYt6Fdq1rIt6e2
+         NUp6pF9BxAWStI92BKvl2fvlWfSzTM6WxnwMEzNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 009/211] openvswitch: change type of UPCALL_PID attribute to NLA_UNSPEC
-Date:   Thu,  3 Oct 2019 17:51:15 +0200
-Message-Id: <20191003154449.283907714@linuxfoundation.org>
+        stable@vger.kernel.org, John Keeping <john@metanate.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 111/344] perf unwind: Fix libunwind when tid != pid
+Date:   Thu,  3 Oct 2019 17:51:16 +0200
+Message-Id: <20191003154551.163214533@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +49,363 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: John Keeping <john@metanate.com>
 
-[ Upstream commit ea8564c865299815095bebeb4b25bef474218e4c ]
+[ Upstream commit e8ba2906f6b9054102ad035ac9cafad9d4168589 ]
 
-userspace openvswitch patch "(dpif-linux: Implement the API
-functions to allow multiple handler threads read upcall)"
-changes its type from U32 to UNSPEC, but leave the kernel
-unchanged
+Commit e5adfc3e7e77 ("perf map: Synthesize maps only for thread group
+leader") changed the recording side so that we no longer get mmap events
+for threads other than the thread group leader (when synthesising these
+events for threads which exist before perf is started).
 
-and after kernel 6e237d099fac "(netlink: Relax attr validation
-for fixed length types)", this bug is exposed by the below
-warning
+When a file recorded after this change is loaded, the lack of mmap
+records mean that unwinding is not set up for any other threads.
 
-	[   57.215841] netlink: 'ovs-vswitchd': attribute type 5 has an invalid length.
+This can be seen in a simple record/report scenario:
 
-Fixes: 5cd667b0a456 ("openvswitch: Allow each vport to have an array of 'port_id's")
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	perf record --call-graph=dwarf -t $TID
+	perf report
+
+If $TID is a process ID then the report will show call graphs, but if
+$TID is a secondary thread the output is as if --call-graph=none was
+specified.
+
+Following the rationale in that commit, move the libunwind fields into
+struct map_groups and update the libunwind functions to take this
+instead of the struct thread.  This is only required for
+unwind__finish_access which must now be called from map_groups__delete
+and the others are changed for symmetry.
+
+Note that unwind__get_entries keeps the thread argument since it is
+required for symbol lookup and the libdw unwind provider uses the thread
+ID.
+
+Signed-off-by: John Keeping <john@metanate.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: e5adfc3e7e77 ("perf map: Synthesize maps only for thread group leader")
+Link: http://lkml.kernel.org/r/20190815100146.28842-2-john@metanate.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/openvswitch/datapath.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/map.c                    |  3 ++-
+ tools/perf/util/map_groups.h             |  4 +++
+ tools/perf/util/thread.c                 |  7 +++--
+ tools/perf/util/thread.h                 |  4 ---
+ tools/perf/util/unwind-libunwind-local.c | 18 ++++++-------
+ tools/perf/util/unwind-libunwind.c       | 34 ++++++++++++------------
+ tools/perf/util/unwind.h                 | 25 ++++++++---------
+ 7 files changed, 48 insertions(+), 47 deletions(-)
 
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -2239,7 +2239,7 @@ static const struct nla_policy vport_pol
- 	[OVS_VPORT_ATTR_STATS] = { .len = sizeof(struct ovs_vport_stats) },
- 	[OVS_VPORT_ATTR_PORT_NO] = { .type = NLA_U32 },
- 	[OVS_VPORT_ATTR_TYPE] = { .type = NLA_U32 },
--	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_U32 },
-+	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_UNSPEC },
- 	[OVS_VPORT_ATTR_OPTIONS] = { .type = NLA_NESTED },
- 	[OVS_VPORT_ATTR_IFINDEX] = { .type = NLA_U32 },
- 	[OVS_VPORT_ATTR_NETNSID] = { .type = NLA_S32 },
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 668410b1d426f..7666206d06fa7 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -647,6 +647,7 @@ struct map_groups *map_groups__new(struct machine *machine)
+ void map_groups__delete(struct map_groups *mg)
+ {
+ 	map_groups__exit(mg);
++	unwind__finish_access(mg);
+ 	free(mg);
+ }
+ 
+@@ -887,7 +888,7 @@ int map_groups__clone(struct thread *thread, struct map_groups *parent)
+ 		if (new == NULL)
+ 			goto out_unlock;
+ 
+-		err = unwind__prepare_access(thread, new, NULL);
++		err = unwind__prepare_access(mg, new, NULL);
+ 		if (err)
+ 			goto out_unlock;
+ 
+diff --git a/tools/perf/util/map_groups.h b/tools/perf/util/map_groups.h
+index 5f25efa6d6bcd..77252e14008fb 100644
+--- a/tools/perf/util/map_groups.h
++++ b/tools/perf/util/map_groups.h
+@@ -31,6 +31,10 @@ struct map_groups {
+ 	struct maps	 maps;
+ 	struct machine	 *machine;
+ 	refcount_t	 refcnt;
++#ifdef HAVE_LIBUNWIND_SUPPORT
++	void				*addr_space;
++	struct unwind_libunwind_ops	*unwind_libunwind_ops;
++#endif
+ };
+ 
+ #define KMAP_NAME_LEN 256
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index 590793cc51424..bbf7816cba31c 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -105,7 +105,6 @@ void thread__delete(struct thread *thread)
+ 	}
+ 	up_write(&thread->comm_lock);
+ 
+-	unwind__finish_access(thread);
+ 	nsinfo__zput(thread->nsinfo);
+ 	srccode_state_free(&thread->srccode_state);
+ 
+@@ -252,7 +251,7 @@ static int ____thread__set_comm(struct thread *thread, const char *str,
+ 		list_add(&new->list, &thread->comm_list);
+ 
+ 		if (exec)
+-			unwind__flush_access(thread);
++			unwind__flush_access(thread->mg);
+ 	}
+ 
+ 	thread->comm_set = true;
+@@ -332,7 +331,7 @@ int thread__insert_map(struct thread *thread, struct map *map)
+ {
+ 	int ret;
+ 
+-	ret = unwind__prepare_access(thread, map, NULL);
++	ret = unwind__prepare_access(thread->mg, map, NULL);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -352,7 +351,7 @@ static int __thread__prepare_access(struct thread *thread)
+ 	down_read(&maps->lock);
+ 
+ 	for (map = maps__first(maps); map; map = map__next(map)) {
+-		err = unwind__prepare_access(thread, map, &initialized);
++		err = unwind__prepare_access(thread->mg, map, &initialized);
+ 		if (err || initialized)
+ 			break;
+ 	}
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index e97ef6977eb91..bf06113be4f3f 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -44,10 +44,6 @@ struct thread {
+ 	struct thread_stack	*ts;
+ 	struct nsinfo		*nsinfo;
+ 	struct srccode_state	srccode_state;
+-#ifdef HAVE_LIBUNWIND_SUPPORT
+-	void				*addr_space;
+-	struct unwind_libunwind_ops	*unwind_libunwind_ops;
+-#endif
+ 	bool			filter;
+ 	int			filter_entry_depth;
+ };
+diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
+index 71a788921b621..ebdbb056510cb 100644
+--- a/tools/perf/util/unwind-libunwind-local.c
++++ b/tools/perf/util/unwind-libunwind-local.c
+@@ -616,26 +616,26 @@ static unw_accessors_t accessors = {
+ 	.get_proc_name		= get_proc_name,
+ };
+ 
+-static int _unwind__prepare_access(struct thread *thread)
++static int _unwind__prepare_access(struct map_groups *mg)
+ {
+-	thread->addr_space = unw_create_addr_space(&accessors, 0);
+-	if (!thread->addr_space) {
++	mg->addr_space = unw_create_addr_space(&accessors, 0);
++	if (!mg->addr_space) {
+ 		pr_err("unwind: Can't create unwind address space.\n");
+ 		return -ENOMEM;
+ 	}
+ 
+-	unw_set_caching_policy(thread->addr_space, UNW_CACHE_GLOBAL);
++	unw_set_caching_policy(mg->addr_space, UNW_CACHE_GLOBAL);
+ 	return 0;
+ }
+ 
+-static void _unwind__flush_access(struct thread *thread)
++static void _unwind__flush_access(struct map_groups *mg)
+ {
+-	unw_flush_cache(thread->addr_space, 0, 0);
++	unw_flush_cache(mg->addr_space, 0, 0);
+ }
+ 
+-static void _unwind__finish_access(struct thread *thread)
++static void _unwind__finish_access(struct map_groups *mg)
+ {
+-	unw_destroy_addr_space(thread->addr_space);
++	unw_destroy_addr_space(mg->addr_space);
+ }
+ 
+ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
+@@ -660,7 +660,7 @@ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
+ 	 */
+ 	if (max_stack - 1 > 0) {
+ 		WARN_ONCE(!ui->thread, "WARNING: ui->thread is NULL");
+-		addr_space = ui->thread->addr_space;
++		addr_space = ui->thread->mg->addr_space;
+ 
+ 		if (addr_space == NULL)
+ 			return -1;
+diff --git a/tools/perf/util/unwind-libunwind.c b/tools/perf/util/unwind-libunwind.c
+index c0811977d7d54..b843f9d0a9ea2 100644
+--- a/tools/perf/util/unwind-libunwind.c
++++ b/tools/perf/util/unwind-libunwind.c
+@@ -11,13 +11,13 @@ struct unwind_libunwind_ops __weak *local_unwind_libunwind_ops;
+ struct unwind_libunwind_ops __weak *x86_32_unwind_libunwind_ops;
+ struct unwind_libunwind_ops __weak *arm64_unwind_libunwind_ops;
+ 
+-static void unwind__register_ops(struct thread *thread,
++static void unwind__register_ops(struct map_groups *mg,
+ 			  struct unwind_libunwind_ops *ops)
+ {
+-	thread->unwind_libunwind_ops = ops;
++	mg->unwind_libunwind_ops = ops;
+ }
+ 
+-int unwind__prepare_access(struct thread *thread, struct map *map,
++int unwind__prepare_access(struct map_groups *mg, struct map *map,
+ 			   bool *initialized)
+ {
+ 	const char *arch;
+@@ -28,7 +28,7 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
+ 	if (!dwarf_callchain_users)
+ 		return 0;
+ 
+-	if (thread->addr_space) {
++	if (mg->addr_space) {
+ 		pr_debug("unwind: thread map already set, dso=%s\n",
+ 			 map->dso->name);
+ 		if (initialized)
+@@ -37,14 +37,14 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
+ 	}
+ 
+ 	/* env->arch is NULL for live-mode (i.e. perf top) */
+-	if (!thread->mg->machine->env || !thread->mg->machine->env->arch)
++	if (!mg->machine->env || !mg->machine->env->arch)
+ 		goto out_register;
+ 
+-	dso_type = dso__type(map->dso, thread->mg->machine);
++	dso_type = dso__type(map->dso, mg->machine);
+ 	if (dso_type == DSO__TYPE_UNKNOWN)
+ 		return 0;
+ 
+-	arch = perf_env__arch(thread->mg->machine->env);
++	arch = perf_env__arch(mg->machine->env);
+ 
+ 	if (!strcmp(arch, "x86")) {
+ 		if (dso_type != DSO__TYPE_64BIT)
+@@ -59,37 +59,37 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
+ 		return 0;
+ 	}
+ out_register:
+-	unwind__register_ops(thread, ops);
++	unwind__register_ops(mg, ops);
+ 
+-	err = thread->unwind_libunwind_ops->prepare_access(thread);
++	err = mg->unwind_libunwind_ops->prepare_access(mg);
+ 	if (initialized)
+ 		*initialized = err ? false : true;
+ 	return err;
+ }
+ 
+-void unwind__flush_access(struct thread *thread)
++void unwind__flush_access(struct map_groups *mg)
+ {
+ 	if (!dwarf_callchain_users)
+ 		return;
+ 
+-	if (thread->unwind_libunwind_ops)
+-		thread->unwind_libunwind_ops->flush_access(thread);
++	if (mg->unwind_libunwind_ops)
++		mg->unwind_libunwind_ops->flush_access(mg);
+ }
+ 
+-void unwind__finish_access(struct thread *thread)
++void unwind__finish_access(struct map_groups *mg)
+ {
+ 	if (!dwarf_callchain_users)
+ 		return;
+ 
+-	if (thread->unwind_libunwind_ops)
+-		thread->unwind_libunwind_ops->finish_access(thread);
++	if (mg->unwind_libunwind_ops)
++		mg->unwind_libunwind_ops->finish_access(mg);
+ }
+ 
+ int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
+ 			 struct thread *thread,
+ 			 struct perf_sample *data, int max_stack)
+ {
+-	if (thread->unwind_libunwind_ops)
+-		return thread->unwind_libunwind_ops->get_entries(cb, arg, thread, data, max_stack);
++	if (thread->mg->unwind_libunwind_ops)
++		return thread->mg->unwind_libunwind_ops->get_entries(cb, arg, thread, data, max_stack);
+ 	return 0;
+ }
+diff --git a/tools/perf/util/unwind.h b/tools/perf/util/unwind.h
+index 8a44a1569a21b..3a7d00c20d862 100644
+--- a/tools/perf/util/unwind.h
++++ b/tools/perf/util/unwind.h
+@@ -6,6 +6,7 @@
+ #include <linux/types.h>
+ 
+ struct map;
++struct map_groups;
+ struct perf_sample;
+ struct symbol;
+ struct thread;
+@@ -19,9 +20,9 @@ struct unwind_entry {
+ typedef int (*unwind_entry_cb_t)(struct unwind_entry *entry, void *arg);
+ 
+ struct unwind_libunwind_ops {
+-	int (*prepare_access)(struct thread *thread);
+-	void (*flush_access)(struct thread *thread);
+-	void (*finish_access)(struct thread *thread);
++	int (*prepare_access)(struct map_groups *mg);
++	void (*flush_access)(struct map_groups *mg);
++	void (*finish_access)(struct map_groups *mg);
+ 	int (*get_entries)(unwind_entry_cb_t cb, void *arg,
+ 			   struct thread *thread,
+ 			   struct perf_sample *data, int max_stack);
+@@ -46,20 +47,20 @@ int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
+ #endif
+ 
+ int LIBUNWIND__ARCH_REG_ID(int regnum);
+-int unwind__prepare_access(struct thread *thread, struct map *map,
++int unwind__prepare_access(struct map_groups *mg, struct map *map,
+ 			   bool *initialized);
+-void unwind__flush_access(struct thread *thread);
+-void unwind__finish_access(struct thread *thread);
++void unwind__flush_access(struct map_groups *mg);
++void unwind__finish_access(struct map_groups *mg);
+ #else
+-static inline int unwind__prepare_access(struct thread *thread __maybe_unused,
++static inline int unwind__prepare_access(struct map_groups *mg __maybe_unused,
+ 					 struct map *map __maybe_unused,
+ 					 bool *initialized __maybe_unused)
+ {
+ 	return 0;
+ }
+ 
+-static inline void unwind__flush_access(struct thread *thread __maybe_unused) {}
+-static inline void unwind__finish_access(struct thread *thread __maybe_unused) {}
++static inline void unwind__flush_access(struct map_groups *mg __maybe_unused) {}
++static inline void unwind__finish_access(struct map_groups *mg __maybe_unused) {}
+ #endif
+ #else
+ static inline int
+@@ -72,14 +73,14 @@ unwind__get_entries(unwind_entry_cb_t cb __maybe_unused,
+ 	return 0;
+ }
+ 
+-static inline int unwind__prepare_access(struct thread *thread __maybe_unused,
++static inline int unwind__prepare_access(struct map_groups *mg __maybe_unused,
+ 					 struct map *map __maybe_unused,
+ 					 bool *initialized __maybe_unused)
+ {
+ 	return 0;
+ }
+ 
+-static inline void unwind__flush_access(struct thread *thread __maybe_unused) {}
+-static inline void unwind__finish_access(struct thread *thread __maybe_unused) {}
++static inline void unwind__flush_access(struct map_groups *mg __maybe_unused) {}
++static inline void unwind__finish_access(struct map_groups *mg __maybe_unused) {}
+ #endif /* HAVE_DWARF_UNWIND_SUPPORT */
+ #endif /* __UNWIND_H */
+-- 
+2.20.1
+
 
 
