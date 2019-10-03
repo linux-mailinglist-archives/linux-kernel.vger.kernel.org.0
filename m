@@ -2,44 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 510D2CAC39
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3007CCAC3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732880AbfJCQHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:07:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54498 "EHLO mail.kernel.org"
+        id S1732895AbfJCQHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:07:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732858AbfJCQG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:58 -0400
+        id S1731841AbfJCQHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:07:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01DAC222BE;
-        Thu,  3 Oct 2019 16:06:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACC7020865;
+        Thu,  3 Oct 2019 16:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118817;
-        bh=NN1pVruRmKwEYEzP7tC27w3B8RxR6A5WUC+VH95oF3U=;
+        s=default; t=1570118820;
+        bh=vVO98uKnCrWzvCx0/1+0fFpO60BbjWNePNjbmaUcMxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SW5ZTXLtjO5LE2G38532uHkHNZaQwnIaFbWYoSb+iE39UGDpdLOdQV0Zu7dGBkrQN
-         SV2z1oAzyzYFz8MtukKb19VIJ8SAU/+DRMAaMn58fgHi5MC4lf5ZozaUOawrneMsBY
-         eg+AZwjYFDEwAw/nbWL4GlZIvTSP8Nbk+rziv4wo=
+        b=O8l/u1svfPn4bX2Wc4P2DPRdElOH0ZVrmPGOpP2pYCEDfCkls+sIJ7FSEePl2UEz6
+         T/8ylUr4m5094RZeRntvhTSkCJ4atWcTplS79XdODF2usJEv/qfDdtklyp51KCZ1ab
+         UPbum9YmkmzLJ8ReHEjam+E0K4CULEALdmLw3iHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com,
-        Waiman Long <longman@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 020/185] locking/lockdep: Add debug_locks check in __lock_downgrade()
-Date:   Thu,  3 Oct 2019 17:51:38 +0200
-Message-Id: <20191003154442.180689450@linuxfoundation.org>
+        stable@vger.kernel.org, Jiaxing Luo <luojiaxing@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 021/185] irqchip/gic-v3-its: Fix LPI release for Multi-MSI devices
+Date:   Thu,  3 Oct 2019 17:51:39 +0200
+Message-Id: <20191003154442.497231363@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -52,48 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waiman Long <longman@redhat.com>
+From: Marc Zyngier <maz@kernel.org>
 
-[ Upstream commit 71492580571467fb7177aade19c18ce7486267f5 ]
+[ Upstream commit c9c96e30ecaa0aafa225aa1a5392cb7db17c7a82 ]
 
-Tetsuo Handa had reported he saw an incorrect "downgrading a read lock"
-warning right after a previous lockdep warning. It is likely that the
-previous warning turned off lock debugging causing the lockdep to have
-inconsistency states leading to the lock downgrade warning.
+When allocating a range of LPIs for a Multi-MSI capable device,
+this allocation extended to the closest power of 2.
 
-Fix that by add a check for debug_locks at the beginning of
-__lock_downgrade().
+But on the release path, the interrupts are released one by
+one. This results in not releasing the "extra" range, leaking
+the its_device. Trying to reprobe the device will then fail.
 
-Debugged-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: https://lkml.kernel.org/r/1547093005-26085-1-git-send-email-longman@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fix it by releasing the LPIs the same way we allocate them.
+
+Fixes: 8208d1708b88 ("irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size")
+Reported-by: Jiaxing Luo <luojiaxing@huawei.com>
+Tested-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/f5e948aa-e32f-3f74-ae30-31fee06c2a74@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/locking/lockdep.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/irqchip/irq-gic-v3-its.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3688,6 +3688,9 @@ static int __lock_downgrade(struct lockd
- 	unsigned int depth;
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index f80666acb9efd..52238e6bed392 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -2269,14 +2269,13 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+ 	struct its_node *its = its_dev->its;
  	int i;
  
-+	if (unlikely(!debug_locks))
-+		return 0;
++	bitmap_release_region(its_dev->event_map.lpi_map,
++			      its_get_event_id(irq_domain_get_irq_data(domain, virq)),
++			      get_count_order(nr_irqs));
 +
- 	depth = curr->lockdep_depth;
- 	/*
- 	 * This function is about (re)setting the class of a held lock,
+ 	for (i = 0; i < nr_irqs; i++) {
+ 		struct irq_data *data = irq_domain_get_irq_data(domain,
+ 								virq + i);
+-		u32 event = its_get_event_id(data);
+-
+-		/* Mark interrupt index as unused */
+-		clear_bit(event, its_dev->event_map.lpi_map);
+-
+ 		/* Nuke the entry in the domain */
+ 		irq_domain_reset_irq_data(data);
+ 	}
+-- 
+2.20.1
+
 
 
