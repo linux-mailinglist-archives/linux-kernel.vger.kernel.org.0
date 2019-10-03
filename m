@@ -2,97 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F89CAE40
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 064FCCAE46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389458AbfJCSeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 14:34:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42758 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729993AbfJCSeN (ORCPT
+        id S2389598AbfJCSfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 14:35:15 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47713 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729993AbfJCSfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:34:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l7lg82rRQaQDVfeOcm7Rfr/SwqkkoNP3HHRQDP2RzwA=; b=rdHcT+kn7cFovw6rm0OfSTKCS
-        KDwDt+68dvvvK0nEwAp1CE5O0vibScB+1y5mauwSu7U9vyyN0snsFE6rnXamMw81w5ovB2KRSgE1F
-        Ms9pOKjNeCi75rnVVNfYuXCApsQcZ0F4DkAxfVK3RuJSKOwVLgQTEFG+c1Uk7zZpCSy8A=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iG5vQ-0006CL-C9; Thu, 03 Oct 2019 18:34:04 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 837CD2740210; Thu,  3 Oct 2019 19:34:03 +0100 (BST)
-Date:   Thu, 3 Oct 2019 19:34:03 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Libin Yang <libin.yang@intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.3 039/344] ASoC: SOF: Intel: hda: Make hdac_device
- device-managed
-Message-ID: <20191003183403.GD6090@sirena.co.uk>
-References: <20191003154540.062170222@linuxfoundation.org>
- <20191003154543.920067214@linuxfoundation.org>
- <20191003172617.GA6090@sirena.co.uk>
- <20191003181937.GC3457141@kroah.com>
+        Thu, 3 Oct 2019 14:35:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570127713;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RTMENbih6iijQ9dlDl/6i1xREO8UhrKYbrBbztUnU2o=;
+        b=bgnatwRW7/mo+60RilcyF97tjfrDdWMNAdqDCvDHKU5ZPeqsqkOuRiTo/v7A3QalAR9jZf
+        NM2RBed9S0PWO5ykySNkkWMDkmfhOppee757TQzNkR6R+dZQdNzFtUzU18O9N7G1l9Kzqz
+        69SF3ooh0iSZBN9vNVoemPSOvUYN1CI=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-355-jVyJ-q_nNJeVFKZoosCI5w-1; Thu, 03 Oct 2019 14:35:11 -0400
+Received: by mail-qk1-f200.google.com with SMTP id r17so3601950qkm.16
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 11:35:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EyEBFcoclk0k8j6w3rMJI9yX9wb88qrPD3qqvau6GSE=;
+        b=tnK71ucQA7TgLzDi39FVEY7aRFFUws00TqXM2RFcLfDy17dnHFy0oeYT5+z9L3xeph
+         aOfHYeGaDifyOedOaXJegG0QNu+J7Rm0PHQMolSUqgmfjBPE2crC9IiTG6IaGPLbUpyY
+         7Bd/zSBEiZNPZPNcrkUA5nCMyosfyXxt7brn9Bx/j2yh0DjC14UZfymeIQEcA3JFx1yS
+         3/5tRfiz990T4cPmgHoNNcNUTQ+JeTFvLHnVKqiILIWtIFyHaSD591sONqSxQuDe634J
+         TRwXczozrlXnoiEch2buYlvCYuuJB0IDefXFJOdoR+uo8Ma1cMSHu7d8ZP45axGYyG/0
+         AKzA==
+X-Gm-Message-State: APjAAAV4dyW4kHXYNkz5HYQQk9aodvMoxiXzUt5CEuRPlb1iqVi+9RQI
+        fMPnAlMfXE9/LMTGQDW7kC0XqJ+kkFfEHRCHTES8tWaNkgyUYh2n9V9AOSImx6kRAUi0GTq4jT1
+        K9BD+Qeb8SacRs9GM69x+thEbNcwK8J0vbh4Pd526
+X-Received: by 2002:a37:5887:: with SMTP id m129mr5700271qkb.27.1570127710763;
+        Thu, 03 Oct 2019 11:35:10 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzPabDzehR5qiqX01GyYVQ9AZvGW8yw2/ObOo/CM+TKkKRwFdBL9hhoAIlkf7yckrDXv+Uo+KS8XS17NN2bfFY=
+X-Received: by 2002:a37:5887:: with SMTP id m129mr5700250qkb.27.1570127710450;
+ Thu, 03 Oct 2019 11:35:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6Nae48J/T25AfBN4"
-Content-Disposition: inline
-In-Reply-To: <20191003181937.GC3457141@kroah.com>
-X-Cookie: Reactor error - core dumped!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191002215812.GA135681@dtor-ws>
+In-Reply-To: <20191002215812.GA135681@dtor-ws>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 3 Oct 2019 14:34:59 -0400
+Message-ID: <CAO-hwJ+v1jJJ=APP__84SPrFdR+Te8nAxR6DirD8a9US_Bm4wQ@mail.gmail.com>
+Subject: Re: [PATCH] Input: add input_get_poll_interval()
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+X-MC-Unique: jVyJ-q_nNJeVFKZoosCI5w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dmitry,
 
---6Nae48J/T25AfBN4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Oct 2, 2019 at 5:58 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> Some drivers need to be able to know the current polling interval for
+> devices working in polling mode, let's allow them fetching it.
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On Thu, Oct 03, 2019 at 08:19:37PM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Oct 03, 2019 at 06:26:17PM +0100, Mark Brown wrote:
-> > On Thu, Oct 03, 2019 at 05:50:04PM +0200, Greg Kroah-Hartman wrote:
+Not sure if you really need my input on this one, but, sure, looks good to =
+me:
+Acked-By: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-> > > Signed-off-by: Libin Yang <libin.yang@intel.com>
-> > > Signed-off-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-> > > Reviewed-by: Takashi Iwai <tiwai@suse.de>
-> > > Link: https://lore.kernel.org/r/20190626070450.7229-1-ranjani.sridharan@linux.intel.com
-> > > Signed-off-by: Mark Brown <broonie@kernel.org>
-> > > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > > ---
+Cheers,
+Benjamin
 
-> > Looks like you're missing your own signoff on this (and quite a few of
-> > the others)?
+> ---
+>  drivers/input/input-poller.c | 9 +++++++++
+>  include/linux/input.h        | 1 +
+>  2 files changed, 10 insertions(+)
+>
+> diff --git a/drivers/input/input-poller.c b/drivers/input/input-poller.c
+> index 1b3d28964bb2..7d6b4e8879f1 100644
+> --- a/drivers/input/input-poller.c
+> +++ b/drivers/input/input-poller.c
+> @@ -123,6 +123,15 @@ void input_set_max_poll_interval(struct input_dev *d=
+ev, unsigned int interval)
+>  }
+>  EXPORT_SYMBOL(input_set_max_poll_interval);
+>
+> +int input_get_poll_interval(struct input_dev *dev)
+> +{
+> +       if (!dev->poller)
+> +               return -EINVAL;
+> +
+> +       return dev->poller->poll_interval;
+> +}
+> +EXPORT_SYMBOL(input_get_poll_interval);
+> +
+>  /* SYSFS interface */
+>
+>  static ssize_t input_dev_get_poll_interval(struct device *dev,
+> diff --git a/include/linux/input.h b/include/linux/input.h
+> index 31da4feaa1d8..a420324b7882 100644
+> --- a/include/linux/input.h
+> +++ b/include/linux/input.h
+> @@ -387,6 +387,7 @@ int input_setup_polling(struct input_dev *dev,
+>  void input_set_poll_interval(struct input_dev *dev, unsigned int interva=
+l);
+>  void input_set_min_poll_interval(struct input_dev *dev, unsigned int int=
+erval);
+>  void input_set_max_poll_interval(struct input_dev *dev, unsigned int int=
+erval);
+> +int input_get_poll_interval(struct input_dev *dev);
+>
+>  int __must_check input_register_handler(struct input_handler *);
+>  void input_unregister_handler(struct input_handler *);
+> --
+> 2.23.0.444.g18eeb5a265-goog
+>
+>
+> --
+> Dmitry
 
-> Sasha signs off on these, I didn't, as he is the one that queues them
-> up.
-
-It seems off when they go out as e-mail with you as the sender - it'll
-be OK in git if he's the committer of course but it's weird here.
-
---6Nae48J/T25AfBN4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2WPxoACgkQJNaLcl1U
-h9AxNwf+I1RACj7QAv9TLm9jlzO6uYlsr+zdnMrG+0ZOunWrliY1KLheoRB6M0xi
-mDqEJNimfEyhB4TddvIehWrbEA64IBq78XefzDknQnbyI/m/v6Lsd8F9ZWf9tbSQ
-sxwN4eh66bPap7YmACtltDh7TV0QVdo8u+y1zzVczQ/UBYUFDN+sfCfxBDL1GtAo
-w+AG6SBVAwl4pYBLwzB5DMpnk6s2MJOi1x9icmoBf/6jv4uGlUjDJN0DxGI8WMcE
-5K97j3661Y1IPLp9sBnXr4dJxd0u88b2qYTyoIuohv6ZCAjCh5ZXLh6mF0zOztW6
-PociXsKyM44Ze2Bp3P1docJMulodZA==
-=k2RV
------END PGP SIGNATURE-----
-
---6Nae48J/T25AfBN4--
