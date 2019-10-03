@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8523CA20A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78BBECA2CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731789AbfJCQBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:01:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45622 "EHLO mail.kernel.org"
+        id S1733162AbfJCQJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:09:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731780AbfJCQBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:01:23 -0400
+        id S1731985AbfJCQJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:09:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE043222BE;
-        Thu,  3 Oct 2019 16:01:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7D70207FF;
+        Thu,  3 Oct 2019 16:09:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118482;
-        bh=PzDVJIaJusdMjmT/cggQNTFeh15nn52NkL+YCM8KRfM=;
+        s=default; t=1570118959;
+        bh=9JOBPaZ+2nE+YIpe80AMMSCTFSc0lfy/HUHq8QQ0QnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GC6QQQ3+SYk3euRvMcg7HDAgeMJwyZVT/+Bqt1WmNi7CVKLnMFOgU2yqUL2FGlAhd
-         wGP1uKF1QlszaTjY53bGYI4jFwevJjjKOCGJEPlRYJfdWgQbOXyFckfyg5jG8A90HV
-         ot5VVCyYXR77Jo+UxOLCfV4WvbjZhEw6oz+pV9YY=
+        b=XYinhMOIWnnRAC4hjochtYGautR2wpHtEmbHw/SYD54sW1i46IFE1FWHvBO3kIIby
+         YZlZ9azBvn5t93U8SxBYeAUDUSL3qz42I+p1tHjH2AUP8afPIbrofqg97sXOeLC3Dm
+         Abdb1GoikhMvC2MgXjPwFzLqI2Lwa36mtysvWVco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Mamonov <pmamonov@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.9 026/129] net/phy: fix DP83865 10 Mbps HDX loopback disable function
-Date:   Thu,  3 Oct 2019 17:52:29 +0200
-Message-Id: <20191003154330.854907619@linuxfoundation.org>
+        stable@vger.kernel.org, Ard van Breemen <ard@kwaak.net>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 072/185] ALSA: usb-audio: Skip bSynchAddress endpoint check if it is invalid
+Date:   Thu,  3 Oct 2019 17:52:30 +0200
+Message-Id: <20191003154453.846968339@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Mamonov <pmamonov@gmail.com>
+From: Ard van Breemen <ard@kwaak.net>
 
-[ Upstream commit e47488b2df7f9cb405789c7f5d4c27909fc597ae ]
+[ Upstream commit 1b34121d9f26d272b0b2334209af6b6fc82d4bf1 ]
 
-According to the DP83865 datasheet "the 10 Mbps HDX loopback can be
-disabled in the expanded memory register 0x1C0.1". The driver erroneously
-used bit 0 instead of bit 1.
+The Linux kernel assumes that get_endpoint(alts,0) and
+get_endpoint(alts,1) are eachothers feedback endpoints.
+To reassure that validity it will test bsynchaddress to comply with that
+assumption. But if the bsyncaddress is 0 (invalid), it will flag that as
+a wrong assumption and return an error.
+Fix: Skip the test if bSynchAddress is 0.
+Note: those with a valid bSynchAddress should have a code quirck added.
 
-Fixes: 4621bf129856 ("phy: Add file missed in previous commit.")
-Signed-off-by: Peter Mamonov <pmamonov@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ard van Breemen <ard@kwaak.net>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/national.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ sound/usb/pcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/phy/national.c
-+++ b/drivers/net/phy/national.c
-@@ -110,14 +110,17 @@ static void ns_giga_speed_fallback(struc
- 
- static void ns_10_base_t_hdx_loopack(struct phy_device *phydev, int disable)
- {
-+	u16 lb_dis = BIT(1);
-+
- 	if (disable)
--		ns_exp_write(phydev, 0x1c0, ns_exp_read(phydev, 0x1c0) | 1);
-+		ns_exp_write(phydev, 0x1c0,
-+			     ns_exp_read(phydev, 0x1c0) | lb_dis);
- 	else
- 		ns_exp_write(phydev, 0x1c0,
--			     ns_exp_read(phydev, 0x1c0) & 0xfffe);
-+			     ns_exp_read(phydev, 0x1c0) & ~lb_dis);
- 
- 	pr_debug("10BASE-T HDX loopback %s\n",
--		 (ns_exp_read(phydev, 0x1c0) & 0x0001) ? "off" : "on");
-+		 (ns_exp_read(phydev, 0x1c0) & lb_dis) ? "off" : "on");
- }
- 
- static int ns_config_init(struct phy_device *phydev)
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index b1a1eb1f65aa3..ff38fca1781b6 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -470,6 +470,7 @@ static int set_sync_endpoint(struct snd_usb_substream *subs,
+ 	}
+ 	ep = get_endpoint(alts, 1)->bEndpointAddress;
+ 	if (get_endpoint(alts, 0)->bLength >= USB_DT_ENDPOINT_AUDIO_SIZE &&
++	    get_endpoint(alts, 0)->bSynchAddress != 0 &&
+ 	    ((is_playback && ep != (unsigned int)(get_endpoint(alts, 0)->bSynchAddress | USB_DIR_IN)) ||
+ 	     (!is_playback && ep != (unsigned int)(get_endpoint(alts, 0)->bSynchAddress & ~USB_DIR_IN)))) {
+ 		dev_err(&dev->dev,
+-- 
+2.20.1
+
 
 
