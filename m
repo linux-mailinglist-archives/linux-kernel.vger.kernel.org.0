@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF72CACE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B31CAD48
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbfJCRbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:31:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60068 "EHLO mail.kernel.org"
+        id S2389268AbfJCRiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:38:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387659AbfJCQKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:10:35 -0400
+        id S1729496AbfJCQCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:02:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA9BF222C8;
-        Thu,  3 Oct 2019 16:10:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC4C721D81;
+        Thu,  3 Oct 2019 16:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119034;
-        bh=ZD0XjW10YGaxOGClqFSscyyezkVzBpPiqFTkIEhmeN4=;
+        s=default; t=1570118569;
+        bh=FUo7+AM5G1HtGd+uzgYEtJ+YHg9f4YGf1zd1fEXlen0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ptk+HZBAw8ftR+i+LjntPX8lIDVvA1u2ZSEfhR9CUNiqQw7xwdYCO8WLDHtpAHE2/
-         dD/bToK2NuL/OY8dPY02S6M6SUfAbi0OSSNVXo4hfG+4gTKVT/JcNuTyFWgDPoljMh
-         ilCVJv83zPljIO3qEleJMmBxJbgWBTlKpdOtqCog=
+        b=bb8O0UFHWMZ5OcSCY1dkOiL04D/yyxbtzaN/OpqRBsf+p3PB5fWZZJ+8xGK6as3i2
+         vyroAP/9G+9C2/vcrpLXtXA+0XozBEH88AFpGyye47eu51/Hc0OkXzSXtnQYudVyOI
+         7+YbCTZnCXp5/UqenYalt0e66l69HHKkezJ8x+Zg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yazen Ghannam <yazen.ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
+        stable@vger.kernel.org,
+        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Song Liu <songliubraving@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 101/185] EDAC/amd64: Recognize DRAM device type ECC capability
-Date:   Thu,  3 Oct 2019 17:52:59 +0200
-Message-Id: <20191003154501.450070671@linuxfoundation.org>
+Subject: [PATCH 4.9 058/129] md: dont call spare_active in md_reap_sync_thread if all member devices cant work
+Date:   Thu,  3 Oct 2019 17:53:01 +0200
+Message-Id: <20191003154345.384807398@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,70 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Guoqing Jiang <jgq516@gmail.com>
 
-[ Upstream commit f8be8e5680225ac9caf07d4545f8529b7395327f ]
+[ Upstream commit 0d8ed0e9bf9643f27f4816dca61081784dedb38d ]
 
-AMD Family 17h systems support x4 and x16 DRAM devices. However, the
-device type is not checked when setting mci.edac_ctl_cap.
+When add one disk to array, the md_reap_sync_thread is responsible
+to activate the spare and set In_sync flag for the new member in
+spare_active().
 
-Set the appropriate capability flag based on the device type.
+But if raid1 has one member disk A, and disk B is added to the array.
+Then we offline A before all the datas are synchronized from A to B,
+obviously B doesn't have the latest data as A, but B is still marked
+with In_sync flag.
 
-Default to x8 DRAM device when neither the x4 or x16 bits are set.
+So let's not call spare_active under the condition, otherwise B is
+still showed with 'U' state which is not correct.
 
- [ bp: reverse cpk_en check to save an indentation level. ]
-
-Fixes: 2d09d8f301f5 ("EDAC, amd64: Determine EDAC MC capabilities on Fam17h")
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190821235938.118710-3-Yazen.Ghannam@amd.com
+Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/amd64_edac.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/md/md.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 667f5ba0403c0..35b847b51bfa9 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -3101,12 +3101,15 @@ static bool ecc_enabled(struct pci_dev *F3, u16 nid)
- static inline void
- f17h_determine_edac_ctl_cap(struct mem_ctl_info *mci, struct amd64_pvt *pvt)
- {
--	u8 i, ecc_en = 1, cpk_en = 1;
-+	u8 i, ecc_en = 1, cpk_en = 1, dev_x4 = 1, dev_x16 = 1;
- 
- 	for (i = 0; i < NUM_UMCS; i++) {
- 		if (pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) {
- 			ecc_en &= !!(pvt->umc[i].umc_cap_hi & UMC_ECC_ENABLED);
- 			cpk_en &= !!(pvt->umc[i].umc_cap_hi & UMC_ECC_CHIPKILL_CAP);
-+
-+			dev_x4  &= !!(pvt->umc[i].dimm_cfg & BIT(6));
-+			dev_x16 &= !!(pvt->umc[i].dimm_cfg & BIT(7));
- 		}
- 	}
- 
-@@ -3114,8 +3117,15 @@ f17h_determine_edac_ctl_cap(struct mem_ctl_info *mci, struct amd64_pvt *pvt)
- 	if (ecc_en) {
- 		mci->edac_ctl_cap |= EDAC_FLAG_SECDED;
- 
--		if (cpk_en)
-+		if (!cpk_en)
-+			return;
-+
-+		if (dev_x4)
- 			mci->edac_ctl_cap |= EDAC_FLAG_S4ECD4ED;
-+		else if (dev_x16)
-+			mci->edac_ctl_cap |= EDAC_FLAG_S16ECD16ED;
-+		else
-+			mci->edac_ctl_cap |= EDAC_FLAG_S8ECD8ED;
- 	}
- }
- 
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 765a16dab2e5f..c1c514792457a 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -8573,7 +8573,8 @@ void md_reap_sync_thread(struct mddev *mddev)
+ 	/* resync has finished, collect result */
+ 	md_unregister_thread(&mddev->sync_thread);
+ 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+-	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery)) {
++	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
++	    mddev->degraded != mddev->raid_disks) {
+ 		/* success...*/
+ 		/* activate any spares */
+ 		if (mddev->pers->spare_active(mddev)) {
 -- 
 2.20.1
 
