@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F179FCAC4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FF48CACF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733258AbfJCQIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56958 "EHLO mail.kernel.org"
+        id S1731853AbfJCRcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:32:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733208AbfJCQIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:40 -0400
+        id S1729041AbfJCQJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:09:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6ACC215EA;
-        Thu,  3 Oct 2019 16:08:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22ACC207FF;
+        Thu,  3 Oct 2019 16:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118919;
-        bh=YeAjsE6EFLoH/k4+lIuFyKsutqcnUMArJBUwkJaNMqo=;
+        s=default; t=1570118948;
+        bh=Nv9twrohaHZFYlosBKimIU3ZsQQJywuxTEEXDKqmwPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TTiSNlkKmD7tvlziioHbyBoboEj2liWaFdS1iBh592ivI/oGFukFG2EEmW6aX0qut
-         /cqvxIIAoCKzt0rzvBasakWj83SxAL4BMEjLz2g4TwLTrbBULg3cAVwOuNzc+FIStB
-         kyFFtkE5bqHo4OzkXZxFxHyejNqM1aRnw2Y+rAvk=
+        b=bf7iHA+7Ii77ipkXl71zIhImXJywu1t7/ini5qAlEWzAnr3CZcJ3xkOnrQPK39ihT
+         12YAZZ8XV8kAoeU0f+4xEacwnCuw8aMd3IExs9tps942NXceskXFbCzWOzQwTkcMRl
+         95jOTnLqkFzZY8UjlSrZ0KO1GH28b99xW6M3B4FA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 041/185] openvswitch: change type of UPCALL_PID attribute to NLA_UNSPEC
-Date:   Thu,  3 Oct 2019 17:51:59 +0200
-Message-Id: <20191003154446.986914094@linuxfoundation.org>
+        stable@vger.kernel.org, Takeshi Misawa <jeliantsurux@gmail.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+d9c8bf24e56416d7ce2c@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 042/185] ppp: Fix memory leak in ppp_write
+Date:   Thu,  3 Oct 2019 17:52:00 +0200
+Message-Id: <20191003154447.350820927@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,40 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Takeshi Misawa <jeliantsurux@gmail.com>
 
-[ Upstream commit ea8564c865299815095bebeb4b25bef474218e4c ]
+[ Upstream commit 4c247de564f1ff614d11b3bb5313fb70d7b9598b ]
 
-userspace openvswitch patch "(dpif-linux: Implement the API
-functions to allow multiple handler threads read upcall)"
-changes its type from U32 to UNSPEC, but leave the kernel
-unchanged
+When ppp is closing, __ppp_xmit_process() failed to enqueue skb
+and skb allocated in ppp_write() is leaked.
 
-and after kernel 6e237d099fac "(netlink: Relax attr validation
-for fixed length types)", this bug is exposed by the below
-warning
+syzbot reported :
+BUG: memory leak
+unreferenced object 0xffff88812a17bc00 (size 224):
+  comm "syz-executor673", pid 6952, jiffies 4294942888 (age 13.040s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000d110fff9>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
+    [<00000000d110fff9>] slab_post_alloc_hook mm/slab.h:522 [inline]
+    [<00000000d110fff9>] slab_alloc_node mm/slab.c:3262 [inline]
+    [<00000000d110fff9>] kmem_cache_alloc_node+0x163/0x2f0 mm/slab.c:3574
+    [<000000002d616113>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:197
+    [<000000000167fc45>] alloc_skb include/linux/skbuff.h:1055 [inline]
+    [<000000000167fc45>] ppp_write+0x48/0x120 drivers/net/ppp/ppp_generic.c:502
+    [<000000009ab42c0b>] __vfs_write+0x43/0xa0 fs/read_write.c:494
+    [<00000000086b2e22>] vfs_write fs/read_write.c:558 [inline]
+    [<00000000086b2e22>] vfs_write+0xee/0x210 fs/read_write.c:542
+    [<00000000a2b70ef9>] ksys_write+0x7c/0x130 fs/read_write.c:611
+    [<00000000ce5e0fdd>] __do_sys_write fs/read_write.c:623 [inline]
+    [<00000000ce5e0fdd>] __se_sys_write fs/read_write.c:620 [inline]
+    [<00000000ce5e0fdd>] __x64_sys_write+0x1e/0x30 fs/read_write.c:620
+    [<00000000d9d7b370>] do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:296
+    [<0000000006e6d506>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-	[   57.215841] netlink: 'ovs-vswitchd': attribute type 5 has an invalid length.
+Fix this by freeing skb, if ppp is closing.
 
-Fixes: 5cd667b0a456 ("openvswitch: Allow each vport to have an array of 'port_id's")
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
+Fixes: 6d066734e9f0 ("ppp: avoid loop in xmit recursion detection code")
+Reported-and-tested-by: syzbot+d9c8bf24e56416d7ce2c@syzkaller.appspotmail.com
+Signed-off-by: Takeshi Misawa <jeliantsurux@gmail.com>
+Reviewed-by: Guillaume Nault <gnault@redhat.com>
+Tested-by: Guillaume Nault <gnault@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/datapath.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ppp/ppp_generic.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -2240,7 +2240,7 @@ static const struct nla_policy vport_pol
- 	[OVS_VPORT_ATTR_STATS] = { .len = sizeof(struct ovs_vport_stats) },
- 	[OVS_VPORT_ATTR_PORT_NO] = { .type = NLA_U32 },
- 	[OVS_VPORT_ATTR_TYPE] = { .type = NLA_U32 },
--	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_U32 },
-+	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_UNSPEC },
- 	[OVS_VPORT_ATTR_OPTIONS] = { .type = NLA_NESTED },
- };
- 
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -1433,6 +1433,8 @@ static void __ppp_xmit_process(struct pp
+ 			netif_wake_queue(ppp->dev);
+ 		else
+ 			netif_stop_queue(ppp->dev);
++	} else {
++		kfree_skb(skb);
+ 	}
+ 	ppp_xmit_unlock(ppp);
+ }
 
 
