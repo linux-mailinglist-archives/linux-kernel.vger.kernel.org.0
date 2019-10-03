@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37D81CA9B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A431ACAAF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392909AbfJCQq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:46:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59636 "EHLO mail.kernel.org"
+        id S2389031AbfJCQQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:16:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390845AbfJCQqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:46:24 -0400
+        id S2389013AbfJCQQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:16:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72F6020867;
-        Thu,  3 Oct 2019 16:46:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0937D2054F;
+        Thu,  3 Oct 2019 16:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121183;
-        bh=nxhfcdcem27JgN1iEngjzJ+W+McMsJHgH8HRx+nl0Sc=;
+        s=default; t=1570119392;
+        bh=xKTppu/GDfJLMQWpfzwwiblwXnUW9uwticGihbh1hF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gR6kVI+Aq9LOGPRSZxTBUsIKZ96bfvlRCqmI/ImzPVsgbK5SKFsjusCKaMAt8rHyA
-         EW2OxN6lK/XOllcOUvFCkrtxYd0+hxbfnO0OCb5VWG3/wBXWDobZ/Y2fTqzUZHOckd
-         j9claqihAbZ/CFA+JX8Ka1/LkIDtucl9qEEQmqkM=
+        b=pe4NTrjuXVzmX6QmPq3lfp8gNsJ5O6QLK1wUA7jRL23cQV4iYstawmgQ0msn1dL6F
+         kf7TT6Oz5/8GOCTJmbKKQdvxlFvQwneynazc2vfHiB2y7BUOvIRsm35Iibzz4AocMJ
+         6W4njwH1DdEp3j8yBL00x0rP8h3lYAp0DWaVqdtw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yazen Ghannam <yazen.ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
+        stable@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        Vaishali Thakkar <vaishali.thakkar@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 148/344] EDAC/amd64: Decode syndrome before translating address
-Date:   Thu,  3 Oct 2019 17:51:53 +0200
-Message-Id: <20191003154554.861640260@linuxfoundation.org>
+Subject: [PATCH 4.19 048/211] base: soc: Export soc_device_register/unregister APIs
+Date:   Thu,  3 Oct 2019 17:51:54 +0200
+Message-Id: <20191003154458.978461649@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,68 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Vinod Koul <vkoul@kernel.org>
 
-[ Upstream commit 8a2eaab7daf03b23ac902481218034ae2fae5e16 ]
+[ Upstream commit f7ccc7a397cf2ef64aebb2f726970b93203858d2 ]
 
-AMD Family 17h systems currently require address translation in order to
-report the system address of a DRAM ECC error. This is currently done
-before decoding the syndrome information. The syndrome information does
-not depend on the address translation, so the proper EDAC csrow/channel
-reporting can function without the address. However, the syndrome
-information will not be decoded if the address translation fails.
+Qcom Socinfo driver can be built as a module, so
+export these two APIs.
 
-Decode the syndrome information before doing the address translation.
-The syndrome information is architecturally defined in MCA_SYND and can
-be considered robust. The address translation is system-specific and may
-fail on newer systems without proper updates to the translation
-algorithm.
-
-Fixes: 713ad54675fd ("EDAC, amd64: Define and register UMC error decode function")
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190821235938.118710-6-Yazen.Ghannam@amd.com
+Tested-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/amd64_edac.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/base/soc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index ffe56a8fe39da..608fdab566b32 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -2550,13 +2550,6 @@ static void decode_umc_error(int node_id, struct mce *m)
- 
- 	err.channel = find_umc_channel(m);
- 
--	if (umc_normaddr_to_sysaddr(m->addr, pvt->mc_node_id, err.channel, &sys_addr)) {
--		err.err_code = ERR_NORM_ADDR;
--		goto log_error;
--	}
--
--	error_address_to_page_and_offset(sys_addr, &err);
--
- 	if (!(m->status & MCI_STATUS_SYNDV)) {
- 		err.err_code = ERR_SYND;
- 		goto log_error;
-@@ -2573,6 +2566,13 @@ static void decode_umc_error(int node_id, struct mce *m)
- 
- 	err.csrow = m->synd & 0x7;
- 
-+	if (umc_normaddr_to_sysaddr(m->addr, pvt->mc_node_id, err.channel, &sys_addr)) {
-+		err.err_code = ERR_NORM_ADDR;
-+		goto log_error;
-+	}
-+
-+	error_address_to_page_and_offset(sys_addr, &err);
-+
- log_error:
- 	__log_ecc_error(mci, &err, ecc_type);
+diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+index 10b280f30217b..7e91894a380b5 100644
+--- a/drivers/base/soc.c
++++ b/drivers/base/soc.c
+@@ -157,6 +157,7 @@ struct soc_device *soc_device_register(struct soc_device_attribute *soc_dev_attr
+ out1:
+ 	return ERR_PTR(ret);
  }
++EXPORT_SYMBOL_GPL(soc_device_register);
+ 
+ /* Ensure soc_dev->attr is freed prior to calling soc_device_unregister. */
+ void soc_device_unregister(struct soc_device *soc_dev)
+@@ -166,6 +167,7 @@ void soc_device_unregister(struct soc_device *soc_dev)
+ 	device_unregister(&soc_dev->dev);
+ 	early_soc_dev_attr = NULL;
+ }
++EXPORT_SYMBOL_GPL(soc_device_unregister);
+ 
+ static int __init soc_bus_register(void)
+ {
 -- 
 2.20.1
 
