@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E02CA8AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B816CA8B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391730AbfJCQaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:30:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36282 "EHLO mail.kernel.org"
+        id S2391810AbfJCQay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:30:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391694AbfJCQaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:30:20 -0400
+        id S2388282AbfJCQar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:30:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51B4E2054F;
-        Thu,  3 Oct 2019 16:30:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29C912054F;
+        Thu,  3 Oct 2019 16:30:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120219;
-        bh=xEyFGuV9urV2Izp0x4mN7WNWUY36GjkjKfAmNsiu/P8=;
+        s=default; t=1570120246;
+        bh=aRnDWCac5Rp2zw7MueiQHhEBPV+CE2W1Bm3OSFT9eFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YFwL/2MbxxVHvTUQvgAwgqWCkjDfn21dfeA08XIyNm+ojcgfUOaTRpZk6zqcVQH1O
-         uPadrv7JF758cVw6nR/dc+Xh9VV9CcB9KlE7NhtUceEQVIM8nG3vCuMgx89T0PZS0x
-         hmtADn7xy2LpNVnSyvWMHXrxkdGXyLJT+bASCWW8=
+        b=0I2lh1P7DFBtKcrUy/roZqP0zBLFoz06UsqW4XMdlGmUHuwPcnvG24cPD6BteGIaS
+         zbMQDhHl0J3SsHIib1HIzXc8IoTkf6gGqApFN4wUsEjBrwGQqTjEdmbxKNuaQIzagy
+         bphry6iV9qIgYiQDU7/urd84SUMEZjEejTsvJMyg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Dan Murphy <dmurphy@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 141/313] media: cec-notifier: clear cec_adap in cec_notifier_unregister
-Date:   Thu,  3 Oct 2019 17:51:59 +0200
-Message-Id: <20191003154546.767772799@linuxfoundation.org>
+Subject: [PATCH 5.2 150/313] leds: lm3532: Fixes for the driver for stability
+Date:   Thu,  3 Oct 2019 17:52:08 +0200
+Message-Id: <20191003154547.709338957@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,45 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Dan Murphy <dmurphy@ti.com>
 
-[ Upstream commit 14d5511691e5290103bc480998bc322e68f139d4 ]
+[ Upstream commit 6559ac32998248182572e1ccae79dc2eb40ac7c6 ]
 
-If cec_notifier_cec_adap_unregister() is called before
-cec_unregister_adapter() then everything is OK (and this is the
-case today). But if it is the other way around, then
-cec_notifier_unregister() is called first, and that doesn't
-set n->cec_adap to NULL.
+Fixed misspelled words, added error check during probe
+on the init of the registers, and fixed ALS/I2C control
+mode.
 
-So if e.g. cec_notifier_set_phys_addr() is called after
-cec_notifier_unregister() but before cec_unregister_adapter()
-then n->cec_adap points to an unregistered and likely deleted
-cec adapter. So just set n->cec_adap->notifier and n->cec_adap
-to NULL for rubustness.
-
-Eventually cec_notifier_unregister will disappear and this will
-be simplified substantially.
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: bc1b8492c764 ("leds: lm3532: Introduce the lm3532 LED driver")
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/cec/cec-notifier.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/leds/leds-lm3532.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
-index 9598c7778871a..c4aa27e0c4308 100644
---- a/drivers/media/cec/cec-notifier.c
-+++ b/drivers/media/cec/cec-notifier.c
-@@ -124,6 +124,8 @@ void cec_notifier_unregister(struct cec_notifier *n)
- {
- 	mutex_lock(&n->lock);
- 	n->callback = NULL;
-+	n->cec_adap->notifier = NULL;
-+	n->cec_adap = NULL;
- 	mutex_unlock(&n->lock);
- 	cec_notifier_put(n);
- }
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+index 180895b83b888..e55a64847fe2f 100644
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -40,7 +40,7 @@
+ #define LM3532_REG_ZN_3_LO	0x67
+ #define LM3532_REG_MAX		0x7e
+ 
+-/* Contorl Enable */
++/* Control Enable */
+ #define LM3532_CTRL_A_ENABLE	BIT(0)
+ #define LM3532_CTRL_B_ENABLE	BIT(1)
+ #define LM3532_CTRL_C_ENABLE	BIT(2)
+@@ -302,7 +302,7 @@ static int lm3532_led_disable(struct lm3532_led *led_data)
+ 	int ret;
+ 
+ 	ret = regmap_update_bits(led_data->priv->regmap, LM3532_REG_ENABLE,
+-					 ctrl_en_val, ~ctrl_en_val);
++					 ctrl_en_val, 0);
+ 	if (ret) {
+ 		dev_err(led_data->priv->dev, "Failed to set ctrl:%d\n", ret);
+ 		return ret;
+@@ -321,7 +321,7 @@ static int lm3532_brightness_set(struct led_classdev *led_cdev,
+ 
+ 	mutex_lock(&led->priv->lock);
+ 
+-	if (led->mode == LM3532_BL_MODE_ALS) {
++	if (led->mode == LM3532_ALS_CTRL) {
+ 		if (brt_val > LED_OFF)
+ 			ret = lm3532_led_enable(led);
+ 		else
+@@ -542,11 +542,14 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+ 		}
+ 
+ 		if (led->mode == LM3532_BL_MODE_ALS) {
++			led->mode = LM3532_ALS_CTRL;
+ 			ret = lm3532_parse_als(priv);
+ 			if (ret)
+ 				dev_err(&priv->client->dev, "Failed to parse als\n");
+ 			else
+ 				lm3532_als_configure(priv, led);
++		} else {
++			led->mode = LM3532_I2C_CTRL;
+ 		}
+ 
+ 		led->num_leds = fwnode_property_read_u32_array(child,
+@@ -590,7 +593,13 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+ 			goto child_out;
+ 		}
+ 
+-		lm3532_init_registers(led);
++		ret = lm3532_init_registers(led);
++		if (ret) {
++			dev_err(&priv->client->dev, "register init err: %d\n",
++				ret);
++			fwnode_handle_put(child);
++			goto child_out;
++		}
+ 
+ 		i++;
+ 	}
 -- 
 2.20.1
 
