@@ -2,75 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A967CAD8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5134DCAD92
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732447AbfJCRqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:46:21 -0400
-Received: from mail-pf1-f170.google.com ([209.85.210.170]:37566 "EHLO
-        mail-pf1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730617AbfJCRqU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:46:20 -0400
-Received: by mail-pf1-f170.google.com with SMTP id y5so2227580pfo.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=YBqTO1SR8JZ4rSW8NROiJQC8y+FlKcm5wmclx7YsqJA=;
-        b=zXh23Z7/bQMXb1njJl5nd10TBMyIcKR2f6rXFwRg7lRseFfvNdwk5hGEOeUVaFd6AE
-         T04YhoYOJAfsK9QdRuija7o1DJFJpKusBRlgy6Puv1OJRPq8hBrCTL4vhDXSQPVWZaAr
-         BEnZfDQlRVp7q4Ibb8SMcqypMkzM6YCeCGNOr0MYXvk7+IxbSwPJ7DkhPfaJ3JlMIBA+
-         dzQ5cMFBlQ6H6S2TM1HRBDgs+WnT+7nUT7ao4Gfm+pgHXG7R9hGzcZ7bT59+ywHCnSFt
-         YloS1Cr05MEyMlQnVdxLlouP7nHl9mitEblkfcbO9Ej4wJzDsMYd9yHDy0fSjWNu9ZVd
-         eBVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=YBqTO1SR8JZ4rSW8NROiJQC8y+FlKcm5wmclx7YsqJA=;
-        b=sxRTymrT7zPRvOnjCt91cUrr6OTmTF/IDizNgPvXegeoJKc9UNqsfb/BWaSSz7vt+9
-         0YMuaeF7ZpUXRIFThnXoiFRTc2nkZfGVrvVEEPoWjfkKBWDN771aGYGodybZsoQS9GlM
-         TU+wRSbiAU4rLe+eVmOjXkhBNsKuHEUh7NtHOj1HOyKFClw8jn1AaTd0KKuK/gEl9P1X
-         fbtVH6fFkJUXpV2LpRWsPTy7l7Pope0rUlER4g6BBWNaElBjTGvpTtjIL49Jilv0Adr6
-         gNbllUDjUYqyXDN7mwCY8EBCaANT351OgzQWOCLt4gMUs2My8UU6fBbykIrnomQQepvH
-         bIoA==
-X-Gm-Message-State: APjAAAV8cF89mexAH0YrjN+8HGpqSnDeP/XE0UBFswj0VlYNXJYdnu13
-        zEZWGzSV1//pTN/iTBJYdUhKsE7nEBA=
-X-Google-Smtp-Source: APXvYqwGyyHM/joodBfrobBkDYq8xYqnEIe7owkvzFzx1uMOZNAZN9I8MRSWEPPfqOEb5FEBHtqCJA==
-X-Received: by 2002:a17:90a:ae0d:: with SMTP id t13mr12067312pjq.60.1570124778487;
-        Thu, 03 Oct 2019 10:46:18 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:a084:116f:9da0:2d6c])
-        by smtp.gmail.com with ESMTPSA id e9sm3138664pgs.86.2019.10.03.10.46.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Oct 2019 10:46:17 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: meson: g12a: add audio devices resets
-In-Reply-To: <20190925093358.15476-1-jbrunet@baylibre.com>
-References: <20190925093358.15476-1-jbrunet@baylibre.com>
-Date:   Thu, 03 Oct 2019 10:46:17 -0700
-Message-ID: <7hr23tvi1i.fsf@baylibre.com>
+        id S1731066AbfJCRst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:48:49 -0400
+Received: from foss.arm.com ([217.140.110.172]:52756 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729119AbfJCRst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:48:49 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2E7E1000;
+        Thu,  3 Oct 2019 10:48:48 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79DDD3F739;
+        Thu,  3 Oct 2019 10:48:47 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     vincenzo.frascino@arm.com, ard.biesheuvel@linaro.org,
+        ndesaulniers@google.com, catalin.marinas@arm.com, will@kernel.org,
+        tglx@linutronix.de, luto@kernel.org
+Subject: [PATCH v5 0/6] arm64: vdso32: Address various issues
+Date:   Thu,  3 Oct 2019 18:48:32 +0100
+Message-Id: <20191003174838.8872-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+This patch series is meant to address the various compilation issues
+reported recently for arm64 vdso32 [1].
 
-> Provide the reset lines coming from the audio clock controller to
-> the audio devices of the g12 family
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+From v4, the series contains a cleanup of lib/vdso Kconfig as well since
+CROSS_COMPILE_COMPAT_VDSO is not required anymore by any architecture.
 
-Queued for v5.5 w/Neil's tag.
+Cc: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Reported-by: Will Deacon <will@kernel.org>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-Thanks,
+[1] https://www.spinics.net/lists/kernel/msg3260702.html
 
-Kevin
+---
+
+v5:
+  - Add a check on empty CROSS_COMPILE_COMPAT
+
+v4:
+  - Drop __arm64__ workaround
+  - Remove COMPAT_CC_IS_GCC check
+  - Remove unused configuration parameter from lib/vdso
+  - Address Review Comments
+
+v3:
+  - Exposed COMPATCC
+  - Addressed Review Comments
+ 
+v2:
+  - Fixed binutils detection
+  - Addressed review comments
+
+Vincenzo Frascino (6):
+  arm64: vdso32: Fix syncconfig errors.
+  arm64: vdso32: Detect binutils support for dmb ishld
+  arm64: Remove gettimeofday.S
+  arm64: vdso32: Remove jump label config option in Makefile
+  arm64: Remove vdso_datapage.h
+  lib: vdso: Remove CROSS_COMPILE_COMPAT_VDSO
+
+ arch/arm64/Kconfig                           |  5 ++-
+ arch/arm64/Makefile                          | 18 +++--------
+ arch/arm64/include/asm/vdso/compat_barrier.h |  2 +-
+ arch/arm64/include/asm/vdso_datapage.h       | 33 --------------------
+ arch/arm64/kernel/vdso/gettimeofday.S        |  0
+ arch/arm64/kernel/vdso32/Makefile            | 14 ++++++---
+ lib/vdso/Kconfig                             |  9 ------
+ 7 files changed, 19 insertions(+), 62 deletions(-)
+ delete mode 100644 arch/arm64/include/asm/vdso_datapage.h
+ delete mode 100644 arch/arm64/kernel/vdso/gettimeofday.S
+
+-- 
+2.23.0
+
