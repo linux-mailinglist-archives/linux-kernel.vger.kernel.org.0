@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30ADACA86B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D285CA874
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391101AbfJCQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:26:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57728 "EHLO mail.kernel.org"
+        id S2389718AbfJCQ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:27:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730584AbfJCQ0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:26:31 -0400
+        id S2391152AbfJCQ0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:26:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D842020867;
-        Thu,  3 Oct 2019 16:26:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 905A921783;
+        Thu,  3 Oct 2019 16:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119990;
-        bh=4QYtWC/NSvfd9Ieshgk9A8mGlOI31249YoRQELA+nJ8=;
+        s=default; t=1570120012;
+        bh=F4rztFgCqKKRmbrrJxmKuN9khu59p00GQ5J9kN3Bezw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wUihc6cSmIWZewwZR2PRlL01MvlcmLtZGAVgmEZFFx3EhtMXL7Dxiu9OJ8eUHc2c7
-         tZhqYxfU8phjD6L6ReQnbTuLQ8wWT+gO1GxshdWL7IWKlungV7R8QB0vbgOJ2T3zXe
-         7yu+detF3td0PUc5MXlF0S/ALg111u913eOq+WgA=
+        b=HHqoEc8AVGIlSrHs6ghWa+/wAGIOsfcBMI7ImiKslHVZVUAnozWhqMFDXdBLZP9LL
+         krA/n9C5h7xWGJwJKgfrGKjm0NuCE2WfEqGb4DIgGla1Y/Unqi1BPlGmokvR5HwuR3
+         0JdAwAHnm9FW/RJMaF/d7aNml7nzFYjP13rz8JTQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org,
+        syzbot+01a77b82edaa374068e1@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 056/313] x86/apic: Make apic_pending_intr_clear() more robust
-Date:   Thu,  3 Oct 2019 17:50:34 +0200
-Message-Id: <20191003154538.577004301@linuxfoundation.org>
+Subject: [PATCH 5.2 064/313] media: iguanair: add sanity checks
+Date:   Thu,  3 Oct 2019 17:50:42 +0200
+Message-Id: <20191003154539.257277195@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,201 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit cc8bf191378c1da8ad2b99cf470ee70193ace84e ]
+[ Upstream commit ab1cbdf159beba7395a13ab70bc71180929ca064 ]
 
-In course of developing shorthand based IPI support issues with the
-function which tries to clear eventually pending ISR bits in the local APIC
-were observed.
+The driver needs to check the endpoint types, too, as opposed
+to the number of endpoints. This also requires moving the check earlier.
 
-  1) O-day testing triggered the WARN_ON() in apic_pending_intr_clear().
-
-     This warning is emitted when the function fails to clear pending ISR
-     bits or observes pending IRR bits which are not delivered to the CPU
-     after the stale ISR bit(s) are ACK'ed.
-
-     Unfortunately the function only emits a WARN_ON() and fails to dump
-     the IRR/ISR content. That's useless for debugging.
-
-     Feng added spot on debug printk's which revealed that the stale IRR
-     bit belonged to the APIC timer interrupt vector, but adding ad hoc
-     debug code does not help with sporadic failures in the field.
-
-     Rework the loop so the full IRR/ISR contents are saved and on failure
-     dumped.
-
-  2) The loop termination logic is interesting at best.
-
-     If the machine has no TSC or cpu_khz is not known yet it tries 1
-     million times to ack stale IRR/ISR bits. What?
-
-     With TSC it uses the TSC to calculate the loop termination. It takes a
-     timestamp at entry and terminates the loop when:
-
-     	  (rdtsc() - start_timestamp) >= (cpu_hkz << 10)
-
-     That's roughly one second.
-
-     Both methods are problematic. The APIC has 256 vectors, which means
-     that in theory max. 256 IRR/ISR bits can be set. In practice this is
-     impossible and the chance that more than a few bits are set is close
-     to zero.
-
-     With the pure loop based approach the 1 million retries are complete
-     overkill.
-
-     With TSC this can terminate too early in a guest which is running on a
-     heavily loaded host even with only a couple of IRR/ISR bits set. The
-     reason is that after acknowledging the highest priority ISR bit,
-     pending IRRs must get serviced first before the next round of
-     acknowledge can take place as the APIC (real and virtualized) does not
-     honour EOI without a preceeding interrupt on the CPU. And every APIC
-     read/write takes a VMEXIT if the APIC is virtualized. While trying to
-     reproduce the issue 0-day reported it was observed that the guest was
-     scheduled out long enough under heavy load that it terminated after 8
-     iterations.
-
-     Make the loop terminate after 512 iterations. That's plenty enough
-     in any case and does not take endless time to complete.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190722105219.158847694@linutronix.de
+Reported-by: syzbot+01a77b82edaa374068e1@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/apic.c | 107 +++++++++++++++++++++---------------
- 1 file changed, 63 insertions(+), 44 deletions(-)
+ drivers/media/rc/iguanair.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 2f067b443326e..67d1259e0f7c0 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1462,54 +1462,72 @@ static void lapic_setup_esr(void)
- 			oldvalue, value);
- }
+diff --git a/drivers/media/rc/iguanair.c b/drivers/media/rc/iguanair.c
+index ea05e125016a7..872d6441e512c 100644
+--- a/drivers/media/rc/iguanair.c
++++ b/drivers/media/rc/iguanair.c
+@@ -413,6 +413,10 @@ static int iguanair_probe(struct usb_interface *intf,
+ 	int ret, pipein, pipeout;
+ 	struct usb_host_interface *idesc;
  
--static void apic_pending_intr_clear(void)
-+#define APIC_IR_REGS		APIC_ISR_NR
-+#define APIC_IR_BITS		(APIC_IR_REGS * 32)
-+#define APIC_IR_MAPSIZE		(APIC_IR_BITS / BITS_PER_LONG)
++	idesc = intf->altsetting;
++	if (idesc->desc.bNumEndpoints < 2)
++		return -ENODEV;
 +
-+union apic_ir {
-+	unsigned long	map[APIC_IR_MAPSIZE];
-+	u32		regs[APIC_IR_REGS];
-+};
-+
-+static bool apic_check_and_ack(union apic_ir *irr, union apic_ir *isr)
- {
--	long long max_loops = cpu_khz ? cpu_khz : 1000000;
--	unsigned long long tsc = 0, ntsc;
--	unsigned int queued;
--	unsigned long value;
--	int i, j, acked = 0;
-+	int i, bit;
-+
-+	/* Read the IRRs */
-+	for (i = 0; i < APIC_IR_REGS; i++)
-+		irr->regs[i] = apic_read(APIC_IRR + i * 0x10);
-+
-+	/* Read the ISRs */
-+	for (i = 0; i < APIC_IR_REGS; i++)
-+		isr->regs[i] = apic_read(APIC_ISR + i * 0x10);
+ 	ir = kzalloc(sizeof(*ir), GFP_KERNEL);
+ 	rc = rc_allocate_device(RC_DRIVER_IR_RAW);
+ 	if (!ir || !rc) {
+@@ -427,18 +431,13 @@ static int iguanair_probe(struct usb_interface *intf,
+ 	ir->urb_in = usb_alloc_urb(0, GFP_KERNEL);
+ 	ir->urb_out = usb_alloc_urb(0, GFP_KERNEL);
  
--	if (boot_cpu_has(X86_FEATURE_TSC))
--		tsc = rdtsc();
- 	/*
--	 * After a crash, we no longer service the interrupts and a pending
--	 * interrupt from previous kernel might still have ISR bit set.
--	 *
--	 * Most probably by now CPU has serviced that pending interrupt and
--	 * it might not have done the ack_APIC_irq() because it thought,
--	 * interrupt came from i8259 as ExtInt. LAPIC did not get EOI so it
--	 * does not clear the ISR bit and cpu thinks it has already serivced
--	 * the interrupt. Hence a vector might get locked. It was noticed
--	 * for timer irq (vector 0x31). Issue an extra EOI to clear ISR.
-+	 * If the ISR map is not empty. ACK the APIC and run another round
-+	 * to verify whether a pending IRR has been unblocked and turned
-+	 * into a ISR.
- 	 */
--	do {
--		queued = 0;
--		for (i = APIC_ISR_NR - 1; i >= 0; i--)
--			queued |= apic_read(APIC_IRR + i*0x10);
+-	if (!ir->buf_in || !ir->packet || !ir->urb_in || !ir->urb_out) {
++	if (!ir->buf_in || !ir->packet || !ir->urb_in || !ir->urb_out ||
++	    !usb_endpoint_is_int_in(&idesc->endpoint[0].desc) ||
++	    !usb_endpoint_is_int_out(&idesc->endpoint[1].desc)) {
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-	idesc = intf->altsetting;
 -
--		for (i = APIC_ISR_NR - 1; i >= 0; i--) {
--			value = apic_read(APIC_ISR + i*0x10);
--			for_each_set_bit(j, &value, 32) {
--				ack_APIC_irq();
--				acked++;
--			}
--		}
--		if (acked > 256) {
--			pr_err("LAPIC pending interrupts after %d EOI\n", acked);
--			break;
--		}
--		if (queued) {
--			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
--				ntsc = rdtsc();
--				max_loops = (long long)cpu_khz << 10;
--				max_loops -= ntsc - tsc;
--			} else {
--				max_loops--;
--			}
--		}
--	} while (queued && max_loops > 0);
--	WARN_ON(max_loops <= 0);
-+	if (!bitmap_empty(isr->map, APIC_IR_BITS)) {
-+		/*
-+		 * There can be multiple ISR bits set when a high priority
-+		 * interrupt preempted a lower priority one. Issue an ACK
-+		 * per set bit.
-+		 */
-+		for_each_set_bit(bit, isr->map, APIC_IR_BITS)
-+			ack_APIC_irq();
-+		return true;
-+	}
-+
-+	return !bitmap_empty(irr->map, APIC_IR_BITS);
-+}
-+
-+/*
-+ * After a crash, we no longer service the interrupts and a pending
-+ * interrupt from previous kernel might still have ISR bit set.
-+ *
-+ * Most probably by now the CPU has serviced that pending interrupt and it
-+ * might not have done the ack_APIC_irq() because it thought, interrupt
-+ * came from i8259 as ExtInt. LAPIC did not get EOI so it does not clear
-+ * the ISR bit and cpu thinks it has already serivced the interrupt. Hence
-+ * a vector might get locked. It was noticed for timer irq (vector
-+ * 0x31). Issue an extra EOI to clear ISR.
-+ *
-+ * If there are pending IRR bits they turn into ISR bits after a higher
-+ * priority ISR bit has been acked.
-+ */
-+static void apic_pending_intr_clear(void)
-+{
-+	union apic_ir irr, isr;
-+	unsigned int i;
-+
-+	/* 512 loops are way oversized and give the APIC a chance to obey. */
-+	for (i = 0; i < 512; i++) {
-+		if (!apic_check_and_ack(&irr, &isr))
-+			return;
-+	}
-+	/* Dump the IRR/ISR content if that failed */
-+	pr_warn("APIC: Stale IRR: %256pb ISR: %256pb\n", irr.map, isr.map);
- }
- 
- /**
-@@ -1577,6 +1595,7 @@ static void setup_local_APIC(void)
- 	value &= ~APIC_TPRI_MASK;
- 	apic_write(APIC_TASKPRI, value);
- 
-+	/* Clear eventually stale ISR/IRR bits */
- 	apic_pending_intr_clear();
- 
- 	/*
+-	if (idesc->desc.bNumEndpoints < 2) {
+-		ret = -ENODEV;
+-		goto out;
+-	}
+-
+ 	ir->rc = rc;
+ 	ir->dev = &intf->dev;
+ 	ir->udev = udev;
 -- 
 2.20.1
 
