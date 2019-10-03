@@ -2,372 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 796A8C99DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC8FEC99EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:30:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbfJCI2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 04:28:38 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43124 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728905AbfJCI2h (ORCPT
+        id S1728640AbfJCIaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 04:30:00 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:44786 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727357AbfJCI37 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 04:28:37 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x938SSpw029791;
-        Thu, 3 Oct 2019 03:28:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570091308;
-        bh=C48gkM4U5fTsROTVmyNzzc2Z1qPDYO16RycuP82bgIs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=YNefiGnUQ+m0mnih4U8Vd6wH3+28xuWNU/sXXVwqkDMCxoM/NmxXRV4iylrU9wFor
-         TaeOpaQyHKsNMNWPAJvz7MqNipij38j5mUm5gae8keEsNc2DLLGSq+bJ6nqt6HqV1R
-         OI0an5KwRJ8k0LSXECDuqrVqLke/PMoaPALDj22U=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x938SSJO126646
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Oct 2019 03:28:28 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 3 Oct
- 2019 03:28:17 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 3 Oct 2019 03:28:28 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x938SRSr035743;
-        Thu, 3 Oct 2019 03:28:27 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>
-CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v8 5/5] backlight: add led-backlight driver
-Date:   Thu, 3 Oct 2019 10:28:12 +0200
-Message-ID: <20191003082812.28491-6-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191003082812.28491-1-jjhiblot@ti.com>
-References: <20191003082812.28491-1-jjhiblot@ti.com>
+        Thu, 3 Oct 2019 04:29:59 -0400
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iFwUh-0004Iy-Pa; Thu, 03 Oct 2019 10:29:51 +0200
+Date:   Thu, 3 Oct 2019 09:29:50 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        "maintainer:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 5/7] irqchip/irq-bcm2836: Add support for the 7211
+ interrupt controller
+Message-ID: <20191003092950.04440d74@why>
+In-Reply-To: <72f07d2e-b070-301a-6a5d-8e89d32adcd7@gmail.com>
+References: <20191001224842.9382-1-f.fainelli@gmail.com>
+        <20191001224842.9382-6-f.fainelli@gmail.com>
+        <20191002134041.5a181d96@why>
+        <72f07d2e-b070-301a-6a5d-8e89d32adcd7@gmail.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: f.fainelli@gmail.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, eric@anholt.net, wahrenst@gmx.net, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+On Wed, 2 Oct 2019 10:06:31 -0700
+Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-This patch adds a led-backlight driver (led_bl), which is similar to
-pwm_bl except the driver uses a LED class driver to adjust the
-brightness in the HW. Multiple LEDs can be used for a single backlight.
+> On 10/2/19 5:40 AM, Marc Zyngier wrote:
+> > On Tue,  1 Oct 2019 15:48:40 -0700
+> > Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >   
+> >> The root interrupt controller on 7211 is about identical to the one
+> >> existing on BCM2836, except that the SMP cross call are done through the
+> >> standard ARM GIC-400 interrupt controller. This interrupt controller is
+> >> used for side band wake-up signals though.  
+> > 
+> > I don't fully grasp how this thing works.
+> > 
+> > If the 7211 interrupt controller is root and the GIC is used for SGIs,
+> > this means that the GIC outputs (IRQ/FIQ/VIRQ/VFIQ, times eight) are
+> > connected to individual inputs to the 7211 controller. Seems totally
+> > braindead, and unexpectedly so.
+> > 
+> > If the GIC is root and the 7211 outputs into the GIC all of its
+> > interrupts as a secondary irqchip, it would at least match an existing
+> > (and pretty bad) pattern.
+> > 
+> > So which one of the two is it?  
+> 
+> The nominal configuration on 7211 is to have all interrupts go through
+> the ARM GIC. It is possible however, to fallback to the legacy 2836 mode
+> whereby the root interrupt controller for peripheral interrupts is this
+> ARMCTL IC. There is a mux that the firmware can control which will
+> dictate which root interrupt controller is used for peripherals.
+> 
+> I have used this mostly for silicon verification and since those are
+> fairly harmless patches, just decided to send them out to avoid
+> maintaining them out of tree.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
----
- drivers/video/backlight/Kconfig  |   7 +
- drivers/video/backlight/Makefile |   1 +
- drivers/video/backlight/led_bl.c | 260 +++++++++++++++++++++++++++++++
- 3 files changed, 268 insertions(+)
- create mode 100644 drivers/video/backlight/led_bl.c
+This doesn't really answer my question. What I understand is that your
+system is laid out like this:
 
-diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-index 8b081d61773e..585a1787618c 100644
---- a/drivers/video/backlight/Kconfig
-+++ b/drivers/video/backlight/Kconfig
-@@ -458,6 +458,13 @@ config BACKLIGHT_RAVE_SP
- 	help
- 	  Support for backlight control on RAVE SP device.
- 
-+config BACKLIGHT_LED
-+	tristate "Generic LED based Backlight Driver"
-+	depends on LEDS_CLASS && OF
-+	help
-+	  If you have a LCD backlight adjustable by LED class driver, say Y
-+	  to enable this driver.
-+
- endif # BACKLIGHT_CLASS_DEVICE
- 
- endmenu
-diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
-index 63c507c07437..2a67642966a5 100644
---- a/drivers/video/backlight/Makefile
-+++ b/drivers/video/backlight/Makefile
-@@ -57,3 +57,4 @@ obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
- obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
- obj-$(CONFIG_BACKLIGHT_ARCXCNN) 	+= arcxcnn_bl.o
- obj-$(CONFIG_BACKLIGHT_RAVE_SP)		+= rave-sp-backlight.o
-+obj-$(CONFIG_BACKLIGHT_LED)		+= led_bl.o
-diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/led_bl.c
-new file mode 100644
-index 000000000000..3f66549997c8
---- /dev/null
-+++ b/drivers/video/backlight/led_bl.c
-@@ -0,0 +1,260 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2015-2019 Texas Instruments Incorporated -  http://www.ti.com/
-+ * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
-+ *
-+ * Based on pwm_bl.c
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+struct led_bl_data {
-+	struct device		*dev;
-+	struct backlight_device	*bl_dev;
-+	struct led_classdev	**leds;
-+	bool			enabled;
-+	int			nb_leds;
-+	unsigned int		*levels;
-+	unsigned int		default_brightness;
-+	unsigned int		max_brightness;
-+};
-+
-+static void led_bl_set_brightness(struct led_bl_data *priv, int level)
-+{
-+	int i;
-+	int bkl_brightness;
-+
-+	if (priv->levels)
-+		bkl_brightness = priv->levels[level];
-+	else
-+		bkl_brightness = level;
-+
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_set_brightness(priv->leds[i], bkl_brightness);
-+
-+	priv->enabled = true;
-+}
-+
-+static void led_bl_power_off(struct led_bl_data *priv)
-+{
-+	int i;
-+
-+	if (!priv->enabled)
-+		return;
-+
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_set_brightness(priv->leds[i], LED_OFF);
-+
-+	priv->enabled = false;
-+}
-+
-+static int led_bl_update_status(struct backlight_device *bl)
-+{
-+	struct led_bl_data *priv = bl_get_data(bl);
-+	int brightness = bl->props.brightness;
-+
-+	if (bl->props.power != FB_BLANK_UNBLANK ||
-+	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
-+	    bl->props.state & BL_CORE_FBBLANK)
-+		brightness = 0;
-+
-+	if (brightness > 0)
-+		led_bl_set_brightness(priv, brightness);
-+	else
-+		led_bl_power_off(priv);
-+
-+	return 0;
-+}
-+
-+static const struct backlight_ops led_bl_ops = {
-+	.update_status	= led_bl_update_status,
-+};
-+
-+static int led_bl_get_leds(struct device *dev,
-+			   struct led_bl_data *priv)
-+{
-+	int i, nb_leds, ret;
-+	struct device_node *node = dev->of_node;
-+	struct led_classdev **leds;
-+	unsigned int max_brightness;
-+	unsigned int default_brightness;
-+
-+	ret = of_count_phandle_with_args(node, "leds", NULL);
-+	if (ret < 0) {
-+		dev_err(dev, "Unable to get led count\n");
-+		return -EINVAL;
-+	}
-+
-+	nb_leds = ret;
-+	if (nb_leds < 1) {
-+		dev_err(dev, "At least one LED must be specified!\n");
-+		return -EINVAL;
-+	}
-+
-+	leds = devm_kzalloc(dev, sizeof(struct led_classdev *) * nb_leds,
-+			    GFP_KERNEL);
-+	if (!leds)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nb_leds; i++) {
-+		leds[i] = devm_of_led_get(dev, i);
-+		if (IS_ERR(leds[i]))
-+			return PTR_ERR(leds[i]);
-+	}
-+
-+	/* check that the LEDs all have the same brightness range */
-+	max_brightness = leds[0]->max_brightness;
-+	for (i = 1; i < nb_leds; i++) {
-+		if (max_brightness != leds[i]->max_brightness) {
-+			dev_err(dev, "LEDs must have identical ranges\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	/* get the default brightness from the first LED from the list */
-+	default_brightness = leds[0]->brightness;
-+
-+	priv->nb_leds = nb_leds;
-+	priv->leds = leds;
-+	priv->max_brightness = max_brightness;
-+	priv->default_brightness = default_brightness;
-+
-+	return 0;
-+}
-+
-+static int led_bl_parse_levels(struct device *dev,
-+			   struct led_bl_data *priv)
-+{
-+	struct device_node *node = dev->of_node;
-+	int num_levels;
-+	u32 value;
-+	int ret;
-+
-+	if (!node)
-+		return -ENODEV;
-+
-+	num_levels = of_property_count_u32_elems(node, "brightness-levels");
-+	if (num_levels > 1) {
-+		int i;
-+		unsigned int db;
-+		u32 *levels = NULL;
-+
-+		levels = devm_kzalloc(dev, sizeof(u32) * num_levels,
-+				      GFP_KERNEL);
-+		if (!levels)
-+			return -ENOMEM;
-+
-+		ret = of_property_read_u32_array(node, "brightness-levels",
-+						levels,
-+						num_levels);
-+		if (ret < 0)
-+			return ret;
-+
-+		/*
-+		 * Try to map actual LED brightness to backlight brightness
-+		 * level
-+		 */
-+		db = priv->default_brightness;
-+		for (i = 0 ; i < num_levels; i++) {
-+			if ((i && db > levels[i-1]) && db <= levels[i])
-+				break;
-+		}
-+		priv->default_brightness = i;
-+		priv->max_brightness = num_levels - 1;
-+		priv->levels = levels;
-+	} else if (num_levels >= 0)
-+		dev_warn(dev, "Not enough levels defined\n");
-+
-+	ret = of_property_read_u32(node, "default-brightness-level", &value);
-+	if (!ret && value <= priv->max_brightness)
-+		priv->default_brightness = value;
-+	else if (!ret  && value > priv->max_brightness)
-+		dev_warn(dev, "Invalid default brightness. Ignoring it\n");
-+
-+	return 0;
-+}
-+
-+static int led_bl_probe(struct platform_device *pdev)
-+{
-+	struct backlight_properties props;
-+	struct led_bl_data *priv;
-+	int ret, i;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->dev = &pdev->dev;
-+
-+	ret = led_bl_get_leds(&pdev->dev, priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = led_bl_parse_levels(&pdev->dev, priv);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to parse DT data\n");
-+		return ret;
-+	}
-+
-+	memset(&props, 0, sizeof(struct backlight_properties));
-+	props.type = BACKLIGHT_RAW;
-+	props.max_brightness = priv->max_brightness;
-+	props.brightness = priv->default_brightness;
-+	props.power = (priv->default_brightness > 0) ? FB_BLANK_POWERDOWN :
-+		      FB_BLANK_UNBLANK;
-+	priv->bl_dev = backlight_device_register(dev_name(&pdev->dev),
-+			&pdev->dev, priv, &led_bl_ops, &props);
-+	if (IS_ERR(priv->bl_dev)) {
-+		dev_err(&pdev->dev, "Failed to register backlight\n");
-+		return PTR_ERR(priv->bl_dev);
-+	}
-+
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_sysfs_disable(priv->leds[i]);
-+
-+	backlight_update_status(priv->bl_dev);
-+
-+	return 0;
-+}
-+
-+static int led_bl_remove(struct platform_device *pdev)
-+{
-+	struct led_bl_data *priv = platform_get_drvdata(pdev);
-+	struct backlight_device *bl = priv->bl_dev;
-+	int i;
-+
-+	backlight_device_unregister(bl);
-+
-+	led_bl_power_off(priv);
-+	for (i = 0; i < priv->nb_leds; i++)
-+		led_sysfs_enable(priv->leds[i]);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id led_bl_of_match[] = {
-+	{ .compatible = "led-backlight" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, led_bl_of_match);
-+
-+static struct platform_driver led_bl_driver = {
-+	.driver		= {
-+		.name		= "led-backlight",
-+		.of_match_table	= of_match_ptr(led_bl_of_match),
-+	},
-+	.probe		= led_bl_probe,
-+	.remove		= led_bl_remove,
-+};
-+
-+module_platform_driver(led_bl_driver);
-+
-+MODULE_DESCRIPTION("LED based Backlight Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:led-backlight");
+     DEVICES -> ARMCTL -> CPUs
+                  ^
+                 GIC
+
+How are the various GIC outputs mapped into the ARMCTL? It has 4 of
+them per CPU (IRQ/FIQ + vIRQ/vFIQ), which the ARMCTL must somehow map
+to its own interrupts, specially if you want to signal IPIs using the
+GIC's SGIs (to which you hint in the commit log).
+
+There is a link I'm missing here.
+
+> We have a plan to use those as an "alternate" interrupt domain for low
+> power modes and use the fact that peripheral interrupts could be active
+> in both domains (GIC and ARMCTRL IC) to help support configuring and
+> identifying wake-up sources fro m within Linux.
+
+That's usually done with a hierarchy, where the ARMCTL IC would be a
+child of the GIC and see all interrupt configuration calls before they
+reach the GIC driver. We have plenty of examples in the tree already.
+
+Thanks,
+
+	M.
 -- 
-2.17.1
-
+Without deviation from the norm, progress is not possible.
