@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4DAECA37F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C725FCA381
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388855AbfJCQPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:15:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
+        id S2387953AbfJCQPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:15:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732566AbfJCQPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:15:44 -0400
+        id S1732566AbfJCQPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:15:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 996AF20700;
-        Thu,  3 Oct 2019 16:15:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 322AC2054F;
+        Thu,  3 Oct 2019 16:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119344;
-        bh=wzC2i8rWj55dG81tZm2kN6D/gSngbg12o66ItecxI1k=;
+        s=default; t=1570119346;
+        bh=vg6DsUyf4XVIFXgZdWx6wo3jzA2TDOouGPZg9zo/8JY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aVo+SH951+aKYddvjpIW8qQtuE6VcUfwAOqOwycnt5UD6lLDRgy3AicxxnztGoR/w
-         vlvElBy8c7NSA7HGACu/4MGMh0X2dzWfW6Ym8Z6PUActhIJLCCIvj2upKpZ9g2maUS
-         VpWL9GNynjOG14EJSJ0RDUTSSSu+yETf5e5Etz6k=
+        b=iZtHcN+ax3zSip5rce+wXAqoqb63yC3OpHfeFoYh+xiMLXevTIbb/XSIgA3qO7GPj
+         7h7ROv4XeTh6FnQmxal9auSy0g6Xds9tdWhFfue78ScnA7qTY1I+P1t7OJZWgylsfG
+         PLDWOqGHitA55woVA2kPcx0gEpapM1ifu+28r/dU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Yotam Gigi <yotam.gi@gmail.com>,
         Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.19 005/211] net: qrtr: Stop rx_worker before freeing node
-Date:   Thu,  3 Oct 2019 17:51:11 +0200
-Message-Id: <20191003154448.374654811@linuxfoundation.org>
+Subject: [PATCH 4.19 006/211] net/sched: act_sample: dont push mac header on ip6gre ingress
+Date:   Thu,  3 Oct 2019 17:51:12 +0200
+Message-Id: <20191003154448.643286322@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -44,33 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 73f0c11d11329a0d6d205d4312b6e5d2512af7c5 ]
+[ Upstream commit 92974a1d006ad8b30d53047c70974c9e065eb7df ]
 
-As the endpoint is unregistered there might still be work pending to
-handle incoming messages, which will result in a use after free
-scenario. The plan is to remove the rx_worker, but until then (and for
-stable@) ensure that the work is stopped before the node is freed.
+current 'sample' action doesn't push the mac header of ingress packets if
+they are received by a layer 3 tunnel (like gre or sit); but it forgot to
+check for gre over ipv6, so the following script:
 
-Fixes: bdabad3e363d ("net: Add Qualcomm IPC router")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+ # tc q a dev $d clsact
+ # tc f a dev $d ingress protocol ip flower ip_proto icmp action sample \
+ > group 100 rate 1
+ # psample -v -g 100
+
+dumps everything, including outer header and mac, when $d is a gre tunnel
+over ipv6. Fix this adding a missing label for ARPHRD_IP6GRE devices.
+
+Fixes: 5c5670fae430 ("net/sched: Introduce sample tc action")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Reviewed-by: Yotam Gigi <yotam.gi@gmail.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/qrtr/qrtr.c |    1 +
+ net/sched/act_sample.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -157,6 +157,7 @@ static void __qrtr_node_release(struct k
- 	list_del(&node->item);
- 	mutex_unlock(&qrtr_node_lock);
- 
-+	cancel_work_sync(&node->work);
- 	skb_queue_purge(&node->rx_queue);
- 	kfree(node);
- }
+--- a/net/sched/act_sample.c
++++ b/net/sched/act_sample.c
+@@ -134,6 +134,7 @@ static bool tcf_sample_dev_ok_push(struc
+ 	case ARPHRD_TUNNEL6:
+ 	case ARPHRD_SIT:
+ 	case ARPHRD_IPGRE:
++	case ARPHRD_IP6GRE:
+ 	case ARPHRD_VOID:
+ 	case ARPHRD_NONE:
+ 		return false;
 
 
