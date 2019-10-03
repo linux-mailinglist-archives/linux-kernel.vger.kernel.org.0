@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82F2ACAAA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F6ACCAA25
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393442AbfJCRKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:10:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41498 "EHLO mail.kernel.org"
+        id S2389847AbfJCQUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:20:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404109AbfJCQd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:33:29 -0400
+        id S2389835AbfJCQUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:20:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30B5420830;
-        Thu,  3 Oct 2019 16:33:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3746A222CB;
+        Thu,  3 Oct 2019 16:20:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120408;
-        bh=UxrkhlOJ5LfTfHbwZvKs7QiZcYpNZh7w2BoGwiaiP/4=;
+        s=default; t=1570119606;
+        bh=s7x370y95jXHCMWBXfaRjHHLe9MY1QprAjrHw4KTmss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lOEHA7TR90Z/qhB2PKaeXBtbDjTEWrJoTnTtkmMuSc47kXnAaUl/rMXnCgHwfI1/z
-         Cs82UYtn9k/W0Mml47SJwTSWcZLLivQ/SPjGcSgB4cMErc9udjuGVcN5D962b5v266
-         Qkrsc/hPojxEe7dgQlfgwB1ilQAwdS1wBzR8/f9Q=
+        b=l6DpmpDo2P2J1H08zhYTF9pb5nB9ZSRh76T6FRMKQo1bthEXSXQKxefXXl7akS25G
+         yenkYfeaU4Bpon02CHqY1AYcZOxGvYZ5Gfp1cTMsHBwKVUHNchBb855rD53exEKTl6
+         Wesn1Rm8La0tulYe2uI9W5Wr0FzJsGY4CAA09Eto=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        stable@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 212/313] PM / devfreq: passive: fix compiler warning
-Date:   Thu,  3 Oct 2019 17:53:10 +0200
-Message-Id: <20191003154553.868738806@linuxfoundation.org>
+Subject: [PATCH 4.19 128/211] s390/crypto: xts-aes-s390 fix extra run-time crypto self tests finding
+Date:   Thu,  3 Oct 2019 17:53:14 +0200
+Message-Id: <20191003154515.944746287@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: Harald Freudenberger <freude@linux.ibm.com>
 
-[ Upstream commit 0465814831a926ce2f83e8f606d067d86745234e ]
+[ Upstream commit 9e323d45ba94262620a073a3f9945ca927c07c71 ]
 
-The recent commit of
-PM / devfreq: passive: Use non-devm notifiers
-had incurred compiler warning, "unused variable 'dev'".
+With 'extra run-time crypto self tests' enabled, the selftest
+for s390-xts fails with
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+  alg: skcipher: xts-aes-s390 encryption unexpectedly succeeded on
+  test vector "random: len=0 klen=64"; expected_error=-22,
+  cfg="random: inplace use_digest nosimd src_divs=[2.61%@+4006,
+  84.44%@+21, 1.55%@+13, 4.50%@+344, 4.26%@+21, 2.64%@+27]"
+
+This special case with nbytes=0 is not handled correctly and this
+fix now makes sure that -EINVAL is returned when there is en/decrypt
+called with 0 bytes to en/decrypt.
+
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/governor_passive.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/s390/crypto/aes_s390.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index da485477065c5..be6eeab9c814e 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -149,7 +149,6 @@ static int devfreq_passive_notifier_call(struct notifier_block *nb,
- static int devfreq_passive_event_handler(struct devfreq *devfreq,
- 				unsigned int event, void *data)
- {
--	struct device *dev = devfreq->dev.parent;
- 	struct devfreq_passive_data *p_data
- 			= (struct devfreq_passive_data *)devfreq->data;
- 	struct devfreq *parent = (struct devfreq *)p_data->parent;
+diff --git a/arch/s390/crypto/aes_s390.c b/arch/s390/crypto/aes_s390.c
+index 8ff7cb3da1cba..2bc189187ed40 100644
+--- a/arch/s390/crypto/aes_s390.c
++++ b/arch/s390/crypto/aes_s390.c
+@@ -585,6 +585,9 @@ static int xts_aes_encrypt(struct blkcipher_desc *desc,
+ 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(desc->tfm);
+ 	struct blkcipher_walk walk;
+ 
++	if (!nbytes)
++		return -EINVAL;
++
+ 	if (unlikely(!xts_ctx->fc))
+ 		return xts_fallback_encrypt(desc, dst, src, nbytes);
+ 
+@@ -599,6 +602,9 @@ static int xts_aes_decrypt(struct blkcipher_desc *desc,
+ 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(desc->tfm);
+ 	struct blkcipher_walk walk;
+ 
++	if (!nbytes)
++		return -EINVAL;
++
+ 	if (unlikely(!xts_ctx->fc))
+ 		return xts_fallback_decrypt(desc, dst, src, nbytes);
+ 
 -- 
 2.20.1
 
