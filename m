@@ -2,117 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A64B6CAE96
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3A98CAE9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730814AbfJCSx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 14:53:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43302 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730471AbfJCSx5 (ORCPT
+        id S1731748AbfJCSyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 14:54:07 -0400
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:35509 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731156AbfJCSyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:53:57 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x93IqNkr003862
-        for <linux-kernel@vger.kernel.org>; Thu, 3 Oct 2019 14:53:55 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vdnyx1hq6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 14:53:55 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 3 Oct 2019 19:53:53 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 3 Oct 2019 19:53:50 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x93IrKAv36569444
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 3 Oct 2019 18:53:20 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D3075204E;
-        Thu,  3 Oct 2019 18:53:49 +0000 (GMT)
-Received: from dhcp-9-31-103-196.watson.ibm.com (unknown [9.31.103.196])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1EDED52050;
-        Thu,  3 Oct 2019 18:53:48 +0000 (GMT)
-Subject: Re: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Safford <david.safford@ge.com>
-Cc:     linux-integrity@vger.kernel.org, stable@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Thu, 03 Oct 2019 14:53:47 -0400
-In-Reply-To: <20191003175854.GB19679@linux.intel.com>
-References: <20190926171601.30404-1-jarkko.sakkinen@linux.intel.com>
-         <1570024819.4999.119.camel@linux.ibm.com>
-         <20191003114119.GF8933@linux.intel.com>
-         <1570107752.4421.183.camel@linux.ibm.com>
-         <20191003175854.GB19679@linux.intel.com>
+        Thu, 3 Oct 2019 14:54:06 -0400
+Received: by mail-lf1-f54.google.com with SMTP id w6so2665321lfl.2;
+        Thu, 03 Oct 2019 11:54:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ez0vzBljWTiUPJRxq3ritD9VFDP65l68//xJ/PQjSxI=;
+        b=U/gGVbwNV43oHYk7RIPPBJCgz+p2rrcsYzuJpOwD+Mk06lXD9aN2/i11uAWciGMYSB
+         OJfRfDG7TdG3Khr+oyKys2GbFWJyvcVlXsiBOLbavdAmF9EPQ/oEoUefOpU+yBP7rNaN
+         DKBKWRugLhYD7ZvnSfnO+qcALKFuGr9JWfvqSlSvFhpAO7YQwtJNIRV9LFd1NONWC7Lu
+         e7lFW0YlAtb3lBDLrnoltkXB9NOvme0b2pTMRV/M4/UqR8i6hQx8h/kGfv9C4Ps3kfCB
+         Q+5phyABewioDuyHdTMq/EmQWLUm+5AsYgASDR/o/+XcejJiXux35wpJdlUAtw2NUn2e
+         FDpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ez0vzBljWTiUPJRxq3ritD9VFDP65l68//xJ/PQjSxI=;
+        b=HSymdIMux+4shIYsRlypZv9IeHSgVc878PZncSxT56A1LIQK5PGGgX/2tYZMpAoAQG
+         QrZVy18sQh8c0cAuYxcZEFoo0kWDtrnm3aGxh9Mk8cke2hwp7ncDSit7X7FQg32Bky1F
+         Chu/QD+uAZS5oTz+ttLonwcq8XQGNXZ4eenRW7dmoJKjwzqOMo55uhtcVB+fAYiT/vET
+         zoCxZUEHgKsVhe2E0+tiA3kMarYLvmt7JddO5Dmxv0Rb1ZBiiWv/yIR35zphv6WZbSqG
+         HvacQg4wjSBNhB4g5U08O0jO6M1mLJN6NaYTCKAJISw0HVNOaLifMErDg2HD8+fcKtVN
+         RoDw==
+X-Gm-Message-State: APjAAAXNmmTeivI2a5gv3az7h+s6F1kUL61Mwv+e7mHfgYkcTkva62SX
+        7vMi8QBF1oOatujX41QOQPVZoA/0n+aAqqyGR2Q=
+X-Google-Smtp-Source: APXvYqzLSIL88hKc/1DZsmk78o7/GSxZOq5xQ5KEQ4s3VjpkYMsiUxNM8gN26fBeAgPFTpmmgq0K6d8T/9Aee9tCnuU=
+X-Received: by 2002:ac2:50cb:: with SMTP id h11mr6600212lfm.170.1570128843620;
+ Thu, 03 Oct 2019 11:54:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl> <20191002154922.7f1cfc76@coco.lan>
+ <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
+ <20191003080539.2b13c03b@coco.lan> <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
+ <20191003120238.75811da6@coco.lan> <20191003160336.GA5125@Limone>
+ <20191003130909.01d29b77@coco.lan> <20191003162326.GA2727@Limone>
+ <20191003144225.0137bf6c@coco.lan> <20191003183200.GA2631@Limone>
+ <e468b867-1b45-8220-a5d2-ac40fdb4e0e6@jpvw.nl> <CANL0fFS7OEzpgCaHqXdYQYitKzrcfBd0B00K0_KASTDSHV=VBw@mail.gmail.com>
+In-Reply-To: <CANL0fFS7OEzpgCaHqXdYQYitKzrcfBd0B00K0_KASTDSHV=VBw@mail.gmail.com>
+From:   Gonsolo <gonsolo@gmail.com>
+Date:   Thu, 3 Oct 2019 20:53:49 +0200
+Message-ID: <CANL0fFT4hYdp6+XV4q_ZagMB4RWc1sru2JXm6T=XczCNdBfXJw@mail.gmail.com>
+Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
+To:     JP <jp@jpvw.nl>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, crope@iki.fi,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19100318-0012-0000-0000-00000353C61D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19100318-0013-0000-0000-0000218ECE5B
-Message-Id: <1570128827.5046.19.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=812 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910030155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc'ing David Safford]
+I also tried to add a msleep(1000) after the si2168 firmware upload;
+no difference.
 
-On Thu, 2019-10-03 at 20:58 +0300, Jarkko Sakkinen wrote:
-> On Thu, Oct 03, 2019 at 09:02:32AM -0400, Mimi Zohar wrote:
-> > On Thu, 2019-10-03 at 14:41 +0300, Jarkko Sakkinen wrote:
-> > > On Wed, Oct 02, 2019 at 10:00:19AM -0400, Mimi Zohar wrote:
-> > > > On Thu, 2019-09-26 at 20:16 +0300, Jarkko Sakkinen wrote:
-> > > > > Only the kernel random pool should be used for generating random numbers.
-> > > > > TPM contributes to that pool among the other sources of entropy. In here it
-> > > > > is not, agreed, absolutely critical because TPM is what is trusted anyway
-> > > > > but in order to remove tpm_get_random() we need to first remove all the
-> > > > > call sites.
-> > > > 
-> > > > At what point during boot is the kernel random pool available?  Does
-> > > > this imply that you're planning on changing trusted keys as well?
-> > > 
-> > > Well trusted keys *must* be changed to use it. It is not a choice
-> > > because using a proprietary random number generator instead of defacto
-> > > one in the kernel can be categorized as a *regression*.
-> > 
-> > I really don't see how using the TPM random number for TPM trusted
-> > keys would be considered a regression.  That by definition is a
-> > trusted key.  If anything, changing what is currently being done would
-> > be the regression. 
-> 
-> It is really not a TPM trusted key. It trusted key that gets sealed with
-> the TPM. The key itself is used in clear by kernel. The random number
-> generator exists in the kernel to for a reason.
-> 
-> It is without doubt a regression.
-
-You're misusing the term "regression" here.  A regression is something
-that previously worked and has stopped working.  In this case, trusted
-keys has always been based on the TPM random number generator.  Before
-changing this, there needs to be some guarantees that the kernel
-random number generator has a pool of random numbers early, on all
-systems including embedded devices, not just servers.
-
-Mimi
-
+g
