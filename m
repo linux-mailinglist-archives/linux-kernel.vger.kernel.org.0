@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67851CA1A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A19ECA170
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731010AbfJCP5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:57:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40140 "EHLO mail.kernel.org"
+        id S1730390AbfJCPz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730968AbfJCP5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:57:38 -0400
+        id S1727024AbfJCPzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:55:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09F6E21848;
-        Thu,  3 Oct 2019 15:57:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D0F221783;
+        Thu,  3 Oct 2019 15:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118257;
-        bh=WWb1wYNljwQ/3KRsaERbjPT/UPBTlJ3xjkOLi37igHM=;
+        s=default; t=1570118153;
+        bh=WFPSs1XY6ltViKwCO9RVIRh0ygbXm+W+QOBH+Hvw6PI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D8gOKu1wk/wCB6r+66Ie7kOrmXAqK1igSR83lB799IbhxD7/w83PG7rRKSjA3sNbR
-         nMCwDfcPtxan4RZBElc4jLh7HhZDy/9sWxiFckBck5Zy0KPdRwdk+o9MMgPU3YFg/c
-         xSX52jTLPBlRkDOO36zk6yCUYqo8mq27YdFdRTMk=
+        b=IAdjekYdhG5aBk6GuV0W4yGfzy6BTqvgqapgMWBI0RhTSqctqA4QNCndoJqqf9hp0
+         uXrIxRhP6HhgGiwj5/8nizODzEHPCtsuE2tWYD1CAw9AAMZF/Ofxn26zA2EDLE9jgh
+         OYK3RARnEjJDE9TI/7cMGMKvK4AMceDNZE33LP14=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH 4.4 08/99] [PATCH stable 4.4 net] net: rds: Fix NULL ptr use in rds_tcp_kill_sock
-Date:   Thu,  3 Oct 2019 17:52:31 +0200
-Message-Id: <20191003154256.590115314@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Shih-Yuan Lee (FourDollars)" <fourdollars@debian.org>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 10/99] ALSA: hda - Add laptop imic fixup for ASUS M9V laptop
+Date:   Thu,  3 Oct 2019 17:52:33 +0200
+Message-Id: <20191003154257.959228889@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -42,68 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mao Wenan <maowenan@huawei.com>
+From: Shih-Yuan Lee (FourDollars) <fourdollars@debian.org>
 
-After the commit c4e97b06cfdc ("net: rds: force to destroy
-connection if t_sock is NULL in rds_tcp_kill_sock()."),
-it introduced null-ptr-deref in rds_tcp_kill_sock as below:
+commit 7b485d175631be676424aedb8cd2f66d0c93da78 upstream.
 
-BUG: KASAN: null-ptr-deref on address 0000000000000020
-Read of size 8 by task kworker/u16:10/910
-CPU: 3 PID: 910 Comm: kworker/u16:10 Not tainted 4.4.178+ #3
-Hardware name: linux,dummy-virt (DT)
-Workqueue: netns cleanup_net
-Call trace:
-[<ffffff90080abb50>] dump_backtrace+0x0/0x618
-[<ffffff90080ac1a0>] show_stack+0x38/0x60
-[<ffffff9008c42b78>] dump_stack+0x1a8/0x230
-[<ffffff90085d469c>] kasan_report_error+0xc8c/0xfc0
-[<ffffff90085d54a4>] kasan_report+0x94/0xd8
-[<ffffff90085d1b28>] __asan_load8+0x88/0x150
-[<ffffff9009c9cc2c>] rds_tcp_dev_event+0x734/0xb48
-[<ffffff90081eacb0>] raw_notifier_call_chain+0x150/0x1e8
-[<ffffff900973fec0>] call_netdevice_notifiers_info+0x90/0x110
-[<ffffff9009764874>] netdev_run_todo+0x2f4/0xb08
-[<ffffff9009796d34>] rtnl_unlock+0x2c/0x48
-[<ffffff9009756484>] default_device_exit_batch+0x444/0x528
-[<ffffff9009720498>] ops_exit_list+0x1c0/0x240
-[<ffffff9009724a80>] cleanup_net+0x738/0xbf8
-[<ffffff90081ca6cc>] process_one_work+0x96c/0x13e0
-[<ffffff90081cf370>] worker_thread+0x7e0/0x1910
-[<ffffff90081e7174>] kthread+0x304/0x390
-[<ffffff9008094280>] ret_from_fork+0x10/0x50
+The same fixup to enable laptop imic is needed for ASUS M9V with AD1986A
+codec like another HP machine.
 
-If the first loop add the tc->t_sock = NULL to the tmp_list,
-1). list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node)
-
-then the second loop is to find connections to destroy, tc->t_sock
-might equal NULL, and tc->t_sock->sk happens null-ptr-deref.
-2). list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node)
-
-Fixes: c4e97b06cfdc ("net: rds: force to destroy connection if t_sock is NULL in rds_tcp_kill_sock().")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: Shih-Yuan Lee (FourDollars) <fourdollars@debian.org>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190920134052.GA8035@localhost
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/rds/tcp.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ sound/pci/hda/patch_analog.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/rds/tcp.c
-+++ b/net/rds/tcp.c
-@@ -352,9 +352,11 @@ static void rds_tcp_kill_sock(struct net
- 	}
- 	spin_unlock_irq(&rds_tcp_conn_lock);
- 	list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node) {
--		sk = tc->t_sock->sk;
--		sk->sk_prot->disconnect(sk, 0);
--		tcp_done(sk);
-+		if (tc->t_sock) {
-+			sk = tc->t_sock->sk;
-+			sk->sk_prot->disconnect(sk, 0);
-+			tcp_done(sk);
-+		}
- 		if (tc->conn->c_passive)
- 			rds_conn_destroy(tc->conn->c_passive);
- 		rds_conn_destroy(tc->conn);
+--- a/sound/pci/hda/patch_analog.c
++++ b/sound/pci/hda/patch_analog.c
+@@ -370,6 +370,7 @@ static const struct hda_fixup ad1986a_fi
+ 
+ static const struct snd_pci_quirk ad1986a_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x30af, "HP B2800", AD1986A_FIXUP_LAPTOP_IMIC),
++	SND_PCI_QUIRK(0x1043, 0x1153, "ASUS M9V", AD1986A_FIXUP_LAPTOP_IMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1443, "ASUS Z99He", AD1986A_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x1043, 0x1447, "ASUS A8JN", AD1986A_FIXUP_EAPD),
+ 	SND_PCI_QUIRK_MASK(0x1043, 0xff00, 0x8100, "ASUS P5", AD1986A_FIXUP_3STACK),
 
 
