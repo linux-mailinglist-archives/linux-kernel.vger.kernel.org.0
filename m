@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1B51CAC31
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92813CAC35
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732820AbfJCQGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:06:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54116 "EHLO mail.kernel.org"
+        id S1732849AbfJCQG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:06:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730325AbfJCQGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:42 -0400
+        id S1732838AbfJCQGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:06:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623F920865;
-        Thu,  3 Oct 2019 16:06:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 339D2207FF;
+        Thu,  3 Oct 2019 16:06:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118801;
-        bh=WFPSs1XY6ltViKwCO9RVIRh0ygbXm+W+QOBH+Hvw6PI=;
+        s=default; t=1570118809;
+        bh=J0AQ6m8qIbtvuZf7+zrnQn0yAD2FJncnfIGWWEcrfZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hubPOXQeOOj/3gKdzpAyJOWV+4gIdV/I5nCTB560tTjqxzaB80sDCScLQk6zK/87G
-         JKYXGugc0OlsEoXj3hxzeiVpOYliBOE8TDnzeAZuufR75HrFjgi8dTbexxZHtIV0ko
-         5zxw2VOqGNzSYqGPEVXiMcUss/rOrbB/gh2bg5oI=
+        b=NrSGvxmmBMpYrAl7ahbLxSGv1nb5O6junzD5q7uehaKpQqwKdSy8LcgVUB48C0Le0
+         WXQgy3xwLyLSxYc1g+iJscwcRwmUdYKx50PVmtvsdbf4j1807lIoE1PL7MaGBJeA2d
+         B1ShbDY2/LTAUrF2bG9y+SE6DyzLD3ng1WY0gJZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Shih-Yuan Lee (FourDollars)" <fourdollars@debian.org>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 015/185] ALSA: hda - Add laptop imic fixup for ASUS M9V laptop
-Date:   Thu,  3 Oct 2019 17:51:33 +0200
-Message-Id: <20191003154440.905045441@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 018/185] pinctrl: sprd: Use define directive for sprd_pinconf_params values
+Date:   Thu,  3 Oct 2019 17:51:36 +0200
+Message-Id: <20191003154441.777375915@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,32 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shih-Yuan Lee (FourDollars) <fourdollars@debian.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 7b485d175631be676424aedb8cd2f66d0c93da78 upstream.
+[ Upstream commit 957063c924736d4341e5d588757b9f31e8f6fa24 ]
 
-The same fixup to enable laptop imic is needed for ASUS M9V with AD1986A
-codec like another HP machine.
+Clang warns when one enumerated type is implicitly converted to another:
 
-Signed-off-by: Shih-Yuan Lee (FourDollars) <fourdollars@debian.org>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190920134052.GA8035@localhost
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
+from enumeration type 'enum sprd_pinconf_params' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
+        ~                ^~~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
+from enumeration type 'enum sprd_pinconf_params' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
+        ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/138
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_analog.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/sprd/pinctrl-sprd.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_analog.c
-+++ b/sound/pci/hda/patch_analog.c
-@@ -370,6 +370,7 @@ static const struct hda_fixup ad1986a_fi
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 63529911445c7..83958bdd0f057 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -159,10 +159,8 @@ struct sprd_pinctrl {
+ 	struct sprd_pinctrl_soc_info *info;
+ };
  
- static const struct snd_pci_quirk ad1986a_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x30af, "HP B2800", AD1986A_FIXUP_LAPTOP_IMIC),
-+	SND_PCI_QUIRK(0x1043, 0x1153, "ASUS M9V", AD1986A_FIXUP_LAPTOP_IMIC),
- 	SND_PCI_QUIRK(0x1043, 0x1443, "ASUS Z99He", AD1986A_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x1043, 0x1447, "ASUS A8JN", AD1986A_FIXUP_EAPD),
- 	SND_PCI_QUIRK_MASK(0x1043, 0xff00, 0x8100, "ASUS P5", AD1986A_FIXUP_3STACK),
+-enum sprd_pinconf_params {
+-	SPRD_PIN_CONFIG_CONTROL = PIN_CONFIG_END + 1,
+-	SPRD_PIN_CONFIG_SLEEP_MODE = PIN_CONFIG_END + 2,
+-};
++#define SPRD_PIN_CONFIG_CONTROL		(PIN_CONFIG_END + 1)
++#define SPRD_PIN_CONFIG_SLEEP_MODE	(PIN_CONFIG_END + 2)
+ 
+ static int sprd_pinctrl_get_id_by_name(struct sprd_pinctrl *sprd_pctl,
+ 				       const char *name)
+-- 
+2.20.1
+
 
 
