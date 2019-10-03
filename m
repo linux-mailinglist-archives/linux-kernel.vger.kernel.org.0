@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2EECA750
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 344A2CA5ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406254AbfJCQwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:52:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40522 "EHLO mail.kernel.org"
+        id S2404176AbfJCQiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:38:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390216AbfJCQwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:52:44 -0400
+        id S2404656AbfJCQiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:38:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98BCE2070B;
-        Thu,  3 Oct 2019 16:52:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FF8F2133F;
+        Thu,  3 Oct 2019 16:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121564;
-        bh=XdThSglTyTf2p/nzZ3yWXHPyxKufsiDO1o2/6UNXVzs=;
+        s=default; t=1570120680;
+        bh=NkcIYxUs1IlDR0mZf32LuTga/yc2ontPgJuKphfxU3Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i6ZHpPYPXOdBOu7OIpJml8uPkRzYvqdXQm6Za8g5JLxgQvoTLd+D2uIkYzzyc6W+Y
-         UqGob/xMbngO2Q6XkQxNgwOZxpl8jKGcLMKdHzx7mH8EuNkU5SnyQt2HvsDbVGO0Bt
-         OAhjUJqNrU00izCKeQRMX9My0IyxOSpO8aEKc09g=
+        b=A1nvjyNxS0yHElTX95jvU+rOjwJ3NX3ditkVscry506iWixa0i6wcLHh0AmIYb8LA
+         embEIkAht25II/mgifEWpNyrB0HTLQRL6oI33wvgC3bKcmjYermqwkOiGJWwovv+/I
+         ibn7stpy8Ll2cBR//rVB3SGJ7hrB+Tk5PwHLoXRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 5.3 325/344] fs: Export generic_fadvise()
+        stable@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 312/313] mt76: mt7615: fix mt7615 firmware path definitions
 Date:   Thu,  3 Oct 2019 17:54:50 +0200
-Message-Id: <20191003154610.980892908@linuxfoundation.org>
+Message-Id: <20191003154603.923216268@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Lorenzo Bianconi <lorenzo@kernel.org>
 
-commit cf1ea0592dbf109e7e7935b7d5b1a47a1ba04174 upstream.
+[ Upstream commit 9d4d0d06bbf9f7e576b0ebbb2f77672d0fc7f503 ]
 
-Filesystems will need to call this function from their fadvise handlers.
+mt7615 patch/n9/cr4 firmwares are available in mediatek folder in
+linux-firmware repository. Because of this mt7615 won't work on regular
+distributions like Ubuntu. Fix path definitions.  Moreover remove useless
+firmware name pointers and use definitions directly
 
-CC: stable@vger.kernel.org
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 04b8e65922f6 ("mt76: add mac80211 driver for MT7615 PCIe-based chipsets")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/fs.h |    2 ++
- mm/fadvise.c       |    4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt7615/mcu.c    | 11 ++++-------
+ drivers/net/wireless/mediatek/mt76/mt7615/mt7615.h |  6 +++---
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3531,6 +3531,8 @@ extern void inode_nohighmem(struct inode
- /* mm/fadvise.c */
- extern int vfs_fadvise(struct file *file, loff_t offset, loff_t len,
- 		       int advice);
-+extern int generic_fadvise(struct file *file, loff_t offset, loff_t len,
-+			   int advice);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+index e2dd425ac97e0..f877e3862f8db 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+@@ -289,7 +289,6 @@ static int mt7615_driver_own(struct mt7615_dev *dev)
  
- #if defined(CONFIG_IO_URING)
- extern struct sock *io_uring_get_socket(struct file *file);
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -27,8 +27,7 @@
-  * deactivate the pages and clear PG_Referenced.
-  */
- 
--static int generic_fadvise(struct file *file, loff_t offset, loff_t len,
--			   int advice)
-+int generic_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ static int mt7615_load_patch(struct mt7615_dev *dev)
  {
- 	struct inode *inode;
- 	struct address_space *mapping;
-@@ -178,6 +177,7 @@ static int generic_fadvise(struct file *
+-	const char *firmware = MT7615_ROM_PATCH;
+ 	const struct mt7615_patch_hdr *hdr;
+ 	const struct firmware *fw = NULL;
+ 	int len, ret, sem;
+@@ -305,7 +304,7 @@ static int mt7615_load_patch(struct mt7615_dev *dev)
+ 		return -EAGAIN;
  	}
- 	return 0;
- }
-+EXPORT_SYMBOL(generic_fadvise);
  
- int vfs_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+-	ret = request_firmware(&fw, firmware, dev->mt76.dev);
++	ret = request_firmware(&fw, MT7615_ROM_PATCH, dev->mt76.dev);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -371,14 +370,12 @@ static u32 gen_dl_mode(u8 feature_set, bool is_cr4)
+ 
+ static int mt7615_load_ram(struct mt7615_dev *dev)
  {
+-	const struct firmware *fw;
+ 	const struct mt7615_fw_trailer *hdr;
+-	const char *n9_firmware = MT7615_FIRMWARE_N9;
+-	const char *cr4_firmware = MT7615_FIRMWARE_CR4;
+ 	u32 n9_ilm_addr, offset;
+ 	int i, ret;
++	const struct firmware *fw;
+ 
+-	ret = request_firmware(&fw, n9_firmware, dev->mt76.dev);
++	ret = request_firmware(&fw, MT7615_FIRMWARE_N9, dev->mt76.dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -426,7 +423,7 @@ static int mt7615_load_ram(struct mt7615_dev *dev)
+ 
+ 	release_firmware(fw);
+ 
+-	ret = request_firmware(&fw, cr4_firmware, dev->mt76.dev);
++	ret = request_firmware(&fw, MT7615_FIRMWARE_CR4, dev->mt76.dev);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mt7615.h b/drivers/net/wireless/mediatek/mt76/mt7615/mt7615.h
+index 895c2904d7ebf..929b39fa57c34 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/mt7615.h
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/mt7615.h
+@@ -25,9 +25,9 @@
+ #define MT7615_RX_RING_SIZE		1024
+ #define MT7615_RX_MCU_RING_SIZE		512
+ 
+-#define MT7615_FIRMWARE_CR4		"mt7615_cr4.bin"
+-#define MT7615_FIRMWARE_N9		"mt7615_n9.bin"
+-#define MT7615_ROM_PATCH		"mt7615_rom_patch.bin"
++#define MT7615_FIRMWARE_CR4		"mediatek/mt7615_cr4.bin"
++#define MT7615_FIRMWARE_N9		"mediatek/mt7615_n9.bin"
++#define MT7615_ROM_PATCH		"mediatek/mt7615_rom_patch.bin"
+ 
+ #define MT7615_EEPROM_SIZE		1024
+ #define MT7615_TOKEN_SIZE		4096
+-- 
+2.20.1
+
 
 
