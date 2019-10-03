@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30004CA9FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C68CA98C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389295AbfJCQRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:17:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43646 "EHLO mail.kernel.org"
+        id S2405354AbfJCQoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:44:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388397AbfJCQRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:17:38 -0400
+        id S2404319AbfJCQoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:44:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82CFA21848;
-        Thu,  3 Oct 2019 16:17:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE9C0222CF;
+        Thu,  3 Oct 2019 16:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119458;
-        bh=u7H7ztHchobE3ZGof1DEGjbx8GRy0u3r0WIDuLbnQ48=;
+        s=default; t=1570121058;
+        bh=/1Doc4+p/q9z3gLW6wxPhUbWI8u6hlwl8Sqo2S/AsAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3Cy/42ua66JMeC3JTNN1RSOpgRAE2vg+z4lJ4DYADzBYD0I3cuizGaTX5okNr79x
-         HrdV02CK6cMQne5FK2Fd3YtKbJW7K/QxaMFe5lEcaoQf5R+hfdYJxJp4NQ/ZSq4siK
-         WTlZ6UGYU2HCDiqmbIaOjdeVAeUHwcE1TlEPi6ZY=
+        b=quFdPjy4bQACQrQKandOoVKAT6bwrz0TwadTLFDbkq0aAogzUSqZQbPaSpzBrnSM0
+         Y2M6Oo9y8DDA6byNNJvS95yciQe9OLrgyWKO+kt26oTvRbSLgMea4RkHBF+KfVwUdr
+         DKMGBTejNR8fhpUibXdyXDE4wq7GpJwtckBztuC8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Young <sean@mess.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Liguang Zhang <zhangliguang@linux.alibaba.com>,
+        Borislav Petkov <bp@suse.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 033/211] media: mtk-cir: lower de-glitch counter for rc-mm protocol
-Date:   Thu,  3 Oct 2019 17:51:39 +0200
-Message-Id: <20191003154454.650243924@linuxfoundation.org>
+Subject: [PATCH 5.3 137/344] ACPI / APEI: Release resources if gen_pool_add() fails
+Date:   Thu,  3 Oct 2019 17:51:42 +0200
+Message-Id: <20191003154553.746892160@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +46,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Liguang Zhang <zhangliguang@linux.alibaba.com>
 
-[ Upstream commit 5dd4b89dc098bf22cd13e82a308f42a02c102b2b ]
+[ Upstream commit 6abc7622271dc520f241462e2474c71723638851 ]
 
-The rc-mm protocol can't be decoded by the mtk-cir since the de-glitch
-filter removes pulses/spaces shorter than 294 microseconds.
+Destroy ghes_estatus_pool and release memory allocated via vmalloc() on
+errors in ghes_estatus_pool_init() in order to avoid memory leaks.
 
-Tested on a BananaPi R2.
+ [ bp: do the labels properly and with descriptive names and massage. ]
 
-Signed-off-by: Sean Young <sean@mess.org>
-Acked-by: Sean Wang <sean.wang@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/1563173924-47479-1-git-send-email-zhangliguang@linux.alibaba.com
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/rc/mtk-cir.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/acpi/apei/ghes.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/rc/mtk-cir.c b/drivers/media/rc/mtk-cir.c
-index e42efd9d382ec..d37b85d2bc750 100644
---- a/drivers/media/rc/mtk-cir.c
-+++ b/drivers/media/rc/mtk-cir.c
-@@ -44,6 +44,11 @@
- /* Fields containing pulse width data */
- #define MTK_WIDTH_MASK		  (GENMASK(7, 0))
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index a66e00fe31fec..66205ec545553 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -153,6 +153,7 @@ static void ghes_unmap(void __iomem *vaddr, enum fixed_addresses fixmap_idx)
+ int ghes_estatus_pool_init(int num_ghes)
+ {
+ 	unsigned long addr, len;
++	int rc;
  
-+/* IR threshold */
-+#define MTK_IRTHD		 0x14
-+#define MTK_DG_CNT_MASK		 (GENMASK(12, 8))
-+#define MTK_DG_CNT(x)		 ((x) << 8)
+ 	ghes_estatus_pool = gen_pool_create(GHES_ESTATUS_POOL_MIN_ALLOC_ORDER, -1);
+ 	if (!ghes_estatus_pool)
+@@ -164,7 +165,7 @@ int ghes_estatus_pool_init(int num_ghes)
+ 	ghes_estatus_pool_size_request = PAGE_ALIGN(len);
+ 	addr = (unsigned long)vmalloc(PAGE_ALIGN(len));
+ 	if (!addr)
+-		return -ENOMEM;
++		goto err_pool_alloc;
+ 
+ 	/*
+ 	 * New allocation must be visible in all pgd before it can be found by
+@@ -172,7 +173,19 @@ int ghes_estatus_pool_init(int num_ghes)
+ 	 */
+ 	vmalloc_sync_all();
+ 
+-	return gen_pool_add(ghes_estatus_pool, addr, PAGE_ALIGN(len), -1);
++	rc = gen_pool_add(ghes_estatus_pool, addr, PAGE_ALIGN(len), -1);
++	if (rc)
++		goto err_pool_add;
 +
- /* Bit to enable interrupt */
- #define MTK_IRINT_EN		  BIT(0)
- 
-@@ -409,6 +414,9 @@ static int mtk_ir_probe(struct platform_device *pdev)
- 	mtk_w32_mask(ir, val, ir->data->fields[MTK_HW_PERIOD].mask,
- 		     ir->data->fields[MTK_HW_PERIOD].reg);
- 
-+	/* Set de-glitch counter */
-+	mtk_w32_mask(ir, MTK_DG_CNT(1), MTK_DG_CNT_MASK, MTK_IRTHD);
++	return 0;
 +
- 	/* Enable IR and PWM */
- 	val = mtk_r32(ir, MTK_CONFIG_HIGH_REG);
- 	val |= MTK_OK_COUNT(ir->data->ok_count) |  MTK_PWM_EN | MTK_IR_EN;
++err_pool_add:
++	vfree((void *)addr);
++
++err_pool_alloc:
++	gen_pool_destroy(ghes_estatus_pool);
++
++	return -ENOMEM;
+ }
+ 
+ static int map_gen_v2(struct ghes *ghes)
 -- 
 2.20.1
 
