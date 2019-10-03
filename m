@@ -2,127 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF1FC9D53
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:33:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A197C9D50
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:33:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbfJCLcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:32:25 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:32214 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729942AbfJCLcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:32:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 2854E3F6AF;
-        Thu,  3 Oct 2019 13:32:15 +0200 (CEST)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=OJfAZWca;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.1
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1]
-        autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oYPLsr8Qw99B; Thu,  3 Oct 2019 13:32:11 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id F0E113F606;
-        Thu,  3 Oct 2019 13:32:09 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 70EB0360058;
-        Thu,  3 Oct 2019 13:32:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1570102329; bh=4R+oNk9LjSksI0IEwsugOtFE/wcCVB50Tp041MEWnHw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OJfAZWcasPC9OIzDgaSFf4Z3aYq1bCXXRjT7k0LLVebI+gvcO7r3JE0TArknPa8Bl
-         AT42Fc4cYqToei7CpqclZe+DDm8tRzC9CDGP3Y7m/LXwzzo1O4/9hQs6fiocDg2ZCP
-         4hslZ2q3KC6PM3Lr+tfnJT72qURmaPcvPueKDiWE=
-Subject: Re: [PATCH v3 1/7] mm: Remove BUG_ON mmap_sem not held from
- xxx_trans_huge_lock()
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
+        id S1730093AbfJCLby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:31:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:42318 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729987AbfJCLby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 07:31:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97378337;
+        Thu,  3 Oct 2019 04:31:53 -0700 (PDT)
+Received: from [10.162.40.180] (p8cg001049571a15.blr.arm.com [10.162.40.180])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 695B83F706;
+        Thu,  3 Oct 2019 04:31:50 -0700 (PDT)
+Subject: Re: [PATCH] mm/page_alloc: Add a reason for reserved pages in
+ has_unmovable_pages()
+To:     Qian Cai <cai@lca.pw>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20191002134730.40985-1-thomas_os@shipmail.org>
- <20191002134730.40985-2-thomas_os@shipmail.org>
- <20191003110232.mltuantcw5pcrybo@box>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <aa671279-c874-aedd-667f-e3a604bb0d67@shipmail.org>
-Date:   Thu, 3 Oct 2019 13:32:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        linux-kernel@vger.kernel.org
+References: <37b43978-5652-576c-8990-451e751b7c67@arm.com>
+ <285C0297-BF27-4095-87B6-AFC88C1F3C0F@lca.pw>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <d3a88afd-63c6-1091-cf4c-75cd10b7f547@arm.com>
+Date:   Thu, 3 Oct 2019 17:02:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20191003110232.mltuantcw5pcrybo@box>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <285C0297-BF27-4095-87B6-AFC88C1F3C0F@lca.pw>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Kirill,
 
-On 10/3/19 1:02 PM, Kirill A. Shutemov wrote:
-> On Wed, Oct 02, 2019 at 03:47:24PM +0200, Thomas Hellström (VMware) wrote:
->> From: Thomas Hellstrom <thellstrom@vmware.com>
+
+On 10/03/2019 04:49 PM, Qian Cai wrote:
+> 
+> 
+>> On Oct 3, 2019, at 5:32 AM, Anshuman Khandual <Anshuman.Khandual@arm.com> wrote:
 >>
->> The caller needs to make sure that the vma is not torn down during the
->> lock operation and can also use the i_mmap_rwsem for file-backed vmas.
->> Remove the BUG_ON. We could, as an alternative, add a test that either
->> vma->vm_mm->mmap_sem or vma->vm_file->f_mapping->i_mmap_rwsem are held.
+>> Even though page flags does contain reserved bit information, the problem
+>> is that we are explicitly printing the reason for this page dump. In this
+>> case it is caused by the fact that it is a reserved page.
 >>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Rik van Riel <riel@surriel.com>
->> Cc: Minchan Kim <minchan@kernel.org>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Huang Ying <ying.huang@intel.com>
->> Cc: Jérôme Glisse <jglisse@redhat.com>
->> Cc: Kirill A. Shutemov <kirill@shutemov.name>
->> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-> The patch looks good to me:
->
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->
-> But I looked at usage at pagewalk.c and it is inconsitent.  The walker
-> takes ptl before calling ->pud_entry(), but not for ->pmd_entry().
->
-> It should be fixed: do not take the lock before ->pud_entry(). The
-> callback must take care of it.
->
-> Looks like we have single ->pud_entry() implementation the whole kernel.
-> It should be trivial to fix.
->
-> Could you do this?
->
-I could probably fix that. There are some comments in the patch 
-introducing that code as to why it was done that way, though, but I 
-don't remember offhand what the arguments were.
+>> page dumped because: <reason>
+>>
+>> The proposed change makes it explicit that the dump is caused because a
+>> non movable page with reserved bit set. It also helps in differentiating 
+>> between reserved bit condition and the last one "if (found > count)".
+> 
+> Then, someone later would like to add a reason for every different page flags just because they *think* they are special.
+> 
 
-But there seems to be more races WRT puds. See my next email. Perhaps 
-this should be fixed as part of a larger audit of the huge_pud code?
-
-/Thomas
-
-
+Ohh, never meant that the 'Reserved' bit is anything special here but it
+is a reason to make a page unmovable unlike many other flags.
