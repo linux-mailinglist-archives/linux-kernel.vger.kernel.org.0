@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76D4DCAD44
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41934CAD67
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388373AbfJCRho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:37:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48484 "EHLO mail.kernel.org"
+        id S2390018AbfJCRk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:40:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732237AbfJCQDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:03:17 -0400
+        id S1731339AbfJCP7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:59:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DD00207FF;
-        Thu,  3 Oct 2019 16:03:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65D0E207FF;
+        Thu,  3 Oct 2019 15:59:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118596;
-        bh=ErDtY2kpllQvvj4z6lp/isxmwDgPqnbmLsd+yvJXw78=;
+        s=default; t=1570118369;
+        bh=tZ0vg3dZimMEgTi2SUGe7lP4Vh6YFUj0YqBXkUubxTs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WQoKCDaIUDdyo5sy1EwwwD/G6Fe1wXwBeATgsZB6UZM27RfKgReqvuEWm9wQVCOTq
-         wRVsLit5ncglrYrJ3AlJUsHPGAnwu4sZ0DxIeSo40zHVPWQPaBgPnaSU7WS3TV/rVL
-         zosFjhn6PfJEfygBQl9RDWzjlZTFaAfo6vVmL21Q=
+        b=oKeKwVHm/+gCRcux6FIGpoj2YApCB9LmBpFhwsI1wBXMSZ7Strm/P+XKsHLb9Siv+
+         MIzmr854o/HDxXrmwLV8hKVPYwewMpJPNlKFHOoP/sfkOAJhobslXjQPWU9Rx+tVE7
+         3j/1sBBbaj1oCWBDyK08MR3HoKwFuJYUABS1ifsk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        syzbot+79d18aac4bf1770dd050@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 067/129] media: hdpvr: add terminating 0 at end of string
-Date:   Thu,  3 Oct 2019 17:53:10 +0200
-Message-Id: <20191003154349.336979920@linuxfoundation.org>
+        stable@vger.kernel.org, chenzefeng <chenzefeng2@huawei.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 48/99] ia64:unwind: fix double free for mod->arch.init_unw_table
+Date:   Thu,  3 Oct 2019 17:53:11 +0200
+Message-Id: <20191003154318.587383181@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
+References: <20191003154252.297991283@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: chenzefeng <chenzefeng2@huawei.com>
 
-[ Upstream commit 8b8900b729e4f31f12ac1127bde137c775c327e6 ]
+[ Upstream commit c5e5c48c16422521d363c33cfb0dcf58f88c119b ]
 
-dev->usbc_buf was passed as argument for %s, but it was not safeguarded
-by a terminating 0.
+The function free_module in file kernel/module.c as follow:
 
-This caused this syzbot issue:
+void free_module(struct module *mod) {
+	......
+	module_arch_cleanup(mod);
+	......
+	module_arch_freeing_init(mod);
+	......
+}
 
-https://syzkaller.appspot.com/bug?extid=79d18aac4bf1770dd050
+Both module_arch_cleanup and module_arch_freeing_init function
+would free the mod->arch.init_unw_table, which cause double free.
 
-Reported-and-tested-by: syzbot+79d18aac4bf1770dd050@syzkaller.appspotmail.com
+Here, set mod->arch.init_unw_table = NULL after remove the unwind
+table to avoid double free.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: chenzefeng <chenzefeng2@huawei.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/hdpvr/hdpvr-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/ia64/kernel/module.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/hdpvr/hdpvr-core.c b/drivers/media/usb/hdpvr/hdpvr-core.c
-index 7b34108f6587e..99171b912a2d8 100644
---- a/drivers/media/usb/hdpvr/hdpvr-core.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-core.c
-@@ -143,6 +143,7 @@ static int device_authorization(struct hdpvr_device *dev)
- 
- 	dev->fw_ver = dev->usbc_buf[1];
- 
-+	dev->usbc_buf[46] = '\0';
- 	v4l2_info(&dev->v4l2_dev, "firmware version 0x%x dated %s\n",
- 			  dev->fw_ver, &dev->usbc_buf[2]);
- 
+diff --git a/arch/ia64/kernel/module.c b/arch/ia64/kernel/module.c
+index 36b2c94a8eb5d..14c7184daaf64 100644
+--- a/arch/ia64/kernel/module.c
++++ b/arch/ia64/kernel/module.c
+@@ -912,8 +912,12 @@ module_finalize (const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs, struct module *mo
+ void
+ module_arch_cleanup (struct module *mod)
+ {
+-	if (mod->arch.init_unw_table)
++	if (mod->arch.init_unw_table) {
+ 		unw_remove_unwind_table(mod->arch.init_unw_table);
+-	if (mod->arch.core_unw_table)
++		mod->arch.init_unw_table = NULL;
++	}
++	if (mod->arch.core_unw_table) {
+ 		unw_remove_unwind_table(mod->arch.core_unw_table);
++		mod->arch.core_unw_table = NULL;
++	}
+ }
 -- 
 2.20.1
 
