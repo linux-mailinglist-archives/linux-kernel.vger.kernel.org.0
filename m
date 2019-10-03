@@ -2,121 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C0BCAFF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C0E8CB00C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:21:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389005AbfJCUUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 16:20:33 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46175 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388922AbfJCUUa (ORCPT
+        id S2389383AbfJCUVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 16:21:24 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35442 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732848AbfJCUVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 16:20:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1570134028;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=lJsPH0CXpGipbA9H0dGeQKpG32OggA79MXCAh0eilHM=;
-        b=R6BpWamPHr78X7aS0QdG6b6w9AkQxDLjf7GIoVYxLgeVb1NK7/MW51tgyLsXk+vjd4jLnI
-        XYMsTYseyRzBnHefOnarfxu1BmDlCu3b+8ON0JPyZNBzzUPCBb3a4fdIj8tYcuiJt3ZWzz
-        Rf/nrehDeqjJYr3tcnlduGa5+58Kgxc=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-98-MbC85PlYPPmkuWBdfuyS6w-1; Thu, 03 Oct 2019 16:20:27 -0400
-Received: by mail-wr1-f72.google.com with SMTP id z17so1623524wru.13
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 13:20:26 -0700 (PDT)
+        Thu, 3 Oct 2019 16:21:24 -0400
+Received: by mail-lf1-f67.google.com with SMTP id w6so2834277lfl.2;
+        Thu, 03 Oct 2019 13:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jDZRfMkXuS+gCx9+RspTMOpPYXHsN1Tk1N0L1DUZ7HM=;
+        b=mF4FYXDKIuGkHD4EoUdMIdXsBYgzvi2LuBwfqYqMCEBS8q9qeEukZ0LiJd751oxxUH
+         HTmLWqSXP2j3DeCXIv0ZS0XYhO30p9xd1DYm3jlV1dl/RYbs4TI88eFtycOHMnyXHnG6
+         kevCuCh9EplsKm4v8y9I+MyQncF7mzXrUqvhjbohSHLi0n66QMb38MS+UPLnpK8nmZoj
+         bRm0A4UNPdl5uOh2HvjST/7KnIAea15FnLsEz1bKL82OvSlXXBkmcZjcidxvtrjZ3aoq
+         cQIMppO8edkchgIj7SREuHwHCk4lSXEvWxRaBwHNxKEuRXSgZS7c26zKK1AyD38jIqgB
+         F1tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=1mbvMx4ggA/oxOpE1MmlWpjLmFJpu3/zVOWw4njUri0=;
-        b=HTFHtX8sBcMUQu3H+VvIBDw/1p3KWFAPwKXjROPFuDtBRv2kyNf3Xr47Rq1HCx+DfI
-         YBOecrVmI+DqBRLez3Ys1Df7AeWjtEiZ1V89CohHIebDkBXhjdbM2bTv6lp6tMUNw2Au
-         XAqEcMsqoMPX4WihTu5Bjf28D/U3qybPAEGtvJRGbDtJipMxelF103l41byuVDerdJIi
-         JUzsTd74TxaS+F3rGgOMDqfconcgR0YnLRU6u4t/CX+/1yUke5q9fF9EG4vW+nIoRk30
-         uew2hr5TJvb5GTF3hoFWiU+fSLypkSLrf/Essf2VFlH0gkiUqXaD1CsUIstQQPE+pjsV
-         ur4A==
-X-Gm-Message-State: APjAAAXXIkc8A0Ya+bH5z2HtDMf/5K1ey5q9sEPVeL234q9i+ii15Dth
-        iVB1oHmPF3CM2RE/hkpgFNWZCTMaSl3Deo30nZx6/bKq+0veNBqS7QmE9+V0rulTsRgV7j+XYKu
-        Ljw+bdxD6pmtrLhp9JVT9DeQ7
-X-Received: by 2002:a5d:6a09:: with SMTP id m9mr8087612wru.12.1570134025935;
-        Thu, 03 Oct 2019 13:20:25 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxMmbb0nF2zvJZD5BcMQQB8t9k4v9RmHUA6Wx0p477W+n8i5AnC905fNFlzJHR4Ptxz5d/wZg==
-X-Received: by 2002:a5d:6a09:: with SMTP id m9mr8087595wru.12.1570134025690;
-        Thu, 03 Oct 2019 13:20:25 -0700 (PDT)
-Received: from shalem.localdomain (2001-1c00-0c14-2800-ec23-a060-24d5-2453.cable.dynamic.v6.ziggo.nl. [2001:1c00:c14:2800:ec23:a060:24d5:2453])
-        by smtp.gmail.com with ESMTPSA id b22sm3533965wmj.36.2019.10.03.13.20.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2019 13:20:25 -0700 (PDT)
-To:     Stephen Boyd <swboyd@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, youling 257 <youling257@gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Subject: Problem with "driver core: platform: Add an error message to
- platform_get_irq*()" commit
-Message-ID: <01e3d855-c849-ad7f-a6f8-87c806bb488b@redhat.com>
-Date:   Thu, 3 Oct 2019 22:20:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jDZRfMkXuS+gCx9+RspTMOpPYXHsN1Tk1N0L1DUZ7HM=;
+        b=tWi4xcqaE16qCix2eViA9H72MyNw7+TtYDga0N9pnSRLB9aUmAD4m+yYmxiSU2bXw1
+         vIyv0hfWjLdx5G2i1hO2yWLKE2fbUTJYeiVTZAagp2p8UAV5AhED9zP7ajuwyPezbfL6
+         ffnvCex0T/ibePhBFtOV2qwjXNhffsS4ni/Skcq/bhhYIm/cPLVbyRyy82MWonHP7CdV
+         +2R3vE4vlrXlwxNsrIlHfx3X4Ois1vPo+Rz9bD6iUeGLw4SOfqk0XjPtnNED3pSYbm8E
+         p+X3ePDepMg6nPwOPdhZfeN/V4ssdP3MowcXEHV6KzdH1sHIm4RMYCY5mvZ8L6oht7+S
+         912g==
+X-Gm-Message-State: APjAAAVSz1EbeWPU8P0faH0mtUf86IiINMqmTVVHOeSxjvzZNR12MXdM
+        nYTkEZFeEcCrKyrjJIh6DqQx1cKCwcr3HMo5qok=
+X-Google-Smtp-Source: APXvYqyNegkv+HSmVHfz0BwhU4UXNB52/xSWUkcsYNrJeoznMED8UbPpBvVjyJ3HmrK+Tu+rmVeziGXFuojVagVqKo0=
+X-Received: by 2002:a19:3805:: with SMTP id f5mr3768257lfa.173.1570134082446;
+ Thu, 03 Oct 2019 13:21:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Language: en-US
-X-MC-Unique: MbC85PlYPPmkuWBdfuyS6w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
+ <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
+ <20190930121803.n34i63scet2ec7ll@willie-the-truck> <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
+ <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
+ <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
+ <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
+ <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
+ <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
+ <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
+ <CAK7LNARM2jVSdgCDJWDbvVxYLiUR_CFgTPg0nxzbCszSKcx+pg@mail.gmail.com>
+ <CAHk-=wiMm3rN15WmiAqMHjC-pakL_b8qgWsPPri0+YLFORT-ZA@mail.gmail.com>
+ <CAK7LNATSoOD0g=Aarui6Y26E_YB035NsaPpHxqtBNyw0K0UXVw@mail.gmail.com> <CAHk-=wj9Dbom1x7qDfrXgNbjdFa_84bAUMdGigs4sELQQW28wg@mail.gmail.com>
+In-Reply-To: <CAHk-=wj9Dbom1x7qDfrXgNbjdFa_84bAUMdGigs4sELQQW28wg@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 3 Oct 2019 22:21:11 +0200
+Message-ID: <CANiq72k39jKJVDkQVk=OP8zdYEAiLMadnSxDYLFY1gwpKmuo_Q@mail.gmail.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Thu, Oct 3, 2019 at 7:29 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, Oct 3, 2019 at 10:24 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > I just want to annotate __always_inline for the case
+> > "2. code that if not inlined is somehow not correct."
+>
+> Oh, I support that entirely - if only for documentation.
+>
+> But I do *not* support the dismissal of the architecture maintainers
+> concerns about "does it work?" and apparently known compiler bugs.
+>
+> > Again, not saying "use a macro".
+>
+> Other people did, though.
+>
+> And there seemed to be little balancing of the pain vs the gain. The
+> gain really isn't that obvious. If the code shrinks by a couple of kB,
+> is that good or bad? Maybe it is smaller, but is it _better_?
 
-I've been debugging a new error printed with 5.4-rc1:
+I think both positions that people have shown are important to take
+into account.
 
-[   25.570893] dwc3 dwc3.0.auto: IRQ peripheral not found
+We should minimize our usage of macros wherever possible and certainly
+not write new ones when another solution is available. But we should
+*also* minimize our dependence on code that "must-be-inlined" to work
+as much as possible.
 
-This is caused by the "driver core: platform: Add an error message to platf=
-orm_get_irq*()"
-commit.
+In particular, I think we should allow to use __always_inline only if
+it doesn't work otherwise, as an alternative before trying the next
+worst solution (macros). And avoid using only "inline" when we
+actually require inlining, of course.
 
-The dwc3 driver first tries to get the IRQ by 2 different names before fall=
-ing
-back to the IRQ at index 0:
+And the reasoning for each usage of __always_inline should have a
+comment (be it "bad codegen", "performance tanks without it",
+"compiler X <= 4.2 refuses to compile"...). Which is also useful for
+compiler folks to grep for cases to improve/fix in their compiler!
 
-         irq =3D platform_get_irq_byname(dwc3_pdev, "peripheral");
-         if (irq > 0)
-                 goto out;
-
-         if (irq =3D=3D -EPROBE_DEFER)
-                 goto out;
-
-         irq =3D platform_get_irq_byname(dwc3_pdev, "dwc_usb3");
-         if (irq > 0)
-                 goto out;
-
-         if (irq =3D=3D -EPROBE_DEFER)
-                 goto out;
-
-         irq =3D platform_get_irq(dwc3_pdev, 0);
-
-Together with the mentioned commit, this is causing this new (harmless)
-error message. We also have had a bug report for this:
-
-https://bugzilla.kernel.org/show_bug.cgi?id=3D205037
-
-Which I will close after this mail since the error is harmless,
-still it is sorta scary looking and we should probable silence it.
-
-The best solution I can come up with is adding a new
-platform_get_irq_byname_optional mirroring platform_get_irq_optional
-and using that in drivers such as the dwc3 driver.
-
-Does anyone have a better suggestion?
-
-Regards,
-
-Hans
-
+Cheers,
+Miguel
