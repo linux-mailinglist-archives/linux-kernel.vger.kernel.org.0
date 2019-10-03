@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 632E6C986E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 08:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92C4DC9896
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 08:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfJCGp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 02:45:58 -0400
-Received: from heh.ee ([213.35.143.160]:36254 "EHLO mx1.heh.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfJCGp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 02:45:58 -0400
-Received: from [0.0.0.0] (unknown [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.heh.ee (Postfix) with ESMTPSA id 9479116D285;
-        Thu,  3 Oct 2019 09:45:55 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ristioja.ee; s=mail;
-        t=1570085155; bh=lo1ytOcDtHw2l+3dcU7fGcAyQaVo6i3tIMNGf9S8fnI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=qfeWJJPzVyxQRpM7KEnuTiB4TNHfik16gyUY91NXyH3hViTA7orx+Y5FlNXFJumt2
-         zBZmHcQl0BCENiK6lfOMLcVVezU2WLONRdW1DECWkq3csOga2Bk4Dw5n9PftXQv7px
-         a7U8jB4VSsxY5Qy264mMZReKwLsD8HdGwLip91j4=
-Subject: Re: [Spice-devel] Xorg indefinitely hangs in kernelspace
-To:     Frediano Ziglio <fziglio@redhat.com>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        spice-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>
-References: <92785039-0941-4626-610b-f4e3d9613069@ristioja.ee>
- <20190905071407.47iywqcqomizs3yr@sirius.home.kraxel.org>
- <e4b7d889-15f3-0c90-3b9f-d395344499c0@ristioja.ee>
- <ccafdbaf-7f8e-8616-5543-2a178bd63828@ristioja.ee>
- <1174991123.3693721.1569850187145.JavaMail.zimbra@redhat.com>
-From:   Jaak Ristioja <jaak@ristioja.ee>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jaak@ristioja.ee; prefer-encrypt=mutual; keydata=
- mDMEWyjlXBYJKwYBBAHaRw8BAQdABEPNmQfWmwZZXSl5vKnpI1UVtS4l2N9kv7KqyFYtfLe0
- IEphYWsgUmlzdGlvamEgPGphYWtAcmlzdGlvamEuZWU+iJYEExYIAD4WIQTjaPCMFhRItZ2p
- iV/uxscoTrbt3AUCWyjlXAIbIwUJA8OZNAULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRDu
- xscoTrbt3OYPAP9l6ZjLh4qK2r/H1b+7a7qZIAjwf0o4AX6qvtX1WERxywEAhhtOHg+G8idL
- FR08XPW7nlobl2qEHMnqBTqteSsz1gG4OARbKOVcEgorBgEEAZdVAQUBAQdAU6y3a2gcxTI+
- bZgPkJjPXxr0tvuLpCqkIb/envF5ajADAQgHiH4EGBYIACYWIQTjaPCMFhRItZ2piV/uxsco
- Trbt3AUCWyjlXAIbDAUJA8OZNAAKCRDuxscoTrbt3OG5AP0cd6gLbKVSBvSEgRNQ+BNk/1a5
- lSQtocXAcwUx0X9h0gEAqIZ9u7pCWBlRTL+rij97VWWkB/jb1deZ2gExNhd6RAU=
-Message-ID: <b902ffbf-9d25-89bc-2d46-d0a4f67dbee4@ristioja.ee>
-Date:   Thu, 3 Oct 2019 09:45:55 +0300
-User-Agent: undefined
+        id S1726199AbfJCGub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 02:50:31 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41027 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbfJCGub (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 02:50:31 -0400
+Received: by mail-io1-f66.google.com with SMTP id n26so2991236ioj.8
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 23:50:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tt/S1MK2hfNRmcchY+VX0l8ftGF+jAU5aVZJF+oZt2U=;
+        b=it//+pUV0o+AfLtqgd58MPT3/eGz5NZ/3fJdCcTXH9p/mKoqt8vNSKVtRXo25SyElS
+         ubjXKxRDSeAb4aFRKo/9jZCkbm00Q4lM4bVPvOUs6Y+y+15CztcT7PA8pPFcNzG3tmlC
+         Xla/5zwL8a+0Cm7HMHu0mixFm6s4bazOxYl0E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tt/S1MK2hfNRmcchY+VX0l8ftGF+jAU5aVZJF+oZt2U=;
+        b=RYF59nzes/1etjMIMt0FvLowSk4L68BQhYDNkmkNz00vkvThW0tIEHTQ3Jke5THcg+
+         7Qf9wsFdBd+iHGxwT0q0taPImGCcFISKZfwLDLzpbawUKXx8RNyoc/mYN6LZE/3wO2Ia
+         /9dlh5HiEHO583cC/zwUz7wQlo52zOwgjQyceefAShnn+Q+MewLizw7odbTAD2h8s01N
+         xVm+dUCsQ8FdX1LEwKcYoApyWV4m51cRQO+RqD3pDd/f8O4C9WOGjcZB1KvWf0ysuFWa
+         kEXWxKFmKqcXecwKevhxKiIyZlSPrEv681BwMEJOW5tNdQJxg3FnjvhXYy6cuOrGiCtO
+         hjWA==
+X-Gm-Message-State: APjAAAWlhnbqhCglbtcT0MJfQggZO3wD6V3bzd5iTg0TGnHkh3/hFK9K
+        Wa79d9LOlGjEjSL5r/bynVmMijSiXesvif25axjIFQ==
+X-Google-Smtp-Source: APXvYqw9C5okno4/FEmbGgjCtziH8L0ligLd5zphx/vdqtLp/tQvohb/XmjYoGGwm1th0cj3JsX+zL0a2/erxOU/7LI=
+X-Received: by 2002:a92:c74d:: with SMTP id y13mr8565455ilp.77.1570085428660;
+ Wed, 02 Oct 2019 23:50:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1174991123.3693721.1569850187145.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191003064527.15128-1-jagan@amarulasolutions.com> <20191003064527.15128-7-jagan@amarulasolutions.com>
+In-Reply-To: <20191003064527.15128-7-jagan@amarulasolutions.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 3 Oct 2019 12:20:17 +0530
+Message-ID: <CAMty3ZD95L83dzsBwNghfahZ2mfmmOn0iA40t534i91UN7P_uQ@mail.gmail.com>
+Subject: Re: [PATCH v11 6/7] drm/panel: Add Bananapi S070WV20-CT16 ICN6211
+ MIPI-DSI to RGB bridge
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.09.19 16:29, Frediano Ziglio wrote:
->   Why didn't you update bug at https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1813620?
-> I know it can seem tedious but would help tracking it.
+On Thu, Oct 3, 2019 at 12:16 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB bridge
+> panel which can be used to connect via DSI port on BPI-M64 board,
+> so add a driver for it.
+>
+> The same panel PCB comes with parallel RBG which is supported via
+> panel-simple driver with "bananapi,s070wv20-ct16" compatible.
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/panel/Kconfig                 |   9 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  .../panel/panel-bananapi-s070wv20-icn6211.c   | 293 ++++++++++++++++++
 
-I suppose the lack on centralized tracking and handling of Linux kernel
-bugs is a delicate topic, so I don't want to rant much more on that.
-Updating that bug would tedious and time-consuming indeed, which is why
-I haven't done that. To be honest, I don't have enough time and motivation.
-
-I would have posted a link to the upstream (kernel) bug tracker for
-this, but being confined I only posted a link to my original e-mail on
-the virtualization list Pipermail archive. Can you please provide a
-better URL to a reasonably browsable index of this whole e-mail thread
-in some web-based mailing list archive? Perhaps posting that to
-Launchpad would suffice.
-
-
-> It seems you are having this issue since quite some time and with
-> multiple kernel versions.
-> Are you still using Kubuntu? Maybe it happens more with KDE.
-> From the Kernel log looks like a dead lock.
-
-Yes, I'm using Kubuntu 19.04.
-
-
-Best regards,
-Jaak Ristioja
+This would be an overlay patch, which doesn't need to mege. please
+correct the same.
