@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8C6CAA0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D1ACA9D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732320AbfJCQSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:18:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45206 "EHLO mail.kernel.org"
+        id S2406040AbfJCQ7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:59:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389555AbfJCQSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:18:35 -0400
+        id S2390523AbfJCQqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:46:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8696F21783;
-        Thu,  3 Oct 2019 16:18:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E954C20830;
+        Thu,  3 Oct 2019 16:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119514;
-        bh=R1MMQt5GaSLuun9OUwmJWG6Nko4NwIeTmHNgmXuUyM0=;
+        s=default; t=1570121205;
+        bh=U+fTeMg7eR4bzJKvKMnVWPprEFx1Xn1JUmgx6apz7Ho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hqzJl7J9xI0F8d6q9Z3XVpY8TYHRaIY9yeUXGV0cUtrX5JqUxtxM1XXshCrdlUMy7
-         Il3YF9+AyQrVj05G1852nn8tE0H7MaBEsqleR2F8x4MWD/5PC5uAkD6Dclp4YQqiSI
-         wcgPlhuZgnqIsvdGnVql3KPZQcgn9ptssPUgwoMA=
+        b=xlzfMDRGIxND0sYkS4CtTb27LjoCMZn4JHIDmXeUN8X8sG++BaXSJIFfrV60bAo/I
+         Y/m7Ewtn2NLiO0G+L+9+moRTo3lMPd7EMgZn9Fs1rQUC0UWAoyXtsnWekX4iRumo9R
+         W19K5t5piJqHt0eGnEShbYPSioo+omwz8ZTdVh6U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.de>,
+        Yufen Yu <yuyufen@huawei.com>,
+        Song Liu <songliubraving@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 093/211] media: dvb-core: fix a memory leak bug
+Subject: [PATCH 5.3 194/344] md/raid1: fail run raid1 array when active disk less than one
 Date:   Thu,  3 Oct 2019 17:52:39 +0200
-Message-Id: <20191003154508.295032796@linuxfoundation.org>
+Message-Id: <20191003154559.356985526@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit fcd5ce4b3936242e6679875a4d3c3acfc8743e15 ]
+[ Upstream commit 07f1a6850c5d5a65c917c3165692b5179ac4cb6b ]
 
-In dvb_create_media_entity(), 'dvbdev->entity' is allocated through
-kzalloc(). Then, 'dvbdev->pads' is allocated through kcalloc(). However, if
-kcalloc() fails, the allocated 'dvbdev->entity' is not deallocated, leading
-to a memory leak bug. To fix this issue, free 'dvbdev->entity' before
-returning -ENOMEM.
+When run test case:
+  mdadm -CR /dev/md1 -l 1 -n 4 /dev/sd[a-d] --assume-clean --bitmap=internal
+  mdadm -S /dev/md1
+  mdadm -A /dev/md1 /dev/sd[b-c] --run --force
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+  mdadm --zero /dev/sda
+  mdadm /dev/md1 -a /dev/sda
+
+  echo offline > /sys/block/sdc/device/state
+  echo offline > /sys/block/sdb/device/state
+  sleep 5
+  mdadm -S /dev/md1
+
+  echo running > /sys/block/sdb/device/state
+  echo running > /sys/block/sdc/device/state
+  mdadm -A /dev/md1 /dev/sd[a-c] --run --force
+
+mdadm run fail with kernel message as follow:
+[  172.986064] md: kicking non-fresh sdb from array!
+[  173.004210] md: kicking non-fresh sdc from array!
+[  173.022383] md/raid1:md1: active with 0 out of 4 mirrors
+[  173.022406] md1: failed to create bitmap (-5)
+
+In fact, when active disk in raid1 array less than one, we
+need to return fail in raid1_run().
+
+Reviewed-by: NeilBrown <neilb@suse.de>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/dvb-core/dvbdev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/md/raid1.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index 3c87785703310..04dc2f4bc7aaf 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -339,8 +339,10 @@ static int dvb_create_media_entity(struct dvb_device *dvbdev,
- 	if (npads) {
- 		dvbdev->pads = kcalloc(npads, sizeof(*dvbdev->pads),
- 				       GFP_KERNEL);
--		if (!dvbdev->pads)
-+		if (!dvbdev->pads) {
-+			kfree(dvbdev->entity);
- 			return -ENOMEM;
-+		}
- 	}
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 501a3b4d82f33..5afbb7df06e70 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -3129,6 +3129,13 @@ static int raid1_run(struct mddev *mddev)
+ 		    !test_bit(In_sync, &conf->mirrors[i].rdev->flags) ||
+ 		    test_bit(Faulty, &conf->mirrors[i].rdev->flags))
+ 			mddev->degraded++;
++	/*
++	 * RAID1 needs at least one disk in active
++	 */
++	if (conf->raid_disks - mddev->degraded < 1) {
++		ret = -EINVAL;
++		goto abort;
++	}
  
- 	switch (type) {
+ 	if (conf->raid_disks - mddev->degraded == 1)
+ 		mddev->recovery_cp = MaxSector;
+@@ -3162,8 +3169,12 @@ static int raid1_run(struct mddev *mddev)
+ 	ret = md_integrity_register(mddev);
+ 	if (ret) {
+ 		md_unregister_thread(&mddev->thread);
+-		raid1_free(mddev, conf);
++		goto abort;
+ 	}
++	return 0;
++
++abort:
++	raid1_free(mddev, conf);
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
