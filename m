@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B551ACAB10
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8667FCAABF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732926AbfJCR0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:26:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41352 "EHLO mail.kernel.org"
+        id S2404442AbfJCRMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:12:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388969AbfJCQQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:16:25 -0400
+        id S2391647AbfJCQaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:30:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E423D20700;
-        Thu,  3 Oct 2019 16:16:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49031222C4;
+        Thu,  3 Oct 2019 16:30:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119384;
-        bh=REPlmJ3AG9u8ggMbAE/uWkhiDbswCFmGAr0G8TJ0BKE=;
+        s=default; t=1570120200;
+        bh=WytRyuAeD8r+lZci6Ro91yBin+ytXB3SZAzTOmA8unM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tgkw+Mjl2Z/PxXOCD1b2BUHiP//FQf+0EaS1C0SUQPXg+GvOtP4c2CwVMv5T4iusU
-         DkRi00GC/P8gMNSX+sQsQe+S4R83YuG6SiIiS9Ormkq2FMhf7M0n+dpLi1ksG6IC1j
-         S0hWnZKHZ00+i5AKbqG5PsPzpkwJWUO5ceKxzgMM=
+        b=eX1NDbqmbj7AqakPwX1jNEQP7b0DQDdpoKez0sAoeNeIUJ5jKtvPet4NhJ7bZ4Ndr
+         BbJw5Ulk0G+jP7o7QMFu5Vp+KzqCfQ+HRKDYpR6osWzpkyfMBIicMqefWvCQ6GRyD5
+         1GMTHFl3G4rky3nGij5YVJe3aWv02wQ+s8dSmVgw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Richter <rrichter@marvell.com>,
-        Borislav Petkov <bp@suse.de>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 046/211] EDAC/mc: Fix grain_bits calculation
-Date:   Thu,  3 Oct 2019 17:51:52 +0200
-Message-Id: <20191003154458.628881944@linuxfoundation.org>
+Subject: [PATCH 5.2 135/313] soc: renesas: rmobile-sysc: Set GENPD_FLAG_ALWAYS_ON for always-on domain
+Date:   Thu,  3 Oct 2019 17:51:53 +0200
+Message-Id: <20191003154546.185363470@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,78 +46,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Richter <rrichter@marvell.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 3724ace582d9f675134985727fd5e9811f23c059 ]
+[ Upstream commit af0bc634728c0bc6a3f66f911f227d5c6396db88 ]
 
-The grain in EDAC is defined as "minimum granularity for an error
-report, in bytes". The following calculation of the grain_bits in
-edac_mc is wrong:
+Currently the R-Mobile "always-on" PM Domain is implemented by returning
+-EBUSY from the generic_pm_domain.power_off() callback, and doing
+nothing in the generic_pm_domain.power_on() callback.  However, this
+means the PM Domain core code is not aware of the semantics of this
+special domain, leading to boot warnings like the following on
+SH/R-Mobile SoCs:
 
-	grain_bits = fls_long(e->grain) + 1;
+    sh_cmt e6130000.timer: PM domain c5 will not be powered off
 
-Where grain_bits is defined as:
+Fix this by making the always-on nature of the domain explicit instead,
+by setting the GENPD_FLAG_ALWAYS_ON flag.  This removes the need for the
+domain to provide power control callbacks.
 
-	grain = 1 << grain_bits
-
-Example:
-
-	grain = 8	# 64 bit (8 bytes)
-	grain_bits = fls_long(8) + 1
-	grain_bits = 4 + 1 = 5
-
-	grain = 1 << grain_bits
-	grain = 1 << 5 = 32
-
-Replace it with the correct calculation:
-
-	grain_bits = fls_long(e->grain - 1);
-
-The example gives now:
-
-	grain_bits = fls_long(8 - 1)
-	grain_bits = fls_long(7)
-	grain_bits = 3
-
-	grain = 1 << 3 = 8
-
-Also, check if the hardware reports a reasonable grain != 0 and fallback
-with a warning to 1 byte granularity otherwise.
-
- [ bp: massage a bit. ]
-
-Signed-off-by: Robert Richter <rrichter@marvell.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190624150758.6695-2-rrichter@marvell.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/edac_mc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/soc/renesas/rmobile-sysc.c | 31 +++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-index 7d3edd7139328..f59511bd99261 100644
---- a/drivers/edac/edac_mc.c
-+++ b/drivers/edac/edac_mc.c
-@@ -1246,9 +1246,13 @@ void edac_mc_handle_error(const enum hw_event_mc_err_type type,
- 	if (p > e->location)
- 		*(p - 1) = '\0';
+diff --git a/drivers/soc/renesas/rmobile-sysc.c b/drivers/soc/renesas/rmobile-sysc.c
+index 421ae1c887d82..54b616ad4a62a 100644
+--- a/drivers/soc/renesas/rmobile-sysc.c
++++ b/drivers/soc/renesas/rmobile-sysc.c
+@@ -48,12 +48,8 @@ struct rmobile_pm_domain *to_rmobile_pd(struct generic_pm_domain *d)
+ static int rmobile_pd_power_down(struct generic_pm_domain *genpd)
+ {
+ 	struct rmobile_pm_domain *rmobile_pd = to_rmobile_pd(genpd);
+-	unsigned int mask;
++	unsigned int mask = BIT(rmobile_pd->bit_shift);
  
--	/* Report the error via the trace interface */
--	grain_bits = fls_long(e->grain) + 1;
-+	/* Sanity-check driver-supplied grain value. */
-+	if (WARN_ON_ONCE(!e->grain))
-+		e->grain = 1;
+-	if (rmobile_pd->bit_shift == ~0)
+-		return -EBUSY;
+-
+-	mask = BIT(rmobile_pd->bit_shift);
+ 	if (rmobile_pd->suspend) {
+ 		int ret = rmobile_pd->suspend();
+ 
+@@ -80,14 +76,10 @@ static int rmobile_pd_power_down(struct generic_pm_domain *genpd)
+ 
+ static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd)
+ {
+-	unsigned int mask;
++	unsigned int mask = BIT(rmobile_pd->bit_shift);
+ 	unsigned int retry_count;
+ 	int ret = 0;
+ 
+-	if (rmobile_pd->bit_shift == ~0)
+-		return 0;
+-
+-	mask = BIT(rmobile_pd->bit_shift);
+ 	if (__raw_readl(rmobile_pd->base + PSTR) & mask)
+ 		return ret;
+ 
+@@ -122,11 +114,15 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ 	struct dev_power_governor *gov = rmobile_pd->gov;
+ 
+ 	genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+-	genpd->power_off		= rmobile_pd_power_down;
+-	genpd->power_on			= rmobile_pd_power_up;
+-	genpd->attach_dev		= cpg_mstp_attach_dev;
+-	genpd->detach_dev		= cpg_mstp_detach_dev;
+-	__rmobile_pd_power_up(rmobile_pd);
++	genpd->attach_dev = cpg_mstp_attach_dev;
++	genpd->detach_dev = cpg_mstp_detach_dev;
 +
-+	grain_bits = fls_long(e->grain - 1);
++	if (!(genpd->flags & GENPD_FLAG_ALWAYS_ON)) {
++		genpd->power_off = rmobile_pd_power_down;
++		genpd->power_on = rmobile_pd_power_up;
++		__rmobile_pd_power_up(rmobile_pd);
++	}
++
+ 	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
+ }
  
-+	/* Report the error via the trace interface */
- 	if (IS_ENABLED(CONFIG_RAS))
- 		trace_mc_event(type, e->msg, e->label, e->error_count,
- 			       mci->mc_idx, e->top_layer, e->mid_layer,
+@@ -270,6 +266,11 @@ static void __init rmobile_setup_pm_domain(struct device_node *np,
+ 		break;
+ 
+ 	case PD_NORMAL:
++		if (pd->bit_shift == ~0) {
++			/* Top-level always-on domain */
++			pr_debug("PM domain %s is always-on domain\n", name);
++			pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
++		}
+ 		break;
+ 	}
+ 
 -- 
 2.20.1
 
