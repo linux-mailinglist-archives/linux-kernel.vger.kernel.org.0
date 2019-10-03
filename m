@@ -2,224 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C19F8CAD7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C77CACC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390564AbfJCRmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:42:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54807 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730924AbfJCRmq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:42:46 -0400
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1iG4qX-0005zE-5X; Thu, 03 Oct 2019 17:24:57 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     gregkh@linuxfoundation.org
-Cc:     stern@rowland.harvard.edu, mathias.nyman@intel.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v3] usb: Add a new quirk to let buggy hub enable and disable LPM during suspend and resume
-Date:   Fri,  4 Oct 2019 01:24:51 +0800
-Message-Id: <20191003172451.13943-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191003155640.12632-1-kai.heng.feng@canonical.com>
-References: <20191003155640.12632-1-kai.heng.feng@canonical.com>
+        id S1729623AbfJCR2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:28:51 -0400
+Received: from mout.gmx.net ([212.227.17.21]:48675 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730170AbfJCR2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:28:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1570123712;
+        bh=GQhmM6Q8Z1o5q9YHR4jherpt7IjBuXvMOjoid+hpyz0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=Ss2ZUDjLmYXfujIZAHNHXSnEnADyrhXH1A8zurENP8iS0hQDzNH4vtQNxgOUDWicn
+         PPHPxdxGbwPrsreyYCMmOGvdpdQSO7UoWKAiBk9k/qW6Q1/gmJJPrPxI36P/mH0wIp
+         Xi0sRqyvodWv2ex4mG9ANf738gGZz2J4vby8gBNc=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([89.0.25.131]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MzQkK-1huInQ1N68-00vQpU; Thu, 03
+ Oct 2019 19:28:32 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     intel-gfx@lists.freedesktop.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915: Add Sphinx-compatible references to struct fields
+Date:   Thu,  3 Oct 2019 19:28:23 +0200
+Message-Id: <20191003172823.8955-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uEoSon0QRk9LuiMg1o+ki0nsyjkCeAFzM81xtrmxJ8dlMknVTq0
+ Y7bZxxpVEhVsRDG1BPwTD+x+JkptaSH1xtFfUymzW53FZtWhyXRyB94q0VqZXhE1ofO4nVU
+ XvKsdg2Sao9ZlIgj5Ej8t+17h2Hlje/aQJZVtR0A6eS1r9QkCxthutGL7eSEgywv1C9me99
+ io1GpODFaAVtlRD8x71zA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:T9/OC7Ym66A=:NJ7P4FyBlwwnExsIKdfFOG
+ rmD8UrUihtyOkpnEjFPD/7dhaFwACu4W3mL8Mu7xzW+mA4b/Z+y3JOf2wRNDJcdgj7RlAfmcW
+ bTHovVmob3WcPdC0BNlp9hW9n8/5cXP5vOhu26MaWjA1DOz0NRoQtGLx+4lpCVsJg8hdv0Tln
+ g8e3xztNkVRA74dnvFdYwycDkT+5INYJAE2ccoKs6qi1XkwPlACMdpAwb3D/1xR+DEH95uUJV
+ RvAxbhXqC4VG+HhbLgbV4czSiqxIb2ZyJ7Qgs2caGWHSGrq/Sjjl8Y8VHpzve2snJxTWY1+xE
+ AHVy8fGc9keOwr0qUtAgGdyiAPGF5FI++DyfgI1H2cJNE3ylV1YxH816+rcmaKzLEmy+XtT4d
+ CSO4cfkMXBx4alz27KRmNMPkz6FyNN7u/XfOqoSS1Jf5Mp8goDdjVcdVqOrNasoKvf/dn7w5o
+ 6PXZWIQZK8+C0RehCiLDkyOyI71vhmtSNiy8m2uXpRDCShVUAJFSMkX2ShgQMcdIi4ENKu2My
+ GFgQz16LvJUSzEMEV3eJX+m+SHmNHYlhsAbt8IO7VW0ik+HZlMYCTbanEj6qH9vIx5kCxtxhp
+ Id334+tQKz8aP+qL5Mzb+OPXWKb+tBZtYZo/JY+AvGL7S/Cw7WFpbnZ8Vh8wZkSeqR6f0qpRF
+ EeloIX6C6Pbfxa8+WlrFYHAy9W5+Gf+8aipGvnskz4strnsR4hqACcpC6TQBhaCKWeT2nzYWt
+ fs1verZmRKu8OR3cpLnSyU0G1P44gM9FhBvbFoFRzvfFrzQwvH2zg0T7CvJlHCQbBFuv+sfcO
+ aHL5tyBicAy+FiEJWJVAs8F9LNle0IWzWtNeAWgQe2Tf1lESTVX7iq1Ajhu7VkFBdx7weOhsU
+ lhpc4eQhp7vRsnfnAP5tK6Wr/lVPiFCUpbW9TeWIBvKizce5+BUZmGnq06Kq0lUkQ9D1DCav3
+ 6XOGhG/fdJhpN9u4dW14GBlpr+oMyA8PDBolN/Q7LVkimla+bo/Q7lcYG4hYtmwt9p/CrLBTV
+ FVRep2nXvXCYHu29JAcDWDMbZoYs18kCqMjUgQvXY9Gy2LwpgCNO4Q2/KsHOT9fzjKnRFxewe
+ ykM7eypah980HnVRYNmYiFYmcSEWSc+uI9CSHxcLQG8kwOfnI0XnzwoyIUcijTKtVj2oleg3d
+ BzEJFSavvANvBsTyT7FMANpTj+4iCcznjIuDpz42i7CouBKPL556eZlifWzNyqx1dP+DbMN5a
+ sNb8oQDXSb+WB3kawU1oCMO/acQFCI9Oey6p/UXH67MIv36Lr2iq1/beI2og=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dell WD15 dock has a topology like this:
-/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 10000M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/7p, 5000M
-            |__ Port 2: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
+This fixes the following kernel-doc warnings and makes the corrsponding fi=
+elds
+show up in the generated HTML:
 
-Their IDs:
-Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 004 Device 002: ID 0424:5537 Standard Microsystems Corp.
-Bus 004 Device 004: ID 0bda:8153 Realtek Semiconductor Corp.
+./drivers/gpu/drm/i915/i915_drv.h:1143: warning: Incorrect use of kernel-d=
+oc format:          * State of the OA buffer.
+./drivers/gpu/drm/i915/i915_drv.h:1154: warning: Incorrect use of kernel-d=
+oc format:                  * Locks reads and writes to all head/tail stat=
+e
+./drivers/gpu/drm/i915/i915_drv.h:1176: warning: Incorrect use of kernel-d=
+oc format:                  * One 'aging' tail pointer and one 'aged' tail=
+ pointer ready to
+./drivers/gpu/drm/i915/i915_drv.h:1188: warning: Incorrect use of kernel-d=
+oc format:                  * Index for the aged tail ready to read() data=
+ up to.
+./drivers/gpu/drm/i915/i915_drv.h:1193: warning: Incorrect use of kernel-d=
+oc format:                  * A monotonic timestamp for when the current a=
+ging tail pointer
+./drivers/gpu/drm/i915/i915_drv.h:1199: warning: Incorrect use of kernel-d=
+oc format:                  * Although we can always read back the head po=
+inter register,
 
-Ethernet cannot be detected after plugging ethernet cable to the dock,
-the hub and roothub get runtime resumed and runtime suspended
-immediately:
-...
-[  433.315169] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-[  433.315204] usb usb4: usb auto-resume
-[  433.315226] hub 4-0:1.0: hub_resume
-[  433.315239] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10202e2, return 0x10343
-[  433.315264] usb usb4-port1: status 0343 change 0001
-[  433.315279] xhci_hcd 0000:3a:00.0: clear port1 connect change, portsc: 0x10002e2
-[  433.315293] xhci_hcd 0000:3a:00.0: Get port status 4-2 read: 0x2a0, return 0x2a0
-[  433.317012] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.422282] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ drivers/gpu/drm/i915/i915_drv.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-At this point the SMSC hub (usb 4-1) enters into compliance mode
-(USB_SS_PORT_LS_COMP_MOD), and USB core tries to warm-reset it,
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_d=
+rv.h
+index 772154e4073e..55782e78f026 100644
+=2D-- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1140,7 +1140,7 @@ struct i915_perf_stream {
+ 	int period_exponent;
 
-[  433.422307] usb usb4-port1: do warm reset
-[  433.422311] usb 4-1: device reset not allowed in state 8
-[  433.422339] hub 4-0:1.0: state 7 ports 2 chg 0002 evt 0000
-[  433.422346] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
-[  433.422356] usb usb4-port1: do warm reset
-[  433.422358] usb 4-1: device reset not allowed in state 8
-[  433.422428] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 0 status  = 0xf0002e2
-[  433.422455] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 1 status  = 0xe0002a0
-[  433.422465] hub 4-0:1.0: hub_suspend
-[  433.422475] usb usb4: bus auto-suspend, wakeup 1
-[  433.426161] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.466209] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.510204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.554051] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.598235] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.642154] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.686204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.730205] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.774203] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.818207] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.862040] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.862053] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.862077] xhci_hcd 0000:3a:00.0: xhci_suspend: stopping port polling.
-[  433.862096] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-[  433.862312] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_suspend: 0
-[  433.862445] xhci_hcd 0000:3a:00.0: PME# enabled
-[  433.902376] xhci_hcd 0000:3a:00.0: restoring config space at offset 0xc (was 0x0, writing 0x20)
-[  433.902395] xhci_hcd 0000:3a:00.0: restoring config space at offset 0x4 (was 0x100000, writing 0x100403)
-[  433.902490] xhci_hcd 0000:3a:00.0: PME# disabled
-[  433.902504] xhci_hcd 0000:3a:00.0: enabling bus mastering
-[  433.902547] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-[  433.902649] pcieport 0000:00:1b.0: PME: Spurious native interrupt!
-[  433.902839] xhci_hcd 0000:3a:00.0: Port change event, 4-1, id 3, portsc: 0xb0202e2
-[  433.902842] xhci_hcd 0000:3a:00.0: resume root hub
-[  433.902845] xhci_hcd 0000:3a:00.0: handle_port_status: starting port polling.
-[  433.902877] xhci_hcd 0000:3a:00.0: xhci_resume: starting port polling.
-[  433.902889] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.902891] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-[  433.902919] usb usb4: usb wakeup-resume
-[  433.902942] usb usb4: usb auto-resume
-[  433.902966] hub 4-0:1.0: hub_resume
-...
+ 	/**
+-	 * State of the OA buffer.
++	 * @oa_buffer: State of the OA buffer.
+ 	 */
+ 	struct {
+ 		struct i915_vma *vma;
+@@ -1151,6 +1151,7 @@ struct i915_perf_stream {
+ 		int size_exponent;
 
-However the warm-reset never success, the asserted PCI PME keeps the
-runtime-resume, warm-reset and runtime-suspend loop which never bring it back
-and causing spurious interrupts floods.
+ 		/**
++		 * @oa_buffer.ptr_lock:
+ 		 * Locks reads and writes to all head/tail state
+ 		 *
+ 		 * Consider: the head and tail pointer state needs to be read
+@@ -1173,6 +1174,7 @@ struct i915_perf_stream {
+ 		spinlock_t ptr_lock;
 
-After some trial and errors, the issue goes away if LPM on the SMSC hub
-is disabled. Digging further, enabling and disabling LPM during runtime
-resume and runtime suspend respectively can solve the issue.
+ 		/**
++		 * @oa_buffer.tails:
+ 		 * One 'aging' tail pointer and one 'aged' tail pointer ready to
+ 		 * used for reading.
+ 		 *
+@@ -1185,17 +1187,20 @@ struct i915_perf_stream {
+ 		} tails[2];
 
-So bring back the old LPM behavior as a quirk and use it for the SMSC
-hub to solve the issue.
+ 		/**
++		 * @oa_buffer.aged_tail_idx:
+ 		 * Index for the aged tail ready to read() data up to.
+ 		 */
+ 		unsigned int aged_tail_idx;
 
-Fixes: d590c2311150 ("usb: Avoid unnecessary LPM enabling and disabling during suspend and resume")
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v3:
-- Add forgotten patch revision changelog.
+ 		/**
++		 * @oa_buffer.aging_timestamp:
+ 		 * A monotonic timestamp for when the current aging tail pointer
+ 		 * was read; used to determine when it is old enough to trust.
+ 		 */
+ 		u64 aging_timestamp;
 
-v2:
-- Explained by Alan, the hub should properly handle U3 -> U0 transition.
-  So use a quirk to target this buggy device only.
-
- Documentation/admin-guide/kernel-parameters.txt |  3 +++
- drivers/usb/core/hub.c                          | 15 +++++++++++++++
- drivers/usb/core/quirks.c                       |  6 ++++++
- include/linux/usb/quirks.h                      |  3 +++
- 4 files changed, 27 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index c7ac2f3ac99f..0b5ba2545373 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4974,6 +4974,9 @@
- 					pause after every control message);
- 				o = USB_QUIRK_HUB_SLOW_RESET (Hub needs extra
- 					delay after resetting its port);
-+				p = USB_QUIRK_PM_SET_LPM (Device needs to
-+					disable LPM on suspend and enable LPM
-+					on resume);
- 			Example: quirks=0781:5580:bk,0a5c:5834:gij
- 
- 	usbhid.mousepoll=
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 236313f41f4a..5e07407c8204 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -3269,6 +3269,13 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
- 		if (PMSG_IS_AUTO(msg))
- 			goto err_ltm;
- 	}
-+	if (udev->quirks & USB_QUIRK_PM_SET_LPM &&
-+	    usb_unlocked_disable_lpm(udev)) {
-+		dev_err(&udev->dev, "Failed to disable LPM before suspend\n.");
-+		status = -ENOMEM;
-+		if (PMSG_IS_AUTO(msg))
-+			goto err_lpm3;
-+	}
- 
- 	/* see 7.1.7.6 */
- 	if (hub_is_superspeed(hub->hdev))
-@@ -3295,6 +3302,10 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
- 	if (status) {
- 		dev_dbg(&port_dev->dev, "can't suspend, status %d\n", status);
- 
-+		/* Try to enable USB3 LPM again */
-+		if (udev->quirks & USB_QUIRK_PM_SET_LPM)
-+			usb_unlocked_enable_lpm(udev);
-+ err_lpm3:
- 		/* Try to enable USB3 LTM again */
- 		usb_enable_ltm(udev);
-  err_ltm:
-@@ -3586,6 +3597,10 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
- 
- 		/* Try to enable USB3 LTM */
- 		usb_enable_ltm(udev);
-+
-+		/* Try to enable USB3 LPM */
-+		if (udev->quirks & USB_QUIRK_PM_SET_LPM)
-+			usb_unlocked_enable_lpm(udev);
- 	}
- 
- 	usb_unlock_port(port_dev);
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index 6b6413073584..75bbc9faddb4 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -131,6 +131,9 @@ static int quirks_param_set(const char *val, const struct kernel_param *kp)
- 			case 'o':
- 				flags |= USB_QUIRK_HUB_SLOW_RESET;
- 				break;
-+			case 'p':
-+				flags |= USB_QUIRK_PM_SET_LPM;
-+				break;
- 			/* Ignore unrecognized flag characters */
- 			}
- 		}
-@@ -203,6 +206,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	/* USB3503 */
- 	{ USB_DEVICE(0x0424, 0x3503), .driver_info = USB_QUIRK_RESET_RESUME },
- 
-+	/* SMSC USB5537B USB 3.0 Hub (Dell WD15) */
-+	{ USB_DEVICE(0x0424, 0x5537), .driver_info = USB_QUIRK_PM_SET_LPM },
-+
- 	/* Microsoft Wireless Laser Mouse 6000 Receiver */
- 	{ USB_DEVICE(0x045e, 0x00e1), .driver_info = USB_QUIRK_RESET_RESUME },
- 
-diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
-index a1be64c9940f..3f2d97eff369 100644
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -69,4 +69,7 @@
- /* Hub needs extra delay after resetting its port. */
- #define USB_QUIRK_HUB_SLOW_RESET		BIT(14)
- 
-+/* Device needs to disable LPM on suspend and enable LPM on resume */
-+#define USB_QUIRK_PM_SET_LPM			BIT(15)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
--- 
-2.17.1
+ 		/**
++		 * @oa_buffer.head:
+ 		 * Although we can always read back the head pointer register,
+ 		 * we prefer to avoid trusting the HW state, just to avoid any
+ 		 * risk that some hardware condition could * somehow bump the
+=2D-
+2.20.1
 
