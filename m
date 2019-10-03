@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B790CAF37
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 21:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4D8DCAF3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 21:29:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731241AbfJCT13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 15:27:29 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:47684 "EHLO
+        id S1731705AbfJCT3a convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 3 Oct 2019 15:29:30 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:47724 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbfJCT12 (ORCPT
+        with ESMTP id S1731411AbfJCT3a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 15:27:28 -0400
+        Thu, 3 Oct 2019 15:29:30 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id EF732146D1AB5;
-        Thu,  3 Oct 2019 12:27:27 -0700 (PDT)
-Date:   Thu, 03 Oct 2019 12:27:27 -0700 (PDT)
-Message-Id: <20191003.122727.323519546750345405.davem@davemloft.net>
-To:     o.rempel@pengutronix.de
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        kernel@pengutronix.de, netdev@vger.kernel.org,
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B55AD146D1ABB;
+        Thu,  3 Oct 2019 12:29:29 -0700 (PDT)
+Date:   Thu, 03 Oct 2019 12:29:29 -0700 (PDT)
+Message-Id: <20191003.122929.5827330149147558.davem@davemloft.net>
+To:     j.neuschaefer@gmx.net
+Cc:     netdev@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] net: phy: at803x: add ar9331 support
+Subject: Re: [PATCH] docs: networking: devlink-trap: Fix reference to other
+ document
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191003082113.13993-1-o.rempel@pengutronix.de>
-References: <20191003082113.13993-1-o.rempel@pengutronix.de>
+In-Reply-To: <20191003190536.32463-1-j.neuschaefer@gmx.net>
+References: <20191003190536.32463-1-j.neuschaefer@gmx.net>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 03 Oct 2019 12:27:28 -0700 (PDT)
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 03 Oct 2019 12:29:29 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Date: Thu,  3 Oct 2019 10:21:11 +0200
+From: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Date: Thu,  3 Oct 2019 21:05:36 +0200
 
-> changes v3:
-> - use PHY_ID_MATCH_EXACT only for ATH9331 PHY
+> This fixes the following Sphinx warning:
 > 
-> changes v2:
-> - use PHY_ID_MATCH_EXACT instead of leaky masking
-> - remove probe and struct at803x_priv
+> Documentation/networking/devlink-trap.rst:175: WARNING: unknown document: /devlink-trap-netdevsim
+> 
+> Fixes: 9e0874570488 ("Documentation: Add description of netdevsim traps")
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-Looks good and all the feedback has been addressed.
-
-Applied to net-next.
+Acked-by: David S. Miller <davem@davemloft.net>
