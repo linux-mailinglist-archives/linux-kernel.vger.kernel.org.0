@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D79E0CA494
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D9ACA49C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391002AbfJCQ0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:26:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56552 "EHLO mail.kernel.org"
+        id S2391079AbfJCQ03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:26:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388188AbfJCQZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:25:56 -0400
+        id S1730584AbfJCQ00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:26:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 360FA20700;
-        Thu,  3 Oct 2019 16:25:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE5CB2133F;
+        Thu,  3 Oct 2019 16:26:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119955;
-        bh=yXWj2bvR3dpUriiGdOgoiAtmGWjIFSMW48e8OMrrxdQ=;
+        s=default; t=1570119985;
+        bh=HlnVsCceNYZyYai/sxKuhEPWoP8UASBPHV6OlRRXLRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ugmK5W3W5ZixdE5iorl5QBEX1NH0HCM7t+3l23a9gsCJHu7pBtnv7RfWn1W+kUoai
-         Vk19b2facf95j7SDSH/t8qvfUdRNiB/mGLqxvpIeMFkK6fUQ5OFFPLRMLE6FRYRzs1
-         c+EWDgx4EdlvU0c9Pb5/IMlTQnvrxQlforXd+cMo=
+        b=h3/zcTSAVgON5Hs0nK4DITuRkNeM7gh1BJJYPIPv9MFgysknvfivn7oNlgwC32o0C
+         TrwBy+t/GhJf9wyH5RUfjBT062AebSY6zurlzBrN+s4it32PPcYNhMLsEQ2BmLIxeF
+         NJiQnXyhPHJefesIBH3VGBaGz7VTTp6NpmryOmng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        stable@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 036/313] regulator: lm363x: Fix off-by-one n_voltages for lm3632 ldo_vpos/ldo_vneg
-Date:   Thu,  3 Oct 2019 17:50:14 +0200
-Message-Id: <20191003154536.806606667@linuxfoundation.org>
+Subject: [PATCH 5.2 037/313] spi: dw-mmio: Clock should be shut when error occurs
+Date:   Thu,  3 Oct 2019 17:50:15 +0200
+Message-Id: <20191003154536.898881972@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,50 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 1e2cc8c5e0745b545d4974788dc606d678b6e564 ]
+[ Upstream commit 3da9834d9381dd99273f2ad4e6d096c9187dc4f2 ]
 
-According to the datasheet https://www.ti.com/lit/ds/symlink/lm3632a.pdf
-Table 20. VPOS Bias Register Field Descriptions VPOS[5:0]
-Sets the Positive Display Bias (LDO) Voltage (50 mV per step)
-000000: 4 V
-000001: 4.05 V
-000010: 4.1 V
-....................
-011101: 5.45 V
-011110: 5.5 V (Default)
-011111: 5.55 V
-....................
-100111: 5.95 V
-101000: 6 V
-Note: Codes 101001 to 111111 map to 6 V
+When optional clock requesting fails, the main clock is still up and running,
+we should shut it down in such caee.
 
-The LM3632_LDO_VSEL_MAX should be 0b101000 (0x28), so the maximum voltage
-can match the datasheet.
-
-Fixes: 3a8d1a73a037 ("regulator: add LM363X driver")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20190626132632.32629-1-axel.lin@ingics.com
+Fixes: 560ee7e91009 ("spi: dw: Add support for an optional interface clock")
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Gareth Williams <gareth.williams.jx@renesas.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Gareth Williams <gareth.williams.jx@renesas.com>
+Link: https://lore.kernel.org/r/20190710114243.30101-1-andriy.shevchenko@linux.intel.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/lm363x-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-dw-mmio.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
-index 60f15a7227607..7e2ea8c76f6ea 100644
---- a/drivers/regulator/lm363x-regulator.c
-+++ b/drivers/regulator/lm363x-regulator.c
-@@ -30,7 +30,7 @@
+diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
+index 18c06568805e7..86789dbaf5771 100644
+--- a/drivers/spi/spi-dw-mmio.c
++++ b/drivers/spi/spi-dw-mmio.c
+@@ -172,8 +172,10 @@ static int dw_spi_mmio_probe(struct platform_device *pdev)
  
- /* LM3632 */
- #define LM3632_BOOST_VSEL_MAX		0x26
--#define LM3632_LDO_VSEL_MAX		0x29
-+#define LM3632_LDO_VSEL_MAX		0x28
- #define LM3632_VBOOST_MIN		4500000
- #define LM3632_VLDO_MIN			4000000
- 
+ 	/* Optional clock needed to access the registers */
+ 	dwsmmio->pclk = devm_clk_get_optional(&pdev->dev, "pclk");
+-	if (IS_ERR(dwsmmio->pclk))
+-		return PTR_ERR(dwsmmio->pclk);
++	if (IS_ERR(dwsmmio->pclk)) {
++		ret = PTR_ERR(dwsmmio->pclk);
++		goto out_clk;
++	}
+ 	ret = clk_prepare_enable(dwsmmio->pclk);
+ 	if (ret)
+ 		goto out_clk;
 -- 
 2.20.1
 
