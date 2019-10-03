@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B0EACA2A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 655ACCA2A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732974AbfJCQHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:07:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55370 "EHLO mail.kernel.org"
+        id S1732990AbfJCQHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:07:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731814AbfJCQHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:07:33 -0400
+        id S1732972AbfJCQHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:07:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E2A321783;
-        Thu,  3 Oct 2019 16:07:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA4FA2245C;
+        Thu,  3 Oct 2019 16:07:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118852;
-        bh=1lKHTcCsWkLc8EvABdysHSBmYWJ2OqaHgt8qCssaoII=;
+        s=default; t=1570118855;
+        bh=hamLF/be2yWDbkm1xolk1kZ1ArBeiYf1ziKgbV1oYKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bUSmf4HayOqD7O1ehmBAzvFAtDERLn1wbR4aZUPGKICUeKz53Begi/E1l+1pStiOI
-         +3sivJiwJw5G7yvkV4qbC0UUdbjRliV8uIZQARgryzseEAoWCdWOU2QF4PebGi1QLu
-         RpIEya5m4Cjv8QVhx/qMG9VHtvjt6b3fMk7KnMrc=
+        b=sn4x17g3smBNQsSwgFLT+CyhzucDlxEVB5KxVjCuGseHTqBCPxzx14VNJ04WksPR7
+         sSET9q3KnXvBrGkQjZr86JsVkx/7EOZdBWAbS9Vksu2kH3r9Rpj6PqF7nT3aZ/6yp4
+         18xt9WusifnAjd4aCP34j5OvRF/l/WDVnpCNSH/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 032/185] Bluetooth: btrtl: Additional Realtek 8822CE Bluetooth devices
-Date:   Thu,  3 Oct 2019 17:51:50 +0200
-Message-Id: <20191003154444.993370236@linuxfoundation.org>
+Subject: [PATCH 4.14 033/185] f2fs: use generic EFSBADCRC/EFSCORRUPTED
+Date:   Thu,  3 Oct 2019 17:51:51 +0200
+Message-Id: <20191003154445.140135573@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,68 +44,284 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 6d0762b19c5963ff9e178e8af3626532ee04d93d ]
+[ Upstream commit 10f966bbf521bb9b2e497bbca496a5141f4071d0 ]
 
-The ASUS X412FA laptop contains a Realtek RTL8822CE device with an
-associated BT chip using a USB ID of 04ca:4005. This ID is added to the
-driver.
+f2fs uses EFAULT as error number to indicate filesystem is corrupted
+all the time, but generic filesystems use EUCLEAN for such condition,
+we need to change to follow others.
 
-The /sys/kernel/debug/usb/devices portion for this device is:
+This patch adds two new macros as below to wrap more generic error
+code macros, and spread them in code.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=09 Cnt=04 Dev#=  4 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=04ca ProdID=4005 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+EFSBADCRC	EBADMSG		/* Bad CRC detected */
+EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
 
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204707
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btusb.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/checkpoint.c | 8 ++++++--
+ fs/f2fs/data.c       | 8 ++++----
+ fs/f2fs/f2fs.h       | 4 ++++
+ fs/f2fs/inline.c     | 4 ++--
+ fs/f2fs/inode.c      | 4 ++--
+ fs/f2fs/node.c       | 4 ++--
+ fs/f2fs/recovery.c   | 2 +-
+ fs/f2fs/segment.c    | 7 ++++---
+ fs/f2fs/segment.h    | 4 ++--
+ fs/f2fs/super.c      | 2 +-
+ 10 files changed, 28 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 7b5a06b277464..73561bfd95d43 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -388,6 +388,9 @@ static const struct usb_device_id blacklist_table[] = {
- 	/* Additional Realtek 8822BE Bluetooth devices */
- 	{ USB_DEVICE(0x0b05, 0x185c), .driver_info = BTUSB_REALTEK },
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 624817eeb25e3..170423ff27210 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -793,6 +793,7 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	unsigned int cp_blks = 1 + __cp_payload(sbi);
+ 	block_t cp_blk_no;
+ 	int i;
++	int err;
  
-+	/* Additional Realtek 8822CE Bluetooth devices */
-+	{ USB_DEVICE(0x04ca, 0x4005), .driver_info = BTUSB_REALTEK },
+ 	sbi->ckpt = kzalloc(cp_blks * blk_size, GFP_KERNEL);
+ 	if (!sbi->ckpt)
+@@ -819,6 +820,7 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	} else if (cp2) {
+ 		cur_page = cp2;
+ 	} else {
++		err = -EFSCORRUPTED;
+ 		goto fail_no_cp;
+ 	}
+ 
+@@ -831,8 +833,10 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 		sbi->cur_cp_pack = 2;
+ 
+ 	/* Sanity checking of checkpoint */
+-	if (sanity_check_ckpt(sbi))
++	if (sanity_check_ckpt(sbi)) {
++		err = -EFSCORRUPTED;
+ 		goto free_fail_no_cp;
++	}
+ 
+ 	if (cp_blks <= 1)
+ 		goto done;
+@@ -860,7 +864,7 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	f2fs_put_page(cp2, 1);
+ fail_no_cp:
+ 	kfree(sbi->ckpt);
+-	return -EINVAL;
++	return err;
+ }
+ 
+ static void __add_dirty_inode(struct inode *inode, enum inode_type type)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 113d1cd551192..cc57294451940 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -376,7 +376,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 
+ 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+ 			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
+-		return -EFAULT;
++		return -EFSCORRUPTED;
+ 
+ 	trace_f2fs_submit_page_bio(page, fio);
+ 	f2fs_trace_ios(fio, 0);
+@@ -959,7 +959,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 
+ 	if (__is_valid_data_blkaddr(blkaddr) &&
+ 		!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC)) {
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto sync_out;
+ 	}
+ 
+@@ -1425,7 +1425,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 
+ 		if (!f2fs_is_valid_blkaddr(fio->sbi, fio->old_blkaddr,
+ 							DATA_GENERIC))
+-			return -EFAULT;
++			return -EFSCORRUPTED;
+ 
+ 		ipu_force = true;
+ 		fio->need_lock = LOCK_DONE;
+@@ -1451,7 +1451,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	if (__is_valid_data_blkaddr(fio->old_blkaddr) &&
+ 		!f2fs_is_valid_blkaddr(fio->sbi, fio->old_blkaddr,
+ 							DATA_GENERIC)) {
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto out_writepage;
+ 	}
+ 	/*
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6caae471c1a45..268409cee1c34 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3089,3 +3089,7 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
+ }
+ 
+ #endif
 +
- 	/* Silicon Wave based devices */
- 	{ USB_DEVICE(0x0c10, 0x0000), .driver_info = BTUSB_SWAVE },
++#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
++#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
++
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 506e365cf903e..8906f6381b1a4 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -135,7 +135,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+ 			"%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, "
+ 			"run fsck to fix.",
+ 			__func__, dn->inode->i_ino, dn->data_blkaddr);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
  
+ 	f2fs_bug_on(F2FS_P_SB(page), PageWriteback(page));
+@@ -382,7 +382,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 			"%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, "
+ 			"run fsck to fix.",
+ 			__func__, dir->i_ino, dn.data_blkaddr);
+-		err = -EINVAL;
++		err = -EFSCORRUPTED;
+ 		goto out;
+ 	}
+ 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index e02ed16bc35cd..c6d0687f00fee 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -70,7 +70,7 @@ static int __written_first_block(struct f2fs_sb_info *sbi,
+ 	if (!__is_valid_data_blkaddr(addr))
+ 		return 1;
+ 	if (!f2fs_is_valid_blkaddr(sbi, addr, DATA_GENERIC))
+-		return -EFAULT;
++		return -EFSCORRUPTED;
+ 	return 0;
+ }
+ 
+@@ -300,7 +300,7 @@ static int do_read_inode(struct inode *inode)
+ 
+ 	if (!sanity_check_inode(inode, node_page)) {
+ 		f2fs_put_page(node_page, 1);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* check data exist */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 12060fbfbb05e..e7b8e2b35e226 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -39,7 +39,7 @@ int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 				"%s: out-of-range nid=%x, run fsck to fix.",
+ 				__func__, nid);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 	return 0;
+ }
+@@ -1195,7 +1195,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
+ 	}
+ 
+ 	if (!f2fs_inode_chksum_verify(sbi, page)) {
+-		err = -EBADMSG;
++		err = -EFSBADCRC;
+ 		goto out_err;
+ 	}
+ page_hit:
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 65a82c5bafcbe..db357e9ad5990 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -451,7 +451,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			"Inconsistent ofs_of_node, ino:%lu, ofs:%u, %u",
+ 			inode->i_ino, ofs_of_node(dn.node_page),
+ 			ofs_of_node(page));
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto err;
+ 	}
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 294fdb1b22137..9e5fca35e47d0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2216,6 +2216,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 			"Found FS corruption, run fsck to fix.");
++		err = -EFSCORRUPTED;
+ 		goto out;
+ 	}
+ 
+@@ -3309,7 +3310,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 					"Wrong journal entry on segno %u",
+ 					start);
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+-			err = -EINVAL;
++			err = -EFSCORRUPTED;
+ 			break;
+ 		}
+ 
+@@ -3350,7 +3351,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 			"SIT is corrupted node# %u vs %u",
+ 			total_node_blocks, valid_node_count(sbi));
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		err = -EINVAL;
++		err = -EFSCORRUPTED;
+ 	}
+ 
+ 	return err;
+@@ -3468,7 +3469,7 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
+ 				"segno:%u, type:%u, next_blkoff:%u, blkofs:%u",
+ 				i, curseg->segno, curseg->alloc_type,
+ 				curseg->next_blkoff, blkofs);
+-			return -EINVAL;
++			return -EFSCORRUPTED;
+ 		}
+ 	}
+ 	return 0;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index e3d8826c5113d..0d46e936d54ed 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -665,7 +665,7 @@ static inline int check_block_count(struct f2fs_sb_info *sbi,
+ 				"Mismatch valid blocks %d vs. %d",
+ 					GET_SIT_VBLOCKS(raw_sit), valid_blocks);
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* check segment usage, and check boundary of a given segment number */
+@@ -675,7 +675,7 @@ static inline int check_block_count(struct f2fs_sb_info *sbi,
+ 				"Wrong valid blocks %d or segno %u",
+ 					GET_SIT_VBLOCKS(raw_sit), segno);
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 	return 0;
+ }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index ad839a7996e9b..344aa861774bd 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2220,7 +2220,7 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Can't find valid F2FS filesystem in %dth superblock",
+ 				block + 1);
+-			err = -EINVAL;
++			err = -EFSCORRUPTED;
+ 			brelse(bh);
+ 			continue;
+ 		}
 -- 
 2.20.1
 
