@@ -2,90 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5059C9D1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C3FC9D25
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729970AbfJCLWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:22:31 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33173 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729895AbfJCLWa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:22:30 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so1592451pfl.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 04:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=4vvWZOnDaYB306KLyalX1Vu4JeBx1avHtcxqLv3dAQI=;
-        b=XLnU6ZGBqa577KBUFDzfnYkNp6/eIoX6Pq9euUphJF1eaLkGpQyppKve1wUxuESwu5
-         ZJvOyoz7Fjr+XB+RNcksDtCovFTo3ED706fd3n3IH2W4NWqquJz+ijcLNcbGryn4DTjs
-         55VDB8F/RFZ4jOgbmebt8kgKu+sISxrGzicyARLK1gbwIeKiIDA/YnY2oROdTtgXo9Lp
-         OhgwAiEmccjOVtNmAa25PRDCf+fOl4AqZJwpjOekZT6+jrEjcGb3ZiOpJSLV4Nc0LmGG
-         YHPOh5KemQuBPqNnHLJbuZPqFqbs8hwaM6Sz1REmnrszkUwm6Y6AJ+oQvdDFSQPGqO+A
-         IjMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4vvWZOnDaYB306KLyalX1Vu4JeBx1avHtcxqLv3dAQI=;
-        b=ulAvClYFL+ifhp4xPGnKPfNOuY1K3naVQZ8F3ZZlrvsUB4Opq/d77yyvTXuoEM/5ew
-         wsscrLxrVH1IFZy471ACx/oxp7fWSBzfF3E/mjf4wuaUPf1j4cw0ze/dF+BioUBpzChk
-         7nkg/wRydP6ggR6Ok0JS0sHG6JjgLwl00DGmn7MScNkvio4TH+yAEstYF9j8xTI6zy4o
-         2dHc3MTaBM7WOB0ztxeusaBeoGLoSh12DpsR5bRL9+F2gKK0ss3djAxDH9AvctI2Tfy/
-         awIk35l5wiu8pClFTA5KgAnQPf37S+TOGrtn4wLK5kEDDZVs5tSagAYFjJlunGNCV8hc
-         m4CA==
-X-Gm-Message-State: APjAAAXH3n1fB8cE+HREw/ZvPzgJvNtX/Ut0BwfG24GVXudeqaE4cJZy
-        BfDwu6+1PrV5Ev98KLEyJqnCVMdniLacPQ==
-X-Google-Smtp-Source: APXvYqyo/GBuKYMgok2Qu85GyYWcZ/kBG23UO0oZtmNIMkGIJX0uwqdZO5n/Gy1IyWW72l28hy/lCQ==
-X-Received: by 2002:a65:4543:: with SMTP id x3mr8479928pgr.300.1570101748857;
-        Thu, 03 Oct 2019 04:22:28 -0700 (PDT)
-Received: from localhost ([49.248.175.14])
-        by smtp.gmail.com with ESMTPSA id k8sm1998881pgm.14.2019.10.03.04.22.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Oct 2019 04:22:28 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] media: dt-bindings: media: Fixup Allwinner A10 CSI binding
-Date:   Thu,  3 Oct 2019 16:52:24 +0530
-Message-Id: <b47ec7088aa4b07458519ab151de92df552a9302.1570101510.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        id S1730009AbfJCLY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:24:28 -0400
+Received: from mga05.intel.com ([192.55.52.43]:11552 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729304AbfJCLY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 07:24:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 04:24:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,251,1566889200"; 
+   d="scan'208";a="205595674"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.161])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Oct 2019 04:24:26 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-stable@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/3] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
+Date:   Thu,  3 Oct 2019 14:24:21 +0300
+Message-Id: <20191003112424.9036-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This new binding fails dt_binding_check due to a typo. Fix it up.
+commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream
 
-linux.git/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml: $id: path/filename 'arm/allwinner,sun4i-a10-csi.yaml' doesn't match actual filename
-linux.git/Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts' failed
-make[2]: *** [Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-linux.git/Makefile:1284: recipe for target 'dt_binding_check' failed
-make[1]: *** [dt_binding_check] Error 2
+This backport is for v4.14 and v4.19 The backport requires non-racy
+behaviour from TPM 1.x sysfs code. Thus, the dependecies for that
+are included.
 
-Fixes: c5e8f4ccd7750 ("media: dt-bindings: media: Add Allwinner A10 CSI binding")
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- .../devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml      | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+NOTE: 1/3 is only needed for v4.14.
 
-diff --git a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
-index 27f38eed389e4..5dd1cf490cd9d 100644
---- a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
-+++ b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/arm/allwinner,sun4i-a10-csi.yaml#
-+$id: http://devicetree.org/schemas/media/allwinner,sun4i-a10-csi.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Allwinner A10 CMOS Sensor Interface (CSI) Device Tree Bindings
+v2:
+* Something happened when merging 3/3 that write lock was taken
+  twice. Fixed in this version. Did also sanity check test with
+  TPM2:
+  echo devices > /sys/power/pm_test && echo mem > /sys/power/state
+
+Jarkko Sakkinen (2):
+  tpm: migrate pubek_show to struct tpm_buf
+  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+
+Vadim Sukhomlinov (1):
+  tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
+
+ drivers/char/tpm/tpm-chip.c  |   5 +-
+ drivers/char/tpm/tpm-sysfs.c | 201 +++++++++++++++++++++--------------
+ drivers/char/tpm/tpm.h       |  13 ---
+ 3 files changed, 124 insertions(+), 95 deletions(-)
+
 -- 
-2.17.1
+2.20.1
 
