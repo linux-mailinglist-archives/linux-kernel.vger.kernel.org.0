@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5E35CA1F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE373CA270
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731561AbfJCQAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43996 "EHLO mail.kernel.org"
+        id S1732194AbfJCQFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731545AbfJCQAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:19 -0400
+        id S1730633AbfJCQFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54640207FF;
-        Thu,  3 Oct 2019 16:00:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB3B2215EA;
+        Thu,  3 Oct 2019 16:05:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118418;
-        bh=fsyH0ce6J7i4xp0YrIBg7PCkiz/4+XeUMbByYMJ7klc=;
+        s=default; t=1570118713;
+        bh=PISx2vyocSh8/A1YRwQdwLjLxS9DHcEQhiIdSzWqr9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c1MkSEzD5hGqUFV5uulsxpVtk8ku84rWJ7qoz3zOd6X9RvnPZgGmhLaY5vPnkUX2W
-         LtNYKrzEP7B9Fcf0mFyKtpeH3aYZwhlTx0R0EdhsgLz1nVm9HxzF9GcZuFIksFA1nu
-         oEYkDyxcqbCVDHY/yzWpanqA4gqMR9ZxQfas1B8Y=
+        b=T5H5JHnylKqzXz6RyD1fTq03QzNWZZ9tutEY3R45swuztUr+4on0WQ8TlT3wtChAP
+         7YLd3Nt1cJwAKRGd9UYsEa+m7l+lpMH36PJjsoPT14n3C59tTOvHDAGz2pgLsc9Jem
+         EgFWxm33MP31Jbfy+6ni7XqX7rKBfHSo5BS88mUo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Kenzior <denkenz@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 89/99] cfg80211: Purge frame registrations on iftype change
-Date:   Thu,  3 Oct 2019 17:53:52 +0200
-Message-Id: <20191003154339.189378717@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 110/129] ASoC: Intel: Fix use of potentially uninitialized variable
+Date:   Thu,  3 Oct 2019 17:53:53 +0200
+Message-Id: <20191003154409.194095223@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Kenzior <denkenz@gmail.com>
+From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
 
-commit c1d3ad84eae35414b6b334790048406bd6301b12 upstream.
+commit 810f3b860850148788fc1ed8a6f5f807199fed65 upstream.
 
-Currently frame registrations are not purged, even when changing the
-interface type.  This can lead to potentially weird situations where
-frames possibly not allowed on a given interface type remain registered
-due to the type switching happening after registration.
+If ipc->ops.reply_msg_match is NULL, we may end up using uninitialized
+mask value.
 
-The kernel currently relies on userspace apps to actually purge the
-registrations themselves, this is not something that the kernel should
-rely on.
+reported by smatch:
+sound/soc/intel/common/sst-ipc.c:266 sst_ipc_reply_find_msg() error: uninitialized symbol 'mask'.
 
-Add a call to cfg80211_mlme_purge_registrations() to forcefully remove
-any registrations left over prior to switching the iftype.
-
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+Link: https://lore.kernel.org/r/20190827141712.21015-3-amadeuszx.slawinski@linux.intel.com
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-Link: https://lore.kernel.org/r/20190828211110.15005-1-denkenz@gmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/wireless/util.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/intel/common/sst-ipc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -974,6 +974,7 @@ int cfg80211_change_iface(struct cfg8021
- 		}
+--- a/sound/soc/intel/common/sst-ipc.c
++++ b/sound/soc/intel/common/sst-ipc.c
+@@ -211,6 +211,8 @@ struct ipc_message *sst_ipc_reply_find_m
  
- 		cfg80211_process_rdev_events(rdev);
-+		cfg80211_mlme_purge_registrations(dev->ieee80211_ptr);
- 	}
+ 	if (ipc->ops.reply_msg_match != NULL)
+ 		header = ipc->ops.reply_msg_match(header, &mask);
++	else
++		mask = (u64)-1;
  
- 	err = rdev_change_virtual_intf(rdev, dev, ntype, flags, params);
+ 	if (list_empty(&ipc->rx_list)) {
+ 		dev_err(ipc->dev, "error: rx list empty but received 0x%llx\n",
 
 
