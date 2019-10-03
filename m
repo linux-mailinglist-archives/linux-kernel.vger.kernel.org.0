@@ -2,37 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C55BCACE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4976CAC77
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731756AbfJCRbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:31:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59660 "EHLO mail.kernel.org"
+        id S1731516AbfJCQKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:10:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387618AbfJCQKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:10:21 -0400
+        id S2387652AbfJCQK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:10:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 915AE215EA;
-        Thu,  3 Oct 2019 16:10:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 546B2207FF;
+        Thu,  3 Oct 2019 16:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119021;
-        bh=XT86kEpiNU0DwRGGQv65OB+v1DaHSodQuRRLnE4WgMo=;
+        s=default; t=1570119028;
+        bh=B05maExQbhzmRz3QtW0v5BieCGz5HdQQOqgZortZCcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IoG8NCiYeKFIa3E/shLh+pMbGk4c6pDnNWXVhBVQdJYisDDV54sZPzEbleFSI8uHy
-         lBru/BvBmgf+uiz8trJ1oucZxyh2Ra3rlhk+KRc+vl1i3JaD8NOMnrHEApEwzJdKv4
-         Ivp4gB068XnO/fOMNAaUeJaDjqCAd4KWHR53MDTs=
+        b=eMFwPoqF+O+1eHR88DdwCJ6wmD7d2e1VxaZmcnsS5tuRr8DKPzfOtONcMWoiA+xOw
+         MhheLhBhmy+7QE04mPvTAt7FOVA9fg9dHnj/PtOiPPdQHWMeoc5E31eh/hZLHMFRU3
+         VwnkEA2ppiLu3r4i9lOfjNEUrntpJfGwUMSw/pKs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        syzbot+79d18aac4bf1770dd050@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 097/185] media: hdpvr: add terminating 0 at end of string
-Date:   Thu,  3 Oct 2019 17:52:55 +0200
-Message-Id: <20191003154500.436507794@linuxfoundation.org>
+        stable@vger.kernel.org, Gerald Baeza <gerald.baeza@st.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 100/185] libperf: Fix alignment trap with xyarray contents in perf stat
+Date:   Thu,  3 Oct 2019 17:52:58 +0200
+Message-Id: <20191003154501.345118791@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -45,38 +50,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Gerald BAEZA <gerald.baeza@st.com>
 
-[ Upstream commit 8b8900b729e4f31f12ac1127bde137c775c327e6 ]
+[ Upstream commit d9c5c083416500e95da098c01be092b937def7fa ]
 
-dev->usbc_buf was passed as argument for %s, but it was not safeguarded
-by a terminating 0.
+Following the patch 'perf stat: Fix --no-scale', an alignment trap
+happens in process_counter_values() on ARMv7 platforms due to the
+attempt to copy non 64 bits aligned double words (pointed by 'count')
+via a NEON vectored instruction ('vld1' with 64 bits alignment
+constraint).
 
-This caused this syzbot issue:
+This patch sets a 64 bits alignment constraint on 'contents[]' field in
+'struct xyarray' since the 'count' pointer used above points to such a
+structure.
 
-https://syzkaller.appspot.com/bug?extid=79d18aac4bf1770dd050
-
-Reported-and-tested-by: syzbot+79d18aac4bf1770dd050@syzkaller.appspotmail.com
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1566464769-16374-1-git-send-email-gerald.baeza@st.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/hdpvr/hdpvr-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/xyarray.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/hdpvr/hdpvr-core.c b/drivers/media/usb/hdpvr/hdpvr-core.c
-index 416092c47ef40..dd82948b1cb05 100644
---- a/drivers/media/usb/hdpvr/hdpvr-core.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-core.c
-@@ -141,6 +141,7 @@ static int device_authorization(struct hdpvr_device *dev)
+diff --git a/tools/perf/util/xyarray.h b/tools/perf/util/xyarray.h
+index 7ffe562e7ae7f..2627b038b6f2a 100644
+--- a/tools/perf/util/xyarray.h
++++ b/tools/perf/util/xyarray.h
+@@ -2,6 +2,7 @@
+ #ifndef _PERF_XYARRAY_H_
+ #define _PERF_XYARRAY_H_ 1
  
- 	dev->fw_ver = dev->usbc_buf[1];
++#include <linux/compiler.h>
+ #include <sys/types.h>
  
-+	dev->usbc_buf[46] = '\0';
- 	v4l2_info(&dev->v4l2_dev, "firmware version 0x%x dated %s\n",
- 			  dev->fw_ver, &dev->usbc_buf[2]);
+ struct xyarray {
+@@ -10,7 +11,7 @@ struct xyarray {
+ 	size_t entries;
+ 	size_t max_x;
+ 	size_t max_y;
+-	char contents[];
++	char contents[] __aligned(8);
+ };
  
+ struct xyarray *xyarray__new(int xlen, int ylen, size_t entry_size);
 -- 
 2.20.1
 
