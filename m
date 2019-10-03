@@ -2,97 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA45CAB0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C063BCAA9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391761AbfJCRQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:16:54 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39905 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390569AbfJCQXd (ORCPT
+        id S2392922AbfJCRJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:09:54 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46163 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392069AbfJCQd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:23:33 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a15so3077634edt.6;
-        Thu, 03 Oct 2019 09:23:31 -0700 (PDT)
+        Thu, 3 Oct 2019 12:33:57 -0400
+Received: by mail-io1-f68.google.com with SMTP id c6so6921095ioo.13
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ziG5nQu3xPwJ88X/LZnL5pMrIpk4xw9VvyMbz8MQsEI=;
-        b=fpxiUa563sqwJxlPjEOcPMPQdDUdznpeUznfXE/xQIhBee3RpywOZqk9RAeDW9Ajfh
-         8uVC4M7k/c838eY5QG17PMfwiK4f+s3+IthwdsafIluDZkNiXhni+Zm8nUInhripCcMm
-         hV8qFZTLQePOm4nOE8+Xu05x0RcIwaP530Dmr5t0hRzxtL+F3DD8ZFb/TVv/9GfVKkAK
-         xeZTs69UNOYpzikIClqyjf9NK5YzH23jpf0y/Xi1q8icvzYBPUVL4kZihjhjn6o7G4IV
-         kf1ud8T5z1cCXIKUFr+LHzjIZg0rYBHq5AJiJoLyipV4ASm4vJXaC2YysqxuA6IuTi/D
-         gN3Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vSzWQER5y5opa0aJ4MNu5LXS/KkmMha6dUD+zB4fTwE=;
+        b=emQhVB24XLr5BXEivKVZdF/OYgPI4jLyARvsgHmtsfPryC7NNw4xZ7y8+Ly+f+pcqp
+         nFm+YJcR9yTQWQAcBQKhMgIm/q9ulHGq1ipujQ4uLrXK7vxiuvcW2LAMpkw273JxLa8Y
+         +oLVYO8cHiINBKSMLjUgWBzGqDjJlMKZ5SeylzlD6PlMVAUlgrzWPvvCbe5UFGP/zJWS
+         sQKOil7+nwQzPU1iSzRuJq+VXCxZFOH1Y2IwLmpZLpPanu7llPrzsUjnWE70/xCbknHk
+         lwDtpoFdsZd3f4abReMXj+VTU7/vIr8dURHwE1kUw2X5aCPFPgVNR87PcNY48iMO6mV+
+         yq6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ziG5nQu3xPwJ88X/LZnL5pMrIpk4xw9VvyMbz8MQsEI=;
-        b=GzgHSLq7r4gl2fu897Nvzsed4zZrkX0jYWf5QXePNApCh6pFYIPgxYuZmnTtT7Id9o
-         aZtI4XnG03CAZ2BWFmYhMMS+L05UYOiNiZw3hMDDqsk2kW6s+ikMJyn0yB9Yw3cZD068
-         rHDIBIcV1gU9EeA0+Tap/mkzN6BNymX86mhutp2sQrBasiI/jzdGniWb60x3/c2OXx0J
-         7arMHtvh/nWmkv9v0mxSJADbOJrd7K+TqBUghpkLMYhTOJTvT1B2Yq1O20M5FlRhvYom
-         9a8NbCeKLEdbCj06DzXRPEQKP5xfh0afq8ddnekiwGY0bXkhsRlBmXB44zJiwVner6b4
-         I/Mw==
-X-Gm-Message-State: APjAAAVcaDHCD45L9ajJbOZX9ZnbfEhJE/fYzm4eVa1d8ycpvDJrjKKS
-        7nsZCxKeguQ2iYR7C4BoRbI=
-X-Google-Smtp-Source: APXvYqykHTQaML6sqsg8BxBtjQGr8gUpDoprCG7qt8I1pR9ipgNcQLUR4cUehkL63L5ZZelA3Nb1KQ==
-X-Received: by 2002:a17:906:255b:: with SMTP id j27mr8481324ejb.96.1570119810698;
-        Thu, 03 Oct 2019 09:23:30 -0700 (PDT)
-Received: from Limone ([46.114.33.103])
-        by smtp.gmail.com with ESMTPSA id c1sm549687edd.21.2019.10.03.09.23.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 09:23:29 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 18:23:26 +0200
-From:   Gon Solo <gonsolo@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
-Message-ID: <20191003162326.GA2727@Limone>
-References: <20191002150650.GA4227@gofer.mess.org>
- <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
- <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
- <20191002154922.7f1cfc76@coco.lan>
- <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
- <20191003080539.2b13c03b@coco.lan>
- <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
- <20191003120238.75811da6@coco.lan>
- <20191003160336.GA5125@Limone>
- <20191003130909.01d29b77@coco.lan>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vSzWQER5y5opa0aJ4MNu5LXS/KkmMha6dUD+zB4fTwE=;
+        b=ELuNE+GJWsHuLAEPG5PXl9ojX/XCm3OeWi74Ezscdhl07DAtsTXUcFRVUsp6X2x0p+
+         SdN2bFdtaTLGoxP/dUTmMFnGDT06nhYfuML88pQg9Ya9DOrLx7BCUtcjAobOnkaIXxvA
+         l3AdUQyX+s8PyGbBlTJ4CZBRar4udE+FFSzLgOzHf2z67el5qPAvMbXxrx1ZCXSy4e9I
+         ssecY12/jOui6UVAbG73vk6+wYc23pgPlBEsc4O2bQcwNCbwf+SmSOdMKPj2lJPVBhDK
+         Ni3Uw1zvug0NrP6/p0N/3y1Y51LicyW5ZMgQIx1pf//M3bhfoNVbH2he3Evh5WHMyiiL
+         uPww==
+X-Gm-Message-State: APjAAAUtJ3TL5PzuCPJdE1fiUmUn5Ui6/8FCVRgx73lOjLT5Z+w3Sonc
+        ODY4IT2nud4qdkeEXpBrgHCG9K6Hiz1cgc96ZH6GHJYZ
+X-Google-Smtp-Source: APXvYqzo9w6kW4utleP6LQr3HRFZ0WTj8yeWIQzu8zffqECqrqFCwDTHG6oQSKqheElwImm16Xoi+ydgolWeI9o1siE=
+X-Received: by 2002:a92:b09:: with SMTP id b9mr7458488ilf.26.1570120436364;
+ Thu, 03 Oct 2019 09:33:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003130909.01d29b77@coco.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190927021927.23057-1-weijiang.yang@intel.com>
+ <CALMp9eQ13Lve+9+61qCF1-7mQkeLLnhDufd-geKtz=34+YJdEg@mail.gmail.com> <20191003130145.GA25798@local-michael-cet-test.sh.intel.com>
+In-Reply-To: <20191003130145.GA25798@local-michael-cet-test.sh.intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Thu, 3 Oct 2019 09:33:45 -0700
+Message-ID: <CALMp9eQUiLNmF6oF5uEuT-VhRnzp3S9rsnAE0jpK+=38LQBHQA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Introduce support for Guest CET feature
+To:     Yang Weijiang <weijiang.yang@intel.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> No, I mean with the first patch you sent to the ML, with the powerup
-> hack.
+On Thu, Oct 3, 2019 at 5:59 AM Yang Weijiang <weijiang.yang@intel.com> wrote:
+>
+> On Wed, Oct 02, 2019 at 03:40:20PM -0700, Jim Mattson wrote:
+> > On Thu, Sep 26, 2019 at 7:17 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
+> > >
+> > > Control-flow Enforcement Technology (CET) provides protection against
+> > > Return/Jump-Oriented Programming (ROP/JOP) attack. It includes two
+> > > sub-features: Shadow Stack (SHSTK) and Indirect Branch Tracking (IBT).
+> > >
+> > > KVM modification is required to support Guest CET feature.
+> > > This patch serial implemented CET related CPUID/XSAVES enumeration, MSRs
+> > > and VMEntry configuration etc.so that Guest kernel can setup CET
+> > > runtime infrastructure based on them. Some MSRs and related feature
+> > > flags used in the patches reference the definitions in kernel patch.
+> >
+> > I am still trying to make my way through the 358 page (!) spec for
+> > this feature, but I already have some questions/comments about this
+> > series:
+> >
+> > 1. Does CET "just work" with shadow paging? Shadow paging knows
+> > nothing about "shadow-stack pages," and it's not clear to me how
+> > shadow-stack pages will interact with dirty tracking.
+> > 2. I see non-trivial changes to task switch under CET. Does
+> > emulator_do_task_switch need to be updated?
+> > 3. What about all of the emulator routines that emulate control
+> > transfers (e.g. em_jmp_{far,abs}, em_call_(near_abs,far},
+> > em_ret_{far,far_imm,near_imm}, etc)? Don't these have to be modified
+> > to work correctly when CR4.CET is set?
+> > 4. You don't use the new "enable supervisor shadow stack control" bit
+> > in the EPTP. I assume that this is entirely optional, right?
+> > 5. I think the easiest way to handle the nested issue (rather than
+> > your explicit check for vmxon when setting CR4.CET when the vCPU is in
+> > VMX operation) is just to leave CR4.CET out of IA32_VMX_CR4_FIXED1
+> > (which is already the case).
+> > 6. The function, exception_class(), in x86.c, should be updated to
+> > categorize #CP as contributory.
+> > 7. The function, x86_exception_has_error_code(), in x86.h, should be
+> > updated to include #CP.
+> > 8. There appear to be multiple changes to SMM that you haven't
+> > implemented (e.g saving/restoring the SSP registers in/from SMRAM.
+> >
+> > CET is quite complex. Without any tests, I don't see how you can have
+> > any confidence in the correctness of this patch series.
+> Thanks Jim for the detailed comments.
+>
+> I missed adding test platform and
+> result introduction in cover letter. This serial of patch has passed CET
+> test in guest on Intel x86 emulator platform and develop machine.
+> Some feature mentioned in the spec. has not been implemented yet. e.g.,
+> "supervisor shadow stack control".
 
-Boot time:
+What I should have said is that I'd like to see kvm-unit-tests to
+exercise the new functionality, even if no one outside Intel can run
+them yet.
 
-[    4.653257] si2168 1-0067: Silicon Labs Si2168-B40 successfully identified
-[    4.653259] si2168 1-0067: firmware version: B 4.0.2
-[    4.653279] usb 2-1: DVB: registering adapter 0 frontend 0 (Silicon Labs Si2168)...
-[    4.653284] dvbdev: dvb_create_media_entity: media entity 'Silicon Labs Si2168' registered.
-...
-[    4.694785] si2157 2-0063: found a 'Silicon Labs Si2147-A30'
-[    4.694787] si2157 2-0063: Silicon Labs Si2147/2148/2157/2158 successfully attached
-[    4.717814] usb 2-1: dvb_usb_v2: 'Logilink VG0022A' successfully initialized and connected
-[    4.717880] usbcore: registered new interface driver dvb_usb_af9035
-
-VLC time:
-
-[  175.490609] si2168 1-0067: downloading firmware from file 'dvb-demod-si2168-b40-01.fw'
-[  176.746585] si2168 1-0067: firmware version: B 4.0.25
-[  176.781570] si2157 2-0063: firmware version: \xff.\xff.255
-
-g
-
+> CET feature itself is complex, most of the enabling work is
+> inside kernel, the role of KVM is to expose CET related CPUID and MSRs
+> etc. to guest, and make guest take over control of the MSRs directly so that
+> CET can work efficiently for guest. There're QEMU patches for CET too.
+>
+> I'll review your comments carefully, thank you again!
