@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D52C992A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 09:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99F71C9930
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 09:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbfJCHsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 03:48:35 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:17091 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725907AbfJCHsf (ORCPT
+        id S1728646AbfJCHsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 03:48:40 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:57826 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726472AbfJCHsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 03:48:35 -0400
-X-UUID: 83fe77502d2044c0a906e3906d16e602-20191003
-X-UUID: 83fe77502d2044c0a906e3906d16e602-20191003
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        Thu, 3 Oct 2019 03:48:36 -0400
+X-UUID: 23770ff02fd74e2fa50fa85c780cd74a-20191003
+X-UUID: 23770ff02fd74e2fa50fa85c780cd74a-20191003
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <argus.lin@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1459279076; Thu, 03 Oct 2019 15:48:29 +0800
+        with ESMTP id 1855105945; Thu, 03 Oct 2019 15:48:31 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 3 Oct 2019 15:48:26 +0800
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 3 Oct 2019 15:48:32 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 3 Oct 2019 15:48:27 +0800
+ Transport; Thu, 3 Oct 2019 15:48:29 +0800
 From:   Argus Lin <argus.lin@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -38,10 +38,12 @@ CC:     Chenglin Xu <chenglin.xu@mediatek.com>, <argus.lin@mediatek.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 0/3] Pwrap: Mediatek pwrap driver for MT6779
-Date:   Thu, 3 Oct 2019 15:48:18 +0800
-Message-ID: <1570088901-23211-1-git-send-email-argus.lin@mediatek.com>
+Subject: [PATCH 1/3] dt-bindings: pwrap: mediatek: add pwrap support for MT6779
+Date:   Thu, 3 Oct 2019 15:48:19 +0800
+Message-ID: <1570088901-23211-2-git-send-email-argus.lin@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1570088901-23211-1-git-send-email-argus.lin@mediatek.com>
+References: <1570088901-23211-1-git-send-email-argus.lin@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -50,23 +52,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here's version 1 of the patch series, include 3 patches:
-1. Add compatible for MT6779 pwrap
-2. Add pwrap driver for MT6779 SoCs. Keep PWRAP_HIPRIO_ARB_EN,
-PWRAP_WDT_UNIT, and PWRAP_WDT_SRC_EN value if it has initialized.
-When we enable interrupt flag, read current value then do logical
-OR opersion with wrp->master->int_en_all.
-3. Add MT6359 support for MT6779 SoCs.
+Add binding document of pwrap for MT6779 SoCs.
 
-Argus Lin (3):
-  dt-bindings: pwrap: mediatek: add pwrap support for MT6779
-  soc: mediatek: pwrap: add pwrap driver for MT6779 SoCs
-  soc: mediatek: pwrap: add support for MT6359 PMIC
+Signed-off-by: Argus Lin <argus.lin@mediatek.com>
+---
+ Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../devicetree/bindings/soc/mediatek/pwrap.txt     |   1 +
- drivers/soc/mediatek/mtk-pmic-wrap.c               | 157 +++++++++++++++++++--
- 2 files changed, 150 insertions(+), 8 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+index 7a32404..ecac2bb 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+@@ -20,6 +20,7 @@ Required properties in pwrap device node.
+ - compatible:
+ 	"mediatek,mt2701-pwrap" for MT2701/7623 SoCs
+ 	"mediatek,mt6765-pwrap" for MT6765 SoCs
++	"mediatek,mt6779-pwrap" for MT6779 SoCs
+ 	"mediatek,mt6797-pwrap" for MT6797 SoCs
+ 	"mediatek,mt7622-pwrap" for MT7622 SoCs
+ 	"mediatek,mt8135-pwrap" for MT8135 SoCs
 --
 1.8.1.1.dirty
 
