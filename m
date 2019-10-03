@@ -2,74 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFEC5C9A06
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7810FC9A13
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbfJCIjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 04:39:37 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41716 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbfJCIjg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 04:39:36 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g13so1552841otp.8;
-        Thu, 03 Oct 2019 01:39:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CGS17e/sJHPecy4McwsfU+3XcXYeoZrnNJIhi8gCwtc=;
-        b=Di/gKMRVcX8wcatzimNmDoKw9xo4Sa6M5vciLmjBjuCwc7Unq/Ap8VgB+fGvHOh5fa
-         +QK1FWTOFoV5TQINpruElkO2WkcF358Xr7x0WDAHPPsl6PvdYeMFJWJn3ax33MZkGZTd
-         AT+fl6OgO7dVk289hb1EOzUEMqdRq7bVZkN/vsIAp/92pQxZcGdk9HhLKzYbHIGPrdhe
-         JP7JMTHhkPpltR59ffYj+910mISdFDBaD55SLFXPuvZIbf0+rpBeSJxbWTwS3focf/Ap
-         ABle5dAcaAI/6GxTvAU0agwsufnLvd1CsUdPlOV/D1cygz/9d/nF3eC9TYlfsjowrIut
-         jTGQ==
-X-Gm-Message-State: APjAAAVkiOalJIPIAcHiZ8LeAWJ0aClzNeWZlN6Noeg1uFLOQgJtW1Eq
-        eAJxBHoiHtpuCdo5afXl+Kgoem66B4hK/9t/nUw=
-X-Google-Smtp-Source: APXvYqxHLhCyLM3XP3x+V9PAlN2EIVZgZVON4Mw9o3+uu4a/vd4uSkAqII+8k9ZkApijMnoBhg4QidvwtIKvtG1TBJ0=
-X-Received: by 2002:a9d:664:: with SMTP id 91mr5673717otn.189.1570091975427;
- Thu, 03 Oct 2019 01:39:35 -0700 (PDT)
+        id S1728855AbfJCIlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 04:41:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:38436 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727382AbfJCIlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 04:41:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EEAD28;
+        Thu,  3 Oct 2019 01:41:38 -0700 (PDT)
+Received: from arrakis.emea.arm.com (unknown [10.1.196.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98C4C3F739;
+        Thu,  3 Oct 2019 01:41:37 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 09:41:35 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>
+Subject: Re: [PATCH v3 1/3] mm: kmemleak: Make the tool tolerant to struct
+ scan_area allocation failures
+Message-ID: <20191003084135.GA21629@arrakis.emea.arm.com>
+References: <20190812160642.52134-1-catalin.marinas@arm.com>
+ <20190812160642.52134-2-catalin.marinas@arm.com>
+ <2ac37341-097e-17a2-fb6b-7912da9fa38e@ozlabs.ru>
 MIME-Version: 1.0
-References: <20190911051231.148032-1-dmitry.torokhov@gmail.com> <20191003003227.GA246700@dtor-ws>
-In-Reply-To: <20191003003227.GA246700@dtor-ws>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 3 Oct 2019 10:39:24 +0200
-Message-ID: <CAJZ5v0jF5vafYFSJ=p3ew_tCbj1T1zRznZDoPTL47Pdj9-rrCg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] software node: add support for reference properties
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ac37341-097e-17a2-fb6b-7912da9fa38e@ozlabs.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 2:32 AM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> Hi Rafael,
->
-> On Tue, Sep 10, 2019 at 10:12:17PM -0700, Dmitry Torokhov wrote:
-> > These series implement "references" properties for software nodes as true
-> > properties, instead of managing them completely separately.
-> >
-> > The first 10 patches are generic cleanups and consolidation and unification
-> > of the existing code; patch #11 implements PROPERTY_EMTRY_REF() and friends;
-> > patch #12 converts the user of references to the property syntax, and patch
-> > #13 removes the remains of references as entities that are managed
-> > separately.
->
-> Now that merge window is over could you please take a look at the
-> series?
+On Thu, Oct 03, 2019 at 04:13:07PM +1000, Alexey Kardashevskiy wrote:
+> On 13/08/2019 02:06, Catalin Marinas wrote:
+> > Object scan areas are an optimisation aimed to decrease the false
+> > positives and slightly improve the scanning time of large objects known
+> > to only have a few specific pointers. If a struct scan_area fails to
+> > allocate, kmemleak can still function normally by scanning the full
+> > object.
+> > 
+> > Introduce an OBJECT_FULL_SCAN flag and mark objects as such when
+> > scan_area allocation fails.
+> 
+> I came across this one while bisecting sudden drop in throughput of a
+> 100Gbit Mellanox CX4 ethernet card in a PPC POWER9 system, the speed
+> dropped from 100Gbit to about 40Gbit. Bisect pointed at dba82d943177,
+> this are the relevant config options:
+> 
+> [fstn1-p1 kernel]$ grep KMEMLEAK ~/pbuild/kernel-le-4g/.config
+> CONFIG_HAVE_DEBUG_KMEMLEAK=y
+> CONFIG_DEBUG_KMEMLEAK=y
+> CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=16000
+> # CONFIG_DEBUG_KMEMLEAK_TEST is not set
+> # CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF is not set
+> CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN=y
 
-I will.
+The throughput drop is probably caused caused by kmemleak slowing down
+all memory allocations (including skb). So that's expected. You may get
+similar drop with other debug options like lock proving, kasan.
 
-It would help to resend the whole series with a CC to linux-acpi, though.
+> Setting CONFIG_DEBUG_KMEMLEAK_MEM_POOL_SIZE=400 or even 4000 (this is
+> what KMEMLEAK_EARLY_LOG_SIZE is now in the master) produces soft
+> lockups on the recent upstream (sha1 a3c0e7b1fe1f):
+> 
+> [c000001fde64fb60] [c000000000c24ed4] _raw_write_unlock_irqrestore+0x54/0x70
+> [c000001fde64fb90] [c0000000004117e4] find_and_remove_object+0xa4/0xd0
+> [c000001fde64fbe0] [c000000000411c74] delete_object_full+0x24/0x50
+> [c000001fde64fc00] [c000000000411d28] __kmemleak_do_cleanup+0x88/0xd0
+> [c000001fde64fc40] [c00000000012a1a4] process_one_work+0x374/0x6a0
+> [c000001fde64fd20] [c00000000012a548] worker_thread+0x78/0x5a0
+> [c000001fde64fdb0] [c000000000135508] kthread+0x198/0x1a0
+> [c000001fde64fe20] [c00000000000b980] ret_from_kernel_thread+0x5c/0x7c
 
-Thanks!
+That's the kmemleak disabling path. I don't have the full log but I
+suspect by setting a small pool size, kmemleak failed to allocate memory
+and went into disabling itself. The clean-up above tries to remove the
+allocated metadata. It seems that it takes significant time on your
+platform. Not sure how to avoid the soft lock-up but I wouldn't bother
+too much about it, it's only triggered by a previous error condition
+disabling kmemleak.
+
+> KMEMLEAK_EARLY_LOG_SIZE=8000 works but slow.
+> 
+> Interestingly KMEMLEAK_EARLY_LOG_SIZE=400 on dba82d943177 still worked
+> and I saw my 100Gbit. Disabling KMEMLEAK also fixes the speed
+> (apparently).
+
+A small memory pool for kmemleak just disables it shortly after boot, so
+it's no longer in the way and you get your throughput back.
+
+> Is that something expected? Thanks,
+
+Yes for the throughput. Not sure about the soft lock-up. Do you have the
+full log around the lock-up?
+
+-- 
+Catalin
