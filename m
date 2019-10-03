@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ED75CAC3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C03CAD07
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732906AbfJCQHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:07:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54728 "EHLO mail.kernel.org"
+        id S1733040AbfJCReA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:34:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732879AbfJCQHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:07:06 -0400
+        id S1732907AbfJCQHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:07:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29B4D215EA;
-        Thu,  3 Oct 2019 16:07:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61D5721783;
+        Thu,  3 Oct 2019 16:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118825;
-        bh=BdKXf97jE2/UC69PLNlnqNXE5Myg2bfbhBoXkFScitU=;
+        s=default; t=1570118833;
+        bh=i2eh7RCgOf8VMp1y2DrKW4hUkdVLQC+cbbYV1EkpAKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GnMC2Mrhp7/tyh8tjQ5B9lwjVHAbdyeSRgXSY1kNWm/4FvUQH8VaxEHVdjhywGqPg
-         esMDoGm1iIevfrE8RrxQe1rsOpcC9dxbfFgCDwiqG9GlGajkaZZz16hG2Ps1pd7Bt8
-         vzaaUJkUN7LWPi9k1cdHDdv7kOsOmxVEIuGuTRtc=
+        b=gn5RzD3TstdAsUwZz48vrHE9OazRkrnBFvd9a23kRkHLuU3JFTFRe8OWj4hl38noc
+         Q+VzGXFC0jmPcpSGMyHraDD+49u/NRfCh1dKR239FscvDjgpi+OUlnKEpVntW/OTXL
+         /TanHau1P51rPbzzpELroBJMG6JpNv+lpdtnvWFg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 023/185] PCI: hv: Avoid use of hv_pci_dev->pci_slot after freeing it
-Date:   Thu,  3 Oct 2019 17:51:41 +0200
-Message-Id: <20191003154442.941063740@linuxfoundation.org>
+Subject: [PATCH 4.14 026/185] dm zoned: fix invalid memory access
+Date:   Thu,  3 Oct 2019 17:51:44 +0200
+Message-Id: <20191003154443.487401217@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,36 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit 533ca1feed98b0bf024779a14760694c7cb4d431 ]
+[ Upstream commit 0c8e9c2d668278652af028c3cc068c65f66342f4 ]
 
-The slot must be removed before the pci_dev is removed, otherwise a panic
-can happen due to use-after-free.
+Commit 75d66ffb48efb30f2dd42f041ba8b39c5b2bd115 ("dm zoned: properly
+handle backing device failure") triggers a coverity warning:
 
-Fixes: 15becc2b56c6 ("PCI: hv: Add hv_pci_remove_slots() when we unload the driver")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+*** CID 1452808:  Memory - illegal accesses  (USE_AFTER_FREE)
+/drivers/md/dm-zoned-target.c: 137 in dmz_submit_bio()
+131             clone->bi_private = bioctx;
+132
+133             bio_advance(bio, clone->bi_iter.bi_size);
+134
+135             refcount_inc(&bioctx->ref);
+136             generic_make_request(clone);
+>>>     CID 1452808:  Memory - illegal accesses  (USE_AFTER_FREE)
+>>>     Dereferencing freed pointer "clone".
+137             if (clone->bi_status == BLK_STS_IOERR)
+138                     return -EIO;
+139
+140             if (bio_op(bio) == REQ_OP_WRITE && dmz_is_seq(zone))
+141                     zone->wp_block += nr_blocks;
+142
+
+The "clone" bio may be processed and freed before the check
+"clone->bi_status == BLK_STS_IOERR" - so this check can access invalid
+memory.
+
+Fixes: 75d66ffb48efb3 ("dm zoned: properly handle backing device failure")
 Cc: stable@vger.kernel.org
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/host/pci-hyperv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-zoned-target.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-index 5a9d945122327..70825689e5a08 100644
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -2740,8 +2740,8 @@ static int hv_pci_remove(struct hv_device *hdev)
- 		/* Remove the bus from PCI's point of view. */
- 		pci_lock_rescan_remove();
- 		pci_stop_root_bus(hbus->pci_bus);
--		pci_remove_root_bus(hbus->pci_bus);
- 		hv_pci_remove_slots(hbus);
-+		pci_remove_root_bus(hbus->pci_bus);
- 		pci_unlock_rescan_remove();
- 		hbus->state = hv_pcibus_removed;
- 	}
+diff --git a/drivers/md/dm-zoned-target.c b/drivers/md/dm-zoned-target.c
+index 1e004d975e786..4694763f9d404 100644
+--- a/drivers/md/dm-zoned-target.c
++++ b/drivers/md/dm-zoned-target.c
+@@ -133,8 +133,6 @@ static int dmz_submit_bio(struct dmz_target *dmz, struct dm_zone *zone,
+ 
+ 	atomic_inc(&bioctx->ref);
+ 	generic_make_request(clone);
+-	if (clone->bi_status == BLK_STS_IOERR)
+-		return -EIO;
+ 
+ 	if (bio_op(bio) == REQ_OP_WRITE && dmz_is_seq(zone))
+ 		zone->wp_block += nr_blocks;
 -- 
 2.20.1
 
