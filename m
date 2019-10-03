@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D1B4CAC5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E21CAB96
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387449AbfJCQJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:09:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57564 "EHLO mail.kernel.org"
+        id S1730683AbfJCP4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:56:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731034AbfJCQJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:09:01 -0400
+        id S1730580AbfJCP4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:56:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1151A207FF;
-        Thu,  3 Oct 2019 16:08:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C257621A4C;
+        Thu,  3 Oct 2019 15:56:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118940;
-        bh=+sq7UOoftRS0d722fihLEmSMnax7EZbAphnxL6t4f28=;
+        s=default; t=1570118182;
+        bh=1OUUghvMNit7ATWMhWdyUNvrax21oyc5yD7XumTD/D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CiPhcb2YlH/iJO1VgknX+chHBsMHlKYCDf2weh3nU23roU7Ks6jLwNMYWoiqBwS4W
-         fOO9huhze4cvSQwRTvuAKIw8UjWq6J5Mn3aM2fdpIm4qS26VnakaaMxkzF5a5VcMB/
-         Y3e3yiW5lJOJkRA8vg1q5fD4bgB9v2HpcPhJpQgo=
+        b=i4I8+pAaDJ813rbnqAq1/oIdfOKnUKf/MFoQ/pnf7WWXLeqKS/IjPIiVULP5tD1g3
+         ZnlxsKIjnFg/8R79qPURmBXTEhizQSLNbrwuKkQs97H9wNhhF30UtKQJVBg+3DRQQY
+         87YWjBwDOWVhT+WfvgwtKE4+HrqPqMoWHIQxDk3E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 066/185] x86/apic: Soft disable APIC before initializing it
-Date:   Thu,  3 Oct 2019 17:52:24 +0200
-Message-Id: <20191003154452.367565793@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Jiri Kosina <jkosina@suse.cz>,
+        syzbot+1088533649dafa1c9004@syzkaller.appspotmail.com
+Subject: [PATCH 4.4 02/99] HID: prodikeys: Fix general protection fault during probe
+Date:   Thu,  3 Oct 2019 17:52:25 +0200
+Message-Id: <20191003154253.491273763@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
+References: <20191003154252.297991283@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-[ Upstream commit 2640da4cccf5cc613bf26f0998b9e340f4b5f69c ]
+commit 98375b86c79137416e9fd354177b85e768c16e56 upstream.
 
-If the APIC was already enabled on entry of setup_local_APIC() then
-disabling it soft via the SPIV register makes a lot of sense.
+The syzbot fuzzer provoked a general protection fault in the
+hid-prodikeys driver:
 
-That masks all LVT entries and brings it into a well defined state.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0-rc5+ #28
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:pcmidi_submit_output_report drivers/hid/hid-prodikeys.c:300  [inline]
+RIP: 0010:pcmidi_set_operational drivers/hid/hid-prodikeys.c:558 [inline]
+RIP: 0010:pcmidi_snd_initialise drivers/hid/hid-prodikeys.c:686 [inline]
+RIP: 0010:pk_probe+0xb51/0xfd0 drivers/hid/hid-prodikeys.c:836
+Code: 0f 85 50 04 00 00 48 8b 04 24 4c 89 7d 10 48 8b 58 08 e8 b2 53 e4 fc
+48 8b 54 24 20 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f
+85 13 04 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
 
-Otherwise previously enabled LVTs which are not touched in the setup
-function stay unmasked and might surprise the just booting kernel.
+The problem is caused by the fact that pcmidi_get_output_report() will
+return an error if the HID device doesn't provide the right sort of
+output report, but pcmidi_set_operational() doesn't bother to check
+the return code and assumes the function call always succeeds.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190722105219.068290579@linutronix.de
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This patch adds the missing check and aborts the probe operation if
+necessary.
+
+Reported-and-tested-by: syzbot+1088533649dafa1c9004@syzkaller.appspotmail.com
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/kernel/apic/apic.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/hid/hid-prodikeys.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index f8f9cfded97d3..ea2de324ab021 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1384,6 +1384,14 @@ void setup_local_APIC(void)
- 		return;
- 	}
+--- a/drivers/hid/hid-prodikeys.c
++++ b/drivers/hid/hid-prodikeys.c
+@@ -556,10 +556,14 @@ static void pcmidi_setup_extra_keys(
  
-+	/*
-+	 * If this comes from kexec/kcrash the APIC might be enabled in
-+	 * SPIV. Soft disable it before doing further initialization.
-+	 */
-+	value = apic_read(APIC_SPIV);
-+	value &= ~APIC_SPIV_APIC_ENABLED;
-+	apic_write(APIC_SPIV, value);
+ static int pcmidi_set_operational(struct pcmidi_snd *pm)
+ {
++	int rc;
 +
- #ifdef CONFIG_X86_32
- 	/* Pound the ESR really hard over the head with a big hammer - mbligh */
- 	if (lapic_is_integrated() && apic->disable_esr) {
--- 
-2.20.1
-
+ 	if (pm->ifnum != 1)
+ 		return 0; /* only set up ONCE for interace 1 */
+ 
+-	pcmidi_get_output_report(pm);
++	rc = pcmidi_get_output_report(pm);
++	if (rc < 0)
++		return rc;
+ 	pcmidi_submit_output_report(pm, 0xc1);
+ 	return 0;
+ }
+@@ -688,7 +692,11 @@ static int pcmidi_snd_initialise(struct
+ 	spin_lock_init(&pm->rawmidi_in_lock);
+ 
+ 	init_sustain_timers(pm);
+-	pcmidi_set_operational(pm);
++	err = pcmidi_set_operational(pm);
++	if (err < 0) {
++		pk_error("failed to find output report\n");
++		goto fail_register;
++	}
+ 
+ 	/* register it */
+ 	err = snd_card_register(card);
 
 
