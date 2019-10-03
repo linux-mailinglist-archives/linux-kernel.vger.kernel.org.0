@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 001CFCA295
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A1DBCA29C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732842AbfJCQGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:06:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54254 "EHLO mail.kernel.org"
+        id S1732914AbfJCQHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:07:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732827AbfJCQGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:47 -0400
+        id S1732886AbfJCQHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:07:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89F2F20865;
-        Thu,  3 Oct 2019 16:06:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDAB4222BE;
+        Thu,  3 Oct 2019 16:07:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118807;
-        bh=xkN8nyZz0hiPeOQuHgssCKwD5TFVPmPIchXLi/WOgfc=;
+        s=default; t=1570118828;
+        bh=pli4rmXhq7FOXLXjYFY5y1FXKnIqmfVOfCt3zRgefls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VnC5zzDcFhJYeHUcUU0GZP/fxoJFyJuZmln8m3d2axs7CCd/k+jPKE+LDRg3VXP1m
-         QOCaz/6PQWehI17A5bFesPvQPBdK1Yk9pLlOLC9T4kxcnFhib9XnbEYrvw5YI5w3JE
-         wBQSQWa75gTZ5pYimjwTxPMhh/YsbAIqSnq/S78M=
+        b=jFzBVGKBhqzCJ819X2ZkpAok9KkVANOC+xFX1hNThaxwD/tw1w8+PRNxI/vGkwP9C
+         x0NimacNl1I6rSMSVl1FinjmYuYsRFjBImxGTfTnu9UZftjpHJfWO9+C3UsMUIgVYc
+         55vlJYh+JBCMxWq25bFf55+waHqiXUDusmZbsNmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.14 017/185] objtool: Clobber user CFLAGS variable
-Date:   Thu,  3 Oct 2019 17:51:35 +0200
-Message-Id: <20191003154441.396821940@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        zhengbin <zhengbin13@huawei.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 024/185] blk-mq: move cancel of requeue_work to the front of blk_exit_queue
+Date:   Thu,  3 Oct 2019 17:51:42 +0200
+Message-Id: <20191003154443.250657845@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -48,40 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: zhengbin <zhengbin13@huawei.com>
 
-commit f73b3cc39c84220e6dccd463b5c8279b03514646 upstream.
+[ Upstream commit e26cc08265dda37d2acc8394604f220ef412299d ]
 
-If the build user has the CFLAGS variable set in their environment,
-objtool blindly appends to it, which can cause unexpected behavior.
+blk_exit_queue will free elevator_data, while blk_mq_requeue_work
+will access it. Move cancel of requeue_work to the front of
+blk_exit_queue to avoid use-after-free.
 
-Clobber CFLAGS to ensure consistent objtool compilation behavior.
+blk_exit_queue                blk_mq_requeue_work
+  __elevator_exit               blk_mq_run_hw_queues
+    blk_mq_exit_sched             blk_mq_run_hw_queue
+      dd_exit_queue                 blk_mq_hctx_has_pending
+        kfree(elevator_data)          blk_mq_sched_has_work
+                                        dd_has_work
 
-Reported-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Tested-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/83a276df209962e6058fcb6c615eef9d401c21bc.1567121311.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-CC: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: fbc2a15e3433 ("blk-mq: move cancel of requeue_work into blk_mq_release")
+Cc: stable@vger.kernel.org
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/objtool/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-mq.c    | 2 --
+ block/blk-sysfs.c | 3 +++
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -35,7 +35,7 @@ INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
- 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
--CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES) $(LIBELF_FLAGS)
-+CFLAGS   := -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES) $(LIBELF_FLAGS)
- LDFLAGS  += $(LIBELF_LIBS) $(LIBSUBCMD)
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 55139d2fca3e0..eac4448047366 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2294,8 +2294,6 @@ void blk_mq_release(struct request_queue *q)
+ 	struct blk_mq_hw_ctx *hctx;
+ 	unsigned int i;
  
- # Allow old libelf to be used:
+-	cancel_delayed_work_sync(&q->requeue_work);
+-
+ 	/* hctx kobj stays in hctx */
+ 	queue_for_each_hw_ctx(q, hctx, i) {
+ 		if (!hctx)
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index e54be402899da..9caf96c2c1081 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -811,6 +811,9 @@ static void __blk_release_queue(struct work_struct *work)
+ 
+ 	blk_free_queue_stats(q->stats);
+ 
++	if (q->mq_ops)
++		cancel_delayed_work_sync(&q->requeue_work);
++
+ 	blk_exit_rl(q, &q->root_rl);
+ 
+ 	if (q->queue_tags)
+-- 
+2.20.1
+
 
 
