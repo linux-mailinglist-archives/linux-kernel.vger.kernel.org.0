@@ -2,118 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE3BC9F28
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 15:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F26C9F39
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 15:18:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbfJCNO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 09:14:58 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:40089 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726508AbfJCNO6 (ORCPT
+        id S1730367AbfJCNR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 09:17:59 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35835 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbfJCNR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 09:14:58 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 46kYQ73LN2z1rpSZ;
-        Thu,  3 Oct 2019 15:14:55 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 46kYQ72G6Nz1qqkM;
-        Thu,  3 Oct 2019 15:14:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id qyrIp-v7WbMQ; Thu,  3 Oct 2019 15:14:54 +0200 (CEST)
-X-Auth-Info: xiZETJUVqfKpf2L5V7ri6d768Sag1oWyEMv8K/uuf50=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu,  3 Oct 2019 15:14:54 +0200 (CEST)
-Date:   Thu, 3 Oct 2019 15:14:34 +0200
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: Add support for century bits to m41t62 (rv4162)
- RTC devices
-Message-ID: <20191003151434.49762715@jawa>
-In-Reply-To: <20191003123538.GS4106@piout.net>
-References: <20190911154803.15969-1-lukma@denx.de>
-        <20191003114831.GR4106@piout.net>
-        <20191003142150.3d73a9d7@jawa>
-        <20191003123538.GS4106@piout.net>
-Organization: denx.de
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 3 Oct 2019 09:17:59 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1iG0zJ-0006F9-Ty; Thu, 03 Oct 2019 15:17:46 +0200
+Message-ID: <662abbc0298ebab59919490ccc3d5c093ae35cf7.camel@pengutronix.de>
+Subject: Re: [PATCH v2 00/21] Refine memblock API
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Adam Ford <aford173@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Thu, 03 Oct 2019 15:17:36 +0200
+In-Reply-To: <20191003113010.GC23397@linux.ibm.com>
+References: <CAHCN7xJ32BYZu-DVTVLSzv222U50JDb8F0A_tLDERbb8kPdRxg@mail.gmail.com>
+         <20190926160433.GD32311@linux.ibm.com>
+         <CAHCN7xL1sFXDhKUpj04d3eDZNgLA1yGAOqwEeCxedy1Qm-JOfQ@mail.gmail.com>
+         <20190928073331.GA5269@linux.ibm.com>
+         <CAHCN7xJEvS2Si=M+BYtz+kY0M4NxmqDjiX9Nwq6_3GGBh3yg=w@mail.gmail.com>
+         <CAHCN7xKLhWw4P9-sZKXQcfSfh2r3J_+rLxuxACW0UVgimCzyVw@mail.gmail.com>
+         <20191002073605.GA30433@linux.ibm.com>
+         <CAHCN7xL1MkJh44N3W_1+08DHmX__SqnfH6dqUzYzr2Wpg0kQyQ@mail.gmail.com>
+         <20191003053451.GA23397@linux.ibm.com>
+         <20191003084914.GV25745@shell.armlinux.org.uk>
+         <20191003113010.GC23397@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/j/.C7KS_WRAAcH/i3tvI2vT"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/j/.C7KS_WRAAcH/i3tvI2vT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Am Donnerstag, den 03.10.2019, 14:30 +0300 schrieb Mike Rapoport:
+> On Thu, Oct 03, 2019 at 09:49:14AM +0100, Russell King - ARM Linux admin wrote:
+> > On Thu, Oct 03, 2019 at 08:34:52AM +0300, Mike Rapoport wrote:
+> > > (trimmed the CC)
+> > > 
+> > > On Wed, Oct 02, 2019 at 06:14:11AM -0500, Adam Ford wrote:
+> > > > On Wed, Oct 2, 2019 at 2:36 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > > > 
+> > > > Before the patch:
+> > > > 
+> > > > # cat /sys/kernel/debug/memblock/memory
+> > > >    0: 0x10000000..0x8fffffff
+> > > > # cat /sys/kernel/debug/memblock/reserved
+> > > >    0: 0x10004000..0x10007fff
+> > > >   34: 0x2fffff88..0x3fffffff
+> > > > 
+> > > > 
+> > > > After the patch:
+> > > > # cat /sys/kernel/debug/memblock/memory
+> > > >    0: 0x10000000..0x8fffffff
+> > > > # cat /sys/kernel/debug/memblock/reserved
+> > > >    0: 0x10004000..0x10007fff
+> > > >   36: 0x80000000..0x8fffffff
+> > > 
+> > > I'm still not convinced that the memblock refactoring didn't uncovered an
+> > > issue in etnaviv driver.
+> > > 
+> > > Why moving the CMA area from 0x80000000 to 0x30000000 makes it fail?
+> > 
+> > I think you have that the wrong way round.
+> 
+> I'm relying on Adam's reports of working and non-working versions.
+> According to that etnaviv works when CMA area is at 0x80000000 and does not
+> work when it is at 0x30000000.
+> 
+> He also sent logs a few days ago [1], they also confirm that.
+> 
+> [1] https://lore.kernel.org/linux-mm/CAHCN7xJEvS2Si=M+BYtz+kY0M4NxmqDjiX9Nwq6_3GGBh3yg=w@mail.gmail.com/
 
-Hi Alexandre,
+To clarify: Etnaviv needs to know where the CMA area is in order to
+move a aperture window to cover the CMA area so the command buffers
+allocated in contig memory can be mapped through this aperture. Now the
+issue is that there is currently there is no good API for a driver to
+know where the CMA area is located, so we are trying to infer this from
+dma_get_required_mask. Unfortunately this can overshoot the real DRAM
+area by a bit, so combined with the fixed 2GB size of the GPU aperture
+this means we are no longer able to map the command buffers through the
+required aperture if the CMA area moves too far down in the physical
+memory.
 
-> On 03/10/2019 14:21:50+0200, Lukasz Majewski wrote:
-> > >=20
-> > > See the datasheet:
-> > >=20
-> > > "During any year which is a multiple of 4, the RV-4162 RTC will
-> > > automatically insert leap day, February 29.  Therefore, the
-> > > application software must correct for this during the exception
-> > > years (2100, 2200, etc.) as noted above." =20
-> >=20
-> > I'm wondering what the phrase "application software" means here?
-> >=20
-> > If it is the userland SW, then we shall at least be able to set
-> > 2099 in this device and then count on software correction.
-> >=20
-> > If the "application software" is the kernel driver - the date
-> > correction shall be done there (maybe some lookup table?).
-> >=20
-> > Personally, I do prefer the first option - this means that with this
-> > patch we can set the time to e.g. 2234 year and then rely on
-> > userland software (or libc) to do the correction.
-> >  =20
->=20
-> It is not possible to ensure this correction is properly done in
-> software, there is no point in letting the user set those bits.
->=20
->=20
+It's really a bad interaction between etnaviv and CMA area placement,
+due to insufficient APIs to communicate some crucial information. There
+is nothing in the etnaviv driver or the hardware which requires the CMA
+area to be at a certain place, we just need to know where it is located
+exactly. So my try at fixing this [1] was by adding a API to get the
+required information, but the first attempt was shot down and I hadn't
+had time to follow up on this yet.
 
-I see your point.
+Regards,
+Lucas
 
-However, could you share your idea on testing setting RTC time to year
-2100 on this particular IC (by using hctosys and friends)?
+[1] https://patchwork.kernel.org/patch/10966767/
 
 
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/j/.C7KS_WRAAcH/i3tvI2vT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAl2V9DoACgkQAR8vZIA0
-zr3BIQgAlkA+YDvGJVBeIvlyQeEpjCBRSOKg1njJc/zbo+dyLX04exb85bLdZaZa
-/qdn/Haxk7CAh6I+vL8X57hcmdJSLBtev42HWSnIYlL8jabaU0SMm0s8kPFln3Bw
-LpDaAaS8q5VM7dCmhtu8jzYOFyDvAZrmT5s1fLHu/FegEgMQAvHVR+ePLhebGRwl
-IqAdmnmTV8kwVXz7RdhrxF61/0SgVqNqf4+IUszFInpHErdCIZZYRc7kw9GNtdYK
-AQKB8Qw3/9gWIc9vsd1ZxLjQ1RJxDEMBvAVUM9Jc40m6ML4lRpmDGRDnIAlha2Uc
-FkEVn2RQ6l+w58s4bhb6h8NBXVkLTg==
-=9hH2
------END PGP SIGNATURE-----
-
---Sig_/j/.C7KS_WRAAcH/i3tvI2vT--
