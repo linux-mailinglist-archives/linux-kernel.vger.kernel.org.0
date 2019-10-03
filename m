@@ -2,39 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2801FCAE73
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10721CAE7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:48:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731637AbfJCSqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 14:46:44 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50000 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728458AbfJCSqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:46:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 11:46:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="191349656"
-Received: from okiselev-mobl1.ccr.corp.intel.com (HELO localhost) ([10.251.93.117])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Oct 2019 11:46:40 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-stable@vger.kernel.org
-Cc:     Vadim Sukhomlinov <sukhomlinov@google.com>, stable@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 3/3] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
-Date:   Thu,  3 Oct 2019 21:46:23 +0300
-Message-Id: <20191003184623.25580-4-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191003184623.25580-1-jarkko.sakkinen@linux.intel.com>
-References: <20191003184623.25580-1-jarkko.sakkinen@linux.intel.com>
+        id S1730484AbfJCSsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 14:48:31 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34352 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbfJCSsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 14:48:31 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y35so2316201pgl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 11:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SMux9srIAI9knq9rYMeJgiDQW4HVbC+Jk/8BjWLwEQc=;
+        b=ghSRkX0vFVvr9BDMmtqVMBlVFlkNHVD4hFZa9FpY6l1ITk9pwLi08wkKZwW0TON0d4
+         4KIsbvAJigEs7jQnKga+xiPXIx1DEqmD3CT5CN0LFYf1WPn1pbKLRFUV4tY1nhc2f+Mo
+         vssad7sA++XuthkMymk6sWA1G2zDrMr8u9U7I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SMux9srIAI9knq9rYMeJgiDQW4HVbC+Jk/8BjWLwEQc=;
+        b=AjJA+9Nz+rwOQXHAHNuqilikS2Dxf3G588FitDS12GE3pr0hD44RSpTujSddnlAPSr
+         xpQz5UVzSGuYAT1McutrfUMxa1ygt71Mg9Fe73XYrh3f8QowsZSKG92xR2AgoffbBIgW
+         1mckqg3uXeY8+jJUsSlJ42k/WoC58nLV3Gjg5fot/UWLD1so+oS4IsI6YLSwwdRwlBsk
+         /IXa3J9zeZSIDu/XgMJBJwdyJScDYR9rxOl+3XwECwLd9/TFyLQbnVaYszDCqWhyACXg
+         oX6+7qvmZ9f0OFhj8Mu5uWdkONyfNdbzhZQf/XirzmqwR+zyAKTD5SXo13MC5N12iUCs
+         ABcA==
+X-Gm-Message-State: APjAAAXYKqj8abZJw6xSBfNHSPpzErF8y47Kbp8FTtVdOBN1ZIbftiYg
+        26GoygQxLvLudjoNo676pUJk1g==
+X-Google-Smtp-Source: APXvYqw9SD0WqcikWyFdjpqaesgxfzkZspJGIoFYPr7e/x6TTC+LPSxSFwe+Xe8qzKpx+kTwJQCxBQ==
+X-Received: by 2002:a63:4754:: with SMTP id w20mr11328229pgk.134.1570128509058;
+        Thu, 03 Oct 2019 11:48:29 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id k93sm6590355pjh.3.2019.10.03.11.48.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 11:48:28 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     heiko@sntech.de
+Cc:     ryandcase@chromium.org, mka@chromium.org, seanpaul@chromium.org,
+        tfiga@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        Sandy Huang <hjc@rock-chips.com>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        David Airlie <airlied@linux.ie>,
+        linux-arm-kernel@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v2] drm/rockchip: Round up _before_ giving to the clock framework
+Date:   Thu,  3 Oct 2019 11:47:30 -0700
+Message-Id: <20191003114726.v2.1.Ib233b3e706cf6317858384264d5b0ed35657456e@changeid>
+X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,46 +63,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vadim Sukhomlinov <sukhomlinov@google.com>
+I'm embarassed to say that even though I've touched
+vop_crtc_mode_fixup() twice and I swear I tested it, there's still a
+stupid glaring bug in it.  Specifically, on veyron_minnie (with all
+the latest display timings) we want to be setting our pixel clock to
+66,666,666.67 Hz and we tell userspace that's what we set, but we're
+actually choosing 66,000,000 Hz.  This is confirmed by looking at the
+clock tree.
 
-commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream
+The problem is that in drm_display_mode_from_videomode() we convert
+from Hz to kHz with:
 
-TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
-future TPM operations. TPM 1.2 behavior was different, future TPM
-operations weren't disabled, causing rare issues. This patch ensures
-that future TPM operations are disabled.
+  dmode->clock = vm->pixelclock / 1000;
 
-Fixes: d1bd4a792d39 ("tpm: Issue a TPM2_Shutdown for TPM2 devices.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
-[dianders: resolved merge conflicts with mainline]
+...and drm_display_mode_from_videomode() is called from panel-simple
+when we have an "override_mode" like we do on veyron_minnie.  See
+commit 123643e5c40a ("ARM: dts: rockchip: Specify
+rk3288-veyron-minnie's display timings").
+
+...so when the device tree specifies a clock of 66666667 for the panel
+then DRM translates that to 66666000.  The clock framework will always
+pick a clock that is _lower_ than the one requested, so it will refuse
+to pick 66666667 and we'll end up at 66000000.
+
+While we could try to fix drm_display_mode_from_videomode() to round
+to the nearest kHz and it would fix our problem, it wouldn't help if
+the clock we actually needed was 60,000,001 Hz.  We could
+alternatively have DRM always round up, but maybe this would break
+someone else who already baked in the assumption that DRM rounds down.
+Specifically note that clock drivers are not consistent about whether
+they round up or round down when you call clk_set_rate().  We know how
+Rockchip's clock driver works, but (for instance) you can see that on
+most Qualcomm clocks the default is clk_rcg2_ops which rounds up.
+
+Let's solve this by just adding 999 Hz before calling
+clk_round_rate().  This should be safe and work everywhere.  As
+discussed in more detail in comments in the commit, Rockchip's PLLs
+are configured in a way that there shouldn't be another PLL setting
+that is only a few kHz off so we won't get mixed up.
+
+NOTE: if this is picked to stable, it's probably easiest to first pick
+commit 527e4ca3b6d1 ("drm/rockchip: Base adjustments of the mode based
+on prev adjustments") which shouldn't hurt in stable.
+
+Fixes: b59b8de31497 ("drm/rockchip: return a true clock rate to adjusted_mode")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
 ---
- drivers/char/tpm/tpm-chip.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0eca20c5a80c..dcf5bb153495 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -158,12 +158,13 @@ static int tpm_class_shutdown(struct device *dev)
+Changes in v2:
+- Beefed up the commit message (Sean).
+
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 37 +++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 613404f86668..84e3decb17b1 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1040,10 +1040,41 @@ static bool vop_crtc_mode_fixup(struct drm_crtc *crtc,
+ 				struct drm_display_mode *adjusted_mode)
  {
- 	struct tpm_chip *chip = container_of(dev, struct tpm_chip, dev);
+ 	struct vop *vop = to_vop(crtc);
++	unsigned long rate;
  
-+	down_write(&chip->ops_sem);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		down_write(&chip->ops_sem);
- 		tpm2_shutdown(chip, TPM2_SU_CLEAR);
- 		chip->ops = NULL;
--		up_write(&chip->ops_sem);
- 	}
-+	chip->ops = NULL;
-+	up_write(&chip->ops_sem);
+-	adjusted_mode->clock =
+-		DIV_ROUND_UP(clk_round_rate(vop->dclk,
+-					    adjusted_mode->clock * 1000), 1000);
++	/*
++	 * Clock craziness.
++	 *
++	 * Key points:
++	 *
++	 * - DRM works in in kHz.
++	 * - Clock framework works in Hz.
++	 * - Rockchip's clock driver picks the clock rate that is the
++	 *   same _OR LOWER_ than the one requested.
++	 *
++	 * Action plan:
++	 *
++	 * 1. When DRM gives us a mode, we should add 999 Hz to it.  That way
++	 *    if the clock we need is 60000001 Hz (~60 MHz) and DRM tells us to
++	 *    make 60000 kHz then the clock framework will actually give us
++	 *    the right clock.
++	 *
++	 *    NOTE: if the PLL (maybe through a divider) could actually make
++	 *    a clock rate 999 Hz higher instead of the one we want then this
++	 *    could be a problem.  Unfortunately there's not much we can do
++	 *    since it's baked into DRM to use kHz.  It shouldn't matter in
++	 *    practice since Rockchip PLLs are controlled by tables and
++	 *    even if there is a divider in the middle I wouldn't expect PLL
++	 *    rates in the table that are just a few kHz different.
++	 *
++	 * 2. Get the clock framework to round the rate for us to tell us
++	 *    what it will actually make.
++	 *
++	 * 3. Store the rounded up rate so that we don't need to worry about
++	 *    this in the actual clk_set_rate().
++	 */
++	rate = clk_round_rate(vop->dclk, adjusted_mode->clock * 1000 + 999);
++	adjusted_mode->clock = DIV_ROUND_UP(rate, 1000);
  
- 	return 0;
+ 	return true;
  }
 -- 
-2.20.1
+2.23.0.444.g18eeb5a265-goog
 
