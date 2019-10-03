@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 432D3CA53C
+	by mail.lfdr.de (Postfix) with ESMTP id ACA4ACA53D
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391910AbfJCQcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:32:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39788 "EHLO mail.kernel.org"
+        id S2391521AbfJCQcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:32:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391510AbfJCQcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:32:19 -0400
+        id S2391903AbfJCQcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:32:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E495B215EA;
-        Thu,  3 Oct 2019 16:32:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F4FB215EA;
+        Thu,  3 Oct 2019 16:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120338;
-        bh=5eDikgOSaSe6iEg5YcefwyC0Wju1DF4Oj1szVWREBus=;
+        s=default; t=1570120341;
+        bh=PO6/JpMM8870A6I/uwuOSfPrmhKU+aElITomc83RwyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QcG+Bp2/AcX0FSl/0lHaoqgzL8mPnbtZ+bjKe4P561yHNexuNJtqpIA7wIQbrCKf8
-         Eo4AW+2J5FwmfNq91/dF+gvacRyyYgSPM2OeAdon20rdNUve1YpO7ZC3C5ZTo+3iWq
-         +ers22w2PPMPn5Uae3r2ki04tLkIz/olpimpOJbc=
+        b=V7ChofLcCuyIvEvAIuuRtfox4T4gIsTnOqgsvM2VhYp3aKPHeKqitKA+qZkmMmh41
+         r2xtismJgGAGB9PmYYTW2fAbfiA2X7TRFyEZvv1VwUDRSEyxzKbO3YOYQ3UHeMCdUy
+         +1O47idurCYf9y8pd0vmy0HtN7xlz9SglQLb+40I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Arthur She <arthur.she@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 185/313] ASoC: dmaengine: Make the pcm->name equal to pcm->id if the name is not set
-Date:   Thu,  3 Oct 2019 17:52:43 +0200
-Message-Id: <20191003154551.208360676@linuxfoundation.org>
+        stable@vger.kernel.org, Jackie Liu <liuyun01@kylinos.cn>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 186/313] io_uring: fix wrong sequence setting logic
+Date:   Thu,  3 Oct 2019 17:52:44 +0200
+Message-Id: <20191003154551.305735543@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,44 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Jackie Liu <liuyun01@kylinos.cn>
 
-[ Upstream commit 2ec42f3147e1610716f184b02e65d7f493eed925 ]
+[ Upstream commit 8776f3fa15a5cd213c4dfab7ddaf557983374ea6 ]
 
-Some tools use the snd_pcm_info_get_name() to try to identify PCMs or for
-other purposes.
+Sqo_thread will get sqring in batches, which will cause
+ctx->cached_sq_head to be added in batches. if one of these
+sqes is set with the DRAIN flag, then he will never get a
+chance to process, and finally sqo_thread will not exit.
 
-Currently it is left empty with the dmaengine-pcm, in this case copy the
-pcm->id string as pcm->name.
-
-For example IGT is using this to find the HDMI PCM for testing audio on it.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Reported-by: Arthur She <arthur.she@linaro.org>
-Link: https://lore.kernel.org/r/20190906055524.7393-1-peter.ujfalusi@ti.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: de0617e4671 ("io_uring: add support for marking commands as draining")
+Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/io_uring.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 748f5f641002e..d93db2c2b5270 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -306,6 +306,12 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 03cd8f5bba850..701936f2bde39 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -288,6 +288,7 @@ struct io_ring_ctx {
+ struct sqe_submit {
+ 	const struct io_uring_sqe	*sqe;
+ 	unsigned short			index;
++	u32				sequence;
+ 	bool				has_user;
+ 	bool				needs_lock;
+ 	bool				needs_fixed_file;
+@@ -1894,7 +1895,7 @@ static int io_req_set_file(struct io_ring_ctx *ctx, const struct sqe_submit *s,
  
- 		if (!dmaengine_pcm_can_report_residue(dev, pcm->chan[i]))
- 			pcm->flags |= SND_DMAENGINE_PCM_FLAG_NO_RESIDUE;
-+
-+		if (rtd->pcm->streams[i].pcm->name[0] == '\0') {
-+			strncpy(rtd->pcm->streams[i].pcm->name,
-+				rtd->pcm->streams[i].pcm->id,
-+				sizeof(rtd->pcm->streams[i].pcm->name));
-+		}
+ 	if (flags & IOSQE_IO_DRAIN) {
+ 		req->flags |= REQ_F_IO_DRAIN;
+-		req->sequence = ctx->cached_sq_head - 1;
++		req->sequence = s->sequence;
  	}
  
- 	return 0;
+ 	if (!io_op_needs_file(s->sqe))
+@@ -2050,6 +2051,7 @@ static bool io_get_sqring(struct io_ring_ctx *ctx, struct sqe_submit *s)
+ 	if (head < ctx->sq_entries) {
+ 		s->index = head;
+ 		s->sqe = &ctx->sq_sqes[head];
++		s->sequence = ctx->cached_sq_head;
+ 		ctx->cached_sq_head++;
+ 		return true;
+ 	}
 -- 
 2.20.1
 
