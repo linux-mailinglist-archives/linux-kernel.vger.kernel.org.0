@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F546CAC54
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86FB8CABDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730151AbfJCQI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57296 "EHLO mail.kernel.org"
+        id S1731672AbfJCQBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:01:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733288AbfJCQIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:53 -0400
+        id S1728786AbfJCQAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B781207FF;
-        Thu,  3 Oct 2019 16:08:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A3AF21848;
+        Thu,  3 Oct 2019 16:00:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118932;
-        bh=lQFsJo/ifnDFbQ6bmQ5/++QOotlYuVYGBuf+IwxkEQs=;
+        s=default; t=1570118454;
+        bh=i96ov6Rmi4+Atr3GicTb5fGFgF2PeBsIq374ck8lhDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SThtAwg2p9/wB/zC16wsdM5cys4DdgcRf9/BzCzq47d0pAgRh0OrHmIv2x9CxO3ZE
-         VOq+VbjpFawfDuARFGQmEyInq3zDNNA6QeP3gV3tN90u84M6186NVJ00/jpr9qIzvG
-         Ov2fprcdVKdNMIiE0d++BWCUfDOQ8Zz9LstN/Jhg=
+        b=o/qUl32GgomMzMqMfxy44Oy+UUwRpuyZaAFJdD5aicsuYZVWF7OmQZeZO8QZ/PFUI
+         vhYcnxGWacMoreoyfElXAGKQXhbeR+AgCHZOjfxftOxVljHRA/085EuxufQO0vNPF3
+         2Q9Jy1Wvaz4tcnSBqfvZ0LY8YCWBADelizJaNvWw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 063/185] sched/fair: Fix imbalance due to CPU affinity
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 018/129] Revert "f2fs: avoid out-of-range memory access"
 Date:   Thu,  3 Oct 2019 17:52:21 +0200
-Message-Id: <20191003154451.628695736@linuxfoundation.org>
+Message-Id: <20191003154327.439442229@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,64 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Guittot <vincent.guittot@linaro.org>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit f6cad8df6b30a5d2bbbd2e698f74b4cafb9fb82b ]
+[ Upstream commit a37d0862d17411edb67677a580a6f505ec2225f6 ]
 
-The load_balance() has a dedicated mecanism to detect when an imbalance
-is due to CPU affinity and must be handled at parent level. In this case,
-the imbalance field of the parent's sched_group is set.
+As Pavel Machek reported:
 
-The description of sg_imbalanced() gives a typical example of two groups
-of 4 CPUs each and 4 tasks each with a cpumask covering 1 CPU of the first
-group and 3 CPUs of the second group. Something like:
+"We normally use -EUCLEAN to signal filesystem corruption. Plus, it is
+good idea to report it to the syslog and mark filesystem as "needing
+fsck" if filesystem can do that."
 
-	{ 0 1 2 3 } { 4 5 6 7 }
-	        *     * * *
+Still we need improve the original patch with:
+- use unlikely keyword
+- add message print
+- return EUCLEAN
 
-But the load_balance fails to fix this UC on my octo cores system
-made of 2 clusters of quad cores.
+However, after rethink this patch, I don't think we should add such
+condition check here as below reasons:
+- We have already checked the field in f2fs_sanity_check_ckpt(),
+- If there is fs corrupt or security vulnerability, there is nothing
+to guarantee the field is integrated after the check, unless we do
+the check before each of its use, however no filesystem does that.
+- We only have similar check for bitmap, which was added due to there
+is bitmap corruption happened on f2fs' runtime in product.
+- There are so many key fields in SB/CP/NAT did have such check
+after f2fs_sanity_check_{sb,cp,..}.
 
-Whereas the load_balance is able to detect that the imbalanced is due to
-CPU affinity, it fails to fix it because the imbalance field is cleared
-before letting parent level a chance to run. In fact, when the imbalance is
-detected, the load_balance reruns without the CPU with pinned tasks. But
-there is no other running tasks in the situation described above and
-everything looks balanced this time so the imbalance field is immediately
-cleared.
+So I propose to revert this unneeded check.
 
-The imbalance field should not be cleared if there is no other task to move
-when the imbalance is detected.
+This reverts commit 56f3ce675103e3fb9e631cfb4131fc768bc23e9a.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1561996022-28829-1-git-send-email-vincent.guittot@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/fair.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c298d47888ed8..808db3566ddbc 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8359,9 +8359,10 @@ static int load_balance(int this_cpu, struct rq *this_rq,
- out_balanced:
- 	/*
- 	 * We reach balance although we may have faced some affinity
--	 * constraints. Clear the imbalance flag if it was set.
-+	 * constraints. Clear the imbalance flag only if other tasks got
-+	 * a chance to move and fix the imbalance.
- 	 */
--	if (sd_parent) {
-+	if (sd_parent && !(env.flags & LBF_ALL_PINNED)) {
- 		int *group_imbalance = &sd_parent->groups->sgc->imbalance;
- 
- 		if (*group_imbalance)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index c983f7d28f033..2fb99a081de8f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1709,11 +1709,6 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+ 		seg_i = CURSEG_I(sbi, i);
+ 		segno = le32_to_cpu(ckpt->cur_data_segno[i]);
+ 		blk_off = le16_to_cpu(ckpt->cur_data_blkoff[i]);
+-		if (blk_off > ENTRIES_IN_SUM) {
+-			f2fs_bug_on(sbi, 1);
+-			f2fs_put_page(page, 1);
+-			return -EFAULT;
+-		}
+ 		seg_i->next_segno = segno;
+ 		reset_curseg(sbi, i, 0);
+ 		seg_i->alloc_type = ckpt->alloc_type[i];
 -- 
 2.20.1
 
