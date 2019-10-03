@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC6FCA9CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AFD7CAA14
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406170AbfJCQ72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:59:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60654 "EHLO mail.kernel.org"
+        id S2388163AbfJCQTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:19:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404876AbfJCQrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:47:10 -0400
+        id S2388158AbfJCQTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:19:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 598D921848;
-        Thu,  3 Oct 2019 16:47:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D882E215EA;
+        Thu,  3 Oct 2019 16:19:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121229;
-        bh=284s9J8GB6AczDfW5clFHx94KyPZCImw8LyR3mWFV40=;
+        s=default; t=1570119544;
+        bh=C6bM2lkrmxaRi+8ngCo47RBCDNww5tM1dx0eSaBFFeg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yjzh+9XLslcnb+aG8r3qsYoTcGyeHAnv+++Z798+YXUQXGqR9uZQ2UzYNNc+OSJ/j
-         2Zmwp5u46lY2eCk8ympG7ZAQGdho0+Wckf932ZULAEcu13PAmaSz7W2rozcQrvueWs
-         3A26YT+T87oDPr1oDcX51PBTKk2ip5sMNfUVoTrk=
+        b=YhEcVcmVOcI/tbmI7X1Tk9G0lStUysjAhdqddK4qnQgMlO9pdalaQW3SldidJcMUZ
+         ljLdvoQQQn694XCzUwrfvJNCSyUPdcHAE7KZuK0grfPqOt9kPqjommFjIUOK5/aLEO
+         /+H6nUgqpmrMs0bB46f/TRqwyEuibozGA/7zTRnE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "M. Vefa Bicakci" <m.v.b@runbox.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Benjamin Peterson <benjamin@python.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 202/344] platform/x86: intel_pmc_core: Do not ioremap RAM
-Date:   Thu,  3 Oct 2019 17:52:47 +0200
-Message-Id: <20191003154600.180915290@linuxfoundation.org>
+Subject: [PATCH 4.19 103/211] perf trace beauty ioctl: Fix off-by-one error in cmd->string table
+Date:   Thu,  3 Oct 2019 17:52:49 +0200
+Message-Id: <20191003154510.188106056@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +48,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: M. Vefa Bicakci <m.v.b@runbox.com>
+From: Benjamin Peterson <benjamin@python.org>
 
-[ Upstream commit 7d505758b1e556cdf65a5e451744fe0ae8063d17 ]
+[ Upstream commit b92675f4a9c02dd78052645597dac9e270679ddf ]
 
-On a Xen-based PVH virtual machine with more than 4 GiB of RAM,
-intel_pmc_core fails initialization with the following warning message
-from the kernel, indicating that the driver is attempting to ioremap
-RAM:
+While tracing a program that calls isatty(3), I noticed that strace
+reported TCGETS for the request argument of the underlying ioctl(2)
+syscall while perf trace reported TCSETS. strace is corrrect. The bug in
+perf was due to the tty ioctl beauty table starting at 0x5400 rather
+than 0x5401.
 
-  ioremap on RAM at 0x00000000fe000000 - 0x00000000fe001fff
-  WARNING: CPU: 1 PID: 434 at arch/x86/mm/ioremap.c:186 __ioremap_caller.constprop.0+0x2aa/0x2c0
-...
-  Call Trace:
-   ? pmc_core_probe+0x87/0x2d0 [intel_pmc_core]
-   pmc_core_probe+0x87/0x2d0 [intel_pmc_core]
+Committer testing:
 
-This issue appears to manifest itself because of the following fallback
-mechanism in the driver:
+  Using augmented_raw_syscalls.o and settings to make 'perf trace'
+  use strace formatting, i.e. with this in ~/.perfconfig
 
-	if (lpit_read_residency_count_address(&slp_s0_addr))
-		pmcdev->base_addr = PMC_BASE_ADDR_DEFAULT;
+  # cat ~/.perfconfig
+  [trace]
+	add_events = /home/acme/git/linux/tools/perf/examples/bpf/augmented_raw_syscalls.c
+	show_zeros = yes
+	show_duration = no
+	no_inherit = yes
+	show_timestamp = no
+	show_arg_names = no
+	args_alignment = 40
+	show_prefix = yes
 
-The validity of address PMC_BASE_ADDR_DEFAULT (i.e., 0xFE000000) is not
-verified by the driver, which is what this patch introduces. With this
-patch, if address PMC_BASE_ADDR_DEFAULT is in RAM, then the driver will
-not attempt to ioremap the aforementioned address.
+  # strace -e ioctl stty > /dev/null
+  ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+  ioctl(1, TIOCGWINSZ, 0x7fff8a9b0860)    = -1 ENOTTY (Inappropriate ioctl for device)
+  ioctl(1, TCGETS, 0x7fff8a9b0540)        = -1 ENOTTY (Inappropriate ioctl for device)
+  +++ exited with 0 +++
+  #
 
-Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Before:
+
+  # perf trace -e ioctl stty > /dev/null
+  ioctl(0, TCSETS, 0x7fff2cf79f20)        = 0
+  ioctl(1, TIOCSWINSZ, 0x7fff2cf79f40)    = -1 ENOTTY (Inappropriate ioctl for device)
+  ioctl(1, TCSETS, 0x7fff2cf79c20)        = -1 ENOTTY (Inappropriate ioctl for device)
+  #
+
+After:
+
+  # perf trace -e ioctl stty > /dev/null
+  ioctl(0, TCGETS, 0x7ffed0763920)        = 0
+  ioctl(1, TIOCGWINSZ, 0x7ffed0763940)    = -1 ENOTTY (Inappropriate ioctl for device)
+  ioctl(1, TCGETS, 0x7ffed0763620)        = -1 ENOTTY (Inappropriate ioctl for device)
+  #
+
+Signed-off-by: Benjamin Peterson <benjamin@python.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 1cc47f2d46206d67285aea0ca7e8450af571da13 ("perf trace beauty ioctl: Improve 'cmd' beautifier")
+Link: http://lkml.kernel.org/r/20190823033625.18814-1-benjamin@python.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/intel_pmc_core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/perf/trace/beauty/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index c510d0d724759..3b6b8dcc47678 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -878,10 +878,14 @@ static int pmc_core_probe(struct platform_device *pdev)
- 	if (pmcdev->map == &spt_reg_map && !pci_dev_present(pmc_pci_ids))
- 		pmcdev->map = &cnp_reg_map;
- 
--	if (lpit_read_residency_count_address(&slp_s0_addr))
-+	if (lpit_read_residency_count_address(&slp_s0_addr)) {
- 		pmcdev->base_addr = PMC_BASE_ADDR_DEFAULT;
--	else
-+
-+		if (page_is_ram(PHYS_PFN(pmcdev->base_addr)))
-+			return -ENODEV;
-+	} else {
- 		pmcdev->base_addr = slp_s0_addr - pmcdev->map->slp_s0_offset;
-+	}
- 
- 	pmcdev->regbase = ioremap(pmcdev->base_addr,
- 				  pmcdev->map->regmap_length);
+diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
+index 1be3b4cf08270..82346ca06f171 100644
+--- a/tools/perf/trace/beauty/ioctl.c
++++ b/tools/perf/trace/beauty/ioctl.c
+@@ -22,7 +22,7 @@
+ static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
+ {
+ 	static const char *ioctl_tty_cmd[] = {
+-	"TCGETS", "TCSETS", "TCSETSW", "TCSETSF", "TCGETA", "TCSETA", "TCSETAW",
++	[_IOC_NR(TCGETS)] = "TCGETS", "TCSETS", "TCSETSW", "TCSETSF", "TCGETA", "TCSETA", "TCSETAW",
+ 	"TCSETAF", "TCSBRK", "TCXONC", "TCFLSH", "TIOCEXCL", "TIOCNXCL", "TIOCSCTTY",
+ 	"TIOCGPGRP", "TIOCSPGRP", "TIOCOUTQ", "TIOCSTI", "TIOCGWINSZ", "TIOCSWINSZ",
+ 	"TIOCMGET", "TIOCMBIS", "TIOCMBIC", "TIOCMSET", "TIOCGSOFTCAR", "TIOCSSOFTCAR",
 -- 
 2.20.1
 
