@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06004CA206
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8660CA2C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731750AbfJCQBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:01:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45402 "EHLO mail.kernel.org"
+        id S1733102AbfJCQJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:09:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731730AbfJCQBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:01:14 -0400
+        id S1733078AbfJCQJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:09:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C94A21848;
-        Thu,  3 Oct 2019 16:01:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA052207FF;
+        Thu,  3 Oct 2019 16:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118472;
-        bh=2OU/aDDl5if082keo3Lhq1ZCrxI0CLsaFeUqmdsqnOA=;
+        s=default; t=1570118951;
+        bh=q7MH5xjL57lYshgLlsRFQ3lgZeENdcd5LR0JjZVkFok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dNlDsZXhUpxV8jd91OOrda4EgVGdNV0Y3i6P77FTb97dpg0L4l1gyAyKnlbEzwKfN
-         jpfj42HMH2w4+Ld4EgSdYJkidZ/elqAy77lAE837eQK4oyP2Q3RB2nUzh1/H9Vnjae
-         pOMwvzio+RPJxk0A6bkckg2wUY3ub8fHfA2LNrzY=
+        b=eogvt0xLu2N0RzVWDBH3iISmxmo1Oy3cYBIRHQqYRJPBTOgzXZ4ZmEaPI3k/g2dTv
+         RfX4ofd9OODlKbr3Y4X/RVMgvDAgXPhJUSkwsVS87M9z7PL/YE3yVhxM6Voyqon9U/
+         2fSpgoqyis0AF+syOScmyHntv34OjvgzxB2pbig0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 023/129] arcnet: provide a buffer big enough to actually receive packets
-Date:   Thu,  3 Oct 2019 17:52:26 +0200
-Message-Id: <20191003154329.859212127@linuxfoundation.org>
+        stable@vger.kernel.org, Robert Richter <rrichter@marvell.com>,
+        Borislav Petkov <bp@suse.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 069/185] EDAC/mc: Fix grain_bits calculation
+Date:   Thu,  3 Oct 2019 17:52:27 +0200
+Message-Id: <20191003154453.150860539@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,101 +48,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Robert Richter <rrichter@marvell.com>
 
-[ Upstream commit 108639aac35eb57f1d0e8333f5fc8c7ff68df938 ]
+[ Upstream commit 3724ace582d9f675134985727fd5e9811f23c059 ]
 
-struct archdr is only big enough to hold the header of various types of
-arcnet packets. So to provide enough space to hold the data read from
-hardware provide a buffer large enough to hold a packet with maximal
-size.
+The grain in EDAC is defined as "minimum granularity for an error
+report, in bytes". The following calculation of the grain_bits in
+edac_mc is wrong:
 
-The problem was noticed by the stack protector which makes the kernel
-oops.
+	grain_bits = fls_long(e->grain) + 1;
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Acked-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Where grain_bits is defined as:
+
+	grain = 1 << grain_bits
+
+Example:
+
+	grain = 8	# 64 bit (8 bytes)
+	grain_bits = fls_long(8) + 1
+	grain_bits = 4 + 1 = 5
+
+	grain = 1 << grain_bits
+	grain = 1 << 5 = 32
+
+Replace it with the correct calculation:
+
+	grain_bits = fls_long(e->grain - 1);
+
+The example gives now:
+
+	grain_bits = fls_long(8 - 1)
+	grain_bits = fls_long(7)
+	grain_bits = 3
+
+	grain = 1 << 3 = 8
+
+Also, check if the hardware reports a reasonable grain != 0 and fallback
+with a warning to 1 byte granularity otherwise.
+
+ [ bp: massage a bit. ]
+
+Signed-off-by: Robert Richter <rrichter@marvell.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190624150758.6695-2-rrichter@marvell.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/arcnet/arcnet.c |   31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ drivers/edac/edac_mc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/arcnet/arcnet.c
-+++ b/drivers/net/arcnet/arcnet.c
-@@ -1009,31 +1009,34 @@ EXPORT_SYMBOL(arcnet_interrupt);
- static void arcnet_rx(struct net_device *dev, int bufnum)
- {
- 	struct arcnet_local *lp = netdev_priv(dev);
--	struct archdr pkt;
-+	union {
-+		struct archdr pkt;
-+		char buf[512];
-+	} rxdata;
- 	struct arc_rfc1201 *soft;
- 	int length, ofs;
+diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
+index 80801c616395e..f7fa05fee45a1 100644
+--- a/drivers/edac/edac_mc.c
++++ b/drivers/edac/edac_mc.c
+@@ -1240,9 +1240,13 @@ void edac_mc_handle_error(const enum hw_event_mc_err_type type,
+ 	if (p > e->location)
+ 		*(p - 1) = '\0';
  
--	soft = &pkt.soft.rfc1201;
-+	soft = &rxdata.pkt.soft.rfc1201;
+-	/* Report the error via the trace interface */
+-	grain_bits = fls_long(e->grain) + 1;
++	/* Sanity-check driver-supplied grain value. */
++	if (WARN_ON_ONCE(!e->grain))
++		e->grain = 1;
++
++	grain_bits = fls_long(e->grain - 1);
  
--	lp->hw.copy_from_card(dev, bufnum, 0, &pkt, ARC_HDR_SIZE);
--	if (pkt.hard.offset[0]) {
--		ofs = pkt.hard.offset[0];
-+	lp->hw.copy_from_card(dev, bufnum, 0, &rxdata.pkt, ARC_HDR_SIZE);
-+	if (rxdata.pkt.hard.offset[0]) {
-+		ofs = rxdata.pkt.hard.offset[0];
- 		length = 256 - ofs;
- 	} else {
--		ofs = pkt.hard.offset[1];
-+		ofs = rxdata.pkt.hard.offset[1];
- 		length = 512 - ofs;
- 	}
- 
- 	/* get the full header, if possible */
--	if (sizeof(pkt.soft) <= length) {
--		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(pkt.soft));
-+	if (sizeof(rxdata.pkt.soft) <= length) {
-+		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(rxdata.pkt.soft));
- 	} else {
--		memset(&pkt.soft, 0, sizeof(pkt.soft));
-+		memset(&rxdata.pkt.soft, 0, sizeof(rxdata.pkt.soft));
- 		lp->hw.copy_from_card(dev, bufnum, ofs, soft, length);
- 	}
- 
- 	arc_printk(D_DURING, dev, "Buffer #%d: received packet from %02Xh to %02Xh (%d+4 bytes)\n",
--		   bufnum, pkt.hard.source, pkt.hard.dest, length);
-+		   bufnum, rxdata.pkt.hard.source, rxdata.pkt.hard.dest, length);
- 
- 	dev->stats.rx_packets++;
- 	dev->stats.rx_bytes += length + ARC_HDR_SIZE;
-@@ -1042,13 +1045,13 @@ static void arcnet_rx(struct net_device
- 	if (arc_proto_map[soft->proto]->is_ip) {
- 		if (BUGLVL(D_PROTO)) {
- 			struct ArcProto
--			*oldp = arc_proto_map[lp->default_proto[pkt.hard.source]],
-+			*oldp = arc_proto_map[lp->default_proto[rxdata.pkt.hard.source]],
- 			*newp = arc_proto_map[soft->proto];
- 
- 			if (oldp != newp) {
- 				arc_printk(D_PROTO, dev,
- 					   "got protocol %02Xh; encap for host %02Xh is now '%c' (was '%c')\n",
--					   soft->proto, pkt.hard.source,
-+					   soft->proto, rxdata.pkt.hard.source,
- 					   newp->suffix, oldp->suffix);
- 			}
- 		}
-@@ -1057,10 +1060,10 @@ static void arcnet_rx(struct net_device
- 		lp->default_proto[0] = soft->proto;
- 
- 		/* in striking contrast, the following isn't a hack. */
--		lp->default_proto[pkt.hard.source] = soft->proto;
-+		lp->default_proto[rxdata.pkt.hard.source] = soft->proto;
- 	}
- 	/* call the protocol-specific receiver. */
--	arc_proto_map[soft->proto]->rx(dev, bufnum, &pkt, length);
-+	arc_proto_map[soft->proto]->rx(dev, bufnum, &rxdata.pkt, length);
- }
- 
- static void null_rx(struct net_device *dev, int bufnum,
++	/* Report the error via the trace interface */
+ 	if (IS_ENABLED(CONFIG_RAS))
+ 		trace_mc_event(type, e->msg, e->label, e->error_count,
+ 			       mci->mc_idx, e->top_layer, e->mid_layer,
+-- 
+2.20.1
+
 
 
