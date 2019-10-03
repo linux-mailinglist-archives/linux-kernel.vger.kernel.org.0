@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE1BCA3B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 713CCCA3BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389391AbfJCQSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:18:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44856 "EHLO mail.kernel.org"
+        id S2389451AbfJCQS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:18:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387876AbfJCQST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:18:19 -0400
+        id S2388580AbfJCQSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:18:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56E1D21783;
-        Thu,  3 Oct 2019 16:18:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 050A020865;
+        Thu,  3 Oct 2019 16:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119498;
-        bh=CQ1VJV5SGEcxU1DDwi4WGZ9oGRxifBDjq7NGuSu/3LU=;
+        s=default; t=1570119501;
+        bh=J2DOie5+rJ5lNglv194L5tZNcZlQOsaZ5mRHla4X5YE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R+V91hcpsQiZ7i747xodx/V83ABWmb5EvtUE22r05RcH6RgvuuAzZkrGo0UpJebdP
-         b+zVVwbEqegZ4pYGreZU5Een9sPJrr6w0tnGWgz+ivvqM8U9bUqjTRUAwJpkP9Tzxj
-         7VSmm6ptq1RzTd3y0tuAhLrjuR1Lr/JTKTQZ4kEI=
+        b=a2RiLTLU9P0DvkqLmb5l5cF+Z+xafN4XNnTGw3WoGAY2teR2DexkIscuGen/1yTWo
+         0sKsQ6AqfhA8Pyk76YDz2vdO5D/JGiWghze9Itd5+McKx8vPfZb7wq5cr+N+gcoPeW
+         tb7Zlbtw/JA8GYqI4EaewFsjcrsNQ6GLZn3B2dWU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 088/211] led: triggers: Fix a memory leak bug
-Date:   Thu,  3 Oct 2019 17:52:34 +0200
-Message-Id: <20191003154507.088788611@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 089/211] nbd: add missing config put
+Date:   Thu,  3 Oct 2019 17:52:35 +0200
+Message-Id: <20191003154507.323052521@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -45,36 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Mike Christie <mchristi@redhat.com>
 
-[ Upstream commit 60e2dde1e91ae0addb21ac380cc36ebee7534e49 ]
+[ Upstream commit 887e975c4172d0d5670c39ead2f18ba1e4ec8133 ]
 
-In led_trigger_set(), 'event' is allocated in kasprintf(). However, it is
-not deallocated in the following execution if the label 'err_activate' or
-'err_add_groups' is entered, leading to memory leaks. To fix this issue,
-free 'event' before returning the error.
+Fix bug added with the patch:
 
-Fixes: 52c47742f79d ("leds: triggers: send uevent when changing triggers")
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+commit 8f3ea35929a0806ad1397db99a89ffee0140822a
+Author: Josef Bacik <josef@toxicpanda.com>
+Date:   Mon Jul 16 12:11:35 2018 -0400
+
+    nbd: handle unexpected replies better
+
+where if the timeout handler runs when the completion path is and we fail
+to grab the mutex in the timeout handler we will leave a config reference
+and cannot free the config later.
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/led-triggers.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/nbd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 17d73db1456eb..e4cb3811e82a3 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -177,6 +177,7 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
- 	list_del(&led_cdev->trig_list);
- 	write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock, flags);
- 	led_set_brightness(led_cdev, LED_OFF);
-+	kfree(event);
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index fa60f265ee506..b1c7009de1f4d 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -353,8 +353,10 @@ static enum blk_eh_timer_return nbd_xmit_timeout(struct request *req,
+ 	}
+ 	config = nbd->config;
  
- 	return ret;
- }
+-	if (!mutex_trylock(&cmd->lock))
++	if (!mutex_trylock(&cmd->lock)) {
++		nbd_config_put(nbd);
+ 		return BLK_EH_RESET_TIMER;
++	}
+ 
+ 	if (config->num_connections > 1) {
+ 		dev_err_ratelimited(nbd_to_dev(nbd),
 -- 
 2.20.1
 
