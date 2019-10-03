@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 722CECA473
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F04F8CA48B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390838AbfJCQY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:24:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54750 "EHLO mail.kernel.org"
+        id S2390211AbfJCQZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:25:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390019AbfJCQYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:24:51 -0400
+        id S2390948AbfJCQZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:25:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64D012054F;
-        Thu,  3 Oct 2019 16:24:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7C6220867;
+        Thu,  3 Oct 2019 16:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119890;
-        bh=2NQHd2QxdKNhEULOQ3m6pk/Bq8wN86OiE8oTa6a2Tsg=;
+        s=default; t=1570119939;
+        bh=j1VMz70szKG1in2f+5pz0U3jeGXcWdIJYP6XH2tNQWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u+bDIERZnhgsZoN8eMQ8U7OmCszIvwX/UEqlesyLBUCUjqTQSNtk8kdZTFpZZMXMK
-         +LpKfmnm1DOhOYl0++HCcEajSo/V8D8s1f2fGOboTFawh3/dXQFk6Fq5+nO2P/i5JA
-         ckt7X8wpVDR5sEjxsz+J9NZRkuFNp7XKiblV9lBY=
+        b=FBelC5Pz7s1bndCpJk8w/nzxY3dJ40El++8e9HFf1mXDFrFcjbIYFkEFj/oWWw5c/
+         PvDKHfvmFoapyJcFK4dLXF8eHHnAoD9kfmnBuWM41eLcn174xNs1bgxwChCuo0vd3H
+         czd2TDc0B1eRrxssckKBq6U/mepT5RpF8baM+m8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+ce366e2b8296e25d84f5@syzkaller.appspotmail.com,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        stable@vger.kernel.org, Peter Mamonov <pmamonov@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 5.2 002/313] cdc_ncm: fix divide-by-zero caused by invalid wMaxPacketSize
-Date:   Thu,  3 Oct 2019 17:49:40 +0200
-Message-Id: <20191003154533.792457976@linuxfoundation.org>
+Subject: [PATCH 5.2 005/313] net/phy: fix DP83865 10 Mbps HDX loopback disable function
+Date:   Thu,  3 Oct 2019 17:49:43 +0200
+Message-Id: <20191003154534.045366125@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,41 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjørn Mork <bjorn@mork.no>
+From: Peter Mamonov <pmamonov@gmail.com>
 
-[ Upstream commit 3fe4b3351301660653a2bc73f2226da0ebd2b95e ]
+[ Upstream commit e47488b2df7f9cb405789c7f5d4c27909fc597ae ]
 
-Endpoints with zero wMaxPacketSize are not usable for transferring
-data. Ignore such endpoints when looking for valid in, out and
-status pipes, to make the driver more robust against invalid and
-meaningless descriptors.
+According to the DP83865 datasheet "the 10 Mbps HDX loopback can be
+disabled in the expanded memory register 0x1C0.1". The driver erroneously
+used bit 0 instead of bit 1.
 
-The wMaxPacketSize of the out pipe is used as divisor. So this change
-fixes a divide-by-zero bug.
-
-Reported-by: syzbot+ce366e2b8296e25d84f5@syzkaller.appspotmail.com
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
+Fixes: 4621bf129856 ("phy: Add file missed in previous commit.")
+Signed-off-by: Peter Mamonov <pmamonov@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/cdc_ncm.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/phy/national.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/usb/cdc_ncm.c
-+++ b/drivers/net/usb/cdc_ncm.c
-@@ -681,8 +681,12 @@ cdc_ncm_find_endpoints(struct usbnet *de
- 	u8 ep;
+--- a/drivers/net/phy/national.c
++++ b/drivers/net/phy/national.c
+@@ -105,14 +105,17 @@ static void ns_giga_speed_fallback(struc
  
- 	for (ep = 0; ep < intf->cur_altsetting->desc.bNumEndpoints; ep++) {
--
- 		e = intf->cur_altsetting->endpoint + ep;
+ static void ns_10_base_t_hdx_loopack(struct phy_device *phydev, int disable)
+ {
++	u16 lb_dis = BIT(1);
 +
-+		/* ignore endpoints which cannot transfer data */
-+		if (!usb_endpoint_maxp(&e->desc))
-+			continue;
-+
- 		switch (e->desc.bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) {
- 		case USB_ENDPOINT_XFER_INT:
- 			if (usb_endpoint_dir_in(&e->desc)) {
+ 	if (disable)
+-		ns_exp_write(phydev, 0x1c0, ns_exp_read(phydev, 0x1c0) | 1);
++		ns_exp_write(phydev, 0x1c0,
++			     ns_exp_read(phydev, 0x1c0) | lb_dis);
+ 	else
+ 		ns_exp_write(phydev, 0x1c0,
+-			     ns_exp_read(phydev, 0x1c0) & 0xfffe);
++			     ns_exp_read(phydev, 0x1c0) & ~lb_dis);
+ 
+ 	pr_debug("10BASE-T HDX loopback %s\n",
+-		 (ns_exp_read(phydev, 0x1c0) & 0x0001) ? "off" : "on");
++		 (ns_exp_read(phydev, 0x1c0) & lb_dis) ? "off" : "on");
+ }
+ 
+ static int ns_config_init(struct phy_device *phydev)
 
 
