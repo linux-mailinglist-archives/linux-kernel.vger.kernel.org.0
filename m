@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1356CA292
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 804D7CA294
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732805AbfJCQGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:06:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54044 "EHLO mail.kernel.org"
+        id S1732832AbfJCQGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:06:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732795AbfJCQGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:39 -0400
+        id S1732808AbfJCQGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:06:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95A61207FF;
-        Thu,  3 Oct 2019 16:06:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E20D3207FF;
+        Thu,  3 Oct 2019 16:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118799;
-        bh=Qr5EGmTQNR2o9tv56lUO1BpJvOjnhnOrG5GY8KDWsgs=;
+        s=default; t=1570118804;
+        bh=rBfg1VHZ1ulI3RU63dveim5KDxRhoNFTWRrE5Xe8CFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ATwvV+HlCSUsS7q7ijz59TBANNbs/9zOj70LpwSyB6qbt5aXF4w+H4NKHm5LDKRpQ
-         dgtMXjDXCbtCkS6lUytRstV3HrBK32dH1BwjyeJTk4MMaAZ11Uc+owrzKWRxH/NrIG
-         lW/zE8K+IBYFVbQFZd7cM+O+q0H1cve3bcvRQDNY=
+        b=WMBFkm3XVSQNmyAEGCdh4RM+LLY2+oKUd3ziEZZkuBvz+oqyQS/bk87OGGt5MuUgd
+         CqMTHkFNQTPS6EYYWZ8xjJ68LuwyMA2mt/TBY8iobrQCGswm7O4n7VXn7/9euUnol2
+         pS0K/7Cqo/cZu8TzrVN5qLpPUljBqU5YHt8xTJSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: [PATCH 4.14 014/185] arm64: kpti: Whitelist Cortex-A CPUs that dont implement the CSV3 field
-Date:   Thu,  3 Oct 2019 17:51:32 +0200
-Message-Id: <20191003154440.681273301@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Dennis Padiernos <depadiernos@gmail.com>
+Subject: [PATCH 4.14 016/185] ALSA: hda - Apply AMD controller workaround for Raven platform
+Date:   Thu,  3 Oct 2019 17:51:34 +0200
+Message-Id: <20191003154441.189849859@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -43,38 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 2a355ec25729053bb9a1a89b6c1d1cdd6c3b3fb1 upstream.
+commit d2c63b7dfd06788a466d5ec8a850491f084c5fc2 upstream.
 
-While the CSV3 field of the ID_AA64_PFR0 CPU ID register can be checked
-to see if a CPU is susceptible to Meltdown and therefore requires kpti
-to be enabled, existing CPUs do not implement this field.
+It's reported that the garbled sound on HP Envy x360 13z-ag000 (Ryzen
+Laptop) is fixed by the same workaround applied to other AMD chips.
+Update the driver_data entry for Raven (1022:15e3) to use the newly
+introduced preset, AZX_DCAPS_PRESET_AMD_SB.  Since it already contains
+AZX_DCAPS_PM_RUNTIME, we can drop that bit, too.
 
-We therefore whitelist all unaffected Cortex-A CPUs that do not implement
-the CSV3 field.
-
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reported-and-tested-by: Dennis Padiernos <depadiernos@gmail.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190920073040.31764-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/cpufeature.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/pci/hda/hda_intel.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -838,6 +838,11 @@ static bool unmap_kernel_at_el0(const st
- 	switch (read_cpuid_id() & MIDR_CPU_MODEL_MASK) {
- 	case MIDR_CAVIUM_THUNDERX2:
- 	case MIDR_BRCM_VULCAN:
-+	case MIDR_CORTEX_A53:
-+	case MIDR_CORTEX_A55:
-+	case MIDR_CORTEX_A57:
-+	case MIDR_CORTEX_A72:
-+	case MIDR_CORTEX_A73:
- 		return false;
- 	}
- 
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2586,8 +2586,7 @@ static const struct pci_device_id azx_id
+ 			 AZX_DCAPS_PM_RUNTIME },
+ 	/* AMD Raven */
+ 	{ PCI_DEVICE(0x1022, 0x15e3),
+-	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
+-			 AZX_DCAPS_PM_RUNTIME },
++	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_AMD_SB },
+ 	/* ATI HDMI */
+ 	{ PCI_DEVICE(0x1002, 0x0002),
+ 	  .driver_data = AZX_DRIVER_ATIHDMI_NS | AZX_DCAPS_PRESET_ATI_HDMI_NS },
 
 
