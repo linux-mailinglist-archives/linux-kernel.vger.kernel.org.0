@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C56CACF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E648CAC4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732158AbfJCRdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:33:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56396 "EHLO mail.kernel.org"
+        id S1731713AbfJCQIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:08:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731668AbfJCQIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:16 -0400
+        id S1730926AbfJCQIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:08:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED4AF20865;
-        Thu,  3 Oct 2019 16:08:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D860D215EA;
+        Thu,  3 Oct 2019 16:08:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118895;
-        bh=ma1CarYG2lqqBfk2dF+ebJNDWLLYYaQ94NCINGFyuyM=;
+        s=default; t=1570118911;
+        bh=9BntkJM+X8b2XhLAQ3602/FseqHcZoM+K3XqsjBTRlA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uPhClj8OI3wX/iV8RYtO6/geSoqrze2sj6Ayi6x6MxYWq44Sc/ZPDG9boH0/Hsz2w
-         HXyGRlllxU+mmyZYgSFgcFdDQdVHyVJbjIycIyf5BPYJwcdHtnU2tQQZv9MAbOXokp
-         xBkVimPoa5hD3vrMM2+ROwAan+X1K7V/pwnvApMU=
+        b=SIxxNyALCWQDkiBjehOoo6Yrx5v6cM2bU4PICUPuDLIxY6G18ajVQKCaps2dz2e9b
+         X+tgs7ygo7VfU2Tb9GfpCsdATq8RalhUDOvhZwU9EAnpC4TmovGVQUZaIynty+KQj2
+         4sOIdN5QcGf0LzBgCPeNlZqrnuM3tvyVapBvme90=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 050/185] ax25: enforce CAP_NET_RAW for raw sockets
-Date:   Thu,  3 Oct 2019 17:52:08 +0200
-Message-Id: <20191003154449.113701954@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 056/185] dmaengine: bcm2835: Print error in case setting DMA mask fails
+Date:   Thu,  3 Oct 2019 17:52:14 +0200
+Message-Id: <20191003154450.056069262@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -43,31 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ori Nimron <orinimron123@gmail.com>
+From: Stefan Wahren <wahrenst@gmx.net>
 
-[ Upstream commit 0614e2b73768b502fc32a75349823356d98aae2c ]
+[ Upstream commit 72503b25ee363827aafffc3e8d872e6a92a7e422 ]
 
-When creating a raw AF_AX25 socket, CAP_NET_RAW needs to be checked
-first.
+During enabling of the RPi 4, we found out that the driver doesn't provide
+a helpful error message in case setting DMA mask fails. So add one.
 
-Signed-off-by: Ori Nimron <orinimron123@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Link: https://lore.kernel.org/r/1563297318-4900-1-git-send-email-wahrenst@gmx.net
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ax25/af_ax25.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma/bcm2835-dma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -859,6 +859,8 @@ static int ax25_create(struct net *net,
- 		break;
+diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
+index 6ba53bbd0e161..b984d00bc0558 100644
+--- a/drivers/dma/bcm2835-dma.c
++++ b/drivers/dma/bcm2835-dma.c
+@@ -891,8 +891,10 @@ static int bcm2835_dma_probe(struct platform_device *pdev)
+ 		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
  
- 	case SOCK_RAW:
-+		if (!capable(CAP_NET_RAW))
-+			return -EPERM;
- 		break;
- 	default:
- 		return -ESOCKTNOSUPPORT;
+ 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-	if (rc)
++	if (rc) {
++		dev_err(&pdev->dev, "Unable to set DMA mask\n");
+ 		return rc;
++	}
+ 
+ 	od = devm_kzalloc(&pdev->dev, sizeof(*od), GFP_KERNEL);
+ 	if (!od)
+-- 
+2.20.1
+
 
 
