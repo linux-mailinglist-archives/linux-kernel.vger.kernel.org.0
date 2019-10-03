@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C53CAD30
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78D43CACC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388681AbfJCRg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:36:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51164 "EHLO mail.kernel.org"
+        id S1730551AbfJCR3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:29:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732480AbfJCQEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:04:52 -0400
+        id S2388079AbfJCQMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:12:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45A5021D81;
-        Thu,  3 Oct 2019 16:04:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE26120865;
+        Thu,  3 Oct 2019 16:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118691;
-        bh=E4yPYwc32cIU2DIgfQp7vP06Bppdzxn0qHcM/XOaOkw=;
+        s=default; t=1570119158;
+        bh=OEJuyGRuQV/TMV5fm8GvzzZkATmPIugznv+/fAGZ58I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ke1xdcmudqcykcOZg4dcEkZISz2xhUafiGOyY8LydMpuN/UumesIHLQD32iMciBez
-         YnnwN3bg096MWrA9zCTPRynqZhdFgpxELvVRzCUgVdN0MaNsdZ37biqUwg6vp42Ivd
-         oMfOkqzSzgFyl+TBX8LkwhV+WN6EA7JGlZCWqtok=
+        b=A7vhQAbFtXUnMaUubQPD4W4rUggOadhw88ROfAiQX1tTGIt0tZ3GSKl6EOflMHZ7F
+         VyY9kr8e6JMCvR6K9cvAONiu27wBUdxf/QVV61CXytuIIeRl6qgUjWaED+9U47iISg
+         70XGd9Eoqh0EDFBJOMlt596mOryszaeU09B9zl3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, rostedt@goodmis.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 102/129] printk: Do not lose last line in kmsg buffer dump
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 147/185] fuse: fix missing unlock_page in fuse_writepage()
 Date:   Thu,  3 Oct 2019 17:53:45 +0200
-Message-Id: <20191003154405.768526041@linuxfoundation.org>
+Message-Id: <20191003154511.943701174@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,74 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit b46eff55ad5bd98e746c0a7022fe7ee071de5fee ]
+commit d5880c7a8620290a6c90ced7a0e8bd0ad9419601 upstream.
 
-kmsg_dump_get_buffer() is supposed to select all the youngest log
-messages which fit into the provided buffer.  It determines the correct
-start index by using msg_print_text() with a NULL buffer to calculate
-the size of each entry.  However, when performing the actual writes,
-msg_print_text() only writes the entry to the buffer if the written len
-is lesser than the size of the buffer.  So if the lengths of the
-selected youngest log messages happen to precisely fill up the provided
-buffer, the last log message is not included.
+unlock_page() was missing in case of an already in-flight write against the
+same page.
 
-We don't want to modify msg_print_text() to fill up the buffer and start
-returning a length which is equal to the size of the buffer, since
-callers of its other users, such as kmsg_dump_get_line(), depend upon
-the current behaviour.
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Fixes: ff17be086477 ("fuse: writepage: skip already in flight")
+Cc: <stable@vger.kernel.org> # v3.13
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Instead, fix kmsg_dump_get_buffer() to compensate for this.
-
-For example, with the following two final prints:
-
-[    6.427502] AAAAAAAAAAAAA
-[    6.427769] BBBBBBBB12345
-
-A dump of a 64-byte buffer filled by kmsg_dump_get_buffer(), before this
-patch:
-
- 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 35 32 32 31 39 37  <0>[    6.522197
- 00000010: 5d 20 41 41 41 41 41 41 41 41 41 41 41 41 41 0a  ] AAAAAAAAAAAAA.
- 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
- 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-
-After this patch:
-
- 00000000: 3c 30 3e 5b 20 20 20 20 36 2e 34 35 36 36 37 38  <0>[    6.456678
- 00000010: 5d 20 42 42 42 42 42 42 42 42 31 32 33 34 35 0a  ] BBBBBBBB12345.
- 00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
- 00000030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-
-Link: http://lkml.kernel.org/r/20190711142937.4083-1-vincent.whitchurch@axis.com
-Fixes: e2ae715d66bf4bec ("kmsg - kmsg_dump() use iterator to receive log buffer content")
-To: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org
-Cc: <stable@vger.kernel.org> # v3.5+
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/printk/printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/file.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index df348d4eeb265..6607d77afe55a 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3131,7 +3131,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
- 	/* move first record forward until length fits into the buffer */
- 	seq = dumper->cur_seq;
- 	idx = dumper->cur_idx;
--	while (l > size && seq < dumper->next_seq) {
-+	while (l >= size && seq < dumper->next_seq) {
- 		struct printk_log *msg = log_from_idx(idx);
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1699,6 +1699,7 @@ static int fuse_writepage(struct page *p
+ 		WARN_ON(wbc->sync_mode == WB_SYNC_ALL);
  
- 		l -= msg_print_text(msg, true, NULL, 0);
--- 
-2.20.1
-
+ 		redirty_page_for_writepage(wbc, page);
++		unlock_page(page);
+ 		return 0;
+ 	}
+ 
 
 
