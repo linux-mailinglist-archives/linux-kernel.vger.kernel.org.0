@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35118CA2B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BBCBCA219
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733075AbfJCQIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56476 "EHLO mail.kernel.org"
+        id S1731935AbfJCQB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:01:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733249AbfJCQIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:18 -0400
+        id S1731048AbfJCQBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:01:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DBA3215EA;
-        Thu,  3 Oct 2019 16:08:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E52320700;
+        Thu,  3 Oct 2019 16:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118898;
-        bh=f9VOswH3F5Q8aSAQ58Nf+fB9hZXGza6I3bPJjxhCzLI=;
+        s=default; t=1570118512;
+        bh=MIecuNNRxGS+on9SL/GewOgrOrgNIMHtj3KVEuhl5CI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rjwu/wRuJXvYm3qQphieO7NC76rwuNgs86YDEUm3m1mQfgDeeGP2PFFxdO99T+MUg
-         uTS1eUrSyW37d0qkMJX9qF3+dEdAqkvTcPSq41pOh1QKjfb7Ny4Lt67fvWGfxQhUr/
-         OD7UWnRUU22h1RdpXdBDaG1D8zEr8j2qga2XNuY0=
+        b=OBJ5/o4MgSnTjTwq0zHwd/JvAdGZskCAklobknWSwHVmCOHP+SAoE+ct2RlZHQQd0
+         8Zav4DLKbB5CGNsU62IBsdGtF+5ZYp83DtNO6ArDwZfC6nUcZaggeOAH/eOpXG3liy
+         69OsfHgppsQwG1D6pdMZm2EqqWN1zzgzchFTlq2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 051/185] ieee802154: enforce CAP_NET_RAW for raw sockets
-Date:   Thu,  3 Oct 2019 17:52:09 +0200
-Message-Id: <20191003154449.331955993@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 007/129] crypto: talitos - fix missing break in switch statement
+Date:   Thu,  3 Oct 2019 17:52:10 +0200
+Message-Id: <20191003154322.503362886@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ori Nimron <orinimron123@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit e69dbd4619e7674c1679cba49afd9dd9ac347eef ]
+commit 5fc194ea6d34dfad9833d3043ce41d6c52aff39a upstream.
 
-When creating a raw AF_IEEE802154 socket, CAP_NET_RAW needs to be
-checked first.
+Add missing break statement in order to prevent the code from falling
+through to case CRYPTO_ALG_TYPE_AHASH.
 
-Signed-off-by: Ori Nimron <orinimron123@gmail.com>
+Fixes: aeb4c132f33d ("crypto: talitos - Convert to new AEAD interface")
+Cc: stable@vger.kernel.org
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ieee802154/socket.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/crypto/talitos.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ieee802154/socket.c
-+++ b/net/ieee802154/socket.c
-@@ -1001,6 +1001,9 @@ static int ieee802154_create(struct net
- 
- 	switch (sock->type) {
- 	case SOCK_RAW:
-+		rc = -EPERM;
-+		if (!capable(CAP_NET_RAW))
-+			goto out;
- 		proto = &ieee802154_raw_prot;
- 		ops = &ieee802154_raw_ops;
- 		break;
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -3043,6 +3043,7 @@ static int talitos_remove(struct platfor
+ 			break;
+ 		case CRYPTO_ALG_TYPE_AEAD:
+ 			crypto_unregister_aead(&t_alg->algt.alg.aead);
++			break;
+ 		case CRYPTO_ALG_TYPE_AHASH:
+ 			crypto_unregister_ahash(&t_alg->algt.alg.hash);
+ 			break;
 
 
