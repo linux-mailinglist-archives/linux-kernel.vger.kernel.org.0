@@ -2,113 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD3BCAEA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1A5CAEAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732197AbfJCS4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 14:56:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34072 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730110AbfJCS4G (ORCPT
+        id S1731876AbfJCS5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 14:57:43 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35608 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729355AbfJCS5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:56:06 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b128so2353548pfa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 11:56:05 -0700 (PDT)
+        Thu, 3 Oct 2019 14:57:42 -0400
+Received: by mail-io1-f68.google.com with SMTP id q10so8101962iop.2;
+        Thu, 03 Oct 2019 11:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:cc:subject:user-agent:date;
-        bh=m3hPkICQE69+a0xauYT0Amw2XtL4GDAq+zoSEfirsuU=;
-        b=RTH7eMPNg4REcj7uJxBnWgOGXzLh25RAdH0XvU6vUYGvMXEuc4SQe9Mopl1HUy9qTV
-         NwlkefUwbR5ZusY6euOhVnCNMd9HBRlowLYcDJ+/tismHYMOUtJdHE3jmXC+xB5H1rFG
-         MUmS1wlEq19k/B0rutrOSHgMx0/zeNEFj52Eo=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aa6r931Rjp1NE7cgnIGCkHLvHKb0A2CYSfJ4m7AK8VA=;
+        b=O7PPsQ4zo2sfTl6NOOpE5XsVzE5RNltNIJ3BWIjoP92YjkqCBcz4qI/eBObiEFXHxG
+         KRCWmXU5E6KeddHOB8UC3E5e2kPXWnfMhDspqFWqDTx4jTXTKFnfflDpMxlSj8QQ1ljS
+         fmuw1vNpa3Srq0SIWXs3Yi8+CZ2o1gSYFOzL3TWpH9CYIiygn++HYMB4hX9sctCfrbeo
+         ATuEaJcaYLvYIjB/e6/PErOcfUZWKWlgQTRbvjxOQIFhwAhCJj5WwHA7nqs0A2i372Ra
+         1nwpkJ3rEVH8ssU/VgHToN77qu95pjftoLb/trkIUAcWvXG3cECeieEVc2QRbCNL+uR/
+         qKgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
-         :user-agent:date;
-        bh=m3hPkICQE69+a0xauYT0Amw2XtL4GDAq+zoSEfirsuU=;
-        b=pUI/RIi+RTHIktYlxn7xSTYq0hg7Z57wx9HJR9+msPHLfORXmc2wVflVBScJDewbSR
-         Yv+1ZOXBVH+Dz2K5J35nOHBTc2AhehUx6LCxCiz7oNd8r0hGoVjJLBpTGoV7XW6oAjHF
-         5UsFW3tRiomsxdXx6tsgyhVowGOcqd8zNB61jRvJaB9xh4dNbvOl1JPmJgAQtRSZmh09
-         cdGKKDAohZHjH1sPPOxml1s7N8FyreYJ8yxK5FI+86z5aR8BSTHyvZWPc70TEQ5Y/9bp
-         PYQ0M5Hw/gbkrebTtpzrRj1uvf4o04pzzaWnIWsYQceGmjMUUpoKfojMDrohzML0ZmOT
-         fy7A==
-X-Gm-Message-State: APjAAAUCchkt6wNGZp4vosQqnn6EELJU1WGrFBzxWv2JLeff7HKHSkHd
-        jMVrpwVNZntMK0W5zhk9HO5omg==
-X-Google-Smtp-Source: APXvYqwDCBHsPX8dh6oRQ9FHBVLRypmHbpAWhqLjb3zrDPeKQKRHPbU3F7fMBBGRfrbzqBb/RLO09A==
-X-Received: by 2002:a17:90a:fa3:: with SMTP id 32mr12426687pjz.35.1570128965072;
-        Thu, 03 Oct 2019 11:56:05 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id v68sm4379189pfv.47.2019.10.03.11.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 11:56:04 -0700 (PDT)
-Message-ID: <5d964444.1c69fb81.121ce.d43b@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aa6r931Rjp1NE7cgnIGCkHLvHKb0A2CYSfJ4m7AK8VA=;
+        b=JNBm0G4oj6/+NQ4FoSknnwoZYj3/trQ5BoY91o6CSf22ajjNNv7KN7jRSG+Cj0tVwW
+         A8C4IXl/QAtkMHfLXjAFpbGRw/GgWzpsCr515jsZ0cJ2Sul8KuX6YclYfr7YUy9u9Ln0
+         V3Wwjm2EnNgQN2damUB8Z5I+rMLUM7Rho9CHpqqhRvco8wg9zfrwjcQrlxGweLKTXLcF
+         4bJ0v/00rlBb+JcsqUXYH54hpyu0ggmpNJJusxksSSLxWBp2JvKbIQ//jhmdi0JnZ4WS
+         fnD9S0d3SfvTNQk/5INLOw+sF7QH1djJaGBUUEoT+93lhApQEUe1OYG0qPoLUnDORzA0
+         NYTQ==
+X-Gm-Message-State: APjAAAXZp2PF22JgOfnvlpct3c3eo1Dsm0Qpweq+x6oOg/g6eeSpBbS5
+        RC1tU7mVs2dtwHqbFnN38cquOoQWtTkvQtFomzI=
+X-Google-Smtp-Source: APXvYqw5LZFI0OlAdzJ3Zi5QgTBf3yzfeslOKU0JWKwjHyMto7VKmPhcOSlsE1S3BTxGJi0w5yQ/WHCyiK/fEHdewQE=
+X-Received: by 2002:a92:1657:: with SMTP id r84mr10980876ill.5.1570129060851;
+ Thu, 03 Oct 2019 11:57:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAE=gft6YdNszcJV67CwcY2gOgPHrJ1+SnKMLr63f2bix2aZXXA@mail.gmail.com>
-References: <20190910160903.65694-1-swboyd@chromium.org> <20190910160903.65694-4-swboyd@chromium.org> <CAE=gft6YdNszcJV67CwcY2gOgPHrJ1+SnKMLr63f2bix2aZXXA@mail.gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v3 3/5] memremap: Add support for read-only memory mappings
-User-Agent: alot/0.8.1
-Date:   Thu, 03 Oct 2019 11:56:03 -0700
+References: <20191001073413.GA51148@LGEARND20B15>
+In-Reply-To: <20191001073413.GA51148@LGEARND20B15>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 3 Oct 2019 13:57:29 -0500
+Message-ID: <CAH2r5mtx3OWKv4ZDM=Nob9nRi7ahRW-DK2nY9LP28urQ6NBvFw@mail.gmail.com>
+Subject: Re: [PATCH] fs: cifs: mute -Wunused-const-variable message
+To:     Austin Kim <austindh.kim@gmail.com>
+Cc:     Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2019-09-18 12:37:34)
-> On Tue, Sep 10, 2019 at 9:09 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > @@ -53,6 +60,9 @@ static void *try_ram_remap(resource_size_t offset, si=
-ze_t size,
-> >   * mapping types will be attempted in the order listed below until one=
- of
-> >   * them succeeds.
-> >   *
-> > + * MEMREMAP_RO - establish a mapping whereby writes are ignored/reject=
-ed.
-> > + * Attempts to map System RAM with this mapping type will fail.
->=20
-> Why should attempts to map RAM with this flag fail? MEMREMAP_WB will
-> allow RAM and quietly give you back the direct mapping, so it seems
-> like at least some values in this function allow RAM.
->=20
-> Oh, I see a comment below about "Enforce that this mapping is not
-> aliasing System RAM". I guess this is worried about cache coloring?
-> But is that a problem with RO mappings? I guess the RO mappings could
-> get partially stale, so if the memory were being updated out from
-> under you, you might see some updates but not others. Was that the
-> rationale?
+merged into cifs-2.6.git for-next
 
-Will Deacon, Dan Williams, and I talked about this RO flag at LPC and I
-believe we decided to mostly get rid of the flags argument to this
-function. The vast majority of callers pass MEMREMAP_WB, so I'll just
-make that be the implementation default and support the flags for
-encrpytion (MEMREMAP_ENC and MEMREMAP_DEC). There are a few callers that
-pass MEMREMAP_WC or MEMREMAP_WT (and one that passes all of them), but I
-believe those can be changed to MEMREMAP_WB and not care. There's also
-the efi framebuffer code that matches the memory attributes in the EFI
-memory map. I'm not sure what to do with that one to be quite honest.
-Maybe EFI shouldn't care and just use whatever is already there in the
-mapping?
+On Tue, Oct 1, 2019 at 2:34 AM Austin Kim <austindh.kim@gmail.com> wrote:
+>
+> After 'Initial git repository build' commit,
+> 'mapping_table_ERRHRD' variable has not been used.
+>
+> So 'mapping_table_ERRHRD' const variable could be removed
+> to mute below warning message:
+>
+>    fs/cifs/netmisc.c:120:40: warning: unused variable 'mapping_table_ERRHRD' [-Wunused-const-variable]
+>    static const struct smb_to_posix_error mapping_table_ERRHRD[] = {
+>                                            ^
+> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+> ---
+>  fs/cifs/netmisc.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
+> index 49c17ee1..9b41436 100644
+> --- a/fs/cifs/netmisc.c
+> +++ b/fs/cifs/netmisc.c
+> @@ -117,10 +117,6 @@ static const struct smb_to_posix_error mapping_table_ERRSRV[] = {
+>         {0, 0}
+>  };
+>
+> -static const struct smb_to_posix_error mapping_table_ERRHRD[] = {
+> -       {0, 0}
+> -};
+> -
+>  /*
+>   * Convert a string containing text IPv4 or IPv6 address to binary form.
+>   *
+> --
+> 2.6.2
+>
 
-Either way, I'll introduce a memremap_ro() API that maps memory as read
-only if possible and return a const void pointer as well. I'm debating
-making that API fallback to memremap() if RO isn't supported for some
-reason or can't work because we're remapping system memory but that
-seems a little too nice when the caller could just as well decide to
-fail if memory can't be mapped as read only.
 
+-- 
+Thanks,
+
+Steve
