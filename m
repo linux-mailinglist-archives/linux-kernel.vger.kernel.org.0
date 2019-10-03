@@ -2,80 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC2ACB0D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87C03CB0DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:12:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731559AbfJCVKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 17:10:40 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41327 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbfJCVKk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 17:10:40 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s1so2469559pgv.8
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 14:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:cc:subject:user-agent:date;
-        bh=TZu2ZOfBt4zOQYcx7ts+ww1a8wZ3i5klQLAM70cz5EM=;
-        b=ZpeSxI7m/QWltN4KyEEzLW1mbR3sjyIll0DL6bBVA9iBnHBwBECbV4n7v/1zZXw1tq
-         zM4xBiDcxDDwTgVD5vECVOL8EhXs7sAMqJdY1jzUf3wDZ926Mxt9mV2hZcK1AXkxbODE
-         /bXkbGxRjqj5+s785Fagw4SbqIOefWgenyLqM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
-         :user-agent:date;
-        bh=TZu2ZOfBt4zOQYcx7ts+ww1a8wZ3i5klQLAM70cz5EM=;
-        b=nOXDwYnoPptdmPKHwfgLXEyi/38rhtmy38Z5Og/QJNg3UmtVnByHaZ8Dc0Rv+ygTXf
-         HlmgZJmdeTKBy0XyU2kBSEZf4igjeWsxOWazXenJs41lTNMaIVJr6842MbuUk4HXE1zr
-         +FLbNjzAsxInkMR5JxveGnEGeW5nhfMXrt7xgC6fyPAAtbljuNhnncdfDfqPuqdh1kb8
-         uJFSNAdlVN9GJWWokoRZ3na7SxYQa/cOdzIzfqPtS64FJbzGXySuaCHneYWKD4VzRTdx
-         jX/lSPWp+2tQ5EYzvb6eyviK2wJwTSZU5xx/lFlTtnplTIxm8pZbwzFntuslCAberqt+
-         NHZg==
-X-Gm-Message-State: APjAAAWqqQG7Eh4DQ/zyy6gQX9+D2ftp+Jarb7Zx7xS5FTU5f04IauUB
-        mpzXXLkGyQWePwg6q17dXAZY7w==
-X-Google-Smtp-Source: APXvYqxRNBvkg2TMNLnFboSrLgS+N0S0t6bmJh6XqO3SPIjYAzw3ZpxIyPcyB1kqZ4AiwJpxPFtwPQ==
-X-Received: by 2002:a63:1521:: with SMTP id v33mr11802366pgl.9.1570137039483;
-        Thu, 03 Oct 2019 14:10:39 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g24sm4399113pfi.81.2019.10.03.14.10.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 14:10:38 -0700 (PDT)
-Message-ID: <5d9663ce.1c69fb81.e941e.dccc@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190730212048.164657-1-swboyd@chromium.org>
-References: <20190730212048.164657-1-swboyd@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
+        id S1731864AbfJCVMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 17:12:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56538 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727789AbfJCVMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 17:12:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6E09AAF2A;
+        Thu,  3 Oct 2019 21:12:04 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 14:10:50 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>,
-        Tri Vo <trong@android.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] idr: Document calling context for IDA APIs mustn't use locks
-User-Agent: alot/0.8.1
-Date:   Thu, 03 Oct 2019 14:10:37 -0700
+Cc:     akpm@linux-foundation.org, walken@google.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH -next 00/11] lib/interval-tree: move to half closed
+ intervals
+Message-ID: <20191003211050.5xwndt7ua4gw4tfq@linux-p48b>
+Mail-Followup-To: Matthew Wilcox <willy@infradead.org>,
+        akpm@linux-foundation.org, walken@google.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org
+References: <20191003201858.11666-1-dave@stgolabs.net>
+ <20191003203250.GE32665@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191003203250.GE32665@bombadil.infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2019-07-30 14:20:47)
-> The documentation for these functions indicates that callers don't need
-> to hold a lock while calling them, but that documentation is only in one
-> place under "IDA Usage". Let's state the same information on each IDA
-> function so that it's clear what the calling context requires.
-> Furthermore, let's document ida_simple_get() with the same information
-> so that callers know how this API works.
->=20
-> Cc: Greg KH <gregkh@linuxfoundation.org>
-> Cc: Tri Vo <trong@android.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: linux-doc@vger.kernel.org
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
+On Thu, 03 Oct 2019, Matthew Wilcox wrote:
 
-Ping? Can this be picked up, maybe into the doc tree?
+>On Thu, Oct 03, 2019 at 01:18:47PM -0700, Davidlohr Bueso wrote:
+>> It has been discussed[1,2] that almost all users of interval trees would better
+>> be served if the intervals were actually not [a,b], but instead [a, b). This
+>
+>So how does a user represent a range from ULONG_MAX to ULONG_MAX now?
 
+I would assume that any such lookups would be stab queries (anon/vma interval
+tree). So both anon and files. And yeah, I blissfully ignored any overflow scenarios.
+This should at least be documented.
+
+>
+>I think the problem is that large parts of the kernel just don't consider
+>integer overflow.  Because we write in C, it's natural to write:
+>
+>	for (i = start; i < end; i++)
+>
+>and just assume that we never need to hit ULONG_MAX or UINT_MAX.
+
+Similarly, I did not adjust queries such as 0 to ULONG_MAX, which are actually
+real, then again any intersecting ranges will most likely not even be close to
+end.
+
+>If we're storing addresses, that's generally true -- most architectures
+>don't allow addresses in the -PAGE_SIZE to ULONG_MAX range (or they'd
+>have trouble with PTR_ERR).  If you're looking at file sizes, that's
+>not true on 32-bit machines, and we've definitely seen filesystem bugs
+>with files nudging up on 16TB (on 32 bit with 4k page size).  Or block
+>driver bugs with similarly sized block devices.
+>
+>So, yeah, easier to use.  But damning corner cases.
+
+I agree.
+
+Thanks,
+Davidlohr
