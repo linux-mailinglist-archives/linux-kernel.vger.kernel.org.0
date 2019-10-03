@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4370CA63A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABD4CA615
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405020AbfJCQlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:41:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51594 "EHLO mail.kernel.org"
+        id S2404893AbfJCQjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:39:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404538AbfJCQlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:41:13 -0400
+        id S2404882AbfJCQjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:39:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED261206BB;
-        Thu,  3 Oct 2019 16:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDDCC2070B;
+        Thu,  3 Oct 2019 16:39:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120873;
-        bh=W0T+0m0P2SGl5GUNMUD4zXhYLqP9P+xj8Epf7hhfNdM=;
+        s=default; t=1570120783;
+        bh=A38585MkYUrW2y8YB2ohcvJBhcAXqti4+EOzHtQ6l5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NyQCaOZiSLVykxPyG0WLXYVRHUGHIKCOgI6OP0ql/RM3Kq9YwpGwrBNWJqu17ogog
-         y7CnNoXcGS+j+OSmgyPJdYjCpiPLfQ0RPMeipBepYTnhsJ2GCIxj8YFiWwtAntqJn/
-         u+x9/ZZZgiGuwS2iSA3FhdeERMO4tkPCgIjzcWUs=
+        b=pyPkRU5nJIPrCUm1xuz2ksHU7Zx9jfzCWK8AIqia/qojUO34DwyZ0Y4vm2KJXzU9y
+         qOztZlgIdc5f0haOW/e+28SD/iulFoiGrJwIfnq+oe74wCnn7sfWfjdflz2EW4Os64
+         k3IA5lJvyLi/Djx0hmpDwkqnjZuokgdKG1a7MskI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 034/344] appletalk: enforce CAP_NET_RAW for raw sockets
-Date:   Thu,  3 Oct 2019 17:49:59 +0200
-Message-Id: <20191003154543.445016933@linuxfoundation.org>
+Subject: [PATCH 5.3 037/344] nfc: enforce CAP_NET_RAW for raw sockets
+Date:   Thu,  3 Oct 2019 17:50:02 +0200
+Message-Id: <20191003154543.727486904@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,9 +45,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ori Nimron <orinimron123@gmail.com>
 
-[ Upstream commit 6cc03e8aa36c51f3b26a0d21a3c4ce2809c842ac ]
+[ Upstream commit 3a359798b176183ef09efb7a3dc59abad1cc7104 ]
 
-When creating a raw AF_APPLETALK socket, CAP_NET_RAW needs to be checked
+When creating a raw AF_NFC socket, CAP_NET_RAW needs to be checked
 first.
 
 Signed-off-by: Ori Nimron <orinimron123@gmail.com>
@@ -55,22 +55,26 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/appletalk/ddp.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/nfc/llcp_sock.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -1023,6 +1023,11 @@ static int atalk_create(struct net *net,
- 	 */
- 	if (sock->type != SOCK_RAW && sock->type != SOCK_DGRAM)
- 		goto out;
-+
-+	rc = -EPERM;
-+	if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))
-+		goto out;
-+
- 	rc = -ENOMEM;
- 	sk = sk_alloc(net, PF_APPLETALK, GFP_KERNEL, &ddp_proto, kern);
- 	if (!sk)
+--- a/net/nfc/llcp_sock.c
++++ b/net/nfc/llcp_sock.c
+@@ -1004,10 +1004,13 @@ static int llcp_sock_create(struct net *
+ 	    sock->type != SOCK_RAW)
+ 		return -ESOCKTNOSUPPORT;
+ 
+-	if (sock->type == SOCK_RAW)
++	if (sock->type == SOCK_RAW) {
++		if (!capable(CAP_NET_RAW))
++			return -EPERM;
+ 		sock->ops = &llcp_rawsock_ops;
+-	else
++	} else {
+ 		sock->ops = &llcp_sock_ops;
++	}
+ 
+ 	sk = nfc_llcp_sock_alloc(sock, sock->type, GFP_ATOMIC, kern);
+ 	if (sk == NULL)
 
 
