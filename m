@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4FCFCAA34
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B36C1CA9CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389184AbfJCQU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:20:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48910 "EHLO mail.kernel.org"
+        id S2392412AbfJCQtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:49:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390017AbfJCQUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:20:53 -0400
+        id S2405630AbfJCQtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:49:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74FEF2054F;
-        Thu,  3 Oct 2019 16:20:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFAAC20830;
+        Thu,  3 Oct 2019 16:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119652;
-        bh=QrVb8AKqGho74elpDM3t5GaiRxbdvP6AAaWnOKIF96A=;
+        s=default; t=1570121351;
+        bh=tgroMNcvxwArRTks3sCAEnqyWlNndrYFv3ukcCXLdjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0TMWk2vkhybzBR6ea8giKaaB896UTG/fKugfSSLQ75ojNwS9ebkDQ9tO9j4k7d/kV
-         3F/NN/+NgxiUhjiPY5skPgR0+VG5kVwRLiQGbCFCi89ICHb4P2gRmTGdh7hwPN36Sv
-         GjIwOzRj4WoY3OTJs1KYdWyiEEh6y6ThkSVsAGO8=
+        b=J8+ymSWTYnV/kKtboM3vi8UrFQhBMHGViWi+z+msQpv05+rBY3moXL8y9yW6kXq5A
+         STFqY5U/L5pT3tzPePiEoBX/Nh97Q2BYke8MgM0aEFqPJ1ie0iDVBkas2fctsTNfn4
+         XONNxqIH4TSQBtRRwWy5sHCu4WltINwnT2LcqSwg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 142/211] media: ttusb-dec: Fix info-leak in ttusb_dec_send_command()
-Date:   Thu,  3 Oct 2019 17:53:28 +0200
-Message-Id: <20191003154519.590260656@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 5.3 246/344] RDMA: Fix double-free in srq creation error flow
+Date:   Thu,  3 Oct 2019 17:53:31 +0200
+Message-Id: <20191003154604.699571015@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-[ Upstream commit a10feaf8c464c3f9cfdd3a8a7ce17e1c0d498da1 ]
+commit 3eca7fc2d8d1275d9cf0c709f0937becbfcf6d96 upstream.
 
-The function at issue does not always initialize each byte allocated
-for 'b' and can therefore leak uninitialized memory to a USB device in
-the call to usb_bulk_msg()
+The cited commit introduced a double-free of the srq buffer in the error
+flow of procedure __uverbs_create_xsrq().
 
-Use kzalloc() instead of kmalloc()
+The problem is that ib_destroy_srq_user() called in the error flow also
+frees the srq buffer.
 
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Thus, if uverbs_response() fails in __uverbs_create_srq(), the srq buffer
+will be freed twice.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 68e326dea1db ("RDMA: Handle SRQ allocations by IB/core")
+Link: https://lore.kernel.org/r/20190916071154.20383-5-leon@kernel.org
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/usb/ttusb-dec/ttusb_dec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/uverbs_cmd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-index 44ca66cb9b8f1..f34efa7c61b40 100644
---- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
-+++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-@@ -329,7 +329,7 @@ static int ttusb_dec_send_command(struct ttusb_dec *dec, const u8 command,
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -3484,7 +3484,8 @@ static int __uverbs_create_xsrq(struct u
  
- 	dprintk("%s\n", __func__);
- 
--	b = kmalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
-+	b = kzalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
- 	if (!b)
- 		return -ENOMEM;
- 
--- 
-2.20.1
-
+ err_copy:
+ 	ib_destroy_srq_user(srq, uverbs_get_cleared_udata(attrs));
+-
++	/* It was released in ib_destroy_srq_user */
++	srq = NULL;
+ err_free:
+ 	kfree(srq);
+ err_put:
 
 
