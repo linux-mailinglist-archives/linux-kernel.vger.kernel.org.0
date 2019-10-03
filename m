@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1690CCA7BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F3BCA5BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405991AbfJCQvK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:51:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38358 "EHLO mail.kernel.org"
+        id S2392231AbfJCQgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:36:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405146AbfJCQu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:50:59 -0400
+        id S2392204AbfJCQgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:36:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 939B820865;
-        Thu,  3 Oct 2019 16:50:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D02AE20830;
+        Thu,  3 Oct 2019 16:36:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121459;
-        bh=nXQIQUChDQTJepmXhuT4OoVw16fDzfRJkyUABc3APIs=;
+        s=default; t=1570120578;
+        bh=7m5SvWbRsWINvHAdfhGmsNmX/GYECeg7xIZ18asPn3o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=txNQnknvRXHd2IBjLif/cvIggVGWZN3vEU9DjF0fXDkrOMkpWZv/OTGtEFkCgCMSq
-         m934wYGylGUZCfvaJw8Qu90g39+QdHmI1uapa40GEHpLLsRRWkIT13Rk1J5K5LuxML
-         d+Z5Lfv5dZwM0w0IintsJWeQIpPZ4LUuZvG8bJjo=
+        b=d+RIQWcqerSCCb/kX1x43ZdS86BfvH6jg9fLSvuHHUYsdisOr4nHZoXi4iuTpIuC1
+         22uDybQ39YIiI+i7k25Z3EaeklkmfE8D3nb1kZbxbSOu8FPnGeEZG6SH78+XUP+/+l
+         hIPLGvHC37MX6J+vcQziqIgWmDHZh3K8XJ1c97mY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Nadav Amit <namit@vmware.com>, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 5.3 286/344] iommu/vt-d: Fix wrong analysis whether devices share the same bus
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.2 273/313] rtw88: pci: Use DMA sync instead of remapping in RX ISR
 Date:   Thu,  3 Oct 2019 17:54:11 +0200
-Message-Id: <20191003154608.066370067@linuxfoundation.org>
+Message-Id: <20191003154559.932293810@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,62 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nadav Amit <namit@vmware.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-commit 2c70010867f164d1b30e787e360e05d10cc40046 upstream.
+commit 29b68a920f6abb7b5ba21ab4b779f62d536bac9b upstream.
 
-set_msi_sid_cb() is used to determine whether device aliases share the
-same bus, but it can provide false indications that aliases use the same
-bus when in fact they do not. The reason is that set_msi_sid_cb()
-assumes that pdev is fixed, while actually pci_for_each_dma_alias() can
-call fn() when pdev is set to a subordinate device.
+Since each skb in RX ring is reused instead of new allocation, we can
+treat the DMA in a more efficient way by DMA synchronization.
 
-As a result, running an VM on ESX with VT-d emulation enabled can
-results in the log warning such as:
-
-  DMAR: [INTR-REMAP] Request device [00:11.0] fault index 3b [fault reason 38] Blocked an interrupt request due to source-id verification failure
-
-This seems to cause additional ata errors such as:
-  ata3.00: qc timeout (cmd 0xa1)
-  ata3.00: failed to IDENTIFY (I/O error, err_mask=0x4)
-
-These timeouts also cause boot to be much longer and other errors.
-
-Fix it by checking comparing the alias with the previous one instead.
-
-Fixes: 3f0c625c6ae71 ("iommu/vt-d: Allow interrupts from the entire bus for aliased devices")
-Cc: stable@vger.kernel.org
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel_irq_remapping.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/realtek/rtw88/pci.c |   24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -376,13 +376,13 @@ static int set_msi_sid_cb(struct pci_dev
- {
- 	struct set_msi_sid_data *data = opaque;
- 
-+	if (data->count == 0 || PCI_BUS_NUM(alias) == PCI_BUS_NUM(data->alias))
-+		data->busmatch_count++;
-+
- 	data->pdev = pdev;
- 	data->alias = alias;
- 	data->count++;
- 
--	if (PCI_BUS_NUM(alias) == pdev->bus->number)
--		data->busmatch_count++;
--
+--- a/drivers/net/wireless/realtek/rtw88/pci.c
++++ b/drivers/net/wireless/realtek/rtw88/pci.c
+@@ -206,6 +206,23 @@ static int rtw_pci_reset_rx_desc(struct
  	return 0;
  }
  
++static void rtw_pci_sync_rx_desc_device(struct rtw_dev *rtwdev, dma_addr_t dma,
++					struct rtw_pci_rx_ring *rx_ring,
++					u32 idx, u32 desc_sz)
++{
++	struct device *dev = rtwdev->dev;
++	struct rtw_pci_rx_buffer_desc *buf_desc;
++	int buf_sz = RTK_PCI_RX_BUF_SIZE;
++
++	dma_sync_single_for_device(dev, dma, buf_sz, DMA_FROM_DEVICE);
++
++	buf_desc = (struct rtw_pci_rx_buffer_desc *)(rx_ring->r.head +
++						     idx * desc_sz);
++	memset(buf_desc, 0, sizeof(*buf_desc));
++	buf_desc->buf_size = cpu_to_le16(RTK_PCI_RX_BUF_SIZE);
++	buf_desc->dma = cpu_to_le32(dma);
++}
++
+ static int rtw_pci_init_rx_ring(struct rtw_dev *rtwdev,
+ 				struct rtw_pci_rx_ring *rx_ring,
+ 				u8 desc_size, u32 len)
+@@ -782,8 +799,8 @@ static void rtw_pci_rx_isr(struct rtw_de
+ 		rtw_pci_dma_check(rtwdev, ring, cur_rp);
+ 		skb = ring->buf[cur_rp];
+ 		dma = *((dma_addr_t *)skb->cb);
+-		pci_unmap_single(rtwpci->pdev, dma, RTK_PCI_RX_BUF_SIZE,
+-				 PCI_DMA_FROMDEVICE);
++		dma_sync_single_for_cpu(rtwdev->dev, dma, RTK_PCI_RX_BUF_SIZE,
++					DMA_FROM_DEVICE);
+ 		rx_desc = skb->data;
+ 		chip->ops->query_rx_desc(rtwdev, rx_desc, &pkt_stat, &rx_status);
+ 
+@@ -818,7 +835,8 @@ static void rtw_pci_rx_isr(struct rtw_de
+ 
+ next_rp:
+ 		/* new skb delivered to mac80211, re-enable original skb DMA */
+-		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
++		rtw_pci_sync_rx_desc_device(rtwdev, dma, ring, cur_rp,
++					    buf_desc_sz);
+ 
+ 		/* host read next element in ring */
+ 		if (++cur_rp >= ring->r.len)
 
 
