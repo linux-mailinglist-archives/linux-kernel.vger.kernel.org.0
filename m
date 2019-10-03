@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D565CAACA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79619CAB46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404144AbfJCRN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:13:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33524 "EHLO mail.kernel.org"
+        id S2388208AbfJCQPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:15:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389505AbfJCQ2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:28:48 -0400
+        id S2388829AbfJCQPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:15:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9475B222CB;
-        Thu,  3 Oct 2019 16:28:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32B202054F;
+        Thu,  3 Oct 2019 16:15:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120128;
-        bh=UgYhas+Ne82pUddsBnQzmIKiDCnGAB4Tisqknu33vB4=;
+        s=default; t=1570119311;
+        bh=RJVO5bS6hGN7PjVVg/vDRQirrvhgb5aRO4dGELRr25c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m+ShSmHH6EU+ZDymlMlU3VcSx1th/cnuaxqd+NWmSWsKappC7i8qmEc3AZVqqNN7V
-         MaV4IxUR/7ENfoil5xGeTTtXy7NZVfl/seg9H//dd4AK+/W81bShoPrkFpKRw355zE
-         TWh14rtADgUn9Dt6wogArA7Kif+9OOBaWINuaS/g=
+        b=IDeun3UOls9S9soQcEwVB4ZtEXTmsAB/IFv7IVYIP9XnosHKx9TrgUH5Y2h58ByuP
+         1eyzh98Srf5vmgDuFbRwdfVkpEtkKFISVK2dpTAAPlyOx1QE4ifi6lJbUItRrgWYHt
+         9gxuTeA8/n4ygiyNaaSLceuKoBpUKQfgGRONTAcY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 106/313] media: imx: mipi csi-2: Dont fail if initial state times-out
-Date:   Thu,  3 Oct 2019 17:51:24 +0200
-Message-Id: <20191003154543.310627899@linuxfoundation.org>
+        stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 019/211] appletalk: enforce CAP_NET_RAW for raw sockets
+Date:   Thu,  3 Oct 2019 17:51:25 +0200
+Message-Id: <20191003154451.281556886@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,75 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: Ori Nimron <orinimron123@gmail.com>
 
-[ Upstream commit 0d5078c7172c46db6c58718d817b9fcf769554b4 ]
+[ Upstream commit 6cc03e8aa36c51f3b26a0d21a3c4ce2809c842ac ]
 
-Not all sensors will be able to guarantee a proper initial state.
-This may be either because the driver is not properly written,
-or (probably unlikely) because the hardware won't support it.
+When creating a raw AF_APPLETALK socket, CAP_NET_RAW needs to be checked
+first.
 
-While the right solution in the former case is to fix the sensor
-driver, the real world not always allows right solutions, due to lack
-of available documentation and support on these sensors.
-
-Let's relax this requirement, and allow the driver to support stream start,
-even if the sensor initial sequence wasn't the expected.
-
-Also improve the warning message to better explain the problem and provide
-a hint that the sensor driver needs to be fixed.
-
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Reviewed-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Ori Nimron <orinimron123@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/media/imx/imx6-mipi-csi2.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ net/appletalk/ddp.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/staging/media/imx/imx6-mipi-csi2.c
-index f29e28df36ed8..bfa4b254c4e48 100644
---- a/drivers/staging/media/imx/imx6-mipi-csi2.c
-+++ b/drivers/staging/media/imx/imx6-mipi-csi2.c
-@@ -243,7 +243,7 @@ static int __maybe_unused csi2_dphy_wait_ulp(struct csi2_dev *csi2)
- }
- 
- /* Waits for low-power LP-11 state on data and clock lanes. */
--static int csi2_dphy_wait_stopstate(struct csi2_dev *csi2)
-+static void csi2_dphy_wait_stopstate(struct csi2_dev *csi2)
- {
- 	u32 mask, reg;
- 	int ret;
-@@ -254,11 +254,9 @@ static int csi2_dphy_wait_stopstate(struct csi2_dev *csi2)
- 	ret = readl_poll_timeout(csi2->base + CSI2_PHY_STATE, reg,
- 				 (reg & mask) == mask, 0, 500000);
- 	if (ret) {
--		v4l2_err(&csi2->sd, "LP-11 timeout, phy_state = 0x%08x\n", reg);
--		return ret;
-+		v4l2_warn(&csi2->sd, "LP-11 wait timeout, likely a sensor driver bug, expect capture failures.\n");
-+		v4l2_warn(&csi2->sd, "phy_state = 0x%08x\n", reg);
- 	}
--
--	return 0;
- }
- 
- /* Wait for active clock on the clock lane. */
-@@ -316,9 +314,7 @@ static int csi2_start(struct csi2_dev *csi2)
- 	csi2_enable(csi2, true);
- 
- 	/* Step 5 */
--	ret = csi2_dphy_wait_stopstate(csi2);
--	if (ret)
--		goto err_assert_reset;
-+	csi2_dphy_wait_stopstate(csi2);
- 
- 	/* Step 6 */
- 	ret = v4l2_subdev_call(csi2->src_sd, video, s_stream, 1);
--- 
-2.20.1
-
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -1028,6 +1028,11 @@ static int atalk_create(struct net *net,
+ 	 */
+ 	if (sock->type != SOCK_RAW && sock->type != SOCK_DGRAM)
+ 		goto out;
++
++	rc = -EPERM;
++	if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))
++		goto out;
++
+ 	rc = -ENOMEM;
+ 	sk = sk_alloc(net, PF_APPLETALK, GFP_KERNEL, &ddp_proto, kern);
+ 	if (!sk)
 
 
