@@ -2,92 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE3BCAEFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 21:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EFF9CAF01
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 21:14:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfJCTNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 15:13:09 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:32925 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbfJCTNI (ORCPT
+        id S1730692AbfJCTOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 15:14:15 -0400
+Received: from mail.efficios.com ([167.114.142.138]:60432 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbfJCTOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 15:13:08 -0400
-Received: by mail-io1-f67.google.com with SMTP id z19so8248446ior.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 12:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=kR8Zy1YrMRxTBtPohNQSd/AqP79mcgM2qqBmsukmkyI=;
-        b=se77SjyVATxLFOZM67qjxeZ6JxrN0Fjp0aVCUA1pBKktbIzqSWVh1TFERJq6YKaGJC
-         xg4VQFzjWMXBt84K4G4NL9GZ6Uujcw25j8eMYP5o/fOr8qR3VuSODEFu8IOndrfU0fUE
-         JVl5yWlUmf10315yQLrSdtz7/3QtJLK8YNfoVIZvzNj4XckX8jqaVVHFbA0qIAy2k+s2
-         Cp7BhycojGSNLdD8YwHpQL+R2UBF/HZ+MIM1Lk0fbeEeLCZc4K9XA008b/HIYOXUudtM
-         LWfLEXL6b0UiR0bvuAjW1fDQjdE7hPpktN9fneHWgfI4lMORqVroCz/RuDmgNQavEHtq
-         wFMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=kR8Zy1YrMRxTBtPohNQSd/AqP79mcgM2qqBmsukmkyI=;
-        b=U4g+UBVBU49/lu2gKTjQBOlo7AUlefNCyaem/v/pnemZ131w96r4uiJ4SPBNUjmOOB
-         zD0b6P8YgDol8RgXJI8SsTuVL3+1Tl3fE+Rp21uOqBbtoKi8C7M00GFDTxJEowvFziXU
-         LF+aeEJsZLgpY5655XsoV+a++cmSHl+IrdK0asY+7r1kRbw0/qlcDgAWWelJh1ttWqNy
-         ofsd0oWC0vp9RWp+vWis0JOVTb5PhJzkC7z/MoVbNyHrF2MS9J1YEHKo2UUwE2TZ/yxZ
-         wDEyKlDqaFvC4zNS3Fw1gNh3ExcwVr2t+bf8pUWfjgFAi6TtAy6GGDohDqW1D9FdbP1p
-         MJCQ==
-X-Gm-Message-State: APjAAAX3iLZmccO7K/lC+bH/8bfPt2mDmuA+2ejzYH0pTMec+VslF4x3
-        ASKotWrnlOi6o8rW/gkk2ttOg0RajAboZw==
-X-Google-Smtp-Source: APXvYqz6nPLd4RajPw+ZYmFpKrfqpnW6/OhBMwg45uYZm6lUpOatNTvPjK3Q4wBFqI1YNDjnz6MfJg==
-X-Received: by 2002:a02:2a46:: with SMTP id w67mr11216914jaw.17.1570129987782;
-        Thu, 03 Oct 2019 12:13:07 -0700 (PDT)
-Received: from Serenity ([104.129.159.212])
-        by smtp.gmail.com with ESMTPSA id z10sm1203162iog.41.2019.10.03.12.13.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 12:13:07 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 15:13:54 -0400
-From:   Tyler Ramer <tyaramer@gmail.com>
-To:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme-pci: Shutdown when removing dead controller
-Message-ID: <20191003191354.GA4481@Serenity>
+        Thu, 3 Oct 2019 15:14:14 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id A458233B6C7;
+        Thu,  3 Oct 2019 15:14:12 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 2VPmRjdUR16r; Thu,  3 Oct 2019 15:14:12 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id EFB6B33B6C0;
+        Thu,  3 Oct 2019 15:14:11 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com EFB6B33B6C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1570130052;
+        bh=7io7uSdeeE/pgtuBYIIMb2OgPbrbl38vwPbZaO6HFvw=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=beEbyjRH8RDU1ayL22FADOwMgSZr7sHigxFMjXI2qgq8/UCvEKQUz0BAu0ma4VSvH
+         ElPhCIJKfqloIbzwqUaoYvSl+CEHYWIryWQIgbiSFMZpkJ5+OS0shtOszfU4hrmLBY
+         jYqCOd7595Fh6TTom8wsBPKfTS3G9e2H2NNipLmsUaxy25yvbX0GC0tN02TLH+bxZJ
+         ShGjKH2aMkcnnvYeFhHRCrhYpqir8/Kl9yvc40l/H9QyVN1Rl9fWVdWN6u1DcuNw7A
+         091bRHxp6Ou1eohY9EJy7NTbFvVu2hFX17GjUDpbGzGcO/Z1Q1oiLEbz3v6ak39k3I
+         XSWRvWk/KNzvg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id pJzSuz6dVofd; Thu,  3 Oct 2019 15:14:11 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id D0F9B33B6B3;
+        Thu,  3 Oct 2019 15:14:11 -0400 (EDT)
+Date:   Thu, 3 Oct 2019 15:14:11 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     paulmck <paulmck@kernel.org>
+Cc:     rcu <rcu@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        dipankar <dipankar@in.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        rostedt <rostedt@goodmis.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Shane M Seymour <shane.seymour@hpe.com>,
+        Martin <martin.petersen@oracle.com>
+Message-ID: <996944932.1292.1570130051686.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20191003190919.GA2689@paulmck-ThinkPad-P72>
+References: <20191003014153.GA13156@paulmck-ThinkPad-P72> <20191003014310.13262-1-paulmck@kernel.org> <644598334.955.1570120530976.JavaMail.zimbra@efficios.com> <20191003165220.GZ2689@paulmck-ThinkPad-P72> <618064891.1049.1570123274780.JavaMail.zimbra@efficios.com> <20191003190919.GA2689@paulmck-ThinkPad-P72>
+Subject: Re: [PATCH tip/core/rcu 1/9] rcu: Upgrade rcu_swap_protected() to
+ rcu_replace()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3847 (ZimbraWebClient - FF69 (Linux)/8.8.15_GA_3847)
+Thread-Topic: Upgrade rcu_swap_protected() to rcu_replace()
+Thread-Index: ag42kyaxnP9eCqmhEy53O9DecrsO8A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Always shutdown the controller when nvme_remove_dead_controller is
-reached.
+----- On Oct 3, 2019, at 3:09 PM, paulmck paulmck@kernel.org wrote:
 
-It's possible for nvme_remove_dead_controller to be called as part of a
-failed reset, when there is a bad NVME_CSTS. The controller won't
-be comming back online, so we should shut it down rather than just
-disabling.
+> On Thu, Oct 03, 2019 at 01:21:14PM -0400, Mathieu Desnoyers wrote:
+>> ----- On Oct 3, 2019, at 12:52 PM, paulmck paulmck@kernel.org wrote:
+>> 
+>> > On Thu, Oct 03, 2019 at 12:35:30PM -0400, Mathieu Desnoyers wrote:
+>> >> ----- On Oct 2, 2019, at 9:43 PM, paulmck paulmck@kernel.org wrote:
+>> >> 
+>> >> > From: "Paul E. McKenney" <paulmck@kernel.org>
+>> >> > 
+>> >> > Although the rcu_swap_protected() macro follows the example of swap(),
+>> >> > the interactions with RCU make its update of its argument somewhat
+>> >> > counter-intuitive.  This commit therefore introduces an rcu_replace()
+>> >> > that returns the old value of the RCU pointer instead of doing the
+>> >> > argument update.  Once all the uses of rcu_swap_protected() are updated
+>> >> > to instead use rcu_replace(), rcu_swap_protected() will be removed.
+>> >> 
+>> >> We expose the rcu_xchg_pointer() API in liburcu (Userspace RCU) project.
+>> >> Any reason for not going that way and keep the kernel and user-space RCU
+>> >> APIs alike ?
+>> >> 
+>> >> It's of course fine if they diverge, but we might want to at least consider
+>> >> if using the same API name would be OK.
+>> > 
+>> > Different semantics.  An rcu_xchg_pointer() allows concurrent updates,
+>> > and rcu_replace() does not.
+>> > 
+>> > But yes, if someone needs the concurrent updates, rcu_xchg_pointer()
+>> > would certainly be my choice for the name.
+>> 
+>> Then considering that its assignment counterpart is "rcu_assign_pointer()"
+>> (and not "rcu_assign()"), would "rcu_replace_pointer()" be less ambiguous
+>> about its intended use ?
+> 
+> The sequence was rcu_swap_protected() -> rcu_swap() -> rcu_replace().
+> Because that rcu_replace(), unlike rcu_swap_protected(), returns a
+> value, the shorter name is valuable.
+> 
+> Maybe we should have used rcu_assign() instead of rcu_assign_pointer(),
+> but there is no point in that sort of change at this late date!
 
-Signed-off-by: Tyler Ramer <tyaramer@gmail.com>
----
- drivers/nvme/host/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I agree that having both the "rcu_" prefix and the "_pointer" suffix is
+somewhat redundant. Indeed it's not a worthwhile change for a pre-existing
+API, but it is welcome for a new API.
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index c0808f9eb8ab..c3f5ba22c625 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2509,7 +2509,7 @@ static void nvme_pci_free_ctrl(struct nvme_ctrl *ctrl)
- static void nvme_remove_dead_ctrl(struct nvme_dev *dev)
- {
- 	nvme_get_ctrl(&dev->ctrl);
--	nvme_dev_disable(dev, false);
-+	nvme_dev_disable(dev, true);
- 	nvme_kill_queues(&dev->ctrl);
- 	if (!queue_work(nvme_wq, &dev->remove_work))
- 		nvme_put_ctrl(&dev->ctrl);
+Thanks!
+
+Mathieu
+
+> 
+>							Thanx, Paul
+> 
+>> Thanks,
+>> 
+>> Mathieu
+>> 
+>> 
+>> > 
+>> >							Thanx, Paul
+>> > 
+>> >> Thanks,
+>> >> 
+>> >> Mathieu
+>> >> 
+>> >> 
+>> >> > 
+>> >> > Link:
+>> >> > https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
+>> >> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+>> >> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>> >> > Cc: Bart Van Assche <bart.vanassche@wdc.com>
+>> >> > Cc: Christoph Hellwig <hch@lst.de>
+>> >> > Cc: Hannes Reinecke <hare@suse.de>
+>> >> > Cc: Johannes Thumshirn <jthumshirn@suse.de>
+>> >> > Cc: Shane M Seymour <shane.seymour@hpe.com>
+>> >> > Cc: Martin K. Petersen <martin.petersen@oracle.com>
+>> >> > ---
+>> >> > include/linux/rcupdate.h | 18 ++++++++++++++++++
+>> >> > 1 file changed, 18 insertions(+)
+>> >> > 
+>> >> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+>> >> > index 75a2ede..3b73287 100644
+>> >> > --- a/include/linux/rcupdate.h
+>> >> > +++ b/include/linux/rcupdate.h
+>> >> > @@ -383,6 +383,24 @@ do {									      \
+>> >> > } while (0)
+>> >> > 
+>> >> > /**
+>> >> > + * rcu_replace() - replace an RCU pointer, returning its old value
+>> >> > + * @rcu_ptr: RCU pointer, whose old value is returned
+>> >> > + * @ptr: regular pointer
+>> >> > + * @c: the lockdep conditions under which the dereference will take place
+>> >> > + *
+>> >> > + * Perform a replacement, where @rcu_ptr is an RCU-annotated
+>> >> > + * pointer and @c is the lockdep argument that is passed to the
+>> >> > + * rcu_dereference_protected() call used to read that pointer.  The old
+>> >> > + * value of @rcu_ptr is returned, and @rcu_ptr is set to @ptr.
+>> >> > + */
+>> >> > +#define rcu_replace(rcu_ptr, ptr, c)					\
+>> >> > +({									\
+>> >> > +	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
+>> >> > +	rcu_assign_pointer((rcu_ptr), (ptr));				\
+>> >> > +	__tmp;								\
+>> >> > +})
+>> >> > +
+>> >> > +/**
+>> >> >  * rcu_swap_protected() - swap an RCU and a regular pointer
+>> >> >  * @rcu_ptr: RCU pointer
+>> >> >  * @ptr: regular pointer
+>> >> > --
+>> >> > 2.9.5
+>> >> 
+>> >> --
+>> >> Mathieu Desnoyers
+>> >> EfficiOS Inc.
+>> > > http://www.efficios.com
+>> 
+>> --
+>> Mathieu Desnoyers
+>> EfficiOS Inc.
+> > http://www.efficios.com
+
 -- 
-2.23.0
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
