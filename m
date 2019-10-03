@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2501CAA42
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C544CAB24
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393277AbfJCRC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:02:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54388 "EHLO mail.kernel.org"
+        id S2388887AbfJCQQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:16:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732358AbfJCQnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:43:05 -0400
+        id S2388869AbfJCQPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:15:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E2032070B;
-        Thu,  3 Oct 2019 16:43:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BFA92054F;
+        Thu,  3 Oct 2019 16:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120985;
-        bh=M1vlaAi5suffo46HsoG0DnNlWRvEJ7Gma9/swqx3m3w=;
+        s=default; t=1570119354;
+        bh=w+JMfZ2HyJWwo/lkQZIKDcRJmOHuWYVfXivgguIOXQw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Xyt/2rG7KgJ5y/MtOdm/J1drHP8C/05xc5cDMaqSnmyMa0e2fzg+TJSaySdUzFKD
-         KdDGtA9H2lNTUhhEjRzg97xvOIfYFjWPPk6ZqT9Ew8MufFPaUvrfPrkuZSl4q6/zOO
-         yMN+QXkfNyCFfXZJXhuZZoujXe15OvZwgueJzAgg=
+        b=BS+Iym9o3rhC96MKJF+icnZgSYu6vF98QOVsm7exLv2nLEBkULbNCWz339y/Qo7+e
+         6yiH009LfMppUPHjjxLqyuyhR79RxddqCkVOs1nF6lyiJdKuDcf6+SdTcqW9f84h5f
+         PtAXdqrE+hAoka0M4Xt+jdMoO0ChkI8lX0C7YQLI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 104/344] perf config: Honour $PERF_CONFIG env var to specify alternate .perfconfig
-Date:   Thu,  3 Oct 2019 17:51:09 +0200
-Message-Id: <20191003154550.468326116@linuxfoundation.org>
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 009/211] openvswitch: change type of UPCALL_PID attribute to NLA_UNSPEC
+Date:   Thu,  3 Oct 2019 17:51:15 +0200
+Message-Id: <20191003154449.283907714@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Li RongQing <lirongqing@baidu.com>
 
-[ Upstream commit 61a461fcbd62d42c29a1ea6a9cc3838ad9f49401 ]
+[ Upstream commit ea8564c865299815095bebeb4b25bef474218e4c ]
 
-We had this comment in Documentation/perf_counter/config.c, i.e. since
-when we got this from the git sources, but never really did that
-getenv("PERF_CONFIG"), do it now as I need to disable whatever
-~/.perfconfig root has so that tests parsing tool output are done for
-the expected default output or that we specify an alternate config file
-that when read will make the tools produce expected output.
+userspace openvswitch patch "(dpif-linux: Implement the API
+functions to allow multiple handler threads read upcall)"
+changes its type from U32 to UNSPEC, but leave the kernel
+unchanged
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
-Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
-Link: https://lkml.kernel.org/n/tip-jo209zac9rut0dz1rqvbdlgm@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+and after kernel 6e237d099fac "(netlink: Relax attr validation
+for fixed length types)", this bug is exposed by the below
+warning
+
+	[   57.215841] netlink: 'ovs-vswitchd': attribute type 5 has an invalid length.
+
+Fixes: 5cd667b0a456 ("openvswitch: Allow each vport to have an array of 'port_id's")
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Acked-by: Pravin B Shelar <pshelar@ovn.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/perf.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/openvswitch/datapath.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index 97e2628ea5dd1..d4e4d53e8b44b 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -441,6 +441,9 @@ int main(int argc, const char **argv)
- 
- 	srandom(time(NULL));
- 
-+	/* Setting $PERF_CONFIG makes perf read _only_ the given config file. */
-+	config_exclusive_filename = getenv("PERF_CONFIG");
-+
- 	err = perf_config(perf_default_config, NULL);
- 	if (err)
- 		return err;
--- 
-2.20.1
-
+--- a/net/openvswitch/datapath.c
++++ b/net/openvswitch/datapath.c
+@@ -2239,7 +2239,7 @@ static const struct nla_policy vport_pol
+ 	[OVS_VPORT_ATTR_STATS] = { .len = sizeof(struct ovs_vport_stats) },
+ 	[OVS_VPORT_ATTR_PORT_NO] = { .type = NLA_U32 },
+ 	[OVS_VPORT_ATTR_TYPE] = { .type = NLA_U32 },
+-	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_U32 },
++	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_UNSPEC },
+ 	[OVS_VPORT_ATTR_OPTIONS] = { .type = NLA_NESTED },
+ 	[OVS_VPORT_ATTR_IFINDEX] = { .type = NLA_U32 },
+ 	[OVS_VPORT_ATTR_NETNSID] = { .type = NLA_S32 },
 
 
