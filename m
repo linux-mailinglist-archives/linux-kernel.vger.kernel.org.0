@@ -2,109 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCC0CB1CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 00:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96744CB1D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 00:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbfJCWKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 18:10:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49424 "EHLO mail.kernel.org"
+        id S1730289AbfJCWPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 18:15:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728795AbfJCWKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 18:10:49 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730297AbfJCWPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 18:15:18 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7655C20867;
-        Thu,  3 Oct 2019 22:10:47 +0000 (UTC)
-Date:   Thu, 3 Oct 2019 18:10:45 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
-Message-ID: <20191003181045.7fb1a5b3@gandalf.local.home>
-In-Reply-To: <20191002182106.GC4643@worktop.programming.kicks-ass.net>
-References: <20190827180622.159326993@infradead.org>
-        <20190827181147.166658077@infradead.org>
-        <aaffb32f-6ca9-f9e3-9b1a-627125c563ed@redhat.com>
-        <20191002182106.GC4643@worktop.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id B673720867;
+        Thu,  3 Oct 2019 22:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570140917;
+        bh=Iwjv0cYSZTuQsc9KwzGWDMEOZCnt/5QZ+H4+pxuSkcw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=1XGiqxhQpiS8qJU1660yhorYGIMPs+gVEr2itAc63pnWSnmBTDVqJa9oP2/2vXnjb
+         c9fWZbFmmI11v+l95/lUuQsXvjbSMwkH150Y3ibzlTYKaJLwlafkwOanpwQNN8CCAd
+         izahV9qz0naHh4ZH3aSE7haoJp6xMTxEN5K9x2pQ=
+Subject: Re: [PATCH v2] cpupower : Handle set and info subcommands correctly
+To:     Abhishek Goel <huntbag@linux.vnet.ibm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     trenn@suse.com, ego@linux.vnet.ibm.com, shuah <shuah@kernel.org>
+References: <20190913080712.26383-1-huntbag@linux.vnet.ibm.com>
+ <2614b112-5e19-96dc-179b-8d4e3b8c8858@kernel.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <9f493ef7-8222-3e12-5068-41ea76e660a2@kernel.org>
+Date:   Thu, 3 Oct 2019 16:15:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2614b112-5e19-96dc-179b-8d4e3b8c8858@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Oct 2019 20:21:06 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hi Abhishek,
 
-> On Wed, Oct 02, 2019 at 06:35:26PM +0200, Daniel Bristot de Oliveira wrote:
+On 10/3/19 8:38 AM, shuah wrote:
+> On 9/13/19 2:07 AM, Abhishek Goel wrote:
+>> Cpupower tool has set and info options which are being used only by
+>> x86 machines. This patch removes support for these two subcommands
+>> from generic cpupower utility. Thus, these two subcommands will now be
+>> available only for intel.
+>> This removes the ambiguous error message while using set option in case
+>> of using non-intel systems.
+>>
+>> Without this patch on a non-intel box:
+>>
+>> root@ubuntu:~# cpupower info
+>> System does not support Intel's performance bias setting
+>>
+>> root@ubuntu:~# cpupower set -b 10
+>> Error setting perf-bias value on CPU
+>>
+>> With this patch on a non-intel box:
+>>
+>> root@ubuntu:~# cpupower info
+>> Supported commands are:
+>>          frequency-info
+>>          frequency-set
+>>          idle-info
+>>          idle-set
+>>          monitor
+>>          help
+>>
+>> Same result for set subcommand.
+>>
+>> This patch does not affect results on a intel box.
+>>
+>> Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+>> Acked-by: Thomas Renninger <trenn@suse.de>
+>> ---
+>>
+>> changes from v1:
+>>     Instead of bailing out early in set and info commands, in V2, we
+>>     are cutting out support for these two commands for non-intel
+>>     systems.
 > 
-> > ftrace was already batching the updates, for instance, causing 3 IPIs to enable
-> > all functions. The text_poke() batching also works. But because of the limited
-> > buffer [ see the reply to the patch 2/3 ], it is flushing the buffer during the
-> > operation, causing more IPIs than the previous code. Using the 5.4-rc1 in a VM,
-> > when enabling the function tracer, I see 250+ intermediate text_poke_finish()
-> > because of a full buffer...
-> > 
-> > Would this be the case of trying to use a dynamically allocated buffer?
-> > 
-> > Thoughts?  
+> thanks. I will get this in for 5.4-rc3 veru likely. Definitely in 5.4
 > 
-> Is it a problem? I tried growing the buffer (IIRC I made it 10 times
-> bigger) and didn't see any performance improvements because of it.
 
-I'm just worried if people are going to complain about the IPI burst.
-Although, I just tried it out before applying this patch, and there's
-still a bit of a burst. Not sure why. I did:
+Okay I almost applied this and decided it needs improvements.
 
-# cat /proc/interrupts > /tmp/before; echo function > /debug/tracing/current_tracer; cat /proc/interrupts > /tmp/after
-# cat /proc/interrupts > /tmp/before1; echo nop > /debug/tracing/current_tracer; cat /proc/interrupts > /tmp/after1
+I don't like using #if defined(__x86_64__) || defined(__i386__)
 
-Before this patch:
+tools/power/cpupower/utils/cpupower.c main() already does this
+dynamically using uname(). Please use the same logic do this,
+instead of adding compile time code.
 
-# diff /tmp/before /tmp/after
-< CAL:       2342       2347       2116       2175       2446       2030       2416       2222   Function call interrupts
----
-> CAL:       2462       2467       2236       2295       2446       2150       2536       2342   Function call interrupts
-
-(Just showing the function call interrupts)
-
-There appears to be 120 IPIs sent to all CPUS for enabling function tracer.
-
-# diff /tmp/before1 /tmp/after1
-< CAL:       2462       2467       2236       2295       2446       2150       2536       2342   Function call interrupts
----
-> CAL:       2577       2582       2351       2410       2446       2265       2651       2457   Function call interrupts
-
-And 151 IPIs for disabling it.
-
-After applying this patch:
-
-# diff /tmp/before /tmp/after
-< CAL:      66070      46620      59955      59236      68707      63397      61644      62742   Function call interrupts
----
-> CAL:      66727      47277      59955      59893      69364      64054      62301      63399   Function call interrupts
-
-# diff /tmp/before1 /tmp/after1
-< CAL:      66727      47277      59955      59893      69364      64054      62301      63399   Function call interrupts
----
-> CAL:      67358      47938      59985      60554      70025      64715      62962      64060   Function call interrupts
-
-
-We get 657 IPIs for enabling function tracer, and 661 for disabling it.
-Funny how it's more on the disable than the enable with the patch but
-the other way without it.
-
-But still, we are going from 120 to 660 IPIs for every CPU. Not saying
-it's a problem, but something that we should note. Someone (those that
-don't like kernel interference) may complain.
-
--- Steve
+thanks,
+-- Shuah
