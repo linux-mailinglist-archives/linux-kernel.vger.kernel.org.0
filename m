@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0078ACACD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 966BECAD42
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbfJCRaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:30:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32776 "EHLO mail.kernel.org"
+        id S2388304AbfJCRhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:37:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730028AbfJCQLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:11:13 -0400
+        id S1727331AbfJCQDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:03:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76CB421783;
-        Thu,  3 Oct 2019 16:11:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80BD6222CB;
+        Thu,  3 Oct 2019 16:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119072;
-        bh=tt0LCh4YXjzKOv/dvjz3XCtEM80VHmZtBK0kywOKkYo=;
+        s=default; t=1570118604;
+        bh=wcXHOx5i/Yxq9c0RNlMMhVQk9lBkRtog124MZoxnOIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rky9rFU355z9Cpl81h7mh4rGgkiE1ZfvKrKxoLZHjRpKITWIMH8usRccI6IhN4X4T
-         IQ5dj6lSnFH0gAPWHip6T1/AScRAriiudhm9P2XLUwzzKQqSeai7zp7pImg0S5Hxrf
-         hxWAsuQaT6bvPsHdV/tJPixuiGBtPKI6vIApmk9I=
+        b=qo1TjyLPH/wP3QSvUFEy6QyniglygDLFpo27AZLVnDMc8gqJxO9fGn80xaS6A1lvV
+         JJKR/cTprrNcESbhNbPAWK+3UfQxDJ4fPoJG8MxEG/Grzd1P5f/K/mYKk9Axx/Qr4b
+         p3uUdpqBctLpB81YNCZZ7E+ER2AmWDkMv5/Fe7OQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Wu <tomwu@mellanox.com>,
-        Israel Rukshin <israelr@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        stable@vger.kernel.org,
+        Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 114/185] nvmet: fix data units read and written counters in SMART log
-Date:   Thu,  3 Oct 2019 17:53:12 +0200
-Message-Id: <20191003154504.256361939@linuxfoundation.org>
+Subject: [PATCH 4.9 070/129] PM / devfreq: exynos-bus: Correct clock enable sequence
+Date:   Thu,  3 Oct 2019 17:53:13 +0200
+Message-Id: <20191003154349.951024370@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,63 +46,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Wu <tomwu@mellanox.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
-[ Upstream commit 3bec2e3754becebd4c452999adb49bc62c575ea4 ]
+[ Upstream commit 2c2b20e0da89c76759ee28c6824413ab2fa3bfc6 ]
 
-In nvme spec 1.3 there is a definition for data write/read counters
-from SMART log, (See section 5.14.1.2):
-	This value is reported in thousands (i.e., a value of 1
-	corresponds to 1000 units of 512 bytes read) and is rounded up.
+Regulators should be enabled before clocks to avoid h/w hang. This
+require change in exynos_bus_probe() to move exynos_bus_parse_of()
+after exynos_bus_parent_parse_of() and change in error handling.
+Similar change is needed in exynos_bus_exit() where clock should be
+disabled before regulators.
 
-However, in nvme target where value is reported with actual units,
-but not thousands of units as the spec requires.
-
-Signed-off-by: Tom Wu <tomwu@mellanox.com>
-Reviewed-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/target/admin-cmd.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/devfreq/exynos-bus.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-cmd.c
-index c4a0bf36e7521..0e94fd737eb4e 100644
---- a/drivers/nvme/target/admin-cmd.c
-+++ b/drivers/nvme/target/admin-cmd.c
-@@ -49,9 +49,11 @@ static u16 nvmet_get_smart_log_nsid(struct nvmet_req *req,
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 1b21bb60e7975..2c8f41fbe94fb 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -198,11 +198,10 @@ static void exynos_bus_exit(struct device *dev)
+ 	if (ret < 0)
+ 		dev_warn(dev, "failed to disable the devfreq-event devices\n");
+ 
+-	if (bus->regulator)
+-		regulator_disable(bus->regulator);
+-
+ 	dev_pm_opp_of_remove_table(dev);
+ 	clk_disable_unprepare(bus->clk);
++	if (bus->regulator)
++		regulator_disable(bus->regulator);
+ }
+ 
+ /*
+@@ -391,6 +390,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	struct exynos_bus *bus;
+ 	int ret, max_state;
+ 	unsigned long min_freq, max_freq;
++	bool passive = false;
+ 
+ 	if (!np) {
+ 		dev_err(dev, "failed to find devicetree node\n");
+@@ -404,27 +404,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	bus->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, bus);
+ 
+-	/* Parse the device-tree to get the resource information */
+-	ret = exynos_bus_parse_of(np, bus);
+-	if (ret < 0)
+-		return ret;
+-
+ 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
+-	if (!profile) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!profile)
++		return -ENOMEM;
+ 
+ 	node = of_parse_phandle(dev->of_node, "devfreq", 0);
+ 	if (node) {
+ 		of_node_put(node);
+-		goto passive;
++		passive = true;
+ 	} else {
+ 		ret = exynos_bus_parent_parse_of(np, bus);
++		if (ret < 0)
++			return ret;
  	}
  
- 	host_reads = part_stat_read(ns->bdev->bd_part, ios[READ]);
--	data_units_read = part_stat_read(ns->bdev->bd_part, sectors[READ]);
-+	data_units_read = DIV_ROUND_UP(part_stat_read(ns->bdev->bd_part,
-+		sectors[READ]), 1000);
- 	host_writes = part_stat_read(ns->bdev->bd_part, ios[WRITE]);
--	data_units_written = part_stat_read(ns->bdev->bd_part, sectors[WRITE]);
-+	data_units_written = DIV_ROUND_UP(part_stat_read(ns->bdev->bd_part,
-+		sectors[WRITE]), 1000);
++	/* Parse the device-tree to get the resource information */
++	ret = exynos_bus_parse_of(np, bus);
+ 	if (ret < 0)
+-		goto err;
++		goto err_reg;
++
++	if (passive)
++		goto passive;
  
- 	put_unaligned_le64(host_reads, &slog->host_reads[0]);
- 	put_unaligned_le64(data_units_read, &slog->data_units_read[0]);
-@@ -77,11 +79,11 @@ static u16 nvmet_get_smart_log_all(struct nvmet_req *req,
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link) {
- 		host_reads += part_stat_read(ns->bdev->bd_part, ios[READ]);
--		data_units_read +=
--			part_stat_read(ns->bdev->bd_part, sectors[READ]);
-+		data_units_read += DIV_ROUND_UP(
-+			part_stat_read(ns->bdev->bd_part, sectors[READ]), 1000);
- 		host_writes += part_stat_read(ns->bdev->bd_part, ios[WRITE]);
--		data_units_written +=
--			part_stat_read(ns->bdev->bd_part, sectors[WRITE]);
-+		data_units_written += DIV_ROUND_UP(
-+			part_stat_read(ns->bdev->bd_part, sectors[WRITE]), 1000);
+ 	/* Initialize the struct profile and governor data for parent device */
+ 	profile->polling_ms = 50;
+@@ -514,6 +514,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
+ 	clk_disable_unprepare(bus->clk);
++err_reg:
++	if (!passive)
++		regulator_disable(bus->regulator);
  
- 	}
- 	rcu_read_unlock();
+ 	return ret;
+ }
 -- 
 2.20.1
 
