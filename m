@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8A3DCA23A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C201BCA23C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730977AbfJCQDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:03:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48222 "EHLO mail.kernel.org"
+        id S1730277AbfJCQDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:03:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732204AbfJCQDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:03:06 -0400
+        id S1732206AbfJCQDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:03:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1627E20700;
-        Thu,  3 Oct 2019 16:03:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 916E1207FF;
+        Thu,  3 Oct 2019 16:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118585;
-        bh=egiD3HlchjuA3kjYlfvJDgaix+zmh6+yq/vEbpt6MAg=;
+        s=default; t=1570118588;
+        bh=qXmjZGCt17KUtkbDK9AyGeefrtzMuJnk7XU5Ul7MwNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zurVI+qfln6ruCRbc8uXbScPi7Ez4ltjdPUaq30tmOi/Kfx93kbYcApicnqz6Zfd4
-         luDeN6Vs/GMREyExep8ZAtA7EYzk/uAO6EqNPWAMZ/7fIX/VY0HuHh5ZXhRu21Ow+/
-         FfGbQcI3tVqE7KNgOzGZuhaoa6oxtF3V2BSVGuKs=
+        b=fU1x8qG61cDpjrxbYAO4SnVDnFNV8NGaXu8ezDbiZr+stmS2bwIbIlh2x88UHgq/m
+         +TwjjJo8ZhexRHss1ZNj/aziIs5Wb+3MZE1KRZOsFd27zFGT4s/J4IZaps0NAuLBEe
+         R2sJCVfJzSVmzHBUO7n0yNUBa3GH05NVl2nVNEu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 063/129] media: omap3isp: Dont set streaming state on random subdevs
-Date:   Thu,  3 Oct 2019 17:53:06 +0200
-Message-Id: <20191003154347.645464548@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 064/129] net: lpc-enet: fix printk format strings
+Date:   Thu,  3 Oct 2019 17:53:07 +0200
+Message-Id: <20191003154347.943170682@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
 References: <20191003154318.081116689@linuxfoundation.org>
@@ -46,48 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 7ef57be07ac146e70535747797ef4aee0f06e9f9 ]
+[ Upstream commit de6f97b2bace0e2eb6c3a86e124d1e652a587b56 ]
 
-The streaming state should be set to the first upstream sub-device only,
-not everywhere, for a sub-device driver itself knows how to best control
-the streaming state of its own upstream sub-devices.
+compile-testing this driver on other architectures showed
+multiple warnings:
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+  drivers/net/ethernet/nxp/lpc_eth.c: In function 'lpc_eth_drv_probe':
+  drivers/net/ethernet/nxp/lpc_eth.c:1337:19: warning: format '%d' expects argument of type 'int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+
+  drivers/net/ethernet/nxp/lpc_eth.c:1342:19: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
+
+Use format strings that work on all architectures.
+
+Link: https://lore.kernel.org/r/20190809144043.476786-10-arnd@arndb.de
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/omap3isp/isp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/nxp/lpc_eth.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index a21b12c5c0853..ce651d3ca1b82 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -726,6 +726,10 @@ static int isp_pipeline_enable(struct isp_pipeline *pipe,
- 					s_stream, mode);
- 			pipe->do_propagation = true;
- 		}
-+
-+		/* Stop at the first external sub-device. */
-+		if (subdev->dev != isp->dev)
-+			break;
- 	}
+diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+index 8e13ec84c5381..9fcaf19106335 100644
+--- a/drivers/net/ethernet/nxp/lpc_eth.c
++++ b/drivers/net/ethernet/nxp/lpc_eth.c
+@@ -1374,13 +1374,14 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	pldat->dma_buff_base_p = dma_handle;
  
- 	return 0;
-@@ -840,6 +844,10 @@ static int isp_pipeline_disable(struct isp_pipeline *pipe)
- 						      &subdev->entity);
- 			failure = -ETIMEDOUT;
- 		}
-+
-+		/* Stop at the first external sub-device. */
-+		if (subdev->dev != isp->dev)
-+			break;
- 	}
+ 	netdev_dbg(ndev, "IO address space     :%pR\n", res);
+-	netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
++	netdev_dbg(ndev, "IO address size      :%zd\n",
++			(size_t)resource_size(res));
+ 	netdev_dbg(ndev, "IO address (mapped)  :0x%p\n",
+ 			pldat->net_base);
+ 	netdev_dbg(ndev, "IRQ number           :%d\n", ndev->irq);
+-	netdev_dbg(ndev, "DMA buffer size      :%d\n", pldat->dma_buff_size);
+-	netdev_dbg(ndev, "DMA buffer P address :0x%08x\n",
+-			pldat->dma_buff_base_p);
++	netdev_dbg(ndev, "DMA buffer size      :%zd\n", pldat->dma_buff_size);
++	netdev_dbg(ndev, "DMA buffer P address :%pad\n",
++			&pldat->dma_buff_base_p);
+ 	netdev_dbg(ndev, "DMA buffer V address :0x%p\n",
+ 			pldat->dma_buff_base_v);
  
- 	return failure;
+@@ -1427,8 +1428,8 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_out_unregister_netdev;
+ 
+-	netdev_info(ndev, "LPC mac at 0x%08x irq %d\n",
+-	       res->start, ndev->irq);
++	netdev_info(ndev, "LPC mac at 0x%08lx irq %d\n",
++	       (unsigned long)res->start, ndev->irq);
+ 
+ 	phydev = ndev->phydev;
+ 
 -- 
 2.20.1
 
