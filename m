@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D33C964D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51685C9648
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbfJCBjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728482AbfJCBjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 2 Oct 2019 21:39:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44740 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:44768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727127AbfJCBjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 21:39:06 -0400
+        id S1727428AbfJCBjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 21:39:07 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0709222C4;
-        Thu,  3 Oct 2019 01:39:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CC5D222C6;
+        Thu,  3 Oct 2019 01:39:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1570066746;
-        bh=FpL5YvkDdg4RVG52mRZHGhleRA1CCuTWDAmisi5oPRY=;
+        bh=UjqYB5SekydtulNhxTwjwTsMjjV+WrUsz39ttMq5r5c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nn5I8KdOBbZD7onKrQJi5gaT/xj6j4d0WvUkv2dXzUiPqFrjAgAaPO5mnQrIsf5Zd
-         dhtSyYFF96V59kLkGgVbllxli+YoV6flPCJp7FOE0maJf03uD2EHfzpGzh0c1wG63w
-         1xvHzAeJTV2MayQaxrk4EUGriiTbXs89RxsOlFqY=
+        b=UdlIhIBfxLXG1/Gci9lQXshyutXy6tcvMTqXJwxcW6SXALee+xO+qD3WAiy2qvC9o
+         LzyAksRVj2fFAIn5liyKEzEtFtVTU6vUuaZDz/c+e88sFwyeR3S2Y++QMctC/sQi7l
+         +lsjJmWjj1oY54bZsOJDwXZQuQ3ON7dIc33O68R0=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 02/12] time: Export tick start/stop functions for rcutorture
-Date:   Wed,  2 Oct 2019 18:38:53 -0700
-Message-Id: <20191003013903.13079-2-paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 03/12] rcu: Force on tick when invoking lots of callbacks
+Date:   Wed,  2 Oct 2019 18:38:54 -0700
+Message-Id: <20191003013903.13079-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191003013834.GA12927@paulmck-ThinkPad-P72>
 References: <20191003013834.GA12927@paulmck-ThinkPad-P72>
@@ -45,52 +45,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Paul E. McKenney" <paulmck@linux.ibm.com>
 
-It turns out that rcutorture needs to ensure that the scheduling-clock
-interrupt is enabled in CONFIG_NO_HZ_FULL kernels before starting on
-CPU-bound in-kernel processing.  This commit therefore exports
-tick_nohz_dep_set_task(), tick_nohz_dep_clear_task(), and
-tick_nohz_full_setup() to GPL kernel modules.
+Callback invocation can run for a significant time period, and within
+CONFIG_NO_HZ_FULL=y kernels, this period will be devoid of scheduler-clock
+interrupts.  In-kernel execution without such interrupts can cause all
+manner of malfunction, with RCU CPU stall warnings being but one result.
 
-Reported-by: kbuild test robot <lkp@intel.com>
+This commit therefore forces scheduling-clock interrupts on whenever more
+than a few RCU callbacks are invoked.  Because offloaded callback invocation
+can be preempted, this forcing is withdrawn on each context switch.  This
+in turn requires that the loop invoking RCU callbacks reiterate the forcing
+periodically.
+
+[ paulmck: Apply Joel Fernandes TICK_DEP_MASK_RCU->TICK_DEP_BIT_RCU fix. ]
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/time/tick-sched.c | 4 ++++
+ kernel/rcu/tree.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index d1b0a84..1ffdb4b 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -172,6 +172,7 @@ static void tick_sched_handle(struct tick_sched *ts, struct pt_regs *regs)
- #ifdef CONFIG_NO_HZ_FULL
- cpumask_var_t tick_nohz_full_mask;
- bool tick_nohz_full_running;
-+EXPORT_SYMBOL_GPL(tick_nohz_full_running);
- static atomic_t tick_dep_mask;
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 8110514..db673ae 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2151,6 +2151,8 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	rcu_nocb_unlock_irqrestore(rdp, flags);
  
- static bool check_tick_dependency(atomic_t *dep)
-@@ -351,11 +352,13 @@ void tick_nohz_dep_set_task(struct task_struct *tsk, enum tick_dep_bits bit)
- 	 */
- 	tick_nohz_dep_set_all(&tsk->tick_dep_mask, bit);
+ 	/* Invoke callbacks. */
++	if (IS_ENABLED(CONFIG_NO_HZ_FULL))
++		tick_dep_set_task(current, TICK_DEP_BIT_RCU);
+ 	rhp = rcu_cblist_dequeue(&rcl);
+ 	for (; rhp; rhp = rcu_cblist_dequeue(&rcl)) {
+ 		debug_rcu_head_unqueue(rhp);
+@@ -2217,6 +2219,8 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	/* Re-invoke RCU core processing if there are callbacks remaining. */
+ 	if (!offloaded && rcu_segcblist_ready_cbs(&rdp->cblist))
+ 		invoke_rcu_core();
++	if (IS_ENABLED(CONFIG_NO_HZ_FULL))
++		tick_dep_clear_task(current, TICK_DEP_BIT_RCU);
  }
-+EXPORT_SYMBOL_GPL(tick_nohz_dep_set_task);
- 
- void tick_nohz_dep_clear_task(struct task_struct *tsk, enum tick_dep_bits bit)
- {
- 	atomic_andnot(BIT(bit), &tsk->tick_dep_mask);
- }
-+EXPORT_SYMBOL_GPL(tick_nohz_dep_clear_task);
  
  /*
-  * Set a per-taskgroup tick dependency. Posix CPU timers need this in order to elapse
-@@ -404,6 +407,7 @@ void __init tick_nohz_full_setup(cpumask_var_t cpumask)
- 	cpumask_copy(tick_nohz_full_mask, cpumask);
- 	tick_nohz_full_running = true;
- }
-+EXPORT_SYMBOL_GPL(tick_nohz_full_setup);
- 
- static int tick_nohz_cpu_down(unsigned int cpu)
- {
 -- 
 2.9.5
 
