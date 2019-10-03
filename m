@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BEB7CA7FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44A7DCA6B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405639AbfJCQsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:48:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33966 "EHLO mail.kernel.org"
+        id S2392937AbfJCQqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:46:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405612AbfJCQsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:48:18 -0400
+        id S2392920AbfJCQqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:46:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1220215EA;
-        Thu,  3 Oct 2019 16:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D8DE20830;
+        Thu,  3 Oct 2019 16:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121297;
-        bh=dzieCr/axxqMz92jBnTQ1G764nndP0Xbet2Pe5781Xs=;
+        s=default; t=1570121194;
+        bh=WsyQeQ0LKRlhdI1QG341Q+aStMLnCD6mISC3+nH3hEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=awmHudFA0VyCNO4YNMtUZVgUg9nWT5/6bkblBRJNm5oHWpGhnHIEdcXpjjvrFc8SD
-         Mv8sPQSGbG8N/dRrX0Yqb7fCBjtgkS20WQaiuX9x6PciQa/1+Sfq2qO31QUkePQacG
-         wBk0fMRFmnlwY3y5/k9RC7GGF01CbP644nfNvtyc=
+        b=0UBU1QTWXMuiMfoerzaAozStQruHsbg9CI+YDk/HleKmMryOVKPxNf5PGSbSHg/6m
+         /KcJnrbuldM6ZxnjdFkG5aJReyeF6i4ZFnN4x9Bne9RiSlL1iCzUKHAxV1vdgHJw+m
+         Ldx2nD62nULq9nbj8qejBD3AgSHKYi80mnGr7xHA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 181/344] iommu/amd: Silence warnings under memory pressure
-Date:   Thu,  3 Oct 2019 17:52:26 +0200
-Message-Id: <20191003154558.066593822@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 182/344] ASoC: Intel: Haswell: Adjust machine device private context
+Date:   Thu,  3 Oct 2019 17:52:27 +0200
+Message-Id: <20191003154558.167017826@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -43,61 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Cezary Rojewski <cezary.rojewski@intel.com>
 
-[ Upstream commit 3d708895325b78506e8daf00ef31549476e8586a ]
+[ Upstream commit ca964edf0ddbfec2cb10b3d251d09598e7ca9b13 ]
 
-When running heavy memory pressure workloads, the system is throwing
-endless warnings,
+Apart from Haswell machines, all other devices have their private data
+set to snd_soc_acpi_mach instance.
 
-smartpqi 0000:23:00.0: AMD-Vi: IOMMU mapping error in map_sg (io-pages:
-5 reason: -12)
-Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40
-07/10/2019
-swapper/10: page allocation failure: order:0, mode:0xa20(GFP_ATOMIC),
-nodemask=(null),cpuset=/,mems_allowed=0,4
-Call Trace:
- <IRQ>
- dump_stack+0x62/0x9a
- warn_alloc.cold.43+0x8a/0x148
- __alloc_pages_nodemask+0x1a5c/0x1bb0
- get_zeroed_page+0x16/0x20
- iommu_map_page+0x477/0x540
- map_sg+0x1ce/0x2f0
- scsi_dma_map+0xc6/0x160
- pqi_raid_submit_scsi_cmd_with_io_request+0x1c3/0x470 [smartpqi]
- do_IRQ+0x81/0x170
- common_interrupt+0xf/0xf
- </IRQ>
+Changes for HSW/ BDW boards introduced with series:
+https://patchwork.kernel.org/cover/10782035/
 
-because the allocation could fail from iommu_map_page(), and the volume
-of this call could be huge which may generate a lot of serial console
-output and cosumes all CPUs.
+added support for dai_link platform_name adjustments within card probe
+routines. These take for granted private_data points to
+snd_soc_acpi_mach whereas for Haswell, it's sst_pdata instead. Change
+private context of platform_device - representing machine board - to
+address this.
 
-Fix it by silencing the warning in this call site, and there is still a
-dev_err() later to notify the failure.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: e87055d732e3 ("ASoC: Intel: haswell: platform name fixup support")
+Fixes: 7e40ddcf974a ("ASoC: Intel: bdw-rt5677: platform name fixup support")
+Fixes: 2d067b2807f9 ("ASoC: Intel: broadwell: platform name fixup support")
+Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
+Link: https://lore.kernel.org/r/20190822113616.22702-2-cezary.rojewski@intel.com
+Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/intel/common/sst-acpi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 61de81965c44e..e1259429ded2f 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2577,7 +2577,9 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
+diff --git a/sound/soc/intel/common/sst-acpi.c b/sound/soc/intel/common/sst-acpi.c
+index 0e8e0a7a11df3..5854868650b9e 100644
+--- a/sound/soc/intel/common/sst-acpi.c
++++ b/sound/soc/intel/common/sst-acpi.c
+@@ -141,11 +141,12 @@ static int sst_acpi_probe(struct platform_device *pdev)
+ 	}
  
- 			bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
- 			phys_addr = (sg_phys(s) & PAGE_MASK) + (j << PAGE_SHIFT);
--			ret = iommu_map_page(domain, bus_addr, phys_addr, PAGE_SIZE, prot, GFP_ATOMIC);
-+			ret = iommu_map_page(domain, bus_addr, phys_addr,
-+					     PAGE_SIZE, prot,
-+					     GFP_ATOMIC | __GFP_NOWARN);
- 			if (ret)
- 				goto out_unmap;
+ 	platform_set_drvdata(pdev, sst_acpi);
++	mach->pdata = sst_pdata;
+ 
+ 	/* register machine driver */
+ 	sst_acpi->pdev_mach =
+ 		platform_device_register_data(dev, mach->drv_name, -1,
+-					      sst_pdata, sizeof(*sst_pdata));
++					      mach, sizeof(*mach));
+ 	if (IS_ERR(sst_acpi->pdev_mach))
+ 		return PTR_ERR(sst_acpi->pdev_mach);
  
 -- 
 2.20.1
