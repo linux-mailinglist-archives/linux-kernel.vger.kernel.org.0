@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AABECA396
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F04CA398
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389096AbfJCQQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:16:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42040 "EHLO mail.kernel.org"
+        id S2389125AbfJCQQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:16:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387453AbfJCQQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:16:47 -0400
+        id S2389106AbfJCQQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:16:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D02E215EA;
-        Thu,  3 Oct 2019 16:16:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33CF020865;
+        Thu,  3 Oct 2019 16:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119405;
-        bh=xu8cDBVm/s7hvJIacKg88rR28SFhpQz90oD3QYf2fXE=;
+        s=default; t=1570119411;
+        bh=g5n/f2orquoWGH33QaUBF3fe0GsS1SbY/85pMcYcF4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cGSDseJY7i7wATBg0bkaUH5Wh3hJroEVwUdT+7MLydnz+S1LRxR0uHxo3zEHTTO/b
-         3ebDWQCS8sLcex3MLOTnndZoa0WYUQxItGIaQ7hEQuFuQrERBO9UoZAiM8tPy2IPvs
-         LAm+WXbslE+67cxc/0yOgHgM4QWDNT2CXH9gPK+g=
+        b=pwM6At4Dn4bvuI5Hs8tr1ymbD/ICVXNiyr8XgmYJUpCBga7hiDWZWXqOYg0hh2Zgy
+         vt52O0fh6gatthz+cCtUr+QbK4TQ2ThIR8QnFEp2IWLXtqi+JKY2Eh7qw2mjDouQbd
+         sfLNqtQlH028kDr0RG9kU87lq7Lb1Q+PXhP560k8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/211] arm64/prefetch: fix a -Wtype-limits warning
-Date:   Thu,  3 Oct 2019 17:51:59 +0200
-Message-Id: <20191003154500.358542969@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 055/211] md: dont call spare_active in md_reap_sync_thread if all member devices cant work
+Date:   Thu,  3 Oct 2019 17:52:01 +0200
+Message-Id: <20191003154500.825598265@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -43,96 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Guoqing Jiang <jgq516@gmail.com>
 
-[ Upstream commit b99286b088ea843b935dcfb29f187697359fe5cd ]
+[ Upstream commit 0d8ed0e9bf9643f27f4816dca61081784dedb38d ]
 
-The commit d5370f754875 ("arm64: prefetch: add alternative pattern for
-CPUs without a prefetcher") introduced MIDR_IS_CPU_MODEL_RANGE() to be
-used in has_no_hw_prefetch() with rv_min=0 which generates a compilation
-warning from GCC,
+When add one disk to array, the md_reap_sync_thread is responsible
+to activate the spare and set In_sync flag for the new member in
+spare_active().
 
-In file included from ./arch/arm64/include/asm/cache.h:8,
-               from ./include/linux/cache.h:6,
-               from ./include/linux/printk.h:9,
-               from ./include/linux/kernel.h:15,
-               from ./include/linux/cpumask.h:10,
-               from arch/arm64/kernel/cpufeature.c:11:
-arch/arm64/kernel/cpufeature.c: In function 'has_no_hw_prefetch':
-./arch/arm64/include/asm/cputype.h:59:26: warning: comparison of
-unsigned expression >= 0 is always true [-Wtype-limits]
-_model == (model) && rv >= (rv_min) && rv <= (rv_max);  \
-                        ^~
-arch/arm64/kernel/cpufeature.c:889:9: note: in expansion of macro
-'MIDR_IS_CPU_MODEL_RANGE'
-return MIDR_IS_CPU_MODEL_RANGE(midr, MIDR_THUNDERX,
-       ^~~~~~~~~~~~~~~~~~~~~~~
+But if raid1 has one member disk A, and disk B is added to the array.
+Then we offline A before all the datas are synchronized from A to B,
+obviously B doesn't have the latest data as A, but B is still marked
+with In_sync flag.
 
-Fix it by converting MIDR_IS_CPU_MODEL_RANGE to a static inline
-function.
+So let's not call spare_active under the condition, otherwise B is
+still showed with 'U' state which is not correct.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/cputype.h | 21 +++++++++++----------
- arch/arm64/kernel/cpufeature.c   |  2 +-
- 2 files changed, 12 insertions(+), 11 deletions(-)
+ drivers/md/md.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index b4a48419769f2..9b7d5abd04afd 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -62,14 +62,6 @@
- #define MIDR_CPU_MODEL_MASK (MIDR_IMPLEMENTOR_MASK | MIDR_PARTNUM_MASK | \
- 			     MIDR_ARCHITECTURE_MASK)
- 
--#define MIDR_IS_CPU_MODEL_RANGE(midr, model, rv_min, rv_max)		\
--({									\
--	u32 _model = (midr) & MIDR_CPU_MODEL_MASK;			\
--	u32 rv = (midr) & (MIDR_REVISION_MASK | MIDR_VARIANT_MASK);	\
--									\
--	_model == (model) && rv >= (rv_min) && rv <= (rv_max);		\
-- })
--
- #define ARM_CPU_IMP_ARM			0x41
- #define ARM_CPU_IMP_APM			0x50
- #define ARM_CPU_IMP_CAVIUM		0x43
-@@ -153,10 +145,19 @@ struct midr_range {
- 
- #define MIDR_ALL_VERSIONS(m) MIDR_RANGE(m, 0, 0, 0xf, 0xf)
- 
-+static inline bool midr_is_cpu_model_range(u32 midr, u32 model, u32 rv_min,
-+					   u32 rv_max)
-+{
-+	u32 _model = midr & MIDR_CPU_MODEL_MASK;
-+	u32 rv = midr & (MIDR_REVISION_MASK | MIDR_VARIANT_MASK);
-+
-+	return _model == model && rv >= rv_min && rv <= rv_max;
-+}
-+
- static inline bool is_midr_in_range(u32 midr, struct midr_range const *range)
- {
--	return MIDR_IS_CPU_MODEL_RANGE(midr, range->model,
--				 range->rv_min, range->rv_max);
-+	return midr_is_cpu_model_range(midr, range->model,
-+				       range->rv_min, range->rv_max);
- }
- 
- static inline bool
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 859d63cc99a31..a897efdb3dddd 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -846,7 +846,7 @@ static bool has_no_hw_prefetch(const struct arm64_cpu_capabilities *entry, int _
- 	u32 midr = read_cpuid_id();
- 
- 	/* Cavium ThunderX pass 1.x and 2.x */
--	return MIDR_IS_CPU_MODEL_RANGE(midr, MIDR_THUNDERX,
-+	return midr_is_cpu_model_range(midr, MIDR_THUNDERX,
- 		MIDR_CPU_VAR_REV(0, 0),
- 		MIDR_CPU_VAR_REV(1, MIDR_REVISION_MASK));
- }
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index fb5d702e43b5b..73758b3679a11 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -8948,7 +8948,8 @@ void md_reap_sync_thread(struct mddev *mddev)
+ 	/* resync has finished, collect result */
+ 	md_unregister_thread(&mddev->sync_thread);
+ 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+-	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery)) {
++	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
++	    mddev->degraded != mddev->raid_disks) {
+ 		/* success...*/
+ 		/* activate any spares */
+ 		if (mddev->pers->spare_active(mddev)) {
 -- 
 2.20.1
 
