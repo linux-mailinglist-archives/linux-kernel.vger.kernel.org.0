@@ -2,226 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C637CB13E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D744DCB140
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387693AbfJCVgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 17:36:55 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42395 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733154AbfJCVgy (ORCPT
+        id S1733111AbfJCVir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 17:38:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42604 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730739AbfJCViq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 17:36:54 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e5so2108304pls.9
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 14:36:53 -0700 (PDT)
+        Thu, 3 Oct 2019 17:38:46 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q12so2547196pff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 14:38:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tcX5x0C+xpmYXyYNCFKGEi47GTPK36S9z6JV/CqMXvM=;
-        b=oLC2xsYXDT6rruB+EivBNYLkjtGT43Znq/A4fpIT7TrnxT717GlHuh7q5l7Cx6PSZL
-         HgPaqXdV3HcScyLxcPyesIJnhgo/CmZzY4R6cigv339E7eetOe8JvnZRvuNvVjlwPEGG
-         ekBAYMSQ0a8ECLOez4o8F/i05ij0CO4eoPxYYhJdGVXEK+eG543ow7IGuoQJYwfbioNN
-         JpGmrDV/poiTVnaQA+KU5uQCslDt1K3CXFz9bCyuLq0iB8Zku1eELxPcWAJvDEP+B65e
-         RE5An2nrTjyFJP62QEuBcrDH1xSp4vzTPilPj/uwxvUcWtP8UKczoXPQssUHZbZahk8i
-         ti8Q==
+         :content-disposition:in-reply-to;
+        bh=d8eAHonumPxoDjOGcoOJYQ6JBJJnBbXuaVBYnqFe57A=;
+        b=LwvECE09N5iAc+1n+0VNTbW3zmtLbBUjEDaMYm2S3vACDV1hMKdGRDIo+5RddQV3iH
+         oWl//haeVzcm6RoxtusZWfFjZQ8VGgKhfhBs+vUzdDrDclImOJ4p8ipQy30/IvuBjIwU
+         Q/MypZoSS1Sn7QeW8RaJ/18OWxY8v6vaYpbRw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tcX5x0C+xpmYXyYNCFKGEi47GTPK36S9z6JV/CqMXvM=;
-        b=S4Xrg5AdnI49ZkwgsyKJvgyNbKi08yqSJc/nC0ikvGbBjJbE0UU/UULifI9Z15fI+5
-         eZDn5GMamI89p+VSAbnLAvIXjGEgmdeQzXSfXS49mIwzJ8RkRE6AAAmAxPEse5v+zVpj
-         oFTRo4kyvDAGBAM2u66jrER274hNiwlaj3gFrE2xNuX6o3/obP3q3oQ4XV09hJ2Q/XZI
-         KLpV2yCJFiSItJFd6Jv33U5JDxd/3CEfBPEk4UmxoSbskH/6/ZhEzqKvLb7QEXOcQdFd
-         8DaSu4Kng1m+GF5ra+KSaHmV9Tp3txCZzLc7eGLHVE+Kmvhnw5aSvYMWaDwFsHP+/GSO
-         lNYw==
-X-Gm-Message-State: APjAAAWOLiPAkU9SGG2ZbgrqesY5ftc2ySN4ywYzxTOCO5sjItfP73g4
-        mqOKYBQjXsWrYVENXXFF0fwfhg==
-X-Google-Smtp-Source: APXvYqwqTDr05PZx0Wi+AfRkYdAL2FYdwltFLrXQo5Tysz6jBXVcQebqzX54I5rDTZYv8rn8zWh6/g==
-X-Received: by 2002:a17:902:9b86:: with SMTP id y6mr12091545plp.10.1570138613043;
-        Thu, 03 Oct 2019 14:36:53 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w11sm4841457pfd.116.2019.10.03.14.36.51
+         :mime-version:content-disposition:in-reply-to;
+        bh=d8eAHonumPxoDjOGcoOJYQ6JBJJnBbXuaVBYnqFe57A=;
+        b=nsdEpHK1JcKX7TpPAtLHuheikF6VrsaWSzTcVJ5cyDNV1maExRy3l6Pf+0hQFspfHo
+         QEqUkA1xn98oPFeFncEB3WwFt2oTdN5tmXMx0SVpJGg413QlEZw/uhmm1Vd7osP+1o8z
+         Yvfj55+txUnmtiwQayi/EWiEmY/bOYHUTJCmY8V0KADxn/vHcdPGM/s5JJ/O12djfBs1
+         ziJiDuFiRxfDmqTRq0NTfpbd4twfY/scmI75KDlq2QGeYM554i/McHNy0KqUuWtnurz7
+         +0A12O3WAzMkT35cUuFbPBmLi4p9UMJHnOwG6d1owAIs3EqihpBxI8Y112f7RBtr8BNr
+         9uXQ==
+X-Gm-Message-State: APjAAAWVcvbqON5P5l19FJaMfl/mxEtPVmobagvlApO9xZSt5IvaHD8t
+        d2OX3rmTvRblBUBLvWF3uGxeyw==
+X-Google-Smtp-Source: APXvYqw+LtB3JWQsbxLy3YhlawIlrNj7chBkLHklXW+zMwZlMW1AvjlplYHd/Mb2CskKI81sZ0nfKQ==
+X-Received: by 2002:a63:7342:: with SMTP id d2mr11918594pgn.264.1570138725773;
+        Thu, 03 Oct 2019 14:38:45 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id j126sm4570520pfb.186.2019.10.03.14.38.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 14:36:52 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 14:36:50 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     mnalajal@codeaurora.org
-Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] base: soc: Handle custom soc information sysfs entries
-Message-ID: <20191003213650.GF63675@minitux>
-References: <1570061174-4918-1-git-send-email-mnalajal@codeaurora.org>
- <20191003070610.GC1814133@kroah.com>
- <0d219d344cea82b5f6c1ab23341de25b@codeaurora.org>
- <20191003183357.GA3580296@kroah.com>
- <6e7d5e14c231d2fe51c7ae78d5d0dee8@codeaurora.org>
+        Thu, 03 Oct 2019 14:38:44 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 14:38:43 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Laura Abbott <labbott@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Semmle Security Reports <security-reports@semmle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-mapping: Lift address space checks out of debug code
+Message-ID: <201910031438.A67C40B97C@keescook>
+References: <201910021341.7819A660@keescook>
+ <7a5dc7aa-66ec-0249-e73f-285b8807cb73@arm.com>
+ <201910021643.75E856C@keescook>
+ <fc9fffc8-3cff-4a6f-d426-4a4cc895ebb1@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6e7d5e14c231d2fe51c7ae78d5d0dee8@codeaurora.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <fc9fffc8-3cff-4a6f-d426-4a4cc895ebb1@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 03 Oct 14:11 PDT 2019, mnalajal@codeaurora.org wrote:
-
-> On 2019-10-03 11:33, Greg KH wrote:
-> > On Thu, Oct 03, 2019 at 11:23:45AM -0700, mnalajal@codeaurora.org wrote:
-> > > On 2019-10-03 00:06, Greg KH wrote:
-> > > > On Wed, Oct 02, 2019 at 05:06:14PM -0700, Murali Nalajala wrote:
-> > > > > Soc framework exposed sysfs entries are not sufficient for some
-> > > > > of the h/w platforms. Currently there is no interface where soc
-> > > > > drivers can expose further information about their SoCs via soc
-> > > > > framework. This change address this limitation where clients can
-> > > > > pass their custom entries as attribute group and soc framework
-> > > > > would expose them as sysfs properties.
-> > > > >
-> > > > > Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
-> > > > > ---
-> > > > >  drivers/base/soc.c      | 26 ++++++++++++++++++--------
-> > > > >  include/linux/sys_soc.h |  1 +
-> > > > >  2 files changed, 19 insertions(+), 8 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-> > > > > index 7c0c5ca..ec70a58 100644
-> > > > > --- a/drivers/base/soc.c
-> > > > > +++ b/drivers/base/soc.c
-> > > > > @@ -15,6 +15,8 @@
-> > > > >  #include <linux/err.h>
-> > > > >  #include <linux/glob.h>
-> > > > >
-> > > > > +#define NUM_ATTR_GROUPS 3
-> > > > > +
-> > > > >  static DEFINE_IDA(soc_ida);
-> > > > >
-> > > > >  static ssize_t soc_info_get(struct device *dev,
-> > > > > @@ -104,11 +106,6 @@ static ssize_t soc_info_get(struct device *dev,
-> > > > >  	.is_visible = soc_attribute_mode,
-> > > > >  };
-> > > > >
-> > > > > -static const struct attribute_group *soc_attr_groups[] = {
-> > > > > -	&soc_attr_group,
-> > > > > -	NULL,
-> > > > > -};
-> > > > > -
-> > > > >  static void soc_release(struct device *dev)
-> > > > >  {
-> > > > >  	struct soc_device *soc_dev = container_of(dev, struct soc_device,
-> > > > > dev);
-> > > > > @@ -121,6 +118,7 @@ static void soc_release(struct device *dev)
-> > > > >  struct soc_device *soc_device_register(struct soc_device_attribute
-> > > > > *soc_dev_attr)
-> > > > >  {
-> > > > >  	struct soc_device *soc_dev;
-> > > > > +	const struct attribute_group **soc_attr_groups = NULL;
-> > > > >  	int ret;
-> > > > >
-> > > > >  	if (!soc_bus_type.p) {
-> > > > > @@ -136,10 +134,20 @@ struct soc_device *soc_device_register(struct
-> > > > > soc_device_attribute *soc_dev_attr
-> > > > >  		goto out1;
-> > > > >  	}
-> > > > >
-> > > > > +	soc_attr_groups = kzalloc(sizeof(*soc_attr_groups) *
-> > > > > +						NUM_ATTR_GROUPS, GFP_KERNEL);
-> > > > > +	if (!soc_attr_groups) {
-> > > > > +		ret = -ENOMEM;
-> > > > > +		goto out2;
-> > > > > +	}
-> > > > > +	soc_attr_groups[0] = &soc_attr_group;
-> > > > > +	soc_attr_groups[1] = soc_dev_attr->custom_attr_group;
-> > > > > +	soc_attr_groups[2] = NULL;
-> > > > > +
-> > > > >  	/* Fetch a unique (reclaimable) SOC ID. */
-> > > > >  	ret = ida_simple_get(&soc_ida, 0, 0, GFP_KERNEL);
-> > > > >  	if (ret < 0)
-> > > > > -		goto out2;
-> > > > > +		goto out3;
-> > > > >  	soc_dev->soc_dev_num = ret;
-> > > > >
-> > > > >  	soc_dev->attr = soc_dev_attr;
-> > > > > @@ -151,14 +159,16 @@ struct soc_device *soc_device_register(struct
-> > > > > soc_device_attribute *soc_dev_attr
-> > > > >
-> > > > >  	ret = device_register(&soc_dev->dev);
-> > > > >  	if (ret)
-> > > > > -		goto out3;
-> > > > > +		goto out4;
-> > > > >
-> > > > >  	return soc_dev;
-> > > > >
-> > > > > -out3:
-> > > > > +out4:
-> > > > >  	ida_simple_remove(&soc_ida, soc_dev->soc_dev_num);
-> > > > >  	put_device(&soc_dev->dev);
-> > > > >  	soc_dev = NULL;
-> > > > > +out3:
-> > > > > +	kfree(soc_attr_groups);
-> > > > >  out2:
-> > > > >  	kfree(soc_dev);
-> > > > >  out1:
-> > > > > diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
-> > > > > index 48ceea8..d9b3cf0 100644
-> > > > > --- a/include/linux/sys_soc.h
-> > > > > +++ b/include/linux/sys_soc.h
-> > > > > @@ -15,6 +15,7 @@ struct soc_device_attribute {
-> > > > >  	const char *serial_number;
-> > > > >  	const char *soc_id;
-> > > > >  	const void *data;
-> > > > > +	const struct attribute_group *custom_attr_group;
-> > > >
-> > > > Shouldn't you make this:
-> > > > 	const struct attribute_group **soc_groups;
-> > > >
-> > > > to match up with the rest of the way the driver core works?
-> > > Assumption is, soc drivers send their custom attribute group and soc
-> > > framework has already soc_attr_group" (basic info exposed).
-> > > With my changes i am combining these two groups and passing to
-> > > "device_register()".
-> > > I do not think soc drivers have a requirement where they can pass
-> > > various
-> > > groups rather one single group attribute.
+On Thu, Oct 03, 2019 at 10:42:45AM +0100, Robin Murphy wrote:
+> On 03/10/2019 00:58, Kees Cook wrote:
+> > On Wed, Oct 02, 2019 at 10:15:43PM +0100, Robin Murphy wrote:
+> > > Hi Kees,
+> > > 
+> > > On 2019-10-02 9:46 pm, Kees Cook wrote:
+> > > > As we've seen from USB and other areas, we need to always do runtime
+> > > > checks for DMA operating on memory regions that might be remapped. This
+> > > > consolidates the (existing!) checks and makes them on by default. A
+> > > > warning will be triggered for any drivers still using DMA on the stack
+> > > > (as has been seen in a few recent reports).
+> > > > 
+> > > > Suggested-by: Laura Abbott <labbott@redhat.com>
+> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > > ---
+> > > >    include/linux/dma-debug.h   |  8 --------
+> > > >    include/linux/dma-mapping.h |  8 +++++++-
+> > > >    kernel/dma/debug.c          | 16 ----------------
+> > > >    3 files changed, 7 insertions(+), 25 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
+> > > > index 4208f94d93f7..2af9765d9af7 100644
+> > > > --- a/include/linux/dma-debug.h
+> > > > +++ b/include/linux/dma-debug.h
+> > > > @@ -18,9 +18,6 @@ struct bus_type;
+> > > >    extern void dma_debug_add_bus(struct bus_type *bus);
+> > > > -extern void debug_dma_map_single(struct device *dev, const void *addr,
+> > > > -				 unsigned long len);
+> > > > -
+> > > >    extern void debug_dma_map_page(struct device *dev, struct page *page,
+> > > >    			       size_t offset, size_t size,
+> > > >    			       int direction, dma_addr_t dma_addr);
+> > > > @@ -75,11 +72,6 @@ static inline void dma_debug_add_bus(struct bus_type *bus)
+> > > >    {
+> > > >    }
+> > > > -static inline void debug_dma_map_single(struct device *dev, const void *addr,
+> > > > -					unsigned long len)
+> > > > -{
+> > > > -}
+> > > > -
+> > > >    static inline void debug_dma_map_page(struct device *dev, struct page *page,
+> > > >    				      size_t offset, size_t size,
+> > > >    				      int direction, dma_addr_t dma_addr)
+> > > > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> > > > index 4a1c4fca475a..2d6b8382eab1 100644
+> > > > --- a/include/linux/dma-mapping.h
+> > > > +++ b/include/linux/dma-mapping.h
+> > > > @@ -583,7 +583,13 @@ static inline unsigned long dma_get_merge_boundary(struct device *dev)
+> > > >    static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+> > > >    		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> > > >    {
+> > > > -	debug_dma_map_single(dev, ptr, size);
+> > > > +	/* DMA must never operate on stack or other remappable places. */
+> > > > +	WARN_ONCE(is_vmalloc_addr(ptr) || !virt_addr_valid(ptr),
+> > > 
+> > > This stands to absolutely cripple I/O performance on arm64, because every
+> > > valid call will end up going off and scanning the memblock list, which is
+> > > not something we want on a fastpath in non-debug configurations. We'd need a
+> > > much better solution to the "pfn_valid() vs. EFI no-map" problem before this
+> > > might be viable.
 > > 
-> > Ok, I guess this is "good enough" such that no individual SOC driver
-> > will want to create subdirs and lots of fun like that.  If they do, then
-> > we can change the api at that point in time :)
+> > Ah! Interesting. I didn't realize this was fast-path (I don't know the
+> > DMA code at all). I thought it was more of a "one time setup" before
+> > actual DMA activity started.
+> 
+> That's strictly true, it's just that many workloads can involve tens of
+> thousands of "one time"s per second ;)
+> 
+> Overhead on the dma_map_* paths has shown to have a direct impact on
+> throughput in such situations, hence various optimisation effort in IOVA
+> allocation for IOMMU-based DMA ops, and the recent work to remove indirect
+> calls entirely for the common dma-direct/SWIOTLB cases.
+> 
+> > Regardless, is_vmalloc_addr() is extremely light (a bounds check), and is the
+> > most important part of this as far as catching stack-based DMA attempts.
+> > I thought virt_addr_valid() was cheap too, but I see it's much heavier on
+> > arm64.
 > > 
-> > thanks,
+> > I just went to compare what the existing USB check does, and it happens
+> > immediately before its call to dma_map_single(). Both checks are simple
+> > bounds checks, so it shouldn't be an issue:
 > > 
-> > greg k-h
+> > 			if (is_vmalloc_addr(urb->setup_packet)) {
+> > 				WARN_ONCE(1, "setup packet is not dma capable\n");
+> > 				return -EAGAIN;
+> > 			} else if (object_is_on_stack(urb->setup_packet)) {
+> > 				WARN_ONCE(1, "setup packet is on stack\n");
+> > 				return -EAGAIN;
+> > 			}
+> > 
+> > 			urb->setup_dma = dma_map_single(
+> > 					hcd->self.sysdev,
+> > 					urb->setup_packet,
+> > 					sizeof(struct usb_ctrlrequest),
+> > 
+> > 
+> > In the USB case, it'll actually refuse to do the operation. Should
+> > dma_map_single() similarly fail? I could push these checks down into
+> > dma_map_single(), which would be a no-change on behavior for USB and
+> > gain the checks on all other callers...
 > 
-> I trying to fix an issue in the existing "soc_device_register()" code. This
-> looks to me a memory leak.
-> 
-> 	ret = device_register(&soc_dev->dev);
-> 	if (ret)
-> 		goto out3;
-> 	return soc_dev;
-> out3:
-> 	ida_simple_remove(&soc_ida, soc_dev->soc_dev_num);
-> 	put_device(&soc_dev->dev);
+> I think it would be reasonable to pull the is_vmalloc_addr() check inline,
+> as that probably covers 90+% of badness (especially given vmapped stacks),
+> and as you say should be reliably cheap everywhere. Callers are certainly
+> expected to use dma_mapping_error() and handle failure, so refusing to do a
+> bogus mapping operation should be OK API-wise - ultimately if a driver goes
+> ahead and uses DMA_MAPPING_ERROR as an address anyway, that's not likely to
+> be any *more* catastrophic than if it did the same with whatever nonsense
+> virt_to_phys() of a vmalloc address had returned.
 
-This put_device() will invoke soc_release() which will free soc_dev.
+What do you think about the object_is_on_stack() check? That does a
+dereference through "current" to find the stack bounds...
 
-> 	soc_dev = NULL;
-
-So setting soc_dev to NULL here turns below kfree() into a nop.
-> out2:
-> 	kfree(soc_dev);
-> 
-> Here we are assigning "soc_dev=NULL" before freeing. I see this assignment
-> is unnecessary here.
-
-The code works as intended and the assignment prevents a double free.
-But it's perhaps slightly too clever.
-
-
-Swapping the allocation order of the ida and soc_dev would make this
-clearer.
-
-Regards,
-Bjorn
+-- 
+Kees Cook
