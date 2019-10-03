@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A764CA31B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B4FCA31D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388001AbfJCQMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:12:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34336 "EHLO mail.kernel.org"
+        id S1731890AbfJCQMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:12:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387990AbfJCQMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:12:14 -0400
+        id S2388014AbfJCQMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:12:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67C3B20700;
-        Thu,  3 Oct 2019 16:12:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C66D120700;
+        Thu,  3 Oct 2019 16:12:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119133;
-        bh=a+KhuUV2OOAQsa6Eu69UYdgnsSiU9l/+U5sClBKGbLE=;
+        s=default; t=1570119139;
+        bh=fik+i5HOycM4aEtSccDBSMO6kukqh4PeAR2iNgi49dk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dnmzro4gf/SLmsuFfZ4HVKDW0otVz92jAtborxuZo+hHCr7pzbfAtLNeyDoEE1n4s
-         u6MbLID+9kZDXpHYufnNYjPLBAo5DW+pZcd/6DCbeyMptgPJpt3GvdsdblMjdQLWBy
-         +mHxGJsSnLAXvXrYhT3R4oFcJzMWChLI05Hao3Uk=
+        b=zp8PkfR/05S/vGoz8TUKN0IV67t/3U2XQ5zPTz847KgKJWm7KiU1cyTvk0Xa5pA6O
+         I7VKtjlxJuB5hiQKLV6LiBsuRgEFV+W6gpyPyYAIWu/jLP6s+CN2yH2e96kvqo5Z5r
+         PvJaNgnW4X8J5m0Cux2ypTYxT7IM+bE24jbYFCTw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 139/185] PM / devfreq: passive: fix compiler warning
-Date:   Thu,  3 Oct 2019 17:53:37 +0200
-Message-Id: <20191003154508.965694616@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 141/185] ALSA: firewire-tascam: check intermediate state of clock status and retry
+Date:   Thu,  3 Oct 2019 17:53:39 +0200
+Message-Id: <20191003154509.448533373@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,35 +43,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit 0465814831a926ce2f83e8f606d067d86745234e ]
+commit e1a00b5b253a4f97216b9a33199a863987075162 upstream.
 
-The recent commit of
-PM / devfreq: passive: Use non-devm notifiers
-had incurred compiler warning, "unused variable 'dev'".
+2 bytes in MSB of register for clock status is zero during intermediate
+state after changing status of sampling clock in models of TASCAM FireWire
+series. The duration of this state differs depending on cases. During the
+state, it's better to retry reading the register for current status of
+the clock.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+In current implementation, the intermediate state is checked only when
+getting current sampling transmission frequency, then retry reading.
+This care is required for the other operations to read the register.
+
+This commit moves the codes of check and retry into helper function
+commonly used for operations to read the register.
+
+Fixes: e453df44f0d6 ("ALSA: firewire-tascam: add PCM functionality")
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Link: https://lore.kernel.org/r/20190910135152.29800-3-o-takashi@sakamocchi.jp
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/devfreq/governor_passive.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/firewire/tascam/tascam-stream.c |   42 ++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index 4222d3c1efb98..d2ebdb7fd7518 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -152,7 +152,6 @@ static int devfreq_passive_notifier_call(struct notifier_block *nb,
- static int devfreq_passive_event_handler(struct devfreq *devfreq,
- 				unsigned int event, void *data)
+--- a/sound/firewire/tascam/tascam-stream.c
++++ b/sound/firewire/tascam/tascam-stream.c
+@@ -9,20 +9,37 @@
+ #include <linux/delay.h>
+ #include "tascam.h"
+ 
++#define CLOCK_STATUS_MASK      0xffff0000
++#define CLOCK_CONFIG_MASK      0x0000ffff
++
+ #define CALLBACK_TIMEOUT 500
+ 
+ static int get_clock(struct snd_tscm *tscm, u32 *data)
  {
--	struct device *dev = devfreq->dev.parent;
- 	struct devfreq_passive_data *p_data
- 			= (struct devfreq_passive_data *)devfreq->data;
- 	struct devfreq *parent = (struct devfreq *)p_data->parent;
--- 
-2.20.1
-
++	int trial = 0;
+ 	__be32 reg;
+ 	int err;
+ 
+-	err = snd_fw_transaction(tscm->unit, TCODE_READ_QUADLET_REQUEST,
+-				 TSCM_ADDR_BASE + TSCM_OFFSET_CLOCK_STATUS,
+-				 &reg, sizeof(reg), 0);
+-	if (err >= 0)
++	while (trial++ < 5) {
++		err = snd_fw_transaction(tscm->unit, TCODE_READ_QUADLET_REQUEST,
++				TSCM_ADDR_BASE + TSCM_OFFSET_CLOCK_STATUS,
++				&reg, sizeof(reg), 0);
++		if (err < 0)
++			return err;
++
+ 		*data = be32_to_cpu(reg);
++		if (*data & CLOCK_STATUS_MASK)
++			break;
++
++		// In intermediate state after changing clock status.
++		msleep(50);
++	}
+ 
+-	return err;
++	// Still in the intermediate state.
++	if (trial >= 5)
++		return -EAGAIN;
++
++	return 0;
+ }
+ 
+ static int set_clock(struct snd_tscm *tscm, unsigned int rate,
+@@ -35,7 +52,7 @@ static int set_clock(struct snd_tscm *ts
+ 	err = get_clock(tscm, &data);
+ 	if (err < 0)
+ 		return err;
+-	data &= 0x0000ffff;
++	data &= CLOCK_CONFIG_MASK;
+ 
+ 	if (rate > 0) {
+ 		data &= 0x000000ff;
+@@ -80,17 +97,14 @@ static int set_clock(struct snd_tscm *ts
+ 
+ int snd_tscm_stream_get_rate(struct snd_tscm *tscm, unsigned int *rate)
+ {
+-	u32 data = 0x0;
+-	unsigned int trials = 0;
++	u32 data;
+ 	int err;
+ 
+-	while (data == 0x0 || trials++ < 5) {
+-		err = get_clock(tscm, &data);
+-		if (err < 0)
+-			return err;
++	err = get_clock(tscm, &data);
++	if (err < 0)
++		return err;
+ 
+-		data = (data & 0xff000000) >> 24;
+-	}
++	data = (data & 0xff000000) >> 24;
+ 
+ 	/* Check base rate. */
+ 	if ((data & 0x0f) == 0x01)
 
 
