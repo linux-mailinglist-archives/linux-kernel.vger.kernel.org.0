@@ -2,128 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 613EAC99D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:28:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A212C99DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfJCI2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 04:28:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48874 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbfJCI2H (ORCPT
+        id S1728873AbfJCI2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 04:28:32 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59904 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfJCI2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 04:28:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Fbgpkb4ZrN1nGnmGwSYFUAda/iVeR399X2dHLFAYocs=; b=u2FxOR8zeqCulSg/8YpUzgwQO
-        Beao2Hmrly9ZYW+VfZvMRZ4k4HpOUqcdLBMRL4Y7ypmW2fLem5CHKlCysRIxUhMFEDtEqLz2968GE
-        +QFtzp+tsF8sU78eCsGFwhvYUfkXqF2YD1O9RJocBCGIqFBn/AaAeQJPaaulycC9881geyqkNu1Yn
-        gKlQHPDl42UJQFiUHL8qdebafFSZIVuGF0OhesLpW75rspRgeqX/Cv+oFTMSTHjCrebGFSFLp04Jy
-        mu7NyNJyK1gcq/0q0Ioj/gN+RY4QMFN4ONx/4CpyPt9dDxwsAC33MogCYDPqFbKMyfdfFE0t2AxJr
-        Dfc/bLbcg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iFwSn-0004Hq-8X; Thu, 03 Oct 2019 08:27:53 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 105E0301A79;
-        Thu,  3 Oct 2019 10:27:02 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3415320D8F669; Thu,  3 Oct 2019 10:27:51 +0200 (CEST)
-Date:   Thu, 3 Oct 2019 10:27:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 1/3] x86/alternatives: Teach text_poke_bp() to emulate
- instructions
-Message-ID: <20191003082751.GQ4536@hirez.programming.kicks-ass.net>
-References: <20190827180622.159326993@infradead.org>
- <20190827181147.053490768@infradead.org>
- <20191003140050.1d4cf59d3de8b5396d36c269@kernel.org>
+        Thu, 3 Oct 2019 04:28:31 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x938SGt5086185;
+        Thu, 3 Oct 2019 03:28:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570091296;
+        bh=ZEHDwWZtjItO4loUVl/4DVTQMNSpL7iyeLeaFKV6yBI=;
+        h=From:To:CC:Subject:Date;
+        b=F9r1mbIEv5nYVhtMXq/tihqyGZ223AwTPNqczkOtK87jYm8rOOwIcmZO4a7Vw6R2N
+         h+n5OFLt8B2hQR+Ms5qCJ6VU2XHHWGcIyX9350Xer0AK1vPdCnFDYUGBJpREX01me6
+         VDMDVnp3MLcVfXyhxGMAPtMrbLUB1V26hTZkSVNs=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x938SG2q094622
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Oct 2019 03:28:16 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 3 Oct
+ 2019 03:28:04 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 3 Oct 2019 03:28:15 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x938SE6N082784;
+        Thu, 3 Oct 2019 03:28:15 -0500
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>
+CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v8 0/5] Add a generic driver for LED-based backlight
+Date:   Thu, 3 Oct 2019 10:28:07 +0200
+Message-ID: <20191003082812.28491-1-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003140050.1d4cf59d3de8b5396d36c269@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 02:00:50PM +0900, Masami Hiramatsu wrote:
+This series aims to add a led-backlight driver, similar to pwm-backlight,
+but using a LED class device underneath.
 
-> > This fits almost all text_poke_bp() users, except
-> > arch_unoptimize_kprobe() which restores random text, and for that site
-> > we have to build an explicit emulate instruction.
-> 
-> OK, and in this case, I would like to change RELATIVEJUMP_OPCODE
-> to JMP32_INSN_OPCODE for readability. (or at least
-> making RELATIVEJUMP_OPCODE as an alias of JMP32_INSN_OPCODE)
+A few years ago (2015), Tomi Valkeinen posted a series implementing a
+backlight driver on top of a LED device:
+https://patchwork.kernel.org/patch/7293991/
+https://patchwork.kernel.org/patch/7294001/
+https://patchwork.kernel.org/patch/7293981/
 
-> > @@ -448,12 +447,18 @@ void arch_optimize_kprobes(struct list_h
-> >  void arch_unoptimize_kprobe(struct optimized_kprobe *op)
-> >  {
-> >  	u8 insn_buff[RELATIVEJUMP_SIZE];
-> > +	u8 emulate_buff[RELATIVEJUMP_SIZE];
-> >  
-> >  	/* Set int3 to first byte for kprobes */
-> >  	insn_buff[0] = BREAKPOINT_INSTRUCTION;
-> >  	memcpy(insn_buff + 1, op->optinsn.copied_insn, RELATIVE_ADDR_SIZE);
-> > +
-> > +	emulate_buff[0] = RELATIVEJUMP_OPCODE;
-> > +	*(s32 *)(&emulate_buff[1]) = (s32)((long)op->optinsn.insn -
-> > +			((long)op->kp.addr + RELATIVEJUMP_SIZE));
+The discussion stopped because Tomi lacked the time to work on it.
 
-I'm halfway through a patch introducing:
+changes in v8:
+- use class_find_device_by_of_node() instead of class_find_device()
+- renamed devm_led_get() as devm_of_led_get()
 
-  union text_poke_insn {
-	u8 code[POKE_MAX_OPCODE_SUZE];
-	struct {
-		u8 opcode;
-		s32 disp;
-	} __attribute__((packed));
-  };
+changes in v7:
+- rebased on top of linux-leds/for-next
+- populate the of_node member of the LED device if fwnode is a of_node
+  (this is a new patch and the first of the series).
+- devm_led_get() works only when the device tree is used. Add a few checks
+  for that.  
 
-to text-patching.h to unify all such custom unions we have all over the
-place. I'll mob up the above in that.
+changes in v6:
+- trim the list of included headers
+- remove useless definition of BKL_FULL_BRIGHTNESS
 
-> > +
-> >  	text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
-> > -		     op->optinsn.insn);
-> > +		     emulate_buff);
-> >  }
+changes in v5:
+- removed LED brightness scaling
+- disable sysfs the interface of the LEDs when used by the backlight device
 
-As argued in a previous thread, text_poke_bp() is broken when it changes
-more than a single instruction at a time.
+changes in v4:
+- fix dev_err() messages and commit logs following the advices of Pavel
+- cosmetic changes (indents, getting rid of  "? 1 : 0" in
+  led_match_led_node())
 
-Now, ISTR optimized kprobes does something like:
+changes in v3:
+- dt binding: don't limit the brightness range to 0-255. Use the range of
+  the underlying LEDs. as a side-effect, all LEDs must now have the same
+  range
+- driver: Adapt to dt binding update.
+- driver: rework probe() for clarity and remove the remaining goto.
 
-	poke INT3
-	synchronize_rcu_tasks() /* waits for all tasks to schedule
-				   guarantees instructions after INT3
-				   are unused */
-	install optimized probe /* overwrites multiple instrctions with
-				   JMP.d32 */
+changes in v2:
+- handle more than one LED.
+- don't make the backlight device a child of the LED controller.
+- make brightness-levels and default-brightness-level optional
+- removed the option to use a GPIO enable.
+- removed the option to use a regulator. It should be handled by the LED
+  core
+- don't make any change to the LED core (not needed anymore)
 
-And the above then undoes that by:
+Jean-Jacques Hiblot (3):
+  leds: populate the device's of_node when possible
+  leds: Add managed API to get a LED from a device driver
+  dt-bindings: backlight: Add led-backlight binding
 
-	poke INT3 on top of the optimzed probe
+Tomi Valkeinen (2):
+  leds: Add of_led_get() and led_put()
+  backlight: add led-backlight driver
 
-	poke tail instructions back /* guaranteed safe because the
-				       above INT3 poke ensures the
-				       JMP.d32 instruction is unused */
+ .../bindings/leds/backlight/led-backlight.txt |  28 ++
+ drivers/leds/led-class.c                      |  98 ++++++-
+ drivers/video/backlight/Kconfig               |   7 +
+ drivers/video/backlight/Makefile              |   1 +
+ drivers/video/backlight/led_bl.c              | 260 ++++++++++++++++++
+ include/linux/leds.h                          |   6 +
+ 6 files changed, 399 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+ create mode 100644 drivers/video/backlight/led_bl.c
 
-	poke head byte back
+-- 
+2.17.1
 
-Is this correct? If so, we should probably put a comment in there
-explaining how all this is unusual but safe.
