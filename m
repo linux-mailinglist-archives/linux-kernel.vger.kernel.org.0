@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F05FCACC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AFB4CAC12
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730489AbfJCR31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:29:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35132 "EHLO mail.kernel.org"
+        id S1732520AbfJCQFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388100AbfJCQMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:12:44 -0400
+        id S1732499AbfJCQFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 597E520865;
-        Thu,  3 Oct 2019 16:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03B63222BE;
+        Thu,  3 Oct 2019 16:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119163;
-        bh=FB4XVy2jvCqmDjccoNIb7z5U4Sf68+Zu8TPjSSL5quA=;
+        s=default; t=1570118699;
+        bh=rH23hAnLzNISvEHaOXTSYqOud5dtE9qKwqYzmL3JTXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ljPvCoHqJ/m+25ckhFZYrkAL6I5jyFPoCQEkn4jQtHdH/hiw6NwKsNTCdt6+aTqL
-         JaazPO0Jmhhx5/fO6nJlRdOp3+F5yiBQLVq/gx6iBZuzfWxShH4Ir0Q7MzzTlecRa6
-         oAZiIQEx0M/PMXdc5V/P5bbo0Ug6iQEB/tvneoLs=
+        b=b5H2LJRf7Xol34HQV5KCcSTgaaZbrGPIaRaCsLAqWFzE9XxCBzNt3J3yBvArkHCbD
+         hpHTyrCh7g7T+eDJLwZkPHr5oB6wn6DsSrVrZnko5vX3RQmq/hGulwcQH1i+EKMjsg
+         YzHox9uMUCpN4pusAURdGm4aIgBWJatVfqlMW3Vs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "stable@vger.kernel.org, x86@kernel.org,
-        clang-built-linux@googlegroups.com, Nathan Chancellor" 
-        <natechancellor@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.14 149/185] x86/retpolines: Fix up backport of a9d57ef15cbe
-Date:   Thu,  3 Oct 2019 17:53:47 +0200
-Message-Id: <20191003154512.704851856@linuxfoundation.org>
+        stable@vger.kernel.org, Denis Lunev <den@virtuozzo.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 105/129] KVM: x86: always stop emulation on page fault
+Date:   Thu,  3 Oct 2019 17:53:48 +0200
+Message-Id: <20191003154407.528591625@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
 
-Commit a9d57ef15cbe ("x86/retpolines: Disable switch jump tables when
-retpolines are enabled") added -fno-jump-tables to workaround a GCC issue
-while deliberately avoiding adding this flag when CONFIG_CC_IS_CLANG is
-set, which is defined by the kconfig system when CC=clang is provided.
+commit 8530a79c5a9f4e29e6ffb35ec1a79d81f4968ec8 upstream.
 
-However, this symbol was added in 4.18 in commit 469cb7376c06 ("kconfig:
-add CC_IS_CLANG and CLANG_VERSION") so it is always undefined in 4.14,
-meaning -fno-jump-tables gets added when using Clang.
+inject_emulated_exception() returns true if and only if nested page
+fault happens. However, page fault can come from guest page tables
+walk, either nested or not nested. In both cases we should stop an
+attempt to read under RIP and give guest to step over its own page
+fault handler.
 
-Fix this up by using the equivalent $(cc-name) comparison, which matches
-what upstream did until commit 076f421da5d4 ("kbuild: replace cc-name
-test with CONFIG_CC_IS_CLANG").
+This is also visible when an emulated instruction causes a #GP fault
+and the VMware backdoor is enabled.  To handle the VMware backdoor,
+KVM intercepts #GP faults; with only the next patch applied,
+x86_emulate_instruction() injects a #GP but returns EMULATE_FAIL
+instead of EMULATE_DONE.   EMULATE_FAIL causes handle_exception_nmi()
+(or gp_interception() for SVM) to re-inject the original #GP because it
+thinks emulation failed due to a non-VMware opcode.  This patch prevents
+the issue as x86_emulate_instruction() will return EMULATE_DONE after
+injecting the #GP.
 
-Fixes: e28951100515 ("x86/retpolines: Disable switch jump tables when retpolines are enabled")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: 6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
+Cc: stable@vger.kernel.org
+Cc: Denis Lunev <den@virtuozzo.com>
+Cc: Roman Kagan <rkagan@virtuozzo.com>
+Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
+Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -249,7 +249,7 @@ ifdef CONFIG_RETPOLINE
-   # retpoline builds, however, gcc does not for x86. This has
-   # only been fixed starting from gcc stable version 8.4.0 and
-   # onwards, but not for older ones. See gcc bug #86952.
--  ifndef CONFIG_CC_IS_CLANG
-+  ifneq ($(cc-name), clang)
-     KBUILD_CFLAGS += $(call cc-option,-fno-jump-tables)
-   endif
- endif
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5764,8 +5764,10 @@ int x86_emulate_instruction(struct kvm_v
+ 			if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
+ 						emulation_type))
+ 				return EMULATE_DONE;
+-			if (ctxt->have_exception && inject_emulated_exception(vcpu))
++			if (ctxt->have_exception) {
++				inject_emulated_exception(vcpu);
+ 				return EMULATE_DONE;
++			}
+ 			if (emulation_type & EMULTYPE_SKIP)
+ 				return EMULATE_FAIL;
+ 			return handle_emulation_failure(vcpu);
 
 
