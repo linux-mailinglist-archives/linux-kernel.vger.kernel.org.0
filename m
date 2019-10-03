@@ -2,153 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2DD1CA297
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F3C5CA2CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731509AbfJCQHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:07:01 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42540 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731347AbfJCQGz (ORCPT
+        id S1733144AbfJCQJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:09:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733130AbfJCQJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:55 -0400
-Received: by mail-io1-f66.google.com with SMTP id n197so6759978iod.9;
-        Thu, 03 Oct 2019 09:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Mlk8A86Fq4GMU/KjC59awMny/l9qD3VrtRXq6Ecrchc=;
-        b=V3NMv022bIO4LOUDBGXngyMnjadYmEv5jEvTTZuP5q/wQS5Vm1+q6D3RcD6VZc4VjO
-         6H/Recodkm+uluNF6IuIBjp2G+wkmroJ/7VYdkIj9+4guGwcAOIL6AxPPA33VQCUFMtr
-         +NnezmU5s8g6cJqjvx1nTgi7f18SKpobHNbSEnoDD/NFdmfOKAbAhg6GgOv6V3YuGS8a
-         7uwt3HpW71eSJcOfJrnYrQmhoqrmBsyzNCT/7LFxPcD07Hecy/QEpgJsqfYm0UBByHrN
-         luK/55rb0RpO2vIWK446OJ1f86KwD8zL+2JZQxkuj2A+APwRRrPOSTSbfNMx3yq9299S
-         EMRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Mlk8A86Fq4GMU/KjC59awMny/l9qD3VrtRXq6Ecrchc=;
-        b=OjjSfM8IKEfWKBuFJoA2RKFzDfIzwHUFwygzp+D7SH1FlUFXFBdmc5xF91cJyYiouO
-         zEyI+HsJE7WpZqPW0HowoCbB0A0C/ny+W5i2QcEJUcskVnBi3Mf7yEwJvEezlOOQUybq
-         sB6tee8US/DnCAcURjWjfV1vzzki4vkmXSBLLQIxDyLOZYAfYKObaM4OtDBbeZqZCC03
-         AizTeLH8hkrfapNQFXdnUNR5FebkgIkw/gGmpIGbcDYiHrprZYhQSxidi5i5HoR1C1hp
-         Zm/mY29h7Y6ly1HgwDDHJAo6krCu4etMkaoMH++ApZdQsyZHsTlUL9HKvfygS6l1iwAh
-         unVA==
-X-Gm-Message-State: APjAAAUP+LUozqgBUrBMVYBqdIHzN11GqJmNyL9HOXXDD9dyqNSjcSkt
-        8NuAb4msoCPtdGBB2vTzqck4EVJjoaUFhusjXZo=
-X-Google-Smtp-Source: APXvYqwKVFct2U1efQS8h4m+GJhx1lW98NQBdZGp7Re59o/Ywbh4H1PWNheYUDsMKUc0sleg/qKJqe+Z1d/Rp8qmIKg=
-X-Received: by 2002:a6b:a0d:: with SMTP id z13mr8337013ioi.5.1570118813951;
- Thu, 03 Oct 2019 09:06:53 -0700 (PDT)
+        Thu, 3 Oct 2019 12:09:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=urZ8lihnNIb8UAfT+LX/L3lCi7pvbQhtMnEgBxPHSbI=; b=DlhEsireXtR/zTup5aTEHnevD
+        QqyPCYchDetqL28cohfZf3sEs0ad4YMZIHuOy5Byw3JPTvFZbFwixbPw+2E1uxAGpd79bOBfXzeI8
+        B1CDUUCNqA+brWodchUcgETKSa+4sHPCGW9U8SXBZMDnU6iKuNJVbDRR/QY8pEboAfcIsnS+EbjVt
+        /FI/y6aX8+2wGb26acBA24HzsFoR4WZqNGVvgYNE2G0cIgrbUarIeyngmUqCnAt6y9bHtBZ4N8HZY
+        cpLDT2M5XeOYnskkQWwrfzifTlI2de9h6PL/Ax3uFYKT8KhJCeMned2deUTnF667GA4lOQpA2ig8N
+        /I/+dXVIw==;
+Received: from 177.133.68.49.dynamic.adsl.gvt.net.br ([177.133.68.49] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iG3fF-0004Vj-KQ; Thu, 03 Oct 2019 16:09:14 +0000
+Date:   Thu, 3 Oct 2019 13:09:09 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Gon Solo <gonsolo@gmail.com>
+Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
+Message-ID: <20191003130909.01d29b77@coco.lan>
+In-Reply-To: <20191003160336.GA5125@Limone>
+References: <20191002142744.GA3475@gofer.mess.org>
+        <CANL0fFS9TGKJH2rfkXzak78BaLazTNO7GoZhSb4vLBsDrmz3FQ@mail.gmail.com>
+        <20191002150650.GA4227@gofer.mess.org>
+        <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
+        <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
+        <20191002154922.7f1cfc76@coco.lan>
+        <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
+        <20191003080539.2b13c03b@coco.lan>
+        <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
+        <20191003120238.75811da6@coco.lan>
+        <20191003160336.GA5125@Limone>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <CAH2r5mv49T9gwwoJxKJfkgdi6xbf+hDALUiAJHghGikgUNParw@mail.gmail.com>
- <CAH2r5mtVW=3-2L+0QFJAqBG+uj2sYmF=dtzT_kqwK59cu94vGw@mail.gmail.com>
- <20191003104356.GA77584@google.com> <CAH2r5msF5DF2ac+-V0xRR-8RYeQdwpsS1iBLHM6iKTB+aEVc5Q@mail.gmail.com>
- <CAK7LNARrdQad9=U1LknT9yRYtRagNVS8T5r_Ovv5Sa91QO3TsA@mail.gmail.com>
-In-Reply-To: <CAK7LNARrdQad9=U1LknT9yRYtRagNVS8T5r_Ovv5Sa91QO3TsA@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 3 Oct 2019 11:06:42 -0500
-Message-ID: <CAH2r5ms_GdhAG4q3kcadeU44EQPjnebzBG8=DUcsi9Gh5J8UXw@mail.gmail.com>
-Subject: Re: nsdeps not working on modules in 5.4-rc1
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Matthias Maennich <maennich@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 10:24 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Hi Steve,
->
-> On Fri, Oct 4, 2019 at 12:15 AM Steve French <smfrench@gmail.com> wrote:
-> >
-> > On Thu, Oct 3, 2019 at 5:43 AM Matthias Maennich <maennich@google.com> wrote:
-> > >
-> > > Hi Steve!
-> > >
-> > > On Wed, Oct 02, 2019 at 06:54:26PM -0500, Steve French wrote:
-> > > >And running the build differently, from the root of the git tree
-> > > >(5.4-rc1) rather than using the Ubuntu 5.4-rc1 headers also fails
-> > > >
-> > > >e.g. "make  M=fs/cifs modules nsdeps"
-> > > >
-> > > >...
-> > > >  LD [M]  fs/cifs/cifs.o
-> > > >  Building modules, stage 2.
-> > > >  MODPOST 1 modules
-> > > >WARNING: module cifs uses symbol sigprocmask from namespace
-> > > >_fs/cifs/cache.o), but does not import it.
-> > > >...
-> > > >WARNING: module cifs uses symbol posix_test_lock from namespace
-> > > >cifs/cache.o), but does not import it.
-> > > >  CC [M]  fs/cifs/cifs.mod.o
-> > > >  LD [M]  fs/cifs/cifs.ko
-> > > >  Building modules, stage 2.
-> > > >  MODPOST 1 modules
-> > > >./scripts/nsdeps: 34: local: ./fs/cifs/cifsfs.c: bad variable name
-> > > >make: *** [Makefile:1710: nsdeps] Error 2
-> > >
-> > > Thanks for reporting this. It appears to me you hit a bug that was
-> > > recently discovered: when building with `make M=some/subdirectory`,
-> > > modpost is misbehaving. Can you try whether this patch series solves
-> > > your problems:
-> > > https://lore.kernel.org/lkml/20191003075826.7478-1-yamada.masahiro@socionext.com/
-> > > In particular patch 2/6 out of the series.
-> > >
-> > > Cheers,
-> > > Matthias
-> >
-> >
-> > Applying just patch 2 and doing "make" from the root of the git tree
-> > (5.4-rc1), at the tail end of the build I got
-> >
-> > ...
-> > Kernel: arch/x86/boot/bzImage is ready  (#87)
-> >   Building modules, stage 2.
-> >   MODPOST 5340 modules
-> > free(): invalid pointer
-> > Aborted (core dumped)
->
->
-> Right.
->
-> Since 2/6 depends on 1/6,
-> applying only the second one does not work.
+Em Thu, 3 Oct 2019 18:03:36 +0200
+Gon Solo <gonsolo@gmail.com> escreveu:
 
-Applying both 1 and 2 I get the following error doing make (although
-it makes it a long way into the build)
+> > With the original patch you proposed, what are the logs?  
+> 
+> With the following patch applied to media_tree master:
+> 
+> diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
+> index e87040d6eca7..4c1ab0b6876a 100644
+> --- a/drivers/media/tuners/si2157.c
+> +++ b/drivers/media/tuners/si2157.c
+> @@ -129,13 +129,14 @@ static int si2157_init(struct dvb_frontend *fe)
+>  	chip_id = cmd.args[1] << 24 | cmd.args[2] << 16 | cmd.args[3] << 8 |
+>  			cmd.args[4] << 0;
+>  
+> -	#define SI2177_A30 ('A' << 24 | 77 << 16 | '3' << 8 | '0' << 0)
+> -	#define SI2158_A20 ('A' << 24 | 58 << 16 | '2' << 8 | '0' << 0)
+> -	#define SI2148_A20 ('A' << 24 | 48 << 16 | '2' << 8 | '0' << 0)
+> -	#define SI2157_A30 ('A' << 24 | 57 << 16 | '3' << 8 | '0' << 0)
+> -	#define SI2147_A30 ('A' << 24 | 47 << 16 | '3' << 8 | '0' << 0)
+> -	#define SI2146_A10 ('A' << 24 | 46 << 16 | '1' << 8 | '0' << 0)
+> -	#define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
+> +	#define SI2177_A30 ('A' << 24 |  77 << 16 | '3' << 8 | '0' << 0)
+> +	#define SI2158_A20 ('A' << 24 |  58 << 16 | '2' << 8 | '0' << 0)
+> +	#define SI2148_A20 ('A' << 24 |  48 << 16 | '2' << 8 | '0' << 0)
+> +	#define SI2157_A30 ('A' << 24 |  57 << 16 | '3' << 8 | '0' << 0)
+> +	#define SI2147_A30 ('A' << 24 |  47 << 16 | '3' << 8 | '0' << 0)
+> +	#define SI2146_A10 ('A' << 24 |  46 << 16 | '1' << 8 | '0' << 0)
+> +	#define SI2141_A10 ('A' << 24 |  41 << 16 | '1' << 8 | '0' << 0)
+> +	#define SI_BOGUS   (255 << 24 | 255 << 16 | 255 << 8 | 255 << 0)
+>  
+>  	switch (chip_id) {
+>  	case SI2158_A20:
+> @@ -148,6 +149,10 @@ static int si2157_init(struct dvb_frontend *fe)
+>  	case SI2177_A30:
+>  		fw_name = SI2157_A30_FIRMWARE;
+>  		break;
+> +	case SI_BOGUS:
+> +		dev_info(&client->dev, "Bogus chip version, trying with no firmware\n");
+> +		fw_name = NULL;
+> +		break;
+>  	case SI2157_A30:
+>  	case SI2147_A30:
+>  	case SI2146_A10:
+> @@ -225,6 +230,7 @@ static int si2157_init(struct dvb_frontend *fe)
+>  
+>  	dev_info(&client->dev, "firmware version: %c.%c.%d\n",
+>  			cmd.args[6], cmd.args[7], cmd.args[8]);
+>  warm:
+>  	/* init statistics in order signal app which are supported */
+>  	c->strength.len = 1;
+> diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
+> index 3afd18733614..a8d59cf06b1e 100644
+> --- a/drivers/media/usb/dvb-usb-v2/af9035.c
+> +++ b/drivers/media/usb/dvb-usb-v2/af9035.c
+> @@ -1197,6 +1197,11 @@ static int af9035_frontend_attach(struct dvb_usb_adapter *adap)
+>  	return ret;
+>  }
+>  
+> +/* I2C speed register = (1000000000 / (24.4 * 16 * I2C_speed))
+> + * 7 equals ~400k, 26 ~100k and 260 ~10k.
+> + * */
+> +#define I2C_SPEED_REGISTER 7
+> +
+>  static int it930x_frontend_attach(struct dvb_usb_adapter *adap)
+>  {
+>  	struct state *state = adap_to_priv(adap);
+> @@ -1208,13 +1213,13 @@ static int it930x_frontend_attach(struct dvb_usb_adapter *adap)
+>  
+>  	dev_dbg(&intf->dev, "adap->id=%d\n", adap->id);
+>  
+> -	/* I2C master bus 2 clock speed 300k */
+> -	ret = af9035_wr_reg(d, 0x00f6a7, 0x07);
+> +	/* I2C master bus 2 clock speed */
+> +	ret = af9035_wr_reg(d, 0x00f6a7, I2C_SPEED_REGISTER);
+>  	if (ret < 0)
+>  		goto err;
+>  
+> -	/* I2C master bus 1,3 clock speed 300k */
+> -	ret = af9035_wr_reg(d, 0x00f103, 0x07);
+> +	/* I2C master bus 1,3 clock speed */
+> +	ret = af9035_wr_reg(d, 0x00f103, I2C_SPEED_REGISTER);
+>  	if (ret < 0)
+>  		goto err;
+>  
+> @@ -2119,6 +2124,8 @@ static const struct usb_device_id af9035_id_table[] = {
+>  	/* IT930x devices */
+>  	{ DVB_USB_DEVICE(USB_VID_ITETECH, USB_PID_ITETECH_IT9303,
+>  		&it930x_props, "ITE 9303 Generic", NULL) },
+> +	{ DVB_USB_DEVICE(USB_VID_DEXATEK, 0x0100,
+> +		&it930x_props, "Logilink VG0022A", NULL) },
+>  	{ DVB_USB_DEVICE(USB_VID_AVERMEDIA, USB_PID_AVERMEDIA_TD310,
+>  		&it930x_props, "AVerMedia TD310 DVB-T2", NULL) },
+>  	{ }
+> 
+> the Messages at boot time are
+> 
+> [    4.262882] si2168 1-0067: Silicon Labs Si2168-B40 successfully identified
+> [    4.262884] si2168 1-0067: firmware version: B 4.0.2
+> [    4.262902] usb 2-1: DVB: registering adapter 0 frontend 0 (Silicon Labs Si2168)...
+> [    4.262908] dvbdev: dvb_create_media_entity: media entity 'Silicon Labs Si2168' registered.
+> [    4.289776] si2157 2-0063: Silicon Labs Si2147/2148/2157/2158 successfully attached
+> 
+> and the messages when running vlc (successfully) are
+> 
+> [  486.537128] si2168 1-0067: downloading firmware from file 'dvb-demod-si2168-b40-01.fw'
+> [  487.795436] si2168 1-0067: firmware version: B 4.0.25
+> [  487.807614] si2157 2-0063: Bogus chip version, trying with no firmware
+> [  487.807618] si2157 2-0063: found a 'Silicon Labs Si21255-\xff\xff\xff'
+> [  487.833876] si2157 2-0063: firmware version: \xff.\xff.255
 
-<snip>
-WARNING: drivers/usb/storage/usb-storage: 'USB_STORAGE' exported
-twice. Previous export was in drivers/usb/storage/usb-storage.ko
-ERROR: "usb_stor_set_xfer_buf" [drivers/usb/storage/ums-usbat.ko] undefined!
-ERROR: "usb_stor_access_xfer_buf" [drivers/usb/storage/ums-usbat.ko] undefined!
-ERROR: "usb_stor_post_reset" [drivers/usb/storage/ums-usbat.ko] undefined!
-ERROR: "usb_stor_disconnect" [drivers/usb/storage/ums-usbat.ko] undefined!
-<snip>
-ERROR: "usb_stor_adjust_quirks" [drivers/usb/storage/uas.ko] undefined!
-ERROR: "usb_stor_sense_invalidCDB" [drivers/usb/storage/uas.ko] undefined!
-WARNING: "USB_STORAGE" [drivers/usb/storage/usb-storage] is a static
-EXPORT_SYMBOL_GPL
-make[1]: *** [scripts/Makefile.modpost:94: __modpost] Error 1
-make: *** [Makefile:1303: modules] Error 2
-
-Running "make M=fs/cifs nsdeps" I still get the error
-
-  Building modules, stage 2.
-  MODPOST 1 modules
-./scripts/nsdeps: 34: local: ./fs/cifs/cifsfs.c: bad variable name
-make: *** [Makefile:1710: nsdeps] Error 2
+No, I mean with the first patch you sent to the ML, with the powerup
+hack.
 
 
-
--- 
 Thanks,
-
-Steve
+Mauro
