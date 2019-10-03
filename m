@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 191E9CA558
+	by mail.lfdr.de (Postfix) with ESMTP id EE375CA55A
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391999AbfJCQdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:33:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41374 "EHLO mail.kernel.org"
+        id S2392021AbfJCQdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:33:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404066AbfJCQdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:33:24 -0400
+        id S2392006AbfJCQdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:33:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2CA620830;
-        Thu,  3 Oct 2019 16:33:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F3A420830;
+        Thu,  3 Oct 2019 16:33:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120403;
-        bh=gvv0LsompVGXjpuBgj9I67q5B+fRbpqCxYEYavnNq64=;
+        s=default; t=1570120414;
+        bh=WbgxNP3QFWxN6WoB3PxWw3/x2rMUsZ0UosLpkH6AAk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vUTpc35BEGi5yUjGB+wSkqQ3+NXsh1dsqYEXRgLhKg/VzHMhja+OPM4BKJrzbFY9D
-         HqQibdxppNgJTEcvBGI2XYYMKsQ70sowHksdt5r/O1nYKMwpcPp67d7SnSEzRMaGXz
-         RGhCQOUPWav7z13C0NOiZmNxaot3ncxli8P0nyF0=
+        b=fuQJiqHg5R/omtk2J41IWhqmssAnhM0bO+A3ZuQJGqXoVm9APVc+mpD3ct2F+bqXZ
+         HfIwx+9Jz3KNHWlHcW0sjwo5pgUgbDaKrEB/8zQkD82xjoc7Dxs/Y9i7z9DOd2pUS4
+         tIiAZRQ0Np+tXeUmKCVe9RxcMRsFvImFENAht+lo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Palecek <jpalecek@web.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 210/313] kvm: Nested KVM MMUs need PAE root too
-Date:   Thu,  3 Oct 2019 17:53:08 +0200
-Message-Id: <20191003154553.658097188@linuxfoundation.org>
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 5.2 214/313] ARM: omap2plus_defconfig: Fix missing video
+Date:   Thu,  3 Oct 2019 17:53:12 +0200
+Message-Id: <20191003154554.073304812@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,111 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiří Paleček <jpalecek@web.de>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit 1cfff4d9a5d01fa61e5768a6afffc81ae1c8ecb9 ]
+commit 4957eccf979b025286b39388fd1a60cde601a10a upstream.
 
-On AMD processors, in PAE 32bit mode, nested KVM instances don't
-work. The L0 host get a kernel OOPS, which is related to
-arch.mmu->pae_root being NULL.
+When the panel-dpi driver was removed, the simple-panels driver
+was never enabled, so anyone who used the panel-dpi driver lost
+video, and those who used it inconjunction with simple-panels
+would have to manually enable CONFIG_DRM_PANEL_SIMPLE.
 
-The reason for this is that when setting up nested KVM instance,
-arch.mmu is set to &arch.guest_mmu (while normally, it would be
-&arch.root_mmu). However, the initialization and allocation of
-pae_root only creates it in root_mmu. KVM code (ie. in
-mmu_alloc_shadow_roots) then accesses arch.mmu->pae_root, which is the
-unallocated arch.guest_mmu->pae_root.
+This patch makes CONFIG_DRM_PANEL_SIMPLE a module in the same
+way the deprecated panel-dpi was.
 
-This fix just allocates (and frees) pae_root in both guest_mmu and
-root_mmu (and also lm_root if it was allocated). The allocation is
-subject to previous restrictions ie. it won't allocate anything on
-64-bit and AFAIK not on Intel.
+Fixes: 8bf4b1621178 ("drm/omap: Remove panel-dpi driver")
 
-Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=203923
-Fixes: 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu")
-Signed-off-by: Jiri Palecek <jpalecek@web.de>
-Tested-by: Jiri Palecek <jpalecek@web.de>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/kvm/mmu.c | 30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
+ arch/arm/configs/omap2plus_defconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 66055ca29b6b4..9130152d5ed83 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -5607,13 +5607,13 @@ slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb);
- }
- 
--static void free_mmu_pages(struct kvm_vcpu *vcpu)
-+static void free_mmu_pages(struct kvm_mmu *mmu)
- {
--	free_page((unsigned long)vcpu->arch.mmu->pae_root);
--	free_page((unsigned long)vcpu->arch.mmu->lm_root);
-+	free_page((unsigned long)mmu->pae_root);
-+	free_page((unsigned long)mmu->lm_root);
- }
- 
--static int alloc_mmu_pages(struct kvm_vcpu *vcpu)
-+static int alloc_mmu_pages(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu)
- {
- 	struct page *page;
- 	int i;
-@@ -5634,9 +5634,9 @@ static int alloc_mmu_pages(struct kvm_vcpu *vcpu)
- 	if (!page)
- 		return -ENOMEM;
- 
--	vcpu->arch.mmu->pae_root = page_address(page);
-+	mmu->pae_root = page_address(page);
- 	for (i = 0; i < 4; ++i)
--		vcpu->arch.mmu->pae_root[i] = INVALID_PAGE;
-+		mmu->pae_root[i] = INVALID_PAGE;
- 
- 	return 0;
- }
-@@ -5644,6 +5644,7 @@ static int alloc_mmu_pages(struct kvm_vcpu *vcpu)
- int kvm_mmu_create(struct kvm_vcpu *vcpu)
- {
- 	uint i;
-+	int ret;
- 
- 	vcpu->arch.mmu = &vcpu->arch.root_mmu;
- 	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
-@@ -5661,7 +5662,19 @@ int kvm_mmu_create(struct kvm_vcpu *vcpu)
- 		vcpu->arch.guest_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
- 
- 	vcpu->arch.nested_mmu.translate_gpa = translate_nested_gpa;
--	return alloc_mmu_pages(vcpu);
-+
-+	ret = alloc_mmu_pages(vcpu, &vcpu->arch.guest_mmu);
-+	if (ret)
-+		return ret;
-+
-+	ret = alloc_mmu_pages(vcpu, &vcpu->arch.root_mmu);
-+	if (ret)
-+		goto fail_allocate_root;
-+
-+	return ret;
-+ fail_allocate_root:
-+	free_mmu_pages(&vcpu->arch.guest_mmu);
-+	return ret;
- }
- 
- 
-@@ -6134,7 +6147,8 @@ unsigned long kvm_mmu_calculate_default_mmu_pages(struct kvm *kvm)
- void kvm_mmu_destroy(struct kvm_vcpu *vcpu)
- {
- 	kvm_mmu_unload(vcpu);
--	free_mmu_pages(vcpu);
-+	free_mmu_pages(&vcpu->arch.root_mmu);
-+	free_mmu_pages(&vcpu->arch.guest_mmu);
- 	mmu_free_memory_caches(vcpu);
- }
- 
--- 
-2.20.1
-
+--- a/arch/arm/configs/omap2plus_defconfig
++++ b/arch/arm/configs/omap2plus_defconfig
+@@ -363,6 +363,7 @@ CONFIG_DRM_OMAP_PANEL_TPO_TD028TTEC1=m
+ CONFIG_DRM_OMAP_PANEL_TPO_TD043MTEA1=m
+ CONFIG_DRM_OMAP_PANEL_NEC_NL8048HL11=m
+ CONFIG_DRM_TILCDC=m
++CONFIG_DRM_PANEL_SIMPLE=m
+ CONFIG_FB=y
+ CONFIG_FIRMWARE_EDID=y
+ CONFIG_FB_MODE_HELPERS=y
 
 
