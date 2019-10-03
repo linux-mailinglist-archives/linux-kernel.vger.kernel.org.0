@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E713ECA2BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD6A2CA2BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730940AbfJCQIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56688 "EHLO mail.kernel.org"
+        id S1733187AbfJCQIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:08:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731886AbfJCQI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:26 -0400
+        id S1733155AbfJCQI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:08:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8940B215EA;
-        Thu,  3 Oct 2019 16:08:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BB9420865;
+        Thu,  3 Oct 2019 16:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118906;
-        bh=7dFsxG1YLl3GjuYFLgokzQIzvV40LA4esZrNSpI38To=;
+        s=default; t=1570118908;
+        bh=SJoa6ch7YWT88IzJRbD/Ujj7hZoK2RBN31oGU40WAAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ut0Bp6+3nrN7n8VPOO9gyAuEvnMPaIOFGitn5ysBOED33Nf1DFoGitGIv+GCUrOZN
-         68hpQm6YV+If3G36grGB84nasmccQuyhDnG52LmzSzjQGot7DwyeEGfblo2D+K/Tdy
-         kcX1Kwe8emax3sJCQdjBWnz79J3shqEAn6deVjzo=
+        b=mrYIfnLToqoIiUwjUIYIpObsg/4kiE+w150gRY09R+xaaX+McKXHLPzr6XgD21LSQ
+         Z8fyrRCuGzWUjD6IM2kKOzcVFJfkB33CyQ2DXhg2IoBGnelPLPqZIridXC0P6UqQdg
+         0fe23WICrsOc2dachQoCniTYXuG8U5Z0+zI1/VqQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        stable@vger.kernel.org,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Fabio Estevam <festevam@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 054/185] regulator: lm363x: Fix off-by-one n_voltages for lm3632 ldo_vpos/ldo_vneg
-Date:   Thu,  3 Oct 2019 17:52:12 +0200
-Message-Id: <20191003154449.808487786@linuxfoundation.org>
+Subject: [PATCH 4.14 055/185] ASoC: sgtl5000: Fix charge pump source assignment
+Date:   Thu,  3 Oct 2019 17:52:13 +0200
+Message-Id: <20191003154449.941253223@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,50 +48,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 
-[ Upstream commit 1e2cc8c5e0745b545d4974788dc606d678b6e564 ]
+[ Upstream commit b6319b061ba279577fd7030a9848fbd6a17151e3 ]
 
-According to the datasheet https://www.ti.com/lit/ds/symlink/lm3632a.pdf
-Table 20. VPOS Bias Register Field Descriptions VPOS[5:0]
-Sets the Positive Display Bias (LDO) Voltage (50 mV per step)
-000000: 4 V
-000001: 4.05 V
-000010: 4.1 V
-....................
-011101: 5.45 V
-011110: 5.5 V (Default)
-011111: 5.55 V
-....................
-100111: 5.95 V
-101000: 6 V
-Note: Codes 101001 to 111111 map to 6 V
+If VDDA != VDDIO and any of them is greater than 3.1V, charge pump
+source can be assigned automatically [1].
 
-The LM3632_LDO_VSEL_MAX should be 0b101000 (0x28), so the maximum voltage
-can match the datasheet.
+[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
 
-Fixes: 3a8d1a73a037 ("regulator: add LM363X driver")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20190626132632.32629-1-axel.lin@ingics.com
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Link: https://lore.kernel.org/r/20190719100524.23300-7-oleksandr.suvorov@toradex.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/lm363x-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/sgtl5000.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
-index ce5f7d9ad475f..30f576a5daf18 100644
---- a/drivers/regulator/lm363x-regulator.c
-+++ b/drivers/regulator/lm363x-regulator.c
-@@ -33,7 +33,7 @@
+diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
+index 0b11a2e01b2fc..b649675d190d2 100644
+--- a/sound/soc/codecs/sgtl5000.c
++++ b/sound/soc/codecs/sgtl5000.c
+@@ -1084,12 +1084,17 @@ static int sgtl5000_set_power_regs(struct snd_soc_codec *codec)
+ 					SGTL5000_INT_OSC_EN);
+ 		/* Enable VDDC charge pump */
+ 		ana_pwr |= SGTL5000_VDDC_CHRGPMP_POWERUP;
+-	} else if (vddio >= 3100 && vdda >= 3100) {
++	} else {
+ 		ana_pwr &= ~SGTL5000_VDDC_CHRGPMP_POWERUP;
+-		/* VDDC use VDDIO rail */
+-		lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
+-		lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
+-			    SGTL5000_VDDC_MAN_ASSN_SHIFT;
++		/*
++		 * if vddio == vdda the source of charge pump should be
++		 * assigned manually to VDDIO
++		 */
++		if (vddio == vdda) {
++			lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
++			lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
++				    SGTL5000_VDDC_MAN_ASSN_SHIFT;
++		}
+ 	}
  
- /* LM3632 */
- #define LM3632_BOOST_VSEL_MAX		0x26
--#define LM3632_LDO_VSEL_MAX		0x29
-+#define LM3632_LDO_VSEL_MAX		0x28
- #define LM3632_VBOOST_MIN		4500000
- #define LM3632_VLDO_MIN			4000000
- 
+ 	snd_soc_write(codec, SGTL5000_CHIP_LINREG_CTRL, lreg_ctrl);
 -- 
 2.20.1
 
