@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434B3CA2BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13F6ECA1F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733243AbfJCQIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56846 "EHLO mail.kernel.org"
+        id S1730042AbfJCQAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:00:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731955AbfJCQIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:35 -0400
+        id S1729838AbfJCQAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F5A021848;
-        Thu,  3 Oct 2019 16:08:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D070920700;
+        Thu,  3 Oct 2019 16:00:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118914;
-        bh=g7ImD3Q5yFxdqIyESBY5o6a+si5j7yoFRXlz7SFGtl0=;
+        s=default; t=1570118441;
+        bh=4P6MSDnzsesx6pv5JsKnOe6/ahOueIEhgfYHMzGTTjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bcpqZMH4WWkVQWHCxnP/6QZCEQCnMbkB2DnnE9U3UpknrhDMsjzLTC1Vi57Ng0t1H
-         PnwBCmna64JbH2RcIzpgIYiCmATf/VamxtuDxEHYy5ukUCsqkCVjVj7VmOSJSc0Ov1
-         DwhGd2aQ8u93mZ70wu4G627RzZxtG20lSzK3qHeE=
+        b=16REERKDipfuUqBSq1iW2ycAzK9kBCLtQTqqXr4C09t9X1mS0eXHITrekFUaWeBL/
+         AsO/x/AwlhA57OZruxTQgKat47+DDXKe294iJ1m6tuRbe9fDtAtI8A0PrJA9Ey7EvT
+         BjSVkUJpJOTF44LgfYTBPl1wTQ33fIFg9Yh7Mr3g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Stoughton <nstoughton@logitech.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        stable@vger.kernel.org, Yu Wang <yyuwang@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 057/185] leds: leds-lp5562 allow firmware files up to the maximum length
-Date:   Thu,  3 Oct 2019 17:52:15 +0200
-Message-Id: <20191003154450.192983537@linuxfoundation.org>
+Subject: [PATCH 4.9 013/129] mac80211: handle deauthentication/disassociation from TDLS peer
+Date:   Thu,  3 Oct 2019 17:52:16 +0200
+Message-Id: <20191003154324.605928554@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Stoughton <nstoughton@logitech.com>
+From: Yu Wang <yyuwang@codeaurora.org>
 
-[ Upstream commit ed2abfebb041473092b41527903f93390d38afa7 ]
+[ Upstream commit 79c92ca42b5a3e0ea172ea2ce8df8e125af237da ]
 
-Firmware files are in ASCII, using 2 hex characters per byte. The
-maximum length of a firmware string is therefore
+When receiving a deauthentication/disassociation frame from a TDLS
+peer, a station should not disconnect the current AP, but only
+disable the current TDLS link if it's enabled.
 
-16 (commands) * 2 (bytes per command) * 2 (characters per byte) = 64
+Without this change, a TDLS issue can be reproduced by following the
+steps as below:
 
-Fixes: ff45262a85db ("leds: add new LP5562 LED driver")
-Signed-off-by: Nick Stoughton <nstoughton@logitech.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+1. STA-1 and STA-2 are connected to AP, bidirection traffic is running
+   between STA-1 and STA-2.
+2. Set up TDLS link between STA-1 and STA-2, stay for a while, then
+   teardown TDLS link.
+3. Repeat step #2 and monitor the connection between STA and AP.
+
+During the test, one STA may send a deauthentication/disassociation
+frame to another, after TDLS teardown, with reason code 6/7, which
+means: Class 2/3 frame received from nonassociated STA.
+
+On receive this frame, the receiver STA will disconnect the current
+AP and then reconnect. It's not a expected behavior, purpose of this
+frame should be disabling the TDLS link, not the link with AP.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Yu Wang <yyuwang@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/leds-lp5562.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/mac80211/ieee80211_i.h |  3 +++
+ net/mac80211/mlme.c        | 12 +++++++++++-
+ net/mac80211/tdls.c        | 23 +++++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
-index 05ffa34fb6ad0..9d9b673c873c6 100644
---- a/drivers/leds/leds-lp5562.c
-+++ b/drivers/leds/leds-lp5562.c
-@@ -263,7 +263,11 @@ static void lp5562_firmware_loaded(struct lp55xx_chip *chip)
- {
- 	const struct firmware *fw = chip->fw;
+diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
+index 6708de10a3e5e..0b0de3030e0dc 100644
+--- a/net/mac80211/ieee80211_i.h
++++ b/net/mac80211/ieee80211_i.h
+@@ -2123,6 +2123,9 @@ void ieee80211_tdls_cancel_channel_switch(struct wiphy *wiphy,
+ 					  const u8 *addr);
+ void ieee80211_teardown_tdls_peers(struct ieee80211_sub_if_data *sdata);
+ void ieee80211_tdls_chsw_work(struct work_struct *wk);
++void ieee80211_tdls_handle_disconnect(struct ieee80211_sub_if_data *sdata,
++				      const u8 *peer, u16 reason);
++const char *ieee80211_get_reason_code_string(u16 reason_code);
  
--	if (fw->size > LP5562_PROGRAM_LENGTH) {
-+	/*
-+	 * the firmware is encoded in ascii hex character, with 2 chars
-+	 * per byte
-+	 */
-+	if (fw->size > (LP5562_PROGRAM_LENGTH * 2)) {
- 		dev_err(&chip->cl->dev, "firmware data size overflow: %zu\n",
- 			fw->size);
+ extern const struct ethtool_ops ieee80211_ethtool_ops;
+ 
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index 090e2aa8630e8..c75594a12c38e 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -2755,7 +2755,7 @@ static void ieee80211_rx_mgmt_auth(struct ieee80211_sub_if_data *sdata,
+ #define case_WLAN(type) \
+ 	case WLAN_REASON_##type: return #type
+ 
+-static const char *ieee80211_get_reason_code_string(u16 reason_code)
++const char *ieee80211_get_reason_code_string(u16 reason_code)
+ {
+ 	switch (reason_code) {
+ 	case_WLAN(UNSPECIFIED);
+@@ -2820,6 +2820,11 @@ static void ieee80211_rx_mgmt_deauth(struct ieee80211_sub_if_data *sdata,
+ 	if (len < 24 + 2)
  		return;
+ 
++	if (!ether_addr_equal(mgmt->bssid, mgmt->sa)) {
++		ieee80211_tdls_handle_disconnect(sdata, mgmt->sa, reason_code);
++		return;
++	}
++
+ 	if (ifmgd->associated &&
+ 	    ether_addr_equal(mgmt->bssid, ifmgd->associated->bssid)) {
+ 		const u8 *bssid = ifmgd->associated->bssid;
+@@ -2869,6 +2874,11 @@ static void ieee80211_rx_mgmt_disassoc(struct ieee80211_sub_if_data *sdata,
+ 
+ 	reason_code = le16_to_cpu(mgmt->u.disassoc.reason_code);
+ 
++	if (!ether_addr_equal(mgmt->bssid, mgmt->sa)) {
++		ieee80211_tdls_handle_disconnect(sdata, mgmt->sa, reason_code);
++		return;
++	}
++
+ 	sdata_info(sdata, "disassociated from %pM (Reason: %u=%s)\n",
+ 		   mgmt->sa, reason_code,
+ 		   ieee80211_get_reason_code_string(reason_code));
+diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
+index c64ae68ae4f84..863f92c087014 100644
+--- a/net/mac80211/tdls.c
++++ b/net/mac80211/tdls.c
+@@ -2001,3 +2001,26 @@ void ieee80211_tdls_chsw_work(struct work_struct *wk)
+ 	}
+ 	rtnl_unlock();
+ }
++
++void ieee80211_tdls_handle_disconnect(struct ieee80211_sub_if_data *sdata,
++				      const u8 *peer, u16 reason)
++{
++	struct ieee80211_sta *sta;
++
++	rcu_read_lock();
++	sta = ieee80211_find_sta(&sdata->vif, peer);
++	if (!sta || !sta->tdls) {
++		rcu_read_unlock();
++		return;
++	}
++	rcu_read_unlock();
++
++	tdls_dbg(sdata, "disconnected from TDLS peer %pM (Reason: %u=%s)\n",
++		 peer, reason,
++		 ieee80211_get_reason_code_string(reason));
++
++	ieee80211_tdls_oper_request(&sdata->vif, peer,
++				    NL80211_TDLS_TEARDOWN,
++				    WLAN_REASON_TDLS_TEARDOWN_UNREACHABLE,
++				    GFP_ATOMIC);
++}
 -- 
 2.20.1
 
