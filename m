@@ -2,88 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6868FCA38F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B47A1CA3AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389009AbfJCQQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:16:31 -0400
-Received: from foss.arm.com ([217.140.110.172]:48430 "EHLO foss.arm.com"
+        id S1729271AbfJCQR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:17:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388982AbfJCQQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:16:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C54E1000;
-        Thu,  3 Oct 2019 09:16:24 -0700 (PDT)
-Received: from arrakis.emea.arm.com (unknown [10.1.196.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EFC23F739;
-        Thu,  3 Oct 2019 09:16:23 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 17:16:21 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     ard.biesheuvel@linaro.org, ndesaulniers@google.com,
-        linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-        will@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/6] arm64: vdso32: Fix syncconfig errors.
-Message-ID: <20191003161621.GJ21629@arrakis.emea.arm.com>
-References: <20191002144156.2174-1-vincenzo.frascino@arm.com>
- <20191002144156.2174-2-vincenzo.frascino@arm.com>
- <20191003160041.GI21629@arrakis.emea.arm.com>
+        id S2389349AbfJCQRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:17:54 -0400
+Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11C6A215EA;
+        Thu,  3 Oct 2019 16:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570119473;
+        bh=FERkCSeCrTfeA7B2Qv/31CeQdyCYPtev+CqxmGRT/hQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=l/z3fhRPTCw2Y7dHHmkDZx8PVF2MLMwofuA1vBfi5IjMaa+vFG+JtkBCCAL8f6If8
+         eayCiWI4iyKiyr85gyQ3RKeATIZJ8RutysJUziJGRfuqAwdouYnB6ZByk0xPhd/C4+
+         frbm2d4k57p/VfRX4JvUg/0+ZqgagDUuDzLNwE/k=
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: [PATCH 0/2] vtime: Remove pair of seqcount on context switch
+Date:   Thu,  3 Oct 2019 18:17:43 +0200
+Message-Id: <20191003161745.28464-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003160041.GI21629@arrakis.emea.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 05:00:41PM +0100, Catalin Marinas wrote:
-> On Wed, Oct 02, 2019 at 03:41:51PM +0100, Vincenzo Frascino wrote:
-> > diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> > index 84a3d502c5a5..dfa6a5cb99e4 100644
-> > --- a/arch/arm64/Makefile
-> > +++ b/arch/arm64/Makefile
-> > @@ -53,20 +53,12 @@ $(warning Detected assembler with broken .inst; disassembly will be unreliable)
-> >    endif
-> >  endif
-> >  
-> > +COMPATCC ?= $(CROSS_COMPILE_COMPAT)gcc
-> > +export COMPATCC
-> > +
-> >  ifeq ($(CONFIG_GENERIC_COMPAT_VDSO), y)
-> > -  CROSS_COMPILE_COMPAT ?= $(CONFIG_CROSS_COMPILE_COMPAT_VDSO:"%"=%)
-> > -
-> > -  ifeq ($(CONFIG_CC_IS_CLANG), y)
-> > -    $(warning CROSS_COMPILE_COMPAT is clang, the compat vDSO will not be built)
-> > -  else ifeq ($(strip $(CROSS_COMPILE_COMPAT)),)
-> > -    $(warning CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built)
-> > -  else ifeq ($(shell which $(CROSS_COMPILE_COMPAT)gcc 2> /dev/null),)
-> > -    $(error $(CROSS_COMPILE_COMPAT)gcc not found, check CROSS_COMPILE_COMPAT)
-> > -  else
-> > -    export CROSS_COMPILE_COMPAT
-> > -    export CONFIG_COMPAT_VDSO := y
-> > -    compat_vdso := -DCONFIG_COMPAT_VDSO=1
-> > -  endif
-> > +  export CONFIG_COMPAT_VDSO := y
-> > +  compat_vdso := -DCONFIG_COMPAT_VDSO=1
-> >  endif
-> 
-> With this change, if I don't have any CROSS_COMPILE_COMPAT in my
-> environment, the kernel fails to build because COMPATCC becomes gcc
-> which cannot build the vdso32. What I really want is not to warn me, nor
-> fail to build the kernel when I don't care about the compat vDSO (e.g. I
-> have a 64-bit only machine).
-> 
-> What saved us before was the COMPATCC_IS_ARM_GCC check and a selection
-> of the GENERIC_COMPAT_VDSO dependent on this check. This was now dropped
-> from the previous version of the patch. We could add something like
-> COMPATCC_CAN_LINK.
+Extracted from a larger queue that fixes kcpustat on nohz_full, these
+two patches have value on their own as they remove two write barriers
+on nohz_full context switch.
 
-Ah, the COMPATCC_CAN_LINK idea doesn't help because an x86 gcc can still
-link. Maybe only enable CONFIG_COMPAT_VDSO above if CROSS_COMPILE_COMPAT
-was set. You could move the COMPATCC setting and export under the
-same 'if' block in the Makefile.
+Frederic Weisbecker (2):
+  vtime: Rename vtime_account_system() to vtime_account_kernel()
+  vtime: Spare a seqcount lock/unlock cycle on context switch
+
+ arch/ia64/kernel/time.c          |  4 +--
+ arch/powerpc/kernel/time.c       |  6 ++--
+ arch/s390/kernel/vtime.c         |  4 +--
+ include/linux/context_tracking.h |  4 +--
+ include/linux/vtime.h            | 38 ++++++++++++------------
+ kernel/sched/cputime.c           | 50 ++++++++++++++++++--------------
+ 6 files changed, 57 insertions(+), 49 deletions(-)
 
 -- 
-Catalin
+2.23.0
+
