@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B99CA5C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB5DCA729
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404409AbfJCQg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:36:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
+        id S2391841AbfJCQvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:51:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392227AbfJCQgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:36:22 -0400
+        id S2405182AbfJCQvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:51:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EE5F2070B;
-        Thu,  3 Oct 2019 16:36:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC8EA2054F;
+        Thu,  3 Oct 2019 16:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120581;
-        bh=Vhn61zfodW2nUexBhYAvgnh3S61wuWAuR3adKLo41/0=;
+        s=default; t=1570121467;
+        bh=OSDbZ+qnZK1aTfBoQCDkx4FU7CwedCYXzK82/thGqPc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mk2VQRpgXbOYF0ekaIAwsj/ezLnMApAJjj27r4747OXnXjAtFBVv9uKAlPrVcDOTf
-         LsGGgj8+pZ2e7W5XK0No54M/GoPaQqwaSxOEOdArzT8GpwYjpbYqyAzK6MdufilIOA
-         sgqQX2uFEHXkATeF+C4Vzo/EEsfDGHjC5TGcMUjY=
+        b=SVxXFvyWKEaOU7dapxkbpx4qcEGHKl5bEFRD0yTtl9wf5Ux58GN7G28PirqEo34be
+         16dncNx5AxqQGdwf+bFAlAIAOYggKbDBl28A1NuVpEe5E5tXOE9MZX05GCtD1QqTFP
+         SaXEQgVCT5F4EER91qPPItAp2Zmdd0RsS8lOYeWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rakesh Pillai <pillair@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.2 274/313] ath10k: fix channel info parsing for non tlv target
-Date:   Thu,  3 Oct 2019 17:54:12 +0200
-Message-Id: <20191003154600.019382008@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Peter Jones <pjones@redhat.com>
+Subject: [PATCH 5.3 288/344] efifb: BGRT: Improve efifb_bgrt_sanity_check
+Date:   Thu,  3 Oct 2019 17:54:13 +0200
+Message-Id: <20191003154608.221655861@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,95 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rakesh Pillai <pillair@codeaurora.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 6be6c04bcc2e8770b8637632789ff15765124894 upstream.
+commit 51677dfcc17f88ed754143df670ff064eae67f84 upstream.
 
-The tlv targets such as WCN3990 send more data in the chan info event, which is
-not sent by the non tlv targets. There is a minimum size check in the wmi event
-for non-tlv targets and hence we cannot update the common channel info
-structure as it was done in commit 13104929d2ec ("ath10k: fill the channel
-survey results for WCN3990 correctly"). This broke channel survey results on
-10.x firmware versions.
+For various reasons, at least with x86 EFI firmwares, the xoffset and
+yoffset in the BGRT info are not always reliable.
 
-If the common channel info structure is updated, the size check for chan info
-event for non-tlv targets will fail and return -EPROTO and we see the below
-error messages
+Extensive testing has shown that when the info is correct, the
+BGRT image is always exactly centered horizontally (the yoffset variable
+is more variable and not always predictable).
 
-   ath10k_pci 0000:01:00.0: failed to parse chan info event: -71
+This commit simplifies / improves the bgrt_sanity_check to simply
+check that the BGRT image is exactly centered horizontally and skips
+(re)drawing it when it is not.
 
-Add tlv specific channel info structure and restore the original size of the
-common channel info structure to mitigate this issue.
+This fixes the BGRT image sometimes being drawn in the wrong place.
 
-Tested HW: WCN3990
-	   QCA9887
-Tested FW: WLAN.HL.3.1-00784-QCAHLSWMTPLZ-1
-	   10.2.4-1.0-00037
-
-Fixes: 13104929d2ec ("ath10k: fill the channel survey results for WCN3990 correctly")
-Cc: stable@vger.kernel.org # 5.0
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: stable@vger.kernel.org
+Fixes: 88fe4ceb2447 ("efifb: BGRT: Do not copy the boot graphics for non native resolutions")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Cc: Peter Jones <pjones@redhat.com>,
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190721131918.10115-1-hdegoede@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c |    2 +-
- drivers/net/wireless/ath/ath10k/wmi-tlv.h |   16 ++++++++++++++++
- drivers/net/wireless/ath/ath10k/wmi.h     |    8 --------
- 3 files changed, 17 insertions(+), 9 deletions(-)
+ drivers/video/fbdev/efifb.c |   27 ++++++---------------------
+ 1 file changed, 6 insertions(+), 21 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -810,7 +810,7 @@ static int ath10k_wmi_tlv_op_pull_ch_inf
- 					     struct wmi_ch_info_ev_arg *arg)
+--- a/drivers/video/fbdev/efifb.c
++++ b/drivers/video/fbdev/efifb.c
+@@ -122,28 +122,13 @@ static void efifb_copy_bmp(u8 *src, u32
+  */
+ static bool efifb_bgrt_sanity_check(struct screen_info *si, u32 bmp_width)
  {
- 	const void **tb;
--	const struct wmi_chan_info_event *ev;
-+	const struct wmi_tlv_chan_info_event *ev;
- 	int ret;
+-	static const int default_resolutions[][2] = {
+-		{  800,  600 },
+-		{ 1024,  768 },
+-		{ 1280, 1024 },
+-	};
+-	u32 i, right_margin;
++	/*
++	 * All x86 firmwares horizontally center the image (the yoffset
++	 * calculations differ between boards, but xoffset is predictable).
++	 */
++	u32 expected_xoffset = (si->lfb_width - bmp_width) / 2;
  
- 	tb = ath10k_wmi_tlv_parse_alloc(ar, skb->data, skb->len, GFP_ATOMIC);
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.h
-@@ -1607,6 +1607,22 @@ struct chan_info_params {
- 
- #define WMI_TLV_FLAG_MGMT_BUNDLE_TX_COMPL	BIT(9)
- 
-+struct wmi_tlv_chan_info_event {
-+	__le32 err_code;
-+	__le32 freq;
-+	__le32 cmd_flags;
-+	__le32 noise_floor;
-+	__le32 rx_clear_count;
-+	__le32 cycle_count;
-+	__le32 chan_tx_pwr_range;
-+	__le32 chan_tx_pwr_tp;
-+	__le32 rx_frame_count;
-+	__le32 my_bss_rx_cycle_count;
-+	__le32 rx_11b_mode_data_duration;
-+	__le32 tx_frame_cnt;
-+	__le32 mac_clk_mhz;
-+} __packed;
-+
- struct wmi_tlv_mgmt_tx_compl_ev {
- 	__le32 desc_id;
- 	__le32 status;
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -6524,14 +6524,6 @@ struct wmi_chan_info_event {
- 	__le32 noise_floor;
- 	__le32 rx_clear_count;
- 	__le32 cycle_count;
--	__le32 chan_tx_pwr_range;
--	__le32 chan_tx_pwr_tp;
--	__le32 rx_frame_count;
--	__le32 my_bss_rx_cycle_count;
--	__le32 rx_11b_mode_data_duration;
--	__le32 tx_frame_cnt;
--	__le32 mac_clk_mhz;
+-	for (i = 0; i < ARRAY_SIZE(default_resolutions); i++) {
+-		if (default_resolutions[i][0] == si->lfb_width &&
+-		    default_resolutions[i][1] == si->lfb_height)
+-			break;
+-	}
+-	/* If not a default resolution used for textmode, this should be fine */
+-	if (i >= ARRAY_SIZE(default_resolutions))
+-		return true;
 -
- } __packed;
- 
- struct wmi_10_4_chan_info_event {
+-	/* If the right margin is 5 times smaller then the left one, reject */
+-	right_margin = si->lfb_width - (bgrt_tab.image_offset_x + bmp_width);
+-	if (right_margin < (bgrt_tab.image_offset_x / 5))
+-		return false;
+-
+-	return true;
++	return bgrt_tab.image_offset_x == expected_xoffset;
+ }
+ #else
+ static bool efifb_bgrt_sanity_check(struct screen_info *si, u32 bmp_width)
 
 
