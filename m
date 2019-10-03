@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D77DCA5F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B9BCA747
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404792AbfJCQiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:38:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47866 "EHLO mail.kernel.org"
+        id S2406193AbfJCQw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:52:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404183AbfJCQiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:38:13 -0400
+        id S2406178AbfJCQwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:52:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E7B72070B;
-        Thu,  3 Oct 2019 16:38:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D2732133F;
+        Thu,  3 Oct 2019 16:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120691;
-        bh=uhbaKLWlkBR1MGVt+PBtDFsl8Khc+T7Mn7gXEEVFRhE=;
+        s=default; t=1570121544;
+        bh=zR8prZ67XS3tWyl81iTYJBxZzU5N6ZPe07g20rODNrk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jTXV705SUizATEAua/CjK0sgPeoLOr4e3wNVWeBVxT1vsTZ4CQ5E9UFoE2Hxp8BNX
-         M2u1ZrSweXSWUgh3JpgOA5jOgd5oidzUk0mes5vpH6PENE33+gLfE0EI8icm0mvYKT
-         YKrf3/CECOHak2YqjlSex8fxb2fZHsNx6TicQ0qU=
+        b=wb68v6VFW8KJTmUUYsbNe+nVSbj38JRzPiUTatY7SK+v/YY8vSPGOBMU04+uG3bVg
+         iS/QnmADr9pU15B24ByIUjxSCNk7e1wcCPX7Do7Je279tWwb8TFOAn5A4zdjIjHBuy
+         SPdyY10SkI7/09qKdw0/yITVrM4FrEiOlNy/NIF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.2 288/313] Btrfs: fix race setting up and completing qgroup rescan workers
+        stable@vger.kernel.org, Stefan Assmann <sassmann@kpanic.de>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: [PATCH 5.3 301/344] i40e: check __I40E_VF_DISABLE bit in i40e_sync_filters_subtask
 Date:   Thu,  3 Oct 2019 17:54:26 +0200
-Message-Id: <20191003154601.462968395@linuxfoundation.org>
+Message-Id: <20191003154609.147514725@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,202 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Stefan Assmann <sassmann@kpanic.de>
 
-commit 13fc1d271a2e3ab8a02071e711add01fab9271f6 upstream.
+commit a7542b87607560d0b89e7ff81d870bd6ff8835cb upstream.
 
-There is a race between setting up a qgroup rescan worker and completing
-a qgroup rescan worker that can lead to callers of the qgroup rescan wait
-ioctl to either not wait for the rescan worker to complete or to hang
-forever due to missing wake ups. The following diagram shows a sequence
-of steps that illustrates the race.
+While testing VF spawn/destroy the following panic occurred.
 
-        CPU 1                                                         CPU 2                                  CPU 3
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000029
+[...]
+Workqueue: i40e i40e_service_task [i40e]
+RIP: 0010:i40e_sync_vsi_filters+0x6fd/0xc60 [i40e]
+[...]
+Call Trace:
+ ? __switch_to_asm+0x35/0x70
+ ? __switch_to_asm+0x41/0x70
+ ? __switch_to_asm+0x35/0x70
+ ? _cond_resched+0x15/0x30
+ i40e_sync_filters_subtask+0x56/0x70 [i40e]
+ i40e_service_task+0x382/0x11b0 [i40e]
+ ? __switch_to_asm+0x41/0x70
+ ? __switch_to_asm+0x41/0x70
+ process_one_work+0x1a7/0x3b0
+ worker_thread+0x30/0x390
+ ? create_worker+0x1a0/0x1a0
+ kthread+0x112/0x130
+ ? kthread_bind+0x30/0x30
+ ret_from_fork+0x35/0x40
 
- btrfs_ioctl_quota_rescan()
-  btrfs_qgroup_rescan()
-   qgroup_rescan_init()
-    mutex_lock(&fs_info->qgroup_rescan_lock)
-    spin_lock(&fs_info->qgroup_lock)
+Investigation revealed a race where pf->vf[vsi->vf_id].trusted may get
+accessed by the watchdog via i40e_sync_filters_subtask() although
+i40e_free_vfs() already free'd pf->vf.
+To avoid this the call to i40e_sync_vsi_filters() in
+i40e_sync_filters_subtask() needs to be guarded by __I40E_VF_DISABLE,
+which is also used by i40e_free_vfs().
 
-    fs_info->qgroup_flags |=
-      BTRFS_QGROUP_STATUS_FLAG_RESCAN
+Note: put the __I40E_VF_DISABLE check after the
+__I40E_MACVLAN_SYNC_PENDING check as the latter is more likely to
+trigger.
 
-    init_completion(
-      &fs_info->qgroup_rescan_completion)
-
-    fs_info->qgroup_rescan_running = true
-
-    mutex_unlock(&fs_info->qgroup_rescan_lock)
-    spin_unlock(&fs_info->qgroup_lock)
-
-    btrfs_init_work()
-     --> starts the worker
-
-                                                        btrfs_qgroup_rescan_worker()
-                                                         mutex_lock(&fs_info->qgroup_rescan_lock)
-
-                                                         fs_info->qgroup_flags &=
-                                                           ~BTRFS_QGROUP_STATUS_FLAG_RESCAN
-
-                                                         mutex_unlock(&fs_info->qgroup_rescan_lock)
-
-                                                         starts transaction, updates qgroup status
-                                                         item, etc
-
-                                                                                                           btrfs_ioctl_quota_rescan()
-                                                                                                            btrfs_qgroup_rescan()
-                                                                                                             qgroup_rescan_init()
-                                                                                                              mutex_lock(&fs_info->qgroup_rescan_lock)
-                                                                                                              spin_lock(&fs_info->qgroup_lock)
-
-                                                                                                              fs_info->qgroup_flags |=
-                                                                                                                BTRFS_QGROUP_STATUS_FLAG_RESCAN
-
-                                                                                                              init_completion(
-                                                                                                                &fs_info->qgroup_rescan_completion)
-
-                                                                                                              fs_info->qgroup_rescan_running = true
-
-                                                                                                              mutex_unlock(&fs_info->qgroup_rescan_lock)
-                                                                                                              spin_unlock(&fs_info->qgroup_lock)
-
-                                                                                                              btrfs_init_work()
-                                                                                                               --> starts another worker
-
-                                                         mutex_lock(&fs_info->qgroup_rescan_lock)
-
-                                                         fs_info->qgroup_rescan_running = false
-
-                                                         mutex_unlock(&fs_info->qgroup_rescan_lock)
-
-							 complete_all(&fs_info->qgroup_rescan_completion)
-
-Before the rescan worker started by the task at CPU 3 completes, if
-another task calls btrfs_ioctl_quota_rescan(), it will get -EINPROGRESS
-because the flag BTRFS_QGROUP_STATUS_FLAG_RESCAN is set at
-fs_info->qgroup_flags, which is expected and correct behaviour.
-
-However if other task calls btrfs_ioctl_quota_rescan_wait() before the
-rescan worker started by the task at CPU 3 completes, it will return
-immediately without waiting for the new rescan worker to complete,
-because fs_info->qgroup_rescan_running is set to false by CPU 2.
-
-This race is making test case btrfs/171 (from fstests) to fail often:
-
-  btrfs/171 9s ... - output mismatch (see /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad)
-#      --- tests/btrfs/171.out     2018-09-16 21:30:48.505104287 +0100
-#      +++ /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad      2019-09-19 02:01:36.938486039 +0100
-#      @@ -1,2 +1,3 @@
-#       QA output created by 171
-#      +ERROR: quota rescan failed: Operation now in progress
-#       Silence is golden
-#      ...
-#      (Run 'diff -u /home/fdmanana/git/hub/xfstests/tests/btrfs/171.out /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad'  to see the entire diff)
-
-That is because the test calls the btrfs-progs commands "qgroup quota
-rescan -w", "qgroup assign" and "qgroup remove" in a sequence that makes
-calls to the rescan start ioctl fail with -EINPROGRESS (note the "btrfs"
-commands 'qgroup assign' and 'qgroup remove' often call the rescan start
-ioctl after calling the qgroup assign ioctl,
-btrfs_ioctl_qgroup_assign()), since previous waits didn't actually wait
-for a rescan worker to complete.
-
-Another problem the race can cause is missing wake ups for waiters,
-since the call to complete_all() happens outside a critical section and
-after clearing the flag BTRFS_QGROUP_STATUS_FLAG_RESCAN. In the sequence
-diagram above, if we have a waiter for the first rescan task (executed
-by CPU 2), then fs_info->qgroup_rescan_completion.wait is not empty, and
-if after the rescan worker clears BTRFS_QGROUP_STATUS_FLAG_RESCAN and
-before it calls complete_all() against
-fs_info->qgroup_rescan_completion, the task at CPU 3 calls
-init_completion() against fs_info->qgroup_rescan_completion which
-re-initilizes its wait queue to an empty queue, therefore causing the
-rescan worker at CPU 2 to call complete_all() against an empty queue,
-never waking up the task waiting for that rescan worker.
-
-Fix this by clearing BTRFS_QGROUP_STATUS_FLAG_RESCAN and setting
-fs_info->qgroup_rescan_running to false in the same critical section,
-delimited by the mutex fs_info->qgroup_rescan_lock, as well as doing the
-call to complete_all() in that same critical section. This gives the
-protection needed to avoid rescan wait ioctl callers not waiting for a
-running rescan worker and the lost wake ups problem, since setting that
-rescan flag and boolean as well as initializing the wait queue is done
-already in a critical section delimited by that mutex (at
-qgroup_rescan_init()).
-
-Fixes: 57254b6ebce4ce ("Btrfs: add ioctl to wait for qgroup rescan completion")
-Fixes: d2c609b834d62f ("btrfs: properly track when rescan worker is running")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/qgroup.c |   33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -3154,9 +3154,6 @@ out:
- 	btrfs_free_path(path);
- 
- 	mutex_lock(&fs_info->qgroup_rescan_lock);
--	if (!btrfs_fs_closing(fs_info))
--		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_RESCAN;
--
- 	if (err > 0 &&
- 	    fs_info->qgroup_flags & BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT) {
- 		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT;
-@@ -3172,16 +3169,30 @@ out:
- 	trans = btrfs_start_transaction(fs_info->quota_root, 1);
- 	if (IS_ERR(trans)) {
- 		err = PTR_ERR(trans);
-+		trans = NULL;
- 		btrfs_err(fs_info,
- 			  "fail to start transaction for status update: %d",
- 			  err);
--		goto done;
- 	}
--	ret = update_qgroup_status_item(trans);
--	if (ret < 0) {
--		err = ret;
--		btrfs_err(fs_info, "fail to update qgroup status: %d", err);
-+
-+	mutex_lock(&fs_info->qgroup_rescan_lock);
-+	if (!btrfs_fs_closing(fs_info))
-+		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_RESCAN;
-+	if (trans) {
-+		ret = update_qgroup_status_item(trans);
-+		if (ret < 0) {
-+			err = ret;
-+			btrfs_err(fs_info, "fail to update qgroup status: %d",
-+				  err);
-+		}
- 	}
-+	fs_info->qgroup_rescan_running = false;
-+	complete_all(&fs_info->qgroup_rescan_completion);
-+	mutex_unlock(&fs_info->qgroup_rescan_lock);
-+
-+	if (!trans)
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -2583,6 +2583,10 @@ static void i40e_sync_filters_subtask(st
+ 		return;
+ 	if (!test_and_clear_bit(__I40E_MACVLAN_SYNC_PENDING, pf->state))
+ 		return;
++	if (test_and_set_bit(__I40E_VF_DISABLE, pf->state)) {
++		set_bit(__I40E_MACVLAN_SYNC_PENDING, pf->state);
 +		return;
-+
- 	btrfs_end_transaction(trans);
++	}
  
- 	if (btrfs_fs_closing(fs_info)) {
-@@ -3192,12 +3203,6 @@ out:
- 	} else {
- 		btrfs_err(fs_info, "qgroup scan failed with %d", err);
+ 	for (v = 0; v < pf->num_alloc_vsi; v++) {
+ 		if (pf->vsi[v] &&
+@@ -2597,6 +2601,7 @@ static void i40e_sync_filters_subtask(st
+ 			}
+ 		}
  	}
--
--done:
--	mutex_lock(&fs_info->qgroup_rescan_lock);
--	fs_info->qgroup_rescan_running = false;
--	mutex_unlock(&fs_info->qgroup_rescan_lock);
--	complete_all(&fs_info->qgroup_rescan_completion);
++	clear_bit(__I40E_VF_DISABLE, pf->state);
  }
  
- /*
+ /**
 
 
