@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1EFBCA88B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B130CA89C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391396AbfJCQ2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:28:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60730 "EHLO mail.kernel.org"
+        id S2390614AbfJCQ3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:29:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391399AbfJCQ2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:28:16 -0400
+        id S2390247AbfJCQ30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:29:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50DE82054F;
-        Thu,  3 Oct 2019 16:28:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 479D52054F;
+        Thu,  3 Oct 2019 16:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120095;
-        bh=ifZ3V7ZCH5w23cboU3vYYYsrlUpjnatzjxURontzwQI=;
+        s=default; t=1570120165;
+        bh=sQXkXt8R38QkmXVe1OI/saT7LbNFH+7CrxACz0uYLK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ShcKZ7A69GVCUkXzNEnaGjggn7d3fhRPmDtkfg7luYE+Z7miFQM+Or9DsFhsrj6MA
-         tGVlC7tDr5JjODKCHb0H07qIh9zYWsBV3dfe540zrp+unbO+vHhGIKEnaWdsYleLWj
-         gjBNKPEAvcsj5qu6N/+8ofe0VMg98SSONFaTrhNg=
+        b=rXdK4eAXq6VW8qkfrDnfTtTZFuD4fyIxvvBsESGLYTYYgqJS0KeVLECha91tO1T2e
+         ohhDhuvQISppBG6wJ/yTZvnEqmoPQA80YSgcjvgtOtUnX6GPOwcYTkHB+EgfL9UjgG
+         VNg2PkYdraf5LtExX+cwO46Ocjul6RclHlE1uf+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        linux-edac@vger.kernel.org, x86@kernel.org,
+        stable@vger.kernel.org, Luke Mujica <lukemujica@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 078/313] RAS: Fix prototype warnings
-Date:   Thu,  3 Oct 2019 17:50:56 +0200
-Message-Id: <20191003154540.526612763@linuxfoundation.org>
+Subject: [PATCH 5.2 083/313] perf tools: Fix paths in include statements
+Date:   Thu,  3 Oct 2019 17:51:01 +0200
+Message-Id: <20191003154541.035488765@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,69 +48,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+From: Luke Mujica <lukemujica@google.com>
 
-[ Upstream commit 0a54b809a3a2c31e1055b45b03708eb730222be1 ]
+[ Upstream commit 2b75863b0845764529e01014a5c90664d8044cbe ]
 
-When building with C=2 and/or W=1, legitimate warnings are issued about
-missing prototypes:
+These paths point to the wrong location but still work because they get
+picked up by a -I flag that happens to direct to the correct file. Fix
+paths to lead to the actual file location without help from include
+flags.
 
-    CHECK   drivers/ras/debugfs.c
-  drivers/ras/debugfs.c:4:15: warning: symbol 'ras_debugfs_dir' was not declared. Should it be static?
-  drivers/ras/debugfs.c:8:5: warning: symbol 'ras_userspace_consumers' was not declared. Should it be static?
-  drivers/ras/debugfs.c:38:12: warning: symbol 'ras_add_daemon_trace' was not declared. Should it be static?
-  drivers/ras/debugfs.c:54:13: warning: symbol 'ras_debugfs_init' was not declared. Should it be static?
-    CC      drivers/ras/debugfs.o
-  drivers/ras/debugfs.c:8:5: warning: no previous prototype for 'ras_userspace_consumers' [-Wmissing-prototypes]
-      8 | int ras_userspace_consumers(void)
-        |     ^~~~~~~~~~~~~~~~~~~~~~~
-  drivers/ras/debugfs.c:38:12: warning: no previous prototype for 'ras_add_daemon_trace' [-Wmissing-prototypes]
-     38 | int __init ras_add_daemon_trace(void)
-        |            ^~~~~~~~~~~~~~~~~~~~
-  drivers/ras/debugfs.c:54:13: warning: no previous prototype for 'ras_debugfs_init' [-Wmissing-prototypes]
-     54 | void __init ras_debugfs_init(void)
-        |             ^~~~~~~~~~~~~~~~
-
-Provide the proper includes.
-
- [ bp: Take care of the same warnings for cec.c too. ]
-
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac@vger.kernel.org
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/7168.1565218769@turing-police
+Signed-off-by: Luke Mujica <lukemujica@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190719202253.220261-1-lukemujica@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ras/cec.c     | 1 +
- drivers/ras/debugfs.c | 2 ++
- 2 files changed, 3 insertions(+)
+ tools/perf/arch/x86/util/kvm-stat.c | 4 ++--
+ tools/perf/arch/x86/util/tsc.c      | 6 +++---
+ tools/perf/ui/helpline.c            | 4 ++--
+ tools/perf/ui/util.c                | 2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index f5795adc5a6e1..8037c490f3ba7 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -1,6 +1,7 @@
+diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
+index 865a9762f22ef..3f84403c0983a 100644
+--- a/tools/perf/arch/x86/util/kvm-stat.c
++++ b/tools/perf/arch/x86/util/kvm-stat.c
+@@ -1,7 +1,7 @@
  // SPDX-License-Identifier: GPL-2.0
- #include <linux/mm.h>
- #include <linux/gfp.h>
-+#include <linux/ras.h>
- #include <linux/kernel.h>
- #include <linux/workqueue.h>
+ #include <errno.h>
+-#include "../../util/kvm-stat.h"
+-#include "../../util/evsel.h"
++#include "../../../util/kvm-stat.h"
++#include "../../../util/evsel.h"
+ #include <asm/svm.h>
+ #include <asm/vmx.h>
+ #include <asm/kvm.h>
+diff --git a/tools/perf/arch/x86/util/tsc.c b/tools/perf/arch/x86/util/tsc.c
+index 950539f9a4f77..b1eb963b4a6e1 100644
+--- a/tools/perf/arch/x86/util/tsc.c
++++ b/tools/perf/arch/x86/util/tsc.c
+@@ -5,10 +5,10 @@
+ #include <linux/stddef.h>
+ #include <linux/perf_event.h>
  
-diff --git a/drivers/ras/debugfs.c b/drivers/ras/debugfs.c
-index 9c1b717efad86..0d4f985afbf37 100644
---- a/drivers/ras/debugfs.c
-+++ b/drivers/ras/debugfs.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- #include <linux/debugfs.h>
-+#include <linux/ras.h>
-+#include "debugfs.h"
+-#include "../../perf.h"
++#include "../../../perf.h"
+ #include <linux/types.h>
+-#include "../../util/debug.h"
+-#include "../../util/tsc.h"
++#include "../../../util/debug.h"
++#include "../../../util/tsc.h"
  
- struct dentry *ras_debugfs_dir;
+ int perf_read_tsc_conversion(const struct perf_event_mmap_page *pc,
+ 			     struct perf_tsc_conversion *tc)
+diff --git a/tools/perf/ui/helpline.c b/tools/perf/ui/helpline.c
+index b3c421429ed44..54bcd08df87e3 100644
+--- a/tools/perf/ui/helpline.c
++++ b/tools/perf/ui/helpline.c
+@@ -3,10 +3,10 @@
+ #include <stdlib.h>
+ #include <string.h>
  
+-#include "../debug.h"
++#include "../util/debug.h"
+ #include "helpline.h"
+ #include "ui.h"
+-#include "../util.h"
++#include "../util/util.h"
+ 
+ char ui_helpline__current[512];
+ 
+diff --git a/tools/perf/ui/util.c b/tools/perf/ui/util.c
+index 63bf06e80ab9d..9ed76e88a3e4c 100644
+--- a/tools/perf/ui/util.c
++++ b/tools/perf/ui/util.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "util.h"
+-#include "../debug.h"
++#include "../util/debug.h"
+ 
+ 
+ /*
 -- 
 2.20.1
 
