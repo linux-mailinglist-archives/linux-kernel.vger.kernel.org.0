@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A11E5CA6C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFCD3CA6C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390538AbfJCQrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:47:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60592 "EHLO mail.kernel.org"
+        id S2393006AbfJCQrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:47:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732115AbfJCQrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:47:07 -0400
+        id S2391908AbfJCQrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:47:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93ABB215EA;
-        Thu,  3 Oct 2019 16:47:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 036EC2070B;
+        Thu,  3 Oct 2019 16:47:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121227;
-        bh=P6WhpmMdBIGrX0O3XwXmFKVq11nYdl3AZ1TqwXFHXIo=;
+        s=default; t=1570121232;
+        bh=Qr/VRfoHX7sntmUIqwqsVChvtHI6zIMCrPB6fm/zYdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEv7jwUtYF5rAe57AC+hWPzPfiwBEVZZlQHg6IrRh/GQjPNthrJGPwH9dbBKcuFFU
-         FU03v0PEkHJ5Gr+OfkKDH3CsChM4nfeeDNK+/1UZD2t7X56bjlf4quPSn0ucfkZb9s
-         Xz5dlXtOzgqtJLd1CAgA3z2n/cH6X8UWTfdvNJgE=
+        b=LzVRgAtT6D0Djkr0kN/ydtSEgr2WMe72apBfFPNG9F5kbG1xDDZUBdoT3rHPfehMx
+         kKofiM+HxlspJlaD1e0niAmVWufzJwot7PWATwWgy6PTs7djpelMg+95EJMEmBEXCU
+         WzNUyct9LPTf126QLyNmYWUhFPtvDyJcr32jCJuA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 201/344] x86/cpu: Add Tiger Lake to Intel family
-Date:   Thu,  3 Oct 2019 17:52:46 +0200
-Message-Id: <20191003154600.082702372@linuxfoundation.org>
+        stable@vger.kernel.org, "M. Vefa Bicakci" <m.v.b@runbox.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 203/344] platform/x86: intel_pmc_core_pltdrv: Module removal warning fix
+Date:   Thu,  3 Oct 2019 17:52:48 +0200
+Message-Id: <20191003154600.286807055@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -48,42 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gayatri Kammela <gayatri.kammela@intel.com>
+From: M. Vefa Bicakci <m.v.b@runbox.com>
 
-[ Upstream commit 6e1c32c5dbb4b90eea8f964c2869d0bde050dbe0 ]
+[ Upstream commit 0b43e41e93815ecd9616759cf5d64d3a7be8e6fb ]
 
-Add the model numbers/CPUIDs of Tiger Lake mobile and desktop to the
-Intel family.
+Prior to this commit, removing the intel_pmc_core_pltdrv module
+would cause the following warning:
 
-Suggested-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190905193020.14707-2-tony.luck@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+  Device 'intel_pmc_core.0' does not have a release() function, it is broken and must be fixed. See Documentation/kobject.txt.
+  WARNING: CPU: 0 PID: 2202 at drivers/base/core.c:1238 device_release+0x6f/0x80
+
+This commit hence adds an empty release function for the driver.
+
+Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/intel-family.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/platform/x86/intel_pmc_core_pltdrv.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index fe7c205233f1c..9ae1c0f05fd2d 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -73,6 +73,9 @@
- #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
- #define INTEL_FAM6_ICELAKE_NNPI		0x9D
+diff --git a/drivers/platform/x86/intel_pmc_core_pltdrv.c b/drivers/platform/x86/intel_pmc_core_pltdrv.c
+index a8754a6db1b8b..186540014c480 100644
+--- a/drivers/platform/x86/intel_pmc_core_pltdrv.c
++++ b/drivers/platform/x86/intel_pmc_core_pltdrv.c
+@@ -18,8 +18,16 @@
+ #include <asm/cpu_device_id.h>
+ #include <asm/intel-family.h>
  
-+#define INTEL_FAM6_TIGERLAKE_L		0x8C
-+#define INTEL_FAM6_TIGERLAKE		0x8D
++static void intel_pmc_core_release(struct device *dev)
++{
++	/* Nothing to do. */
++}
 +
- /* "Small Core" Processors (Atom) */
+ static struct platform_device pmc_core_device = {
+ 	.name = "intel_pmc_core",
++	.dev  = {
++		.release = intel_pmc_core_release,
++	},
+ };
  
- #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
+ /*
 -- 
 2.20.1
 
