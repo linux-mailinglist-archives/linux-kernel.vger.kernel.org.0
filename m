@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B6ECAB17
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 168BFCA907
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391545AbfJCRRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:17:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51326 "EHLO mail.kernel.org"
+        id S2404392AbfJCQgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:36:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390340AbfJCQWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:22:36 -0400
+        id S2404371AbfJCQgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:36:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C55C20659;
-        Thu,  3 Oct 2019 16:22:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B57042086A;
+        Thu,  3 Oct 2019 16:36:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119756;
-        bh=OSDbZ+qnZK1aTfBoQCDkx4FU7CwedCYXzK82/thGqPc=;
+        s=default; t=1570120570;
+        bh=5c5TRDo84sJDQ13UTbdqdWaHh1lRiJyZiHqi4clyXMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TzXbGme0g1mLg+Clcwpwt4WEMTrlccZ6P614o5aUO5xHfEN0wHXly+B8PBiT1PCgv
-         8Hrr+0AGaPJR/g1WvNxEz7dJCSxTH97Bp0pm2shxUb4kxYBPrpqOIIhW7TdHH02K1r
-         TtPvVFUp7icKue+nIwcvC8EUdZ1oeBHTV8iuDHwQ=
+        b=enYHxHnE5kNtFbGEHcPAloEAsLISa0TNt9jl0BVsRoceEZsQXDP8ee0uEL/OOsmou
+         yo7eeUyTr18/B2hrpFVVfwpKZ80o72bW0/5/sTPT/6i5PftHMsuSwnypC9OllurHEa
+         2bCnfhaM+gtoFrVONtgWykx4E1+gI2tBGh6kVEXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Peter Jones <pjones@redhat.com>
-Subject: [PATCH 4.19 181/211] efifb: BGRT: Improve efifb_bgrt_sanity_check
-Date:   Thu,  3 Oct 2019 17:54:07 +0200
-Message-Id: <20191003154527.420265838@linuxfoundation.org>
+        stable@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: [PATCH 5.2 271/313] KEYS: trusted: correctly initialize digests and fix locking issue
+Date:   Thu,  3 Oct 2019 17:54:09 +0200
+Message-Id: <20191003154559.738687404@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-commit 51677dfcc17f88ed754143df670ff064eae67f84 upstream.
+commit 9f75c82246313d4c2a6bc77e947b45655b3b5ad5 upstream.
 
-For various reasons, at least with x86 EFI firmwares, the xoffset and
-yoffset in the BGRT info are not always reliable.
+Commit 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to
+tpm_pcr_extend()") modifies tpm_pcr_extend() to accept a digest for each
+PCR bank. After modification, tpm_pcr_extend() expects that digests are
+passed in the same order as the algorithms set in chip->allocated_banks.
 
-Extensive testing has shown that when the info is correct, the
-BGRT image is always exactly centered horizontally (the yoffset variable
-is more variable and not always predictable).
-
-This commit simplifies / improves the bgrt_sanity_check to simply
-check that the BGRT image is exactly centered horizontally and skips
-(re)drawing it when it is not.
-
-This fixes the BGRT image sometimes being drawn in the wrong place.
+This patch fixes two issues introduced in the last iterations of the patch
+set: missing initialization of the TPM algorithm ID in the tpm_digest
+structures passed to tpm_pcr_extend() by the trusted key module, and
+unreleased locks in the TPM driver due to returning from tpm_pcr_extend()
+without calling tpm_put_ops().
 
 Cc: stable@vger.kernel.org
-Fixes: 88fe4ceb2447 ("efifb: BGRT: Do not copy the boot graphics for non native resolutions")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: Peter Jones <pjones@redhat.com>,
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190721131918.10115-1-hdegoede@redhat.com
+Fixes: 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/efifb.c |   27 ++++++---------------------
- 1 file changed, 6 insertions(+), 21 deletions(-)
+ drivers/char/tpm/tpm-interface.c |   14 +++++++++-----
+ security/keys/trusted.c          |    5 +++++
+ 2 files changed, 14 insertions(+), 5 deletions(-)
 
---- a/drivers/video/fbdev/efifb.c
-+++ b/drivers/video/fbdev/efifb.c
-@@ -122,28 +122,13 @@ static void efifb_copy_bmp(u8 *src, u32
-  */
- static bool efifb_bgrt_sanity_check(struct screen_info *si, u32 bmp_width)
- {
--	static const int default_resolutions[][2] = {
--		{  800,  600 },
--		{ 1024,  768 },
--		{ 1280, 1024 },
--	};
--	u32 i, right_margin;
-+	/*
-+	 * All x86 firmwares horizontally center the image (the yoffset
-+	 * calculations differ between boards, but xoffset is predictable).
-+	 */
-+	u32 expected_xoffset = (si->lfb_width - bmp_width) / 2;
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -320,18 +320,22 @@ int tpm_pcr_extend(struct tpm_chip *chip
+ 	if (!chip)
+ 		return -ENODEV;
  
--	for (i = 0; i < ARRAY_SIZE(default_resolutions); i++) {
--		if (default_resolutions[i][0] == si->lfb_width &&
--		    default_resolutions[i][1] == si->lfb_height)
--			break;
--	}
--	/* If not a default resolution used for textmode, this should be fine */
--	if (i >= ARRAY_SIZE(default_resolutions))
--		return true;
--
--	/* If the right margin is 5 times smaller then the left one, reject */
--	right_margin = si->lfb_width - (bgrt_tab.image_offset_x + bmp_width);
--	if (right_margin < (bgrt_tab.image_offset_x / 5))
--		return false;
--
--	return true;
-+	return bgrt_tab.image_offset_x == expected_xoffset;
+-	for (i = 0; i < chip->nr_allocated_banks; i++)
+-		if (digests[i].alg_id != chip->allocated_banks[i].alg_id)
+-			return -EINVAL;
++	for (i = 0; i < chip->nr_allocated_banks; i++) {
++		if (digests[i].alg_id != chip->allocated_banks[i].alg_id) {
++			rc = EINVAL;
++			goto out;
++		}
++	}
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		rc = tpm2_pcr_extend(chip, pcr_idx, digests);
+-		tpm_put_ops(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	rc = tpm1_pcr_extend(chip, pcr_idx, digests[0].digest,
+ 			     "attempting extend a PCR value");
++
++out:
+ 	tpm_put_ops(chip);
+ 	return rc;
  }
- #else
- static bool efifb_bgrt_sanity_check(struct screen_info *si, u32 bmp_width)
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1228,11 +1228,16 @@ hashalg_fail:
+ 
+ static int __init init_digests(void)
+ {
++	int i;
++
+ 	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+ 			  GFP_KERNEL);
+ 	if (!digests)
+ 		return -ENOMEM;
+ 
++	for (i = 0; i < chip->nr_allocated_banks; i++)
++		digests[i].alg_id = chip->allocated_banks[i].alg_id;
++
+ 	return 0;
+ }
+ 
 
 
