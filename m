@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 561D3CA8D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE74ACA8D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391433AbfJCQda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:33:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41436 "EHLO mail.kernel.org"
+        id S2392010AbfJCQdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:33:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404011AbfJCQd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:33:27 -0400
+        id S2392000AbfJCQdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:33:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 735EA2086A;
-        Thu,  3 Oct 2019 16:33:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C63AD2086A;
+        Thu,  3 Oct 2019 16:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120406;
-        bh=wNMAwQyR3lEpLegMCTQMtoCUQIx6OvMT+xYy5hpErRE=;
+        s=default; t=1570120411;
+        bh=/J2pAeecO5+wy94vLp5m0dXczIyTOj8lr+GmEvWqm2E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UCe/PO9l1I4oIrKdZpD6BIH2xcV4xLv1H1SUXrHV70n7uwrLY10uD1KCjWcEXK4el
-         J63h/1yxVzwqvZvACzIFeGz610tjsfVKtoI23UKVgGEOa2AUBOmvGectL3i/B46ijY
-         xG3CUiEdSjbUa9Be/fuYGu4Jhgmx15DtR2psuCFQ=
+        b=ShLTMzxfIufZ812gTvFa34gCRRUOgtMdmGDrASzgu5NKlPgyh11qgcNzpzf47B7FZ
+         raiNEFUtw1xF0PVbOWZST30HjZtBgba+FMXZtMRyb31C7Tn8EXqkZGhuFdKmmWGVgu
+         FUK46h0uINjiJPuEYzKGN455kvlgWJaDYZTdqk/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 211/313] media: omap3isp: Set device on omap3isp subdevs
-Date:   Thu,  3 Oct 2019 17:53:09 +0200
-Message-Id: <20191003154553.772381224@linuxfoundation.org>
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 5.2 213/313] ARM: dts: logicpd-torpedo-baseboard: Fix missing video
+Date:   Thu,  3 Oct 2019 17:53:11 +0200
+Message-Id: <20191003154553.964985089@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -46,101 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit e9eb103f027725053a4b02f93d7f2858b56747ce ]
+commit f9f5518a38684e031d913f40482721ff553f5ba2 upstream.
 
-The omap3isp driver registered subdevs without the dev field being set. Do
-that now.
+A previous commit removed the panel-dpi driver, which made the
+Torpedo video stop working because it relied on the dpi driver
+for setting video timings.  Now that the simple-panel driver is
+available in omap2plus, this patch migrates the Torpedo dev kits
+to use a similar panel and remove the manual timing requirements.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 8bf4b1621178 ("drm/omap: Remove panel-dpi driver")
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/platform/omap3isp/ispccdc.c    | 1 +
- drivers/media/platform/omap3isp/ispccp2.c    | 1 +
- drivers/media/platform/omap3isp/ispcsi2.c    | 1 +
- drivers/media/platform/omap3isp/isppreview.c | 1 +
- drivers/media/platform/omap3isp/ispresizer.c | 1 +
- drivers/media/platform/omap3isp/ispstat.c    | 2 ++
- 6 files changed, 7 insertions(+)
+ arch/arm/boot/dts/logicpd-torpedo-baseboard.dtsi |   37 +++--------------------
+ 1 file changed, 6 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/media/platform/omap3isp/ispccdc.c b/drivers/media/platform/omap3isp/ispccdc.c
-index 1ba8a5ba343f6..e2f336c715a4d 100644
---- a/drivers/media/platform/omap3isp/ispccdc.c
-+++ b/drivers/media/platform/omap3isp/ispccdc.c
-@@ -2602,6 +2602,7 @@ int omap3isp_ccdc_register_entities(struct isp_ccdc_device *ccdc,
- 	int ret;
+--- a/arch/arm/boot/dts/logicpd-torpedo-baseboard.dtsi
++++ b/arch/arm/boot/dts/logicpd-torpedo-baseboard.dtsi
+@@ -108,7 +108,6 @@
+ &dss {
+ 	status = "ok";
+ 	vdds_dsi-supply = <&vpll2>;
+-	vdda_video-supply = <&video_reg>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&dss_dpi_pins1>;
+ 	port {
+@@ -124,44 +123,20 @@
+ 		display0 = &lcd0;
+ 	};
  
- 	/* Register the subdev and video node. */
-+	ccdc->subdev.dev = vdev->mdev->dev;
- 	ret = v4l2_device_register_subdev(vdev, &ccdc->subdev);
- 	if (ret < 0)
- 		goto error;
-diff --git a/drivers/media/platform/omap3isp/ispccp2.c b/drivers/media/platform/omap3isp/ispccp2.c
-index efca45bb02c8b..d0a49cdfd22d2 100644
---- a/drivers/media/platform/omap3isp/ispccp2.c
-+++ b/drivers/media/platform/omap3isp/ispccp2.c
-@@ -1031,6 +1031,7 @@ int omap3isp_ccp2_register_entities(struct isp_ccp2_device *ccp2,
- 	int ret;
+-	video_reg: video_reg {
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&panel_pwr_pins>;
+-		compatible = "regulator-fixed";
+-		regulator-name = "fixed-supply";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-		gpio = <&gpio5 27 GPIO_ACTIVE_HIGH>;	/* gpio155, lcd INI */
+-	};
+-
+ 	lcd0: display {
+-		compatible = "panel-dpi";
++		/* This isn't the exact LCD, but the timings meet spec */
++		/* To make it work, set CONFIG_OMAP2_DSS_MIN_FCK_PER_PCK=4 */
++		compatible = "newhaven,nhd-4.3-480272ef-atxl";
+ 		label = "15";
+-		status = "okay";
+-		/* default-on; */
+ 		pinctrl-names = "default";
+-
++		pinctrl-0 = <&panel_pwr_pins>;
++		backlight = <&bl>;
++		enable-gpios = <&gpio5 27 GPIO_ACTIVE_HIGH>;
+ 		port {
+ 			lcd_in: endpoint {
+ 				remote-endpoint = <&dpi_out>;
+ 			};
+ 		};
+-
+-		panel-timing {
+-			clock-frequency = <9000000>;
+-			hactive = <480>;
+-			vactive = <272>;
+-			hfront-porch = <3>;
+-			hback-porch = <2>;
+-			hsync-len = <42>;
+-			vback-porch = <3>;
+-			vfront-porch = <4>;
+-			vsync-len = <11>;
+-			hsync-active = <0>;
+-			vsync-active = <0>;
+-			de-active = <1>;
+-			pixelclk-active = <1>;
+-		};
+ 	};
  
- 	/* Register the subdev and video nodes. */
-+	ccp2->subdev.dev = vdev->mdev->dev;
- 	ret = v4l2_device_register_subdev(vdev, &ccp2->subdev);
- 	if (ret < 0)
- 		goto error;
-diff --git a/drivers/media/platform/omap3isp/ispcsi2.c b/drivers/media/platform/omap3isp/ispcsi2.c
-index e85917f4a50cc..fd493c5e4e24f 100644
---- a/drivers/media/platform/omap3isp/ispcsi2.c
-+++ b/drivers/media/platform/omap3isp/ispcsi2.c
-@@ -1198,6 +1198,7 @@ int omap3isp_csi2_register_entities(struct isp_csi2_device *csi2,
- 	int ret;
- 
- 	/* Register the subdev and video nodes. */
-+	csi2->subdev.dev = vdev->mdev->dev;
- 	ret = v4l2_device_register_subdev(vdev, &csi2->subdev);
- 	if (ret < 0)
- 		goto error;
-diff --git a/drivers/media/platform/omap3isp/isppreview.c b/drivers/media/platform/omap3isp/isppreview.c
-index 40e22400cf5ec..97d660606d984 100644
---- a/drivers/media/platform/omap3isp/isppreview.c
-+++ b/drivers/media/platform/omap3isp/isppreview.c
-@@ -2225,6 +2225,7 @@ int omap3isp_preview_register_entities(struct isp_prev_device *prev,
- 	int ret;
- 
- 	/* Register the subdev and video nodes. */
-+	prev->subdev.dev = vdev->mdev->dev;
- 	ret = v4l2_device_register_subdev(vdev, &prev->subdev);
- 	if (ret < 0)
- 		goto error;
-diff --git a/drivers/media/platform/omap3isp/ispresizer.c b/drivers/media/platform/omap3isp/ispresizer.c
-index 21ca6954df72f..78d9dd7ea2da7 100644
---- a/drivers/media/platform/omap3isp/ispresizer.c
-+++ b/drivers/media/platform/omap3isp/ispresizer.c
-@@ -1681,6 +1681,7 @@ int omap3isp_resizer_register_entities(struct isp_res_device *res,
- 	int ret;
- 
- 	/* Register the subdev and video nodes. */
-+	res->subdev.dev = vdev->mdev->dev;
- 	ret = v4l2_device_register_subdev(vdev, &res->subdev);
- 	if (ret < 0)
- 		goto error;
-diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
-index ca7bb8497c3da..cb5841f628cff 100644
---- a/drivers/media/platform/omap3isp/ispstat.c
-+++ b/drivers/media/platform/omap3isp/ispstat.c
-@@ -1026,6 +1026,8 @@ void omap3isp_stat_unregister_entities(struct ispstat *stat)
- int omap3isp_stat_register_entities(struct ispstat *stat,
- 				    struct v4l2_device *vdev)
- {
-+	stat->subdev.dev = vdev->mdev->dev;
-+
- 	return v4l2_device_register_subdev(vdev, &stat->subdev);
- }
- 
--- 
-2.20.1
-
+ 	bl: backlight {
 
 
