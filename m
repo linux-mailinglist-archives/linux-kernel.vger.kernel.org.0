@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C349CA641
+	by mail.lfdr.de (Postfix) with ESMTP id 8B1C5CA642
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405072AbfJCQlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:41:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52144 "EHLO mail.kernel.org"
+        id S2390957AbfJCQlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:41:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405058AbfJCQli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:41:38 -0400
+        id S2404660AbfJCQln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:41:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6B7020830;
-        Thu,  3 Oct 2019 16:41:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 077522054F;
+        Thu,  3 Oct 2019 16:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120897;
-        bh=9YTmjz6JzHxwcmKGl0VJUGsFdEfzvM/9GRS2tB2FdWA=;
+        s=default; t=1570120902;
+        bh=Efrs07DtXo6dlB5edLomXEd/SCJQyQCva1c9N4iPxMY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sM6BiEC19QNGTv53Wk1agsW1bjlHvTlEKpR+aLdBoUKZJFTiIJjZ5vyK6bt5RwwDo
-         t/mmevqLQWVFcYotpysZsddW3K5rsnGmdv4Zd807Nq7PIDexVqhfS3efOh0R2EFphM
-         jfh6hEccVAtFXP2Ab5IQM6w0FlgapLnJ+vPrYTLQ=
+        b=Jcn+AXWpETztasE22oApNPadyrizxm8ngl/rte3xwvj9oAHcVHTcEqKnDeKoa4a2t
+         g6sXtBrqFytLFUmMPf5oBBA9YGq/r+pVl79wy8HQzw+gvnr+pQJbTmhiNZ/5TIaKDo
+         tZBAbVgWUfoR1jK/8Nbhl6CBHo6QeG5nly2P2x2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 079/344] soc: amlogic: meson-clk-measure: protect measure with a mutex
-Date:   Thu,  3 Oct 2019 17:50:44 +0200
-Message-Id: <20191003154547.939282431@linuxfoundation.org>
+        stable@vger.kernel.org, Ard van Breemen <ard@kwaak.net>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 081/344] ALSA: usb-audio: Skip bSynchAddress endpoint check if it is invalid
+Date:   Thu,  3 Oct 2019 17:50:46 +0200
+Message-Id: <20191003154548.132056513@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,67 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Ard van Breemen <ard@kwaak.net>
 
-[ Upstream commit 3a760d986568b67d1f8411dab64608075817b90d ]
+[ Upstream commit 1b34121d9f26d272b0b2334209af6b6fc82d4bf1 ]
 
-In order to protect clock measuring when multiple process asks for
-a measure, protect the main measure function with mutexes.
+The Linux kernel assumes that get_endpoint(alts,0) and
+get_endpoint(alts,1) are eachothers feedback endpoints.
+To reassure that validity it will test bsynchaddress to comply with that
+assumption. But if the bsyncaddress is 0 (invalid), it will flag that as
+a wrong assumption and return an error.
+Fix: Skip the test if bSynchAddress is 0.
+Note: those with a valid bSynchAddress should have a code quirck added.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Ard van Breemen <ard@kwaak.net>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ sound/usb/pcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-index 19d4cbc93a17a..c470e24f1dfa6 100644
---- a/drivers/soc/amlogic/meson-clk-measure.c
-+++ b/drivers/soc/amlogic/meson-clk-measure.c
-@@ -11,6 +11,8 @@
- #include <linux/debugfs.h>
- #include <linux/regmap.h>
- 
-+static DEFINE_MUTEX(measure_lock);
-+
- #define MSR_CLK_DUTY		0x0
- #define MSR_CLK_REG0		0x4
- #define MSR_CLK_REG1		0x8
-@@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 	unsigned int val;
- 	int ret;
- 
-+	ret = mutex_lock_interruptible(&measure_lock);
-+	if (ret)
-+		return ret;
-+
- 	regmap_write(priv->regmap, MSR_CLK_REG0, 0);
- 
- 	/* Set measurement duration */
-@@ -377,8 +383,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 
- 	ret = regmap_read_poll_timeout(priv->regmap, MSR_CLK_REG0,
- 				       val, !(val & MSR_BUSY), 10, 10000);
--	if (ret)
-+	if (ret) {
-+		mutex_unlock(&measure_lock);
- 		return ret;
-+	}
- 
- 	/* Disable */
- 	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_ENABLE, 0);
-@@ -386,6 +394,8 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 	/* Get the value in multiple of gate time counts */
- 	regmap_read(priv->regmap, MSR_CLK_REG2, &val);
- 
-+	mutex_unlock(&measure_lock);
-+
- 	if (val >= MSR_VAL_MASK)
- 		return -EINVAL;
- 
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index e4bbf79de956e..33cd26763c0ee 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -457,6 +457,7 @@ static int set_sync_endpoint(struct snd_usb_substream *subs,
+ 	}
+ 	ep = get_endpoint(alts, 1)->bEndpointAddress;
+ 	if (get_endpoint(alts, 0)->bLength >= USB_DT_ENDPOINT_AUDIO_SIZE &&
++	    get_endpoint(alts, 0)->bSynchAddress != 0 &&
+ 	    ((is_playback && ep != (unsigned int)(get_endpoint(alts, 0)->bSynchAddress | USB_DIR_IN)) ||
+ 	     (!is_playback && ep != (unsigned int)(get_endpoint(alts, 0)->bSynchAddress & ~USB_DIR_IN)))) {
+ 		dev_err(&dev->dev,
 -- 
 2.20.1
 
