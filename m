@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6764ACA5B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8F0CA71D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391296AbfJCQfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:35:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44846 "EHLO mail.kernel.org"
+        id S2405959AbfJCQun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:50:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404335AbfJCQft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:35:49 -0400
+        id S2405926AbfJCQuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:50:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4813520830;
-        Thu,  3 Oct 2019 16:35:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 759202070B;
+        Thu,  3 Oct 2019 16:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120548;
-        bh=wacoWmoaqhJ4gxuQ3wZXfgOE/GMA7IuQ3de0W36+LKw=;
+        s=default; t=1570121432;
+        bh=gfjxtCDC8qvqtkS70sKSq48huJP48vRLnJ9jhAFOzAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ayCRoYtSCKmbfmRVXrfcPlPzZYvkWehMViahfeIJz3+zMAEYJ2leHZD74mJDWhC9q
-         KK5o+LcutR244vHVoEDU1POsRiQkk9eVBe4Ei6Af3J3HBromn8zZsJ1k8UGM500xmJ
-         u1FsdWXAkoNkDaGXNJqdZLFk07IWSsVpbIT1zwlQ=
+        b=uTPgaDLlXqFnl8jjcph+0XJdAzfOcm0yb8oDW21Pkox6sfHY0nZRC7q5peROwaMBI
+         AwmRgJcflXjRngylr/5f9NiUYenSSDe6t8xNPfZvLLLtHjPqFhBfwJAfay8yAy0FH4
+         f0nNrR5MzDiutax3Q+KfE6r7rIKxG5djqBdJGK3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH 5.2 263/313] gfs2: clear buf_in_tr when ending a transaction in sweep_bh_for_rgrps
-Date:   Thu,  3 Oct 2019 17:54:01 +0200
-Message-Id: <20191003154558.940882423@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.3 277/344] ASoC: Intel: Skylake: Use correct function to access iomem space
+Date:   Thu,  3 Oct 2019 17:54:02 +0200
+Message-Id: <20191003154607.418094410@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
 
-commit f0b444b349e33ae0d3dd93e25ca365482a5d17d4 upstream.
+commit 17d29ff98fd4b70e9ccdac5e95e18a087e2737ef upstream.
 
-In function sweep_bh_for_rgrps, which is a helper for punch_hole,
-it uses variable buf_in_tr to keep track of when it needs to commit
-pending block frees on a partial delete that overflows the
-transaction created for the delete. The problem is that the
-variable was initialized at the start of function sweep_bh_for_rgrps
-but it was never cleared, even when starting a new transaction.
+For copying from __iomem, we should use __ioread32_copy.
 
-This patch reinitializes the variable when the transaction is
-ended, so the next transaction starts out with it cleared.
+reported by sparse:
+sound/soc/intel/skylake/skl-debug.c:437:34: warning: incorrect type in argument 1 (different address spaces)
+sound/soc/intel/skylake/skl-debug.c:437:34:    expected void [noderef] <asn:2> *to
+sound/soc/intel/skylake/skl-debug.c:437:34:    got unsigned char *
+sound/soc/intel/skylake/skl-debug.c:437:51: warning: incorrect type in argument 2 (different address spaces)
+sound/soc/intel/skylake/skl-debug.c:437:51:    expected void const *from
+sound/soc/intel/skylake/skl-debug.c:437:51:    got void [noderef] <asn:2> *[assigned] fw_reg_addr
 
-Fixes: d552a2b9b33e ("GFS2: Non-recursive delete")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+Link: https://lore.kernel.org/r/20190827141712.21015-2-amadeuszx.slawinski@linux.intel.com
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/bmap.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/intel/skylake/skl-debug.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -1670,6 +1670,7 @@ out_unlock:
- 			brelse(dibh);
- 			up_write(&ip->i_rw_mutex);
- 			gfs2_trans_end(sdp);
-+			buf_in_tr = false;
- 		}
- 		gfs2_glock_dq_uninit(rd_gh);
- 		cond_resched();
+--- a/sound/soc/intel/skylake/skl-debug.c
++++ b/sound/soc/intel/skylake/skl-debug.c
+@@ -188,7 +188,7 @@ static ssize_t fw_softreg_read(struct fi
+ 	memset(d->fw_read_buff, 0, FW_REG_BUF);
+ 
+ 	if (w0_stat_sz > 0)
+-		__iowrite32_copy(d->fw_read_buff, fw_reg_addr, w0_stat_sz >> 2);
++		__ioread32_copy(d->fw_read_buff, fw_reg_addr, w0_stat_sz >> 2);
+ 
+ 	for (offset = 0; offset < FW_REG_SIZE; offset += 16) {
+ 		ret += snprintf(tmp + ret, FW_REG_BUF - ret, "%#.4x: ", offset);
 
 
