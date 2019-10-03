@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F2E3CA998
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D493CCAADE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405495AbfJCQpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:45:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57318 "EHLO mail.kernel.org"
+        id S2389113AbfJCQQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:16:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405456AbfJCQo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:44:58 -0400
+        id S2389086AbfJCQQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:16:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAE4F2054F;
-        Thu,  3 Oct 2019 16:44:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23DD720700;
+        Thu,  3 Oct 2019 16:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121098;
-        bh=AR8xkLta58mWfwbBEqsTYV291X1xSKFmHu7uqW2tgpM=;
+        s=default; t=1570119408;
+        bh=XdCheeG0w24WQDvOmQTlTAsMqd8i15E+HQEqz4HkuCw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cun77hZZYfm70jKuBlPa8d7nkBWsULXGTgTrA7HU25nFJJ0CMddZx4wH7TjuGrrpT
-         W1ublExNbgGRJ4iBRIaSczzczEnYyauWE9EPWO/sLYzSvcFeiuCwWx4od1nbe+4pLz
-         9H421jA96WUkEUR2O9z8QbAHjfRQH1FuKyByU7rw=
+        b=Q6X5YLaLa/W6TaXnUjCOxmGprFGDFR+K/5cHi+ejmmcsWG/VZBeOAQXVPNI+5o1dm
+         CJzKytyIURNoZCFAthZaYSzT29DcZzFWdNAl6HAl6KAjA7w/cR37xf3ltCZ5AfTfbF
+         +E2KR/QYYpFow+jnuP+W2wHUTlL6saQ6d9QLOyvc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
+        Song Liu <songliubraving@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 154/344] PM / devfreq: passive: Use non-devm notifiers
-Date:   Thu,  3 Oct 2019 17:51:59 +0200
-Message-Id: <20191003154555.430174790@linuxfoundation.org>
+Subject: [PATCH 4.19 054/211] md/raid1: end bio when the device faulty
+Date:   Thu,  3 Oct 2019 17:52:00 +0200
+Message-Id: <20191003154500.482539522@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit 0ef7c7cce43f6ecc2b96d447e69b2900a9655f7c ]
+[ Upstream commit eeba6809d8d58908b5ed1b5ceb5fcb09a98a7cad ]
 
-The devfreq passive governor registers and unregisters devfreq
-transition notifiers on DEVFREQ_GOV_START/GOV_STOP using devm wrappers.
+When write bio return error, it would be added to conf->retry_list
+and wait for raid1d thread to retry write and acknowledge badblocks.
 
-If devfreq itself is registered with devm then a warning is triggered on
-rmmod from devm_devfreq_unregister_notifier. Call stack looks like this:
+In narrow_write_error(), the error bio will be split in the unit of
+badblock shift (such as one sector) and raid1d thread issues them
+one by one. Until all of the splited bio has finished, raid1d thread
+can go on processing other things, which is time consuming.
 
-	devm_devfreq_unregister_notifier+0x30/0x40
-	devfreq_passive_event_handler+0x4c/0x88
-	devfreq_remove_device.part.8+0x6c/0x9c
-	devm_devfreq_dev_release+0x18/0x20
-	release_nodes+0x1b0/0x220
-	devres_release_all+0x78/0x84
-	device_release_driver_internal+0x100/0x1c0
-	driver_detach+0x4c/0x90
-	bus_remove_driver+0x7c/0xd0
-	driver_unregister+0x2c/0x58
-	platform_driver_unregister+0x10/0x18
-	imx_devfreq_platdrv_exit+0x14/0xd40 [imx_devfreq]
+But, there is a scene for error handling that is not necessary.
+When the device has been set faulty, flush_bio_list() may end
+bios in pending_bio_list with error status. Since these bios
+has not been issued to the device actually, error handlding to
+retry write and acknowledge badblocks make no sense.
 
-This happens because devres_release_all will first remove all the nodes
-into a separate todo list so the nested devres_release from
-devm_devfreq_unregister_notifier won't find anything.
+Even without that scene, when the device is faulty, badblocks info
+can not be written out to the device. Thus, we also no need to
+handle the error IO.
 
-Fix the warning by calling the non-devm APIS for frequency notification.
-Using devm wrappers is not actually useful for a governor anyway: it
-relies on the devfreq core to correctly match the GOV_START/GOV_STOP
-notifications.
-
-Fixes: 996133119f57 ("PM / devfreq: Add new passive governor")
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/governor_passive.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/md/raid1.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index 58308948b8637..da485477065c5 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -165,12 +165,12 @@ static int devfreq_passive_event_handler(struct devfreq *devfreq,
- 			p_data->this = devfreq;
- 
- 		nb->notifier_call = devfreq_passive_notifier_call;
--		ret = devm_devfreq_register_notifier(dev, parent, nb,
-+		ret = devfreq_register_notifier(parent, nb,
- 					DEVFREQ_TRANSITION_NOTIFIER);
- 		break;
- 	case DEVFREQ_GOV_STOP:
--		devm_devfreq_unregister_notifier(dev, parent, nb,
--					DEVFREQ_TRANSITION_NOTIFIER);
-+		WARN_ON(devfreq_unregister_notifier(parent, nb,
-+					DEVFREQ_TRANSITION_NOTIFIER));
- 		break;
- 	default:
- 		break;
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index fa47249fa3e42..54010675df9a5 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -434,19 +434,21 @@ static void raid1_end_write_request(struct bio *bio)
+ 		    /* We never try FailFast to WriteMostly devices */
+ 		    !test_bit(WriteMostly, &rdev->flags)) {
+ 			md_error(r1_bio->mddev, rdev);
+-			if (!test_bit(Faulty, &rdev->flags))
+-				/* This is the only remaining device,
+-				 * We need to retry the write without
+-				 * FailFast
+-				 */
+-				set_bit(R1BIO_WriteError, &r1_bio->state);
+-			else {
+-				/* Finished with this branch */
+-				r1_bio->bios[mirror] = NULL;
+-				to_put = bio;
+-			}
+-		} else
++		}
++
++		/*
++		 * When the device is faulty, it is not necessary to
++		 * handle write error.
++		 * For failfast, this is the only remaining device,
++		 * We need to retry the write without FailFast.
++		 */
++		if (!test_bit(Faulty, &rdev->flags))
+ 			set_bit(R1BIO_WriteError, &r1_bio->state);
++		else {
++			/* Finished with this branch */
++			r1_bio->bios[mirror] = NULL;
++			to_put = bio;
++		}
+ 	} else {
+ 		/*
+ 		 * Set R1BIO_Uptodate in our master bio, so that we
 -- 
 2.20.1
 
