@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11A67CA912
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC1DCAB1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391338AbfJCQg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:36:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46256 "EHLO mail.kernel.org"
+        id S2391936AbfJCRRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:17:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404501AbfJCQg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:36:56 -0400
+        id S2389571AbfJCQV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:21:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CA3720830;
-        Thu,  3 Oct 2019 16:36:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0219A21A4C;
+        Thu,  3 Oct 2019 16:21:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120616;
-        bh=CmtXy0D0yuXcEhN0X7903mDS0j4POCGAx1nqzYqdUeI=;
+        s=default; t=1570119714;
+        bh=SnQEhVM8RTG3LPNrFMAJntGs+Y+Ic60hMP54tSb/Xss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S7Krhuim0Zi41s2CLz9+cy2fC9XvW3IsvC4cofChvTLgXiJ1CUu4gn2twKaywlJlC
-         NbOBK2P+k596Ey25ga8LbRiKtsfMAr7ybkmfU2xocFSklqwvv2EE9ZPUUVBXsG5e/f
-         Gov4PfIPpNt09hP3XZusldF4mzhzihz0aLCeH5zY=
+        b=srSud1pA5II9ttftUSdMWVaaVkDKDo3b1A4XHFLJXzcRBVTJgQB9fcGknnOTnQ08U
+         CuWj+pdTnMHgmZ+F48NnfXQ79if/IQ07AZ7FEljE0+bF6ITrFcHd2D+dLBgxAIXjJU
+         8nNUeyTHuW4jcMgzAEEleNLKNUABNLhcqkJ77vW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Richard Kojedzinszky <richard@kojedz.in>
-Subject: [PATCH 5.2 250/313] binfmt_elf: Do not move brk for INTERP-less ET_EXEC
-Date:   Thu,  3 Oct 2019 17:53:48 +0200
-Message-Id: <20191003154557.675459805@linuxfoundation.org>
+        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
+        Doug Reiland <doug.reiland@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Peter Xu <peterx@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 167/211] KVM: x86: Manually calculate reserved bits when loading PDPTRS
+Date:   Thu,  3 Oct 2019 17:53:53 +0200
+Message-Id: <20191003154525.870373223@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +46,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 7be3cb019db1cbd5fd5ffe6d64a23fefa4b6f229 upstream.
+commit 16cfacc8085782dab8e365979356ce1ca87fd6cc upstream.
 
-When brk was moved for binaries without an interpreter, it should have
-been limited to ET_DYN only. In other words, the special case was an
-ET_DYN that lacks an INTERP, not just an executable that lacks INTERP.
-The bug manifested for giant static executables, where the brk would end
-up in the middle of the text area on 32-bit architectures.
+Manually generate the PDPTR reserved bit mask when explicitly loading
+PDPTRs.  The reserved bits that are being tracked by the MMU reflect the
+current paging mode, which is unlikely to be PAE paging in the vast
+majority of flows that use load_pdptrs(), e.g. CR0 and CR4 emulation,
+__set_sregs(), etc...  This can cause KVM to incorrectly signal a bad
+PDPTR, or more likely, miss a reserved bit check and subsequently fail
+a VM-Enter due to a bad VMCS.GUEST_PDPTR.
 
-Reported-and-tested-by: Richard Kojedzinszky <richard@kojedz.in>
-Fixes: bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing direct loader exec")
+Add a one off helper to generate the reserved bits instead of sharing
+code across the MMU's calculations and the PDPTR emulation.  The PDPTR
+reserved bits are basically set in stone, and pushing a helper into
+the MMU's calculation adds unnecessary complexity without improving
+readability.
+
+Oppurtunistically fix/update the comment for load_pdptrs().
+
+Note, the buggy commit also introduced a deliberate functional change,
+"Also remove bit 5-6 from rsvd_bits_mask per latest SDM.", which was
+effectively (and correctly) reverted by commit cd9ae5fe47df ("KVM: x86:
+Fix page-tables reserved bits").  A bit of SDM archaeology shows that
+the SDM from late 2008 had a bug (likely a copy+paste error) where it
+listed bits 6:5 as AVL and A for PDPTEs used for 4k entries but reserved
+for 2mb entries.  I.e. the SDM contradicted itself, and bits 6:5 are and
+always have been reserved.
+
+Fixes: 20c466b56168d ("KVM: Use rsvd_bits_mask in load_pdptrs()")
 Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Reported-by: Doug Reiland <doug.reiland@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/binfmt_elf.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1142,7 +1142,8 @@ out_free_interp:
- 		 * (since it grows up, and may collide early with the stack
- 		 * growing down), and into the unused ELF_ET_DYN_BASE region.
- 		 */
--		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) && !interpreter)
-+		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
-+		    loc->elf_ex.e_type == ET_DYN && !interpreter)
- 			current->mm->brk = current->mm->start_brk =
- 				ELF_ET_DYN_BASE;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -581,8 +581,14 @@ static int kvm_read_nested_guest_page(st
+ 				       data, offset, len, access);
+ }
  
++static inline u64 pdptr_rsvd_bits(struct kvm_vcpu *vcpu)
++{
++	return rsvd_bits(cpuid_maxphyaddr(vcpu), 63) | rsvd_bits(5, 8) |
++	       rsvd_bits(1, 2);
++}
++
+ /*
+- * Load the pae pdptrs.  Return true is they are all valid.
++ * Load the pae pdptrs.  Return 1 if they are all valid, 0 otherwise.
+  */
+ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
+ {
+@@ -601,8 +607,7 @@ int load_pdptrs(struct kvm_vcpu *vcpu, s
+ 	}
+ 	for (i = 0; i < ARRAY_SIZE(pdpte); ++i) {
+ 		if ((pdpte[i] & PT_PRESENT_MASK) &&
+-		    (pdpte[i] &
+-		     vcpu->arch.mmu.guest_rsvd_check.rsvd_bits_mask[0][2])) {
++		    (pdpte[i] & pdptr_rsvd_bits(vcpu))) {
+ 			ret = 0;
+ 			goto out;
+ 		}
 
 
