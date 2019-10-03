@@ -2,103 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D8C3C9F71
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 15:30:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99F9EC9F73
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 15:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730437AbfJCNaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 09:30:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
+        id S1730452AbfJCNaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 09:30:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729655AbfJCNaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 09:30:18 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        id S1729655AbfJCNaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 09:30:35 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B53D2207FF;
-        Thu,  3 Oct 2019 13:30:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87D85207FF;
+        Thu,  3 Oct 2019 13:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570109417;
-        bh=+vZNSuj5CLm8gcAmu27ZLgAdEbY/2YdMMvRqm8UjGpI=;
+        s=default; t=1570109434;
+        bh=/PbXIGt0UaMtnHakh0maKsJfjC9hWocWlO7+FUASxAs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J3BGEMEZWWnTW+MyQ4U/TofVfzu0O0SxMZ45RD9OMOYdaU0PF9y/zk1yr8yom7599
-         SEATzOa5QuObf6Yj7y42d72fe+QRiA5cczVygzrtgTIWLpX6NCswZMBpZWB0lyKoDK
-         vggthv0v/96f15LJN8YVUTIrIrm+UPuPML+f/f80=
-Date:   Thu, 3 Oct 2019 14:30:13 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND PATCH] pinctrl: devicetree: Avoid taking direct
- reference to device name string
-Message-ID: <20191003133012.7a64vxj7tz6si56c@willie-the-truck>
-References: <20191002124206.22928-1-will@kernel.org>
- <CACRpkdYFzrUT9YE3VvRdWpx-n9szyvoOnEBM7GWLZAv8t1drww@mail.gmail.com>
+        b=2QzvAZ+ZKgdOJ80qmd9SOJ5LSwKyk4G/pw5n8Gp/a2xELivFH5ULWHtb4eAgV9ans
+         E48i9e22CPdnXQuE2n7GWOtdKqOw4VSGKA0OvZ19/QyJ2q0J6pwyokSdaw/GXyAOMy
+         RBSZCDf5+Mji9yipjs10suznOE6Etm80OulAKWYY=
+Date:   Thu, 3 Oct 2019 15:30:31 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        michael@amarulasolutions.com
+Subject: Re: [PATCH v11 4/7] dt-bindings: sun6i-dsi: Add VCC-DSI supply
+ property
+Message-ID: <20191003133031.gowixvfbdaif4sdf@gilmour>
+References: <20191003064527.15128-1-jagan@amarulasolutions.com>
+ <20191003064527.15128-5-jagan@amarulasolutions.com>
+ <20191003114733.56mlar666l76uoyb@gilmour>
+ <0086CD40-F161-4B33-8D76-8DCA20E7DB07@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xl6ox63chtxqzxbp"
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYFzrUT9YE3VvRdWpx-n9szyvoOnEBM7GWLZAv8t1drww@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <0086CD40-F161-4B33-8D76-8DCA20E7DB07@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 02:54:21PM +0200, Linus Walleij wrote:
-> On Wed, Oct 2, 2019 at 2:42 PM Will Deacon <will@kernel.org> wrote:
-> > When populating the pinctrl mapping table entries for a device, the
-> > 'dev_name' field for each entry is initialised to point directly at the
-> > string returned by 'dev_name()' for the device and subsequently used by
-> > 'create_pinctrl()' when looking up the mappings for the device being
-> > probed.
-> >
-> > This is unreliable in the presence of calls to 'dev_set_name()', which may
-> > reallocate the device name string leaving the pinctrl mappings with a
-> > dangling reference. This then leads to a use-after-free every time the
-> > name is dereferenced by a device probe:
-> >
-> >   | BUG: KASAN: invalid-access in strcmp+0x20/0x64
-> >   | Read of size 1 at addr 13ffffc153494b00 by task modprobe/590
-> >   | Pointer tag: [13], memory tag: [fe]
-> >   |
-> >   | Call trace:
-> >   |  __kasan_report+0x16c/0x1dc
-> >   |  kasan_report+0x10/0x18
-> >   |  check_memory_region
-> >   |  __hwasan_load1_noabort+0x4c/0x54
-> >   |  strcmp+0x20/0x64
-> >   |  create_pinctrl+0x18c/0x7f4
-> >   |  pinctrl_get+0x90/0x114
-> >   |  devm_pinctrl_get+0x44/0x98
-> >   |  pinctrl_bind_pins+0x5c/0x450
-> >   |  really_probe+0x1c8/0x9a4
-> >   |  driver_probe_device+0x120/0x1d8
-> >
-> > Follow the example of sysfs, and duplicate the device name string before
-> > stashing it away in the pinctrl mapping entries.
-> >
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Reported-by: Elena Petrova <lenaptr@google.com>
-> > Tested-by: Elena Petrova <lenaptr@google.com>
-> > Signed-off-by: Will Deacon <will@kernel.org>
-> 
-> Patch applied, sorry for not getting back to you earlier.
 
-No need to apologise -- I posted it during the merge window!
+--xl6ox63chtxqzxbp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The fact that dev_set_name() is reallocating the name is a bit
-> scary, it doesn't feel super-stable, but I suppose there is some
-> particularly good reason for it.
-> 
-> I guess the look-up table still refers to the struct device *
-> directly so pin control functionality will work, but the pin controller
-> device name down in /sys/kernel/debug/pinctrl
-> is going to be bogus, am I right? Like the name given there
-> will be whatever the name was before the call to dev_set_name().
+On Thu, Oct 03, 2019 at 09:04:03PM +0800, Icenowy Zheng wrote:
+> =E4=BA=8E 2019=E5=B9=B410=E6=9C=883=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
+7:47:33, Maxime Ripard <mripard@kernel.org> =E5=86=99=E5=88=B0:
+> >On Thu, Oct 03, 2019 at 12:15:24PM +0530, Jagan Teki wrote:
+> >> Allwinner MIPI DSI controllers are supplied with SoC DSI
+> >> power rails via VCC-DSI pin.
+> >>
+> >> Some board still work without supplying this but give more
+> >> faith on datasheet and hardware schematics and document this
+> >> supply property in required property list.
+> >>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> >> Tested-by: Merlijn Wajer <merlijn@wizzup.org>
+> >> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >> ---
+> >>  .../bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml         | 3
+> >+++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git
+> >a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi=
+=2Eyaml
+> >b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi=
+=2Eyaml
+> >> index 47950fced28d..9d4c25b104f6 100644
+> >> ---
+> >a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi=
+=2Eyaml
+> >> +++
+> >b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi=
+=2Eyaml
+> >> @@ -36,6 +36,9 @@ properties:
+> >>    resets:
+> >>      maxItems: 1
+> >>
+> >> +  vcc-dsi-supply:
+> >> +    description: VCC-DSI power supply of the DSI encoder
+> >> +
+> >
+> >The driver treats it as mandatory, so I've added it to the binding, as
+> >suggested by the commit log.
+>
+> No. The regulator_get function will return dummy regulator, rather than
+> fail, if the regulator is not specified.
 
-Yeah, but I think that's a least consistent with other sysfs entries
-(i.e. those created by driver_sysfs_add()) so callers of dev_set_name()
-need to be super careful about how they use it. In reality, it's going
-to be mostly confined to bus code, but copying the string (as in this
-patch) avoids pinctrl being the thing that blows up.
+Yes. And this deals nicely with the backward compatibility case. The
+regulator is there on all the SoCs, so there's no reason to leave it
+out.
 
-Will
+Maxime
+
+--xl6ox63chtxqzxbp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZX39wAKCRDj7w1vZxhR
+xfdtAP9iY02ClBdX7PytSYTVv7u9rk5qFxNbRhfligYsza6diwEA+bXtRpDjiCDy
+YsfwN2Wm3Vvp2K/WtdvzfKezGk0WpAo=
+=iYP9
+-----END PGP SIGNATURE-----
+
+--xl6ox63chtxqzxbp--
