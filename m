@@ -2,198 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3F9DCA1DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8B80CA22F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:04:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfJCP7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:59:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731364AbfJCP7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:59:43 -0400
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00CCC222C2;
-        Thu,  3 Oct 2019 15:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118382;
-        bh=UYI+i4ZdBUJfq10YbStvW3i66fBJsqe8ARvR8bHxCbY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RqbyF7VSy9NGgBFB+HIevDvHLWm+7aEURok3DWHfiN9exDTZhQ0pl2MxYRrX080ic
-         NvimPrOdtKf3nbQIlfd+/crmMgf4KzFT7yuBdmLEm+N4KARx9ff/JsYlUcKUJn+11m
-         v/Eryv8Mp0Q/GqOr9XmwF5yWFxqs8FHEcY16wT1Q=
-Received: by mail-qt1-f178.google.com with SMTP id u22so4246606qtq.13;
-        Thu, 03 Oct 2019 08:59:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAUvA72ISCtY+efvzNh6dqfvQ3Lf6ux9VN7JhsN2AaaBO3tEWT7g
-        EK6o3DrXOWHKyp1GJ2XG1mlKWB7qzSa95wev2A==
-X-Google-Smtp-Source: APXvYqwcwdNJlOIpfQZz2dIR2x5UhCf43ZSWs3Ge+J8BHWO8rEIey1vwAN28tyHAn9j5UNMWeVMspf0z3kY4qPEkVYI=
-X-Received: by 2002:ad4:458d:: with SMTP id x13mr9205417qvu.85.1570118380840;
- Thu, 03 Oct 2019 08:59:40 -0700 (PDT)
+        id S1732034AbfJCQCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:02:41 -0400
+Received: from bout01.mta.xmission.com ([166.70.11.15]:49701 "EHLO
+        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732006AbfJCQCc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:02:32 -0400
+X-Greylist: delayed 1285 seconds by postgrey-1.27 at vger.kernel.org; Thu, 03 Oct 2019 12:02:31 EDT
+Received: from mx04.mta.xmission.com ([166.70.13.214])
+        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1iG3Ff-00086p-9O; Thu, 03 Oct 2019 09:42:47 -0600
+Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
+        by mx04.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <sbauer@plzdonthack.me>)
+        id 1iG3FP-0007KK-Lf; Thu, 03 Oct 2019 09:42:47 -0600
+Received: from hacktheplanet (c-68-50-34-150.hsd1.in.comcast.net [68.50.34.150])
+        by plesk14.xmission.com (Postfix) with ESMTPSA id A270F126779;
+        Thu,  3 Oct 2019 15:42:28 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 11:42:27 -0400
+From:   Scott Bauer <sbauer@plzdonthack.me>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, axboe <axboe@kernel.dk>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        jonathan.derrick@intel.com, revanth.rajashekar@intel.com
+Message-ID: <20191003154227.GB2450@hacktheplanet>
+References: <807d7b7f-623b-75f0-baab-13b1b0c02e9d@infradead.org>
 MIME-Version: 1.0
-References: <20190920075411.15735-1-marcel@ziswiler.com> <20190920075411.15735-2-marcel@ziswiler.com>
- <20191001220539.GA16232@bogus> <e6fdfd7f46308dbc8fd33d4a2ff0b242ec39a84c.camel@toradex.com>
-In-Reply-To: <e6fdfd7f46308dbc8fd33d4a2ff0b242ec39a84c.camel@toradex.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 3 Oct 2019 10:59:29 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKmCVP3Fc2sUY=FpM5-HLQ0-=uTf6PEwn0XzyC5BBHBOA@mail.gmail.com>
-Message-ID: <CAL_JsqKmCVP3Fc2sUY=FpM5-HLQ0-=uTf6PEwn0XzyC5BBHBOA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] drm/panel: simple: add display timings for logic
- technologies displays
-To:     Philippe Schenker <philippe.schenker@toradex.com>
-Cc:     "marcel@ziswiler.com" <marcel@ziswiler.com>,
-        "info@logictechno.com" <info@logictechno.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "j.bauer@endrich.com" <j.bauer@endrich.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <807d7b7f-623b-75f0-baab-13b1b0c02e9d@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-XM-SPF: eid=1iG3FP-0007KK-Lf;;;mid=<20191003154227.GB2450@hacktheplanet>;;;hst=mx04.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
+X-SA-Exim-Connect-IP: 166.70.198.161
+X-SA-Exim-Mail-From: sbauer@plzdonthack.me
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMNoVowels,XMSubLong,XM_UncommonTLD01
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4998]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.5 XM_UncommonTLD01 Less-common TLD
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Randy Dunlap <rdunlap@infradead.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 15245 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 2.8 (0.0%), b_tie_ro: 2.0 (0.0%), parse: 1.01
+        (0.0%), extract_message_metadata: 22 (0.1%), get_uri_detail_list: 1.54
+        (0.0%), tests_pri_-1000: 3.3 (0.0%), tests_pri_-950: 1.04 (0.0%),
+        tests_pri_-900: 0.84 (0.0%), tests_pri_-90: 16 (0.1%), check_bayes: 15
+        (0.1%), b_tokenize: 4.3 (0.0%), b_tok_get_all: 5.0 (0.0%),
+        b_comp_prob: 1.18 (0.0%), b_tok_touch_all: 2.7 (0.0%), b_finish: 0.64
+        (0.0%), tests_pri_0: 6303 (41.3%), check_dkim_signature: 0.35 (0.0%),
+        check_dkim_adsp: 6140 (40.3%), poll_dns_idle: 14983 (98.3%),
+        tests_pri_10: 1.63 (0.0%), tests_pri_500: 8891 (58.3%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH 1/2] block: sed-opal: fix sparse warning: obsolete array
+ init.
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on mx04.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 5:27 AM Philippe Schenker
-<philippe.schenker@toradex.com> wrote:
->
-> On Tue, 2019-10-01 at 17:05 -0500, Rob Herring wrote:
-> > On Fri, Sep 20, 2019 at 09:54:11AM +0200, Marcel Ziswiler wrote:
-> > > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > >
-> > > Add display timings for the following 3 display panels manufactured
-> > > by
-> > > Logic Technologies Limited:
-> > >
-> > > - LT161010-2NHC e.g. as found in the Toradex Capacitive Touch
-> > > Display
-> > >   7" Parallel [1]
-> > > - LT161010-2NHR e.g. as found in the Toradex Resistive Touch Display
-> > > 7"
-> > >   Parallel [2]
-> > > - LT170410-2WHC e.g. as found in the Toradex Capacitive Touch
-> > > Display
-> > >   10.1" LVDS [3]
-> > >
-> > > Those panels may also be distributed by Endrich Bauelemente
-> > > Vertriebs
-> > > GmbH [4].
-> > >
-> > > [1]
-> > > https://docs.toradex.com/104497-7-inch-parallel-capacitive-touch-display-800x480-datasheet.pdf
-> > > [2]
-> > > https://docs.toradex.com/104498-7-inch-parallel-resistive-touch-display-800x480.pdf
-> > > [3]
-> > > https://docs.toradex.com/105952-10-1-inch-lvds-capacitive-touch-display-1280x800-datasheet.pdf
-> > > [4]
-> > > https://www.endrich.com/isi50_isi30_tft-displays/lt170410-1whc_isi30
-> > >
-> > > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > >
-> > > ---
-> > >
-> > >  drivers/gpu/drm/panel/panel-simple.c | 65
-> > > ++++++++++++++++++++++++++++
-> > >  1 file changed, 65 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/panel/panel-simple.c
-> > > b/drivers/gpu/drm/panel/panel-simple.c
-> > > index 28fa6ba7b767..42bd0de25167 100644
-> > > --- a/drivers/gpu/drm/panel/panel-simple.c
-> > > +++ b/drivers/gpu/drm/panel/panel-simple.c
-> > > @@ -2034,6 +2034,62 @@ static const struct panel_desc lg_lp129qe = {
-> > >     },
-> > >  };
-> > >
-> > > +static const struct display_timing logictechno_lt161010_2nh_timing
-> > > = {
-> > > +   .pixelclock = { 26400000, 33300000, 46800000 },
-> > > +   .hactive = { 800, 800, 800 },
-> > > +   .hfront_porch = { 16, 210, 354 },
-> > > +   .hback_porch = { 46, 46, 46 },
-> > > +   .hsync_len = { 1, 20, 40 },
-> > > +   .vactive = { 480, 480, 480 },
-> > > +   .vfront_porch = { 7, 22, 147 },
-> > > +   .vback_porch = { 23, 23, 23 },
-> > > +   .vsync_len = { 1, 10, 20 },
-> > > +   .flags = DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW |
-> > > +            DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_PIXDATA_POSEDGE |
-> > > +            DISPLAY_FLAGS_SYNC_POSEDGE,
-> > > +};
-> > > +
-> > > +static const struct panel_desc logictechno_lt161010_2nh = {
-> > > +   .timings = &logictechno_lt161010_2nh_timing,
-> > > +   .num_timings = 1,
-> > > +   .size = {
-> > > +           .width = 154,
-> > > +           .height = 86,
-> > > +   },
-> > > +   .bus_format = MEDIA_BUS_FMT_RGB666_1X18,
-> > > +   .bus_flags = DRM_BUS_FLAG_DE_HIGH |
-> > > +                DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE |
-> > > +                DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE,
-> > > +};
-> > > +
-> > > +static const struct display_timing logictechno_lt170410_2whc_timing
-> > > = {
-> > > +   .pixelclock = { 68900000, 71100000, 7340000 },
-> > > +   .hactive = { 1280, 1280, 1280 },
-> > > +   .hfront_porch = { 23, 60, 71 },
-> > > +   .hback_porch = { 23, 60, 71 },
-> > > +   .hsync_len = { 15, 40, 47 },
-> > > +   .vactive = { 800, 800, 800 },
-> > > +   .vfront_porch = { 5, 7, 10 },
-> > > +   .vback_porch = { 5, 7, 10 },
-> > > +   .vsync_len = { 6, 9, 12 },
-> > > +   .flags = DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW |
-> > > +            DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_PIXDATA_POSEDGE |
-> > > +            DISPLAY_FLAGS_SYNC_POSEDGE,
-> > > +};
-> > > +
-> > > +static const struct panel_desc logictechno_lt170410_2whc = {
-> > > +   .timings = &logictechno_lt170410_2whc_timing,
-> > > +   .num_timings = 1,
-> > > +   .size = {
-> > > +           .width = 217,
-> > > +           .height = 136,
-> > > +   },
-> > > +   .bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-> > > +   .bus_flags = DRM_BUS_FLAG_DE_HIGH |
-> > > +                DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE |
-> > > +                DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE,
-> > > +};
-> > > +
-> > >  static const struct drm_display_mode mitsubishi_aa070mc01_mode = {
-> > >     .clock = 30400,
-> > >     .hdisplay = 800,
-> > > @@ -3264,6 +3320,15 @@ static const struct of_device_id
-> > > platform_of_match[] = {
-> > >     }, {
-> > >             .compatible = "lg,lp129qe",
-> > >             .data = &lg_lp129qe,
-> > > +   }, {
-> > > +           .compatible = "logictechno,lt161010-2nhc",
-> > > +           .data = &logictechno_lt161010_2nh,
-> > > +   }, {
-> > > +           .compatible = "logictechno,lt161010-2nhr",
-> > > +           .data = &logictechno_lt161010_2nh,
-> > > +   }, {
-> > > +           .compatible = "logictechno,lt170410-2whc",
-> > > +           .data = &logictechno_lt170410_2whc,
-> >
-> > The vendor prefix wasn't documented, but the compatible string and
-> > rest
-> > already are?
->
-> Marcel added the vendor prefix in the first patch of the series [1]
+On Wed, Oct 02, 2019 at 07:23:05PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix sparse warning: (missing '=')
+> ../block/sed-opal.c:133:17: warning: obsolete array initializer, use C99 syntax
+> 
+> Fixes: ff91064ea37c ("block: sed-opal: check size of shadow mbr")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: linux-block@vger.kernel.org
+> Cc: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+> Cc: David Kozub <zub@linux.fjfi.cvut.cz>
+> ---
 
-Right, but where's the panel's binding documentation with the above
-compatible strings documented?
+Un cc'd David and Jonas, +CC'd Jon and Revanth.
 
-Rob
+This looks fine to me too.
+
+Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
