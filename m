@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59CB4CA6B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B5CCA694
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732701AbfJCQqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:46:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59742 "EHLO mail.kernel.org"
+        id S2405507AbfJCQpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:45:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387477AbfJCQq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:46:28 -0400
+        id S2405482AbfJCQpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:45:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A8E220830;
-        Thu,  3 Oct 2019 16:46:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCE2D222D3;
+        Thu,  3 Oct 2019 16:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121186;
-        bh=9fwelzb4gaRs6F+woif6HxRJvfWAzWKdIXQYj+jKX5Q=;
+        s=default; t=1570121106;
+        bh=6Ktj9zXXi9b3bAjU5OSe3uz1uAckroEcPDIgl37r6dk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=stslWFFf4FuAO5UQeLbipALmg6iwnJCuR/m9jarYnsTazsu3iSCKm/eJymj9yTHl9
-         eyR+0YBqIYG3nKoIQHqD6Jc0WJ32JK3J8gDSRo5LuaQf0rzaAaAWPRgE/M3BxZQ2A2
-         RDnkpuWjcQ0fRXgDsXFbBsW9j6jCYHVAbAOR97K4=
+        b=bW8MOEpOlnRZYzwAG0GK9KAL8TbG64UrQtL3SAgpjjBJ9TOWPbtgKu1fW4XLo+nIn
+         AsV+84rqyHuJPs/66gQBwtBoHzACIxSBAHdL2ijwt+dWguOoXi5235WCF38fc/qR0T
+         A9KDIZMhCXZZMoC4kNEEIZMbe2xRPGvyF3yp3ikU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 149/344] ARM: at91: move platform-specific asm-offset.h to arch/arm/mach-at91
-Date:   Thu,  3 Oct 2019 17:51:54 +0200
-Message-Id: <20191003154554.952579697@linuxfoundation.org>
+Subject: [PATCH 5.3 157/344] media: saa7146: add cleanup in hexium_attach()
+Date:   Thu,  3 Oct 2019 17:52:02 +0200
+Message-Id: <20191003154555.710581995@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,90 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 9fac85a6db8999922f2cd92dfe2e83e063b31a94 ]
+[ Upstream commit 42e64117d3b4a759013f77bbcf25ab6700e55de7 ]
 
-<generated/at91_pm_data-offsets.h> is only generated and included by
-arch/arm/mach-at91/, so it does not need to reside in the globally
-visible include/generated/.
+If saa7146_register_device() fails, no cleanup is executed, leading to
+memory/resource leaks. To fix this issue, perform necessary cleanup work
+before returning the error.
 
-I renamed it to arch/arm/mach-at91/pm_data-offsets.h since the prefix
-'at91_' is just redundant in mach-at91/.
-
-My main motivation of this change is to avoid the race condition for
-the parallel build (-j) when CONFIG_IKHEADERS is enabled.
-
-When it is enabled, all the headers under include/ are archived into
-kernel/kheaders_data.tar.xz and exposed in the sysfs.
-
-In the parallel build, we have no idea in which order files are built.
-
- - If at91_pm_data-offsets.h is built before kheaders_data.tar.xz,
-   the header will be included in the archive. Probably nobody will
-   use it, but it is harmless except that it will increase the archive
-   size needlessly.
-
- - If kheaders_data.tar.xz is built before at91_pm_data-offsets.h,
-   the header will not be included in the archive. However, in the next
-   build, the archive will be re-generated to include the newly-found
-   at91_pm_data-offsets.h. This is not nice from the build system point
-   of view.
-
- - If at91_pm_data-offsets.h and kheaders_data.tar.xz are built at the
-   same time, the corrupted header might be included in the archive,
-   which does not look nice either.
-
-This commit fixes the race.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Link: https://lore.kernel.org/r/20190823024346.591-1-yamada.masahiro@socionext.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-at91/.gitignore   | 1 +
- arch/arm/mach-at91/Makefile     | 5 +++--
- arch/arm/mach-at91/pm_suspend.S | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/mach-at91/.gitignore
+ drivers/media/pci/saa7146/hexium_gemini.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/mach-at91/.gitignore b/arch/arm/mach-at91/.gitignore
-new file mode 100644
-index 0000000000000..2ecd6f51c8a95
---- /dev/null
-+++ b/arch/arm/mach-at91/.gitignore
-@@ -0,0 +1 @@
-+pm_data-offsets.h
-diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
-index 31b61f0e1c077..de64301dcff25 100644
---- a/arch/arm/mach-at91/Makefile
-+++ b/arch/arm/mach-at91/Makefile
-@@ -19,9 +19,10 @@ ifeq ($(CONFIG_PM_DEBUG),y)
- CFLAGS_pm.o += -DDEBUG
- endif
+diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
+index dca20a3d98e25..f962269306707 100644
+--- a/drivers/media/pci/saa7146/hexium_gemini.c
++++ b/drivers/media/pci/saa7146/hexium_gemini.c
+@@ -292,6 +292,9 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
+ 	ret = saa7146_register_device(&hexium->video_dev, dev, "hexium gemini", VFL_TYPE_GRABBER);
+ 	if (ret < 0) {
+ 		pr_err("cannot register capture v4l2 device. skipping.\n");
++		saa7146_vv_release(dev);
++		i2c_del_adapter(&hexium->i2c_adapter);
++		kfree(hexium);
+ 		return ret;
+ 	}
  
--include/generated/at91_pm_data-offsets.h: arch/arm/mach-at91/pm_data-offsets.s FORCE
-+$(obj)/pm_data-offsets.h: $(obj)/pm_data-offsets.s FORCE
- 	$(call filechk,offsets,__PM_DATA_OFFSETS_H__)
- 
--arch/arm/mach-at91/pm_suspend.o: include/generated/at91_pm_data-offsets.h
-+$(obj)/pm_suspend.o: $(obj)/pm_data-offsets.h
- 
- targets += pm_data-offsets.s
-+clean-files += pm_data-offsets.h
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index c751f047b1166..ed57c879d4e17 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -10,7 +10,7 @@
- #include <linux/linkage.h>
- #include <linux/clk/at91_pmc.h>
- #include "pm.h"
--#include "generated/at91_pm_data-offsets.h"
-+#include "pm_data-offsets.h"
- 
- #define	SRAMC_SELF_FRESH_ACTIVE		0x01
- #define	SRAMC_SELF_FRESH_EXIT		0x00
 -- 
 2.20.1
 
