@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F03DBCAB6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB57CA988
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391402AbfJCRVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:21:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44012 "EHLO mail.kernel.org"
+        id S2405305AbfJCQoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:44:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389344AbfJCQRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:17:53 -0400
+        id S2405292AbfJCQn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:43:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C6882133F;
-        Thu,  3 Oct 2019 16:17:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A0E32070B;
+        Thu,  3 Oct 2019 16:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119472;
-        bh=Q/ywRCQArBh0m7zwjTfd1BsBMu4lEOlN3cPetuN71E4=;
+        s=default; t=1570121036;
+        bh=eMPlCWxTQpyconOk0Sr//jZgoyEkKBpyv80QPkFVPI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BxE2H4r9b1U+MoiXx7wcUpKvIi4WolTVPQmzG4DcEYf+ml/VB1FLgsSg+wHk3Xffl
-         IALZzr8rgExd9cVqH4CBIpN8X3UJ5HF/HCWUwrXLOH1B4Tkuk51mXg5pT1JmVxW3R+
-         mH6B4gtgLEAQxOrVILh3sy+ftIxhSa6PPuRoOyyk=
+        b=P9aZWpWs7ygCTfGTILe7b1GpffPkW2xOxhfV9sr63OLF+8VgMfY4Ry11s1TxhYGhg
+         /ete2kQ/lDrtginkbp94OUWpiNgsuq/kzg/WkSdzc8K01ZmxsI+fBWvoXkNEOGv41e
+         EMartH9hdAdBtSZJoYlMGU/l1IqsdMnjs0aoksNI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 028/211] ASoC: sgtl5000: Fix charge pump source assignment
-Date:   Thu,  3 Oct 2019 17:51:34 +0200
-Message-Id: <20191003154453.706714725@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        Peter Collingbourne <pcc@google.com>
+Subject: [PATCH 5.3 130/344] powerpc/Makefile: Always pass --synthetic to nm if supported
+Date:   Thu,  3 Oct 2019 17:51:35 +0200
+Message-Id: <20191003154553.059733159@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,53 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit b6319b061ba279577fd7030a9848fbd6a17151e3 ]
+[ Upstream commit 117acf5c29dd89e4c86761c365b9724dba0d9763 ]
 
-If VDDA != VDDIO and any of them is greater than 3.1V, charge pump
-source can be assigned automatically [1].
+Back in 2004 we added logic to arch/ppc64/Makefile to pass
+the --synthetic option to nm, if it was supported by nm.
 
-[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
+Then in 2005 when arch/ppc64 and arch/ppc were merged, the logic to
+add --synthetic was moved inside an #ifdef CONFIG_PPC64 block within
+arch/powerpc/Makefile, and has remained there since.
 
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Link: https://lore.kernel.org/r/20190719100524.23300-7-oleksandr.suvorov@toradex.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+That was fine, though crufty, until recently when a change to
+init/Kconfig added a config time check that uses $(NM). On powerpc
+that leads to an infinite loop because Kconfig uses $(NM) to calculate
+some values, then the powerpc Makefile changes $(NM), which Kconfig
+notices and restarts.
+
+The original commit that added --synthetic simply said:
+  On new toolchains we need to use nm --synthetic or we miss code
+  symbols.
+
+And the nm man page says that the --synthetic option causes nm to:
+  Include synthetic symbols in the output. These are special symbols
+  created by the linker for various purposes.
+
+So it seems safe to always pass --synthetic if nm supports it, ie. on
+32-bit and 64-bit, it just means 32-bit kernels might have more
+symbols reported (and in practice I see no extra symbols). Making it
+unconditional avoids the #ifdef CONFIG_PPC64, which in turn avoids the
+infinite loop.
+
+Debugged-by: Peter Collingbourne <pcc@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/sgtl5000.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/powerpc/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index f9817029bffbb..18cddf1729a65 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -1165,12 +1165,17 @@ static int sgtl5000_set_power_regs(struct snd_soc_component *component)
- 					SGTL5000_INT_OSC_EN);
- 		/* Enable VDDC charge pump */
- 		ana_pwr |= SGTL5000_VDDC_CHRGPMP_POWERUP;
--	} else if (vddio >= 3100 && vdda >= 3100) {
-+	} else {
- 		ana_pwr &= ~SGTL5000_VDDC_CHRGPMP_POWERUP;
--		/* VDDC use VDDIO rail */
--		lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
--		lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
--			    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		/*
-+		 * if vddio == vdda the source of charge pump should be
-+		 * assigned manually to VDDIO
-+		 */
-+		if (vddio == vdda) {
-+			lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
-+			lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
-+				    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		}
- 	}
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index c345b79414a96..403f7e193833a 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -39,13 +39,11 @@ endif
+ uname := $(shell uname -m)
+ KBUILD_DEFCONFIG := $(if $(filter ppc%,$(uname)),$(uname),ppc64)_defconfig
  
- 	snd_soc_component_write(component, SGTL5000_CHIP_LINREG_CTRL, lreg_ctrl);
+-ifdef CONFIG_PPC64
+ new_nm := $(shell if $(NM) --help 2>&1 | grep -- '--synthetic' > /dev/null; then echo y; else echo n; fi)
+ 
+ ifeq ($(new_nm),y)
+ NM		:= $(NM) --synthetic
+ endif
+-endif
+ 
+ # BITS is used as extension for files which are available in a 32 bit
+ # and a 64 bit version to simplify shared Makefiles.
 -- 
 2.20.1
 
