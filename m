@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A78FCAB95
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AD3FCAC86
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730667AbfJCP4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:56:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38276 "EHLO mail.kernel.org"
+        id S2387878AbfJCQLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:11:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730597AbfJCP4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:56:25 -0400
+        id S2387870AbfJCQLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:11:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8287821A4C;
-        Thu,  3 Oct 2019 15:56:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4A1320700;
+        Thu,  3 Oct 2019 16:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118185;
-        bh=2OU/aDDl5if082keo3Lhq1ZCrxI0CLsaFeUqmdsqnOA=;
+        s=default; t=1570119096;
+        bh=4TiQxJJfR3qDJTi4w87i1jLrhWKWJHCVRA0qnfV3P2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oj95QolTunlcDzHfYvz3jFqECfoWDYM4IRvG1tRnZfL8E8/OLayw6MUjeyBRSI49A
-         +8VujKCgdnyhhejCJDBeemmvraR2fCftumWfS3ok0APWwQzzMfITvW5rNHgY8msydY
-         /VZ+KIumlh8ni8CB4gJYdtdYyVKgitOqutr1knBM=
+        b=iB1HGSx2W1oAJlBEy8sIovhi2AyvZjk+RK0ubtzo/t6EpYFiypcx+V7jqfVBJYDIK
+         p9/aUdPFjrUtvBLCMo/32JocVCUsobM1tYJXVZYIc5JJCHd6E2q4erm1QEUyiUM/w9
+         jRBJ/kbM4Bh2bINLm9Q3WnTLX4/eyWQFvfqbn9i8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 20/99] arcnet: provide a buffer big enough to actually receive packets
-Date:   Thu,  3 Oct 2019 17:52:43 +0200
-Message-Id: <20191003154303.294917042@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 086/185] media: mtk-mdp: fix reference count on old device tree
+Date:   Thu,  3 Oct 2019 17:52:44 +0200
+Message-Id: <20191003154457.551440417@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,101 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Matthias Brugger <matthias.bgg@gmail.com>
 
-[ Upstream commit 108639aac35eb57f1d0e8333f5fc8c7ff68df938 ]
+[ Upstream commit 864919ea0380e62adb2503b89825fe358acb8216 ]
 
-struct archdr is only big enough to hold the header of various types of
-arcnet packets. So to provide enough space to hold the data read from
-hardware provide a buffer large enough to hold a packet with maximal
-size.
+of_get_next_child() increments the reference count of the returning
+device_node. Decrement it in the check if we are using the old or the
+new DTB.
 
-The problem was noticed by the stack protector which makes the kernel
-oops.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Acked-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: ba1f1f70c2c0 ("[media] media: mtk-mdp: Fix mdp device tree")
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Acked-by: Houlong Wei <houlong.wei@mediatek.com>
+[hverkuil-cisco@xs4all.nl: use node instead of parent as temp variable]
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/arcnet/arcnet.c |   31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ drivers/media/platform/mtk-mdp/mtk_mdp_core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/arcnet/arcnet.c
-+++ b/drivers/net/arcnet/arcnet.c
-@@ -1009,31 +1009,34 @@ EXPORT_SYMBOL(arcnet_interrupt);
- static void arcnet_rx(struct net_device *dev, int bufnum)
- {
- 	struct arcnet_local *lp = netdev_priv(dev);
--	struct archdr pkt;
-+	union {
-+		struct archdr pkt;
-+		char buf[512];
-+	} rxdata;
- 	struct arc_rfc1201 *soft;
- 	int length, ofs;
+diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_core.c b/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
+index bbb24fb95b951..3deb0549b1a13 100644
+--- a/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
++++ b/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
+@@ -118,7 +118,9 @@ static int mtk_mdp_probe(struct platform_device *pdev)
+ 	mutex_init(&mdp->vpulock);
  
--	soft = &pkt.soft.rfc1201;
-+	soft = &rxdata.pkt.soft.rfc1201;
- 
--	lp->hw.copy_from_card(dev, bufnum, 0, &pkt, ARC_HDR_SIZE);
--	if (pkt.hard.offset[0]) {
--		ofs = pkt.hard.offset[0];
-+	lp->hw.copy_from_card(dev, bufnum, 0, &rxdata.pkt, ARC_HDR_SIZE);
-+	if (rxdata.pkt.hard.offset[0]) {
-+		ofs = rxdata.pkt.hard.offset[0];
- 		length = 256 - ofs;
+ 	/* Old dts had the components as child nodes */
+-	if (of_get_next_child(dev->of_node, NULL)) {
++	node = of_get_next_child(dev->of_node, NULL);
++	if (node) {
++		of_node_put(node);
+ 		parent = dev->of_node;
+ 		dev_warn(dev, "device tree is out of date\n");
  	} else {
--		ofs = pkt.hard.offset[1];
-+		ofs = rxdata.pkt.hard.offset[1];
- 		length = 512 - ofs;
- 	}
- 
- 	/* get the full header, if possible */
--	if (sizeof(pkt.soft) <= length) {
--		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(pkt.soft));
-+	if (sizeof(rxdata.pkt.soft) <= length) {
-+		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(rxdata.pkt.soft));
- 	} else {
--		memset(&pkt.soft, 0, sizeof(pkt.soft));
-+		memset(&rxdata.pkt.soft, 0, sizeof(rxdata.pkt.soft));
- 		lp->hw.copy_from_card(dev, bufnum, ofs, soft, length);
- 	}
- 
- 	arc_printk(D_DURING, dev, "Buffer #%d: received packet from %02Xh to %02Xh (%d+4 bytes)\n",
--		   bufnum, pkt.hard.source, pkt.hard.dest, length);
-+		   bufnum, rxdata.pkt.hard.source, rxdata.pkt.hard.dest, length);
- 
- 	dev->stats.rx_packets++;
- 	dev->stats.rx_bytes += length + ARC_HDR_SIZE;
-@@ -1042,13 +1045,13 @@ static void arcnet_rx(struct net_device
- 	if (arc_proto_map[soft->proto]->is_ip) {
- 		if (BUGLVL(D_PROTO)) {
- 			struct ArcProto
--			*oldp = arc_proto_map[lp->default_proto[pkt.hard.source]],
-+			*oldp = arc_proto_map[lp->default_proto[rxdata.pkt.hard.source]],
- 			*newp = arc_proto_map[soft->proto];
- 
- 			if (oldp != newp) {
- 				arc_printk(D_PROTO, dev,
- 					   "got protocol %02Xh; encap for host %02Xh is now '%c' (was '%c')\n",
--					   soft->proto, pkt.hard.source,
-+					   soft->proto, rxdata.pkt.hard.source,
- 					   newp->suffix, oldp->suffix);
- 			}
- 		}
-@@ -1057,10 +1060,10 @@ static void arcnet_rx(struct net_device
- 		lp->default_proto[0] = soft->proto;
- 
- 		/* in striking contrast, the following isn't a hack. */
--		lp->default_proto[pkt.hard.source] = soft->proto;
-+		lp->default_proto[rxdata.pkt.hard.source] = soft->proto;
- 	}
- 	/* call the protocol-specific receiver. */
--	arc_proto_map[soft->proto]->rx(dev, bufnum, &pkt, length);
-+	arc_proto_map[soft->proto]->rx(dev, bufnum, &rxdata.pkt, length);
- }
- 
- static void null_rx(struct net_device *dev, int bufnum,
+-- 
+2.20.1
+
 
 
