@@ -2,45 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3332FCAAE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18CC4CA995
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388143AbfJCQQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:16:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41880 "EHLO mail.kernel.org"
+        id S2404974AbfJCQpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:45:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389052AbfJCQQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:16:41 -0400
+        id S2404740AbfJCQox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:44:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F116B2054F;
-        Thu,  3 Oct 2019 16:16:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64AC7206BB;
+        Thu,  3 Oct 2019 16:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119400;
-        bh=I6mLupdicjRHBWyEFst+0fM+XGoYu7qjKSS+PJ4HJa8=;
+        s=default; t=1570121092;
+        bh=J2I7SM7bMsl2OQ6fr2CABIWGTg6EorLiy5htaNXQeuo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ANooPvhVZo6oWTzY/4+XLcKvvwiAxOrigbfZYhklWFI2RYL3Dmhd3Zyk7bskAZJ4z
-         GKhXHeSsAlRdnffHA1kgWIJmi6ke72WplyGygNCkOAQ9bbbu4Rb69LVWWrnmDn6O7J
-         1OcZoyEIdfg3OiBm/FXMgXndwwMYwt4U3gZS2r9Q=
+        b=exwgFh8qxuEtkDldN19X+pM7VHk/Pr64VVLAJALFRyN/uRIBaVv8iMeW+dz2e08C0
+         dhY4Rj6QFQ+KxffuzRw1nfwaFzOOYddQSHew1PIexKasay4PhkfFqtV1cHA3AoMEmn
+         COJnx5/4h/KQcTO5oiguJLN82+PllCJzZqLc5Qsw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        James Morse <james.morse@arm.com>,
-        kernel-janitors@vger.kernel.org,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 051/211] EDAC/altera: Use the proper type for the IRQ status bits
+Subject: [PATCH 5.3 152/344] PM / devfreq: Fix kernel oops on governor module load
 Date:   Thu,  3 Oct 2019 17:51:57 +0200
-Message-Id: <20191003154459.712803357@linuxfoundation.org>
+Message-Id: <20191003154555.236136924@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,57 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
+[ Upstream commit 7544fd7f384591038646d3cd9efb311ab4509e24 ]
 
-Smatch complains about the cast of a u32 pointer to unsigned long:
+A bit unexpectedly (but still documented), request_module may
+return a positive value, in case of a modprobe error.
+This is currently causing issues in the devfreq framework.
 
-  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
-  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
+When a request_module exits with a positive value, we currently
+return that via ERR_PTR. However, because the value is positive,
+it's not a ERR_VALUE proper, and is therefore treated as a
+valid struct devfreq_governor pointer, leading to a kernel oops.
 
-This code wouldn't work on a 64 bit big endian system because it would
-read past the end of &irq_status.
+Fix this by returning -EINVAL if request_module returns a positive
+value.
 
- [ bp: massage. ]
-
-Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: kernel-janitors@vger.kernel.org
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
+Fixes: b53b0128052ff ("PM / devfreq: Fix static checker warning in try_then_request_governor")
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/altera_edac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/devfreq/devfreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 5762c3c383f2e..56de378ad13dc 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1956,6 +1956,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	int irq = irq_desc_get_irq(desc);
-+	unsigned long bits;
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index ab22bf8a12d69..a0e19802149fc 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -254,7 +254,7 @@ static struct devfreq_governor *try_then_request_governor(const char *name)
+ 		/* Restore previous state before return */
+ 		mutex_lock(&devfreq_list_lock);
+ 		if (err)
+-			return ERR_PTR(err);
++			return (err < 0) ? ERR_PTR(err) : ERR_PTR(-EINVAL);
  
- 	dberr = (irq == edac->db_irq) ? 1 : 0;
- 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
-@@ -1965,7 +1966,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 
- 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
- 
--	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
-+	bits = irq_status;
-+	for_each_set_bit(bit, &bits, 32) {
- 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
- 		if (irq)
- 			generic_handle_irq(irq);
+ 		governor = find_devfreq_governor(name);
+ 	}
 -- 
 2.20.1
 
