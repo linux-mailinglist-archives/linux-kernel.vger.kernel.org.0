@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 082C9CA434
+	by mail.lfdr.de (Postfix) with ESMTP id DD842CA436
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:23:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390427AbfJCQXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:23:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51774 "EHLO mail.kernel.org"
+        id S2390550AbfJCQXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:23:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390411AbfJCQWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:22:55 -0400
+        id S1730956AbfJCQXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:23:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 783B020659;
-        Thu,  3 Oct 2019 16:22:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7918520867;
+        Thu,  3 Oct 2019 16:23:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119775;
-        bh=2G0dztF253cPdRh9s33RdqiI65/0buDPPhCyXdohiho=;
+        s=default; t=1570119786;
+        bh=YT2f8Hida0YD9QbunYG7OVjkii+QZ4EmAyZrubRi0/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mbkbop/heSYOjhHCuGGYdC2VgFDO9jOzTZghYgfYIS6mH/tHDVbQhYYFYpNmxk9qC
-         iHmeD/4r/PVzzZqZfaK6IQ6PsTvB5NVdzpQ+/78w2hfUFHHkebpeQ+OsyVnS0R4TI1
-         cSEBiQRjT3UidSneCMM8u5WK1x2e3QdiBxOydcTg=
+        b=sdC7SQMdCsAtiIHMR75r3PWwvgEqUliVZN8BrK19BdgTbiQm7Zo3CV0v5SMlIJHSd
+         1hnLMs1ZuRTKBDHvLeamNnUQTl5wOc9Kvr/YDnBArakhSi9IDSpEBsM7fmoNnVgkmB
+         XBmAFfOZlanrAvcO4g4od69tR2cDoIOjU1s6iSu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.19 187/211] smb3: allow disabling requesting leases
-Date:   Thu,  3 Oct 2019 17:54:13 +0200
-Message-Id: <20191003154528.113625131@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 191/211] Btrfs: fix use-after-free when using the tree modification log
+Date:   Thu,  3 Oct 2019 17:54:17 +0200
+Message-Id: <20191003154528.608823011@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -44,118 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve French <stfrench@microsoft.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 3e7a02d47872081f4b6234a9f72500f1d10f060c upstream.
+commit efad8a853ad2057f96664328a0d327a05ce39c76 upstream.
 
-In some cases to work around server bugs or performance
-problems it can be helpful to be able to disable requesting
-SMB2.1/SMB3 leases on a particular mount (not to all servers
-and all shares we are mounted to). Add new mount parm
-"nolease" which turns off requesting leases on directory
-or file opens.  Currently the only way to disable leases is
-globally through a module load parameter. This is more
-granular.
+At ctree.c:get_old_root(), we are accessing a root's header owner field
+after we have freed the respective extent buffer. This results in an
+use-after-free that can lead to crashes, and when CONFIG_DEBUG_PAGEALLOC
+is set, results in a stack trace like the following:
 
-Suggested-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+  [ 3876.799331] stack segment: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+  [ 3876.799363] CPU: 0 PID: 15436 Comm: pool Not tainted 5.3.0-rc3-btrfs-next-54 #1
+  [ 3876.799385] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+  [ 3876.799433] RIP: 0010:btrfs_search_old_slot+0x652/0xd80 [btrfs]
+  (...)
+  [ 3876.799502] RSP: 0018:ffff9f08c1a2f9f0 EFLAGS: 00010286
+  [ 3876.799518] RAX: ffff8dd300000000 RBX: ffff8dd85a7a9348 RCX: 000000038da26000
+  [ 3876.799538] RDX: 0000000000000000 RSI: ffffe522ce368980 RDI: 0000000000000246
+  [ 3876.799559] RBP: dae1922adadad000 R08: 0000000008020000 R09: ffffe522c0000000
+  [ 3876.799579] R10: ffff8dd57fd788c8 R11: 000000007511b030 R12: ffff8dd781ddc000
+  [ 3876.799599] R13: ffff8dd9e6240578 R14: ffff8dd6896f7a88 R15: ffff8dd688cf90b8
+  [ 3876.799620] FS:  00007f23ddd97700(0000) GS:ffff8dda20200000(0000) knlGS:0000000000000000
+  [ 3876.799643] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [ 3876.799660] CR2: 00007f23d4024000 CR3: 0000000710bb0005 CR4: 00000000003606f0
+  [ 3876.799682] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  [ 3876.799703] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  [ 3876.799723] Call Trace:
+  [ 3876.799735]  ? do_raw_spin_unlock+0x49/0xc0
+  [ 3876.799749]  ? _raw_spin_unlock+0x24/0x30
+  [ 3876.799779]  resolve_indirect_refs+0x1eb/0xc80 [btrfs]
+  [ 3876.799810]  find_parent_nodes+0x38d/0x1180 [btrfs]
+  [ 3876.799841]  btrfs_check_shared+0x11a/0x1d0 [btrfs]
+  [ 3876.799870]  ? extent_fiemap+0x598/0x6e0 [btrfs]
+  [ 3876.799895]  extent_fiemap+0x598/0x6e0 [btrfs]
+  [ 3876.799913]  do_vfs_ioctl+0x45a/0x700
+  [ 3876.799926]  ksys_ioctl+0x70/0x80
+  [ 3876.799938]  ? trace_hardirqs_off_thunk+0x1a/0x20
+  [ 3876.799953]  __x64_sys_ioctl+0x16/0x20
+  [ 3876.799965]  do_syscall_64+0x62/0x220
+  [ 3876.799977]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  [ 3876.799993] RIP: 0033:0x7f23e0013dd7
+  (...)
+  [ 3876.800056] RSP: 002b:00007f23ddd96ca8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+  [ 3876.800078] RAX: ffffffffffffffda RBX: 00007f23d80210f8 RCX: 00007f23e0013dd7
+  [ 3876.800099] RDX: 00007f23d80210f8 RSI: 00000000c020660b RDI: 0000000000000003
+  [ 3876.800626] RBP: 000055fa2a2a2440 R08: 0000000000000000 R09: 00007f23ddd96d7c
+  [ 3876.801143] R10: 00007f23d8022000 R11: 0000000000000246 R12: 00007f23ddd96d80
+  [ 3876.801662] R13: 00007f23ddd96d78 R14: 00007f23d80210f0 R15: 00007f23ddd96d80
+  (...)
+  [ 3876.805107] ---[ end trace e53161e179ef04f9 ]---
+
+Fix that by saving the root's header owner field into a local variable
+before freeing the root's extent buffer, and then use that local variable
+when needed.
+
+Fixes: 30b0463a9394d9 ("Btrfs: fix accessing the root pointer in tree mod log functions")
+CC: stable@vger.kernel.org # 3.10+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsfs.c   |    2 ++
- fs/cifs/cifsglob.h |    2 ++
- fs/cifs/connect.c  |    9 ++++++++-
- fs/cifs/smb2pdu.c  |    2 +-
- 4 files changed, 13 insertions(+), 2 deletions(-)
+ fs/btrfs/ctree.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -428,6 +428,8 @@ cifs_show_options(struct seq_file *s, st
- 	cifs_show_security(s, tcon->ses);
- 	cifs_show_cache_flavor(s, cifs_sb);
- 
-+	if (tcon->no_lease)
-+		seq_puts(s, ",nolease");
- 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER)
- 		seq_puts(s, ",multiuser");
- 	else if (tcon->ses->user_name)
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -543,6 +543,7 @@ struct smb_vol {
- 	bool noblocksnd:1;
- 	bool noautotune:1;
- 	bool nostrictsync:1; /* do not force expensive SMBflush on every sync */
-+	bool no_lease:1;     /* disable requesting leases */
- 	bool fsc:1;	/* enable fscache */
- 	bool mfsymlinks:1; /* use Minshall+French Symlinks */
- 	bool multiuser:1;
-@@ -1004,6 +1005,7 @@ struct cifs_tcon {
- 	bool need_reopen_files:1; /* need to reopen tcon file handles */
- 	bool use_resilient:1; /* use resilient instead of durable handles */
- 	bool use_persistent:1; /* use persistent instead of durable handles */
-+	bool no_lease:1;    /* Do not request leases on files or directories */
- 	__le32 capabilities;
- 	__u32 share_flags;
- 	__u32 maximal_access;
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -70,7 +70,7 @@ enum {
- 	Opt_user_xattr, Opt_nouser_xattr,
- 	Opt_forceuid, Opt_noforceuid,
- 	Opt_forcegid, Opt_noforcegid,
--	Opt_noblocksend, Opt_noautotune,
-+	Opt_noblocksend, Opt_noautotune, Opt_nolease,
- 	Opt_hard, Opt_soft, Opt_perm, Opt_noperm,
- 	Opt_mapposix, Opt_nomapposix,
- 	Opt_mapchars, Opt_nomapchars, Opt_sfu,
-@@ -129,6 +129,7 @@ static const match_table_t cifs_mount_op
- 	{ Opt_noforcegid, "noforcegid" },
- 	{ Opt_noblocksend, "noblocksend" },
- 	{ Opt_noautotune, "noautotune" },
-+	{ Opt_nolease, "nolease" },
- 	{ Opt_hard, "hard" },
- 	{ Opt_soft, "soft" },
- 	{ Opt_perm, "perm" },
-@@ -1542,6 +1543,9 @@ cifs_parse_mount_options(const char *mou
- 		case Opt_noautotune:
- 			vol->noautotune = 1;
- 			break;
-+		case Opt_nolease:
-+			vol->no_lease = 1;
-+			break;
- 		case Opt_hard:
- 			vol->retry = 1;
- 			break;
-@@ -3023,6 +3027,8 @@ static int match_tcon(struct cifs_tcon *
- 		return 0;
- 	if (tcon->snapshot_time != volume_info->snapshot_time)
- 		return 0;
-+	if (tcon->no_lease != volume_info->no_lease)
-+		return 0;
- 	return 1;
- }
- 
-@@ -3231,6 +3237,7 @@ cifs_get_tcon(struct cifs_ses *ses, stru
- 	tcon->nocase = volume_info->nocase;
- 	tcon->nohandlecache = volume_info->nohandlecache;
- 	tcon->local_lease = volume_info->local_lease;
-+	tcon->no_lease = volume_info->no_lease;
- 	INIT_LIST_HEAD(&tcon->pending_opens);
- 
- 	spin_lock(&cifs_tcp_ses_lock);
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2192,7 +2192,7 @@ SMB2_open_init(struct cifs_tcon *tcon, s
- 	iov[1].iov_len = uni_path_len;
- 	iov[1].iov_base = path;
- 
--	if (!server->oplocks)
-+	if ((!server->oplocks) || (tcon->no_lease))
- 		*oplock = SMB2_OPLOCK_LEVEL_NONE;
- 
- 	if (!(server->capabilities & SMB2_GLOBAL_CAP_LEASING) ||
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -1374,6 +1374,7 @@ get_old_root(struct btrfs_root *root, u6
+ 	struct tree_mod_elem *tm;
+ 	struct extent_buffer *eb = NULL;
+ 	struct extent_buffer *eb_root;
++	u64 eb_root_owner = 0;
+ 	struct extent_buffer *old;
+ 	struct tree_mod_root *old_root = NULL;
+ 	u64 old_generation = 0;
+@@ -1411,6 +1412,7 @@ get_old_root(struct btrfs_root *root, u6
+ 			free_extent_buffer(old);
+ 		}
+ 	} else if (old_root) {
++		eb_root_owner = btrfs_header_owner(eb_root);
+ 		btrfs_tree_read_unlock(eb_root);
+ 		free_extent_buffer(eb_root);
+ 		eb = alloc_dummy_extent_buffer(fs_info, logical);
+@@ -1428,7 +1430,7 @@ get_old_root(struct btrfs_root *root, u6
+ 	if (old_root) {
+ 		btrfs_set_header_bytenr(eb, eb->start);
+ 		btrfs_set_header_backref_rev(eb, BTRFS_MIXED_BACKREF_REV);
+-		btrfs_set_header_owner(eb, btrfs_header_owner(eb_root));
++		btrfs_set_header_owner(eb, eb_root_owner);
+ 		btrfs_set_header_level(eb, old_root->level);
+ 		btrfs_set_header_generation(eb, old_generation);
+ 	}
 
 
