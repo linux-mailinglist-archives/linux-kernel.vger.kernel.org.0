@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3863DCAB3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F2ACAAA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390546AbfJCRT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:19:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47050 "EHLO mail.kernel.org"
+        id S2393442AbfJCRKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:10:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389757AbfJCQTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:19:48 -0400
+        id S2404109AbfJCQd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:33:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D8C8222BE;
-        Thu,  3 Oct 2019 16:19:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30B5420830;
+        Thu,  3 Oct 2019 16:33:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119588;
-        bh=eAjUJp1E2xHVDiwJ3NWPs36uLgMPOkY1v8U/SjReQOY=;
+        s=default; t=1570120408;
+        bh=UxrkhlOJ5LfTfHbwZvKs7QiZcYpNZh7w2BoGwiaiP/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gyezlc1p+nukOrnNINaYzzjN5sXpU5VFhfAdI2mNHVec11TB/WU3cnEMGBdGLcfrU
-         UIzdW/Y9gYv8UZjh1C0uSkFol08iMEE78JmO8qBJvYPnZaRoXj2VkPmsktNhjBoPrc
-         mLesUFH0niQNmjolk20P0Cf28lXDGapJjKrSg6dw=
+        b=lOEHA7TR90Z/qhB2PKaeXBtbDjTEWrJoTnTtkmMuSc47kXnAaUl/rMXnCgHwfI1/z
+         Cs82UYtn9k/W0Mml47SJwTSWcZLLivQ/SPjGcSgB4cMErc9udjuGVcN5D962b5v266
+         Qkrsc/hPojxEe7dgQlfgwB1ilQAwdS1wBzR8/f9Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 121/211] ACPI: custom_method: fix memory leaks
-Date:   Thu,  3 Oct 2019 17:53:07 +0200
-Message-Id: <20191003154514.756957114@linuxfoundation.org>
+Subject: [PATCH 5.2 212/313] PM / devfreq: passive: fix compiler warning
+Date:   Thu,  3 Oct 2019 17:53:10 +0200
+Message-Id: <20191003154553.868738806@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
 
-[ Upstream commit 03d1571d9513369c17e6848476763ebbd10ec2cb ]
+[ Upstream commit 0465814831a926ce2f83e8f606d067d86745234e ]
 
-In cm_write(), 'buf' is allocated through kzalloc(). In the following
-execution, if an error occurs, 'buf' is not deallocated, leading to memory
-leaks. To fix this issue, free 'buf' before returning the error.
+The recent commit of
+PM / devfreq: passive: Use non-devm notifiers
+had incurred compiler warning, "unused variable 'dev'".
 
-Fixes: 526b4af47f44 ("ACPI: Split out custom_method functionality into an own driver")
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/custom_method.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/devfreq/governor_passive.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
-index e967c1173ba32..222ea3f12f41e 100644
---- a/drivers/acpi/custom_method.c
-+++ b/drivers/acpi/custom_method.c
-@@ -48,8 +48,10 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
- 	if ((*ppos > max_size) ||
- 	    (*ppos + count > max_size) ||
- 	    (*ppos + count < count) ||
--	    (count > uncopied_bytes))
-+	    (count > uncopied_bytes)) {
-+		kfree(buf);
- 		return -EINVAL;
-+	}
- 
- 	if (copy_from_user(buf + (*ppos), user_buf, count)) {
- 		kfree(buf);
-@@ -69,6 +71,7 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
- 		add_taint(TAINT_OVERRIDDEN_ACPI_TABLE, LOCKDEP_NOW_UNRELIABLE);
- 	}
- 
-+	kfree(buf);
- 	return count;
- }
- 
+diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
+index da485477065c5..be6eeab9c814e 100644
+--- a/drivers/devfreq/governor_passive.c
++++ b/drivers/devfreq/governor_passive.c
+@@ -149,7 +149,6 @@ static int devfreq_passive_notifier_call(struct notifier_block *nb,
+ static int devfreq_passive_event_handler(struct devfreq *devfreq,
+ 				unsigned int event, void *data)
+ {
+-	struct device *dev = devfreq->dev.parent;
+ 	struct devfreq_passive_data *p_data
+ 			= (struct devfreq_passive_data *)devfreq->data;
+ 	struct devfreq *parent = (struct devfreq *)p_data->parent;
 -- 
 2.20.1
 
