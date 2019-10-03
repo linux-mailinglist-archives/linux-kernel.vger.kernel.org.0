@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773DACA97A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E4B6CAB60
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405209AbfJCQnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:43:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54422 "EHLO mail.kernel.org"
+        id S2388754AbfJCQO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:14:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405111AbfJCQnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:43:08 -0400
+        id S2388740AbfJCQOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:14:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D7C32070B;
-        Thu,  3 Oct 2019 16:43:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0C5620865;
+        Thu,  3 Oct 2019 16:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120987;
-        bh=dmdbnGlcQ67LSvX15BeOkemg/oVzkc782wV47LPJXig=;
+        s=default; t=1570119295;
+        bh=rXSuWWeH3sDfoofSnPCEWC5e/wGIuwV3gpWgxhVBfvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OQ8vi4L4Q3za7fyzVdZ8G868eigjkDhlDxL4s9klNb+R9wfLwbAVcPp3mXKAPBadX
-         zHNN94E07VT/YlORpM9hs8YMlpni0O9Gl5w61RcTUOMYjIJfVCjcVWaj6Y4ChM/hdS
-         F6/M94bTSgSOZPpKh4VMxHgjn31Y+GxdGJAsVtIs=
+        b=AtrMfo4Sby58MWvp3Bt5O8gREa9q2ZExNh6g1+PRb+seoa70051I4xCCEjbJJ5fSv
+         1832HkXHhwzmvw9jS0ENXZipuziwme1yW3dqSfCBvoT6h+6Cw5IGHnV8LvM2RiAeB/
+         fBi5MzZ5TnJWnxToB6f5D2gEFNDfKkKudhxNeqhI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 113/344] dmaengine: iop-adma: use correct printk format strings
-Date:   Thu,  3 Oct 2019 17:51:18 +0200
-Message-Id: <20191003154551.361789545@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.19 013/211] usbnet: ignore endpoints with invalid wMaxPacketSize
+Date:   Thu,  3 Oct 2019 17:51:19 +0200
+Message-Id: <20191003154449.899499399@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,108 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Bjørn Mork <bjorn@mork.no>
 
-[ Upstream commit 00c9755524fbaa28117be774d7c92fddb5ca02f3 ]
+[ Upstream commit 8d3d7c2029c1b360f1a6b0a2fca470b57eb575c0 ]
 
-When compile-testing on other architectures, we get lots of warnings
-about incorrect format strings, like:
+Endpoints with zero wMaxPacketSize are not usable for transferring
+data. Ignore such endpoints when looking for valid in, out and
+status pipes, to make the drivers more robust against invalid and
+meaningless descriptors.
 
-   drivers/dma/iop-adma.c: In function 'iop_adma_alloc_slots':
-   drivers/dma/iop-adma.c:307:6: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
+The wMaxPacketSize of these endpoints are used for memory allocations
+and as divisors in many usbnet minidrivers. Avoiding zero is therefore
+critical.
 
-   drivers/dma/iop-adma.c: In function 'iop_adma_prep_dma_memcpy':
->> drivers/dma/iop-adma.c:518:40: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'size_t {aka long unsigned int}' [-Wformat=]
-
-Use %zu for printing size_t as required, and cast the dma_addr_t
-arguments to 'u64' for printing with %llx. Ideally this should use
-the %pad format string, but that requires an lvalue argument that
-doesn't work here.
-
-Link: https://lore.kernel.org/r/20190809163334.489360-3-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/iop-adma.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/usb/usbnet.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/dma/iop-adma.c b/drivers/dma/iop-adma.c
-index c6c0143670d9d..a776857d89c8f 100644
---- a/drivers/dma/iop-adma.c
-+++ b/drivers/dma/iop-adma.c
-@@ -116,9 +116,9 @@ static void __iop_adma_slot_cleanup(struct iop_adma_chan *iop_chan)
- 	list_for_each_entry_safe(iter, _iter, &iop_chan->chain,
- 					chain_node) {
- 		pr_debug("\tcookie: %d slot: %d busy: %d "
--			"this_desc: %#x next_desc: %#x ack: %d\n",
-+			"this_desc: %#x next_desc: %#llx ack: %d\n",
- 			iter->async_tx.cookie, iter->idx, busy,
--			iter->async_tx.phys, iop_desc_get_next_desc(iter),
-+			iter->async_tx.phys, (u64)iop_desc_get_next_desc(iter),
- 			async_tx_test_ack(&iter->async_tx));
- 		prefetch(_iter);
- 		prefetch(&_iter->async_tx);
-@@ -306,9 +306,9 @@ iop_adma_alloc_slots(struct iop_adma_chan *iop_chan, int num_slots,
- 				int i;
- 				dev_dbg(iop_chan->device->common.dev,
- 					"allocated slot: %d "
--					"(desc %p phys: %#x) slots_per_op %d\n",
-+					"(desc %p phys: %#llx) slots_per_op %d\n",
- 					iter->idx, iter->hw_desc,
--					iter->async_tx.phys, slots_per_op);
-+					(u64)iter->async_tx.phys, slots_per_op);
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -112,6 +112,11 @@ int usbnet_get_endpoints(struct usbnet *
+ 			int				intr = 0;
  
- 				/* pre-ack all but the last descriptor */
- 				if (num_slots != slots_per_op)
-@@ -516,7 +516,7 @@ iop_adma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dma_dest,
- 		return NULL;
- 	BUG_ON(len > IOP_ADMA_MAX_BYTE_COUNT);
- 
--	dev_dbg(iop_chan->device->common.dev, "%s len: %u\n",
-+	dev_dbg(iop_chan->device->common.dev, "%s len: %zu\n",
- 		__func__, len);
- 
- 	spin_lock_bh(&iop_chan->lock);
-@@ -549,7 +549,7 @@ iop_adma_prep_dma_xor(struct dma_chan *chan, dma_addr_t dma_dest,
- 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
- 
- 	dev_dbg(iop_chan->device->common.dev,
--		"%s src_cnt: %d len: %u flags: %lx\n",
-+		"%s src_cnt: %d len: %zu flags: %lx\n",
- 		__func__, src_cnt, len, flags);
- 
- 	spin_lock_bh(&iop_chan->lock);
-@@ -582,7 +582,7 @@ iop_adma_prep_dma_xor_val(struct dma_chan *chan, dma_addr_t *dma_src,
- 	if (unlikely(!len))
- 		return NULL;
- 
--	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %u\n",
-+	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %zu\n",
- 		__func__, src_cnt, len);
- 
- 	spin_lock_bh(&iop_chan->lock);
-@@ -620,7 +620,7 @@ iop_adma_prep_dma_pq(struct dma_chan *chan, dma_addr_t *dst, dma_addr_t *src,
- 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
- 
- 	dev_dbg(iop_chan->device->common.dev,
--		"%s src_cnt: %d len: %u flags: %lx\n",
-+		"%s src_cnt: %d len: %zu flags: %lx\n",
- 		__func__, src_cnt, len, flags);
- 
- 	if (dmaf_p_disabled_continue(flags))
-@@ -683,7 +683,7 @@ iop_adma_prep_dma_pq_val(struct dma_chan *chan, dma_addr_t *pq, dma_addr_t *src,
- 		return NULL;
- 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
- 
--	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %u\n",
-+	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %zu\n",
- 		__func__, src_cnt, len);
- 
- 	spin_lock_bh(&iop_chan->lock);
--- 
-2.20.1
-
+ 			e = alt->endpoint + ep;
++
++			/* ignore endpoints which cannot transfer data */
++			if (!usb_endpoint_maxp(&e->desc))
++				continue;
++
+ 			switch (e->desc.bmAttributes) {
+ 			case USB_ENDPOINT_XFER_INT:
+ 				if (!usb_endpoint_dir_in(&e->desc))
 
 
