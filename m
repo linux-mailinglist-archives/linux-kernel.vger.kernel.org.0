@@ -2,120 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 301E8CA52E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCA8CA56A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403921AbfJCQbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:31:52 -0400
-Received: from mail.efficios.com ([167.114.142.138]:40570 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403884AbfJCQbk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:31:40 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0E47B33ACF0;
-        Thu,  3 Oct 2019 12:31:39 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id ZMVYT95oWAXT; Thu,  3 Oct 2019 12:31:38 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 84E1733ACED;
-        Thu,  3 Oct 2019 12:31:38 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 84E1733ACED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1570120298;
-        bh=Xa4tdzxQuYNj6KgrYhA4aLJ8ZuVzRaG5b/3vwfcSUKY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=HRz2dE0k19vaOBDAn9NaI8MfJQ8pY9RF4PTVC0Xlwep0nYLWyNHK+05Ai1OXf0VXG
-         T6E84w097FHLOUm8iPHe57pX8N8ziTZmZVlLQIMk/89aaVHBxIauDQtVPJMN32vrnG
-         bh5gIT4Uh2ARfLkGH1BB7nBq/u3pSN9j6LPr4AXnzPI/Ow5WGtnRrrz0i6mw91dfhx
-         L3o5WtRhJNkGZSkalrE27yydwfyShXQlC6+6JfD/uXinC3LnaHytIYEt4oxxmSqjh1
-         U01Pu9I7Ex8pyxwoDBDM6S7CResfW/fzBn58MPRSdnss2s0WTyJpkHjrRDSt1YtZYt
-         ZLq5hKlLD6Sqg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 9g9rzWrEvl57; Thu,  3 Oct 2019 12:31:38 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 611F333ACD2;
-        Thu,  3 Oct 2019 12:31:38 -0400 (EDT)
-Date:   Thu, 3 Oct 2019 12:31:38 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     rostedt <rostedt@goodmis.org>
-Cc:     David Howells <dhowells@redhat.com>, paulmck@kernel.org,
-        rcu <rcu@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        dipankar <dipankar@in.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Eric Dumazet <edumazet@google.com>,
-        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Shane M Seymour <shane.seymour@hpe.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Message-ID: <561448323.948.1570120298211.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20191003090850.1e2561b3@gandalf.local.home>
-References: <20191003014310.13262-1-paulmck@kernel.org> <20191003014153.GA13156@paulmck-ThinkPad-P72> <25408.1570091957@warthog.procyon.org.uk> <20191003090850.1e2561b3@gandalf.local.home>
-Subject: Re: [PATCH tip/core/rcu 1/9] rcu: Upgrade rcu_swap_protected() to
- rcu_replace()
+        id S2404149AbfJCQeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:34:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392095AbfJCQeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:34:06 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4263921783;
+        Thu,  3 Oct 2019 16:34:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570120445;
+        bh=3Bz1OUoxGDjgeT98hppsGEw91e3Ye36LUrMKlBtqcSU=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=j/K162GHR8smbdtnU3kJ9VWiqmsrEwDD+5DiuSNo/q0iv/ITY+YoqW2+yjI1POSoX
+         UhSWY7N6nAoeYF55YeI0ITa7Ya91LlcNCgn/L8LsNRbxn5mYuNKwbhWSHK+NX8cnXW
+         fLO2UPAEPnRh95wTpBNoIcAzJl/2QPOMSTploa9s=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3847 (ZimbraWebClient - FF69 (Linux)/8.8.15_GA_3847)
-Thread-Topic: Upgrade rcu_swap_protected() to rcu_replace()
-Thread-Index: V+Isuv29ciiT7lw1a+SgtJRKwn+KMg==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191002160632.11140-1-krzk@kernel.org>
+References: <20191002160632.11140-1-krzk@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: power: Convert Generic Power Domain bindings to json-schema
+User-Agent: alot/0.8.1
+Date:   Thu, 03 Oct 2019 09:34:04 -0700
+Message-Id: <20191003163405.4263921783@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 3, 2019, at 9:08 AM, rostedt rostedt@goodmis.org wrote:
+Quoting Krzysztof Kozlowski (2019-10-02 09:06:30)
+> Convert Generic Power Domain bindings to DT schema format using
+> json-schema.  The consumer bindings are split to separate file.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>=20
+> ---
 
-> On Thu, 03 Oct 2019 09:39:17 +0100
-> David Howells <dhowells@redhat.com> wrote:
-> 
->> paulmck@kernel.org wrote:
->> 
->> > +#define rcu_replace(rcu_ptr, ptr, c)					\
->> > +({									\
->> > +	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
->> > +	rcu_assign_pointer((rcu_ptr), (ptr));				\
->> > +	__tmp;								\
->> > +})
->> 
->> Does it make sense to actually use xchg() if that's supported by the arch?
->> 
-> 
-> Hmm, is there really any arch that doesn't support xchg()? It would be
-> very hard to do any kind of atomic operations without it.
-> 
-> cmpxchg() is the one that I understand is optional by the arch.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-I remember going through all kernel arch headers myself and introduce
-irq-off-based xchg and cmpxchg generic implementations for all UP
-architectures lacking cmpxchg/xchg instructions.
-
-We might want to consider simply using xchg() here.
-
-FWIW, the API exposed by the Userspace RCU project (liburcu) for this
-is:
-
-  rcu_xchg_pointer()
-
-Thanks,
-
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
