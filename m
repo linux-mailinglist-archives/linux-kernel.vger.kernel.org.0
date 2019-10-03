@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3FB5CA767
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E19BCA5EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393211AbfJCQxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:53:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41812 "EHLO mail.kernel.org"
+        id S2392290AbfJCQiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:38:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392392AbfJCQxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:53:40 -0400
+        id S2404781AbfJCQiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:38:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4F0F2070B;
-        Thu,  3 Oct 2019 16:53:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60CD320830;
+        Thu,  3 Oct 2019 16:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121620;
-        bh=i4IspC7AeqYlgm2PcakB4Ki6b9MyRM+zKi5VW6w/aa8=;
+        s=default; t=1570120688;
+        bh=OZi46/LEW9kyWJKIzQu9CrXEOyEZid01NguqZCh4Q1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tb5NbJoc+1GCkRMJgK4mvPDoCOXl7WWJod4Nefbdly8Cso4Hpz+ht6zI0nM+ZsD1S
-         aIAfj+JBAAVkVFiGEN4oVXj2I8axLrCBIEkiixJrs58lG06IzHKSRjKOXHXxqEjRz7
-         28tmhFBMS9HDtr3Gi6OIF72zvYJs/84ybK+Wh8S4=
+        b=03XJpzUJEr8sT7KBllJJZGH4aHf6dkGszRPfQDDOnDXtMZMzo0PTSAtDqC0Ye+/hj
+         n77ZUS0sWFtomaScEyuBaaPIvxdtxpyaMtzKM7CyeDSeJ8xNG9ugJ/JCh6HH/li24J
+         fkPczQiNU7FZqPKMCw60noDNQev6Tu3qGDeyCB7w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.3 299/344] rtw88: pci: Use DMA sync instead of remapping in RX ISR
-Date:   Thu,  3 Oct 2019 17:54:24 +0200
-Message-Id: <20191003154609.010463031@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.2 287/313] btrfs: qgroup: Fix reserved data space leak if we have multiple reserve calls
+Date:   Thu,  3 Oct 2019 17:54:25 +0200
+Message-Id: <20191003154601.353973257@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,68 +43,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 29b68a920f6abb7b5ba21ab4b779f62d536bac9b upstream.
+commit d4e204948fe3e0dc8e1fbf3f8f3290c9c2823be3 upstream.
 
-Since each skb in RX ring is reused instead of new allocation, we can
-treat the DMA in a more efficient way by DMA synchronization.
+[BUG]
+The following script can cause btrfs qgroup data space leak:
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+  mkfs.btrfs -f $dev
+  mount $dev -o nospace_cache $mnt
+
+  btrfs subv create $mnt/subv
+  btrfs quota en $mnt
+  btrfs quota rescan -w $mnt
+  btrfs qgroup limit 128m $mnt/subv
+
+  for (( i = 0; i < 3; i++)); do
+          # Create 3 64M holes for latter fallocate to fail
+          truncate -s 192m $mnt/subv/file
+          xfs_io -c "pwrite 64m 4k" $mnt/subv/file > /dev/null
+          xfs_io -c "pwrite 128m 4k" $mnt/subv/file > /dev/null
+          sync
+
+          # it's supposed to fail, and each failure will leak at least 64M
+          # data space
+          xfs_io -f -c "falloc 0 192m" $mnt/subv/file &> /dev/null
+          rm $mnt/subv/file
+          sync
+  done
+
+  # Shouldn't fail after we removed the file
+  xfs_io -f -c "falloc 0 64m" $mnt/subv/file
+
+[CAUSE]
+Btrfs qgroup data reserve code allow multiple reservations to happen on
+a single extent_changeset:
+E.g:
+	btrfs_qgroup_reserve_data(inode, &data_reserved, 0, SZ_1M);
+	btrfs_qgroup_reserve_data(inode, &data_reserved, SZ_1M, SZ_2M);
+	btrfs_qgroup_reserve_data(inode, &data_reserved, 0, SZ_4M);
+
+Btrfs qgroup code has its internal tracking to make sure we don't
+double-reserve in above example.
+
+The only pattern utilizing this feature is in the main while loop of
+btrfs_fallocate() function.
+
+However btrfs_qgroup_reserve_data()'s error handling has a bug in that
+on error it clears all ranges in the io_tree with EXTENT_QGROUP_RESERVED
+flag but doesn't free previously reserved bytes.
+
+This bug has a two fold effect:
+- Clearing EXTENT_QGROUP_RESERVED ranges
+  This is the correct behavior, but it prevents
+  btrfs_qgroup_check_reserved_leak() to catch the leakage as the
+  detector is purely EXTENT_QGROUP_RESERVED flag based.
+
+- Leak the previously reserved data bytes.
+
+The bug manifests when N calls to btrfs_qgroup_reserve_data are made and
+the last one fails, leaking space reserved in the previous ones.
+
+[FIX]
+Also free previously reserved data bytes when btrfs_qgroup_reserve_data
+fails.
+
+Fixes: 524725537023 ("btrfs: qgroup: Introduce btrfs_qgroup_reserve_data function")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtw88/pci.c |   24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ fs/btrfs/qgroup.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/realtek/rtw88/pci.c
-+++ b/drivers/net/wireless/realtek/rtw88/pci.c
-@@ -206,6 +206,23 @@ static int rtw_pci_reset_rx_desc(struct
- 	return 0;
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3425,6 +3425,9 @@ cleanup:
+ 	while ((unode = ulist_next(&reserved->range_changed, &uiter)))
+ 		clear_extent_bit(&BTRFS_I(inode)->io_tree, unode->val,
+ 				 unode->aux, EXTENT_QGROUP_RESERVED, 0, 0, NULL);
++	/* Also free data bytes of already reserved one */
++	btrfs_qgroup_free_refroot(root->fs_info, root->root_key.objectid,
++				  orig_reserved, BTRFS_QGROUP_RSV_DATA);
+ 	extent_changeset_release(reserved);
+ 	return ret;
  }
- 
-+static void rtw_pci_sync_rx_desc_device(struct rtw_dev *rtwdev, dma_addr_t dma,
-+					struct rtw_pci_rx_ring *rx_ring,
-+					u32 idx, u32 desc_sz)
-+{
-+	struct device *dev = rtwdev->dev;
-+	struct rtw_pci_rx_buffer_desc *buf_desc;
-+	int buf_sz = RTK_PCI_RX_BUF_SIZE;
-+
-+	dma_sync_single_for_device(dev, dma, buf_sz, DMA_FROM_DEVICE);
-+
-+	buf_desc = (struct rtw_pci_rx_buffer_desc *)(rx_ring->r.head +
-+						     idx * desc_sz);
-+	memset(buf_desc, 0, sizeof(*buf_desc));
-+	buf_desc->buf_size = cpu_to_le16(RTK_PCI_RX_BUF_SIZE);
-+	buf_desc->dma = cpu_to_le32(dma);
-+}
-+
- static int rtw_pci_init_rx_ring(struct rtw_dev *rtwdev,
- 				struct rtw_pci_rx_ring *rx_ring,
- 				u8 desc_size, u32 len)
-@@ -784,8 +801,8 @@ static void rtw_pci_rx_isr(struct rtw_de
- 		rtw_pci_dma_check(rtwdev, ring, cur_rp);
- 		skb = ring->buf[cur_rp];
- 		dma = *((dma_addr_t *)skb->cb);
--		pci_unmap_single(rtwpci->pdev, dma, RTK_PCI_RX_BUF_SIZE,
--				 PCI_DMA_FROMDEVICE);
-+		dma_sync_single_for_cpu(rtwdev->dev, dma, RTK_PCI_RX_BUF_SIZE,
-+					DMA_FROM_DEVICE);
- 		rx_desc = skb->data;
- 		chip->ops->query_rx_desc(rtwdev, rx_desc, &pkt_stat, &rx_status);
- 
-@@ -820,7 +837,8 @@ static void rtw_pci_rx_isr(struct rtw_de
- 
- next_rp:
- 		/* new skb delivered to mac80211, re-enable original skb DMA */
--		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
-+		rtw_pci_sync_rx_desc_device(rtwdev, dma, ring, cur_rp,
-+					    buf_desc_sz);
- 
- 		/* host read next element in ring */
- 		if (++cur_rp >= ring->r.len)
 
 
