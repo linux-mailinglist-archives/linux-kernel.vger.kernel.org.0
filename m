@@ -2,102 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB7EC9567
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 02:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F3B3C957E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 02:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729394AbfJCANi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 20:13:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51952 "EHLO mail.kernel.org"
+        id S1729527AbfJCATR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 20:19:17 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:36143 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbfJCANi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 20:13:38 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729403AbfJCATR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 20:19:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91717222BE;
-        Thu,  3 Oct 2019 00:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570061617;
-        bh=6hltzyRT3OubG5wFKK8LJd0jyatsmp0ace1N5N5YixA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uD6/FKhUqtDzlmHluCqmNn82TlKMYSMeoZZ1ks7eLfNn2p6+TUzquYUn/bJJEyBHP
-         vEoOC0oVjIdkgg/PXDJvCf79MB0H3a3071W51stbDTAKLcd4YuWYQIKhV7VRZ7dg9E
-         2hFoDOCW59+OG9d4otYotz/vEX50mbCPaKitj9pw=
-Date:   Wed, 2 Oct 2019 17:13:37 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v1] kernel.h: Split out mathematical helpers
-Message-Id: <20191002171337.7cf1f48fde153382d7245fc5@linux-foundation.org>
-In-Reply-To: <20190910105105.7714-1-andriy.shevchenko@linux.intel.com>
-References: <20190910105105.7714-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46kDC61mRlz9sP7;
+        Thu,  3 Oct 2019 10:19:14 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1570061954;
+        bh=j0/8PDAz9u0mCIgmnUYn4sa6fAVrE3H3mjWMLrHDgmQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QVW9Ca6u4i8N5H17DSouB++CdBy03SF22BZhYF2Ze8/YZnYZ7jDmL/dz4Zy0+kbjy
+         dDaMvbhJAm33hZZ4MNXx69Va20HT/DpLTIKjtWEwUHkvv1sP0o1833XwlUYAjYxqCY
+         rQMjPTBb+eSxOm2xeAxnEAOl/0SeF+O16i+U8KJvZb7ti+MAxGvl/hTp+lzyJzMUee
+         R3ptB0AXRd/Bmr14ohZkoboWBPmlLl7qYKVWcrq6x6Y8VRi063ZWkIAxhwIWY8K/U0
+         WjkHEhKIfOF6C5d0a6tkBLJojvoAadlG2Hhn01VGMtCZhv8iXqWrp4ydVjffWSNa5k
+         U5JRiVTR+AxqA==
+Date:   Thu, 3 Oct 2019 10:19:01 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Yong Zhao <Yong.Zhao@amd.com>
+Subject: linux-next: manual merge of the amdgpu tree with Linus' tree
+Message-ID: <20191003101901.67efa929@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Z4xOnbbIMfNja5oGok1Aohh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Sep 2019 13:51:05 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+--Sig_/Z4xOnbbIMfNja5oGok1Aohh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> kernel.h is being used as a dump for all kinds of stuff for a long time.
-> Here is the attempt to start cleaning it up by splitting out mathematical
-> helpers.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  fs/nfs/callback_proc.c        |   1 +
->  include/linux/bitops.h        |   3 +-
->  include/linux/dcache.h        |   1 +
->  include/linux/iommu-helper.h  |   1 +
->  include/linux/kernel.h        | 143 --------------------------------
->  include/linux/math.h          | 149 ++++++++++++++++++++++++++++++++++
->  include/linux/rcu_node_tree.h |   2 +
+Hi all,
 
-I'm not really understanding how this works, apart from "dumb luck".
+Today's linux-next merge of the amdgpu tree got a conflict in:
 
-Random example: mm/percpu.c needs roundup(), so how does it include the
-new math.h?
+  drivers/gpu/drm/amd/amdkfd/kfd_priv.h
 
-....... ./arch/x86/include/asm/uprobes.h
-........ ./include/linux/notifier.h
-......... ./include/linux/mutex.h
-......... ./include/linux/srcu.h
-.......... ./include/linux/workqueue.h
-........... ./include/linux/timer.h
-............ ./include/linux/ktime.h
-............. ./include/linux/time.h
-.............. ./include/linux/time32.h
-............... ./include/linux/timex.h
-................ ./include/uapi/linux/timex.h
-................. ./include/linux/time.h
-................ ./include/uapi/linux/param.h
-................. ./arch/x86/include/generated/uapi/asm/param.h
-.................. ./include/asm-generic/param.h
-................... ./include/uapi/asm-generic/param.h
-................ ./arch/x86/include/asm/timex.h
-................. ./arch/x86/include/asm/tsc.h
-............. ./include/linux/jiffies.h
-.............. ./arch/x86/include/generated/uapi/asm/param.h
-.............. ./include/generated/timeconst.h
-............. ./include/linux/timekeeping.h
-............. ./include/linux/timekeeping32.h
-............ ./include/linux/debugobjects.h
-.......... ./include/linux/rcu_segcblist.h
-.......... ./include/linux/srcutree.h
-........... ./include/linux/rcu_node_tree.h
-............ ./include/linux/math.h
+between commit:
 
-oh, like that.
+  471f39020569 ("drm/amdkfd: use mmu_notifier_put")
 
-It seems rather unreliable.  Perhaps a "#include <linux/math.h>" was
-intended in kernel.h?
+from Linus' tree and commit:
 
+  4b3cece1863c ("drm/amdkfd: Use hex print format for pasid")
+
+from the amdgpu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+index c89326125d71,fc8b81208368..000000000000
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+@@@ -687,7 -688,10 +688,7 @@@ struct kfd_process=20
+  	/* We want to receive a notification when the mm_struct is destroyed */
+  	struct mmu_notifier mmu_notifier;
+ =20
+- 	unsigned int pasid;
+ -	/* Use for delayed freeing of kfd_process structure */
+ -	struct rcu_head	rcu;
+ -
++ 	uint16_t pasid;
+  	unsigned int doorbell_index;
+ =20
+  	/*
+
+--Sig_/Z4xOnbbIMfNja5oGok1Aohh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2VPnUACgkQAVBC80lX
+0Gw1mwf/WjgCerrGOo0JXIahm9n+nUZ7Zwa8DHPNvuc3pK8XsGVADLei9vi7lyqy
+r4U0S1RwUr6QoNq0rsW23JrxmSIcQTr1Mmf4SNdKj0Bqag8eGs3WEHJ33JdYWN9v
+phmiCoMmd/kqwficHL6e8dA9IrH9LV2bCbb+3EkOuSYOCzpqCa1MlkDkNjT1mkQg
+hVeduENK6dKXNz671rUnTZKkbBhKoDd9t9Bq+oxcrYhkXLDq3s/Ijg/iEtOarBxR
+7Qr8I5tp8Bt4aysqbE4/4dl2iZL1BxT6zPbQ5FDU9U/IXd6n/6INbM6ncZLSpWwE
+utxDJAJvL14ZWyQdn63LRp/qQPaqwg==
+=ii+d
+-----END PGP SIGNATURE-----
+
+--Sig_/Z4xOnbbIMfNja5oGok1Aohh--
