@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AE2DCACA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A581CACA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388453AbfJCQNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:13:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
+        id S2388506AbfJCQOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:14:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732701AbfJCQNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:13:49 -0400
+        id S2388488AbfJCQN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:13:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0FA420865;
-        Thu,  3 Oct 2019 16:13:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DDF1222C2;
+        Thu,  3 Oct 2019 16:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119228;
-        bh=tX/U8aujwjTxyRxka83R53J89nL+5YHZAjZBtNZPeIA=;
+        s=default; t=1570119238;
+        bh=UGqMufujAPeYf8XfJuRbDlboz+r/vDuLTwr5F1tDuSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gIiuUvFwYP5FysDvbFus3RlqccsmidMdKnypAV3P215QjfimtZGcVbYPnQVBqhGyp
-         nIBRe7lXAu7Lh7XUt5MBiexhN3+T+u64RP0ndQKjMWu2oyyWQjfBDCkaHmaQDEYTAI
-         q23KezIlG2sBK1j4dUNJARD4TzZLiJg0lwpd9A0I=
+        b=J7l5BQj4oUFFbp7+jtEcXcDohsnaGQaAECBoGrHBnbEj7GSqHkSgKu0skOlOmWZkg
+         8w08KqeKY7N+fZdgUiTFvEIRNM5nnrv/wNknVG3dkMhYhrG+XhC6CBTUhzg75x/CYc
+         sIG9Eog4/cSx1SHMwySxXSUJinlQDy/qmxUWDA3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Subject: [PATCH 4.14 174/185] /dev/mem: Bail out upon SIGKILL.
-Date:   Thu,  3 Oct 2019 17:54:12 +0200
-Message-Id: <20191003154520.113837237@linuxfoundation.org>
+        stable@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 178/185] hwrng: core - dont wait on add_early_randomness()
+Date:   Thu,  3 Oct 2019 17:54:16 +0200
+Message-Id: <20191003154521.457073485@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,112 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Laurent Vivier <lvivier@redhat.com>
 
-commit 8619e5bdeee8b2c685d686281f2d2a6017c4bc15 upstream.
+commit 78887832e76541f77169a24ac238fccb51059b63 upstream.
 
-syzbot found that a thread can stall for minutes inside read_mem() or
-write_mem() after that thread was killed by SIGKILL [1]. Reading from
-iomem areas of /dev/mem can be slow, depending on the hardware.
-While reading 2GB at one read() is legal, delaying termination of killed
-thread for minutes is bad. Thus, allow reading/writing /dev/mem and
-/dev/kmem to be preemptible and killable.
+add_early_randomness() is called by hwrng_register() when the
+hardware is added. If this hardware and its module are present
+at boot, and if there is no data available the boot hangs until
+data are available and can't be interrupted.
 
-  [ 1335.912419][T20577] read_mem: sz=4096 count=2134565632
-  [ 1335.943194][T20577] read_mem: sz=4096 count=2134561536
-  [ 1335.978280][T20577] read_mem: sz=4096 count=2134557440
-  [ 1336.011147][T20577] read_mem: sz=4096 count=2134553344
-  [ 1336.041897][T20577] read_mem: sz=4096 count=2134549248
+For instance, in the case of virtio-rng, in some cases the host can be
+not able to provide enough entropy for all the guests.
 
-Theoretically, reading/writing /dev/mem and /dev/kmem can become
-"interruptible". But this patch chose "killable". Future patch will make
-them "interruptible" so that we can revert to "killable" if some program
-regressed.
+We can have two easy ways to reproduce the problem but they rely on
+misconfiguration of the hypervisor or the egd daemon:
 
-[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
+- if virtio-rng device is configured to connect to the egd daemon of the
+host but when the virtio-rng driver asks for data the daemon is not
+connected,
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Link: https://lore.kernel.org/r/1566825205-10703-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+- if virtio-rng device is configured to connect to the egd daemon of the
+host but the egd daemon doesn't provide data.
+
+The guest kernel will hang at boot until the virtio-rng driver provides
+enough data.
+
+To avoid that, call rng_get_data() in non-blocking mode (wait=0)
+from add_early_randomness().
+
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+Fixes: d9e797261933 ("hwrng: add randomness to system from rng...")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mem.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/char/hw_random/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -97,6 +97,13 @@ void __weak unxlate_dev_mem_ptr(phys_add
- }
- #endif
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@ -67,7 +67,7 @@ static void add_early_randomness(struct
+ 	size_t size = min_t(size_t, 16, rng_buffer_size());
  
-+static inline bool should_stop_iteration(void)
-+{
-+	if (need_resched())
-+		cond_resched();
-+	return fatal_signal_pending(current);
-+}
-+
- /*
-  * This funcion reads the *physical* memory. The f_pos points directly to the
-  * memory location.
-@@ -175,6 +182,8 @@ static ssize_t read_mem(struct file *fil
- 		p += sz;
- 		count -= sz;
- 		read += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 	kfree(bounce);
- 
-@@ -251,6 +260,8 @@ static ssize_t write_mem(struct file *fi
- 		p += sz;
- 		count -= sz;
- 		written += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 
- 	*ppos += written;
-@@ -464,6 +475,10 @@ static ssize_t read_kmem(struct file *fi
- 			read += sz;
- 			low_count -= sz;
- 			count -= sz;
-+			if (should_stop_iteration()) {
-+				count = 0;
-+				break;
-+			}
- 		}
- 	}
- 
-@@ -488,6 +503,8 @@ static ssize_t read_kmem(struct file *fi
- 			buf += sz;
- 			read += sz;
- 			p += sz;
-+			if (should_stop_iteration())
-+				break;
- 		}
- 		free_page((unsigned long)kbuf);
- 	}
-@@ -540,6 +557,8 @@ static ssize_t do_write_kmem(unsigned lo
- 		p += sz;
- 		count -= sz;
- 		written += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 
- 	*ppos += written;
-@@ -591,6 +610,8 @@ static ssize_t write_kmem(struct file *f
- 			buf += sz;
- 			virtr += sz;
- 			p += sz;
-+			if (should_stop_iteration())
-+				break;
- 		}
- 		free_page((unsigned long)kbuf);
- 	}
+ 	mutex_lock(&reading_mutex);
+-	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
++	bytes_read = rng_get_data(rng, rng_buffer, size, 0);
+ 	mutex_unlock(&reading_mutex);
+ 	if (bytes_read > 0)
+ 		add_device_randomness(rng_buffer, bytes_read);
 
 
