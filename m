@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 783E0CABB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB181CACD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731290AbfJCP6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:58:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41536 "EHLO mail.kernel.org"
+        id S1731086AbfJCRaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:30:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731279AbfJCP6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:58:43 -0400
+        id S2387973AbfJCQMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:12:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0893120700;
-        Thu,  3 Oct 2019 15:58:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 764602054F;
+        Thu,  3 Oct 2019 16:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118322;
-        bh=ajS824LenRlv1kgE8cKvjNmdtuc51nUxbHZHmDxrsXo=;
+        s=default; t=1570119126;
+        bh=hLXlgvEYlx29ykXAvEEcccUqURw5gnfziaZ5PdEBuPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fchApmjodAlmit9FMs4Wz3KVIFC0ZqnV48lC4MrzKEIwEt8xa2+WJTyjJc0epVsPU
-         Ts/FPYjVEzFDcjKjLf1Med/bGJEndSqk3sznqeKxdQ5asU/GZZ8Vsw6hedGmC4elvR
-         OqmR4rE72+mhwwQtlwFWgOKJ/myHHtndKT4cghZ8=
+        b=szTVtqQK6Xg/7ujSwbtbxkYF2l2azrScf3lOU7Yw87egLAY+ZAIUJpXa6IRhNQywe
+         nTpGzEIkg9tn44IgekC52vRIvXJLgIBHV5KuIjhdeBHdAmE+HBBe9kDu5Kk/Zr+tYI
+         K1iyS3rc0mQG5wdHpdJq9e6UGImX91AAXCRLogkw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Arthur She <arthur.she@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 69/99] ASoC: dmaengine: Make the pcm->name equal to pcm->id if the name is not set
-Date:   Thu,  3 Oct 2019 17:53:32 +0200
-Message-Id: <20191003154330.805351034@linuxfoundation.org>
+Subject: [PATCH 4.14 136/185] ALSA: hda/realtek - Blacklist PC beep for Lenovo ThinkCentre M73/93
+Date:   Thu,  3 Oct 2019 17:53:34 +0200
+Message-Id: <20191003154508.410993699@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 2ec42f3147e1610716f184b02e65d7f493eed925 ]
+[ Upstream commit 051c78af14fcd74a22b5af45548ad9d588247cc7 ]
 
-Some tools use the snd_pcm_info_get_name() to try to identify PCMs or for
-other purposes.
+Lenovo ThinkCentre M73 and M93 don't seem to have a proper beep
+although the driver tries to probe and set up blindly.
+Blacklist these machines for suppressing the beep creation.
 
-Currently it is left empty with the dmaengine-pcm, in this case copy the
-pcm->id string as pcm->name.
-
-For example IGT is using this to find the HDMI PCM for testing audio on it.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Reported-by: Arthur She <arthur.she@linaro.org>
-Link: https://lore.kernel.org/r/20190906055524.7393-1-peter.ujfalusi@ti.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204635
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/pci/hda/patch_realtek.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 6fd1906af3873..fe65754c2e504 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -301,6 +301,12 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 6deb96a301d3d..4f35ac2606708 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -977,6 +977,9 @@ static const struct snd_pci_quirk beep_white_list[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x834a, "EeePC", 1),
+ 	SND_PCI_QUIRK(0x1458, 0xa002, "GA-MA790X", 1),
+ 	SND_PCI_QUIRK(0x8086, 0xd613, "Intel", 1),
++	/* blacklist -- no beep available */
++	SND_PCI_QUIRK(0x17aa, 0x309e, "Lenovo ThinkCentre M73", 0),
++	SND_PCI_QUIRK(0x17aa, 0x30a3, "Lenovo ThinkCentre M93", 0),
+ 	{}
+ };
  
- 		if (!dmaengine_pcm_can_report_residue(dev, pcm->chan[i]))
- 			pcm->flags |= SND_DMAENGINE_PCM_FLAG_NO_RESIDUE;
-+
-+		if (rtd->pcm->streams[i].pcm->name[0] == '\0') {
-+			strncpy(rtd->pcm->streams[i].pcm->name,
-+				rtd->pcm->streams[i].pcm->id,
-+				sizeof(rtd->pcm->streams[i].pcm->name));
-+		}
- 	}
- 
- 	return 0;
 -- 
 2.20.1
 
