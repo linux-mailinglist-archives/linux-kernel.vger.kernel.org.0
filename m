@@ -2,83 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFBF6CAD25
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C78F9CAD2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388104AbfJCRfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:35:24 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38668 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731848AbfJCRfX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:35:23 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w8so1840744plq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:35:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=fXED1acjUYEy8AfTXY9uzTTHkmVKjak7JTmjU0uqyWA=;
-        b=LcL/9uRRNdFh8s3yJ34zvuzwmAlYXY+5NtkUJo19unLkx0Vd/qr8WqTEZBan/qftZr
-         P1bDgtC07qIqLSSGqeYoL0rj7rNRyavq3OPtZDp6QIfTcfUnqZ+qT1ZIDz5oFqaOGbrS
-         bddhgK6RC6JawtQgHzHSJ7Dfcme+1rlZvKUh4SWJKBwzlcEPHfrq1RqtyYZSNIc7wZF6
-         k7Duu2DYf/TEpibED84bxJD7NVZ2H2gVwF7PoM7jleGKOPhQ6d24sdBI+M2QemqnvXWn
-         En+88TQN7gWRurqwAw27hQo3eVf/lu+2dWPwg7zvpOquykRuQTYhtNH9Wpud+t2sW8qy
-         zMug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=fXED1acjUYEy8AfTXY9uzTTHkmVKjak7JTmjU0uqyWA=;
-        b=CAZnnbj53tO6yj2OJ0N0qZRTLXvdL+AdfKSxP95QcAh1uc+OcKKT5NKtX7CjKZMvqz
-         uwr2OJLSteaJZIxi9mFhwNCulf6MOR2zKZbeFE+5NU/vEVJW24DLLFgKJQG5ebgbfpGY
-         y+etpb9BLcfMDC6Q4pUKLBw8JSAgwY0QGVzHD/mwi7JBg9SDbEcRDvGBGggYJM/5d5DJ
-         50rBBNQw/nNt1yCatNBEALW2joLGpaPXH4Ko7JwuJzOrlu5YWePw4EFP7qRoO2EfL2+L
-         fuqxcr7cwhQOjPqsOAMmin1jYWWsCRgMqkAUAi9SFJp674tJ9vOLYwLHeY4F1B4iYA0y
-         Ty+w==
-X-Gm-Message-State: APjAAAX3ZxWvEbXXkqQIeT3ltrR8RIt1Kso9+8ZUsYYLBTntCPAslTZf
-        TJFZykLMKE7tqSps38jt/4F03A==
-X-Google-Smtp-Source: APXvYqy05X9Caox3UXihsMlUZMERys06g8z7Vx5e9Y0f2nZLZLrsuuT/5m6q6Rg/jEuE7VX9C6qJXw==
-X-Received: by 2002:a17:902:b7ca:: with SMTP id v10mr10149938plz.54.1570124122276;
-        Thu, 03 Oct 2019 10:35:22 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:a084:116f:9da0:2d6c])
-        by smtp.gmail.com with ESMTPSA id l21sm2835389pgm.55.2019.10.03.10.35.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Oct 2019 10:35:21 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Xingyu Chen <xingyu.chen@amlogic.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Xingyu Chen <xingyu.chen@amlogic.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        linux-watchdog@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: meson: Fix the wrong value of left time
-In-Reply-To: <1569754429-17287-1-git-send-email-xingyu.chen@amlogic.com>
-References: <1569754429-17287-1-git-send-email-xingyu.chen@amlogic.com>
-Date:   Thu, 03 Oct 2019 10:35:20 -0700
-Message-ID: <7hy2y1vijr.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S2388635AbfJCRgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:36:20 -0400
+Received: from mga11.intel.com ([192.55.52.93]:13339 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387524AbfJCRgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:36:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 10:36:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
+   d="scan'208";a="192188491"
+Received: from spandruv-mobl3.jf.intel.com ([10.254.33.3])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Oct 2019 10:36:16 -0700
+Message-ID: <dfb172a0a8003f90fd185b7b154164b8b49bbaa9.camel@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] x86,sched: Add support for frequency invariance
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Len Brown <lenb@kernel.org>, x86@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Quentin Perret <qperret@qperret.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Doug Smythies <dsmythies@telus.net>
+Date:   Thu, 03 Oct 2019 10:36:16 -0700
+In-Reply-To: <20191003121537.GR4536@hirez.programming.kicks-ass.net>
+References: <20191002122926.385-1-ggherdovich@suse.cz>
+         <20191002122926.385-2-ggherdovich@suse.cz> <1906426.HDqaVa71mF@kreacher>
+         <20191003121537.GR4536@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xingyu Chen <xingyu.chen@amlogic.com> writes:
+On Thu, 2019-10-03 at 14:15 +0200, Peter Zijlstra wrote:
+> On Thu, Oct 03, 2019 at 12:27:52PM +0200, Rafael J. Wysocki wrote:
+> > On Wednesday, October 2, 2019 2:29:25 PM CEST Giovanni Gherdovich
+> > wrote:
+> > > +static bool turbo_disabled(void)
+> > > +{
+> > > +	u64 misc_en;
+> > > +	int err;
+> > > +
+> > > +	err = rdmsrl_safe(MSR_IA32_MISC_ENABLE, &misc_en);
+> > > +	if (err)
+> > > +		return false;
+> > > +
+> > > +	return (misc_en & MSR_IA32_MISC_ENABLE_TURBO_DISABLE);
+> > > +}
+> > 
+> > This setting may be updated by the platform firmware (BIOS) in some
+> > cases
+> > (see kernel.org BZ 200759, for example), so in general checking it
+> > once
+> > at the init time is not enough.
+> 
+> Is there anything sane we can do if the BIOS frobs stuff like that
+> under
+> our feet? Other than yell bloody murder, that is?
+On  this platform which this BZ is talking about, you will get an ACPI
+notification about this change. But the notification will happen for
+only one CPU, but it needs to be accounted for all CPUs.
 
-> The left time value is wrong when we get it by sysfs. The left time value
-> should be equal to preset timeout value minus elapsed time value. According
-> to the Meson-GXB/GXL datasheets which can be found at [0], the timeout value
-> is saved to BIT[0-15] of the WATCHDOG_TCNT, and elapsed time value is saved
-> to BIT[16-31] of the WATCHDOG_TCNT.
->
-> [0]: http://linux-meson.com
->
-> Fixes: 683fa50f0e18 ("watchdog: Add Meson GXBB Watchdog Driver")
-> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Thanks,
+Srinivas
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> 
+> > > +
+> > > +#include <asm/cpu_device_id.h>
+> > > +#include <asm/intel-family.h>
+> > > +
+> > > +#define ICPU(model) \
+> > > +	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_APERFMPERF, 0}
+> > > +
+> > > +static const struct x86_cpu_id has_knl_turbo_ratio_limits[] = {
+> > > +	ICPU(INTEL_FAM6_XEON_PHI_KNL),
+> > > +	ICPU(INTEL_FAM6_XEON_PHI_KNM),
+> > > +	{}
+> > > +};
+> > > +
+> > > +static const struct x86_cpu_id has_turbo_ratio_group_limits[] =
+> > > {
+> > > +	ICPU(INTEL_FAM6_ATOM_GOLDMONT),
+> > > +	ICPU(INTEL_FAM6_ATOM_GOLDMONT_D),
+> > > +	ICPU(INTEL_FAM6_ATOM_GOLDMONT_PLUS),
+> > > +	ICPU(INTEL_FAM6_SKYLAKE_X),
+> > > +	{}
+> > > +};
+> > > +
+> > > +static void core_set_cpu_max_freq(void)
+> > > +{
+> > > +	u64 ratio, turbo_ratio;
+> > > +	int err;
+> > > +
+> > > +	if (smp_processor_id() != 0)
+> > > +		return;
+> > > +
+> > > +	if (turbo_disabled() ||
+> > > +		x86_match_cpu(has_knl_turbo_ratio_limits) ||
+> > > +		x86_match_cpu(has_turbo_ratio_group_limits))
+> > > +		return;
+> > > +
+> > 
+> > I would move the checks above directly to intel_set_cpu_max_freq().
+> 
+> The reason it is here, is that..
+> 
+> > > +	err = rdmsrl_safe(MSR_PLATFORM_INFO, &ratio);
+> > > +	if (err)
+> > > +		return;
+> > > +
+> > > +	err = rdmsrl_safe(MSR_TURBO_RATIO_LIMIT, &turbo_ratio);
+> > > +	if (err)
+> > > +		return;
+> > > +
+> > > +	ratio = (ratio >> 8) & 0xFF;                /* max P state
+> > > ratio */
+> > > +	turbo_ratio = (turbo_ratio >> 24) & 0xFF;   /* 4C turbo ratio
+> > > */
+> > > +
+> > > +	arch_max_freq = div_u64(turbo_ratio * SCHED_CAPACITY_SCALE,
+> > > ratio);
+> > > +
+> > > +	static_branch_enable(&arch_scale_freq_key);
+> > > +}
+> > > +
+> > > +static void intel_set_cpu_max_freq(void)
+> > > +{
+> > > +	/*
+> > > +	 * TODO: add support for:
+> > > +	 *
+> > > +	 * - Xeon Phi (KNM, KNL)
+> > > +	 * - Xeon Gold/Platinum, Atom Goldmont/Goldmont Plus
+> > > +	 * - Atom Silvermont
+> > > +	 *
+> > > +	 * which all now get by default arch_max_freq =
+> > > SCHED_CAPACITY_SCALE
+> > > +	 */
+> > > +	core_set_cpu_max_freq();
+> 
+> This used to read something like:
+> 
+> 	if (core_set_cpu_max_freq())
+> 		return;
+> 
+> 	if (atom_set_cpu_max_freq())
+> 		return;
+> 
+> 	...
+> 
+> and then those checks make sense, because we're failing the 'core'
+> way,
+> but another way might work.
+> 
+> But in this version the atom version has gone missing -- I've
+> suggested
+> it be put back as an additional patch.
+> 
+> Also, the SKX way still needs to be written..
+> 
+> > > +}
+> > > +
+> > > +static void init_scale_freq(void *arg)
+> > > +{
+> > > +	u64 aperf, mperf;
+> > > +
+> > > +	rdmsrl(MSR_IA32_APERF, aperf);
+> > > +	rdmsrl(MSR_IA32_MPERF, mperf);
+> > > +
+> > > +	this_cpu_write(arch_prev_aperf, aperf);
+> > > +	this_cpu_write(arch_prev_mperf, mperf);
+> > > +}
+> > > +
+> > > +static void set_cpu_max_freq(void)
+> > > +{
+> > > +	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
+> > > +		return;
+> > > +
+> > > +	switch (boot_cpu_data.x86_vendor) {
+> > > +	case X86_VENDOR_INTEL:
+> > > +		intel_set_cpu_max_freq();
+> > > +		break;
+> > > +	default:
+> > > +		break;
+> > > +	}
+> > 
+> > Why is the switch () needed?
+> > 
+> > It seems that
+> > 
+> > 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+> > 		intel_set_cpu_max_freq();
+> > 
+> > would do the trick.
+> 
+> I was hoping to grow X86_VENDOR_AMD bits..
+> 
+> > > +
+> > > +	init_scale_freq(NULL);
+> > > +}
+> > > +
+> > > +DEFINE_PER_CPU(unsigned long, arch_cpu_freq);
+> > > +
+> > > +static bool tick_disable;
+> > > +
+> > > +void arch_scale_freq_tick(void)
+> > > +{
+> > > +	u64 freq;
+> > > +	u64 aperf, mperf;
+> > > +	u64 acnt, mcnt;
+> > > +
+> > > +	if (!arch_scale_freq_invariant() || tick_disable)
+> > > +		return;
+> > > +
+> > 
+> > This may be a silly question, but can using tick_disable be
+> > avoided?
+> > 
+> > I guess it is there, because disabling the static branch from
+> > x86_arch_scale_freq_tick_disable() would be unsafe, but I'm not
+> > sure why that would be the case?
+> 
+> There's not enough state -- we can of course fix that.
+> 
+> That is, if you disable it, we don't know if we should enable it
+> again
+> later or if it was disabled because we failed to initialize it
+> earlier.
+
