@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6BF4CA553
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F46CA526
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404027AbfJCQdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:33:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41178 "EHLO mail.kernel.org"
+        id S2403892AbfJCQbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:31:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391274AbfJCQdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:33:15 -0400
+        id S2403874AbfJCQbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:31:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68A2A2086A;
-        Thu,  3 Oct 2019 16:33:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3CB220867;
+        Thu,  3 Oct 2019 16:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120394;
-        bh=3iuTUPH38z8GhXhGf0ZoFLJizgr0/Dx+jX0EiSbp/nM=;
+        s=default; t=1570120295;
+        bh=almqlEgrShZjlwAf+YmnkiSQmi+dQpvSMs4EOo+e5No=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xj2RCNOx8xUR0JmPnUsIem2LeZ39ftM+2PufEbBvSa2+NepWEWp5no33EPaGdbjSq
-         kZmW0vrRlV/bKSXv3uJMJx+2MixOVm1TUtGI9hznE7a1gSkctQfwcxR51gnVhQSTq+
-         8ijgMJSuN0ytrNbxhUeQaeu7dq6ey1lbmWbcthds=
+        b=XM6exgv+fSeDHTuLXY3nLH7BndK2iJ+KwVUEOgSci1qxYWsJU4x1WLjK1/mTXAY8M
+         2Sk6UG50fQYewGO3YbW48wXKYQRStNHKijzmJDxcQ96gEM6TiesgNad5dTE6h9sXKS
+         bCNEfV1bPtlCaw7/MottZZGruprWmJ/A08hkPUzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 168/313] ARM: dts: exynos: Mark LDO10 as always-on on Peach Pit/Pi Chromebooks
-Date:   Thu,  3 Oct 2019 17:52:26 +0200
-Message-Id: <20191003154549.512120380@linuxfoundation.org>
+Subject: [PATCH 5.2 170/313] ACPI: custom_method: fix memory leaks
+Date:   Thu,  3 Oct 2019 17:52:28 +0200
+Message-Id: <20191003154549.729370674@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,58 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 5b0eeeaa37615df37a9a30929b73e9defe61ca84 ]
+[ Upstream commit 03d1571d9513369c17e6848476763ebbd10ec2cb ]
 
-Commit aff138bf8e37 ("ARM: dts: exynos: Add TMU nodes regulator supply
-for Peach boards") assigned LDO10 to Exynos Thermal Measurement Unit,
-but it turned out that it supplies also some other critical parts and
-board freezes/crashes when it is turned off.
+In cm_write(), 'buf' is allocated through kzalloc(). In the following
+execution, if an error occurs, 'buf' is not deallocated, leading to memory
+leaks. To fix this issue, free 'buf' before returning the error.
 
-The mentioned commit made Exynos TMU a consumer of that regulator and in
-typical case Exynos TMU driver keeps it enabled from early boot. However
-there are such configurations (example is multi_v7_defconfig), in which
-some of the regulators are compiled as modules and are not available
-from early boot. In such case it may happen that LDO10 is turned off by
-regulator core, because it has no consumers yet (in this case consumer
-drivers cannot get it, because the supply regulators for it are not yet
-available). This in turn causes the board to crash. This patch restores
-'always-on' property for the LDO10 regulator.
-
-Fixes: aff138bf8e37 ("ARM: dts: exynos: Add TMU nodes regulator supply for Peach boards")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 526b4af47f44 ("ACPI: Split out custom_method functionality into an own driver")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 1 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/acpi/custom_method.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index f78db6809cca4..9eb48cabcca45 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -440,6 +440,7 @@
- 				regulator-name = "vdd_ldo10";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
- 				};
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index e0f470fe54c81..4398f2d1fe881 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -440,6 +440,7 @@
- 				regulator-name = "vdd_ldo10";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
- 				};
+diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
+index b2ef4c2ec955d..fd66a736621cf 100644
+--- a/drivers/acpi/custom_method.c
++++ b/drivers/acpi/custom_method.c
+@@ -49,8 +49,10 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 	if ((*ppos > max_size) ||
+ 	    (*ppos + count > max_size) ||
+ 	    (*ppos + count < count) ||
+-	    (count > uncopied_bytes))
++	    (count > uncopied_bytes)) {
++		kfree(buf);
+ 		return -EINVAL;
++	}
+ 
+ 	if (copy_from_user(buf + (*ppos), user_buf, count)) {
+ 		kfree(buf);
+@@ -70,6 +72,7 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 		add_taint(TAINT_OVERRIDDEN_ACPI_TABLE, LOCKDEP_NOW_UNRELIABLE);
+ 	}
+ 
++	kfree(buf);
+ 	return count;
+ }
+ 
 -- 
 2.20.1
 
