@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B43CACFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 813C8CAC46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732678AbfJCRd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:33:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55516 "EHLO mail.kernel.org"
+        id S1733019AbfJCQHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:07:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732979AbfJCQHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:07:39 -0400
+        id S1733002AbfJCQHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:07:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E081215EA;
-        Thu,  3 Oct 2019 16:07:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2817920865;
+        Thu,  3 Oct 2019 16:07:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118858;
-        bh=2+FcyMHDjxFQ28Ij1ASllU/GvnthM1pbt1/VA2nje2I=;
+        s=default; t=1570118868;
+        bh=Qd6Fx4HR0MEy1fkhsPPqO3Z/s2WW9q4MQSyVMAfTlqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RTDkK2CjDFO7dE/UitDXZk70/M/1wOT2NTovkzV4xKeYYqWwm0M+HUSbYTTS7a9lU
-         Dr2Z8YMZnSdMd97rS25KlpXVe8z4zzX6kbY4hsjPleBuDedGGyjz8e3jlLeYFN683U
-         9IgFN2EfwVusI6HQdMN+qN0gkMK4x9O0qSdhQjJo=
+        b=QMy3egQSz0hb5GzBmjvJ9nqbjgeAwwGB6CclapMLVKlLQvuaZRG7+hvx1/3U6e8j8
+         AaskTuUxIA6knT/n5oj15eyJ9pSq0t84c2hlb6J+qjqctdiIsZ2y6Z1gvyxKn/iopa
+         aVvSwc+Y7GoxOg/m6j2Qrs1sNFb7a5u970PmSqcc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 034/185] arcnet: provide a buffer big enough to actually receive packets
-Date:   Thu,  3 Oct 2019 17:51:52 +0200
-Message-Id: <20191003154445.232219705@linuxfoundation.org>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.14 038/185] net: qrtr: Stop rx_worker before freeing node
+Date:   Thu,  3 Oct 2019 17:51:56 +0200
+Message-Id: <20191003154446.167148984@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -46,101 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-[ Upstream commit 108639aac35eb57f1d0e8333f5fc8c7ff68df938 ]
+[ Upstream commit 73f0c11d11329a0d6d205d4312b6e5d2512af7c5 ]
 
-struct archdr is only big enough to hold the header of various types of
-arcnet packets. So to provide enough space to hold the data read from
-hardware provide a buffer large enough to hold a packet with maximal
-size.
+As the endpoint is unregistered there might still be work pending to
+handle incoming messages, which will result in a use after free
+scenario. The plan is to remove the rx_worker, but until then (and for
+stable@) ensure that the work is stopped before the node is freed.
 
-The problem was noticed by the stack protector which makes the kernel
-oops.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Acked-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: bdabad3e363d ("net: Add Qualcomm IPC router")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/arcnet/arcnet.c |   31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ net/qrtr/qrtr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/arcnet/arcnet.c
-+++ b/drivers/net/arcnet/arcnet.c
-@@ -1064,31 +1064,34 @@ EXPORT_SYMBOL(arcnet_interrupt);
- static void arcnet_rx(struct net_device *dev, int bufnum)
- {
- 	struct arcnet_local *lp = netdev_priv(dev);
--	struct archdr pkt;
-+	union {
-+		struct archdr pkt;
-+		char buf[512];
-+	} rxdata;
- 	struct arc_rfc1201 *soft;
- 	int length, ofs;
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -129,6 +129,7 @@ static void __qrtr_node_release(struct k
+ 	list_del(&node->item);
+ 	mutex_unlock(&qrtr_node_lock);
  
--	soft = &pkt.soft.rfc1201;
-+	soft = &rxdata.pkt.soft.rfc1201;
- 
--	lp->hw.copy_from_card(dev, bufnum, 0, &pkt, ARC_HDR_SIZE);
--	if (pkt.hard.offset[0]) {
--		ofs = pkt.hard.offset[0];
-+	lp->hw.copy_from_card(dev, bufnum, 0, &rxdata.pkt, ARC_HDR_SIZE);
-+	if (rxdata.pkt.hard.offset[0]) {
-+		ofs = rxdata.pkt.hard.offset[0];
- 		length = 256 - ofs;
- 	} else {
--		ofs = pkt.hard.offset[1];
-+		ofs = rxdata.pkt.hard.offset[1];
- 		length = 512 - ofs;
- 	}
- 
- 	/* get the full header, if possible */
--	if (sizeof(pkt.soft) <= length) {
--		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(pkt.soft));
-+	if (sizeof(rxdata.pkt.soft) <= length) {
-+		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(rxdata.pkt.soft));
- 	} else {
--		memset(&pkt.soft, 0, sizeof(pkt.soft));
-+		memset(&rxdata.pkt.soft, 0, sizeof(rxdata.pkt.soft));
- 		lp->hw.copy_from_card(dev, bufnum, ofs, soft, length);
- 	}
- 
- 	arc_printk(D_DURING, dev, "Buffer #%d: received packet from %02Xh to %02Xh (%d+4 bytes)\n",
--		   bufnum, pkt.hard.source, pkt.hard.dest, length);
-+		   bufnum, rxdata.pkt.hard.source, rxdata.pkt.hard.dest, length);
- 
- 	dev->stats.rx_packets++;
- 	dev->stats.rx_bytes += length + ARC_HDR_SIZE;
-@@ -1097,13 +1100,13 @@ static void arcnet_rx(struct net_device
- 	if (arc_proto_map[soft->proto]->is_ip) {
- 		if (BUGLVL(D_PROTO)) {
- 			struct ArcProto
--			*oldp = arc_proto_map[lp->default_proto[pkt.hard.source]],
-+			*oldp = arc_proto_map[lp->default_proto[rxdata.pkt.hard.source]],
- 			*newp = arc_proto_map[soft->proto];
- 
- 			if (oldp != newp) {
- 				arc_printk(D_PROTO, dev,
- 					   "got protocol %02Xh; encap for host %02Xh is now '%c' (was '%c')\n",
--					   soft->proto, pkt.hard.source,
-+					   soft->proto, rxdata.pkt.hard.source,
- 					   newp->suffix, oldp->suffix);
- 			}
- 		}
-@@ -1112,10 +1115,10 @@ static void arcnet_rx(struct net_device
- 		lp->default_proto[0] = soft->proto;
- 
- 		/* in striking contrast, the following isn't a hack. */
--		lp->default_proto[pkt.hard.source] = soft->proto;
-+		lp->default_proto[rxdata.pkt.hard.source] = soft->proto;
- 	}
- 	/* call the protocol-specific receiver. */
--	arc_proto_map[soft->proto]->rx(dev, bufnum, &pkt, length);
-+	arc_proto_map[soft->proto]->rx(dev, bufnum, &rxdata.pkt, length);
++	cancel_work_sync(&node->work);
+ 	skb_queue_purge(&node->rx_queue);
+ 	kfree(node);
  }
- 
- static void null_rx(struct net_device *dev, int bufnum,
 
 
