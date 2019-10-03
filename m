@@ -2,79 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B33C9D95
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 818C2C9D9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:43:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730192AbfJCLmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:42:15 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33536 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbfJCLmP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:42:15 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x93Bg5o1078189;
-        Thu, 3 Oct 2019 06:42:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570102925;
-        bh=oz/bIvQ4rqWyufq6vJCniBBXFBd9FPenYQM05c8kSkc=;
-        h=From:To:CC:Subject:Date;
-        b=uVfssUzlirsigRojwClcbNOiE9BqrhxcG9kE+myhSDPnPIxTdGD0faqq9z6fIpsOb
-         Iqx9J4XdEeyJ1C2OpWIUPU37ftkiNRvzBYgKN34wKOshh2l5VkmzU/Em8TgkYhlzMO
-         0GRhAmmcCfis8iC6bN9meplhWkBvu1bUZrB014Mk=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x93Bg5x8108385
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 3 Oct 2019 06:42:05 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 3 Oct
- 2019 06:42:04 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 3 Oct 2019 06:42:04 -0500
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x93Bg1G9053789;
-        Thu, 3 Oct 2019 06:42:02 -0500
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>,
-        <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-am654-base-board: Add disable-wp for mmc0
-Date:   Thu, 3 Oct 2019 17:12:51 +0530
-Message-ID: <20191003114251.20533-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        id S1730251AbfJCLnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:43:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34032 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730027AbfJCLnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 07:43:23 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05D0320830;
+        Thu,  3 Oct 2019 11:43:20 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 07:43:19 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     paulmck@kernel.org
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH tip/core/rcu 4/8] rcu: Ensure that ->rcu_urgent_qs is
+ set before resched IPI
+Message-ID: <20191003074319.2df342dd@gandalf.local.home>
+In-Reply-To: <20191003013305.12854-4-paulmck@kernel.org>
+References: <20191003013243.GA12705@paulmck-ThinkPad-P72>
+        <20191003013305.12854-4-paulmck@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MMC0_SDWP is not connected to the card. Indicate this by adding a
-disable-wp flag.
+On Wed,  2 Oct 2019 18:33:01 -0700
+paulmck@kernel.org wrote:
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am654-base-board.dts | 1 +
- 1 file changed, 1 insertion(+)
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> 
+> The RCU-specific resched_cpu() function sends a resched IPI to the
+> specified CPU, which can be used to force the tick on for a given
+> nohz_full CPU.  This is needed when this nohz_full CPU is looping in the
+> kernel while blocking the current grace period.  However, for the tick
+> to actually be forced on in all cases, that CPU's rcu_data structure's
+> ->rcu_urgent_qs flag must be set beforehand.  This commit therefore  
+> causes rcu_implicit_dynticks_qs() to set this flag prior to invoking
+> resched_cpu() on a holdout nohz_full CPU.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index 1102b84f853d..143474119328 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -221,6 +221,7 @@
- 	bus-width = <8>;
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
-+	disable-wp;
- };
- 
- &dwc3_1 {
--- 
-2.19.2
+Should this be marked for stable?
+
+-- Steve
+
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> ---
+>  kernel/rcu/tree.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 8110514..0d83b19 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -1073,6 +1073,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
+>  	if (tick_nohz_full_cpu(rdp->cpu) &&
+>  		   time_after(jiffies,
+>  			      READ_ONCE(rdp->last_fqs_resched) + jtsq * 3)) {
+> +		WRITE_ONCE(*ruqp, true);
+>  		resched_cpu(rdp->cpu);
+>  		WRITE_ONCE(rdp->last_fqs_resched, jiffies);
+>  	}
 
