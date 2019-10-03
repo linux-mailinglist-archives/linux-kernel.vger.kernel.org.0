@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A8B1CA821
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD976CA8F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390165AbfJCQVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:21:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49612 "EHLO mail.kernel.org"
+        id S2390998AbfJCQfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390125AbfJCQVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:21:23 -0400
+        id S2404256AbfJCQfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CF3E20659;
-        Thu,  3 Oct 2019 16:21:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 104B82086A;
+        Thu,  3 Oct 2019 16:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119682;
-        bh=BaDAgkkOFgT+WQJwC5jLKMwjDio2r3/yL/TbFia8kOo=;
+        s=default; t=1570120513;
+        bh=ZgCkLt2JG903zWS9Ruydm29M6HwhLE/8rg89Q6YLjK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ne8hlVP20R/AYQ80qldV+Z1tvxT8QFNepXnT4oO2/6d9h3uDsRZFCWjVwAJEuf5/2
-         vsmHTWQdX4DHnlUplrhjMYEaMgmEeJzPlIv8xsfMIzT0OLKBqt0hrUHGSEqp9uiVXp
-         rE74bGvE29KGuqRJaTeAUuVm71sYjJ6yNCHZCDBk=
+        b=qK1lO6g5K30xjNxupeKQ8FJaZCblwn7XVIcfPIN0Gks1kzLMK4x00AKprcpj3LPIK
+         6mF4cbUb+9nFFol9oHlvNe5wGk6GlSLRNCpIz6ruZWo2QEfr1cmTuSkT0G8Y0rJDdo
+         2GkftVkkoI4/+kFDV+oY1ppPPTpCfQXb0vnyi31U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 152/211] scsi: qla2xxx: Fix Relogin to prevent modifying scan_state flag
-Date:   Thu,  3 Oct 2019 17:53:38 +0200
-Message-Id: <20191003154522.656461639@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.2 243/313] KVM: x86: Disable posted interrupts for non-standard IRQs delivery modes
+Date:   Thu,  3 Oct 2019 17:53:41 +0200
+Message-Id: <20191003154556.956790264@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,106 +46,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Alexander Graf <graf@amazon.com>
 
-commit 8b5292bcfcacf15182a77a973a98d310e76fd58b upstream.
+commit fdcf756213756c23b533ca4974d1f48c6a4d4281 upstream.
 
-Relogin fails to move forward due to scan_state flag indicating device is
-not there. Before relogin process, Session delete process accidently
-modified the scan_state flag.
+We can easily route hardware interrupts directly into VM context when
+they target the "Fixed" or "LowPriority" delivery modes.
 
-[mkp: typos plus corrected Fixes: sha as reported by sfr]
+However, on modes such as "SMI" or "Init", we need to go via KVM code
+to actually put the vCPU into a different mode of operation, so we can
+not post the interrupt
 
-Fixes: 2dee5521028c ("scsi: qla2xxx: Fix login state machine freeze")
+Add code in the VMX and SVM PI logic to explicitly refuse to establish
+posted mappings for advanced IRQ deliver modes. This reflects the logic
+in __apic_accept_irq() which also only ever passes Fixed and LowPriority
+interrupts as posted interrupts into the guest.
+
+This fixes a bug I have with code which configures real hardware to
+inject virtual SMIs into my guest.
+
+Signed-off-by: Alexander Graf <graf@amazon.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c   |   25 ++++++++++++++++++++-----
- drivers/scsi/qla2xxx/qla_os.c     |    1 +
- drivers/scsi/qla2xxx/qla_target.c |    1 -
- 3 files changed, 21 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/kvm_host.h |    7 +++++++
+ arch/x86/kvm/svm.c              |    4 +++-
+ arch/x86/kvm/vmx/vmx.c          |    6 +++++-
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -216,8 +216,13 @@ qla2x00_async_login(struct scsi_qla_host
- 	struct srb_iocb *lio;
- 	int rval = QLA_FUNCTION_FAILED;
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1576,6 +1576,13 @@ bool kvm_intr_is_single_vcpu(struct kvm
+ void kvm_set_msi_irq(struct kvm *kvm, struct kvm_kernel_irq_routing_entry *e,
+ 		     struct kvm_lapic_irq *irq);
  
--	if (!vha->flags.online)
--		goto done;
-+	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT) ||
-+	    fcport->loop_id == FC_NO_LOOP_ID) {
-+		ql_log(ql_log_warn, vha, 0xffff,
-+		    "%s: %8phC - not sending command.\n",
-+		    __func__, fcport->port_name);
-+		return rval;
-+	}
++static inline bool kvm_irq_is_postable(struct kvm_lapic_irq *irq)
++{
++	/* We can only post Fixed and LowPrio IRQs */
++	return (irq->delivery_mode == dest_Fixed ||
++		irq->delivery_mode == dest_LowestPrio);
++}
++
+ static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu)
+ {
+ 	if (kvm_x86_ops->vcpu_blocking)
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5252,7 +5252,8 @@ get_pi_vcpu_info(struct kvm *kvm, struct
  
- 	sp = qla2x00_get_sp(vha, fcport, GFP_KERNEL);
- 	if (!sp)
-@@ -1123,8 +1128,13 @@ int qla24xx_async_gpdb(struct scsi_qla_h
- 	struct port_database_24xx *pd;
- 	struct qla_hw_data *ha = vha->hw;
+ 	kvm_set_msi_irq(kvm, e, &irq);
  
--	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT))
-+	if (!vha->flags.online || (fcport->flags & FCF_ASYNC_SENT) ||
-+	    fcport->loop_id == FC_NO_LOOP_ID) {
-+		ql_log(ql_log_warn, vha, 0xffff,
-+		    "%s: %8phC - not sending command.\n",
-+		    __func__, fcport->port_name);
- 		return rval;
-+	}
+-	if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu)) {
++	if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
++	    !kvm_irq_is_postable(&irq)) {
+ 		pr_debug("SVM: %s: use legacy intr remap mode for irq %u\n",
+ 			 __func__, irq.vector);
+ 		return -1;
+@@ -5306,6 +5307,7 @@ static int svm_update_pi_irte(struct kvm
+ 		 * 1. When cannot target interrupt to a specific vcpu.
+ 		 * 2. Unsetting posted interrupt.
+ 		 * 3. APIC virtialization is disabled for the vcpu.
++		 * 4. IRQ has incompatible delivery mode (SMI, INIT, etc)
+ 		 */
+ 		if (!get_pi_vcpu_info(kvm, e, &vcpu_info, &svm) && set &&
+ 		    kvm_vcpu_apicv_active(&svm->vcpu)) {
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7325,10 +7325,14 @@ static int vmx_update_pi_irte(struct kvm
+ 		 * irqbalance to make the interrupts single-CPU.
+ 		 *
+ 		 * We will support full lowest-priority interrupt later.
++		 *
++		 * In addition, we can only inject generic interrupts using
++		 * the PI mechanism, refuse to route others through it.
+ 		 */
  
- 	fcport->disc_state = DSC_GPDB;
- 
-@@ -1904,8 +1914,11 @@ qla24xx_handle_plogi_done_event(struct s
- 		return;
- 	}
- 
--	if (fcport->disc_state == DSC_DELETE_PEND)
-+	if ((fcport->disc_state == DSC_DELETE_PEND) ||
-+	    (fcport->disc_state == DSC_DELETED)) {
-+		set_bit(RELOGIN_NEEDED, &vha->dpc_flags);
- 		return;
-+	}
- 
- 	if (ea->sp->gen2 != fcport->login_gen) {
- 		/* target side must have changed it. */
-@@ -6557,8 +6570,10 @@ qla2x00_abort_isp_cleanup(scsi_qla_host_
- 	}
- 
- 	/* Clear all async request states across all VPs. */
--	list_for_each_entry(fcport, &vha->vp_fcports, list)
-+	list_for_each_entry(fcport, &vha->vp_fcports, list) {
- 		fcport->flags &= ~(FCF_LOGIN_NEEDED | FCF_ASYNC_SENT);
-+		fcport->scan_state = 0;
-+	}
- 	spin_lock_irqsave(&ha->vport_slock, flags);
- 	list_for_each_entry(vp, &ha->vp_list, list) {
- 		atomic_inc(&vp->vref_count);
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -4864,6 +4864,7 @@ void qla24xx_create_new_sess(struct scsi
- 	if (fcport) {
- 		fcport->id_changed = 1;
- 		fcport->scan_state = QLA_FCPORT_FOUND;
-+		fcport->chip_reset = vha->hw->base_qpair->chip_reset;
- 		memcpy(fcport->node_name, e->u.new_sess.node_name, WWN_SIZE);
- 
- 		if (pla) {
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1216,7 +1216,6 @@ static void qla24xx_chk_fcp_state(struct
- 		sess->logout_on_delete = 0;
- 		sess->logo_ack_needed = 0;
- 		sess->fw_login_state = DSC_LS_PORT_UNAVAIL;
--		sess->scan_state = 0;
- 	}
- }
- 
+ 		kvm_set_msi_irq(kvm, e, &irq);
+-		if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu)) {
++		if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
++		    !kvm_irq_is_postable(&irq)) {
+ 			/*
+ 			 * Make sure the IRTE is in remapped mode if
+ 			 * we don't handle it in posted mode.
 
 
