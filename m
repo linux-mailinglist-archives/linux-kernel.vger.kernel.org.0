@@ -2,85 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 555F0CAA7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0224FCAA90
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393380AbfJCRGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:06:12 -0400
-Received: from mga18.intel.com ([134.134.136.126]:15008 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393126AbfJCRGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:06:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 10:06:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="393272209"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Oct 2019 10:06:07 -0700
-Received: from orsmsx114.amr.corp.intel.com (10.22.240.10) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 3 Oct 2019 10:06:07 -0700
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.204]) by
- ORSMSX114.amr.corp.intel.com ([169.254.8.55]) with mapi id 14.03.0439.000;
- Thu, 3 Oct 2019 10:06:07 -0700
-From:   "Derrick, Jonathan" <jonathan.derrick@intel.com>
-To:     "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "sbauer@plzdonthack.me" <sbauer@plzdonthack.me>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "Rajashekar, Revanth" <revanth.rajashekar@intel.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH 2/2] block: sed-opal: fix sparse warning: convert __be64
- data
-Thread-Topic: [PATCH 2/2] block: sed-opal: fix sparse warning: convert
- __be64 data
-Thread-Index: AQHVeZGSCWgTvFsPkkSWBOzJr9STdKdJhBaAgAAXyAA=
-Date:   Thu, 3 Oct 2019 17:06:06 +0000
-Message-ID: <d091d361b0233da07f45488aae87857cb9388529.camel@intel.com>
-References: <82f70133-7242-d113-f041-9b89694685c0@infradead.org>
-         <20191003154053.GA2450@hacktheplanet>
-In-Reply-To: <20191003154053.GA2450@hacktheplanet>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.232.115.165]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <90673F7865A38542AC230A2D6562171E@intel.com>
-Content-Transfer-Encoding: base64
+        id S2393462AbfJCRIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:08:34 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33398 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393437AbfJCRIc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:08:32 -0400
+Received: by mail-lj1-f195.google.com with SMTP id a22so3643395ljd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xGPNBFqVYtxez447o7VfzpEEdWGUXuNgcxnMZZtHxhw=;
+        b=JQlxhcyH0jHwarYabbpi6wNpJW+TQGKZ3Q/o2mSONQp+edqEcUDbfc+bZRMV+49X8b
+         6iqsJ6W2xVarc2Qbqm9lYLbIQOaubfS2b2d2RR4HW+NziK3KAuGvVuwqS5GOwXs3hULK
+         jTZNUAkzsyFNJMvYZMy8abMpYXNOFhEkahnBA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xGPNBFqVYtxez447o7VfzpEEdWGUXuNgcxnMZZtHxhw=;
+        b=oYfeS1MOJvU0l7wacN3BzVdxj//AJwgyhCDy1xddHhvbdL9ThV2VFwtyeGKRxMWGBD
+         aCt8ub9Ivuk7/wsBif3iIFS7Vcl66Wctp8vY5ypNesSB8jlfui5nJwWds2TTo5ZUX48Z
+         Gz+vK8l1sY7+neYucPpftln7zGEvPZxbTcYC5yzAaLM1KsvjRUKcLRjwxDHEu62OXoOm
+         Pr5GUW0WHU7eNhVBgPnszhJF9T4YyEHICyCCmHLCZW/8o9zyB7EMUPZ3F5JIb1Ogj0/k
+         xVgq92v342emlgxHnbztP8NzqNxPvKl2Qc+wP8wKon1zC8l4OtaFSAjE8LNyRnyyZSpD
+         jAxQ==
+X-Gm-Message-State: APjAAAW/9v3Z4smIzWYpdmKvy8xRjI0t+GQ1qgK0JnoKWyX+wduItw9J
+        wsbqXVe/Ne9EDO89l9h2tUIged/juKM=
+X-Google-Smtp-Source: APXvYqzqMY8b60y4cEPN1JW3g4aYGF4KZ6oD9pfYiP1GZAnS7Z25Y3BXKMiS030byZ5sAwZWyIdS7Q==
+X-Received: by 2002:a2e:8199:: with SMTP id e25mr3993242ljg.246.1570122509079;
+        Thu, 03 Oct 2019 10:08:29 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id g27sm658951lja.33.2019.10.03.10.08.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2019 10:08:27 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id n14so3579022ljj.10
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:08:26 -0700 (PDT)
+X-Received: by 2002:a2e:86d5:: with SMTP id n21mr6759265ljj.1.1570122505822;
+ Thu, 03 Oct 2019 10:08:25 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
+ <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
+ <20190930121803.n34i63scet2ec7ll@willie-the-truck> <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
+ <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
+ <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
+ <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
+ <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
+ <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
+ <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
+ <CAK7LNARM2jVSdgCDJWDbvVxYLiUR_CFgTPg0nxzbCszSKcx+pg@mail.gmail.com> <CAHk-=wiMm3rN15WmiAqMHjC-pakL_b8qgWsPPri0+YLFORT-ZA@mail.gmail.com>
+In-Reply-To: <CAHk-=wiMm3rN15WmiAqMHjC-pakL_b8qgWsPPri0+YLFORT-ZA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 3 Oct 2019 10:08:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whkB+g0R0JqLB+Y4piUZf9A8P1ugi5T92LjFLNY+epBeg@mail.gmail.com>
+Message-ID: <CAHk-=whkB+g0R0JqLB+Y4piUZf9A8P1ugi5T92LjFLNY+epBeg@mail.gmail.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTEwLTAzIGF0IDExOjQwIC0wNDAwLCBTY290dCBCYXVlciB3cm90ZToNCj4g
-T24gV2VkLCBPY3QgMDIsIDIwMTkgYXQgMDc6MjM6MTVQTSAtMDcwMCwgUmFuZHkgRHVubGFwIHdy
-b3RlOg0KPiA+IEZyb206IFJhbmR5IER1bmxhcCA8cmR1bmxhcEBpbmZyYWRlYWQub3JnPg0KPiA+
-IA0KPiA+IHNwYXJzZSB3YXJucyBhYm91dCBpbmNvcnJlY3QgdHlwZSB3aGVuIHVzaW5nIF9fYmU2
-NCBkYXRhLg0KPiA+IEl0IGlzIG5vdCBiZWluZyBjb252ZXJ0ZWQgdG8gQ1BVLWVuZGlhbiBidXQg
-aXQgc2hvdWxkIGJlLg0KPiA+IA0KPiA+IEZpeGVzIHRoZXNlIHNwYXJzZSB3YXJuaW5nczoNCj4g
-PiANCj4gPiAuLi9ibG9jay9zZWQtb3BhbC5jOjM3NToyMDogd2FybmluZzogaW5jb3JyZWN0IHR5
-cGUgaW4gYXNzaWdubWVudCAoZGlmZmVyZW50IGJhc2UgdHlwZXMpDQo+ID4gLi4vYmxvY2svc2Vk
-LW9wYWwuYzozNzU6MjA6ICAgIGV4cGVjdGVkIHVuc2lnbmVkIGxvbmcgbG9uZyBbdXNlcnR5cGVd
-IGFsaWduDQo+ID4gLi4vYmxvY2svc2VkLW9wYWwuYzozNzU6MjA6ICAgIGdvdCByZXN0cmljdGVk
-IF9fYmU2NCBjb25zdCBbdXNlcnR5cGVdIGFsaWdubWVudF9ncmFudWxhcml0eQ0KPiA+IC4uL2Js
-b2NrL3NlZC1vcGFsLmM6Mzc2OjI1OiB3YXJuaW5nOiBpbmNvcnJlY3QgdHlwZSBpbiBhc3NpZ25t
-ZW50IChkaWZmZXJlbnQgYmFzZSB0eXBlcykNCj4gPiAuLi9ibG9jay9zZWQtb3BhbC5jOjM3Njoy
-NTogICAgZXhwZWN0ZWQgdW5zaWduZWQgbG9uZyBsb25nIFt1c2VydHlwZV0gbG93ZXN0X2xiYQ0K
-PiA+IC4uL2Jsb2NrL3NlZC1vcGFsLmM6Mzc2OjI1OiAgICBnb3QgcmVzdHJpY3RlZCBfX2JlNjQg
-Y29uc3QgW3VzZXJ0eXBlXSBsb3dlc3RfYWxpZ25lZF9sYmENCj4gPiANCj4gPiBGaXhlczogNDU1
-YTdiMjM4Y2Q2ICgiYmxvY2s6IEFkZCBTZWQtb3BhbCBsaWJyYXJ5IikNCj4gPiBTaWduZWQtb2Zm
-LWJ5OiBSYW5keSBEdW5sYXAgPHJkdW5sYXBAaW5mcmFkZWFkLm9yZz4NCj4gPiBDYzogU2NvdHQg
-QmF1ZXIgPHNjb3R0LmJhdWVyQGludGVsLmNvbT4NCj4gPiBDYzogUmFmYWVsIEFudG9nbm9sbGkg
-PHJhZmFlbC5hbnRvZ25vbGxpQGludGVsLmNvbT4NCj4gPiBDYzogSmVucyBBeGJvZSA8YXhib2VA
-a2VybmVsLmRrPg0KPiA+IENjOiBsaW51eC1ibG9ja0B2Z2VyLmtlcm5lbC5vcmcNCj4gDQo+ICsg
-Sm9uIGFuZCBSZXZhbnRoLA0KPiANCj4gDQo+IFRoZXNlIGxvb2sgZmluZS4gVGhleSdyZSBjdXJy
-ZW50bHkgdW51c2VkLCBidXQgbWF5IGJlIHVzZWZ1bCBpbiB0aGUgZnV0dXJlIGZvciBzeXNmcyBv
-ciB3aGF0IGV2ZXIgZWxzZSB3ZSBhZGQgaW4uDQoNCkkgaW1hZ2luZSBtb2Rlcm4gZGV2aWNlcyB3
-aXRoIGxvZ2ljYWwvcGh5c2ljYWwgaW5kaXJlY3Rpb24gd291bGQNCnByb2JhYmx5IHJlcG9ydCBn
-cmFuPTEgYW5kIGxvd2VzdD0wIHJlZ2FyZGxlc3MuDQoNCkVpdGhlciB3YXksDQpSZXZpZXdlZC1i
-eTogSm9uIERlcnJpY2sgPGpvbmF0aGFuLmRlcnJpY2tAaW50ZWwuY29tPg0K
+On Thu, Oct 3, 2019 at 10:01 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> If this is purely about the fact that x86 is different from other
+> architectures, then let's remove the "compiler can do stupid things"
+> option on x86 too. It was never clear that it was a huge advantage.
+
+Side note: what might be an actual advantage would be to have a mode
+where you see when the compiler would choose to not inline things.
+
+Maybe we have things that are marked "inline" that simply shouldn't
+be. We do tend to have this history of adding small helper functions
+to header files, and then they grow and grow and grow. And now they
+shouldn't be in a header file any more, but they still are.
+
+So having a "compiler doesn't want to inline this" flag might be
+useful for finding those, but it might also be useful for people
+looking for what triggers bugs.
+
+But honestly, the last time I saw somebody argue for "I don't want
+inlining", it was the broken "I want to compiler the kernel with no
+optimizations so that it's easier to look at the resulting code". That
+was just a _bad_ bad patch. And if it is concerns like that that are
+driving this "compiler doesn't have to inline", then we should stop it
+immediately.
+
+             Linus
