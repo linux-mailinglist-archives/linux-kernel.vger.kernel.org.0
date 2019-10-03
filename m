@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D493CCAADE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CA67CA9E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389113AbfJCQQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:16:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42138 "EHLO mail.kernel.org"
+        id S2405955AbfJCRBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389086AbfJCQQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:16:49 -0400
+        id S1732888AbfJCQpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:45:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23DD720700;
-        Thu,  3 Oct 2019 16:16:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85BE92054F;
+        Thu,  3 Oct 2019 16:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119408;
-        bh=XdCheeG0w24WQDvOmQTlTAsMqd8i15E+HQEqz4HkuCw=;
+        s=default; t=1570121101;
+        bh=JynpDT/gW2P7z3FNimWG7u5TDUQgbp30m34PxCe32QM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q6X5YLaLa/W6TaXnUjCOxmGprFGDFR+K/5cHi+ejmmcsWG/VZBeOAQXVPNI+5o1dm
-         CJzKytyIURNoZCFAthZaYSzT29DcZzFWdNAl6HAl6KAjA7w/cR37xf3ltCZ5AfTfbF
-         +E2KR/QYYpFow+jnuP+W2wHUTlL6saQ6d9QLOyvc=
+        b=uFpGAdJuV6HLaT+KPe355Fzom04/FY79vqdp3nE9YIa/+CRKbl3vwJoaiHd+lLk6S
+         cCAXfRbxr/XelGdDV27q80caAChYm0lJyo31YzAI3JD/8jsNc8KfUfJL1KpywARQ+I
+         wP8/VbTaxRQ5la9ADrKMJC0t69yWJcsnh7iz5Qj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
-        Song Liu <songliubraving@fb.com>,
+        stable@vger.kernel.org,
+        Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/211] md/raid1: end bio when the device faulty
+Subject: [PATCH 5.3 155/344] PM / devfreq: exynos-bus: Correct clock enable sequence
 Date:   Thu,  3 Oct 2019 17:52:00 +0200
-Message-Id: <20191003154500.482539522@linuxfoundation.org>
+Message-Id: <20191003154555.515579518@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +46,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
-[ Upstream commit eeba6809d8d58908b5ed1b5ceb5fcb09a98a7cad ]
+[ Upstream commit 2c2b20e0da89c76759ee28c6824413ab2fa3bfc6 ]
 
-When write bio return error, it would be added to conf->retry_list
-and wait for raid1d thread to retry write and acknowledge badblocks.
+Regulators should be enabled before clocks to avoid h/w hang. This
+require change in exynos_bus_probe() to move exynos_bus_parse_of()
+after exynos_bus_parent_parse_of() and change in error handling.
+Similar change is needed in exynos_bus_exit() where clock should be
+disabled before regulators.
 
-In narrow_write_error(), the error bio will be split in the unit of
-badblock shift (such as one sector) and raid1d thread issues them
-one by one. Until all of the splited bio has finished, raid1d thread
-can go on processing other things, which is time consuming.
-
-But, there is a scene for error handling that is not necessary.
-When the device has been set faulty, flush_bio_list() may end
-bios in pending_bio_list with error status. Since these bios
-has not been issued to the device actually, error handlding to
-retry write and acknowledge badblocks make no sense.
-
-Even without that scene, when the device is faulty, badblocks info
-can not be written out to the device. Thus, we also no need to
-handle the error IO.
-
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/raid1.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ drivers/devfreq/exynos-bus.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index fa47249fa3e42..54010675df9a5 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -434,19 +434,21 @@ static void raid1_end_write_request(struct bio *bio)
- 		    /* We never try FailFast to WriteMostly devices */
- 		    !test_bit(WriteMostly, &rdev->flags)) {
- 			md_error(r1_bio->mddev, rdev);
--			if (!test_bit(Faulty, &rdev->flags))
--				/* This is the only remaining device,
--				 * We need to retry the write without
--				 * FailFast
--				 */
--				set_bit(R1BIO_WriteError, &r1_bio->state);
--			else {
--				/* Finished with this branch */
--				r1_bio->bios[mirror] = NULL;
--				to_put = bio;
--			}
--		} else
-+		}
-+
-+		/*
-+		 * When the device is faulty, it is not necessary to
-+		 * handle write error.
-+		 * For failfast, this is the only remaining device,
-+		 * We need to retry the write without FailFast.
-+		 */
-+		if (!test_bit(Faulty, &rdev->flags))
- 			set_bit(R1BIO_WriteError, &r1_bio->state);
-+		else {
-+			/* Finished with this branch */
-+			r1_bio->bios[mirror] = NULL;
-+			to_put = bio;
-+		}
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index d9f377912c104..7c06df8bd74fe 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -191,11 +191,10 @@ static void exynos_bus_exit(struct device *dev)
+ 	if (ret < 0)
+ 		dev_warn(dev, "failed to disable the devfreq-event devices\n");
+ 
+-	if (bus->regulator)
+-		regulator_disable(bus->regulator);
+-
+ 	dev_pm_opp_of_remove_table(dev);
+ 	clk_disable_unprepare(bus->clk);
++	if (bus->regulator)
++		regulator_disable(bus->regulator);
+ }
+ 
+ /*
+@@ -383,6 +382,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	struct exynos_bus *bus;
+ 	int ret, max_state;
+ 	unsigned long min_freq, max_freq;
++	bool passive = false;
+ 
+ 	if (!np) {
+ 		dev_err(dev, "failed to find devicetree node\n");
+@@ -396,27 +396,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	bus->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, bus);
+ 
+-	/* Parse the device-tree to get the resource information */
+-	ret = exynos_bus_parse_of(np, bus);
+-	if (ret < 0)
+-		return ret;
+-
+ 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
+-	if (!profile) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!profile)
++		return -ENOMEM;
+ 
+ 	node = of_parse_phandle(dev->of_node, "devfreq", 0);
+ 	if (node) {
+ 		of_node_put(node);
+-		goto passive;
++		passive = true;
  	} else {
- 		/*
- 		 * Set R1BIO_Uptodate in our master bio, so that we
+ 		ret = exynos_bus_parent_parse_of(np, bus);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
++	/* Parse the device-tree to get the resource information */
++	ret = exynos_bus_parse_of(np, bus);
+ 	if (ret < 0)
+-		goto err;
++		goto err_reg;
++
++	if (passive)
++		goto passive;
+ 
+ 	/* Initialize the struct profile and governor data for parent device */
+ 	profile->polling_ms = 50;
+@@ -507,6 +507,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
+ 	clk_disable_unprepare(bus->clk);
++err_reg:
++	if (!passive)
++		regulator_disable(bus->regulator);
+ 
+ 	return ret;
+ }
 -- 
 2.20.1
 
