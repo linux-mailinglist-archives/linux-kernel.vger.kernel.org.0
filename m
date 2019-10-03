@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E31CABE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40874CACF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731851AbfJCQBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:01:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45994 "EHLO mail.kernel.org"
+        id S1731694AbfJCRcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:32:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730888AbfJCQBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:01:36 -0400
+        id S1732267AbfJCQJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:09:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8319B20700;
-        Thu,  3 Oct 2019 16:01:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ECEC21A4C;
+        Thu,  3 Oct 2019 16:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118495;
-        bh=AcEFQVZfnqefqvpMnJZjKPVSuzbiEQwQhCaY9hwlWMw=;
+        s=default; t=1570118969;
+        bh=/mKR2Aj0YnNxM7Y42TKtxzacGVHLJvIRIb7cpYpcFKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pBX9kVo/H/dRUrJqunxBJIpme5Uy86QUOP5BCA/p+n0YsoffrRy7cWlobKqKyzQEd
-         hDF8lQ45mycJZiECZ8JvK6m+1yfQ4WsBm+D0Z95ESB3KbneNK9rYZ2517NvZ2JQg96
-         j+nMv96feNrzf6p/pU4YbWcppgZTihqmtWTenHeo=
+        b=VwQyGrh3xvu/eWzkEocJU1pFkRr+bGw61JqXWlm/vOHF+wlWG7R2GcuOoxvAYGR1O
+         3SRFTy9jFOPTh1LkIaWBnMlEBaxt+M6CpS9flkwPYo7N+71Mdkl7imUTh59VJHkvnC
+         K88GowJDx+GrgdtMfD9iLwuOeYH1CdTp0sGBq4zs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.9 030/129] sch_netem: fix a divide by zero in tabledist()
-Date:   Thu,  3 Oct 2019 17:52:33 +0200
-Message-Id: <20191003154333.272336115@linuxfoundation.org>
+        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 076/185] md/raid1: end bio when the device faulty
+Date:   Thu,  3 Oct 2019 17:52:34 +0200
+Message-Id: <20191003154454.599749140@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit b41d936b5ecfdb3a4abc525ce6402a6c49cffddc ]
+[ Upstream commit eeba6809d8d58908b5ed1b5ceb5fcb09a98a7cad ]
 
-syzbot managed to crash the kernel in tabledist() loading
-an empty distribution table.
+When write bio return error, it would be added to conf->retry_list
+and wait for raid1d thread to retry write and acknowledge badblocks.
 
-	t = dist->table[rnd % dist->size];
+In narrow_write_error(), the error bio will be split in the unit of
+badblock shift (such as one sector) and raid1d thread issues them
+one by one. Until all of the splited bio has finished, raid1d thread
+can go on processing other things, which is time consuming.
 
-Simply return an error when such load is attempted.
+But, there is a scene for error handling that is not necessary.
+When the device has been set faulty, flush_bio_list() may end
+bios in pending_bio_list with error status. Since these bios
+has not been issued to the device actually, error handlding to
+retry write and acknowledge badblocks make no sense.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Even without that scene, when the device is faulty, badblocks info
+can not be written out to the device. Thus, we also no need to
+handle the error IO.
+
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_netem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid1.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -711,7 +711,7 @@ static int get_dist_table(struct Qdisc *
- 	int i;
- 	size_t s;
- 
--	if (n > NETEM_DIST_MAX)
-+	if (!n || n > NETEM_DIST_MAX)
- 		return -EINVAL;
- 
- 	s = sizeof(struct disttable) + n * sizeof(s16);
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 31c4391f6a62b..762d21c84774a 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -435,19 +435,21 @@ static void raid1_end_write_request(struct bio *bio)
+ 		    /* We never try FailFast to WriteMostly devices */
+ 		    !test_bit(WriteMostly, &rdev->flags)) {
+ 			md_error(r1_bio->mddev, rdev);
+-			if (!test_bit(Faulty, &rdev->flags))
+-				/* This is the only remaining device,
+-				 * We need to retry the write without
+-				 * FailFast
+-				 */
+-				set_bit(R1BIO_WriteError, &r1_bio->state);
+-			else {
+-				/* Finished with this branch */
+-				r1_bio->bios[mirror] = NULL;
+-				to_put = bio;
+-			}
+-		} else
++		}
++
++		/*
++		 * When the device is faulty, it is not necessary to
++		 * handle write error.
++		 * For failfast, this is the only remaining device,
++		 * We need to retry the write without FailFast.
++		 */
++		if (!test_bit(Faulty, &rdev->flags))
+ 			set_bit(R1BIO_WriteError, &r1_bio->state);
++		else {
++			/* Finished with this branch */
++			r1_bio->bios[mirror] = NULL;
++			to_put = bio;
++		}
+ 	} else {
+ 		/*
+ 		 * Set R1BIO_Uptodate in our master bio, so that we
+-- 
+2.20.1
+
 
 
