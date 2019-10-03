@@ -2,101 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 575DACAD08
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DF15CAD11
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733097AbfJCReI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:34:08 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:35092 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732907AbfJCReF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:34:05 -0400
-Received: from smtp2.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 0E95AA1BF4;
-        Thu,  3 Oct 2019 19:34:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.240])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id ZVLOBka5CkYJ; Thu,  3 Oct 2019 19:34:00 +0200 (CEST)
-Date:   Fri, 4 Oct 2019 03:33:52 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] usercopy: Add parentheses around assignment in
- test_copy_struct_from_user
-Message-ID: <20191003173352.ai4wbllwo6lrxjju@yavin.dot.cyphar.com>
-References: <20191003171121.2723619-1-natechancellor@gmail.com>
- <CAHrFyr4GFJHQLHOi_OuDVkhuKxfnf_VkTWk6MJ2Mn1EtWhpqjg@mail.gmail.com>
+        id S2387501AbfJCReR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:34:17 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:52859 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732907AbfJCReL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:34:11 -0400
+X-Originating-IP: 91.224.148.103
+Received: from localhost.localdomain (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id ADB16FF80E;
+        Thu,  3 Oct 2019 17:34:07 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 0/7] Introduce max12xx ADC support
+Date:   Thu,  3 Oct 2019 19:33:54 +0200
+Message-Id: <20191003173401.16343-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mq3doqufbzkhsyhl"
-Content-Disposition: inline
-In-Reply-To: <CAHrFyr4GFJHQLHOi_OuDVkhuKxfnf_VkTWk6MJ2Mn1EtWhpqjg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello, here is a patchset updating the existing max1027.c driver (for
+10-bit max1027/29/31 ADCs) with a few corrections/improvements and
+then introducing their 12-bit cousins named max1227/29/31.
 
---mq3doqufbzkhsyhl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As on my hardware setup the "start conversion" and "end of conversion"
+pin are not wired (which is absolutely fine for this chip), I also
+updated the driver and the bindings to support optional interrupts. In
+this case, triggered buffers are not available and the user must poll
+the value from sysfs.
 
-On 2019-10-03, Christian Brauner <christian@brauner.io> wrote:
-> On Thu, Oct 3, 2019, 19:11 Nathan Chancellor <natechancellor@gmail.com>
-> wrote:
->=20
-> > Clang warns:
-> >
-> > lib/test_user_copy.c:96:10: warning: using the result of an assignment
-> > as a condition without parentheses [-Wparentheses]
-> >         if (ret |=3D test(umem_src =3D=3D NULL, "kmalloc failed"))
-> >             ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > lib/test_user_copy.c:96:10: note: place parentheses around the
-> > assignment to silence this warning
-> >         if (ret |=3D test(umem_src =3D=3D NULL, "kmalloc failed"))
-> >                 ^
-> >             (                                              )
-> > lib/test_user_copy.c:96:10: note: use '!=3D' to turn this compound
-> > assignment into an inequality comparison
-> >         if (ret |=3D test(umem_src =3D=3D NULL, "kmalloc failed"))
-> >                 ^~
-> >                 !=3D
-> >
-> > Add the parentheses as it suggests because this is intentional.
-> >
-> > Fixes: f5a1a536fa14 ("lib: introduce copy_struct_from_user() helper")
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/731
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> >
->=20
-> I'll take this. Aleksa, can I get your ack too, please?
->=20
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
-Acked-by: Aleksa Sarai <cyphar@cyphar.com>
+Thanks,
+Miquèl
 
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Changes in v2:
+==============
+* Removed the addition of three compatibles from patch 4 (the
+  preparation patch) to add these lines back in patch 5 (the actual
+  introduction).
 
---mq3doqufbzkhsyhl
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Miquel Raynal (7):
+  iio: adc: max1027: Add debugfs register read support
+  iio: adc: max1027: Make it optional to use interrupts
+  iio: adc: max1027: Reset the device at probe time
+  iio: adc: max1027: Prepare the introduction of different resolutions
+  iio: adc: max1027: Introduce 12-bit devices support
+  dt-bindings: iio: adc: max1027: Mark interrupts as optional
+  dt-bindings: iio: adc: max1027: Document max12xx series compatibles
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXZYw/QAKCRCdlLljIbnQ
-ErZYAP4heG3krz9cEVZdwR0992zolXZYYA3cb+gwBXtyntW4tQEA7oYTckHSxzrw
-2x9+2UkmgGKl+HPHYP3tiwp6I40UOQg=
-=IFPY
------END PGP SIGNATURE-----
+ .../bindings/iio/adc/max1027-adc.txt          |  12 +-
+ drivers/iio/adc/Kconfig                       |   4 +-
+ drivers/iio/adc/max1027.c                     | 190 +++++++++++-------
+ 3 files changed, 133 insertions(+), 73 deletions(-)
 
---mq3doqufbzkhsyhl--
+-- 
+2.20.1
+
