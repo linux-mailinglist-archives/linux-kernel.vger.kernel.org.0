@@ -2,162 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E58CB043
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E50BFCB055
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388824AbfJCUje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 16:39:34 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43661 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729891AbfJCUjd (ORCPT
+        id S2389482AbfJCUme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 16:42:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726669AbfJCUmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 16:39:33 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c3so5493545qtv.10;
-        Thu, 03 Oct 2019 13:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c5v0Ayn3zo5649C9SEeg+lS3ZwQJtN55TT1dAsho3tE=;
-        b=L8LL/5DSNN7PcsbocdWR7gM/PGi+bHDR9Esq0SBUn9toL+v8n8ifL4Lf8et0uoWDyI
-         3M9R906KW/Wi1Ar5dgfuIOO0IYSxuhPgM5fpySrr2wBjdL1/JCRq5qVGfeZT0mtVuz64
-         a2PRVv2kZBH8wIiSrlq3EOatqpjKx35sSfGweMEGRAmtaFBYyI4y51Ym/ga31U7IJsCf
-         f/hts4rhe9KHpbOmNXe7uRwIQWO1J0eQ1GItj3JJ2DwvTEpYH1aiFNqoD2wGH3fgh37P
-         qJG6YMHQtx+0nMN7E906Nd8Lyn0EtsTGqbuM0Ci4VH3xnmE61CsG3JmpKoq/eyJu0gWU
-         QkWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c5v0Ayn3zo5649C9SEeg+lS3ZwQJtN55TT1dAsho3tE=;
-        b=XzAR6ucbaSlUEMhGUar/RAp1ZmNC393myVxlhcv7M8ANfWyyc55A3ZQ+mjKUrneJWD
-         xnJ0yZmWR3MYqju/lVqsbSLQMgtq5yp9tpC4njIMRnz1QMAgaw6YpZQj0IhMudprDY8g
-         biLk7UXeC2pl71T50H3CPGypC67v+VPQL5ygLkkA1vHW1n2BVnUSHaw2UoX6x9NhuudQ
-         Cu1dGSHinplyNul4U1di+wetLYGQN5TUgMRUUORIBisOVukffk0shryrHKBPXyQNxXo0
-         5tfy7umUWx0vVIcvRFNtLAZ2Nhl9mvHDsCrWFrNVwl+JLPT2IjZhDsJ75lkpH8nVKnvS
-         c9mA==
-X-Gm-Message-State: APjAAAXnG8KhAgrXfIF7GTKsNxrnnyRBBhSX75H8bc5swlzfzCs1KyWP
-        05/v/CNDQTcH4Iiylgq0wkGuxjBFNhkTwZIP7Nf6kcI1
-X-Google-Smtp-Source: APXvYqw7nFDvBQrLYt8LQT23ZuQZKHZ+C32m4Il/c3x3OBmEOFxjRaW+5Io1922Ypof0CQNJgVR+iiav+lPYu1K8new=
-X-Received: by 2002:ac8:4593:: with SMTP id l19mr12258563qtn.271.1570135171067;
- Thu, 03 Oct 2019 13:39:31 -0700 (PDT)
+        Thu, 3 Oct 2019 16:42:33 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x93Kawvo021258;
+        Thu, 3 Oct 2019 16:40:25 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vdqd29pd0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Oct 2019 16:40:25 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x93KaxC5021544;
+        Thu, 3 Oct 2019 16:40:24 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vdqd29pcb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Oct 2019 16:40:24 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x93KYnnu029841;
+        Thu, 3 Oct 2019 20:40:23 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma02wdc.us.ibm.com with ESMTP id 2v9y58q4mu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Oct 2019 20:40:23 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x93KeLcl61341986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 3 Oct 2019 20:40:21 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 377AFBE054;
+        Thu,  3 Oct 2019 20:40:21 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91CACBE04F;
+        Thu,  3 Oct 2019 20:40:12 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.190])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  3 Oct 2019 20:40:12 +0000 (GMT)
+Message-ID: <3598584cc4b829e9c290b6dab89fb148528e4f72.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 10/11] mm/Kconfig: Adds config option to track
+ lockless pagetable walks
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Song Liu <songliubraving@fb.com>, Michal Hocko <mhocko@suse.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Keith Busch <keith.busch@intel.com>, linux-mm@kvack.org,
+        Paul Mackerras <paulus@samba.org>,
+        Christoph Lameter <cl@linux.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        linux-arch@vger.kernel.org, Santosh Sivaraj <santosh@fossix.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        kvm-ppc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, Roman Gushchin <guro@fb.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu, 03 Oct 2019 17:40:11 -0300
+In-Reply-To: <20191003074432.GO4536@hirez.programming.kicks-ass.net>
+References: <20191003013325.2614-1-leonardo@linux.ibm.com>
+         <20191003013325.2614-11-leonardo@linux.ibm.com>
+         <20191003074432.GO4536@hirez.programming.kicks-ass.net>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-cFtUj1Ho01ANPCDPn5bA"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-References: <1570121672-12172-1-git-send-email-zdai@linux.vnet.ibm.com>
- <CAKgT0Udz7vt5C=+6vpFPbys4sODAZtCjrkSvOdgP80rX7Ww+Ng@mail.gmail.com> <1570128658.1250.8.camel@oc5348122405>
-In-Reply-To: <1570128658.1250.8.camel@oc5348122405>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Thu, 3 Oct 2019 13:39:19 -0700
-Message-ID: <CAKgT0UcHvAQoChS1bkV8LsxaJcyRrTSPru+qsYXBsxHgr+aJmg@mail.gmail.com>
-Subject: Re: [v1] e1000e: EEH on e1000e adapter detects io perm failure can
- trigger crash
-To:     "David Z. Dai" <zdai@linux.vnet.ibm.com>
-Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        David Miller <davem@davemloft.net>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, zdai@us.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910030167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 11:51 AM David Z. Dai <zdai@linux.vnet.ibm.com> wrote:
->
-> On Thu, 2019-10-03 at 10:39 -0700, Alexander Duyck wrote:
-> > On Thu, Oct 3, 2019 at 9:59 AM David Dai <zdai@linux.vnet.ibm.com> wrote:
-> > >
-> > > We see the behavior when EEH e1000e adapter detects io permanent failure,
-> > > it will crash kernel with this stack:
-> > > EEH: Beginning: 'error_detected(permanent failure)'
-> > > EEH: PE#900000 (PCI 0115:90:00.1): Invoking e1000e->error_detected(permanent failure)
-> > > EEH: PE#900000 (PCI 0115:90:00.1): e1000e driver reports: 'disconnect'
-> > > EEH: PE#900000 (PCI 0115:90:00.0): Invoking e1000e->error_detected(permanent failure)
-> > > EEH: PE#900000 (PCI 0115:90:00.0): e1000e driver reports: 'disconnect'
-> > > EEH: Finished:'error_detected(permanent failure)'
-> > > Oops: Exception in kernel mode, sig: 5 [#1]
-> > > NIP [c0000000007b1be0] free_msi_irqs+0xa0/0x280
-> > >  LR [c0000000007b1bd0] free_msi_irqs+0x90/0x280
-> > > Call Trace:
-> > > [c0000004f491ba10] [c0000000007b1bd0] free_msi_irqs+0x90/0x280 (unreliable)
-> > > [c0000004f491ba70] [c0000000007b260c] pci_disable_msi+0x13c/0x180
-> > > [c0000004f491bab0] [d0000000046381ac] e1000_remove+0x234/0x2a0 [e1000e]
-> > > [c0000004f491baf0] [c000000000783cec] pci_device_remove+0x6c/0x120
-> > > [c0000004f491bb30] [c00000000088da6c] device_release_driver_internal+0x2bc/0x3f0
-> > > [c0000004f491bb80] [c00000000076f5a8] pci_stop_and_remove_bus_device+0xb8/0x110
-> > > [c0000004f491bbc0] [c00000000006e890] pci_hp_remove_devices+0x90/0x130
-> > > [c0000004f491bc50] [c00000000004ad34] eeh_handle_normal_event+0x1d4/0x660
-> > > [c0000004f491bd10] [c00000000004bf10] eeh_event_handler+0x1c0/0x1e0
-> > > [c0000004f491bdc0] [c00000000017c4ac] kthread+0x1ac/0x1c0
-> > > [c0000004f491be30] [c00000000000b75c] ret_from_kernel_thread+0x5c/0x80
-> > >
-> > > Basically the e1000e irqs haven't been freed at the time eeh is trying to
-> > > remove the the e1000e device.
-> > > Need to make sure when e1000e_close is called to bring down the NIC,
-> > > if adapter error_state is pci_channel_io_perm_failure, it should also
-> > > bring down the link and free irqs.
-> > >
-> > > Reported-by: Morumuri Srivalli  <smorumu1@in.ibm.com>
-> > > Signed-off-by: David Dai <zdai@linux.vnet.ibm.com>
-> > > ---
-> > >  drivers/net/ethernet/intel/e1000e/netdev.c |    3 ++-
-> > >  1 files changed, 2 insertions(+), 1 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-> > > index d7d56e4..cf618e1 100644
-> > > --- a/drivers/net/ethernet/intel/e1000e/netdev.c
-> > > +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-> > > @@ -4715,7 +4715,8 @@ int e1000e_close(struct net_device *netdev)
-> > >
-> > >         pm_runtime_get_sync(&pdev->dev);
-> > >
-> > > -       if (!test_bit(__E1000_DOWN, &adapter->state)) {
-> > > +       if (!test_bit(__E1000_DOWN, &adapter->state) ||
-> > > +           (adapter->pdev->error_state == pci_channel_io_perm_failure)) {
-> > >                 e1000e_down(adapter, true);
-> > >                 e1000_free_irq(adapter);
-> >
-> > It seems like the issue is the fact that e1000_io_error_detected is
-> > calling e1000e_down without the e1000_free_irq() bit. Instead of doing
-> > this couldn't you simply add the following to e1000_is_slot_reset in
-> > the "result = PCI_ERS_RESULT_DISCONNECT" case:
-> >     if (netif_running(netdev)
-> >         e1000_free_irq(adapter);
-> >
-> > Alternatively we could look at freeing and reallocating the IRQs in
-> > the event of an error like we do for the e1000e_pm_freeze and
-> > e1000e_pm_thaw cases. That might make more sense since we are dealing
-> > with an error we might want to free and reallocate the IRQ resources
-> > assigned to the device.
-> >
-> > Thanks.
-> >
-> > - Alex
->
-> Thanks for the quick reply and comment!
-> Looked the e1000_io_slot_reset() routine:
->         err = pci_enable_device_mem(pdev);
->         if (err) {
->                 dev_err(&pdev->dev,
->                         "Cannot re-enable PCI device after reset.\n");
->                 result = PCI_ERS_RESULT_DISCONNECT;
->         } else {
-> I didn't see log message "Cannot re-enable PCI device after reset" at
-> the time of crash.
->
-> I can still apply the same logic in e1000_io_error_detected() routine:
->     if (state == pci_channel_io_perm_failure) {
-> +       if (netif_running(netdev))
-> +           e1000_free_irq(adapter);
->         return PCI_ERS_RESULT_DISCONNECT;
->     }
-> Will test this once the test hardware is available again.
 
-Are you sure this is the path you are hitting? Things aren't adding up.
+--=-cFtUj1Ho01ANPCDPn5bA
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I thought the issue was that the interface for the error handling was
-calling e1000e_down() but not freeing the IRQs? In the path where you
-are adding your code I don't see how the __E1000_DOWN would have been
-set?
+On Thu, 2019-10-03 at 09:44 +0200, Peter Zijlstra wrote:
+> This shouldn't be a user visible option at all. Either the arch needs
+> it and selects it or not.
 
-- Alex
+You are right. I will do that on v6.
+Thanks for the feedback!
+
+--=-cFtUj1Ho01ANPCDPn5bA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl2WXKsACgkQlQYWtz9S
+ttT0Rw/+O9ro3F+kPIMVu+zxDUbz2AsZH3nFxKIz+44t5QRLd0SVCWEZoL8sXxBl
+szuekeDyKqOVi4Uxq0kFBYP79d+/4XthFa9AwDozRXNre5Q0DiNv0j0z9DT0Ng02
+nSLeaiuIt8SlD/TRrFOrlt0yFmE0485uR2jQYklJ056mh+629wFa8XJ3NOuOlU3C
+wst6saBjYMZXlDg2acZTrI6VY1tpXAzkD1q1yQoEFUoMaLuBNhvLff0kxjxKTm2A
+WnfAyv+BNeD/BlUzi8ifmvz/V6tWyhJ3LGwOOPloAKVy+SyJkxhzQoNn0uToodx6
+GqeglOW+cnrPkmn3vZpinpSVOoQDzyy1MrurMbpXtV1iiVBxGXflyK7GAa9bpI4l
+E45jXUJHTnFB3LOon16oBweT/fM3jVa4RVzPzO7JFfdLQUhnNdWROxdglOVvQxH7
+2ZSy6maWC/mwRerDZk23R+usHwJ3kRItE/XT6mfzWcgf16Ph0A0xuZTLYvKJgOX4
+8mFMwRkitAKKI/AYeKZ5w1AsVzO6XcG95Fxv78yIHxau479a0LB8FQVbCUySWjlR
+6hZvWhqKJpy28cRX9ojp9MEzhABgb3bp8/3N7IKSxC2Gxsf7tVFs6ioEGFyBk/mK
+unZ51OqsQ9LvoN4l67gzt238uunxFlb/uQIH4AWX/eO/9iYv5lY=
+=uZ4G
+-----END PGP SIGNATURE-----
+
+--=-cFtUj1Ho01ANPCDPn5bA--
+
