@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96F0ECA725
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5FA1CA5BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393119AbfJCQvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:51:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38286 "EHLO mail.kernel.org"
+        id S2391105AbfJCQgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:36:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393110AbfJCQu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:50:57 -0400
+        id S2404395AbfJCQgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:36:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC8C32054F;
-        Thu,  3 Oct 2019 16:50:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38FE121783;
+        Thu,  3 Oct 2019 16:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121456;
-        bh=+UCKaZfYue33VfG5BDJ5CZdVt/o9tLhbPDHE2Ou/7zY=;
+        s=default; t=1570120575;
+        bh=S4+I5ESyQyS/UgATDeHyzIwu+16lRIeDNWwtMrdWlCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXsLDNFx+MckIkNBFCAiXA12fjEbocE+49Uilh1pb/vgreG/KhuQPYLK8REsjbSbh
-         Im7jXhiMFd0mYvDb70DYtsPeohvuwX9ISYyjk3phGgEwIBruY4shEUVg3nfTlSHjap
-         2URVW6vght6ryV+XZf2XLvY692BgCnovawXeb9Dk=
+        b=g3VJ6mZ5k15PBYYDIYuwlb/QWODd7VAsR8xi7T/NZGfIMwd7VbTfq3GfJhjnYDyMr
+         4rkS/G61YtReEzgmfzVQG9QuVik1YWRpmxhGdX07/sojM+G2jg2k+LatSbJeDjvql3
+         XJMmtIF+hMi5INaI2M2l40EX/WJf7nIvr1Us2Rrs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 5.3 285/344] alarmtimer: Use EOPNOTSUPP instead of ENOTSUPP
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.2 272/313] rtw88: pci: Rearrange the memory usage for skb in RX ISR
 Date:   Thu,  3 Oct 2019 17:54:10 +0200
-Message-Id: <20191003154607.979058870@linuxfoundation.org>
+Message-Id: <20191003154559.844199542@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +43,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-commit f18ddc13af981ce3c7b7f26925f099e7c6929aba upstream.
+commit ee6db78f5db9bfe426c57a1ec9713827ebccd2d4 upstream.
 
-ENOTSUPP is not supposed to be returned to userspace. This was found on an
-OpenPower machine, where the RTC does not support set_alarm.
+Testing with RTL8822BE hardware, when available memory is low, we
+frequently see a kernel panic and system freeze.
 
-On that system, a clock_nanosleep(CLOCK_REALTIME_ALARM, ...) results in
-"524 Unknown error 524"
+First, rtw_pci_rx_isr encounters a memory allocation failure (trimmed):
 
-Replace it with EOPNOTSUPP which results in the expected "95 Operation not
-supported" error.
+rx routine starvation
+WARNING: CPU: 7 PID: 9871 at drivers/net/wireless/realtek/rtw88/pci.c:822 rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
+[ 2356.580313] RIP: 0010:rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
 
-Fixes: 1c6b39ad3f01 (alarmtimers: Return -ENOTSUPP if no RTC device is present)
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190903171802.28314-1-cascardo@canonical.com
+Then we see a variety of different error conditions and kernel panics,
+such as this one (trimmed):
+
+rtw_pci 0000:02:00.0: pci bus timeout, check dma status
+skbuff: skb_over_panic: text:00000000091b6e66 len:415 put:415 head:00000000d2880c6f data:000000007a02b1ea tail:0x1df end:0xc0 dev:<NULL>
+------------[ cut here ]------------
+kernel BUG at net/core/skbuff.c:105!
+invalid opcode: 0000 [#1] SMP NOPTI
+RIP: 0010:skb_panic+0x43/0x45
+
+When skb allocation fails and the "rx routine starvation" is hit, the
+function returns immediately without updating the RX ring. At this
+point, the RX ring may continue referencing an old skb which was already
+handed off to ieee80211_rx_irqsafe(). When it comes to be used again,
+bad things happen.
+
+This patch allocates a new, data-sized skb first in RX ISR. After
+copying the data in, we pass it to the upper layers. However, if skb
+allocation fails, we effectively drop the frame. In both cases, the
+original, full size ring skb is reused.
+
+In addition, to fixing the kernel crash, the RX routine should now
+generally behave better under low memory conditions.
+
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204053
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/alarmtimer.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtw88/pci.c |   49 +++++++++++++------------------
+ 1 file changed, 22 insertions(+), 27 deletions(-)
 
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -672,7 +672,7 @@ static int alarm_timer_create(struct k_i
- 	enum  alarmtimer_type type;
+--- a/drivers/net/wireless/realtek/rtw88/pci.c
++++ b/drivers/net/wireless/realtek/rtw88/pci.c
+@@ -763,6 +763,7 @@ static void rtw_pci_rx_isr(struct rtw_de
+ 	u32 pkt_offset;
+ 	u32 pkt_desc_sz = chip->rx_pkt_desc_sz;
+ 	u32 buf_desc_sz = chip->rx_buf_desc_sz;
++	u32 new_len;
+ 	u8 *rx_desc;
+ 	dma_addr_t dma;
  
- 	if (!alarmtimer_get_rtcdev())
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
+@@ -790,40 +791,34 @@ static void rtw_pci_rx_isr(struct rtw_de
+ 		pkt_offset = pkt_desc_sz + pkt_stat.drv_info_sz +
+ 			     pkt_stat.shift;
  
- 	if (!capable(CAP_WAKE_ALARM))
- 		return -EPERM;
-@@ -790,7 +790,7 @@ static int alarm_timer_nsleep(const cloc
- 	int ret = 0;
+-		if (pkt_stat.is_c2h) {
+-			/* keep rx_desc, halmac needs it */
+-			skb_put(skb, pkt_stat.pkt_len + pkt_offset);
++		/* allocate a new skb for this frame,
++		 * discard the frame if none available
++		 */
++		new_len = pkt_stat.pkt_len + pkt_offset;
++		new = dev_alloc_skb(new_len);
++		if (WARN_ONCE(!new, "rx routine starvation\n"))
++			goto next_rp;
++
++		/* put the DMA data including rx_desc from phy to new skb */
++		skb_put_data(new, skb->data, new_len);
  
- 	if (!alarmtimer_get_rtcdev())
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
+-			/* pass offset for further operation */
+-			*((u32 *)skb->cb) = pkt_offset;
+-			skb_queue_tail(&rtwdev->c2h_queue, skb);
++		if (pkt_stat.is_c2h) {
++			 /* pass rx_desc & offset for further operation */
++			*((u32 *)new->cb) = pkt_offset;
++			skb_queue_tail(&rtwdev->c2h_queue, new);
+ 			ieee80211_queue_work(rtwdev->hw, &rtwdev->c2h_work);
+ 		} else {
+-			/* remove rx_desc, maybe use skb_pull? */
+-			skb_put(skb, pkt_stat.pkt_len);
+-			skb_reserve(skb, pkt_offset);
+-
+-			/* alloc a smaller skb to mac80211 */
+-			new = dev_alloc_skb(pkt_stat.pkt_len);
+-			if (!new) {
+-				new = skb;
+-			} else {
+-				skb_put_data(new, skb->data, skb->len);
+-				dev_kfree_skb_any(skb);
+-			}
+-			/* TODO: merge into rx.c */
+-			rtw_rx_stats(rtwdev, pkt_stat.vif, skb);
++			/* remove rx_desc */
++			skb_pull(new, pkt_offset);
++
++			rtw_rx_stats(rtwdev, pkt_stat.vif, new);
+ 			memcpy(new->cb, &rx_status, sizeof(rx_status));
+ 			ieee80211_rx_irqsafe(rtwdev->hw, new);
+ 		}
  
- 	if (flags & ~TIMER_ABSTIME)
- 		return -EINVAL;
+-		/* skb delivered to mac80211, alloc a new one in rx ring */
+-		new = dev_alloc_skb(RTK_PCI_RX_BUF_SIZE);
+-		if (WARN(!new, "rx routine starvation\n"))
+-			return;
+-
+-		ring->buf[cur_rp] = new;
+-		rtw_pci_reset_rx_desc(rtwdev, new, ring, cur_rp, buf_desc_sz);
++next_rp:
++		/* new skb delivered to mac80211, re-enable original skb DMA */
++		rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_desc_sz);
+ 
+ 		/* host read next element in ring */
+ 		if (++cur_rp >= ring->r.len)
 
 
