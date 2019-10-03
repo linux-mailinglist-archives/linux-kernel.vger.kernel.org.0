@@ -2,95 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E9EC9C43
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 12:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EAF9C9C51
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 12:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbfJCK2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 06:28:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44145 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727657AbfJCK2N (ORCPT
+        id S1729259AbfJCKaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 06:30:12 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:49390 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfJCKaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 06:28:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z9so2310144wrl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 03:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8A0SaEYYe0J2Jik12kIYDJK29NXY+H6u1d3B57ETVtU=;
-        b=b2BT52Hp4jqhRvrAAbkSJwgl3k/crr/1cyvLfQmF8o178ZBQZD0srr8mKn6LyCuQwo
-         F6I7lNHhkeYyp3Z/e7UXU0qSmsD2FoOe0zZ8QrRe8MNEqRnZgARvAq6pzTFj8nIOMHS7
-         pW3ylXfbZsTieEyJzX6780I6YGT+38ccKJypTtKlnT7UsZR5SJQu9oVvhDQYA7dSlU4D
-         3ww5GhcNMkEosTczmqkNNwWw6/DqKLG+afojn1q0gETScKVbBABjNODWLryU6yjTVcKE
-         Frdr3QT+TrMdmDW0V1bki1i/VqP2++yXCiTqtxFkL6TQBQAmSXbrwtloO4oxlOGRRLF/
-         jW+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8A0SaEYYe0J2Jik12kIYDJK29NXY+H6u1d3B57ETVtU=;
-        b=o66XxFP6LrDy3aViBYue6bT2YLPgjpk4zgNooN+HQIMXumv3cVRf7YwepT/ZQa20mw
-         LuovWLyRLTfymWh/UTxeVe3+aTnkr3jmQ/9e4MtKsX1j6TCn7B3VlXzGDKv8HGHXJzZW
-         8c+macybOt9IWmxgtChWSTAi5y9smbN9+A88iKpiLemwJ1viZ9YEoNQbr4JOBEshUXv9
-         dBlXLyKvCKmw+Orb1yCjvb2ZIG94iKPX6B8cV33fbaV4U9rv/kjIqsYpx2e+0s0zwX5k
-         YKWoSbPxNJu4S9iptMFwpZVRULLQTlkLjzs6Q3z6WeV5zN3RZRrh4SEe9qCFcAFlpX4W
-         zNnQ==
-X-Gm-Message-State: APjAAAWCuoeSQSswAVfaXyxrXwvZfC6bY2RbZrkUXQUN8v/uaPgWY7Wo
-        qA06mTUVqRZkCSPV5o95ipEDo2/2o1w=
-X-Google-Smtp-Source: APXvYqxbnqYYFrgiX8wxlXj6DtHm6R9O9KqBlknamHm+7r9SOjdm3CHXdDjccGSLPMvVjP428rGflA==
-X-Received: by 2002:a5d:67c3:: with SMTP id n3mr6031099wrw.294.1570098491906;
-        Thu, 03 Oct 2019 03:28:11 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id x16sm1962479wrl.32.2019.10.03.03.28.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 03:28:11 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 11:28:09 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] sh: kgdb: fix an implicit fallthrough warning
-Message-ID: <20191003102809.ymtwu33ouzipyecz@holly.lan>
-References: <20191002154756.18924-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002154756.18924-1-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180716
+        Thu, 3 Oct 2019 06:30:12 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x93ATIYu014338;
+        Thu, 3 Oct 2019 19:29:19 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x93ATIYu014338
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1570098559;
+        bh=pMnHQORs2NGZ3n4d6znGdbIAOnjr2/F3UzN5iG+hjIQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=if8kKidKQ1gQ+bVFAZ1Cvyf9TwWp30f3uYtC1RTDZvuEIwwPX5/y6B/4iuLUpOb7+
+         7IyZj1Y/2IjnSvPy/9e6IRK6tj8m2Ji30mJaFxB/mbSpNma5TvuE5yhELJdRxOp2G0
+         H2OtCblY2Sr+d6hGJJkXQAd4zPrlLOiHKnC9qoDpZv+kNYETy5scLlF8PHoSiW0XK6
+         /GZ7kjbOq/135juWsjnfDZo3byz850TlKdjPMdyd3JMcNz91um1a97y0vLk1HU5FGE
+         W7/TN/u9i5+TekSKMhKEWOgUQyX58WoO2pGJiXS0YGCiTOTwK0ndBazZqdL1/w88eh
+         bqLc6UYlLHYlQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] kbuild: two minor updates for Documentation/kbuild/modules.rst
+Date:   Thu,  3 Oct 2019 19:29:12 +0900
+Message-Id: <20191003102915.28301-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 05:47:56PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The switch case in arch/sh/kernel/kgdb.c can fallthrough. Add an
-> appropriate comment.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Capitalize the first word in the sentence.
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Use obj-m instead of obj-y. obj-y still works, but we have no built-in
+objects in external module builds. So, obj-m is better IMHO.
 
-> ---
->  arch/sh/kernel/kgdb.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/sh/kernel/kgdb.c b/arch/sh/kernel/kgdb.c
-> index 6d61f8cf4c13..0d5f3c9d52f3 100644
-> --- a/arch/sh/kernel/kgdb.c
-> +++ b/arch/sh/kernel/kgdb.c
-> @@ -266,6 +266,7 @@ int kgdb_arch_handle_exception(int e_vector, int signo, int err_code,
->  		ptr = &remcomInBuffer[1];
->  		if (kgdb_hex2long(&ptr, &addr))
->  			linux_regs->pc = addr;
-> +		/* fallthrough */
->  	case 'D':
->  	case 'k':
->  		atomic_set(&kgdb_cpu_doing_single_step, -1);
-> -- 
-> 2.23.0
-> 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ Documentation/kbuild/modules.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
+index d2ae799237fd..dd1d2a0688e8 100644
+--- a/Documentation/kbuild/modules.rst
++++ b/Documentation/kbuild/modules.rst
+@@ -501,7 +501,7 @@ build.
+ --- 6.3 Symbols From Another External Module
+ 
+ 	Sometimes, an external module uses exported symbols from
+-	another external module. kbuild needs to have full knowledge of
++	another external module. Kbuild needs to have full knowledge of
+ 	all symbols to avoid spitting out warnings about undefined
+ 	symbols. Three solutions exist for this situation.
+ 
+@@ -521,7 +521,7 @@ build.
+ 		The top-level kbuild file would then look like::
+ 
+ 			#./Kbuild (or ./Makefile):
+-				obj-y := foo/ bar/
++				obj-m := foo/ bar/
+ 
+ 		And executing::
+ 
+-- 
+2.17.1
+
