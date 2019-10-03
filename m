@@ -2,57 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A25C0C9B89
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 12:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F14AC9B8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 12:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbfJCKCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 06:02:10 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:40870 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfJCKCJ (ORCPT
+        id S1729804AbfJCKCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 06:02:17 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40681 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729779AbfJCKCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 06:02:09 -0400
-Received: by mail-ua1-f67.google.com with SMTP id i13so693524uaq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 03:02:09 -0700 (PDT)
+        Thu, 3 Oct 2019 06:02:16 -0400
+Received: by mail-vs1-f65.google.com with SMTP id v10so1273990vsc.7
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 03:02:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zBQuLmzEEP5mC2BeRTIy+012Xlkl6GcCB3DclJcKQc8=;
-        b=YdOPzNeyUypkY4f2+s9Pl9vnLli9mq8zx1/TCiERslbqEEeHfntoU3+ohRn7IM3tyS
-         h4zOQfj0G+wk62ij1nf8QZjHa1mo8qclx2QJfxZinXA/Zkf6OHq38HC7WAu839P2C7ix
-         qIyvQA4s++l9jjYS6f8E/Dnim/cmIVEtuhEsUpzG8WuhmPDpoS8XNhTjNOgyXbURkOYH
-         YdQ9k7j2tl7A8bG/1MP4dCrpLpzvEwNNfvY56xL8e2UBsIT2e45k+THCR42pbXniAbRV
-         huhFxtC4VSRd0MH3LROkKNZRJJ840C0Z+4lP6MJFxs9LNwGQeHl1vxsph01uAwXeEQAT
-         YCtA==
+        bh=L9j8LD9n1/rnTvXeM15o45g67BHvuZ5Bz7byS7S6kVc=;
+        b=ZDwNgTSke7WQvmLJiRzveQ1bKNNP6yyU67i3nwD4J5JDwu+g7sfX2+Q2M9Q1eUSrAU
+         bmJoF+j1vbH5mci4/tcG+b2ZIkCFUVJwEzc6jWSSmoZzLZezzLdzfwzs5RCNuMp9lBUk
+         lV7ECYvYJGT4g3nILS711DFDgTCTKkl7yzyprXlgnwnSbKC1h8R7/bShr9pZZ81K3xpU
+         +G5oQ7XJuTu0hcPbta6kdGA5PCZU27uFWtR88ol+XoUbYhN0RT9wXY2ZP29hBy6EyBDA
+         VDXP/j92bz+JwyACQ0AffJE4cJFJKPSJyyty2bwZmLYo1K4t0gjzP+3sU2wpcDRZ2ffn
+         bHZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zBQuLmzEEP5mC2BeRTIy+012Xlkl6GcCB3DclJcKQc8=;
-        b=nIFPhI7ceV+UALRgD9SFrOgyEuUChZUL6X63FIonc3exgcRdJ6sW5KMBZV5WfYYWhn
-         KSYmCg+VdHcdMsz0BhjLPTTZpkrROIcRqxGa/JTq0PQJSjKZFkB2tl0d89jWItakURE6
-         pq/WEZrcqk7XIZYWU5bb0eKgnR8Ykk5uE3H1nWBn1T5ch6XgGNzObpetQSn/DxRGjSuE
-         XAo7ViLd0N4D7QIg5YdrUDUFij6wwRZZ+0oX0BFovguky/yzFeX7B1MNbCqki6YPrdPV
-         9tOeAT4iIi2jIqfSqJWUUcnr1KpqcbAf9AvqXSEEnXo+DXEHnE9yv34YaGKvnaHyyhuu
-         68Tw==
-X-Gm-Message-State: APjAAAV00oFwsXlY3AUkrUNEfVtHfyc+lt/y4WrNFiLGFyqjTmqU4oQr
-        ZTqkH5nqRcH+YPXl0REIGHl3td7S/MxdJln6YtyEWipe
-X-Google-Smtp-Source: APXvYqwDpqTe8ItD2ulVQunBpElEvgrn4CneFoE5CW5QAPlP41une3yqt6CvFMmGoITPH5SepzqIq7eNuuRlO7Zk0sY=
-X-Received: by 2002:ab0:1856:: with SMTP id j22mr4557733uag.19.1570096928603;
- Thu, 03 Oct 2019 03:02:08 -0700 (PDT)
+        bh=L9j8LD9n1/rnTvXeM15o45g67BHvuZ5Bz7byS7S6kVc=;
+        b=uJiKJhUGGCN1PvgkeOtg+d+h1QJVqPPRA9XnhS75r2+iKPtrg+IteMrQho5IfeqcWm
+         PzSz9KGww1DolbTT3W4bMyqfJzyIaNyMU7WtaT8HsuEYifnw7DeJmZfnMyQvV6AcSVge
+         GaI4ga19r/DEpTNvAe/dOC4snfyLSRUBOlQROBUmtkYDzCCrNVLUELIORNROa37NzPFx
+         k2nJ98aFhu6d2lq7/nT0vfw1ZH+F8//CI2blKuaNtvkB0zbT2K78v8EQgc0liUZqFQaF
+         MfCObqVS1j8nQKnq0Dt6SqoAIyvUiPUGTdpNGpMDmGMLZmhYLSl9W3cBICOXHH3Mhakz
+         ictg==
+X-Gm-Message-State: APjAAAWdlPKvVIAE2DftF5DAMEsyas67TeWEi4Zw3Zq+8eHSp/JWhosJ
+        LO71wRnB+McI/8aBUKTNYPIZEZl35QDovE2ChWpi5q9J
+X-Google-Smtp-Source: APXvYqyNh+gLwIl1W9laIqP5ANou/nZUVmjlfSUUmVTGXPR2HMKTPYOw64WXP1acl6Q+S9RTPodCbv1xTNRFLaL1RLc=
+X-Received: by 2002:a67:eb84:: with SMTP id e4mr4474520vso.165.1570096933748;
+ Thu, 03 Oct 2019 03:02:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191002152946.11586-1-geert+renesas@glider.be>
-In-Reply-To: <20191002152946.11586-1-geert+renesas@glider.be>
+References: <20191001180834.1158-1-geert+renesas@glider.be>
+In-Reply-To: <20191001180834.1158-1-geert+renesas@glider.be>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 3 Oct 2019 12:01:32 +0200
-Message-ID: <CAPDyKFprzytDRz10GMqwKuCj+9VKhKWprxZpnA0-hVCN7Ldzhg@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: renesas_sdhi: Do not use platform_get_irq() to
- count interrupts
+Date:   Thu, 3 Oct 2019 12:01:37 +0200
+Message-ID: <CAPDyKFo3_QmWHSwmKAXsvfr8F=UviP+vSGOuDMoJppYjv1_aNA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sh_mmcif: Use platform_get_irq_optional() for
+ optional interrupt
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Stephen Boyd <swboyd@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
@@ -62,23 +63,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Oct 2019 at 17:29, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+On Tue, 1 Oct 2019 at 20:08, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 >
 > As platform_get_irq() now prints an error when the interrupt does not
-> exist, counting interrupts by looping until failure causes the printing
-> of scary messages like:
+> exist, a scary warning may be printed for an optional interrupt:
 >
->     renesas_sdhi_internal_dmac ee140000.sd: IRQ index 1 not found
+>     sh_mmcif ee200000.mmc: IRQ index 1 not found
 >
-> Fix this by using the platform_irq_count() helper to avoid touching
-> non-existent interrupts.
+> Fix this by calling platform_get_irq_optional() instead for the second
+> interrupt, which is optional.
+>
+> Remove the now superfluous error printing for the first interrupt, which
+> is mandatory.
 >
 > Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to platform_get_irq*()")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Applied for fixes, thanks!
 
@@ -87,72 +86,29 @@ Uffe
 
 
 > ---
-> v2:
->   - Add Reviewed-by, Tested-by,
->   - Return failure in case num_irqs is zero, as before.
->
 > This is a fix for v5.4-rc1.
 > ---
->  drivers/mmc/host/renesas_sdhi_core.c | 31 +++++++++++++++++-----------
->  1 file changed, 19 insertions(+), 12 deletions(-)
+>  drivers/mmc/host/sh_mmcif.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index d4ada5cca2d14f6a..234551a68739b65b 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -646,8 +646,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->         struct tmio_mmc_dma *dma_priv;
->         struct tmio_mmc_host *host;
->         struct renesas_sdhi *priv;
-> +       int num_irqs, irq, ret, i;
->         struct resource *res;
-> -       int irq, ret, i;
->         u16 ver;
+> diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+> index 81bd9afb0980525e..98c575de43c755ed 100644
+> --- a/drivers/mmc/host/sh_mmcif.c
+> +++ b/drivers/mmc/host/sh_mmcif.c
+> @@ -1393,11 +1393,9 @@ static int sh_mmcif_probe(struct platform_device *pdev)
+>         const char *name;
 >
->         of_data = of_device_get_match_data(&pdev->dev);
-> @@ -825,24 +825,31 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->                 host->hs400_complete = renesas_sdhi_hs400_complete;
->         }
->
-> -       i = 0;
-> -       while (1) {
-> +       num_irqs = platform_irq_count(pdev);
-> +       if (num_irqs < 0) {
-> +               ret = num_irqs;
-> +               goto eirq;
-> +       }
-> +
-> +       /* There must be at least one IRQ source */
-> +       if (!num_irqs) {
-> +               ret = -ENXIO;
-> +               goto eirq;
-> +       }
-> +
-> +       for (i = 0; i < num_irqs; i++) {
->                 irq = platform_get_irq(pdev, i);
-> -               if (irq < 0)
-> -                       break;
-> -               i++;
-> +               if (irq < 0) {
-> +                       ret = irq;
-> +                       goto eirq;
-> +               }
-> +
->                 ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_irq, 0,
->                                        dev_name(&pdev->dev), host);
->                 if (ret)
->                         goto eirq;
->         }
->
-> -       /* There must be at least one IRQ source */
-> -       if (!i) {
-> -               ret = irq;
-> -               goto eirq;
+>         irq[0] = platform_get_irq(pdev, 0);
+> -       irq[1] = platform_get_irq(pdev, 1);
+> -       if (irq[0] < 0) {
+> -               dev_err(dev, "Get irq error\n");
+> +       irq[1] = platform_get_irq_optional(pdev, 1);
+> +       if (irq[0] < 0)
+>                 return -ENXIO;
 > -       }
-> -
->         dev_info(&pdev->dev, "%s base at 0x%08lx max clock rate %u MHz\n",
->                  mmc_hostname(host->mmc), (unsigned long)
->                  (platform_get_resource(pdev, IORESOURCE_MEM, 0)->start),
+>
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         reg = devm_ioremap_resource(dev, res);
 > --
 > 2.17.1
 >
