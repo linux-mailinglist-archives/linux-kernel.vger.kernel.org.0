@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E100ACAA9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24173CAA2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729860AbfJCRJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:09:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42316 "EHLO mail.kernel.org"
+        id S2389939AbfJCQUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:20:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731952AbfJCQeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:34:04 -0400
+        id S1731517AbfJCQUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:20:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12F2C2133F;
-        Thu,  3 Oct 2019 16:34:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90DB720865;
+        Thu,  3 Oct 2019 16:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120443;
-        bh=WfxDNclaPwQMRAUKsE1cmWMDs3Yv+dnYyxNB+8LnBpk=;
+        s=default; t=1570119633;
+        bh=+hiAlNfbSBPF8qKfDkfN4sNImtyxNSb/HIggk7vL2UE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JNFTW0ZbNzTVdaXx9IC30sUcfTqhrAy4QqOG4NNf3zL7DVUUY+QmcXjP0acKtfZUm
-         HH8QPXYtwUmsXFA/ey7nZDYm4DKDbHg/Wh6yy/xbtfUq4zPVHW2tPxmXM8Zb/GX+oU
-         ALfGzejVIhEGWRr4tnz47c2ov5A6X8wjFUtyDpgk=
+        b=SBH6riL5/qd/BA9nrJf1OjUpZAune74uhhx5DzC0qoPVx/us5Eaj/aXg/q+ch1xkV
+         iGexVsgvcCQRaJs6AkLekpgQM+fFUto3lAqzf+KjljNJJK+ddGvugo48lZ2q5FSQlB
+         JB57GzYXeESN6iFQUrOB82LpGJ1wR6cWNkvYbnio=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.2 224/313] RDMA: Fix double-free in srq creation error flow
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 136/211] mmc: dw_mmc: Re-store SDIO IRQs mask at system resume
 Date:   Thu,  3 Oct 2019 17:53:22 +0200
-Message-Id: <20191003154555.095265867@linuxfoundation.org>
+Message-Id: <20191003154518.185905298@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-commit 3eca7fc2d8d1275d9cf0c709f0937becbfcf6d96 upstream.
+[ Upstream commit 7c526608d5afb62cbc967225e2ccaacfdd142e9d ]
 
-The cited commit introduced a double-free of the srq buffer in the error
-flow of procedure __uverbs_create_xsrq().
+In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
+the driver. However, this still means dw_mci_runtime_suspend|resume() gets
+called during system suspend/resume, via pm_runtime_force_suspend|resume().
+This means during system suspend/resume, the register context of the dw_mmc
+device most likely loses its register context, even in cases when SDIO IRQs
+have been enabled.
 
-The problem is that ib_destroy_srq_user() called in the error flow also
-frees the srq buffer.
+To re-enable the SDIO IRQs during system resume, the dw_mmc driver
+currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
+the SDIO card, but this isn't the recommended solution. Instead, it's
+better to deal with this locally in the dw_mmc driver, so let's do that.
 
-Thus, if uverbs_response() fails in __uverbs_create_srq(), the srq buffer
-will be freed twice.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 68e326dea1db ("RDMA: Handle SRQ allocations by IB/core")
-Link: https://lore.kernel.org/r/20190916071154.20383-5-leon@kernel.org
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/uverbs_cmd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mmc/host/dw_mmc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -3477,7 +3477,8 @@ static int __uverbs_create_xsrq(struct u
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 942da07c9eb87..22c454c7aaca6 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -3486,6 +3486,10 @@ int dw_mci_runtime_resume(struct device *dev)
+ 	/* Force setup bus to guarantee available clock output */
+ 	dw_mci_setup_bus(host->slot, true);
  
- err_copy:
- 	ib_destroy_srq_user(srq, uverbs_get_cleared_udata(attrs));
--
-+	/* It was released in ib_destroy_srq_user */
-+	srq = NULL;
- err_free:
- 	kfree(srq);
- err_put:
++	/* Re-enable SDIO interrupts. */
++	if (sdio_irq_claimed(host->slot->mmc))
++		__dw_mci_enable_sdio_irq(host->slot, 1);
++
+ 	/* Now that slots are all setup, we can enable card detect */
+ 	dw_mci_enable_cd(host);
+ 
+-- 
+2.20.1
+
 
 
