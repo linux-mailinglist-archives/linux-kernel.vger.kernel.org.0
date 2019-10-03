@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6506DCA713
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BCBCCA5B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405915AbfJCQuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:50:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37224 "EHLO mail.kernel.org"
+        id S2404294AbfJCQfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404546AbfJCQuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:50:13 -0400
+        id S2403914AbfJCQfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 857BA2086A;
-        Thu,  3 Oct 2019 16:50:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14A7D20830;
+        Thu,  3 Oct 2019 16:35:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121413;
-        bh=qlKi8sfZrReaearLm/ylwI/YAYHwYCncfnDPGIhBkTw=;
+        s=default; t=1570120532;
+        bh=ZSB+bi5mbr3BV55s1umwo8go/XxMX3YmhZC4SEzUBMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WqAca34GdP7Pn+Bj7dJ7BILuuLXv2gnsdnRRXvia2NcZzklneECwS+ScAoknJFEVd
-         9HlBHRSKMkvWjrLX4LSaC1fYvuDT/G+BIurDmR2iOqXIKZK2CiV5eiYPbEC7ez3mMJ
-         Q6iIIL86CloioP7/VboQHqIhmG0qdXqUOczaHQX0=
+        b=wLclcfy0JXYO+mXXx4q/9hV0sPI6MtThZf1CC4wMEUkpwecl6DjIA0jrWC2/GImmP
+         QlreX0CiTHCNf+n7dmsQ/N0Ox14swDw+uRtaPPScsogpN6+VxHfQAk4jf+Ko/ryC0z
+         rKmMtxOsBQ79f8iaC/St4217NmUyiHdCgqt8rl4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Francois Buergisser <fbuergisser@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 5.3 270/344] media: hantro: Set DMA max segment size
-Date:   Thu,  3 Oct 2019 17:53:55 +0200
-Message-Id: <20191003154606.905277395@linuxfoundation.org>
+        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.2 258/313] iommu/arm-smmu-v3: Disable detection of ATS and PRI
+Date:   Thu,  3 Oct 2019 17:53:56 +0200
+Message-Id: <20191003154558.449042558@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,35 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Francois Buergisser <fbuergisser@chromium.org>
+From: Will Deacon <will@kernel.org>
 
-commit c3c3509b86810293df5c524ef61421d8affc8bf0 upstream.
+commit b5e86196b83fd68e065a7c811ab8925fb0dc3893 upstream.
 
-The Hantro codec is typically used in platforms with an IOMMU,
-so we need to set a proper DMA segment size. Devices without an
-IOMMU will still fallback to default 64KiB segments.
+Detecting the ATS capability of the SMMU at probe time introduces a
+spinlock into the ->unmap() fast path, even when ATS is not actually
+in use. Furthermore, the ATC invalidation that exists is broken, as it
+occurs before invalidation of the main SMMU TLB which leaves a window
+where the ATC can be repopulated with stale entries.
 
-Cc: stable@vger.kernel.org
-Fixes: 775fec69008d3 ("media: add Rockchip VPU JPEG encoder driver")
-Signed-off-by: Francois Buergisser <fbuergisser@chromium.org>
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Given that ATS is both a new feature and a specialist sport, disable it
+for now whilst we fix it properly in subsequent patches. Since PRI
+requires ATS, disable that too.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 9ce27afc0830 ("iommu/arm-smmu-v3: Add support for PCI ATS")
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/media/hantro/hantro_drv.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/iommu/arm-smmu-v3.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/staging/media/hantro/hantro_drv.c
-+++ b/drivers/staging/media/hantro/hantro_drv.c
-@@ -724,6 +724,7 @@ static int hantro_probe(struct platform_
- 		dev_err(vpu->dev, "Could not set DMA coherent mask.\n");
- 		return ret;
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -2817,11 +2817,13 @@ static int arm_smmu_device_hw_probe(stru
  	}
-+	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
  
- 	for (i = 0; i < vpu->variant->num_irqs; i++) {
- 		const char *irq_name = vpu->variant->irqs[i].name;
+ 	/* Boolean feature flags */
++#if 0	/* ATS invalidation is slow and broken */
+ 	if (IS_ENABLED(CONFIG_PCI_PRI) && reg & IDR0_PRI)
+ 		smmu->features |= ARM_SMMU_FEAT_PRI;
+ 
+ 	if (IS_ENABLED(CONFIG_PCI_ATS) && reg & IDR0_ATS)
+ 		smmu->features |= ARM_SMMU_FEAT_ATS;
++#endif
+ 
+ 	if (reg & IDR0_SEV)
+ 		smmu->features |= ARM_SMMU_FEAT_SEV;
 
 
