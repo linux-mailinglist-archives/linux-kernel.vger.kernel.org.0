@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFB4CAC12
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83EF7CAC15
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732520AbfJCQFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:05:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51394 "EHLO mail.kernel.org"
+        id S1732141AbfJCQFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732499AbfJCQFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:05:00 -0400
+        id S1732126AbfJCQFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03B63222BE;
-        Thu,  3 Oct 2019 16:04:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FA4E207FF;
+        Thu,  3 Oct 2019 16:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118699;
-        bh=rH23hAnLzNISvEHaOXTSYqOud5dtE9qKwqYzmL3JTXM=;
+        s=default; t=1570118705;
+        bh=GVnmuEVQ/Drr8zEOgY/HVCLRUoVFGyhxwmFUHpJJH4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b5H2LJRf7Xol34HQV5KCcSTgaaZbrGPIaRaCsLAqWFzE9XxCBzNt3J3yBvArkHCbD
-         hpHTyrCh7g7T+eDJLwZkPHr5oB6wn6DsSrVrZnko5vX3RQmq/hGulwcQH1i+EKMjsg
-         YzHox9uMUCpN4pusAURdGm4aIgBWJatVfqlMW3Vs=
+        b=f5fTAxF4VRFs6D1xLSY0Xj9Cl1abYSOjkG+JOV6D/gc35+ZItWsnQ2meK6zSs+MGC
+         QRoYgsMEW4b2HaKxUR+pgmC4A6hjtGnVU3IBuzR7XnXkFU9RS7wDU8ewAyVSPKQEa9
+         dWT+nmWeGN/WBwDfYeY6HcxrKn5mfQdTR2/KpdoY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Lunev <den@virtuozzo.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
+        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
+        Doug Reiland <doug.reiland@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Peter Xu <peterx@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 105/129] KVM: x86: always stop emulation on page fault
-Date:   Thu,  3 Oct 2019 17:53:48 +0200
-Message-Id: <20191003154407.528591625@linuxfoundation.org>
+Subject: [PATCH 4.9 107/129] KVM: x86: Manually calculate reserved bits when loading PDPTRS
+Date:   Thu,  3 Oct 2019 17:53:50 +0200
+Message-Id: <20191003154408.285993885@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
 References: <20191003154318.081116689@linuxfoundation.org>
@@ -46,52 +46,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 8530a79c5a9f4e29e6ffb35ec1a79d81f4968ec8 upstream.
+commit 16cfacc8085782dab8e365979356ce1ca87fd6cc upstream.
 
-inject_emulated_exception() returns true if and only if nested page
-fault happens. However, page fault can come from guest page tables
-walk, either nested or not nested. In both cases we should stop an
-attempt to read under RIP and give guest to step over its own page
-fault handler.
+Manually generate the PDPTR reserved bit mask when explicitly loading
+PDPTRs.  The reserved bits that are being tracked by the MMU reflect the
+current paging mode, which is unlikely to be PAE paging in the vast
+majority of flows that use load_pdptrs(), e.g. CR0 and CR4 emulation,
+__set_sregs(), etc...  This can cause KVM to incorrectly signal a bad
+PDPTR, or more likely, miss a reserved bit check and subsequently fail
+a VM-Enter due to a bad VMCS.GUEST_PDPTR.
 
-This is also visible when an emulated instruction causes a #GP fault
-and the VMware backdoor is enabled.  To handle the VMware backdoor,
-KVM intercepts #GP faults; with only the next patch applied,
-x86_emulate_instruction() injects a #GP but returns EMULATE_FAIL
-instead of EMULATE_DONE.   EMULATE_FAIL causes handle_exception_nmi()
-(or gp_interception() for SVM) to re-inject the original #GP because it
-thinks emulation failed due to a non-VMware opcode.  This patch prevents
-the issue as x86_emulate_instruction() will return EMULATE_DONE after
-injecting the #GP.
+Add a one off helper to generate the reserved bits instead of sharing
+code across the MMU's calculations and the PDPTR emulation.  The PDPTR
+reserved bits are basically set in stone, and pushing a helper into
+the MMU's calculation adds unnecessary complexity without improving
+readability.
 
-Fixes: 6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
+Oppurtunistically fix/update the comment for load_pdptrs().
+
+Note, the buggy commit also introduced a deliberate functional change,
+"Also remove bit 5-6 from rsvd_bits_mask per latest SDM.", which was
+effectively (and correctly) reverted by commit cd9ae5fe47df ("KVM: x86:
+Fix page-tables reserved bits").  A bit of SDM archaeology shows that
+the SDM from late 2008 had a bug (likely a copy+paste error) where it
+listed bits 6:5 as AVL and A for PDPTEs used for 4k entries but reserved
+for 2mb entries.  I.e. the SDM contradicted itself, and bits 6:5 are and
+always have been reserved.
+
+Fixes: 20c466b56168d ("KVM: Use rsvd_bits_mask in load_pdptrs()")
 Cc: stable@vger.kernel.org
-Cc: Denis Lunev <den@virtuozzo.com>
-Cc: Roman Kagan <rkagan@virtuozzo.com>
-Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
-Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Reported-by: Doug Reiland <doug.reiland@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -5764,8 +5764,10 @@ int x86_emulate_instruction(struct kvm_v
- 			if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
- 						emulation_type))
- 				return EMULATE_DONE;
--			if (ctxt->have_exception && inject_emulated_exception(vcpu))
-+			if (ctxt->have_exception) {
-+				inject_emulated_exception(vcpu);
- 				return EMULATE_DONE;
-+			}
- 			if (emulation_type & EMULTYPE_SKIP)
- 				return EMULATE_FAIL;
- 			return handle_emulation_failure(vcpu);
+@@ -535,8 +535,14 @@ static int kvm_read_nested_guest_page(st
+ 				       data, offset, len, access);
+ }
+ 
++static inline u64 pdptr_rsvd_bits(struct kvm_vcpu *vcpu)
++{
++	return rsvd_bits(cpuid_maxphyaddr(vcpu), 63) | rsvd_bits(5, 8) |
++	       rsvd_bits(1, 2);
++}
++
+ /*
+- * Load the pae pdptrs.  Return true is they are all valid.
++ * Load the pae pdptrs.  Return 1 if they are all valid, 0 otherwise.
+  */
+ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
+ {
+@@ -555,8 +561,7 @@ int load_pdptrs(struct kvm_vcpu *vcpu, s
+ 	}
+ 	for (i = 0; i < ARRAY_SIZE(pdpte); ++i) {
+ 		if ((pdpte[i] & PT_PRESENT_MASK) &&
+-		    (pdpte[i] &
+-		     vcpu->arch.mmu.guest_rsvd_check.rsvd_bits_mask[0][2])) {
++		    (pdpte[i] & pdptr_rsvd_bits(vcpu))) {
+ 			ret = 0;
+ 			goto out;
+ 		}
 
 
