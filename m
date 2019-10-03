@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00A40CA6A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59A48CA6A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392834AbfJCQpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:45:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58248 "EHLO mail.kernel.org"
+        id S2392850AbfJCQpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:45:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392828AbfJCQpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:45:39 -0400
+        id S2404313AbfJCQpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:45:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCC4620867;
-        Thu,  3 Oct 2019 16:45:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72E73215EA;
+        Thu,  3 Oct 2019 16:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121138;
-        bh=zRRSafVxTQ5grYDlfaRz+gppOToyxtG9qdrTKTUUJ/U=;
+        s=default; t=1570121149;
+        bh=jFyrjGVt0cRFDQk6Fgliyx+XUAerjBChFSMocGjBCxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Se45bL6DzE/RL9nciGL3bryurRp3mrAo29UmSDNdCa6zUcx/gzrOFIJhI+7Tn9nHG
-         dquU/Xe0UZJQOdGdPHWcMzxNBoj70Ai/4TKDImgLEfEzhXQy0cgEYmi7tri3liONQo
-         yzoIOwofw3gzHCRpa1zW6XQbEDrEG2pKvT48HNz4=
+        b=aQbGvJoQBp0CBs0FpYGDApykgiV4IqK5Z8H8JUC2M4vG5+rQBdnlQHdv+eWUBCoaA
+         KM/AU2w1HU0Rnfvy4R7pkWFyQXOKxA8BWoSRdlPnCBqfh3Gew55sj3NSmJ3Y/7m2OL
+         A7jHOa8zhPNCO6FnaDGIIt5yhTyySVrPkXIep3q0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Douglas RAILLARD <douglas.raillard@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 168/344] sched/cpufreq: Align trace event behavior of fast switching
-Date:   Thu,  3 Oct 2019 17:52:13 +0200
-Message-Id: <20191003154556.822084625@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 171/344] arm64: kpti: ensure patched kernel text is fetched from PoU
+Date:   Thu,  3 Oct 2019 17:52:16 +0200
+Message-Id: <20191003154557.091909530@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -46,50 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas RAILLARD <douglas.raillard@arm.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 77c84dd1881d0f0176cb678d770bfbda26c54390 ]
+[ Upstream commit f32c7a8e45105bd0af76872bf6eef0438ff12fb2 ]
 
-Fast switching path only emits an event for the CPU of interest, whereas the
-regular path emits an event for all the CPUs that had their frequency changed,
-i.e. all the CPUs sharing the same policy.
+While the MMUs is disabled, I-cache speculation can result in
+instructions being fetched from the PoC. During boot we may patch
+instructions (e.g. for alternatives and jump labels), and these may be
+dirty at the PoU (and stale at the PoC).
 
-With the current behavior, looking at cpu_frequency event for a given CPU that
-is using the fast switching path will not give the correct frequency signal.
+Thus, while the MMU is disabled in the KPTI pagetable fixup code we may
+load stale instructions into the I-cache, potentially leading to
+subsequent crashes when executing regions of code which have been
+modified at runtime.
 
-Signed-off-by: Douglas RAILLARD <douglas.raillard@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Similarly to commit:
+
+  8ec41987436d566f ("arm64: mm: ensure patched kernel text is fetched from PoU")
+
+... we can invalidate the I-cache after enabling the MMU to prevent such
+issues.
+
+The KPTI pagetable fixup code itself should be clean to the PoC per the
+boot protocol, so no maintenance is required for this code.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: James Morse <james.morse@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/cpufreq_schedutil.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm64/mm/proc.S | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 867b4bb6d4beb..b03ca2f73713d 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -117,6 +117,7 @@ static void sugov_fast_switch(struct sugov_policy *sg_policy, u64 time,
- 			      unsigned int next_freq)
- {
- 	struct cpufreq_policy *policy = sg_policy->policy;
-+	int cpu;
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index 7dbf2be470f6c..28a8f7b87ff06 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -286,6 +286,15 @@ skip_pgd:
+ 	msr	sctlr_el1, x18
+ 	isb
  
- 	if (!sugov_update_next_freq(sg_policy, time, next_freq))
- 		return;
-@@ -126,7 +127,11 @@ static void sugov_fast_switch(struct sugov_policy *sg_policy, u64 time,
- 		return;
- 
- 	policy->cur = next_freq;
--	trace_cpu_frequency(next_freq, smp_processor_id());
++	/*
++	 * Invalidate the local I-cache so that any instructions fetched
++	 * speculatively from the PoC are discarded, since they may have
++	 * been dynamically patched at the PoU.
++	 */
++	ic	iallu
++	dsb	nsh
++	isb
 +
-+	if (trace_cpu_frequency_enabled()) {
-+		for_each_cpu(cpu, policy->cpus)
-+			trace_cpu_frequency(next_freq, cpu);
-+	}
- }
- 
- static void sugov_deferred_update(struct sugov_policy *sg_policy, u64 time,
+ 	/* Set the flag to zero to indicate that we're all done */
+ 	str	wzr, [flag_ptr]
+ 	ret
 -- 
 2.20.1
 
