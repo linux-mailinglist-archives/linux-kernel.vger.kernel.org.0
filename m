@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B6ACCA580
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B97CA447
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392193AbfJCQfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:35:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43648 "EHLO mail.kernel.org"
+        id S2390488AbfJCQXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:23:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392166AbfJCQez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:34:55 -0400
+        id S2389691AbfJCQXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:23:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 545312070B;
-        Thu,  3 Oct 2019 16:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3627222CB;
+        Thu,  3 Oct 2019 16:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120494;
-        bh=m9qnTR0LR1iK60+h83avMrZtFdUbDuMY45XhFOrTCCM=;
+        s=default; t=1570119791;
+        bh=5cRDAKA5t7/TTzGgUnfSvSOrJ2+GOJhdYTJFcryfpfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lo1a0OyjHAi5Bq/RcEVUisL8363pBtScQebjYiZm0ipOilbkoEDteuFuUdi6/8Bzn
-         WbZGfPl/48t5q/djy+q+Bn91+ZMgnCoTDgX9WBXAvk/3C59I75g8BidCgS/OxM2aDt
-         VFmqwndEtGyMHrbQ3lYzaIWYEwIdEEidtVXgaL1w=
+        b=CJ/Z28xgkGsAP/ox7Zr4PLCAhFIallqoyNFxsLp9IHfb+Cp03Uo5ejgfN6YVju9RO
+         gSyOScm4dxu/lsTj2LqqiercDy/cOdvBYHouFutmg1gbfI/8UKTsbcll+xIn7OOFxT
+         0V1FygQVogvPKqJXOVyAZPjkW/KOMSoQV0W1K8x0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Lunev <den@virtuozzo.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.2 241/313] KVM: x86: set ctxt->have_exception in x86_decode_insn()
-Date:   Thu,  3 Oct 2019 17:53:39 +0200
-Message-Id: <20191003154556.780722120@linuxfoundation.org>
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 157/211] Revert "ceph: use ceph_evict_inode to cleanup inodes resource"
+Date:   Thu,  3 Oct 2019 17:53:43 +0200
+Message-Id: <20191003154523.940350966@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +42,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+This reverts commit 812810399999a673d30f9d04d38659030a28051a.
 
-commit c8848cee74ff05638e913582a476bde879c968ad upstream.
+The backport was incorrect and was causing kernel panics. Revert and
+re-apply a correct backport from Jeff Layton.
 
-x86_emulate_instruction() takes into account ctxt->have_exception flag
-during instruction decoding, but in practice this flag is never set in
-x86_decode_insn().
-
-Fixes: 6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
-Cc: stable@vger.kernel.org
-Cc: Denis Lunev <den@virtuozzo.com>
-Cc: Roman Kagan <rkagan@virtuozzo.com>
-Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
-Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/emulate.c |    2 ++
- arch/x86/kvm/x86.c     |    6 ++++++
- 2 files changed, 8 insertions(+)
+ fs/ceph/inode.c | 7 ++-----
+ fs/ceph/super.c | 2 +-
+ fs/ceph/super.h | 2 +-
+ 3 files changed, 4 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5377,6 +5377,8 @@ done_prefixes:
- 					ctxt->memopp->addr.mem.ea + ctxt->_eip);
- 
- done:
-+	if (rc == X86EMUL_PROPAGATE_FAULT)
-+		ctxt->have_exception = true;
- 	return (rc != X86EMUL_CONTINUE) ? EMULATION_FAILED : EMULATION_OK;
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 665a86f83f4b0..11f19432a74c4 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -528,16 +528,13 @@ static void ceph_i_callback(struct rcu_head *head)
+ 	kmem_cache_free(ceph_inode_cachep, ci);
  }
  
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6482,6 +6482,12 @@ int x86_emulate_instruction(struct kvm_v
- 						emulation_type))
- 				return EMULATE_DONE;
- 			if (ctxt->have_exception) {
-+				/*
-+				 * #UD should result in just EMULATION_FAILED, and trap-like
-+				 * exception should not be encountered during decode.
-+				 */
-+				WARN_ON_ONCE(ctxt->exception.vector == UD_VECTOR ||
-+					     exception_type(ctxt->exception.vector) == EXCPT_TRAP);
- 				inject_emulated_exception(vcpu);
- 				return EMULATE_DONE;
- 			}
+-void ceph_evict_inode(struct inode *inode)
++void ceph_destroy_inode(struct inode *inode)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_inode_frag *frag;
+ 	struct rb_node *n;
+ 
+-	dout("evict_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
+-
+-	truncate_inode_pages_final(&inode->i_data);
+-	clear_inode(inode);
++	dout("destroy_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
+ 
+ 	ceph_fscache_unregister_inode_cookie(ci);
+ 
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 02528e11bf331..c5cf46e43f2e7 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -827,9 +827,9 @@ static int ceph_remount(struct super_block *sb, int *flags, char *data)
+ 
+ static const struct super_operations ceph_super_ops = {
+ 	.alloc_inode	= ceph_alloc_inode,
++	.destroy_inode	= ceph_destroy_inode,
+ 	.write_inode    = ceph_write_inode,
+ 	.drop_inode	= ceph_drop_inode,
+-	.evict_inode	= ceph_evict_inode,
+ 	.sync_fs        = ceph_sync_fs,
+ 	.put_super	= ceph_put_super,
+ 	.remount_fs	= ceph_remount,
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 6e968e48e5e4b..0180193097905 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -854,7 +854,7 @@ static inline bool __ceph_have_pending_cap_snap(struct ceph_inode_info *ci)
+ extern const struct inode_operations ceph_file_iops;
+ 
+ extern struct inode *ceph_alloc_inode(struct super_block *sb);
+-extern void ceph_evict_inode(struct inode *inode);
++extern void ceph_destroy_inode(struct inode *inode);
+ extern int ceph_drop_inode(struct inode *inode);
+ 
+ extern struct inode *ceph_get_inode(struct super_block *sb,
+-- 
+2.20.1
+
 
 
