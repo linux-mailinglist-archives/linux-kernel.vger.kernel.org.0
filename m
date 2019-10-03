@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1CBCA9AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61B07CAAA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405034AbfJCQqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:46:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58968 "EHLO mail.kernel.org"
+        id S2392500AbfJCRKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:10:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732663AbfJCQqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:46:03 -0400
+        id S2404006AbfJCQc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:32:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0119C20830;
-        Thu,  3 Oct 2019 16:46:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 531E92070B;
+        Thu,  3 Oct 2019 16:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121162;
-        bh=Dp16fsSU8hxNbAKOIIQ6JCkszM+DVXRU4bOKtGvh95U=;
+        s=default; t=1570120378;
+        bh=Skgvnuz/LExgBBhhSVAUih1t+PvrDiosBgrzzb3/5hg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sld6ZMhS4W+h2imD2DEuecQJYPYSs6ji76Mvov1oKeMZK5LTjpcQp/3Q5j/3kxZjb
-         NN+vqyeoC/6PTtaLYyWLPFBE5jLgOgpfzFyJY8eamSgnw64+s8HLpGfsxOmrgGRkLK
-         plyZ7Z6Ap677T6i24MZcFKF1K0x86IrHys13OzUI=
+        b=F8bKanS3fzuh/01hAvF8D9QaWckih70/cRPK/UP000SQ34FILkozCOOS645nzMAxT
+         zmrMbEP4TAB7xm21evFO+NrQNRckUKvhaqZXNTIUi56LPbScF50tcPaPs5PJJXjCt4
+         zgRFAXRrh4LvsMUHGny6D/9DbgFPeSlFLCdShfI8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 176/344] ASoC: fsl_ssi: Fix clock control issue in master mode
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 163/313] iommu/amd: Silence warnings under memory pressure
 Date:   Thu,  3 Oct 2019 17:52:21 +0200
-Message-Id: <20191003154557.605507644@linuxfoundation.org>
+Message-Id: <20191003154549.003547109@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+From: Qian Cai <cai@lca.pw>
 
-[ Upstream commit 696d05225cebffd172008d212657be90e823eac0 ]
+[ Upstream commit 3d708895325b78506e8daf00ef31549476e8586a ]
 
-The test case is
-arecord -Dhw:0 -d 10 -f S16_LE -r 48000 -c 2 temp.wav &
-aplay -Dhw:0 -d 30 -f S16_LE -r 48000 -c 2 test.wav
+When running heavy memory pressure workloads, the system is throwing
+endless warnings,
 
-There will be error after end of arecord:
-aplay: pcm_write:2051: write error: Input/output error
+smartpqi 0000:23:00.0: AMD-Vi: IOMMU mapping error in map_sg (io-pages:
+5 reason: -12)
+Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40
+07/10/2019
+swapper/10: page allocation failure: order:0, mode:0xa20(GFP_ATOMIC),
+nodemask=(null),cpuset=/,mems_allowed=0,4
+Call Trace:
+ <IRQ>
+ dump_stack+0x62/0x9a
+ warn_alloc.cold.43+0x8a/0x148
+ __alloc_pages_nodemask+0x1a5c/0x1bb0
+ get_zeroed_page+0x16/0x20
+ iommu_map_page+0x477/0x540
+ map_sg+0x1ce/0x2f0
+ scsi_dma_map+0xc6/0x160
+ pqi_raid_submit_scsi_cmd_with_io_request+0x1c3/0x470 [smartpqi]
+ do_IRQ+0x81/0x170
+ common_interrupt+0xf/0xf
+ </IRQ>
 
-Capture and Playback work in parallel in master mode, one
-substream stops, the other substream is impacted, the
-reason is that clock is disabled wrongly.
+because the allocation could fail from iommu_map_page(), and the volume
+of this call could be huge which may generate a lot of serial console
+output and cosumes all CPUs.
 
-The clock's reference count is not increased when second
-substream starts, the hw_param() function returns in the
-beginning because first substream is enabled, then in end
-of first substream, the hw_free() disables the clock.
+Fix it by silencing the warning in this call site, and there is still a
+dev_err() later to notify the failure.
 
-This patch is to move the clock enablement to the place
-before checking of the device enablement in hw_param().
-
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Link: https://lore.kernel.org/r/1567012817-12625-1-git-send-email-shengjiu.wang@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/fsl_ssi.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/iommu/amd_iommu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
-index fa862af25c1a3..085855f9b08d4 100644
---- a/sound/soc/fsl/fsl_ssi.c
-+++ b/sound/soc/fsl/fsl_ssi.c
-@@ -799,15 +799,6 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
- 	u32 wl = SSI_SxCCR_WL(sample_size);
- 	int ret;
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 3e687f18b203a..a0b64c43257a6 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2570,7 +2570,9 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
  
--	/*
--	 * SSI is properly configured if it is enabled and running in
--	 * the synchronous mode; Note that AC97 mode is an exception
--	 * that should set separate configurations for STCCR and SRCCR
--	 * despite running in the synchronous mode.
--	 */
--	if (ssi->streams && ssi->synchronous)
--		return 0;
--
- 	if (fsl_ssi_is_i2s_master(ssi)) {
- 		ret = fsl_ssi_set_bclk(substream, dai, hw_params);
- 		if (ret)
-@@ -823,6 +814,15 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
- 		}
- 	}
+ 			bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
+ 			phys_addr = (sg_phys(s) & PAGE_MASK) + (j << PAGE_SHIFT);
+-			ret = iommu_map_page(domain, bus_addr, phys_addr, PAGE_SIZE, prot, GFP_ATOMIC);
++			ret = iommu_map_page(domain, bus_addr, phys_addr,
++					     PAGE_SIZE, prot,
++					     GFP_ATOMIC | __GFP_NOWARN);
+ 			if (ret)
+ 				goto out_unmap;
  
-+	/*
-+	 * SSI is properly configured if it is enabled and running in
-+	 * the synchronous mode; Note that AC97 mode is an exception
-+	 * that should set separate configurations for STCCR and SRCCR
-+	 * despite running in the synchronous mode.
-+	 */
-+	if (ssi->streams && ssi->synchronous)
-+		return 0;
-+
- 	if (!fsl_ssi_is_ac97(ssi)) {
- 		/*
- 		 * Keep the ssi->i2s_net intact while having a local variable
 -- 
 2.20.1
 
