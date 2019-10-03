@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD51CA62A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBF6CA62F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404483AbfJCQki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:40:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50710 "EHLO mail.kernel.org"
+        id S2404964AbfJCQku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:40:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404451AbfJCQka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:40:30 -0400
+        id S2404939AbfJCQko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:40:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 612F620830;
-        Thu,  3 Oct 2019 16:40:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F0A521848;
+        Thu,  3 Oct 2019 16:40:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120829;
-        bh=lZGEvVKT7P6VlhMVE3btjG8+YRwhHKeruH72i+PVMm4=;
+        s=default; t=1570120843;
+        bh=YRxLwZTD2kyRklJzSvxmQ6ggHmLqbT6T6h2wJ2/43pQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I5A6E3qrYMSHEfF7sRDuM/NkN1ODKLTtvDYxOgFi6t5D0g25IXqN1uQGB+wAiZjnS
-         4iHJkzJ7b/8hU2kNGZqbR0/7+ubDI+aIgvUI/lsLLhtts/fjIhrMMc3UiJh9RcyM5f
-         x6nBNE1S++BGCyh4ZlFAEsZ+zYrF8LYKbQ4F27j8=
+        b=w1/mHfiWwA9U6el05IHiv/6UyJnjr7zcNMvJUC7pL7g0aI8Ir9i8+GiMeoxF6vpdW
+         5ls4DWXccsRSuMVHoObER7y2y1hkDGNQ903BD56VoXtkgR9zQBb4omJgdc3d6xL8Zn
+         vYd0qwUFrX5TTTZ0VccbBc8cx6/rWcTLji1GewP8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Young <sean@mess.org>,
-        Sean Wang <sean.wang@kernel.org>,
+        stable@vger.kernel.org, Michael Tretter <m.tretter@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 053/344] media: mtk-cir: lower de-glitch counter for rc-mm protocol
-Date:   Thu,  3 Oct 2019 17:50:18 +0200
-Message-Id: <20191003154545.363336419@linuxfoundation.org>
+Subject: [PATCH 5.3 057/344] media: vb2: reorder checks in vb2_poll()
+Date:   Thu,  3 Oct 2019 17:50:22 +0200
+Message-Id: <20191003154545.765419448@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,49 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Michael Tretter <m.tretter@pengutronix.de>
 
-[ Upstream commit 5dd4b89dc098bf22cd13e82a308f42a02c102b2b ]
+[ Upstream commit 8d86a15649957c182e90fa2b1267c16699bc12f1 ]
 
-The rc-mm protocol can't be decoded by the mtk-cir since the de-glitch
-filter removes pulses/spaces shorter than 294 microseconds.
+When reaching the end of stream, V4L2 clients may expect the
+V4L2_EOS_EVENT before being able to dequeue the last buffer, which has
+the V4L2_BUF_FLAG_LAST flag set.
 
-Tested on a BananaPi R2.
+If the vb2_poll() function first checks for events and afterwards if
+buffers are available, a driver can queue the V4L2_EOS_EVENT event and
+return the buffer after the check for events but before the check for
+buffers. This causes vb2_poll() to signal that the buffer with
+V4L2_BUF_FLAG_LAST can be read without the V4L2_EOS_EVENT being
+available.
 
-Signed-off-by: Sean Young <sean@mess.org>
-Acked-by: Sean Wang <sean.wang@kernel.org>
+First, check for available buffers and afterwards for events to ensure
+that if vb2_poll() signals POLLIN | POLLRDNORM for the
+V4L2_BUF_FLAG_LAST buffer, it also signals POLLPRI for the
+V4L2_EOS_EVENT.
+
+Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/rc/mtk-cir.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/rc/mtk-cir.c b/drivers/media/rc/mtk-cir.c
-index 50fb0aebb8d40..f2259082e3d82 100644
---- a/drivers/media/rc/mtk-cir.c
-+++ b/drivers/media/rc/mtk-cir.c
-@@ -35,6 +35,11 @@
- /* Fields containing pulse width data */
- #define MTK_WIDTH_MASK		  (GENMASK(7, 0))
- 
-+/* IR threshold */
-+#define MTK_IRTHD		 0x14
-+#define MTK_DG_CNT_MASK		 (GENMASK(12, 8))
-+#define MTK_DG_CNT(x)		 ((x) << 8)
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index 40d76eb4c2fe7..5a9ba3846f0a5 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -872,17 +872,19 @@ EXPORT_SYMBOL_GPL(vb2_queue_release);
+ __poll_t vb2_poll(struct vb2_queue *q, struct file *file, poll_table *wait)
+ {
+ 	struct video_device *vfd = video_devdata(file);
+-	__poll_t res = 0;
++	__poll_t res;
 +
- /* Bit to enable interrupt */
- #define MTK_IRINT_EN		  BIT(0)
++	res = vb2_core_poll(q, file, wait);
  
-@@ -398,6 +403,9 @@ static int mtk_ir_probe(struct platform_device *pdev)
- 	mtk_w32_mask(ir, val, ir->data->fields[MTK_HW_PERIOD].mask,
- 		     ir->data->fields[MTK_HW_PERIOD].reg);
+ 	if (test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags)) {
+ 		struct v4l2_fh *fh = file->private_data;
  
-+	/* Set de-glitch counter */
-+	mtk_w32_mask(ir, MTK_DG_CNT(1), MTK_DG_CNT_MASK, MTK_IRTHD);
-+
- 	/* Enable IR and PWM */
- 	val = mtk_r32(ir, MTK_CONFIG_HIGH_REG);
- 	val |= MTK_OK_COUNT(ir->data->ok_count) |  MTK_PWM_EN | MTK_IR_EN;
+ 		poll_wait(file, &fh->wait, wait);
+ 		if (v4l2_event_pending(fh))
+-			res = EPOLLPRI;
++			res |= EPOLLPRI;
+ 	}
+ 
+-	return res | vb2_core_poll(q, file, wait);
++	return res;
+ }
+ EXPORT_SYMBOL_GPL(vb2_poll);
+ 
 -- 
 2.20.1
 
