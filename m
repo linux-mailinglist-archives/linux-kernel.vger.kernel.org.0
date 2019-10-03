@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14DD0CA34B
+	by mail.lfdr.de (Postfix) with ESMTP id F3105CA34D
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388547AbfJCQOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:14:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37304 "EHLO mail.kernel.org"
+        id S2388586AbfJCQOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:14:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729087AbfJCQOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:14:11 -0400
+        id S2388564AbfJCQOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:14:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 386B02054F;
-        Thu,  3 Oct 2019 16:14:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 250212054F;
+        Thu,  3 Oct 2019 16:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119249;
-        bh=3WwguDc4N+jwyxYyr5VZivaM+c7eenyCQ0XBChLpn1w=;
+        s=default; t=1570119257;
+        bh=yMx/H7OD2uW4oLP8Y6+fIh/TB4XMrwAZ/YucbCxVYcE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gQClggXd2zhLRfgImsun7oIM0XWouO4gK7zdteDk/7a77DFEyxliokq+Q50LhoB5P
-         aPhfV2OK8g2kGhMMq3JSQJyQiNUskDFYUAB549h+Kv/OuBNCvmHiy6j4PjJImGGZeD
-         g2I0gg8St4LKsWAftCcV4OvcL08T3taxsXAU9Yro=
+        b=plXTah2jKWBfW11x7vnwUR+9r1Ml5s+pM7gYSAQAOHqUvI/Pqvw0pTBKOYYDMUTVl
+         hSEpu7aBGUdwwDsc+TYdo/+g5Wc38FjjdJd78CRFZBdcxmHy1qyC0qMmB4c9ykJXQq
+         o4coFkO1E9FTm4f9sXEFymNPI4f91sGPGntuZtVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        NeilBrown <neilb@suse.de>, Song Liu <songliubraving@fb.com>,
+        stable@vger.kernel.org, Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 182/185] md/raid0: avoid RAID0 data corruption due to layout confusion.
-Date:   Thu,  3 Oct 2019 17:54:20 +0200
-Message-Id: <20191003154522.204761992@linuxfoundation.org>
+Subject: [PATCH 4.14 184/185] btrfs: qgroup: Drop quota_root and fs_info parameters from update_qgroup_status_item
+Date:   Thu,  3 Oct 2019 17:54:22 +0200
+Message-Id: <20191003154522.423660639@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -45,138 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.de>
+From: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
 
-[ Upstream commit c84a1372df929033cb1a0441fb57bd3932f39ac9 ]
+[ Upstream commit 2e980acdd829742966c6a7e565ef3382c0717295 ]
 
-If the drives in a RAID0 are not all the same size, the array is
-divided into zones.
-The first zone covers all drives, to the size of the smallest.
-The second zone covers all drives larger than the smallest, up to
-the size of the second smallest - etc.
+They can be fetched from the transaction handle.
 
-A change in Linux 3.14 unintentionally changed the layout for the
-second and subsequent zones.  All the correct data is still stored, but
-each chunk may be assigned to a different device than in pre-3.14 kernels.
-This can lead to data corruption.
-
-It is not possible to determine what layout to use - it depends which
-kernel the data was written by.
-So we add a module parameter to allow the old (0) or new (1) layout to be
-specified, and refused to assemble an affected array if that parameter is
-not set.
-
-Fixes: 20d0189b1012 ("block: Introduce new bio_split()")
-cc: stable@vger.kernel.org (3.14+)
-Acked-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Signed-off-by: NeilBrown <neilb@suse.de>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/raid0.c | 33 ++++++++++++++++++++++++++++++++-
- drivers/md/raid0.h | 14 ++++++++++++++
- 2 files changed, 46 insertions(+), 1 deletion(-)
+ fs/btrfs/qgroup.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 5ecba9eef441f..28fb717217706 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -26,6 +26,9 @@
- #include "raid0.h"
- #include "raid5.h"
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index d6d6e9593e391..b20df81d76208 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -722,10 +722,10 @@ static int update_qgroup_info_item(struct btrfs_trans_handle *trans,
+ 	return ret;
+ }
  
-+static int default_layout = 0;
-+module_param(default_layout, int, 0644);
-+
- #define UNSUPPORTED_MDDEV_FLAGS		\
- 	((1L << MD_HAS_JOURNAL) |	\
- 	 (1L << MD_JOURNAL_CLEAN) |	\
-@@ -146,6 +149,19 @@ static int create_strip_zones(struct mddev *mddev, struct r0conf **private_conf)
- 	}
- 	pr_debug("md/raid0:%s: FINAL %d zones\n",
- 		 mdname(mddev), conf->nr_strip_zones);
-+
-+	if (conf->nr_strip_zones == 1) {
-+		conf->layout = RAID0_ORIG_LAYOUT;
-+	} else if (default_layout == RAID0_ORIG_LAYOUT ||
-+		   default_layout == RAID0_ALT_MULTIZONE_LAYOUT) {
-+		conf->layout = default_layout;
-+	} else {
-+		pr_err("md/raid0:%s: cannot assemble multi-zone RAID0 with default_layout setting\n",
-+		       mdname(mddev));
-+		pr_err("md/raid0: please set raid.default_layout to 1 or 2\n");
-+		err = -ENOTSUPP;
-+		goto abort;
-+	}
- 	/*
- 	 * now since we have the hard sector sizes, we can make sure
- 	 * chunk size is a multiple of that sector size
-@@ -552,10 +568,12 @@ static void raid0_handle_discard(struct mddev *mddev, struct bio *bio)
- 
- static bool raid0_make_request(struct mddev *mddev, struct bio *bio)
+-static int update_qgroup_status_item(struct btrfs_trans_handle *trans,
+-				     struct btrfs_fs_info *fs_info,
+-				    struct btrfs_root *root)
++static int update_qgroup_status_item(struct btrfs_trans_handle *trans)
  {
-+	struct r0conf *conf = mddev->private;
- 	struct strip_zone *zone;
- 	struct md_rdev *tmp_dev;
- 	sector_t bio_sector;
- 	sector_t sector;
-+	sector_t orig_sector;
- 	unsigned chunk_sects;
- 	unsigned sectors;
++	struct btrfs_fs_info *fs_info = trans->fs_info;
++	struct btrfs_root *quota_root = fs_info->quota_root;
+ 	struct btrfs_path *path;
+ 	struct btrfs_key key;
+ 	struct extent_buffer *l;
+@@ -741,7 +741,7 @@ static int update_qgroup_status_item(struct btrfs_trans_handle *trans,
+ 	if (!path)
+ 		return -ENOMEM;
  
-@@ -588,8 +606,21 @@ static bool raid0_make_request(struct mddev *mddev, struct bio *bio)
- 		bio = split;
+-	ret = btrfs_search_slot(trans, root, &key, path, 0, 1);
++	ret = btrfs_search_slot(trans, quota_root, &key, path, 0, 1);
+ 	if (ret > 0)
+ 		ret = -ENOENT;
+ 
+@@ -2110,7 +2110,7 @@ int btrfs_run_qgroups(struct btrfs_trans_handle *trans,
+ 		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_ON;
+ 	spin_unlock(&fs_info->qgroup_lock);
+ 
+-	ret = update_qgroup_status_item(trans, fs_info, quota_root);
++	ret = update_qgroup_status_item(trans);
+ 	if (ret)
+ 		fs_info->qgroup_flags |= BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT;
+ 
+@@ -2668,7 +2668,7 @@ static void btrfs_qgroup_rescan_worker(struct btrfs_work *work)
+ 			  err);
+ 		goto done;
  	}
- 
-+	orig_sector = sector;
- 	zone = find_zone(mddev->private, &sector);
--	tmp_dev = map_sector(mddev, zone, sector, &sector);
-+	switch (conf->layout) {
-+	case RAID0_ORIG_LAYOUT:
-+		tmp_dev = map_sector(mddev, zone, orig_sector, &sector);
-+		break;
-+	case RAID0_ALT_MULTIZONE_LAYOUT:
-+		tmp_dev = map_sector(mddev, zone, sector, &sector);
-+		break;
-+	default:
-+		WARN("md/raid0:%s: Invalid layout\n", mdname(mddev));
-+		bio_io_error(bio);
-+		return true;
-+	}
-+
- 	bio_set_dev(bio, tmp_dev->bdev);
- 	bio->bi_iter.bi_sector = sector + zone->dev_start +
- 		tmp_dev->data_offset;
-diff --git a/drivers/md/raid0.h b/drivers/md/raid0.h
-index 540e65d92642d..3816e5477db1e 100644
---- a/drivers/md/raid0.h
-+++ b/drivers/md/raid0.h
-@@ -8,11 +8,25 @@ struct strip_zone {
- 	int	 nb_dev;	/* # of devices attached to the zone */
- };
- 
-+/* Linux 3.14 (20d0189b101) made an unintended change to
-+ * the RAID0 layout for multi-zone arrays (where devices aren't all
-+ * the same size.
-+ * RAID0_ORIG_LAYOUT restores the original layout
-+ * RAID0_ALT_MULTIZONE_LAYOUT uses the altered layout
-+ * The layouts are identical when there is only one zone (all
-+ * devices the same size).
-+ */
-+
-+enum r0layout {
-+	RAID0_ORIG_LAYOUT = 1,
-+	RAID0_ALT_MULTIZONE_LAYOUT = 2,
-+};
- struct r0conf {
- 	struct strip_zone	*strip_zone;
- 	struct md_rdev		**devlist; /* lists of rdevs, pointed to
- 					    * by strip_zone->dev */
- 	int			nr_strip_zones;
-+	enum r0layout		layout;
- };
- 
- #endif
+-	ret = update_qgroup_status_item(trans, fs_info, fs_info->quota_root);
++	ret = update_qgroup_status_item(trans);
+ 	if (ret < 0) {
+ 		err = ret;
+ 		btrfs_err(fs_info, "fail to update qgroup status: %d", err);
 -- 
 2.20.1
 
