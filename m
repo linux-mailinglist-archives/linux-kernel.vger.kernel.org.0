@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76C9ECA8F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561D3CA8D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404014AbfJCQfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:35:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43894 "EHLO mail.kernel.org"
+        id S2391433AbfJCQda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:33:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391340AbfJCQfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:35:07 -0400
+        id S2404011AbfJCQd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:33:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19871222BE;
-        Thu,  3 Oct 2019 16:35:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 735EA2086A;
+        Thu,  3 Oct 2019 16:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120505;
-        bh=tnJUdGvdGG0/Hb6exXH5DQf1GWv+G6e1JVUW/HKVA+Y=;
+        s=default; t=1570120406;
+        bh=wNMAwQyR3lEpLegMCTQMtoCUQIx6OvMT+xYy5hpErRE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BduTl4Ahyl3n2W/OEv4pTx9KKw24lmmkAG110azxi7ydSPSmPGvDoeLds6jPcot0j
-         pOhUXLvfUs8YpconQIZnM7InZYoD5ih11e2UIpaz6Ki3Ap8huhwxvh+Z1rXFd0MfEY
-         D6o6YgA6MkqKuWnoWtotZWDRl/Sc9PRAP8q/EgKg=
+        b=UCe/PO9l1I4oIrKdZpD6BIH2xcV4xLv1H1SUXrHV70n7uwrLY10uD1KCjWcEXK4el
+         J63h/1yxVzwqvZvACzIFeGz610tjsfVKtoI23UKVgGEOa2AUBOmvGectL3i/B46ijY
+         xG3CUiEdSjbUa9Be/fuYGu4Jhgmx15DtR2psuCFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jungyeon Yoon <jungyeon.yoon@gmail.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 208/313] btrfs: tree-checker: Add ROOT_ITEM check
-Date:   Thu,  3 Oct 2019 17:53:06 +0200
-Message-Id: <20191003154553.469944753@linuxfoundation.org>
+Subject: [PATCH 5.2 211/313] media: omap3isp: Set device on omap3isp subdevs
+Date:   Thu,  3 Oct 2019 17:53:09 +0200
+Message-Id: <20191003154553.772381224@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,146 +46,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-[ Upstream commit 259ee7754b6793af8bdd77f9ca818bc41cfe9541 ]
+[ Upstream commit e9eb103f027725053a4b02f93d7f2858b56747ce ]
 
-This patch will introduce ROOT_ITEM check, which includes:
-- Key->objectid and key->offset check
-  Currently only some easy check, e.g. 0 as rootid is invalid.
+The omap3isp driver registered subdevs without the dev field being set. Do
+that now.
 
-- Item size check
-  Root item size is fixed.
-
-- Generation checks
-  Generation, generation_v2 and last_snapshot should not be greater than
-  super generation + 1
-
-- Level and alignment check
-  Level should be in [0, 7], and bytenr must be aligned to sector size.
-
-- Flags check
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203261
-Reported-by: Jungyeon Yoon <jungyeon.yoon@gmail.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/tree-checker.c | 92 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+ drivers/media/platform/omap3isp/ispccdc.c    | 1 +
+ drivers/media/platform/omap3isp/ispccp2.c    | 1 +
+ drivers/media/platform/omap3isp/ispcsi2.c    | 1 +
+ drivers/media/platform/omap3isp/isppreview.c | 1 +
+ drivers/media/platform/omap3isp/ispresizer.c | 1 +
+ drivers/media/platform/omap3isp/ispstat.c    | 2 ++
+ 6 files changed, 7 insertions(+)
 
-diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-index ccd5706199d76..d83adda6c090a 100644
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -821,6 +821,95 @@ static int check_inode_item(struct extent_buffer *leaf,
- 	return 0;
+diff --git a/drivers/media/platform/omap3isp/ispccdc.c b/drivers/media/platform/omap3isp/ispccdc.c
+index 1ba8a5ba343f6..e2f336c715a4d 100644
+--- a/drivers/media/platform/omap3isp/ispccdc.c
++++ b/drivers/media/platform/omap3isp/ispccdc.c
+@@ -2602,6 +2602,7 @@ int omap3isp_ccdc_register_entities(struct isp_ccdc_device *ccdc,
+ 	int ret;
+ 
+ 	/* Register the subdev and video node. */
++	ccdc->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &ccdc->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispccp2.c b/drivers/media/platform/omap3isp/ispccp2.c
+index efca45bb02c8b..d0a49cdfd22d2 100644
+--- a/drivers/media/platform/omap3isp/ispccp2.c
++++ b/drivers/media/platform/omap3isp/ispccp2.c
+@@ -1031,6 +1031,7 @@ int omap3isp_ccp2_register_entities(struct isp_ccp2_device *ccp2,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	ccp2->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &ccp2->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispcsi2.c b/drivers/media/platform/omap3isp/ispcsi2.c
+index e85917f4a50cc..fd493c5e4e24f 100644
+--- a/drivers/media/platform/omap3isp/ispcsi2.c
++++ b/drivers/media/platform/omap3isp/ispcsi2.c
+@@ -1198,6 +1198,7 @@ int omap3isp_csi2_register_entities(struct isp_csi2_device *csi2,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	csi2->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &csi2->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/isppreview.c b/drivers/media/platform/omap3isp/isppreview.c
+index 40e22400cf5ec..97d660606d984 100644
+--- a/drivers/media/platform/omap3isp/isppreview.c
++++ b/drivers/media/platform/omap3isp/isppreview.c
+@@ -2225,6 +2225,7 @@ int omap3isp_preview_register_entities(struct isp_prev_device *prev,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	prev->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &prev->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispresizer.c b/drivers/media/platform/omap3isp/ispresizer.c
+index 21ca6954df72f..78d9dd7ea2da7 100644
+--- a/drivers/media/platform/omap3isp/ispresizer.c
++++ b/drivers/media/platform/omap3isp/ispresizer.c
+@@ -1681,6 +1681,7 @@ int omap3isp_resizer_register_entities(struct isp_res_device *res,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	res->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &res->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
+index ca7bb8497c3da..cb5841f628cff 100644
+--- a/drivers/media/platform/omap3isp/ispstat.c
++++ b/drivers/media/platform/omap3isp/ispstat.c
+@@ -1026,6 +1026,8 @@ void omap3isp_stat_unregister_entities(struct ispstat *stat)
+ int omap3isp_stat_register_entities(struct ispstat *stat,
+ 				    struct v4l2_device *vdev)
+ {
++	stat->subdev.dev = vdev->mdev->dev;
++
+ 	return v4l2_device_register_subdev(vdev, &stat->subdev);
  }
  
-+static int check_root_item(struct extent_buffer *leaf, struct btrfs_key *key,
-+			   int slot)
-+{
-+	struct btrfs_fs_info *fs_info = leaf->fs_info;
-+	struct btrfs_root_item ri;
-+	const u64 valid_root_flags = BTRFS_ROOT_SUBVOL_RDONLY |
-+				     BTRFS_ROOT_SUBVOL_DEAD;
-+
-+	/* No such tree id */
-+	if (key->objectid == 0) {
-+		generic_err(leaf, slot, "invalid root id 0");
-+		return -EUCLEAN;
-+	}
-+
-+	/*
-+	 * Some older kernel may create ROOT_ITEM with non-zero offset, so here
-+	 * we only check offset for reloc tree whose key->offset must be a
-+	 * valid tree.
-+	 */
-+	if (key->objectid == BTRFS_TREE_RELOC_OBJECTID && key->offset == 0) {
-+		generic_err(leaf, slot, "invalid root id 0 for reloc tree");
-+		return -EUCLEAN;
-+	}
-+
-+	if (btrfs_item_size_nr(leaf, slot) != sizeof(ri)) {
-+		generic_err(leaf, slot,
-+			    "invalid root item size, have %u expect %zu",
-+			    btrfs_item_size_nr(leaf, slot), sizeof(ri));
-+	}
-+
-+	read_extent_buffer(leaf, &ri, btrfs_item_ptr_offset(leaf, slot),
-+			   sizeof(ri));
-+
-+	/* Generation related */
-+	if (btrfs_root_generation(&ri) >
-+	    btrfs_super_generation(fs_info->super_copy) + 1) {
-+		generic_err(leaf, slot,
-+			"invalid root generation, have %llu expect (0, %llu]",
-+			    btrfs_root_generation(&ri),
-+			    btrfs_super_generation(fs_info->super_copy) + 1);
-+		return -EUCLEAN;
-+	}
-+	if (btrfs_root_generation_v2(&ri) >
-+	    btrfs_super_generation(fs_info->super_copy) + 1) {
-+		generic_err(leaf, slot,
-+		"invalid root v2 generation, have %llu expect (0, %llu]",
-+			    btrfs_root_generation_v2(&ri),
-+			    btrfs_super_generation(fs_info->super_copy) + 1);
-+		return -EUCLEAN;
-+	}
-+	if (btrfs_root_last_snapshot(&ri) >
-+	    btrfs_super_generation(fs_info->super_copy) + 1) {
-+		generic_err(leaf, slot,
-+		"invalid root last_snapshot, have %llu expect (0, %llu]",
-+			    btrfs_root_last_snapshot(&ri),
-+			    btrfs_super_generation(fs_info->super_copy) + 1);
-+		return -EUCLEAN;
-+	}
-+
-+	/* Alignment and level check */
-+	if (!IS_ALIGNED(btrfs_root_bytenr(&ri), fs_info->sectorsize)) {
-+		generic_err(leaf, slot,
-+		"invalid root bytenr, have %llu expect to be aligned to %u",
-+			    btrfs_root_bytenr(&ri), fs_info->sectorsize);
-+		return -EUCLEAN;
-+	}
-+	if (btrfs_root_level(&ri) >= BTRFS_MAX_LEVEL) {
-+		generic_err(leaf, slot,
-+			    "invalid root level, have %u expect [0, %u]",
-+			    btrfs_root_level(&ri), BTRFS_MAX_LEVEL - 1);
-+		return -EUCLEAN;
-+	}
-+	if (ri.drop_level >= BTRFS_MAX_LEVEL) {
-+		generic_err(leaf, slot,
-+			    "invalid root level, have %u expect [0, %u]",
-+			    ri.drop_level, BTRFS_MAX_LEVEL - 1);
-+		return -EUCLEAN;
-+	}
-+
-+	/* Flags check */
-+	if (btrfs_root_flags(&ri) & ~valid_root_flags) {
-+		generic_err(leaf, slot,
-+			    "invalid root flags, have 0x%llx expect mask 0x%llx",
-+			    btrfs_root_flags(&ri), valid_root_flags);
-+		return -EUCLEAN;
-+	}
-+	return 0;
-+}
-+
- /*
-  * Common point to switch the item-specific validation.
-  */
-@@ -856,6 +945,9 @@ static int check_leaf_item(struct extent_buffer *leaf,
- 	case BTRFS_INODE_ITEM_KEY:
- 		ret = check_inode_item(leaf, key, slot);
- 		break;
-+	case BTRFS_ROOT_ITEM_KEY:
-+		ret = check_root_item(leaf, key, slot);
-+		break;
- 	}
- 	return ret;
- }
 -- 
 2.20.1
 
