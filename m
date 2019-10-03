@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2302DCA384
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DFFCA374
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387977AbfJCQPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:15:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40306 "EHLO mail.kernel.org"
+        id S2388243AbfJCQPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388862AbfJCQPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:15:52 -0400
+        id S1732149AbfJCQPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:15:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 925B420700;
-        Thu,  3 Oct 2019 16:15:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5158A20700;
+        Thu,  3 Oct 2019 16:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119351;
-        bh=bbTKLwu6LByg5hrqRRMmlhrRluWfWwOtjqI2kMTKy+Y=;
+        s=default; t=1570119319;
+        bh=5E7e2HVF4nFAfnMAASpJMM+BCKfYI87ZtTiS03Yvpd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ffXFbfE+1jhHLr6qMzDoDpspQpF6e6Ze3foZzCvTRtVDqGOM8/PgXFbVAQLJYvjBy
-         Lyu8+g+IqlI3pXQemIq0KL3ighg3zErZK92y1GdES/scir6Y/EzcEN5XSpTRcLxg5P
-         be7rRSPJLPil5zlwN26oopGmJxViXWO1Ag0cmLEI=
+        b=Zca8ZirMMJFoo9nRskSmMVmHJWocErZW0Tqe9+6H84zWXhsSyh6Unh7Kb77kR8Q3l
+         Aui5FcBUfa1eXfpz2iMraVaKqvIT+dcq0IcDZt+P0UUbuxNP69hu5Wz7EuE63vgczq
+         p0duKpZGF/V32nKZIepy2UAShO7HU1SgsH7uCnJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 008/211] nfp: flower: fix memory leak in nfp_flower_spawn_vnic_reprs
-Date:   Thu,  3 Oct 2019 17:51:14 +0200
-Message-Id: <20191003154449.111320254@linuxfoundation.org>
+Subject: [PATCH 4.19 021/211] ieee802154: enforce CAP_NET_RAW for raw sockets
+Date:   Thu,  3 Oct 2019 17:51:27 +0200
+Message-Id: <20191003154452.025649940@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -45,47 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Ori Nimron <orinimron123@gmail.com>
 
-[ Upstream commit 8ce39eb5a67aee25d9f05b40b673c95b23502e3e ]
+[ Upstream commit e69dbd4619e7674c1679cba49afd9dd9ac347eef ]
 
-In nfp_flower_spawn_vnic_reprs in the loop if initialization or the
-allocations fail memory is leaked. Appropriate releases are added.
+When creating a raw AF_IEEE802154 socket, CAP_NET_RAW needs to be
+checked first.
 
-Fixes: b94524529741 ("nfp: flower: add per repr private data for LAG offload")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Ori Nimron <orinimron123@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/flower/main.c |    3 +++
+ net/ieee802154/socket.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/netronome/nfp/flower/main.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/main.c
-@@ -373,6 +373,7 @@ nfp_flower_spawn_phy_reprs(struct nfp_ap
- 		repr_priv = kzalloc(sizeof(*repr_priv), GFP_KERNEL);
- 		if (!repr_priv) {
- 			err = -ENOMEM;
-+			nfp_repr_free(repr);
- 			goto err_reprs_clean;
- 		}
+--- a/net/ieee802154/socket.c
++++ b/net/ieee802154/socket.c
+@@ -1018,6 +1018,9 @@ static int ieee802154_create(struct net
  
-@@ -382,6 +383,7 @@ nfp_flower_spawn_phy_reprs(struct nfp_ap
- 		port = nfp_port_alloc(app, NFP_PORT_PHYS_PORT, repr);
- 		if (IS_ERR(port)) {
- 			err = PTR_ERR(port);
-+			kfree(repr_priv);
- 			nfp_repr_free(repr);
- 			goto err_reprs_clean;
- 		}
-@@ -399,6 +401,7 @@ nfp_flower_spawn_phy_reprs(struct nfp_ap
- 		err = nfp_repr_init(app, repr,
- 				    cmsg_port_id, port, priv->nn->dp.netdev);
- 		if (err) {
-+			kfree(repr_priv);
- 			nfp_port_free(port);
- 			nfp_repr_free(repr);
- 			goto err_reprs_clean;
+ 	switch (sock->type) {
+ 	case SOCK_RAW:
++		rc = -EPERM;
++		if (!capable(CAP_NET_RAW))
++			goto out;
+ 		proto = &ieee802154_raw_prot;
+ 		ops = &ieee802154_raw_ops;
+ 		break;
 
 
