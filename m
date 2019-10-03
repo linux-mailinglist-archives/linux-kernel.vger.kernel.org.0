@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7F3CA2B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DF2CCA2D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733247AbfJCQIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56264 "EHLO mail.kernel.org"
+        id S2387500AbfJCQJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:09:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733218AbfJCQIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:11 -0400
+        id S2387480AbfJCQJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:09:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C62FC207FF;
-        Thu,  3 Oct 2019 16:08:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DA06215EA;
+        Thu,  3 Oct 2019 16:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118890;
-        bh=OBw4N9b4a5/LHABcdH3FNTdMUO8hc2WEP536ITLH9+c=;
+        s=default; t=1570118977;
+        bh=OO6n8+8fpvuQYORdso34RDWt5h1ChvIzr+09+4h4/0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IAZP49ZEQ+9fF81lL5Fx1xTes5K58bzKAOnw49Pkrtw8cUhEJ1uEalWRGQjbBK6ej
-         iv/RuPenWVDak4sCVGPeDp6F4iLbbu/E6Q/7VnPQuxeNxVmRQT/CKCmb/Zn0xYsPU3
-         f32xN+fx9FTuCQ5LxAwYuw3ZsU8B6Hrxb+SqNIHU=
+        b=Y6ybbV1FC64JLJbnhPzIRzfuEReByzHwebYnOQdGT6ZJXKPyDAkhO1RZ3SzdWPvxE
+         99m2jXMCxnF7X7rK9O5YXLHoXMQlVXdjP7uMfPVZBmHhOvQPmUDrUfrOzDp3w+SL9m
+         pGORsK3i1Q1sglFYWF8O5NS0nmceWhanbIsdLvOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        syzbot+618aacd49e8c8b8486bd@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 040/185] net_sched: add max len check for TCA_KIND
-Date:   Thu,  3 Oct 2019 17:51:58 +0200
-Message-Id: <20191003154446.810304929@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.14 043/185] sch_netem: fix a divide by zero in tabledist()
+Date:   Thu,  3 Oct 2019 17:52:01 +0200
+Message-Id: <20191003154447.588828756@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -47,39 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 62794fc4fbf52f2209dc094ea255eaef760e7d01 ]
+[ Upstream commit b41d936b5ecfdb3a4abc525ce6402a6c49cffddc ]
 
-The TCA_KIND attribute is of NLA_STRING which does not check
-the NUL char. KMSAN reported an uninit-value of TCA_KIND which
-is likely caused by the lack of NUL.
+syzbot managed to crash the kernel in tabledist() loading
+an empty distribution table.
 
-Change it to NLA_NUL_STRING and add a max len too.
+	t = dist->table[rnd % dist->size];
 
-Fixes: 8b4c3cdd9dd8 ("net: sched: Add policy validation for tc attributes")
-Reported-and-tested-by: syzbot+618aacd49e8c8b8486bd@syzkaller.appspotmail.com
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Simply return an error when such load is attempted.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_api.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/sched/sch_netem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -1217,7 +1217,8 @@ check_loop_fn(struct Qdisc *q, unsigned
-  */
+--- a/net/sched/sch_netem.c
++++ b/net/sched/sch_netem.c
+@@ -708,7 +708,7 @@ static int get_dist_table(struct Qdisc *
+ 	struct disttable *d;
+ 	int i;
  
- const struct nla_policy rtm_tca_policy[TCA_MAX + 1] = {
--	[TCA_KIND]		= { .type = NLA_STRING },
-+	[TCA_KIND]		= { .type = NLA_NUL_STRING,
-+				    .len = IFNAMSIZ - 1 },
- 	[TCA_RATE]		= { .type = NLA_BINARY,
- 				    .len = sizeof(struct tc_estimator) },
- 	[TCA_STAB]		= { .type = NLA_NESTED },
+-	if (n > NETEM_DIST_MAX)
++	if (!n || n > NETEM_DIST_MAX)
+ 		return -EINVAL;
+ 
+ 	d = kvmalloc(sizeof(struct disttable) + n * sizeof(s16), GFP_KERNEL);
 
 
