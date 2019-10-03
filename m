@@ -2,105 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA783C9AFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 11:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C267FC9B3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 11:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729228AbfJCJsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 05:48:13 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:36641 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728743AbfJCJsN (ORCPT
+        id S1729670AbfJCJxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 05:53:11 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40000 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728812AbfJCJxK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 05:48:13 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x939fd1O020324;
-        Thu, 3 Oct 2019 11:47:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+        Thu, 3 Oct 2019 05:53:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x939n7cB003263;
+        Thu, 3 Oct 2019 09:51:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=kN9FmgYjR/+h00iD+FWqgH8LfZypMJPodsHGme7Pa2U=;
- b=Ueu7492KlMOHrKSycPDSg2LPkrEWdivvPKLY1GOs4xx+yO3t8ExTim5uIUC07QvxoWKG
- 3LT9SsL5b8qjCc49kEbhNfxAemN7lbkU0+pg4pUoFf7nWTFf+GoAnGIau3e1+Ge+26Vk
- hu4UlE5aBurWsPHyTrhGpmbjDgmaswU71tdJYWAUMXsgcSlCJdvbg08xf5gvNL/9qE3l
- BiJjf2O7egamZ3rj080Qm+BuaNoozraPZ1k/ujKLo+pSrybFr2C7QL1kTr+Byd91RW+Z
- VZJnqY6ObQ+ZbHo6SpStvCI9SaDMI4Da12gaEoovClMT/LnwsTUKRNBOBdn71RxBaG7Z fw== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2v9w9w3u0a-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 03 Oct 2019 11:47:38 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 99F6953;
-        Thu,  3 Oct 2019 09:47:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6CD812B492E;
-        Thu,  3 Oct 2019 11:47:31 +0200 (CEST)
-Received: from lmecxl0912.lme.st.com (10.75.127.51) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 3 Oct
- 2019 11:47:30 +0200
-Subject: Re: [PATCH 0/4] ARM: multi_v7_defconfig: add audio support for
- stm32mp157a-dk1
-To:     Olivier Moysan <olivier.moysan@st.com>
-CC:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1567440041-19220-1-git-send-email-olivier.moysan@st.com>
- <CAK8P3a3WvXmMys3mamCZef1-ychtdg+XbV=H-WTs2ZN6Jsrcbg@mail.gmail.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <c4c9ed0b-210a-43b0-fc7b-d45a24fe682f@st.com>
-Date:   Thu, 3 Oct 2019 11:47:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=OGCsoYWUTAHGPkhKorSnO+N61wFEeMCh2U+hapf2L9Y=;
+ b=AsjiUbBHCDlKLuYuC11WX7hHW8Az5zIEhG3Dwi19aST/2w8PkzqayVo0h4MGdH06HLs5
+ 33QJbmEJ4qA4XUxqkS4j+8BR2HATBHSLjN+tDY9Q+Ar72ZMndoAXNYJgEa7gJC+4Aten
+ /4I7C30qUXIj/8FeZEVVRTB4vC8FvWKI1HqRWv7YgCy7rzBfS86gFkvtpjFn4qfHYdox
+ Mlt0zYpiJKsDsw7m96kDsRjbOyM6iCvOHkjmLYUOUMwvdnndmynMmnrhfRxrcRklC1Kb
+ 5GfTUSCl/Jbqs3FalkU/BcpqQUgvvInWi6qGB0Vodq01XVMTscdKZ6k0fIZEq0WX6/W/ Aw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2v9yfqjp0g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 03 Oct 2019 09:51:27 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x939n1MW159306;
+        Thu, 3 Oct 2019 09:51:26 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2vcg63a19k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 03 Oct 2019 09:51:26 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x939pCcs025867;
+        Thu, 3 Oct 2019 09:51:12 GMT
+Received: from [10.191.0.240] (/10.191.0.240)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 03 Oct 2019 02:51:12 -0700
+Subject: Re: [PATCH 1/3] KVM: X86: Add "nopvspin" parameter to disable PV
+ spinlocks
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+References: <1569759666-26904-1-git-send-email-zhenzhong.duan@oracle.com>
+ <1569759666-26904-2-git-send-email-zhenzhong.duan@oracle.com>
+ <87pnjh3i6i.fsf@vitty.brq.redhat.com>
+ <aae59646-be5f-6455-a033-ed29861107ce@oracle.com>
+ <87eezw3lna.fsf@vitty.brq.redhat.com>
+ <fdd14f28-74e9-5cf9-2f5a-09c884c55110@oracle.com>
+ <20191002164730.GA9615@linux.intel.com>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <07f979cc-04b8-6901-b7b0-3e9f06655eb6@oracle.com>
+Date:   Thu, 3 Oct 2019 17:51:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3WvXmMys3mamCZef1-ychtdg+XbV=H-WTs2ZN6Jsrcbg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <20191002164730.GA9615@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-03_04:2019-10-01,2019-10-03 signatures=0
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910030091
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910030091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olivier,
 
-On 9/2/19 6:42 PM, Arnd Bergmann wrote:
-> On Mon, Sep 2, 2019 at 6:01 PM Olivier Moysan <olivier.moysan@st.com> wrote:
+On 2019/10/3 0:47, Sean Christopherson wrote:
+> On Tue, Oct 01, 2019 at 05:47:00PM +0800, Zhenzhong Duan wrote:
+>> On 2019/10/1 16:39, Vitaly Kuznetsov wrote:
+>>> Zhenzhong Duan<zhenzhong.duan@oracle.com>  writes:
+>>>
+>>>> On 2019/9/30 23:41, Vitaly Kuznetsov wrote:
+>>>>> Zhenzhong Duan<zhenzhong.duan@oracle.com>   writes:
+>>>>>
+>>>>>> There are cases where a guest tries to switch spinlocks to bare metal
+>>>>>> behavior (e.g. by setting "xen_nopvspin" on XEN platform and
+>>>>>> "hv_nopvspin" on HYPER_V).
+>>>>>>
+>>>>>> That feature is missed on KVM, add a new parameter "nopvspin" to disable
+>>>>>> PV spinlocks for KVM guest.
+>>>>>>
+>>>>>> This new parameter is also intended to replace "xen_nopvspin" and
+>>>>>> "hv_nopvspin" in the future.
+>>>>> Any reason to not do it right now? We will probably need to have compat
+>>>>> code to support xen_nopvspin/hv_nopvspin too but emit a 'is deprecated'
+>>>>> warning.
+>>>> Sorry the description isn't clear, I'll fix it.
+>>>>
+>>>> I did the compat work in the other two patches.
+>>>> [PATCH 2/3] xen: Mark "xen_nopvspin" parameter obsolete and map it to "nopvspin"
+>>>> [PATCH 3/3] x86/hyperv: Mark "hv_nopvspin" parameter obsolete and map it to "nopvspin"
+>>>>
+>>> For some reason I got CCed only on the first one and moreover,
+>> The three patches have different maintainers/reviewers by get_maintainer.pl, I added
+>> "Cc: maintainers/reviewers" to each patch then git-sendemail picked them automaticly.
+>> I meaned to not disturb maintainers with the field they aren't in charge of. It looks
+>> I'm wrong.
 >>
->> This patchset adds audio support for stm32mp157a-dk1 board.
->>
->> Olivier Moysan (4):
->>    ARM: multi_v7_defconfig: enable stm32 sai support
->>    ARM: multi_v7_defconfig: enable stm32 i2s support
->>    ARM: multi_v7_defconfig: enable cs42l51 codec support
->>    ARM: multi_v7_defconfig: enable audio graph card support
->  > The changes are ok, and I expect Alexandre will pick them up and forward
-> to the soc tree.
+>> So what's the correct way dealing with this? Should I send the whole patchset to all
+>> the maintainers/reviewers related to all the patches?
+> There's no one right answer to that question, folks have different
+> preferences.  My general rule of thumb is to cc everyone on all patches
+> unless the series is obnoxiously large *and* isolated to a specific part
+> of the kernel.  The idea being that people are more likely to be annoyed
+> if they can't find all patches in a relatively small series (this case)
+> than they are about receiving a mail or two that they don't care about.
 >
+> At a minimum I would cc everyone involved on the cover letter, and cc the
+> relevant mailing lists on all patches.  Sending everyone the cover letter
+> provides people a quick overview of the patches they didn't receive, as
+> well as a starting point if they want to find those patches.  Cc'ing the
+> mailing list(s) can make it even easier to find the patches.  The cover
+> letter is also a good place to explain why you didn't cc everyone on all
+> patches (or vice versa).
+>
+> Also, the cover letter should have the shortlog and overall diffstats.
+> 'git format-patch --cover-letter' will do the work for you.
 
-Those changes have been applied on stm32-next (squashed in only one commit).
+Thanks for your detailed reply, I's clear to me what to do now.
 
-Thanks
-Alex
-
-
-
-> However, I would prefer these to just be a single patch, as there is little
-> use in splitting the intended change up into one line per patch.
-> 
->         Arnd
-> 
-
-
+Zhenzhong
 
