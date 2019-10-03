@@ -2,95 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA1FC9D5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32BF6C9D6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:34:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbfJCLdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:33:17 -0400
-Received: from mga17.intel.com ([192.55.52.151]:24061 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729989AbfJCLdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:33:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 04:33:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,251,1566889200"; 
-   d="scan'208";a="198504868"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.161])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Oct 2019 04:33:13 -0700
-Date:   Thu, 3 Oct 2019 14:33:13 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Detach page allocation from tpm_buf
-Message-ID: <20191003113313.GD8933@linux.intel.com>
-References: <20190925134842.19305-1-jarkko.sakkinen@linux.intel.com>
- <20190926124635.GA6040@linux.intel.com>
- <20190926131227.GA6582@linux.intel.com>
- <1570020024.4999.104.camel@linux.ibm.com>
- <20191003113211.GC8933@linux.intel.com>
+        id S1730228AbfJCLep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:34:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42648 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730018AbfJCLep (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 07:34:45 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x93BXvVO133419;
+        Thu, 3 Oct 2019 11:34:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=ER+a2BxvyuPvFP+5B1+t/eEBvhU2exoZo5NNX+TZSPo=;
+ b=qugWByDP7h2kyZmosEsA//CzOArVNvhkCVGLxNlY1WOzTGzEUn7pSrcWWiIpvNZjCx9o
+ OcjuayS1A/KLU9vIvKtBGF7nXiE2qqyCRyxGpEkBF1h0gSIDI2zyokb4TDfbhxakbPMq
+ thhCTFx5LgGmQKGa+57K99TbnS+fLlOlaFpYkKr1l3TscksQiLmtAj3RnWrkzP2DyoW4
+ Isy6Ksevpvc8IlPN1HprJM0B5Ain9o53TNtczfzlHHg7PH4mh5DGe7t+xZOIf6firg+U
+ snA6g3ezW8XbNS+G2kseHOCWQ0/lMhJ+KubLFhJfX692NrThnXslDcjKj6joCovu4gQZ eA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2v9xxv3bm2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 03 Oct 2019 11:34:41 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x93BYMqu059837;
+        Thu, 3 Oct 2019 11:34:40 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2vckyqmerm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 03 Oct 2019 11:34:40 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x93BYcG0006862;
+        Thu, 3 Oct 2019 11:34:39 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 03 Oct 2019 04:34:38 -0700
+Date:   Thu, 3 Oct 2019 14:34:29 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Saiyam Doshi <saiyamdoshi.in@gmail.com>
+Subject: Re: [PATCH] drivers/staging/exfat - explain the fs_sync() issue in
+ TODO
+Message-ID: <20191003113429.GS22609@kadam>
+References: <9837.1570042895@turing-police>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191003113211.GC8933@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9837.1570042895@turing-police>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910030108
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910030108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 02:32:11PM +0300, Jarkko Sakkinen wrote:
-> On Wed, Oct 02, 2019 at 08:40:24AM -0400, Mimi Zohar wrote:
-> > On Thu, 2019-09-26 at 16:12 +0300, Jarkko Sakkinen wrote:
-> > > On Thu, Sep 26, 2019 at 03:46:35PM +0300, Jarkko Sakkinen wrote:
-> > > > On Wed, Sep 25, 2019 at 04:48:41PM +0300, Jarkko Sakkinen wrote:
-> > > > > -		tpm_buf_reset(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_RANDOM);
-> > > > > +		tpm_buf_reset(&buf, data_ptr, PAGE_SIZE,
-> > > > > +			      TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_EXTEND);
-> > > > 
-> > > > Oops.
-> > > 
-> > > Maybe we could use random as the probe for TPM version since we anyway
-> > > send a TPM command as a probe for TPM version:
-> > > 
-> > > 1. Try TPM2 get random.
-> > > 2. If fail, try TPM1 get random.
-> > > 3. Output random number to klog.
-> > > 
-> > > Something like 8 bytes would be sufficient. This would make sure that
-> > > no new change breaks tpm_get_random() and also this would give some
-> > > feedback that TPM is at least somewhat working.
-> > 
-> > That involves sending 2 TPM commands.  At what point does this occur?
-> >  On registration?  Whenever getting a random number?  Is the result
-> > cached in chip->flags?
+On Wed, Oct 02, 2019 at 03:01:35PM -0400, Valdis KlÄ“tnieks wrote:
+> We've seen several incorrect patches for fs_sync() calls in the exfat driver.
+> Add code to the TODO that explains this isn't just a delete code and refactor,
+> but that actual analysis of when the filesystem should be flushed to disk
+> needs to be done.
 > 
-> On registeration. It is just printed to klog.
-> 
-> > Will this delay the TPM initialization, causing IMA to go into "TPM
-> > bypass mode"?
-> 
-> Of course it will delay the init.
-> 
-> As I've stated before the real fix for the bypass issue would be
-> to make TPM as part of the core but this has not received much
-> appeal. I think I've sent patch for this once.
 
-It has been like that people reject a fix to a race condition and
-then I get complains on adding minor latency to the init because
-of the existing race. It is ridicilous, really.
+This doesn't help at all because no one can be expected to read it.
+Put a comment in the code which says something like:
 
-/Jarkko
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 229ecabe7a93..c1710d99875e 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -287,6 +287,13 @@ static DEFINE_SEMAPHORE(z_sem);
+ 
+ static inline void fs_sync(struct super_block *sb, bool do_sync)
+ {
++	/*
++	 * Oct 2019:  Please, do not delete this code or the callers.  This
++	 * code is obviously bogus and many of the callers are dead code, yes,
++	 * but it may hold clues as to when syncing is required.  Someone needs
++	 * to go through and audit it really carefully.
++	 *
++	 */
+ 	if (do_sync)
+ 		bdev_sync(sb);
+ }
