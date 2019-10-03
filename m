@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA847CA649
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FBBFCA64C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392613AbfJCQmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:42:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53070 "EHLO mail.kernel.org"
+        id S2392624AbfJCQmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:42:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392598AbfJCQmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:42:12 -0400
+        id S2392611AbfJCQmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:42:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A7A32054F;
-        Thu,  3 Oct 2019 16:42:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B39F52070B;
+        Thu,  3 Oct 2019 16:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120931;
-        bh=wRDwsyR5qSUPM7woFG2J2OQNhFrZhUJC8yuXlh2FM/E=;
+        s=default; t=1570120934;
+        bh=CiyScJoSbjEh1dk6sz0/OoVDGfhZZEA9aBDwuupZISg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hvzFEvIaUsq/3HuTbdVY8aUSLwGqo+A3gNOAwraUz6ARj/E//Ae5XdEn0G5EFBXFt
-         tlw8HItNrRWHi/MpG0WK/DjONuFGUbeOznuRMjwM99iZ50B5CvKibGSowy84Pla8hj
-         aoT/9ugEb5QurPMxpCovFIEuZcHs9MR2vNN2MusM=
+        b=auZdpDU89bZCtc2nR0VRT6PJIfgBiOI216nbLMHtvKz+QRnHzKcXhPSCJ+FlBI/zU
+         3mH10JNQSv4mtu8OVm4pjBewKozuSqmxkgvENHrCaF1xnSSbAUYOxQx9ao7EAD1HVf
+         KppePnIjjwFjzu9/O2jkCq1Mo1akc0Lkco2QfySk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
         Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
         linux-edac@vger.kernel.org, x86@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 091/344] RAS: Fix prototype warnings
-Date:   Thu,  3 Oct 2019 17:50:56 +0200
-Message-Id: <20191003154549.150971421@linuxfoundation.org>
+Subject: [PATCH 5.3 092/344] RAS: Build debugfs.o only when enabled in Kconfig
+Date:   Thu,  3 Oct 2019 17:50:57 +0200
+Message-Id: <20191003154549.261953614@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,69 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 0a54b809a3a2c31e1055b45b03708eb730222be1 ]
+[ Upstream commit b6ff24f7b5101101ff897dfdde3f37924e676bc2 ]
 
-When building with C=2 and/or W=1, legitimate warnings are issued about
-missing prototypes:
+In addition, the 0day bot reported this build error:
 
-    CHECK   drivers/ras/debugfs.c
-  drivers/ras/debugfs.c:4:15: warning: symbol 'ras_debugfs_dir' was not declared. Should it be static?
-  drivers/ras/debugfs.c:8:5: warning: symbol 'ras_userspace_consumers' was not declared. Should it be static?
-  drivers/ras/debugfs.c:38:12: warning: symbol 'ras_add_daemon_trace' was not declared. Should it be static?
-  drivers/ras/debugfs.c:54:13: warning: symbol 'ras_debugfs_init' was not declared. Should it be static?
-    CC      drivers/ras/debugfs.o
-  drivers/ras/debugfs.c:8:5: warning: no previous prototype for 'ras_userspace_consumers' [-Wmissing-prototypes]
-      8 | int ras_userspace_consumers(void)
-        |     ^~~~~~~~~~~~~~~~~~~~~~~
-  drivers/ras/debugfs.c:38:12: warning: no previous prototype for 'ras_add_daemon_trace' [-Wmissing-prototypes]
-     38 | int __init ras_add_daemon_trace(void)
-        |            ^~~~~~~~~~~~~~~~~~~~
-  drivers/ras/debugfs.c:54:13: warning: no previous prototype for 'ras_debugfs_init' [-Wmissing-prototypes]
-     54 | void __init ras_debugfs_init(void)
-        |             ^~~~~~~~~~~~~~~~
+  >> drivers/ras/debugfs.c:10:5: error: redefinition of 'ras_userspace_consumers'
+      int ras_userspace_consumers(void)
+          ^~~~~~~~~~~~~~~~~~~~~~~
+     In file included from drivers/ras/debugfs.c:3:0:
+     include/linux/ras.h:14:19: note: previous definition of 'ras_userspace_consumers' was here
+      static inline int ras_userspace_consumers(void) { return 0; }
+                      ^~~~~~~~~~~~~~~~~~~~~~~
 
-Provide the proper includes.
+for a riscv-specific .config where CONFIG_DEBUG_FS is not set. Fix all
+that by making debugfs.o depend on that define.
 
- [ bp: Take care of the same warnings for cec.c too. ]
+ [ bp: Rewrite commit message. ]
 
+Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: linux-edac@vger.kernel.org
 Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/7168.1565218769@turing-police
+Link: http://lkml.kernel.org/r/7053.1565218556@turing-police
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ras/cec.c     | 1 +
- drivers/ras/debugfs.c | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/ras/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index 5d545806d9303..c09cf55e2d204 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -4,6 +4,7 @@
-  */
- #include <linux/mm.h>
- #include <linux/gfp.h>
-+#include <linux/ras.h>
- #include <linux/kernel.h>
- #include <linux/workqueue.h>
- 
-diff --git a/drivers/ras/debugfs.c b/drivers/ras/debugfs.c
-index 9c1b717efad86..0d4f985afbf37 100644
---- a/drivers/ras/debugfs.c
-+++ b/drivers/ras/debugfs.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- #include <linux/debugfs.h>
-+#include <linux/ras.h>
-+#include "debugfs.h"
- 
- struct dentry *ras_debugfs_dir;
- 
+diff --git a/drivers/ras/Makefile b/drivers/ras/Makefile
+index ef6777e14d3df..6f0404f501071 100644
+--- a/drivers/ras/Makefile
++++ b/drivers/ras/Makefile
+@@ -1,3 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_RAS)	+= ras.o debugfs.o
++obj-$(CONFIG_RAS)	+= ras.o
++obj-$(CONFIG_DEBUG_FS)	+= debugfs.o
+ obj-$(CONFIG_RAS_CEC)	+= cec.o
 -- 
 2.20.1
 
