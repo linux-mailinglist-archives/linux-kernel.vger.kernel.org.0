@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A84CAA5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E36FCAAD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392953AbfJCRDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:03:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52074 "EHLO mail.kernel.org"
+        id S2391924AbfJCROf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:14:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405051AbfJCQle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:41:34 -0400
+        id S2391188AbfJCQ1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:27:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 027EA2054F;
-        Thu,  3 Oct 2019 16:41:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BEE020700;
+        Thu,  3 Oct 2019 16:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120894;
-        bh=/U8E39KaJHPuCt55oqs9aksyUmQx9j4P9V5W2MqI1Vw=;
+        s=default; t=1570120022;
+        bh=9YTmjz6JzHxwcmKGl0VJUGsFdEfzvM/9GRS2tB2FdWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAemkEjtUuq4e6OYXJguy3dXLrUcAgY7TX81EUrZPwZsQX4wG5TlQHJO9OdOIvLTf
-         1udmBbjf4412aTbMTu+Yh8f0XddlMfDWYfieA+Rvj8BP/X2szjCTZL7+kbu1/TyfPy
-         I0Aogo+0YMDebOi94L0BojNlothWWt0ZhD+iTsXE=
+        b=dm7Yn7Nwhv+ymdYXTkVnDFoCXa67540drrtpr4kNzOmCPCkGTT6Bl985NbQA7jMdY
+         zCtDCe9Tk7jGCXf7Vp7VGnS3JxX3MG1ZKnMzMptDGYKR9zB5t4EfGa0f68RKemSlWx
+         tY97vwGj4bI+bhabOsyOLwGRQUcMMxmqR7TpfZ+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junhua Huang <huang.junhua@zte.com.cn>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 078/344] arm64: mm: free the initrd reserved memblock in a aligned manner
-Date:   Thu,  3 Oct 2019 17:50:43 +0200
-Message-Id: <20191003154547.849626206@linuxfoundation.org>
+        stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 067/313] soc: amlogic: meson-clk-measure: protect measure with a mutex
+Date:   Thu,  3 Oct 2019 17:50:45 +0200
+Message-Id: <20191003154539.513177799@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junhua Huang <huang.junhua@zte.com.cn>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-[ Upstream commit 13776f9d40a028a245bb766269e360f5b7a62721 ]
+[ Upstream commit 3a760d986568b67d1f8411dab64608075817b90d ]
 
-We should free the initrd reserved memblock in an aligned manner,
-because the initrd reserves the memblock in an aligned manner
-in arm64_memblock_init().
-Otherwise there are some fragments in memblock_reserved regions
-after free_initrd_mem(). e.g.:
-/sys/kernel/debug/memblock # cat reserved
-   0: 0x0000000080080000..0x00000000817fafff
-   1: 0x0000000083400000..0x0000000083ffffff
-   2: 0x0000000090000000..0x000000009000407f
-   3: 0x00000000b0000000..0x00000000b000003f
-   4: 0x00000000b26184ea..0x00000000b2618fff
-The fragments like the ranges from b0000000 to b000003f and
-from b26184ea to b2618fff should be freed.
+In order to protect clock measuring when multiple process asks for
+a measure, protect the main measure function with mutexes.
 
-And we can do free_reserved_area() after memblock_free(),
-as free_reserved_area() calls __free_pages(), once we've done
-that it could be allocated somewhere else,
-but memblock and iomem still say this is reserved memory.
-
-Fixes: 05c58752f9dc ("arm64: To remove initrd reserved area entry from memblock")
-Signed-off-by: Junhua Huang <huang.junhua@zte.com.cn>
-Signed-off-by: Will Deacon <will@kernel.org>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/mm/init.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/soc/amlogic/meson-clk-measure.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index f3c795278def0..b1ee6cb4b17fc 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -570,8 +570,12 @@ void free_initmem(void)
- #ifdef CONFIG_BLK_DEV_INITRD
- void __init free_initrd_mem(unsigned long start, unsigned long end)
- {
-+	unsigned long aligned_start, aligned_end;
+diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+index 19d4cbc93a17a..c470e24f1dfa6 100644
+--- a/drivers/soc/amlogic/meson-clk-measure.c
++++ b/drivers/soc/amlogic/meson-clk-measure.c
+@@ -11,6 +11,8 @@
+ #include <linux/debugfs.h>
+ #include <linux/regmap.h>
+ 
++static DEFINE_MUTEX(measure_lock);
 +
-+	aligned_start = __virt_to_phys(start) & PAGE_MASK;
-+	aligned_end = PAGE_ALIGN(__virt_to_phys(end));
-+	memblock_free(aligned_start, aligned_end - aligned_start);
- 	free_reserved_area((void *)start, (void *)end, 0, "initrd");
--	memblock_free(__virt_to_phys(start), end - start);
- }
- #endif
+ #define MSR_CLK_DUTY		0x0
+ #define MSR_CLK_REG0		0x4
+ #define MSR_CLK_REG1		0x8
+@@ -360,6 +362,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	unsigned int val;
+ 	int ret;
+ 
++	ret = mutex_lock_interruptible(&measure_lock);
++	if (ret)
++		return ret;
++
+ 	regmap_write(priv->regmap, MSR_CLK_REG0, 0);
+ 
+ 	/* Set measurement duration */
+@@ -377,8 +383,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 
+ 	ret = regmap_read_poll_timeout(priv->regmap, MSR_CLK_REG0,
+ 				       val, !(val & MSR_BUSY), 10, 10000);
+-	if (ret)
++	if (ret) {
++		mutex_unlock(&measure_lock);
+ 		return ret;
++	}
+ 
+ 	/* Disable */
+ 	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_ENABLE, 0);
+@@ -386,6 +394,8 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	/* Get the value in multiple of gate time counts */
+ 	regmap_read(priv->regmap, MSR_CLK_REG2, &val);
+ 
++	mutex_unlock(&measure_lock);
++
+ 	if (val >= MSR_VAL_MASK)
+ 		return -EINVAL;
  
 -- 
 2.20.1
