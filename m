@@ -2,107 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDEA5C9FAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 15:43:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41893C9FBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 15:43:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730622AbfJCNnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 09:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729655AbfJCNnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 09:43:03 -0400
-Received: from earth.universe (dyndsl-037-138-174-173.ewe-ip-backbone.de [37.138.174.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DD3520830;
-        Thu,  3 Oct 2019 13:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570110181;
-        bh=abRlt0tWQx8wHRdQAm2ffKGRAzb4Fb6wF3dHUvT+a9g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=01ipPJ1T73AEkeXxjuzYiLpHcOBEyTJfYrMMQhaz23nOkeBj8M2bp0l5wNdDlW/pz
-         h6BIJihrVbI5rHohhty4QxkbD+afipPAZJUoAEq3lXB5lo8Yq36///mKoT0ZtgtHfF
-         kA3T1fpfZr1rLEbIb7Wt6Ep6mhD7Vl+3Na3KgkSw=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 71EB23C0CA1; Thu,  3 Oct 2019 15:42:59 +0200 (CEST)
-Date:   Thu, 3 Oct 2019 15:42:59 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        linux-media@vger.kernel.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
-Message-ID: <20191003134259.bmrhgkvvkyjdvsr3@earth.universe>
-References: <20181221011752.25627-1-sre@kernel.org>
- <4f47f7f2-3abb-856c-4db5-675caf8057c7@xs4all.nl>
- <20190319133154.7tbfafy7pguzw2tk@earth.universe>
- <CAHCN7xLffcvC0LVnfrhf4cA=y1PRMx+COa3c8rBm1xOj179vEA@mail.gmail.com>
+        id S1729278AbfJCNnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 09:43:33 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:38055 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfJCNnc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 09:43:32 -0400
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 58E5420000A;
+        Thu,  3 Oct 2019 13:43:30 +0000 (UTC)
+Date:   Thu, 3 Oct 2019 15:43:29 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: Add support for century bits to m41t62 (rv4162) RTC
+ devices
+Message-ID: <20191003134329.GB575@piout.net>
+References: <20190911154803.15969-1-lukma@denx.de>
+ <20191003114831.GR4106@piout.net>
+ <20191003142150.3d73a9d7@jawa>
+ <20191003123538.GS4106@piout.net>
+ <20191003151434.49762715@jawa>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3hs23bfjj5434d43"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHCN7xLffcvC0LVnfrhf4cA=y1PRMx+COa3c8rBm1xOj179vEA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191003151434.49762715@jawa>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/10/2019 15:14:34+0200, Lukasz Majewski wrote:
+> Hi Alexandre,
+> 
+> > On 03/10/2019 14:21:50+0200, Lukasz Majewski wrote:
+> > > > 
+> > > > See the datasheet:
+> > > > 
+> > > > "During any year which is a multiple of 4, the RV-4162 RTC will
+> > > > automatically insert leap day, February 29.  Therefore, the
+> > > > application software must correct for this during the exception
+> > > > years (2100, 2200, etc.) as noted above."  
+> > > 
+> > > I'm wondering what the phrase "application software" means here?
+> > > 
+> > > If it is the userland SW, then we shall at least be able to set
+> > > 2099 in this device and then count on software correction.
+> > > 
+> > > If the "application software" is the kernel driver - the date
+> > > correction shall be done there (maybe some lookup table?).
+> > > 
+> > > Personally, I do prefer the first option - this means that with this
+> > > patch we can set the time to e.g. 2234 year and then rely on
+> > > userland software (or libc) to do the correction.
+> > >   
+> > 
+> > It is not possible to ensure this correction is properly done in
+> > software, there is no point in letting the user set those bits.
+> > 
+> > 
+> 
+> I see your point.
+> 
+> However, could you share your idea on testing setting RTC time to year
+> 2100 on this particular IC (by using hctosys and friends)?
+> 
 
---3hs23bfjj5434d43
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You can use rtc from
+https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.git/
 
-Hi Adam,
+You can also use rtc-range with your patch to observe that it fails in
+2100.
 
-On Wed, Oct 02, 2019 at 02:03:52PM -0500, Adam Ford wrote:
-> On Tue, Mar 19, 2019 at 8:33 AM Sebastian Reichel <sre@kernel.org> wrote:
-> After a bunch of testing, I think the issue I was having was the BTS
-> file being pulled in from linux-firmware.  I was able to successfully
-> load a BTS file that I have from Logic PD with working BLE and BT
-> working together.  I have to run some tests, but if you wouldn't mind
-> re-basing your code and pushing it again for review, I can most likely
-> add my 'tested-by'.
->
-> I am not sure who to discuss my perceived bug in the BTS blob.  I have
-> to go find the old BTS editor and see if I can determine the cause,
-> but the fact that I can use the BTS file that corresponds to the FCC
-> certified file that Logic PD used is more important to me than using
-> the generic BTS file provided by TI, however it would be nice for the
-> reference BTS file to operate without error.
-
-nice :) I just send a rebased partial series. I need some more time
-for the FM radio part (I plan to work on that within the next 3
-weeks).
-
--- Sebastian
-
---3hs23bfjj5434d43
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2V+t4ACgkQ2O7X88g7
-+pqntw//XWtlZbSO/mbBluBjdqneqq8If142mAI8pY6Z1yv9hZV4H4ybUiS4czE8
-5aWvAeye7uUZYbj85bELesffkWiKDShkT2K0mmfnY+apgcRRRsGhNMVN0+lNOHrV
-Ekm2sVokpe+BKHu2hPPiCTsMMSfd4Z6Xga7KeClQJgJFYtmst3e4/k0pTTNNu9tV
-O6J1j+baQzjiJEs7rz24vIrE6PoSvYmh8VRzOv2VwZ3kfcABu2vnz1JPxCSJvDfD
-swO2nW3uZiMdeTDvI027iHCWupdkCc+XReqVHKu7VhiwnEiUg/8YuUxFL43bnFvY
-vVRhJarFYkTvarwA2d1phCPH8DfH+uQ3nvFhpCjHUs+5KEEYWmiZhxkC7urL6xFY
-KvvKQVm0bvNnWtHLOSwrkQD0nRVYEAm3Cjk9DtnwjMemVs7F1vYq9OA6u6GDflty
-FSBlOZMplAA34TzvS3AcFjnKwzfmQqp43britTK1k+FDWcsBM2NWBN6aEOfcxmTs
-hGmFfOOzckx2cf6xPnkkjhzpvMsZHWMcdKp67MWBJxglOBMRpvY+0+JtaXbvDoXQ
-p7GfLTdLP7xkCMcTwXLFD6VvN2lbLioCPBQXCY+HbZ9AseDrHZlSzIM4MXE8nr/v
-qRQ8UFg2GG+KfwxV5uM4IEFOfAdPAtCcWClbYvmcOsJxrbBmqt4=
-=MOKK
------END PGP SIGNATURE-----
-
---3hs23bfjj5434d43--
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
