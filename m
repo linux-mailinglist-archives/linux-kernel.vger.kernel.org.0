@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 265DACA1F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E193CA2DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731593AbfJCQAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44238 "EHLO mail.kernel.org"
+        id S2387550AbfJCQKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:10:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728869AbfJCQAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:30 -0400
+        id S2387519AbfJCQJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:09:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31B0F207FF;
-        Thu,  3 Oct 2019 16:00:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D203221783;
+        Thu,  3 Oct 2019 16:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118429;
-        bh=kXRTHqdvzRxg+hLmSIfW68KUmIdN8xeuSlI/WR+DK7A=;
+        s=default; t=1570118994;
+        bh=vl5OSf5PcUwtpHqom2X88k2JI5OtM9u9ufc3BWxJAGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cJfJsScZgnJ+RGDqlcZVF7O+4KYwajH+DJIzoA4ibOb57PZRoamAk5aO8pl+fSUjJ
-         byofAzn5M8WOzrR2Ber8ohFNtmZMzEp9yd3F5cApmitLXbzcIOjET33slNglbydVhL
-         WXy++pDB0W54FUaenEFW58XpPgYdro9iJXn2cUr0=
+        b=0m3Eqh05HIVLoqEjp7It8AVJZ2bZXCdLA9Uze5SdNDEko0IXLI30UVJQdW35uV7OP
+         GDs6yBwKc/l3u4QHU6vcmSQSBrF7DzxA3GphOXtlKIyhuxz8g68W75pdwkIlRzXaKI
+         QTF4fIUThz11E7o/O/ro90cyFsL10d2yhO82+hDc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 001/129] Revert "Bluetooth: validate BLE connection interval updates"
-Date:   Thu,  3 Oct 2019 17:52:04 +0200
-Message-Id: <20191003154318.892827121@linuxfoundation.org>
+        stable@vger.kernel.org, Bodong Wang <bodong@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 047/185] net/mlx5: Add device ID of upcoming BlueField-2
+Date:   Thu,  3 Oct 2019 17:52:05 +0200
+Message-Id: <20191003154448.481107260@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,62 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Bodong Wang <bodong@mellanox.com>
 
-[ Upstream commit 68d19d7d995759b96169da5aac313363f92a9075 ]
+[ Upstream commit d19a79ee38c8fda6d297e4227e80db8bf51c71a6 ]
 
-This reverts commit c49a8682fc5d298d44e8d911f4fa14690ea9485e.
+Add the device ID of upcoming BlueField-2 integrated ConnectX-6 Dx
+network controller. Its VFs will be using the generic VF device ID:
+0x101e "ConnectX Family mlx5Gen Virtual Function".
 
-There are devices which require low connection intervals for usable operation
-including keyboards and mice. Forcing a static connection interval for
-these types of devices has an impact in latency and causes a regression.
-
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 2e9d3e83ab82 ("net/mlx5: Update the list of the PCI supported devices")
+Signed-off-by: Bodong Wang <bodong@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bluetooth/hci_event.c  | 5 -----
- net/bluetooth/l2cap_core.c | 9 +--------
- 2 files changed, 1 insertion(+), 13 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index 163a239bda91a..6f78489fdb132 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -5089,11 +5089,6 @@ static void hci_le_remote_conn_param_req_evt(struct hci_dev *hdev,
- 		return send_conn_param_neg_reply(hdev, handle,
- 						 HCI_ERROR_UNKNOWN_CONN_ID);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1574,6 +1574,7 @@ static const struct pci_device_id mlx5_c
+ 	{ PCI_VDEVICE(MELLANOX, 0x101c), MLX5_PCI_DEV_IS_VF},	/* ConnectX-6 VF */
+ 	{ PCI_VDEVICE(MELLANOX, 0xa2d2) },			/* BlueField integrated ConnectX-5 network controller */
+ 	{ PCI_VDEVICE(MELLANOX, 0xa2d3), MLX5_PCI_DEV_IS_VF},	/* BlueField integrated ConnectX-5 network controller VF */
++	{ PCI_VDEVICE(MELLANOX, 0xa2d6) },			/* BlueField-2 integrated ConnectX-6 Dx network controller */
+ 	{ 0, }
+ };
  
--	if (min < hcon->le_conn_min_interval ||
--	    max > hcon->le_conn_max_interval)
--		return send_conn_param_neg_reply(hdev, handle,
--						 HCI_ERROR_INVALID_LL_PARAMS);
--
- 	if (hci_check_conn_params(min, max, latency, timeout))
- 		return send_conn_param_neg_reply(hdev, handle,
- 						 HCI_ERROR_INVALID_LL_PARAMS);
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index 4912e80dacefa..48d23abfe7992 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -5277,14 +5277,7 @@ static inline int l2cap_conn_param_update_req(struct l2cap_conn *conn,
- 
- 	memset(&rsp, 0, sizeof(rsp));
- 
--	if (min < hcon->le_conn_min_interval ||
--	    max > hcon->le_conn_max_interval) {
--		BT_DBG("requested connection interval exceeds current bounds.");
--		err = -EINVAL;
--	} else {
--		err = hci_check_conn_params(min, max, latency, to_multiplier);
--	}
--
-+	err = hci_check_conn_params(min, max, latency, to_multiplier);
- 	if (err)
- 		rsp.result = cpu_to_le16(L2CAP_CONN_PARAM_REJECTED);
- 	else
--- 
-2.20.1
-
 
 
