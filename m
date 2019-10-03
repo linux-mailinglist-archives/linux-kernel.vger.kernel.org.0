@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3950DCA480
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82066CA483
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390512AbfJCQZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:25:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55444 "EHLO mail.kernel.org"
+        id S1732574AbfJCQZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388107AbfJCQZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:25:19 -0400
+        id S2389092AbfJCQZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:25:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52B2821A4C;
-        Thu,  3 Oct 2019 16:25:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0D0120867;
+        Thu,  3 Oct 2019 16:25:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119917;
-        bh=W0T+0m0P2SGl5GUNMUD4zXhYLqP9P+xj8Epf7hhfNdM=;
+        s=default; t=1570119923;
+        bh=0xn1V+dQaLQrN6Mj+KrT7gR0pmwR/tohH0dFedkmAxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SRMA7zB0HwEprw1ZWB5cnHnbYgY+/XeEkwAH53ia8UUvaii46C/dTo4PK/X1fzBuh
-         i3on+oseyEHUxvcT/ez/cyWtHgMLTlfD1uO6WkAr9NrXu8OxykX5EIzhVwuW9FPhe8
-         NFYxsmtoIzvPT+cBKaOBAOa5u1UGFoeG78zHww+Q=
+        b=e5G9+0HS1X+pwXm38Lmq0FpL7QkERhmFZhYDt3aZub8MUixDG7kqh0dhPG1SR8YjI
+         RkiQV0QICkpfEAHdhUTU2pa6o5NjfhLhT9KyY/GlBzT2kbr30Xo17IHjTLWknr+Mpi
+         Y2TdC/SKrBo5DDG6nMB2U9KFUgTnebgehmTS+zCc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 029/313] appletalk: enforce CAP_NET_RAW for raw sockets
-Date:   Thu,  3 Oct 2019 17:50:07 +0200
-Message-Id: <20191003154536.199089000@linuxfoundation.org>
+Subject: [PATCH 5.2 030/313] ax25: enforce CAP_NET_RAW for raw sockets
+Date:   Thu,  3 Oct 2019 17:50:08 +0200
+Message-Id: <20191003154536.289860375@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,9 +45,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ori Nimron <orinimron123@gmail.com>
 
-[ Upstream commit 6cc03e8aa36c51f3b26a0d21a3c4ce2809c842ac ]
+[ Upstream commit 0614e2b73768b502fc32a75349823356d98aae2c ]
 
-When creating a raw AF_APPLETALK socket, CAP_NET_RAW needs to be checked
+When creating a raw AF_AX25 socket, CAP_NET_RAW needs to be checked
 first.
 
 Signed-off-by: Ori Nimron <orinimron123@gmail.com>
@@ -55,22 +55,19 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/appletalk/ddp.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/ax25/af_ax25.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -1023,6 +1023,11 @@ static int atalk_create(struct net *net,
- 	 */
- 	if (sock->type != SOCK_RAW && sock->type != SOCK_DGRAM)
- 		goto out;
-+
-+	rc = -EPERM;
-+	if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))
-+		goto out;
-+
- 	rc = -ENOMEM;
- 	sk = sk_alloc(net, PF_APPLETALK, GFP_KERNEL, &ddp_proto, kern);
- 	if (!sk)
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -855,6 +855,8 @@ static int ax25_create(struct net *net,
+ 		break;
+ 
+ 	case SOCK_RAW:
++		if (!capable(CAP_NET_RAW))
++			return -EPERM;
+ 		break;
+ 	default:
+ 		return -ESOCKTNOSUPPORT;
 
 
