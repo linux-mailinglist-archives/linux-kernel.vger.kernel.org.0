@@ -2,156 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3F94CA9F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C10D3CAA01
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389240AbfJCQR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:17:26 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36939 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389225AbfJCQRW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:17:22 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u20so1749648plq.4
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:17:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=woKsN5Nvj3edIiL1mnog+HJwItqLGqoGggibhx+prXM=;
-        b=HQAEmXF/vteXHA3wUvUvKzh5HoSg9S0QmvBoKuxVYXBOPyOwnLQNu0ojnI9ENc9Ztm
-         oAl2oYSCkpNYvvNGLiZ2CYkYN5JmMbMcg+/63PFwNIF4bZyDwf6qxUrYGJNtUBybwSNp
-         GW3/LiHFDHlufv8dYKPbMAMdI1yvxWVf3wRmh57d6KmDrIYklelTyqc/FXK8gWpNo48M
-         LAeTZUhlIXsKmJvsB5HRZNWQlHNJhDRI6YWtz4h/sAsWEoxf+qlTTJju8gMlCGXsvaE2
-         DMi6SjUq8ATeVYXTguDhgGT4uyKK5Zs4PaJxHJEEZjGGdfC31jAxrE7uSuyt41Ey7mJ5
-         PR3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=woKsN5Nvj3edIiL1mnog+HJwItqLGqoGggibhx+prXM=;
-        b=kyLFcG2/2R2U3+/Xftg8CEMC7hfS64NrtVsNvXL6HnLSwWObtulOnlS5A9gIyF/sBd
-         +BN9BjDdhP77VMp3GBDipctP+rPbY+NiTFV+PZWICY1VH40n7SdCtATLKSph15KY8Cqb
-         5a4p4jNPmz5KHIgN4TG1YcDY4GpgBBdyd6Ey+qcGX8JKa+QNfKEaJqtc1Hk49/UIzLk6
-         AeJ2I056dcD6lzH+exwz88Je2c0Rp6pt0hE0P3vYJGmNO/f1YSZC8Uao18uCYcZ/Cq5I
-         tqj0mCYMNqc8obyEINc8UJ5KFqyDHEWx9gv03qYDCJ0rlHOib2IMDD7/wPV8cIVeTsfB
-         OukA==
-X-Gm-Message-State: APjAAAXOUqT0+bpbOR5MrwXoWzfI2uGTHvqS7XTJkQJNv8FCW/vTmEGH
-        EymJk5haiRKzIFetg7rN+x6T
-X-Google-Smtp-Source: APXvYqwcF1Q6beDBQTdeoxkdICiYiMYrEpiV3RDw2oLfKtKRdUOjZccajdXgDjR+VWUVYjV6gLKSZQ==
-X-Received: by 2002:a17:902:a986:: with SMTP id bh6mr10472391plb.197.1570119441739;
-        Thu, 03 Oct 2019 09:17:21 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2405:204:71cf:7b8f:fca3:6f38:70fb:67fc])
-        by smtp.gmail.com with ESMTPSA id f18sm3004698pgf.58.2019.10.03.09.17.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Oct 2019 09:17:20 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 21:47:14 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, thomas.liau@actions-semi.com,
-        linux-actions@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 0/7] Add SD/MMC driver for Actions Semi S900 SoC
-Message-ID: <20191003161714.GA14774@Mani-XPS-13-9360>
-References: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
- <CAPDyKFqsZ1mZ53b9wLruATzi+ymFrUCLhxzx7NFUq48p5w0Gtw@mail.gmail.com>
+        id S2389381AbfJCQSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:18:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389357AbfJCQR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:17:57 -0400
+Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CE0621783;
+        Thu,  3 Oct 2019 16:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570119475;
+        bh=6+z8HPX3gQVp7v3MP3VMlQDEtk2bBbOhScr3L95UUC0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kEUhSU6yLjIjJitOpe47ICQpXc2lS34flqRfpjgkq1bS8n6NFw0BiK5vOaMx+HkWX
+         n0kG//i93jAvaHy8IJwjbmosgR4T+hhVK6De7TwkESHLhgWwvi9kryXsgweAgMDeY/
+         +LS1MNma9pY9T28MsYDl+SqCfCuor5BM8c8dXXng=
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: [PATCH 1/2] vtime: Rename vtime_account_system() to vtime_account_kernel()
+Date:   Thu,  3 Oct 2019 18:17:44 +0200
+Message-Id: <20191003161745.28464-2-frederic@kernel.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191003161745.28464-1-frederic@kernel.org>
+References: <20191003161745.28464-1-frederic@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqsZ1mZ53b9wLruATzi+ymFrUCLhxzx7NFUq48p5w0Gtw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+vtime_account_system() decides if we need to account the time to the
+system (__vtime_account_system()) or to the guest (vtime_account_guest()).
 
-On Thu, Oct 03, 2019 at 12:01:18PM +0200, Ulf Hansson wrote:
-> On Mon, 16 Sep 2019 at 17:46, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > Hello,
-> >
-> > This patchset adds SD/MMC driver for Actions Semi S900 SoC from Owl
-> > family SoCs. There are 4 SD/MMC controller present in this SoC but
-> > only 2 are enabled currently for Bubblegum96 board to access uSD and
-> > onboard eMMC. SDIO support for this driver is not currently implemented.
-> >
-> > Note: Currently, driver uses 2 completion mechanisms for maintaining
-> > the coherency between SDC and DMA interrupts and I know that it is not
-> > efficient. Hence, I'd like to hear any suggestions for reimplementing
-> > the logic if anyone has.
-> >
-> > With this driver, this patchset also fixes one clk driver issue and enables
-> > the Actions Semi platform in ARM64 defconfig.
-> >
-> > Thanks,
-> > Mani
-> >
-> > Changes in v4:
-> >
-> > * Incorporated review comments from Rob on dt binding
-> >
-> > Changes in v3:
-> >
-> > * Incorporated a review comment from Andreas on board dts patch
-> > * Modified the MAINTAINERS entry for devicetree YAML binding
-> >
-> > Changes in v2:
-> >
-> > * Converted the devicetree bindings to YAML
-> > * Misc changes to bubblegum devicetree as per the review from Andreas
-> > * Dropped the read/write wrappers and renamed all functions to use owl-
-> >   prefix as per the review from Ulf
-> > * Renamed clk_val_best to owl_clk_val_best and added Reviewed-by tag
-> >   from Stephen
-> >
-> > Manivannan Sadhasivam (7):
-> >   clk: actions: Fix factor clk struct member access
-> >   dt-bindings: mmc: Add Actions Semi SD/MMC/SDIO controller binding
-> >   arm64: dts: actions: Add MMC controller support for S900
-> >   arm64: dts: actions: Add uSD and eMMC support for Bubblegum96
-> >   mmc: Add Actions Semi Owl SoCs SD/MMC driver
-> >   MAINTAINERS: Add entry for Actions Semi SD/MMC driver and binding
-> >   arm64: configs: Enable Actions Semi platform in defconfig
-> >
-> >  .../devicetree/bindings/mmc/owl-mmc.yaml      |  59 ++
-> >  MAINTAINERS                                   |   2 +
-> >  .../boot/dts/actions/s900-bubblegum-96.dts    |  62 ++
-> >  arch/arm64/boot/dts/actions/s900.dtsi         |  45 ++
-> >  arch/arm64/configs/defconfig                  |   1 +
-> >  drivers/clk/actions/owl-factor.c              |   7 +-
-> >  drivers/mmc/host/Kconfig                      |   8 +
-> >  drivers/mmc/host/Makefile                     |   1 +
-> >  drivers/mmc/host/owl-mmc.c                    | 696 ++++++++++++++++++
-> >  9 files changed, 877 insertions(+), 4 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/mmc/owl-mmc.yaml
-> >  create mode 100644 drivers/mmc/host/owl-mmc.c
-> >
-> > --
-> > 2.17.1
-> >
-> 
-> I have picked up the mmc patches for next
+So this function is a misnommer as we are on a higher level than
+"system". All we know when we call that function is that we are
+accounting kernel cputime. Whether it belongs to guest or system time
+is a lower level detail.
 
-Thanks :)
+Rename this function to vtime_account_kernel(). This will clarify things
+and avoid too many underscored vtime_account_system() versions.
 
-> and as Stephen picked the
-> clock patch, the rest are now for arm-soc, I guess!?
-> 
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wanpeng Li <wanpengli@tencent.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+---
+ arch/ia64/kernel/time.c          |  4 ++--
+ arch/powerpc/kernel/time.c       |  6 +++---
+ arch/s390/kernel/vtime.c         |  4 ++--
+ include/linux/context_tracking.h |  4 ++--
+ include/linux/vtime.h            |  6 +++---
+ kernel/sched/cputime.c           | 18 +++++++++---------
+ 6 files changed, 21 insertions(+), 21 deletions(-)
 
-Yes, I'll queue them through actions tree (unless Andreas wants to do the PR).
+diff --git a/arch/ia64/kernel/time.c b/arch/ia64/kernel/time.c
+index 1e95d32c8877..91b4024c9351 100644
+--- a/arch/ia64/kernel/time.c
++++ b/arch/ia64/kernel/time.c
+@@ -132,7 +132,7 @@ static __u64 vtime_delta(struct task_struct *tsk)
+ 	return delta_stime;
+ }
+ 
+-void vtime_account_system(struct task_struct *tsk)
++void vtime_account_kernel(struct task_struct *tsk)
+ {
+ 	struct thread_info *ti = task_thread_info(tsk);
+ 	__u64 stime = vtime_delta(tsk);
+@@ -146,7 +146,7 @@ void vtime_account_system(struct task_struct *tsk)
+ 	else
+ 		ti->stime += stime;
+ }
+-EXPORT_SYMBOL_GPL(vtime_account_system);
++EXPORT_SYMBOL_GPL(vtime_account_kernel);
+ 
+ void vtime_account_idle(struct task_struct *tsk)
+ {
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index 694522308cd5..84827da01d45 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -338,7 +338,7 @@ static unsigned long vtime_delta(struct task_struct *tsk,
+ 	return stime;
+ }
+ 
+-void vtime_account_system(struct task_struct *tsk)
++void vtime_account_kernel(struct task_struct *tsk)
+ {
+ 	unsigned long stime, stime_scaled, steal_time;
+ 	struct cpu_accounting_data *acct = get_accounting(tsk);
+@@ -366,7 +366,7 @@ void vtime_account_system(struct task_struct *tsk)
+ #endif
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(vtime_account_system);
++EXPORT_SYMBOL_GPL(vtime_account_kernel);
+ 
+ void vtime_account_idle(struct task_struct *tsk)
+ {
+@@ -395,7 +395,7 @@ static void vtime_flush_scaled(struct task_struct *tsk,
+ /*
+  * Account the whole cputime accumulated in the paca
+  * Must be called with interrupts disabled.
+- * Assumes that vtime_account_system/idle() has been called
++ * Assumes that vtime_account_kernel/idle() has been called
+  * recently (i.e. since the last entry from usermode) so that
+  * get_paca()->user_time_scaled is up to date.
+  */
+diff --git a/arch/s390/kernel/vtime.c b/arch/s390/kernel/vtime.c
+index c475ca49cfc6..8df10d3c8f6c 100644
+--- a/arch/s390/kernel/vtime.c
++++ b/arch/s390/kernel/vtime.c
+@@ -247,9 +247,9 @@ void vtime_account_irq_enter(struct task_struct *tsk)
+ }
+ EXPORT_SYMBOL_GPL(vtime_account_irq_enter);
+ 
+-void vtime_account_system(struct task_struct *tsk)
++void vtime_account_kernel(struct task_struct *tsk)
+ __attribute__((alias("vtime_account_irq_enter")));
+-EXPORT_SYMBOL_GPL(vtime_account_system);
++EXPORT_SYMBOL_GPL(vtime_account_kernel);
+ 
+ /*
+  * Sorted add to a list. List is linear searched until first bigger
+diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
+index d05609ad329d..558a209c247d 100644
+--- a/include/linux/context_tracking.h
++++ b/include/linux/context_tracking.h
+@@ -141,7 +141,7 @@ static inline void guest_enter_irqoff(void)
+ 	 * to assume that it's the stime pending cputime
+ 	 * to flush.
+ 	 */
+-	vtime_account_system(current);
++	vtime_account_kernel(current);
+ 	current->flags |= PF_VCPU;
+ 	rcu_virt_note_context_switch(smp_processor_id());
+ }
+@@ -149,7 +149,7 @@ static inline void guest_enter_irqoff(void)
+ static inline void guest_exit_irqoff(void)
+ {
+ 	/* Flush the guest cputime we spent on the guest */
+-	vtime_account_system(current);
++	vtime_account_kernel(current);
+ 	current->flags &= ~PF_VCPU;
+ }
+ #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
+diff --git a/include/linux/vtime.h b/include/linux/vtime.h
+index a26ed10a4eac..2fd247f90408 100644
+--- a/include/linux/vtime.h
++++ b/include/linux/vtime.h
+@@ -57,13 +57,13 @@ static inline void vtime_task_switch(struct task_struct *prev)
+ }
+ #endif /* __ARCH_HAS_VTIME_TASK_SWITCH */
+ 
+-extern void vtime_account_system(struct task_struct *tsk);
++extern void vtime_account_kernel(struct task_struct *tsk);
+ extern void vtime_account_idle(struct task_struct *tsk);
+ 
+ #else /* !CONFIG_VIRT_CPU_ACCOUNTING */
+ 
+ static inline void vtime_task_switch(struct task_struct *prev) { }
+-static inline void vtime_account_system(struct task_struct *tsk) { }
++static inline void vtime_account_kernel(struct task_struct *tsk) { }
+ #endif /* !CONFIG_VIRT_CPU_ACCOUNTING */
+ 
+ #ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
+@@ -86,7 +86,7 @@ extern void vtime_account_irq_enter(struct task_struct *tsk);
+ static inline void vtime_account_irq_exit(struct task_struct *tsk)
+ {
+ 	/* On hard|softirq exit we always account to hard|softirq cputime */
+-	vtime_account_system(tsk);
++	vtime_account_kernel(tsk);
+ }
+ extern void vtime_flush(struct task_struct *tsk);
+ #else /* !CONFIG_VIRT_CPU_ACCOUNTING_NATIVE */
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 46ed4e1383e2..b45932e27857 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -412,7 +412,7 @@ void vtime_common_task_switch(struct task_struct *prev)
+ 	if (is_idle_task(prev))
+ 		vtime_account_idle(prev);
+ 	else
+-		vtime_account_system(prev);
++		vtime_account_kernel(prev);
+ 
+ 	vtime_flush(prev);
+ 	arch_vtime_task_switch(prev);
+@@ -425,7 +425,7 @@ void vtime_common_task_switch(struct task_struct *prev)
+ /*
+  * Archs that account the whole time spent in the idle task
+  * (outside irq) as idle time can rely on this and just implement
+- * vtime_account_system() and vtime_account_idle(). Archs that
++ * vtime_account_kernel() and vtime_account_idle(). Archs that
+  * have other meaning of the idle time (s390 only includes the
+  * time spent by the CPU when it's in low power mode) must override
+  * vtime_account().
+@@ -436,7 +436,7 @@ void vtime_account_irq_enter(struct task_struct *tsk)
+ 	if (!in_interrupt() && is_idle_task(tsk))
+ 		vtime_account_idle(tsk);
+ 	else
+-		vtime_account_system(tsk);
++		vtime_account_kernel(tsk);
+ }
+ EXPORT_SYMBOL_GPL(vtime_account_irq_enter);
+ #endif /* __ARCH_HAS_VTIME_ACCOUNT */
+@@ -711,8 +711,8 @@ static u64 get_vtime_delta(struct vtime *vtime)
+ 	return delta - other;
+ }
+ 
+-static void __vtime_account_system(struct task_struct *tsk,
+-				   struct vtime *vtime)
++static void vtime_account_system(struct task_struct *tsk,
++				 struct vtime *vtime)
+ {
+ 	vtime->stime += get_vtime_delta(vtime);
+ 	if (vtime->stime >= TICK_NSEC) {
+@@ -731,7 +731,7 @@ static void vtime_account_guest(struct task_struct *tsk,
+ 	}
+ }
+ 
+-void vtime_account_system(struct task_struct *tsk)
++void vtime_account_kernel(struct task_struct *tsk)
+ {
+ 	struct vtime *vtime = &tsk->vtime;
+ 
+@@ -743,7 +743,7 @@ void vtime_account_system(struct task_struct *tsk)
+ 	if (tsk->flags & PF_VCPU)
+ 		vtime_account_guest(tsk, vtime);
+ 	else
+-		__vtime_account_system(tsk, vtime);
++		vtime_account_system(tsk, vtime);
+ 	write_seqcount_end(&vtime->seqcount);
+ }
+ 
+@@ -752,7 +752,7 @@ void vtime_user_enter(struct task_struct *tsk)
+ 	struct vtime *vtime = &tsk->vtime;
+ 
+ 	write_seqcount_begin(&vtime->seqcount);
+-	__vtime_account_system(tsk, vtime);
++	vtime_account_system(tsk, vtime);
+ 	vtime->state = VTIME_USER;
+ 	write_seqcount_end(&vtime->seqcount);
+ }
+@@ -782,7 +782,7 @@ void vtime_guest_enter(struct task_struct *tsk)
+ 	 * that can thus safely catch up with a tickless delta.
+ 	 */
+ 	write_seqcount_begin(&vtime->seqcount);
+-	__vtime_account_system(tsk, vtime);
++	vtime_account_system(tsk, vtime);
+ 	tsk->flags |= PF_VCPU;
+ 	write_seqcount_end(&vtime->seqcount);
+ }
+-- 
+2.23.0
 
-Regards,
-Mani
-
-> Kind regards
-> Uffe
