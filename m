@@ -2,42 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 382D0CA459
+	by mail.lfdr.de (Postfix) with ESMTP id A15CCCA45A
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390656AbfJCQX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:23:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53214 "EHLO mail.kernel.org"
+        id S2390663AbfJCQX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:23:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390640AbfJCQXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:23:52 -0400
+        id S2390650AbfJCQXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:23:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3473222BE;
-        Thu,  3 Oct 2019 16:23:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F67A2054F;
+        Thu,  3 Oct 2019 16:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119831;
-        bh=pP89B59oW/f7tod7PG0miwbXWNsTY7e+yYicB3brcU4=;
+        s=default; t=1570119834;
+        bh=6BtUQ4/V1KszXMNqYKGNsb4im93ln/f6XS19k9g+gEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0n+I3vs5HkZNmIaU9ydK5MS+VMtJeL66lM+vX8aJc/6FguE539Z8elrW+YOYSyQzm
-         c1y2pZpsXBOQ7wYDM8bzrFHHkqy/tab7pl13o+mdeodvMU6NbTdesR1dPoBiaA/e2x
-         lW7YI0UDHsMELP20W9To88Q55gNPzuLVOslJJRMw=
+        b=LGIoa2+ZrNUBPc3g+EmFSUQeDNfTxmqWOJc3aRpCmnhy3u+LrtkEXEjjGbREhJyEf
+         67LwsiKip6bpKDkSpoSQQV32D3glbsVeBEkemhOocMz1B2rwO0HmfxH63zpPFv8TmO
+         aocIZeTKHH3e9bqF/Bnfjuz3NXTo0tq8omSkDpBQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Yafang Shao <shaoyafang@didiglobal.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 210/211] mm/compaction.c: clear total_{migrate,free}_scanned before scanning a new zone
-Date:   Thu,  3 Oct 2019 17:54:36 +0200
-Message-Id: <20191003154530.762686997@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 211/211] drm/amd/display: Restore backlight brightness after system resume
+Date:   Thu,  3 Oct 2019 17:54:37 +0200
+Message-Id: <20191003154530.869163725@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -50,131 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yafang Shao <laoar.shao@gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit a94b525241c0fff3598809131d7cfcfe1d572d8c ]
+commit bb264220d9316f6bd7c1fd84b8da398c93912931 upstream.
 
-total_{migrate,free}_scanned will be added to COMPACTMIGRATE_SCANNED and
-COMPACTFREE_SCANNED in compact_zone().  We should clear them before
-scanning a new zone.  In the proc triggered compaction, we forgot clearing
-them.
+Laptops with AMD APU doesn't restore display backlight brightness after
+system resume.
 
-[laoar.shao@gmail.com: introduce a helper compact_zone_counters_init()]
-  Link: http://lkml.kernel.org/r/1563869295-25748-1-git-send-email-laoar.shao@gmail.com
-[akpm@linux-foundation.org: expand compact_zone_counters_init() into its single callsite, per mhocko]
-[vbabka@suse.cz: squash compact_zone() list_head init as well]
-  Link: http://lkml.kernel.org/r/1fb6f7da-f776-9e42-22f8-bbb79b030b98@suse.cz
-[akpm@linux-foundation.org: kcompactd_do_work(): avoid unnecessary initialization of cc.zone]
-Link: http://lkml.kernel.org/r/1563789275-9639-1-git-send-email-laoar.shao@gmail.com
-Fixes: 7f354a548d1c ("mm, compaction: add vmstats for kcompactd work")
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Yafang Shao <shaoyafang@didiglobal.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@suse.com>
+This issue started when DC was introduced.
+
+Let's use BL_CORE_SUSPENDRESUME so the backlight core calls
+update_status callback after system resume to restore the backlight
+level.
+
+Tested on Dell Inspiron 3180 (Stoney Ridge) and Dell Latitude 5495
+(Raven Ridge).
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- mm/compaction.c | 35 +++++++++++++----------------------
- 1 file changed, 13 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index faca45ebe62df..5079ddbec8f9e 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1540,6 +1540,17 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
- 	unsigned long end_pfn = zone_end_pfn(zone);
- 	const bool sync = cc->mode != MIGRATE_ASYNC;
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -1462,6 +1462,7 @@ static int amdgpu_dm_backlight_get_brigh
+ }
  
-+	/*
-+	 * These counters track activities during zone compaction.  Initialize
-+	 * them before compacting a new zone.
-+	 */
-+	cc->total_migrate_scanned = 0;
-+	cc->total_free_scanned = 0;
-+	cc->nr_migratepages = 0;
-+	cc->nr_freepages = 0;
-+	INIT_LIST_HEAD(&cc->freepages);
-+	INIT_LIST_HEAD(&cc->migratepages);
-+
- 	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
- 	ret = compaction_suitable(zone, cc->order, cc->alloc_flags,
- 							cc->classzone_idx);
-@@ -1703,10 +1714,6 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
- {
- 	enum compact_result ret;
- 	struct compact_control cc = {
--		.nr_freepages = 0,
--		.nr_migratepages = 0,
--		.total_migrate_scanned = 0,
--		.total_free_scanned = 0,
- 		.order = order,
- 		.gfp_mask = gfp_mask,
- 		.zone = zone,
-@@ -1719,8 +1726,6 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
- 		.ignore_skip_hint = (prio == MIN_COMPACT_PRIORITY),
- 		.ignore_block_suitable = (prio == MIN_COMPACT_PRIORITY)
- 	};
--	INIT_LIST_HEAD(&cc.freepages);
--	INIT_LIST_HEAD(&cc.migratepages);
- 
- 	ret = compact_zone(zone, &cc);
- 
-@@ -1819,8 +1824,6 @@ static void compact_node(int nid)
- 	struct zone *zone;
- 	struct compact_control cc = {
- 		.order = -1,
--		.total_migrate_scanned = 0,
--		.total_free_scanned = 0,
- 		.mode = MIGRATE_SYNC,
- 		.ignore_skip_hint = true,
- 		.whole_zone = true,
-@@ -1834,11 +1837,7 @@ static void compact_node(int nid)
- 		if (!populated_zone(zone))
- 			continue;
- 
--		cc.nr_freepages = 0;
--		cc.nr_migratepages = 0;
- 		cc.zone = zone;
--		INIT_LIST_HEAD(&cc.freepages);
--		INIT_LIST_HEAD(&cc.migratepages);
- 
- 		compact_zone(zone, &cc);
- 
-@@ -1947,8 +1946,6 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 	struct zone *zone;
- 	struct compact_control cc = {
- 		.order = pgdat->kcompactd_max_order,
--		.total_migrate_scanned = 0,
--		.total_free_scanned = 0,
- 		.classzone_idx = pgdat->kcompactd_classzone_idx,
- 		.mode = MIGRATE_SYNC_LIGHT,
- 		.ignore_skip_hint = false,
-@@ -1972,16 +1969,10 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 							COMPACT_CONTINUE)
- 			continue;
- 
--		cc.nr_freepages = 0;
--		cc.nr_migratepages = 0;
--		cc.total_migrate_scanned = 0;
--		cc.total_free_scanned = 0;
--		cc.zone = zone;
--		INIT_LIST_HEAD(&cc.freepages);
--		INIT_LIST_HEAD(&cc.migratepages);
--
- 		if (kthread_should_stop())
- 			return;
-+
-+		cc.zone = zone;
- 		status = compact_zone(zone, &cc);
- 
- 		if (status == COMPACT_SUCCESS) {
--- 
-2.20.1
-
+ static const struct backlight_ops amdgpu_dm_backlight_ops = {
++	.options = BL_CORE_SUSPENDRESUME,
+ 	.get_brightness = amdgpu_dm_backlight_get_brightness,
+ 	.update_status	= amdgpu_dm_backlight_update_status,
+ };
 
 
