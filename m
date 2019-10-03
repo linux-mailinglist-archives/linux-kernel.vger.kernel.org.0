@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14302CA857
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A08DCA85A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390520AbfJCQZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:25:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55514 "EHLO mail.kernel.org"
+        id S2390190AbfJCQZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:25:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390494AbfJCQZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:25:22 -0400
+        id S2389808AbfJCQZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:25:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F020A215EA;
-        Thu,  3 Oct 2019 16:25:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4720920867;
+        Thu,  3 Oct 2019 16:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119920;
-        bh=3Ns8z5rPL19etrEXv+UVIEZ1HUYcfTPW144ZHogKkn8=;
+        s=default; t=1570119936;
+        bh=JgBrlH+Itu1vKsvB8lGZbiO4ta09eCPbLm2aSAuszJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ndSzGgPKTyea8GE1tDyU1TEhV35Og5aLIK/wWXJ+LJKNGUDkz85Q8+4lGp9rcY4Tp
-         rQQ67FnP625PueVzb/xfuc94KF1xklmrMigunm+3VAtIywsCd7dbmK70aTt6s48Q6U
-         kyW7r3e0NEeQNtrVv6u3YQNV/43ewA8gY9MIkjD8=
+        b=ExYtBp4omp623fL1YUS6mkN6jC4KgbJN8yYhevysHN6U+os3TYFX72ZqnvlZH7KpA
+         3i5FncIVJEPlbsy76oDTj9hu0qXW7TPRFF+cB+v/B5ENEMSMbMp/3/FtCxutrfNRtv
+         LkI/085wTuo+7Bvx2HgZvKqnPg15MF3AvxX2ZWWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Wei Wang <weiwan@google.com>,
+        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
+        Fei Liu <feliu@redhat.com>, Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 003/313] ipv6: do not free rt if FIB_LOOKUP_NOREF is set on suppress rule
-Date:   Thu,  3 Oct 2019 17:49:41 +0200
-Message-Id: <20191003154533.875309419@linuxfoundation.org>
+Subject: [PATCH 5.2 004/313] macsec: drop skb sk before calling gro_cells_receive
+Date:   Thu,  3 Oct 2019 17:49:42 +0200
+Message-Id: <20191003154533.961390674@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -44,79 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit ca7a03c4175366a92cee0ccc4fec0038c3266e26 ]
+[ Upstream commit ba56d8ce38c8252fff5b745db3899cf092578ede ]
 
-Commit 7d9e5f422150 removed references from certain dsts, but accounting
-for this never translated down into the fib6 suppression code. This bug
-was triggered by WireGuard users who use wg-quick(8), which uses the
-"suppress-prefix" directive to ip-rule(8) for routing all of their
-internet traffic without routing loops. The test case added here
-causes the reference underflow by causing packets to evaluate a suppress
-rule.
+Fei Liu reported a crash when doing netperf on a topo of macsec
+dev over veth:
 
-Fixes: 7d9e5f422150 ("ipv6: convert major tx path to use RT6_LOOKUP_F_DST_NOREF")
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Acked-by: Wei Wang <weiwan@google.com>
+  [  448.919128] refcount_t: underflow; use-after-free.
+  [  449.090460] Call trace:
+  [  449.092895]  refcount_sub_and_test+0xb4/0xc0
+  [  449.097155]  tcp_wfree+0x2c/0x150
+  [  449.100460]  ip_rcv+0x1d4/0x3a8
+  [  449.103591]  __netif_receive_skb_core+0x554/0xae0
+  [  449.108282]  __netif_receive_skb+0x28/0x78
+  [  449.112366]  netif_receive_skb_internal+0x54/0x100
+  [  449.117144]  napi_gro_complete+0x70/0xc0
+  [  449.121054]  napi_gro_flush+0x6c/0x90
+  [  449.124703]  napi_complete_done+0x50/0x130
+  [  449.128788]  gro_cell_poll+0x8c/0xa8
+  [  449.132351]  net_rx_action+0x16c/0x3f8
+  [  449.136088]  __do_softirq+0x128/0x320
+
+The issue was caused by skb's true_size changed without its sk's
+sk_wmem_alloc increased in tcp/skb_gro_receive(). Later when the
+skb is being freed and the skb's truesize is subtracted from its
+sk's sk_wmem_alloc in tcp_wfree(), underflow occurs.
+
+macsec is calling gro_cells_receive() to receive a packet, which
+actually requires skb->sk to be NULL. However when macsec dev is
+over veth, it's possible the skb->sk is still set if the skb was
+not unshared or expanded from the peer veth.
+
+ip_rcv() is calling skb_orphan() to drop the skb's sk for tproxy,
+but it is too late for macsec's calling gro_cells_receive(). So
+fix it by dropping the skb's sk earlier on rx path of macsec.
+
+Fixes: 5491e7c6b1a9 ("macsec: enable GRO and RPS on macsec devices")
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Reported-by: Fei Liu <feliu@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/fib6_rules.c                    |    3 ++-
- tools/testing/selftests/net/fib_tests.sh |   17 ++++++++++++++++-
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ drivers/net/macsec.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/fib6_rules.c
-+++ b/net/ipv6/fib6_rules.c
-@@ -285,7 +285,8 @@ static bool fib6_rule_suppress(struct fi
- 	return false;
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -1235,6 +1235,7 @@ deliver:
+ 		macsec_rxsa_put(rx_sa);
+ 	macsec_rxsc_put(rx_sc);
  
- suppress_route:
--	ip6_rt_put(rt);
-+	if (!(arg->flags & FIB_LOOKUP_NOREF))
-+		ip6_rt_put(rt);
- 	return true;
- }
- 
---- a/tools/testing/selftests/net/fib_tests.sh
-+++ b/tools/testing/selftests/net/fib_tests.sh
-@@ -9,7 +9,7 @@ ret=0
- ksft_skip=4
- 
- # all tests in this script. Can be overridden with -t option
--TESTS="unregister down carrier nexthop ipv6_rt ipv4_rt ipv6_addr_metric ipv4_addr_metric ipv6_route_metrics ipv4_route_metrics ipv4_route_v6_gw"
-+TESTS="unregister down carrier nexthop suppress ipv6_rt ipv4_rt ipv6_addr_metric ipv4_addr_metric ipv6_route_metrics ipv4_route_metrics ipv4_route_v6_gw"
- 
- VERBOSE=0
- PAUSE_ON_FAIL=no
-@@ -582,6 +582,20 @@ fib_nexthop_test()
- 	cleanup
- }
- 
-+fib_suppress_test()
-+{
-+	$IP link add dummy1 type dummy
-+	$IP link set dummy1 up
-+	$IP -6 route add default dev dummy1
-+	$IP -6 rule add table main suppress_prefixlength 0
-+	ping -f -c 1000 -W 1 1234::1 || true
-+	$IP -6 rule del table main suppress_prefixlength 0
-+	$IP link del dummy1
-+
-+	# If we got here without crashing, we're good.
-+	return 0
-+}
-+
- ################################################################################
- # Tests on route add and replace
- 
-@@ -1558,6 +1572,7 @@ do
- 	fib_down_test|down)		fib_down_test;;
- 	fib_carrier_test|carrier)	fib_carrier_test;;
- 	fib_nexthop_test|nexthop)	fib_nexthop_test;;
-+	fib_suppress_test|suppress)	fib_suppress_test;;
- 	ipv6_route_test|ipv6_rt)	ipv6_route_test;;
- 	ipv4_route_test|ipv4_rt)	ipv4_route_test;;
- 	ipv6_addr_metric)		ipv6_addr_metric_test;;
++	skb_orphan(skb);
+ 	ret = gro_cells_receive(&macsec->gro_cells, skb);
+ 	if (ret == NET_RX_SUCCESS)
+ 		count_rx(dev, skb->len);
 
 
