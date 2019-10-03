@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C6CCA75D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7761ECA5F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405629AbfJCQx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:53:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41428 "EHLO mail.kernel.org"
+        id S2404697AbfJCQiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:38:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406415AbfJCQxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:53:25 -0400
+        id S2404789AbfJCQiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:38:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 978402070B;
-        Thu,  3 Oct 2019 16:53:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71CB520830;
+        Thu,  3 Oct 2019 16:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121604;
-        bh=rFg+X+AdtxdlLQ/7XLQJB/cHNvvUWv+S2FvMzXXgqNg=;
+        s=default; t=1570120696;
+        bh=RgbKOuX3h2QbdzinijI7/wH56GttneKB9fd77dI5Lzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QknmR7NaF+QuZNTohDMdftlh7mQACdAUUwNeoqMMkhgzbyghs7L1vH0Qwhgg24GPY
-         Mmn/5a7sFYdXGvmjsrqWC0gUgMHa55DEvSQ/9Yd1jCUseZjt3Vn5ozcyMpamK6MhBH
-         y3wvKQO65+MnYruPEQroaFfqmyXu4PVtNjQAMSNk=
+        b=kRGOpQqp/GQSS6J0IWt/4mQDxlRaWK5BTwCSTVFtAFV/KW+/NlQjmjxOatKpCwjRZ
+         pTdml9f1hC1VqQSSr1geBbVGmuJmlSJB9yV2K+1KCPayXGw+lkAi9uKJOTJw9TpQHt
+         Gm/zJvvfeqh5OJ81hlkdMadQZllBFJTA/g3Sbxtk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Ming Lei <ming.lei@redhat.com>, Bob Liu <bob.liu@oracle.com>,
-        Yufen Yu <yuyufen@huawei.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.3 303/344] block: fix null pointer dereference in blk_mq_rq_timed_out()
+        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 5.2 290/313] SUNRPC: Fix buffer handling of GSS MIC without slack
 Date:   Thu,  3 Oct 2019 17:54:28 +0200
-Message-Id: <20191003154609.287465111@linuxfoundation.org>
+Message-Id: <20191003154601.664343882@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,137 +44,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Benjamin Coddington <bcodding@redhat.com>
 
-commit 8d6996630c03d7ceeabe2611378fea5ca1c3f1b3 upstream.
+commit 5f1bc39979d868a0358c683864bec3fc8395440b upstream.
 
-We got a null pointer deference BUG_ON in blk_mq_rq_timed_out()
-as following:
+The GSS Message Integrity Check data for krb5i may lie partially in the XDR
+reply buffer's pages and tail.  If so, we try to copy the entire MIC into
+free space in the tail.  But as the estimations of the slack space required
+for authentication and verification have improved there may be less free
+space in the tail to complete this copy -- see commit 2c94b8eca1a2
+("SUNRPC: Use au_rslack when computing reply buffer size").  In fact, there
+may only be room in the tail for a single copy of the MIC, and not part of
+the MIC and then another complete copy.
 
-[  108.825472] BUG: kernel NULL pointer dereference, address: 0000000000000040
-[  108.827059] PGD 0 P4D 0
-[  108.827313] Oops: 0000 [#1] SMP PTI
-[  108.827657] CPU: 6 PID: 198 Comm: kworker/6:1H Not tainted 5.3.0-rc8+ #431
-[  108.829503] Workqueue: kblockd blk_mq_timeout_work
-[  108.829913] RIP: 0010:blk_mq_check_expired+0x258/0x330
-[  108.838191] Call Trace:
-[  108.838406]  bt_iter+0x74/0x80
-[  108.838665]  blk_mq_queue_tag_busy_iter+0x204/0x450
-[  108.839074]  ? __switch_to_asm+0x34/0x70
-[  108.839405]  ? blk_mq_stop_hw_queue+0x40/0x40
-[  108.839823]  ? blk_mq_stop_hw_queue+0x40/0x40
-[  108.840273]  ? syscall_return_via_sysret+0xf/0x7f
-[  108.840732]  blk_mq_timeout_work+0x74/0x200
-[  108.841151]  process_one_work+0x297/0x680
-[  108.841550]  worker_thread+0x29c/0x6f0
-[  108.841926]  ? rescuer_thread+0x580/0x580
-[  108.842344]  kthread+0x16a/0x1a0
-[  108.842666]  ? kthread_flush_work+0x170/0x170
-[  108.843100]  ret_from_fork+0x35/0x40
+The real world failure reported is that `ls` of a directory on NFS may
+sometimes return -EIO, which can be traced back to xdr_buf_read_netobj()
+failing to find available free space in the tail to copy the MIC.
 
-The bug is caused by the race between timeout handle and completion for
-flush request.
+Fix this by checking for the case of the MIC crossing the boundaries of
+head, pages, and tail. If so, shift the buffer until the MIC is contained
+completely within the pages or tail.  This allows the remainder of the
+function to create a sub buffer that directly address the complete MIC.
 
-When timeout handle function blk_mq_rq_timed_out() try to read
-'req->q->mq_ops', the 'req' have completed and reinitiated by next
-flush request, which would call blk_rq_init() to clear 'req' as 0.
-
-After commit 12f5b93145 ("blk-mq: Remove generation seqeunce"),
-normal requests lifetime are protected by refcount. Until 'rq->ref'
-drop to zero, the request can really be free. Thus, these requests
-cannot been reused before timeout handle finish.
-
-However, flush request has defined .end_io and rq->end_io() is still
-called even if 'rq->ref' doesn't drop to zero. After that, the 'flush_rq'
-can be reused by the next flush request handle, resulting in null
-pointer deference BUG ON.
-
-We fix this problem by covering flush request with 'rq->ref'.
-If the refcount is not zero, flush_end_io() return and wait the
-last holder recall it. To record the request status, we add a new
-entry 'rq_status', which will be used in flush_end_io().
-
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: stable@vger.kernel.org # v4.18+
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Cc: stable@vger.kernel.org # v5.1
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
--------
-v2:
- - move rq_status from struct request to struct blk_flush_queue
-v3:
- - remove unnecessary '{}' pair.
-v4:
- - let spinlock to protect 'fq->rq_status'
-v5:
- - move rq_status after flush_running_idx member of struct blk_flush_queue
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
 ---
- block/blk-flush.c |   10 ++++++++++
- block/blk-mq.c    |    5 ++++-
- block/blk.h       |    7 +++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
+ net/sunrpc/xdr.c |   27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -214,6 +214,16 @@ static void flush_end_io(struct request
+--- a/net/sunrpc/xdr.c
++++ b/net/sunrpc/xdr.c
+@@ -1237,16 +1237,29 @@ xdr_encode_word(struct xdr_buf *buf, uns
+ EXPORT_SYMBOL_GPL(xdr_encode_word);
  
- 	/* release the tag's ownership to the req cloned from */
- 	spin_lock_irqsave(&fq->mq_flush_lock, flags);
-+
-+	if (!refcount_dec_and_test(&flush_rq->ref)) {
-+		fq->rq_status = error;
-+		spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
-+		return;
-+	}
-+
-+	if (fq->rq_status != BLK_STS_OK)
-+		error = fq->rq_status;
-+
- 	hctx = flush_rq->mq_hctx;
- 	if (!q->elevator) {
- 		blk_mq_tag_set_rq(hctx, flush_rq->tag, fq->orig_rq);
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -904,7 +904,10 @@ static bool blk_mq_check_expired(struct
- 	 */
- 	if (blk_mq_req_expired(rq, next))
- 		blk_mq_rq_timed_out(rq, reserved);
--	if (refcount_dec_and_test(&rq->ref))
-+
-+	if (is_flush_rq(rq, hctx))
-+		rq->end_io(rq, 0);
-+	else if (refcount_dec_and_test(&rq->ref))
- 		__blk_mq_free_request(rq);
+ /* If the netobj starting offset bytes from the start of xdr_buf is contained
+- * entirely in the head or the tail, set object to point to it; otherwise
+- * try to find space for it at the end of the tail, copy it there, and
+- * set obj to point to it. */
++ * entirely in the head, pages, or tail, set object to point to it; otherwise
++ * shift the buffer until it is contained entirely within the pages or tail.
++ */
+ int xdr_buf_read_netobj(struct xdr_buf *buf, struct xdr_netobj *obj, unsigned int offset)
+ {
+ 	struct xdr_buf subbuf;
++	unsigned int boundary;
  
- 	return true;
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -19,6 +19,7 @@ struct blk_flush_queue {
- 	unsigned int		flush_queue_delayed:1;
- 	unsigned int		flush_pending_idx:1;
- 	unsigned int		flush_running_idx:1;
-+	blk_status_t 		rq_status;
- 	unsigned long		flush_pending_since;
- 	struct list_head	flush_queue[2];
- 	struct list_head	flush_data_in_flight;
-@@ -47,6 +48,12 @@ static inline void __blk_get_queue(struc
- 	kobject_get(&q->kobj);
- }
- 
-+static inline bool
-+is_flush_rq(struct request *req, struct blk_mq_hw_ctx *hctx)
-+{
-+	return hctx->fq->flush_rq == req;
-+}
+ 	if (xdr_decode_word(buf, offset, &obj->len))
+ 		return -EFAULT;
+-	if (xdr_buf_subsegment(buf, &subbuf, offset + 4, obj->len))
++	offset += 4;
 +
- struct blk_flush_queue *blk_alloc_flush_queue(struct request_queue *q,
- 		int node, int cmd_size, gfp_t flags);
- void blk_free_flush_queue(struct blk_flush_queue *q);
++	/* Is the obj partially in the head? */
++	boundary = buf->head[0].iov_len;
++	if (offset < boundary && (offset + obj->len) > boundary)
++		xdr_shift_buf(buf, boundary - offset);
++
++	/* Is the obj partially in the pages? */
++	boundary += buf->page_len;
++	if (offset < boundary && (offset + obj->len) > boundary)
++		xdr_shrink_pagelen(buf, boundary - offset);
++
++	if (xdr_buf_subsegment(buf, &subbuf, offset, obj->len))
+ 		return -EFAULT;
+ 
+ 	/* Is the obj contained entirely in the head? */
+@@ -1258,11 +1271,7 @@ int xdr_buf_read_netobj(struct xdr_buf *
+ 	if (subbuf.tail[0].iov_len == obj->len)
+ 		return 0;
+ 
+-	/* use end of tail as storage for obj:
+-	 * (We don't copy to the beginning because then we'd have
+-	 * to worry about doing a potentially overlapping copy.
+-	 * This assumes the object is at most half the length of the
+-	 * tail.) */
++	/* Find a contiguous area in @buf to hold all of @obj */
+ 	if (obj->len > buf->buflen - buf->len)
+ 		return -ENOMEM;
+ 	if (buf->tail[0].iov_len != 0)
 
 
