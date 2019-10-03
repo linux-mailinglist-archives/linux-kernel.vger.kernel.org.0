@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 337D0CA271
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39E87CA1F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732527AbfJCQFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:05:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51840 "EHLO mail.kernel.org"
+        id S1731126AbfJCQA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:00:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731287AbfJCQFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:05:16 -0400
+        id S1731563AbfJCQAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D447207FF;
-        Thu,  3 Oct 2019 16:05:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9B6F20700;
+        Thu,  3 Oct 2019 16:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118715;
-        bh=gAU5FFtkt4JrXlIGSESoZ5d/KBuNhSLtdre5Bf76G9s=;
+        s=default; t=1570118424;
+        bh=v5z7osx8ZrhN/0iHMnVEgaI9K9aFHg+JY9Ifsi+bC+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IkdJXTlAg1shSPSvuYbFsCnEPGSS2iAUVd/8ZGsmdELiBm+iIOyQ34HvIEwdhaJU9
-         wsx4k0r+dHUabaBmoEiF7QV7Q3WQZ2Z6/lQPvUBQ4WoHeuz9C8GDZYTJZIE4La1RUB
-         eDvxArX/kPOU2PsNEVm9KEZ9W3gp+5144hYQN9ZQ=
+        b=WmgscjCcuOwgP07YJm4DvttoqWUIHRMV64y8+7h6+7AfZd6gRz67L3fI5RVFd8n1w
+         AWcERSBA8NXsmdKvaCmsNdwv2sMdURo6zMfcW9r7oLFoJDjIhSZzzMG0abCPJp9eY7
+         nLNnLRQMkIrw0jW4pEH1ZiQGqsz2PvGveTxTAPKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 4.9 111/129] ARM: zynq: Use memcpy_toio instead of memcpy on smp bring-up
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 91/99] ext4: fix punch hole for inline_data file systems
 Date:   Thu,  3 Oct 2019 17:53:54 +0200
-Message-Id: <20191003154409.643189494@linuxfoundation.org>
+Message-Id: <20191003154339.624879548@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
+References: <20191003154252.297991283@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +42,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luis Araneda <luaraneda@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit b7005d4ef4f3aa2dc24019ffba03a322557ac43d upstream.
+commit c1e8220bd316d8ae8e524df39534b8a412a45d5e upstream.
 
-This fixes a kernel panic on memcpy when
-FORTIFY_SOURCE is enabled.
+If a program attempts to punch a hole on an inline data file, we need
+to convert it to a normal file first.
 
-The initial smp implementation on commit aa7eb2bb4e4a
-("arm: zynq: Add smp support")
-used memcpy, which worked fine until commit ee333554fed5
-("ARM: 8749/1: Kconfig: Add ARCH_HAS_FORTIFY_SOURCE")
-enabled overflow checks at runtime, producing a read
-overflow panic.
+This was detected using ext4/032 using the adv configuration.  Simple
+reproducer:
 
-The computed size of memcpy args are:
-- p_size (dst): 4294967295 = (size_t) -1
-- q_size (src): 1
-- size (len): 8
+mke2fs -Fq -t ext4 -O inline_data /dev/vdc
+mount /vdc
+echo "" > /vdc/testfile
+xfs_io -c 'truncate 33554432' /vdc/testfile
+xfs_io -c 'fpunch 0 1048576' /vdc/testfile
+umount /vdc
+e2fsck -fy /dev/vdc
 
-Additionally, the memory is marked as __iomem, so one of
-the memcpy_* functions should be used for read/write.
-
-Fixes: aa7eb2bb4e4a ("arm: zynq: Add smp support")
-Signed-off-by: Luis Araneda <luaraneda@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-zynq/platsmp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/inode.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/arm/mach-zynq/platsmp.c
-+++ b/arch/arm/mach-zynq/platsmp.c
-@@ -65,7 +65,7 @@ int zynq_cpun_start(u32 address, int cpu
- 			* 0x4: Jump by mov instruction
- 			* 0x8: Jumping address
- 			*/
--			memcpy((__force void *)zero, &zynq_secondary_trampoline,
-+			memcpy_toio(zero, &zynq_secondary_trampoline,
- 							trampoline_size);
- 			writel(address, zero + trampoline_size);
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3705,6 +3705,15 @@ int ext4_punch_hole(struct inode *inode,
  
+ 	trace_ext4_punch_hole(inode, offset, length, 0);
+ 
++	ext4_clear_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
++	if (ext4_has_inline_data(inode)) {
++		down_write(&EXT4_I(inode)->i_mmap_sem);
++		ret = ext4_convert_inline_data(inode);
++		up_write(&EXT4_I(inode)->i_mmap_sem);
++		if (ret)
++			return ret;
++	}
++
+ 	/*
+ 	 * Write out all dirty pages to avoid race conditions
+ 	 * Then release them.
 
 
