@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB26CA578
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62D64CA57B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392164AbfJCQep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:34:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
+        id S2404219AbfJCQev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:34:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730354AbfJCQeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:34:44 -0400
+        id S2392166AbfJCQer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:34:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 875BB2070B;
-        Thu,  3 Oct 2019 16:34:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3481820830;
+        Thu,  3 Oct 2019 16:34:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120484;
-        bh=e+vpEdynfvmz8PwJA4x8O4oVQGYU5GXH/XaFuuhjjPU=;
+        s=default; t=1570120486;
+        bh=l+Sn/vT20V4n9NS+jpT09f33J7KQnZFya5wMuhRIGZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HeTxsRsGjk8/8bunH+n0Rs2oAR2XqMwAe5PJzOcstlbuCdVlMTLTyQNPQnzF6Rdjd
-         YfWaiCdiWIqhQLE/njt6GtGdr79XxhREXuP8mkItoNb2UA2hWU5bmOPYk/wnD/7LDu
-         M8qf7B8ZQH0d2UNOXolFYK7DM4iqFOZaUiMZu0Hc=
+        b=txh1pYvEnZBjltGX4hGNNhVsC61L96gzv5pByxv+fgKWVRmV/8hs7ks2ygUNi7TL6
+         vudKGdgpUOjNuybIrFGBUNxzgl5AkKmN0usBR2WAuBxE988HCmDTdGMQLipy3J1pNx
+         la6wj/BAFhDXUNxFDhPGlR7t0OWqyOk5i1dh/+sY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
-        Phil Scarr <phil.scarr@pm.me>
-Subject: [PATCH 5.2 238/313] parisc: Disable HP HSC-PCI Cards to prevent kernel crash
-Date:   Thu,  3 Oct 2019 17:53:36 +0200
-Message-Id: <20191003154556.490294105@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 5.2 239/313] platform/x86: intel_int0002_vgpio: Fix wakeups not working on Cherry Trail
+Date:   Thu,  3 Oct 2019 17:53:37 +0200
+Message-Id: <20191003154556.585063804@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -43,73 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helge Deller <deller@gmx.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 5fa1659105fac63e0f3c199b476025c2e04111ce upstream.
+commit 1bd43d0077b9a32a8b8059036471f3fc82dae342 upstream.
 
-The HP Dino PCI controller chip can be used in two variants: as on-board
-controller (e.g. in B160L), or on an Add-On card ("Card-Mode") to bridge
-PCI components to systems without a PCI bus, e.g. to a HSC/GSC bus.  One
-such Add-On card is the HP HSC-PCI Card which has one or more DEC Tulip
-PCI NIC chips connected to the on-card Dino PCI controller.
+Commit 871f1f2bcb01 ("platform/x86: intel_int0002_vgpio: Only implement
+irq_set_wake on Bay Trail") removed the irq_set_wake method from the
+struct irq_chip used on Cherry Trail, but it did not set
+IRQCHIP_SKIP_SET_WAKE causing  kernel/irq/manage.c: set_irq_wake_real()
+to return -ENXIO.
 
-Dino in Card-Mode has a big disadvantage: All PCI memory accesses need
-to go through the DINO_MEM_DATA register, so Linux drivers will not be
-able to use the ioremap() function. Without ioremap() many drivers will
-not work, one example is the tulip driver which then simply crashes the
-kernel if it tries to access the ports on the HP HSC card.
+This causes the kernel to no longer see PME events reported through the
+INT0002 device as wakeup events. Which e.g. breaks wakeup by the (USB)
+keyboard on many Cherry Trail 2-in-1 devices.
 
-This patch disables the HP HSC card if it finds one, and as such
-fixes the kernel crash on a HP D350/2 machine.
-
-Signed-off-by: Helge Deller <deller@gmx.de>
-Noticed-by: Phil Scarr <phil.scarr@pm.me>
 Cc: stable@vger.kernel.org
+Fixes: 871f1f2bcb01 ("platform/x86: intel_int0002_vgpio: Only implement irq_set_wake on Bay Trail")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/parisc/dino.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/platform/x86/intel_int0002_vgpio.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/parisc/dino.c
-+++ b/drivers/parisc/dino.c
-@@ -156,6 +156,15 @@ static inline struct dino_device *DINO_D
- 	return container_of(hba, struct dino_device, hba);
- }
+--- a/drivers/platform/x86/intel_int0002_vgpio.c
++++ b/drivers/platform/x86/intel_int0002_vgpio.c
+@@ -155,6 +155,7 @@ static struct irq_chip int0002_cht_irqch
+ 	 * No set_wake, on CHT the IRQ is typically shared with the ACPI SCI
+ 	 * and we don't want to mess with the ACPI SCI irq settings.
+ 	 */
++	.flags			= IRQCHIP_SKIP_SET_WAKE,
+ };
  
-+/* Check if PCI device is behind a Card-mode Dino. */
-+static int pci_dev_is_behind_card_dino(struct pci_dev *dev)
-+{
-+	struct dino_device *dino_dev;
-+
-+	dino_dev = DINO_DEV(parisc_walk_tree(dev->bus->bridge));
-+	return is_card_dino(&dino_dev->hba.dev->id);
-+}
-+
- /*
-  * Dino Configuration Space Accessor Functions
-  */
-@@ -437,6 +446,21 @@ static void quirk_cirrus_cardbus(struct
- }
- DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_CIRRUS, PCI_DEVICE_ID_CIRRUS_6832, quirk_cirrus_cardbus );
- 
-+#ifdef CONFIG_TULIP
-+static void pci_fixup_tulip(struct pci_dev *dev)
-+{
-+	if (!pci_dev_is_behind_card_dino(dev))
-+		return;
-+	if (!(pci_resource_flags(dev, 1) & IORESOURCE_MEM))
-+		return;
-+	pr_warn("%s: HP HSC-PCI Cards with card-mode Dino not yet supported.\n",
-+		pci_name(dev));
-+	/* Disable this card by zeroing the PCI resources */
-+	memset(&dev->resource[0], 0, sizeof(dev->resource[0]));
-+	memset(&dev->resource[1], 0, sizeof(dev->resource[1]));
-+}
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_DEC, PCI_ANY_ID, pci_fixup_tulip);
-+#endif /* CONFIG_TULIP */
- 
- static void __init
- dino_bios_init(void)
+ static int int0002_probe(struct platform_device *pdev)
 
 
