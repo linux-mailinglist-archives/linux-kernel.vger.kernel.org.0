@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83EF7CAC15
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04350CABCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732141AbfJCQFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:05:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51534 "EHLO mail.kernel.org"
+        id S1731572AbfJCQA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:00:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732126AbfJCQFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:05:05 -0400
+        id S1730126AbfJCQAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FA4E207FF;
-        Thu,  3 Oct 2019 16:05:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1726020700;
+        Thu,  3 Oct 2019 16:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118705;
-        bh=GVnmuEVQ/Drr8zEOgY/HVCLRUoVFGyhxwmFUHpJJH4c=;
+        s=default; t=1570118421;
+        bh=mgSaZRohk52PKrF8/7qdc5HUss2tWVEUx4tTZMb7ceo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f5fTAxF4VRFs6D1xLSY0Xj9Cl1abYSOjkG+JOV6D/gc35+ZItWsnQ2meK6zSs+MGC
-         QRoYgsMEW4b2HaKxUR+pgmC4A6hjtGnVU3IBuzR7XnXkFU9RS7wDU8ewAyVSPKQEa9
-         dWT+nmWeGN/WBwDfYeY6HcxrKn5mfQdTR2/KpdoY=
+        b=OND4zBanS1LOerddOG1EcD+KzckHDnBRm3PTkhNj/oV6/J/VPNErc+q7Nsudgy5/+
+         ImftuTsPwBjJdNVp34Q7flS4Jth2c4rGdjekzQZd3Z5d7YqKBlN1xEPnjhopTTcMDR
+         r9sXd6fVjI98eSTCGaM62Ikr+g8JYOouxlJSOBso=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-        Doug Reiland <doug.reiland@intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Peter Xu <peterx@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 107/129] KVM: x86: Manually calculate reserved bits when loading PDPTRS
-Date:   Thu,  3 Oct 2019 17:53:50 +0200
-Message-Id: <20191003154408.285993885@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
+Subject: [PATCH 4.4 90/99] /dev/mem: Bail out upon SIGKILL.
+Date:   Thu,  3 Oct 2019 17:53:53 +0200
+Message-Id: <20191003154339.386257847@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
+References: <20191003154252.297991283@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,75 +44,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 16cfacc8085782dab8e365979356ce1ca87fd6cc upstream.
+commit 8619e5bdeee8b2c685d686281f2d2a6017c4bc15 upstream.
 
-Manually generate the PDPTR reserved bit mask when explicitly loading
-PDPTRs.  The reserved bits that are being tracked by the MMU reflect the
-current paging mode, which is unlikely to be PAE paging in the vast
-majority of flows that use load_pdptrs(), e.g. CR0 and CR4 emulation,
-__set_sregs(), etc...  This can cause KVM to incorrectly signal a bad
-PDPTR, or more likely, miss a reserved bit check and subsequently fail
-a VM-Enter due to a bad VMCS.GUEST_PDPTR.
+syzbot found that a thread can stall for minutes inside read_mem() or
+write_mem() after that thread was killed by SIGKILL [1]. Reading from
+iomem areas of /dev/mem can be slow, depending on the hardware.
+While reading 2GB at one read() is legal, delaying termination of killed
+thread for minutes is bad. Thus, allow reading/writing /dev/mem and
+/dev/kmem to be preemptible and killable.
 
-Add a one off helper to generate the reserved bits instead of sharing
-code across the MMU's calculations and the PDPTR emulation.  The PDPTR
-reserved bits are basically set in stone, and pushing a helper into
-the MMU's calculation adds unnecessary complexity without improving
-readability.
+  [ 1335.912419][T20577] read_mem: sz=4096 count=2134565632
+  [ 1335.943194][T20577] read_mem: sz=4096 count=2134561536
+  [ 1335.978280][T20577] read_mem: sz=4096 count=2134557440
+  [ 1336.011147][T20577] read_mem: sz=4096 count=2134553344
+  [ 1336.041897][T20577] read_mem: sz=4096 count=2134549248
 
-Oppurtunistically fix/update the comment for load_pdptrs().
+Theoretically, reading/writing /dev/mem and /dev/kmem can become
+"interruptible". But this patch chose "killable". Future patch will make
+them "interruptible" so that we can revert to "killable" if some program
+regressed.
 
-Note, the buggy commit also introduced a deliberate functional change,
-"Also remove bit 5-6 from rsvd_bits_mask per latest SDM.", which was
-effectively (and correctly) reverted by commit cd9ae5fe47df ("KVM: x86:
-Fix page-tables reserved bits").  A bit of SDM archaeology shows that
-the SDM from late 2008 had a bug (likely a copy+paste error) where it
-listed bits 6:5 as AVL and A for PDPTEs used for 4k entries but reserved
-for 2mb entries.  I.e. the SDM contradicted itself, and bits 6:5 are and
-always have been reserved.
+[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
 
-Fixes: 20c466b56168d ("KVM: Use rsvd_bits_mask in load_pdptrs()")
-Cc: stable@vger.kernel.org
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Reported-by: Doug Reiland <doug.reiland@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: stable <stable@vger.kernel.org>
+Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
+Link: https://lore.kernel.org/r/1566825205-10703-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/char/mem.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -535,8 +535,14 @@ static int kvm_read_nested_guest_page(st
- 				       data, offset, len, access);
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -95,6 +95,13 @@ void __weak unxlate_dev_mem_ptr(phys_add
  }
+ #endif
  
-+static inline u64 pdptr_rsvd_bits(struct kvm_vcpu *vcpu)
++static inline bool should_stop_iteration(void)
 +{
-+	return rsvd_bits(cpuid_maxphyaddr(vcpu), 63) | rsvd_bits(5, 8) |
-+	       rsvd_bits(1, 2);
++	if (need_resched())
++		cond_resched();
++	return fatal_signal_pending(current);
 +}
 +
  /*
-- * Load the pae pdptrs.  Return true is they are all valid.
-+ * Load the pae pdptrs.  Return 1 if they are all valid, 0 otherwise.
-  */
- int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
- {
-@@ -555,8 +561,7 @@ int load_pdptrs(struct kvm_vcpu *vcpu, s
+  * This funcion reads the *physical* memory. The f_pos points directly to the
+  * memory location.
+@@ -161,6 +168,8 @@ static ssize_t read_mem(struct file *fil
+ 		p += sz;
+ 		count -= sz;
+ 		read += sz;
++		if (should_stop_iteration())
++			break;
  	}
- 	for (i = 0; i < ARRAY_SIZE(pdpte); ++i) {
- 		if ((pdpte[i] & PT_PRESENT_MASK) &&
--		    (pdpte[i] &
--		     vcpu->arch.mmu.guest_rsvd_check.rsvd_bits_mask[0][2])) {
-+		    (pdpte[i] & pdptr_rsvd_bits(vcpu))) {
- 			ret = 0;
- 			goto out;
+ 
+ 	*ppos += read;
+@@ -232,6 +241,8 @@ static ssize_t write_mem(struct file *fi
+ 		p += sz;
+ 		count -= sz;
+ 		written += sz;
++		if (should_stop_iteration())
++			break;
+ 	}
+ 
+ 	*ppos += written;
+@@ -443,6 +454,10 @@ static ssize_t read_kmem(struct file *fi
+ 			read += sz;
+ 			low_count -= sz;
+ 			count -= sz;
++			if (should_stop_iteration()) {
++				count = 0;
++				break;
++			}
  		}
+ 	}
+ 
+@@ -467,6 +482,8 @@ static ssize_t read_kmem(struct file *fi
+ 			buf += sz;
+ 			read += sz;
+ 			p += sz;
++			if (should_stop_iteration())
++				break;
+ 		}
+ 		free_page((unsigned long)kbuf);
+ 	}
+@@ -517,6 +534,8 @@ static ssize_t do_write_kmem(unsigned lo
+ 		p += sz;
+ 		count -= sz;
+ 		written += sz;
++		if (should_stop_iteration())
++			break;
+ 	}
+ 
+ 	*ppos += written;
+@@ -568,6 +587,8 @@ static ssize_t write_kmem(struct file *f
+ 			buf += sz;
+ 			virtr += sz;
+ 			p += sz;
++			if (should_stop_iteration())
++				break;
+ 		}
+ 		free_page((unsigned long)kbuf);
+ 	}
 
 
