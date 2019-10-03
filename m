@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D999CA7A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 850D5CA5DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393168AbfJCQwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:52:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39602 "EHLO mail.kernel.org"
+        id S2404578AbfJCQh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:37:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393156AbfJCQwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:52:04 -0400
+        id S2404549AbfJCQhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:37:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00F3E20862;
-        Thu,  3 Oct 2019 16:52:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6A34215EA;
+        Thu,  3 Oct 2019 16:37:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121523;
-        bh=QgqhBMZOdxVZBFPauAUYX1wbmJG3AvrJIlgEmUkZGP4=;
+        s=default; t=1570120640;
+        bh=lxArp3kU4HFZxrzSHItw74m76dcaz61ksoyl0nVuO+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dOihcuykp1FmqNbh8CmqkLzVq2Gn4egsJ9sCnWiX7VmG4ZS/PTpLG+02tBlKBvCIu
-         /2ShZuCE/BbT3tZ03zAYfsMThpEcKDRIzL7HUlD9fd5AtJdyIHgXU6GBf6LR+lG8lu
-         TlW9dU403j8V5fApAiP27shxgXdFnNEBlwc+vzbc=
+        b=ZZdjzL/jtDlmWacfTtqVnY75xbOLvuLvZ+7/8IUz/E+9RRUVLIkXtsGtVh1UW0r8d
+         s8uX5ynw1SAMidi7iCkokdKq0yO76Hy1p5Zmpc7vvJb/ev7V5sTsglG+JE3RiFMH8d
+         JeTscCmncwV+0ELLTrAPgrwhfoNeg2CnOafGKqZc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.3 311/344] btrfs: Relinquish CPUs in btrfs_compare_trees
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Boaz Harrosh <boazh@netapp.com>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 5.2 298/313] mm: Handle MADV_WILLNEED through vfs_fadvise()
 Date:   Thu,  3 Oct 2019 17:54:36 +0200
-Message-Id: <20191003154609.868056456@linuxfoundation.org>
+Message-Id: <20191003154602.510522173@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,69 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Borisov <nborisov@suse.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 6af112b11a4bc1b560f60a618ac9c1dcefe9836e upstream.
+commit 692fe62433d4ca47605b39f7c416efd6679ba694 upstream.
 
-When doing any form of incremental send the parent and the child trees
-need to be compared via btrfs_compare_trees. This  can result in long
-loop chains without ever relinquishing the CPU. This causes softlockup
-detector to trigger when comparing trees with a lot of items. Example
-report:
+Currently handling of MADV_WILLNEED hint calls directly into readahead
+code. Handle it by calling vfs_fadvise() instead so that filesystem can
+use its ->fadvise() callback to acquire necessary locks or otherwise
+prepare for the request.
 
-watchdog: BUG: soft lockup - CPU#0 stuck for 24s! [snapperd:16153]
-CPU: 0 PID: 16153 Comm: snapperd Not tainted 5.2.9-1-default #1 openSUSE Tumbleweed (unreleased)
-Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-pstate: 40000005 (nZcv daif -PAN -UAO)
-pc : __ll_sc_arch_atomic_sub_return+0x14/0x20
-lr : btrfs_release_extent_buffer_pages+0xe0/0x1e8 [btrfs]
-sp : ffff00001273b7e0
-Call trace:
- __ll_sc_arch_atomic_sub_return+0x14/0x20
- release_extent_buffer+0xdc/0x120 [btrfs]
- free_extent_buffer.part.0+0xb0/0x118 [btrfs]
- free_extent_buffer+0x24/0x30 [btrfs]
- btrfs_release_path+0x4c/0xa0 [btrfs]
- btrfs_free_path.part.0+0x20/0x40 [btrfs]
- btrfs_free_path+0x24/0x30 [btrfs]
- get_inode_info+0xa8/0xf8 [btrfs]
- finish_inode_if_needed+0xe0/0x6d8 [btrfs]
- changed_cb+0x9c/0x410 [btrfs]
- btrfs_compare_trees+0x284/0x648 [btrfs]
- send_subvol+0x33c/0x520 [btrfs]
- btrfs_ioctl_send+0x8a0/0xaf0 [btrfs]
- btrfs_ioctl+0x199c/0x2288 [btrfs]
- do_vfs_ioctl+0x4b0/0x820
- ksys_ioctl+0x84/0xb8
- __arm64_sys_ioctl+0x28/0x38
- el0_svc_common.constprop.0+0x7c/0x188
- el0_svc_handler+0x34/0x90
- el0_svc+0x8/0xc
-
-Fix this by adding a call to cond_resched at the beginning of the main
-loop in btrfs_compare_trees.
-
-Fixes: 7069830a9e38 ("Btrfs: add btrfs_compare_trees function")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Boaz Harrosh <boazh@netapp.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/madvise.c |   22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -5477,6 +5477,7 @@ int btrfs_compare_trees(struct btrfs_roo
- 	advance_left = advance_right = 0;
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -14,6 +14,7 @@
+ #include <linux/userfaultfd_k.h>
+ #include <linux/hugetlb.h>
+ #include <linux/falloc.h>
++#include <linux/fadvise.h>
+ #include <linux/sched.h>
+ #include <linux/ksm.h>
+ #include <linux/fs.h>
+@@ -275,6 +276,7 @@ static long madvise_willneed(struct vm_a
+ 			     unsigned long start, unsigned long end)
+ {
+ 	struct file *file = vma->vm_file;
++	loff_t offset;
  
- 	while (1) {
-+		cond_resched();
- 		if (advance_left && !left_end_reached) {
- 			ret = tree_advance(left_path, &left_level,
- 					left_root_level,
+ 	*prev = vma;
+ #ifdef CONFIG_SWAP
+@@ -298,12 +300,20 @@ static long madvise_willneed(struct vm_a
+ 		return 0;
+ 	}
+ 
+-	start = ((start - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
+-	if (end > vma->vm_end)
+-		end = vma->vm_end;
+-	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
+-
+-	force_page_cache_readahead(file->f_mapping, file, start, end - start);
++	/*
++	 * Filesystem's fadvise may need to take various locks.  We need to
++	 * explicitly grab a reference because the vma (and hence the
++	 * vma's reference to the file) can go away as soon as we drop
++	 * mmap_sem.
++	 */
++	*prev = NULL;	/* tell sys_madvise we drop mmap_sem */
++	get_file(file);
++	up_read(&current->mm->mmap_sem);
++	offset = (loff_t)(start - vma->vm_start)
++			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
++	vfs_fadvise(file, offset, end - start, POSIX_FADV_WILLNEED);
++	fput(file);
++	down_read(&current->mm->mmap_sem);
+ 	return 0;
+ }
+ 
 
 
