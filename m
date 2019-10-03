@@ -2,123 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDA15CA9A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86043CA9DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392844AbfJCQpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:45:46 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:55350 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390402AbfJCQpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:45:42 -0400
-Received: from zn.tnic (p200300EC2F0F5D00F0B6154A9AF851AA.dip0.t-ipconnect.de [IPv6:2003:ec:2f0f:5d00:f0b6:154a:9af8:51aa])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0EBC61EC0503;
-        Thu,  3 Oct 2019 18:45:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1570121136;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eIkPCeTvcN78j8vweFeN2Nr3nk3iKgIhVmOywuUW9/M=;
-        b=XWyVnN3Hnw3ZyTL4XgOzMreKMhkPulfwnXD1mttsER3/l8E7tfOwYc+ObMHMUdYfH1glId
-        O7tKS29RD2qU8cboLOfagoGjGU1QORTSGArxvzRZhOQPs9Dyrh65tnk+E5cokgz+Aymvus
-        hvfoU6NbYJIvWKB5LRGu7anv5uYgt9c=
-Date:   Thu, 3 Oct 2019 18:45:27 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        linux-edac@vger.kernel.org, x86@kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.2 078/313] RAS: Fix prototype warnings
-Message-ID: <20191003164527.GB11675@zn.tnic>
-References: <20191003154533.590915454@linuxfoundation.org>
- <20191003154540.526612763@linuxfoundation.org>
+        id S2393147AbfJCRAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:00:25 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35267 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392862AbfJCQp4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:45:56 -0400
+Received: by mail-qk1-f193.google.com with SMTP id w2so3044902qkf.2;
+        Thu, 03 Oct 2019 09:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cY7dwSAZ/LRC+V3+VuDl/u0CtvPhkHUKtwYdGP4h8tM=;
+        b=hLGF2x3mry/9VP8Cgyatm0IMsLfiswwpsqSwtwh3Z2Hay6ZNSrYP6Hl5hSyR5M48qX
+         0IPsGhDFHmzedwYhjqPSKXxSwEpjaF1SjvuJ0FK0DlG2SceDEdslkMbvqyN5w454YJEj
+         OuwD5C0GKsFxYOH/fjS9taQ1Fao+rvVL7X1AVWbbtq3PQMNMju9lJvlRQgAV3ZyrxHfz
+         Zj6wGdAz4K8h7+DjIXPxytnFabB1ZqrIkvVfNl+Es1B4BNAEYSyFz5+rL/yTVGZXslMS
+         T9YRxz1/wbsN4CzseBltb1yCaLMVpoVxf5u9viLfyDTGM5uggapI2PAJl/M2cNZb9nJB
+         +HVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=cY7dwSAZ/LRC+V3+VuDl/u0CtvPhkHUKtwYdGP4h8tM=;
+        b=RMHT5/h6CUgdSc/0yRyZM0s0mVbobXvyVqfA+oKKvrAeSR4Lc0r6jyTSXT7e/P0E0X
+         GlgTldK6jN0y2Nm4cbGWWnoj2QyGAKbzSpgRk+F4qd8EwDXGRbOKXoFQ5JlKOATFhxw6
+         eTlfLkKVQrOi7qtzWnJML+OR33E056u/cGwHHVZttZRvMXLTCj+XIcwA6STFxZb40Aws
+         GkMdjKMGoVsp2XXJzVXaut/uITHYfcF6ek0S0F4Bcg/WhG/9+GYKGxDcbJosxAjHKvak
+         a3T4bmzlJKp8yXajbWn5eXrTVq+a8C/cmsn4la3dKs8goeqveg7LM6SU9o/k8XKooygR
+         X2Yw==
+X-Gm-Message-State: APjAAAVPjRvcNqvwQTuBqa+J1fViD7Nf7o1OM9epKhg6SJBx5u12wJxa
+        ZQTxKnrEg93PUXGG19MHNTM=
+X-Google-Smtp-Source: APXvYqwyDNBYMAZlSJRkUJmx4zksig6ZCgUKH4qEh9uQ/wdnO/i0VrSvc1T2/bEhZTtSydu35p/6UQ==
+X-Received: by 2002:ae9:e810:: with SMTP id a16mr5237472qkg.364.1570121154872;
+        Thu, 03 Oct 2019 09:45:54 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::3:9f72])
+        by smtp.gmail.com with ESMTPSA id c131sm1941291qke.24.2019.10.03.09.45.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Oct 2019 09:45:54 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 09:45:52 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc:     hannes@cmpxchg.org, clm@fb.com, dennisz@fb.com,
+        Josef Bacik <jbacik@fb.com>, kernel-team@fb.com,
+        newella@fb.com, lizefan@huawei.com, axboe@kernel.dk,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Rik van Riel <riel@surriel.com>, josef@toxicpanda.com,
+        cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/10] blkcg: implement blk-iocost
+Message-ID: <20191003164552.GA3247445@devbig004.ftw2.facebook.com>
+References: <20190828220600.2527417-1-tj@kernel.org>
+ <20190828220600.2527417-9-tj@kernel.org>
+ <20190910125513.GA6399@blackbody.suse.cz>
+ <20190910160855.GS2263813@devbig004.ftw2.facebook.com>
+ <20191003145106.GC6678@blackbody.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191003154540.526612763@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191003145106.GC6678@blackbody.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 05:50:56PM +0200, Greg Kroah-Hartman wrote:
-> From: Valdis KlÄ“tnieks <valdis.kletnieks@vt.edu>
-> 
-> [ Upstream commit 0a54b809a3a2c31e1055b45b03708eb730222be1 ]
-> 
-> When building with C=2 and/or W=1, legitimate warnings are issued about
-> missing prototypes:
-> 
->     CHECK   drivers/ras/debugfs.c
->   drivers/ras/debugfs.c:4:15: warning: symbol 'ras_debugfs_dir' was not declared. Should it be static?
->   drivers/ras/debugfs.c:8:5: warning: symbol 'ras_userspace_consumers' was not declared. Should it be static?
->   drivers/ras/debugfs.c:38:12: warning: symbol 'ras_add_daemon_trace' was not declared. Should it be static?
->   drivers/ras/debugfs.c:54:13: warning: symbol 'ras_debugfs_init' was not declared. Should it be static?
->     CC      drivers/ras/debugfs.o
->   drivers/ras/debugfs.c:8:5: warning: no previous prototype for 'ras_userspace_consumers' [-Wmissing-prototypes]
->       8 | int ras_userspace_consumers(void)
->         |     ^~~~~~~~~~~~~~~~~~~~~~~
->   drivers/ras/debugfs.c:38:12: warning: no previous prototype for 'ras_add_daemon_trace' [-Wmissing-prototypes]
->      38 | int __init ras_add_daemon_trace(void)
->         |            ^~~~~~~~~~~~~~~~~~~~
->   drivers/ras/debugfs.c:54:13: warning: no previous prototype for 'ras_debugfs_init' [-Wmissing-prototypes]
->      54 | void __init ras_debugfs_init(void)
->         |             ^~~~~~~~~~~~~~~~
-> 
-> Provide the proper includes.
-> 
->  [ bp: Take care of the same warnings for cec.c too. ]
-> 
-> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: linux-edac@vger.kernel.org
-> Cc: x86@kernel.org
-> Link: http://lkml.kernel.org/r/7168.1565218769@turing-police
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/ras/cec.c     | 1 +
->  drivers/ras/debugfs.c | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-> index f5795adc5a6e1..8037c490f3ba7 100644
-> --- a/drivers/ras/cec.c
-> +++ b/drivers/ras/cec.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <linux/mm.h>
->  #include <linux/gfp.h>
-> +#include <linux/ras.h>
->  #include <linux/kernel.h>
->  #include <linux/workqueue.h>
->  
-> diff --git a/drivers/ras/debugfs.c b/drivers/ras/debugfs.c
-> index 9c1b717efad86..0d4f985afbf37 100644
-> --- a/drivers/ras/debugfs.c
-> +++ b/drivers/ras/debugfs.c
-> @@ -1,5 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  #include <linux/debugfs.h>
-> +#include <linux/ras.h>
-> +#include "debugfs.h"
->  
->  struct dentry *ras_debugfs_dir;
->  
-> -- 
+Hello,
 
-Definitely not stable material.
+On Thu, Oct 03, 2019 at 04:51:06PM +0200, Michal Koutný wrote:
+> > Initially, I put them under block device sysfs but it was too clumsy
+> > with different config file formats and all.
+> Do you have any more details on that? In the end, it all boils down to a
+> daemon/setup utility writing into the control files and it can use
+> whatever config files it decides, can't it?
+
+Yeah, I mean, we can make any interface work.  So, there are two
+global knobs io.cost.model and io.cost.qos.  Of the tw, io.cost.model
+is okay to move under block device but the qos file gets weird because
+the content of the file is more resource control policies than device
+properties.
+
+Thanks.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+tejun
