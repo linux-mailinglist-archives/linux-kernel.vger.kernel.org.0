@@ -2,90 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9354ECAEAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64612CAEB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730691AbfJCS5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 14:57:41 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41534 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729334AbfJCS5l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:57:41 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q7so2314787pfh.8;
-        Thu, 03 Oct 2019 11:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=77ylIXsEbYhUXexead1rm79X/JZoqHaSnH4twYhYCoQ=;
-        b=BpE9oIq1CkyRCJfS8Nn2AnbjENHyzwH5NgPOeVNQUQBPh7UjnSVpGKz0ge3saGm/iF
-         u9Fcz0pmEzvbRqy3zYSji48bwSSbZ06d/3D6t1WFFaKVZPnunteU5BMuhPqymZOfX0QW
-         6v0XzWb0j2/xVW4cbs51ECFH6q7gKyAVdAusUUoJ1yAv32vdJBCaKymC5+gQHjDbJd3k
-         uWJ9HYp5euk8lArRNufDVBNvGX7sOaUbA0HHWuSEfo2Vav2Si8JQKwhffYLV+I8Mbnij
-         zCleNJAe1IcxrIZfgnHk4/NRq0KShU4326UeI0hIJcFy1rCQzaZ86yMDgYwbnVTo2BXF
-         ALFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=77ylIXsEbYhUXexead1rm79X/JZoqHaSnH4twYhYCoQ=;
-        b=uW8+aTW4kUm2Y7BoaSxyeG13VYEZ5RhLAcZsLrXj7ZYjLS8ug04Jvh37/irrX4b2bQ
-         hgkPjsS0EqSclUnfrrNlShdZaFrtbI2jmAGkKfa7saBYaBPLgXsXYxXPAKALeJA4sTrs
-         pUWsIJ0q5eOkABK1E9wWK6hgpRYE+DyDQKPJmGf53a8QXGJi0CIbzrYZXcQ2aiqBMmBu
-         2lc84sFEUh8HIq2tIRNVO3MZlfkYOo3TTPFjU4OeY22Uc1u7tV1xnzM9E6MJVKI/w3MA
-         +OxwXNun7pDVgojCPMpVzGcpF9lX0I2NM2EGknmSv4+2oT1UVWeEWFo/63tAS4y7Bahx
-         bs4w==
-X-Gm-Message-State: APjAAAV02hg8wGvN9vwE45jjJbPiFVpw5JiESrVSKYSOrNy+ld7N9ORi
-        bmrDgO7K7EHxmB0Kevwnvl0=
-X-Google-Smtp-Source: APXvYqwoNe2DbK34Yvqq3TzuS+OFDaVRV5Awc4BhXJrMiJoZqeLJNE7zu/wy+ZIvsGb0ufzTgTz3zA==
-X-Received: by 2002:a63:6b49:: with SMTP id g70mr10705775pgc.92.1570129060362;
-        Thu, 03 Oct 2019 11:57:40 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id j22sm5381780pgg.16.2019.10.03.11.57.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 11:57:39 -0700 (PDT)
-Date:   Thu, 3 Oct 2019 11:57:37 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: add input_get_poll_interval()
-Message-ID: <20191003185737.GC22365@dtor-ws>
-References: <20191002215812.GA135681@dtor-ws>
- <CAO-hwJ+v1jJJ=APP__84SPrFdR+Te8nAxR6DirD8a9US_Bm4wQ@mail.gmail.com>
+        id S1732226AbfJCS5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 14:57:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35362 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729355AbfJCS5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 14:57:50 -0400
+Received: from localhost (odyssey.drury.edu [64.22.249.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D69D220862;
+        Thu,  3 Oct 2019 18:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570129069;
+        bh=VUZms35WLEMfQ6ssxS4VLvjvBarYopl2qOJcmQeQmeI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=RNwwd/5hECe7dXysVQIqYWlbAQIU8/uvWdCbqRnnEuqFDTHjsQCBbuDXngb64VYuu
+         GoHVAY/hXo9GraY0zIW+LixdiNA7JN6hfEyldB8+QvvQeKwnBKCuGOxqy8lc9jH/9E
+         LAku9d9Z65l0/es2xvtAKnVLeIneWSgbk15M/+Hk=
+Date:   Thu, 3 Oct 2019 13:57:47 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+Subject: Re: [PATCH v7 7/7] PCI: Skip Enhanced Allocation (EA) initialization
+ for VF device
+Message-ID: <20191003185747.GA178031@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO-hwJ+v1jJJ=APP__84SPrFdR+Te8nAxR6DirD8a9US_Bm4wQ@mail.gmail.com>
+In-Reply-To: <ecff2638-7a5a-3d5d-6f30-f9517b139696@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin,
-
-On Thu, Oct 03, 2019 at 02:34:59PM -0400, Benjamin Tissoires wrote:
-> Hi Dmitry,
+On Thu, Oct 03, 2019 at 10:21:24AM -0700, Kuppuswamy Sathyanarayanan wrote:
+> Hi Bjorn,
 > 
-> On Wed, Oct 2, 2019 at 5:58 PM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> >
-> > Some drivers need to be able to know the current polling interval for
-> > devices working in polling mode, let's allow them fetching it.
-> >
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> On 8/28/19 3:14 PM, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> > 
+> > As per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced Allocation
+> > Capability. So skip pci_ea_init() for virtual devices.
+> > 
+> > Cc: Ashok Raj <ashok.raj@intel.com>
+> > Cc: Keith Busch <keith.busch@intel.com>
+> > Suggested-by: Ashok Raj <ashok.raj@intel.com>
+> > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> This patch was also dropped in your v8. Is this also intentional?
+
+Yes, I dropped it because I didn't think there was much motivation for
+it.
+
+If a device is broken, i.e., a VF has an EA capability, this patch
+silently returns.  The existing code would try to use the EA
+capability and something would probably blow up, so in that sense,
+this patch makes the hardware issue less visible.
+
+If a device is correct, i.e., a VF does *not* have an EA capability,
+pci_find_capability() will fail anyway, so this patch doesn't change
+the functional behavior.
+
+This patch *does* avoid the pci_find_capability() in that case, which
+is a performance optimization.  We could merge it on that basis, but
+we should try to quantify the benefit to see if it's really worthwhile
+and the commit log should use that as the explicit motivation.
+
+> > ---
+> >   drivers/pci/pci.c | 7 +++++++
+> >   1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 1b27b5af3d55..266600a11769 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -3025,6 +3025,13 @@ void pci_ea_init(struct pci_dev *dev)
+> >   	int offset;
+> >   	int i;
+> > +	/*
+> > +	 * Per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced
+> > +	 * Allocation Capability.
+> > +	 */
+> > +	if (dev->is_virtfn)
+> > +		return;
+> > +
+> >   	/* find PCI EA capability in list */
+> >   	ea = pci_find_capability(dev, PCI_CAP_ID_EA);
+> >   	if (!ea)
 > 
-> Not sure if you really need my input on this one, but, sure, looks good to me:
-> Acked-By: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-
-Thanks!
-
-I like for someone to have taken look at the stuff I write before I
-commit it to the tree, and you are one of the most active developers in
-linux-input, so I tend to copy you on random bits and pieces and I
-really appreciate that you take time to check them out.
-
--- 
-Dmitry
+> -- 
+> Sathyanarayanan Kuppuswamy
+> Linux kernel developer
+> 
