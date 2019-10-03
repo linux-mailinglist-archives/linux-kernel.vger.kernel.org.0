@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C725FCA381
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46277CA382
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387953AbfJCQPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:15:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40142 "EHLO mail.kernel.org"
+        id S2388867AbfJCQPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732566AbfJCQPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:15:47 -0400
+        id S1732566AbfJCQPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:15:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 322AC2054F;
-        Thu,  3 Oct 2019 16:15:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC56F2054F;
+        Thu,  3 Oct 2019 16:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119346;
-        bh=vg6DsUyf4XVIFXgZdWx6wo3jzA2TDOouGPZg9zo/8JY=;
+        s=default; t=1570119349;
+        bh=W4X8vXVHEFPFQSTdvRznwhMJHRc36QiMXlnVAAWFoUk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iZtHcN+ax3zSip5rce+wXAqoqb63yC3OpHfeFoYh+xiMLXevTIbb/XSIgA3qO7GPj
-         7h7ROv4XeTh6FnQmxal9auSy0g6Xds9tdWhFfue78ScnA7qTY1I+P1t7OJZWgylsfG
-         PLDWOqGHitA55woVA2kPcx0gEpapM1ifu+28r/dU=
+        b=2sd8/vwTnmwIGwMEB5fTh4qjP797uKLWbTKRw6tXipVC0Ilk/El0HlCdd0pPwFERf
+         LsEH5W+slu6/QrKsb7Td77ubB5M8bO/YLw9OenKbNpkhW8+WHHm0RDN/vph6BUSG73
+         iPPMQtjsUpbVaZMPVRshEH3j8sDbNB0bUjwI7qyM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Yotam Gigi <yotam.gi@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.19 006/211] net/sched: act_sample: dont push mac header on ip6gre ingress
-Date:   Thu,  3 Oct 2019 17:51:12 +0200
-Message-Id: <20191003154448.643286322@linuxfoundation.org>
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        syzbot+618aacd49e8c8b8486bd@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 007/211] net_sched: add max len check for TCA_KIND
+Date:   Thu,  3 Oct 2019 17:51:13 +0200
+Message-Id: <20191003154448.932834647@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -44,40 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 92974a1d006ad8b30d53047c70974c9e065eb7df ]
+[ Upstream commit 62794fc4fbf52f2209dc094ea255eaef760e7d01 ]
 
-current 'sample' action doesn't push the mac header of ingress packets if
-they are received by a layer 3 tunnel (like gre or sit); but it forgot to
-check for gre over ipv6, so the following script:
+The TCA_KIND attribute is of NLA_STRING which does not check
+the NUL char. KMSAN reported an uninit-value of TCA_KIND which
+is likely caused by the lack of NUL.
 
- # tc q a dev $d clsact
- # tc f a dev $d ingress protocol ip flower ip_proto icmp action sample \
- > group 100 rate 1
- # psample -v -g 100
+Change it to NLA_NUL_STRING and add a max len too.
 
-dumps everything, including outer header and mac, when $d is a gre tunnel
-over ipv6. Fix this adding a missing label for ARPHRD_IP6GRE devices.
-
-Fixes: 5c5670fae430 ("net/sched: Introduce sample tc action")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Reviewed-by: Yotam Gigi <yotam.gi@gmail.com>
+Fixes: 8b4c3cdd9dd8 ("net: sched: Add policy validation for tc attributes")
+Reported-and-tested-by: syzbot+618aacd49e8c8b8486bd@syzkaller.appspotmail.com
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_sample.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/sched/sch_api.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/sched/act_sample.c
-+++ b/net/sched/act_sample.c
-@@ -134,6 +134,7 @@ static bool tcf_sample_dev_ok_push(struc
- 	case ARPHRD_TUNNEL6:
- 	case ARPHRD_SIT:
- 	case ARPHRD_IPGRE:
-+	case ARPHRD_IP6GRE:
- 	case ARPHRD_VOID:
- 	case ARPHRD_NONE:
- 		return false;
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -1308,7 +1308,8 @@ check_loop_fn(struct Qdisc *q, unsigned
+ }
+ 
+ const struct nla_policy rtm_tca_policy[TCA_MAX + 1] = {
+-	[TCA_KIND]		= { .type = NLA_STRING },
++	[TCA_KIND]		= { .type = NLA_NUL_STRING,
++				    .len = IFNAMSIZ - 1 },
+ 	[TCA_RATE]		= { .type = NLA_BINARY,
+ 				    .len = sizeof(struct tc_estimator) },
+ 	[TCA_STAB]		= { .type = NLA_NESTED },
 
 
