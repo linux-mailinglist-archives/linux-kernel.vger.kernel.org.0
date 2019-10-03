@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0863CA8E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B7DCA8F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404164AbfJCQeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:34:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
+        id S2404239AbfJCQfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392122AbfJCQeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:34:20 -0400
+        id S2392182AbfJCQfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 198A92086A;
-        Thu,  3 Oct 2019 16:34:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BADFF215EA;
+        Thu,  3 Oct 2019 16:34:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120459;
-        bh=Q/NK56j/ghdmHEJTxu2BwpA78enXAjTw55znvF1Vb/A=;
+        s=default; t=1570120500;
+        bh=BfTwByiLBOEtLAiKrDFm0+a1C2cPRfgHJQH9uMU+AJg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fgPaC9C8UFwMcRjQOZl2pmt7IdDlyAGk75p7p8oMNSpSldF5CwOd++t9LivlBBe/a
-         MlR/aF/juTLwugyJFpIztu/NlF11FyStVWQYxE5/n2bRFZmMVWOMwcXon8HEhZI0MI
-         LgDaimMAAowNb/piswkWtf2S/7bzXvUThwf5/B0k=
+        b=pgjrIsC850x8vGQIQydt8JWvnQLLCzFrcoZwtlTWQKdztQu+Ol7pz8vzROXM287p0
+         LDIhcmendBiDlgjU2QTHDdvaOf2w10vztqG8iBXZN632SficUYvpVskj2JAeaDQLcL
+         nAwQUXvd3CROzoi1BMUmQh4Oo8V9ndTyjMOwVB9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 203/313] ALSA: hda/realtek - Blacklist PC beep for Lenovo ThinkCentre M73/93
-Date:   Thu,  3 Oct 2019 17:53:01 +0200
-Message-Id: <20191003154552.986364854@linuxfoundation.org>
+Subject: [PATCH 5.2 206/313] btrfs: delayed-inode: Kill the BUG_ON() in btrfs_delete_delayed_dir_index()
+Date:   Thu,  3 Oct 2019 17:53:04 +0200
+Message-Id: <20191003154553.282845831@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -43,35 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit 051c78af14fcd74a22b5af45548ad9d588247cc7 ]
+[ Upstream commit 933c22a7512c5c09b1fdc46b557384efe8d03233 ]
 
-Lenovo ThinkCentre M73 and M93 don't seem to have a proper beep
-although the driver tries to probe and set up blindly.
-Blacklist these machines for suppressing the beep creation.
+There is one report of fuzzed image which leads to BUG_ON() in
+btrfs_delete_delayed_dir_index().
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204635
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Although that fuzzed image can already be addressed by enhanced
+extent-tree error handler, it's still better to hunt down more BUG_ON().
+
+This patch will hunt down two BUG_ON()s in
+btrfs_delete_delayed_dir_index():
+- One for error from btrfs_delayed_item_reserve_metadata()
+  Instead of BUG_ON(), we output an error message and free the item.
+  And return the error.
+  All callers of this function handles the error by aborting current
+  trasaction.
+
+- One for possible EEXIST from __btrfs_add_delayed_deletion_item()
+  That function can return -EEXIST.
+  We already have a good enough error message for that, only need to
+  clean up the reserved metadata space and allocated item.
+
+To help above cleanup, also modifiy __btrfs_remove_delayed_item() called
+in btrfs_release_delayed_item(), to skip unassociated item.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203253
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/btrfs/delayed-inode.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 1bec62720374d..d223a79ac934f 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -1058,6 +1058,9 @@ static const struct snd_pci_quirk beep_white_list[] = {
- 	SND_PCI_QUIRK(0x1043, 0x834a, "EeePC", 1),
- 	SND_PCI_QUIRK(0x1458, 0xa002, "GA-MA790X", 1),
- 	SND_PCI_QUIRK(0x8086, 0xd613, "Intel", 1),
-+	/* blacklist -- no beep available */
-+	SND_PCI_QUIRK(0x17aa, 0x309e, "Lenovo ThinkCentre M73", 0),
-+	SND_PCI_QUIRK(0x17aa, 0x30a3, "Lenovo ThinkCentre M93", 0),
- 	{}
- };
+diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
+index 43fdb2992956a..6858a05606dd3 100644
+--- a/fs/btrfs/delayed-inode.c
++++ b/fs/btrfs/delayed-inode.c
+@@ -474,6 +474,9 @@ static void __btrfs_remove_delayed_item(struct btrfs_delayed_item *delayed_item)
+ 	struct rb_root_cached *root;
+ 	struct btrfs_delayed_root *delayed_root;
  
++	/* Not associated with any delayed_node */
++	if (!delayed_item->delayed_node)
++		return;
+ 	delayed_root = delayed_item->delayed_node->root->fs_info->delayed_root;
+ 
+ 	BUG_ON(!delayed_root);
+@@ -1525,7 +1528,12 @@ int btrfs_delete_delayed_dir_index(struct btrfs_trans_handle *trans,
+ 	 * we have reserved enough space when we start a new transaction,
+ 	 * so reserving metadata failure is impossible.
+ 	 */
+-	BUG_ON(ret);
++	if (ret < 0) {
++		btrfs_err(trans->fs_info,
++"metadata reservation failed for delayed dir item deltiona, should have been reserved");
++		btrfs_release_delayed_item(item);
++		goto end;
++	}
+ 
+ 	mutex_lock(&node->mutex);
+ 	ret = __btrfs_add_delayed_deletion_item(node, item);
+@@ -1534,7 +1542,8 @@ int btrfs_delete_delayed_dir_index(struct btrfs_trans_handle *trans,
+ 			  "err add delayed dir index item(index: %llu) into the deletion tree of the delayed node(root id: %llu, inode id: %llu, errno: %d)",
+ 			  index, node->root->root_key.objectid,
+ 			  node->inode_id, ret);
+-		BUG();
++		btrfs_delayed_item_release_metadata(dir->root, item);
++		btrfs_release_delayed_item(item);
+ 	}
+ 	mutex_unlock(&node->mutex);
+ end:
 -- 
 2.20.1
 
