@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3196CA346
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF245CA348
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388492AbfJCQOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:14:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36942 "EHLO mail.kernel.org"
+        id S2388517AbfJCQOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:14:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388477AbfJCQN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:13:56 -0400
+        id S2388504AbfJCQOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:14:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 965872054F;
-        Thu,  3 Oct 2019 16:13:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07A8A20700;
+        Thu,  3 Oct 2019 16:14:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119236;
-        bh=TJDCL/OzCzUm1R6VioSOIvxqDHPnNF2nC0aYF3S27Po=;
+        s=default; t=1570119241;
+        bh=nv5tyfbfrOt8/5M/vZRl8GRVLkrUHUar+IwteF0cp3Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r0/oGxGNcoMeq3sKuEkUz4+X5qKvlaJRH3q4jMuQ6xSioyqF0iGu2X1QZ+Qd9F+GD
-         tmsjVcTTMlHY4WNuRsBEowD7n4gsmb3pFh/JNAxYte5wvj9bOF2WFKWvo3STVqNbUb
-         +QVg7hyXVG+SPEFCo48SF/ylOhJPtCPNpkb4JEJw=
+        b=VEJuvm4ZwJkIXNsNdkE7ncE5lydUyDunX2A7g1WyqNb8Xp8X6whl+V1SeZ/amBs1o
+         waAUaJGEc5dHhgwrRHgQBCN/ixQD3t0H7h9v8yB+niSnPqBHBBQgS86PgrvxGutpXz
+         7LSkeB39oIJnerqfNmOqiBa/Ie69lvFNTAgww4ck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.14 177/185] quota: fix wrong condition in is_quota_modification()
-Date:   Thu,  3 Oct 2019 17:54:15 +0200
-Message-Id: <20191003154521.219218955@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.14 179/185] i2c: riic: Clear NACK in tend isr
+Date:   Thu,  3 Oct 2019 17:54:17 +0200
+Message-Id: <20191003154521.694500080@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -43,47 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-commit 6565c182094f69e4ffdece337d395eb7ec760efc upstream.
+commit a71e2ac1f32097fbb2beab098687a7a95c84543e upstream.
 
-Quoted from
-commit 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
+The NACKF flag should be cleared in INTRIICNAKI interrupt processing as
+description in HW manual.
 
-" At LSF we decided that if we truncate up from isize we shouldn't trim
-  fallocated blocks that were fallocated with KEEP_SIZE and are past the
- new i_size.  This patch fixes ext4 to do this. "
+This issue shows up quickly when PREEMPT_RT is applied and a device is
+probed that is not plugged in (like a touchscreen controller). The result
+is endless interrupts that halt system boot.
 
-And generic/092 of fstest have covered this case for long time, however
-is_quota_modification() didn't adjust based on that rule, so that in
-below condition, we will lose to quota block change:
-- fallocate blocks beyond EOF
-- remount
-- truncate(file_path, file_size)
-
-Fix it.
-
-Link: https://lore.kernel.org/r/20190911093650.35329-1-yuchao0@huawei.com
-Fixes: 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
-CC: stable@vger.kernel.org
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: 310c18a41450 ("i2c: riic: add driver")
+Cc: stable@vger.kernel.org
+Reported-by: Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/quotaops.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-riic.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/quotaops.h
-+++ b/include/linux/quotaops.h
-@@ -22,7 +22,7 @@ static inline struct quota_info *sb_dqop
- /* i_mutex must being held */
- static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
- {
--	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
-+	return (ia->ia_valid & ATTR_SIZE) ||
- 		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
- 		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
- }
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -212,6 +212,7 @@ static irqreturn_t riic_tend_isr(int irq
+ 	if (readb(riic->base + RIIC_ICSR2) & ICSR2_NACKF) {
+ 		/* We got a NACKIE */
+ 		readb(riic->base + RIIC_ICDRR);	/* dummy read */
++		riic_clear_set_bit(riic, ICSR2_NACKF, 0, RIIC_ICSR2);
+ 		riic->err = -ENXIO;
+ 	} else if (riic->bytes_left) {
+ 		return IRQ_NONE;
 
 
