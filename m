@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 042E8CA8B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01FFDCA8C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:19:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403805AbfJCQbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:31:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37568 "EHLO mail.kernel.org"
+        id S2391944AbfJCQcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:32:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403790AbfJCQbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:31:00 -0400
+        id S2391930AbfJCQca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:32:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9ADF12054F;
-        Thu,  3 Oct 2019 16:30:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3B9F215EA;
+        Thu,  3 Oct 2019 16:32:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120260;
-        bh=jFyrjGVt0cRFDQk6Fgliyx+XUAerjBChFSMocGjBCxw=;
+        s=default; t=1570120349;
+        bh=XhKIrUahQlqk4SXDAope8+7LBJRm3FUya3fBd/Mo1FA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n3Yz1a8BZiugnHDVZHE0rszeDztU33YLZXM/oXP1CAe1AF4GSR3i0nC08Pr5FIzKl
-         FdYJR3zsIuilOCb3matsxXapsEhu1YhdA9EkrZjvkbGZ06R56FqCSgQHxq8PRyk7eh
-         WqdkS90kzLJshF+8AE0miV5F+k7Vma1g63Uapu8k=
+        b=LsR/IUhTfpJ/E58ECpIjgHDyFXY5qXvsHTq2CroXrYJUVr0/76jyXCyvEmkY9t7fe
+         omvT8xC6fs4Ei/EpGrKs8OtmXM+Lg0wElie5IQdCWES4S5IHyxbt7StahB2Kp6AecN
+         A+Z/AK3JAPujthpvhDXic9eM9f8KFKcgkFSexJFw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 155/313] arm64: kpti: ensure patched kernel text is fetched from PoU
-Date:   Thu,  3 Oct 2019 17:52:13 +0200
-Message-Id: <20191003154548.190098694@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 162/313] ALSA: firewire-motu: add support for MOTU 4pre
+Date:   Thu,  3 Oct 2019 17:52:20 +0200
+Message-Id: <20191003154548.898994506@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,59 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit f32c7a8e45105bd0af76872bf6eef0438ff12fb2 ]
+[ Upstream commit 6af86bdb8ad41f4cf1292d3b10857dc322758328 ]
 
-While the MMUs is disabled, I-cache speculation can result in
-instructions being fetched from the PoC. During boot we may patch
-instructions (e.g. for alternatives and jump labels), and these may be
-dirty at the PoU (and stale at the PoC).
+MOTU 4pre was launched in 2012 by MOTU, Inc. This commit allows userspace
+applications can transmit and receive PCM frames and MIDI messages for
+this model via ALSA PCM interface and RawMidi/Sequencer interfaces.
 
-Thus, while the MMU is disabled in the KPTI pagetable fixup code we may
-load stale instructions into the I-cache, potentially leading to
-subsequent crashes when executing regions of code which have been
-modified at runtime.
+The device supports MOTU protocol version 3. Unlike the other devices, the
+device is simply designed. The size of data block is fixed to 10 quadlets
+during available sampling rates (44.1 - 96.0 kHz). Each data block
+includes 1 source packet header, 2 data chunks for messages, 8 data chunks
+for PCM samples and 2 data chunks for padding to quadlet alignment. The
+device has no MIDI, optical, BNC and AES/EBU interfaces.
 
-Similarly to commit:
+Like support for the other MOTU devices, the quality of playback sound
+is not enough good with periodical noise yet.
 
-  8ec41987436d566f ("arm64: mm: ensure patched kernel text is fetched from PoU")
+$ python2 crpp < ~/git/am-config-rom/motu/motu-4pre.img
+               ROM header and bus information block
+               -----------------------------------------------------------------
+400  041078cc  bus_info_length 4, crc_length 16, crc 30924
+404  31333934  bus_name "1394"
+408  20ff7000  irmc 0, cmc 0, isc 1, bmc 0, cyc_clk_acc 255, max_rec 7 (256)
+40c  0001f200  company_id 0001f2     |
+410  000a41c5  device_id 00000a41c5  | EUI-64 0001f200000a41c5
 
-... we can invalidate the I-cache after enabling the MMU to prevent such
-issues.
+               root directory
+               -----------------------------------------------------------------
+414  0004ef04  directory_length 4, crc 61188
+418  030001f2  vendor
+41c  0c0083c0  node capabilities per IEEE 1394
+420  d1000002  --> unit directory at 428
+424  8d000005  --> eui-64 leaf at 438
 
-The KPTI pagetable fixup code itself should be clean to the PoC per the
-boot protocol, so no maintenance is required for this code.
+               unit directory at 428
+               -----------------------------------------------------------------
+428  0003ceda  directory_length 3, crc 52954
+42c  120001f2  specifier id
+430  13000045  version
+434  17103800  model
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+               eui-64 leaf at 438
+               -----------------------------------------------------------------
+438  0002d248  leaf_length 2, crc 53832
+43c  0001f200  company_id 0001f2     |
+440  000a41c5  device_id 00000a41c5  | EUI-64 0001f200000a41c5
+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/mm/proc.S | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ sound/firewire/motu/motu.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 7dbf2be470f6c..28a8f7b87ff06 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -286,6 +286,15 @@ skip_pgd:
- 	msr	sctlr_el1, x18
- 	isb
+diff --git a/sound/firewire/motu/motu.c b/sound/firewire/motu/motu.c
+index 03cda2166ea3d..72908b4de77c0 100644
+--- a/sound/firewire/motu/motu.c
++++ b/sound/firewire/motu/motu.c
+@@ -247,6 +247,17 @@ static const struct snd_motu_spec motu_audio_express = {
+ 	.analog_out_ports = 4,
+ };
  
-+	/*
-+	 * Invalidate the local I-cache so that any instructions fetched
-+	 * speculatively from the PoC are discarded, since they may have
-+	 * been dynamically patched at the PoU.
-+	 */
-+	ic	iallu
-+	dsb	nsh
-+	isb
++static const struct snd_motu_spec motu_4pre = {
++	.name = "4pre",
++	.protocol = &snd_motu_protocol_v3,
++	.flags = SND_MOTU_SPEC_SUPPORT_CLOCK_X2 |
++		 SND_MOTU_SPEC_TX_MICINST_CHUNK |
++		 SND_MOTU_SPEC_TX_RETURN_CHUNK |
++		 SND_MOTU_SPEC_RX_SEPARETED_MAIN,
++	.analog_in_ports = 2,
++	.analog_out_ports = 2,
++};
 +
- 	/* Set the flag to zero to indicate that we're all done */
- 	str	wzr, [flag_ptr]
- 	ret
+ #define SND_MOTU_DEV_ENTRY(model, data)			\
+ {							\
+ 	.match_flags	= IEEE1394_MATCH_VENDOR_ID |	\
+@@ -265,6 +276,7 @@ static const struct ieee1394_device_id motu_id_table[] = {
+ 	SND_MOTU_DEV_ENTRY(0x000015, &motu_828mk3),	/* FireWire only. */
+ 	SND_MOTU_DEV_ENTRY(0x000035, &motu_828mk3),	/* Hybrid. */
+ 	SND_MOTU_DEV_ENTRY(0x000033, &motu_audio_express),
++	SND_MOTU_DEV_ENTRY(0x000045, &motu_4pre),
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(ieee1394, motu_id_table);
 -- 
 2.20.1
 
