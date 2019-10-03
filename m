@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4623ECABE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E1B1CAC66
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbfJCQBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:01:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45762 "EHLO mail.kernel.org"
+        id S1733172AbfJCQJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:09:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731797AbfJCQB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:01:28 -0400
+        id S1730839AbfJCQJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:09:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57FE120700;
-        Thu,  3 Oct 2019 16:01:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FFFE20865;
+        Thu,  3 Oct 2019 16:09:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118487;
-        bh=m86mkQGEAR5Bc8tXq/FQ5/3j86C89hyMwVTi5kizTuA=;
+        s=default; t=1570118961;
+        bh=VdKhJwRbFbfM5bBeuH5EBQiicL+atLU1WRNr50An8iE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MyVMPtxNIFOrM2fCkHgnHiHjwtIXvGEQPF5CW5KgG4oGp4Wg4ekj1zYN+Qt942HPF
-         aqRnRa/nSmrIrZjQNDzV43ThKKgzAel0SdGCF4hmobDwRXJM23UFa4N5sHFDJMAdlm
-         /pm8mnAhJB0wkbq2gU3yPUDr8wyxBRUZsR4b8v8E=
+        b=qGXQi4Ktbn/VEG6POSvAnVRhdhika6jA78qTRqjjkOkEjuI3EUCAtbO8ImJBW5ewB
+         UONO4daQLT/CqGs+v7b84EQQVkFBYpGKubJ5btF2QhDU5r1juotN3WpGJgCh9Ln8kr
+         Bt00fFJlVIEcqw49X19CZPI0dc2iPwWlN6YY2ptA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 028/129] openvswitch: change type of UPCALL_PID attribute to NLA_UNSPEC
+        stable@vger.kernel.org, chenzefeng <chenzefeng2@huawei.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 073/185] ia64:unwind: fix double free for mod->arch.init_unw_table
 Date:   Thu,  3 Oct 2019 17:52:31 +0200
-Message-Id: <20191003154332.136509462@linuxfoundation.org>
+Message-Id: <20191003154454.055459837@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li RongQing <lirongqing@baidu.com>
+From: chenzefeng <chenzefeng2@huawei.com>
 
-[ Upstream commit ea8564c865299815095bebeb4b25bef474218e4c ]
+[ Upstream commit c5e5c48c16422521d363c33cfb0dcf58f88c119b ]
 
-userspace openvswitch patch "(dpif-linux: Implement the API
-functions to allow multiple handler threads read upcall)"
-changes its type from U32 to UNSPEC, but leave the kernel
-unchanged
+The function free_module in file kernel/module.c as follow:
 
-and after kernel 6e237d099fac "(netlink: Relax attr validation
-for fixed length types)", this bug is exposed by the below
-warning
+void free_module(struct module *mod) {
+	......
+	module_arch_cleanup(mod);
+	......
+	module_arch_freeing_init(mod);
+	......
+}
 
-	[   57.215841] netlink: 'ovs-vswitchd': attribute type 5 has an invalid length.
+Both module_arch_cleanup and module_arch_freeing_init function
+would free the mod->arch.init_unw_table, which cause double free.
 
-Fixes: 5cd667b0a456 ("openvswitch: Allow each vport to have an array of 'port_id's")
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Here, set mod->arch.init_unw_table = NULL after remove the unwind
+table to avoid double free.
+
+Signed-off-by: chenzefeng <chenzefeng2@huawei.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/openvswitch/datapath.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/ia64/kernel/module.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -2218,7 +2218,7 @@ static const struct nla_policy vport_pol
- 	[OVS_VPORT_ATTR_STATS] = { .len = sizeof(struct ovs_vport_stats) },
- 	[OVS_VPORT_ATTR_PORT_NO] = { .type = NLA_U32 },
- 	[OVS_VPORT_ATTR_TYPE] = { .type = NLA_U32 },
--	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_U32 },
-+	[OVS_VPORT_ATTR_UPCALL_PID] = { .type = NLA_UNSPEC },
- 	[OVS_VPORT_ATTR_OPTIONS] = { .type = NLA_NESTED },
- };
- 
+diff --git a/arch/ia64/kernel/module.c b/arch/ia64/kernel/module.c
+index 853b5611a894d..95e8d130e1235 100644
+--- a/arch/ia64/kernel/module.c
++++ b/arch/ia64/kernel/module.c
+@@ -913,8 +913,12 @@ module_finalize (const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs, struct module *mo
+ void
+ module_arch_cleanup (struct module *mod)
+ {
+-	if (mod->arch.init_unw_table)
++	if (mod->arch.init_unw_table) {
+ 		unw_remove_unwind_table(mod->arch.init_unw_table);
+-	if (mod->arch.core_unw_table)
++		mod->arch.init_unw_table = NULL;
++	}
++	if (mod->arch.core_unw_table) {
+ 		unw_remove_unwind_table(mod->arch.core_unw_table);
++		mod->arch.core_unw_table = NULL;
++	}
+ }
+-- 
+2.20.1
+
 
 
