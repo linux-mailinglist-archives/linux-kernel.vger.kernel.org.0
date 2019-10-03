@@ -2,179 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF78ECA75B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2E7BCA788
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406416AbfJCQxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:53:24 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:42194 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405232AbfJCQxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:53:19 -0400
-Received: from smtp2.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id E55FEA33D1;
-        Thu,  3 Oct 2019 18:53:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.240])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id 2oKS5ApijqDi; Thu,  3 Oct 2019 18:53:11 +0200 (CEST)
-Date:   Fri, 4 Oct 2019 02:53:01 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-kernel@vger.kernel.org, libc-alpha@sourceware.org,
-        Christian Brauner <christian@brauner.io>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Alessia Mantegazza <amantegazza@vaga.pv.it>,
-        Guillaume Dore <corwin@poussif.eu>, linux-doc@vger.kernel.org,
-        linux-abi@vger.kernel.org, Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: [PATCH] Documentation: update about adding syscalls
-Message-ID: <20191003165301.ihrlrgcldgun7dld@yavin.dot.cyphar.com>
-References: <20191002151437.5367-1-christian.brauner@ubuntu.com>
- <20191003103931.52683cb6@lwn.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ecmiy52y44gvxiaw"
-Content-Disposition: inline
-In-Reply-To: <20191003103931.52683cb6@lwn.net>
+        id S2406488AbfJCQyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:54:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26284 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2406371AbfJCQyv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:54:51 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x93GmpAV109559;
+        Thu, 3 Oct 2019 12:54:40 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vdm171dpe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Oct 2019 12:54:39 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x93GrPOS020802;
+        Thu, 3 Oct 2019 16:54:37 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma04dal.us.ibm.com with ESMTP id 2v9y58h8wg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Oct 2019 16:54:37 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x93GsZTq56754432
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 3 Oct 2019 16:54:35 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BF680136051;
+        Thu,  3 Oct 2019 16:54:35 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2EAB9136055;
+        Thu,  3 Oct 2019 16:54:35 +0000 (GMT)
+Received: from oc5348122405.ibm.com.austin.ibm.com (unknown [9.53.179.215])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  3 Oct 2019 16:54:34 +0000 (GMT)
+From:   David Dai <zdai@linux.vnet.ibm.com>
+To:     jeffrey.t.kirsher@intel.com, davem@davemloft.net
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zdai@us.ibm.com,
+        zdai@linux.vnet.ibm.com
+Subject: [v1] e1000e: EEH on e1000e adapter detects io perm failure can trigger crash
+Date:   Thu,  3 Oct 2019 11:54:32 -0500
+Message-Id: <1570121672-12172-1-git-send-email-zdai@linux.vnet.ibm.com>
+X-Mailer: git-send-email 1.7.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=989 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910030146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We see the behavior when EEH e1000e adapter detects io permanent failure,
+it will crash kernel with this stack:
+EEH: Beginning: 'error_detected(permanent failure)'
+EEH: PE#900000 (PCI 0115:90:00.1): Invoking e1000e->error_detected(permanent failure)
+EEH: PE#900000 (PCI 0115:90:00.1): e1000e driver reports: 'disconnect'
+EEH: PE#900000 (PCI 0115:90:00.0): Invoking e1000e->error_detected(permanent failure)
+EEH: PE#900000 (PCI 0115:90:00.0): e1000e driver reports: 'disconnect'
+EEH: Finished:'error_detected(permanent failure)'
+Oops: Exception in kernel mode, sig: 5 [#1]
+NIP [c0000000007b1be0] free_msi_irqs+0xa0/0x280
+ LR [c0000000007b1bd0] free_msi_irqs+0x90/0x280
+Call Trace:
+[c0000004f491ba10] [c0000000007b1bd0] free_msi_irqs+0x90/0x280 (unreliable)
+[c0000004f491ba70] [c0000000007b260c] pci_disable_msi+0x13c/0x180
+[c0000004f491bab0] [d0000000046381ac] e1000_remove+0x234/0x2a0 [e1000e]
+[c0000004f491baf0] [c000000000783cec] pci_device_remove+0x6c/0x120
+[c0000004f491bb30] [c00000000088da6c] device_release_driver_internal+0x2bc/0x3f0
+[c0000004f491bb80] [c00000000076f5a8] pci_stop_and_remove_bus_device+0xb8/0x110
+[c0000004f491bbc0] [c00000000006e890] pci_hp_remove_devices+0x90/0x130
+[c0000004f491bc50] [c00000000004ad34] eeh_handle_normal_event+0x1d4/0x660
+[c0000004f491bd10] [c00000000004bf10] eeh_event_handler+0x1c0/0x1e0
+[c0000004f491bdc0] [c00000000017c4ac] kthread+0x1ac/0x1c0
+[c0000004f491be30] [c00000000000b75c] ret_from_kernel_thread+0x5c/0x80
 
---ecmiy52y44gvxiaw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Basically the e1000e irqs haven't been freed at the time eeh is trying to 
+remove the the e1000e device.
+Need to make sure when e1000e_close is called to bring down the NIC,
+if adapter error_state is pci_channel_io_perm_failure, it should also 
+bring down the link and free irqs.
 
-On 2019-10-03, Jonathan Corbet <corbet@lwn.net> wrote:
-> [Expanding CC a bit; this is the sort of change I'm reluctant to take
-> without being sure it reflects what the community thinks.]
->=20
-> On Wed,  2 Oct 2019 17:14:37 +0200
-> Christian Brauner <christian.brauner@ubuntu.com> wrote:
->=20
-> > Add additional information on how to ensure that syscalls with structure
-> > arguments are extensible and add a section about naming conventions to
-> > follow when adding revised versions of already existing syscalls.
-> >=20
-> > Co-Developed-by: Aleksa Sarai <cyphar@cyphar.com>
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > ---
-> >  Documentation/process/adding-syscalls.rst | 82 +++++++++++++++++++----
-> >  1 file changed, 70 insertions(+), 12 deletions(-)
-> >=20
-> > diff --git a/Documentation/process/adding-syscalls.rst b/Documentation/=
-process/adding-syscalls.rst
-> > index 1c3a840d06b9..93e0221fbb9a 100644
-> > --- a/Documentation/process/adding-syscalls.rst
-> > +++ b/Documentation/process/adding-syscalls.rst
-> > @@ -79,7 +79,7 @@ flags, and reject the system call (with ``EINVAL``) i=
-f it does::
-> >  For more sophisticated system calls that involve a larger number of ar=
-guments,
-> >  it's preferred to encapsulate the majority of the arguments into a str=
-ucture
-> >  that is passed in by pointer.  Such a structure can cope with future e=
-xtension
-> > -by including a size argument in the structure::
-> > +by either including a size argument in the structure::
-> > =20
-> >      struct xyzzy_params {
-> >          u32 size; /* userspace sets p->size =3D sizeof(struct xyzzy_pa=
-rams) */
-> > @@ -87,20 +87,56 @@ by including a size argument in the structure::
-> >          u64 param_2;
-> >          u64 param_3;
-> >      };
-> > +    int sys_xyzzy(struct xyzzy_params __user *uarg);
-> > +    /* in case of -E2BIG, p->size is set to the in-kernel size and thu=
-s all
-> > +       extensions after that offset are unsupported. */
->=20
-> That comment kind of threw me for a loop - this is the first mention of
-> E2BIG and readers may not just know what's being talked about.  Especially
-> since the comment suggests *not* actually returning an error.
+Reported-by: Morumuri Srivalli  <smorumu1@in.ibm.com>
+Signed-off-by: David Dai <zdai@linux.vnet.ibm.com>
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-I probably could've worded this better -- this comment describes what
-userspace sees when they use the API (sched_setattr(2) is an example of
-this style of API).
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index d7d56e4..cf618e1 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -4715,7 +4715,8 @@ int e1000e_close(struct net_device *netdev)
+ 
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+-	if (!test_bit(__E1000_DOWN, &adapter->state)) {
++	if (!test_bit(__E1000_DOWN, &adapter->state) ||
++	    (adapter->pdev->error_state == pci_channel_io_perm_failure)) {
+ 		e1000e_down(adapter, true);
+ 		e1000_free_irq(adapter);
+ 
+-- 
+1.7.1
 
-In the case where the kernel doesn't support a requested extension
-(usize > ksize, and there are non-zero bytes past ksize) then the kernel
-returns -E2BIG *but also* sets p->size to ksize so that userspace knows
-what extensions the kernel supports.
-
-Maybe I should've replicated more of the details from the kernel-doc for
-copy_struct_from_user().
-
-> > -As long as any subsequently added field, say ``param_4``, is designed =
-so that a
-> > -zero value gives the previous behaviour, then this allows both directi=
-ons of
-> > -version mismatch:
-> > +or by including a separate argument that specifies the size::
-> > =20
-> > - - To cope with a later userspace program calling an older kernel, the=
- kernel
-> > -   code should check that any memory beyond the size of the structure =
-that it
-> > -   expects is zero (effectively checking that ``param_4 =3D=3D 0``).
-> > - - To cope with an older userspace program calling a newer kernel, the=
- kernel
-> > -   code can zero-extend a smaller instance of the structure (effective=
-ly
-> > -   setting ``param_4 =3D 0``).
-> > +    struct xyzzy_params {
-> > +        u32 param_1;
-> > +        u64 param_2;
-> > +        u64 param_3;
-> > +    };
-> > +    /* userspace sets @usize =3D sizeof(struct xyzzy_params) */
-> > +    int sys_xyzzy(struct xyzzy_params __user *uarg, size_t usize);
-> > +    /* in case of -E2BIG, userspace has to attempt smaller @usize valu=
-es
-> > +       to figure out which extensions are unsupported. */
->=20
-> Here too.  But what I'm really wondering about now is: you're describing
-> different behavior for what are essentially two cases of the same thing.
-> Why should the kernel simply accept the smaller size if the size is
-> embedded in the structure itself, but return an error and force user space
-> to retry if it's a separate argument?
->=20
-> I guess maybe because in the latter case the kernel can't easily return
-> the size it's actually using?  I think that should be explicit if so.
-
-As above, the -E2BIG only happens if userspace is trying to use an
-extension that the kernel doesn't support (usize > ksize, non-zero bytes
-after ksize). The main difference between the two API styles is whether
-or not userspace gets told what ksize is explicitly in the case of an
--E2BIG.
-
-Maybe it would be less confusing to only mention one of ways of doing
-it, but then we have to pick one (and while the newer syscalls [clone3
-and openat2] use a separate argument, there are more syscalls which
-embed it in the struct).
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ecmiy52y44gvxiaw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXZYnaQAKCRCdlLljIbnQ
-EhlVAQCqbspnt/NT+1gkI4JVdUZFAWs0Fw/uNiDdbdMPIaf3JAEA/PeY3tJKd9bc
-O9UhoWmz9VranrMXxxyR6e0LVw7J3wo=
-=BOSH
------END PGP SIGNATURE-----
-
---ecmiy52y44gvxiaw--
