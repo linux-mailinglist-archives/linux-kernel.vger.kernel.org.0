@@ -2,78 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 529E5C9565
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 02:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB7EC9567
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 02:13:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbfJCAKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 20:10:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51776 "EHLO mail.kernel.org"
+        id S1729394AbfJCANi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 20:13:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbfJCAKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 20:10:41 -0400
-Received: from paulmck-ThinkPad-P72 (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        id S1725893AbfJCANi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 20:13:38 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0F42222BE;
-        Thu,  3 Oct 2019 00:10:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91717222BE;
+        Thu,  3 Oct 2019 00:13:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570061440;
-        bh=fmE3R/unYqOD8Jb21mmni10VRvYjNlSBy0xhnkNHBb8=;
-        h=Date:From:To:Cc:Subject:Reply-To:From;
-        b=wJMqOS7sYhwPKsQOa7bATY/6lIrGaEoXusZZJfI94MLCVMFxRLH+WGLIPX88acFSW
-         hRNO/706HX1lqbPmFlbNoe1BraU7X8Hrlz4FeYETYir7OVKs9FB2XXPmjHkPKEdhj5
-         mYEqNzdURjHlitcYcZzIQvxS5ORsvJhLH8Th36h4=
-Date:   Wed, 2 Oct 2019 17:10:39 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        akiyks@gmail.com
-Subject: [PATCH memory-model 0/32] Memory-model updates
-Message-ID: <20191003001039.GA8027@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        s=default; t=1570061617;
+        bh=6hltzyRT3OubG5wFKK8LJd0jyatsmp0ace1N5N5YixA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uD6/FKhUqtDzlmHluCqmNn82TlKMYSMeoZZ1ks7eLfNn2p6+TUzquYUn/bJJEyBHP
+         vEoOC0oVjIdkgg/PXDJvCf79MB0H3a3071W51stbDTAKLcd4YuWYQIKhV7VRZ7dg9E
+         2hFoDOCW59+OG9d4otYotz/vEX50mbCPaKitj9pw=
+Date:   Wed, 2 Oct 2019 17:13:37 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v1] kernel.h: Split out mathematical helpers
+Message-Id: <20191002171337.7cf1f48fde153382d7245fc5@linux-foundation.org>
+In-Reply-To: <20190910105105.7714-1-andriy.shevchenko@linux.intel.com>
+References: <20190910105105.7714-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Tue, 10 Sep 2019 13:51:05 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-This series contains updates for the Linux-kernel memory model:
+> kernel.h is being used as a dump for all kinds of stuff for a long time.
+> Here is the attempt to start cleaning it up by splitting out mathematical
+> helpers.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  fs/nfs/callback_proc.c        |   1 +
+>  include/linux/bitops.h        |   3 +-
+>  include/linux/dcache.h        |   1 +
+>  include/linux/iommu-helper.h  |   1 +
+>  include/linux/kernel.h        | 143 --------------------------------
+>  include/linux/math.h          | 149 ++++++++++++++++++++++++++++++++++
+>  include/linux/rcu_node_tree.h |   2 +
 
-1.	Fix data race detection for unordered store and load,
-	courtesy of Alan Stern.
+I'm not really understanding how this works, apart from "dumb luck".
 
-2-4.	Documentation update for plain accesses.
+Random example: mm/percpu.c needs roundup(), so how does it include the
+new math.h?
 
-5-32.	Work-in-progress test-script updates.
+....... ./arch/x86/include/asm/uprobes.h
+........ ./include/linux/notifier.h
+......... ./include/linux/mutex.h
+......... ./include/linux/srcu.h
+.......... ./include/linux/workqueue.h
+........... ./include/linux/timer.h
+............ ./include/linux/ktime.h
+............. ./include/linux/time.h
+.............. ./include/linux/time32.h
+............... ./include/linux/timex.h
+................ ./include/uapi/linux/timex.h
+................. ./include/linux/time.h
+................ ./include/uapi/linux/param.h
+................. ./arch/x86/include/generated/uapi/asm/param.h
+.................. ./include/asm-generic/param.h
+................... ./include/uapi/asm-generic/param.h
+................ ./arch/x86/include/asm/timex.h
+................. ./arch/x86/include/asm/tsc.h
+............. ./include/linux/jiffies.h
+.............. ./arch/x86/include/generated/uapi/asm/param.h
+.............. ./include/generated/timeconst.h
+............. ./include/linux/timekeeping.h
+............. ./include/linux/timekeeping32.h
+............ ./include/linux/debugobjects.h
+.......... ./include/linux/rcu_segcblist.h
+.......... ./include/linux/srcutree.h
+........... ./include/linux/rcu_node_tree.h
+............ ./include/linux/math.h
 
-							Thanx, Paul
+oh, like that.
 
-------------------------------------------------------------------------
+It seems rather unreliable.  Perhaps a "#include <linux/math.h>" was
+intended in kernel.h?
 
- Documentation/explanation.txt |  602 ++++++++++++++++++++++++++++++++++++++++--
- linux-kernel.cat              |    2 
- litmus-tests/.gitignore       |    4 
- scripts/README                |   16 -
- scripts/checkalllitmus.sh     |   29 --
- scripts/checkghlitmus.sh      |   11 
- scripts/checklitmus.sh        |  101 +++----
- scripts/checklitmushist.sh    |    2 
- scripts/checktheselitmus.sh   |   43 +++
- scripts/cmplitmushist.sh      |   53 +++
- scripts/hwfnseg.sh            |   20 +
- scripts/initlitmushist.sh     |    2 
- scripts/judgelitmus.sh        |  164 ++++++++---
- scripts/newlitmushist.sh      |    4 
- scripts/parseargs.sh          |   21 +
- scripts/runlitmus.sh          |  144 +++++++---
- scripts/runlitmushist.sh      |   29 +-
- scripts/simpletest.sh         |   35 ++
- 18 files changed, 1071 insertions(+), 211 deletions(-)
