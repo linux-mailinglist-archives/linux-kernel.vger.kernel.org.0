@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A588CA5EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2EECA750
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404664AbfJCQiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:38:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47514 "EHLO mail.kernel.org"
+        id S2406254AbfJCQwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:52:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392295AbfJCQh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:37:58 -0400
+        id S2390216AbfJCQwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:52:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D164222C8;
-        Thu,  3 Oct 2019 16:37:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98BCE2070B;
+        Thu,  3 Oct 2019 16:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120678;
-        bh=NXMysJ5e2+Am4q6601uqhjNjIcYRPQ+6oZ2nGUXSlxo=;
+        s=default; t=1570121564;
+        bh=XdThSglTyTf2p/nzZ3yWXHPyxKufsiDO1o2/6UNXVzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=liEVrL5z7meD7nm34tEySFyjNrChAAaYsaiMjI463a/ronRYu+3ORIi98ssTvkJ+r
-         tc3d4h707rDCnz6a+7DDq8grbe+A7qSiedU4im+QMEbFpwHhcQq+8HSdx/bnjjHKzE
-         soxVsypwtF9G01MLYA1LABInxow+Nq9bLxIljgUw=
+        b=i6ZHpPYPXOdBOu7OIpJml8uPkRzYvqdXQm6Za8g5JLxgQvoTLd+D2uIkYzzyc6W+Y
+         UqGob/xMbngO2Q6XkQxNgwOZxpl8jKGcLMKdHzx7mH8EuNkU5SnyQt2HvsDbVGO0Bt
+         OAhjUJqNrU00izCKeQRMX9My0IyxOSpO8aEKc09g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
-        Felix Fietkau <nbd@nbd.name>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 311/313] mt76: mt7615: always release sem in mt7615_load_patch
-Date:   Thu,  3 Oct 2019 17:54:49 +0200
-Message-Id: <20191003154603.815074337@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 5.3 325/344] fs: Export generic_fadvise()
+Date:   Thu,  3 Oct 2019 17:54:50 +0200
+Message-Id: <20191003154610.980892908@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lorenzo Bianconi <lorenzo@kernel.org>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 2fc446487c364bf8bbd5f8f5f27e52d914fa1d72 ]
+commit cf1ea0592dbf109e7e7935b7d5b1a47a1ba04174 upstream.
 
-Release patch semaphore even if request_firmware fails in
-mt7615_load_patch
+Filesystems will need to call this function from their fadvise handlers.
 
-Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+CC: stable@vger.kernel.org
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/wireless/mediatek/mt76/mt7615/mcu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/fs.h |    2 ++
+ mm/fadvise.c       |    4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-index dc1301effa242..e2dd425ac97e0 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -289,9 +289,9 @@ static int mt7615_driver_own(struct mt7615_dev *dev)
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3531,6 +3531,8 @@ extern void inode_nohighmem(struct inode
+ /* mm/fadvise.c */
+ extern int vfs_fadvise(struct file *file, loff_t offset, loff_t len,
+ 		       int advice);
++extern int generic_fadvise(struct file *file, loff_t offset, loff_t len,
++			   int advice);
  
- static int mt7615_load_patch(struct mt7615_dev *dev)
+ #if defined(CONFIG_IO_URING)
+ extern struct sock *io_uring_get_socket(struct file *file);
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -27,8 +27,7 @@
+  * deactivate the pages and clear PG_Referenced.
+  */
+ 
+-static int generic_fadvise(struct file *file, loff_t offset, loff_t len,
+-			   int advice)
++int generic_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
  {
--	const struct firmware *fw;
--	const struct mt7615_patch_hdr *hdr;
- 	const char *firmware = MT7615_ROM_PATCH;
-+	const struct mt7615_patch_hdr *hdr;
-+	const struct firmware *fw = NULL;
- 	int len, ret, sem;
+ 	struct inode *inode;
+ 	struct address_space *mapping;
+@@ -178,6 +177,7 @@ static int generic_fadvise(struct file *
+ 	}
+ 	return 0;
+ }
++EXPORT_SYMBOL(generic_fadvise);
  
- 	sem = mt7615_mcu_patch_sem_ctrl(dev, 1);
-@@ -307,7 +307,7 @@ static int mt7615_load_patch(struct mt7615_dev *dev)
- 
- 	ret = request_firmware(&fw, firmware, dev->mt76.dev);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	if (!fw || !fw->data || fw->size < sizeof(*hdr)) {
- 		dev_err(dev->mt76.dev, "Invalid firmware\n");
--- 
-2.20.1
-
+ int vfs_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ {
 
 
