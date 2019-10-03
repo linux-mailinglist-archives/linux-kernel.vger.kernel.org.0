@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7868BCA9B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CED53CAAC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392927AbfJCQqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59806 "EHLO mail.kernel.org"
+        id S2392142AbfJCRMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:12:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730157AbfJCQqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:46:33 -0400
+        id S2391619AbfJCQ3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:29:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A77D20830;
-        Thu,  3 Oct 2019 16:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2291222C2;
+        Thu,  3 Oct 2019 16:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121192;
-        bh=zV48jgoYMfQjfPPSYmYYK+1BTHruirrsZy0aq79/d4M=;
+        s=default; t=1570120187;
+        bh=aF29muMYd0aFbQLCZ8bnN7wOIqz7jZ7RkN0z5SAUhJI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rTEQhxAu9c5Mw6aY9H5uAtaAYUvemRapaoPJdvO4+3kcVXEsZnjVGZvKrch8tHyqp
-         DCiIikOQVd6ypJWUPB19VBXw2NwtjH1pq7Mncuw8XUdlLLDFAy60lteYH2ELY/pEOB
-         BkOg5wjV12n1ZIqTFXIQJZLhpVIGc2snt2Wk1L0I=
+        b=i6MRSxIHoV5GORt+MHlWsVim9kyTyw3gRkS5fnghDzBhPghk9ASBpbGB0T6/kpYfR
+         /zeVg1UUC80tCayDl5ec/IGhvN2ImAVTYOz4H/Hv65flrO32C3frHEYAYp+znesL9N
+         X2BzQHFqeFbQ6pqO7zIyopXkp3vvx/WvuSCkH6rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+8a8f48672560c8ca59dd@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Yazen Ghannam <yazen.ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 141/344] media: dvb-frontends: use ida for pll number
-Date:   Thu,  3 Oct 2019 17:51:46 +0200
-Message-Id: <20191003154554.158863980@linuxfoundation.org>
+Subject: [PATCH 5.2 130/313] EDAC/amd64: Support more than two controllers for chip selects handling
+Date:   Thu,  3 Oct 2019 17:51:48 +0200
+Message-Id: <20191003154545.707291404@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,219 +48,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-[ Upstream commit c268e7adea52be0093de1164c425f3c8d8927770 ]
+[ Upstream commit d971e28e2ce4696fcc32998c8aced5e47701fffe ]
 
-KASAN: global-out-of-bounds Read in dvb_pll_attach
+The struct chip_select array that's used for saving chip select bases
+and masks is fixed at length of two. There should be one struct
+chip_select for each controller, so this array should be increased to
+support systems that may have more than two controllers.
 
-Syzbot reported global-out-of-bounds Read in dvb_pll_attach, while
-accessing id[dvb_pll_devcount], because dvb_pll_devcount was 65,
-that is more than size of 'id' which is DVB_PLL_MAX(64).
+Increase the size of the struct chip_select array to eight, which is the
+largest number of controllers per die currently supported on AMD
+systems.
 
-Rather than increasing dvb_pll_devcount every time, use ida so that
-numbers are allocated correctly. This does mean that no more than
-64 devices can be attached at the same time, but this is more than
-sufficient.
+Fix number of DIMMs and Chip Select bases/masks on Family17h, because
+AMD Family 17h systems support 2 DIMMs, 4 CS bases, and 2 CS masks per
+channel.
 
-usb 1-1: dvb_usb_v2: will pass the complete MPEG2 transport stream to the
-software demuxer
-dvbdev: DVB: registering new adapter (774 Friio White ISDB-T USB2.0)
-usb 1-1: media controller created
-dvbdev: dvb_create_media_entity: media entity 'dvb-demux' registered.
-tc90522 0-0018: Toshiba TC90522 attached.
-usb 1-1: DVB: registering adapter 0 frontend 0 (Toshiba TC90522 ISDB-T
-module)...
-dvbdev: dvb_create_media_entity: media entity 'Toshiba TC90522 ISDB-T
-module' registered.
-==================================================================
-BUG: KASAN: global-out-of-bounds in dvb_pll_attach+0x6c5/0x830
-drivers/media/dvb-frontends/dvb-pll.c:798
-Read of size 4 at addr ffffffff89c9e5e0 by task kworker/0:1/12
+Also, carve out the Family 17h+ reading of the bases/masks into a
+separate function. This effectively reverts the original bases/masks
+reading code to before Family 17h support was added.
 
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0-rc6+ #13
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x67/0x231 mm/kasan/report.c:188
-  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
-  kasan_report+0xe/0x20 mm/kasan/common.c:614
-  dvb_pll_attach+0x6c5/0x830 drivers/media/dvb-frontends/dvb-pll.c:798
-  dvb_pll_probe+0xfe/0x174 drivers/media/dvb-frontends/dvb-pll.c:877
-  i2c_device_probe+0x790/0xaa0 drivers/i2c/i2c-core-base.c:389
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  i2c_new_client_device+0x5b3/0xc40 drivers/i2c/i2c-core-base.c:778
-  i2c_new_device+0x19/0x50 drivers/i2c/i2c-core-base.c:821
-  dvb_module_probe+0xf9/0x220 drivers/media/dvb-core/dvbdev.c:985
-  friio_tuner_attach+0x125/0x1d0 drivers/media/usb/dvb-usb-v2/gl861.c:536
-  dvb_usbv2_adapter_frontend_init
-drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:675 [inline]
-  dvb_usbv2_adapter_init drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:804
-[inline]
-  dvb_usbv2_init drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:865 [inline]
-  dvb_usbv2_probe.cold+0x24dc/0x255d
-drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:980
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
-  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x30b/0x410 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the variable:
-  id+0x100/0x120
-
-Memory state around the buggy address:
-  ffffffff89c9e480: fa fa fa fa 00 00 fa fa fa fa fa fa 00 00 00 00
-  ffffffff89c9e500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffffffff89c9e580: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
-                                                        ^
-  ffffffff89c9e600: 04 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
-  ffffffff89c9e680: 04 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
-==================================================================
-
-Reported-by: syzbot+8a8f48672560c8ca59dd@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190821235938.118710-2-Yazen.Ghannam@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/dvb-frontends/dvb-pll.c | 40 ++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+ drivers/edac/amd64_edac.c | 123 +++++++++++++++++++++-----------------
+ drivers/edac/amd64_edac.h |   5 +-
+ 2 files changed, 71 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/dvb-pll.c b/drivers/media/dvb-frontends/dvb-pll.c
-index ba0c49107bd28..d45b4ddc8f912 100644
---- a/drivers/media/dvb-frontends/dvb-pll.c
-+++ b/drivers/media/dvb-frontends/dvb-pll.c
-@@ -9,6 +9,7 @@
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 873437be86d9c..dd60cf5a3d969 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -810,7 +810,7 @@ static void debug_display_dimm_sizes_df(struct amd64_pvt *pvt, u8 ctrl)
  
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/idr.h>
- #include <linux/dvb/frontend.h>
- #include <asm/types.h>
+ 	edac_printk(KERN_DEBUG, EDAC_MC, "UMC%d chip selects:\n", ctrl);
  
-@@ -34,8 +35,7 @@ struct dvb_pll_priv {
- };
+-	for (dimm = 0; dimm < 4; dimm++) {
++	for (dimm = 0; dimm < 2; dimm++) {
+ 		size0 = 0;
+ 		cs0 = dimm * 2;
  
- #define DVB_PLL_MAX 64
--
--static unsigned int dvb_pll_devcount;
-+static DEFINE_IDA(pll_ida);
- 
- static int debug;
- module_param(debug, int, 0644);
-@@ -787,6 +787,7 @@ struct dvb_frontend *dvb_pll_attach(struct dvb_frontend *fe, int pll_addr,
- 	struct dvb_pll_priv *priv = NULL;
- 	int ret;
- 	const struct dvb_pll_desc *desc;
-+	int nr;
- 
- 	b1 = kmalloc(1, GFP_KERNEL);
- 	if (!b1)
-@@ -795,9 +796,14 @@ struct dvb_frontend *dvb_pll_attach(struct dvb_frontend *fe, int pll_addr,
- 	b1[0] = 0;
- 	msg.buf = b1;
- 
--	if ((id[dvb_pll_devcount] > DVB_PLL_UNDEFINED) &&
--	    (id[dvb_pll_devcount] < ARRAY_SIZE(pll_list)))
--		pll_desc_id = id[dvb_pll_devcount];
-+	nr = ida_simple_get(&pll_ida, 0, DVB_PLL_MAX, GFP_KERNEL);
-+	if (nr < 0) {
-+		kfree(b1);
-+		return NULL;
-+	}
+@@ -942,89 +942,102 @@ static void prep_chip_selects(struct amd64_pvt *pvt)
+ 	} else if (pvt->fam == 0x15 && pvt->model == 0x30) {
+ 		pvt->csels[0].b_cnt = pvt->csels[1].b_cnt = 4;
+ 		pvt->csels[0].m_cnt = pvt->csels[1].m_cnt = 2;
++	} else if (pvt->fam >= 0x17) {
++		int umc;
 +
-+	if (id[nr] > DVB_PLL_UNDEFINED && id[nr] < ARRAY_SIZE(pll_list))
-+		pll_desc_id = id[nr];
++		for_each_umc(umc) {
++			pvt->csels[umc].b_cnt = 4;
++			pvt->csels[umc].m_cnt = 2;
++		}
++
+ 	} else {
+ 		pvt->csels[0].b_cnt = pvt->csels[1].b_cnt = 8;
+ 		pvt->csels[0].m_cnt = pvt->csels[1].m_cnt = 4;
+ 	}
+ }
  
- 	BUG_ON(pll_desc_id < 1 || pll_desc_id >= ARRAY_SIZE(pll_list));
++static void read_umc_base_mask(struct amd64_pvt *pvt)
++{
++	u32 umc_base_reg, umc_mask_reg;
++	u32 base_reg, mask_reg;
++	u32 *base, *mask;
++	int cs, umc;
++
++	for_each_umc(umc) {
++		umc_base_reg = get_umc_base(umc) + UMCCH_BASE_ADDR;
++
++		for_each_chip_select(cs, umc, pvt) {
++			base = &pvt->csels[umc].csbases[cs];
++
++			base_reg = umc_base_reg + (cs * 4);
++
++			if (!amd_smn_read(pvt->mc_node_id, base_reg, base))
++				edac_dbg(0, "  DCSB%d[%d]=0x%08x reg: 0x%x\n",
++					 umc, cs, *base, base_reg);
++		}
++
++		umc_mask_reg = get_umc_base(umc) + UMCCH_ADDR_MASK;
++
++		for_each_chip_select_mask(cs, umc, pvt) {
++			mask = &pvt->csels[umc].csmasks[cs];
++
++			mask_reg = umc_mask_reg + (cs * 4);
++
++			if (!amd_smn_read(pvt->mc_node_id, mask_reg, mask))
++				edac_dbg(0, "  DCSM%d[%d]=0x%08x reg: 0x%x\n",
++					 umc, cs, *mask, mask_reg);
++		}
++	}
++}
++
+ /*
+  * Function 2 Offset F10_DCSB0; read in the DCS Base and DCS Mask registers
+  */
+ static void read_dct_base_mask(struct amd64_pvt *pvt)
+ {
+-	int base_reg0, base_reg1, mask_reg0, mask_reg1, cs;
++	int cs;
  
-@@ -808,24 +814,20 @@ struct dvb_frontend *dvb_pll_attach(struct dvb_frontend *fe, int pll_addr,
- 			fe->ops.i2c_gate_ctrl(fe, 1);
+ 	prep_chip_selects(pvt);
  
- 		ret = i2c_transfer (i2c, &msg, 1);
--		if (ret != 1) {
--			kfree(b1);
--			return NULL;
+-	if (pvt->umc) {
+-		base_reg0 = get_umc_base(0) + UMCCH_BASE_ADDR;
+-		base_reg1 = get_umc_base(1) + UMCCH_BASE_ADDR;
+-		mask_reg0 = get_umc_base(0) + UMCCH_ADDR_MASK;
+-		mask_reg1 = get_umc_base(1) + UMCCH_ADDR_MASK;
+-	} else {
+-		base_reg0 = DCSB0;
+-		base_reg1 = DCSB1;
+-		mask_reg0 = DCSM0;
+-		mask_reg1 = DCSM1;
+-	}
++	if (pvt->umc)
++		return read_umc_base_mask(pvt);
+ 
+ 	for_each_chip_select(cs, 0, pvt) {
+-		int reg0   = base_reg0 + (cs * 4);
+-		int reg1   = base_reg1 + (cs * 4);
++		int reg0   = DCSB0 + (cs * 4);
++		int reg1   = DCSB1 + (cs * 4);
+ 		u32 *base0 = &pvt->csels[0].csbases[cs];
+ 		u32 *base1 = &pvt->csels[1].csbases[cs];
+ 
+-		if (pvt->umc) {
+-			if (!amd_smn_read(pvt->mc_node_id, reg0, base0))
+-				edac_dbg(0, "  DCSB0[%d]=0x%08x reg: 0x%x\n",
+-					 cs, *base0, reg0);
+-
+-			if (!amd_smn_read(pvt->mc_node_id, reg1, base1))
+-				edac_dbg(0, "  DCSB1[%d]=0x%08x reg: 0x%x\n",
+-					 cs, *base1, reg1);
+-		} else {
+-			if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, base0))
+-				edac_dbg(0, "  DCSB0[%d]=0x%08x reg: F2x%x\n",
+-					 cs, *base0, reg0);
++		if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, base0))
++			edac_dbg(0, "  DCSB0[%d]=0x%08x reg: F2x%x\n",
++				 cs, *base0, reg0);
+ 
+-			if (pvt->fam == 0xf)
+-				continue;
++		if (pvt->fam == 0xf)
++			continue;
+ 
+-			if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, base1))
+-				edac_dbg(0, "  DCSB1[%d]=0x%08x reg: F2x%x\n",
+-					 cs, *base1, (pvt->fam == 0x10) ? reg1
+-								: reg0);
 -		}
-+		if (ret != 1)
-+			goto out;
- 		if (fe->ops.i2c_gate_ctrl)
- 			     fe->ops.i2c_gate_ctrl(fe, 0);
++		if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, base1))
++			edac_dbg(0, "  DCSB1[%d]=0x%08x reg: F2x%x\n",
++				 cs, *base1, (pvt->fam == 0x10) ? reg1
++							: reg0);
  	}
  
- 	priv = kzalloc(sizeof(struct dvb_pll_priv), GFP_KERNEL);
--	if (!priv) {
--		kfree(b1);
--		return NULL;
--	}
-+	if (!priv)
-+		goto out;
+ 	for_each_chip_select_mask(cs, 0, pvt) {
+-		int reg0   = mask_reg0 + (cs * 4);
+-		int reg1   = mask_reg1 + (cs * 4);
++		int reg0   = DCSM0 + (cs * 4);
++		int reg1   = DCSM1 + (cs * 4);
+ 		u32 *mask0 = &pvt->csels[0].csmasks[cs];
+ 		u32 *mask1 = &pvt->csels[1].csmasks[cs];
  
- 	priv->pll_i2c_address = pll_addr;
- 	priv->i2c = i2c;
- 	priv->pll_desc = desc;
--	priv->nr = dvb_pll_devcount++;
-+	priv->nr = nr;
+-		if (pvt->umc) {
+-			if (!amd_smn_read(pvt->mc_node_id, reg0, mask0))
+-				edac_dbg(0, "    DCSM0[%d]=0x%08x reg: 0x%x\n",
+-					 cs, *mask0, reg0);
+-
+-			if (!amd_smn_read(pvt->mc_node_id, reg1, mask1))
+-				edac_dbg(0, "    DCSM1[%d]=0x%08x reg: 0x%x\n",
+-					 cs, *mask1, reg1);
+-		} else {
+-			if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, mask0))
+-				edac_dbg(0, "    DCSM0[%d]=0x%08x reg: F2x%x\n",
+-					 cs, *mask0, reg0);
++		if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, mask0))
++			edac_dbg(0, "    DCSM0[%d]=0x%08x reg: F2x%x\n",
++				 cs, *mask0, reg0);
  
- 	memcpy(&fe->ops.tuner_ops, &dvb_pll_tuner_ops,
- 	       sizeof(struct dvb_tuner_ops));
-@@ -858,6 +860,11 @@ struct dvb_frontend *dvb_pll_attach(struct dvb_frontend *fe, int pll_addr,
- 	kfree(b1);
+-			if (pvt->fam == 0xf)
+-				continue;
++		if (pvt->fam == 0xf)
++			continue;
  
- 	return fe;
-+out:
-+	kfree(b1);
-+	ida_simple_remove(&pll_ida, nr);
-+
-+	return NULL;
+-			if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, mask1))
+-				edac_dbg(0, "    DCSM1[%d]=0x%08x reg: F2x%x\n",
+-					 cs, *mask1, (pvt->fam == 0x10) ? reg1
+-								: reg0);
+-		}
++		if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, mask1))
++			edac_dbg(0, "    DCSM1[%d]=0x%08x reg: F2x%x\n",
++				 cs, *mask1, (pvt->fam == 0x10) ? reg1
++							: reg0);
+ 	}
  }
- EXPORT_SYMBOL(dvb_pll_attach);
  
-@@ -894,9 +901,10 @@ dvb_pll_probe(struct i2c_client *client, const struct i2c_device_id *id)
+diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
+index 8f66472f7adc2..4dce6a2ac75f9 100644
+--- a/drivers/edac/amd64_edac.h
++++ b/drivers/edac/amd64_edac.h
+@@ -96,6 +96,7 @@
+ /* Hardware limit on ChipSelect rows per MC and processors per system */
+ #define NUM_CHIPSELECTS			8
+ #define DRAM_RANGES			8
++#define NUM_CONTROLLERS			8
  
- static int dvb_pll_remove(struct i2c_client *client)
- {
--	struct dvb_frontend *fe;
-+	struct dvb_frontend *fe = i2c_get_clientdata(client);
-+	struct dvb_pll_priv *priv = fe->tuner_priv;
+ #define ON true
+ #define OFF false
+@@ -351,8 +352,8 @@ struct amd64_pvt {
+ 	u32 dbam0;		/* DRAM Base Address Mapping reg for DCT0 */
+ 	u32 dbam1;		/* DRAM Base Address Mapping reg for DCT1 */
  
--	fe = i2c_get_clientdata(client);
-+	ida_simple_remove(&pll_ida, priv->nr);
- 	dvb_pll_release(fe);
- 	return 0;
- }
+-	/* one for each DCT */
+-	struct chip_select csels[2];
++	/* one for each DCT/UMC */
++	struct chip_select csels[NUM_CONTROLLERS];
+ 
+ 	/* DRAM base and limit pairs F1x[78,70,68,60,58,50,48,40] */
+ 	struct dram_range ranges[DRAM_RANGES];
 -- 
 2.20.1
 
