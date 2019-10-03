@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0891CA399
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D96CA39C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388361AbfJCQRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:17:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42356 "EHLO mail.kernel.org"
+        id S2389172AbfJCQRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:17:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387779AbfJCQQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:16:58 -0400
+        id S1730025AbfJCQRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:17:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EC1B20865;
-        Thu,  3 Oct 2019 16:16:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C169720700;
+        Thu,  3 Oct 2019 16:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119417;
-        bh=DM6CKKGHX4IgKpzSLPPrNa7vM4k4yCQtzVToryn8A5Q=;
+        s=default; t=1570119423;
+        bh=i5xIGvAmJ611D+9rinA4VEpsJYMNIu3CSB0dALNOkD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IptwCjO6Qcst30Pq22wK9R6Fhk81zY2yTOgULJ7RdR+qlzqMCVWuIbhkBO49BTAEk
-         3QGukHvt6gotAGR01sNoQ3djBBlApLPuSr2fxUJIn8KBQYU8TP/ccLVeAv3+ehuerJ
-         r7h1d4FyZPR/TzJV9OOicJdnUBfkL71alOWD0ncw=
+        b=WgB5l1iLP0HuF/FNGYCUrc5S7NMKATNUijs0vXfz0nazGGVOKe9dHpziS3pSPfMN8
+         fbQeuOGJObFCg9l1/x89ZV4ojOYlzxNSt4uk/EZ8B5IEEcjXLaf7hLqmqXzqzQfhn+
+         YrZcOMkOG2Boi3+m924Y+ciDL6krAQRBuGMN8nEA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        linux-edac@vger.kernel.org, x86@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 057/211] media: media/platform: fsl-viu.c: fix build for MICROBLAZE
-Date:   Thu,  3 Oct 2019 17:52:03 +0200
-Message-Id: <20191003154501.340506559@linuxfoundation.org>
+Subject: [PATCH 4.19 058/211] RAS: Fix prototype warnings
+Date:   Thu,  3 Oct 2019 17:52:04 +0200
+Message-Id: <20191003154501.432687344@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -45,42 +45,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 6898dd580a045341f844862ceb775144156ec1af ]
+[ Upstream commit 0a54b809a3a2c31e1055b45b03708eb730222be1 ]
 
-arch/microblaze/ defines out_be32() and in_be32(), so don't do that
-again in the driver source.
+When building with C=2 and/or W=1, legitimate warnings are issued about
+missing prototypes:
 
-Fixes these build warnings:
+    CHECK   drivers/ras/debugfs.c
+  drivers/ras/debugfs.c:4:15: warning: symbol 'ras_debugfs_dir' was not declared. Should it be static?
+  drivers/ras/debugfs.c:8:5: warning: symbol 'ras_userspace_consumers' was not declared. Should it be static?
+  drivers/ras/debugfs.c:38:12: warning: symbol 'ras_add_daemon_trace' was not declared. Should it be static?
+  drivers/ras/debugfs.c:54:13: warning: symbol 'ras_debugfs_init' was not declared. Should it be static?
+    CC      drivers/ras/debugfs.o
+  drivers/ras/debugfs.c:8:5: warning: no previous prototype for 'ras_userspace_consumers' [-Wmissing-prototypes]
+      8 | int ras_userspace_consumers(void)
+        |     ^~~~~~~~~~~~~~~~~~~~~~~
+  drivers/ras/debugfs.c:38:12: warning: no previous prototype for 'ras_add_daemon_trace' [-Wmissing-prototypes]
+     38 | int __init ras_add_daemon_trace(void)
+        |            ^~~~~~~~~~~~~~~~~~~~
+  drivers/ras/debugfs.c:54:13: warning: no previous prototype for 'ras_debugfs_init' [-Wmissing-prototypes]
+     54 | void __init ras_debugfs_init(void)
+        |             ^~~~~~~~~~~~~~~~
 
-../drivers/media/platform/fsl-viu.c:36: warning: "out_be32" redefined
-../arch/microblaze/include/asm/io.h:50: note: this is the location of the previous definition
-../drivers/media/platform/fsl-viu.c:37: warning: "in_be32" redefined
-../arch/microblaze/include/asm/io.h:53: note: this is the location of the previous definition
+Provide the proper includes.
 
-Fixes: 29d750686331 ("media: fsl-viu: allow building it with COMPILE_TEST")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+ [ bp: Take care of the same warnings for cec.c too. ]
+
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac@vger.kernel.org
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/7168.1565218769@turing-police
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/fsl-viu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ras/cec.c     | 1 +
+ drivers/ras/debugfs.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-index 0273302aa7412..83086eea14500 100644
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -37,7 +37,7 @@
- #define VIU_VERSION		"0.5.1"
+diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+index 5d2b2c02cbbec..0c719787876a5 100644
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/mm.h>
+ #include <linux/gfp.h>
++#include <linux/ras.h>
+ #include <linux/kernel.h>
+ #include <linux/workqueue.h>
  
- /* Allow building this driver with COMPILE_TEST */
--#ifndef CONFIG_PPC
-+#if !defined(CONFIG_PPC) && !defined(CONFIG_MICROBLAZE)
- #define out_be32(v, a)	iowrite32be(a, (void __iomem *)v)
- #define in_be32(a)	ioread32be((void __iomem *)a)
- #endif
+diff --git a/drivers/ras/debugfs.c b/drivers/ras/debugfs.c
+index 501603057dffe..12a161377f4f8 100644
+--- a/drivers/ras/debugfs.c
++++ b/drivers/ras/debugfs.c
+@@ -1,4 +1,6 @@
+ #include <linux/debugfs.h>
++#include <linux/ras.h>
++#include "debugfs.h"
+ 
+ struct dentry *ras_debugfs_dir;
+ 
 -- 
 2.20.1
 
