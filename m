@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F158CA749
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EABECA5E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406202AbfJCQwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:52:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40176 "EHLO mail.kernel.org"
+        id S2392260AbfJCQhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:37:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406184AbfJCQw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:52:28 -0400
+        id S2404641AbfJCQhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:37:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EB6020867;
-        Thu,  3 Oct 2019 16:52:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ACD32133F;
+        Thu,  3 Oct 2019 16:37:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121547;
-        bh=AVrR9+tsKYdOfYBrPs/yN9cRUzxjuwMAG5sQEM8OOFY=;
+        s=default; t=1570120664;
+        bh=qyqv8Nqt7qKDu6qQIfCQt4uEpeLcNcBWqRu86A9Xn1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sDQHhVDHmysfAYUumR9sV/P4w1sVg/e3WvqU3eqPpXSRFa+VzGIOwrVbaXMvmJVOY
-         WW/m9eTHS2mA8Ogh0DDL9VWTPpTIXUg+6dkcreBejKz6SdM3sbM/8pMcYXwA6HLfnL
-         NbzbfB6w/8yk53HOJhnqnO1znYaOgDtuM8daixQE=
+        b=LPz80+IQZFWskUq4qHHnyVte5XE3SCMJMsrvqfsaVrjsGkA4icOjAmXiDkZOSJaxf
+         eDj6yaqdoEF4Da8/SZUTeRIIYYKOmZkSd1lVPJ6iuQ5STJ/otDaUC0fPpF9GYfv5wI
+         5MZNcC4KWK5VjRSv4e425JbQ1fax+bSfigggVzjc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Curtis Malainey <cujomalainey@chromium.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.3 319/344] ACPI / LPSS: Save/restore LPSS private registers also on Lynxpoint
+        Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 5.2 306/313] i2c: riic: Clear NACK in tend isr
 Date:   Thu,  3 Oct 2019 17:54:44 +0200
-Message-Id: <20191003154610.524307055@linuxfoundation.org>
+Message-Id: <20191003154603.337186952@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,64 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-commit 57b3006492a4c11b2d4a772b5b2905d544a32037 upstream.
+commit a71e2ac1f32097fbb2beab098687a7a95c84543e upstream.
 
-My assumption in commit b53548f9d9e4 ("spi: pxa2xx: Remove LPSS private
-register restoring during resume") that Intel Lynxpoint and compatible
-based chipsets may not need LPSS private registers saving and restoring
-over suspend/resume cycle turned out to be false on Intel Broadwell.
+The NACKF flag should be cleared in INTRIICNAKI interrupt processing as
+description in HW manual.
 
-Curtis Malainey sent a patch bringing above change back and reported the
-LPSS SPI Chip Select control was lost over suspend/resume cycle on
-Broadwell machine.
+This issue shows up quickly when PREEMPT_RT is applied and a device is
+probed that is not plugged in (like a touchscreen controller). The result
+is endless interrupts that halt system boot.
 
-Instead of reverting above commit lets add LPSS private register
-saving/restoring also for all LPSS SPI, I2C and UART controllers on
-Lynxpoint and compatible chipset to make sure context is not lost in
-case nothing else preserves it like firmware or if LPSS is always on.
-
-Fixes: b53548f9d9e4 ("spi: pxa2xx: Remove LPSS private register restoring during resume")
-Reported-by: Curtis Malainey <cujomalainey@chromium.org>
-Tested-by: Curtis Malainey <cujomalainey@chromium.org>
-Cc: 5.0+ <stable@vger.kernel.org> # 5.0+
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 310c18a41450 ("i2c: riic: add driver")
+Cc: stable@vger.kernel.org
+Reported-by: Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpi_lpss.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-riic.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -219,12 +219,13 @@ static void bsw_pwm_setup(struct lpss_pr
- }
- 
- static const struct lpss_device_desc lpt_dev_desc = {
--	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR,
-+	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR
-+			| LPSS_SAVE_CTX,
- 	.prv_offset = 0x800,
- };
- 
- static const struct lpss_device_desc lpt_i2c_dev_desc = {
--	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_LTR,
-+	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_LTR | LPSS_SAVE_CTX,
- 	.prv_offset = 0x800,
- };
- 
-@@ -236,7 +237,8 @@ static struct property_entry uart_proper
- };
- 
- static const struct lpss_device_desc lpt_uart_dev_desc = {
--	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR,
-+	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR
-+			| LPSS_SAVE_CTX,
- 	.clk_con_id = "baudclk",
- 	.prv_offset = 0x800,
- 	.setup = lpss_uart_setup,
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -202,6 +202,7 @@ static irqreturn_t riic_tend_isr(int irq
+ 	if (readb(riic->base + RIIC_ICSR2) & ICSR2_NACKF) {
+ 		/* We got a NACKIE */
+ 		readb(riic->base + RIIC_ICDRR);	/* dummy read */
++		riic_clear_set_bit(riic, ICSR2_NACKF, 0, RIIC_ICSR2);
+ 		riic->err = -ENXIO;
+ 	} else if (riic->bytes_left) {
+ 		return IRQ_NONE;
 
 
