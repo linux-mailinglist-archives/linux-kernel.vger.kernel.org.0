@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8265BCAC7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDDDCAD79
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387716AbfJCQKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:10:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60240 "EHLO mail.kernel.org"
+        id S2390457AbfJCRmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:42:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387702AbfJCQKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:10:43 -0400
+        id S1730924AbfJCP5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:57:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D16A220865;
-        Thu,  3 Oct 2019 16:10:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30C5220830;
+        Thu,  3 Oct 2019 15:57:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119042;
-        bh=hl3O/OFJLRd7pyM5aEktlYIQgT6hixGXy1W4f3nfxMQ=;
+        s=default; t=1570118241;
+        bh=5u9Whsc6p/XfD9xIRZ6kTcBX2xjj+4JbTk+wCWZ59AA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wvzdcvXenZpyb/gOQhNTPTqGmsclGN0Z8+r1zrIK3O42RJmvVv7I4FUy/JmWeO/0F
-         TyTfOB6bzB1n6xIF9aMPRPnpGcgfdkTCOJgAnnbPnHbEIfgOXTFUFgC5vf+naxYmD0
-         tCyz+AI3yyPJJ8jMSaOf7RmjswNP1q3i5crV5B7I=
+        b=IGqME5eC9/Wb1MRfQfL+v3vLhoSqf0yP5Bc/6GZqbLUzq3Rl3399VF93s1an+KDgC
+         kpaIv7RulDxaC5Puexa70c8mSP+6zi2CnALWLGe8/+EDfx6ymePbga3IyAPOGOWBBt
+         Qk/NdkN1kTjaTfHAxvs008wPeHdMsL8cNb/734Fs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 104/185] PM / devfreq: exynos-bus: Correct clock enable sequence
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 39/99] sched/fair: Fix imbalance due to CPU affinity
 Date:   Thu,  3 Oct 2019 17:53:02 +0200
-Message-Id: <20191003154502.348273629@linuxfoundation.org>
+Message-Id: <20191003154314.415611606@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
+References: <20191003154252.297991283@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,99 +47,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
 
-[ Upstream commit 2c2b20e0da89c76759ee28c6824413ab2fa3bfc6 ]
+[ Upstream commit f6cad8df6b30a5d2bbbd2e698f74b4cafb9fb82b ]
 
-Regulators should be enabled before clocks to avoid h/w hang. This
-require change in exynos_bus_probe() to move exynos_bus_parse_of()
-after exynos_bus_parent_parse_of() and change in error handling.
-Similar change is needed in exynos_bus_exit() where clock should be
-disabled before regulators.
+The load_balance() has a dedicated mecanism to detect when an imbalance
+is due to CPU affinity and must be handled at parent level. In this case,
+the imbalance field of the parent's sched_group is set.
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+The description of sg_imbalanced() gives a typical example of two groups
+of 4 CPUs each and 4 tasks each with a cpumask covering 1 CPU of the first
+group and 3 CPUs of the second group. Something like:
+
+	{ 0 1 2 3 } { 4 5 6 7 }
+	        *     * * *
+
+But the load_balance fails to fix this UC on my octo cores system
+made of 2 clusters of quad cores.
+
+Whereas the load_balance is able to detect that the imbalanced is due to
+CPU affinity, it fails to fix it because the imbalance field is cleared
+before letting parent level a chance to run. In fact, when the imbalance is
+detected, the load_balance reruns without the CPU with pinned tasks. But
+there is no other running tasks in the situation described above and
+everything looks balanced this time so the imbalance field is immediately
+cleared.
+
+The imbalance field should not be cleared if there is no other task to move
+when the imbalance is detected.
+
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1561996022-28829-1-git-send-email-vincent.guittot@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/exynos-bus.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ kernel/sched/fair.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 49f68929e024f..25ff31eb1044c 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -194,11 +194,10 @@ static void exynos_bus_exit(struct device *dev)
- 	if (ret < 0)
- 		dev_warn(dev, "failed to disable the devfreq-event devices\n");
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 19d735ab44db4..cd2fb8384fbe3 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7313,9 +7313,10 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+ out_balanced:
+ 	/*
+ 	 * We reach balance although we may have faced some affinity
+-	 * constraints. Clear the imbalance flag if it was set.
++	 * constraints. Clear the imbalance flag only if other tasks got
++	 * a chance to move and fix the imbalance.
+ 	 */
+-	if (sd_parent) {
++	if (sd_parent && !(env.flags & LBF_ALL_PINNED)) {
+ 		int *group_imbalance = &sd_parent->groups->sgc->imbalance;
  
--	if (bus->regulator)
--		regulator_disable(bus->regulator);
--
- 	dev_pm_opp_of_remove_table(dev);
- 	clk_disable_unprepare(bus->clk);
-+	if (bus->regulator)
-+		regulator_disable(bus->regulator);
- }
- 
- /*
-@@ -386,6 +385,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	struct exynos_bus *bus;
- 	int ret, max_state;
- 	unsigned long min_freq, max_freq;
-+	bool passive = false;
- 
- 	if (!np) {
- 		dev_err(dev, "failed to find devicetree node\n");
-@@ -399,27 +399,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	bus->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, bus);
- 
--	/* Parse the device-tree to get the resource information */
--	ret = exynos_bus_parse_of(np, bus);
--	if (ret < 0)
--		return ret;
--
- 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
--	if (!profile) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!profile)
-+		return -ENOMEM;
- 
- 	node = of_parse_phandle(dev->of_node, "devfreq", 0);
- 	if (node) {
- 		of_node_put(node);
--		goto passive;
-+		passive = true;
- 	} else {
- 		ret = exynos_bus_parent_parse_of(np, bus);
-+		if (ret < 0)
-+			return ret;
- 	}
- 
-+	/* Parse the device-tree to get the resource information */
-+	ret = exynos_bus_parse_of(np, bus);
- 	if (ret < 0)
--		goto err;
-+		goto err_reg;
-+
-+	if (passive)
-+		goto passive;
- 
- 	/* Initialize the struct profile and governor data for parent device */
- 	profile->polling_ms = 50;
-@@ -509,6 +509,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
- err:
- 	dev_pm_opp_of_remove_table(dev);
- 	clk_disable_unprepare(bus->clk);
-+err_reg:
-+	if (!passive)
-+		regulator_disable(bus->regulator);
- 
- 	return ret;
- }
+ 		if (*group_imbalance)
 -- 
 2.20.1
 
