@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4B6CAB60
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FFD1CAB50
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388754AbfJCQO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:14:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38612 "EHLO mail.kernel.org"
+        id S2388828AbfJCQPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:15:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388740AbfJCQOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:14:55 -0400
+        id S1732537AbfJCQPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:15:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0C5620865;
-        Thu,  3 Oct 2019 16:14:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC27820700;
+        Thu,  3 Oct 2019 16:15:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119295;
-        bh=rXSuWWeH3sDfoofSnPCEWC5e/wGIuwV3gpWgxhVBfvs=;
+        s=default; t=1570119306;
+        bh=Zi8kZfEwQCXyWQOulmbK2ZxdZBCqfrJnfsTiMhnQ5xQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AtrMfo4Sby58MWvp3Bt5O8gREa9q2ZExNh6g1+PRb+seoa70051I4xCCEjbJJ5fSv
-         1832HkXHhwzmvw9jS0ENXZipuziwme1yW3dqSfCBvoT6h+6Cw5IGHnV8LvM2RiAeB/
-         fBi5MzZ5TnJWnxToB6f5D2gEFNDfKkKudhxNeqhI=
+        b=gqc5Lxvl9nYnNsdsokeFkjg0Yyu1g+osZPAED2SjlDUsOQgRI7IKhAIyFmIheAdbM
+         J8o2J956zhn8JsZrmsLku2qVbsUf8Z9+5wAFReimVOcw94vbNWAQJnbbRvZETmHGx7
+         G9aslVy4SsYFRwDSfE4BsRgnhFxiEQf+rDrfoeec=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.19 013/211] usbnet: ignore endpoints with invalid wMaxPacketSize
-Date:   Thu,  3 Oct 2019 17:51:19 +0200
-Message-Id: <20191003154449.899499399@linuxfoundation.org>
+        stable@vger.kernel.org, Bodong Wang <bodong@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 017/211] net/mlx5: Add device ID of upcoming BlueField-2
+Date:   Thu,  3 Oct 2019 17:51:23 +0200
+Message-Id: <20191003154450.791407311@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -44,39 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjørn Mork <bjorn@mork.no>
+From: Bodong Wang <bodong@mellanox.com>
 
-[ Upstream commit 8d3d7c2029c1b360f1a6b0a2fca470b57eb575c0 ]
+[ Upstream commit d19a79ee38c8fda6d297e4227e80db8bf51c71a6 ]
 
-Endpoints with zero wMaxPacketSize are not usable for transferring
-data. Ignore such endpoints when looking for valid in, out and
-status pipes, to make the drivers more robust against invalid and
-meaningless descriptors.
+Add the device ID of upcoming BlueField-2 integrated ConnectX-6 Dx
+network controller. Its VFs will be using the generic VF device ID:
+0x101e "ConnectX Family mlx5Gen Virtual Function".
 
-The wMaxPacketSize of these endpoints are used for memory allocations
-and as divisors in many usbnet minidrivers. Avoiding zero is therefore
-critical.
-
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fixes: 2e9d3e83ab82 ("net/mlx5: Update the list of the PCI supported devices")
+Signed-off-by: Bodong Wang <bodong@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/usbnet.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -112,6 +112,11 @@ int usbnet_get_endpoints(struct usbnet *
- 			int				intr = 0;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1642,6 +1642,7 @@ static const struct pci_device_id mlx5_c
+ 	{ PCI_VDEVICE(MELLANOX, 0x101c), MLX5_PCI_DEV_IS_VF},	/* ConnectX-6 VF */
+ 	{ PCI_VDEVICE(MELLANOX, 0xa2d2) },			/* BlueField integrated ConnectX-5 network controller */
+ 	{ PCI_VDEVICE(MELLANOX, 0xa2d3), MLX5_PCI_DEV_IS_VF},	/* BlueField integrated ConnectX-5 network controller VF */
++	{ PCI_VDEVICE(MELLANOX, 0xa2d6) },			/* BlueField-2 integrated ConnectX-6 Dx network controller */
+ 	{ 0, }
+ };
  
- 			e = alt->endpoint + ep;
-+
-+			/* ignore endpoints which cannot transfer data */
-+			if (!usb_endpoint_maxp(&e->desc))
-+				continue;
-+
- 			switch (e->desc.bmAttributes) {
- 			case USB_ENDPOINT_XFER_INT:
- 				if (!usb_endpoint_dir_in(&e->desc))
 
 
