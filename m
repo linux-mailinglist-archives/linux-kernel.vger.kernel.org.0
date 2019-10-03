@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 583ABCA763
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EAA4CA768
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393201AbfJCQxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:53:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
+        id S2393220AbfJCQxq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:53:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392392AbfJCQxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:53:35 -0400
+        id S1732255AbfJCQxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:53:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 580FE2070B;
-        Thu,  3 Oct 2019 16:53:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C50620862;
+        Thu,  3 Oct 2019 16:53:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121614;
-        bh=1/khuy4O3zZHpw9LAei40BNaPZ3LL9+GHfckPbkNiRo=;
+        s=default; t=1570121617;
+        bh=ppvgryPXoAV87FTYKqBMl7LfUlYuP5FSY5V3yCvro1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rPFQag060fy0KhHewUhRlwpo+N6KwiPUZHW6OqUxdWdjDECbLVJy5pm829KLzcB2j
-         7ge3pFcIC2YlzgLejUg8zMM2Z2kyqWZ+TrJiOKlDOk/EpG5wnxlOe7Nb4HhS7H4eae
-         c25qTen6CnKazpwOX+tZsbmaxtrEDH+4ZgmZmPwA=
+        b=f71YjRlFTpy3K74cONVnCxRD2XOvbRPELlFdIgHtaoN+Q4l7XxJGQAXNv/5iiE9Hk
+         xDURYDrQ72LhJ9dNvyK4sQQCGWsUIhoDdHsXcNkiE8BkeXXAU4Pb/RRcHn4T7G5hPN
+         A4mPc8vlvBmwoQLKstvEO/wsQwF2g6mrUJzOHi3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ding Xiang <dingxiang@cmss.chinamobile.com>,
+        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
+        linux-security-module@vger.kernel.org, kernel-team@android.com,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.3 307/344] ovl: Fix dereferencing possible ERR_PTR()
-Date:   Thu,  3 Oct 2019 17:54:32 +0200
-Message-Id: <20191003154609.569642324@linuxfoundation.org>
+Subject: [PATCH 5.3 308/344] ovl: filter of trusted xattr results in audit
+Date:   Thu,  3 Oct 2019 17:54:33 +0200
+Message-Id: <20191003154609.636796606@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -44,35 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ding Xiang <dingxiang@cmss.chinamobile.com>
+From: Mark Salyzyn <salyzyn@android.com>
 
-commit 97f024b9171e74c4443bbe8a8dce31b917f97ac5 upstream.
+commit 5c2e9f346b815841f9bed6029ebcb06415caf640 upstream.
 
-if ovl_encode_real_fh() fails, no memory was allocated
-and the error in the error-valued pointer should be returned.
+When filtering xattr list for reading, presence of trusted xattr
+results in a security audit log.  However, if there is other content
+no errno will be set, and if there isn't, the errno will be -ENODATA
+and not -EPERM as is usually associated with a lack of capability.
+The check does not block the request to list the xattrs present.
 
-Fixes: 9b6faee07470 ("ovl: check ERR_PTR() return value from ovl_encode_fh()")
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
-Cc: <stable@vger.kernel.org> # v4.16+
+Switch to ns_capable_noaudit to reflect a more appropriate check.
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org # v3.18+
+Fixes: a082c6f680da ("ovl: filter trusted xattr for non-admin")
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/export.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/overlayfs/inode.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/overlayfs/export.c
-+++ b/fs/overlayfs/export.c
-@@ -227,9 +227,8 @@ static int ovl_d_to_fh(struct dentry *de
- 	/* Encode an upper or lower file handle */
- 	fh = ovl_encode_real_fh(enc_lower ? ovl_dentry_lower(dentry) :
- 				ovl_dentry_upper(dentry), !enc_lower);
--	err = PTR_ERR(fh);
- 	if (IS_ERR(fh))
--		goto fail;
-+		return PTR_ERR(fh);
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -383,7 +383,8 @@ static bool ovl_can_list(const char *s)
+ 		return true;
  
- 	err = -EOVERFLOW;
- 	if (fh->len > buflen)
+ 	/* Never list trusted.overlay, list other trusted for superuser only */
+-	return !ovl_is_private_xattr(s) && capable(CAP_SYS_ADMIN);
++	return !ovl_is_private_xattr(s) &&
++	       ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN);
+ }
+ 
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
 
 
