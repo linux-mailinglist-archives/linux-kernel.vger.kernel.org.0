@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45BB0CA25F
+	by mail.lfdr.de (Postfix) with ESMTP id BB132CA260
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732411AbfJCQEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:04:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50512 "EHLO mail.kernel.org"
+        id S1731375AbfJCQEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:04:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730326AbfJCQE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:04:26 -0400
+        id S1732417AbfJCQEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:04:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2F8C222BE;
-        Thu,  3 Oct 2019 16:04:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4152B207FF;
+        Thu,  3 Oct 2019 16:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118666;
-        bh=InZJTPDFa4soq7713ObllAYGLrvpGFadXo4NIQ9qt88=;
+        s=default; t=1570118671;
+        bh=OZiQOQK6GRMgvpkM/jHIACWmpTyy1Vs+E5l8pYuqDfA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CNGNMZoWpXDHXGBtcjlopQVRYsq6JdOEeElg0cpnsEF+nN/+XzNQdAuQY3dF7e79b
-         Ij9uRKvPltxRkVRY7OnAQCnQoAdBDt0YkMelzTB+YU8rv8YMuX7XNJYvjraSrmO2Uh
-         +wkJLjm8UygGqmhL0ac/mfwF6inu33oYDgevQAOM=
+        b=UyNspbRxr83O63aaPXp58bvqwUj/BBwUSmXvz7KWmGI+PP5aecQ55eoV7juEnnofa
+         8MCJ3Ldf1vsXqBtFqIJsyLuwb+WUpi48leqyIuTKbevrtQrDR/EZ1WZ6gS4EG9pyFL
+         P3hyd1++PE9dRHIfDYc4vrZVViX4BlECQOJx7S78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 094/129] ALSA: hda/realtek - Blacklist PC beep for Lenovo ThinkCentre M73/93
-Date:   Thu,  3 Oct 2019 17:53:37 +0200
-Message-Id: <20191003154402.352952103@linuxfoundation.org>
+Subject: [PATCH 4.9 096/129] media: omap3isp: Set device on omap3isp subdevs
+Date:   Thu,  3 Oct 2019 17:53:39 +0200
+Message-Id: <20191003154403.586416212@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
 References: <20191003154318.081116689@linuxfoundation.org>
@@ -43,34 +46,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-[ Upstream commit 051c78af14fcd74a22b5af45548ad9d588247cc7 ]
+[ Upstream commit e9eb103f027725053a4b02f93d7f2858b56747ce ]
 
-Lenovo ThinkCentre M73 and M93 don't seem to have a proper beep
-although the driver tries to probe and set up blindly.
-Blacklist these machines for suppressing the beep creation.
+The omap3isp driver registered subdevs without the dev field being set. Do
+that now.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204635
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/platform/omap3isp/ispccdc.c    | 1 +
+ drivers/media/platform/omap3isp/ispccp2.c    | 1 +
+ drivers/media/platform/omap3isp/ispcsi2.c    | 1 +
+ drivers/media/platform/omap3isp/isppreview.c | 1 +
+ drivers/media/platform/omap3isp/ispresizer.c | 1 +
+ drivers/media/platform/omap3isp/ispstat.c    | 2 ++
+ 6 files changed, 7 insertions(+)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 31322aeebcff0..d45c85dcf9d9d 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -969,6 +969,9 @@ static const struct snd_pci_quirk beep_white_list[] = {
- 	SND_PCI_QUIRK(0x1043, 0x834a, "EeePC", 1),
- 	SND_PCI_QUIRK(0x1458, 0xa002, "GA-MA790X", 1),
- 	SND_PCI_QUIRK(0x8086, 0xd613, "Intel", 1),
-+	/* blacklist -- no beep available */
-+	SND_PCI_QUIRK(0x17aa, 0x309e, "Lenovo ThinkCentre M73", 0),
-+	SND_PCI_QUIRK(0x17aa, 0x30a3, "Lenovo ThinkCentre M93", 0),
- 	{}
- };
+diff --git a/drivers/media/platform/omap3isp/ispccdc.c b/drivers/media/platform/omap3isp/ispccdc.c
+index 882310eb45ccf..fe16fbd95221f 100644
+--- a/drivers/media/platform/omap3isp/ispccdc.c
++++ b/drivers/media/platform/omap3isp/ispccdc.c
+@@ -2608,6 +2608,7 @@ int omap3isp_ccdc_register_entities(struct isp_ccdc_device *ccdc,
+ 	int ret;
+ 
+ 	/* Register the subdev and video node. */
++	ccdc->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &ccdc->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispccp2.c b/drivers/media/platform/omap3isp/ispccp2.c
+index ca095238510d5..b64e218eaea6e 100644
+--- a/drivers/media/platform/omap3isp/ispccp2.c
++++ b/drivers/media/platform/omap3isp/ispccp2.c
+@@ -1030,6 +1030,7 @@ int omap3isp_ccp2_register_entities(struct isp_ccp2_device *ccp2,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	ccp2->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &ccp2->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispcsi2.c b/drivers/media/platform/omap3isp/ispcsi2.c
+index f75a1be29d84a..27a2913363b62 100644
+--- a/drivers/media/platform/omap3isp/ispcsi2.c
++++ b/drivers/media/platform/omap3isp/ispcsi2.c
+@@ -1206,6 +1206,7 @@ int omap3isp_csi2_register_entities(struct isp_csi2_device *csi2,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	csi2->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &csi2->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/isppreview.c b/drivers/media/platform/omap3isp/isppreview.c
+index ac30a0f837801..e981eb2330f18 100644
+--- a/drivers/media/platform/omap3isp/isppreview.c
++++ b/drivers/media/platform/omap3isp/isppreview.c
+@@ -2228,6 +2228,7 @@ int omap3isp_preview_register_entities(struct isp_prev_device *prev,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	prev->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &prev->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispresizer.c b/drivers/media/platform/omap3isp/ispresizer.c
+index 0b6a87508584f..2035e3c6a9dee 100644
+--- a/drivers/media/platform/omap3isp/ispresizer.c
++++ b/drivers/media/platform/omap3isp/ispresizer.c
+@@ -1684,6 +1684,7 @@ int omap3isp_resizer_register_entities(struct isp_res_device *res,
+ 	int ret;
+ 
+ 	/* Register the subdev and video nodes. */
++	res->subdev.dev = vdev->mdev->dev;
+ 	ret = v4l2_device_register_subdev(vdev, &res->subdev);
+ 	if (ret < 0)
+ 		goto error;
+diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
+index 1b9217d3b1b6a..4a4ae637655ba 100644
+--- a/drivers/media/platform/omap3isp/ispstat.c
++++ b/drivers/media/platform/omap3isp/ispstat.c
+@@ -1010,6 +1010,8 @@ void omap3isp_stat_unregister_entities(struct ispstat *stat)
+ int omap3isp_stat_register_entities(struct ispstat *stat,
+ 				    struct v4l2_device *vdev)
+ {
++	stat->subdev.dev = vdev->mdev->dev;
++
+ 	return v4l2_device_register_subdev(vdev, &stat->subdev);
+ }
  
 -- 
 2.20.1
