@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6290ECA823
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5CFACA8F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390196AbfJCQVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:21:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50106 "EHLO mail.kernel.org"
+        id S2404084AbfJCQfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387709AbfJCQVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:21:44 -0400
+        id S2404058AbfJCQfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A758222C4;
-        Thu,  3 Oct 2019 16:21:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C55D2070B;
+        Thu,  3 Oct 2019 16:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119703;
-        bh=zgSTrqbkUadHQjGjspxkvJJQ1y0zPVUECS01n+/9POc=;
+        s=default; t=1570120519;
+        bh=ajBjYAZiKmXhY3kJWE4D+XSVieiVoPua4IlPs8TFonc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R5qAR8SlCeKqI1eVCM/dn2ZrYvEEvTI9drliySJm5doukb0IGMiWasfQKnjb2skFS
-         OAxUu1djbUH6v/8nTNzOmYq/nwkXTziW/2ldtkB/nNjO+7iDShZ7OHNMOXJKYhutw0
-         bEzg4BQP3lDrTXY/6xTdY4hkq+3/ggu018o9iei4=
+        b=rq2O06wPa/qdPB8F5f8ZYIjb7PxlRYQRafUXaMvZ2B6JRNKrcUeZgG17oYkKNj4WC
+         4nyY3xJCplqkc+Zs4l4XCubdHf8PU1FyvMaHgbBsuiN3D+ha9MTpZJTGf4loxx2byo
+         xKvnXHa8fBHXGx5zyI9znTg1LKNaGs27Pkf27DEE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 163/211] fuse: fix missing unlock_page in fuse_writepage()
-Date:   Thu,  3 Oct 2019 17:53:49 +0200
-Message-Id: <20191003154525.043527749@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.2 253/313] ASoC: Intel: Fix use of potentially uninitialized variable
+Date:   Thu,  3 Oct 2019 17:53:51 +0200
+Message-Id: <20191003154557.950873648@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
 
-commit d5880c7a8620290a6c90ced7a0e8bd0ad9419601 upstream.
+commit 810f3b860850148788fc1ed8a6f5f807199fed65 upstream.
 
-unlock_page() was missing in case of an already in-flight write against the
-same page.
+If ipc->ops.reply_msg_match is NULL, we may end up using uninitialized
+mask value.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Fixes: ff17be086477 ("fuse: writepage: skip already in flight")
-Cc: <stable@vger.kernel.org> # v3.13
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+reported by smatch:
+sound/soc/intel/common/sst-ipc.c:266 sst_ipc_reply_find_msg() error: uninitialized symbol 'mask'.
+
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+Link: https://lore.kernel.org/r/20190827141712.21015-3-amadeuszx.slawinski@linux.intel.com
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/file.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/intel/common/sst-ipc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1700,6 +1700,7 @@ static int fuse_writepage(struct page *p
- 		WARN_ON(wbc->sync_mode == WB_SYNC_ALL);
+--- a/sound/soc/intel/common/sst-ipc.c
++++ b/sound/soc/intel/common/sst-ipc.c
+@@ -222,6 +222,8 @@ struct ipc_message *sst_ipc_reply_find_m
  
- 		redirty_page_for_writepage(wbc, page);
-+		unlock_page(page);
- 		return 0;
- 	}
+ 	if (ipc->ops.reply_msg_match != NULL)
+ 		header = ipc->ops.reply_msg_match(header, &mask);
++	else
++		mask = (u64)-1;
  
+ 	if (list_empty(&ipc->rx_list)) {
+ 		dev_err(ipc->dev, "error: rx list empty but received 0x%llx\n",
 
 
