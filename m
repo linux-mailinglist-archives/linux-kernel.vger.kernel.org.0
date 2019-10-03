@@ -2,108 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3105CA34D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF472CA2E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388586AbfJCQOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:14:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388564AbfJCQOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:14:18 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 250212054F;
-        Thu,  3 Oct 2019 16:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119257;
-        bh=yMx/H7OD2uW4oLP8Y6+fIh/TB4XMrwAZ/YucbCxVYcE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=plXTah2jKWBfW11x7vnwUR+9r1Ml5s+pM7gYSAQAOHqUvI/Pqvw0pTBKOYYDMUTVl
-         hSEpu7aBGUdwwDsc+TYdo/+g5Wc38FjjdJd78CRFZBdcxmHy1qyC0qMmB4c9ykJXQq
-         o4coFkO1E9FTm4f9sXEFymNPI4f91sGPGntuZtVs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 184/185] btrfs: qgroup: Drop quota_root and fs_info parameters from update_qgroup_status_item
-Date:   Thu,  3 Oct 2019 17:54:22 +0200
-Message-Id: <20191003154522.423660639@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2387631AbfJCQKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:10:24 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33808 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387601AbfJCQKT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:10:19 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k7so1752572pll.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:to:cc:subject:user-agent:date;
+        bh=v9Xix4ukYpxBHBe1n3DXedqcwTHB0Vaz/YT0zLakIIo=;
+        b=EvjKgRekrDRXydliKainNvs1EDKpTaQC9hbAsmM3L4SgVhnCamPwwGeWgzLCmD/6ZN
+         YJihKrj4Aua03JcGiXSnnv9gCPNFzimjX/dj6do1v8Tarr4QDToU5Y7qaBlDo7r0dOjB
+         7MqZGdDBTEaz9H1tW70rmHCyl63UhJarLzgIk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
+         :user-agent:date;
+        bh=v9Xix4ukYpxBHBe1n3DXedqcwTHB0Vaz/YT0zLakIIo=;
+        b=CPELijN4UdoJQOBVp46+sZe/+On1Tce9Twss9HSO1zD7n03OJRBM/0xvz3AtP+TX3Z
+         bQlJ5JR451e+7AgXOdTudOB26N8j2FToeZ/S+czUUScPObn3oSXGi4CXKDu902fBTqc/
+         tx7SZzOOUKHvknVI+JvvYz5/ToP/aDQ81PRKowdYy/zIECL+JiIy6gmcz4IeE4LotkV9
+         kkyWhBq0P9tU/HMyXrFOBy9FsbcacXWY8SOJenqehnf5ODl39q+J/kBQTIjtW0Aac/Tn
+         5D9kYsc0ACkrGM7s6I19+qRNltSjuhZr1vQeGSbdOuZC9pL+CTNkgvXIx4lU4vwwKivf
+         pIQA==
+X-Gm-Message-State: APjAAAWZQEplBN1jivHmKQLGAGtNmJh19Nmx1LVdJGuBQGa7BdmCgpeV
+        Ng2J7fbzux3OgeSsZwYZnWpBpw==
+X-Google-Smtp-Source: APXvYqwv9TynoMmQOqZjRuUUV4/ZHjd2t53y5sK2b6fAukPfOM6uRj4H5n6IfZmi7UusPIcmhIpQeQ==
+X-Received: by 2002:a17:902:ba82:: with SMTP id k2mr9926433pls.293.1570119017817;
+        Thu, 03 Oct 2019 09:10:17 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id b69sm3516011pfb.132.2019.10.03.09.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 09:10:17 -0700 (PDT)
+Message-ID: <5d961d69.1c69fb81.43b1b.addf@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191001180743.1041-1-geert+renesas@glider.be>
+References: <20191001180743.1041-1-geert+renesas@glider.be>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] serial: sh-sci: Use platform_get_irq_optional() for optional interrupts
+User-Agent: alot/0.8.1
+Date:   Thu, 03 Oct 2019 09:10:16 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+Quoting Geert Uytterhoeven (2019-10-01 11:07:43)
+> As platform_get_irq() now prints an error when the interrupt does not
+> exist, scary warnings may be printed for optional interrupts:
+>=20
+>     sh-sci e6550000.serial: IRQ index 1 not found
+>     sh-sci e6550000.serial: IRQ index 2 not found
+>     sh-sci e6550000.serial: IRQ index 3 not found
+>     sh-sci e6550000.serial: IRQ index 4 not found
+>     sh-sci e6550000.serial: IRQ index 5 not found
+>=20
+> Fix this by calling platform_get_irq_optional() instead for all but the
+> first interrupts, which are optional.
+>=20
+> Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to =
+platform_get_irq*()")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-[ Upstream commit 2e980acdd829742966c6a7e565ef3382c0717295 ]
-
-They can be fetched from the transaction handle.
-
-Signed-off-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/btrfs/qgroup.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index d6d6e9593e391..b20df81d76208 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -722,10 +722,10 @@ static int update_qgroup_info_item(struct btrfs_trans_handle *trans,
- 	return ret;
- }
- 
--static int update_qgroup_status_item(struct btrfs_trans_handle *trans,
--				     struct btrfs_fs_info *fs_info,
--				    struct btrfs_root *root)
-+static int update_qgroup_status_item(struct btrfs_trans_handle *trans)
- {
-+	struct btrfs_fs_info *fs_info = trans->fs_info;
-+	struct btrfs_root *quota_root = fs_info->quota_root;
- 	struct btrfs_path *path;
- 	struct btrfs_key key;
- 	struct extent_buffer *l;
-@@ -741,7 +741,7 @@ static int update_qgroup_status_item(struct btrfs_trans_handle *trans,
- 	if (!path)
- 		return -ENOMEM;
- 
--	ret = btrfs_search_slot(trans, root, &key, path, 0, 1);
-+	ret = btrfs_search_slot(trans, quota_root, &key, path, 0, 1);
- 	if (ret > 0)
- 		ret = -ENOENT;
- 
-@@ -2110,7 +2110,7 @@ int btrfs_run_qgroups(struct btrfs_trans_handle *trans,
- 		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_ON;
- 	spin_unlock(&fs_info->qgroup_lock);
- 
--	ret = update_qgroup_status_item(trans, fs_info, quota_root);
-+	ret = update_qgroup_status_item(trans);
- 	if (ret)
- 		fs_info->qgroup_flags |= BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT;
- 
-@@ -2668,7 +2668,7 @@ static void btrfs_qgroup_rescan_worker(struct btrfs_work *work)
- 			  err);
- 		goto done;
- 	}
--	ret = update_qgroup_status_item(trans, fs_info, fs_info->quota_root);
-+	ret = update_qgroup_status_item(trans);
- 	if (ret < 0) {
- 		err = ret;
- 		btrfs_err(fs_info, "fail to update qgroup status: %d", err);
--- 
-2.20.1
-
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
