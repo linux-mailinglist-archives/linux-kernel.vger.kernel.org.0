@@ -2,204 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D021CC9D3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35AA9C9D4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbfJCL1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:27:02 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:45589 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729565AbfJCL1C (ORCPT
+        id S1730053AbfJCLaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:30:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32834 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729912AbfJCLaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:27:02 -0400
-X-Originating-IP: 162.222.80.169
-Received: from aptenodytes (unknown [162.222.80.169])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 1E3D860008;
-        Thu,  3 Oct 2019 11:26:57 +0000 (UTC)
-Date:   Thu, 3 Oct 2019 07:26:56 -0400
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 5/5] gpio: syscon: Add support for the Xylon LogiCVC
- GPIOs
-Message-ID: <20191003112656.GB28856@aptenodytes>
-References: <20190927100407.1863293-1-paul.kocialkowski@bootlin.com>
- <20190927100407.1863293-6-paul.kocialkowski@bootlin.com>
- <CAMpxmJWQ9iuNj8Nfhf0hVzP6piNPrb8_e7ucth0rmg8KwT4HdA@mail.gmail.com>
+        Thu, 3 Oct 2019 07:30:22 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x93BRXVd017056
+        for <linux-kernel@vger.kernel.org>; Thu, 3 Oct 2019 07:30:20 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vdfcjsp0y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 07:30:20 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 3 Oct 2019 12:30:18 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 3 Oct 2019 12:30:14 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x93BUDku57016436
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 3 Oct 2019 11:30:13 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F81A11C058;
+        Thu,  3 Oct 2019 11:30:13 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FA8511C052;
+        Thu,  3 Oct 2019 11:30:12 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.148.8.153])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  3 Oct 2019 11:30:12 +0000 (GMT)
+Date:   Thu, 3 Oct 2019 14:30:10 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Adam Ford <aford173@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH v2 00/21] Refine memblock API
+References: <CAHCN7xJ32BYZu-DVTVLSzv222U50JDb8F0A_tLDERbb8kPdRxg@mail.gmail.com>
+ <20190926160433.GD32311@linux.ibm.com>
+ <CAHCN7xL1sFXDhKUpj04d3eDZNgLA1yGAOqwEeCxedy1Qm-JOfQ@mail.gmail.com>
+ <20190928073331.GA5269@linux.ibm.com>
+ <CAHCN7xJEvS2Si=M+BYtz+kY0M4NxmqDjiX9Nwq6_3GGBh3yg=w@mail.gmail.com>
+ <CAHCN7xKLhWw4P9-sZKXQcfSfh2r3J_+rLxuxACW0UVgimCzyVw@mail.gmail.com>
+ <20191002073605.GA30433@linux.ibm.com>
+ <CAHCN7xL1MkJh44N3W_1+08DHmX__SqnfH6dqUzYzr2Wpg0kQyQ@mail.gmail.com>
+ <20191003053451.GA23397@linux.ibm.com>
+ <20191003084914.GV25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMpxmJWQ9iuNj8Nfhf0hVzP6piNPrb8_e7ucth0rmg8KwT4HdA@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191003084914.GV25745@shell.armlinux.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19100311-0012-0000-0000-00000353A8D8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19100311-0013-0000-0000-0000218EAF93
+Message-Id: <20191003113010.GC23397@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910030107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 03, 2019 at 09:49:14AM +0100, Russell King - ARM Linux admin wrote:
+> On Thu, Oct 03, 2019 at 08:34:52AM +0300, Mike Rapoport wrote:
+> > (trimmed the CC)
+> > 
+> > On Wed, Oct 02, 2019 at 06:14:11AM -0500, Adam Ford wrote:
+> > > On Wed, Oct 2, 2019 at 2:36 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > > >
+> > > 
+> > > Before the patch:
+> > > 
+> > > # cat /sys/kernel/debug/memblock/memory
+> > >    0: 0x10000000..0x8fffffff
+> > > # cat /sys/kernel/debug/memblock/reserved
+> > >    0: 0x10004000..0x10007fff
+> > >   34: 0x2fffff88..0x3fffffff
+> > > 
+> > > 
+> > > After the patch:
+> > > # cat /sys/kernel/debug/memblock/memory
+> > >    0: 0x10000000..0x8fffffff
+> > > # cat /sys/kernel/debug/memblock/reserved
+> > >    0: 0x10004000..0x10007fff
+> > >   36: 0x80000000..0x8fffffff
+> > 
+> > I'm still not convinced that the memblock refactoring didn't uncovered an
+> > issue in etnaviv driver.
+> > 
+> > Why moving the CMA area from 0x80000000 to 0x30000000 makes it fail?
+> 
+> I think you have that the wrong way round.
 
---ftEhullJWpWg/VHq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm relying on Adam's reports of working and non-working versions.
+According to that etnaviv works when CMA area is at 0x80000000 and does not
+work when it is at 0x30000000.
 
-Hi and thanks for the review!
+He also sent logs a few days ago [1], they also confirm that.
 
-On Thu 03 Oct 19, 10:26, Bartosz Golaszewski wrote:
-> Hi Paul,
->=20
-> just two nits:
->=20
-> pt., 27 wrz 2019 o 12:04 Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> napisa=C5=82(a):
-> >
-> > The LogiCVC display hardware block comes with GPIO capabilities
-> > that must be exposed separately from the main driver (as GPIOs) for
-> > use with regulators and panels. A syscon is used to share the same
-> > regmap across the two drivers.
-> >
-> > Since the GPIO capabilities are pretty simple, add them to the syscon
-> > GPIO driver.
-> >
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  drivers/gpio/gpio-syscon.c | 68 ++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 68 insertions(+)
-> >
-> > diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-> > index 05c537ed73f1..cdcb913b8f0c 100644
-> > --- a/drivers/gpio/gpio-syscon.c
-> > +++ b/drivers/gpio/gpio-syscon.c
-> > @@ -190,6 +190,70 @@ static const struct syscon_gpio_data keystone_dsp_=
-gpio =3D {
-> >         .set            =3D keystone_gpio_set,
-> >  };
-> >
-> > +#define LOGICVC_CTRL_REG               0x40
-> > +#define LOGICVC_CTRL_GPIO_SHIFT                11
-> > +#define LOGICVC_CTRL_GPIO_BITS         5
-> > +
-> > +#define LOGICVC_POWER_CTRL_REG         0x78
-> > +#define LOGICVC_POWER_CTRL_GPIO_SHIFT  0
-> > +#define LOGICVC_POWER_CTRL_GPIO_BITS   4
-> > +
-> > +static void logicvc_gpio_offset(struct syscon_gpio_priv *priv,
-> > +                               unsigned offset, unsigned int *reg,
-> > +                               unsigned int *bit)
-> > +{
-> > +       if (offset >=3D LOGICVC_CTRL_GPIO_BITS) {
-> > +               *reg =3D LOGICVC_POWER_CTRL_REG;
-> > +
-> > +               /* To the (virtual) power ctrl offset. */
-> > +               offset -=3D LOGICVC_CTRL_GPIO_BITS;
-> > +               /* To the actual bit offset in reg. */
-> > +               offset +=3D LOGICVC_POWER_CTRL_GPIO_SHIFT;
-> > +       } else {
-> > +               *reg =3D LOGICVC_CTRL_REG;
-> > +
-> > +               /* To the actual bit offset in reg. */
-> > +               offset +=3D LOGICVC_CTRL_GPIO_SHIFT;
-> > +       }
-> > +
-> > +       *bit =3D BIT(offset);
-> > +}
-> > +
-> > +static int logicvc_gpio_get(struct gpio_chip *chip, unsigned offset)
-> > +{
-> > +       struct syscon_gpio_priv *priv =3D gpiochip_get_data(chip);
-> > +       unsigned int reg;
-> > +       unsigned int bit;
-> > +       unsigned int value;
->=20
-> Can you put these on a single line?
+[1] https://lore.kernel.org/linux-mm/CAHCN7xJEvS2Si=M+BYtz+kY0M4NxmqDjiX9Nwq6_3GGBh3yg=w@mail.gmail.com/
+ 
+> > BTW, the code that complained about "command buffer outside valid memory
+> > window" has been removed by the commit 17e4660ae3d7 ("drm/etnaviv:
+> > implement per-process address spaces on MMUv2"). 
+> > 
+> > Could be that recent changes to MMU management of etnaviv resolve the
+> > issue?
+> 
+> The iMX6 does not have MMUv2 hardware, it has MMUv1.  With MMUv1
+> hardware requires command buffers within the first 2GiB of physical
+> RAM.
 
-Sure thing.
+I've mentioned that patch because it removed the check for cmdbuf address
+for MMUv1:
 
-> > +       int ret;
-> > +
-> > +       logicvc_gpio_offset(priv, offset, &reg, &bit);
-> > +
-> > +       ret =3D regmap_read(priv->syscon, reg, &value);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       return !!(value & bit);
-> > +}
-> > +
-> > +static void logicvc_gpio_set(struct gpio_chip *chip, unsigned offset, =
-int val)
-> > +{
-> > +       struct syscon_gpio_priv *priv =3D gpiochip_get_data(chip);
-> > +       unsigned int reg;
-> > +       unsigned int bit;
->=20
-> Same here.
+@@ -785,15 +768,7 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+                                  PAGE_SIZE);
+        if (ret) {
+                dev_err(gpu->dev, "could not create command buffer\n");
+-               goto unmap_suballoc;
+-       }
+-
+-       if (!(gpu->identity.minor_features1 & chipMinorFeatures1_MMU_VERSION) &&
+-           etnaviv_cmdbuf_get_va(&gpu->buffer, &gpu->cmdbuf_mapping) > 0x80000000) {
+-               ret = -EINVAL;
+-               dev_err(gpu->dev,
+-                       "command buffer outside valid memory window\n");
+-               goto free_buffer;
++               goto fail;
+        }
+ 
+        /* Setup event management */
 
-Will do!
 
-Cheers,
+I really don't know how etnaviv works, so I hoped that people who
+understand it would help.
+ 
+> I've reported the problem previously but there was no resolution,
+> other than pointing the blame at CMA.
+> 
+> https://lists.freedesktop.org/archives/dri-devel/2019-June/thread.html#223516
+> 
+> -- 
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> According to speedtest.net: 11.9Mbps down 500kbps up
 
-Paul
+-- 
+Sincerely yours,
+Mike.
 
-> > +
-> > +       logicvc_gpio_offset(priv, offset, &reg, &bit);
-> > +
-> > +       regmap_update_bits(priv->syscon, reg, bit, val ? bit : 0);
-> > +}
-> > +
-> > +static const struct syscon_gpio_data logicvc_gpio =3D {
-> > +       .flags          =3D GPIO_SYSCON_FEAT_OUT,
-> > +       .bit_count      =3D LOGICVC_CTRL_GPIO_BITS + LOGICVC_POWER_CTRL=
-_GPIO_BITS,
-> > +       .get            =3D logicvc_gpio_get,
-> > +       .set            =3D logicvc_gpio_set,
-> > +};
-> > +
-> >  static const struct of_device_id syscon_gpio_ids[] =3D {
-> >         {
-> >                 .compatible     =3D "cirrus,ep7209-mctrl-gpio",
-> > @@ -203,6 +267,10 @@ static const struct of_device_id syscon_gpio_ids[]=
- =3D {
-> >                 .compatible     =3D "rockchip,rk3328-grf-gpio",
-> >                 .data           =3D &rockchip_rk3328_gpio_mute,
-> >         },
-> > +       {
-> > +               .compatible     =3D "xylon,logicvc-3.02.a-gpio",
-> > +               .data           =3D &logicvc_gpio,
-> > +       },
-> >         { }
-> >  };
-> >  MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
-> > --
-> > 2.23.0
-> >
-
---=20
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---ftEhullJWpWg/VHq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAl2V2wAACgkQ3cLmz3+f
-v9EXmgf+M7DOLYFim8MRoBBPHg6VUTypsKrr003RgYerHk+laNEy/4udpTCO21vW
-KRvnQw+9uIhLZMAHOjpy7KQCT0gxCIyrVvBbEO5mIk44nqTLlv76nITiirEn04pi
-Boau1nRZ1IH8RzhecJroo5JsqcfVJQA7p/nsDM7XX4F2vRCjeX4soqb5iY5xbdnd
-P0BqnmUzRb9gx8l6bn2eAyX0YGiCcRgwrdpsG+Vh6Y0hFLjCJBMANJeRBazMA9yD
-hac6kPuxPmX1FzXNr53UWQbZUd7znDR2qDGgNraFy4xQCIucajivrJsXwoBOAdTT
-OzBqao5sxI1iL7ULfrwRBKXPMs4EDg==
-=31VS
------END PGP SIGNATURE-----
-
---ftEhullJWpWg/VHq--
