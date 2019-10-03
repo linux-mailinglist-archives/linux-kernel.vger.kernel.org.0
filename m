@@ -2,133 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875E7CACB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4001CACDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbfJCR2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:28:00 -0400
-Received: from condef-03.nifty.com ([202.248.20.68]:31723 "EHLO
-        condef-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729199AbfJCR1z (ORCPT
+        id S1731255AbfJCRav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:30:51 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36674 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730028AbfJCRaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:27:55 -0400
-Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-03.nifty.com with ESMTP id x93HOMtO024256;
-        Fri, 4 Oct 2019 02:24:22 +0900
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x93HODVW006126;
-        Fri, 4 Oct 2019 02:24:13 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x93HODVW006126
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1570123454;
-        bh=LJ8ChLvuFkxOnRaAfzcwPHpVO6iA3brJ5hpU1BX1eNM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YJoEtvR8gerE47Ilqm+9qHWrT5ejo7mmyCPWUxRwjrQvhDoKpmFyNhYPZB4P/3lQn
-         m488NTZCmfDrSSxvZNiBb4vzFF6bfUzr8wWSvzqs6bipD4/fBJJN6aRgVAL+k7ASSn
-         +GsIyXeenTGPRExtiYn25nAM5HOkCRpBUW/qksdN3Mj2p0pGQ5G2gU+aOnUp/Cj4Ux
-         xxFHclgj2gvSgXwDfv4le3HKJm6T7xR6cGQt4SD4Jz7wUIugAB3BPkYNcNyxJ3jTg9
-         lmGKs4KldhJ3f1ziivjjmo+VDN5TZEfwPFd2BYBKf/OfFUss37s7QKJA6ZjbndzKXI
-         fZIWQl7F8eHkA==
-X-Nifty-SrcIP: [209.85.222.42]
-Received: by mail-ua1-f42.google.com with SMTP id u31so1184450uah.0;
-        Thu, 03 Oct 2019 10:24:13 -0700 (PDT)
-X-Gm-Message-State: APjAAAX39GdNDrAv1m1XPuAjZBhuYpCZNBh0URvJFTXpMAWwUGBeQboo
-        KNtb5DGQHQ8q4Gkv0Cpk9AYJ1vD1aM29Qr5UmXU=
-X-Google-Smtp-Source: APXvYqxcbafJe04SN1qeT5pWEmiFMIsMMij9Z6/1CaqUF5SYJfUPY3akBZRbK+HKr3EEke1jiD5zOefK+INWk5Gr9hA=
-X-Received: by 2002:a9f:21f6:: with SMTP id 109mr3156310uac.109.1570123452512;
- Thu, 03 Oct 2019 10:24:12 -0700 (PDT)
+        Thu, 3 Oct 2019 13:30:46 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x93HNef8050113;
+        Thu, 3 Oct 2019 12:23:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570123420;
+        bh=iWtSBJKe76nynGhnxiOJ2Lg3nCj737L2QbGyJus8OHE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Ata+h7vnlts4aIRPksMFgleVPIt3OELkhLgzkSJT8AwEhjMkDFV3VLBW5frWbZhz8
+         9lLeYzkW7QmilsFkhY2SrY9ih7FUzt6UJwlSPQwIuu5o2od2B5BS6t6GR5Xpu8irGT
+         65j/0TSJeoEC6x49nwjVjNyMTvWFbp0UCFhaznEM=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x93HNdRh005634
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 3 Oct 2019 12:23:39 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 3 Oct
+ 2019 12:23:39 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 3 Oct 2019 12:23:28 -0500
+Received: from [10.250.99.146] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x93HNbUm045560;
+        Thu, 3 Oct 2019 12:23:37 -0500
+Subject: Re: [PATCH v8 5/5] backlight: add led-backlight driver
+To:     Sebastian Reichel <sre@kernel.org>
+CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <tomi.valkeinen@ti.com>,
+        <dmurphy@ti.com>, <linux-leds@vger.kernel.org>
+References: <20191003082812.28491-1-jjhiblot@ti.com>
+ <20191003082812.28491-6-jjhiblot@ti.com>
+ <20191003114735.byayntpe35qqrjeu@earth.universe>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <074963ce-d28f-413a-f35c-d503589a4604@ti.com>
+Date:   Thu, 3 Oct 2019 19:23:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190930112636.vx2qxo4hdysvxibl@willie-the-truck>
- <CAK7LNASQZ82KSOrQW7+Wq1vFDCg2__maBEAPMLqUDqZMLuj1rA@mail.gmail.com>
- <20190930121803.n34i63scet2ec7ll@willie-the-truck> <CAKwvOdnqn=0LndrX+mUrtSAQqoT1JWRMOJCA5t3e=S=T7zkcCQ@mail.gmail.com>
- <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck> <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
- <20191001170142.x66orounxuln7zs3@willie-the-truck> <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
- <20191001175512.GK25745@shell.armlinux.org.uk> <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
- <20191001181438.GL25745@shell.armlinux.org.uk> <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
- <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
- <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
- <CAK7LNARM2jVSdgCDJWDbvVxYLiUR_CFgTPg0nxzbCszSKcx+pg@mail.gmail.com> <CAHk-=wiMm3rN15WmiAqMHjC-pakL_b8qgWsPPri0+YLFORT-ZA@mail.gmail.com>
-In-Reply-To: <CAHk-=wiMm3rN15WmiAqMHjC-pakL_b8qgWsPPri0+YLFORT-ZA@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 4 Oct 2019 02:23:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATSoOD0g=Aarui6Y26E_YB035NsaPpHxqtBNyw0K0UXVw@mail.gmail.com>
-Message-ID: <CAK7LNATSoOD0g=Aarui6Y26E_YB035NsaPpHxqtBNyw0K0UXVw@mail.gmail.com>
-Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191003114735.byayntpe35qqrjeu@earth.universe>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 2:02 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Sebastian,
+
+On 03/10/2019 13:47, Sebastian Reichel wrote:
+> Hi,
 >
-> On Wed, Oct 2, 2019 at 7:11 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > Macrofying the 'inline' is a horrid mistake that makes incorrect code work.
-> > It would eternally prevent people from writing portable, correct code.
-> > Please do not encourage to hide problems.
+> On Thu, Oct 03, 2019 at 10:28:12AM +0200, Jean-Jacques Hiblot wrote:
+>> From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>>
+>> This patch adds a led-backlight driver (led_bl), which is similar to
+>> pwm_bl except the driver uses a LED class driver to adjust the
+>> brightness in the HW. Multiple LEDs can be used for a single backlight.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>> Acked-by: Pavel Machek <pavel@ucw.cz>
+>> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> ---
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 >
-> Honestly, if the alternative to hiding problems is "use a macro", then
-> I'd rather hide the problems and just make "inline" means "inline".
+> (with some suggestions below)
+
+[...]
+
+
+> I suggest to restructure:
 >
-> If "inline" means "it's just a hint, use macros", then inline is useless.
-
-For clarification,
-I am not saying "use macros" at all.
-
-
-I just want to annotate __always_inline for the case
-"2. code that if not inlined is somehow not correct."
-
-
-
-> If "inline" means "using this means that there are known compiler
-> bugs, but we don't know where they trigger", then inline is _worse_
-> than useless.
+> 1. call led_sysfs_disable
 >
-> I do not see the big advantage of letting the compiler say "yeah, I'm
-> not going to do that, Dave".
+> 2. use devm_add_action_or_reset() to register the
+>     led_sysfs_enable loop
 >
-> And I see a *huge* disadvantage when people are ignoring compiler
-> bugs, and are saying "use a macro". Seriously.
+> 3. use devm_backlight_device_register() to register BL
+>
+> 4. drop the remove function
+>
+>> +
+>> +	backlight_update_status(priv->bl_dev);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int led_bl_remove(struct platform_device *pdev)
+>> +{
+>> +	struct led_bl_data *priv = platform_get_drvdata(pdev);
+>> +	struct backlight_device *bl = priv->bl_dev;
+>> +	int i;
+>> +
+>> +	backlight_device_unregister(bl);
+>> +
+>> +	led_bl_power_off(priv);
+>> +	for (i = 0; i < priv->nb_leds; i++)
+>> +		led_sysfs_enable(priv->leds[i]);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id led_bl_of_match[] = {
+>> +	{ .compatible = "led-backlight" },
+>> +	{ }
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(of, led_bl_of_match);
+>> +
+>> +static struct platform_driver led_bl_driver = {
+>> +	.driver		= {
+>> +		.name		= "led-backlight",
+>> +		.of_match_table	= of_match_ptr(led_bl_of_match),
+> You should drop of_match_ptr(). Since the driver depends on OF,
+> it will always simply return led_bl_of_match.
+>
+> (Also after removing the OF dependency from the driver it would
+> either require led_bl_of_match to be marked __maybe_unused or
+> moving it into a #if CONFIG_OF area to avoid warnings.)
 
+Thanks for the suggestions. I think I'll work on them as a separate 
+thing and post them after this is merged if there are no others changes 
+required.
 
-Again, not saying "use a macro".
-
-
+JJ
 
 >
-> Right now we see the obvious compiler bugs that cause build breakages.
-> How many non-obvious compiler bugs do we have? And how sure are you
-> that our code is "correct" after fixing a couple of obvious cases?
+> -- Sebastian
 >
-> As to "portable", nobody cares. We're a kernel. We aren't portable,
-> and never were.
->
-> If this is purely about the fact that x86 is different from other
-> architectures, then let's remove the "compiler can do stupid things"
-> option on x86 too. It was never clear that it was a huge advantage.
->
->                Linus
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+>> +	},
+>> +	.probe		= led_bl_probe,
+>> +	.remove		= led_bl_remove,
+>> +};
+>> +
+>> +module_platform_driver(led_bl_driver);
+>> +
+>> +MODULE_DESCRIPTION("LED based Backlight Driver");
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_ALIAS("platform:led-backlight");
+>> -- 
+>> 2.17.1
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
