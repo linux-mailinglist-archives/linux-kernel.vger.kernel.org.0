@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED41CA676
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CFB1CA683
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392348AbfJCQoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:44:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55966 "EHLO mail.kernel.org"
+        id S2405382AbfJCQoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:44:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404781AbfJCQoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:44:05 -0400
+        id S2392744AbfJCQoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:44:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99BDE2054F;
-        Thu,  3 Oct 2019 16:44:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 951092054F;
+        Thu,  3 Oct 2019 16:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121044;
-        bh=LYIbF59LRkqGRsnLtIcvlgJlu1D6vqFSlyn1nFHtP2M=;
+        s=default; t=1570121069;
+        bh=fKDOifOsBYF0DMQPzAQ/DZmDI8+D34sivsnDb+H7i50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tLZ1pGcBmhoF9yLNsC45NxxENr3vXP+xCeui17DEWIAIGJ4g+/H0xFF4srspBuz5N
-         R1UMg7Ij4rA3WMhUTRLdH4H4oF0qdTVVKbaGZwNlGMGf4QtZzxFs/UwOZRg8f2+Q+N
-         w34e0/vx0wYbkGkeS/z5S5lmQHVyv0ztvPSRYfss=
+        b=VXB5jI/cF9NJmkxBno2dJEldYkwQYZLGntn6RuaV4dNEL9pCIQoXs2MDKJR95+0hm
+         z7qTK++bs04qsrhf0Ne++x4kyZ4z5dl75lhIAyjoFjhFBXcVSfXmPDXV7h7g7PwExa
+         0XCxwXiV3UixRaBQT99zXsV3K0QG6j8I0RSiqXL4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 106/344] media: mtk-mdp: fix reference count on old device tree
-Date:   Thu,  3 Oct 2019 17:51:11 +0200
-Message-Id: <20191003154550.692726688@linuxfoundation.org>
+Subject: [PATCH 5.3 107/344] media: i2c: tda1997x: prevent potential NULL pointer access
+Date:   Thu,  3 Oct 2019 17:51:12 +0200
+Message-Id: <20191003154550.774976696@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -46,40 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Brugger <matthias.bgg@gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[ Upstream commit 864919ea0380e62adb2503b89825fe358acb8216 ]
+[ Upstream commit 2f822f1da08ac5c93e351e79d22920f08fa51baf ]
 
-of_get_next_child() increments the reference count of the returning
-device_node. Decrement it in the check if we are using the old or the
-new DTB.
+i2c_new_dummy() can fail returning a NULL pointer. This is not checked
+and the returned pointer is blindly used. Convert to
+devm_i2c_new_dummy_client() which returns an ERR_PTR and also add a
+validity check. Using devm_* here also fixes a leak because the dummy
+client was not released in the probe error path.
 
-Fixes: ba1f1f70c2c0 ("[media] media: mtk-mdp: Fix mdp device tree")
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-Acked-by: Houlong Wei <houlong.wei@mediatek.com>
-[hverkuil-cisco@xs4all.nl: use node instead of parent as temp variable]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/mtk-mdp/mtk_mdp_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/i2c/tda1997x.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_core.c b/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
-index fc9faec85edb6..5d44f2e92dd50 100644
---- a/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
-+++ b/drivers/media/platform/mtk-mdp/mtk_mdp_core.c
-@@ -110,7 +110,9 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 	mutex_init(&mdp->vpulock);
+diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
+index a62ede0966361..5e68182001ecc 100644
+--- a/drivers/media/i2c/tda1997x.c
++++ b/drivers/media/i2c/tda1997x.c
+@@ -2691,7 +2691,13 @@ static int tda1997x_probe(struct i2c_client *client,
+ 	}
  
- 	/* Old dts had the components as child nodes */
--	if (of_get_next_child(dev->of_node, NULL)) {
-+	node = of_get_next_child(dev->of_node, NULL);
-+	if (node) {
-+		of_node_put(node);
- 		parent = dev->of_node;
- 		dev_warn(dev, "device tree is out of date\n");
- 	} else {
+ 	ret = 0x34 + ((io_read(sd, REG_SLAVE_ADDR)>>4) & 0x03);
+-	state->client_cec = i2c_new_dummy(client->adapter, ret);
++	state->client_cec = devm_i2c_new_dummy_device(&client->dev,
++						      client->adapter, ret);
++	if (IS_ERR(state->client_cec)) {
++		ret = PTR_ERR(state->client_cec);
++		goto err_free_mutex;
++	}
++
+ 	v4l_info(client, "CEC slave address 0x%02x\n", ret);
+ 
+ 	ret = tda1997x_core_init(sd);
+@@ -2798,7 +2804,6 @@ static int tda1997x_remove(struct i2c_client *client)
+ 	media_entity_cleanup(&sd->entity);
+ 	v4l2_ctrl_handler_free(&state->hdl);
+ 	regulator_bulk_disable(TDA1997X_NUM_SUPPLIES, state->supplies);
+-	i2c_unregister_device(state->client_cec);
+ 	cancel_delayed_work(&state->delayed_work_enable_hpd);
+ 	mutex_destroy(&state->page_lock);
+ 	mutex_destroy(&state->lock);
 -- 
 2.20.1
 
