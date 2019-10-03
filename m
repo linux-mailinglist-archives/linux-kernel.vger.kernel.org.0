@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FBDCA830
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A4ACA845
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390391AbfJCQWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:22:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51528 "EHLO mail.kernel.org"
+        id S2390729AbfJCQYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:24:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389666AbfJCQWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:22:45 -0400
+        id S2390710AbfJCQYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:24:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DBD220659;
-        Thu,  3 Oct 2019 16:22:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15BF4215EA;
+        Thu,  3 Oct 2019 16:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119764;
-        bh=Z6hm1aV5wDIfEywU7fJ4It8USUkTpKw4tv3LMqvxrEU=;
+        s=default; t=1570119858;
+        bh=68NxIA56E8TqefE0dqfPd3/WVVwwRUsYnUYxrw8mY1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dTP9SmVMkHw/FZRGFIX3PDFPFKMxsyLIGkOZpcjsv2KlxQ7QzUJ9pkJ4vQSwvcBGh
-         4m+/nCegx2vX3kqpqDSvT8BDgWqQ96tYepTS7GuAi3DqvBy6UjqBsJh6HQWsGkHmWt
-         BbISDGsoxs9AsYHAYEFuuPoYpt4KfGaVK+fnqIzU=
+        b=GHqzqrYrURO7QmscjF7dEamc6ELLf2vv5YME1I1b8ZpSfcWjg33kpWvnBVwOfdTFq
+         2y+HuY3dwYYUgPkYPZzScakcREh5DQPDpwiJiVp6Df+evS7OkyCWyGaOj7qrRALgdQ
+         AGo4ifrWHMV9cnG7BbyM1TvcQqN7jiZfIesX/G5g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Masoud Sharbiani <msharbiani@apple.com>,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 183/211] memcg, oom: dont require __GFP_FS when invoking memcg OOM killer
-Date:   Thu,  3 Oct 2019 17:54:09 +0200
-Message-Id: <20191003154527.642258250@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 193/211] btrfs: qgroup: Fix the wrong target io_tree when freeing reserved data space
+Date:   Thu,  3 Oct 2019 17:54:19 +0200
+Message-Id: <20191003154528.856046734@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -48,182 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+From: Qu Wenruo <wqu@suse.com>
 
-commit f9c645621a28e37813a1de96d9cbd89cde94a1e4 upstream.
+commit bab32fc069ce8829c416e8737c119f62a57970f9 upstream.
 
-Masoud Sharbiani noticed that commit 29ef680ae7c21110 ("memcg, oom: move
-out_of_memory back to the charge path") broke memcg OOM called from
-__xfs_filemap_fault() path.  It turned out that try_charge() is retrying
-forever without making forward progress because mem_cgroup_oom(GFP_NOFS)
-cannot invoke the OOM killer due to commit 3da88fb3bacfaa33 ("mm, oom:
-move GFP_NOFS check to out_of_memory").
+[BUG]
+Under the following case with qgroup enabled, if some error happened
+after we have reserved delalloc space, then in error handling path, we
+could cause qgroup data space leakage:
 
-Allowing forced charge due to being unable to invoke memcg OOM killer will
-lead to global OOM situation.  Also, just returning -ENOMEM will be risky
-because OOM path is lost and some paths (e.g.  get_user_pages()) will leak
--ENOMEM.  Therefore, invoking memcg OOM killer (despite GFP_NOFS) will be
-the only choice we can choose for now.
+>From btrfs_truncate_block() in inode.c:
 
-Until 29ef680ae7c21110, we were able to invoke memcg OOM killer when
-GFP_KERNEL reclaim failed [1].  But since 29ef680ae7c21110, we need to
-invoke memcg OOM killer when GFP_NOFS reclaim failed [2].  Although in the
-past we did invoke memcg OOM killer for GFP_NOFS [3], we might get
-pre-mature memcg OOM reports due to this patch.
+	ret = btrfs_delalloc_reserve_space(inode, &data_reserved,
+					   block_start, blocksize);
+	if (ret)
+		goto out;
 
-[1]
+ again:
+	page = find_or_create_page(mapping, index, mask);
+	if (!page) {
+		btrfs_delalloc_release_space(inode, data_reserved,
+					     block_start, blocksize, true);
+		btrfs_delalloc_release_extents(BTRFS_I(inode), blocksize, true);
+		ret = -ENOMEM;
+		goto out;
+	}
 
- leaker invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
- CPU: 0 PID: 2746 Comm: leaker Not tainted 4.18.0+ #19
- Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/13/2018
- Call Trace:
-  dump_stack+0x63/0x88
-  dump_header+0x67/0x27a
-  ? mem_cgroup_scan_tasks+0x91/0xf0
-  oom_kill_process+0x210/0x410
-  out_of_memory+0x10a/0x2c0
-  mem_cgroup_out_of_memory+0x46/0x80
-  mem_cgroup_oom_synchronize+0x2e4/0x310
-  ? high_work_func+0x20/0x20
-  pagefault_out_of_memory+0x31/0x76
-  mm_fault_error+0x55/0x115
-  ? handle_mm_fault+0xfd/0x220
-  __do_page_fault+0x433/0x4e0
-  do_page_fault+0x22/0x30
-  ? page_fault+0x8/0x30
-  page_fault+0x1e/0x30
- RIP: 0033:0x4009f0
- Code: 03 00 00 00 e8 71 fd ff ff 48 83 f8 ff 49 89 c6 74 74 48 89 c6 bf c0 0c 40 00 31 c0 e8 69 fd ff ff 45 85 ff 7e 21 31 c9 66 90 <41> 0f be 14 0e 01 d3 f7 c1 ff 0f 00 00 75 05 41 c6 04 0e 2a 48 83
- RSP: 002b:00007ffe29ae96f0 EFLAGS: 00010206
- RAX: 000000000000001b RBX: 0000000000000000 RCX: 0000000001ce1000
- RDX: 0000000000000000 RSI: 000000007fffffe5 RDI: 0000000000000000
- RBP: 000000000000000c R08: 0000000000000000 R09: 00007f94be09220d
- R10: 0000000000000002 R11: 0000000000000246 R12: 00000000000186a0
- R13: 0000000000000003 R14: 00007f949d845000 R15: 0000000002800000
- Task in /leaker killed as a result of limit of /leaker
- memory: usage 524288kB, limit 524288kB, failcnt 158965
- memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
- kmem: usage 2016kB, limit 9007199254740988kB, failcnt 0
- Memory cgroup stats for /leaker: cache:844KB rss:521136KB rss_huge:0KB shmem:0KB mapped_file:0KB dirty:132KB writeback:0KB inactive_anon:0KB active_anon:521224KB inactive_file:1012KB active_file:8KB unevictable:0KB
- Memory cgroup out of memory: Kill process 2746 (leaker) score 998 or sacrifice child
- Killed process 2746 (leaker) total-vm:536704kB, anon-rss:521176kB, file-rss:1208kB, shmem-rss:0kB
- oom_reaper: reaped process 2746 (leaker), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+[CAUSE]
+In the above case, btrfs_delalloc_reserve_space() will call
+btrfs_qgroup_reserve_data() and mark the io_tree range with
+EXTENT_QGROUP_RESERVED flag.
 
-[2]
+In the error handling path, we have the following call stack:
+btrfs_delalloc_release_space()
+|- btrfs_free_reserved_data_space()
+   |- btrsf_qgroup_free_data()
+      |- __btrfs_qgroup_release_data(reserved=@reserved, free=1)
+         |- qgroup_free_reserved_data(reserved=@reserved)
+            |- clear_record_extent_bits();
+            |- freed += changeset.bytes_changed;
 
- leaker invoked oom-killer: gfp_mask=0x600040(GFP_NOFS), nodemask=(null), order=0, oom_score_adj=0
- CPU: 1 PID: 2746 Comm: leaker Not tainted 4.18.0+ #20
- Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/13/2018
- Call Trace:
-  dump_stack+0x63/0x88
-  dump_header+0x67/0x27a
-  ? mem_cgroup_scan_tasks+0x91/0xf0
-  oom_kill_process+0x210/0x410
-  out_of_memory+0x109/0x2d0
-  mem_cgroup_out_of_memory+0x46/0x80
-  try_charge+0x58d/0x650
-  ? __radix_tree_replace+0x81/0x100
-  mem_cgroup_try_charge+0x7a/0x100
-  __add_to_page_cache_locked+0x92/0x180
-  add_to_page_cache_lru+0x4d/0xf0
-  iomap_readpages_actor+0xde/0x1b0
-  ? iomap_zero_range_actor+0x1d0/0x1d0
-  iomap_apply+0xaf/0x130
-  iomap_readpages+0x9f/0x150
-  ? iomap_zero_range_actor+0x1d0/0x1d0
-  xfs_vm_readpages+0x18/0x20 [xfs]
-  read_pages+0x60/0x140
-  __do_page_cache_readahead+0x193/0x1b0
-  ondemand_readahead+0x16d/0x2c0
-  page_cache_async_readahead+0x9a/0xd0
-  filemap_fault+0x403/0x620
-  ? alloc_set_pte+0x12c/0x540
-  ? _cond_resched+0x14/0x30
-  __xfs_filemap_fault+0x66/0x180 [xfs]
-  xfs_filemap_fault+0x27/0x30 [xfs]
-  __do_fault+0x19/0x40
-  __handle_mm_fault+0x8e8/0xb60
-  handle_mm_fault+0xfd/0x220
-  __do_page_fault+0x238/0x4e0
-  do_page_fault+0x22/0x30
-  ? page_fault+0x8/0x30
-  page_fault+0x1e/0x30
- RIP: 0033:0x4009f0
- Code: 03 00 00 00 e8 71 fd ff ff 48 83 f8 ff 49 89 c6 74 74 48 89 c6 bf c0 0c 40 00 31 c0 e8 69 fd ff ff 45 85 ff 7e 21 31 c9 66 90 <41> 0f be 14 0e 01 d3 f7 c1 ff 0f 00 00 75 05 41 c6 04 0e 2a 48 83
- RSP: 002b:00007ffda45c9290 EFLAGS: 00010206
- RAX: 000000000000001b RBX: 0000000000000000 RCX: 0000000001a1e000
- RDX: 0000000000000000 RSI: 000000007fffffe5 RDI: 0000000000000000
- RBP: 000000000000000c R08: 0000000000000000 R09: 00007f6d061ff20d
- R10: 0000000000000002 R11: 0000000000000246 R12: 00000000000186a0
- R13: 0000000000000003 R14: 00007f6ce59b2000 R15: 0000000002800000
- Task in /leaker killed as a result of limit of /leaker
- memory: usage 524288kB, limit 524288kB, failcnt 7221
- memory+swap: usage 0kB, limit 9007199254740988kB, failcnt 0
- kmem: usage 1944kB, limit 9007199254740988kB, failcnt 0
- Memory cgroup stats for /leaker: cache:3632KB rss:518232KB rss_huge:0KB shmem:0KB mapped_file:0KB dirty:0KB writeback:0KB inactive_anon:0KB active_anon:518408KB inactive_file:3908KB active_file:12KB unevictable:0KB
- Memory cgroup out of memory: Kill process 2746 (leaker) score 992 or sacrifice child
- Killed process 2746 (leaker) total-vm:536704kB, anon-rss:518264kB, file-rss:1188kB, shmem-rss:0kB
- oom_reaper: reaped process 2746 (leaker), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+However due to a completion bug, qgroup_free_reserved_data() will clear
+EXTENT_QGROUP_RESERVED flag in BTRFS_I(inode)->io_failure_tree, other
+than the correct BTRFS_I(inode)->io_tree.
+Since io_failure_tree is never marked with that flag,
+btrfs_qgroup_free_data() will not free any data reserved space at all,
+causing a leakage.
 
-[3]
+This type of error handling can only be triggered by errors outside of
+qgroup code. So EDQUOT error from qgroup can't trigger it.
 
- leaker invoked oom-killer: gfp_mask=0x50, order=0, oom_score_adj=0
- leaker cpuset=/ mems_allowed=0
- CPU: 1 PID: 3206 Comm: leaker Not tainted 3.10.0-957.27.2.el7.x86_64 #1
- Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/13/2018
- Call Trace:
-  [<ffffffffaf364147>] dump_stack+0x19/0x1b
-  [<ffffffffaf35eb6a>] dump_header+0x90/0x229
-  [<ffffffffaedbb456>] ? find_lock_task_mm+0x56/0xc0
-  [<ffffffffaee32a38>] ? try_get_mem_cgroup_from_mm+0x28/0x60
-  [<ffffffffaedbb904>] oom_kill_process+0x254/0x3d0
-  [<ffffffffaee36c36>] mem_cgroup_oom_synchronize+0x546/0x570
-  [<ffffffffaee360b0>] ? mem_cgroup_charge_common+0xc0/0xc0
-  [<ffffffffaedbc194>] pagefault_out_of_memory+0x14/0x90
-  [<ffffffffaf35d072>] mm_fault_error+0x6a/0x157
-  [<ffffffffaf3717c8>] __do_page_fault+0x3c8/0x4f0
-  [<ffffffffaf371925>] do_page_fault+0x35/0x90
-  [<ffffffffaf36d768>] page_fault+0x28/0x30
- Task in /leaker killed as a result of limit of /leaker
- memory: usage 524288kB, limit 524288kB, failcnt 20628
- memory+swap: usage 524288kB, limit 9007199254740988kB, failcnt 0
- kmem: usage 0kB, limit 9007199254740988kB, failcnt 0
- Memory cgroup stats for /leaker: cache:840KB rss:523448KB rss_huge:0KB mapped_file:0KB swap:0KB inactive_anon:0KB active_anon:523448KB inactive_file:464KB active_file:376KB unevictable:0KB
- Memory cgroup out of memory: Kill process 3206 (leaker) score 970 or sacrifice child
- Killed process 3206 (leaker) total-vm:536692kB, anon-rss:523304kB, file-rss:412kB, shmem-rss:0kB
+[FIX]
+Fix the wrong target io_tree.
 
-Bisected by Masoud Sharbiani.
-
-Link: http://lkml.kernel.org/r/cbe54ed1-b6ba-a056-8899-2dc42526371d@i-love.sakura.ne.jp
-Fixes: 3da88fb3bacfaa33 ("mm, oom: move GFP_NOFS check to out_of_memory") [necessary after 29ef680ae7c21110]
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: Masoud Sharbiani <msharbiani@apple.com>
-Tested-by: Masoud Sharbiani <msharbiani@apple.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: <stable@vger.kernel.org>	[4.19+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Josef Bacik <josef@toxicpanda.com>
+Fixes: bc42bda22345 ("btrfs: qgroup: Fix qgroup reserved space underflow by only freeing reserved ranges")
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/oom_kill.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/btrfs/qgroup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -1089,9 +1089,10 @@ bool out_of_memory(struct oom_control *o
- 	 * The OOM killer does not compensate for IO-less reclaim.
- 	 * pagefault_out_of_memory lost its gfp context so we have to
- 	 * make sure exclude 0 mask - all other users should have at least
--	 * ___GFP_DIRECT_RECLAIM to get here.
-+	 * ___GFP_DIRECT_RECLAIM to get here. But mem_cgroup_oom() has to
-+	 * invoke the OOM killer even if it is a GFP_NOFS allocation.
- 	 */
--	if (oc->gfp_mask && !(oc->gfp_mask & __GFP_FS))
-+	if (oc->gfp_mask && !(oc->gfp_mask & __GFP_FS) && !is_memcg_oom(oc))
- 		return true;
- 
- 	/*
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3111,7 +3111,7 @@ static int qgroup_free_reserved_data(str
+ 		 * EXTENT_QGROUP_RESERVED, we won't double free.
+ 		 * So not need to rush.
+ 		 */
+-		ret = clear_record_extent_bits(&BTRFS_I(inode)->io_failure_tree,
++		ret = clear_record_extent_bits(&BTRFS_I(inode)->io_tree,
+ 				free_start, free_start + free_len - 1,
+ 				EXTENT_QGROUP_RESERVED, &changeset);
+ 		if (ret < 0)
 
 
