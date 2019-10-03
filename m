@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13F6ECA1F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25250CA2C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfJCQAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44562 "EHLO mail.kernel.org"
+        id S1732138AbfJCQIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:08:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729838AbfJCQAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:42 -0400
+        id S1731955AbfJCQIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:08:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D070920700;
-        Thu,  3 Oct 2019 16:00:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63C8320865;
+        Thu,  3 Oct 2019 16:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118441;
-        bh=4P6MSDnzsesx6pv5JsKnOe6/ahOueIEhgfYHMzGTTjU=;
+        s=default; t=1570118921;
+        bh=nE9nz5evbkAO8wmG0ixscqvwNdd1KDUNZZz1Dyjbub8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=16REERKDipfuUqBSq1iW2ycAzK9kBCLtQTqqXr4C09t9X1mS0eXHITrekFUaWeBL/
-         AsO/x/AwlhA57OZruxTQgKat47+DDXKe294iJ1m6tuRbe9fDtAtI8A0PrJA9Ey7EvT
-         BjSVkUJpJOTF44LgfYTBPl1wTQ33fIFg9Yh7Mr3g=
+        b=VhHC7CmKJ8p5sihzHmURyILHjzcesM1C0WoYC7DokDPxhdgwhDXRIAeUToVy8WOhR
+         OVO1sNKeNkGC2Vk4/pTAJLuP4ERMGXvcU+RJ14KygtzNVXKJuSLgLFqV522D23K9pw
+         5NYSB0HcEV822atJsluqSKkhrqPAgc0EYPzc8UMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Wang <yyuwang@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Sean Young <sean@mess.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 013/129] mac80211: handle deauthentication/disassociation from TDLS peer
-Date:   Thu,  3 Oct 2019 17:52:16 +0200
-Message-Id: <20191003154324.605928554@linuxfoundation.org>
+Subject: [PATCH 4.14 059/185] media: mtk-cir: lower de-glitch counter for rc-mm protocol
+Date:   Thu,  3 Oct 2019 17:52:17 +0200
+Message-Id: <20191003154450.607953431@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,123 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Wang <yyuwang@codeaurora.org>
+From: Sean Young <sean@mess.org>
 
-[ Upstream commit 79c92ca42b5a3e0ea172ea2ce8df8e125af237da ]
+[ Upstream commit 5dd4b89dc098bf22cd13e82a308f42a02c102b2b ]
 
-When receiving a deauthentication/disassociation frame from a TDLS
-peer, a station should not disconnect the current AP, but only
-disable the current TDLS link if it's enabled.
+The rc-mm protocol can't be decoded by the mtk-cir since the de-glitch
+filter removes pulses/spaces shorter than 294 microseconds.
 
-Without this change, a TDLS issue can be reproduced by following the
-steps as below:
+Tested on a BananaPi R2.
 
-1. STA-1 and STA-2 are connected to AP, bidirection traffic is running
-   between STA-1 and STA-2.
-2. Set up TDLS link between STA-1 and STA-2, stay for a while, then
-   teardown TDLS link.
-3. Repeat step #2 and monitor the connection between STA and AP.
-
-During the test, one STA may send a deauthentication/disassociation
-frame to another, after TDLS teardown, with reason code 6/7, which
-means: Class 2/3 frame received from nonassociated STA.
-
-On receive this frame, the receiver STA will disconnect the current
-AP and then reconnect. It's not a expected behavior, purpose of this
-frame should be disabling the TDLS link, not the link with AP.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Yu Wang <yyuwang@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Acked-by: Sean Wang <sean.wang@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/ieee80211_i.h |  3 +++
- net/mac80211/mlme.c        | 12 +++++++++++-
- net/mac80211/tdls.c        | 23 +++++++++++++++++++++++
- 3 files changed, 37 insertions(+), 1 deletion(-)
+ drivers/media/rc/mtk-cir.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
-index 6708de10a3e5e..0b0de3030e0dc 100644
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -2123,6 +2123,9 @@ void ieee80211_tdls_cancel_channel_switch(struct wiphy *wiphy,
- 					  const u8 *addr);
- void ieee80211_teardown_tdls_peers(struct ieee80211_sub_if_data *sdata);
- void ieee80211_tdls_chsw_work(struct work_struct *wk);
-+void ieee80211_tdls_handle_disconnect(struct ieee80211_sub_if_data *sdata,
-+				      const u8 *peer, u16 reason);
-+const char *ieee80211_get_reason_code_string(u16 reason_code);
+diff --git a/drivers/media/rc/mtk-cir.c b/drivers/media/rc/mtk-cir.c
+index e88eb64e8e693..00a4a0dfcab87 100644
+--- a/drivers/media/rc/mtk-cir.c
++++ b/drivers/media/rc/mtk-cir.c
+@@ -44,6 +44,11 @@
+ /* Fields containing pulse width data */
+ #define MTK_WIDTH_MASK		  (GENMASK(7, 0))
  
- extern const struct ethtool_ops ieee80211_ethtool_ops;
++/* IR threshold */
++#define MTK_IRTHD		 0x14
++#define MTK_DG_CNT_MASK		 (GENMASK(12, 8))
++#define MTK_DG_CNT(x)		 ((x) << 8)
++
+ /* Bit to enable interrupt */
+ #define MTK_IRINT_EN		  BIT(0)
  
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index 090e2aa8630e8..c75594a12c38e 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -2755,7 +2755,7 @@ static void ieee80211_rx_mgmt_auth(struct ieee80211_sub_if_data *sdata,
- #define case_WLAN(type) \
- 	case WLAN_REASON_##type: return #type
+@@ -411,6 +416,9 @@ static int mtk_ir_probe(struct platform_device *pdev)
+ 	mtk_w32_mask(ir, val, ir->data->fields[MTK_HW_PERIOD].mask,
+ 		     ir->data->fields[MTK_HW_PERIOD].reg);
  
--static const char *ieee80211_get_reason_code_string(u16 reason_code)
-+const char *ieee80211_get_reason_code_string(u16 reason_code)
- {
- 	switch (reason_code) {
- 	case_WLAN(UNSPECIFIED);
-@@ -2820,6 +2820,11 @@ static void ieee80211_rx_mgmt_deauth(struct ieee80211_sub_if_data *sdata,
- 	if (len < 24 + 2)
- 		return;
- 
-+	if (!ether_addr_equal(mgmt->bssid, mgmt->sa)) {
-+		ieee80211_tdls_handle_disconnect(sdata, mgmt->sa, reason_code);
-+		return;
-+	}
++	/* Set de-glitch counter */
++	mtk_w32_mask(ir, MTK_DG_CNT(1), MTK_DG_CNT_MASK, MTK_IRTHD);
 +
- 	if (ifmgd->associated &&
- 	    ether_addr_equal(mgmt->bssid, ifmgd->associated->bssid)) {
- 		const u8 *bssid = ifmgd->associated->bssid;
-@@ -2869,6 +2874,11 @@ static void ieee80211_rx_mgmt_disassoc(struct ieee80211_sub_if_data *sdata,
- 
- 	reason_code = le16_to_cpu(mgmt->u.disassoc.reason_code);
- 
-+	if (!ether_addr_equal(mgmt->bssid, mgmt->sa)) {
-+		ieee80211_tdls_handle_disconnect(sdata, mgmt->sa, reason_code);
-+		return;
-+	}
-+
- 	sdata_info(sdata, "disassociated from %pM (Reason: %u=%s)\n",
- 		   mgmt->sa, reason_code,
- 		   ieee80211_get_reason_code_string(reason_code));
-diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
-index c64ae68ae4f84..863f92c087014 100644
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -2001,3 +2001,26 @@ void ieee80211_tdls_chsw_work(struct work_struct *wk)
- 	}
- 	rtnl_unlock();
- }
-+
-+void ieee80211_tdls_handle_disconnect(struct ieee80211_sub_if_data *sdata,
-+				      const u8 *peer, u16 reason)
-+{
-+	struct ieee80211_sta *sta;
-+
-+	rcu_read_lock();
-+	sta = ieee80211_find_sta(&sdata->vif, peer);
-+	if (!sta || !sta->tdls) {
-+		rcu_read_unlock();
-+		return;
-+	}
-+	rcu_read_unlock();
-+
-+	tdls_dbg(sdata, "disconnected from TDLS peer %pM (Reason: %u=%s)\n",
-+		 peer, reason,
-+		 ieee80211_get_reason_code_string(reason));
-+
-+	ieee80211_tdls_oper_request(&sdata->vif, peer,
-+				    NL80211_TDLS_TEARDOWN,
-+				    WLAN_REASON_TDLS_TEARDOWN_UNREACHABLE,
-+				    GFP_ATOMIC);
-+}
+ 	/* Enable IR and PWM */
+ 	val = mtk_r32(ir, MTK_CONFIG_HIGH_REG);
+ 	val |= MTK_OK_COUNT(ir->data->ok_count) |  MTK_PWM_EN | MTK_IR_EN;
 -- 
 2.20.1
 
