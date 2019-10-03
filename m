@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59EAFCA30A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4060CA30D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387867AbfJCQLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:11:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
+        id S2387903AbfJCQLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:11:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729616AbfJCQLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:11:31 -0400
+        id S2387877AbfJCQLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:11:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 416FB2054F;
-        Thu,  3 Oct 2019 16:11:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14531207FF;
+        Thu,  3 Oct 2019 16:11:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119090;
-        bh=YguYYRHa7pxbgWOAPbbpBNA7eGUgBYUkdSRQ4YqKIUY=;
+        s=default; t=1570119101;
+        bh=cn6NzZ9VbJI2M0TVHdR5+d1pVaa64iCqsLuPxdNrJMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qPaz00VoHnLR1nEPQB+cSmnUpKEkHRSgUKFRSj9H+4E7SSvmv+aOwvTBjsP+RwAJD
-         2WPr5ra145ajLU0vSu8NhIp6cKFLiCSYzFKQdz4bm+ZrRtzoMf/yF6tbuibFhvqJuU
-         9bWZPHNw5dRjVRhkR78YWQ5FAppwD0BSO6n06gM4=
+        b=2Qix8PXnhhaOTDkiBEVxvXVaSZ7Wlbv9JQ2UgYVTYMHYbPTUVzotM12TO/IECDZq1
+         V/Bw4WhZW3VcXPul2C8MwG74EB4GnickfYVQ6n/rmr9F4IStSqC2sh7JuevfIvgX/r
+         wOyV7KaMaeqZqJNnf/dWAMBR+soxpNr/Bl/kVlOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Darius Rad <alpha@area49.net>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 085/185] perf test vfs_getname: Disable ~/.perfconfig to get default output
-Date:   Thu,  3 Oct 2019 17:52:43 +0200
-Message-Id: <20191003154457.247847023@linuxfoundation.org>
+Subject: [PATCH 4.14 088/185] media: rc: imon: Allow iMON RC protocol for ffdc 7e device
+Date:   Thu,  3 Oct 2019 17:52:46 +0200
+Message-Id: <20191003154458.180129634@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -48,74 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Darius Rad <alpha@area49.net>
 
-[ Upstream commit 4fe94ce1c6ba678b5f12b94bb9996eea4fc99e85 ]
+[ Upstream commit b20a6e298bcb8cb8ae18de26baaf462a6418515b ]
 
-To get the expected output we have to ignore whatever changes the user
-has in its ~/.perfconfig file, so set PERF_CONFIG to /dev/null to
-achieve that.
+Allow selecting the IR protocol, MCE or iMON, for a device that
+identifies as follows (with config id 0x7e):
 
-Before:
+15c2:ffdc SoundGraph Inc. iMON PAD Remote Controller
 
-  # egrep 'trace|show_' ~/.perfconfig
-  [trace]
-  	show_zeros = yes
-  	show_duration = no
-  	show_timestamp = no
-  	show_arg_names = no
-  	show_prefix = yes
-  # echo $PERF_CONFIG
+As the driver is structured to default to iMON when both RC
+protocols are supported, existing users of this device (using MCE
+protocol) will need to manually switch to MCE (RC-6) protocol from
+userspace (with ir-keytable, sysfs).
 
-  # perf test "trace + vfs_getname"
-  70: Check open filename arg using perf trace + vfs_getname: FAILED!
-  # export PERF_CONFIG=/dev/null
-  # perf test "trace + vfs_getname"
-  70: Check open filename arg using perf trace + vfs_getname: Ok
-  #
-
-After:
-
-  # egrep 'trace|show_' ~/.perfconfig
-  [trace]
-  	show_zeros = yes
-  	show_duration = no
-  	show_timestamp = no
-  	show_arg_names = no
-  	show_prefix = yes
-  # echo $PERF_CONFIG
-
-  # perf test "trace + vfs_getname"
-  70: Check open filename arg using perf trace + vfs_getname: Ok
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
-Link: https://lkml.kernel.org/n/tip-3up27pexg5i3exuzqrvt4m8u@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Darius Rad <alpha@area49.net>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/shell/trace+probe_vfs_getname.sh | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/rc/imon.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-index 2a9ef080efd02..a8a516dec4ed2 100755
---- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-@@ -30,6 +30,10 @@ if [ $err -ne 0 ] ; then
- 	exit $err
- fi
- 
-+# Do not use whatever ~/.perfconfig file, it may change the output
-+# via trace.{show_timestamp,show_prefix,etc}
-+export PERF_CONFIG=/dev/null
-+
- trace_open_vfs_getname
- err=$?
- rm -f ${file}
+diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
+index 0c46155a8e9da..a7547c88e4c36 100644
+--- a/drivers/media/rc/imon.c
++++ b/drivers/media/rc/imon.c
+@@ -1963,12 +1963,17 @@ static void imon_get_ffdc_type(struct imon_context *ictx)
+ 		break;
+ 	/* iMON VFD, MCE IR */
+ 	case 0x46:
+-	case 0x7e:
+ 	case 0x9e:
+ 		dev_info(ictx->dev, "0xffdc iMON VFD, MCE IR");
+ 		detected_display_type = IMON_DISPLAY_TYPE_VFD;
+ 		allowed_protos = RC_PROTO_BIT_RC6_MCE;
+ 		break;
++	/* iMON VFD, iMON or MCE IR */
++	case 0x7e:
++		dev_info(ictx->dev, "0xffdc iMON VFD, iMON or MCE IR");
++		detected_display_type = IMON_DISPLAY_TYPE_VFD;
++		allowed_protos |= RC_PROTO_BIT_RC6_MCE;
++		break;
+ 	/* iMON LCD, MCE IR */
+ 	case 0x9f:
+ 		dev_info(ictx->dev, "0xffdc iMON LCD, MCE IR");
 -- 
 2.20.1
 
