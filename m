@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD5A1CAC9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C840CACA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388358AbfJCQNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:13:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
+        id S2388200AbfJCQNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:13:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388195AbfJCQNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:13:08 -0400
+        id S2388360AbfJCQNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:13:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68AE52054F;
-        Thu,  3 Oct 2019 16:13:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EDE42054F;
+        Thu,  3 Oct 2019 16:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119188;
-        bh=V7DuxVBin5ZXYh+MsB/OcPR+axrn4a9WekxFP0wvVYQ=;
+        s=default; t=1570119190;
+        bh=RzBBn1sBdiFhmbdzNBun+vapTG+24oKBd7pOWXsexII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PhOJszfItt97Upf5Ki/dfXxtS5V1Rdf+d1uBGVNv8aHSxTrYi9enTH5KPLi9Kmhr2
-         33QmzN0oZQrNjCAUtD+ecymO1F9dqBDtGxx8Z+t+ie3CcRMUTUKMosdaOMugfDOHy1
-         volnvfJFJ1wrcUKRsgf9QZViWHQJZFup0Laqp6j0=
+        b=UHLUYPlXHNWZxGv20/mz6AfBgYHOfFj8HNSrHsRy6rtRSZEE3kap6R7b1haqTnEyQ
+         60w1/oVmXtwXLr6+HPnSwdhk4/SpiPWuMWYYL//884ojcdtP04y/UO4fd6urpRGiGc
+         +ERX5BzJ9IasUPOom6M4pnBKEUMT9HCILyYwjv2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 157/185] ASoC: Intel: Fix use of potentially uninitialized variable
-Date:   Thu,  3 Oct 2019 17:53:55 +0200
-Message-Id: <20191003154514.757296883@linuxfoundation.org>
+        stable@vger.kernel.org, Lihua Yao <ylhuajnu@outlook.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.14 158/185] ARM: samsung: Fix system restart on S3C6410
+Date:   Thu,  3 Oct 2019 17:53:56 +0200
+Message-Id: <20191003154515.001351358@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -46,37 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+From: Lihua Yao <ylhuajnu@outlook.com>
 
-commit 810f3b860850148788fc1ed8a6f5f807199fed65 upstream.
+commit 16986074035cc0205472882a00d404ed9d213313 upstream.
 
-If ipc->ops.reply_msg_match is NULL, we may end up using uninitialized
-mask value.
+S3C6410 system restart is triggered by watchdog reset.
 
-reported by smatch:
-sound/soc/intel/common/sst-ipc.c:266 sst_ipc_reply_find_msg() error: uninitialized symbol 'mask'.
-
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
-Link: https://lore.kernel.org/r/20190827141712.21015-3-amadeuszx.slawinski@linux.intel.com
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Fixes: 9f55342cc2de ("ARM: dts: s3c64xx: Fix infinite interrupt in soft mode")
+Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/common/sst-ipc.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/plat-samsung/watchdog-reset.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/soc/intel/common/sst-ipc.c
-+++ b/sound/soc/intel/common/sst-ipc.c
-@@ -231,6 +231,8 @@ struct ipc_message *sst_ipc_reply_find_m
+--- a/arch/arm/plat-samsung/watchdog-reset.c
++++ b/arch/arm/plat-samsung/watchdog-reset.c
+@@ -67,6 +67,7 @@ void samsung_wdt_reset(void)
+ #ifdef CONFIG_OF
+ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	{ .compatible = "samsung,s3c2410-wdt" },
++	{ .compatible = "samsung,s3c6410-wdt" },
+ 	{},
+ };
  
- 	if (ipc->ops.reply_msg_match != NULL)
- 		header = ipc->ops.reply_msg_match(header, &mask);
-+	else
-+		mask = (u64)-1;
- 
- 	if (list_empty(&ipc->rx_list)) {
- 		dev_err(ipc->dev, "error: rx list empty but received 0x%llx\n",
 
 
