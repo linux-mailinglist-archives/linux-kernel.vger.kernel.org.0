@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EABECA5E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98993CA796
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392260AbfJCQhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:37:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47182 "EHLO mail.kernel.org"
+        id S1732709AbfJCQzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:55:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404641AbfJCQhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:37:45 -0400
+        id S2405726AbfJCQwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:52:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ACD32133F;
-        Thu,  3 Oct 2019 16:37:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C14562070B;
+        Thu,  3 Oct 2019 16:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120664;
-        bh=qyqv8Nqt7qKDu6qQIfCQt4uEpeLcNcBWqRu86A9Xn1M=;
+        s=default; t=1570121550;
+        bh=apEfD4q9zyhxqB3xsHAa2NQ+UoWoYJIDYz+hdQ4OCN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LPz80+IQZFWskUq4qHHnyVte5XE3SCMJMsrvqfsaVrjsGkA4icOjAmXiDkZOSJaxf
-         eDj6yaqdoEF4Da8/SZUTeRIIYYKOmZkSd1lVPJ6iuQ5STJ/otDaUC0fPpF9GYfv5wI
-         5MZNcC4KWK5VjRSv4e425JbQ1fax+bSfigggVzjc=
+        b=QICHaWrEgNBa2ev5gmMicvrzGHqQ3CmzQaegkeXvF7B5J/0QxvtkEICXcevRWFAhT
+         ZF4jEQtDqEgeBNrpnLNJ8BfEEzWM6zeoC39sNAWxp4F7LmR/waaOuUcW7lk3LiRBWt
+         lnOqNnrZI4/gCBDDA4ItJcg8kgVG3Lp4A4tdUJV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 5.2 306/313] i2c: riic: Clear NACK in tend isr
-Date:   Thu,  3 Oct 2019 17:54:44 +0200
-Message-Id: <20191003154603.337186952@linuxfoundation.org>
+        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 5.3 320/344] md/raid6: Set R5_ReadError when there is read failure on parity disk
+Date:   Thu,  3 Oct 2019 17:54:45 +0200
+Message-Id: <20191003154610.601867235@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Xiao Ni <xni@redhat.com>
 
-commit a71e2ac1f32097fbb2beab098687a7a95c84543e upstream.
+commit 143f6e733b73051cd22dcb80951c6c929da413ce upstream.
 
-The NACKF flag should be cleared in INTRIICNAKI interrupt processing as
-description in HW manual.
+7471fb77ce4d ("md/raid6: Fix anomily when recovering a single device in
+RAID6.") avoids rereading P when it can be computed from other members.
+However, this misses the chance to re-write the right data to P. This
+patch sets R5_ReadError if the re-read fails.
 
-This issue shows up quickly when PREEMPT_RT is applied and a device is
-probed that is not plugged in (like a touchscreen controller). The result
-is endless interrupts that halt system boot.
+Also, when re-read is skipped, we also missed the chance to reset
+rdev->read_errors to 0. It can fail the disk when there are many read
+errors on P member disk (other disks don't have read error)
 
-Fixes: 310c18a41450 ("i2c: riic: add driver")
-Cc: stable@vger.kernel.org
-Reported-by: Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+V2: upper layer read request don't read parity/Q data. So there is no
+need to consider such situation.
+
+This is Reported-by: kbuild test robot <lkp@intel.com>
+
+Fixes: 7471fb77ce4d ("md/raid6: Fix anomily when recovering a single device in RAID6.")
+Cc: <stable@vger.kernel.org> #4.4+
+Signed-off-by: Xiao Ni <xni@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-riic.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/raid5.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -202,6 +202,7 @@ static irqreturn_t riic_tend_isr(int irq
- 	if (readb(riic->base + RIIC_ICSR2) & ICSR2_NACKF) {
- 		/* We got a NACKIE */
- 		readb(riic->base + RIIC_ICDRR);	/* dummy read */
-+		riic_clear_set_bit(riic, ICSR2_NACKF, 0, RIIC_ICSR2);
- 		riic->err = -ENXIO;
- 	} else if (riic->bytes_left) {
- 		return IRQ_NONE;
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -2559,7 +2559,9 @@ static void raid5_end_read_request(struc
+ 		    && !test_bit(R5_ReadNoMerge, &sh->dev[i].flags))
+ 			retry = 1;
+ 		if (retry)
+-			if (test_bit(R5_ReadNoMerge, &sh->dev[i].flags)) {
++			if (sh->qd_idx >= 0 && sh->pd_idx == i)
++				set_bit(R5_ReadError, &sh->dev[i].flags);
++			else if (test_bit(R5_ReadNoMerge, &sh->dev[i].flags)) {
+ 				set_bit(R5_ReadError, &sh->dev[i].flags);
+ 				clear_bit(R5_ReadNoMerge, &sh->dev[i].flags);
+ 			} else
 
 
