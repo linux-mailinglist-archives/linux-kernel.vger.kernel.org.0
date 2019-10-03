@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2DAFCAC83
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08151CABAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387827AbfJCQLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:11:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32972 "EHLO mail.kernel.org"
+        id S1731067AbfJCP56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:57:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387817AbfJCQLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:11:20 -0400
+        id S1729844AbfJCP5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:57:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 528F920700;
-        Thu,  3 Oct 2019 16:11:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3322222C4;
+        Thu,  3 Oct 2019 15:57:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119079;
-        bh=LsYsdVGs4V7IkchSF2wWNLWdAyxE/UN89uLgORJq4c4=;
+        s=default; t=1570118271;
+        bh=yM8m71Be2pYqomVTYrjF2jhvY6jtc0hAN1c1ya7NIOA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGWeEUCH7mnh/AmoSiKOtsrenhMYaU1uoqT0Y5Vi1P/PnkjjBcxgQ/gsQnnIb7M8Y
-         Pi0sORCPBy33NGme9fMGHrUct03WhxNaSijIjSGduu4kUNMarv4VH886ytCl5jUWBw
-         SmRw2Qc84PXDw4A89OTtApN7YuscauKK4felGXD0=
+        b=MmQ+YXw+AtoetvejG4ttu2oDlp35mvEg6hMtf2bgTzLDVWK7uUCw0wqWKxdXrFBK8
+         N7x7QSQM+eu9hMpWved9GkcYIJpiy9XxV1fhbbytt6rYR4Su5/kPdVGn5WmuioP6Vz
+         eh79uqIj9kFLS6jSQSNrDPQBOMn4jVmRjGKLRKeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick McLean <chutzpah@gentoo.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 117/185] libtraceevent: Change users plugin directory
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        syzbot+1a35278dd0ebfb3a038a@syzkaller.appspotmail.com,
+        syzbot+397fd082ce5143e2f67d@syzkaller.appspotmail.com,
+        syzbot+06ddf1788cfd048c5e82@syzkaller.appspotmail.com
+Subject: [PATCH 4.4 52/99] media: gspca: zero usb_buf on error
 Date:   Thu,  3 Oct 2019 17:53:15 +0200
-Message-Id: <20191003154504.677497152@linuxfoundation.org>
+Message-Id: <20191003154321.620973331@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
+References: <20191003154252.297991283@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,68 +47,277 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-[ Upstream commit e97fd1383cd77c467d2aed7fa4e596789df83977 ]
+[ Upstream commit 4843a543fad3bf8221cf14e5d5f32d15cee89e84 ]
 
-To be compliant with XDG user directory layout, the user's plugin
-directory is changed from ~/.traceevent/plugins to
-~/.local/lib/traceevent/plugins/
+If reg_r() fails, then gspca_dev->usb_buf was left uninitialized,
+and some drivers used the contents of that buffer in logic.
 
-Suggested-by: Patrick McLean <chutzpah@gentoo.org>
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Patrick McLean <chutzpah@gentoo.org>
-Cc: linux-trace-devel@vger.kernel.org
-Link: https://lore.kernel.org/linux-trace-devel/20190313144206.41e75cf8@patrickm/
-Link: http://lore.kernel.org/linux-trace-devel/20190801074959.22023-4-tz.stoyanov@gmail.com
-Link: http://lore.kernel.org/lkml/20190805204355.344622683@goodmis.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This caused several syzbot errors:
+
+https://syzkaller.appspot.com/bug?extid=397fd082ce5143e2f67d
+https://syzkaller.appspot.com/bug?extid=1a35278dd0ebfb3a038a
+https://syzkaller.appspot.com/bug?extid=06ddf1788cfd048c5e82
+
+I analyzed the gspca drivers and zeroed the buffer where needed.
+
+Reported-and-tested-by: syzbot+1a35278dd0ebfb3a038a@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+397fd082ce5143e2f67d@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+06ddf1788cfd048c5e82@syzkaller.appspotmail.com
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/traceevent/Makefile       | 6 +++---
- tools/lib/traceevent/event-plugin.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/usb/gspca/konica.c   |  5 +++++
+ drivers/media/usb/gspca/nw80x.c    |  5 +++++
+ drivers/media/usb/gspca/ov519.c    | 10 ++++++++++
+ drivers/media/usb/gspca/ov534.c    |  5 +++++
+ drivers/media/usb/gspca/ov534_9.c  |  1 +
+ drivers/media/usb/gspca/se401.c    |  5 +++++
+ drivers/media/usb/gspca/sn9c20x.c  |  5 +++++
+ drivers/media/usb/gspca/sonixb.c   |  5 +++++
+ drivers/media/usb/gspca/sonixj.c   |  5 +++++
+ drivers/media/usb/gspca/spca1528.c |  5 +++++
+ drivers/media/usb/gspca/sq930x.c   |  5 +++++
+ drivers/media/usb/gspca/sunplus.c  |  5 +++++
+ drivers/media/usb/gspca/vc032x.c   |  5 +++++
+ drivers/media/usb/gspca/w996Xcf.c  |  5 +++++
+ 14 files changed, 71 insertions(+)
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 46cd5f871ad76..a26c44cf31aa4 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -55,15 +55,15 @@ set_plugin_dir := 1
+diff --git a/drivers/media/usb/gspca/konica.c b/drivers/media/usb/gspca/konica.c
+index 0f6d57fbf91b7..624b4d24716dd 100644
+--- a/drivers/media/usb/gspca/konica.c
++++ b/drivers/media/usb/gspca/konica.c
+@@ -127,6 +127,11 @@ static void reg_r(struct gspca_dev *gspca_dev, u16 value, u16 index)
+ 	if (ret < 0) {
+ 		pr_err("reg_r err %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, 2);
+ 	}
+ }
  
- # Set plugin_dir to preffered global plugin location
- # If we install under $HOME directory we go under
--# $(HOME)/.traceevent/plugins
-+# $(HOME)/.local/lib/traceevent/plugins
- #
- # We dont set PLUGIN_DIR in case we install under $HOME
- # directory, because by default the code looks under:
--# $(HOME)/.traceevent/plugins by default.
-+# $(HOME)/.local/lib/traceevent/plugins by default.
- #
- ifeq ($(plugin_dir),)
- ifeq ($(prefix),$(HOME))
--override plugin_dir = $(HOME)/.traceevent/plugins
-+override plugin_dir = $(HOME)/.local/lib/traceevent/plugins
- set_plugin_dir := 0
- else
- override plugin_dir = $(libdir)/traceevent/plugins
-diff --git a/tools/lib/traceevent/event-plugin.c b/tools/lib/traceevent/event-plugin.c
-index a16756ae35267..5fe7889606a23 100644
---- a/tools/lib/traceevent/event-plugin.c
-+++ b/tools/lib/traceevent/event-plugin.c
-@@ -30,7 +30,7 @@
- #include "event-parse.h"
- #include "event-utils.h"
+diff --git a/drivers/media/usb/gspca/nw80x.c b/drivers/media/usb/gspca/nw80x.c
+index 599f755e75b86..7ebeee98dc1bb 100644
+--- a/drivers/media/usb/gspca/nw80x.c
++++ b/drivers/media/usb/gspca/nw80x.c
+@@ -1584,6 +1584,11 @@ static void reg_r(struct gspca_dev *gspca_dev,
+ 	if (ret < 0) {
+ 		pr_err("reg_r err %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, USB_BUF_SZ);
+ 		return;
+ 	}
+ 	if (len == 1)
+diff --git a/drivers/media/usb/gspca/ov519.c b/drivers/media/usb/gspca/ov519.c
+index c95f32a0c02b4..c7aafdbb57384 100644
+--- a/drivers/media/usb/gspca/ov519.c
++++ b/drivers/media/usb/gspca/ov519.c
+@@ -2116,6 +2116,11 @@ static int reg_r(struct sd *sd, u16 index)
+ 	} else {
+ 		PERR("reg_r %02x failed %d\n", index, ret);
+ 		sd->gspca_dev.usb_err = ret;
++		/*
++		 * Make sure the result is zeroed to avoid uninitialized
++		 * values.
++		 */
++		gspca_dev->usb_buf[0] = 0;
+ 	}
  
--#define LOCAL_PLUGIN_DIR ".traceevent/plugins"
-+#define LOCAL_PLUGIN_DIR ".local/lib/traceevent/plugins/"
+ 	return ret;
+@@ -2142,6 +2147,11 @@ static int reg_r8(struct sd *sd,
+ 	} else {
+ 		PERR("reg_r8 %02x failed %d\n", index, ret);
+ 		sd->gspca_dev.usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, 8);
+ 	}
  
- static struct registered_plugin_options {
- 	struct registered_plugin_options	*next;
+ 	return ret;
+diff --git a/drivers/media/usb/gspca/ov534.c b/drivers/media/usb/gspca/ov534.c
+index bfff1d1c70ab0..466f984312ddb 100644
+--- a/drivers/media/usb/gspca/ov534.c
++++ b/drivers/media/usb/gspca/ov534.c
+@@ -644,6 +644,11 @@ static u8 ov534_reg_read(struct gspca_dev *gspca_dev, u16 reg)
+ 	if (ret < 0) {
+ 		pr_err("read failed %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the result is zeroed to avoid uninitialized
++		 * values.
++		 */
++		gspca_dev->usb_buf[0] = 0;
+ 	}
+ 	return gspca_dev->usb_buf[0];
+ }
+diff --git a/drivers/media/usb/gspca/ov534_9.c b/drivers/media/usb/gspca/ov534_9.c
+index 47085cf2d7236..f2dca06069355 100644
+--- a/drivers/media/usb/gspca/ov534_9.c
++++ b/drivers/media/usb/gspca/ov534_9.c
+@@ -1157,6 +1157,7 @@ static u8 reg_r(struct gspca_dev *gspca_dev, u16 reg)
+ 	if (ret < 0) {
+ 		pr_err("reg_r err %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		return 0;
+ 	}
+ 	return gspca_dev->usb_buf[0];
+ }
+diff --git a/drivers/media/usb/gspca/se401.c b/drivers/media/usb/gspca/se401.c
+index 5102cea504710..6adbb0eca71fe 100644
+--- a/drivers/media/usb/gspca/se401.c
++++ b/drivers/media/usb/gspca/se401.c
+@@ -115,6 +115,11 @@ static void se401_read_req(struct gspca_dev *gspca_dev, u16 req, int silent)
+ 			pr_err("read req failed req %#04x error %d\n",
+ 			       req, err);
+ 		gspca_dev->usb_err = err;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, READ_REQ_SIZE);
+ 	}
+ }
+ 
+diff --git a/drivers/media/usb/gspca/sn9c20x.c b/drivers/media/usb/gspca/sn9c20x.c
+index d0ee899584a9f..e5bd1e84fd875 100644
+--- a/drivers/media/usb/gspca/sn9c20x.c
++++ b/drivers/media/usb/gspca/sn9c20x.c
+@@ -924,6 +924,11 @@ static void reg_r(struct gspca_dev *gspca_dev, u16 reg, u16 length)
+ 	if (unlikely(result < 0 || result != length)) {
+ 		pr_err("Read register %02x failed %d\n", reg, result);
+ 		gspca_dev->usb_err = result;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, USB_BUF_SZ);
+ 	}
+ }
+ 
+diff --git a/drivers/media/usb/gspca/sonixb.c b/drivers/media/usb/gspca/sonixb.c
+index 6696b2ec34e96..83e98b85ab6a1 100644
+--- a/drivers/media/usb/gspca/sonixb.c
++++ b/drivers/media/usb/gspca/sonixb.c
+@@ -466,6 +466,11 @@ static void reg_r(struct gspca_dev *gspca_dev,
+ 		dev_err(gspca_dev->v4l2_dev.dev,
+ 			"Error reading register %02x: %d\n", value, res);
+ 		gspca_dev->usb_err = res;
++		/*
++		 * Make sure the result is zeroed to avoid uninitialized
++		 * values.
++		 */
++		gspca_dev->usb_buf[0] = 0;
+ 	}
+ }
+ 
+diff --git a/drivers/media/usb/gspca/sonixj.c b/drivers/media/usb/gspca/sonixj.c
+index fd1c8706d86a8..67e23557a1a94 100644
+--- a/drivers/media/usb/gspca/sonixj.c
++++ b/drivers/media/usb/gspca/sonixj.c
+@@ -1175,6 +1175,11 @@ static void reg_r(struct gspca_dev *gspca_dev,
+ 	if (ret < 0) {
+ 		pr_err("reg_r err %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, USB_BUF_SZ);
+ 	}
+ }
+ 
+diff --git a/drivers/media/usb/gspca/spca1528.c b/drivers/media/usb/gspca/spca1528.c
+index f38fd8949609f..ee93bd443df5d 100644
+--- a/drivers/media/usb/gspca/spca1528.c
++++ b/drivers/media/usb/gspca/spca1528.c
+@@ -84,6 +84,11 @@ static void reg_r(struct gspca_dev *gspca_dev,
+ 	if (ret < 0) {
+ 		pr_err("reg_r err %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, USB_BUF_SZ);
+ 	}
+ }
+ 
+diff --git a/drivers/media/usb/gspca/sq930x.c b/drivers/media/usb/gspca/sq930x.c
+index e274cf19a3ea2..b236e9dcd4685 100644
+--- a/drivers/media/usb/gspca/sq930x.c
++++ b/drivers/media/usb/gspca/sq930x.c
+@@ -438,6 +438,11 @@ static void reg_r(struct gspca_dev *gspca_dev,
+ 	if (ret < 0) {
+ 		pr_err("reg_r %04x failed %d\n", value, ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, USB_BUF_SZ);
+ 	}
+ }
+ 
+diff --git a/drivers/media/usb/gspca/sunplus.c b/drivers/media/usb/gspca/sunplus.c
+index 46c9f2229a186..cc3e1478c5a09 100644
+--- a/drivers/media/usb/gspca/sunplus.c
++++ b/drivers/media/usb/gspca/sunplus.c
+@@ -268,6 +268,11 @@ static void reg_r(struct gspca_dev *gspca_dev,
+ 	if (ret < 0) {
+ 		pr_err("reg_r err %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, USB_BUF_SZ);
+ 	}
+ }
+ 
+diff --git a/drivers/media/usb/gspca/vc032x.c b/drivers/media/usb/gspca/vc032x.c
+index b4efb2fb36fa3..5032b9d7d9bb2 100644
+--- a/drivers/media/usb/gspca/vc032x.c
++++ b/drivers/media/usb/gspca/vc032x.c
+@@ -2919,6 +2919,11 @@ static void reg_r_i(struct gspca_dev *gspca_dev,
+ 	if (ret < 0) {
+ 		pr_err("reg_r err %d\n", ret);
+ 		gspca_dev->usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(gspca_dev->usb_buf, 0, USB_BUF_SZ);
+ 	}
+ }
+ static void reg_r(struct gspca_dev *gspca_dev,
+diff --git a/drivers/media/usb/gspca/w996Xcf.c b/drivers/media/usb/gspca/w996Xcf.c
+index fb9fe2ef3a6f6..a74ac595656f7 100644
+--- a/drivers/media/usb/gspca/w996Xcf.c
++++ b/drivers/media/usb/gspca/w996Xcf.c
+@@ -139,6 +139,11 @@ static int w9968cf_read_sb(struct sd *sd)
+ 	} else {
+ 		pr_err("Read SB reg [01] failed\n");
+ 		sd->gspca_dev.usb_err = ret;
++		/*
++		 * Make sure the buffer is zeroed to avoid uninitialized
++		 * values.
++		 */
++		memset(sd->gspca_dev.usb_buf, 0, 2);
+ 	}
+ 
+ 	udelay(W9968CF_I2C_BUS_DELAY);
 -- 
 2.20.1
 
