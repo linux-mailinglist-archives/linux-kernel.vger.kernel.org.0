@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD976CA8F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF278CA82F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:18:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390998AbfJCQfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:35:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
+        id S2390377AbfJCQWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:22:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404256AbfJCQfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:35:14 -0400
+        id S2390365AbfJCQWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:22:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 104B82086A;
-        Thu,  3 Oct 2019 16:35:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0665D20659;
+        Thu,  3 Oct 2019 16:22:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120513;
-        bh=ZgCkLt2JG903zWS9Ruydm29M6HwhLE/8rg89Q6YLjK0=;
+        s=default; t=1570119761;
+        bh=yHF9RoZHB6Qm3RCjepEVe+GJFwIebmGSDxiefTu0FjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qK1lO6g5K30xjNxupeKQ8FJaZCblwn7XVIcfPIN0Gks1kzLMK4x00AKprcpj3LPIK
-         6mF4cbUb+9nFFol9oHlvNe5wGk6GlSLRNCpIz6ruZWo2QEfr1cmTuSkT0G8Y0rJDdo
-         2GkftVkkoI4/+kFDV+oY1ppPPTpCfQXb0vnyi31U=
+        b=SP+uD7o4NiSFowI2Qys5boR9QOdlg1D3yqE2uFRSejjSUVwDyekoPfY9iau4QGKtF
+         zDpXCuHQXzC+VDl/UadBEZMllvghL3IQl57HiKXG0MPY5X/E6Cxy74WwxYRcMbSvz1
+         /U7Zqr5Tjdo5yVI1cZMHwVQhgm5PR9KVamP6J0L8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.2 243/313] KVM: x86: Disable posted interrupts for non-standard IRQs delivery modes
-Date:   Thu,  3 Oct 2019 17:53:41 +0200
-Message-Id: <20191003154556.956790264@linuxfoundation.org>
+        stable@vger.kernel.org, Joonwon Kang <kjw1627@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.19 156/211] randstruct: Check member structs in is_pure_ops_struct()
+Date:   Thu,  3 Oct 2019 17:53:42 +0200
+Message-Id: <20191003154523.683939067@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,92 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Graf <graf@amazon.com>
+From: Joonwon Kang <kjw1627@gmail.com>
 
-commit fdcf756213756c23b533ca4974d1f48c6a4d4281 upstream.
+commit 60f2c82ed20bde57c362e66f796cf9e0e38a6dbb upstream.
 
-We can easily route hardware interrupts directly into VM context when
-they target the "Fixed" or "LowPriority" delivery modes.
+While no uses in the kernel triggered this case, it was possible to have
+a false negative where a struct contains other structs which contain only
+function pointers because of unreachable code in is_pure_ops_struct().
 
-However, on modes such as "SMI" or "Init", we need to go via KVM code
-to actually put the vCPU into a different mode of operation, so we can
-not post the interrupt
-
-Add code in the VMX and SVM PI logic to explicitly refuse to establish
-posted mappings for advanced IRQ deliver modes. This reflects the logic
-in __apic_accept_irq() which also only ever passes Fixed and LowPriority
-interrupts as posted interrupts into the guest.
-
-This fixes a bug I have with code which configures real hardware to
-inject virtual SMIs into my guest.
-
-Signed-off-by: Alexander Graf <graf@amazon.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
+Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+Link: https://lore.kernel.org/r/20190727155841.GA13586@host
+Fixes: 313dd1b62921 ("gcc-plugins: Add the randstruct plugin")
 Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/kvm_host.h |    7 +++++++
- arch/x86/kvm/svm.c              |    4 +++-
- arch/x86/kvm/vmx/vmx.c          |    6 +++++-
- 3 files changed, 15 insertions(+), 2 deletions(-)
+ scripts/gcc-plugins/randomize_layout_plugin.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1576,6 +1576,13 @@ bool kvm_intr_is_single_vcpu(struct kvm
- void kvm_set_msi_irq(struct kvm *kvm, struct kvm_kernel_irq_routing_entry *e,
- 		     struct kvm_lapic_irq *irq);
+--- a/scripts/gcc-plugins/randomize_layout_plugin.c
++++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+@@ -443,13 +443,13 @@ static int is_pure_ops_struct(const_tree
+ 		if (node == fieldtype)
+ 			continue;
  
-+static inline bool kvm_irq_is_postable(struct kvm_lapic_irq *irq)
-+{
-+	/* We can only post Fixed and LowPrio IRQs */
-+	return (irq->delivery_mode == dest_Fixed ||
-+		irq->delivery_mode == dest_LowestPrio);
-+}
-+
- static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu)
- {
- 	if (kvm_x86_ops->vcpu_blocking)
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5252,7 +5252,8 @@ get_pi_vcpu_info(struct kvm *kvm, struct
+-		if (!is_fptr(fieldtype))
+-			return 0;
+-
+-		if (code != RECORD_TYPE && code != UNION_TYPE)
++		if (code == RECORD_TYPE || code == UNION_TYPE) {
++			if (!is_pure_ops_struct(fieldtype))
++				return 0;
+ 			continue;
++		}
  
- 	kvm_set_msi_irq(kvm, e, &irq);
+-		if (!is_pure_ops_struct(fieldtype))
++		if (!is_fptr(fieldtype))
+ 			return 0;
+ 	}
  
--	if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu)) {
-+	if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
-+	    !kvm_irq_is_postable(&irq)) {
- 		pr_debug("SVM: %s: use legacy intr remap mode for irq %u\n",
- 			 __func__, irq.vector);
- 		return -1;
-@@ -5306,6 +5307,7 @@ static int svm_update_pi_irte(struct kvm
- 		 * 1. When cannot target interrupt to a specific vcpu.
- 		 * 2. Unsetting posted interrupt.
- 		 * 3. APIC virtialization is disabled for the vcpu.
-+		 * 4. IRQ has incompatible delivery mode (SMI, INIT, etc)
- 		 */
- 		if (!get_pi_vcpu_info(kvm, e, &vcpu_info, &svm) && set &&
- 		    kvm_vcpu_apicv_active(&svm->vcpu)) {
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7325,10 +7325,14 @@ static int vmx_update_pi_irte(struct kvm
- 		 * irqbalance to make the interrupts single-CPU.
- 		 *
- 		 * We will support full lowest-priority interrupt later.
-+		 *
-+		 * In addition, we can only inject generic interrupts using
-+		 * the PI mechanism, refuse to route others through it.
- 		 */
- 
- 		kvm_set_msi_irq(kvm, e, &irq);
--		if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu)) {
-+		if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
-+		    !kvm_irq_is_postable(&irq)) {
- 			/*
- 			 * Make sure the IRTE is in remapped mode if
- 			 * we don't handle it in posted mode.
 
 
