@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 659F9C9628
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA66C9629
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfJCB2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 21:28:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40866 "EHLO mail.kernel.org"
+        id S1728031AbfJCB2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 21:28:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727501AbfJCB2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 21:28:21 -0400
+        id S1727503AbfJCB2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Oct 2019 21:28:22 -0400
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1019E222CC;
+        by mail.kernel.org (Postfix) with ESMTPSA id 614E1222CB;
         Thu,  3 Oct 2019 01:28:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1570066101;
-        bh=jYb6PLJxKNd9LF++H/PLSDwTIf7b8iJz+MMZGyL3Qok=;
+        bh=X8B73pQcjIp/AA1icOILDEEDeMeq0jr4E16DUv2eUgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=By5Yfaw16RvX/et3M4fexhD6Znk37fXohUBQpsrwPOL5HeRTSpdSWaI9gMvP7uJs7
-         qUuBtWewhhfS+xbjcVOLJZRBUqbmkvwEIdjiDhPftl17vA58Y+mQSWK0Q4TpKlPifB
-         LLXo2WEbB3sLCyiZnvHgNIv+NChQH18KjnR9ItB0=
+        b=xbbbWpI14/XUdne+aW7QslBAFZwwTx4nbXz+9yym0tASq1eQqeZCprHK9AooMr/dQ
+         1r+glc5tzz6/QAOGE9c1KJdSz1ru0S8ev7Calpz8EeHVXU09nuDorw4FEWW7RYBD5g
+         6BDkR6Tv5OGYqSAZxAZX6fpUZPwD0gNeShQ9OGMA=
 From:   paulmck@kernel.org
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 6/9] Restore docs "treewide: Rename rcu_dereference_raw_notrace() to _check()"
-Date:   Wed,  2 Oct 2019 18:28:12 -0700
-Message-Id: <20191003012815.12639-6-paulmck@kernel.org>
+Subject: [PATCH tip/core/rcu 7/9] Restore docs "rcu: Restore barrier() to rcu_read_lock() and rcu_read_unlock()"
+Date:   Wed,  2 Oct 2019 18:28:13 -0700
+Message-Id: <20191003012815.12639-7-paulmck@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20191003012741.GA12456@paulmck-ThinkPad-P72>
 References: <20191003012741.GA12456@paulmck-ThinkPad-P72>
@@ -49,22 +49,81 @@ This restores docs back in ReST format.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- Documentation/RCU/Design/Requirements/Requirements.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../RCU/Design/Requirements/Requirements.rst       | 54 ++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
 diff --git a/Documentation/RCU/Design/Requirements/Requirements.rst b/Documentation/RCU/Design/Requirements/Requirements.rst
-index a33b5fb..0b22246 100644
+index 0b22246..fd5e2cb 100644
 --- a/Documentation/RCU/Design/Requirements/Requirements.rst
 +++ b/Documentation/RCU/Design/Requirements/Requirements.rst
-@@ -1997,7 +1997,7 @@ Tracing and RCU
- ~~~~~~~~~~~~~~~
+@@ -1691,6 +1691,7 @@ follows:
+ #. `Hotplug CPU`_
+ #. `Scheduler and RCU`_
+ #. `Tracing and RCU`_
++#. `Accesses to User Memory and RCU`_
+ #. `Energy Efficiency`_
+ #. `Scheduling-Clock Interrupts and RCU`_
+ #. `Memory Efficiency`_
+@@ -2004,6 +2005,59 @@ where RCU readers execute in environments in which tracing cannot be
+ used. The tracing folks both located the requirement and provided the
+ needed fix, so this surprise requirement was relatively painless.
  
- It is possible to use tracing on RCU code, but tracing itself uses RCU.
--For this reason, ``rcu_dereference_raw_notrace()`` is provided for use
-+For this reason, ``rcu_dereference_raw_check()`` is provided for use
- by tracing, which avoids the destructive recursion that could otherwise
- ensue. This API is also used by virtualization in some architectures,
- where RCU readers execute in environments in which tracing cannot be
++Accesses to User Memory and RCU
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The kernel needs to access user-space memory, for example, to access data
++referenced by system-call parameters.  The ``get_user()`` macro does this job.
++
++However, user-space memory might well be paged out, which means that
++``get_user()`` might well page-fault and thus block while waiting for the
++resulting I/O to complete.  It would be a very bad thing for the compiler to
++reorder a ``get_user()`` invocation into an RCU read-side critical section.
++
++For example, suppose that the source code looked like this:
++
++  ::
++
++       1 rcu_read_lock();
++       2 p = rcu_dereference(gp);
++       3 v = p->value;
++       4 rcu_read_unlock();
++       5 get_user(user_v, user_p);
++       6 do_something_with(v, user_v);
++
++The compiler must not be permitted to transform this source code into
++the following:
++
++  ::
++
++       1 rcu_read_lock();
++       2 p = rcu_dereference(gp);
++       3 get_user(user_v, user_p); // BUG: POSSIBLE PAGE FAULT!!!
++       4 v = p->value;
++       5 rcu_read_unlock();
++       6 do_something_with(v, user_v);
++
++If the compiler did make this transformation in a ``CONFIG_PREEMPT=n`` kernel
++build, and if ``get_user()`` did page fault, the result would be a quiescent
++state in the middle of an RCU read-side critical section.  This misplaced
++quiescent state could result in line 4 being a use-after-free access,
++which could be bad for your kernel's actuarial statistics.  Similar examples
++can be constructed with the call to ``get_user()`` preceding the
++``rcu_read_lock()``.
++
++Unfortunately, ``get_user()`` doesn't have any particular ordering properties,
++and in some architectures the underlying ``asm`` isn't even marked
++``volatile``.  And even if it was marked ``volatile``, the above access to
++``p->value`` is not volatile, so the compiler would not have any reason to keep
++those two accesses in order.
++
++Therefore, the Linux-kernel definitions of ``rcu_read_lock()`` and
++``rcu_read_unlock()`` must act as compiler barriers, at least for outermost
++instances of ``rcu_read_lock()`` and ``rcu_read_unlock()`` within a nested set
++of RCU read-side critical sections.
++
+ Energy Efficiency
+ ~~~~~~~~~~~~~~~~~
+ 
 -- 
 2.9.5
 
