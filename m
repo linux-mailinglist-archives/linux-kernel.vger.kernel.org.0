@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4E1CCA217
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35118CA2B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731925AbfJCQBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:01:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46370 "EHLO mail.kernel.org"
+        id S1733075AbfJCQIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:08:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730314AbfJCQBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:01:50 -0400
+        id S1733249AbfJCQIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:08:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C36A6207FF;
-        Thu,  3 Oct 2019 16:01:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DBA3215EA;
+        Thu,  3 Oct 2019 16:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118509;
-        bh=5u2zAl7BkqOE1FqzDrXTn5nzPaiQIpAI/eo9TlZSobQ=;
+        s=default; t=1570118898;
+        bh=f9VOswH3F5Q8aSAQ58Nf+fB9hZXGza6I3bPJjxhCzLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kFg9TRgfC7s9jRlK4FhhmHCKqSZ430+FMUV+hUUl+rxZDx9z3yFFfHMaE/1ufC59P
-         dxm91S12jidhUo/TP99sMBTtAdeIM3YjE/hmz/qEqZt7I9C1GJcXKVtZXnH6UVH4jk
-         KS2zD0VRXqEfzOYOtwHiNytekRFukKnGORcC/FG4=
+        b=rjwu/wRuJXvYm3qQphieO7NC76rwuNgs86YDEUm3m1mQfgDeeGP2PFFxdO99T+MUg
+         uTS1eUrSyW37d0qkMJX9qF3+dEdAqkvTcPSq41pOh1QKjfb7Ny4Lt67fvWGfxQhUr/
+         OD7UWnRUU22h1RdpXdBDaG1D8zEr8j2qga2XNuY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        linux-mtd@lists.infradead.org, Fabio Bettoni <fbettoni@gmail.com>,
-        Felix Fietkau <nbd@nbd.name>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Tokunori Ikegami <ikegami.t@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH 4.9 006/129] mtd: cfi_cmdset_0002: Use chip_good() to retry in do_write_oneword()
+        stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 051/185] ieee802154: enforce CAP_NET_RAW for raw sockets
 Date:   Thu,  3 Oct 2019 17:52:09 +0200
-Message-Id: <20191003154322.117166351@linuxfoundation.org>
+Message-Id: <20191003154449.331955993@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,86 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tokunori Ikegami <ikegami.t@gmail.com>
+From: Ori Nimron <orinimron123@gmail.com>
 
-commit 37c673ade35c707d50583b5b25091ff8ebdeafd7 upstream.
+[ Upstream commit e69dbd4619e7674c1679cba49afd9dd9ac347eef ]
 
-As reported by the OpenWRT team, write requests sometimes fail on some
-platforms.
-Currently to check the state chip_ready() is used correctly as described by
-the flash memory S29GL256P11TFI01 datasheet.
-Also chip_good() is used to check if the write is succeeded and it was
-implemented by the commit fb4a90bfcd6d8 ("[MTD] CFI-0002 - Improve error
-checking").
-But actually the write failure is caused on some platforms and also it can
-be fixed by using chip_good() to check the state and retry instead.
-Also it seems that it is caused after repeated about 1,000 times to retry
-the write one word with the reset command.
-By using chip_good() to check the state to be done it can be reduced the
-retry with reset.
-It is depended on the actual flash chip behavior so the root cause is
-unknown.
+When creating a raw AF_IEEE802154 socket, CAP_NET_RAW needs to be
+checked first.
 
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Cc: linux-mtd@lists.infradead.org
-Cc: stable@vger.kernel.org
-Reported-by: Fabio Bettoni <fbettoni@gmail.com>
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: Tokunori Ikegami <ikegami.t@gmail.com>
-[vigneshr@ti.com: Fix a checkpatch warning]
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+Signed-off-by: Ori Nimron <orinimron123@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
+Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ net/ieee802154/socket.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -1624,29 +1624,35 @@ static int __xipram do_write_oneword(str
- 			continue;
- 		}
+--- a/net/ieee802154/socket.c
++++ b/net/ieee802154/socket.c
+@@ -1001,6 +1001,9 @@ static int ieee802154_create(struct net
  
--		if (time_after(jiffies, timeo) && !chip_ready(map, adr)){
-+		/*
-+		 * We check "time_after" and "!chip_good" before checking
-+		 * "chip_good" to avoid the failure due to scheduling.
-+		 */
-+		if (time_after(jiffies, timeo) && !chip_good(map, adr, datum)) {
- 			xip_enable(map, chip, adr);
- 			printk(KERN_WARNING "MTD %s(): software timeout\n", __func__);
- 			xip_disable(map, chip, adr);
-+			ret = -EIO;
- 			break;
- 		}
- 
--		if (chip_ready(map, adr))
-+		if (chip_good(map, adr, datum))
- 			break;
- 
- 		/* Latency issues. Drop the lock, wait a while and retry */
- 		UDELAY(map, chip, adr, 1);
- 	}
-+
- 	/* Did we succeed? */
--	if (!chip_good(map, adr, datum)) {
-+	if (ret) {
- 		/* reset on all failures. */
- 		map_write( map, CMD(0xF0), chip->start );
- 		/* FIXME - should have reset delay before continuing */
- 
--		if (++retry_cnt <= MAX_RETRIES)
-+		if (++retry_cnt <= MAX_RETRIES) {
-+			ret = 0;
- 			goto retry;
--
--		ret = -EIO;
-+		}
- 	}
- 	xip_enable(map, chip, adr);
-  op_done:
+ 	switch (sock->type) {
+ 	case SOCK_RAW:
++		rc = -EPERM;
++		if (!capable(CAP_NET_RAW))
++			goto out;
+ 		proto = &ieee802154_raw_prot;
+ 		ops = &ieee802154_raw_ops;
+ 		break;
 
 
