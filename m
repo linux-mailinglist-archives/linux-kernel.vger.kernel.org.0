@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 850D5CA5DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7EAFCA740
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404578AbfJCQh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:37:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46690 "EHLO mail.kernel.org"
+        id S2393179AbfJCQwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:52:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404549AbfJCQhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:37:20 -0400
+        id S2393158AbfJCQwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:52:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6A34215EA;
-        Thu,  3 Oct 2019 16:37:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B4E320865;
+        Thu,  3 Oct 2019 16:52:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120640;
-        bh=lxArp3kU4HFZxrzSHItw74m76dcaz61ksoyl0nVuO+Y=;
+        s=default; t=1570121526;
+        bh=YeCFigP0qPUGddwULD/CreVJ/+qrEsHVvja3e2+ZdGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZZdjzL/jtDlmWacfTtqVnY75xbOLvuLvZ+7/8IUz/E+9RRUVLIkXtsGtVh1UW0r8d
-         s8uX5ynw1SAMidi7iCkokdKq0yO76Hy1p5Zmpc7vvJb/ev7V5sTsglG+JE3RiFMH8d
-         JeTscCmncwV+0ELLTrAPgrwhfoNeg2CnOafGKqZc=
+        b=15OpnNIRi3WYmvQg4rqc256eloEj7d7k5n38V4PDyF48EOaibWfGaXebS50vHs08Z
+         xy2VZ0a4F3nKweHGYU8259zipO8+iTNB1WaOtBxUvqUHvEonwMZp9P388u3Gm60oDT
+         z1+8+r4IVwVvG7PHwZ0Hx836Sd814Wc6ZYh31tUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Boaz Harrosh <boazh@netapp.com>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 5.2 298/313] mm: Handle MADV_WILLNEED through vfs_fadvise()
-Date:   Thu,  3 Oct 2019 17:54:36 +0200
-Message-Id: <20191003154602.510522173@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.3 312/344] btrfs: adjust dirty_metadata_bytes after writeback failure of extent buffer
+Date:   Thu,  3 Oct 2019 17:54:37 +0200
+Message-Id: <20191003154609.942983053@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Dennis Zhou <dennis@kernel.org>
 
-commit 692fe62433d4ca47605b39f7c416efd6679ba694 upstream.
+commit eb5b64f142504a597d67e2109d603055ff765e52 upstream.
 
-Currently handling of MADV_WILLNEED hint calls directly into readahead
-code. Handle it by calling vfs_fadvise() instead so that filesystem can
-use its ->fadvise() callback to acquire necessary locks or otherwise
-prepare for the request.
+Before, if a eb failed to write out, we would end up triggering a
+BUG_ON(). As of f4340622e0226 ("btrfs: extent_io: Move the BUG_ON() in
+flush_write_bio() one level up"), we no longer BUG_ON(), so we should
+make life consistent and add back the unwritten bytes to
+dirty_metadata_bytes.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Boaz Harrosh <boazh@netapp.com>
-CC: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Fixes: f4340622e022 ("btrfs: extent_io: Move the BUG_ON() in flush_write_bio() one level up")
+CC: stable@vger.kernel.org # 5.2+
+Reviewed-by: Filipe Manana <fdmanana@kernel.org>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/madvise.c |   22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ fs/btrfs/extent_io.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -14,6 +14,7 @@
- #include <linux/userfaultfd_k.h>
- #include <linux/hugetlb.h>
- #include <linux/falloc.h>
-+#include <linux/fadvise.h>
- #include <linux/sched.h>
- #include <linux/ksm.h>
- #include <linux/fs.h>
-@@ -275,6 +276,7 @@ static long madvise_willneed(struct vm_a
- 			     unsigned long start, unsigned long end)
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -3745,12 +3745,21 @@ err_unlock:
+ static void set_btree_ioerr(struct page *page)
  {
- 	struct file *file = vma->vm_file;
-+	loff_t offset;
+ 	struct extent_buffer *eb = (struct extent_buffer *)page->private;
++	struct btrfs_fs_info *fs_info;
  
- 	*prev = vma;
- #ifdef CONFIG_SWAP
-@@ -298,12 +300,20 @@ static long madvise_willneed(struct vm_a
- 		return 0;
- 	}
+ 	SetPageError(page);
+ 	if (test_and_set_bit(EXTENT_BUFFER_WRITE_ERR, &eb->bflags))
+ 		return;
  
--	start = ((start - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
--	if (end > vma->vm_end)
--		end = vma->vm_end;
--	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
--
--	force_page_cache_readahead(file->f_mapping, file, start, end - start);
-+	/*
-+	 * Filesystem's fadvise may need to take various locks.  We need to
-+	 * explicitly grab a reference because the vma (and hence the
-+	 * vma's reference to the file) can go away as soon as we drop
-+	 * mmap_sem.
+ 	/*
++	 * If we error out, we should add back the dirty_metadata_bytes
++	 * to make it consistent.
 +	 */
-+	*prev = NULL;	/* tell sys_madvise we drop mmap_sem */
-+	get_file(file);
-+	up_read(&current->mm->mmap_sem);
-+	offset = (loff_t)(start - vma->vm_start)
-+			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-+	vfs_fadvise(file, offset, end - start, POSIX_FADV_WILLNEED);
-+	fput(file);
-+	down_read(&current->mm->mmap_sem);
- 	return 0;
- }
- 
++	fs_info = eb->fs_info;
++	percpu_counter_add_batch(&fs_info->dirty_metadata_bytes,
++				 eb->len, fs_info->dirty_metadata_batch);
++
++	/*
+ 	 * If writeback for a btree extent that doesn't belong to a log tree
+ 	 * failed, increment the counter transaction->eb_write_errors.
+ 	 * We do this because while the transaction is running and before it's
 
 
