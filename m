@@ -2,147 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1A0EC9A29
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 267E6C9A21
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbfJCInQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 04:43:16 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40199 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728901AbfJCInQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 04:43:16 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l3so1993178wru.7
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 01:43:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Trt8B0Ci9I5T6my9f4Ys/e4jgqsO0QhMPAq+wm6jZoE=;
-        b=rBmONC0OMG067X9RLR1i4c7uxzZLb+zCjcCqb+aXuoyKhccH76Qd5ItSUyzb2v2mSN
-         w3cy0/Or85QPmCjWuvfqpQo7hXpo2PTUDocbzbMv6pkIBkLix3XQ0GXzjisliwti6jTX
-         2cXw8bnmYmWcoQsiUppZ0RECva/qcIGjebNQvCeEpecHreXgytksXdvKjVnjUmb5xBo9
-         rJbRsZZqIhgMJAWLLC2ICuOsyd4Zbw8r6CTxRoyVFs5ZDLM+o9mcXTo6iOIJ02GcWOZ5
-         K5WsAnXceL5j7xR91eRiWvsbIZN9m990BzMTItIWmJGji4aTBE9zIR6im97iADLNa1YG
-         Ze1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Trt8B0Ci9I5T6my9f4Ys/e4jgqsO0QhMPAq+wm6jZoE=;
-        b=qSyS2ChIkLCehMgk3WO6Hf/WtyzRrJrB7H5RNivQ0K1kSXnDr4xPPGJRRG6uSLNaH+
-         TBWsNvyba7iJwzaCSnrb3pEpHoD3HqEMPywhG0NhaljiB1cuaA1BiN2S36czbk0QCTO8
-         Ver98ZE5YiuI34k2jpmodB5hU6FRNcqY8fTF+44Chx9NQVFPrrmwSsOEn7uaappWFUaL
-         hGbu9EBHlKjqBc5Hmaj+7k2+8F/uxVaNubneEGW0xEgLdYnzE3EY32T35x/P9EafozzI
-         wAggVswQS71MwQr5ysdaB09t5EeL9WnYKpqgu1/Shq/46st6qVIRHCnGQv37jGPjvb1n
-         WLLg==
-X-Gm-Message-State: APjAAAWvsHOsPk9nxWomnfWhQ18Z46vdukCdEQ39CpsULZ8XW80S8vrJ
-        IHEWPlP5t2CdzZ3cV6mNpN1VgQ==
-X-Google-Smtp-Source: APXvYqx+etsjYqb6/Yi7gSL+hcjsMcNoG/WAIugIjV1FSPApDbGOxZ5Y2YJSpOzXEOONUlEmnhPNBA==
-X-Received: by 2002:adf:fb11:: with SMTP id c17mr6528096wrr.0.1570092193745;
-        Thu, 03 Oct 2019 01:43:13 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e34:ed2f:f020:7990:8bfa:5771:282b])
-        by smtp.gmail.com with ESMTPSA id z3sm1519702wmi.30.2019.10.03.01.43.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 01:43:13 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-pm@vger.kernel.org (open list:POWER MANAGEMENT CORE),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V2 3/3] powercap/drivers/idle_inject: Specify the idle state to inject
-Date:   Thu,  3 Oct 2019 10:42:41 +0200
-Message-Id: <20191003084242.8655-3-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191003084242.8655-1-daniel.lezcano@linaro.org>
-References: <20191003084242.8655-1-daniel.lezcano@linaro.org>
+        id S1729049AbfJCInB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 04:43:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40182 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728322AbfJCInB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 04:43:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 23F59B14B;
+        Thu,  3 Oct 2019 08:42:59 +0000 (UTC)
+Message-ID: <1570092176.18913.7.camel@suse.com>
+Subject: Re: [RFC PATCH 20/22] thunderbolt: Add support for USB tunnels
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-usb@vger.kernel.org
+Cc:     Anthony Wong <anthony.wong@canonical.com>,
+        Mario.Limonciello@dell.com,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>
+Date:   Thu, 03 Oct 2019 10:42:56 +0200
+In-Reply-To: <20191001113830.13028-21-mika.westerberg@linux.intel.com>
+References: <20191001113830.13028-1-mika.westerberg@linux.intel.com>
+         <20191001113830.13028-21-mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the idle injection framework only allows to inject the
-deepest idle state available on the system.
+Am Dienstag, den 01.10.2019, 14:38 +0300 schrieb Mika Westerberg:
+> From: Rajmohan Mani <rajmohan.mani@intel.com>
+> 
+> USB4 added a capability to tunnel USB 3.x protocol over the USB4
+> fabric. USB4 device routers may include integrated SuperSpeed HUB or a
+> function or both. USB tunneling follows PCIe so that the tunnel is
+> created between the parent and the child router from USB downstream
+> adapter port to USB upstream adapter port over a single USB4 link.
+> 
+> This adds support for USB tunneling and also capability to discover
+> existing USB tunnels (for example created by connection manager in boot
+> firmware).
+> 
+> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> Co-developed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  drivers/thunderbolt/switch.c  |  35 ++++++++
+>  drivers/thunderbolt/tb.c      | 153 ++++++++++++++++++++++++++------
+>  drivers/thunderbolt/tb.h      |  15 ++++
+>  drivers/thunderbolt/tb_regs.h |   9 +-
+>  drivers/thunderbolt/tunnel.c  | 158 +++++++++++++++++++++++++++++++++-
+>  drivers/thunderbolt/tunnel.h  |   9 ++
+>  drivers/thunderbolt/usb4.c    |  41 ++++++++-
+>  7 files changed, 393 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+> index 58e3f54ddbb9..5a3236fefb76 100644
+> --- a/drivers/thunderbolt/switch.c
+> +++ b/drivers/thunderbolt/switch.c
+> @@ -1025,11 +1025,46 @@ bool tb_port_is_enabled(struct tb_port *port)
+>  	case TB_TYPE_DP_HDMI_OUT:
+>  		return tb_dp_port_is_enabled(port);
+>  
+> +	case TB_TYPE_USB_UP:
+> +	case TB_TYPE_USB_DOWN:
+> +		return tb_usb_port_is_enabled(port);
+> +
+>  	default:
+>  		return false;
+>  	}
+>  }
+>  
+> +/**
+> + * tb_usb_port_is_enabled() - Is the USB adapter port enabled
+> + * @port: USB port to check
+> + */
+> +bool tb_usb_port_is_enabled(struct tb_port *port)
 
-Give the opportunity to specify which idle state we want to inject by
-adding a new function helper to set the state and use it when calling
-play_idle().
+Should these functions be called tb_usb3_port... ?
+This looks like all USB would need this.
+ 
+> -static const char * const tb_tunnel_names[] = { "PCI", "DP", "DMA" };
+> +static const char * const tb_tunnel_names[] = { "PCI", "DP", "DMA", "USB"};
 
-There is no functional changes, the cpuidle state is the deepest one.
+USB3 ?
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/powercap/idle_inject.c | 15 ++++++++++++++-
- include/linux/idle_inject.h    |  3 +++
- 2 files changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
-index 9b18667b9f26..a612c425d74c 100644
---- a/drivers/powercap/idle_inject.c
-+++ b/drivers/powercap/idle_inject.c
-@@ -38,6 +38,7 @@
- #define pr_fmt(fmt) "ii_dev: " fmt
- 
- #include <linux/cpu.h>
-+#include <linux/cpuidle.h>
- #include <linux/hrtimer.h>
- #include <linux/kthread.h>
- #include <linux/sched.h>
-@@ -65,6 +66,7 @@ struct idle_inject_thread {
-  */
- struct idle_inject_device {
- 	struct hrtimer timer;
-+	int state;
- 	unsigned int idle_duration_us;
- 	unsigned int run_duration_us;
- 	unsigned long int cpumask[0];
-@@ -139,7 +141,7 @@ static void idle_inject_fn(unsigned int cpu)
- 	iit->should_run = 0;
- 
- 	play_idle(READ_ONCE(ii_dev->idle_duration_us),
--		  cpuidle_find_deepest_state());
-+		  READ_ONCE(ii_dev->state));
- }
- 
- /**
-@@ -170,6 +172,16 @@ void idle_inject_get_duration(struct idle_inject_device *ii_dev,
- 	*idle_duration_us = READ_ONCE(ii_dev->idle_duration_us);
- }
- 
-+/**
-+ * idle_inject_set_state - set the idle state to inject
-+ * @state: an integer for the idle state to inject
-+ */
-+void idle_inject_set_state(struct idle_inject_device *ii_dev, int state)
-+{
-+	if (state >= CPUIDLE_STATE_NOUSE && state < CPUIDLE_STATE_MAX)
-+		WRITE_ONCE(ii_dev->state, state);
-+}
-+
- /**
-  * idle_inject_start - start idle injections
-  * @ii_dev: idle injection control device structure
-@@ -298,6 +310,7 @@ struct idle_inject_device *idle_inject_register(struct cpumask *cpumask)
- 	cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
- 	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	ii_dev->timer.function = idle_inject_timer_fn;
-+	ii_dev->state = cpuidle_find_deepest_state();
- 
- 	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
- 
-diff --git a/include/linux/idle_inject.h b/include/linux/idle_inject.h
-index a445cd1a36c5..e2b26b9ccd34 100644
---- a/include/linux/idle_inject.h
-+++ b/include/linux/idle_inject.h
-@@ -26,4 +26,7 @@ void idle_inject_set_duration(struct idle_inject_device *ii_dev,
- void idle_inject_get_duration(struct idle_inject_device *ii_dev,
- 				 unsigned int *run_duration_us,
- 				 unsigned int *idle_duration_us);
-+
-+void idle_inject_set_state(struct idle_inject_device *ii_dev, int state);
-+
- #endif /* __IDLE_INJECT_H__ */
--- 
-2.17.1
+	Regards
+		Oliver
 
