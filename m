@@ -2,73 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F04CB147
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D32ACB128
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 23:31:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388478AbfJCVjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 17:39:08 -0400
-Received: from mga09.intel.com ([134.134.136.24]:52653 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388163AbfJCVjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 17:39:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 14:38:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="186051650"
-Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
-  by orsmga008.jf.intel.com with ESMTP; 03 Oct 2019 14:38:58 -0700
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-mm@kvack.org, luto@kernel.org, peterz@infradead.org,
-        dave.hansen@intel.com, pbonzini@redhat.com,
-        sean.j.christopherson@intel.com, keescook@chromium.org
-Cc:     kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [RFC PATCH 13/13] x86/Kconfig: Add Kconfig for KVM based XO
-Date:   Thu,  3 Oct 2019 14:24:00 -0700
-Message-Id: <20191003212400.31130-14-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191003212400.31130-1-rick.p.edgecombe@intel.com>
-References: <20191003212400.31130-1-rick.p.edgecombe@intel.com>
+        id S1731609AbfJCVbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 17:31:46 -0400
+Received: from mail-qt1-f180.google.com ([209.85.160.180]:46991 "EHLO
+        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728031AbfJCVbq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 17:31:46 -0400
+Received: by mail-qt1-f180.google.com with SMTP id u22so5687758qtq.13
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 14:31:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jonmasters-org.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9VbPegMBaauhbhqrGeSKBEluFIPdq7CVXWZA4Bamei8=;
+        b=BJHxrU1nSyyy8QF2YqhUZ6bw3iyG47Xae1aeOT1UUoyKSErx+TwdcWv7QJp3ii6FUC
+         GrjZy9eSgAQQGYaRMZIPwTn5cnnCQZ0/M0OP9SOTuR7wGkcNI5MnFo6SbIPzPqFBM+t1
+         lht3nPaJTvInTyk/eyJtUVjt5laQLj3IrPzy+Wn8omLAEUzIzjctOIXl1C4uD+1PWhJS
+         CUe5uYo+RDEvTQirTAL6mEV7MtPuMLpziS85bx2PyX+09SgwivFMzbKT/wCFocIoDA8v
+         sV6aUGef1efw+0+SPYN7HsHKFTHwjWxeUpls4Rd2dgFQvhv0/k0+An4AE3up6lsiDm3A
+         DGhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9VbPegMBaauhbhqrGeSKBEluFIPdq7CVXWZA4Bamei8=;
+        b=oSJWXZBJsZFWPhVfJ7uaglkbIrTJrQOCzy80Rj6iOio1xxa+rv+Yx+wx/q/AajBgAM
+         Vm+usVWOg7AC54WBM9PGvoQdDzMduowRY0l+EIb1UAffsVR4SFEeDWfZCNLtKWRdi5x6
+         FqdXB4AedEPtCC0h54ygQcZbZqotZYMpfVYwe8BV1xVrklO9aJmQEsqbaVzNhNTR+9vi
+         TQOG4bvoG1i66uV7vgprmMU1LlaqSXYtaMfw9E0uspt8knjOzbwyNIPs8oFNe0PVIQoH
+         Xfp4S0FAC0dc7mZlOOKuIZtq7fjkOH6/bvbORxhQeBiH+RPAEtsS7iP1US98WJAS4O4W
+         uezg==
+X-Gm-Message-State: APjAAAXr2+5KI0mL9fzQToi/EXFgbqfAzCDSLXSknXiYuXcGT8PUpEbF
+        CS9obmYqiArNTSnmLyyix/qHajv2TLTxyw==
+X-Google-Smtp-Source: APXvYqwgx7GCDCzm1ugkjBJk7NQzk6WWoKpRMlg4DROZvf+75wqqSA3Qq5BDTpkQ3s3fOr1cp8IFDg==
+X-Received: by 2002:ad4:4772:: with SMTP id d18mr10824473qvx.100.1570138304941;
+        Thu, 03 Oct 2019 14:31:44 -0700 (PDT)
+Received: from tonnant.bos.jonmasters.org (Boston.jonmasters.org. [50.195.43.97])
+        by smtp.gmail.com with ESMTPSA id q5sm2820352qte.38.2019.10.03.14.31.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2019 14:31:44 -0700 (PDT)
+From:   Jon Masters <jcm@jonmasters.org>
+Subject: Re: Linux 5.3-rc8
+To:     "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>, zhangjs <zachary@baishancloud.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190910042107.GA1517@darwi-home-pc>
+Message-ID: <cbcfca99-5c84-bab5-3b50-448e048bd2e9@jonmasters.org>
+Date:   Thu, 3 Oct 2019 17:31:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190910042107.GA1517@darwi-home-pc>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CONFIG_KVM_XO for supporting KVM based execute only memory.
+On 9/10/19 12:21 AM, Ahmed S. Darwish wrote:
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- arch/x86/Kconfig | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> Can this even be considered a user-space breakage? I'm honestly not
+> sure. On my modern RDRAND-capable x86, just running rng-tools rngd(8)
+> early-on fixes the problem. I'm not sure about the status of older
+> CPUs though.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 222855cc0158..3a3af2a456e8 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -802,6 +802,19 @@ config KVM_GUEST
- 	  underlying device model, the host provides the guest with
- 	  timing infrastructure such as time of day, and system time
- 
-+config KVM_XO
-+	bool "Support for KVM based execute only virtual memory permissions"
-+	select DYNAMIC_PHYSICAL_MASK
-+	select SPARSEMEM_VMEMMAP
-+	depends on KVM_GUEST && X86_64
-+	default y
-+	help
-+	  This option enables support for execute only memory for KVM guests. If
-+	  support from the underlying VMM is not detected at boot, this
-+	  capability will automatically disable.
-+
-+	  If you are unsure how to answer this question, answer Y.
-+
- config PVH
- 	bool "Support for running PVH guests"
- 	---help---
--- 
-2.17.1
+Tangent: I asked aloud on Twitter last night if anyone had exploited
+Rowhammer-like effects to generate entropy...and sure enough, the usual
+suspects have: https://arxiv.org/pdf/1808.04286.pdf
 
+While this requires low level access to a memory controller, it's
+perhaps an example of something a platform designer could look at as a
+source to introduce boot-time entropy for e.g. EFI_RNG_PROTOCOL even on
+an existing platform without dedicated hardware for the purpose.
+
+Just a thought.
+
+Jon.
