@@ -2,80 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A1FCA1D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25705CA169
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731351AbfJCP7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:59:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730500AbfJCP72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:59:28 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFCC620700;
-        Thu,  3 Oct 2019 15:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118367;
-        bh=1/YZ4lN4FMqcUT8nbaioNtWfW697Qpib4gtPmCCVTqI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e9p247W5rtra4GOcQDcemjQuRAQExGRKLBRexYnPRfSy2ts+BrhuNHFzbG2UxHDed
-         a51YYzbE48K7U2ic7OKB2zPo5gjNktgCJBGvsD0tJ4S7R5PsVzQwsmwd70KcZ85CzJ
-         gkSDV1E7o+7NEqGaQnO5oRLYAXYAjnimNhO8cK/w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard van Breemen <ard@kwaak.net>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 47/99] ALSA: usb-audio: Skip bSynchAddress endpoint check if it is invalid
-Date:   Thu,  3 Oct 2019 17:53:10 +0200
-Message-Id: <20191003154317.871182505@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730384AbfJCPxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:53:17 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34397 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbfJCPxR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:53:17 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y35so2058514pgl.1;
+        Thu, 03 Oct 2019 08:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1wqB6OZNdAWXlilaMCSpXU3dW8zf1TakKdGobbh4lqo=;
+        b=tJDWBKQfkYG6j7dTjY7u63ZnzNoDHCHuPQoSGsP9Cwd10QAabJ71wYeSDMbD+2tbML
+         vDUecy1ZRk0qFDimsSJWyQBM8CxqEQTZjwiEFE800kp61Xwhir7kRwS4R0vgp3yYbIER
+         XhbJMaNYYL41LDNzOhsfFVn+eeThyw7X3j4XPlpV/5i08O0T8/jZgITZ9zasEn8Bto2M
+         1jJZj9aG7l1rdbtmwZvfHdE1Wyc8XPRwe0EpgDIzoC6NEI9nX6WNKOM1T2hheyB1XY+N
+         Tm1xe8mIDuZHXT/L85qUYKbPKVjh1kBdVXB8VGRXS516j9RwHq5d2gEwBcjkRCvd65Dm
+         jCOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1wqB6OZNdAWXlilaMCSpXU3dW8zf1TakKdGobbh4lqo=;
+        b=E0aunpWzkDxRx3vJprXOxGQXP1MMNWGvrRmIbxikgim4+rHafLaLLOVRg+Wr+PTv8K
+         1OzHQAQUcNEHIOiaLbFszTyNE+qb/5MieLJFjFHeFlpgBkSRtJQJpofuzfJ3cFvPvRKh
+         Gla3pohIMx7NBZisMK8CZQAAcK1bUxXiZvINdooB8nCPiSSEbkrYTO3KVD4pBCkUF7nP
+         iBL+DDyN1DtsI0EP7xuEYa5WQKG2VB33zy+NrbPZx/lOxnxNOddw41GcxABc3si7BXpn
+         GYeEcC9me/aSZV/J92jtZDNjfSjXNKXkpREOVjUQlcLe7anMtvjP/dUrpKa0bIrlqK8O
+         3q2Q==
+X-Gm-Message-State: APjAAAXeu1aqywvukasqf5xjeI8R1WLJ2Za4Iubvv2hBHPDSB2SMsyo/
+        m/QzmkQ1EqVSbJYLFdbA5oM=
+X-Google-Smtp-Source: APXvYqwTxuuMApyhcjWNrwEKc2wo9IJ44wvLub5GBlE26WCqQKGZg+xTcVBGAiBqFOqiS3iNLC822A==
+X-Received: by 2002:aa7:81d3:: with SMTP id c19mr11732627pfn.85.1570117995085;
+        Thu, 03 Oct 2019 08:53:15 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id a13sm4649830pfg.10.2019.10.03.08.53.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 08:53:14 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 08:53:11 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 0/2] Add support for software nodes to gpiolib
+Message-ID: <20191003155311.GA22365@dtor-ws>
+References: <20190913032240.50333-1-dmitry.torokhov@gmail.com>
+ <CACRpkdYm=qK7x0cLg3HjPmGYhZ076cDN1Kvd774p6g0UEg9C7w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYm=qK7x0cLg3HjPmGYhZ076cDN1Kvd774p6g0UEg9C7w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard van Breemen <ard@kwaak.net>
+On Thu, Oct 03, 2019 at 12:07:47PM +0200, Linus Walleij wrote:
+> On Fri, Sep 13, 2019 at 5:22 AM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> 
+> > This is a part of the larger series previously posted at
+> >
+> > https://lore.kernel.org/linux-gpio/20190911075215.78047-1-dmitry.torokhov@gmail.com
+> >
+> > that was rebased on top of linux-gpio devel branch.
+> >
+> > Changes in v2:
+> > - switched export to be EXPORT_SYMBOL_GPL to match the new export
+> >   markings for the rest of GPIO devres functions
+> > - rebased on top of Linus W devel branch
+> > - added Andy's Reviewed-by
+> 
+> I failed to get this into v5.4 because of misc stress, sorry :(
+> 
+> I have queued it on an immutable branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-fwnode-gpiod-get-index
+> then pulled that into my devel branch for v5.5.
+> 
+> So you can ask subsystem maintainers to pull this in to do conversions.
+> 
+> Apologies for the inconvenience.
 
-[ Upstream commit 1b34121d9f26d272b0b2334209af6b6fc82d4bf1 ]
+Hey, no worries and thank you for making a branch. It does not really
+matter if we land it one release earlier or later.
 
-The Linux kernel assumes that get_endpoint(alts,0) and
-get_endpoint(alts,1) are eachothers feedback endpoints.
-To reassure that validity it will test bsynchaddress to comply with that
-assumption. But if the bsyncaddress is 0 (invalid), it will flag that as
-a wrong assumption and return an error.
-Fix: Skip the test if bSynchAddress is 0.
-Note: those with a valid bSynchAddress should have a code quirck added.
+Hope you are feeling better.
 
-Signed-off-by: Ard van Breemen <ard@kwaak.net>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/usb/pcm.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
-index 1ea1384bc2369..f84c55ecd0fb4 100644
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -460,6 +460,7 @@ static int set_sync_endpoint(struct snd_usb_substream *subs,
- 	}
- 	ep = get_endpoint(alts, 1)->bEndpointAddress;
- 	if (get_endpoint(alts, 0)->bLength >= USB_DT_ENDPOINT_AUDIO_SIZE &&
-+	    get_endpoint(alts, 0)->bSynchAddress != 0 &&
- 	    ((is_playback && ep != (unsigned int)(get_endpoint(alts, 0)->bSynchAddress | USB_DIR_IN)) ||
- 	     (!is_playback && ep != (unsigned int)(get_endpoint(alts, 0)->bSynchAddress & ~USB_DIR_IN)))) {
- 		dev_err(&dev->dev,
 -- 
-2.20.1
-
-
-
+Dmitry
