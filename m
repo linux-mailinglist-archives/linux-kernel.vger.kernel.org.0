@@ -2,153 +2,311 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D40AC9ACA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 11:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B18E6C9AEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 11:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfJCJeD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 3 Oct 2019 05:34:03 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33987 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728743AbfJCJeD (ORCPT
+        id S1728966AbfJCJiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 05:38:52 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:31811 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728743AbfJCJiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 05:34:03 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iFxUa-0003BR-Oa; Thu, 03 Oct 2019 11:33:48 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6AAF01C0740;
-        Thu,  3 Oct 2019 11:33:48 +0200 (CEST)
-Date:   Thu, 03 Oct 2019 09:33:48 -0000
-From:   "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/math-emu: Check __copy_from_user() result
-Cc:     Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@suse.de>,
-        Kees Cook <keescook@chromium.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Bill Metzenthen <billm@melbpc.org.au>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191001142344.1274185-1-arnd@arndb.de>
-References: <20191001142344.1274185-1-arnd@arndb.de>
+        Thu, 3 Oct 2019 05:38:52 -0400
+X-UUID: 83d216c888f543e887d8043adfa60921-20191003
+X-UUID: 83d216c888f543e887d8043adfa60921-20191003
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1843083875; Thu, 03 Oct 2019 17:38:46 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 3 Oct 2019 17:38:43 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 3 Oct 2019 17:38:44 +0800
+Message-ID: <1570095525.19702.59.camel@mtksdccf07>
+Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy
+ with CONFIG_KASAN_GENERIC=y
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+CC:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Date:   Thu, 3 Oct 2019 17:38:45 +0800
+In-Reply-To: <CACT4Y+ZwNv2-QBrvuR2JvemovmKPQ9Ggrr=ZkdTg6xy_Ki6UAg@mail.gmail.com>
+References: <20190927034338.15813-1-walter-zh.wu@mediatek.com>
+         <CACT4Y+Zxz+R=qQxSMoipXoLjRqyApD3O0eYpK0nyrfGHE4NNPw@mail.gmail.com>
+         <1569594142.9045.24.camel@mtksdccf07>
+         <CACT4Y+YuAxhKtL7ho7jpVAPkjG-JcGyczMXmw8qae2iaZjTh_w@mail.gmail.com>
+         <1569818173.17361.19.camel@mtksdccf07>
+         <1570018513.19702.36.camel@mtksdccf07>
+         <CACT4Y+bbZhvz9ZpHtgL8rCCsV=ybU5jA6zFnJBL7gY2cNXDLyQ@mail.gmail.com>
+         <1570069078.19702.57.camel@mtksdccf07>
+         <CACT4Y+ZwNv2-QBrvuR2JvemovmKPQ9Ggrr=ZkdTg6xy_Ki6UAg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Message-ID: <157009522838.9978.6698411788206711401.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Thu, 2019-10-03 at 08:26 +0200, Dmitry Vyukov wrote:
+> On Thu, Oct 3, 2019 at 4:18 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> >
+> > On Wed, 2019-10-02 at 15:57 +0200, Dmitry Vyukov wrote:
+> > > On Wed, Oct 2, 2019 at 2:15 PM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > > >
+> > > > On Mon, 2019-09-30 at 12:36 +0800, Walter Wu wrote:
+> > > > > On Fri, 2019-09-27 at 21:41 +0200, Dmitry Vyukov wrote:
+> > > > > > On Fri, Sep 27, 2019 at 4:22 PM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > > > > > >
+> > > > > > > On Fri, 2019-09-27 at 15:07 +0200, Dmitry Vyukov wrote:
+> > > > > > > > On Fri, Sep 27, 2019 at 5:43 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > > > > > > > >
+> > > > > > > > > memmove() and memcpy() have missing underflow issues.
+> > > > > > > > > When -7 <= size < 0, then KASAN will miss to catch the underflow issue.
+> > > > > > > > > It looks like shadow start address and shadow end address is the same,
+> > > > > > > > > so it does not actually check anything.
+> > > > > > > > >
+> > > > > > > > > The following test is indeed not caught by KASAN:
+> > > > > > > > >
+> > > > > > > > >         char *p = kmalloc(64, GFP_KERNEL);
+> > > > > > > > >         memset((char *)p, 0, 64);
+> > > > > > > > >         memmove((char *)p, (char *)p + 4, -2);
+> > > > > > > > >         kfree((char*)p);
+> > > > > > > > >
+> > > > > > > > > It should be checked here:
+> > > > > > > > >
+> > > > > > > > > void *memmove(void *dest, const void *src, size_t len)
+> > > > > > > > > {
+> > > > > > > > >         check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> > > > > > > > >         check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> > > > > > > > >
+> > > > > > > > >         return __memmove(dest, src, len);
+> > > > > > > > > }
+> > > > > > > > >
+> > > > > > > > > We fix the shadow end address which is calculated, then generic KASAN
+> > > > > > > > > get the right shadow end address and detect this underflow issue.
+> > > > > > > > >
+> > > > > > > > > [1] https://bugzilla.kernel.org/show_bug.cgi?id=199341
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+> > > > > > > > > Reported-by: Dmitry Vyukov <dvyukov@google.com>
+> > > > > > > > > ---
+> > > > > > > > >  lib/test_kasan.c   | 36 ++++++++++++++++++++++++++++++++++++
+> > > > > > > > >  mm/kasan/generic.c |  8 ++++++--
+> > > > > > > > >  2 files changed, 42 insertions(+), 2 deletions(-)
+> > > > > > > > >
+> > > > > > > > > diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+> > > > > > > > > index b63b367a94e8..8bd014852556 100644
+> > > > > > > > > --- a/lib/test_kasan.c
+> > > > > > > > > +++ b/lib/test_kasan.c
+> > > > > > > > > @@ -280,6 +280,40 @@ static noinline void __init kmalloc_oob_in_memset(void)
+> > > > > > > > >         kfree(ptr);
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > > +static noinline void __init kmalloc_oob_in_memmove_underflow(void)
+> > > > > > > > > +{
+> > > > > > > > > +       char *ptr;
+> > > > > > > > > +       size_t size = 64;
+> > > > > > > > > +
+> > > > > > > > > +       pr_info("underflow out-of-bounds in memmove\n");
+> > > > > > > > > +       ptr = kmalloc(size, GFP_KERNEL);
+> > > > > > > > > +       if (!ptr) {
+> > > > > > > > > +               pr_err("Allocation failed\n");
+> > > > > > > > > +               return;
+> > > > > > > > > +       }
+> > > > > > > > > +
+> > > > > > > > > +       memset((char *)ptr, 0, 64);
+> > > > > > > > > +       memmove((char *)ptr, (char *)ptr + 4, -2);
+> > > > > > > > > +       kfree(ptr);
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > > +static noinline void __init kmalloc_oob_in_memmove_overflow(void)
+> > > > > > > > > +{
+> > > > > > > > > +       char *ptr;
+> > > > > > > > > +       size_t size = 64;
+> > > > > > > > > +
+> > > > > > > > > +       pr_info("overflow out-of-bounds in memmove\n");
+> > > > > > > > > +       ptr = kmalloc(size, GFP_KERNEL);
+> > > > > > > > > +       if (!ptr) {
+> > > > > > > > > +               pr_err("Allocation failed\n");
+> > > > > > > > > +               return;
+> > > > > > > > > +       }
+> > > > > > > > > +
+> > > > > > > > > +       memset((char *)ptr, 0, 64);
+> > > > > > > > > +       memmove((char *)ptr + size, (char *)ptr, 2);
+> > > > > > > > > +       kfree(ptr);
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  static noinline void __init kmalloc_uaf(void)
+> > > > > > > > >  {
+> > > > > > > > >         char *ptr;
+> > > > > > > > > @@ -734,6 +768,8 @@ static int __init kmalloc_tests_init(void)
+> > > > > > > > >         kmalloc_oob_memset_4();
+> > > > > > > > >         kmalloc_oob_memset_8();
+> > > > > > > > >         kmalloc_oob_memset_16();
+> > > > > > > > > +       kmalloc_oob_in_memmove_underflow();
+> > > > > > > > > +       kmalloc_oob_in_memmove_overflow();
+> > > > > > > > >         kmalloc_uaf();
+> > > > > > > > >         kmalloc_uaf_memset();
+> > > > > > > > >         kmalloc_uaf2();
+> > > > > > > > > diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> > > > > > > > > index 616f9dd82d12..34ca23d59e67 100644
+> > > > > > > > > --- a/mm/kasan/generic.c
+> > > > > > > > > +++ b/mm/kasan/generic.c
+> > > > > > > > > @@ -131,9 +131,13 @@ static __always_inline bool memory_is_poisoned_n(unsigned long addr,
+> > > > > > > > >                                                 size_t size)
+> > > > > > > > >  {
+> > > > > > > > >         unsigned long ret;
+> > > > > > > > > +       void *shadow_start = kasan_mem_to_shadow((void *)addr);
+> > > > > > > > > +       void *shadow_end = kasan_mem_to_shadow((void *)addr + size - 1) + 1;
+> > > > > > > > >
+> > > > > > > > > -       ret = memory_is_nonzero(kasan_mem_to_shadow((void *)addr),
+> > > > > > > > > -                       kasan_mem_to_shadow((void *)addr + size - 1) + 1);
+> > > > > > > > > +       if ((long)size < 0)
+> > > > > > > > > +               shadow_end = kasan_mem_to_shadow((void *)addr + size);
+> > > > > > > >
+> > > > > > > > Hi Walter,
+> > > > > > > >
+> > > > > > > > Thanks for working on this.
+> > > > > > > >
+> > > > > > > > If size<0, does it make sense to continue at all? We will still check
+> > > > > > > > 1PB of shadow memory? What happens when we pass such huge range to
+> > > > > > > > memory_is_nonzero?
+> > > > > > > > Perhaps it's better to produce an error and bail out immediately if size<0?
+> > > > > > >
+> > > > > > > I agree with what you said. when size<0, it is indeed an unreasonable
+> > > > > > > behavior, it should be blocked from continuing to do.
+> > > > > > >
+> > > > > > >
+> > > > > > > > Also, what's the failure mode of the tests? Didn't they badly corrupt
+> > > > > > > > memory? We tried to keep tests such that they produce the KASAN
+> > > > > > > > reports, but don't badly corrupt memory b/c/ we need to run all of
+> > > > > > > > them.
+> > > > > > >
+> > > > > > > Maybe we should first produce KASAN reports and then go to execute
+> > > > > > > memmove() or do nothing? It looks like it’s doing the following.or?
+> > > > > > >
+> > > > > > > void *memmove(void *dest, const void *src, size_t len)
+> > > > > > >  {
+> > > > > > > +       if (long(len) <= 0)
+> > > > > >
+> > > > > > /\/\/\/\/\/\
+> > > > > >
+> > > > > > This check needs to be inside of check_memory_region, otherwise we
+> > > > > > will have similar problems in all other places that use
+> > > > > > check_memory_region.
+> > > > > Thanks for your reminder.
+> > > > >
+> > > > >  bool check_memory_region(unsigned long addr, size_t size, bool write,
+> > > > >                                 unsigned long ret_ip)
+> > > > >  {
+> > > > > +       if (long(size) < 0) {
+> > > > > +               kasan_report_invalid_size(src, dest, len, _RET_IP_);
+> > > > > +               return false;
+> > > > > +       }
+> > > > > +
+> > > > >         return check_memory_region_inline(addr, size, write, ret_ip);
+> > > > >  }
+> > > > >
+> > > > > > But check_memory_region already returns a bool, so we could check that
+> > > > > > bool and return early.
+> > > > >
+> > > > > When size<0, we should only show one KASAN report, and should we only
+> > > > > limit to return when size<0 is true? If yse, then __memmove() will do
+> > > > > nothing.
+> > > > >
+> > > > >
+> > > > >  void *memmove(void *dest, const void *src, size_t len)
+> > > > >  {
+> > > > > -       check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> > > > > +       if(!check_memory_region((unsigned long)src, len, false,
+> > > > > _RET_IP_)
+> > > > > +               && long(size) < 0)
+> > > > > +               return;
+> > > > > +
+> > > > >         check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> > > > >
+> > > > >         return __memmove(dest, src, len);
+> > > > >
+> > > > > >
+> > > > Hi Dmitry,
+> > > >
+> > > > What do you think the following code is better than the above one.
+> > > > In memmmove/memset/memcpy, they need to determine whether size < 0 is
+> > > > true. we directly determine whether size is negative in memmove and
+> > > > return early. it avoid to generate repeated KASAN report. Is it better?
+> > > >
+> > > > void *memmove(void *dest, const void *src, size_t len)
+> > > > {
+> > > > +       if (long(size) < 0) {
+> > > > +               kasan_report_invalid_size(src, dest, len, _RET_IP_);
+> > > > +               return;
+> > > > +       }
+> > > > +
+> > > >         check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> > > >         check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> > > >
+> > > >
+> > > > check_memory_region() still has to check whether the size is negative.
+> > > > but memmove/memset/memcpy generate invalid size KASAN report will not be
+> > > > there.
+> > >
+> > >
+> > > If check_memory_region() will do the check, why do we need to
+> > > duplicate it inside of memmove and all other range functions?
+> > >
+> > Yes, I know it has duplication, but if we don't have to determine size<0
+> > in memmove, then all check_memory_region return false will do nothing,
+> 
+> But they will produce a KASAN report, right? They are asked to check
+> if 18446744073709551614 bytes are good. 18446744073709551614 bytes
+> can't be good.
+> 
+> 
+> > it includes other memory corruption behaviors, this is my original
+> > concern.
+> >
+> > > I would do:
+> > >
+> > > void *memmove(void *dest, const void *src, size_t len)
+> > > {
+> > >         if (check_memory_region((unsigned long)src, len, false, _RET_IP_))
+> > >                 return;
+> > if check_memory_region return TRUE is to do nothing, but it is no memory
+> > corruption? Should it return early when check_memory_region return a
+> > FALSE?
+> 
+> Maybe. I just meant the overall idea: check_memory_region should
+> detect that 18446744073709551614 bytes are bad, print an error, return
+> an indication that bytes were bad, memmove should return early if the
+> range is bad.
+> 
+ok, i will send new patch.
+Thanks for your review.
 
-Commit-ID:     e6b44ce1925a8329a937c57f0d60ba0d9bb5d226
-Gitweb:        https://git.kernel.org/tip/e6b44ce1925a8329a937c57f0d60ba0d9bb5d226
-Author:        Arnd Bergmann <arnd@arndb.de>
-AuthorDate:    Tue, 01 Oct 2019 16:23:34 +02:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 03 Oct 2019 10:51:08 +02:00
+> 
+> > > This avoids duplicating the check, adds minimal amount of code to
+> > > range functions and avoids adding kasan_report_invalid_size.
+> > Thanks for your suggestion.
+> > We originally want to show complete information(destination address,
+> > source address, and its length), but add minimal amount of code into
+> > kasan_report(), it should be good.
+> >
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/1570069078.19702.57.camel%40mtksdccf07.
 
-x86/math-emu: Check __copy_from_user() result
 
-The new __must_check annotation on __copy_from_user() successfully
-identified some code that has lacked the check since at least
-linux-2.1.73:
-
-  arch/x86/math-emu/reg_ld_str.c:88:2: error: ignoring return value of \
-  function declared with 'warn_unused_result' attribute [-Werror,-Wunused-result]
-          __copy_from_user(sti_ptr, s, 10);
-          ^~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~
-  arch/x86/math-emu/reg_ld_str.c:1129:2: error: ignoring return value of \
-  function declared with 'warn_unused_result' attribute [-Werror,-Wunused-result]
-          __copy_from_user(register_base + offset, s, other);
-          ^~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  arch/x86/math-emu/reg_ld_str.c:1131:3: error: ignoring return value of \
-  function declared with 'warn_unused_result' attribute [-Werror,-Wunused-result]
-                  __copy_from_user(register_base, s + other, offset);
-                ^~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In addition, the get_user()/put_user() helpers do not enforce a return
-value check, but actually still require one. These have been missing for
-even longer.
-
-Change the internal wrappers around get_user()/put_user() to force
-a signal and add a corresponding wrapper around __copy_from_user()
-to check all such cases.
-
- [ bp: Break long lines. ]
-
-Fixes: 257e458057e5 ("Import 2.1.73")
-Fixes: 9dd819a15162 ("uaccess: add missing __must_check attributes")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Bill Metzenthen <billm@melbpc.org.au>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191001142344.1274185-1-arnd@arndb.de
----
- arch/x86/math-emu/fpu_system.h | 6 ++++--
- arch/x86/math-emu/reg_ld_str.c | 6 +++---
- 2 files changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/math-emu/fpu_system.h b/arch/x86/math-emu/fpu_system.h
-index f98a0c9..9b41391 100644
---- a/arch/x86/math-emu/fpu_system.h
-+++ b/arch/x86/math-emu/fpu_system.h
-@@ -107,6 +107,8 @@ static inline bool seg_writable(struct desc_struct *d)
- #define FPU_access_ok(y,z)	if ( !access_ok(y,z) ) \
- 				math_abort(FPU_info,SIGSEGV)
- #define FPU_abort		math_abort(FPU_info, SIGSEGV)
-+#define FPU_copy_from_user(to, from, n)	\
-+		do { if (copy_from_user(to, from, n)) FPU_abort; } while (0)
- 
- #undef FPU_IGNORE_CODE_SEGV
- #ifdef FPU_IGNORE_CODE_SEGV
-@@ -122,7 +124,7 @@ static inline bool seg_writable(struct desc_struct *d)
- #define	FPU_code_access_ok(z) FPU_access_ok((void __user *)FPU_EIP,z)
- #endif
- 
--#define FPU_get_user(x,y)       get_user((x),(y))
--#define FPU_put_user(x,y)       put_user((x),(y))
-+#define FPU_get_user(x,y) do { if (get_user((x),(y))) FPU_abort; } while (0)
-+#define FPU_put_user(x,y) do { if (put_user((x),(y))) FPU_abort; } while (0)
- 
- #endif
-diff --git a/arch/x86/math-emu/reg_ld_str.c b/arch/x86/math-emu/reg_ld_str.c
-index f377974..fe6246f 100644
---- a/arch/x86/math-emu/reg_ld_str.c
-+++ b/arch/x86/math-emu/reg_ld_str.c
-@@ -85,7 +85,7 @@ int FPU_load_extended(long double __user *s, int stnr)
- 
- 	RE_ENTRANT_CHECK_OFF;
- 	FPU_access_ok(s, 10);
--	__copy_from_user(sti_ptr, s, 10);
-+	FPU_copy_from_user(sti_ptr, s, 10);
- 	RE_ENTRANT_CHECK_ON;
- 
- 	return FPU_tagof(sti_ptr);
-@@ -1126,9 +1126,9 @@ void frstor(fpu_addr_modes addr_modes, u_char __user *data_address)
- 	/* Copy all registers in stack order. */
- 	RE_ENTRANT_CHECK_OFF;
- 	FPU_access_ok(s, 80);
--	__copy_from_user(register_base + offset, s, other);
-+	FPU_copy_from_user(register_base + offset, s, other);
- 	if (offset)
--		__copy_from_user(register_base, s + other, offset);
-+		FPU_copy_from_user(register_base, s + other, offset);
- 	RE_ENTRANT_CHECK_ON;
- 
- 	for (i = 0; i < 8; i++) {
