@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0083CA9BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E93CAA13
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392984AbfJCQrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:47:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60372 "EHLO mail.kernel.org"
+        id S2389669AbfJCQTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:19:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392971AbfJCQq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:46:57 -0400
+        id S2389651AbfJCQS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:18:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1A1921848;
-        Thu,  3 Oct 2019 16:46:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0263720865;
+        Thu,  3 Oct 2019 16:18:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121216;
-        bh=UcXwOX4Q3s/OeMb0P6GUol/4vmnAyQo333LJD65XGZo=;
+        s=default; t=1570119536;
+        bh=mMpkkxyADmRE+S4kl3stEwDC1qfXOMgTeOHsTq9W7RI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K29SN5ZyeYUgV4Xlta0I32EWE/37DpoS74ob2V+goolXo/RE7UPgOlMAbtdIDL7P7
-         JYcZBnFRXVs5wnN4X7ZbhzBd8xINR4L3PN9gGr5odsdMBjVcjbLxDM5+MVyvoL5gbc
-         l69sjmZTf6yayJisIFMl0ocdEYocZD45T1shchBo=
+        b=OyM90vOUcyW2ycLHizZfTAxAJxx4+C5xY4CyBGl8pdjGBr9OWY3qSfVwLWDBcE2ZE
+         UHtWwH0nyVbf+D7T0NYj9cuE34+a1T/t745B74TZaQnHWFfRFxmNh+dVjYCy4X1gBq
+         4EMhmdhVEO9E2fMzn9btmoSXWeqz+tzxjIvehYzo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 198/344] irqchip/sifive-plic: set max threshold for ignored handlers
-Date:   Thu,  3 Oct 2019 17:52:43 +0200
-Message-Id: <20191003154559.755455322@linuxfoundation.org>
+Subject: [PATCH 4.19 100/211] media: saa7146: add cleanup in hexium_attach()
+Date:   Thu,  3 Oct 2019 17:52:46 +0200
+Message-Id: <20191003154509.529699392@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 9ce06497c2722a0f9109e4cc3ce35b7a69617886 ]
+[ Upstream commit 42e64117d3b4a759013f77bbcf25ab6700e55de7 ]
 
-When running in M-mode, the S-mode plic handlers are still listed in the
-device tree.  Ignore them by setting the maximum threshold.
+If saa7146_register_device() fails, no cleanup is executed, leading to
+memory/resource leaks. To fix this issue, perform necessary cleanup work
+before returning the error.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-sifive-plic.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/media/pci/saa7146/hexium_gemini.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index cf755964f2f8b..c72c036aea768 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -244,6 +244,7 @@ static int __init plic_init(struct device_node *node,
- 		struct plic_handler *handler;
- 		irq_hw_number_t hwirq;
- 		int cpu, hartid;
-+		u32 threshold = 0;
+diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
+index 6d8e4afe9673a..8c56d4c37a525 100644
+--- a/drivers/media/pci/saa7146/hexium_gemini.c
++++ b/drivers/media/pci/saa7146/hexium_gemini.c
+@@ -304,6 +304,9 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
+ 	ret = saa7146_register_device(&hexium->video_dev, dev, "hexium gemini", VFL_TYPE_GRABBER);
+ 	if (ret < 0) {
+ 		pr_err("cannot register capture v4l2 device. skipping.\n");
++		saa7146_vv_release(dev);
++		i2c_del_adapter(&hexium->i2c_adapter);
++		kfree(hexium);
+ 		return ret;
+ 	}
  
- 		if (of_irq_parse_one(node, i, &parent)) {
- 			pr_err("failed to parse parent for context %d.\n", i);
-@@ -266,10 +267,16 @@ static int __init plic_init(struct device_node *node,
- 			continue;
- 		}
- 
-+		/*
-+		 * When running in M-mode we need to ignore the S-mode handler.
-+		 * Here we assume it always comes later, but that might be a
-+		 * little fragile.
-+		 */
- 		handler = per_cpu_ptr(&plic_handlers, cpu);
- 		if (handler->present) {
- 			pr_warn("handler already present for context %d.\n", i);
--			continue;
-+			threshold = 0xffffffff;
-+			goto done;
- 		}
- 
- 		handler->present = true;
-@@ -279,8 +286,9 @@ static int __init plic_init(struct device_node *node,
- 		handler->enable_base =
- 			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
- 
-+done:
- 		/* priority must be > threshold to trigger an interrupt */
--		writel(0, handler->hart_base + CONTEXT_THRESHOLD);
-+		writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
- 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
- 			plic_toggle(handler, hwirq, 0);
- 		nr_handlers++;
 -- 
 2.20.1
 
