@@ -2,171 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EC42CACC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68F86CACF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730448AbfJCR3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:29:09 -0400
-Received: from mx4.ucr.edu ([138.23.248.66]:38989 "EHLO mx4.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729235AbfJCR3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:29:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1570123745; x=1601659745;
-  h=from:to:cc:subject:date:message-id;
-  bh=Mr/HQci3u3rRGYq/s4Glr5VxHGEGmVqkkQJmECKmcB4=;
-  b=AHQhjqzNc2UfyZ+3qMvQ+o4JhiYWCMHZ22bWMQAPB/yT4qS/kRwkPBkz
-   Iaaxy9AguSgNBP3cNOTsIiD8KRETMC3PFqjh9TgjWJCc+O4f1yr+sE0UL
-   E722nB85rpdORrt3Fztv0xtV+UV7aKSkbv66wNgfGEMzW1RVMuglCnbAo
-   hy3wwv+2WT6XrRIjMdIotHRJ25T55sSRXTK5sFZSi0Lr5CAsssDgS3lYj
-   9ymHRC0A24Xdl8ioklwkxcCnYmpPooTYLOFYn91AeXR5MyivdOgKk6QUw
-   TiJ1vk39YgjizqwgapC72VVVm++UY4ObXeuWBCh3db3ENUN0h0fbB+01D
-   w==;
-IronPort-SDR: 0TfxothWkXzANr6f2vHDrfGnbPgE4y1jRaRyZ2uAKevfgSXPjjytDHA/xCL5p41caUNURz2GaP
- DeyhtGkXrP2Z0u+JqZXCBSXlKleZYiVixQbPrWoFVDkDNg1OwIJeIftbeYQ0RvuaU3dIpLExCW
- KvQLHP8DC3tooBBsZ3MTjk+omWXmGqknMLXEFemOH2aiqXwC2Q27yx1KxNCypo9VYv5gsCySwd
- iz8HYl0/GzN7swpAoZO1mVYDx++jB2735GekhUheVjJhlpT8VjuVPY27f/8UMSGV9Q2OCMWRBq
- unk=
-IronPort-PHdr: =?us-ascii?q?9a23=3ARk4yEBQf7v5kir4P4dqbeiUtO9psv+yvbD5Q0Y?=
- =?us-ascii?q?Iujvd0So/mwa69bRCN2/xhgRfzUJnB7Loc0qyK6vumBTxLuM/Y+Fk5M7V0Hy?=
- =?us-ascii?q?cfjssXmwFySOWkMmbcaMDQUiohAc5ZX0Vk9XzoeWJcGcL5ekGA6ibqtW1aFR?=
- =?us-ascii?q?rwLxd6KfroEYDOkcu3y/qy+5rOaAlUmTaxe7x/IAi4oAnLucQbgoRuJrssxh?=
- =?us-ascii?q?fUv3BFZ/lYyWR0KFyJgh3y/N2w/Jlt8yRRv/Iu6ctNWrjkcqo7ULJVEi0oP3?=
- =?us-ascii?q?g668P3uxbDSxCP5mYHXWUNjhVIGQnF4wrkUZr3ryD3q/By2CiePc3xULA0RT?=
- =?us-ascii?q?Gv5LplRRP0lCsKMSMy/XrJgcJskq1UvBOhpwR+w4HKZoGVKOF+db7Zcd8DWG?=
- =?us-ascii?q?ZNQtpdWylHD4O5bosPFPEBPeder4nyulAAswKwDhSiBOPu1DBIgmL51rA+3+?=
- =?us-ascii?q?kvDQ3K2QotFM8MvnvJttX4LKccX/6owqfGzjvNaOhb1Svh5IXSbhwsu+2AUa?=
- =?us-ascii?q?52fMHMyUcvDQTFjlCIpIPnPjOU1+QNs3Wc7+F9Uu+ui28mqwFrrTiu2ssglo?=
- =?us-ascii?q?fEi5kIyl/Y7yV12pg6KsClSENiZ9OvDZhetzmCOodoXs8vR3tktSU6x7Ecp5?=
- =?us-ascii?q?K3YScHxI45yxLDd/CLa5WE7xPnWeqLPzt1inJodKihixuz60StyOLxW8+p21?=
- =?us-ascii?q?hQtCVFiMPDtnUV2hzW7ciIV+Vy81+62TaKywDT8uZEIV0olabDK54u3Lowlp?=
- =?us-ascii?q?0LvETGBCD2mUH2gLaOdkUg5+Sk8urnbqv6qpOALYN0hQb+MqMhmsy7H+s0KB?=
- =?us-ascii?q?QBX2+e+eik1b3j+1P2QKlSg/EojqXUtIrWKMcbq6KjHQNZz4ku5wyhAzu6zN?=
- =?us-ascii?q?gUhXwHI0hEeBKDgYjpIVbOIPXgAPa/glWskC1kx/HaMrH9DJjANWXDn6v7fb?=
- =?us-ascii?q?pn9UFT1RczwchF551IErEBPO7zWkjpudzcDx85NRG0wun+BNV+yIweQ2SPDb?=
- =?us-ascii?q?GdMK7Jr1+I6fwgI/OWaI8Wpjn9Mf4l6ODqjXMjnl8dZ6apjtM5cne9S8VnMU?=
- =?us-ascii?q?WEZjK4k8UBGGZS5lEWUefwzlCOTGgAND6JQ6sg62RjW8qdBoDZS9Xo3+SM?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HdCgAaL5Zdh8jWVdFlHgEGEoFcCwK?=
- =?us-ascii?q?DXEwQjSSGLAEBBosmgQmFeoMLhSiBewEIAQEBDAEBLQIBAYRAgkgjNQgOAgM?=
- =?us-ascii?q?JAQEFAQEBAQEFBAEBAhABAQEIDQkIKYVAQgEMAYFqKYM1CxYVUoEVAQUBNSI?=
- =?us-ascii?q?5gkcBgXYUBaIkgQM8jCUziGYBCQ2BSAkBCIEiAYc0hFmBEIEHhGGEKIM9gkQ?=
- =?us-ascii?q?EgTcBAQGLPQeJZ3CVYgEGAoIRFIF4kxQnhDyJP4tEAS2MEpsdAgoHBg8jgTA?=
- =?us-ascii?q?BghBNJYFsCoFEUBAUgVsOCRWOLiEzgQiCc41iAQ?=
-X-IPAS-Result: =?us-ascii?q?A2HdCgAaL5Zdh8jWVdFlHgEGEoFcCwKDXEwQjSSGLAEBB?=
- =?us-ascii?q?osmgQmFeoMLhSiBewEIAQEBDAEBLQIBAYRAgkgjNQgOAgMJAQEFAQEBAQEFB?=
- =?us-ascii?q?AEBAhABAQEIDQkIKYVAQgEMAYFqKYM1CxYVUoEVAQUBNSI5gkcBgXYUBaIkg?=
- =?us-ascii?q?QM8jCUziGYBCQ2BSAkBCIEiAYc0hFmBEIEHhGGEKIM9gkQEgTcBAQGLPQeJZ?=
- =?us-ascii?q?3CVYgEGAoIRFIF4kxQnhDyJP4tEAS2MEpsdAgoHBg8jgTABghBNJYFsCoFEU?=
- =?us-ascii?q?BAUgVsOCRWOLiEzgQiCc41iAQ?=
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="80465613"
-Received: from mail-pl1-f200.google.com ([209.85.214.200])
-  by smtpmx4.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Oct 2019 10:29:03 -0700
-Received: by mail-pl1-f200.google.com with SMTP id f8so2169228plj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:29:04 -0700 (PDT)
+        id S1731903AbfJCRc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:32:59 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:56582 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730823AbfJCRcy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:32:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570123973;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tyc8Mk8DJcaipG9TZO3g0pE+sD22mtd1Wvj7+XFS8Vs=;
+        b=FlUxtkozk3qE3W5q3py1FalZj1ZbbYvZguu6n0GvwV/RnYXRP5/GospIXMgZwslApnzkeR
+        Ar2ZoLPwOA+YSOYK7t/88TSR4f9emWGmqLlzOFThhSE3InYcvFjHY3TuZdJGyVvA1QtHfo
+        eSW2ejI2qgt/EgDWzSBERNyvrvm4AB4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-1-68CYGk9-OmG4rKzj9u8jpg-1; Thu, 03 Oct 2019 13:32:50 -0400
+Received: by mail-wm1-f71.google.com with SMTP id o8so1416288wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:32:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7xuYVaL6kMkVdyoXuZH4xe6VghxajLsnhwu8EUF2ekg=;
-        b=g3fXJ7mHA78bTmyoi4z/IIoTj4FmcHL2235+LeWeNz9oySobqrZCKoDytP+3z+IVsy
-         TMaAA86Dw1F1zirzTSZ7c7Ta8fMrhsEQoUeJGNWF8LyjxoQhHenbjxP1BjYwYiDyOOBm
-         7bVMSjscO7R1QQhwVb+eFq4BkKu1yMqG/fh2sjM1k81J1Nidq9TY5RVX/V0dmwTgsYTy
-         tZxBwLsmdU605HGgv2RhOygpcraM1QsG0H3u0MSSHTvNqO01zgWBO5H3FZiE/RwEjjKD
-         FEs7341kGNVCSUqP78fjNsLpMvUPmROAf/QrXpkAXCVRWU3pyG/rBSuaI2YZs7/IA5NU
-         L/Dw==
-X-Gm-Message-State: APjAAAVSau8Q9GuL+TeRRSYMW841Wiqmtzxw5Ath7bhutHPM0zUUtNM+
-        7P0jaHuxIGlMJ8EyhPqmm3AqCYaE75HuZaSzhI9eSLxUE7k9Hv1pykP73FlKOAdnz+SmWL3PlfK
-        qczJZFmnkfH3ubnJPzGkGmB1u+w==
-X-Received: by 2002:a17:902:82cb:: with SMTP id u11mr10426926plz.313.1570123743271;
-        Thu, 03 Oct 2019 10:29:03 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwSfAqTaew0JD5ZU0+Z9NkYE4T9Dt3wJBWjJZFhmQ0ZxSZ4KisCFXx7oPCag5yPjJxnTPRSIA==
-X-Received: by 2002:a17:902:82cb:: with SMTP id u11mr10426899plz.313.1570123742854;
-        Thu, 03 Oct 2019 10:29:02 -0700 (PDT)
-Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
-        by smtp.googlemail.com with ESMTPSA id c62sm4638873pfa.92.2019.10.03.10.29.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2ef7N0ePuxn3Ta7g1ODhoz4GZ5kwOIoAGHMitlSYrcw=;
+        b=BhBQ7L4HtoBaDbGyd/3Mdk+2qKzSVrFSP1EMSb8qF6GsK7498Z4iAVR6J0GB1EG3c3
+         b3V85lt2fgNNupIWZpTnJpRTVb2Ck3jXl+fZxzJWS4qL35qz6mxcUvNX8431wjrB54OF
+         g7vop/yVCtY4nbpTndWcPac7hySbnCfqbY76XzqMUmgo9KB4yGGm0cG7n8gwgURfTc3J
+         Yt93jEkRQmvbJL2LsuAU2ljUkBibkHO3jAy9RftzNkZBIRIYmONppc69cVxKA9hgYreu
+         qqv/HWzE4bZWSTo1hTVO1yv1YwHeluZJcfEo1U6TDuM2w9BGXj2eRqG1jzGRo8sxO6yW
+         QxVQ==
+X-Gm-Message-State: APjAAAW633+w54eQqS7W3dPEKK9/YgByOS8JdVsNg/sA+JycpxCMVTCK
+        QDDYP3Ik8184vxo/ncT0tm2Z9hTzTDHf0r03qDEupakIAA13UXOQW6qyFY7Z7VTpvLcRDLYGqmX
+        8LtWE6vafLj2sHsgBjreX6X5k
+X-Received: by 2002:a7b:c156:: with SMTP id z22mr8133040wmi.142.1570123969574;
+        Thu, 03 Oct 2019 10:32:49 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqz+93T7QZmfuz6juSrvUo+0tO+JKd49hF/xJ8735MhhS21vMaPI2qHMRdInVKHuyZof2sGApg==
+X-Received: by 2002:a7b:c156:: with SMTP id z22mr8133017wmi.142.1570123969238;
+        Thu, 03 Oct 2019 10:32:49 -0700 (PDT)
+Received: from localhost (pD95EF0F7.dip0.t-ipconnect.de. [217.94.240.247])
+        by smtp.gmail.com with ESMTPSA id 90sm4908448wrr.1.2019.10.03.10.32.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 10:29:01 -0700 (PDT)
-From:   Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] power: supply: max17042_battery: fix some usage of uninitialized variables
-Date:   Thu,  3 Oct 2019 10:29:48 -0700
-Message-Id: <20191003172948.15834-1-yzhai003@ucr.edu>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 03 Oct 2019 10:32:48 -0700 (PDT)
+From:   Christian Kellner <ckellner@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Christian Kellner <christian@kellner.me>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>
+Subject: [PATCH] thunderbolt: Add 'generation' attribute for devices
+Date:   Thu,  3 Oct 2019 19:32:40 +0200
+Message-Id: <20191003173242.80938-1-ckellner@redhat.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+X-MC-Unique: 68CYGk9-OmG4rKzj9u8jpg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several functions in this file are trying to use regmap_read() to
-initialize the specific variable, however, if regmap_read() fails,
-the variable could be uninitialized but used directly, which is
-potentially unsafe. The return value of regmap_read() should be
-checked and handled. The same case also happens in function
-max17042_thread_handler() but it needs more effort to patch.
+From: Christian Kellner <christian@kellner.me>
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+The Thunderbolt standard went through several major iterations, here
+called generation. USB4, which will be based on Thunderbolt, will be
+generation 4. Let userspace know the generation of the controller in
+the devices in order to distinguish between Thunderbolt and USB4, so
+it can be shown in various user interfaces.
+
+Signed-off-by: Christian Kellner <christian@kellner.me>
 ---
- drivers/power/supply/max17042_battery.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-thunderbolt |  8 ++++++++
+ drivers/thunderbolt/switch.c                    | 10 ++++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
-index e6a2dacaa730..b897776a2749 100644
---- a/drivers/power/supply/max17042_battery.c
-+++ b/drivers/power/supply/max17042_battery.c
-@@ -675,8 +675,12 @@ static void max17042_reset_vfsoc0_reg(struct max17042_chip *chip)
+diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentatio=
+n/ABI/testing/sysfs-bus-thunderbolt
+index b21fba14689b..630e51344f1c 100644
+--- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
++++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
+@@ -80,6 +80,14 @@ Contact:=09thunderbolt-software@lists.01.org
+ Description:=09This attribute contains 1 if Thunderbolt device was already
+ =09=09authorized on boot and 0 otherwise.
+=20
++What: /sys/bus/thunderbolt/devices/.../generation
++Date:=09=09Aug 2019
++KernelVersion:=095.5
++Contact:=09Christian Kellner <christian@kellner.me>
++Description:=09This attribute contains the generation of the Thunderbolt
++=09=09controller associated with the device. It will contain 4
++=09=09for USB4.
++
+ What: /sys/bus/thunderbolt/devices/.../key
+ Date:=09=09Sep 2017
+ KernelVersion:=094.13
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 410bf1bceeee..ac9fa2740800 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -1120,6 +1120,15 @@ device_name_show(struct device *dev, struct device_a=
+ttribute *attr, char *buf)
+ }
+ static DEVICE_ATTR_RO(device_name);
+=20
++static ssize_t
++generation_show(struct device *dev, struct device_attribute *attr, char *b=
+uf)
++{
++=09struct tb_switch *sw =3D tb_to_switch(dev);
++
++=09return sprintf(buf, "%u\n", sw->generation);
++}
++static DEVICE_ATTR_RO(generation);
++
+ static ssize_t key_show(struct device *dev, struct device_attribute *attr,
+ =09=09=09char *buf)
  {
- 	unsigned int vfSoc;
- 	struct regmap *map = chip->regmap;
-+	int ret;
-+
-+	ret = regmap_read(map, MAX17042_VFSOC, &vfSoc);
-+	if (ret)
-+		return;
- 
--	regmap_read(map, MAX17042_VFSOC, &vfSoc);
- 	regmap_write(map, MAX17042_VFSOC0Enable, VFSOC0_UNLOCK);
- 	max17042_write_verify_reg(map, MAX17042_VFSOC0, vfSoc);
- 	regmap_write(map, MAX17042_VFSOC0Enable, VFSOC0_LOCK);
-@@ -686,12 +690,18 @@ static void max17042_load_new_capacity_params(struct max17042_chip *chip)
- {
- 	u32 full_cap0, rep_cap, dq_acc, vfSoc;
- 	u32 rem_cap;
-+	int ret;
- 
- 	struct max17042_config_data *config = chip->pdata->config_data;
- 	struct regmap *map = chip->regmap;
- 
--	regmap_read(map, MAX17042_FullCAP0, &full_cap0);
--	regmap_read(map, MAX17042_VFSOC, &vfSoc);
-+	ret = regmap_read(map, MAX17042_FullCAP0, &full_cap0);
-+	if (ret)
-+		return;
-+
-+	ret = regmap_read(map, MAX17042_VFSOC, &vfSoc);
-+	if (ret)
-+		return;
- 
- 	/* fg_vfSoc needs to shifted by 8 bits to get the
- 	 * perc in 1% accuracy, to get the right rem_cap multiply
-@@ -1108,7 +1118,12 @@ static int max17042_probe(struct i2c_client *client,
- 	if (!client->irq)
- 		regmap_write(chip->regmap, MAX17042_SALRT_Th, 0xff00);
- 
--	regmap_read(chip->regmap, MAX17042_STATUS, &val);
-+	ret = regmap_read(chip->regmap, MAX17042_STATUS, &val);
-+	if (ret) {
-+		dev_err(&client->dev, "Failed to get MAX17042_STATUS.\n");
-+		return ret;
-+	}
-+
- 	if (val & STATUS_POR_BIT) {
- 		INIT_WORK(&chip->work, max17042_init_worker);
- 		ret = devm_add_action(&client->dev, max17042_stop_work, chip);
--- 
-2.17.1
+@@ -1325,6 +1334,7 @@ static struct attribute *switch_attrs[] =3D {
+ =09&dev_attr_boot.attr,
+ =09&dev_attr_device.attr,
+ =09&dev_attr_device_name.attr,
++=09&dev_attr_generation.attr,
+ =09&dev_attr_key.attr,
+ =09&dev_attr_nvm_authenticate.attr,
+ =09&dev_attr_nvm_version.attr,
+--=20
+2.23.0
 
