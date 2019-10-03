@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 730C6CA1C0
+	by mail.lfdr.de (Postfix) with ESMTP id E9837CA1C1
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbfJCP6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:58:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41724 "EHLO mail.kernel.org"
+        id S1730435AbfJCP65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:58:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728773AbfJCP6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:58:51 -0400
+        id S1729802AbfJCP6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:58:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 118E3207FF;
-        Thu,  3 Oct 2019 15:58:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E461E20830;
+        Thu,  3 Oct 2019 15:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118330;
-        bh=uJycNw4DL+U+YCISpHKsr1iB52emBHrVSbHwAuMW0VY=;
+        s=default; t=1570118334;
+        bh=xpL+Zktkj4FG1ObP8MvGMpsubfq7xDXJQA7h+p6dJUA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lp4lHbiLVDStTXKmA8jEarTnlxGJEDsbR8KR2W1jYwqXSDLmc1SGV9fYGOjW/YwGy
-         If3+oTnLURSjGNLtsDQkCFWcVh/tcNjzm98zHwOuL3Na9Mh3Mz8iB4+opVtT/Up2vO
-         nrHxgozRLRh5GE2VX7UNd+/DGaTTCBUrsHbbfRWY=
+        b=ocuAxx2YVKM8GMVzijLajYCGiencmdDoIY3QubyO0yNPtHV4KoMku1drwSpObzt3W
+         EWfwQUtzuOSawTBGHOuAwvewnKkHC6WjwIwpTpBMZQso+f1i2V6AuLbMBZB+XGm8zQ
+         5YVuStMOS8uWyiqQfNwh8b4wTjecd+NMxjCkiRZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Easton <kevin@guarana.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        syzbot+98156c174c5a2cad9f8f@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 71/99] libertas: Add missing sentinel at end of if_usb.c fw_table
-Date:   Thu,  3 Oct 2019 17:53:34 +0200
-Message-Id: <20191003154331.703444750@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
+        syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 72/99] media: ttusb-dec: Fix info-leak in ttusb_dec_send_command()
+Date:   Thu,  3 Oct 2019 17:53:35 +0200
+Message-Id: <20191003154332.100916722@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -45,34 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kevin Easton <kevin@guarana.org>
+From: Tomas Bortoli <tomasbortoli@gmail.com>
 
-[ Upstream commit 764f3f1ecffc434096e0a2b02f1a6cc964a89df6 ]
+[ Upstream commit a10feaf8c464c3f9cfdd3a8a7ce17e1c0d498da1 ]
 
-This sentinel tells the firmware loading process when to stop.
+The function at issue does not always initialize each byte allocated
+for 'b' and can therefore leak uninitialized memory to a USB device in
+the call to usb_bulk_msg()
 
-Reported-and-tested-by: syzbot+98156c174c5a2cad9f8f@syzkaller.appspotmail.com
-Signed-off-by: Kevin Easton <kevin@guarana.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Use kzalloc() instead of kmalloc()
+
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/libertas/if_usb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/usb/ttusb-dec/ttusb_dec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/libertas/if_usb.c b/drivers/net/wireless/libertas/if_usb.c
-index dff08a2896a38..d271eaf1f9499 100644
---- a/drivers/net/wireless/libertas/if_usb.c
-+++ b/drivers/net/wireless/libertas/if_usb.c
-@@ -49,7 +49,8 @@ static const struct lbs_fw_table fw_table[] = {
- 	{ MODEL_8388, "libertas/usb8388_v5.bin", NULL },
- 	{ MODEL_8388, "libertas/usb8388.bin", NULL },
- 	{ MODEL_8388, "usb8388.bin", NULL },
--	{ MODEL_8682, "libertas/usb8682.bin", NULL }
-+	{ MODEL_8682, "libertas/usb8682.bin", NULL },
-+	{ 0, NULL, NULL }
- };
+diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+index a5de46f04247f..f9b5de7ace01c 100644
+--- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
++++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
+@@ -272,7 +272,7 @@ static int ttusb_dec_send_command(struct ttusb_dec *dec, const u8 command,
  
- static struct usb_device_id if_usb_table[] = {
+ 	dprintk("%s\n", __func__);
+ 
+-	b = kmalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
++	b = kzalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
+ 	if (!b)
+ 		return -ENOMEM;
+ 
 -- 
 2.20.1
 
