@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D162CAA4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9047CAA49
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406345AbfJCRDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:03:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52796 "EHLO mail.kernel.org"
+        id S2405859AbfJCRCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:02:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392561AbfJCQmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:42:04 -0400
+        id S2392638AbfJCQmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:42:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 415A02070B;
-        Thu,  3 Oct 2019 16:42:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8324F2054F;
+        Thu,  3 Oct 2019 16:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120923;
-        bh=/SiC1b9j8s5dkXxghdD5HO3MXsCZs6ZS7C/TYS9uG9o=;
+        s=default; t=1570120942;
+        bh=1yjOP+y2VDBuHbUnkJ0x7XMZLigsvLv6f6vVBFKWGfQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DZi6dIgHxMgDXifyYS97oy7HGTgTDfPxLYQNpHLrfgC8y7wn7kPUSDeXdMmtbaNZd
-         uSunwqBeEBEDfOFIR38qF/p4+mPapPUQ69Dg45yfCpFmmL8rmsEimR3L4+yM7Z5fh5
-         1yQo3A2kz8b5joh/iTk7PCXlpqBhsogb8rcyOJP4=
+        b=CijMr+PcEw9yoB+erLIlNxHdAZDPx2zQgglkNef1SHAb3348zbw/lKIzYct3AUcFv
+         7uA92YCzsHxV8kzSTYgjPunIcF/BI+yWcrdSsKQ+DrSoK9iBJh6SWtWlFwd52/9LKX
+         M9zQq3q+Y0dwpNYO7hijFvhAx2DiVOQiUWtyIP9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        Song Liu <songliubraving@fb.com>,
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 088/344] md: dont set In_sync if array is frozen
-Date:   Thu,  3 Oct 2019 17:50:53 +0200
-Message-Id: <20191003154548.851927886@linuxfoundation.org>
+Subject: [PATCH 5.3 094/344] ACPI / processor: dont print errors for processorIDs == 0xff
+Date:   Thu,  3 Oct 2019 17:50:59 +0200
+Message-Id: <20191003154549.463755278@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -45,53 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guoqing Jiang <jgq516@gmail.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-[ Upstream commit 062f5b2ae12a153644c765e7ba3b0f825427be1d ]
+[ Upstream commit 2c2b005f549544c13ef4cfb0e4842949066889bc ]
 
-When a disk is added to array, the following path is called in mdadm.
+Some platforms define their processors in this manner:
+    Device (SCK0)
+    {
+	Name (_HID, "ACPI0004" /* Module Device */)  // _HID: Hardware ID
+	Name (_UID, "CPUSCK0")  // _UID: Unique ID
+	Processor (CP00, 0x00, 0x00000410, 0x06){}
+	Processor (CP01, 0x02, 0x00000410, 0x06){}
+	Processor (CP02, 0x04, 0x00000410, 0x06){}
+	Processor (CP03, 0x06, 0x00000410, 0x06){}
+	Processor (CP04, 0x01, 0x00000410, 0x06){}
+	Processor (CP05, 0x03, 0x00000410, 0x06){}
+	Processor (CP06, 0x05, 0x00000410, 0x06){}
+	Processor (CP07, 0x07, 0x00000410, 0x06){}
+	Processor (CP08, 0xFF, 0x00000410, 0x06){}
+	Processor (CP09, 0xFF, 0x00000410, 0x06){}
+	Processor (CP0A, 0xFF, 0x00000410, 0x06){}
+	Processor (CP0B, 0xFF, 0x00000410, 0x06){}
+...
 
-Manage_subdevs -> sysfs_freeze_array
-               -> Manage_add
-               -> sysfs_set_str(&info, NULL, "sync_action","idle")
+The processors marked as 0xff are invalid, there are only 8 of them in
+this case.
 
-Then from kernel side, Manage_add invokes the path (add_new_disk ->
-validate_super = super_1_validate) to set In_sync flag.
+So do not print an error on ids == 0xff, just print an info message.
+Actually, we could return ENODEV even on the first CPU with ID 0xff, but
+ACPI spec does not forbid the 0xff value to be a processor ID. Given
+0xff could be a correct one, we would break working systems if we
+returned ENODEV.
 
-Since In_sync means "device is in_sync with rest of array", and the new
-added disk need to resync thread to help the synchronization of data.
-And md_reap_sync_thread would call spare_active to set In_sync for the
-new added disk finally. So don't set In_sync if array is in frozen.
-
-Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/acpi/acpi_processor.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index fd62be3ca2871..232ea1f519963 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1826,8 +1826,15 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *rdev)
- 				if (!(le32_to_cpu(sb->feature_map) &
- 				      MD_FEATURE_RECOVERY_BITMAP))
- 					rdev->saved_raid_disk = -1;
--			} else
--				set_bit(In_sync, &rdev->flags);
-+			} else {
-+				/*
-+				 * If the array is FROZEN, then the device can't
-+				 * be in_sync with rest of array.
-+				 */
-+				if (!test_bit(MD_RECOVERY_FROZEN,
-+					      &mddev->recovery))
-+					set_bit(In_sync, &rdev->flags);
-+			}
- 			rdev->raid_disk = role;
- 			break;
- 		}
+diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+index 24f065114d424..2c4dda0787e84 100644
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -279,9 +279,13 @@ static int acpi_processor_get_info(struct acpi_device *device)
+ 	}
+ 
+ 	if (acpi_duplicate_processor_id(pr->acpi_id)) {
+-		dev_err(&device->dev,
+-			"Failed to get unique processor _UID (0x%x)\n",
+-			pr->acpi_id);
++		if (pr->acpi_id == 0xff)
++			dev_info_once(&device->dev,
++				"Entry not well-defined, consider updating BIOS\n");
++		else
++			dev_err(&device->dev,
++				"Failed to get unique processor _UID (0x%x)\n",
++				pr->acpi_id);
+ 		return -ENODEV;
+ 	}
+ 
 -- 
 2.20.1
 
