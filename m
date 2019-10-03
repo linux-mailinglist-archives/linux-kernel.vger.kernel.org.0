@@ -2,116 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5B41C9E93
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 241A3C9E8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbfJCMc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 08:32:58 -0400
-Received: from mga17.intel.com ([192.55.52.151]:27959 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729080AbfJCMc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 08:32:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 05:32:56 -0700
-X-IronPort-AV: E=Sophos;i="5.67,252,1566889200"; 
-   d="scan'208";a="185899703"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 05:32:53 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-        by paasikivi.fi.intel.com (Postfix) with ESMTP id 4D2822136B;
-        Thu,  3 Oct 2019 15:32:17 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@linux.intel.com>)
-        id 1iG0HM-0002wi-0Q; Thu, 03 Oct 2019 15:32:20 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Joe Perches <joe@perches.com>
-Subject: [PATCH v9 12/12] lib/test_printf: Add tests for %pfw printk modifier
-Date:   Thu,  3 Oct 2019 15:32:19 +0300
-Message-Id: <20191003123219.11237-13-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191003123219.11237-1-sakari.ailus@linux.intel.com>
-References: <20191003123219.11237-1-sakari.ailus@linux.intel.com>
+        id S1730163AbfJCMcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 08:32:52 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51172 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730027AbfJCMcs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 08:32:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7fYz0vJ661x367z1HdxIQ8T0lQiWOwZl1Be5LTqF4ZE=; b=Xs0UHHdSC+UJC+tSmcoYeljSA
+        PnOky73ndEHrdXF4iMRu+TJd3ak2L74zMgu1wGVPUKyLQZ0aUtdGaQ2+eNYmqRdzZ8dR/6yG/bySz
+        tAPJpjkMKftuB3cOiuMqxIgSSGgyGnL8zim5cirp8Ak6G7E0BKpP1HOYmTG13Z6GfZJatvWzke4Sq
+        MSk5aMwF0dI+fDSXUCDNqwk/R31sFNR310ydIYjSfOex6vrg3AsL4IgB1YSPKFK09P96SGiWtRLDo
+        evcWPTw964PlMxqi27LEQhmdgZUAaBr3UkptRqL4O9y04m1OXejYfNLE8NLkaJd3kCalqOh94bYQq
+        hxuDNjrAg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iG0Ha-0006sG-CU; Thu, 03 Oct 2019 12:32:34 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 41A2C3060F2;
+        Thu,  3 Oct 2019 14:31:42 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7DA7C201DF21A; Thu,  3 Oct 2019 14:32:31 +0200 (CEST)
+Date:   Thu, 3 Oct 2019 14:32:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 1/3] x86/alternatives: Teach text_poke_bp() to emulate
+ instructions
+Message-ID: <20191003123231.GK4581@hirez.programming.kicks-ass.net>
+References: <20190827180622.159326993@infradead.org>
+ <20190827181147.053490768@infradead.org>
+ <20191003140050.1d4cf59d3de8b5396d36c269@kernel.org>
+ <20191003082751.GQ4536@hirez.programming.kicks-ass.net>
+ <20191003110106.GI4581@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191003110106.GI4581@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a test for the %pfw printk modifier using software nodes.
+On Thu, Oct 03, 2019 at 01:01:06PM +0200, Peter Zijlstra wrote:
+> Also, I think text_poke_bp(INT3) is broken, although I don't think
+> anybody actually does that. Still, let me fix that.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Something like so should allow text_poke_bp(INT3) to work as expected.
+
 ---
- lib/test_printf.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index 944eb50f38625..bb6a7d334084b 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -22,6 +22,8 @@
- #include <linux/gfp.h>
- #include <linux/mm.h>
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -999,6 +999,13 @@ int poke_int3_handler(struct pt_regs *re
+ 	ip += tp->len;
  
-+#include <linux/property.h>
+ 	switch (tp->opcode) {
++	case INT3_INSN_OPCODE:
++		/*
++		 * Someone poked an explicit INT3, they'll want to handle it,
++		 * do not consume.
++		 */
++		return 0;
 +
- #include "../tools/testing/selftests/kselftest_module.h"
+ 	case CALL_INSN_OPCODE:
+ 		int3_emulate_call(regs, (long)ip + tp->rel32);
+ 		break;
+@@ -1040,8 +1047,8 @@ NOKPROBE_SYMBOL(poke_int3_handler);
+ void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries)
+ {
+ 	unsigned char int3 = INT3_INSN_OPCODE;
+-	int patched_all_but_first = 0;
+ 	unsigned int i;
++	int do_sync;
  
- #define BUF_SIZE 256
-@@ -588,6 +590,35 @@ flags(void)
- 	kfree(cmp_buffer);
- }
+ 	lockdep_assert_held(&text_mutex);
  
-+static void __init fwnode_pointer(void)
-+{
-+	const struct software_node softnodes[] = {
-+		{ .name = "first", },
-+		{ .name = "second", .parent = &softnodes[0], },
-+		{ .name = "third", .parent = &softnodes[1], },
-+		{ NULL /* Guardian */ }
-+	};
-+	const char * const full_name = "first/second/third";
-+	const char * const full_name_second = "first/second";
-+	const char * const second_name = "second";
-+	const char * const third_name = "third";
-+	int rval;
+@@ -1065,16 +1072,16 @@ void text_poke_bp_batch(struct text_poke
+ 	/*
+ 	 * Second step: update all but the first byte of the patched range.
+ 	 */
+-	for (i = 0; i < nr_entries; i++) {
++	for (do_sync = 0, i = 0; i < nr_entries; i++) {
+ 		if (tp[i].len - sizeof(int3) > 0) {
+ 			text_poke((char *)tp[i].addr + sizeof(int3),
+ 				  (const char *)tp[i].text + sizeof(int3),
+ 				  tp[i].len - sizeof(int3));
+-			patched_all_but_first++;
++			do_sync++;
+ 		}
+ 	}
+ 
+-	if (patched_all_but_first) {
++	if (do_sync) {
+ 		/*
+ 		 * According to Intel, this core syncing is very likely
+ 		 * not necessary and we'd be safe even without it. But
+@@ -1087,10 +1094,17 @@ void text_poke_bp_batch(struct text_poke
+ 	 * Third step: replace the first byte (int3) by the first byte of
+ 	 * replacing opcode.
+ 	 */
+-	for (i = 0; i < nr_entries; i++)
++	for (do_sync = 0, i = 0; i < nr_entries; i++) {
++		if (tp[i].text[0] == INT3_INSN_OPCODE)
++			continue;
 +
-+	rval = software_node_register_nodes(softnodes);
-+	if (rval) {
-+		pr_warn("cannot register softnodes; rval %d\n", rval);
-+		return;
+ 		text_poke(tp[i].addr, tp[i].text, sizeof(int3));
++		do_sync++;
 +	}
 +
-+	test(full_name_second, "%pfw", software_node_fwnode(&softnodes[1]));
-+	test(full_name, "%pfw", software_node_fwnode(&softnodes[2]));
-+	test(full_name, "%pfwf", software_node_fwnode(&softnodes[2]));
-+	test(second_name, "%pfwP", software_node_fwnode(&softnodes[1]));
-+	test(third_name, "%pfwP", software_node_fwnode(&softnodes[2]));
-+
-+	software_node_unregister_nodes(softnodes);
-+}
-+
- static void __init
- test_pointer(void)
- {
-@@ -610,6 +641,7 @@ test_pointer(void)
- 	bitmap();
- 	netdev_features();
- 	flags();
-+	fwnode_pointer();
- }
++	if (do_sync)
++		on_each_cpu(do_sync_core, NULL, 1);
  
- static void __init selftest(void)
--- 
-2.20.1
-
+-	on_each_cpu(do_sync_core, NULL, 1);
+ 	/*
+ 	 * sync_core() implies an smp_mb() and orders this store against
+ 	 * the writing of the new instruction.
+@@ -1123,6 +1137,9 @@ void text_poke_loc_init(struct text_poke
+ 	tp->opcode = insn.opcode.bytes[0];
+ 
+ 	switch (tp->opcode) {
++	case INT3_INSN_OPCPDE:
++		break;
++
+ 	case CALL_INSN_OPCODE:
+ 	case JMP32_INSN_OPCODE:
+ 	case JMP8_INSN_OPCODE:
