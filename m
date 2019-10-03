@@ -2,225 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B0ACAA02
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA45CAB0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389413AbfJCQSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:18:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387651AbfJCQR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:17:59 -0400
-Received: from lenoir.home (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60DAF21A4C;
-        Thu,  3 Oct 2019 16:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119478;
-        bh=MGvHbC9K5+l59c4z5K2Nq/I42snRLtWbzjkUQSSFuAA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2QWZklpfkmxHS+bqZrDH/IqoyZ0JKs8aKP8Bvz5EtMSkHKO/yWARdyRGuzOWjEyjy
-         fpXzZ5wsnId1Pq2xOWiDkWjoCf98dIF/xQtzLfWhGQTg5Jz76+zFEDKKRHlDyjCcIA
-         mXE1wBihO/qEsROPkzm3TOC0sJ25VfkbkIdSP/U8=
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: [PATCH 2/2] vtime: Spare a seqcount lock/unlock cycle on context switch
-Date:   Thu,  3 Oct 2019 18:17:45 +0200
-Message-Id: <20191003161745.28464-3-frederic@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003161745.28464-1-frederic@kernel.org>
-References: <20191003161745.28464-1-frederic@kernel.org>
+        id S2391761AbfJCRQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:16:54 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39905 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390569AbfJCQXd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:23:33 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a15so3077634edt.6;
+        Thu, 03 Oct 2019 09:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ziG5nQu3xPwJ88X/LZnL5pMrIpk4xw9VvyMbz8MQsEI=;
+        b=fpxiUa563sqwJxlPjEOcPMPQdDUdznpeUznfXE/xQIhBee3RpywOZqk9RAeDW9Ajfh
+         8uVC4M7k/c838eY5QG17PMfwiK4f+s3+IthwdsafIluDZkNiXhni+Zm8nUInhripCcMm
+         hV8qFZTLQePOm4nOE8+Xu05x0RcIwaP530Dmr5t0hRzxtL+F3DD8ZFb/TVv/9GfVKkAK
+         xeZTs69UNOYpzikIClqyjf9NK5YzH23jpf0y/Xi1q8icvzYBPUVL4kZihjhjn6o7G4IV
+         kf1ud8T5z1cCXIKUFr+LHzjIZg0rYBHq5AJiJoLyipV4ASm4vJXaC2YysqxuA6IuTi/D
+         gN3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ziG5nQu3xPwJ88X/LZnL5pMrIpk4xw9VvyMbz8MQsEI=;
+        b=GzgHSLq7r4gl2fu897Nvzsed4zZrkX0jYWf5QXePNApCh6pFYIPgxYuZmnTtT7Id9o
+         aZtI4XnG03CAZ2BWFmYhMMS+L05UYOiNiZw3hMDDqsk2kW6s+ikMJyn0yB9Yw3cZD068
+         rHDIBIcV1gU9EeA0+Tap/mkzN6BNymX86mhutp2sQrBasiI/jzdGniWb60x3/c2OXx0J
+         7arMHtvh/nWmkv9v0mxSJADbOJrd7K+TqBUghpkLMYhTOJTvT1B2Yq1O20M5FlRhvYom
+         9a8NbCeKLEdbCj06DzXRPEQKP5xfh0afq8ddnekiwGY0bXkhsRlBmXB44zJiwVner6b4
+         I/Mw==
+X-Gm-Message-State: APjAAAVcaDHCD45L9ajJbOZX9ZnbfEhJE/fYzm4eVa1d8ycpvDJrjKKS
+        7nsZCxKeguQ2iYR7C4BoRbI=
+X-Google-Smtp-Source: APXvYqykHTQaML6sqsg8BxBtjQGr8gUpDoprCG7qt8I1pR9ipgNcQLUR4cUehkL63L5ZZelA3Nb1KQ==
+X-Received: by 2002:a17:906:255b:: with SMTP id j27mr8481324ejb.96.1570119810698;
+        Thu, 03 Oct 2019 09:23:30 -0700 (PDT)
+Received: from Limone ([46.114.33.103])
+        by smtp.gmail.com with ESMTPSA id c1sm549687edd.21.2019.10.03.09.23.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 09:23:29 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 18:23:26 +0200
+From:   Gon Solo <gonsolo@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
+Message-ID: <20191003162326.GA2727@Limone>
+References: <20191002150650.GA4227@gofer.mess.org>
+ <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
+ <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
+ <20191002154922.7f1cfc76@coco.lan>
+ <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
+ <20191003080539.2b13c03b@coco.lan>
+ <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
+ <20191003120238.75811da6@coco.lan>
+ <20191003160336.GA5125@Limone>
+ <20191003130909.01d29b77@coco.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191003130909.01d29b77@coco.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On context switch we are locking the vtime seqcount of the scheduling-out
-task twice:
+> No, I mean with the first patch you sent to the ML, with the powerup
+> hack.
 
- * On vtime_task_switch_common(), when we flush the pending vtime through
-   vtime_account_system()
+Boot time:
 
- * On arch_vtime_task_switch() to reset the vtime state.
+[    4.653257] si2168 1-0067: Silicon Labs Si2168-B40 successfully identified
+[    4.653259] si2168 1-0067: firmware version: B 4.0.2
+[    4.653279] usb 2-1: DVB: registering adapter 0 frontend 0 (Silicon Labs Si2168)...
+[    4.653284] dvbdev: dvb_create_media_entity: media entity 'Silicon Labs Si2168' registered.
+...
+[    4.694785] si2157 2-0063: found a 'Silicon Labs Si2147-A30'
+[    4.694787] si2157 2-0063: Silicon Labs Si2147/2148/2157/2158 successfully attached
+[    4.717814] usb 2-1: dvb_usb_v2: 'Logilink VG0022A' successfully initialized and connected
+[    4.717880] usbcore: registered new interface driver dvb_usb_af9035
 
-This is pointless as these actions can be performed without the need
-to unlock/lock in the middle. The reason these steps are separated is to
-consolidate a very small amount of common code between
-CONFIG_VIRT_CPU_ACCOUNTING_GEN and CONFIG_VIRT_CPU_ACCOUNTING_NATIVE.
+VLC time:
 
-Performance in this fast path is definetly a priority over artificial
-code factorization so split the task switch code between GEN and
-NATIVE and mutualize the parts than can run under a single seqcount
-locked block.
+[  175.490609] si2168 1-0067: downloading firmware from file 'dvb-demod-si2168-b40-01.fw'
+[  176.746585] si2168 1-0067: firmware version: B 4.0.25
+[  176.781570] si2157 2-0063: firmware version: \xff.\xff.255
 
-As a side effect, vtime_account_idle() becomes included in the seqcount
-protection. This happens to be a welcome preparation in order to
-properly support kcpustat under vtime in the future and fetch
-CPUTIME_IDLE without race.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Cc: Ingo Molnar <mingo@kernel.org>
----
- include/linux/vtime.h  | 32 ++++++++++++++++----------------
- kernel/sched/cputime.c | 34 +++++++++++++++++++++-------------
- 2 files changed, 37 insertions(+), 29 deletions(-)
-
-diff --git a/include/linux/vtime.h b/include/linux/vtime.h
-index 2fd247f90408..d9160ab3667a 100644
---- a/include/linux/vtime.h
-+++ b/include/linux/vtime.h
-@@ -14,8 +14,12 @@ struct task_struct;
-  * vtime_accounting_cpu_enabled() definitions/declarations
-  */
- #if defined(CONFIG_VIRT_CPU_ACCOUNTING_NATIVE)
-+
- static inline bool vtime_accounting_cpu_enabled(void) { return true; }
-+extern void vtime_task_switch(struct task_struct *prev);
-+
- #elif defined(CONFIG_VIRT_CPU_ACCOUNTING_GEN)
-+
- /*
-  * Checks if vtime is enabled on some CPU. Cputime readers want to be careful
-  * in that case and compute the tickless cputime.
-@@ -36,33 +40,29 @@ static inline bool vtime_accounting_cpu_enabled(void)
- 
- 	return false;
- }
-+
-+extern void vtime_task_switch_generic(struct task_struct *prev);
-+
-+static inline void vtime_task_switch(struct task_struct *prev)
-+{
-+	if (vtime_accounting_cpu_enabled())
-+		vtime_task_switch_generic(prev);
-+}
-+
- #else /* !CONFIG_VIRT_CPU_ACCOUNTING */
-+
- static inline bool vtime_accounting_cpu_enabled(void) { return false; }
--#endif
-+static inline void vtime_task_switch(struct task_struct *prev) { }
- 
-+#endif
- 
- /*
-  * Common vtime APIs
-  */
- #ifdef CONFIG_VIRT_CPU_ACCOUNTING
--
--#ifdef __ARCH_HAS_VTIME_TASK_SWITCH
--extern void vtime_task_switch(struct task_struct *prev);
--#else
--extern void vtime_common_task_switch(struct task_struct *prev);
--static inline void vtime_task_switch(struct task_struct *prev)
--{
--	if (vtime_accounting_cpu_enabled())
--		vtime_common_task_switch(prev);
--}
--#endif /* __ARCH_HAS_VTIME_TASK_SWITCH */
--
- extern void vtime_account_kernel(struct task_struct *tsk);
- extern void vtime_account_idle(struct task_struct *tsk);
--
- #else /* !CONFIG_VIRT_CPU_ACCOUNTING */
--
--static inline void vtime_task_switch(struct task_struct *prev) { }
- static inline void vtime_account_kernel(struct task_struct *tsk) { }
- #endif /* !CONFIG_VIRT_CPU_ACCOUNTING */
- 
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index b45932e27857..cef23c211f41 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -405,9 +405,10 @@ static inline void irqtime_account_process_tick(struct task_struct *p, int user_
- /*
-  * Use precise platform statistics if available:
-  */
--#ifdef CONFIG_VIRT_CPU_ACCOUNTING
-+#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-+
- # ifndef __ARCH_HAS_VTIME_TASK_SWITCH
--void vtime_common_task_switch(struct task_struct *prev)
-+void vtime_task_switch(struct task_struct *prev)
- {
- 	if (is_idle_task(prev))
- 		vtime_account_idle(prev);
-@@ -418,10 +419,7 @@ void vtime_common_task_switch(struct task_struct *prev)
- 	arch_vtime_task_switch(prev);
- }
- # endif
--#endif /* CONFIG_VIRT_CPU_ACCOUNTING */
- 
--
--#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
- /*
-  * Archs that account the whole time spent in the idle task
-  * (outside irq) as idle time can rely on this and just implement
-@@ -731,19 +729,25 @@ static void vtime_account_guest(struct task_struct *tsk,
- 	}
- }
- 
--void vtime_account_kernel(struct task_struct *tsk)
-+static void __vtime_account_kernel(struct task_struct *tsk,
-+				   struct vtime *vtime)
- {
--	struct vtime *vtime = &tsk->vtime;
--
--	if (!vtime_delta(vtime))
--		return;
--
--	write_seqcount_begin(&vtime->seqcount);
- 	/* We might have scheduled out from guest path */
- 	if (tsk->flags & PF_VCPU)
- 		vtime_account_guest(tsk, vtime);
- 	else
- 		vtime_account_system(tsk, vtime);
-+}
-+
-+void vtime_account_kernel(struct task_struct *tsk)
-+{
-+	struct vtime *vtime = &tsk->vtime;
-+
-+	if (!vtime_delta(vtime))
-+		return;
-+
-+	write_seqcount_begin(&vtime->seqcount);
-+	__vtime_account_kernel(tsk, vtime);
- 	write_seqcount_end(&vtime->seqcount);
- }
- 
-@@ -804,11 +808,15 @@ void vtime_account_idle(struct task_struct *tsk)
- 	account_idle_time(get_vtime_delta(&tsk->vtime));
- }
- 
--void arch_vtime_task_switch(struct task_struct *prev)
-+void vtime_task_switch_generic(struct task_struct *prev)
- {
- 	struct vtime *vtime = &prev->vtime;
- 
- 	write_seqcount_begin(&vtime->seqcount);
-+	if (is_idle_task(prev))
-+		vtime_account_idle(prev);
-+	else
-+		__vtime_account_kernel(prev, vtime);
- 	vtime->state = VTIME_INACTIVE;
- 	write_seqcount_end(&vtime->seqcount);
- 
--- 
-2.23.0
+g
 
