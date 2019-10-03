@@ -2,81 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 211BCCACD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA0FCAC96
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733215AbfJCRad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:30:33 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46878 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732191AbfJCQLT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:11:19 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q5so2037206pfg.13
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 09:11:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:cc:subject:user-agent:date;
-        bh=WCl0BJ/xg5z2POfrHRFKcHi5xkDivkEW/iGK30/2GP0=;
-        b=Pq/jSr1xmzlqjDuxBQh7dFDV5hRyr6MZtXVubXctjAF8kRjt+U6xL1O1zUsbiV9qug
-         ygNsoBsTe8l9J4vQh++/GIEgBZ3tc+dCBa+tnW6tuf4O22v4fqwHlcvMDTQXutYl4bj7
-         bWJISwhs7L3e2klQ4E9mPH1vemoDoOFTbhMxY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
-         :user-agent:date;
-        bh=WCl0BJ/xg5z2POfrHRFKcHi5xkDivkEW/iGK30/2GP0=;
-        b=pmbUJmBXwHY2sLgkCkrF496xUDkpx02mEiYv6TTnS35TJ3Xh+boqeX/JUdENiXWFcS
-         wifaUky7L0uS+1JIBeMUBixQ3OFFB2qgjImy9lhM3tq8r2TUPe71TgfzQRNzBHLLIgie
-         l1D0zGU0cwsD6s/KReT46Dsh+ljl2/fweibH9TuoNGkZTceTPQb/yu5YbkRspw6rAEEu
-         QTGre/jqXvQePsYySROptuSa7j/aB4bd53bTM1hL+o46ltHPXwkkQiR36/XCkAm3HVW/
-         3o+QhOvpEycBHar8H31a6UJgCMgHHSOPKkhT44RHKQRrtwL06+WTVpwCdFSwvRjNFUm0
-         KTHQ==
-X-Gm-Message-State: APjAAAXDMJ3XFVg3tRni+GzOtgjhK5K/Ydr9MkUUoyhWbN1fQfFeiudW
-        cq6JTs5KDLnRW+Rvrxj/WRPkRA==
-X-Google-Smtp-Source: APXvYqwgRSbE1eF4YKGVz+xu6rX+ntZRdmjPXT4BO1EQpfB2LWEVRFrJK7RpkgO+T9w/1Sx9rAIAHg==
-X-Received: by 2002:a17:90a:ba94:: with SMTP id t20mr11602435pjr.8.1570119078443;
-        Thu, 03 Oct 2019 09:11:18 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id j25sm4527578pfi.113.2019.10.03.09.11.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 09:11:17 -0700 (PDT)
-Message-ID: <5d961da5.1c69fb81.f4dce.d93e@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S2388115AbfJCQMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:12:47 -0400
+Received: from foss.arm.com ([217.140.110.172]:48278 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388084AbfJCQMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:12:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D4C8337;
+        Thu,  3 Oct 2019 09:12:39 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A91493F739;
+        Thu,  3 Oct 2019 09:12:36 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 17:12:34 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Marco Elver <elver@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Paul Turner <pjt@google.com>, Daniel Axtens <dja@axtens.net>,
+        Anatol Pomazau <anatol@google.com>,
+        Will Deacon <willdeacon@google.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>
+Subject: Re: Kernel Concurrency Sanitizer (KCSAN)
+Message-ID: <20191003161233.GB38140@lakrids.cambridge.arm.com>
+References: <CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com>
+ <20190920163123.GC55224@lakrids.cambridge.arm.com>
+ <CACT4Y+ZwyBhR8pB7jON8eVObCGbJ54L8Sbz6Wfmy3foHkPb_fA@mail.gmail.com>
+ <CANpmjNM+aEzySwuMDkEvsVaeTooxExuTRAv-nzjhp7npT8a3ag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191001180622.806-1-geert+renesas@glider.be>
-References: <20191001180622.806-1-geert+renesas@glider.be>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] iommu/ipmmu-vmsa: Only call platform_get_irq() when interrupt is mandatory
-User-Agent: alot/0.8.1
-Date:   Thu, 03 Oct 2019 09:11:17 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNM+aEzySwuMDkEvsVaeTooxExuTRAv-nzjhp7npT8a3ag@mail.gmail.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-10-01 11:06:22)
-> As platform_get_irq() now prints an error when the interrupt does not
-> exist, calling it gratuitously causes scary messages like:
->=20
->     ipmmu-vmsa e6740000.mmu: IRQ index 0 not found
->=20
-> Fix this by moving the call to platform_get_irq() down, where the
-> existence of the interrupt is mandatory.
->=20
-> Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to =
-platform_get_irq*()")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+On Fri, Sep 20, 2019 at 07:51:04PM +0200, Marco Elver wrote:
+> On Fri, 20 Sep 2019 at 18:47, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Fri, Sep 20, 2019 at 6:31 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> > >
+> > > On Fri, Sep 20, 2019 at 04:18:57PM +0200, Marco Elver wrote:
+> > > > We would like to share a new data-race detector for the Linux kernel:
+> > > > Kernel Concurrency Sanitizer (KCSAN) --
+> > > > https://github.com/google/ktsan/wiki/KCSAN  (Details:
+> > > > https://github.com/google/ktsan/blob/kcsan/Documentation/dev-tools/kcsan.rst)
+> > >
+> > > Nice!
+> > >
+> > > BTW kcsan_atomic_next() is missing a stub definition in <linux/kcsan.h>
+> > > when !CONFIG_KCSAN:
+> > >
+> > > https://github.com/google/ktsan/commit/a22a093a0f0d0b582c82cdbac4f133a3f61d207c#diff-19d7c475b4b92aab8ba440415ab786ec
+> > >
+> > > ... and I think the kcsan_{begin,end}_atomic() stubs need to be static
+> > > inline too.
+> 
+> Thanks for catching, fixed and pushed. Feel free to rebase your arm64 branch.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Great; I've just done so!
+
+What's the plan for posting a PATCH or RFC series?
+
+The rest of this email is rabbit-holing on the issue KCSAN spotted;
+sorry about that!
+
+[...]
+
+> > > We have some interesting splats at boot time in stop_machine, which
+> > > don't seem to have been hit/fixed on x86 yet in the kcsan-with-fixes
+> > > branch, e.g.
+> > >
+> > > [    0.237939] ==================================================================
+> > > [    0.239431] BUG: KCSAN: data-race in multi_cpu_stop+0xa8/0x198 and set_state+0x80/0xb0
+> > > [    0.241189]
+> > > [    0.241606] write to 0xffff00001003bd00 of 4 bytes by task 24 on cpu 3:
+> > > [    0.243435]  set_state+0x80/0xb0
+> > > [    0.244328]  multi_cpu_stop+0x16c/0x198
+> > > [    0.245406]  cpu_stopper_thread+0x170/0x298
+> > > [    0.246565]  smpboot_thread_fn+0x40c/0x560
+> > > [    0.247696]  kthread+0x1a8/0x1b0
+> > > [    0.248586]  ret_from_fork+0x10/0x18
+> > > [    0.249589]
+> > > [    0.250006] read to 0xffff00001003bd00 of 4 bytes by task 14 on cpu 1:
+> > > [    0.251804]  multi_cpu_stop+0xa8/0x198
+> > > [    0.252851]  cpu_stopper_thread+0x170/0x298
+> > > [    0.254008]  smpboot_thread_fn+0x40c/0x560
+> > > [    0.255135]  kthread+0x1a8/0x1b0
+> > > [    0.256027]  ret_from_fork+0x10/0x18
+> > > [    0.257036]
+> > > [    0.257449] Reported by Kernel Concurrency Sanitizer on:
+> > > [    0.258918] CPU: 1 PID: 14 Comm: migration/1 Not tainted 5.3.0-00007-g67ab35a199f4-dirty #3
+> > > [    0.261241] Hardware name: linux,dummy-virt (DT)
+> > > [    0.262517] ==================================================================>
+> 
+> Thanks, the fixes in -with-fixes were ones I only encountered with
+> Syzkaller, where I disable KCSAN during boot. I've just added a fix
+> for this race and pushed to kcsan-with-fixes.
+
+I think that's:
+
+  https://github.com/google/ktsan/commit/c1bc8ab013a66919d8347c2392f320feabb14f92
+
+... but that doesn't look quite right to me, as it leaves us with the shape:
+
+	do {
+		if (READ_ONCE(msdata->state) != curstate) {
+			curstate = msdata->state;
+			switch (curstate) {
+				...
+			}
+			ack_state(msdata);
+		}
+	} while (curstate != MULTI_STOP_EXIT);
+
+I don't believe that we have a guarantee of read-after-read ordering
+between the READ_ONCE(msdata->state) and the subsequent plain access of
+msdata->state, as we've been caught out on that in the past, e.g.
+
+  https://lore.kernel.org/lkml/1506527369-19535-1-git-send-email-will.deacon@arm.com/
+
+... which I think means we could switch on a stale value of
+msdata->state. That would mean we might handle the same state twice,
+calling ack_state() more times than expected and corrupting the count.
+
+The compiler could also replace uses of curstate with a reload of
+msdata->state. If it did so for the while condition, we could skip the
+expected ack_state() for MULTI_STOP_EXIT, though it looks like that
+might not matter.
+
+I think we need to make sure that we use a consistent snapshot,
+something like the below. Assuming I'm not barking up the wrong tree, I
+can spin this as a proper patch.
+
+Thanks,
+Mark.
+
+---->8----
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index b4f83f7bdf86..67a0b454b5b5 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -167,7 +167,7 @@ static void set_state(struct multi_stop_data *msdata,
+        /* Reset ack counter. */
+        atomic_set(&msdata->thread_ack, msdata->num_threads);
+        smp_wmb();
+-       msdata->state = newstate;
++       WRITE_ONCE(msdata->state, newstate);
+ }
+ 
+ /* Last one to ack a state moves to the next state. */
+@@ -186,7 +186,7 @@ void __weak stop_machine_yield(const struct cpumask *cpumask)
+ static int multi_cpu_stop(void *data)
+ {
+        struct multi_stop_data *msdata = data;
+-       enum multi_stop_state curstate = MULTI_STOP_NONE;
++       enum multi_stop_state newstate, curstate = MULTI_STOP_NONE;
+        int cpu = smp_processor_id(), err = 0;
+        const struct cpumask *cpumask;
+        unsigned long flags;
+@@ -210,8 +210,9 @@ static int multi_cpu_stop(void *data)
+        do {
+                /* Chill out and ensure we re-read multi_stop_state. */
+                stop_machine_yield(cpumask);
+-               if (msdata->state != curstate) {
+-                       curstate = msdata->state;
++               newstate = READ_ONCE(msdata->state);
++               if (newstate != curstate) {
++                       curstate = newstate;
+                        switch (curstate) {
+                        case MULTI_STOP_DISABLE_IRQ:
+                                local_irq_disable();
 
