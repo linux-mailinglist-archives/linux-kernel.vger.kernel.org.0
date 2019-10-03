@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B6C3CA61E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD95CCA624
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:55:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392224AbfJCQkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:40:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50158 "EHLO mail.kernel.org"
+        id S2392478AbfJCQkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:40:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392442AbfJCQkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:40:03 -0400
+        id S2392459AbfJCQkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:40:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76F5D21848;
-        Thu,  3 Oct 2019 16:40:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E108C222C8;
+        Thu,  3 Oct 2019 16:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120802;
-        bh=HlnVsCceNYZyYai/sxKuhEPWoP8UASBPHV6OlRRXLRg=;
+        s=default; t=1570120815;
+        bh=Va9nDflhvZE8l4fVYvtxdcbe6XHlni19RRugg5yBB5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1W1clVQtmcwgIeqmKxiMY5EfQA95yTNV7QaF68izX3WXHY2jtG2oRfQSzPeGC3i2u
-         3pdY/NtRK7Y6esTljgy1+9OnbUrdU4002IEOoRNaUOsmkchJndf3m4gBzvO57K8rUW
-         4E7JLXpnDjNpZf1GQP0M4H4Ktfl3my7sm1z9hOD8=
+        b=QbHOvPI2lIKIZd7UsUb4cwNX77ZKA2bV+na4K+iN1DyHANMEB08X9nw4EiC66RDX/
+         P6awz3wRKb9FsbXC5F0ajQBMblwwSDOD05hxe1bK6x6EbM2RWZiaXGgCyGX3Vlrw5S
+         eOhWmDF7yoLWJdN6kRw4WC/nOEcNpy5EEKtlVU60=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Ian Jackson <ian.jackson@citrix.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 044/344] spi: dw-mmio: Clock should be shut when error occurs
-Date:   Thu,  3 Oct 2019 17:50:09 +0200
-Message-Id: <20191003154544.428638528@linuxfoundation.org>
+Subject: [PATCH 5.3 048/344] firmware: qcom_scm: Use proper types for dma mappings
+Date:   Thu,  3 Oct 2019 17:50:13 +0200
+Message-Id: <20191003154544.902339172@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -46,42 +47,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 3da9834d9381dd99273f2ad4e6d096c9187dc4f2 ]
+[ Upstream commit 6e37ccf78a53296c6c7bf426065762c27829eb84 ]
 
-When optional clock requesting fails, the main clock is still up and running,
-we should shut it down in such caee.
+We need to use the proper types and convert between physical addresses
+and dma addresses here to avoid mismatch warnings. This is especially
+important on systems with a different size for dma addresses and
+physical addresses. Otherwise, we get the following warning:
 
-Fixes: 560ee7e91009 ("spi: dw: Add support for an optional interface clock")
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Gareth Williams <gareth.williams.jx@renesas.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Link: https://lore.kernel.org/r/20190710114243.30101-1-andriy.shevchenko@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+  drivers/firmware/qcom_scm.c: In function "qcom_scm_assign_mem":
+  drivers/firmware/qcom_scm.c:469:47: error: passing argument 3 of "dma_alloc_coherent" from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+We also fix the size argument to dma_free_coherent() because that size
+doesn't need to be aligned after it's already aligned on the allocation
+size. In fact, dma debugging expects the same arguments to be passed to
+both the allocation and freeing sides of the functions so changing the
+size is incorrect regardless.
+
+Reported-by: Ian Jackson <ian.jackson@citrix.com>
+Cc: Ian Jackson <ian.jackson@citrix.com>
+Cc: Julien Grall <julien.grall@arm.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-dw-mmio.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/firmware/qcom_scm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index 18c06568805e7..86789dbaf5771 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -172,8 +172,10 @@ static int dw_spi_mmio_probe(struct platform_device *pdev)
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 2ddc118dba1b4..74b84244a0db8 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -9,6 +9,7 @@
+ #include <linux/init.h>
+ #include <linux/cpumask.h>
+ #include <linux/export.h>
++#include <linux/dma-direct.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/module.h>
+ #include <linux/types.h>
+@@ -440,6 +441,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	phys_addr_t mem_to_map_phys;
+ 	phys_addr_t dest_phys;
+ 	phys_addr_t ptr_phys;
++	dma_addr_t ptr_dma;
+ 	size_t mem_to_map_sz;
+ 	size_t dest_sz;
+ 	size_t src_sz;
+@@ -457,9 +459,10 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	ptr_sz = ALIGN(src_sz, SZ_64) + ALIGN(mem_to_map_sz, SZ_64) +
+ 			ALIGN(dest_sz, SZ_64);
  
- 	/* Optional clock needed to access the registers */
- 	dwsmmio->pclk = devm_clk_get_optional(&pdev->dev, "pclk");
--	if (IS_ERR(dwsmmio->pclk))
--		return PTR_ERR(dwsmmio->pclk);
-+	if (IS_ERR(dwsmmio->pclk)) {
-+		ret = PTR_ERR(dwsmmio->pclk);
-+		goto out_clk;
-+	}
- 	ret = clk_prepare_enable(dwsmmio->pclk);
- 	if (ret)
- 		goto out_clk;
+-	ptr = dma_alloc_coherent(__scm->dev, ptr_sz, &ptr_phys, GFP_KERNEL);
++	ptr = dma_alloc_coherent(__scm->dev, ptr_sz, &ptr_dma, GFP_KERNEL);
+ 	if (!ptr)
+ 		return -ENOMEM;
++	ptr_phys = dma_to_phys(__scm->dev, ptr_dma);
+ 
+ 	/* Fill source vmid detail */
+ 	src = ptr;
+@@ -489,7 +492,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 
+ 	ret = __qcom_scm_assign_mem(__scm->dev, mem_to_map_phys, mem_to_map_sz,
+ 				    ptr_phys, src_sz, dest_phys, dest_sz);
+-	dma_free_coherent(__scm->dev, ALIGN(ptr_sz, SZ_64), ptr, ptr_phys);
++	dma_free_coherent(__scm->dev, ptr_sz, ptr, ptr_dma);
+ 	if (ret) {
+ 		dev_err(__scm->dev,
+ 			"Assign memory protection call failed %d.\n", ret);
 -- 
 2.20.1
 
