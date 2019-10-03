@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6722CA431
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 082C9CA434
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:23:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390414AbfJCQW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51708 "EHLO mail.kernel.org"
+        id S2390427AbfJCQXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:23:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390402AbfJCQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:22:53 -0400
+        id S2390411AbfJCQWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:22:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D23D6222C4;
-        Thu,  3 Oct 2019 16:22:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 783B020659;
+        Thu,  3 Oct 2019 16:22:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119772;
-        bh=z0Dw7UJEjKkF9qw7/K7UEE7NM0AqBub6wivHOHrpKPI=;
+        s=default; t=1570119775;
+        bh=2G0dztF253cPdRh9s33RdqiI65/0buDPPhCyXdohiho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tdI8KwJrzluwgIVXvdJmO701sBRFuCgrRllrpUUgp9TTqhhXaYIlPPENqHi0t+zNL
-         dNkiEbQXyStoillRzR/rg4Jka5bwwfjGF9rJ9hllU+vuN2sjriz3wi4alkxH3V8VYp
-         td3b0dQCmqehplVW5jrTNLB+ueVm5pwjkwYX1liU=
+        b=mbkbop/heSYOjhHCuGGYdC2VgFDO9jOzTZghYgfYIS6mH/tHDVbQhYYFYpNmxk9qC
+         iHmeD/4r/PVzzZqZfaK6IQ6PsTvB5NVdzpQ+/78w2hfUFHHkebpeQ+OsyVnS0R4TI1
+         cSEBiQRjT3UidSneCMM8u5WK1x2e3QdiBxOydcTg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Ming Lei <ming.lei@redhat.com>, Bob Liu <bob.liu@oracle.com>,
-        Yufen Yu <yuyufen@huawei.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 186/211] block: fix null pointer dereference in blk_mq_rq_timed_out()
-Date:   Thu,  3 Oct 2019 17:54:12 +0200
-Message-Id: <20191003154527.990189469@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.19 187/211] smb3: allow disabling requesting leases
+Date:   Thu,  3 Oct 2019 17:54:13 +0200
+Message-Id: <20191003154528.113625131@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -46,137 +44,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit 8d6996630c03d7ceeabe2611378fea5ca1c3f1b3 upstream.
+commit 3e7a02d47872081f4b6234a9f72500f1d10f060c upstream.
 
-We got a null pointer deference BUG_ON in blk_mq_rq_timed_out()
-as following:
+In some cases to work around server bugs or performance
+problems it can be helpful to be able to disable requesting
+SMB2.1/SMB3 leases on a particular mount (not to all servers
+and all shares we are mounted to). Add new mount parm
+"nolease" which turns off requesting leases on directory
+or file opens.  Currently the only way to disable leases is
+globally through a module load parameter. This is more
+granular.
 
-[  108.825472] BUG: kernel NULL pointer dereference, address: 0000000000000040
-[  108.827059] PGD 0 P4D 0
-[  108.827313] Oops: 0000 [#1] SMP PTI
-[  108.827657] CPU: 6 PID: 198 Comm: kworker/6:1H Not tainted 5.3.0-rc8+ #431
-[  108.829503] Workqueue: kblockd blk_mq_timeout_work
-[  108.829913] RIP: 0010:blk_mq_check_expired+0x258/0x330
-[  108.838191] Call Trace:
-[  108.838406]  bt_iter+0x74/0x80
-[  108.838665]  blk_mq_queue_tag_busy_iter+0x204/0x450
-[  108.839074]  ? __switch_to_asm+0x34/0x70
-[  108.839405]  ? blk_mq_stop_hw_queue+0x40/0x40
-[  108.839823]  ? blk_mq_stop_hw_queue+0x40/0x40
-[  108.840273]  ? syscall_return_via_sysret+0xf/0x7f
-[  108.840732]  blk_mq_timeout_work+0x74/0x200
-[  108.841151]  process_one_work+0x297/0x680
-[  108.841550]  worker_thread+0x29c/0x6f0
-[  108.841926]  ? rescuer_thread+0x580/0x580
-[  108.842344]  kthread+0x16a/0x1a0
-[  108.842666]  ? kthread_flush_work+0x170/0x170
-[  108.843100]  ret_from_fork+0x35/0x40
-
-The bug is caused by the race between timeout handle and completion for
-flush request.
-
-When timeout handle function blk_mq_rq_timed_out() try to read
-'req->q->mq_ops', the 'req' have completed and reinitiated by next
-flush request, which would call blk_rq_init() to clear 'req' as 0.
-
-After commit 12f5b93145 ("blk-mq: Remove generation seqeunce"),
-normal requests lifetime are protected by refcount. Until 'rq->ref'
-drop to zero, the request can really be free. Thus, these requests
-cannot been reused before timeout handle finish.
-
-However, flush request has defined .end_io and rq->end_io() is still
-called even if 'rq->ref' doesn't drop to zero. After that, the 'flush_rq'
-can be reused by the next flush request handle, resulting in null
-pointer deference BUG ON.
-
-We fix this problem by covering flush request with 'rq->ref'.
-If the refcount is not zero, flush_end_io() return and wait the
-last holder recall it. To record the request status, we add a new
-entry 'rq_status', which will be used in flush_end_io().
-
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: stable@vger.kernel.org # v4.18+
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Bob Liu <bob.liu@oracle.com>
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Suggested-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
--------
-v2:
- - move rq_status from struct request to struct blk_flush_queue
-v3:
- - remove unnecessary '{}' pair.
-v4:
- - let spinlock to protect 'fq->rq_status'
-v5:
- - move rq_status after flush_running_idx member of struct blk_flush_queue
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
 ---
- block/blk-flush.c |   10 ++++++++++
- block/blk-mq.c    |    5 ++++-
- block/blk.h       |    7 +++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
+ fs/cifs/cifsfs.c   |    2 ++
+ fs/cifs/cifsglob.h |    2 ++
+ fs/cifs/connect.c  |    9 ++++++++-
+ fs/cifs/smb2pdu.c  |    2 +-
+ 4 files changed, 13 insertions(+), 2 deletions(-)
 
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -232,6 +232,16 @@ static void flush_end_io(struct request
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -428,6 +428,8 @@ cifs_show_options(struct seq_file *s, st
+ 	cifs_show_security(s, tcon->ses);
+ 	cifs_show_cache_flavor(s, cifs_sb);
  
- 		/* release the tag's ownership to the req cloned from */
- 		spin_lock_irqsave(&fq->mq_flush_lock, flags);
-+
-+		if (!refcount_dec_and_test(&flush_rq->ref)) {
-+			fq->rq_status = error;
-+			spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
-+			return;
-+		}
-+
-+		if (fq->rq_status != BLK_STS_OK)
-+			error = fq->rq_status;
-+
- 		hctx = blk_mq_map_queue(q, flush_rq->mq_ctx->cpu);
- 		if (!q->elevator) {
- 			blk_mq_tag_set_rq(hctx, flush_rq->tag, fq->orig_rq);
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -844,7 +844,10 @@ static void blk_mq_check_expired(struct
- 	 */
- 	if (blk_mq_req_expired(rq, next))
- 		blk_mq_rq_timed_out(rq, reserved);
--	if (refcount_dec_and_test(&rq->ref))
-+
-+	if (is_flush_rq(rq, hctx))
-+		rq->end_io(rq, 0);
-+	else if (refcount_dec_and_test(&rq->ref))
- 		__blk_mq_free_request(rq);
++	if (tcon->no_lease)
++		seq_puts(s, ",nolease");
+ 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER)
+ 		seq_puts(s, ",multiuser");
+ 	else if (tcon->ses->user_name)
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -543,6 +543,7 @@ struct smb_vol {
+ 	bool noblocksnd:1;
+ 	bool noautotune:1;
+ 	bool nostrictsync:1; /* do not force expensive SMBflush on every sync */
++	bool no_lease:1;     /* disable requesting leases */
+ 	bool fsc:1;	/* enable fscache */
+ 	bool mfsymlinks:1; /* use Minshall+French Symlinks */
+ 	bool multiuser:1;
+@@ -1004,6 +1005,7 @@ struct cifs_tcon {
+ 	bool need_reopen_files:1; /* need to reopen tcon file handles */
+ 	bool use_resilient:1; /* use resilient instead of durable handles */
+ 	bool use_persistent:1; /* use persistent instead of durable handles */
++	bool no_lease:1;    /* Do not request leases on files or directories */
+ 	__le32 capabilities;
+ 	__u32 share_flags;
+ 	__u32 maximal_access;
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -70,7 +70,7 @@ enum {
+ 	Opt_user_xattr, Opt_nouser_xattr,
+ 	Opt_forceuid, Opt_noforceuid,
+ 	Opt_forcegid, Opt_noforcegid,
+-	Opt_noblocksend, Opt_noautotune,
++	Opt_noblocksend, Opt_noautotune, Opt_nolease,
+ 	Opt_hard, Opt_soft, Opt_perm, Opt_noperm,
+ 	Opt_mapposix, Opt_nomapposix,
+ 	Opt_mapchars, Opt_nomapchars, Opt_sfu,
+@@ -129,6 +129,7 @@ static const match_table_t cifs_mount_op
+ 	{ Opt_noforcegid, "noforcegid" },
+ 	{ Opt_noblocksend, "noblocksend" },
+ 	{ Opt_noautotune, "noautotune" },
++	{ Opt_nolease, "nolease" },
+ 	{ Opt_hard, "hard" },
+ 	{ Opt_soft, "soft" },
+ 	{ Opt_perm, "perm" },
+@@ -1542,6 +1543,9 @@ cifs_parse_mount_options(const char *mou
+ 		case Opt_noautotune:
+ 			vol->noautotune = 1;
+ 			break;
++		case Opt_nolease:
++			vol->no_lease = 1;
++			break;
+ 		case Opt_hard:
+ 			vol->retry = 1;
+ 			break;
+@@ -3023,6 +3027,8 @@ static int match_tcon(struct cifs_tcon *
+ 		return 0;
+ 	if (tcon->snapshot_time != volume_info->snapshot_time)
+ 		return 0;
++	if (tcon->no_lease != volume_info->no_lease)
++		return 0;
+ 	return 1;
  }
  
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -23,6 +23,7 @@ struct blk_flush_queue {
- 	unsigned int		flush_queue_delayed:1;
- 	unsigned int		flush_pending_idx:1;
- 	unsigned int		flush_running_idx:1;
-+	blk_status_t 		rq_status;
- 	unsigned long		flush_pending_since;
- 	struct list_head	flush_queue[2];
- 	struct list_head	flush_data_in_flight;
-@@ -123,6 +124,12 @@ static inline void __blk_get_queue(struc
- 	kobject_get(&q->kobj);
- }
+@@ -3231,6 +3237,7 @@ cifs_get_tcon(struct cifs_ses *ses, stru
+ 	tcon->nocase = volume_info->nocase;
+ 	tcon->nohandlecache = volume_info->nohandlecache;
+ 	tcon->local_lease = volume_info->local_lease;
++	tcon->no_lease = volume_info->no_lease;
+ 	INIT_LIST_HEAD(&tcon->pending_opens);
  
-+static inline bool
-+is_flush_rq(struct request *req, struct blk_mq_hw_ctx *hctx)
-+{
-+	return hctx->fq->flush_rq == req;
-+}
-+
- struct blk_flush_queue *blk_alloc_flush_queue(struct request_queue *q,
- 		int node, int cmd_size, gfp_t flags);
- void blk_free_flush_queue(struct blk_flush_queue *q);
+ 	spin_lock(&cifs_tcp_ses_lock);
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2192,7 +2192,7 @@ SMB2_open_init(struct cifs_tcon *tcon, s
+ 	iov[1].iov_len = uni_path_len;
+ 	iov[1].iov_base = path;
+ 
+-	if (!server->oplocks)
++	if ((!server->oplocks) || (tcon->no_lease))
+ 		*oplock = SMB2_OPLOCK_LEVEL_NONE;
+ 
+ 	if (!(server->capabilities & SMB2_GLOBAL_CAP_LEASING) ||
 
 
