@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04350CABCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5A1CAC9C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731572AbfJCQA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44028 "EHLO mail.kernel.org"
+        id S2388358AbfJCQNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:13:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730126AbfJCQAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:22 -0400
+        id S2388195AbfJCQNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:13:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1726020700;
-        Thu,  3 Oct 2019 16:00:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68AE52054F;
+        Thu,  3 Oct 2019 16:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118421;
-        bh=mgSaZRohk52PKrF8/7qdc5HUss2tWVEUx4tTZMb7ceo=;
+        s=default; t=1570119188;
+        bh=V7DuxVBin5ZXYh+MsB/OcPR+axrn4a9WekxFP0wvVYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OND4zBanS1LOerddOG1EcD+KzckHDnBRm3PTkhNj/oV6/J/VPNErc+q7Nsudgy5/+
-         ImftuTsPwBjJdNVp34Q7flS4Jth2c4rGdjekzQZd3Z5d7YqKBlN1xEPnjhopTTcMDR
-         r9sXd6fVjI98eSTCGaM62Ikr+g8JYOouxlJSOBso=
+        b=PhOJszfItt97Upf5Ki/dfXxtS5V1Rdf+d1uBGVNv8aHSxTrYi9enTH5KPLi9Kmhr2
+         33QmzN0oZQrNjCAUtD+ecymO1F9dqBDtGxx8Z+t+ie3CcRMUTUKMosdaOMugfDOHy1
+         volnvfJFJ1wrcUKRsgf9QZViWHQJZFup0Laqp6j0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Subject: [PATCH 4.4 90/99] /dev/mem: Bail out upon SIGKILL.
-Date:   Thu,  3 Oct 2019 17:53:53 +0200
-Message-Id: <20191003154339.386257847@linuxfoundation.org>
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 157/185] ASoC: Intel: Fix use of potentially uninitialized variable
+Date:   Thu,  3 Oct 2019 17:53:55 +0200
+Message-Id: <20191003154514.757296883@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,112 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
 
-commit 8619e5bdeee8b2c685d686281f2d2a6017c4bc15 upstream.
+commit 810f3b860850148788fc1ed8a6f5f807199fed65 upstream.
 
-syzbot found that a thread can stall for minutes inside read_mem() or
-write_mem() after that thread was killed by SIGKILL [1]. Reading from
-iomem areas of /dev/mem can be slow, depending on the hardware.
-While reading 2GB at one read() is legal, delaying termination of killed
-thread for minutes is bad. Thus, allow reading/writing /dev/mem and
-/dev/kmem to be preemptible and killable.
+If ipc->ops.reply_msg_match is NULL, we may end up using uninitialized
+mask value.
 
-  [ 1335.912419][T20577] read_mem: sz=4096 count=2134565632
-  [ 1335.943194][T20577] read_mem: sz=4096 count=2134561536
-  [ 1335.978280][T20577] read_mem: sz=4096 count=2134557440
-  [ 1336.011147][T20577] read_mem: sz=4096 count=2134553344
-  [ 1336.041897][T20577] read_mem: sz=4096 count=2134549248
+reported by smatch:
+sound/soc/intel/common/sst-ipc.c:266 sst_ipc_reply_find_msg() error: uninitialized symbol 'mask'.
 
-Theoretically, reading/writing /dev/mem and /dev/kmem can become
-"interruptible". But this patch chose "killable". Future patch will make
-them "interruptible" so that we can revert to "killable" if some program
-regressed.
-
-[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: stable <stable@vger.kernel.org>
-Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Link: https://lore.kernel.org/r/1566825205-10703-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+Link: https://lore.kernel.org/r/20190827141712.21015-3-amadeuszx.slawinski@linux.intel.com
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mem.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ sound/soc/intel/common/sst-ipc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -95,6 +95,13 @@ void __weak unxlate_dev_mem_ptr(phys_add
- }
- #endif
+--- a/sound/soc/intel/common/sst-ipc.c
++++ b/sound/soc/intel/common/sst-ipc.c
+@@ -231,6 +231,8 @@ struct ipc_message *sst_ipc_reply_find_m
  
-+static inline bool should_stop_iteration(void)
-+{
-+	if (need_resched())
-+		cond_resched();
-+	return fatal_signal_pending(current);
-+}
-+
- /*
-  * This funcion reads the *physical* memory. The f_pos points directly to the
-  * memory location.
-@@ -161,6 +168,8 @@ static ssize_t read_mem(struct file *fil
- 		p += sz;
- 		count -= sz;
- 		read += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
+ 	if (ipc->ops.reply_msg_match != NULL)
+ 		header = ipc->ops.reply_msg_match(header, &mask);
++	else
++		mask = (u64)-1;
  
- 	*ppos += read;
-@@ -232,6 +241,8 @@ static ssize_t write_mem(struct file *fi
- 		p += sz;
- 		count -= sz;
- 		written += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 
- 	*ppos += written;
-@@ -443,6 +454,10 @@ static ssize_t read_kmem(struct file *fi
- 			read += sz;
- 			low_count -= sz;
- 			count -= sz;
-+			if (should_stop_iteration()) {
-+				count = 0;
-+				break;
-+			}
- 		}
- 	}
- 
-@@ -467,6 +482,8 @@ static ssize_t read_kmem(struct file *fi
- 			buf += sz;
- 			read += sz;
- 			p += sz;
-+			if (should_stop_iteration())
-+				break;
- 		}
- 		free_page((unsigned long)kbuf);
- 	}
-@@ -517,6 +534,8 @@ static ssize_t do_write_kmem(unsigned lo
- 		p += sz;
- 		count -= sz;
- 		written += sz;
-+		if (should_stop_iteration())
-+			break;
- 	}
- 
- 	*ppos += written;
-@@ -568,6 +587,8 @@ static ssize_t write_kmem(struct file *f
- 			buf += sz;
- 			virtr += sz;
- 			p += sz;
-+			if (should_stop_iteration())
-+				break;
- 		}
- 		free_page((unsigned long)kbuf);
- 	}
+ 	if (list_empty(&ipc->rx_list)) {
+ 		dev_err(ipc->dev, "error: rx list empty but received 0x%llx\n",
 
 
