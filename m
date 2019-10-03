@@ -2,45 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E9FCCA5B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABFBACA723
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404356AbfJCQgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:36:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
+        id S2405976AbfJCQvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:51:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392204AbfJCQgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:36:03 -0400
+        id S2404623AbfJCQut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:50:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 750452245C;
-        Thu,  3 Oct 2019 16:36:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B768721783;
+        Thu,  3 Oct 2019 16:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120562;
-        bh=xiGRN6si4omdycJtXoiUGTaupX9LeLNO2kwc0Ww6oz0=;
+        s=default; t=1570121448;
+        bh=60vSsisF/vTpEUWXN2OtyUqye/8pSQ8hFzP0MuHfmlA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XqGAiG/MXiN97Fx3QgOElj+yg61JYKcxBmCePWhml+miop5S8NUYxkjcg8Q+q6aSg
-         kEF4DDW0nvdO/I4Zx3x1U60MhsgxIA46Zr4gFKQeb2r/IARIDCGsZHDjPykC65JJnq
-         BNbdMJUBTtQUQAQ0YtQ5G3z6cjZwtZGB34U91N0Y=
+        b=r7+9x9lX7Lq505w6XsY0Wx0O15kEmsksr3+X46veaAt4O+PCGGa2FZh27jMSnm223
+         DVZ/VXFtu887Xgh4+LM/M/ma28ioktyvtqm/UkYZgTT0lmOhnoYfUB64Ss7CpGaQe5
+         S78u+LM2G5Uy49XkGnIm3OhSm9xD1NGQZWGz3KkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Thomas Lindroth <thomas.lindroth@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: [PATCH 5.2 268/313] memcg, kmem: do not fail __GFP_NOFAIL charges
-Date:   Thu,  3 Oct 2019 17:54:06 +0200
-Message-Id: <20191003154559.450964919@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 5.3 282/344] arm64: tlb: Ensure we execute an ISB following walk cache invalidation
+Date:   Thu,  3 Oct 2019 17:54:07 +0200
+Message-Id: <20191003154607.775075179@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,87 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Will Deacon <will@kernel.org>
 
-commit e55d9d9bfb69405bd7615c0f8d229d8fafb3e9b8 upstream.
+commit 51696d346c49c6cf4f29e9b20d6e15832a2e3408 upstream.
 
-Thomas has noticed the following NULL ptr dereference when using cgroup
-v1 kmem limit:
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-PGD 0
-P4D 0
-Oops: 0000 [#1] PREEMPT SMP PTI
-CPU: 3 PID: 16923 Comm: gtk-update-icon Not tainted 4.19.51 #42
-Hardware name: Gigabyte Technology Co., Ltd. Z97X-Gaming G1/Z97X-Gaming G1, BIOS F9 07/31/2015
-RIP: 0010:create_empty_buffers+0x24/0x100
-Code: cd 0f 1f 44 00 00 0f 1f 44 00 00 41 54 49 89 d4 ba 01 00 00 00 55 53 48 89 fb e8 97 fe ff ff 48 89 c5 48 89 c2 eb 03 48 89 ca <48> 8b 4a 08 4c 09 22 48 85 c9 75 f1 48 89 6a 08 48 8b 43 18 48 8d
-RSP: 0018:ffff927ac1b37bf8 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: fffff2d4429fd740 RCX: 0000000100097149
-RDX: 0000000000000000 RSI: 0000000000000082 RDI: ffff9075a99fbe00
-RBP: 0000000000000000 R08: fffff2d440949cc8 R09: 00000000000960c0
-R10: 0000000000000002 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff907601f18360 R14: 0000000000002000 R15: 0000000000001000
-FS:  00007fb55b288bc0(0000) GS:ffff90761f8c0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000008 CR3: 000000007aebc002 CR4: 00000000001606e0
-Call Trace:
- create_page_buffers+0x4d/0x60
- __block_write_begin_int+0x8e/0x5a0
- ? ext4_inode_attach_jinode.part.82+0xb0/0xb0
- ? jbd2__journal_start+0xd7/0x1f0
- ext4_da_write_begin+0x112/0x3d0
- generic_perform_write+0xf1/0x1b0
- ? file_update_time+0x70/0x140
- __generic_file_write_iter+0x141/0x1a0
- ext4_file_write_iter+0xef/0x3b0
- __vfs_write+0x17e/0x1e0
- vfs_write+0xa5/0x1a0
- ksys_write+0x57/0xd0
- do_syscall_64+0x55/0x160
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+05f2d2f83b5a ("arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable")
+added a new TLB invalidation helper which is used when freeing
+intermediate levels of page table used for kernel mappings, but is
+missing the required ISB instruction after completion of the TLBI
+instruction.
 
-Tetsuo then noticed that this is because the __memcg_kmem_charge_memcg
-fails __GFP_NOFAIL charge when the kmem limit is reached.  This is a wrong
-behavior because nofail allocations are not allowed to fail.  Normal
-charge path simply forces the charge even if that means to cross the
-limit.  Kmem accounting should be doing the same.
+Add the missing barrier.
 
-Link: http://lkml.kernel.org/r/20190906125608.32129-1-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Thomas Lindroth <thomas.lindroth@gmail.com>
-Debugged-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Thomas Lindroth <thomas.lindroth@gmail.com>
-Cc: Shakeel Butt <shakeelb@google.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 05f2d2f83b5a ("arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable")
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memcontrol.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/include/asm/tlbflush.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2719,6 +2719,16 @@ int __memcg_kmem_charge_memcg(struct pag
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -251,6 +251,7 @@ static inline void __flush_tlb_kernel_pg
+ 	dsb(ishst);
+ 	__tlbi(vaae1is, addr);
+ 	dsb(ish);
++	isb();
+ }
+ #endif
  
- 	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
- 	    !page_counter_try_charge(&memcg->kmem, nr_pages, &counter)) {
-+
-+		/*
-+		 * Enforce __GFP_NOFAIL allocation because callers are not
-+		 * prepared to see failures and likely do not have any failure
-+		 * handling code.
-+		 */
-+		if (gfp & __GFP_NOFAIL) {
-+			page_counter_charge(&memcg->kmem, nr_pages);
-+			return 0;
-+		}
- 		cancel_charge(memcg, nr_pages);
- 		return -ENOMEM;
- 	}
 
 
