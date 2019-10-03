@@ -2,102 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F59EC9D8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DAAC9D98
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:43:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730183AbfJCLli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:41:38 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45680 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729820AbfJCLlh (ORCPT
+        id S1730221AbfJCLme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:42:34 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36406 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730185AbfJCLmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:41:37 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q64so2310251ljb.12;
-        Thu, 03 Oct 2019 04:41:35 -0700 (PDT)
+        Thu, 3 Oct 2019 07:42:33 -0400
+Received: by mail-wm1-f66.google.com with SMTP id m18so2050945wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 04:42:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d2hb3oZ6qBYZenVNAUBLjwu+KkhMaugCRDxlPNc+K5A=;
-        b=NGWKYS9QHRqVrfvkO1Dh1XqZFGKQSGJ2snuNrVQ6ruUsg6QO3E6KMTxpF/MLHe2Z8F
-         iVFLCvrfxfsYTTzhPOPc1jrdzY0eNeRkmhsA0hVSx737SLxh6Zv21pK9Ep8bcDn8/unl
-         AcgI5gzRaDZuTZhIa/t7Nh+IYxIoz0ll7Fz3cq0O+jeYX1nHByF7MMgtvCUuL8UYuc2M
-         SHgACtnpO3nQqx7k3RR6Gkfed57TojRCejjFp98g5tqsQmZ+1oxX4sEfvMIPNjAMpTDg
-         VqAU0Txb7s0SJfU7gyJ9qlZYYWP+KgrwUcD1/+NgccwX72gS+wU3I5JW6mq7BgthjPcw
-         Gv8w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cHvDsFcekIPBjH5IQouCdyPdPjje7XItWyIIEhMEyPI=;
+        b=KUHnsWOZhhK6SSsl82Z+eu8JxSen5PB6zveEcc7ZS/DZqL2xMoZCrsOM+Cgj/s/GZU
+         jm2bl+2+AgLJLDfMc0Rgk0E8CwafVlGkNSIEa2jrBFRY2tZxr5dHjI4NXYJ1BSl49Vy6
+         chNXh8bWIusGKFXGeCSOxPhRTfC0FQOeSssodjmRhFw6ZuJKZ2mXORD2jeT5hi0qDFnh
+         oyV4QmcBNWJvY4STPmI08IqiWkcXLqNGzrkm7U24CqRxt/ucuuBeDSqJeVkDwEPoForM
+         ZhCxnXCK2QTLZbkH8OL2+8qxHL9O5N1zLJXAEMU4ZS5vjfOKggq2k2pD9y4XKySoKnoD
+         /BpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d2hb3oZ6qBYZenVNAUBLjwu+KkhMaugCRDxlPNc+K5A=;
-        b=Ke3fR1QdRc4E2CrdBLUlJr5uLLbksgIVYafAnl4ntm0aCdB/ff8R2m0CSvJ3CaWWIk
-         IB8rsUBvySTAm/HG2XjPxyb/kUsIjpuMI2/PMycEc7x6WuCRH5OIxWpITT/QXcx0mEQQ
-         vo9brLI+6o6e87O7HkmAmxiGm8c/LI4FpbzOBCUJxMIofozfUdvgaAFTe4szE/ZvzRf2
-         OG45BkWWgH/bR/k1jG2n4UUJx+2esDuQeCfEIYMyLF5kP5gHzptyCVvbfZ8hCgXp68Tp
-         XwJHGXwF9WpN4ApjaK+8lq4BJsWX2ffo1zf0FSv4iElv1DFauKkWASrEOYRWLTTG2Cpc
-         M4Mg==
-X-Gm-Message-State: APjAAAVHD9npUnR093gsPG6cUQfbde66b0nYFE1vlosQtrwDgDdFzHu7
-        TC+Xkp4nzg15rVmk8spm866Z6+BLW7Cl0f9aqAxh7ad6hh4=
-X-Google-Smtp-Source: APXvYqwR0DZpcGJUGfzc5BGGQqG7il/jl2O3LPEb8ta0vebeYBrwyQnzV4d23hbqFKZj1a9pLdCBBOkUoR3u3VdbsJ0=
-X-Received: by 2002:a2e:5418:: with SMTP id i24mr5547908ljb.126.1570102895089;
- Thu, 03 Oct 2019 04:41:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=cHvDsFcekIPBjH5IQouCdyPdPjje7XItWyIIEhMEyPI=;
+        b=VjkY0nhx4eMjKy11mAFYxW0JMoH/ScfJHt86w2tybkPxcAWzI57+YcqZ2Tt33+KaaJ
+         wBlnt9eVY8pkuCmeMgmXDleI8IQtbEFV6/VI30aBpMvW3sB1vVTLsP5GL5O9lIEfUnWS
+         E5ds6GVZQ8YRMRgF/QPmPIUNAxLNxPsBP2JeWEFzwQ8xqhQGWbnIL3cH2Z8SHLEI/eV0
+         cFv8YNK9i/5Nu9vErjFgqe6l3K+ZaUuilaQBGxR2qysfuxYR72B1oLIl1HyL+kjgpEbt
+         iYPugIXALS6CuoQnv5BFrFTCrN7IsJsg86wdx4zUdkhBgRz/H/0BYN+ESOy6m+icol4o
+         9lTQ==
+X-Gm-Message-State: APjAAAUIJTCHHGngBrXXPJ/lOCXLRIJCA0jQNNcpFukeZ3lAOQztsQoA
+        SmXXL6qA0weOvLvNv+UTbSL5aA==
+X-Google-Smtp-Source: APXvYqw1NwetRlcDBzEKd3mk6MdQNZN+YmmIwRP4K/p2HZFkqtNAeXNCEmkgLAMiYM73jRZWrIMe1w==
+X-Received: by 2002:a7b:cf12:: with SMTP id l18mr7069293wmg.25.1570102950452;
+        Thu, 03 Oct 2019 04:42:30 -0700 (PDT)
+Received: from dell ([2.27.167.122])
+        by smtp.gmail.com with ESMTPSA id m62sm2235472wmm.35.2019.10.03.04.42.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Oct 2019 04:42:29 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 12:42:26 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     daniel.thompson@linaro.org, jingoohan1@gmail.com,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: backlight: lm3630a: Add enable-gpios
+ to describe HWEN pin
+Message-ID: <20191003114226.GD21172@dell>
+References: <20190912213257.24147-1-andreas@kemnade.info>
+ <20190912213257.24147-2-andreas@kemnade.info>
 MIME-Version: 1.0
-References: <20191001205203.4b1a5fb6@coco.lan> <20191002141359.30166-1-gonsolo@gmail.com>
- <20191002141359.30166-2-gonsolo@gmail.com> <20191002142744.GA3475@gofer.mess.org>
- <CANL0fFS9TGKJH2rfkXzak78BaLazTNO7GoZhSb4vLBsDrmz3FQ@mail.gmail.com>
- <20191002150650.GA4227@gofer.mess.org> <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
- <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl> <20191002154922.7f1cfc76@coco.lan>
- <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
- <CANL0fFTwJ4yRO+5q6WkL0+DtwdrRti6r_WY1intisYJhs5En8w@mail.gmail.com> <20191003081742.0933264b@coco.lan>
-In-Reply-To: <20191003081742.0933264b@coco.lan>
-From:   Gonsolo <gonsolo@gmail.com>
-Date:   Thu, 3 Oct 2019 13:41:23 +0200
-Message-ID: <CANL0fFTtHn4ocL4BD4cVKhVzjLhnQ0a45yq5x4MxWAVu-tD8sw@mail.gmail.com>
-Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190912213257.24147-2-andreas@kemnade.info>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Thu, 12 Sep 2019, Andreas Kemnade wrote:
 
-> It means that there's a firmware stored at the device's eeprom
-> (version 4.0.2). When the driver starts, it downloads a newer firmware
-> from the file dvb-demod-si2168-b40-01.fw.
+> Provide DT documentation for enable-gpios.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> changes in v2: added example
+> changes in v3: added Acked-by
+> changes in v4: moved enable-gpios to the right position
+>   in the example
+>  .../bindings/leds/backlight/lm3630a-backlight.yaml           | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-Thanks for the explanation.
+Applied, thanks.
 
-> Btw, could you please try the enclosed hack and post the results?
-
-Will do in a second.
-
-FWIW, this hack worked:
-
-diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
-index e87040d6eca7..28a3a4f1640e 100644
---- a/drivers/media/tuners/si2157.c
-+++ b/drivers/media/tuners/si2157.c
-@@ -136,6 +136,7 @@ static int si2157_init(struct dvb_frontend *fe)
-        #define SI2147_A30 ('A' << 24 | 47 << 16 | '3' << 8 | '0' << 0)
-        #define SI2146_A10 ('A' << 24 | 46 << 16 | '1' << 8 | '0' << 0)
-        #define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
-+       #define GONZO     (255 << 24 | 255 << 16 | 255 << 8 | 255 << 0)
-
-        switch (chip_id) {
-        case SI2158_A20:
-@@ -148,6 +149,10 @@ static int si2157_init(struct dvb_frontend *fe)
-        case SI2177_A30:
-                fw_name = SI2157_A30_FIRMWARE;
-                break;
-+       case GONZO:
-+               dev_info(&client->dev, "trying null\n");
-+               fw_name = NULL;
-+               break;
-        case SI2157_A30:
-        case SI2147_A30:
-        case SI2146_A10:
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
