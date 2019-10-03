@@ -2,108 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BF78CAE45
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF3CCAE49
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 20:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389479AbfJCSfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 14:35:08 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18241 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729993AbfJCSfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:35:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 11:35:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
-   d="scan'208";a="196429376"
-Received: from okiselev-mobl1.ccr.corp.intel.com (HELO localhost) ([10.251.93.117])
-  by orsmga006.jf.intel.com with ESMTP; 03 Oct 2019 11:35:04 -0700
-Date:   Thu, 3 Oct 2019 21:35:03 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexey Klimov <aklimov@redhat.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH v4 0/4] tpm: add update_durations class op to allow
- override of chip supplied values
-Message-ID: <20191003183503.GD20683@linux.intel.com>
-References: <20190902142735.6280-1-jsnitsel@redhat.com>
- <20191002203533.GA17766@linux.intel.com>
- <20191003165551.whfzgmhpm5r6ejpw@cantor>
+        id S2389722AbfJCSfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 14:35:44 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44710 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388309AbfJCSfo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 14:35:44 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: bbrezillon)
+        with ESMTPSA id DD9C028ECEA
+Date:   Thu, 3 Oct 2019 20:35:36 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "pgaj@cadence.com" <pgaj@cadence.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] i3c: master: make sure ->boardinfo is
+ initialized in add_i3c_dev_locked()
+Message-ID: <20191003203536.218a3cd8@collabora.com>
+In-Reply-To: <CH2PR12MB42162C4459E31D85FD60FB79AE9F0@CH2PR12MB4216.namprd12.prod.outlook.com>
+References: <cover.1567608245.git.vitor.soares@synopsys.com>
+        <ed18fd927b5759a6a1edb351113ceca615283189.1567608245.git.vitor.soares@synopsys.com>
+        <20191003162943.4a0d0274@collabora.com>
+        <CH2PR12MB42162C4459E31D85FD60FB79AE9F0@CH2PR12MB4216.namprd12.prod.outlook.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003165551.whfzgmhpm5r6ejpw@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 09:55:51AM -0700, Jerry Snitselaar wrote:
-> On Wed Oct 02 19, Jarkko Sakkinen wrote:
-> > On Mon, Sep 02, 2019 at 07:27:32AM -0700, Jerry Snitselaar wrote:
-> > > We've run into a case where a customer has an STM TPM 1.2 chip
-> > > (version 1.2.8.28), that is getting into an inconsistent state and
-> > > they end up getting tpm transmit errors.  In really old tpm code this
-> > > wasn't seen because the code that grabbed the duration values from the
-> > > chip could fail silently, and would proceed to just use default values
-> > > and move forward. More recent code though successfully gets the
-> > > duration values from the chip, and using those values this particular
-> > > chip version gets into the state seen by the customer.
-> > > 
-> > > The idea with this patchset is to provide a facility like the
-> > > update_timeouts operation to allow the override of chip supplied
-> > > values.
-> > > 
-> > > changes from v3:
-> > >     * Assign value to version when tpm1_getcap is successful for TPM 1.1 device
-> > >       not when it fails.
-> > > 
-> > > changes from v2:
-> > >     * Added patch 1/3
-> > >     * Rework tpm_tis_update_durations to make use of new version structs
-> > >       and pull tpm1_getcap calls out of loop.
-> > > 
-> > > changes from v1:
-> > >     * Remove unneeded newline
-> > >     * Formatting cleanups
-> > >     * Change tpm_tis_update_durations to be a void function, and
-> > >       use chip->duration_adjusted to track whether adjustment was
-> > >       made.
-> > > 
-> > > Jarkko Sakkinen (1):
-> > >       tpm: Remove duplicate code from caps_show() in tpm-sysfs.c
-> > > 
-> > > Jerry Snitselaar (2):
-> > >       tpm: provide a way to override the chip returned durations
-> > >       tpm_tis: override durations for STM tpm with firmware 1.2.8.28
-> > > 
-> > > 
-> > 
-> > I applied to my master branch.
-> > 
-> > Probably hard to get wide testing given the "niche" case when the
-> > issue happens. Should be sufficient that the commonc case still
-> > works.
-> > 
-> > /Jarkko
+On Thu, 3 Oct 2019 17:37:40 +0000
+Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+
+> Hi Boris,
 > 
-> Yeah, it is a pain. The people with the problem systems tested an
-> earlier version of Alexey's patches. I have a system with a different
-> rev STM device, so I did some testing with a modified patch that keyed
-> off that revision, but it will be hard to get it wide exposure.
+> From: Boris Brezillon <boris.brezillon@collabora.com>
+> Date: Thu, Oct 03, 2019 at 15:29:43
+> 
+> > On Thu,  5 Sep 2019 12:00:35 +0200
+> > Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+> >   
+> > > The newdev->boardinfo assignment was missing in
+> > > i3c_master_add_i3c_dev_locked() and hence the ->of_node info isn't
+> > > propagated to i3c_dev_desc.
+> > > 
+> > > Fix this by trying to initialize device i3c_dev_boardinfo if available.
+> > > 
+> > > Cc: <stable@vger.kernel.org>
+> > > Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+> > > Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+> > > ---
+> > > Change in v3:
+> > >   - None
+> > > 
+> > > Changes in v2:
+> > >   - Change commit message
+> > >   - Change i3c_master_search_i3c_boardinfo(newdev) to
+> > >   i3c_master_init_i3c_dev_boardinfo(newdev)
+> > >   - Add fixes, stable tags
+> > > 
+> > >  /**
+> > >   * i3c_master_add_i3c_dev_locked() - add an I3C slave to the bus
+> > >   * @master: master used to send frames on the bus
+> > > @@ -1818,8 +1834,9 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
+> > >  				  u8 addr)
+> > >  {
+> > >  	struct i3c_device_info info = { .dyn_addr = addr };
+> > > -	struct i3c_dev_desc *newdev, *olddev;
+> > >  	u8 old_dyn_addr = addr, expected_dyn_addr;
+> > > +	enum i3c_addr_slot_status addrstatus;
+> > > +	struct i3c_dev_desc *newdev, *olddev;
+> > >  	struct i3c_ibi_setup ibireq = { };
+> > >  	bool enable_ibi = false;
+> > >  	int ret;
+> > > @@ -1878,6 +1895,8 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
+> > >  	if (ret)
+> > >  		goto err_detach_dev;
+> > >  
+> > > +	i3c_master_init_i3c_dev_boardinfo(newdev);
+> > > +
+> > >  	/*
+> > >  	 * Depending on our previous state, the expected dynamic address might
+> > >  	 * differ:
+> > > @@ -1895,7 +1914,11 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
+> > >  	else
+> > >  		expected_dyn_addr = newdev->info.dyn_addr;
+> > >  
+> > > -	if (newdev->info.dyn_addr != expected_dyn_addr) {
+> > > +	addrstatus = i3c_bus_get_addr_slot_status(&master->bus,
+> > > +						  expected_dyn_addr);
+> > > +
+> > > +	if (newdev->info.dyn_addr != expected_dyn_addr &&
+> > > +	    addrstatus == I3C_ADDR_SLOT_FREE) {  
+> > 
+> > First, this change shouldn't be part of this patch, since the commit
+> > message only mentions the boardinfo init stuff,  
+> 
+> This is not an issue, I can create a patch just for boardinfo init fix.
+> 
+> > not the extra 'is slot
+> > free check'.  
+> 
+> Even ignoring patch 1, it is necessary to check if the slot is free 
+> because if SETDASA fails the boardinfo->init_dyn_addr can be assigned to 
+> another device. That's why we need to check if expected_dyn_addr is free.
 
-I think this is sufficient for me as it
+Correct. I thought we were already pre-reserving the init_addr (as
+described here [1]), but it looks like the code is buggy. That's
+probably something we should fix  (we should reserve ->init_i3c_addr
+here [2], not ->dyn_addr).
 
-1. Fixes the issue.
-2. I've verified that it doesn't break systems that don't have the
-   issue
+> 
+> > Plus, I want the fix to be backported so we should avoid
+> > any unneeded deps.
+> > 
+> > But even with those 2 things addressed, I'm still convinced the
+> > 'free desc when device is not reachable' change you do in patch 1 is
+> > not that great,   
+> 
+> If I'm doing wrong I really appreciate you tell me the reason.
 
-The worst case scenario is that you break something that is broken
-already...
+I just think it's easier to keep track of things (like reserved
+addresses) if the descriptor stays around even if the device is not yet
+accessible.
 
-/Jarkko
+> 
+> > and the fact that you can't pre-reserve the address to
+> > make sure no one uses it until the device had a chance to show up tends
+> > to prove me right.  
+> 
+> This is a different corner case and I though we agreed that the framework 
+> doesn't provide guarantees to assign boardinfo->init_dyn_addr [1].
+
+Well, it doesn't, but we should try hard to not use addresses that
+have been requested by a device.
+
+> 
+> Yet, I don't disagree with the idea of pre-reserve the 
+> boardinfo->init_dyn_addr.
+> I can do this but we need to align how it should be done.
+
+Keep the device around even if SETDASA fails and make sure the
+->init_dyn_addr is reserved. It's how it was supposed to work, there's
+just a bug in the logic.
+
+> 
+> > 
+> > Can we please do what I suggest and solve the "not enough dev slots"
+> > problem later on (if we really have to).  
+> 
+> I have this use case where the HC has only 4 slot for 4 devices. 
+> Sometimes the one or more devices can be sleeping and when they trigger 
+> HJ there is no space in HC.
+
+Let's address that separately please. I want to solve one problem at a
+time.
+
+[1]https://elixir.bootlin.com/linux/latest/source/drivers/i3c/master.c#L1330
+[2]https://elixir.bootlin.com/linux/latest/source/drivers/i3c/master.c#L1307
