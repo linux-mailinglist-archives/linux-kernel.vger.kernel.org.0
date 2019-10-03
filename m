@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0325ACAD3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B66E4CAC87
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388949AbfJCRhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:37:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
+        id S1732440AbfJCQLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:11:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732276AbfJCQDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:03:43 -0400
+        id S1729616AbfJCQLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:11:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77DCA222C4;
-        Thu,  3 Oct 2019 16:03:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C94B2054F;
+        Thu,  3 Oct 2019 16:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118623;
-        bh=9BntkJM+X8b2XhLAQ3602/FseqHcZoM+K3XqsjBTRlA=;
+        s=default; t=1570119099;
+        bh=F+BBISY2usXO5Kw7pU45xxt7mQnQUjIjnV1fz2gbs68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R8PEPKNdGevq4qJITczhq5Rwbo92UyMELC8zQNqtwVkf476OsfS+hBz4fAlpaGKoO
-         dwp5H+7X/JbdDoTpgen5EdfywpMjoS93X9OLi/ShH4rXNh9+lAMEwnouThSAw5lsuK
-         mea3jBKNgvRIeRjE0v/GOXzy9RvQciKTAyAFpBGs=
+        b=wMQErbDj8BfWW8f+zc6MRW9VX/5eOkI3J6ZkC7elg5ai/9ALyVZbKRDEqJBuMEuyz
+         xCWBe14p/8tghZTg4xmiT5dB0wk5S4fpGSx5Ed+evVPha3UtQW46h/73ZqS2L8uAb1
+         O8fBx/ctaxN71Jbxi9RsqCBLBRJDIdmLOw86LnFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 042/129] dmaengine: bcm2835: Print error in case setting DMA mask fails
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 087/185] media: fdp1: Reduce FCP not found message level to debug
 Date:   Thu,  3 Oct 2019 17:52:45 +0200
-Message-Id: <20191003154336.468459051@linuxfoundation.org>
+Message-Id: <20191003154457.897681855@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
-References: <20191003154318.081116689@linuxfoundation.org>
+In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
+References: <20191003154437.541662648@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <wahrenst@gmx.net>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 72503b25ee363827aafffc3e8d872e6a92a7e422 ]
+[ Upstream commit 4fd22938569c14f6092c05880ca387409d78355f ]
 
-During enabling of the RPi 4, we found out that the driver doesn't provide
-a helpful error message in case setting DMA mask fails. So add one.
+When support for the IPMMU is not enabled, the FDP driver may be
+probe-deferred multiple times, causing several messages to be printed
+like:
 
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Link: https://lore.kernel.org/r/1563297318-4900-1-git-send-email-wahrenst@gmx.net
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+    rcar_fdp1 fe940000.fdp1: FCP not found (-517)
+    rcar_fdp1 fe944000.fdp1: FCP not found (-517)
+
+Fix this by reducing the message level to debug level, as is done in the
+VSP1 driver.
+
+Fixes: 4710b752e029f3f8 ("[media] v4l: Add Renesas R-Car FDP1 Driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/bcm2835-dma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/rcar_fdp1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
-index 6ba53bbd0e161..b984d00bc0558 100644
---- a/drivers/dma/bcm2835-dma.c
-+++ b/drivers/dma/bcm2835-dma.c
-@@ -891,8 +891,10 @@ static int bcm2835_dma_probe(struct platform_device *pdev)
- 		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
- 
- 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
--	if (rc)
-+	if (rc) {
-+		dev_err(&pdev->dev, "Unable to set DMA mask\n");
- 		return rc;
-+	}
- 
- 	od = devm_kzalloc(&pdev->dev, sizeof(*od), GFP_KERNEL);
- 	if (!od)
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index a889332d5d309..d8d406c79cfa1 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -2310,7 +2310,7 @@ static int fdp1_probe(struct platform_device *pdev)
+ 		fdp1->fcp = rcar_fcp_get(fcp_node);
+ 		of_node_put(fcp_node);
+ 		if (IS_ERR(fdp1->fcp)) {
+-			dev_err(&pdev->dev, "FCP not found (%ld)\n",
++			dev_dbg(&pdev->dev, "FCP not found (%ld)\n",
+ 				PTR_ERR(fdp1->fcp));
+ 			return PTR_ERR(fdp1->fcp);
+ 		}
 -- 
 2.20.1
 
