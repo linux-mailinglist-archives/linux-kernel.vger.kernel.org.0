@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5245CAC1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2E6CAC20
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732641AbfJCQFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:05:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52632 "EHLO mail.kernel.org"
+        id S1732650AbfJCQF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:05:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732611AbfJCQFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:05:45 -0400
+        id S1731745AbfJCQFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:05:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B376521A4C;
-        Thu,  3 Oct 2019 16:05:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA1EC21A4C;
+        Thu,  3 Oct 2019 16:05:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118745;
-        bh=y443mZgJMPW97Mpfp8ZziGu2lKXh9L7Mmoa5z5wOjxM=;
+        s=default; t=1570118750;
+        bh=Zm2B1F/uU1HKxIqJj3bpcXBykbAxzVxXbPe7Q9uwm8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QNWM9LQMUMniAOOfJRVIppXgGZkUscNxG7vQ7SR3iu4H62Uf/j01ycOHkYDNeKDxE
-         RqxWj/z4XGWstImy9Lwde1LEFIBDafvhxkACU5Kijfji5Jj4Qs9t02Uy8xbWJA5cKv
-         /s2Iei5xaGXOSb1BUFVnOKmVCULWO7WYeswEeZRc=
+        b=Aw/He6unCjByQoQzh3AbBNh9nZa1GJOProczkaGtWwKy1D9GUGocQiRi2qAuuGq0r
+         PwD8YQRo5uZpA7daG98TelyfL9rIYUO7zUR1awIPmQUWCyRFn1ycQCTW++uHhSdKFy
+         XAQd3nS95MT945AVnVhuB5j+hYLXRgiTfBs1ApRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 124/129] hwrng: core - dont wait on add_early_randomness()
-Date:   Thu,  3 Oct 2019 17:54:07 +0200
-Message-Id: <20191003154416.111926355@linuxfoundation.org>
+        stable@vger.kernel.org, Murphy Zhou <jencce.kernel@gmail.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.9 126/129] CIFS: fix max ea value size
+Date:   Thu,  3 Oct 2019 17:54:09 +0200
+Message-Id: <20191003154416.814706442@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
 References: <20191003154318.081116689@linuxfoundation.org>
@@ -44,55 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Vivier <lvivier@redhat.com>
+From: Murphy Zhou <jencce.kernel@gmail.com>
 
-commit 78887832e76541f77169a24ac238fccb51059b63 upstream.
+commit 63d37fb4ce5ae7bf1e58f906d1bf25f036fe79b2 upstream.
 
-add_early_randomness() is called by hwrng_register() when the
-hardware is added. If this hardware and its module are present
-at boot, and if there is no data available the boot hangs until
-data are available and can't be interrupted.
+It should not be larger then the slab max buf size. If user
+specifies a larger size, it passes this check and goes
+straightly to SMB2_set_info_init performing an insecure memcpy.
 
-For instance, in the case of virtio-rng, in some cases the host can be
-not able to provide enough entropy for all the guests.
-
-We can have two easy ways to reproduce the problem but they rely on
-misconfiguration of the hypervisor or the egd daemon:
-
-- if virtio-rng device is configured to connect to the egd daemon of the
-host but when the virtio-rng driver asks for data the daemon is not
-connected,
-
-- if virtio-rng device is configured to connect to the egd daemon of the
-host but the egd daemon doesn't provide data.
-
-The guest kernel will hang at boot until the virtio-rng driver provides
-enough data.
-
-To avoid that, call rng_get_data() in non-blocking mode (wait=0)
-from add_early_randomness().
-
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-Fixes: d9e797261933 ("hwrng: add randomness to system from rng...")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Murphy Zhou <jencce.kernel@gmail.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/hw_random/core.c |    2 +-
+ fs/cifs/xattr.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -88,7 +88,7 @@ static void add_early_randomness(struct
- 	size_t size = min_t(size_t, 16, rng_buffer_size());
+--- a/fs/cifs/xattr.c
++++ b/fs/cifs/xattr.c
+@@ -31,7 +31,7 @@
+ #include "cifs_fs_sb.h"
+ #include "cifs_unicode.h"
  
- 	mutex_lock(&reading_mutex);
--	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
-+	bytes_read = rng_get_data(rng, rng_buffer, size, 0);
- 	mutex_unlock(&reading_mutex);
- 	if (bytes_read > 0)
- 		add_device_randomness(rng_buffer, bytes_read);
+-#define MAX_EA_VALUE_SIZE 65535
++#define MAX_EA_VALUE_SIZE CIFSMaxBufSize
+ #define CIFS_XATTR_CIFS_ACL "system.cifs_acl"
+ #define CIFS_XATTR_ATTRIB "cifs.dosattrib"  /* full name: user.cifs.dosattrib */
+ #define CIFS_XATTR_CREATETIME "cifs.creationtime"  /* user.cifs.creationtime */
 
 
