@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2984CA9F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAF57CAAB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387564AbfJCQR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:17:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
+        id S2404282AbfJCRMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:12:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388394AbfJCQRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:17:23 -0400
+        id S2391821AbfJCQa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:30:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 869B020865;
-        Thu,  3 Oct 2019 16:17:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F32C42070B;
+        Thu,  3 Oct 2019 16:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119441;
-        bh=vpb3RdfOJRrO7WE5fuKy6/hyWAMQx4pHWPaGXtcDL2M=;
+        s=default; t=1570120257;
+        bh=CguQhBGjD/VMo7E6gLNngt9pIJo06htO8RE80jx/QE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N4qex38C1WM2eT8VwKRiodA1lKHWiOR0VVQp/l+0MPPkMpLLzKUE1nHxkXnp8k37p
-         ka8ITGv7SXtyU7OIk3mTTNUpkQI9dJOVpEszYPHfi6b1rHN7vtCUnPy4khpcJwM4Ii
-         c0bdafYUwmiY0iKUybzeQqG3FysgEG9P4mHUrXwQ=
+        b=ReGOkp5pkkQFbzZEeB6zTaU7HvLlg6MV1bo0Hup6Gg6TvP99D7v+HvGAtT6qOt0uG
+         Eb9V+IwtYTr1lwoMBYDIeRR0AbrNdQfvQDy3lHRyQbPCNAwjkYHpt7mPATvskVGRdd
+         GE1J7lpmwyTk/KfN6+iOcQcPrOsUj/0h8sKpbTX8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
+        stable@vger.kernel.org, djuran@redhat.com,
+        Neil Horman <nhorman@tuxdriver.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 065/211] idle: Prevent late-arriving interrupts from disrupting offline
-Date:   Thu,  3 Oct 2019 17:52:11 +0200
-Message-Id: <20191003154503.434608576@linuxfoundation.org>
+Subject: [PATCH 5.2 154/313] x86/apic/vector: Warn when vector space exhaustion breaks affinity
+Date:   Thu,  3 Oct 2019 17:52:12 +0200
+Message-Id: <20191003154548.088944970@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,109 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Neil Horman <nhorman@tuxdriver.com>
 
-[ Upstream commit e78a7614f3876ac649b3df608789cb6ef74d0480 ]
+[ Upstream commit 743dac494d61d991967ebcfab92e4f80dc7583b3 ]
 
-Scheduling-clock interrupts can arrive late in the CPU-offline process,
-after idle entry and the subsequent call to cpuhp_report_idle_dead().
-Once execution passes the call to rcu_report_dead(), RCU is ignoring
-the CPU, which results in lockdep complaints when the interrupt handler
-uses RCU:
+On x86, CPUs are limited in the number of interrupts they can have affined
+to them as they only support 256 interrupt vectors per CPU. 32 vectors are
+reserved for the CPU and the kernel reserves another 22 for internal
+purposes. That leaves 202 vectors for assignement to devices.
 
-------------------------------------------------------------------------
+When an interrupt is set up or the affinity is changed by the kernel or the
+administrator, the vector assignment code attempts to honor the requested
+affinity mask. If the vector space on the CPUs in that affinity mask is
+exhausted the code falls back to a wider set of CPUs and assigns a vector
+on a CPU outside of the requested affinity mask silently.
 
-=============================
-WARNING: suspicious RCU usage
-5.2.0-rc1+ #681 Not tainted
------------------------------
-kernel/sched/fair.c:9542 suspicious rcu_dereference_check() usage!
+While the effective affinity is reflected in the corresponding
+/proc/irq/$N/effective_affinity* files the silent breakage of the requested
+affinity can lead to unexpected behaviour for administrators.
 
-other info that might help us debug this:
+Add a pr_warn() when this happens so that adminstrators get at least
+informed about it in the syslog.
 
-RCU used illegally from offline CPU!
-rcu_scheduler_active = 2, debug_locks = 1
-no locks held by swapper/5/0.
+[ tglx: Massaged changelog and made the pr_warn() more informative ]
 
-stack backtrace:
-CPU: 5 PID: 0 Comm: swapper/5 Not tainted 5.2.0-rc1+ #681
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS Bochs 01/01/2011
-Call Trace:
- <IRQ>
- dump_stack+0x5e/0x8b
- trigger_load_balance+0xa8/0x390
- ? tick_sched_do_timer+0x60/0x60
- update_process_times+0x3b/0x50
- tick_sched_handle+0x2f/0x40
- tick_sched_timer+0x32/0x70
- __hrtimer_run_queues+0xd3/0x3b0
- hrtimer_interrupt+0x11d/0x270
- ? sched_clock_local+0xc/0x74
- smp_apic_timer_interrupt+0x79/0x200
- apic_timer_interrupt+0xf/0x20
- </IRQ>
-RIP: 0010:delay_tsc+0x22/0x50
-Code: ff 0f 1f 80 00 00 00 00 65 44 8b 05 18 a7 11 48 0f ae e8 0f 31 48 89 d6 48 c1 e6 20 48 09 c6 eb 0e f3 90 65 8b 05 fe a6 11 48 <41> 39 c0 75 18 0f ae e8 0f 31 48 c1 e2 20 48 09 c2 48 89 d0 48 29
-RSP: 0000:ffff8f92c0157ed0 EFLAGS: 00000212 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000005 RBX: ffff8c861f356400 RCX: ffff8f92c0157e64
-RDX: 000000321214c8cc RSI: 00000032120daa7f RDI: 0000000000260f15
-RBP: 0000000000000005 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8c861ee18000 R15: ffff8c861ee18000
- cpuhp_report_idle_dead+0x31/0x60
- do_idle+0x1d5/0x200
- ? _raw_spin_unlock_irqrestore+0x2d/0x40
- cpu_startup_entry+0x14/0x20
- start_secondary+0x151/0x170
- secondary_startup_64+0xa4/0xb0
-
-------------------------------------------------------------------------
-
-This happens rarely, but can be forced by happen more often by
-placing delays in cpuhp_report_idle_dead() following the call to
-rcu_report_dead().  With this in place, the following rcutorture
-scenario reproduces the problem within a few minutes:
-
-tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 8 --duration 5 --kconfig "CONFIG_DEBUG_LOCK_ALLOC=y CONFIG_PROVE_LOCKING=y" --configs "TREE04"
-
-This commit uses the crude but effective expedient of moving the disabling
-of interrupts within the idle loop to precede the cpu_is_offline()
-check.  It also invokes tick_nohz_idle_stop_tick() instead of
-tick_nohz_idle_stop_tick_protected() to shut off the scheduling-clock
-interrupt.
-
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-[ paulmck: Revert tick_nohz_idle_stop_tick_protected() removal, new callers. ]
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Reported-by: djuran@redhat.com
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: djuran@redhat.com
+Link: https://lkml.kernel.org/r/20190822143421.9535-1-nhorman@tuxdriver.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/idle.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/apic/vector.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 16f84142f2f49..44a17366c8ec2 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -240,13 +240,14 @@ static void do_idle(void)
- 		check_pgt_cache();
- 		rmb();
- 
-+		local_irq_disable();
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index fdacb864c3dd4..2c5676b0a6e7f 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -398,6 +398,17 @@ static int activate_reserved(struct irq_data *irqd)
+ 		if (!irqd_can_reserve(irqd))
+ 			apicd->can_reserve = false;
+ 	}
 +
- 		if (cpu_is_offline(cpu)) {
--			tick_nohz_idle_stop_tick_protected();
-+			tick_nohz_idle_stop_tick();
- 			cpuhp_report_idle_dead();
- 			arch_cpu_idle_dead();
- 		}
++	/*
++	 * Check to ensure that the effective affinity mask is a subset
++	 * the user supplied affinity mask, and warn the user if it is not
++	 */
++	if (!cpumask_subset(irq_data_get_effective_affinity_mask(irqd),
++			    irq_data_get_affinity_mask(irqd))) {
++		pr_warn("irq %u: Affinity broken due to vector space exhaustion.\n",
++			irqd->irq);
++	}
++
+ 	return ret;
+ }
  
--		local_irq_disable();
- 		arch_cpu_idle_enter();
- 
- 		/*
 -- 
 2.20.1
 
