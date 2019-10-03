@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B332CA341
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64CBACA343
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388465AbfJCQNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:13:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36796 "EHLO mail.kernel.org"
+        id S2388483AbfJCQN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:13:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388449AbfJCQNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:13:51 -0400
+        id S2388468AbfJCQNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:13:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60E1C2054F;
-        Thu,  3 Oct 2019 16:13:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FF2920865;
+        Thu,  3 Oct 2019 16:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119230;
-        bh=k1efsW7IKJq+Czkbunuurx0HI92kzse705DoNbejggo=;
+        s=default; t=1570119233;
+        bh=Eof/LCjyy1Lk1IY5ADIWNRxDzi1JWLWfiMWrE7Ujgks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=06s1Z8wxzDDQN7U71M1I7KVY4jkrrJFQug1uGQEJcqZIsgdDX+IYMSrFOoUGV7RG3
-         NnIAtBG8UGVSdUIaJRHY1lwLOFpIYM3uqC2Z14kr0xlvrjaOVTuw8L9cbY9zA7UCQb
-         LvCzdkHT+Fqd0yLU2wvrStK8op7qutoX5eeLchd0=
+        b=R3tf4n4JziXlnF0vbGlgyJ/OMw3rclUwfoNiPyOal72dCgh7lH5Xdq1vmJr1OTG/a
+         lxn0VuhicLRA4les4Qi+tVxKf2nPq3yBsvV1LVY4/QWrPv93YNnqUITCtm4fdDrOjd
+         Zbdfd8UgwQuhIZI/VnmO/7JZfKhvBBQLuZMnXTuM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rakesh Pandit <rakesh@tuxera.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 175/185] ext4: fix warning inside ext4_convert_unwritten_extents_endio
-Date:   Thu,  3 Oct 2019 17:54:13 +0200
-Message-Id: <20191003154520.560757088@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 176/185] ext4: fix punch hole for inline_data file systems
+Date:   Thu,  3 Oct 2019 17:54:14 +0200
+Message-Id: <20191003154520.885600546@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -43,37 +42,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rakesh Pandit <rakesh@tuxera.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit e3d550c2c4f2f3dba469bc3c4b83d9332b4e99e1 upstream.
+commit c1e8220bd316d8ae8e524df39534b8a412a45d5e upstream.
 
-Really enable warning when CONFIG_EXT4_DEBUG is set and fix missing
-first argument.  This was introduced in commit ff95ec22cd7f ("ext4:
-add warning to ext4_convert_unwritten_extents_endio") and splitting
-extents inside endio would trigger it.
+If a program attempts to punch a hole on an inline data file, we need
+to convert it to a normal file first.
 
-Fixes: ff95ec22cd7f ("ext4: add warning to ext4_convert_unwritten_extents_endio")
-Signed-off-by: Rakesh Pandit <rakesh@tuxera.com>
+This was detected using ext4/032 using the adv configuration.  Simple
+reproducer:
+
+mke2fs -Fq -t ext4 -O inline_data /dev/vdc
+mount /vdc
+echo "" > /vdc/testfile
+xfs_io -c 'truncate 33554432' /vdc/testfile
+xfs_io -c 'fpunch 0 1048576' /vdc/testfile
+umount /vdc
+e2fsck -fy /dev/vdc
+
+Cc: stable@vger.kernel.org
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/extents.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ext4/inode.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -3756,8 +3756,8 @@ static int ext4_convert_unwritten_extent
- 	 * illegal.
- 	 */
- 	if (ee_block != map->m_lblk || ee_len > map->m_len) {
--#ifdef EXT4_DEBUG
--		ext4_warning("Inode (%ld) finished: extent logical block %llu,"
-+#ifdef CONFIG_EXT4_DEBUG
-+		ext4_warning(inode->i_sb, "Inode (%ld) finished: extent logical block %llu,"
- 			     " len %u; IO logical block %llu, len %u",
- 			     inode->i_ino, (unsigned long long)ee_block, ee_len,
- 			     (unsigned long long)map->m_lblk, map->m_len);
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4177,6 +4177,15 @@ int ext4_punch_hole(struct inode *inode,
+ 
+ 	trace_ext4_punch_hole(inode, offset, length, 0);
+ 
++	ext4_clear_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
++	if (ext4_has_inline_data(inode)) {
++		down_write(&EXT4_I(inode)->i_mmap_sem);
++		ret = ext4_convert_inline_data(inode);
++		up_write(&EXT4_I(inode)->i_mmap_sem);
++		if (ret)
++			return ret;
++	}
++
+ 	/*
+ 	 * Write out all dirty pages to avoid race conditions
+ 	 * Then release them.
 
 
