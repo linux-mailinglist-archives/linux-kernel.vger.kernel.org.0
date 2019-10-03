@@ -2,149 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C77CACC1
+	by mail.lfdr.de (Postfix) with ESMTP id 704C6CACC2
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729623AbfJCR2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:28:51 -0400
-Received: from mout.gmx.net ([212.227.17.21]:48675 "EHLO mout.gmx.net"
+        id S1730366AbfJCR2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:28:53 -0400
+Received: from mout.gmx.net ([212.227.15.15]:59037 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730170AbfJCR2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729919AbfJCR2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 Oct 2019 13:28:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1570123712;
-        bh=GQhmM6Q8Z1o5q9YHR4jherpt7IjBuXvMOjoid+hpyz0=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=Ss2ZUDjLmYXfujIZAHNHXSnEnADyrhXH1A8zurENP8iS0hQDzNH4vtQNxgOUDWicn
-         PPHPxdxGbwPrsreyYCMmOGvdpdQSO7UoWKAiBk9k/qW6Q1/gmJJPrPxI36P/mH0wIp
-         Xi0sRqyvodWv2ex4mG9ANf738gGZz2J4vby8gBNc=
+        s=badeba3b8450; t=1570123715;
+        bh=1/9ytc+GiSYLmzLUQTHXod+HPAelk3SiwurUk+Qr1yw=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=CJYOeogBGQo0GZboKNzoPTNFGJP7gyTe8ysUI62iHOFyQnMY/RnxxLPJXFY3m6aVU
+         LoTHWUKCu1EBTOKHcImQvCF7pGjJ1bhUlh7jiJmQe4t+EjMIAidDjTbuVrYLfx7vYC
+         w/NihBJnoa8wfRFhVXlCTAk5cLTu2mniycEzcyRo=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([89.0.25.131]) by mail.gmx.com (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MzQkK-1huInQ1N68-00vQpU; Thu, 03
- Oct 2019 19:28:32 +0200
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     intel-gfx@lists.freedesktop.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915: Add Sphinx-compatible references to struct fields
-Date:   Thu,  3 Oct 2019 19:28:23 +0200
-Message-Id: <20191003172823.8955-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+Received: from [192.168.1.162] ([37.4.249.116]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mt75H-1i19Lu1F6X-00tPuP; Thu, 03
+ Oct 2019 19:28:35 +0200
+Subject: Re: [PATCH] ARM: dt: check MPIDR on MP devices built without SMP
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Cc:     "kernelci.org bot" <bot@kernelci.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+References: <20191002114508.1089-1-nsaenzjulienne@suse.de>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <e2487ea8-67d0-b850-af63-683dff498275@gmx.net>
+Date:   Thu, 3 Oct 2019 19:28:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uEoSon0QRk9LuiMg1o+ki0nsyjkCeAFzM81xtrmxJ8dlMknVTq0
- Y7bZxxpVEhVsRDG1BPwTD+x+JkptaSH1xtFfUymzW53FZtWhyXRyB94q0VqZXhE1ofO4nVU
- XvKsdg2Sao9ZlIgj5Ej8t+17h2Hlje/aQJZVtR0A6eS1r9QkCxthutGL7eSEgywv1C9me99
- io1GpODFaAVtlRD8x71zA==
+In-Reply-To: <20191002114508.1089-1-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:sY96XPCdbmODy3ENQlqjYJoCke2gtAyeaRHQ/ewzjOXNOxvx0/A
+ qbuh9Z8YocIKS/wvcaobPGkEZeoW4UtoD0zFjrSOTvzB2S3MjUxsBhQ0ELhAx8mZNPUS83w
+ sJU+6SLWL1qvXoaSnaGzdmjFYgEz2yAcUD6v3dnb7VNTV1KVvYl8aChNgpanuSYxw6Ooejb
+ lzhdZTT81abj3HPqjb7Ig==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:T9/OC7Ym66A=:NJ7P4FyBlwwnExsIKdfFOG
- rmD8UrUihtyOkpnEjFPD/7dhaFwACu4W3mL8Mu7xzW+mA4b/Z+y3JOf2wRNDJcdgj7RlAfmcW
- bTHovVmob3WcPdC0BNlp9hW9n8/5cXP5vOhu26MaWjA1DOz0NRoQtGLx+4lpCVsJg8hdv0Tln
- g8e3xztNkVRA74dnvFdYwycDkT+5INYJAE2ccoKs6qi1XkwPlACMdpAwb3D/1xR+DEH95uUJV
- RvAxbhXqC4VG+HhbLgbV4czSiqxIb2ZyJ7Qgs2caGWHSGrq/Sjjl8Y8VHpzve2snJxTWY1+xE
- AHVy8fGc9keOwr0qUtAgGdyiAPGF5FI++DyfgI1H2cJNE3ylV1YxH816+rcmaKzLEmy+XtT4d
- CSO4cfkMXBx4alz27KRmNMPkz6FyNN7u/XfOqoSS1Jf5Mp8goDdjVcdVqOrNasoKvf/dn7w5o
- 6PXZWIQZK8+C0RehCiLDkyOyI71vhmtSNiy8m2uXpRDCShVUAJFSMkX2ShgQMcdIi4ENKu2My
- GFgQz16LvJUSzEMEV3eJX+m+SHmNHYlhsAbt8IO7VW0ik+HZlMYCTbanEj6qH9vIx5kCxtxhp
- Id334+tQKz8aP+qL5Mzb+OPXWKb+tBZtYZo/JY+AvGL7S/Cw7WFpbnZ8Vh8wZkSeqR6f0qpRF
- EeloIX6C6Pbfxa8+WlrFYHAy9W5+Gf+8aipGvnskz4strnsR4hqACcpC6TQBhaCKWeT2nzYWt
- fs1verZmRKu8OR3cpLnSyU0G1P44gM9FhBvbFoFRzvfFrzQwvH2zg0T7CvJlHCQbBFuv+sfcO
- aHL5tyBicAy+FiEJWJVAs8F9LNle0IWzWtNeAWgQe2Tf1lESTVX7iq1Ajhu7VkFBdx7weOhsU
- lhpc4eQhp7vRsnfnAP5tK6Wr/lVPiFCUpbW9TeWIBvKizce5+BUZmGnq06Kq0lUkQ9D1DCav3
- 6XOGhG/fdJhpN9u4dW14GBlpr+oMyA8PDBolN/Q7LVkimla+bo/Q7lcYG4hYtmwt9p/CrLBTV
- FVRep2nXvXCYHu29JAcDWDMbZoYs18kCqMjUgQvXY9Gy2LwpgCNO4Q2/KsHOT9fzjKnRFxewe
- ykM7eypah980HnVRYNmYiFYmcSEWSc+uI9CSHxcLQG8kwOfnI0XnzwoyIUcijTKtVj2oleg3d
- BzEJFSavvANvBsTyT7FMANpTj+4iCcznjIuDpz42i7CouBKPL556eZlifWzNyqx1dP+DbMN5a
- sNb8oQDXSb+WB3kawU1oCMO/acQFCI9Oey6p/UXH67MIv36Lr2iq1/beI2og=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:F8KbZNVHwWY=:JS9pNupe6kR583TYXbT6TH
+ UaYtQkAAEYgrXx7mWwajxIETZwCTKTyfva4pSeSaX7cazQDSxqwSsPJhjS7cdcmmy9sQaI/Kl
+ ZPUIbAvFllW1gJeQclovYN+ID6gkzaMlTkpntqQdFOiqMwdB9kWBRlwLWd/Os2Lt/HtjqTsH7
+ clN650pzstI/5hsZgQv0a3EQ/DxCvRpY/8uGnREMtW9ZPBI/0OIMfqsbPugdM7C64PqPlmL4U
+ Be7tTEsnYYjwkbnyujZv9BQzfhgJlk8P0pvNoPca8hexkDfh+wJktFtScnPyBk8jQpKNNqJ1U
+ qEWDDfTPEKAGox6UXUphWMe4YYSZAnQ279D2rkSiX7r6tRGUjVaXnBoQ5DyK/zdz7U5hwKrdx
+ H9pJq1WTRnxyWfLEd2SjStCS21pTbrVjmUkhfSH2t3XlTUX7Pogzel3vB4Oi9m1CEcRzqc0+J
+ PD1410f+rGm3bogyd74o8CoeLRjexA1BH3Jkh8mK2HnNMq2RxvV27KZuAyU3wXPxSuNTG6tYQ
+ G74aUtPwn99fsFNLvFfSDjnlJLePz0oOWkHkkFe3xckF09Y/CXopTtHqVC/mQa2GnxfTF71qK
+ WWMtgGBAEjPsVZBr/T6V0GVhdRt9+36/OGfBX+d9NVoZIK0om+hY6X17Ia8eH6syUhSH1xtn3
+ +HuqlQRJhrAaz8/6JqAtJIlG6VLlVj1gaYk+CHTIF3EheK4TtFZN0lGe+i7zEKvHbplLAqFca
+ NwZEgiXI+KrRZMEtRTUcET8luQRjYcvMMDySRsAgs8oF4vHpgh1APRkDI5MDHZ1ElOHVH+y4d
+ a7krHpVFk1jDG4Ys5MIz9qqNQBmrI7BQP2dXnTKRqzqUQ4hU4SAqe5KOOEVF/t3A+xu8G2Rhh
+ MNenCWNqmHz2whisbbp691OBNxgoyfmkjuN6HNUrDuYIJduP470F2eEl+FMt6/YYR81rao86a
+ llJwZcWjVcfqdRXISg1Zts5SYFaX1p9dR2/QP0oQIx6cuME3WurlroEaZbCDvxRFRceKYYHLv
+ d0qxN6w6yhr40yA/z6uYWDXed1uC7op1mBAAcdY2VmScyOTYhrcAh1905754n7hkHSui+54WF
+ kFgiSrnuft9aeSd957wKJM77N8Sy9yK9folc2RmpjN1vWWGyIbiUGmfJPLyw/kpv/JMCPLuNM
+ 8WG0zHrZlsx+0mC7feEPs/WQizIYfHZ2EpuImNcxT5R9IiSVGlEH4BXuHzAvyY88i65WfOyEy
+ rJH4oBbAkzVsVbea10jG63+VJPQC75sq9fo33wFraGHKOPztjKmjBqLRpleQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes the following kernel-doc warnings and makes the corrsponding fi=
-elds
-show up in the generated HTML:
+Am 02.10.19 um 13:45 schrieb Nicolas Saenz Julienne:
+> Currently, in arm_dt_init_cpu_maps(), the hwid of the boot CPU is read
+> from MPIDR on SMP devices and set to 0 for non SMP. This value is then
+> matched with the DT cpu nodes' reg property in order to find the boot
+> CPU in DT.
+>
+> On MP devices build without SMP the cpu DT node contains the expected
+> MPIDR yet the hwid is set to 0. With this the function fails to match
+> the cpus and uses the default CPU logical map. Making it impossible to
+> get the CPU's DT node further down the line. This causes issues with
+> cpufreq-dt, as it triggers warnings when not finding a suitable DT node
+> on CPU0.
+>
+> Change the way we choose whether to get MPIDR or not. Instead of
+> depending on SMP check the number of CPUs defined in DT. Anything > 1
+> means MPIDR will be available.
+>
+> This was seen on a Raspberry Pi 2 build with bcm2835_defconfig.
+>
+> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
 
-./drivers/gpu/drm/i915/i915_drv.h:1143: warning: Incorrect use of kernel-d=
-oc format:          * State of the OA buffer.
-./drivers/gpu/drm/i915/i915_drv.h:1154: warning: Incorrect use of kernel-d=
-oc format:                  * Locks reads and writes to all head/tail stat=
-e
-./drivers/gpu/drm/i915/i915_drv.h:1176: warning: Incorrect use of kernel-d=
-oc format:                  * One 'aging' tail pointer and one 'aged' tail=
- pointer ready to
-./drivers/gpu/drm/i915/i915_drv.h:1188: warning: Incorrect use of kernel-d=
-oc format:                  * Index for the aged tail ready to read() data=
- up to.
-./drivers/gpu/drm/i915/i915_drv.h:1193: warning: Incorrect use of kernel-d=
-oc format:                  * A monotonic timestamp for when the current a=
-ging tail pointer
-./drivers/gpu/drm/i915/i915_drv.h:1199: warning: Incorrect use of kernel-d=
-oc format:                  * Although we can always read back the head po=
-inter register,
+Tested-by: Stefan Wahren <wahrenst@gmx.net>
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- drivers/gpu/drm/i915/i915_drv.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_d=
-rv.h
-index 772154e4073e..55782e78f026 100644
-=2D-- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -1140,7 +1140,7 @@ struct i915_perf_stream {
- 	int period_exponent;
-
- 	/**
--	 * State of the OA buffer.
-+	 * @oa_buffer: State of the OA buffer.
- 	 */
- 	struct {
- 		struct i915_vma *vma;
-@@ -1151,6 +1151,7 @@ struct i915_perf_stream {
- 		int size_exponent;
-
- 		/**
-+		 * @oa_buffer.ptr_lock:
- 		 * Locks reads and writes to all head/tail state
- 		 *
- 		 * Consider: the head and tail pointer state needs to be read
-@@ -1173,6 +1174,7 @@ struct i915_perf_stream {
- 		spinlock_t ptr_lock;
-
- 		/**
-+		 * @oa_buffer.tails:
- 		 * One 'aging' tail pointer and one 'aged' tail pointer ready to
- 		 * used for reading.
- 		 *
-@@ -1185,17 +1187,20 @@ struct i915_perf_stream {
- 		} tails[2];
-
- 		/**
-+		 * @oa_buffer.aged_tail_idx:
- 		 * Index for the aged tail ready to read() data up to.
- 		 */
- 		unsigned int aged_tail_idx;
-
- 		/**
-+		 * @oa_buffer.aging_timestamp:
- 		 * A monotonic timestamp for when the current aging tail pointer
- 		 * was read; used to determine when it is old enough to trust.
- 		 */
- 		u64 aging_timestamp;
-
- 		/**
-+		 * @oa_buffer.head:
- 		 * Although we can always read back the head pointer register,
- 		 * we prefer to avoid trusting the HW state, just to avoid any
- 		 * risk that some hardware condition could * somehow bump the
-=2D-
-2.20.1
+Thanks
 
