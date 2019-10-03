@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74EB1CA6BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 485A9CA6C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:56:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392958AbfJCQqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:46:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60186 "EHLO mail.kernel.org"
+        id S2392989AbfJCQrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:47:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392946AbfJCQqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:46:48 -0400
+        id S2392977AbfJCQq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:46:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A28D5215EA;
-        Thu,  3 Oct 2019 16:46:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A12E720830;
+        Thu,  3 Oct 2019 16:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121208;
-        bh=LHr0zQNTuWMvB8KfJDg2lp4+b/SuKXqID+v+rc6sg8g=;
+        s=default; t=1570121219;
+        bh=gVJ5XNv35Wj2YquIGuUHJ24XMfhRoDYe2lPrgEnThQ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zVYqSXR2uVCjbtsjahGoM52Q5/5TbG854kFRhWyvqC9UVQ7m6XSzpHjOO8+px8FJ/
-         RUNu5PkkVHyvcj1gm/uLIehdsWyR4AFYAMArSHDdkfLzEfa2NxtRxPqm2KckoJ54hf
-         FKG/QBk5rcSWbG6BdPio4QdQ3JYyuiQ36MhjTf64=
+        b=HCPhPfzNy5QnKd8AGjizTiyufNWrl3OVeCU9jZvAlNdv4ns5Chfu1hP6TsI0GDNE8
+         QVn5u5bLfC8qhoYsXaIyo75nro3thu1HjSZQgvIyh44m9Kxb6ElgSrIsX9FxSyXrCU
+         cnWD2VcHAeKt0su9+mUG0PKx6OzjYzND2byAvflo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 195/344] dmaengine: ti: edma: Do not reset reserved paRAM slots
-Date:   Thu,  3 Oct 2019 17:52:40 +0200
-Message-Id: <20191003154559.443819896@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 199/344] s390/crypto: xts-aes-s390 fix extra run-time crypto self tests finding
+Date:   Thu,  3 Oct 2019 17:52:44 +0200
+Message-Id: <20191003154559.860229126@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
 References: <20191003154540.062170222@linuxfoundation.org>
@@ -43,48 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Harald Freudenberger <freude@linux.ibm.com>
 
-[ Upstream commit c5dbe60664b3660f5ac5854e21273ea2e7ff698f ]
+[ Upstream commit 9e323d45ba94262620a073a3f9945ca927c07c71 ]
 
-Skip resetting paRAM slots marked as reserved as they might be used by
-other cores.
+With 'extra run-time crypto self tests' enabled, the selftest
+for s390-xts fails with
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/20190823125618.8133-2-peter.ujfalusi@ti.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+  alg: skcipher: xts-aes-s390 encryption unexpectedly succeeded on
+  test vector "random: len=0 klen=64"; expected_error=-22,
+  cfg="random: inplace use_digest nosimd src_divs=[2.61%@+4006,
+  84.44%@+21, 1.55%@+13, 4.50%@+344, 4.26%@+21, 2.64%@+27]"
+
+This special case with nbytes=0 is not handled correctly and this
+fix now makes sure that -EINVAL is returned when there is en/decrypt
+called with 0 bytes to en/decrypt.
+
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ti/edma.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/s390/crypto/aes_s390.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-index ceabdea40ae0f..982631d4e1f8a 100644
---- a/drivers/dma/ti/edma.c
-+++ b/drivers/dma/ti/edma.c
-@@ -2273,9 +2273,6 @@ static int edma_probe(struct platform_device *pdev)
+diff --git a/arch/s390/crypto/aes_s390.c b/arch/s390/crypto/aes_s390.c
+index d00f84add5f4c..6d2dbb5089d5c 100644
+--- a/arch/s390/crypto/aes_s390.c
++++ b/arch/s390/crypto/aes_s390.c
+@@ -586,6 +586,9 @@ static int xts_aes_encrypt(struct blkcipher_desc *desc,
+ 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(desc->tfm);
+ 	struct blkcipher_walk walk;
  
- 	ecc->default_queue = info->default_queue;
- 
--	for (i = 0; i < ecc->num_slots; i++)
--		edma_write_slot(ecc, i, &dummy_paramset);
--
- 	if (info->rsv) {
- 		/* Set the reserved slots in inuse list */
- 		rsv_slots = info->rsv->rsv_slots;
-@@ -2288,6 +2285,12 @@ static int edma_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	for (i = 0; i < ecc->num_slots; i++) {
-+		/* Reset only unused - not reserved - paRAM slots */
-+		if (!test_bit(i, ecc->slot_inuse))
-+			edma_write_slot(ecc, i, &dummy_paramset);
-+	}
++	if (!nbytes)
++		return -EINVAL;
 +
- 	/* Clear the xbar mapped channels in unused list */
- 	xbar_chans = info->xbar_chans;
- 	if (xbar_chans) {
+ 	if (unlikely(!xts_ctx->fc))
+ 		return xts_fallback_encrypt(desc, dst, src, nbytes);
+ 
+@@ -600,6 +603,9 @@ static int xts_aes_decrypt(struct blkcipher_desc *desc,
+ 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(desc->tfm);
+ 	struct blkcipher_walk walk;
+ 
++	if (!nbytes)
++		return -EINVAL;
++
+ 	if (unlikely(!xts_ctx->fc))
+ 		return xts_fallback_decrypt(desc, dst, src, nbytes);
+ 
 -- 
 2.20.1
 
