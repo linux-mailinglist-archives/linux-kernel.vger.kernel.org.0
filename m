@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3415CA500
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4913DCA501
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391657AbfJCQaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:30:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35688 "EHLO mail.kernel.org"
+        id S2391667AbfJCQaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:30:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391639AbfJCQ37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:29:59 -0400
+        id S2389910AbfJCQaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:30:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BB282133F;
-        Thu,  3 Oct 2019 16:29:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AF5720700;
+        Thu,  3 Oct 2019 16:30:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120198;
-        bh=9fwelzb4gaRs6F+woif6HxRJvfWAzWKdIXQYj+jKX5Q=;
+        s=default; t=1570120203;
+        bh=DCEiTU4UemXwcgVyei6aTJbJvetLYVFFZnXWVNu4XLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SSDIbc5R11Ao02XVbyw8iJLfRijVhrzS4yrjUBQLehBlzV9hDcfcggbrKBG9QDFt4
-         oR7c9j3WKWPY1aX5bD30E+qZWa5L2+xfcsxOgap96QIYppbHQEN5It/q5RtOoEAhCd
-         OA8wDQOLDtWZB+SdluSY4H23vVrkeluYpV9Pg6O4=
+        b=m6JJfcH/07Z3GBxlyR80cWemO5Vtna4QvvsBgok0EF5MLNsS9jbDqQRfNZ3ZtxF5F
+         zUPgdsXScNDLv6x5vSQGG0K1NucxudQNTy6bPZ+wJ09ZdiLLsQv143e428HUeA85/u
+         kCkzJrVfOHWng3QA26uJxaZWGyCdJO6yA+zZecv4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 134/313] ARM: at91: move platform-specific asm-offset.h to arch/arm/mach-at91
-Date:   Thu,  3 Oct 2019 17:51:52 +0200
-Message-Id: <20191003154546.094722616@linuxfoundation.org>
+Subject: [PATCH 5.2 136/313] soc: renesas: Enable ARM_ERRATA_754322 for affected Cortex-A9
+Date:   Thu,  3 Oct 2019 17:51:54 +0200
+Message-Id: <20191003154546.272144193@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -45,90 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 9fac85a6db8999922f2cd92dfe2e83e063b31a94 ]
+[ Upstream commit 2eced4607a1e6f51f928ae3e521fe02be5cb7d23 ]
 
-<generated/at91_pm_data-offsets.h> is only generated and included by
-arch/arm/mach-at91/, so it does not need to reside in the globally
-visible include/generated/.
+ARM Erratum 754322 affects Cortex-A9 revisions r2p* and r3p*.
 
-I renamed it to arch/arm/mach-at91/pm_data-offsets.h since the prefix
-'at91_' is just redundant in mach-at91/.
+Automatically enable support code to mitigate the erratum when compiling
+a kernel for any of the affected Renesas SoCs:
+  - RZ/A1: r3p0,
+  - R-Mobile A1: r2p4,
+  - R-Car M1A: r2p2-00rel0,
+  - R-Car H1: r3p0,
+  - SH-Mobile AG5: r2p2.
 
-My main motivation of this change is to avoid the race condition for
-the parallel build (-j) when CONFIG_IKHEADERS is enabled.
+EMMA Mobile EV2 (r1p3) and RZ/A2 (r4p1) are not affected.
 
-When it is enabled, all the headers under include/ are archived into
-kernel/kheaders_data.tar.xz and exposed in the sysfs.
-
-In the parallel build, we have no idea in which order files are built.
-
- - If at91_pm_data-offsets.h is built before kheaders_data.tar.xz,
-   the header will be included in the archive. Probably nobody will
-   use it, but it is harmless except that it will increase the archive
-   size needlessly.
-
- - If kheaders_data.tar.xz is built before at91_pm_data-offsets.h,
-   the header will not be included in the archive. However, in the next
-   build, the archive will be re-generated to include the newly-found
-   at91_pm_data-offsets.h. This is not nice from the build system point
-   of view.
-
- - If at91_pm_data-offsets.h and kheaders_data.tar.xz are built at the
-   same time, the corrupted header might be included in the archive,
-   which does not look nice either.
-
-This commit fixes the race.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Link: https://lore.kernel.org/r/20190823024346.591-1-yamada.masahiro@socionext.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-at91/.gitignore   | 1 +
- arch/arm/mach-at91/Makefile     | 5 +++--
- arch/arm/mach-at91/pm_suspend.S | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/mach-at91/.gitignore
+ drivers/soc/renesas/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/mach-at91/.gitignore b/arch/arm/mach-at91/.gitignore
-new file mode 100644
-index 0000000000000..2ecd6f51c8a95
---- /dev/null
-+++ b/arch/arm/mach-at91/.gitignore
-@@ -0,0 +1 @@
-+pm_data-offsets.h
-diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
-index 31b61f0e1c077..de64301dcff25 100644
---- a/arch/arm/mach-at91/Makefile
-+++ b/arch/arm/mach-at91/Makefile
-@@ -19,9 +19,10 @@ ifeq ($(CONFIG_PM_DEBUG),y)
- CFLAGS_pm.o += -DDEBUG
- endif
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 68bfca6f20ddf..2040caa6c8085 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -55,6 +55,7 @@ config ARCH_EMEV2
  
--include/generated/at91_pm_data-offsets.h: arch/arm/mach-at91/pm_data-offsets.s FORCE
-+$(obj)/pm_data-offsets.h: $(obj)/pm_data-offsets.s FORCE
- 	$(call filechk,offsets,__PM_DATA_OFFSETS_H__)
+ config ARCH_R7S72100
+ 	bool "RZ/A1H (R7S72100)"
++	select ARM_ERRATA_754322
+ 	select PM
+ 	select PM_GENERIC_DOMAINS
+ 	select SYS_SUPPORTS_SH_MTU2
+@@ -76,6 +77,7 @@ config ARCH_R8A73A4
+ config ARCH_R8A7740
+ 	bool "R-Mobile A1 (R8A77400)"
+ 	select ARCH_RMOBILE
++	select ARM_ERRATA_754322
+ 	select RENESAS_INTC_IRQPIN
  
--arch/arm/mach-at91/pm_suspend.o: include/generated/at91_pm_data-offsets.h
-+$(obj)/pm_suspend.o: $(obj)/pm_data-offsets.h
+ config ARCH_R8A7743
+@@ -103,10 +105,12 @@ config ARCH_R8A77470
+ config ARCH_R8A7778
+ 	bool "R-Car M1A (R8A77781)"
+ 	select ARCH_RCAR_GEN1
++	select ARM_ERRATA_754322
  
- targets += pm_data-offsets.s
-+clean-files += pm_data-offsets.h
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index c751f047b1166..ed57c879d4e17 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -10,7 +10,7 @@
- #include <linux/linkage.h>
- #include <linux/clk/at91_pmc.h>
- #include "pm.h"
--#include "generated/at91_pm_data-offsets.h"
-+#include "pm_data-offsets.h"
- 
- #define	SRAMC_SELF_FRESH_ACTIVE		0x01
- #define	SRAMC_SELF_FRESH_EXIT		0x00
+ config ARCH_R8A7779
+ 	bool "R-Car H1 (R8A77790)"
+ 	select ARCH_RCAR_GEN1
++	select ARM_ERRATA_754322
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select SYSC_R8A7779
+@@ -150,6 +154,7 @@ config ARCH_R9A06G032
+ config ARCH_SH73A0
+ 	bool "SH-Mobile AG5 (R8A73A00)"
+ 	select ARCH_RMOBILE
++	select ARM_ERRATA_754322
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select RENESAS_INTC_IRQPIN
 -- 
 2.20.1
 
