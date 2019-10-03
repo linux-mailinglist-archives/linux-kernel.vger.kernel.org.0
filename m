@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3FE8CA5DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF1BECA79B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404591AbfJCQha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:37:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46794 "EHLO mail.kernel.org"
+        id S2393192AbfJCQwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:52:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404571AbfJCQh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:37:27 -0400
+        id S1732564AbfJCQwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:52:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 495112133F;
-        Thu,  3 Oct 2019 16:37:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF02420865;
+        Thu,  3 Oct 2019 16:52:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120645;
-        bh=NJRqgMFb42gdLNeJHVaCND2GhjGKkjOwcp7MoysuOtY=;
+        s=default; t=1570121531;
+        bh=OZi46/LEW9kyWJKIzQu9CrXEOyEZid01NguqZCh4Q1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M+COesCVuQs+j4RsJlJjRxqHpMTWYMMfF3pkcnUrODJfQeUDH9ntSTJeEbB0pcqbv
-         8H8ubI3gJrk0R8tAyO0Wbn0X8P2XUdrvdke5DwV6VscnpXEq8UekzYrugaPffGaZD/
-         boV3F/RoN/a3NVOjCEfHJ+gvzowCpOb6CFtRqCB0=
+        b=0ak7N7ycqmnDm6hAvIsEMrkumrRqeGW45A57yGAvnwmXBBhZchr3hK953ez/FXenG
+         nJjg+U4X7DqHZLj2Vgwnxn7RPqcZcgxKgKZoMqnCvC/vnaSgbu/3EafmEurgxKrLbQ
+         Fuzci0uadfzgPzN6zbWY0ELwOM/qJR/Qr3qJI99M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Camuso <tcamuso@redhat.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 5.2 300/313] ipmi: move message error checking to avoid deadlock
-Date:   Thu,  3 Oct 2019 17:54:38 +0200
-Message-Id: <20191003154602.721839595@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.3 314/344] btrfs: qgroup: Fix reserved data space leak if we have multiple reserve calls
+Date:   Thu,  3 Oct 2019 17:54:39 +0200
+Message-Id: <20191003154610.104056625@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,191 +43,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Camuso <tcamuso@redhat.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 383035211c79d4d98481a09ad429b31c7dbf22bd upstream.
+commit d4e204948fe3e0dc8e1fbf3f8f3290c9c2823be3 upstream.
 
-V1->V2: in handle_one_rcv_msg, if data_size > 2, set requeue to zero and
-        goto out instead of calling ipmi_free_msg.
-        Kosuke Tatsukawa <tatsu@ab.jp.nec.com>
+[BUG]
+The following script can cause btrfs qgroup data space leak:
 
-In the source stack trace below, function set_need_watch tries to
-take out the same si_lock that was taken earlier by ipmi_thread.
+  mkfs.btrfs -f $dev
+  mount $dev -o nospace_cache $mnt
 
-ipmi_thread() [drivers/char/ipmi/ipmi_si_intf.c:995]
- smi_event_handler() [drivers/char/ipmi/ipmi_si_intf.c:765]
-  handle_transaction_done() [drivers/char/ipmi/ipmi_si_intf.c:555]
-   deliver_recv_msg() [drivers/char/ipmi/ipmi_si_intf.c:283]
-    ipmi_smi_msg_received() [drivers/char/ipmi/ipmi_msghandler.c:4503]
-     intf_err_seq() [drivers/char/ipmi/ipmi_msghandler.c:1149]
-      smi_remove_watch() [drivers/char/ipmi/ipmi_msghandler.c:999]
-       set_need_watch() [drivers/char/ipmi/ipmi_si_intf.c:1066]
+  btrfs subv create $mnt/subv
+  btrfs quota en $mnt
+  btrfs quota rescan -w $mnt
+  btrfs qgroup limit 128m $mnt/subv
 
-Upstream commit e1891cffd4c4896a899337a243273f0e23c028df adds code to
-ipmi_smi_msg_received() to call smi_remove_watch() via intf_err_seq()
-and this seems to be causing the deadlock.
+  for (( i = 0; i < 3; i++)); do
+          # Create 3 64M holes for latter fallocate to fail
+          truncate -s 192m $mnt/subv/file
+          xfs_io -c "pwrite 64m 4k" $mnt/subv/file > /dev/null
+          xfs_io -c "pwrite 128m 4k" $mnt/subv/file > /dev/null
+          sync
 
-commit e1891cffd4c4896a899337a243273f0e23c028df
-Author: Corey Minyard <cminyard@mvista.com>
-Date:   Wed Oct 24 15:17:04 2018 -0500
-    ipmi: Make the smi watcher be disabled immediately when not needed
+          # it's supposed to fail, and each failure will leak at least 64M
+          # data space
+          xfs_io -f -c "falloc 0 192m" $mnt/subv/file &> /dev/null
+          rm $mnt/subv/file
+          sync
+  done
 
-The fix is to put all messages in the queue and move the message
-checking code out of ipmi_smi_msg_received and into handle_one_recv_msg,
-which processes the message checking after ipmi_thread releases its
-locks.
+  # Shouldn't fail after we removed the file
+  xfs_io -f -c "falloc 0 64m" $mnt/subv/file
 
-Additionally,Kosuke Tatsukawa <tatsu@ab.jp.nec.com> reported that
-handle_new_recv_msgs calls ipmi_free_msg when handle_one_rcv_msg returns
-zero, so that the call to ipmi_free_msg in handle_one_rcv_msg introduced
-another panic when "ipmitool sensor list" was run in a loop. He
-submitted this part of the patch.
+[CAUSE]
+Btrfs qgroup data reserve code allow multiple reservations to happen on
+a single extent_changeset:
+E.g:
+	btrfs_qgroup_reserve_data(inode, &data_reserved, 0, SZ_1M);
+	btrfs_qgroup_reserve_data(inode, &data_reserved, SZ_1M, SZ_2M);
+	btrfs_qgroup_reserve_data(inode, &data_reserved, 0, SZ_4M);
 
-+free_msg:
-+               requeue = 0;
-+               goto out;
+Btrfs qgroup code has its internal tracking to make sure we don't
+double-reserve in above example.
 
-Reported by: Osamu Samukawa <osa-samukawa@tg.jp.nec.com>
-Characterized by: Kosuke Tatsukawa <tatsu@ab.jp.nec.com>
-Signed-off-by: Tony Camuso <tcamuso@redhat.com>
-Fixes: e1891cffd4c4 ("ipmi: Make the smi watcher be disabled immediately when not needed")
-Cc: stable@vger.kernel.org # 5.1
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+The only pattern utilizing this feature is in the main while loop of
+btrfs_fallocate() function.
+
+However btrfs_qgroup_reserve_data()'s error handling has a bug in that
+on error it clears all ranges in the io_tree with EXTENT_QGROUP_RESERVED
+flag but doesn't free previously reserved bytes.
+
+This bug has a two fold effect:
+- Clearing EXTENT_QGROUP_RESERVED ranges
+  This is the correct behavior, but it prevents
+  btrfs_qgroup_check_reserved_leak() to catch the leakage as the
+  detector is purely EXTENT_QGROUP_RESERVED flag based.
+
+- Leak the previously reserved data bytes.
+
+The bug manifests when N calls to btrfs_qgroup_reserve_data are made and
+the last one fails, leaking space reserved in the previous ones.
+
+[FIX]
+Also free previously reserved data bytes when btrfs_qgroup_reserve_data
+fails.
+
+Fixes: 524725537023 ("btrfs: qgroup: Introduce btrfs_qgroup_reserve_data function")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_msghandler.c |  114 ++++++++++++++++++------------------
- 1 file changed, 57 insertions(+), 57 deletions(-)
+ fs/btrfs/qgroup.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -4215,7 +4215,53 @@ static int handle_one_recv_msg(struct ip
- 	int chan;
- 
- 	ipmi_debug_msg("Recv:", msg->rsp, msg->rsp_size);
--	if (msg->rsp_size < 2) {
-+
-+	if ((msg->data_size >= 2)
-+	    && (msg->data[0] == (IPMI_NETFN_APP_REQUEST << 2))
-+	    && (msg->data[1] == IPMI_SEND_MSG_CMD)
-+	    && (msg->user_data == NULL)) {
-+
-+		if (intf->in_shutdown)
-+			goto free_msg;
-+
-+		/*
-+		 * This is the local response to a command send, start
-+		 * the timer for these.  The user_data will not be
-+		 * NULL if this is a response send, and we will let
-+		 * response sends just go through.
-+		 */
-+
-+		/*
-+		 * Check for errors, if we get certain errors (ones
-+		 * that mean basically we can try again later), we
-+		 * ignore them and start the timer.  Otherwise we
-+		 * report the error immediately.
-+		 */
-+		if ((msg->rsp_size >= 3) && (msg->rsp[2] != 0)
-+		    && (msg->rsp[2] != IPMI_NODE_BUSY_ERR)
-+		    && (msg->rsp[2] != IPMI_LOST_ARBITRATION_ERR)
-+		    && (msg->rsp[2] != IPMI_BUS_ERR)
-+		    && (msg->rsp[2] != IPMI_NAK_ON_WRITE_ERR)) {
-+			int ch = msg->rsp[3] & 0xf;
-+			struct ipmi_channel *chans;
-+
-+			/* Got an error sending the message, handle it. */
-+
-+			chans = READ_ONCE(intf->channel_list)->c;
-+			if ((chans[ch].medium == IPMI_CHANNEL_MEDIUM_8023LAN)
-+			    || (chans[ch].medium == IPMI_CHANNEL_MEDIUM_ASYNC))
-+				ipmi_inc_stat(intf, sent_lan_command_errs);
-+			else
-+				ipmi_inc_stat(intf, sent_ipmb_command_errs);
-+			intf_err_seq(intf, msg->msgid, msg->rsp[2]);
-+		} else
-+			/* The message was sent, start the timer. */
-+			intf_start_seq_timer(intf, msg->msgid);
-+free_msg:
-+		requeue = 0;
-+		goto out;
-+
-+	} else if (msg->rsp_size < 2) {
- 		/* Message is too small to be correct. */
- 		dev_warn(intf->si_dev,
- 			 "BMC returned too small a message for netfn %x cmd %x, got %d bytes\n",
-@@ -4472,62 +4518,16 @@ void ipmi_smi_msg_received(struct ipmi_s
- 	unsigned long flags = 0; /* keep us warning-free. */
- 	int run_to_completion = intf->run_to_completion;
- 
--	if ((msg->data_size >= 2)
--	    && (msg->data[0] == (IPMI_NETFN_APP_REQUEST << 2))
--	    && (msg->data[1] == IPMI_SEND_MSG_CMD)
--	    && (msg->user_data == NULL)) {
--
--		if (intf->in_shutdown)
--			goto free_msg;
--
--		/*
--		 * This is the local response to a command send, start
--		 * the timer for these.  The user_data will not be
--		 * NULL if this is a response send, and we will let
--		 * response sends just go through.
--		 */
--
--		/*
--		 * Check for errors, if we get certain errors (ones
--		 * that mean basically we can try again later), we
--		 * ignore them and start the timer.  Otherwise we
--		 * report the error immediately.
--		 */
--		if ((msg->rsp_size >= 3) && (msg->rsp[2] != 0)
--		    && (msg->rsp[2] != IPMI_NODE_BUSY_ERR)
--		    && (msg->rsp[2] != IPMI_LOST_ARBITRATION_ERR)
--		    && (msg->rsp[2] != IPMI_BUS_ERR)
--		    && (msg->rsp[2] != IPMI_NAK_ON_WRITE_ERR)) {
--			int ch = msg->rsp[3] & 0xf;
--			struct ipmi_channel *chans;
--
--			/* Got an error sending the message, handle it. */
--
--			chans = READ_ONCE(intf->channel_list)->c;
--			if ((chans[ch].medium == IPMI_CHANNEL_MEDIUM_8023LAN)
--			    || (chans[ch].medium == IPMI_CHANNEL_MEDIUM_ASYNC))
--				ipmi_inc_stat(intf, sent_lan_command_errs);
--			else
--				ipmi_inc_stat(intf, sent_ipmb_command_errs);
--			intf_err_seq(intf, msg->msgid, msg->rsp[2]);
--		} else
--			/* The message was sent, start the timer. */
--			intf_start_seq_timer(intf, msg->msgid);
--
--free_msg:
--		ipmi_free_smi_msg(msg);
--	} else {
--		/*
--		 * To preserve message order, we keep a queue and deliver from
--		 * a tasklet.
--		 */
--		if (!run_to_completion)
--			spin_lock_irqsave(&intf->waiting_rcv_msgs_lock, flags);
--		list_add_tail(&msg->link, &intf->waiting_rcv_msgs);
--		if (!run_to_completion)
--			spin_unlock_irqrestore(&intf->waiting_rcv_msgs_lock,
--					       flags);
--	}
-+	/*
-+	 * To preserve message order, we keep a queue and deliver from
-+	 * a tasklet.
-+	 */
-+	if (!run_to_completion)
-+		spin_lock_irqsave(&intf->waiting_rcv_msgs_lock, flags);
-+	list_add_tail(&msg->link, &intf->waiting_rcv_msgs);
-+	if (!run_to_completion)
-+		spin_unlock_irqrestore(&intf->waiting_rcv_msgs_lock,
-+				       flags);
- 
- 	if (!run_to_completion)
- 		spin_lock_irqsave(&intf->xmit_msgs_lock, flags);
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3425,6 +3425,9 @@ cleanup:
+ 	while ((unode = ulist_next(&reserved->range_changed, &uiter)))
+ 		clear_extent_bit(&BTRFS_I(inode)->io_tree, unode->val,
+ 				 unode->aux, EXTENT_QGROUP_RESERVED, 0, 0, NULL);
++	/* Also free data bytes of already reserved one */
++	btrfs_qgroup_free_refroot(root->fs_info, root->root_key.objectid,
++				  orig_reserved, BTRFS_QGROUP_RSV_DATA);
+ 	extent_changeset_release(reserved);
+ 	return ret;
+ }
 
 
