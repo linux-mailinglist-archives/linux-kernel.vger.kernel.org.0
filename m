@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA61EC9E58
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56EFDC9E61
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 14:26:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbfJCMZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 08:25:38 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35513 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728710AbfJCMZg (ORCPT
+        id S1729918AbfJCMZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 08:25:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44440 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729638AbfJCMZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 08:25:36 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v8so2723331wrt.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 05:25:35 -0700 (PDT)
+        Thu, 3 Oct 2019 08:25:37 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z9so2657753wrl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 05:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ib/r61tbSexB1OnVkKNOt18FLUJy8O36CIIdkYoTSQw=;
-        b=okVxu1JDlRGVgK8S/rV/IcDImZam46EkKetvnamhwBl7P3VaF5kAWPfnGQlY6ZBo3z
-         aGzf0HjKxPd6nWvp3pX9U2ywm8VgI+I/BiU88M39jQ/OpS/ZLcPD8Nnd+HuK9NYRrXsq
-         5BFHLpikIiPox8UFABtT9umwYXPjX8BmwvjAX3UOJoev0J4uPrjuJl23nvcbAgmGcGPg
-         qTE7XYV810iQdT33+eAEy8w4MjTx5rqE+VdSBfdKrqEXfjYUb34B7unfe3M4Go97btSd
-         A2U1nC1NBoTEDCeCNSa5QfgkuEMGfefaOzDXwz1ZgWDnx81MSF0nF6P5FTjeqkpDvJOK
-         eQSA==
+        bh=9mWuUCV15M116jFIIxOt3SzvdK3XTaBbtn2rQ//v5YE=;
+        b=NKHrdARjZrHsbiuL+EU2WxV69YhlgSc3ZsWItUhEgP+o6mMAZA9Rflt3w03vwt1h5B
+         iE02uzQcywYprKfQk7wGF9kCfpXzPst+MXM6FTsP5os823geaqlVvpyR0MOLPo2uujtI
+         NgF3u9DnVtWc0euJaNVMEe3FOnbC9Xx50i7+BScBL5UrH582fheVYJysfwxSEAaAnXZP
+         LGjS4v2dl+p17ZnkDZm1FRRsbK46Qlmxlm5f+NS9/4prifBlYHDx8BoVranDLfsdutpT
+         XB+fGbS/J5bz4tUh/aC1XugNkcil6VT5+4FyHn80wq+VaubjJgmByrNbc+6OH0hMGM8m
+         Bcqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ib/r61tbSexB1OnVkKNOt18FLUJy8O36CIIdkYoTSQw=;
-        b=doEpL4vNEwusOSr49ThHjCtUkNsX9q52TqzI5Ghg/SMr4k/Hb7KcsjdPHkkqthgEnK
-         LxuatqjsrAXEOts621Tmu4NS1GmAdjOlvgeqMnQMwsy0hwSaweoWBA3W2st4dqlwxfMd
-         VCxTSnuHSopbUO4Or4+AH4X7W0griqxaHzVlecjoiDyb8UVoBWEymhjXy8p2ujdiEHBK
-         7yavD2r1iM0mKDvquyBZ50fgAyZ3kE0H4ccR3WL6PTBY+nYUpbQJxKDuAzr2/Y/YOm1n
-         +lnrXKD6HzLVIfnFIeajbzLR6kYTVitZv820/oHjkaZ1pOiqbsQPS4GxKPlfLELry6mP
-         RlZA==
-X-Gm-Message-State: APjAAAW1bMxwbVumgvgS9cwkvI0GG9Lajs7dZNdpZ2c4i7hxEWJTPbMf
-        5yoC66fUWZl1xuUOc2qSlX8=
-X-Google-Smtp-Source: APXvYqy+2M5QPIy6JWX+AH37obCYnWiGytvV3JKfeetDLFiW+zxNzmthvaujaJAOSFQteC+LJGbUAA==
-X-Received: by 2002:adf:ee92:: with SMTP id b18mr6460803wro.217.1570105535287;
-        Thu, 03 Oct 2019 05:25:35 -0700 (PDT)
+        bh=9mWuUCV15M116jFIIxOt3SzvdK3XTaBbtn2rQ//v5YE=;
+        b=LGls1VDo9CDZw+kDU/rPyxtzuIHamXdHlvqV1ryoZ2kFPmIgPjyRpOOHnPJCrPcKc4
+         NAK+z4qvNnvAzo0Tv5uiMSGIYP1XdP7R9IttKjyjkOUZU89F8rv9xH5qAIgEalEojeKf
+         hAhjr5qydMjI30+45Wk89moItIJpCrbh1eZWWMqUUj3/aVg2+UVrNGLKu444fQ7LQSt/
+         InWnoJ/UX3uD7U7SPdQyk32Zh/iqKZ5IytVrFWU7YAbnFtpRBkmhNopb3Fv6x9vcvw1c
+         YxKnjiVf80RhIs7eSz3keWa9/Pr7hFmvu3zhxmmojTADoQn1I/K/k26YYRYbYrbwxhSb
+         PngQ==
+X-Gm-Message-State: APjAAAWOiak/UlzYW5upqv+22n/EQ/rXf30TFsGcTPV8y6IaLJX7S/0W
+        jeAumWBylNRRrqCd9fF2PQwY1XAO
+X-Google-Smtp-Source: APXvYqwApmNbpgwx0t4k5CHbGjiqkgCAhk9uWbdou/uxPbX2S767CtLM/ECTQ7aEg5xDgYOmmatirA==
+X-Received: by 2002:a5d:6ace:: with SMTP id u14mr7377105wrw.385.1570105536096;
+        Thu, 03 Oct 2019 05:25:36 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id f17sm2699322wru.29.2019.10.03.05.25.34
+        by smtp.gmail.com with ESMTPSA id f17sm2699322wru.29.2019.10.03.05.25.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 05:25:34 -0700 (PDT)
+        Thu, 03 Oct 2019 05:25:35 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/4] staging: rtl8188eu: rename variables to avoid mixed case
-Date:   Thu,  3 Oct 2019 14:25:12 +0200
-Message-Id: <20191003122514.1760-3-straube.linux@gmail.com>
+Subject: [PATCH 3/4] staging: rtl8188eu: cleanup whitespace in update_hw_ht_param
+Date:   Thu,  3 Oct 2019 14:25:13 +0200
+Message-Id: <20191003122514.1760-4-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003122514.1760-1-straube.linux@gmail.com>
 References: <20191003122514.1760-1-straube.linux@gmail.com>
@@ -63,50 +63,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the local varibles max_AMPDU_len and min_MPDU_spacing to avoid
-mixed case.
-
-max_AMPDU_len -> max_ampdu_len
-min_MPDU_spacing -> min_mpdu_spacing
+Replace tabs with spaces in declarations and reomve two blank lines in
+update_hw_ht_param to cleanup whitespace and improve readability.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_ap.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_ap.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_ap.c b/drivers/staging/rtl8188eu/core/rtw_ap.c
-index 1e4461a74474..75c34e8f2335 100644
+index 75c34e8f2335..97cab71cef23 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_ap.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_ap.c
-@@ -560,8 +560,8 @@ void update_sta_info_apmode(struct adapter *padapter, struct sta_info *psta)
- 
- static void update_hw_ht_param(struct adapter *padapter)
+@@ -562,8 +562,8 @@ static void update_hw_ht_param(struct adapter *padapter)
  {
--	u8 max_AMPDU_len;
--	u8 min_MPDU_spacing;
-+	u8 max_ampdu_len;
-+	u8 min_mpdu_spacing;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
- 	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
+ 	u8 max_ampdu_len;
+ 	u8 min_mpdu_spacing;
+-	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
+-	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
++	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
++	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
  
-@@ -572,13 +572,13 @@ static void update_hw_ht_param(struct adapter *padapter)
- 		ampdu_params_info [1:0]:Max AMPDU Len => 0:8k , 1:16k, 2:32k, 3:64k
+ 	DBG_88E("%s\n", __func__);
+ 
+@@ -573,11 +573,9 @@ static void update_hw_ht_param(struct adapter *padapter)
  		ampdu_params_info [4:2]:Min MPDU Start Spacing
  	*/
--	max_AMPDU_len = pmlmeinfo->HT_caps.ampdu_params_info & 0x03;
-+	max_ampdu_len = pmlmeinfo->HT_caps.ampdu_params_info & 0x03;
+ 	max_ampdu_len = pmlmeinfo->HT_caps.ampdu_params_info & 0x03;
+-
+ 	min_mpdu_spacing = (pmlmeinfo->HT_caps.ampdu_params_info & 0x1c) >> 2;
  
--	min_MPDU_spacing = (pmlmeinfo->HT_caps.ampdu_params_info & 0x1c) >> 2;
-+	min_mpdu_spacing = (pmlmeinfo->HT_caps.ampdu_params_info & 0x1c) >> 2;
- 
--	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_MIN_SPACE, &min_MPDU_spacing);
-+	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_MIN_SPACE, &min_mpdu_spacing);
- 
--	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_FACTOR, &max_AMPDU_len);
-+	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_FACTOR, &max_ampdu_len);
+ 	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_MIN_SPACE, &min_mpdu_spacing);
+-
+ 	rtw_hal_set_hwreg(padapter, HW_VAR_AMPDU_FACTOR, &max_ampdu_len);
  
  	/*  */
- 	/*  Config SM Power Save setting */
 -- 
 2.23.0
 
