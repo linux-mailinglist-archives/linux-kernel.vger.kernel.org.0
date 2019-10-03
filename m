@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A331CA35D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 930D6CA362
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388729AbfJCQOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:14:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38546 "EHLO mail.kernel.org"
+        id S2388776AbfJCQPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:15:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733287AbfJCQOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:14:53 -0400
+        id S2388752AbfJCQO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:14:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46DFD21783;
-        Thu,  3 Oct 2019 16:14:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B552121783;
+        Thu,  3 Oct 2019 16:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119292;
-        bh=EYAALUMmZ9KHd4VSRCBYO6TuloHm/s5iluJ+FeyOCvc=;
+        s=default; t=1570119298;
+        bh=zBya74pRYDPzIK4cQdHPpJIitnD/nPJtdMLpRb7hGTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zx5sjDSBo7OOAYdwy9RWGdW4Bp/W5gHe4rZ2MK9KTU716DWzdi+LtfTAI2miIApZx
-         bYsGBUt7A23QZqp2GY8xm8+3tLj4vT4m+mWydzgN3gKkIlISbqob/1uQ4y8zeoq+hl
-         VKgkcwIrAw+BR7vfnUHA/wiqWPBB9l1sbSXwSN0k=
+        b=CvYUTsj/rLvLFLtkedzuTV6a5OYsm10830DSqPg5X8kgfjwPhtMKCOmRzXr9izIkA
+         DMlb+IHE5Y/zQnM6ILJCU/lIWFN2wDl6nrmTxAXnUNRYhktgdQmDECyeK8bnhZTuxO
+         2MMbXkc5opVqYRzuQwpcf3GE8kOrNcjTGC2Ah2aw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benoit <benoit.sansoni@gmail.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 012/211] skge: fix checksum byte order
-Date:   Thu,  3 Oct 2019 17:51:18 +0200
-Message-Id: <20191003154449.715411742@linuxfoundation.org>
+Subject: [PATCH 4.19 014/211] usbnet: sanity checking of packet sizes and device mtu
+Date:   Thu,  3 Oct 2019 17:51:20 +0200
+Message-Id: <20191003154450.103690210@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -44,32 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 5aafeb74b5bb65b34cc87c7623f9fa163a34fa3b ]
+[ Upstream commit 280ceaed79f18db930c0cc8bb21f6493490bf29c ]
 
-Running old skge driver on PowerPC causes checksum errors
-because hardware reported 1's complement checksum is in little-endian
-byte order.
+After a reset packet sizes and device mtu can change and need
+to be reevaluated to calculate queue sizes.
+Malicious devices can set this to zero and we divide by it.
+Introduce sanity checking.
 
-Reported-by: Benoit <benoit.sansoni@gmail.com>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Reported-and-tested-by:  syzbot+6102c120be558c885f04@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/skge.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/usbnet.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/marvell/skge.c
-+++ b/drivers/net/ethernet/marvell/skge.c
-@@ -3122,7 +3122,7 @@ static struct sk_buff *skge_rx_get(struc
- 	skb_put(skb, len);
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -356,6 +356,8 @@ void usbnet_update_max_qlen(struct usbne
+ {
+ 	enum usb_device_speed speed = dev->udev->speed;
  
- 	if (dev->features & NETIF_F_RXCSUM) {
--		skb->csum = csum;
-+		skb->csum = le16_to_cpu(csum);
- 		skb->ip_summed = CHECKSUM_COMPLETE;
++	if (!dev->rx_urb_size || !dev->hard_mtu)
++		goto insanity;
+ 	switch (speed) {
+ 	case USB_SPEED_HIGH:
+ 		dev->rx_qlen = MAX_QUEUE_MEMORY / dev->rx_urb_size;
+@@ -372,6 +374,7 @@ void usbnet_update_max_qlen(struct usbne
+ 		dev->tx_qlen = 5 * MAX_QUEUE_MEMORY / dev->hard_mtu;
+ 		break;
+ 	default:
++insanity:
+ 		dev->rx_qlen = dev->tx_qlen = 4;
  	}
- 
+ }
 
 
