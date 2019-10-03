@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C6BCA1AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 008BECA1BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731111AbfJCP6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:58:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40994 "EHLO mail.kernel.org"
+        id S1731299AbfJCP6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:58:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726119AbfJCP6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:58:18 -0400
+        id S1729062AbfJCP6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:58:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E23820830;
-        Thu,  3 Oct 2019 15:58:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DC2A20700;
+        Thu,  3 Oct 2019 15:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118297;
-        bh=+/ggtlj+xPS8v3mnbHptst9iFj5utmAfBdLGqH5i4lc=;
+        s=default; t=1570118327;
+        bh=qOgqvqjCkUD8COe5UC9OHjXjf/iIdtSx/nJitqT3eqk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VK9g2ZFsvCIdE6U8ce5pT0a2ZTYEwOBT19mYquoDgNGAuv8RS5BhKgH4b8Mje/6TC
-         h0+qoTkvZtlDMPEnrTDrYcAjjoZdD6pxR7sOQSqRs9PUZnmwojzfuxCANVT39yTRxv
-         nYIoBRB4mcXzLOg9GlPdiXAnBqqqYnazsTnrC4is=
+        b=kQueA1yz2fHGAm8NyGVp4K/tJmWvdnpNKHrBk/DzdrSMGQLjSJeHlyOc9xLpeKCt0
+         Ip/Y+34YwKxpW6gvknaPCMCHZb355qWOE0TrbmkB1yZkH9BLMmxyQ8lvmQtiSX2H5E
+         HV+XBgHxSEaCUcuVDsQIm6T3iqMNVuOxyuZVl7Jk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 43/99] ALSA: hda - Show the fatal CORB/RIRB error more clearly
-Date:   Thu,  3 Oct 2019 17:53:06 +0200
-Message-Id: <20191003154316.351539452@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 44/99] ALSA: i2c: ak4xxx-adda: Fix a possible null pointer dereference in build_adc_controls()
+Date:   Thu,  3 Oct 2019 17:53:07 +0200
+Message-Id: <20191003154316.732713960@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -43,42 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit dd65f7e19c6961ba6a69f7c925021b7a270cb950 ]
+[ Upstream commit 2127c01b7f63b06a21559f56a8c81a3c6535bd1a ]
 
-The last fallback of CORB/RIRB communication error recovery is to turn
-on the single command mode, and this last resort usually means that
-something is really screwed up.  Instead of a normal dev_err(), show
-the error more clearly with dev_WARN() with the caller stack trace.
+In build_adc_controls(), there is an if statement on line 773 to check
+whether ak->adc_info is NULL:
+    if (! ak->adc_info ||
+        ! ak->adc_info[mixer_ch].switch_name)
 
-Also, show the bus-reset fallback also as an error, too.
+When ak->adc_info is NULL, it is used on line 792:
+    knew.name = ak->adc_info[mixer_ch].selector_name;
 
+Thus, a possible null-pointer dereference may occur.
+
+To fix this bug, referring to lines 773 and 774, ak->adc_info
+and ak->adc_info[mixer_ch].selector_name are checked before being used.
+
+This bug is found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_controller.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/i2c/other/ak4xxx-adda.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/sound/pci/hda/hda_controller.c b/sound/pci/hda/hda_controller.c
-index 273364c39171c..9cdf86f04e037 100644
---- a/sound/pci/hda/hda_controller.c
-+++ b/sound/pci/hda/hda_controller.c
-@@ -667,10 +667,13 @@ static int azx_rirb_get_response(struct hdac_bus *bus, unsigned int addr,
- 	 */
- 	if (hbus->allow_bus_reset && !hbus->response_reset && !hbus->in_reset) {
- 		hbus->response_reset = 1;
-+		dev_err(chip->card->dev,
-+			"No response from codec, resetting bus: last cmd=0x%08x\n",
-+			bus->last_cmd[addr]);
- 		return -EAGAIN; /* give a chance to retry */
- 	}
+diff --git a/sound/i2c/other/ak4xxx-adda.c b/sound/i2c/other/ak4xxx-adda.c
+index bf377dc192aa7..d33e02c317129 100644
+--- a/sound/i2c/other/ak4xxx-adda.c
++++ b/sound/i2c/other/ak4xxx-adda.c
+@@ -789,11 +789,12 @@ static int build_adc_controls(struct snd_akm4xxx *ak)
+ 				return err;
  
--	dev_err(chip->card->dev,
-+	dev_WARN(chip->card->dev,
- 		"azx_get_response timeout, switching to single_cmd mode: last cmd=0x%08x\n",
- 		bus->last_cmd[addr]);
- 	chip->single_cmd = 1;
+ 			memset(&knew, 0, sizeof(knew));
+-			knew.name = ak->adc_info[mixer_ch].selector_name;
+-			if (!knew.name) {
++			if (!ak->adc_info ||
++				!ak->adc_info[mixer_ch].selector_name) {
+ 				knew.name = "Capture Channel";
+ 				knew.index = mixer_ch + ak->idx_offset * 2;
+-			}
++			} else
++				knew.name = ak->adc_info[mixer_ch].selector_name;
+ 
+ 			knew.iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 			knew.info = ak4xxx_capture_source_info;
 -- 
 2.20.1
 
