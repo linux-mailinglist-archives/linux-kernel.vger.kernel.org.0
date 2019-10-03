@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 686EACAA54
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB3BCAAE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404827AbfJCRDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:03:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52424 "EHLO mail.kernel.org"
+        id S2404166AbfJCRPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:15:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392515AbfJCQlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:41:51 -0400
+        id S2391063AbfJCQ0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:26:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E82622054F;
-        Thu,  3 Oct 2019 16:41:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F2D120867;
+        Thu,  3 Oct 2019 16:26:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120910;
-        bh=FDrlU1PiRBI+pftJbsQpLFHChJmTaWWY3GczLZA6tEQ=;
+        s=default; t=1570119982;
+        bh=VR7Qr2sSZDvvWUGGowSu7a6WGDqx1uqcGdlqRG8+qwM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kpLiA4Cj4aBci5g5uPQkGE7NpuvULBYG7Vc6Ja9DfJ8OdZgwaY3UEzRlg7c3RdWNd
-         Cf6vFmUzcgRWnjE7Lsams4w+hXHGIvEDve5kqId1zMUuWO11/PH6vilboM4ovcfwsE
-         M+M0H8B+sjzDmrkHnQrY7LDo21JK+3ZU07V12A64=
+        b=U+//bAofW5n3o0eTLRKEah11ljQrVsLxl+VtdIQz9T1sezcxCiM29VBU/2n6GSICN
+         UHT6eGzZR4Zk0p2mj6y7eTKwV63T96QsMqerQu6HvCnRFcPwxC9sJ2IVVgzPnbhsrA
+         QV1n2zsn9OFx5Kk2G1hpxBeJl/tJ9En/nfHhe3sg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Grzegorz Halat <ghalat@redhat.com>,
+        stable@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Don Zickus <dzickus@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 066/344] x86/reboot: Always use NMI fallback when shutdown via reboot vector IPI fails
-Date:   Thu,  3 Oct 2019 17:50:31 +0200
-Message-Id: <20191003154546.612832903@linuxfoundation.org>
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 054/313] sched/fair: Fix imbalance due to CPU affinity
+Date:   Thu,  3 Oct 2019 17:50:32 +0200
+Message-Id: <20191003154538.389857532@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,126 +47,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grzegorz Halat <ghalat@redhat.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
 
-[ Upstream commit 747d5a1bf293dcb33af755a6d285d41b8c1ea010 ]
+[ Upstream commit f6cad8df6b30a5d2bbbd2e698f74b4cafb9fb82b ]
 
-A reboot request sends an IPI via the reboot vector and waits for all other
-CPUs to stop. If one or more CPUs are in critical regions with interrupts
-disabled then the IPI is not handled on those CPUs and the shutdown hangs
-if native_stop_other_cpus() is called with the wait argument set.
+The load_balance() has a dedicated mecanism to detect when an imbalance
+is due to CPU affinity and must be handled at parent level. In this case,
+the imbalance field of the parent's sched_group is set.
 
-Such a situation can happen when one CPU was stopped within a lock held
-section and another CPU is trying to acquire that lock with interrupts
-disabled. There are other scenarios which can cause such a lockup as well.
+The description of sg_imbalanced() gives a typical example of two groups
+of 4 CPUs each and 4 tasks each with a cpumask covering 1 CPU of the first
+group and 3 CPUs of the second group. Something like:
 
-In theory the shutdown should be attempted by an NMI IPI after the timeout
-period elapsed. Though the wait loop after sending the reboot vector IPI
-prevents this. It checks the wait request argument and the timeout. If wait
-is set, which is true for sys_reboot() then it won't fall through to the
-NMI shutdown method after the timeout period has finished.
+	{ 0 1 2 3 } { 4 5 6 7 }
+	        *     * * *
 
-This was an oversight when the NMI shutdown mechanism was added to handle
-the 'reboot IPI is not working' situation. The mechanism was added to deal
-with stuck panic shutdowns, which do not have the wait request set, so the
-'wait request' case was probably not considered.
+But the load_balance fails to fix this UC on my octo cores system
+made of 2 clusters of quad cores.
 
-Remove the wait check from the post reboot vector IPI wait loop and enforce
-that the wait loop in the NMI fallback path is invoked even if NMI IPIs are
-disabled or the registration of the NMI handler fails. That second wait
-loop will then hang if not all CPUs shutdown and the wait argument is set.
+Whereas the load_balance is able to detect that the imbalanced is due to
+CPU affinity, it fails to fix it because the imbalance field is cleared
+before letting parent level a chance to run. In fact, when the imbalance is
+detected, the load_balance reruns without the CPU with pinned tasks. But
+there is no other running tasks in the situation described above and
+everything looks balanced this time so the imbalance field is immediately
+cleared.
 
-[ tglx: Avoid the hard to parse line break in the NMI fallback path,
-  	add comments and massage the changelog ]
+The imbalance field should not be cleared if there is no other task to move
+when the imbalance is detected.
 
-Fixes: 7d007d21e539 ("x86/reboot: Use NMI to assist in shutting down if IRQ fails")
-Signed-off-by: Grzegorz Halat <ghalat@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Don Zickus <dzickus@redhat.com>
-Link: https://lkml.kernel.org/r/20190628122813.15500-1-ghalat@redhat.com
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1561996022-28829-1-git-send-email-vincent.guittot@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/smp.c | 46 +++++++++++++++++++++++++------------------
- 1 file changed, 27 insertions(+), 19 deletions(-)
+ kernel/sched/fair.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
-index 96421f97e75cf..231fa230ebc73 100644
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -179,6 +179,12 @@ asmlinkage __visible void smp_reboot_interrupt(void)
- 	irq_exit();
- }
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b07672e793a81..f72bf8122fe4e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9319,9 +9319,10 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+ out_balanced:
+ 	/*
+ 	 * We reach balance although we may have faced some affinity
+-	 * constraints. Clear the imbalance flag if it was set.
++	 * constraints. Clear the imbalance flag only if other tasks got
++	 * a chance to move and fix the imbalance.
+ 	 */
+-	if (sd_parent) {
++	if (sd_parent && !(env.flags & LBF_ALL_PINNED)) {
+ 		int *group_imbalance = &sd_parent->groups->sgc->imbalance;
  
-+static int register_stop_handler(void)
-+{
-+	return register_nmi_handler(NMI_LOCAL, smp_stop_nmi_callback,
-+				    NMI_FLAG_FIRST, "smp_stop");
-+}
-+
- static void native_stop_other_cpus(int wait)
- {
- 	unsigned long flags;
-@@ -212,39 +218,41 @@ static void native_stop_other_cpus(int wait)
- 		apic->send_IPI_allbutself(REBOOT_VECTOR);
- 
- 		/*
--		 * Don't wait longer than a second if the caller
--		 * didn't ask us to wait.
-+		 * Don't wait longer than a second for IPI completion. The
-+		 * wait request is not checked here because that would
-+		 * prevent an NMI shutdown attempt in case that not all
-+		 * CPUs reach shutdown state.
- 		 */
- 		timeout = USEC_PER_SEC;
--		while (num_online_cpus() > 1 && (wait || timeout--))
-+		while (num_online_cpus() > 1 && timeout--)
- 			udelay(1);
- 	}
--	
--	/* if the REBOOT_VECTOR didn't work, try with the NMI */
--	if ((num_online_cpus() > 1) && (!smp_no_nmi_ipi))  {
--		if (register_nmi_handler(NMI_LOCAL, smp_stop_nmi_callback,
--					 NMI_FLAG_FIRST, "smp_stop"))
--			/* Note: we ignore failures here */
--			/* Hope the REBOOT_IRQ is good enough */
--			goto finish;
--
--		/* sync above data before sending IRQ */
--		wmb();
- 
--		pr_emerg("Shutting down cpus with NMI\n");
-+	/* if the REBOOT_VECTOR didn't work, try with the NMI */
-+	if (num_online_cpus() > 1) {
-+		/*
-+		 * If NMI IPI is enabled, try to register the stop handler
-+		 * and send the IPI. In any case try to wait for the other
-+		 * CPUs to stop.
-+		 */
-+		if (!smp_no_nmi_ipi && !register_stop_handler()) {
-+			/* Sync above data before sending IRQ */
-+			wmb();
- 
--		apic->send_IPI_allbutself(NMI_VECTOR);
-+			pr_emerg("Shutting down cpus with NMI\n");
- 
-+			apic->send_IPI_allbutself(NMI_VECTOR);
-+		}
- 		/*
--		 * Don't wait longer than a 10 ms if the caller
--		 * didn't ask us to wait.
-+		 * Don't wait longer than 10 ms if the caller didn't
-+		 * reqeust it. If wait is true, the machine hangs here if
-+		 * one or more CPUs do not reach shutdown state.
- 		 */
- 		timeout = USEC_PER_MSEC * 10;
- 		while (num_online_cpus() > 1 && (wait || timeout--))
- 			udelay(1);
- 	}
- 
--finish:
- 	local_irq_save(flags);
- 	disable_local_APIC();
- 	mcheck_cpu_clear(this_cpu_ptr(&cpu_info));
+ 		if (*group_imbalance)
 -- 
 2.20.1
 
