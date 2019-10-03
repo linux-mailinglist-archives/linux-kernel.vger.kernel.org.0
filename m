@@ -2,119 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2B2CB1F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 00:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B00DCB200
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 00:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbfJCWlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 18:41:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55311 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730531AbfJCWlA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 18:41:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a6so3643150wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 15:40:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=uOVd3X/wZgzEB6V0Fr+tNeKdOcBOeAY72FFGJ1MiF4Y=;
-        b=miFo+VU06QptyI4rqV6HRgzo8qhNbjtt3w1wdJpypaw72rZHGNGN5xbRbWP0WnVDK2
-         m5/OlacpBkE4cZLHtmmYSnP3Rz8QsTFmJxNHMufHMmHkShOS7bpEPwxZ6FkggAydKiyp
-         cfHRlg+KXP/v1DXhQryS+6L5odYaCVN6E0APfRzNxr7DNUP79pIiCeu7QfbQIBODDsgR
-         Aokw80zgJ7g6rr/UNJ1rBqLT5w3cajm1vP2Jze4vW3OIB2+HZiHwL4sv06QqGOgmZa18
-         24cxI0UQjecr1PzeQBPofF41AWfHc8XcDd+nfStc9ZJRpd6Vt4Q7ghbCFkeGBSkKpZ4P
-         KEWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=uOVd3X/wZgzEB6V0Fr+tNeKdOcBOeAY72FFGJ1MiF4Y=;
-        b=kH3cJxx686oKf7vaeQ7m+Dsi38TLBMNKI1YNHyZJdRCX/Q2ExnNkIrnPRV03xquSNF
-         iZY+b6uqsu9a2tMWeA4IM460egHEoYdbXhHcD3/8ceoy6WE8+qfYgXOanTCI+0N9otB6
-         mf2Y5UUxFFVkw9ZpUoSJYN95JUmlwEltUSE6/z6O5gmp++us4BjLts9UDYtX3YWCCNet
-         dvBx9BGzClHuCQoxOXrZrAc92+F4l8ndbIEmZxM+oRlP4W+BzTaLUAvxlP1nQ3BLIt2p
-         J5BaRgopYDe+dpuONyx4yvjFIvO15O27qplOssbJ10bXtjd7CO3/Y0q74wlt0e4qwRCe
-         1lVA==
-X-Gm-Message-State: APjAAAVedsi4rrFBltjV4vDcTrIMOgbR51NjcUW2F9v8XDDn4bSK7sVw
-        LtfCUXT6vq16HQXfqd9FhnXrsRjnBzLWOw==
-X-Google-Smtp-Source: APXvYqyuJkmfu0KDfIG92lUKyRQZ/+be4GBXFc3rX0H85L9SpU3eg379pZCpZHPrMz/oGNZvjlcpSA==
-X-Received: by 2002:a1c:454:: with SMTP id 81mr8233401wme.119.1570142458337;
-        Thu, 03 Oct 2019 15:40:58 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id 94sm7428514wrk.92.2019.10.03.15.40.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Oct 2019 15:40:57 -0700 (PDT)
-Message-ID: <5d9678f9.1c69fb81.af96f.47ab@mx.google.com>
-Date:   Thu, 03 Oct 2019 15:40:57 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1729918AbfJCWp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 18:45:56 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:56832 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726780AbfJCWp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 18:45:56 -0400
+Received: from p57b7758c.dip0.t-ipconnect.de ([87.183.117.140] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iG9r7-0000ti-Nn; Fri, 04 Oct 2019 00:45:53 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hugh Cole-Baker <sigmaris@gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the rockchip tree
+Date:   Fri, 04 Oct 2019 00:45:53 +0200
+Message-ID: <32713632.1bI0RUAnRe@phil>
+In-Reply-To: <20191004075645.715fb074@canb.auug.org.au>
+References: <20191004075645.715fb074@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.19.76-212-g319532606385
-X-Kernelci-Branch: linux-4.19.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 000/211] 4.19.77-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 124 boots: 0 failed, 115 passed with 9 offline=
- (v4.19.76-212-g319532606385)
+Hi Stephen,
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.76-212-g319532606385/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.76-212-g319532606385/
+Am Donnerstag, 3. Oktober 2019, 23:56:45 CEST schrieb Stephen Rothwell:
+> In commit
+> 
+>   b62ce630fddb ("arm64: dts: rockchip: fix Rockpro64 RK808 interrupt line")
+> 
+> Fixes tag
+> 
+>   Fixes: e4f3fb4 ("arm64: dts: rockchip: add initial dts support for Rockpro64")
 
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.76-212-g319532606385
-Git Commit: 319532606385c7221dfbfba6f857bd03e97e20d0
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 71 unique boards, 24 SoC families, 14 builds out of 206
+I fixed the git hash and updated the branch with it.
 
-Offline Platforms:
+Thanks for the catch
+Heiko
 
-arm:
 
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            dm365evm,legacy: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
