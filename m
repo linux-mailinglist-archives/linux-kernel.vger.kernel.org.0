@@ -2,75 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48EB9C96B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 04:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E34C96BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 04:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728378AbfJCCcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 22:32:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35938 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbfJCCcw (ORCPT
+        id S1728279AbfJCCh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 22:37:27 -0400
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:42902 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfJCCh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 22:32:52 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 23so795330pgk.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 19:32:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K19dUfKMeY8BLXEsXBk6OU/EHlaRxwCl2aUwG6ZXU0o=;
-        b=RXesFoYn7HN9To3yjNAdE8us7kMG9/9UJ7QKwCLlNr2HY6CVA2Y9UhrIA9zp3N7dAI
-         RD5+HU6tgVFehQV5nDtR68jv0DJuqxXNQp6z6jX8TjRhsync8EJilwihK0X7aZgft4tf
-         XI41J68VewsYeOtOzs/g1pNjCKcKZYQKMC+UFx7HS6X99jKuxm6DEOUHho0qoTjdQ43J
-         4im4CMYhnYCFUhJe03JnH9IGY+HNv2o1bPB2NDPTKfW9WrxhF3awJcdc7I+sr4TFHM9L
-         fGGuz+3kX+V5w7zZqRK7lRU4sKBoWEpeT40XjZ3HZIvORfj5pXwEKzPn0qi5qM1DfBT7
-         l0Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K19dUfKMeY8BLXEsXBk6OU/EHlaRxwCl2aUwG6ZXU0o=;
-        b=tH9XJ0UC3jH2X89JSztOibzCajX9i4IG47AA5qiEw2jfrz9EzyyGg9oUkv7Tu+5SLg
-         gFma46aqZUZAqDWkhcVhAfFjTRkLxP3lowJ2cgZ3tjaw/y+t1dCiZf0xtPZ8TRcMj/vz
-         al0wXawrE0VIu3kRYC271Lp4wV1fRK/ItWZd9StfLAfWrx9ziC93A36zIL9Xh9QeiZiD
-         vZx1NO2Y4HgJY5pr70nEpIG+BmSUaYbjj3BhorguSq+yLmxtorRGyxnnN71Ni/B9aW+v
-         yZRu3hZzWPq4zj074v/6FhPKLY0QxNC78RU3AqcCUaFyp3P5uWc/oNUvmv7P2Jkj/GfN
-         gDKg==
-X-Gm-Message-State: APjAAAUHV9/y7xZT4LiQ9B9/kV3WuliNrxTIg6XwdgwJWaFmMinW4bJl
-        jkppX5DathIb7r99yG8sHwHVwz5kVoBIvw==
-X-Google-Smtp-Source: APXvYqzVsD7R/zMAePisZn0a9vUIXisxTGyyA+gIBLXagTz6/76dGMuqRiU6CxCmZi5V3UzC9JIBnA==
-X-Received: by 2002:a63:e444:: with SMTP id i4mr7151634pgk.45.1570069970102;
-        Wed, 02 Oct 2019 19:32:50 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.79])
-        by smtp.gmail.com with ESMTPSA id 69sm755865pfb.145.2019.10.02.19.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Oct 2019 19:32:49 -0700 (PDT)
-Subject: Re: [PATCH] block: pg: add header include guard
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-block@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20190720120526.7722-1-yamada.masahiro@socionext.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ef3a7522-4753-33c6-6611-e48a2f641bfa@kernel.dk>
-Date:   Wed, 2 Oct 2019 20:32:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 2 Oct 2019 22:37:26 -0400
+Received: from mail.aspeedtech.com (twmbx02.aspeed.com [192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id x932J6BT043282;
+        Thu, 3 Oct 2019 10:19:06 +0800 (GMT-8)
+        (envelope-from chiawei_wang@aspeedtech.com)
+Received: from TWMBX02.aspeed.com (192.168.0.24) by TWMBX02.aspeed.com
+ (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.620.29; Thu, 3 Oct
+ 2019 10:35:03 +0800
+Received: from TWMBX02.aspeed.com ([fe80::997d:c0a7:f01f:e1a7]) by
+ TWMBX02.aspeed.com ([fe80::997d:c0a7:f01f:e1a7%12]) with mapi id
+ 15.00.0620.020; Thu, 3 Oct 2019 10:35:02 +0800
+From:   ChiaWei Wang <chiawei_wang@aspeedtech.com>
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>
+CC:     Jason M Biils <jason.m.bills@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        "OpenBMC Maillist" <openbmc@lists.ozlabs.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ryan Chen <ryan_chen@aspeedtech.com>
+Subject: RE: [PATCH 0/2] peci: aspeed: Add AST2600 compatible
+Thread-Topic: [PATCH 0/2] peci: aspeed: Add AST2600 compatible
+Thread-Index: AQHVeOhVfyr8hf/PLEOlKG455HFAV6dHIbEAgABBZgCAABszgIAAsqtw
+Date:   Thu, 3 Oct 2019 02:35:02 +0000
+Message-ID: <4af9eb8fa6fd41fc87708fc8afdcc83e@TWMBX02.aspeed.com>
+References: <20191002061200.29888-1-chiawei_wang@aspeedtech.com>
+ <70044749-785b-6ff3-7a28-fb049dcfec54@linux.intel.com>
+ <CACPK8XfBxC+4PHHCkMoXr+twjfWaovcJ5c=hfCmHRJ6LpGNeFg@mail.gmail.com>
+ <03d21443-aa9a-a126-dc77-a21f14f708c9@linux.intel.com>
+In-Reply-To: <03d21443-aa9a-a126-dc77-a21f14f708c9@linux.intel.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [192.168.0.133]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20190720120526.7722-1-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com x932J6BT043282
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/20/19 6:05 AM, Masahiro Yamada wrote:
-> Add a header include guard just in case.
-
-Applied, thanks.
-
--- 
-Jens Axboe
-
+SGkgSmFlIEh5dW4sDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KRm9yIG5vdyBzaG91bGQg
+SSB1c2UgR2l0SHViIHB1bGwtcmVxdWVzdCB0byBzdWJtaXQgdGhlIHBhdGNoZXMgb2YgUEVDSS1y
+ZWxhdGVkIGNoYW5nZSB0byBPcGVuQk1DIGRldi01LjMgdHJlZSBvbmx5Pw0KDQpSZWdhcmRzLA0K
+Q2hpYXdlaQ0KDQoqKioqKioqKioqKioqIEVtYWlsIENvbmZpZGVudGlhbGl0eSBOb3RpY2UgKioq
+KioqKioqKioqKioqKioqKioNCkRJU0NMQUlNRVI6DQpUaGlzIG1lc3NhZ2UgKGFuZCBhbnkgYXR0
+YWNobWVudHMpIG1heSBjb250YWluIGxlZ2FsbHkgcHJpdmlsZWdlZCBhbmQvb3Igb3RoZXIgY29u
+ZmlkZW50aWFsIGluZm9ybWF0aW9uLiBJZiB5b3UgaGF2ZSByZWNlaXZlZCBpdCBpbiBlcnJvciwg
+cGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGJ5IHJlcGx5IGUtbWFpbCBhbmQgaW1tZWRpYXRlbHkg
+ZGVsZXRlIHRoZSBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50cyB3aXRob3V0IGNvcHlpbmcgb3Ig
+ZGlzY2xvc2luZyB0aGUgY29udGVudHMuIFRoYW5rIHlvdS4NCg0KDQotLS0tLU9yaWdpbmFsIE1l
+c3NhZ2UtLS0tLQ0KRnJvbTogSmFlIEh5dW4gWW9vIFttYWlsdG86amFlLmh5dW4ueW9vQGxpbnV4
+LmludGVsLmNvbV0gDQpTZW50OiBUaHVyc2RheSwgT2N0b2JlciAzLCAyMDE5IDc6NDMgQU0NClRv
+OiBKb2VsIFN0YW5sZXkgPGpvZWxAam1zLmlkLmF1Pg0KQ2M6IENoaWFXZWkgV2FuZyA8Y2hpYXdl
+aV93YW5nQGFzcGVlZHRlY2guY29tPjsgSmFzb24gTSBCaWlscyA8amFzb24ubS5iaWxsc0BsaW51
+eC5pbnRlbC5jb20+OyBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBSdXRs
+YW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IEFuZHJldyBKZWZmZXJ5IDxhbmRyZXdAYWouaWQu
+YXU+OyBsaW51eC1hc3BlZWQgPGxpbnV4LWFzcGVlZEBsaXN0cy5vemxhYnMub3JnPjsgT3BlbkJN
+QyBNYWlsbGlzdCA8b3BlbmJtY0BsaXN0cy5vemxhYnMub3JnPjsgZGV2aWNldHJlZSA8ZGV2aWNl
+dHJlZUB2Z2VyLmtlcm5lbC5vcmc+OyBMaW51eCBBUk0gPGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZz47IExpbnV4IEtlcm5lbCBNYWlsaW5nIExpc3QgPGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmc+OyBSeWFuIENoZW4gPHJ5YW5fY2hlbkBhc3BlZWR0ZWNoLmNvbT4NClN1
+YmplY3Q6IFJlOiBbUEFUQ0ggMC8yXSBwZWNpOiBhc3BlZWQ6IEFkZCBBU1QyNjAwIGNvbXBhdGli
+bGUNCg0KT24gMTAvMi8yMDE5IDM6MDUgUE0sIEpvZWwgU3RhbmxleSB3cm90ZToNCj4gT24gV2Vk
+LCAyIE9jdCAyMDE5IGF0IDE4OjExLCBKYWUgSHl1biBZb28gPGphZS5oeXVuLnlvb0BsaW51eC5p
+bnRlbC5jb20+IHdyb3RlOg0KPj4NCj4+IEhpIENoaWEtV2VpLA0KPj4NCj4+IE9uIDEwLzEvMjAx
+OSAxMToxMSBQTSwgQ2hpYS1XZWksIFdhbmcgd3JvdGU6DQo+Pj4gVXBkYXRlIHRoZSBBc3BlZWQg
+UEVDSSBkcml2ZXIgd2l0aCB0aGUgQVNUMjYwMCBjb21wYXRpYmxlIHN0cmluZy4NCj4+PiBBIG5l
+dyBjb21wdGFiaWxlIHN0cmluZyBpcyBuZWVkZWQgZm9yIHRoZSBleHRlbmRlZCBIVyBmZWF0dXJl
+IG9mIA0KPj4+IEFTVDI2MDAuDQo+Pj4NCj4+PiBDaGlhLVdlaSwgV2FuZyAoMik6DQo+Pj4gICAg
+IHBlY2k6IGFzcGVlZDogQWRkIEFTVDI2MDAgY29tcGF0aWJsZSBzdHJpbmcNCj4+PiAgICAgZHQt
+YmluZGluZ3M6IHBlY2k6IGFzcGVlZDogQWRkIEFTVDI2MDAgY29tcGF0aWJsZQ0KPj4+DQo+Pj4g
+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BlY2kvcGVjaS1hc3BlZWQudHh0
+IHwgMSArDQo+Pj4gICAgZHJpdmVycy9wZWNpL3BlY2ktYXNwZWVkLmMgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHwgMSArDQo+Pj4gICAgMiBmaWxlcyBjaGFuZ2VkLCAyIGluc2VydGlvbnMo
+KykNCj4+Pg0KPj4NCj4+IFBFQ0kgc3Vic3lzdGVtIGlzbid0IGluIGxpbnV4IHVwc3RyZWFtIHll
+dCBzbyB5b3Ugc2hvdWxkIHN1Ym1pdCBpdCANCj4+IGludG8gT3BlbkJNQyBkZXYtNS4zIHRyZWUg
+b25seS4NCj4gDQo+IE9wZW5CTUMgaGFzIGJlZW4gY2FycnlpbmcgdGhlIG91dCBvZiB0cmVlIHBh
+dGNoZXMgZm9yIHNvbWUgdGltZSBub3cuIEkgDQo+IGhhdmVuJ3Qgc2VlbiBhIG5ldyB2ZXJzaW9u
+IHBvc3RlZCBmb3IgYSB3aGlsZS4gRG8geW91IGhhdmUgYSB0aW1lbGluZSANCj4gZm9yIHdoZW4g
+eW91IHBsYW4gdG8gc3VibWl0IGl0IHVwc3RyZWFtPw0KDQpUaGFua3MgZm9yIHlvdXIgZWZmb3J0
+IGZvciBjYXJyeWluZyB0aGUgb3V0IG9mIHRyZWUgcGF0Y2hlcyBpbiBPcGVuQk1DLg0KSSBkb24n
+dCBoYXZlIGEgZXhhY3QgdGltZWxpbmUgYnV0IEknbSBnb25uYSB1cHN0cmVhbSBpdCBhcyBzb29u
+IGFzIGl0IGdldHMgcmVhZHkuDQoNClRoYW5rcywNCg0KSmFlDQo=
