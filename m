@@ -2,100 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3EECC9957
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 09:59:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26462C9967
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 10:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbfJCH7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 03:59:18 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:59222 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbfJCH7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 03:59:17 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id x937wTkY007720;
-        Thu, 3 Oct 2019 16:58:34 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x937wTkY007720
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1570089514;
-        bh=59eE/rGcp2OFwwXp+ofMwhXaVSnXW6C8LJ8vAqEhBT8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JkW9JFD3WiK28/HG0qiHqAjyVx6xAYXVsr8kJZ1Brp9fIgb20YDB1nxm4XHsG7CzU
-         H9I9whiVaS6vOFtE3y28YTYHxAPWBiyGtdvm6wjPNRr0ZwdZr5tWSsFRZMjZpSXNq9
-         UJWoUtH+w0F8ip47kjVGCQHmeVk5mn85mbal0ToUwgv8fuwUhF/OldGknyTOC3IH+p
-         91LewO4WtqsNVD+w7P5Ps6qkXtnofeJ1q7QSJKU2SmhpdL6/7tJwN1Cg9TUX2ovVRH
-         +i5SZARSaLDGDXJo+PoTcI5eJJMUl3r7bP3+EXpCUXnXLUW3PLfByk0gmEt/5jxFtf
-         /n5BF/hn6X18g==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Matthias Maennich <maennich@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shaun Ruffell <sruffell@sruffell.net>,
-        linux-kbuild@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] nsdeps: make generated patches independent of locale
-Date:   Thu,  3 Oct 2019 16:58:26 +0900
-Message-Id: <20191003075826.7478-7-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191003075826.7478-1-yamada.masahiro@socionext.com>
-References: <20191003075826.7478-1-yamada.masahiro@socionext.com>
+        id S1728794AbfJCIAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 04:00:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47228 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727385AbfJCIAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 04:00:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5D91EB0DA;
+        Thu,  3 Oct 2019 08:00:09 +0000 (UTC)
+Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
+To:     David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+References: <20190909193020.GD2063@dhcp22.suse.cz>
+ <20190925070817.GH23050@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1909261149380.39830@chino.kir.corp.google.com>
+ <20190927074803.GB26848@dhcp22.suse.cz>
+ <CAHk-=wgba5zOJtGBFCBP3Oc1m4ma+AR+80s=hy=BbvNr3GqEmA@mail.gmail.com>
+ <20190930112817.GC15942@dhcp22.suse.cz>
+ <20191001054343.GA15624@dhcp22.suse.cz>
+ <fac13297-424f-33b0-e01d-d72b949a73fe@suse.cz>
+ <alpine.DEB.2.21.1910011318050.38265@chino.kir.corp.google.com>
+ <a5abc877-26de-ed3c-eb33-71474301c852@suse.cz>
+ <20191002103422.GJ15624@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1910021525180.63052@chino.kir.corp.google.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <788d3e5b-40e6-916a-9e3f-7f03fa9d618d@suse.cz>
+Date:   Thu, 3 Oct 2019 10:00:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1910021525180.63052@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-scripts/nsdeps automatically generates a patch to add MODULE_IMPORT_NS
-tags, and what is nicer, it sorts the lines alphabetically with the
-'sort' command. However, the output from the 'sort' command depends on
-locale.
+On 10/3/19 12:32 AM, David Rientjes wrote:
+> On Wed, 2 Oct 2019, Michal Hocko wrote:
+> 
+>>>> If 
+>>>> hugetlb wants to stress this to the fullest extent possible, it already 
+>>>> appropriately uses __GFP_RETRY_MAYFAIL.
+>>>
+>>> Which doesn't work anymore right now, and should again after this patch.
+>>
+>> I didn't get to fully digest the patch Vlastimil is proposing. (Ab)using
+>> __GFP_NORETRY is quite subtle but it is already in place with some
+>> explanation and a reference to THPs. So while I am not really happy it
+>> is at least something you can reason about.
+>>
+> 
+> It's a no-op:
+> 
+>         /* Do not loop if specifically requested */
+>         if (gfp_mask & __GFP_NORETRY)
+>                 goto nopage;
+> 
+>         /*
+>          * Do not retry costly high order allocations unless they are
+>          * __GFP_RETRY_MAYFAIL
+>          */
+>         if (costly_order && !(gfp_mask & __GFP_RETRY_MAYFAIL))
+>                 goto nopage;
+> 
+> So I'm not sure we should spend too much time discussing a hunk of a patch 
+> that doesn't do anything.
 
-For example, I got this:
-
-$ { echo usbstorage; echo usb_storage; } | LANG=en_US.UTF-8 sort
-usbstorage
-usb_storage
-$ { echo usbstorage; echo usb_storage; } | LANG=C sort
-usb_storage
-usbstorage
-
-So, this means people might potentially send different patches.
-
-This kind of issue was reported in the past, for example,
-commit f55f2328bb28 ("kbuild: make sorting initramfs contents
-independent of locale").
-
-Adding 'LANG=C' is a conventional way of fixing when a deterministic
-result is desirable.
-
-I added 'LANG=C' very close to the 'sort' command since changing
-locale affects the language of error messages etc. We should respect
-users' choice as much as possible.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Matthias Maennich <maennich@google.com>
----
-
-Changes in v2:
-  - Add more commit log about the locale impact
-
- scripts/nsdeps | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/nsdeps b/scripts/nsdeps
-index 964b7fb8c546..3754dac13b31 100644
---- a/scripts/nsdeps
-+++ b/scripts/nsdeps
-@@ -41,7 +41,7 @@ generate_deps() {
- 		for source_file in $mod_source_files; do
- 			sed '/MODULE_IMPORT_NS/Q' $source_file > ${source_file}.tmp
- 			offset=$(wc -l ${source_file}.tmp | awk '{print $1;}')
--			cat $source_file | grep MODULE_IMPORT_NS | sort -u >> ${source_file}.tmp
-+			cat $source_file | grep MODULE_IMPORT_NS | LANG=C sort -u >> ${source_file}.tmp
- 			tail -n +$((offset +1)) ${source_file} | grep -v MODULE_IMPORT_NS >> ${source_file}.tmp
- 			if ! diff -q ${source_file} ${source_file}.tmp; then
- 				mv ${source_file}.tmp ${source_file}
--- 
-2.17.1
-
+I believe Michal was talking about my (ab)use of __GFP_NORETRY, where it
+controls the earlier 'goto nopage' condition. Yes, with your patches alone,
+the addition of __GFP_NORETRY in the second attempt is a no-op, although
+then I don't see the point of confusing people reading the code with it.
