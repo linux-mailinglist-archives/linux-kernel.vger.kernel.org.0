@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABFE4CA9E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D47ECAB0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393299AbfJCRA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:00:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57764 "EHLO mail.kernel.org"
+        id S2388986AbfJCQQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:16:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392763AbfJCQpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:45:17 -0400
+        id S2388936AbfJCQQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:16:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A2B220865;
-        Thu,  3 Oct 2019 16:45:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E24920700;
+        Thu,  3 Oct 2019 16:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121116;
-        bh=wDcK0SuxOI7PvWtcKRyhb1YAeAPrSWo4zVxce4QENGk=;
+        s=default; t=1570119378;
+        bh=vaMMPoKAfHhldi0winWWmJRpYRh/kQDxIZEj1PKaLew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h/otgvYEagthWCiNRomdrZiAQ6/fuDYAnzZHToshLz7ZTi2kxu+CFbYuLTACN+O4V
-         0wFQnFQwuRzX1BFETQnNhDGE/CZ3nDpcoNFhj90YQMXD6irK+3jv7rpisv9kjXFehj
-         igf0Q14dnE0eSKfT61+Gnnr1r+STh1qeqNrCMSzM=
+        b=0K4Dk/SLWpm60ixe9CrcVl4HsSt9e6+4Nd9bwYlfVKZHCJXyORdeAb+kFkwGw6uqR
+         shOl6/wykzwU+PTsDOESD+4ahv/5sDb/tmNlzF70pf1N6d/cY0gi60iRmRbkZde8cx
+         yce3k5W+NGGhXfBBte7XFEHwWGGra0fhKDUKJ9Hw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 143/344] media: dvb-core: fix a memory leak bug
-Date:   Thu,  3 Oct 2019 17:51:48 +0200
-Message-Id: <20191003154554.365614065@linuxfoundation.org>
+Subject: [PATCH 4.19 044/211] ALSA: hda - Show the fatal CORB/RIRB error more clearly
+Date:   Thu,  3 Oct 2019 17:51:50 +0200
+Message-Id: <20191003154458.049402720@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit fcd5ce4b3936242e6679875a4d3c3acfc8743e15 ]
+[ Upstream commit dd65f7e19c6961ba6a69f7c925021b7a270cb950 ]
 
-In dvb_create_media_entity(), 'dvbdev->entity' is allocated through
-kzalloc(). Then, 'dvbdev->pads' is allocated through kcalloc(). However, if
-kcalloc() fails, the allocated 'dvbdev->entity' is not deallocated, leading
-to a memory leak bug. To fix this issue, free 'dvbdev->entity' before
-returning -ENOMEM.
+The last fallback of CORB/RIRB communication error recovery is to turn
+on the single command mode, and this last resort usually means that
+something is really screwed up.  Instead of a normal dev_err(), show
+the error more clearly with dev_WARN() with the caller stack trace.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Also, show the bus-reset fallback also as an error, too.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/dvb-core/dvbdev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/pci/hda/hda_controller.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index a3393cd4e584f..7557fbf9d3068 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -339,8 +339,10 @@ static int dvb_create_media_entity(struct dvb_device *dvbdev,
- 	if (npads) {
- 		dvbdev->pads = kcalloc(npads, sizeof(*dvbdev->pads),
- 				       GFP_KERNEL);
--		if (!dvbdev->pads)
-+		if (!dvbdev->pads) {
-+			kfree(dvbdev->entity);
- 			return -ENOMEM;
-+		}
+diff --git a/sound/pci/hda/hda_controller.c b/sound/pci/hda/hda_controller.c
+index a41c1bec7c88c..8fcb421193e02 100644
+--- a/sound/pci/hda/hda_controller.c
++++ b/sound/pci/hda/hda_controller.c
+@@ -877,10 +877,13 @@ static int azx_rirb_get_response(struct hdac_bus *bus, unsigned int addr,
+ 	 */
+ 	if (hbus->allow_bus_reset && !hbus->response_reset && !hbus->in_reset) {
+ 		hbus->response_reset = 1;
++		dev_err(chip->card->dev,
++			"No response from codec, resetting bus: last cmd=0x%08x\n",
++			bus->last_cmd[addr]);
+ 		return -EAGAIN; /* give a chance to retry */
  	}
  
- 	switch (type) {
+-	dev_err(chip->card->dev,
++	dev_WARN(chip->card->dev,
+ 		"azx_get_response timeout, switching to single_cmd mode: last cmd=0x%08x\n",
+ 		bus->last_cmd[addr]);
+ 	chip->single_cmd = 1;
 -- 
 2.20.1
 
