@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2C7CA537
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DA6CA583
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:35:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391872AbfJCQcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:32:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39338 "EHLO mail.kernel.org"
+        id S2389735AbfJCQfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403927AbfJCQcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:32:00 -0400
+        id S2404014AbfJCQdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:33:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C20320830;
-        Thu,  3 Oct 2019 16:31:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4E5F2133F;
+        Thu,  3 Oct 2019 16:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120319;
-        bh=KqDLmtdUKBEwEgCmLxElOgvKZQwQkg4iinUvA4Igcok=;
+        s=default; t=1570120384;
+        bh=WsyQeQ0LKRlhdI1QG341Q+aStMLnCD6mISC3+nH3hEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pyLqIQJUN1iW6P6EoNkjGFKRMVa9Wj7prc5x26J+csQ1effH1ESqiI4NKe8QuGVGR
-         GDtO+Z6qjLmZ7ohQoc2tonROpmrZulh4huASNyQwCcbRxyVOS9u5AOKnX5solmMgEC
-         gfkq7Mso4DtLJW+90S4vFdi+4X7oUalu5SGUfu1s=
+        b=ABGye2nzhNtpJV52C4Z0wJcxmKQBbUhCV7jycS0jFx/O2UMFp/pE9MsVyxye/r3RL
+         7FkQSl3avAxsOQgCaVlpYyYbkSo6RY7R8H0L9GQ9BtiONCSDwV6aa7lNt7ST0Ossif
+         zPvSV3zxw5NyaCENKLwFwYqxhDSyAvKMWzbRrKTw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Eidelman <anton@lightbitslabs.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        stable@vger.kernel.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 161/313] nvme-multipath: fix ana log nsid lookup when nsid is not found
-Date:   Thu,  3 Oct 2019 17:52:19 +0200
-Message-Id: <20191003154548.795139311@linuxfoundation.org>
+Subject: [PATCH 5.2 164/313] ASoC: Intel: Haswell: Adjust machine device private context
+Date:   Thu,  3 Oct 2019 17:52:22 +0200
+Message-Id: <20191003154549.108845163@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -47,79 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Eidelman <anton@lightbitslabs.com>
+From: Cezary Rojewski <cezary.rojewski@intel.com>
 
-[ Upstream commit e01f91dff91c7b16a6e3faf2565017d497a73f83 ]
+[ Upstream commit ca964edf0ddbfec2cb10b3d251d09598e7ca9b13 ]
 
-ANA log parsing invokes nvme_update_ana_state() per ANA group desc.
-This updates the state of namespaces with nsids in desc->nsids[].
+Apart from Haswell machines, all other devices have their private data
+set to snd_soc_acpi_mach instance.
 
-Both ctrl->namespaces list and desc->nsids[] array are sorted by nsid.
-Hence nvme_update_ana_state() performs a single walk over ctrl->namespaces:
-- if current namespace matches the current desc->nsids[n],
-  this namespace is updated, and n is incremented.
-- the process stops when it encounters the end of either
-  ctrl->namespaces end or desc->nsids[]
+Changes for HSW/ BDW boards introduced with series:
+https://patchwork.kernel.org/cover/10782035/
 
-In case desc->nsids[n] does not match any of ctrl->namespaces,
-the remaining nsids following desc->nsids[n] will not be updated.
-Such situation was considered abnormal and generated WARN_ON_ONCE.
+added support for dai_link platform_name adjustments within card probe
+routines. These take for granted private_data points to
+snd_soc_acpi_mach whereas for Haswell, it's sst_pdata instead. Change
+private context of platform_device - representing machine board - to
+address this.
 
-However ANA log MAY contain nsids not (yet) found in ctrl->namespaces.
-For example, lets consider the following scenario:
-- nvme0 exposes namespaces with nsids = [2, 3] to the host
-- a new namespace nsid = 1 is added dynamically
-- also, a ANA topology change is triggered
-- NS_CHANGED aen is generated and triggers scan_work
-- before scan_work discovers nsid=1 and creates a namespace, a NOTICE_ANA
-  aen was issues and ana_work receives ANA log with nsids=[1, 2, 3]
-
-Result: ana_work fails to update ANA state on existing namespaces [2, 3]
-
-Solution:
-Change the way nvme_update_ana_state() namespace list walk
-checks the current namespace against desc->nsids[n] as follows:
-a) ns->head->ns_id < desc->nsids[n]: keep walking ctrl->namespaces.
-b) ns->head->ns_id == desc->nsids[n]: match, update the namespace
-c) ns->head->ns_id >= desc->nsids[n]: skip to desc->nsids[n+1]
-
-This enables correct operation in the scenario described above.
-This also allows ANA log to contain nsids currently invisible
-to the host, i.e. inactive nsids.
-
-Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
-Reviewed-by:   James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Fixes: e87055d732e3 ("ASoC: Intel: haswell: platform name fixup support")
+Fixes: 7e40ddcf974a ("ASoC: Intel: bdw-rt5677: platform name fixup support")
+Fixes: 2d067b2807f9 ("ASoC: Intel: broadwell: platform name fixup support")
+Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
+Link: https://lore.kernel.org/r/20190822113616.22702-2-cezary.rojewski@intel.com
+Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ sound/soc/intel/common/sst-acpi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 304aa8a65f2f8..f928bcfc57b5b 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -501,14 +501,16 @@ static int nvme_update_ana_state(struct nvme_ctrl *ctrl,
- 
- 	down_write(&ctrl->namespaces_rwsem);
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
--		if (ns->head->ns_id != le32_to_cpu(desc->nsids[n]))
-+		unsigned nsid = le32_to_cpu(desc->nsids[n]);
-+
-+		if (ns->head->ns_id < nsid)
- 			continue;
--		nvme_update_ns_ana_state(desc, ns);
-+		if (ns->head->ns_id == nsid)
-+			nvme_update_ns_ana_state(desc, ns);
- 		if (++n == nr_nsids)
- 			break;
+diff --git a/sound/soc/intel/common/sst-acpi.c b/sound/soc/intel/common/sst-acpi.c
+index 0e8e0a7a11df3..5854868650b9e 100644
+--- a/sound/soc/intel/common/sst-acpi.c
++++ b/sound/soc/intel/common/sst-acpi.c
+@@ -141,11 +141,12 @@ static int sst_acpi_probe(struct platform_device *pdev)
  	}
- 	up_write(&ctrl->namespaces_rwsem);
--	WARN_ON_ONCE(n < nr_nsids);
- 	return 0;
- }
+ 
+ 	platform_set_drvdata(pdev, sst_acpi);
++	mach->pdata = sst_pdata;
+ 
+ 	/* register machine driver */
+ 	sst_acpi->pdev_mach =
+ 		platform_device_register_data(dev, mach->drv_name, -1,
+-					      sst_pdata, sizeof(*sst_pdata));
++					      mach, sizeof(*mach));
+ 	if (IS_ERR(sst_acpi->pdev_mach))
+ 		return PTR_ERR(sst_acpi->pdev_mach);
  
 -- 
 2.20.1
