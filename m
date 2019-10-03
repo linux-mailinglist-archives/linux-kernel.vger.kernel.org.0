@@ -2,133 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD5DCA254
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 693EBCA286
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbfJCQEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:04:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731056AbfJCQEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:04:09 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C3F0B3D966;
-        Thu,  3 Oct 2019 16:04:08 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-11.phx2.redhat.com [10.3.112.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F30E819C6A;
-        Thu,  3 Oct 2019 16:04:07 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 96DF211E4; Thu,  3 Oct 2019 13:04:04 -0300 (BRT)
-Date:   Thu, 3 Oct 2019 13:04:04 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Josh Hunt <johunt@akamai.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, john@metanate.com, jolsa@kernel.org,
-        alexander.shishkin@linux.intel.com, khlebnikov@yandex-team.ru,
-        namhyung@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: 4.19 dwarf unwinding broken
-Message-ID: <20191003160404.GG3531@redhat.com>
-References: <ab87d20b-526c-9435-0532-c298beeb0318@akamai.com>
- <20191003100300.GA22784@krava>
- <d0e0a675-1344-a47b-c27e-ea05230d88b8@akamai.com>
+        id S1732708AbfJCQGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:06:10 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45461 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732666AbfJCQGH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:06:07 -0400
+Received: by mail-yw1-f65.google.com with SMTP id x65so1199157ywf.12;
+        Thu, 03 Oct 2019 09:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HLNNT4AIEjIBRo/lVJ/0ZBtdA9h4araJ69Seis53dWQ=;
+        b=fY+6Jifakv49XRBxdyt+s4Vqj6XBQnOPNAStPbm49uy988veIOvPI/V3Sy04K+Lp/i
+         9nJMoST/5wPj1ojvMgOqAGpE0625jxeungZAmysfm4alrJTMc+KrEESKo1VMk8MNvR9Y
+         397V54nnMVK9X2+83ZrM0pca0/8NA1xxnWZvFIl26VyMAvUfAiV8j8nngj9H7oBgR5WZ
+         fMgbjqJtswkD43Bglr5/Ylnf4KckUv6e6Fan0AKN5wGjZqDkMhlnfPJu75vQMXJ5VI+G
+         jIEwjD0k7i0K2UQRruAfmK01a+T/dNrKVfp9uVYsKbChcspbGXWWG19eGGgGVPltNt+7
+         VisA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HLNNT4AIEjIBRo/lVJ/0ZBtdA9h4araJ69Seis53dWQ=;
+        b=JXRmc7oA6PhvzdXmvwWIrbKC8NeqVNj8GCshEpk2TiPoszd7GxcTwz7XwV+ihIqzcp
+         hTiEyF/0z/ysj6NmGoVx64Gc3CWkHg3ytaiC36kyQRGi41AwRT6eyoXJwGqNrPmlBxyS
+         dhdv4IgSR7+2tSkBA7o06IYWiakPhD7CkZBinHChDX1El9RbY4FNQmPbMw4n2pZFTX+M
+         vTnl38kl1PBmnD3qJiKHeOJmSZargEJOArhuUvAh4yuaSY1XY7+qYUq4qd9usJveGwit
+         hOLMCAEGPzdC634HdoUgyJxMRuk/+Av7LV7BXfwXBnAIyXFOD4yl10sEvZZW4QRVGdmk
+         Q8lw==
+X-Gm-Message-State: APjAAAVrDQxy/mQ8uyNRN1XRWKuAEQ0iwUAG0lai3dcgVqp8okmd/Da5
+        WH/uLHU+qOSauhHuJtdh7WbfCs0Yy6vFXTm4m/U=
+X-Google-Smtp-Source: APXvYqzDJqamusQ0BB8tClY58QAeDkzR4fFBm6KrwPRGlb9RxSwrwAJCXBteDfm4gLKsevMcJoAhgKIlUl2aL15Bozg=
+X-Received: by 2002:a81:a401:: with SMTP id b1mr6798539ywh.280.1570118765879;
+ Thu, 03 Oct 2019 09:06:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0e0a675-1344-a47b-c27e-ea05230d88b8@akamai.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 03 Oct 2019 16:04:09 +0000 (UTC)
+References: <20191003082232.4136-1-colin.king@canonical.com> <125634cd-b636-c4dc-4e05-bc5c543b7230@amd.com>
+In-Reply-To: <125634cd-b636-c4dc-4e05-bc5c543b7230@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 3 Oct 2019 12:05:52 -0400
+Message-ID: <CADnq5_OAoct7q-CQQ=aLoUXpGcJa8qf=P7V1g=FS9Z6wiPhGog@mail.gmail.com>
+Subject: Re: [PATCH][drm-next] drm/amd/display: fix spelling mistake
+ AUTHENICATED -> AUTHENTICATED
+To:     Harry Wentland <hwentlan@amd.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "Liu, Wenjing" <Wenjing.Liu@amd.com>,
+        "Lakha, Bhawanpreet" <Bhawanpreet.Lakha@amd.com>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.or" <dri-devel@lists.freedesktop.or>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Oct 03, 2019 at 08:17:38AM -0700, Josh Hunt escreveu:
-> On 10/3/19 3:03 AM, Jiri Olsa wrote:
-> >On Thu, Oct 03, 2019 at 12:54:09AM -0700, Josh Hunt wrote:
-> >>The following commit is breaking dwarf unwinding on 4.19 kernels:
+On Thu, Oct 3, 2019 at 9:27 AM Harry Wentland <hwentlan@amd.com> wrote:
+>
+> On 2019-10-03 4:22 a.m., Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
 > >
-> >how?
-> 
-> When doing something like:
-> perf record -p $(cat /var/run/app.pid) -g --call-graph dwarf -F 999
-> -- sleep 3
-> 
-> with 4.19.75 perf I see things like:
-> 
-> app_Thr00 26247 1810131.375329:     168288 cycles:ppp:
-> 
-> app_Thr01 26767 1810131.377449:     344415 cycles:ppp:
-> 
-> uvm:WorkerThread 26746 1810131.383052:        504 cycles:ppp:
->         ffffffff9f77cce0 _raw_spin_lock+0x10 (/boot/vmlinux-4.19.46)
->         ffffffff9f181527 __perf_event_task_sched_in+0xf7
-> (/boot/vmlinux-4.19.46)
->         ffffffff9f09a7b8 finish_task_switch+0x158 (/boot/vmlinux-4.19.46)
->         ffffffff9f778276 __schedule+0x2f6 (/boot/vmlinux-4.19.46)
->         ffffffff9f7787f2 schedule+0x32 (/boot/vmlinux-4.19.46)
->         ffffffff9f77bb0a schedule_hrtimeout_range_clock+0x8a
-> (/boot/vmlinux-4.19.46)
->         ffffffff9f22ea12 poll_schedule_timeout.constprop.6+0x42
-> (/boot/vmlinux-4.19.46)
->         ffffffff9f22eeeb do_sys_poll+0x4ab (/boot/vmlinux-4.19.46)
->         ffffffff9f22fb7b __se_sys_poll+0x5b (/boot/vmlinux-4.19.46)
->         ffffffff9f0023de do_syscall_64+0x4e (/boot/vmlinux-4.19.46)
->         ffffffff9f800088 entry_SYSCALL_64+0x68 (/boot/vmlinux-4.19.46)
-> ---
-> 
-> and with 4.19.75 perf with e5adfc3e7e77 reverted those empty call
-> stacks go away and also other call stacks show more thread details:
-> 
-> uvm:WorkerThread 26746 1810207.336391:          1 cycles:ppp:
->         ffffffff9f181505 __perf_event_task_sched_in+0xd5
-> (/boot/vmlinux-4.19.46)
->         ffffffff9f09a7b8 finish_task_switch+0x158 (/boot/vmlinux-4.19.46)
->         ffffffff9f778276 __schedule+0x2f6 (/boot/vmlinux-4.19.46)
->         ffffffff9f7787f2 schedule+0x32 (/boot/vmlinux-4.19.46)
->         ffffffff9f77bb0a schedule_hrtimeout_range_clock+0x8a
-> (/boot/vmlinux-4.19.46)
->         ffffffff9f22ea12 poll_schedule_timeout.constprop.6+0x42
-> (/boot/vmlinux-4.19.46)
->         ffffffff9f22eeeb do_sys_poll+0x4ab (/boot/vmlinux-4.19.46)
->         ffffffff9f22fb7b __se_sys_poll+0x5b (/boot/vmlinux-4.19.46)
->         ffffffff9f0023de do_syscall_64+0x4e (/boot/vmlinux-4.19.46)
->         ffffffff9f800088 entry_SYSCALL_64+0x68 (/boot/vmlinux-4.19.46)
->             7f7ef3f5c90d [unknown] (/lib/x86_64-linux-gnu/libc-2.23.so)
->                  3eb5c99 poll+0xc9 (inlined)
->                  3eb5c99 colib::ipc::EventFd::wait+0xc9
-> (/usr/local/bin/app)
->                  3296779 uvm::WorkerThread::run+0x129 (/usr/local/bin/app)
->         ffffffffffffffff [unknown] ([unknown])
-> 
-> They also look the same as earlier kernel versions we have running.
-> 
-> In addition reading e8ba2906f6b's changelog sounded very similar to
-> what I was seeing. This application launches a # of threads and is
-> definitely already running before the invocation of perf.
-> 
-> Thanks for looking at this.
+> > There is a spelling mistake in the macros H1_A45_AUTHENICATED and
+> > D1_A4_AUTHENICATED, fix these by adding the missing T.
+> >
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>
+> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+>
 
+Applied.  thanks!
 
-So, if at __event__synthesize_thread()
+Alex
 
-
-                if (pid == tgid &&
-                    perf_event__synthesize_mmap_events(tool, mmap_event, pid, tgid,
-                                                       process, machine, mmap_data))
-
-
-We did something like:
-
-	if (pid != tgid && machine__find_thread(tgid, tgid) == NULL) {
-		struct thread *t = thread__new(tgid, tgid);
-
-		then use the info for pid to get synthesize the thread
-                group leader so that the get the sharing we need?
-	}
-
-
-- Arnaldo
+> Harry
+>
+> > ---
+> >  drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h      |  4 ++--
+> >  .../drm/amd/display/modules/hdcp/hdcp1_execution.c   |  4 ++--
+> >  .../drm/amd/display/modules/hdcp/hdcp1_transition.c  | 12 ++++++------
+> >  drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c  |  8 ++++----
+> >  4 files changed, 14 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
+> > index 402bb7999093..5664bc0b5bd0 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp.h
+> > @@ -176,7 +176,7 @@ enum mod_hdcp_hdcp1_state_id {
+> >       H1_A0_WAIT_FOR_ACTIVE_RX,
+> >       H1_A1_EXCHANGE_KSVS,
+> >       H1_A2_COMPUTATIONS_A3_VALIDATE_RX_A6_TEST_FOR_REPEATER,
+> > -     H1_A45_AUTHENICATED,
+> > +     H1_A45_AUTHENTICATED,
+> >       H1_A8_WAIT_FOR_READY,
+> >       H1_A9_READ_KSV_LIST,
+> >       HDCP1_STATE_END = H1_A9_READ_KSV_LIST
+> > @@ -188,7 +188,7 @@ enum mod_hdcp_hdcp1_dp_state_id {
+> >       D1_A1_EXCHANGE_KSVS,
+> >       D1_A23_WAIT_FOR_R0_PRIME,
+> >       D1_A2_COMPUTATIONS_A3_VALIDATE_RX_A5_TEST_FOR_REPEATER,
+> > -     D1_A4_AUTHENICATED,
+> > +     D1_A4_AUTHENTICATED,
+> >       D1_A6_WAIT_FOR_READY,
+> >       D1_A7_READ_KSV_LIST,
+> >       HDCP1_DP_STATE_END = D1_A7_READ_KSV_LIST,
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
+> > index 9e7302eac299..3db4a7da414f 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_execution.c
+> > @@ -476,7 +476,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_execution(struct mod_hdcp *hdcp,
+> >               status = computations_validate_rx_test_for_repeater(hdcp,
+> >                               event_ctx, input);
+> >               break;
+> > -     case H1_A45_AUTHENICATED:
+> > +     case H1_A45_AUTHENTICATED:
+> >               status = authenticated(hdcp, event_ctx, input);
+> >               break;
+> >       case H1_A8_WAIT_FOR_READY:
+> > @@ -513,7 +513,7 @@ extern enum mod_hdcp_status mod_hdcp_hdcp1_dp_execution(struct mod_hdcp *hdcp,
+> >               status = computations_validate_rx_test_for_repeater(
+> >                               hdcp, event_ctx, input);
+> >               break;
+> > -     case D1_A4_AUTHENICATED:
+> > +     case D1_A4_AUTHENTICATED:
+> >               status = authenticated_dp(hdcp, event_ctx, input);
+> >               break;
+> >       case D1_A6_WAIT_FOR_READY:
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
+> > index 1d187809b709..136b8011ff3f 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp1_transition.c
+> > @@ -81,11 +81,11 @@ enum mod_hdcp_status mod_hdcp_hdcp1_transition(struct mod_hdcp *hdcp,
+> >                       set_state_id(hdcp, output, H1_A8_WAIT_FOR_READY);
+> >               } else {
+> >                       callback_in_ms(0, output);
+> > -                     set_state_id(hdcp, output, H1_A45_AUTHENICATED);
+> > +                     set_state_id(hdcp, output, H1_A45_AUTHENTICATED);
+> >                       HDCP_FULL_DDC_TRACE(hdcp);
+> >               }
+> >               break;
+> > -     case H1_A45_AUTHENICATED:
+> > +     case H1_A45_AUTHENTICATED:
+> >               if (input->link_maintenance != PASS) {
+> >                       /* 1A-07: consider invalid ri' a failure */
+> >                       /* 1A-07a: consider read ri' not returned a failure */
+> > @@ -129,7 +129,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_transition(struct mod_hdcp *hdcp,
+> >                       break;
+> >               }
+> >               callback_in_ms(0, output);
+> > -             set_state_id(hdcp, output, H1_A45_AUTHENICATED);
+> > +             set_state_id(hdcp, output, H1_A45_AUTHENTICATED);
+> >               HDCP_FULL_DDC_TRACE(hdcp);
+> >               break;
+> >       default:
+> > @@ -224,11 +224,11 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
+> >                       set_watchdog_in_ms(hdcp, 5000, output);
+> >                       set_state_id(hdcp, output, D1_A6_WAIT_FOR_READY);
+> >               } else {
+> > -                     set_state_id(hdcp, output, D1_A4_AUTHENICATED);
+> > +                     set_state_id(hdcp, output, D1_A4_AUTHENTICATED);
+> >                       HDCP_FULL_DDC_TRACE(hdcp);
+> >               }
+> >               break;
+> > -     case D1_A4_AUTHENICATED:
+> > +     case D1_A4_AUTHENTICATED:
+> >               if (input->link_integiry_check != PASS ||
+> >                               input->reauth_request_check != PASS) {
+> >                       /* 1A-07: restart hdcp on a link integrity failure */
+> > @@ -295,7 +295,7 @@ enum mod_hdcp_status mod_hdcp_hdcp1_dp_transition(struct mod_hdcp *hdcp,
+> >                       fail_and_restart_in_ms(0, &status, output);
+> >                       break;
+> >               }
+> > -             set_state_id(hdcp, output, D1_A4_AUTHENICATED);
+> > +             set_state_id(hdcp, output, D1_A4_AUTHENTICATED);
+> >               HDCP_FULL_DDC_TRACE(hdcp);
+> >               break;
+> >       default:
+> > diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c
+> > index d868f556d180..3982ced5f969 100644
+> > --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c
+> > +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_log.c
+> > @@ -136,8 +136,8 @@ char *mod_hdcp_state_id_to_str(int32_t id)
+> >               return "H1_A1_EXCHANGE_KSVS";
+> >       case H1_A2_COMPUTATIONS_A3_VALIDATE_RX_A6_TEST_FOR_REPEATER:
+> >               return "H1_A2_COMPUTATIONS_A3_VALIDATE_RX_A6_TEST_FOR_REPEATER";
+> > -     case H1_A45_AUTHENICATED:
+> > -             return "H1_A45_AUTHENICATED";
+> > +     case H1_A45_AUTHENTICATED:
+> > +             return "H1_A45_AUTHENTICATED";
+> >       case H1_A8_WAIT_FOR_READY:
+> >               return "H1_A8_WAIT_FOR_READY";
+> >       case H1_A9_READ_KSV_LIST:
+> > @@ -150,8 +150,8 @@ char *mod_hdcp_state_id_to_str(int32_t id)
+> >               return "D1_A23_WAIT_FOR_R0_PRIME";
+> >       case D1_A2_COMPUTATIONS_A3_VALIDATE_RX_A5_TEST_FOR_REPEATER:
+> >               return "D1_A2_COMPUTATIONS_A3_VALIDATE_RX_A5_TEST_FOR_REPEATER";
+> > -     case D1_A4_AUTHENICATED:
+> > -             return "D1_A4_AUTHENICATED";
+> > +     case D1_A4_AUTHENTICATED:
+> > +             return "D1_A4_AUTHENTICATED";
+> >       case D1_A6_WAIT_FOR_READY:
+> >               return "D1_A6_WAIT_FOR_READY";
+> >       case D1_A7_READ_KSV_LIST:
+> >
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
