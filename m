@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C3FCA1DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B55CA1E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731466AbfJCP75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:59:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43380 "EHLO mail.kernel.org"
+        id S1731492AbfJCQAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:00:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731447AbfJCP7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:59:55 -0400
+        id S1731473AbfJCQAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C441720700;
-        Thu,  3 Oct 2019 15:59:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D28321848;
+        Thu,  3 Oct 2019 15:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118394;
-        bh=M5k0BU5EeWicDdY1kbiDXTopE3+Q1rOXUHpx4wMdFFg=;
+        s=default; t=1570118399;
+        bh=UBCdzCG37r0flkITDq3m10cAnvvif7pzX4cphOzD3yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CqJOsLlA57YvIQtyiNmMxH/ILJQ4lmXO9FdsziGMEew/X07/dBE8NNPqn3BMJWPLD
-         LHvrCaSdAU4u4xvTq9PsDH+wTbUwP0E2CA5SEngclPPv643JGqpS/8HD4w0LzpvPVL
-         0MiAFVI0timWAPl6CWfNlmWhya+GUhutdYi0JK/I=
+        b=Clx3ng8ZY68RlSz+gn7khC8BMzR/MkZxtEf9Q4glpUDpTVb3qhVuKBrJbHZMeYWVb
+         CqT5HM+582IfOmvhN3enZcDzlLVqXcUom6m5C6vMUwvup74v8ym0tMD17FgI3HBwL8
+         cKcA7dVUIFHI9AiZbMy/SgTO5PBU/jUMsqRZQ58I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Salyzyn <salyzyn@android.com>,
-        linux-security-module@vger.kernel.org, kernel-team@android.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 96/99] ovl: filter of trusted xattr results in audit
-Date:   Thu,  3 Oct 2019 17:53:59 +0200
-Message-Id: <20191003154342.358048872@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 98/99] btrfs: Relinquish CPUs in btrfs_compare_trees
+Date:   Thu,  3 Oct 2019 17:54:01 +0200
+Message-Id: <20191003154344.957569945@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -44,41 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Salyzyn <salyzyn@android.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit 5c2e9f346b815841f9bed6029ebcb06415caf640 upstream.
+commit 6af112b11a4bc1b560f60a618ac9c1dcefe9836e upstream.
 
-When filtering xattr list for reading, presence of trusted xattr
-results in a security audit log.  However, if there is other content
-no errno will be set, and if there isn't, the errno will be -ENODATA
-and not -EPERM as is usually associated with a lack of capability.
-The check does not block the request to list the xattrs present.
+When doing any form of incremental send the parent and the child trees
+need to be compared via btrfs_compare_trees. This  can result in long
+loop chains without ever relinquishing the CPU. This causes softlockup
+detector to trigger when comparing trees with a lot of items. Example
+report:
 
-Switch to ns_capable_noaudit to reflect a more appropriate check.
+watchdog: BUG: soft lockup - CPU#0 stuck for 24s! [snapperd:16153]
+CPU: 0 PID: 16153 Comm: snapperd Not tainted 5.2.9-1-default #1 openSUSE Tumbleweed (unreleased)
+Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+pstate: 40000005 (nZcv daif -PAN -UAO)
+pc : __ll_sc_arch_atomic_sub_return+0x14/0x20
+lr : btrfs_release_extent_buffer_pages+0xe0/0x1e8 [btrfs]
+sp : ffff00001273b7e0
+Call trace:
+ __ll_sc_arch_atomic_sub_return+0x14/0x20
+ release_extent_buffer+0xdc/0x120 [btrfs]
+ free_extent_buffer.part.0+0xb0/0x118 [btrfs]
+ free_extent_buffer+0x24/0x30 [btrfs]
+ btrfs_release_path+0x4c/0xa0 [btrfs]
+ btrfs_free_path.part.0+0x20/0x40 [btrfs]
+ btrfs_free_path+0x24/0x30 [btrfs]
+ get_inode_info+0xa8/0xf8 [btrfs]
+ finish_inode_if_needed+0xe0/0x6d8 [btrfs]
+ changed_cb+0x9c/0x410 [btrfs]
+ btrfs_compare_trees+0x284/0x648 [btrfs]
+ send_subvol+0x33c/0x520 [btrfs]
+ btrfs_ioctl_send+0x8a0/0xaf0 [btrfs]
+ btrfs_ioctl+0x199c/0x2288 [btrfs]
+ do_vfs_ioctl+0x4b0/0x820
+ ksys_ioctl+0x84/0xb8
+ __arm64_sys_ioctl+0x28/0x38
+ el0_svc_common.constprop.0+0x7c/0x188
+ el0_svc_handler+0x34/0x90
+ el0_svc+0x8/0xc
 
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-team@android.com
-Cc: stable@vger.kernel.org # v3.18+
-Fixes: a082c6f680da ("ovl: filter trusted xattr for non-admin")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fix this by adding a call to cond_resched at the beginning of the main
+loop in btrfs_compare_trees.
+
+Fixes: 7069830a9e38 ("Btrfs: add btrfs_compare_trees function")
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/inode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/ctree.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -292,7 +292,8 @@ static bool ovl_can_list(const char *s)
- 		return true;
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -5435,6 +5435,7 @@ int btrfs_compare_trees(struct btrfs_roo
+ 	advance_left = advance_right = 0;
  
- 	/* Never list trusted.overlay, list other trusted for superuser only */
--	return !ovl_is_private_xattr(s) && capable(CAP_SYS_ADMIN);
-+	return !ovl_is_private_xattr(s) &&
-+	       ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN);
- }
- 
- ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
+ 	while (1) {
++		cond_resched();
+ 		if (advance_left && !left_end_reached) {
+ 			ret = tree_advance(left_root, left_path, &left_level,
+ 					left_root_level,
 
 
