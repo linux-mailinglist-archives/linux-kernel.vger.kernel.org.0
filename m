@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15255CA2D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EEC9CA21E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387486AbfJCQJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:09:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58500 "EHLO mail.kernel.org"
+        id S1729823AbfJCQCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:02:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733205AbfJCQJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:09:36 -0400
+        id S1731180AbfJCQCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:02:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BCA5215EA;
-        Thu,  3 Oct 2019 16:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5050B21A4C;
+        Thu,  3 Oct 2019 16:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118975;
-        bh=14EbOH0XAvEPQOaJJj0L0hn8plnIwTmS2PmGUyKvBX0=;
+        s=default; t=1570118522;
+        bh=CMItQCuPfjOEoWVCOM6n45vcSofO9My2ipRACkBZkzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dky9YNolcp5NZ1MF1din0No/EKQBNPG6xIkKFFCZnnTXQ86L/Fsw10vL4tm+sZWeG
-         OTpvluryxH1CX2NNl6raGjT8OX1VgXcWUlignRa8I6/WSFJLCPm6Yst2hP+ZCOKUBV
-         nsp+QZdlrVfMvu6E0J7m1g2wwJL9kAc6msCcfrRk=
+        b=cKEjFm8LpscIH6CpymWlV6cC0JljBkMsfA0p4cvTuEgOXau5nDeYB+cpHaKjOyari
+         zaO2BFXXXpxP9R9tbxwrZhXzMgWPbAZrgmaZcxx7wAxzAvA4IWNP9FvJCtluDIJJtv
+         1oo/KZs2f757t5C2vCsOP1/jXlVnbJJnAgjVHyEc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        Song Liu <songliubraving@fb.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 078/185] md: dont set In_sync if array is frozen
-Date:   Thu,  3 Oct 2019 17:52:36 +0200
-Message-Id: <20191003154455.019955860@linuxfoundation.org>
+        stable@vger.kernel.org, Ori Nimron <orinimron123@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 034/129] mISDN: enforce CAP_NET_RAW for raw sockets
+Date:   Thu,  3 Oct 2019 17:52:37 +0200
+Message-Id: <20191003154334.200929057@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guoqing Jiang <jgq516@gmail.com>
+From: Ori Nimron <orinimron123@gmail.com>
 
-[ Upstream commit 062f5b2ae12a153644c765e7ba3b0f825427be1d ]
+[ Upstream commit b91ee4aa2a2199ba4d4650706c272985a5a32d80 ]
 
-When a disk is added to array, the following path is called in mdadm.
+When creating a raw AF_ISDN socket, CAP_NET_RAW needs to be checked
+first.
 
-Manage_subdevs -> sysfs_freeze_array
-               -> Manage_add
-               -> sysfs_set_str(&info, NULL, "sync_action","idle")
-
-Then from kernel side, Manage_add invokes the path (add_new_disk ->
-validate_super = super_1_validate) to set In_sync flag.
-
-Since In_sync means "device is in_sync with rest of array", and the new
-added disk need to resync thread to help the synchronization of data.
-And md_reap_sync_thread would call spare_active to set In_sync for the
-new added disk finally. So don't set In_sync if array is in frozen.
-
-Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Ori Nimron <orinimron123@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/isdn/mISDN/socket.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index d185725e100c0..f86082ee62a69 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1763,8 +1763,15 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *rdev)
- 				if (!(le32_to_cpu(sb->feature_map) &
- 				      MD_FEATURE_RECOVERY_BITMAP))
- 					rdev->saved_raid_disk = -1;
--			} else
--				set_bit(In_sync, &rdev->flags);
-+			} else {
-+				/*
-+				 * If the array is FROZEN, then the device can't
-+				 * be in_sync with rest of array.
-+				 */
-+				if (!test_bit(MD_RECOVERY_FROZEN,
-+					      &mddev->recovery))
-+					set_bit(In_sync, &rdev->flags);
-+			}
- 			rdev->raid_disk = role;
- 			break;
- 		}
--- 
-2.20.1
-
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -766,6 +766,8 @@ base_sock_create(struct net *net, struct
+ 
+ 	if (sock->type != SOCK_RAW)
+ 		return -ESOCKTNOSUPPORT;
++	if (!capable(CAP_NET_RAW))
++		return -EPERM;
+ 
+ 	sk = sk_alloc(net, PF_ISDN, GFP_KERNEL, &mISDN_proto, kern);
+ 	if (!sk)
 
 
