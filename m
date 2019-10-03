@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBEC8CA735
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DF9CA5D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406085AbfJCQvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:51:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39132 "EHLO mail.kernel.org"
+        id S2390413AbfJCQhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:37:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406067AbfJCQvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:51:39 -0400
+        id S2404515AbfJCQg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:36:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0C96222D2;
-        Thu,  3 Oct 2019 16:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47C8C2086A;
+        Thu,  3 Oct 2019 16:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121499;
-        bh=eeeJp0FNAAAiyZPK5GMb6KHfkDpMg42jZSSgPnP5/NA=;
+        s=default; t=1570120618;
+        bh=3ihiTb+MDk2eBc5GTPJ9ff6AiF3Ns4X+mQayjR3/jQw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2TO2xSWTWeGqN2gERY8FtS5tqWjkb+slAsVK3Hr9cq+SBgVPOwVAupciBN1JDaXmH
-         jMHotBsyZ2JLOMIjJZdO/kop/V7DxvCcHZLlc1RMSzohjWbG1Sx3/oae0zpULeVYE+
-         uSZTvqEQAyyY0zPpGSordngAXH6joAUYhXFpIo08=
+        b=TFBq2jpgnoxEM3d7QSssWfbkVDfF7jTgyLYJiKn4KkgvQDYdsiQ9+SVSykziQ9luc
+         lHqmFANKFncfCv67XyyEfJtt839GHcZvO380eA8AepzUZYIP6xhJqvalHN3QqkPeS+
+         zF6sS5mCwP0U491DZ6e4jw4TX1XrxcHvc/s4htN4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Lunev <den@virtuozzo.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.3 263/344] KVM: x86: set ctxt->have_exception in x86_decode_insn()
-Date:   Thu,  3 Oct 2019 17:53:48 +0200
-Message-Id: <20191003154606.391152333@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.2 251/313] ASoC: Intel: NHLT: Fix debug print format
+Date:   Thu,  3 Oct 2019 17:53:49 +0200
+Message-Id: <20191003154557.773017960@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
 
-commit c8848cee74ff05638e913582a476bde879c968ad upstream.
+commit 855a06da37a773fd073d51023ac9d07988c87da8 upstream.
 
-x86_emulate_instruction() takes into account ctxt->have_exception flag
-during instruction decoding, but in practice this flag is never set in
-x86_decode_insn().
+oem_table_id is 8 chars long, so we need to limit it, otherwise it
+may print some unprintable characters into dmesg.
 
-Fixes: 6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+Link: https://lore.kernel.org/r/20190827141712.21015-7-amadeuszx.slawinski@linux.intel.com
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Cc: Denis Lunev <den@virtuozzo.com>
-Cc: Roman Kagan <rkagan@virtuozzo.com>
-Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
-Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/emulate.c |    2 ++
- arch/x86/kvm/x86.c     |    6 ++++++
- 2 files changed, 8 insertions(+)
+ sound/soc/intel/skylake/skl-nhlt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5395,6 +5395,8 @@ done_prefixes:
- 					ctxt->memopp->addr.mem.ea + ctxt->_eip);
+--- a/sound/soc/intel/skylake/skl-nhlt.c
++++ b/sound/soc/intel/skylake/skl-nhlt.c
+@@ -225,7 +225,7 @@ int skl_nhlt_update_topology_bin(struct
+ 	struct hdac_bus *bus = skl_to_bus(skl);
+ 	struct device *dev = bus->dev;
  
- done:
-+	if (rc == X86EMUL_PROPAGATE_FAULT)
-+		ctxt->have_exception = true;
- 	return (rc != X86EMUL_CONTINUE) ? EMULATION_FAILED : EMULATION_OK;
- }
+-	dev_dbg(dev, "oem_id %.6s, oem_table_id %8s oem_revision %d\n",
++	dev_dbg(dev, "oem_id %.6s, oem_table_id %.8s oem_revision %d\n",
+ 		nhlt->header.oem_id, nhlt->header.oem_table_id,
+ 		nhlt->header.oem_revision);
  
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6529,6 +6529,12 @@ int x86_emulate_instruction(struct kvm_v
- 						emulation_type))
- 				return EMULATE_DONE;
- 			if (ctxt->have_exception) {
-+				/*
-+				 * #UD should result in just EMULATION_FAILED, and trap-like
-+				 * exception should not be encountered during decode.
-+				 */
-+				WARN_ON_ONCE(ctxt->exception.vector == UD_VECTOR ||
-+					     exception_type(ctxt->exception.vector) == EXCPT_TRAP);
- 				inject_emulated_exception(vcpu);
- 				return EMULATE_DONE;
- 			}
 
 
