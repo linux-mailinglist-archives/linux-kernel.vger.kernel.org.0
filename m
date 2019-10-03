@@ -2,136 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E526C9681
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03EC3C9688
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 03:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbfJCBus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 21:50:48 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1701 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbfJCBur (ORCPT
+        id S1727334AbfJCB4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 21:56:10 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36637 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726376AbfJCB4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 21:50:47 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d9553f50000>; Wed, 02 Oct 2019 18:50:45 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 02 Oct 2019 18:50:45 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 02 Oct 2019 18:50:45 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Oct
- 2019 01:50:45 +0000
-Received: from [10.19.108.102] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 3 Oct 2019
- 01:50:43 +0000
-Subject: Re: [PATCH 4/6] dt-bindings: phy: tegra: Add Tegra194 support
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <gregkh@linuxfoundation.org>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, <skomatineni@nvidia.com>
-References: <20191002080051.11142-1-jckuo@nvidia.com>
- <20191002080051.11142-5-jckuo@nvidia.com> <20191002094438.GD3716706@ulmo>
-X-Nvconfidentiality: public
-From:   JC Kuo <jckuo@nvidia.com>
-Message-ID: <f0455be3-a73e-4abe-2031-425f9b936890@nvidia.com>
-Date:   Thu, 3 Oct 2019 09:50:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20191002094438.GD3716706@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1570067446; bh=cxg5hwQSVwdU7dic5YEs47eqPNAMewPNmwrxcP/+lvY=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=k+8BLZSCNte0C17STOYVwDBbhBTEv27XZ+ygV9WX7+/KNo61SYldVWRffoH21DMyr
-         YXlG2ZCqK+r9u1kDuNPcB4FFWhWCxVym0Ya4LwezJrsyYwrJi8cKGVXYEY1Ztjl0iQ
-         eup9scurDETMkfHXTl8L1do9SPcjJTw2hXLMt+CjpNrACfIu/fsM+c95c3F06rl26X
-         id27vZdcTZDpgkrwk6SXBolaUBIanFE3qmNKHaj2hdy/szzmc+jkNrbCsMUlq7NALm
-         JZkKOMyavqA5ktnBg0yfT9l7dR2tafXyvmSo19ech5pCkyxxhk3v+AqeTA2JwCXCdB
-         W/0C3XEyjf2xQ==
+        Wed, 2 Oct 2019 21:56:10 -0400
+Received: by mail-qk1-f193.google.com with SMTP id y189so782283qkc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 18:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=y2GjO+8c21wpS2L+fpFZZ/mTfKI97RccC2gS32Zsy/c=;
+        b=kqEE18js5/CzpSK/1AWRDcA0HGC2W4qEIAnFt74tE+bnKy0YmvBPBheRYEWCt1gUC4
+         xhjnJQakB3yu0iWcJpdACz8wJn0NjfWBdiGoOE8nK8niFPzzG1qmPCapJTdm6fuJ4LwY
+         2xocpZI0IJNuPbprAp4AItXIoAIAibfTKwqgWeDpNM3MXzm/6uxC+Qmt82nXBQsrw6ww
+         ns6uODJQrpMPptkS4uiwQW6oH1ST4AVKhDhLM9D1gCsfZtQAXZnx5mer60qqs21mRKF1
+         3XQ4+ljG3TGhgMchYm8+2wh2ODF0ogVjyCE+5348+yyyGsYvyE/R5WU8BlglBCxia+kb
+         pr6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=y2GjO+8c21wpS2L+fpFZZ/mTfKI97RccC2gS32Zsy/c=;
+        b=mzqTUfBnZHjSAaiPccHmU5uwQsSK+qC/LYxmZFTUtQEoF6PaTlpGVUa4kVrHRGLms2
+         qV4BLtrEGB2G61P4kXHLoovSCcYOIosiIIHo81+MWsw+hXfYW1BZIJpORTCAUc/ejfgA
+         MUfM3cqeVcVBD17RheBY0q5C/1tDT0uREiLwXvYJUvXm9IsJavPewbI5zax+OiKC0/dS
+         szrYDiyI1bP+oC74uDdBw3pWtaHu3Fw+WZz4zYeOS2OfYAQWhw1FouBh9lyZHVEKekNW
+         yvkrVi5EyGrcmmSw/9GiqR8LO+JZU96n22/lDvHI+sTEyS0+RGg1gu3B5PBzZOHc0oXF
+         QqdQ==
+X-Gm-Message-State: APjAAAWWk+dt/xDJkkGymTEIoTJyFES5cTXqkfhZPP79oGsC/gu3CWna
+        HvKGS7olyKygduSVkMh5poE/bw==
+X-Google-Smtp-Source: APXvYqzQfAMdFJl/bEzMhOHdqRTMv652DMnwuHLcfgozUp4lqmAbkhMXTQ7E833EG8XHUzU96IJk1g==
+X-Received: by 2002:a05:620a:49b:: with SMTP id 27mr1911544qkr.89.1570067768873;
+        Wed, 02 Oct 2019 18:56:08 -0700 (PDT)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id r7sm650004qkf.124.2019.10.02.18.56.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2019 18:56:08 -0700 (PDT)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] Make SPLIT_RSS_COUNTING configurable
+Date:   Wed, 2 Oct 2019 21:56:06 -0400
+Message-Id: <1C584B5C-E04E-4B04-A3B5-4DC8E5E67366@lca.pw>
+References: <CAKOZuesMoBj-APjCipJmWcAgSzkbD1mvyOp0UvHLnkwR-EU4Ww@mail.gmail.com>
+Cc:     Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-mm@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+In-Reply-To: <CAKOZuesMoBj-APjCipJmWcAgSzkbD1mvyOp0UvHLnkwR-EU4Ww@mail.gmail.com>
+To:     Daniel Colascione <dancol@google.com>
+X-Mailer: iPhone Mail (17A844)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Thierry. I will fix the typo in the next revision.
 
-On 10/2/19 5:44 PM, Thierry Reding wrote:
-> On Wed, Oct 02, 2019 at 04:00:49PM +0800, JC Kuo wrote:
->> Extend the bindings to cover the set of features found in Tegra194.
->> Note that, technically, there are four more supplies connected to the
->> XUSB pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL)
->> , but the power sequencing requirements of Tegra194 require these to be
->> under the control of the PMIC.
->>
->> Tegra194 XUSB PADCTL supports up to USB 3.1 Gen 2 speed, however, it is
->> possible for some platforms have long signal trace that could not
->> provide sufficient electrical environment for Gen 2 speed. To deal with
->> this, a new device node property "nvidia,disable-gen2" was added to
->> Tegra194 that be used to specifically disable Gen 2 speed for a
->> particular USB 3.0 port so that the port can be limited to Gen 1 speed
->> and avoid the instability.
->>
->> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+
+> On Oct 2, 2019, at 4:29 PM, Daniel Colascione <dancol@google.com> wrote:
+>=20
+> Adding the correct linux-mm address.
+>=20
+>=20
+>> On Wed, Oct 2, 2019 at 1:25 PM Daniel Colascione <dancol@google.com> wrot=
+e:
+>>=20
+>> Using the new config option, users can disable SPLIT_RSS_COUNTING to
+>> get increased accuracy in user-visible mm counters.
+>>=20
+>> Signed-off-by: Daniel Colascione <dancol@google.com>
 >> ---
->>  .../bindings/phy/nvidia,tegra124-xusb-padctl.txt | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> index 9fb682e47c29..3bef37e7c365 100644
->> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
->> @@ -37,6 +37,7 @@ Required properties:
->>    - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
->>    - Tegra210: "nvidia,tegra210-xusb-padctl"
->>    - Tegra186: "nvidia,tegra186-xusb-padctl"
->> +  - Tegra194: "nvidia,tegra194-xusb-padctl"
->>  - reg: Physical base address and length of the controller's registers.
->>  - resets: Must contain an entry for each entry in reset-names.
->>  - reset-names: Must include the following entries:
->> @@ -62,6 +63,10 @@ For Tegra186:
->>  - vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
->>  - vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
->>  
->> +For Tegra194:
->> +- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
->> +  3.3 V.
->> +- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
->>  
->>  Pad nodes:
->>  ==========
->> @@ -154,6 +159,11 @@ For Tegra210, the list of valid PHY nodes is given below:
->>  - sata: sata-0
->>    - functions: "usb3-ss", "sata"
->>  
->> +For Tegra194, the list of valid PHY nodes is given below:
->> +- usb2: usb2-0, usb2-1, usb2-2, usb2-3
->> +  - functions: "xusb"
->> +- usb3: usb3-0, usb3-1, usb3-2, usb3-3
->> +  - functions: "xusb"
->>  
->>  Port nodes:
->>  ===========
->> @@ -221,6 +231,9 @@ Optional properties:
->>    is internal. In the absence of this property the port is considered to be
->>    external.
->>  
->> +- nvidia,disable-gen2: A boolean property whose presence determines that a port
->> +  should be limited to USB 3.1 Gen 1. This properlty is only for Tegra194.
-> 
-> s/properlty/property/
-> 
-> With that:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> 
+>> include/linux/mm.h            |  4 ++--
+>> include/linux/mm_types_task.h |  5 ++---
+>> include/linux/sched.h         |  2 +-
+>> kernel/fork.c                 |  2 +-
+>> mm/Kconfig                    | 11 +++++++++++
+>> mm/memory.c                   |  6 +++---
+>> 6 files changed, 20 insertions(+), 10 deletions(-)
+>>=20
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index cc292273e6ba..221395de3cb4 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -1637,7 +1637,7 @@ static inline unsigned long get_mm_counter(struct m=
+m_struct *mm, int member)
+>> {
+>>        long val =3D atomic_long_read(&mm->rss_stat.count[member]);
+>>=20
+>> -#ifdef SPLIT_RSS_COUNTING
+>> +#ifdef CONFIG_SPLIT_RSS_COUNTING
+>>        /*
+>>         * counter is updated in asynchronous manner and may go to minus.
+>>         * But it's never be expected number for users.
+>> @@ -1723,7 +1723,7 @@ static inline void setmax_mm_hiwater_rss(unsigned l=
+ong *maxrss,
+>>                *maxrss =3D hiwater_rss;
+>> }
+>>=20
+>> -#if defined(SPLIT_RSS_COUNTING)
+>> +#ifdef CONFIG_SPLIT_RSS_COUNTING
+>> void sync_mm_rss(struct mm_struct *mm);
+>> #else
+>> static inline void sync_mm_rss(struct mm_struct *mm)
+>> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.=
+h
+>> index c1bc6731125c..d2adc8057e65 100644
+>> --- a/include/linux/mm_types_task.h
+>> +++ b/include/linux/mm_types_task.h
+>> @@ -48,14 +48,13 @@ enum {
+>>        NR_MM_COUNTERS
+>> };
+>>=20
+>> -#if USE_SPLIT_PTE_PTLOCKS && defined(CONFIG_MMU)
+>> -#define SPLIT_RSS_COUNTING
+>> +#ifdef CONFIG_SPLIT_RSS_COUNTING
+>> /* per-thread cached information, */
+>> struct task_rss_stat {
+>>        int events;     /* for synchronization threshold */
+>>        int count[NR_MM_COUNTERS];
+>> };
+>> -#endif /* USE_SPLIT_PTE_PTLOCKS */
+>> +#endif /* CONFIG_SPLIT_RSS_COUNTING */
+>>=20
+>> struct mm_rss_stat {
+>>        atomic_long_t count[NR_MM_COUNTERS];
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index 2c2e56bd8913..22f354774540 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -729,7 +729,7 @@ struct task_struct {
+>>        /* Per-thread vma caching: */
+>>        struct vmacache                 vmacache;
+>>=20
+>> -#ifdef SPLIT_RSS_COUNTING
+>> +#ifdef CONFIG_SPLIT_RSS_COUNTING
+>>        struct task_rss_stat            rss_stat;
+>> #endif
+>>        int                             exit_state;
+>> diff --git a/kernel/fork.c b/kernel/fork.c
+>> index f9572f416126..fc5e0889922b 100644
+>> --- a/kernel/fork.c
+>> +++ b/kernel/fork.c
+>> @@ -1917,7 +1917,7 @@ static __latent_entropy struct task_struct *copy_pr=
+ocess(
+>>        p->vtime.state =3D VTIME_INACTIVE;
+>> #endif
+>>=20
+>> -#if defined(SPLIT_RSS_COUNTING)
+>> +#ifdef CONFIG_SPLIT_RSS_COUNTING
+>>        memset(&p->rss_stat, 0, sizeof(p->rss_stat));
+>> #endif
+>>=20
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index a5dae9a7eb51..372ef9449924 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -736,4 +736,15 @@ config ARCH_HAS_PTE_SPECIAL
+>> config ARCH_HAS_HUGEPD
+>>        bool
+>>=20
+>> +config SPLIT_RSS_COUNTING
+>> +       bool "Per-thread mm counter caching"
+>> +       depends on MMU
+>> +       default y if NR_CPUS >=3D SPLIT_PTLOCK_CPUS
+>> +       help
+>> +         Cache mm counter updates in thread structures and
+>> +         flush them to visible per-process statistics in batches.
+>> +         Say Y here to slightly reduce cache contention in processes
+>> +         with many threads at the expense of decreasing the accuracy
+>> +         of memory statistics in /proc.
+>> +
+>> endmenu
+
+All those vague words are going to make developers almost impossible to deci=
+de the right selection here. It sounds like we should kill SPLIT_RSS_COUNTIN=
+G at all to simplify the code as the benefit is so small vs the side-effect?=
+
+
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index b1ca51a079f2..bf557ed5ba23 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -141,7 +141,7 @@ static int __init init_zero_pfn(void)
+>> core_initcall(init_zero_pfn);
+>>=20
+>>=20
+>> -#if defined(SPLIT_RSS_COUNTING)
+>> +#ifdef CONFIG_SPLIT_RSS_COUNTING
+>>=20
+>> void sync_mm_rss(struct mm_struct *mm)
+>> {
+>> @@ -177,7 +177,7 @@ static void check_sync_rss_stat(struct task_struct *t=
+ask)
+>>        if (unlikely(task->rss_stat.events++ > TASK_RSS_EVENTS_THRESH))
+>>                sync_mm_rss(task->mm);
+>> }
+>> -#else /* SPLIT_RSS_COUNTING */
+>> +#else /* CONFIG_SPLIT_RSS_COUNTING */
+>>=20
+>> #define inc_mm_counter_fast(mm, member) inc_mm_counter(mm, member)
+>> #define dec_mm_counter_fast(mm, member) dec_mm_counter(mm, member)
+>> @@ -186,7 +186,7 @@ static void check_sync_rss_stat(struct task_struct *t=
+ask)
+>> {
+>> }
+>>=20
+>> -#endif /* SPLIT_RSS_COUNTING */
+>> +#endif /* CONFIG_SPLIT_RSS_COUNTING */
+>>=20
+>> /*
+>>  * Note: this doesn't free the actual pages themselves. That
+>> --
+>> 2.23.0.581.g78d2f28ef7-goog
+>>=20
