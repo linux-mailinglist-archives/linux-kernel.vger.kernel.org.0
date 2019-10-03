@@ -2,87 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1214DC9CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69648C9D03
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 13:16:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbfJCLNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 07:13:16 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47832 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbfJCLNQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 07:13:16 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x93B9DLO113654;
-        Thu, 3 Oct 2019 11:13:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=2QI2whAR0eSmVo1/waKAX5FLkh2SyO0ymtbtvm3t65g=;
- b=mY0ZsRuSWWsWBscNfWJCsoMDV2+OsiCTI06RsLqeRgTAWsHtaGvfjr99SyaVCnfli+Hl
- qy9HND3gjHwg/h9sUov7b9MMqsPTcRxenzpMDlVFzYgTd6WjByzN21HxiMPRFAj66ZbZ
- cOa8H8f9e4xb5s5JF8K18/jFNHu86P/wnBQD2um0QcOhToXZTrZ8P2AxB7sNXDov3y4s
- eH1RkHQFNcCXBzSE9r4oudJyD5oZL6HmEObuDrjjuARbv1im7AfvCnGqS2qa4bXW77FS
- FwWWfaJ6hI/uTPM578UYQIYTa/D6KmEv9Yi7avahP5kR6UWzd5vI6kTVbMCBw2q+PBWe qA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2v9xxv37a0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Oct 2019 11:13:10 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x93B8K0K095938;
-        Thu, 3 Oct 2019 11:13:10 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2vc9dnm5e7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Oct 2019 11:13:10 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x93BD8v0027718;
-        Thu, 3 Oct 2019 11:13:09 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Oct 2019 04:13:08 -0700
-Date:   Thu, 3 Oct 2019 14:13:02 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Saiyam Doshi <saiyamdoshi.in@gmail.com>
-Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: exfat: use bdev_sync function directly where
- needed
-Message-ID: <20191003111302.GQ22609@kadam>
-References: <20191002151703.GA6594@SD>
+        id S1729732AbfJCLPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 07:15:47 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3237 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729241AbfJCLPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 07:15:47 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B6B522487246D09D5E84;
+        Thu,  3 Oct 2019 19:15:38 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.179) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 3 Oct 2019
+ 19:15:37 +0800
+Subject: Re: [PATCH 3/3] arm64: configs: unset CPU_BIG_ENDIAN
+To:     Anders Roxell <anders.roxell@linaro.org>
+References: <20190926193030.5843-1-anders.roxell@linaro.org>
+ <20190926193030.5843-5-anders.roxell@linaro.org>
+ <bf5db3a5-96da-752c-49ea-d0de899882d5@huawei.com>
+ <CADYN=9LB9RHgRkQj=HcKDz1x9jqmT464Kseh2wZU5VvcLit+bQ@mail.gmail.com>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Olof Johansson" <olof@lixom.net>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <d978673e-cbd1-5ab5-b2a4-cdb407d0f98c@huawei.com>
+Date:   Thu, 3 Oct 2019 12:15:32 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191002151703.GA6594@SD>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=939
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910030104
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9398 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910030104
+In-Reply-To: <CADYN=9LB9RHgRkQj=HcKDz1x9jqmT464Kseh2wZU5VvcLit+bQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.179]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 08:47:03PM +0530, Saiyam Doshi wrote:
-> fs_sync() is wrapper to bdev_sync(). When fs_sync is called with
-> non-zero argument, bdev_sync gets called.
-> 
-> Most instances of fs_sync is called with false and very few with
-> true. Refactor this and makes direct call to bdev_sync() where
-> needed and removes fs_sync definition.
-> 
-> Signed-off-by: Saiyam Doshi <saiyamdoshi.in@gmail.com>
+On 03/10/2019 08:40, Anders Roxell wrote:
+> On Tue, 1 Oct 2019 at 16:04, John Garry <john.garry@huawei.com> wrote:
+>>
+>> On 26/09/2019 20:30, Anders Roxell wrote:
+>>> When building allmodconfig KCONFIG_ALLCONFIG=$(pwd)/arch/arm64/configs/defconfig
+>>> CONFIG_CPU_BIG_ENDIAN gets enabled. Which tends not to be what most
+>>> people wants.
+>>
+>> Today allmodconfig does not enable CONFIG_ACPI due to BE config, which
+>> is quite unfortunate, I'd say.
+>
+> right.
+>
+>>
+>>>
+>>> Rework so that we disable CONFIG_CPU_BIG_ENDIAN in the defcinfig file so
+>>
+>> defconfig
+>
+> thanks.
+>
+>>
+>>> it doesn't get enabled when building allmodconfig kernels. When doing a
+>>> 'make savedefconfig' CONFIG_CPU_BIG_ENDIAN will be dropped.
+>>
+>> So without having to pass KCONFIG_ALLCONFIG or do anything else, what
+>> about a config for CONFIG_CPU_LITTLE_ENDIAN instead? I'm not sure if
+>> that was omitted for a specific reason.
+>
+> Oh, I tried to elaborate on the idea in the cover letter, that using
+> the defconfig
+> as base and then configure the rest as modules is to get a bootable kernel
+> that have as many features turned on as possible. That will make it possible
+> to run as wide a range of testsuites as possible on a single kernel.
+>
+> Does that make it clearer ?
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi Anders,
 
-regards,
-dan carpenter
+Yeah, I got the idea.
+
+So when you say "'make savedefconfig' CONFIG_CPU_BIG_ENDIAN will be 
+dropped", I don't know what the rules are in terms of resyncing the 
+common defconfig (I was under the impression that it's done per release 
+cycle by the arm soc maintainers, but can't find evidence as such), but 
+your change may be easily lost in this way.
+
+Thanks,
+John
+
+>
+> Cheers,
+> Anders
+>
+>
+>>
+>> Thanks,
+>> John
+>>
+>>>
+>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>>> ---
+>>>  arch/arm64/configs/defconfig | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>> index 878f379d8d84..c9aa6b9ee996 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -855,3 +855,4 @@ CONFIG_DEBUG_KERNEL=y
+>>>  # CONFIG_SCHED_DEBUG is not set
+>>>  CONFIG_MEMTEST=y
+>>>  # CONFIG_CMDLINE_FORCE is not set
+>>> +# CONFIG_CPU_BIG_ENDIAN is not set
+>>>
+>>
+>>
+>
+> .
+>
+
 
