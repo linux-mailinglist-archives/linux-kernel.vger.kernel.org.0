@@ -2,179 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B47FCAB69
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4CB9CAB3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390779AbfJCRVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:21:19 -0400
-Received: from mail.efficios.com ([167.114.142.138]:55856 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390269AbfJCRVR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:21:17 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 8A9DC33BACB;
-        Thu,  3 Oct 2019 13:21:15 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 15gIMQsNbnqv; Thu,  3 Oct 2019 13:21:15 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 08C9D33BAC8;
-        Thu,  3 Oct 2019 13:21:15 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 08C9D33BAC8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1570123275;
-        bh=RLuzIee1S32NDi4Tv+0aI32L8zZ0nDhk1T9b8GhkcBU=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=KiZHIewAlL06CJ7JpCxXFqL5RrUWK5SehDIJNvcvgZ8zwCv+okTZDaGMpSUVjva7H
-         U0dk/rMmJQOoRtgn6rjBvlaTMK8eounJyjfSXQ8vAcRfOwy1ypI0IHGEOP1jkwxRGH
-         xl2Cw+h6wkN0eFSjKc1aIHgtLBGtTziAT/OzhQMKeQFkq1i4+6BK7D0+54rd2Xymxk
-         NB+C0uGM3L4/RBPQ23vn7E4g7VB//sLr4ChG49+f+gPwxJDuf+e5QIobaX0GDPlU2I
-         JQBEHN/kw7+Nartp12oLzTODROjnM8xs3iHrRF9K+iJYf4zJFwTW0Tbwv2y7HSTRV4
-         UzL72JTBRfieA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id P-qZ7VLaWfcd; Thu,  3 Oct 2019 13:21:14 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id DC88133BABF;
-        Thu,  3 Oct 2019 13:21:14 -0400 (EDT)
-Date:   Thu, 3 Oct 2019 13:21:14 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     paulmck <paulmck@kernel.org>
-Cc:     rcu <rcu@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        dipankar <dipankar@in.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        rostedt <rostedt@goodmis.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Shane M Seymour <shane.seymour@hpe.com>,
-        Martin <martin.petersen@oracle.com>
-Message-ID: <618064891.1049.1570123274780.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20191003165220.GZ2689@paulmck-ThinkPad-P72>
-References: <20191003014153.GA13156@paulmck-ThinkPad-P72> <20191003014310.13262-1-paulmck@kernel.org> <644598334.955.1570120530976.JavaMail.zimbra@efficios.com> <20191003165220.GZ2689@paulmck-ThinkPad-P72>
-Subject: Re: [PATCH tip/core/rcu 1/9] rcu: Upgrade rcu_swap_protected() to
- rcu_replace()
+        id S1729711AbfJCR0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:26:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:52006 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727488AbfJCR0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:26:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2019 10:23:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
+   d="scan'208";a="343728350"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 03 Oct 2019 10:23:44 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id C5CB3580378;
+        Thu,  3 Oct 2019 10:23:44 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v7 7/7] PCI: Skip Enhanced Allocation (EA) initialization
+ for VF device
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+References: <cover.1567029860.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <0b86bafdeaf8293d6360bed1760586493935f16e.1567029860.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <ecff2638-7a5a-3d5d-6f30-f9517b139696@linux.intel.com>
+Date:   Thu, 3 Oct 2019 10:21:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <0b86bafdeaf8293d6360bed1760586493935f16e.1567029860.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3847 (ZimbraWebClient - FF69 (Linux)/8.8.15_GA_3847)
-Thread-Topic: Upgrade rcu_swap_protected() to rcu_replace()
-Thread-Index: 0tPV4uUWfCTmCxvYNNuRP6QBGE0Q/A==
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 3, 2019, at 12:52 PM, paulmck paulmck@kernel.org wrote:
+Hi Bjorn,
 
-> On Thu, Oct 03, 2019 at 12:35:30PM -0400, Mathieu Desnoyers wrote:
->> ----- On Oct 2, 2019, at 9:43 PM, paulmck paulmck@kernel.org wrote:
->> 
->> > From: "Paul E. McKenney" <paulmck@kernel.org>
->> > 
->> > Although the rcu_swap_protected() macro follows the example of swap(),
->> > the interactions with RCU make its update of its argument somewhat
->> > counter-intuitive.  This commit therefore introduces an rcu_replace()
->> > that returns the old value of the RCU pointer instead of doing the
->> > argument update.  Once all the uses of rcu_swap_protected() are updated
->> > to instead use rcu_replace(), rcu_swap_protected() will be removed.
->> 
->> We expose the rcu_xchg_pointer() API in liburcu (Userspace RCU) project.
->> Any reason for not going that way and keep the kernel and user-space RCU
->> APIs alike ?
->> 
->> It's of course fine if they diverge, but we might want to at least consider
->> if using the same API name would be OK.
-> 
-> Different semantics.  An rcu_xchg_pointer() allows concurrent updates,
-> and rcu_replace() does not.
-> 
-> But yes, if someone needs the concurrent updates, rcu_xchg_pointer()
-> would certainly be my choice for the name.
-
-Then considering that its assignment counterpart is "rcu_assign_pointer()"
-(and not "rcu_assign()"), would "rcu_replace_pointer()" be less ambiguous
-about its intended use ?
-
-Thanks,
-
-Mathieu
-
-
-> 
->							Thanx, Paul
-> 
->> Thanks,
->> 
->> Mathieu
->> 
->> 
->> > 
->> > Link:
->> > https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
->> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
->> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->> > Cc: Bart Van Assche <bart.vanassche@wdc.com>
->> > Cc: Christoph Hellwig <hch@lst.de>
->> > Cc: Hannes Reinecke <hare@suse.de>
->> > Cc: Johannes Thumshirn <jthumshirn@suse.de>
->> > Cc: Shane M Seymour <shane.seymour@hpe.com>
->> > Cc: Martin K. Petersen <martin.petersen@oracle.com>
->> > ---
->> > include/linux/rcupdate.h | 18 ++++++++++++++++++
->> > 1 file changed, 18 insertions(+)
->> > 
->> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
->> > index 75a2ede..3b73287 100644
->> > --- a/include/linux/rcupdate.h
->> > +++ b/include/linux/rcupdate.h
->> > @@ -383,6 +383,24 @@ do {									      \
->> > } while (0)
->> > 
->> > /**
->> > + * rcu_replace() - replace an RCU pointer, returning its old value
->> > + * @rcu_ptr: RCU pointer, whose old value is returned
->> > + * @ptr: regular pointer
->> > + * @c: the lockdep conditions under which the dereference will take place
->> > + *
->> > + * Perform a replacement, where @rcu_ptr is an RCU-annotated
->> > + * pointer and @c is the lockdep argument that is passed to the
->> > + * rcu_dereference_protected() call used to read that pointer.  The old
->> > + * value of @rcu_ptr is returned, and @rcu_ptr is set to @ptr.
->> > + */
->> > +#define rcu_replace(rcu_ptr, ptr, c)					\
->> > +({									\
->> > +	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
->> > +	rcu_assign_pointer((rcu_ptr), (ptr));				\
->> > +	__tmp;								\
->> > +})
->> > +
->> > +/**
->> >  * rcu_swap_protected() - swap an RCU and a regular pointer
->> >  * @rcu_ptr: RCU pointer
->> >  * @ptr: regular pointer
->> > --
->> > 2.9.5
->> 
->> --
->> Mathieu Desnoyers
->> EfficiOS Inc.
-> > http://www.efficios.com
+On 8/28/19 3:14 PM, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>
+> As per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced Allocation
+> Capability. So skip pci_ea_init() for virtual devices.
+>
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Suggested-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+This patch was also dropped in your v8. Is this also intentional?
+> ---
+>   drivers/pci/pci.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 1b27b5af3d55..266600a11769 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3025,6 +3025,13 @@ void pci_ea_init(struct pci_dev *dev)
+>   	int offset;
+>   	int i;
+>   
+> +	/*
+> +	 * Per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced
+> +	 * Allocation Capability.
+> +	 */
+> +	if (dev->is_virtfn)
+> +		return;
+> +
+>   	/* find PCI EA capability in list */
+>   	ea = pci_find_capability(dev, PCI_CAP_ID_EA);
+>   	if (!ea)
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
+
