@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D96CA2C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEAB3CA1FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733292AbfJCQIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:08:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57220 "EHLO mail.kernel.org"
+        id S1731685AbfJCQBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:01:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731439AbfJCQIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:08:50 -0400
+        id S1730237AbfJCQA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:00:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CFFE20865;
-        Thu,  3 Oct 2019 16:08:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E99C21A4C;
+        Thu,  3 Oct 2019 16:00:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118930;
-        bh=VBJNM2vTUgCaLDng6wOKnNX5G5DEU3d89JMapHsEbvQ=;
+        s=default; t=1570118457;
+        bh=laAxBeLgUCL7CLKkEoF7O8sqpowtY5MtgmlxoiWAa/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXsq78dWxITJ3sQVCeqXvoOu63a3NfM6WTCrWqT11T38grg53gfwF4IaO34Psqt5Y
-         +JNezUAA+Gw98dy2Hd3dfDLw/GkHdn/Ja9T3NRiuI8qRLr7GDi+fNX4CPsFgk4RxPc
-         A2HsB8+IwLQ2xV7aaRuszWW8qb1Lziz9ylvRZ5Jg=
+        b=MTT/kqL2d/R2afgxdd9kuRyA/+hRBywSqXJmwYaPhPOn2qqoG4MaE2JEaE3a5v3fL
+         PbcE04lrsxWIbFsD4abBjVW8o6cxkE9DcBNT/AIoZCvdsHH3a5vYSMLMRxVfkbjKpW
+         UPALiuJbftcDCycDU0BhjamSHlilXD1PqukIhia0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 062/185] media: i2c: ov5640: Check for devm_gpiod_get_optional() error
-Date:   Thu,  3 Oct 2019 17:52:20 +0200
-Message-Id: <20191003154451.282144792@linuxfoundation.org>
+Subject: [PATCH 4.9 019/129] f2fs: fix to do sanity check on segment bitmap of LFS curseg
+Date:   Thu,  3 Oct 2019 17:52:22 +0200
+Message-Id: <20191003154327.846915437@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 8791a102ce579346cea9d2f911afef1c1985213c ]
+[ Upstream commit c854f4d681365498f53ba07843a16423625aa7e9 ]
 
-The power down and reset GPIO are optional, but the return value
-from devm_gpiod_get_optional() needs to be checked and propagated
-in the case of error, so that probe deferral can work.
+As Jungyeon Reported in bugzilla:
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=203233
+
+- Reproduces
+gcc poc_13.c
+./run.sh f2fs
+
+- Kernel messages
+ F2FS-fs (sdb): Bitmap was wrongly set, blk:4608
+ kernel BUG at fs/f2fs/segment.c:2133!
+ RIP: 0010:update_sit_entry+0x35d/0x3e0
+ Call Trace:
+  f2fs_allocate_data_block+0x16c/0x5a0
+  do_write_page+0x57/0x100
+  f2fs_do_write_node_page+0x33/0xa0
+  __write_node_page+0x270/0x4e0
+  f2fs_sync_node_pages+0x5df/0x670
+  f2fs_write_checkpoint+0x364/0x13a0
+  f2fs_sync_fs+0xa3/0x130
+  f2fs_do_sync_file+0x1a6/0x810
+  do_fsync+0x33/0x60
+  __x64_sys_fsync+0xb/0x10
+  do_syscall_64+0x43/0x110
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The testcase fails because that, in fuzzed image, current segment was
+allocated with LFS type, its .next_blkoff should point to an unused
+block address, but actually, its bitmap shows it's not. So during
+allocation, f2fs crash when setting bitmap.
+
+Introducing sanity_check_curseg() to check such inconsistence of
+current in-used segment.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov5640.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/f2fs/segment.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-index acf5c8a55bbd2..69f564b0837a7 100644
---- a/drivers/media/i2c/ov5640.c
-+++ b/drivers/media/i2c/ov5640.c
-@@ -2261,9 +2261,14 @@ static int ov5640_probe(struct i2c_client *client,
- 	/* request optional power down pin */
- 	sensor->pwdn_gpio = devm_gpiod_get_optional(dev, "powerdown",
- 						    GPIOD_OUT_HIGH);
-+	if (IS_ERR(sensor->pwdn_gpio))
-+		return PTR_ERR(sensor->pwdn_gpio);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 2fb99a081de8f..1d5a352138109 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2490,6 +2490,41 @@ static int build_dirty_segmap(struct f2fs_sb_info *sbi)
+ 	return init_victim_secmap(sbi);
+ }
+ 
++static int sanity_check_curseg(struct f2fs_sb_info *sbi)
++{
++	int i;
 +
- 	/* request optional reset pin */
- 	sensor->reset_gpio = devm_gpiod_get_optional(dev, "reset",
- 						     GPIOD_OUT_HIGH);
-+	if (IS_ERR(sensor->reset_gpio))
-+		return PTR_ERR(sensor->reset_gpio);
++	/*
++	 * In LFS/SSR curseg, .next_blkoff should point to an unused blkaddr;
++	 * In LFS curseg, all blkaddr after .next_blkoff should be unused.
++	 */
++	for (i = 0; i < NO_CHECK_TYPE; i++) {
++		struct curseg_info *curseg = CURSEG_I(sbi, i);
++		struct seg_entry *se = get_seg_entry(sbi, curseg->segno);
++		unsigned int blkofs = curseg->next_blkoff;
++
++		if (f2fs_test_bit(blkofs, se->cur_valid_map))
++			goto out;
++
++		if (curseg->alloc_type == SSR)
++			continue;
++
++		for (blkofs += 1; blkofs < sbi->blocks_per_seg; blkofs++) {
++			if (!f2fs_test_bit(blkofs, se->cur_valid_map))
++				continue;
++out:
++			f2fs_msg(sbi->sb, KERN_ERR,
++				"Current segment's next free block offset is "
++				"inconsistent with bitmap, logtype:%u, "
++				"segno:%u, type:%u, next_blkoff:%u, blkofs:%u",
++				i, curseg->segno, curseg->alloc_type,
++				curseg->next_blkoff, blkofs);
++			return -EINVAL;
++		}
++	}
++	return 0;
++}
++
+ /*
+  * Update min, max modified time for cost-benefit GC algorithm
+  */
+@@ -2583,6 +2618,10 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
  
- 	v4l2_i2c_subdev_init(&sensor->sd, client, &ov5640_subdev_ops);
- 
++	err = sanity_check_curseg(sbi);
++	if (err)
++		return err;
++
+ 	init_min_max_mtime(sbi);
+ 	return 0;
+ }
 -- 
 2.20.1
 
