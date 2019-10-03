@@ -2,133 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBAB5C957C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 02:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1F74C9583
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 02:20:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbfJCATJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 2 Oct 2019 20:19:09 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:32892 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729403AbfJCATI (ORCPT
+        id S1729552AbfJCATz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 2 Oct 2019 20:19:55 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35027 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbfJCATz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Oct 2019 20:19:08 -0400
-Received: by mail-io1-f70.google.com with SMTP id g15so2232947ioc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 17:19:08 -0700 (PDT)
+        Wed, 2 Oct 2019 20:19:55 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y21so644959wmi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2019 17:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=otXrdRXRXX4CQWq3GYXb5YP6U6iBo7U72/9DY4vWCe8=;
+        b=UyRUiqxpxePfHhLvHWalEtfH7bXcfip6Jpuw1CuN4CME/z2VjKvnYoiACUL8njpxWx
+         NrFj3wRuC+4G387TGIaHSpAOPY+RzGZ4sS0j/azLBk/U985whs44i6Y3Q8GidUtPoAtr
+         gPg9sFSMc6bNH86zfYj2HsjOVmJbhRxv5A2Dc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=peIUdpB0uufhb2WaI0hkt8u3mVPMxGwg5KAkuWXKJEM=;
-        b=tlF1mTql75tAOcAP/kd+dLBLkS5A5QgkwHhNfCXCni2ITRjdKt/cRcz+j/+ZLXczkY
-         8msRT80OPoZS/8gpY7xZwzTrqsnHm5qRaE6BhczxkHTovmoe3Ryo/eOnx4csW9vsP7/m
-         KBFFaVZJGtjaXuy/QjnhsOTZlk6fmavV9f+d8xAK46RiHnqJ/si5CzUTyqfSlOE51ZcE
-         ol5kYYFyNDPyUHvcFOBuTbVLERQzIysEfU8dnVlqYvoOfhDf5XZ3lkgHoi9u04n1mb7R
-         Vmtpl5L1XoQY5JxOPfyGBoxiXCFi4pQFgRCLZrvkDWkEaW0s6bnJETbXJ6T7vmIOGoEE
-         qQRw==
-X-Gm-Message-State: APjAAAXiiQn8kH5GC4sRMhddQgmswBzy3uXsCERHnO03rF4sw+x11uRz
-        T7xZo4+UD8mp6UGn24z1/tOd7/zwzRdOYB1qIfGPLMI20rkC
-X-Google-Smtp-Source: APXvYqyDPxvxHfZLOmI4rcw7jNQszi606WcLVjtl/4QRIX2H67TfAThskc/5+vGFskM40Iac4RX5Nh5xvZCdimiWlmK447iG2BST
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=otXrdRXRXX4CQWq3GYXb5YP6U6iBo7U72/9DY4vWCe8=;
+        b=s+3iz4pE7yYnKUE/FPO0+VMqC9Ytn+MPQfC218B20eek9gJ7nYOZuEFbDGTEiQpmYh
+         DZYJiD59uWCNj3lhRPWltNlj1hmS8ntPnf1J5lXSpIG0D29k7e/nK2jQmV5MrcJDUFvn
+         TPey2Vxzr9CRYgfm5aO5KTnsE+PDgwiY+Ozu8s5s5DxBlccD2xt7ROGwaERz2AzrvRKu
+         1Cvt9TOVWo98ckQcFt4DFpXXcjgYIMtiW9B5fGkvrlNucyXWIYFN9+nZ3sb2hlNIdt0L
+         RO4CBo6K3QeNvp00HkKfV9i8kU7MDwj273+vOxGou+gb4o0/dmfLlqV/b+80nb2QPAQ0
+         P67g==
+X-Gm-Message-State: APjAAAV75jxE8+0wi50vHng3QYu1xjILe+KNA1xkdi+RqlSNIcmeLOhk
+        N2irOxaks4E5/6q5G+roBwaqnil/hwf+1VeKXJpy1Q==
+X-Google-Smtp-Source: APXvYqxalUowEr9ft2/u7jrMhV84UjQI79UjdzbXbSZaI9zycwf1BjEeLazp7AlXXo82ElFFmqdBxB6sMQbjZwxUAj0=
+X-Received: by 2002:a05:600c:24cf:: with SMTP id 15mr4781220wmu.139.1570061993266;
+ Wed, 02 Oct 2019 17:19:53 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a02:7405:: with SMTP id o5mr6859365jac.44.1570061948007;
- Wed, 02 Oct 2019 17:19:08 -0700 (PDT)
-Date:   Wed, 02 Oct 2019 17:19:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000afc1b40593f68888@google.com>
-Subject: memory leak in gfs2_init_fs_context
-From:   syzbot <syzbot+c2fdfd2b783754878fb6@syzkaller.appspotmail.com>
-To:     agruenba@redhat.com, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, rpeterso@redhat.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20191001113307.27796-1-bjorn.topel@gmail.com> <20191001113307.27796-3-bjorn.topel@gmail.com>
+ <CAPhsuW627h-Sf8uCpaE4eyu+wpkOPK+6eXkOhwMBnvFVVDQdKQ@mail.gmail.com>
+In-Reply-To: <CAPhsuW627h-Sf8uCpaE4eyu+wpkOPK+6eXkOhwMBnvFVVDQdKQ@mail.gmail.com>
+From:   KP Singh <kpsingh@chromium.org>
+Date:   Thu, 3 Oct 2019 02:19:42 +0200
+Message-ID: <CACYkzJ6R4bY2B61fC-EYGn0f-osPOVrZEJsatWyJRFn9_1JN2A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] samples/bpf: fix build by setting HAVE_ATTR_TEST to zero
+To:     Song Liu <liu.song.a23@gmail.com>
+Cc:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        adrian.hunter@intel.com, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Tested-by: KP Singh <kpsingh@google.com>
 
-syzbot found the following crash on:
+I can confirm that samples/bpf are building for me now (x86_64,
+clang-8) after applying this series and:
 
-HEAD commit:    f1f2f614 Merge branch 'next-integrity' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15569c05600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4e93436f92b0cfde
-dashboard link: https://syzkaller.appspot.com/bug?extid=c2fdfd2b783754878fb6
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10327c05600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105c9fd5600000
+ * https://lore.kernel.org/bpf/CAPhsuW5c9v0OnU4g+eYkPjBCuNMjC_69pFhzr=3DnTf=
+DMAy4bK6w@mail.gmail.com
+ * https://lore.kernel.org/bpf/20191002191652.11432-1-kpsingh@chromium.org/
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c2fdfd2b783754878fb6@syzkaller.appspotmail.com
-
-udit: type=1400 audit(1569701659.045:64): avc:  denied  { map } for   
-pid=6842 comm="syz-executor375" path="/root/syz-executor375626622"  
-dev="sda1" ino=16502 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-executing program
-executing program
-BUG: memory leak
-unreferenced object 0xffff88810fd9a500 (size 256):
-   comm "syz-executor375", pid 6845, jiffies 4294941255 (age 13.550s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000462ab467>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:43 [inline]
-     [<00000000462ab467>] slab_post_alloc_hook mm/slab.h:586 [inline]
-     [<00000000462ab467>] slab_alloc mm/slab.c:3319 [inline]
-     [<00000000462ab467>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
-     [<00000000b1a62211>] kmalloc include/linux/slab.h:552 [inline]
-     [<00000000b1a62211>] kzalloc include/linux/slab.h:686 [inline]
-     [<00000000b1a62211>] gfs2_init_fs_context+0x25/0x90  
-fs/gfs2/ops_fstype.c:1543
-     [<00000000db94ecb4>] gfs2_meta_init_fs_context+0x17/0x40  
-fs/gfs2/ops_fstype.c:1608
-     [<0000000077df5577>] alloc_fs_context+0x174/0x200 fs/fs_context.c:293
-     [<000000008d5e3681>] fs_context_for_mount+0x25/0x30 fs/fs_context.c:307
-     [<0000000030bafbdb>] __do_sys_fsopen fs/fsopen.c:137 [inline]
-     [<0000000030bafbdb>] __se_sys_fsopen fs/fsopen.c:115 [inline]
-     [<0000000030bafbdb>] __x64_sys_fsopen+0xa9/0x1a0 fs/fsopen.c:115
-     [<00000000974fed69>] do_syscall_64+0x73/0x1f0  
-arch/x86/entry/common.c:290
-     [<00000000299e0e1b>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff88810fd9a200 (size 256):
-   comm "syz-executor375", pid 6846, jiffies 4294941838 (age 7.720s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000462ab467>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:43 [inline]
-     [<00000000462ab467>] slab_post_alloc_hook mm/slab.h:586 [inline]
-     [<00000000462ab467>] slab_alloc mm/slab.c:3319 [inline]
-     [<00000000462ab467>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
-     [<00000000b1a62211>] kmalloc include/linux/slab.h:552 [inline]
-     [<00000000b1a62211>] kzalloc include/linux/slab.h:686 [inline]
-     [<00000000b1a62211>] gfs2_init_fs_context+0x25/0x90  
-fs/gfs2/ops_fstype.c:1543
-     [<00000000db94ecb4>] gfs2_meta_init_fs_context+0x17/0x40  
-fs/gfs2/ops_fstype.c:1608
-     [<0000000077df5577>] alloc_fs_context+0x174/0x200 fs/fs_context.c:293
-     [<000000008d5e3681>] fs_context_for_mount+0x25/0x30 fs/fs_context.c:307
-     [<0000000030bafbdb>] __do_sys_fsopen fs/fsopen.c:137 [inline]
-     [<0000000030bafbdb>] __se_sys_fsopen fs/fsopen.c:115 [inline]
-     [<0000000030bafbdb>] __x64_sys_fsopen+0xa9/0x1a0 fs/fsopen.c:115
-     [<00000000974fed69>] do_syscall_64+0x73/0x1f0  
-arch/x86/entry/common.c:290
-     [<00000000299e0e1b>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+on the current bpf-next/master.
 
 
+- KP
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+On Wed, Oct 2, 2019 at 11:00 PM Song Liu <liu.song.a23@gmail.com> wrote:
+>
+> On Tue, Oct 1, 2019 at 4:36 AM Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.c=
+om> wrote:
+> >
+> > From: Bj=C3=B6rn T=C3=B6pel <bjorn.topel@intel.com>
+> >
+> > To remove that test_attr__{enabled/open} are used by perf-sys.h, we
+> > set HAVE_ATTR_TEST to zero.
+> >
+> > Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn.topel@intel.com>
+>
+> Acked-by: Song Liu <songliubraving@fb.com>
