@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC0D1CA3FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9671CA3FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390000AbfJCQUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:20:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48628 "EHLO mail.kernel.org"
+        id S2389154AbfJCQUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:20:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389982AbfJCQUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:20:46 -0400
+        id S2390007AbfJCQUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:20:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AF452054F;
-        Thu,  3 Oct 2019 16:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3A5F20865;
+        Thu,  3 Oct 2019 16:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119644;
-        bh=zBxVPzYCD7UuRRjQOdsujnRC9GxFPolPRqm3UoNedZI=;
+        s=default; t=1570119650;
+        bh=4aQFDbSQL+d9zrO7he+q/JybfPW4JziCkkso1/CsaKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BhSapKyojx+TWIr6eHqiOCQQ4zC/9Z6BrHNB50H2KKF+GZAQJFTluO1FpOWjKlFfz
-         /vV07nNkmHNzKIzj+463W0VhZkQFccFldZhw7sri5c9IYeqvNeoST4ZXx4BZaMVIWV
-         9pv7nDudrZ0I/f/8nvAy9F16aNnNEwnZ7vx2rpt0=
+        b=ELHSB/tVbnEhWENN1QK50/YhXbwxZJuiu+795ePBgAD5C02h4+csmMQp/UG/pYrGQ
+         tQIeL1Wii7rVN5/o/rtoU3hhCC2tXrpnsQe6O6DMYUi4D+sagwyEe+TjMfcS0ypRpa
+         MgEWZPpqyc07nmi8pqSynKvWmF8JWNT0ftEV0JW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
+        Ahzo <Ahzo@tutanota.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 140/211] ALSA: hda - Drop unsol event handler for Intel HDMI codecs
-Date:   Thu,  3 Oct 2019 17:53:26 +0200
-Message-Id: <20191003154519.222129595@linuxfoundation.org>
+Subject: [PATCH 4.19 141/211] drm/amd/powerplay/smu7: enforce minimal VBITimeout (v2)
+Date:   Thu,  3 Oct 2019 17:53:27 +0200
+Message-Id: <20191003154519.506509425@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -43,49 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Ahzo <Ahzo@tutanota.com>
 
-[ Upstream commit f2dbe87c5ac1f88e6007ba1f1374f4bd8a197fb6 ]
+[ Upstream commit f659bb6dae58c113805f92822e4c16ddd3156b79 ]
 
-We don't need to deal with the unsol events for Intel chips that are
-tied with the graphics via audio component notifier.  Although the
-presence of the audio component is checked at the beginning of
-hdmi_unsol_event(), better to short cut by dropping unsol_event ops.
+This fixes screen corruption/flickering on 75 Hz displays.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204565
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+v2: make print statement debug only (Alex)
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=102646
+Reviewed-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Ahzo <Ahzo@tutanota.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_hdmi.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
-index e4fbfb5557ab7..107ec7f3e2214 100644
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -2583,6 +2583,8 @@ static void i915_pin_cvt_fixup(struct hda_codec *codec,
- /* precondition and allocation for Intel codecs */
- static int alloc_intel_hdmi(struct hda_codec *codec)
- {
-+	int err;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+index b52ccab428a9e..c7c505095402d 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+@@ -4052,6 +4052,11 @@ static int smu7_program_display_gap(struct pp_hwmgr *hwmgr)
+ 
+ 	data->frame_time_x2 = frame_time_in_us * 2 / 100;
+ 
++	if (data->frame_time_x2 < 280) {
++		pr_debug("%s: enforce minimal VBITimeout: %d -> 280\n", __func__, data->frame_time_x2);
++		data->frame_time_x2 = 280;
++	}
 +
- 	/* requires i915 binding */
- 	if (!codec->bus->core.audio_component) {
- 		codec_info(codec, "No i915 binding for Intel HDMI/DP codec\n");
-@@ -2591,7 +2593,12 @@ static int alloc_intel_hdmi(struct hda_codec *codec)
- 		return -ENODEV;
- 	}
+ 	display_gap2 = pre_vbi_time_in_us * (ref_clock / 100);
  
--	return alloc_generic_hdmi(codec);
-+	err = alloc_generic_hdmi(codec);
-+	if (err < 0)
-+		return err;
-+	/* no need to handle unsol events */
-+	codec->patch_ops.unsol_event = NULL;
-+	return 0;
- }
- 
- /* parse and post-process for Intel codecs */
+ 	cgs_write_ind_register(hwmgr->device, CGS_IND_REG__SMC, ixCG_DISPLAY_GAP_CNTL2, display_gap2);
 -- 
 2.20.1
 
