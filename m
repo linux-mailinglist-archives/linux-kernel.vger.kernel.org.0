@@ -2,139 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F86CACF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5024DCAD01
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731903AbfJCRc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:32:59 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:56582 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730823AbfJCRcy (ORCPT
+        id S1732812AbfJCRdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:33:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53724 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732705AbfJCRdc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:32:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1570123973;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=tyc8Mk8DJcaipG9TZO3g0pE+sD22mtd1Wvj7+XFS8Vs=;
-        b=FlUxtkozk3qE3W5q3py1FalZj1ZbbYvZguu6n0GvwV/RnYXRP5/GospIXMgZwslApnzkeR
-        Ar2ZoLPwOA+YSOYK7t/88TSR4f9emWGmqLlzOFThhSE3InYcvFjHY3TuZdJGyVvA1QtHfo
-        eSW2ejI2qgt/EgDWzSBERNyvrvm4AB4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-1-68CYGk9-OmG4rKzj9u8jpg-1; Thu, 03 Oct 2019 13:32:50 -0400
-Received: by mail-wm1-f71.google.com with SMTP id o8so1416288wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:32:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2ef7N0ePuxn3Ta7g1ODhoz4GZ5kwOIoAGHMitlSYrcw=;
-        b=BhBQ7L4HtoBaDbGyd/3Mdk+2qKzSVrFSP1EMSb8qF6GsK7498Z4iAVR6J0GB1EG3c3
-         b3V85lt2fgNNupIWZpTnJpRTVb2Ck3jXl+fZxzJWS4qL35qz6mxcUvNX8431wjrB54OF
-         g7vop/yVCtY4nbpTndWcPac7hySbnCfqbY76XzqMUmgo9KB4yGGm0cG7n8gwgURfTc3J
-         Yt93jEkRQmvbJL2LsuAU2ljUkBibkHO3jAy9RftzNkZBIRIYmONppc69cVxKA9hgYreu
-         qqv/HWzE4bZWSTo1hTVO1yv1YwHeluZJcfEo1U6TDuM2w9BGXj2eRqG1jzGRo8sxO6yW
-         QxVQ==
-X-Gm-Message-State: APjAAAW633+w54eQqS7W3dPEKK9/YgByOS8JdVsNg/sA+JycpxCMVTCK
-        QDDYP3Ik8184vxo/ncT0tm2Z9hTzTDHf0r03qDEupakIAA13UXOQW6qyFY7Z7VTpvLcRDLYGqmX
-        8LtWE6vafLj2sHsgBjreX6X5k
-X-Received: by 2002:a7b:c156:: with SMTP id z22mr8133040wmi.142.1570123969574;
-        Thu, 03 Oct 2019 10:32:49 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqz+93T7QZmfuz6juSrvUo+0tO+JKd49hF/xJ8735MhhS21vMaPI2qHMRdInVKHuyZof2sGApg==
-X-Received: by 2002:a7b:c156:: with SMTP id z22mr8133017wmi.142.1570123969238;
-        Thu, 03 Oct 2019 10:32:49 -0700 (PDT)
-Received: from localhost (pD95EF0F7.dip0.t-ipconnect.de. [217.94.240.247])
-        by smtp.gmail.com with ESMTPSA id 90sm4908448wrr.1.2019.10.03.10.32.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 10:32:48 -0700 (PDT)
-From:   Christian Kellner <ckellner@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
-        Christian Kellner <christian@kellner.me>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>
-Subject: [PATCH] thunderbolt: Add 'generation' attribute for devices
-Date:   Thu,  3 Oct 2019 19:32:40 +0200
-Message-Id: <20191003173242.80938-1-ckellner@redhat.com>
-X-Mailer: git-send-email 2.23.0
+        Thu, 3 Oct 2019 13:33:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1lsTLTacUge/TmK094kPtZgnZ5shmTQX/+pqj5VYXjE=; b=re036ledOxvJgkwTEi0ql8CqX
+        uqD9VjHxS8mTVjj0ThUKiclF4XhTek9fMKqjW4oXRYJwD5MacDUoqB9/3eTCfjMGbbMiWPrahAVDp
+        TxEvPEaF88oafdaXTj69DBU0VUbUnGN8V6Rau9S+3uF9jDtqnLGk1s8+zeC72R5dZEkEw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iG4ym-0005vr-JL; Thu, 03 Oct 2019 17:33:28 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D07612740210; Thu,  3 Oct 2019 18:33:27 +0100 (BST)
+Date:   Thu, 3 Oct 2019 18:33:27 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.3 204/344] SoC: simple-card-utils: set 0Hz to sysclk
+ when shutdown
+Message-ID: <20191003173327.GC6090@sirena.co.uk>
+References: <20191003154540.062170222@linuxfoundation.org>
+ <20191003154600.389003319@linuxfoundation.org>
+ <20191003172849.GB6090@sirena.co.uk>
 MIME-Version: 1.0
-X-MC-Unique: 68CYGk9-OmG4rKzj9u8jpg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7qSK/uQB79J36Y4o"
+Content-Disposition: inline
+In-Reply-To: <20191003172849.GB6090@sirena.co.uk>
+X-Cookie: Reactor error - core dumped!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Kellner <christian@kellner.me>
 
-The Thunderbolt standard went through several major iterations, here
-called generation. USB4, which will be based on Thunderbolt, will be
-generation 4. Let userspace know the generation of the controller in
-the devices in order to distinguish between Thunderbolt and USB4, so
-it can be shown in various user interfaces.
+--7qSK/uQB79J36Y4o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Christian Kellner <christian@kellner.me>
----
- Documentation/ABI/testing/sysfs-bus-thunderbolt |  8 ++++++++
- drivers/thunderbolt/switch.c                    | 10 ++++++++++
- 2 files changed, 18 insertions(+)
+On Thu, Oct 03, 2019 at 06:28:49PM +0100, Mark Brown wrote:
+> On Thu, Oct 03, 2019 at 05:52:49PM +0200, Greg Kroah-Hartman wrote:
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentatio=
-n/ABI/testing/sysfs-bus-thunderbolt
-index b21fba14689b..630e51344f1c 100644
---- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
-+++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
-@@ -80,6 +80,14 @@ Contact:=09thunderbolt-software@lists.01.org
- Description:=09This attribute contains 1 if Thunderbolt device was already
- =09=09authorized on boot and 0 otherwise.
-=20
-+What: /sys/bus/thunderbolt/devices/.../generation
-+Date:=09=09Aug 2019
-+KernelVersion:=095.5
-+Contact:=09Christian Kellner <christian@kellner.me>
-+Description:=09This attribute contains the generation of the Thunderbolt
-+=09=09controller associated with the device. It will contain 4
-+=09=09for USB4.
-+
- What: /sys/bus/thunderbolt/devices/.../key
- Date:=09=09Sep 2017
- KernelVersion:=094.13
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 410bf1bceeee..ac9fa2740800 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -1120,6 +1120,15 @@ device_name_show(struct device *dev, struct device_a=
-ttribute *attr, char *buf)
- }
- static DEVICE_ATTR_RO(device_name);
-=20
-+static ssize_t
-+generation_show(struct device *dev, struct device_attribute *attr, char *b=
-uf)
-+{
-+=09struct tb_switch *sw =3D tb_to_switch(dev);
-+
-+=09return sprintf(buf, "%u\n", sw->generation);
-+}
-+static DEVICE_ATTR_RO(generation);
-+
- static ssize_t key_show(struct device *dev, struct device_attribute *attr,
- =09=09=09char *buf)
- {
-@@ -1325,6 +1334,7 @@ static struct attribute *switch_attrs[] =3D {
- =09&dev_attr_boot.attr,
- =09&dev_attr_device.attr,
- =09&dev_attr_device_name.attr,
-+=09&dev_attr_generation.attr,
- =09&dev_attr_key.attr,
- =09&dev_attr_nvm_authenticate.attr,
- =09&dev_attr_nvm_version.attr,
---=20
-2.23.0
+> > Some codecs set rate constraints that derives from sysclk. This
+> > mechanism works correctly if machine drivers give fixed frequency.
 
+> This is a new feature which seems out of scope for stable - I thought
+> I'd raised this already?
+
+No, I didn't sorry - that was a similar patch in a device driver that
+I'd flagged (and has been correctly dropped).
+
+--7qSK/uQB79J36Y4o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2WMOYACgkQJNaLcl1U
+h9BuXQf7BIZUChyxBFPjAWKEbc9ifRghqSEGtDwFhm+kNuPma03Ue2Azp+uqISuZ
+XDANYfw0mMFJBSPGqXS2xLtpL4KZu3cv3lFRNWWC3mMpHV5bnwWrw+jhN28aT5z8
+7nwxAAGoWXtE4N/ecTEeUqCYBEUp9RwV9QApnBWC9Y9achU741W691H9XXIaUYB3
+hOgpysLCGryH8PVNxIR+MYzWcvwRtBmNoMW0KSX76YUYZYsLnc7717GZcUXx0qEO
+xK1TBJmUeH9QPxj3x7VI9kNXdwHATHqe1HOU1DEQYvN6molKbGF6S/ANpt+k5iVl
+oDgD0Gb/+EFrkQRLkGdb+enxosxdtw==
+=4XgQ
+-----END PGP SIGNATURE-----
+
+--7qSK/uQB79J36Y4o--
