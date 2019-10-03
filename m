@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9837CA1C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA798CA1C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730435AbfJCP65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:58:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41790 "EHLO mail.kernel.org"
+        id S1729702AbfJCP7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:59:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729802AbfJCP6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:58:55 -0400
+        id S1730265AbfJCP65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:58:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E461E20830;
-        Thu,  3 Oct 2019 15:58:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 862C8207FF;
+        Thu,  3 Oct 2019 15:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118334;
-        bh=xpL+Zktkj4FG1ObP8MvGMpsubfq7xDXJQA7h+p6dJUA=;
+        s=default; t=1570118337;
+        bh=agcK21fovO8R8OBGihJ+5fxidtN3+4UA9+YgcXgx4gA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ocuAxx2YVKM8GMVzijLajYCGiencmdDoIY3QubyO0yNPtHV4KoMku1drwSpObzt3W
-         EWfwQUtzuOSawTBGHOuAwvewnKkHC6WjwIwpTpBMZQso+f1i2V6AuLbMBZB+XGm8zQ
-         5YVuStMOS8uWyiqQfNwh8b4wTjecd+NMxjCkiRZg=
+        b=ZzweHHDh2HwRMhdRmELnwfLsMyqeX1UrQbB6SKRDEjltC5l6bLZAPaPt8i05sEV+e
+         wrQw/8Eji3bH1NOZuKJ09UXCX/nMbFv3ruEosDxmD5M0M6lM9znBSh2nsQ6XQp0kIk
+         IPovREUgA5V4j1mODwoB1doM7wxix72QNGsXmgD4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 72/99] media: ttusb-dec: Fix info-leak in ttusb_dec_send_command()
-Date:   Thu,  3 Oct 2019 17:53:35 +0200
-Message-Id: <20191003154332.100916722@linuxfoundation.org>
+Subject: [PATCH 4.4 73/99] ALSA: hda/realtek - Blacklist PC beep for Lenovo ThinkCentre M73/93
+Date:   Thu,  3 Oct 2019 17:53:36 +0200
+Message-Id: <20191003154332.560975756@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
@@ -46,37 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit a10feaf8c464c3f9cfdd3a8a7ce17e1c0d498da1 ]
+[ Upstream commit 051c78af14fcd74a22b5af45548ad9d588247cc7 ]
 
-The function at issue does not always initialize each byte allocated
-for 'b' and can therefore leak uninitialized memory to a USB device in
-the call to usb_bulk_msg()
+Lenovo ThinkCentre M73 and M93 don't seem to have a proper beep
+although the driver tries to probe and set up blindly.
+Blacklist these machines for suppressing the beep creation.
 
-Use kzalloc() instead of kmalloc()
-
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204635
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/ttusb-dec/ttusb_dec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-index a5de46f04247f..f9b5de7ace01c 100644
---- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
-+++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-@@ -272,7 +272,7 @@ static int ttusb_dec_send_command(struct ttusb_dec *dec, const u8 command,
- 
- 	dprintk("%s\n", __func__);
- 
--	b = kmalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
-+	b = kzalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
- 	if (!b)
- 		return -ENOMEM;
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index d5ca16048ce0d..55bae9e6de27d 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -977,6 +977,9 @@ static const struct snd_pci_quirk beep_white_list[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x834a, "EeePC", 1),
+ 	SND_PCI_QUIRK(0x1458, 0xa002, "GA-MA790X", 1),
+ 	SND_PCI_QUIRK(0x8086, 0xd613, "Intel", 1),
++	/* blacklist -- no beep available */
++	SND_PCI_QUIRK(0x17aa, 0x309e, "Lenovo ThinkCentre M73", 0),
++	SND_PCI_QUIRK(0x17aa, 0x30a3, "Lenovo ThinkCentre M93", 0),
+ 	{}
+ };
  
 -- 
 2.20.1
