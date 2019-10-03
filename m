@@ -2,108 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A24CA34E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5820CA35A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:15:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388602AbfJCQO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:14:27 -0400
-Received: from bout01.mta.xmission.com ([166.70.11.15]:50250 "EHLO
-        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388575AbfJCQOW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:14:22 -0400
-Received: from mx01.mta.xmission.com ([166.70.13.211])
-        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1iG3Dz-0007yB-3W; Thu, 03 Oct 2019 09:41:03 -0600
-Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
-        by mx01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1iG3Dw-0003hb-Uu; Thu, 03 Oct 2019 09:41:03 -0600
-Received: from hacktheplanet (c-68-50-34-150.hsd1.in.comcast.net [68.50.34.150])
-        by plesk14.xmission.com (Postfix) with ESMTPSA id 47CDD1266F5;
-        Thu,  3 Oct 2019 15:40:59 +0000 (UTC)
-Date:   Thu, 3 Oct 2019 11:40:53 -0400
-From:   Scott Bauer <sbauer@plzdonthack.me>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, axboe <axboe@kernel.dk>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        jonathan.derrick@intel.com, revanth.rajashekar@intel.com
-Message-ID: <20191003154053.GA2450@hacktheplanet>
-References: <82f70133-7242-d113-f041-9b89694685c0@infradead.org>
+        id S2388707AbfJCQOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:14:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388693AbfJCQOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:14:46 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 208AD20700;
+        Thu,  3 Oct 2019 16:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570119284;
+        bh=VtSc1ME8SN1wgVSZQutqFakL7GH/xf7ew/ekejUwB/A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=woIXU+h+NtQokv/0OsdXDLaZXh5pEjOxtF11BtjOBeOPALba7/EtZ1XtngAwS0oZc
+         lpEM+dkwEOrJwQkhPUMfxHkfYyfozUDpmy7GuoLq6zWsffptqLMPH3GkkYkxAFxJ5F
+         7veaEoy4Xe/tfumJ3BT4DtI+4Q0jD0vZKwSYo2gU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 001/211] arcnet: provide a buffer big enough to actually receive packets
+Date:   Thu,  3 Oct 2019 17:51:07 +0200
+Message-Id: <20191003154447.354536035@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
+References: <20191003154447.010950442@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82f70133-7242-d113-f041-9b89694685c0@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-XM-SPF: eid=1iG3Dw-0003hb-Uu;;;mid=<20191003154053.GA2450@hacktheplanet>;;;hst=mx01.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
-X-SA-Exim-Connect-IP: 166.70.198.161
-X-SA-Exim-Mail-From: sbauer@plzdonthack.me
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMNoVowels,XMSubLong,XM_UncommonTLD01
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4787]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.5 XM_UncommonTLD01 Less-common TLD
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Randy Dunlap <rdunlap@infradead.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1998 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 2.7 (0.1%), b_tie_ro: 1.90 (0.1%), parse: 1.23
-        (0.1%), extract_message_metadata: 27 (1.3%), get_uri_detail_list: 2.1
-        (0.1%), tests_pri_-1000: 9 (0.5%), tests_pri_-950: 1.85 (0.1%),
-        tests_pri_-900: 1.57 (0.1%), tests_pri_-90: 25 (1.2%), check_bayes: 23
-        (1.2%), b_tokenize: 10 (0.5%), b_tok_get_all: 6 (0.3%), b_comp_prob:
-        1.91 (0.1%), b_tok_touch_all: 2.3 (0.1%), b_finish: 0.63 (0.0%),
-        tests_pri_0: 422 (21.1%), check_dkim_signature: 0.80 (0.0%),
-        check_dkim_adsp: 57 (2.8%), poll_dns_idle: 1528 (76.5%), tests_pri_10:
-        2.1 (0.1%), tests_pri_500: 1502 (75.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 2/2] block: sed-opal: fix sparse warning: convert __be64
- data
-X-SA-Exim-Version: 4.2.1 (built Mon, 03 Jun 2019 09:49:16 -0600)
-X-SA-Exim-Scanned: Yes (on mx01.mta.xmission.com)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 07:23:15PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> sparse warns about incorrect type when using __be64 data.
-> It is not being converted to CPU-endian but it should be.
-> 
-> Fixes these sparse warnings:
-> 
-> ../block/sed-opal.c:375:20: warning: incorrect type in assignment (different base types)
-> ../block/sed-opal.c:375:20:    expected unsigned long long [usertype] align
-> ../block/sed-opal.c:375:20:    got restricted __be64 const [usertype] alignment_granularity
-> ../block/sed-opal.c:376:25: warning: incorrect type in assignment (different base types)
-> ../block/sed-opal.c:376:25:    expected unsigned long long [usertype] lowest_lba
-> ../block/sed-opal.c:376:25:    got restricted __be64 const [usertype] lowest_aligned_lba
-> 
-> Fixes: 455a7b238cd6 ("block: Add Sed-opal library")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Scott Bauer <scott.bauer@intel.com>
-> Cc: Rafael Antognolli <rafael.antognolli@intel.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: linux-block@vger.kernel.org
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-+ Jon and Revanth,
+[ Upstream commit 108639aac35eb57f1d0e8333f5fc8c7ff68df938 ]
+
+struct archdr is only big enough to hold the header of various types of
+arcnet packets. So to provide enough space to hold the data read from
+hardware provide a buffer large enough to hold a packet with maximal
+size.
+
+The problem was noticed by the stack protector which makes the kernel
+oops.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Acked-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/arcnet/arcnet.c |   31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
+
+--- a/drivers/net/arcnet/arcnet.c
++++ b/drivers/net/arcnet/arcnet.c
+@@ -1063,31 +1063,34 @@ EXPORT_SYMBOL(arcnet_interrupt);
+ static void arcnet_rx(struct net_device *dev, int bufnum)
+ {
+ 	struct arcnet_local *lp = netdev_priv(dev);
+-	struct archdr pkt;
++	union {
++		struct archdr pkt;
++		char buf[512];
++	} rxdata;
+ 	struct arc_rfc1201 *soft;
+ 	int length, ofs;
+ 
+-	soft = &pkt.soft.rfc1201;
++	soft = &rxdata.pkt.soft.rfc1201;
+ 
+-	lp->hw.copy_from_card(dev, bufnum, 0, &pkt, ARC_HDR_SIZE);
+-	if (pkt.hard.offset[0]) {
+-		ofs = pkt.hard.offset[0];
++	lp->hw.copy_from_card(dev, bufnum, 0, &rxdata.pkt, ARC_HDR_SIZE);
++	if (rxdata.pkt.hard.offset[0]) {
++		ofs = rxdata.pkt.hard.offset[0];
+ 		length = 256 - ofs;
+ 	} else {
+-		ofs = pkt.hard.offset[1];
++		ofs = rxdata.pkt.hard.offset[1];
+ 		length = 512 - ofs;
+ 	}
+ 
+ 	/* get the full header, if possible */
+-	if (sizeof(pkt.soft) <= length) {
+-		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(pkt.soft));
++	if (sizeof(rxdata.pkt.soft) <= length) {
++		lp->hw.copy_from_card(dev, bufnum, ofs, soft, sizeof(rxdata.pkt.soft));
+ 	} else {
+-		memset(&pkt.soft, 0, sizeof(pkt.soft));
++		memset(&rxdata.pkt.soft, 0, sizeof(rxdata.pkt.soft));
+ 		lp->hw.copy_from_card(dev, bufnum, ofs, soft, length);
+ 	}
+ 
+ 	arc_printk(D_DURING, dev, "Buffer #%d: received packet from %02Xh to %02Xh (%d+4 bytes)\n",
+-		   bufnum, pkt.hard.source, pkt.hard.dest, length);
++		   bufnum, rxdata.pkt.hard.source, rxdata.pkt.hard.dest, length);
+ 
+ 	dev->stats.rx_packets++;
+ 	dev->stats.rx_bytes += length + ARC_HDR_SIZE;
+@@ -1096,13 +1099,13 @@ static void arcnet_rx(struct net_device
+ 	if (arc_proto_map[soft->proto]->is_ip) {
+ 		if (BUGLVL(D_PROTO)) {
+ 			struct ArcProto
+-			*oldp = arc_proto_map[lp->default_proto[pkt.hard.source]],
++			*oldp = arc_proto_map[lp->default_proto[rxdata.pkt.hard.source]],
+ 			*newp = arc_proto_map[soft->proto];
+ 
+ 			if (oldp != newp) {
+ 				arc_printk(D_PROTO, dev,
+ 					   "got protocol %02Xh; encap for host %02Xh is now '%c' (was '%c')\n",
+-					   soft->proto, pkt.hard.source,
++					   soft->proto, rxdata.pkt.hard.source,
+ 					   newp->suffix, oldp->suffix);
+ 			}
+ 		}
+@@ -1111,10 +1114,10 @@ static void arcnet_rx(struct net_device
+ 		lp->default_proto[0] = soft->proto;
+ 
+ 		/* in striking contrast, the following isn't a hack. */
+-		lp->default_proto[pkt.hard.source] = soft->proto;
++		lp->default_proto[rxdata.pkt.hard.source] = soft->proto;
+ 	}
+ 	/* call the protocol-specific receiver. */
+-	arc_proto_map[soft->proto]->rx(dev, bufnum, &pkt, length);
++	arc_proto_map[soft->proto]->rx(dev, bufnum, &rxdata.pkt, length);
+ }
+ 
+ static void null_rx(struct net_device *dev, int bufnum,
 
 
-These look fine. They're currently unused, but may be useful in the future for sysfs or what ever else we add in.
