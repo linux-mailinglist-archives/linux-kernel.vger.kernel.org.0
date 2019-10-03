@@ -2,102 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91724CA183
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C9DCA18A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730711AbfJCP4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:56:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730614AbfJCP4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:56:32 -0400
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B18C222C8;
-        Thu,  3 Oct 2019 15:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118191;
-        bh=i4Gdla/qLYCwUY8TXC0PxpCn/O4eLhZk3Oh4yJNbqjQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=y+LYdsAyYVPU+ogedopimwB/UhsnGsp2oUl5tLvk654eTHDmIeoSWG2nCGII7q6zW
-         8/Axawckxy8TxeX/6wm6AHbtuWHbXt5CjRRIqm68o9nzigMg4+pQjLefid3sH8WUKU
-         BEnk+1qMQXkvQCMtJdagzQSxknxFVWIvIJHvHP7U=
-Received: by mail-qt1-f170.google.com with SMTP id n7so4287238qtb.6;
-        Thu, 03 Oct 2019 08:56:31 -0700 (PDT)
-X-Gm-Message-State: APjAAAXmlS7+fJ+TCZeTTUwZUbiSyFC4mD20SWVSlrHlcalh1isF0IVD
-        19fiWqBYLdnmAq2IrNU5s82NfCD3LZqHh0OP7w==
-X-Google-Smtp-Source: APXvYqx6BBDgfwU9lYgWoBXJNLC1ki+lOywVLMS4eE76V10EcL1hEp0zvvi4cS5atfEMr32Ls+zx4zC9aO+o+md64fo=
-X-Received: by 2002:ac8:31b3:: with SMTP id h48mr11022378qte.300.1570118190216;
- Thu, 03 Oct 2019 08:56:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <1568837198-27211-1-git-send-email-vincent.cheng.xh@renesas.com>
- <5d93ce84.1c69fb81.8e964.4dc1@mx.google.com> <20191003145546.GA19695@renesas.com>
-In-Reply-To: <20191003145546.GA19695@renesas.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 3 Oct 2019 10:56:19 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK12p48gqZdwNfYGNsBafmjMY=5U=QcHPHZy5sD-nGntA@mail.gmail.com>
-Message-ID: <CAL_JsqK12p48gqZdwNfYGNsBafmjMY=5U=QcHPHZy5sD-nGntA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: ptp: Add binding doc for IDT ClockMatrix
- based PTP clock
-To:     Vincent Cheng <vincent.cheng.xh@renesas.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730828AbfJCP45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:56:57 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52749 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730765AbfJCP4y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:56:54 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1iG3TF-0005Nb-RW; Thu, 03 Oct 2019 15:56:50 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     gregkh@linuxfoundation.org
+Cc:     stern@rowland.harvard.edu, mathias.nyman@intel.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH v2] usb: Add a new quirk to let buggy hub enable and disable LPM during suspend and resume
+Date:   Thu,  3 Oct 2019 23:56:40 +0800
+Message-Id: <20191003155640.12632-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191002151512.28517-1-kai.heng.feng@canonical.com>
+References: <20191002151512.28517-1-kai.heng.feng@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 3, 2019 at 10:12 AM Vincent Cheng
-<vincent.cheng.xh@renesas.com> wrote:
->
-> On Tue, Oct 01, 2019 at 06:09:06PM EDT, Rob Herring wrote:
-> >On Wed, Sep 18, 2019 at 04:06:37PM -0400, vincent.cheng.xh@renesas.com wrote:
-> >> From: Vincent Cheng <vincent.cheng.xh@renesas.com>
->
-> Hi Rob,
->
-> Welcome back.  Thank-you for providing feedback.
->
-> >>
-> >> Add device tree binding doc for the IDT ClockMatrix PTP clock driver.
-> >
-> >Bindings are for h/w, not drivers...
->
-> Yes, will remove 'driver'.
->
-> >>  Documentation/devicetree/bindings/ptp/ptp-idtcm.txt | 15 +++++++++++++++
-> >>  1 file changed, 15 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/ptp/ptp-idtcm.txt
-> >
-> >Please make this a DT schema.
->
-> Sure, will give it a try.
->
-> >> +  - compatible  Should be "idt,8a3400x-ptp" for System Synchronizer
-> >> +                Should be "idt,8a3401x-ptp" for Port Synchronizer
-> >> +                Should be "idt,8a3404x-ptp" for Universal Frequency Translator (UFT)
-> >
-> >If PTP is the only function of the chip, you don't need to append
-> >'-ptp'.
->
-> Okay, will remove '-ptp'.  Thanks.
->
->
-> >What's the 'x' for? We generally don't use wildcards in compatible
-> >strings.
->
-> We were hoping to use 'x' to represent a single driver to match the various
-> part numbers 8A34001, 8A34002, 8A34003, 8A34004, 8A34011, 8A34012, etc.
->
-> What should be used instead of 'x'?
+Dell WD15 dock has a topology like this:
+/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 10000M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/7p, 5000M
+            |__ Port 2: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
 
-Enumerate all the part numbers. Are the differences discoverable in
-some other way? If so, then 'x' is fine, but just add a note how
-models are distinguished.
+Their IDs:
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 004 Device 002: ID 0424:5537 Standard Microsystems Corp.
+Bus 004 Device 004: ID 0bda:8153 Realtek Semiconductor Corp.
 
-Rob
+Ethernet cannot be detected after plugging ethernet cable to the dock,
+the hub and roothub get runtime resumed and runtime suspended
+immediately:
+...
+[  433.315169] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
+[  433.315204] usb usb4: usb auto-resume
+[  433.315226] hub 4-0:1.0: hub_resume
+[  433.315239] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10202e2, return 0x10343
+[  433.315264] usb usb4-port1: status 0343 change 0001
+[  433.315279] xhci_hcd 0000:3a:00.0: clear port1 connect change, portsc: 0x10002e2
+[  433.315293] xhci_hcd 0000:3a:00.0: Get port status 4-2 read: 0x2a0, return 0x2a0
+[  433.317012] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.422282] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
+
+At this point the SMSC hub (usb 4-1) enters into compliance mode
+(USB_SS_PORT_LS_COMP_MOD), and USB core tries to warm-reset it,
+
+[  433.422307] usb usb4-port1: do warm reset
+[  433.422311] usb 4-1: device reset not allowed in state 8
+[  433.422339] hub 4-0:1.0: state 7 ports 2 chg 0002 evt 0000
+[  433.422346] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
+[  433.422356] usb usb4-port1: do warm reset
+[  433.422358] usb 4-1: device reset not allowed in state 8
+[  433.422428] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 0 status  = 0xf0002e2
+[  433.422455] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 1 status  = 0xe0002a0
+[  433.422465] hub 4-0:1.0: hub_suspend
+[  433.422475] usb usb4: bus auto-suspend, wakeup 1
+[  433.426161] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.466209] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.510204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.554051] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.598235] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.642154] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.686204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.730205] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.774203] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.818207] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.862040] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.862053] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.862077] xhci_hcd 0000:3a:00.0: xhci_suspend: stopping port polling.
+[  433.862096] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
+[  433.862312] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_suspend: 0
+[  433.862445] xhci_hcd 0000:3a:00.0: PME# enabled
+[  433.902376] xhci_hcd 0000:3a:00.0: restoring config space at offset 0xc (was 0x0, writing 0x20)
+[  433.902395] xhci_hcd 0000:3a:00.0: restoring config space at offset 0x4 (was 0x100000, writing 0x100403)
+[  433.902490] xhci_hcd 0000:3a:00.0: PME# disabled
+[  433.902504] xhci_hcd 0000:3a:00.0: enabling bus mastering
+[  433.902547] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
+[  433.902649] pcieport 0000:00:1b.0: PME: Spurious native interrupt!
+[  433.902839] xhci_hcd 0000:3a:00.0: Port change event, 4-1, id 3, portsc: 0xb0202e2
+[  433.902842] xhci_hcd 0000:3a:00.0: resume root hub
+[  433.902845] xhci_hcd 0000:3a:00.0: handle_port_status: starting port polling.
+[  433.902877] xhci_hcd 0000:3a:00.0: xhci_resume: starting port polling.
+[  433.902889] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.902891] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
+[  433.902919] usb usb4: usb wakeup-resume
+[  433.902942] usb usb4: usb auto-resume
+[  433.902966] hub 4-0:1.0: hub_resume
+...
+
+However the warm-reset never success, the asserted PCI PME keeps the
+runtime-resume, warm-reset and runtime-suspend loop which never bring it back
+and causing spurious interrupts floods.
+
+After some trial and errors, the issue goes away if LPM on the SMSC hub
+is disabled. Digging further, enabling and disabling LPM during runtime
+resume and runtime suspend respectively can solve the issue.
+
+So bring back the old LPM behavior as a quirk and use it for the SMSC
+hub to solve the issue.
+
+Fixes: d590c2311150 ("usb: Avoid unnecessary LPM enabling and disabling during suspend and resume")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  3 +++
+ drivers/usb/core/hub.c                          | 15 +++++++++++++++
+ drivers/usb/core/quirks.c                       |  6 ++++++
+ include/linux/usb/quirks.h                      |  3 +++
+ 4 files changed, 27 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index c7ac2f3ac99f..0b5ba2545373 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4974,6 +4974,9 @@
+ 					pause after every control message);
+ 				o = USB_QUIRK_HUB_SLOW_RESET (Hub needs extra
+ 					delay after resetting its port);
++				p = USB_QUIRK_PM_SET_LPM (Device needs to
++					disable LPM on suspend and enable LPM
++					on resume);
+ 			Example: quirks=0781:5580:bk,0a5c:5834:gij
+ 
+ 	usbhid.mousepoll=
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 236313f41f4a..5e07407c8204 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3269,6 +3269,13 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
+ 		if (PMSG_IS_AUTO(msg))
+ 			goto err_ltm;
+ 	}
++	if (udev->quirks & USB_QUIRK_PM_SET_LPM &&
++	    usb_unlocked_disable_lpm(udev)) {
++		dev_err(&udev->dev, "Failed to disable LPM before suspend\n.");
++		status = -ENOMEM;
++		if (PMSG_IS_AUTO(msg))
++			goto err_lpm3;
++	}
+ 
+ 	/* see 7.1.7.6 */
+ 	if (hub_is_superspeed(hub->hdev))
+@@ -3295,6 +3302,10 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
+ 	if (status) {
+ 		dev_dbg(&port_dev->dev, "can't suspend, status %d\n", status);
+ 
++		/* Try to enable USB3 LPM again */
++		if (udev->quirks & USB_QUIRK_PM_SET_LPM)
++			usb_unlocked_enable_lpm(udev);
++ err_lpm3:
+ 		/* Try to enable USB3 LTM again */
+ 		usb_enable_ltm(udev);
+  err_ltm:
+@@ -3586,6 +3597,10 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
+ 
+ 		/* Try to enable USB3 LTM */
+ 		usb_enable_ltm(udev);
++
++		/* Try to enable USB3 LPM */
++		if (udev->quirks & USB_QUIRK_PM_SET_LPM)
++			usb_unlocked_enable_lpm(udev);
+ 	}
+ 
+ 	usb_unlock_port(port_dev);
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 6b6413073584..75bbc9faddb4 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -131,6 +131,9 @@ static int quirks_param_set(const char *val, const struct kernel_param *kp)
+ 			case 'o':
+ 				flags |= USB_QUIRK_HUB_SLOW_RESET;
+ 				break;
++			case 'p':
++				flags |= USB_QUIRK_PM_SET_LPM;
++				break;
+ 			/* Ignore unrecognized flag characters */
+ 			}
+ 		}
+@@ -203,6 +206,9 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	/* USB3503 */
+ 	{ USB_DEVICE(0x0424, 0x3503), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
++	/* SMSC USB5537B USB 3.0 Hub (Dell WD15) */
++	{ USB_DEVICE(0x0424, 0x5537), .driver_info = USB_QUIRK_PM_SET_LPM },
++
+ 	/* Microsoft Wireless Laser Mouse 6000 Receiver */
+ 	{ USB_DEVICE(0x045e, 0x00e1), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
+diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
+index a1be64c9940f..3f2d97eff369 100644
+--- a/include/linux/usb/quirks.h
++++ b/include/linux/usb/quirks.h
+@@ -69,4 +69,7 @@
+ /* Hub needs extra delay after resetting its port. */
+ #define USB_QUIRK_HUB_SLOW_RESET		BIT(14)
+ 
++/* Device needs to disable LPM on suspend and enable LPM on resume */
++#define USB_QUIRK_PM_SET_LPM			BIT(15)
++
+ #endif /* __LINUX_USB_QUIRKS_H */
+-- 
+2.17.1
+
