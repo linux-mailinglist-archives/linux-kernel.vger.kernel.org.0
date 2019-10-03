@@ -2,72 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03191CAD1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFBF6CAD25
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387860AbfJCReg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:34:36 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:40435 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387643AbfJCReW (ORCPT
+        id S2388104AbfJCRfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:35:24 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38668 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731848AbfJCRfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:34:22 -0400
-X-Originating-IP: 91.224.148.103
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 07B71FF80E;
-        Thu,  3 Oct 2019 17:34:18 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 7/7] dt-bindings: iio: adc: max1027: Document max12xx series compatibles
-Date:   Thu,  3 Oct 2019 19:34:01 +0200
-Message-Id: <20191003173401.16343-8-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191003173401.16343-1-miquel.raynal@bootlin.com>
-References: <20191003173401.16343-1-miquel.raynal@bootlin.com>
+        Thu, 3 Oct 2019 13:35:23 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w8so1840744plq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:35:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=fXED1acjUYEy8AfTXY9uzTTHkmVKjak7JTmjU0uqyWA=;
+        b=LcL/9uRRNdFh8s3yJ34zvuzwmAlYXY+5NtkUJo19unLkx0Vd/qr8WqTEZBan/qftZr
+         P1bDgtC07qIqLSSGqeYoL0rj7rNRyavq3OPtZDp6QIfTcfUnqZ+qT1ZIDz5oFqaOGbrS
+         bddhgK6RC6JawtQgHzHSJ7Dfcme+1rlZvKUh4SWJKBwzlcEPHfrq1RqtyYZSNIc7wZF6
+         k7Duu2DYf/TEpibED84bxJD7NVZ2H2gVwF7PoM7jleGKOPhQ6d24sdBI+M2QemqnvXWn
+         En+88TQN7gWRurqwAw27hQo3eVf/lu+2dWPwg7zvpOquykRuQTYhtNH9Wpud+t2sW8qy
+         zMug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=fXED1acjUYEy8AfTXY9uzTTHkmVKjak7JTmjU0uqyWA=;
+        b=CAZnnbj53tO6yj2OJ0N0qZRTLXvdL+AdfKSxP95QcAh1uc+OcKKT5NKtX7CjKZMvqz
+         uwr2OJLSteaJZIxi9mFhwNCulf6MOR2zKZbeFE+5NU/vEVJW24DLLFgKJQG5ebgbfpGY
+         y+etpb9BLcfMDC6Q4pUKLBw8JSAgwY0QGVzHD/mwi7JBg9SDbEcRDvGBGggYJM/5d5DJ
+         50rBBNQw/nNt1yCatNBEALW2joLGpaPXH4Ko7JwuJzOrlu5YWePw4EFP7qRoO2EfL2+L
+         fuqxcr7cwhQOjPqsOAMmin1jYWWsCRgMqkAUAi9SFJp674tJ9vOLYwLHeY4F1B4iYA0y
+         Ty+w==
+X-Gm-Message-State: APjAAAX3ZxWvEbXXkqQIeT3ltrR8RIt1Kso9+8ZUsYYLBTntCPAslTZf
+        TJFZykLMKE7tqSps38jt/4F03A==
+X-Google-Smtp-Source: APXvYqy05X9Caox3UXihsMlUZMERys06g8z7Vx5e9Y0f2nZLZLrsuuT/5m6q6Rg/jEuE7VX9C6qJXw==
+X-Received: by 2002:a17:902:b7ca:: with SMTP id v10mr10149938plz.54.1570124122276;
+        Thu, 03 Oct 2019 10:35:22 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:a084:116f:9da0:2d6c])
+        by smtp.gmail.com with ESMTPSA id l21sm2835389pgm.55.2019.10.03.10.35.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Oct 2019 10:35:21 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Xingyu Chen <xingyu.chen@amlogic.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-watchdog@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] watchdog: meson: Fix the wrong value of left time
+In-Reply-To: <1569754429-17287-1-git-send-email-xingyu.chen@amlogic.com>
+References: <1569754429-17287-1-git-send-email-xingyu.chen@amlogic.com>
+Date:   Thu, 03 Oct 2019 10:35:20 -0700
+Message-ID: <7hy2y1vijr.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the bindings documentation with new Maxim ADCs compatibles.
+Xingyu Chen <xingyu.chen@amlogic.com> writes:
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- .../devicetree/bindings/iio/adc/max1027-adc.txt        | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+> The left time value is wrong when we get it by sysfs. The left time value
+> should be equal to preset timeout value minus elapsed time value. According
+> to the Meson-GXB/GXL datasheets which can be found at [0], the timeout value
+> is saved to BIT[0-15] of the WATCHDOG_TCNT, and elapsed time value is saved
+> to BIT[16-31] of the WATCHDOG_TCNT.
+>
+> [0]: http://linux-meson.com
+>
+> Fixes: 683fa50f0e18 ("watchdog: Add Meson GXBB Watchdog Driver")
+> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt b/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-index 7b23d68f655c..1b703a01d882 100644
---- a/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-@@ -1,7 +1,13 @@
--* Maxim 1027/1029/1031 Analog to Digital Converter (ADC)
-+* Maxim 1027/1029/1031/1227/1229/1231 Analog to Digital Converter (ADC)
- 
- Required properties:
--  - compatible: Should be "maxim,max1027" or "maxim,max1029" or "maxim,max1031"
-+  - compatible: Should be one of:
-+    * "maxim,max1027"
-+    * "maxim,max1029"
-+    * "maxim,max1031"
-+    * "maxim,max1227"
-+    * "maxim,max1229"
-+    * "maxim,max1231"
-   - reg: SPI chip select number for the device
- 
- Optional properties:
--- 
-2.20.1
-
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
