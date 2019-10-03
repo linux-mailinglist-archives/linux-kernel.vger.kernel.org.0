@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96844CA16E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB61CA189
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbfJCPzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 11:55:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37456 "EHLO mail.kernel.org"
+        id S1730816AbfJCP44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbfJCPzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 11:55:52 -0400
+        id S1730794AbfJCP4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:56:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 870EE20700;
-        Thu,  3 Oct 2019 15:55:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54EDD20700;
+        Thu,  3 Oct 2019 15:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118151;
-        bh=/mUCgtJyGz4DPng07kBY1gGf11ZttIpDb6KMtMyH+zk=;
+        s=default; t=1570118213;
+        bh=GAE2HLg/01cvzJ5pm27QrzJnQpSuN3EpD3z2D6FX7jQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AfJbS2MSwzZeH5r7qGnu7HoSVqSTHONS7pRRSiUT0tMpPy8Wh0Fol7ALHtZMVvy9W
-         OvHxoLKQYyJxLoDa102NSQdCzQCg1b8zt873A3I1ifvS8Gj8HEgLLyffUiSgQOTvrb
-         PqS4tU5KG0+pWWUXx9JlTWyBN/F/lwNOCQV5dwW8=
+        b=CSL/catwEb/9i06BxL9fM6vqT3VjsSrh5oFVI5Tkz7LSD1333ImTzXyM5s+4fGrfl
+         Xu42yudFpCUMbYgm9Ab00WVnJ5qpKDzcJH106TM3yfNbMjVCxrHZZhg6f08UWepTFT
+         T9qjB/DkmFseR1uaYVM/FOQv329Ex0egPOKrV3fw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 01/99] Revert "Bluetooth: validate BLE connection interval updates"
-Date:   Thu,  3 Oct 2019 17:52:24 +0200
-Message-Id: <20191003154253.184041960@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.4 03/99] HID: lg: make transfer buffers DMA capable
+Date:   Thu,  3 Oct 2019 17:52:26 +0200
+Message-Id: <20191003154253.721135607@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
 References: <20191003154252.297991283@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,62 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-[ Upstream commit 68d19d7d995759b96169da5aac313363f92a9075 ]
+commit 061232f0d47fa10103f3efa3e890f002a930d902 upstream.
 
-This reverts commit c49a8682fc5d298d44e8d911f4fa14690ea9485e.
+Kernel v4.9 strictly enforces DMA capable buffers, so we need to remove
+buffers allocated on the stack.
 
-There are devices which require low connection intervals for usable operation
-including keyboards and mice. Forcing a static connection interval for
-these types of devices has an impact in latency and causes a regression.
+[jkosina@suse.cz: fix up second usage of hid_hw_raw_request(), spotted by
+ 0day build bot]
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/hci_event.c  | 5 -----
- net/bluetooth/l2cap_core.c | 9 +--------
- 2 files changed, 1 insertion(+), 13 deletions(-)
+ drivers/hid/hid-lg.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index c4e94f34d0480..37fe2b158c2a7 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -5062,11 +5062,6 @@ static void hci_le_remote_conn_param_req_evt(struct hci_dev *hdev,
- 		return send_conn_param_neg_reply(hdev, handle,
- 						 HCI_ERROR_UNKNOWN_CONN_ID);
+--- a/drivers/hid/hid-lg.c
++++ b/drivers/hid/hid-lg.c
+@@ -701,11 +701,16 @@ static int lg_probe(struct hid_device *h
  
--	if (min < hcon->le_conn_min_interval ||
--	    max > hcon->le_conn_max_interval)
--		return send_conn_param_neg_reply(hdev, handle,
--						 HCI_ERROR_INVALID_LL_PARAMS);
--
- 	if (hci_check_conn_params(min, max, latency, timeout))
- 		return send_conn_param_neg_reply(hdev, handle,
- 						 HCI_ERROR_INVALID_LL_PARAMS);
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index 8cfba78d26f61..c25f1e4846cde 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -5266,14 +5266,7 @@ static inline int l2cap_conn_param_update_req(struct l2cap_conn *conn,
+ 	/* Setup wireless link with Logitech Wii wheel */
+ 	if (hdev->product == USB_DEVICE_ID_LOGITECH_WII_WHEEL) {
+-		unsigned char buf[] = { 0x00, 0xAF,  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
++		const unsigned char cbuf[] = { 0x00, 0xAF,  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
++		u8 *buf = kmemdup(cbuf, sizeof(cbuf), GFP_KERNEL);
  
- 	memset(&rsp, 0, sizeof(rsp));
+-		ret = hid_hw_raw_request(hdev, buf[0], buf, sizeof(buf),
+-					HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
++		if (!buf) {
++			ret = -ENOMEM;
++			goto err_free;
++		}
  
--	if (min < hcon->le_conn_min_interval ||
--	    max > hcon->le_conn_max_interval) {
--		BT_DBG("requested connection interval exceeds current bounds.");
--		err = -EINVAL;
--	} else {
--		err = hci_check_conn_params(min, max, latency, to_multiplier);
--	}
--
-+	err = hci_check_conn_params(min, max, latency, to_multiplier);
- 	if (err)
- 		rsp.result = cpu_to_le16(L2CAP_CONN_PARAM_REJECTED);
- 	else
--- 
-2.20.1
-
++		ret = hid_hw_raw_request(hdev, buf[0], buf, sizeof(cbuf),
++					HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
+ 		if (ret >= 0) {
+ 			/* insert a little delay of 10 jiffies ~ 40ms */
+ 			wait_queue_head_t wait;
+@@ -717,9 +722,10 @@ static int lg_probe(struct hid_device *h
+ 			buf[1] = 0xB2;
+ 			get_random_bytes(&buf[2], 2);
+ 
+-			ret = hid_hw_raw_request(hdev, buf[0], buf, sizeof(buf),
++			ret = hid_hw_raw_request(hdev, buf[0], buf, sizeof(cbuf),
+ 					HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
+ 		}
++		kfree(buf);
+ 	}
+ 
+ 	if (drv_data->quirks & LG_FF)
 
 
