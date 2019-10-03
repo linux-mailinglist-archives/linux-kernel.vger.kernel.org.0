@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC1DCAB1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADCF2CAA8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391936AbfJCRRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:17:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50418 "EHLO mail.kernel.org"
+        id S2393413AbfJCRIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:08:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389571AbfJCQV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:21:56 -0400
+        id S2404085AbfJCQfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0219A21A4C;
-        Thu,  3 Oct 2019 16:21:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF15A2070B;
+        Thu,  3 Oct 2019 16:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119714;
-        bh=SnQEhVM8RTG3LPNrFMAJntGs+Y+Ic60hMP54tSb/Xss=;
+        s=default; t=1570120524;
+        bh=gHBXCwehdpgM+xbkDasC+q/jnyRk+Cs4NobCvALNRa0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=srSud1pA5II9ttftUSdMWVaaVkDKDo3b1A4XHFLJXzcRBVTJgQB9fcGknnOTnQ08U
-         CuWj+pdTnMHgmZ+F48NnfXQ79if/IQ07AZ7FEljE0+bF6ITrFcHd2D+dLBgxAIXjJU
-         8nNUeyTHuW4jcMgzAEEleNLKNUABNLhcqkJ77vW4=
+        b=zBcRh7brZj9TDv1oKvPfxA4WZL3I7vC8C3rVVqtvzWwCDEEd6il3XTqte8i4mFPYs
+         vkXNqOpsNt+E5lKFxWzK+lwwB+ra6ayq0znBw/DrAocjlPR9n7GCUulQaiDAZjod+T
+         HoTXoXtg5h0KP8maSJyY9R9OmA+QzZMD1ekZioCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>,
-        Doug Reiland <doug.reiland@intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Peter Xu <peterx@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 167/211] KVM: x86: Manually calculate reserved bits when loading PDPTRS
+        stable@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH 5.2 255/313] ARM: zynq: Use memcpy_toio instead of memcpy on smp bring-up
 Date:   Thu,  3 Oct 2019 17:53:53 +0200
-Message-Id: <20191003154525.870373223@linuxfoundation.org>
+Message-Id: <20191003154558.155501339@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-References: <20191003154447.010950442@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,75 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Luis Araneda <luaraneda@gmail.com>
 
-commit 16cfacc8085782dab8e365979356ce1ca87fd6cc upstream.
+commit b7005d4ef4f3aa2dc24019ffba03a322557ac43d upstream.
 
-Manually generate the PDPTR reserved bit mask when explicitly loading
-PDPTRs.  The reserved bits that are being tracked by the MMU reflect the
-current paging mode, which is unlikely to be PAE paging in the vast
-majority of flows that use load_pdptrs(), e.g. CR0 and CR4 emulation,
-__set_sregs(), etc...  This can cause KVM to incorrectly signal a bad
-PDPTR, or more likely, miss a reserved bit check and subsequently fail
-a VM-Enter due to a bad VMCS.GUEST_PDPTR.
+This fixes a kernel panic on memcpy when
+FORTIFY_SOURCE is enabled.
 
-Add a one off helper to generate the reserved bits instead of sharing
-code across the MMU's calculations and the PDPTR emulation.  The PDPTR
-reserved bits are basically set in stone, and pushing a helper into
-the MMU's calculation adds unnecessary complexity without improving
-readability.
+The initial smp implementation on commit aa7eb2bb4e4a
+("arm: zynq: Add smp support")
+used memcpy, which worked fine until commit ee333554fed5
+("ARM: 8749/1: Kconfig: Add ARCH_HAS_FORTIFY_SOURCE")
+enabled overflow checks at runtime, producing a read
+overflow panic.
 
-Oppurtunistically fix/update the comment for load_pdptrs().
+The computed size of memcpy args are:
+- p_size (dst): 4294967295 = (size_t) -1
+- q_size (src): 1
+- size (len): 8
 
-Note, the buggy commit also introduced a deliberate functional change,
-"Also remove bit 5-6 from rsvd_bits_mask per latest SDM.", which was
-effectively (and correctly) reverted by commit cd9ae5fe47df ("KVM: x86:
-Fix page-tables reserved bits").  A bit of SDM archaeology shows that
-the SDM from late 2008 had a bug (likely a copy+paste error) where it
-listed bits 6:5 as AVL and A for PDPTEs used for 4k entries but reserved
-for 2mb entries.  I.e. the SDM contradicted itself, and bits 6:5 are and
-always have been reserved.
+Additionally, the memory is marked as __iomem, so one of
+the memcpy_* functions should be used for read/write.
 
-Fixes: 20c466b56168d ("KVM: Use rsvd_bits_mask in load_pdptrs()")
+Fixes: aa7eb2bb4e4a ("arm: zynq: Add smp support")
+Signed-off-by: Luis Araneda <luaraneda@gmail.com>
 Cc: stable@vger.kernel.org
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Reported-by: Doug Reiland <doug.reiland@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/mach-zynq/platsmp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -581,8 +581,14 @@ static int kvm_read_nested_guest_page(st
- 				       data, offset, len, access);
- }
+--- a/arch/arm/mach-zynq/platsmp.c
++++ b/arch/arm/mach-zynq/platsmp.c
+@@ -57,7 +57,7 @@ int zynq_cpun_start(u32 address, int cpu
+ 			* 0x4: Jump by mov instruction
+ 			* 0x8: Jumping address
+ 			*/
+-			memcpy((__force void *)zero, &zynq_secondary_trampoline,
++			memcpy_toio(zero, &zynq_secondary_trampoline,
+ 							trampoline_size);
+ 			writel(address, zero + trampoline_size);
  
-+static inline u64 pdptr_rsvd_bits(struct kvm_vcpu *vcpu)
-+{
-+	return rsvd_bits(cpuid_maxphyaddr(vcpu), 63) | rsvd_bits(5, 8) |
-+	       rsvd_bits(1, 2);
-+}
-+
- /*
-- * Load the pae pdptrs.  Return true is they are all valid.
-+ * Load the pae pdptrs.  Return 1 if they are all valid, 0 otherwise.
-  */
- int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3)
- {
-@@ -601,8 +607,7 @@ int load_pdptrs(struct kvm_vcpu *vcpu, s
- 	}
- 	for (i = 0; i < ARRAY_SIZE(pdpte); ++i) {
- 		if ((pdpte[i] & PT_PRESENT_MASK) &&
--		    (pdpte[i] &
--		     vcpu->arch.mmu.guest_rsvd_check.rsvd_bits_mask[0][2])) {
-+		    (pdpte[i] & pdptr_rsvd_bits(vcpu))) {
- 			ret = 0;
- 			goto out;
- 		}
 
 
