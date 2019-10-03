@@ -2,244 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4651CACB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E181ACAB90
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbfJCR1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:27:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37598 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388574AbfJCQOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:14:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF99021A4C;
-        Thu,  3 Oct 2019 16:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119260;
-        bh=NqjaflZa+4i1b02BgIZ5yPMmo/h3wsvAqapPDnfW1Lg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rfVmMYCYWOloizkfGunXNhqZL8YbRVYwFgA2U0Z1cPttJKSTkViSWbEEWefghR0OY
-         Wm1CpgPMdpb4MCILIEehGYDShZJdPtf2GiKdy/cf3ISPHPTJcW6N6guk2VtJMXuOo8
-         iw7dQJVyVaVTEN+RyOKAp5XmoI6ZeDOAeb/v5ZEo=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 185/185] Btrfs: fix race setting up and completing qgroup rescan workers
-Date:   Thu,  3 Oct 2019 17:54:23 +0200
-Message-Id: <20191003154522.680688344@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730561AbfJCP4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:56:20 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40109 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730504AbfJCP4M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:56:12 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l3so3334000wru.7
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 08:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=NKFrC0B8XfOBdcYy4waFnHZo34mHGp46OVgivkV/nsg=;
+        b=aNaQZuIW2iG4+SCv7VDtSMgRNVP7FlZdetl6sUWXBtp7oeSQxR665x5njpcYyKI2xk
+         Uvv8X3BSDSZUsLW1oGFuQlamFhdFIrNfwlOq1B3hFoMi0A+obcRQOOxbwyvUAS2evrAJ
+         c8NcY1rr6yYJPvcSdXbwU2qpl3HfG5D+VizDd0pNvxHe4qBoWnyL11CaCqma1vmkILLv
+         2qq/s4v66IZRtqsJTlOAIledIGofXIi242nk8K6kWHqNHeewn0+boxqT+7rO9Kv7jSca
+         MaaoBvL9LQtm9cjZuqmMY+DRN8fD8+JXAqasrQ7apCP0SX9BNrV6EG/wnPQmxzf2wZkt
+         wiHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=NKFrC0B8XfOBdcYy4waFnHZo34mHGp46OVgivkV/nsg=;
+        b=Yd0pzhMJAlkJ0DurZ1jARXdhryzKGgMP00eAMXYk358euMQrI50hTSTwx/3BZnEuva
+         H53JCRqCQDW2AT1OCr+Xn5NSvce01A9bfUuiDAjA2xB1U7yd0MjCRaWSH0yfVGx5Ga6J
+         eKXpJN0NiXk5CSu0OfHYTrU6vzHhnjuFcHnwRjX0WDRoz193YSMIAweUgRd86H7cxH0w
+         6hkyzITQZ2IzDekXheFTb9GM/AHTJ6TQRzVkFYtLb+LZ25OpeFczby0hwA7vBTfFSK9G
+         2p9gJxGCi2E2wprAVHWBp4ahFQvUrZ0p4fphDiTtswHzet9bIUf7Ef9pj5BZH3+SmCx8
+         g5Bg==
+X-Gm-Message-State: APjAAAUzX7Vt22kmZLBdE40IdjG/EjA6W+j6QdFu0HjJHHhHZY3qJY/2
+        h5KZ5zE4dmhbVE3MA5RrkFtFWQ==
+X-Google-Smtp-Source: APXvYqyeWhVDnASI2XK685gTnJ8+XSIi9Og7/oNl3GooJ5VN2khjLyPsF8m05wz1FN+mrQonzf/z+Q==
+X-Received: by 2002:a5d:45c6:: with SMTP id b6mr6827149wrs.4.1570118168901;
+        Thu, 03 Oct 2019 08:56:08 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id 79sm5324176wmb.7.2019.10.03.08.56.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 08:56:08 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 16:56:06 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: [GIT PULL] kgdb changes v5.4-rc2
+Message-ID: <20191003155606.o5y5vmnszyzotbvw@holly.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-[ Upstream commit 13fc1d271a2e3ab8a02071e711add01fab9271f6 ]
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
 
-There is a race between setting up a qgroup rescan worker and completing
-a qgroup rescan worker that can lead to callers of the qgroup rescan wait
-ioctl to either not wait for the rescan worker to complete or to hang
-forever due to missing wake ups. The following diagram shows a sequence
-of steps that illustrates the race.
+are available in the Git repository at:
 
-        CPU 1                                                         CPU 2                                  CPU 3
+  git://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git/ tags/kgdb-5.4-rc2
 
- btrfs_ioctl_quota_rescan()
-  btrfs_qgroup_rescan()
-   qgroup_rescan_init()
-    mutex_lock(&fs_info->qgroup_rescan_lock)
-    spin_lock(&fs_info->qgroup_lock)
+for you to fetch changes up to 086bf301f541eb4acfb5dadae7b1b207ad1b95a3:
 
-    fs_info->qgroup_flags |=
-      BTRFS_QGROUP_STATUS_FLAG_RESCAN
+  MAINTAINERS: kgdb: Add myself as a reviewer for kgdb/kdb (2019-10-03 16:42:10 +0100)
 
-    init_completion(
-      &fs_info->qgroup_rescan_completion)
+----------------------------------------------------------------
+kgdb patches for 5.4-rc2
 
-    fs_info->qgroup_rescan_running = true
+This is just a single patch adding a new reviewer for kgdb. New reviewers
+will be a big help so I decided to consider this to be a fix!
 
-    mutex_unlock(&fs_info->qgroup_rescan_lock)
-    spin_unlock(&fs_info->qgroup_lock)
+I'm looking forward to working more closely with Doug.
 
-    btrfs_init_work()
-     --> starts the worker
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-                                                        btrfs_qgroup_rescan_worker()
-                                                         mutex_lock(&fs_info->qgroup_rescan_lock)
+----------------------------------------------------------------
+Douglas Anderson (1):
+      MAINTAINERS: kgdb: Add myself as a reviewer for kgdb/kdb
 
-                                                         fs_info->qgroup_flags &=
-                                                           ~BTRFS_QGROUP_STATUS_FLAG_RESCAN
-
-                                                         mutex_unlock(&fs_info->qgroup_rescan_lock)
-
-                                                         starts transaction, updates qgroup status
-                                                         item, etc
-
-                                                                                                           btrfs_ioctl_quota_rescan()
-                                                                                                            btrfs_qgroup_rescan()
-                                                                                                             qgroup_rescan_init()
-                                                                                                              mutex_lock(&fs_info->qgroup_rescan_lock)
-                                                                                                              spin_lock(&fs_info->qgroup_lock)
-
-                                                                                                              fs_info->qgroup_flags |=
-                                                                                                                BTRFS_QGROUP_STATUS_FLAG_RESCAN
-
-                                                                                                              init_completion(
-                                                                                                                &fs_info->qgroup_rescan_completion)
-
-                                                                                                              fs_info->qgroup_rescan_running = true
-
-                                                                                                              mutex_unlock(&fs_info->qgroup_rescan_lock)
-                                                                                                              spin_unlock(&fs_info->qgroup_lock)
-
-                                                                                                              btrfs_init_work()
-                                                                                                               --> starts another worker
-
-                                                         mutex_lock(&fs_info->qgroup_rescan_lock)
-
-                                                         fs_info->qgroup_rescan_running = false
-
-                                                         mutex_unlock(&fs_info->qgroup_rescan_lock)
-
-							 complete_all(&fs_info->qgroup_rescan_completion)
-
-Before the rescan worker started by the task at CPU 3 completes, if
-another task calls btrfs_ioctl_quota_rescan(), it will get -EINPROGRESS
-because the flag BTRFS_QGROUP_STATUS_FLAG_RESCAN is set at
-fs_info->qgroup_flags, which is expected and correct behaviour.
-
-However if other task calls btrfs_ioctl_quota_rescan_wait() before the
-rescan worker started by the task at CPU 3 completes, it will return
-immediately without waiting for the new rescan worker to complete,
-because fs_info->qgroup_rescan_running is set to false by CPU 2.
-
-This race is making test case btrfs/171 (from fstests) to fail often:
-
-  btrfs/171 9s ... - output mismatch (see /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad)
-#      --- tests/btrfs/171.out     2018-09-16 21:30:48.505104287 +0100
-#      +++ /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad      2019-09-19 02:01:36.938486039 +0100
-#      @@ -1,2 +1,3 @@
-#       QA output created by 171
-#      +ERROR: quota rescan failed: Operation now in progress
-#       Silence is golden
-#      ...
-#      (Run 'diff -u /home/fdmanana/git/hub/xfstests/tests/btrfs/171.out /home/fdmanana/git/hub/xfstests/results//btrfs/171.out.bad'  to see the entire diff)
-
-That is because the test calls the btrfs-progs commands "qgroup quota
-rescan -w", "qgroup assign" and "qgroup remove" in a sequence that makes
-calls to the rescan start ioctl fail with -EINPROGRESS (note the "btrfs"
-commands 'qgroup assign' and 'qgroup remove' often call the rescan start
-ioctl after calling the qgroup assign ioctl,
-btrfs_ioctl_qgroup_assign()), since previous waits didn't actually wait
-for a rescan worker to complete.
-
-Another problem the race can cause is missing wake ups for waiters,
-since the call to complete_all() happens outside a critical section and
-after clearing the flag BTRFS_QGROUP_STATUS_FLAG_RESCAN. In the sequence
-diagram above, if we have a waiter for the first rescan task (executed
-by CPU 2), then fs_info->qgroup_rescan_completion.wait is not empty, and
-if after the rescan worker clears BTRFS_QGROUP_STATUS_FLAG_RESCAN and
-before it calls complete_all() against
-fs_info->qgroup_rescan_completion, the task at CPU 3 calls
-init_completion() against fs_info->qgroup_rescan_completion which
-re-initilizes its wait queue to an empty queue, therefore causing the
-rescan worker at CPU 2 to call complete_all() against an empty queue,
-never waking up the task waiting for that rescan worker.
-
-Fix this by clearing BTRFS_QGROUP_STATUS_FLAG_RESCAN and setting
-fs_info->qgroup_rescan_running to false in the same critical section,
-delimited by the mutex fs_info->qgroup_rescan_lock, as well as doing the
-call to complete_all() in that same critical section. This gives the
-protection needed to avoid rescan wait ioctl callers not waiting for a
-running rescan worker and the lost wake ups problem, since setting that
-rescan flag and boolean as well as initializing the wait queue is done
-already in a critical section delimited by that mutex (at
-qgroup_rescan_init()).
-
-Fixes: 57254b6ebce4ce ("Btrfs: add ioctl to wait for qgroup rescan completion")
-Fixes: d2c609b834d62f ("btrfs: properly track when rescan worker is running")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/btrfs/qgroup.c |   33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
-
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -2645,9 +2645,6 @@ out:
- 	btrfs_free_path(path);
- 
- 	mutex_lock(&fs_info->qgroup_rescan_lock);
--	if (!btrfs_fs_closing(fs_info))
--		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_RESCAN;
--
- 	if (err > 0 &&
- 	    fs_info->qgroup_flags & BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT) {
- 		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_INCONSISTENT;
-@@ -2663,16 +2660,30 @@ out:
- 	trans = btrfs_start_transaction(fs_info->quota_root, 1);
- 	if (IS_ERR(trans)) {
- 		err = PTR_ERR(trans);
-+		trans = NULL;
- 		btrfs_err(fs_info,
- 			  "fail to start transaction for status update: %d",
- 			  err);
--		goto done;
- 	}
--	ret = update_qgroup_status_item(trans);
--	if (ret < 0) {
--		err = ret;
--		btrfs_err(fs_info, "fail to update qgroup status: %d", err);
-+
-+	mutex_lock(&fs_info->qgroup_rescan_lock);
-+	if (!btrfs_fs_closing(fs_info))
-+		fs_info->qgroup_flags &= ~BTRFS_QGROUP_STATUS_FLAG_RESCAN;
-+	if (trans) {
-+		ret = update_qgroup_status_item(trans);
-+		if (ret < 0) {
-+			err = ret;
-+			btrfs_err(fs_info, "fail to update qgroup status: %d",
-+				  err);
-+		}
- 	}
-+	fs_info->qgroup_rescan_running = false;
-+	complete_all(&fs_info->qgroup_rescan_completion);
-+	mutex_unlock(&fs_info->qgroup_rescan_lock);
-+
-+	if (!trans)
-+		return;
-+
- 	btrfs_end_transaction(trans);
- 
- 	if (btrfs_fs_closing(fs_info)) {
-@@ -2683,12 +2694,6 @@ out:
- 	} else {
- 		btrfs_err(fs_info, "qgroup scan failed with %d", err);
- 	}
--
--done:
--	mutex_lock(&fs_info->qgroup_rescan_lock);
--	fs_info->qgroup_rescan_running = false;
--	mutex_unlock(&fs_info->qgroup_rescan_lock);
--	complete_all(&fs_info->qgroup_rescan_completion);
- }
- 
- /*
-
-
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
