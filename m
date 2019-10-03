@@ -2,153 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE97DCAA8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825CCCAA88
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393269AbfJCRIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:08:16 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42486 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404097AbfJCQfd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:35:33 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id CAAE033AE1C;
-        Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id k_jYdgfrH5Lv; Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 36A5033AE16;
-        Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 36A5033AE16
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1570120531;
-        bh=6vFLz6hjT/E6jAGrCza0pDvCRKmeewzGZqcKlSfdW4A=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=WiHMjRyu9CrlZZmS1uV+PBnIFNCHRHBU6xcvtIcfVgLOHYL4GmGfCx3jyqzAUOTTT
-         QltC1AZkRd0yqNiqz/cN2GqlaTiOdvJSaHuP8KRlCwjdM7ESdmlnWCK8eA2pl5QlUv
-         k1+m6wNt1lLkGPmctjlSUshWEmIl3OFYoqR9lk+SrKyORpVTltPP+OpzlOPwhDMwEC
-         QPDhttXiavrQuPUQpc+VbGSjEBBZj/pQqGNg/ScbD7dwCPxtSd86493PAIRSxtAumC
-         SQLggu4OkLjLIt9+iUs9/qu1id2y74ys6eljERcGDQrUd/q6JQVHfKFD1PgPKKCZY8
-         GoUIjY/U7vZNg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 8mFuFfAugPSn; Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 135EF33AE0D;
-        Thu,  3 Oct 2019 12:35:31 -0400 (EDT)
-Date:   Thu, 3 Oct 2019 12:35:30 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     paulmck <paulmck@kernel.org>
-Cc:     rcu <rcu@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        dipankar <dipankar@in.ibm.com>,
+        id S2404215AbfJCRHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:07:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404386AbfJCQgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:36:15 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C33F2070B;
+        Thu,  3 Oct 2019 16:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570120574;
+        bh=judodVvtfyPO1QPUMh5cBC0ImVnKv7kctqKG1EVeODU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=w8bZ+hMV38XC1vWA/KGyoQUuiE4RMwZVD9yuxNZqO981Z3pQMRsrpGiZPZo57qbw1
+         2NiUg7aTcpDliYgmtTHGHRnbLrGUeclrjXfMhOUoXSYlXrxMkyKovSCk2lBulZwJOw
+         bNJJjmxrrIkGjj1w8uy8Xd6xBBr/QuxGzun0vLdI=
+Date:   Thu, 3 Oct 2019 17:36:08 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        rostedt <rostedt@goodmis.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Shane M Seymour <shane.seymour@hpe.com>,
-        Martin <martin.petersen@oracle.com>
-Message-ID: <644598334.955.1570120530976.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20191003014310.13262-1-paulmck@kernel.org>
-References: <20191003014153.GA13156@paulmck-ThinkPad-P72> <20191003014310.13262-1-paulmck@kernel.org>
-Subject: Re: [PATCH tip/core/rcu 1/9] rcu: Upgrade rcu_swap_protected() to
- rcu_replace()
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Kees Cook <keescook@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
+Message-ID: <20191003163606.iqzcxvghaw7hdqb5@willie-the-truck>
+References: <20191001092823.z4zhlbwvtwnlotwc@willie-the-truck>
+ <CAKwvOdk0h2A6=fb7Yepf+oKbZfq_tqwpGq8EBmHVu1j4mo-a-A@mail.gmail.com>
+ <20191001170142.x66orounxuln7zs3@willie-the-truck>
+ <CAKwvOdnFJqipp+G5xLDRBcOrQRcvMQmn+n8fufWyzyt2QL_QkA@mail.gmail.com>
+ <20191001175512.GK25745@shell.armlinux.org.uk>
+ <CAKwvOdmw_xmTGZLeK8-+Q4nUpjs-UypJjHWks-3jHA670Dxa1A@mail.gmail.com>
+ <20191001181438.GL25745@shell.armlinux.org.uk>
+ <CAKwvOdmBnBVU7F-a6DqPU6QM-BRc8LNn6YRmhTsuGLauCWKUOg@mail.gmail.com>
+ <CAMuHMdWPhE1nNkmL1nj3vpQhB7fP3uDs2i_ZVi0Gf9qij4W2CA@mail.gmail.com>
+ <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3847 (ZimbraWebClient - FF69 (Linux)/8.8.15_GA_3847)
-Thread-Topic: Upgrade rcu_swap_protected() to rcu_replace()
-Thread-Index: RcnUW8sQqVWa96y2rcR60UQZx5RREw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgFODvdFBHzgVf3JjoBz0z6LZhOm8xvMntsvOr66ASmZQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 2, 2019, at 9:43 PM, paulmck paulmck@kernel.org wrote:
-
-> From: "Paul E. McKenney" <paulmck@kernel.org>
+On Wed, Oct 02, 2019 at 01:39:40PM -0700, Linus Torvalds wrote:
+> On Wed, Oct 2, 2019 at 5:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >
+> > >
+> > > Then use the C preprocessor to force the inlining.  I'm sorry it's not
+> > > as pretty as static inline functions.
+> >
+> > Which makes us lose the baby^H^H^H^Htype checking performed
+> > on function parameters, requiring to add more ugly checks.
 > 
-> Although the rcu_swap_protected() macro follows the example of swap(),
-> the interactions with RCU make its update of its argument somewhat
-> counter-intuitive.  This commit therefore introduces an rcu_replace()
-> that returns the old value of the RCU pointer instead of doing the
-> argument update.  Once all the uses of rcu_swap_protected() are updated
-> to instead use rcu_replace(), rcu_swap_protected() will be removed.
-
-We expose the rcu_xchg_pointer() API in liburcu (Userspace RCU) project.
-Any reason for not going that way and keep the kernel and user-space RCU
-APIs alike ?
-
-It's of course fine if they diverge, but we might want to at least consider
-if using the same API name would be OK.
-
-Thanks,
-
-Mathieu
-
-
+> I'm 100% agreed on this.
 > 
-> Link:
-> https://lore.kernel.org/lkml/CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com/
-> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Bart Van Assche <bart.vanassche@wdc.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Hannes Reinecke <hare@suse.de>
-> Cc: Johannes Thumshirn <jthumshirn@suse.de>
-> Cc: Shane M Seymour <shane.seymour@hpe.com>
-> Cc: Martin K. Petersen <martin.petersen@oracle.com>
-> ---
-> include/linux/rcupdate.h | 18 ++++++++++++++++++
-> 1 file changed, 18 insertions(+)
+> If the inline change is being pushed by people who say "you should
+> have used macros instead if you wanted inlining", then I will just
+> revert that stupid commit that is causing problems.
 > 
-> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> index 75a2ede..3b73287 100644
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -383,6 +383,24 @@ do {									      \
-> } while (0)
+> No, the preprocessor is not the answer.
 > 
-> /**
-> + * rcu_replace() - replace an RCU pointer, returning its old value
-> + * @rcu_ptr: RCU pointer, whose old value is returned
-> + * @ptr: regular pointer
-> + * @c: the lockdep conditions under which the dereference will take place
-> + *
-> + * Perform a replacement, where @rcu_ptr is an RCU-annotated
-> + * pointer and @c is the lockdep argument that is passed to the
-> + * rcu_dereference_protected() call used to read that pointer.  The old
-> + * value of @rcu_ptr is returned, and @rcu_ptr is set to @ptr.
-> + */
-> +#define rcu_replace(rcu_ptr, ptr, c)					\
-> +({									\
-> +	typeof(ptr) __tmp = rcu_dereference_protected((rcu_ptr), (c));	\
-> +	rcu_assign_pointer((rcu_ptr), (ptr));				\
-> +	__tmp;								\
-> +})
-> +
-> +/**
->  * rcu_swap_protected() - swap an RCU and a regular pointer
->  * @rcu_ptr: RCU pointer
->  * @ptr: regular pointer
-> --
-> 2.9.5
+> That said, code that relies on inlining for _correctness_ should use
+> "__always_inline" and possibly even have a comment about why.
+> 
+> But I am considering just undoing commit 9012d011660e ("compiler:
+> allow all arches to enable CONFIG_OPTIMIZE_INLINING") entirely. The
+> advantages are questionable, and when the advantages are balanced
+> against actual regressions and the arguments are "use macros", that
+> just shows how badly thought out this was.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+It's clear that opinions are divided on this issue, but you can add
+an enthusiastic:
+
+Acked-by: Will Deacon <will@kernel.org>
+
+if you go ahead with the revert. I'm all for allowing the compiler to
+make its own inlining decisions, but not when the potential for
+miscompilation isn't fully understood and the proposed alternatives turn
+the source into an unreadable mess. Perhaps we can do something different
+for 5.5 (arch opt-in? clang only? invert the logic? work to move functions
+over to __always_inline /before/ flipping the CONFIG option? ...?)
+
+Will
