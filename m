@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8F0CA71D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F8ACA5B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405959AbfJCQun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:50:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37750 "EHLO mail.kernel.org"
+        id S2391606AbfJCQf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:35:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405926AbfJCQuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:50:32 -0400
+        id S2389429AbfJCQfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:35:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 759202070B;
-        Thu,  3 Oct 2019 16:50:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8FD72070B;
+        Thu,  3 Oct 2019 16:35:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121432;
-        bh=gfjxtCDC8qvqtkS70sKSq48huJP48vRLnJ9jhAFOzAs=;
+        s=default; t=1570120551;
+        bh=Q2csLGPfbPef3CuRi72M6y/BVZlrVtVLVt5CDkrmq8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uTPgaDLlXqFnl8jjcph+0XJdAzfOcm0yb8oDW21Pkox6sfHY0nZRC7q5peROwaMBI
-         AwmRgJcflXjRngylr/5f9NiUYenSSDe6t8xNPfZvLLLtHjPqFhBfwJAfay8yAy0FH4
-         f0nNrR5MzDiutax3Q+KfE6r7rIKxG5djqBdJGK3w=
+        b=eqFm0teokzezRZnr2XECQVrE+PXWQD7kjpmvOHxxx5nlnJDcON6pQizFeNKR95zDQ
+         BNU908FL137RkErMiI9YH50KcrVl3IR3DUHmnNwIpz/lEBlL52fM0Jihth981wLdph
+         7ovCq8qlSxZqR5cAqWZeXye03i0BQ0zKNV9xcj1U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.3 277/344] ASoC: Intel: Skylake: Use correct function to access iomem space
+        stable@vger.kernel.org, Vitaly Wool <vitalywool@gmail.com>,
+        Markus Linnala <markus.linnala@gmail.com>,
+        Chris Murphy <bugzilla@colorremedies.com>,
+        Agustin DallAlba <agustin@dallalba.com.ar>,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Shakeel Butt <shakeelb@google.com>,
+        Henry Burns <henrywolfeburns@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.2 264/313] z3fold: fix retry mechanism in page reclaim
 Date:   Thu,  3 Oct 2019 17:54:02 +0200
-Message-Id: <20191003154607.418094410@linuxfoundation.org>
+Message-Id: <20191003154559.044870572@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +50,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+From: Vitaly Wool <vitalywool@gmail.com>
 
-commit 17d29ff98fd4b70e9ccdac5e95e18a087e2737ef upstream.
+commit 3f9d2b5766aea06042630ac60b7316fd0cebf06f upstream.
 
-For copying from __iomem, we should use __ioread32_copy.
+z3fold_page_reclaim()'s retry mechanism is broken: on a second iteration
+it will have zhdr from the first one so that zhdr is no longer in line
+with struct page.  That leads to crashes when the system is stressed.
 
-reported by sparse:
-sound/soc/intel/skylake/skl-debug.c:437:34: warning: incorrect type in argument 1 (different address spaces)
-sound/soc/intel/skylake/skl-debug.c:437:34:    expected void [noderef] <asn:2> *to
-sound/soc/intel/skylake/skl-debug.c:437:34:    got unsigned char *
-sound/soc/intel/skylake/skl-debug.c:437:51: warning: incorrect type in argument 2 (different address spaces)
-sound/soc/intel/skylake/skl-debug.c:437:51:    expected void const *from
-sound/soc/intel/skylake/skl-debug.c:437:51:    got void [noderef] <asn:2> *[assigned] fw_reg_addr
+Fix that by moving zhdr assignment up.
 
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
-Link: https://lore.kernel.org/r/20190827141712.21015-2-amadeuszx.slawinski@linux.intel.com
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+While at it, protect against using already freed handles by using own
+local slots structure in z3fold_page_reclaim().
+
+Link: http://lkml.kernel.org/r/20190908162919.830388dc7404d1e2c80f4095@gmail.com
+Signed-off-by: Vitaly Wool <vitalywool@gmail.com>
+Reported-by: Markus Linnala <markus.linnala@gmail.com>
+Reported-by: Chris Murphy <bugzilla@colorremedies.com>
+Reported-by: Agustin Dall'Alba <agustin@dallalba.com.ar>
+Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Henry Burns <henrywolfeburns@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/skylake/skl-debug.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/z3fold.c |   49 ++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 15 deletions(-)
 
---- a/sound/soc/intel/skylake/skl-debug.c
-+++ b/sound/soc/intel/skylake/skl-debug.c
-@@ -188,7 +188,7 @@ static ssize_t fw_softreg_read(struct fi
- 	memset(d->fw_read_buff, 0, FW_REG_BUF);
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -368,9 +368,10 @@ static inline int __idx(struct z3fold_he
+  * Encodes the handle of a particular buddy within a z3fold page
+  * Pool lock should be held as this function accesses first_num
+  */
+-static unsigned long encode_handle(struct z3fold_header *zhdr, enum buddy bud)
++static unsigned long __encode_handle(struct z3fold_header *zhdr,
++				struct z3fold_buddy_slots *slots,
++				enum buddy bud)
+ {
+-	struct z3fold_buddy_slots *slots;
+ 	unsigned long h = (unsigned long)zhdr;
+ 	int idx = 0;
  
- 	if (w0_stat_sz > 0)
--		__iowrite32_copy(d->fw_read_buff, fw_reg_addr, w0_stat_sz >> 2);
-+		__ioread32_copy(d->fw_read_buff, fw_reg_addr, w0_stat_sz >> 2);
+@@ -387,11 +388,15 @@ static unsigned long encode_handle(struc
+ 	if (bud == LAST)
+ 		h |= (zhdr->last_chunks << BUDDY_SHIFT);
  
- 	for (offset = 0; offset < FW_REG_SIZE; offset += 16) {
- 		ret += snprintf(tmp + ret, FW_REG_BUF - ret, "%#.4x: ", offset);
+-	slots = zhdr->slots;
+ 	slots->slot[idx] = h;
+ 	return (unsigned long)&slots->slot[idx];
+ }
+ 
++static unsigned long encode_handle(struct z3fold_header *zhdr, enum buddy bud)
++{
++	return __encode_handle(zhdr, zhdr->slots, bud);
++}
++
+ /* Returns the z3fold page where a given handle is stored */
+ static inline struct z3fold_header *handle_to_z3fold_header(unsigned long h)
+ {
+@@ -626,6 +631,7 @@ static void do_compact_page(struct z3fol
+ 	}
+ 
+ 	if (unlikely(PageIsolated(page) ||
++		     test_bit(PAGE_CLAIMED, &page->private) ||
+ 		     test_bit(PAGE_STALE, &page->private))) {
+ 		z3fold_page_unlock(zhdr);
+ 		return;
+@@ -1102,6 +1108,7 @@ static int z3fold_reclaim_page(struct z3
+ 	struct z3fold_header *zhdr = NULL;
+ 	struct page *page = NULL;
+ 	struct list_head *pos;
++	struct z3fold_buddy_slots slots;
+ 	unsigned long first_handle = 0, middle_handle = 0, last_handle = 0;
+ 
+ 	spin_lock(&pool->lock);
+@@ -1120,16 +1127,22 @@ static int z3fold_reclaim_page(struct z3
+ 			/* this bit could have been set by free, in which case
+ 			 * we pass over to the next page in the pool.
+ 			 */
+-			if (test_and_set_bit(PAGE_CLAIMED, &page->private))
++			if (test_and_set_bit(PAGE_CLAIMED, &page->private)) {
++				page = NULL;
+ 				continue;
++			}
+ 
+-			if (unlikely(PageIsolated(page)))
++			if (unlikely(PageIsolated(page))) {
++				clear_bit(PAGE_CLAIMED, &page->private);
++				page = NULL;
+ 				continue;
++			}
++			zhdr = page_address(page);
+ 			if (test_bit(PAGE_HEADLESS, &page->private))
+ 				break;
+ 
+-			zhdr = page_address(page);
+ 			if (!z3fold_page_trylock(zhdr)) {
++				clear_bit(PAGE_CLAIMED, &page->private);
+ 				zhdr = NULL;
+ 				continue; /* can't evict at this point */
+ 			}
+@@ -1147,26 +1160,30 @@ static int z3fold_reclaim_page(struct z3
+ 
+ 		if (!test_bit(PAGE_HEADLESS, &page->private)) {
+ 			/*
+-			 * We need encode the handles before unlocking, since
+-			 * we can race with free that will set
+-			 * (first|last)_chunks to 0
++			 * We need encode the handles before unlocking, and
++			 * use our local slots structure because z3fold_free
++			 * can zero out zhdr->slots and we can't do much
++			 * about that
+ 			 */
+ 			first_handle = 0;
+ 			last_handle = 0;
+ 			middle_handle = 0;
+ 			if (zhdr->first_chunks)
+-				first_handle = encode_handle(zhdr, FIRST);
++				first_handle = __encode_handle(zhdr, &slots,
++								FIRST);
+ 			if (zhdr->middle_chunks)
+-				middle_handle = encode_handle(zhdr, MIDDLE);
++				middle_handle = __encode_handle(zhdr, &slots,
++								MIDDLE);
+ 			if (zhdr->last_chunks)
+-				last_handle = encode_handle(zhdr, LAST);
++				last_handle = __encode_handle(zhdr, &slots,
++								LAST);
+ 			/*
+ 			 * it's safe to unlock here because we hold a
+ 			 * reference to this page
+ 			 */
+ 			z3fold_page_unlock(zhdr);
+ 		} else {
+-			first_handle = encode_handle(zhdr, HEADLESS);
++			first_handle = __encode_handle(zhdr, &slots, HEADLESS);
+ 			last_handle = middle_handle = 0;
+ 		}
+ 
+@@ -1196,9 +1213,9 @@ next:
+ 			spin_lock(&pool->lock);
+ 			list_add(&page->lru, &pool->lru);
+ 			spin_unlock(&pool->lock);
++			clear_bit(PAGE_CLAIMED, &page->private);
+ 		} else {
+ 			z3fold_page_lock(zhdr);
+-			clear_bit(PAGE_CLAIMED, &page->private);
+ 			if (kref_put(&zhdr->refcount,
+ 					release_z3fold_page_locked)) {
+ 				atomic64_dec(&pool->pages_nr);
+@@ -1213,6 +1230,7 @@ next:
+ 			list_add(&page->lru, &pool->lru);
+ 			spin_unlock(&pool->lock);
+ 			z3fold_page_unlock(zhdr);
++			clear_bit(PAGE_CLAIMED, &page->private);
+ 		}
+ 
+ 		/* We started off locked to we need to lock the pool back */
+@@ -1317,7 +1335,8 @@ static bool z3fold_page_isolate(struct p
+ 	VM_BUG_ON_PAGE(!PageMovable(page), page);
+ 	VM_BUG_ON_PAGE(PageIsolated(page), page);
+ 
+-	if (test_bit(PAGE_HEADLESS, &page->private))
++	if (test_bit(PAGE_HEADLESS, &page->private) ||
++	    test_bit(PAGE_CLAIMED, &page->private))
+ 		return false;
+ 
+ 	zhdr = page_address(page);
 
 
