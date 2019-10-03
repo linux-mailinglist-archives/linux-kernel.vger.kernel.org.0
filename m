@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E421CA743
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA245CA5DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406159AbfJCQwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:52:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39856 "EHLO mail.kernel.org"
+        id S2404631AbfJCQhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:37:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405685AbfJCQwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:52:17 -0400
+        id S2392063AbfJCQhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:37:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64DD220867;
-        Thu,  3 Oct 2019 16:52:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A787B21783;
+        Thu,  3 Oct 2019 16:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570121536;
-        bh=aF9CpfdxUg0KgzY0DPJtD5O3gsmdeYqLg5p8jigGk1M=;
+        s=default; t=1570120659;
+        bh=TJDCL/OzCzUm1R6VioSOIvxqDHPnNF2nC0aYF3S27Po=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uNO8mt5xlPahzAQkr+ykEP148sznszzOcvLpyrobc8mTThZVHzSc9pa2Nn3NlH1OA
-         0dwDLYqwFadjXqXKFa9A7fwpkFPHRo42GDaBTV7dCCge+LYQ+N5PaS0N/0bSMAYuxo
-         SUYM4Mnv6xRYAVd7JoPklJaLS7DVSLwRdr+ClfwU=
+        b=eSJ3Cg5U9EoOjN5gCKk/ZMeRw/wcd8BpYrF6r3o6usqljBCrqKsZsDMOiNwg1QqMz
+         5iVvYIO0QvIRytdrmHUn/92iEfmrnrQ7FYZbvAf4mEOaCDU3f7zUIz7zQldO7LwdvL
+         xmV20YCgXS+o7K3jkVYKONcGbdLwqNxwdNWwbbp0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
-        Anand Jain <anand.jain@oracle.com>, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.3 316/344] btrfs: Fix a regression which we cant convert to SINGLE profile
-Date:   Thu,  3 Oct 2019 17:54:41 +0200
-Message-Id: <20191003154610.279347902@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 5.2 304/313] quota: fix wrong condition in is_quota_modification()
+Date:   Thu,  3 Oct 2019 17:54:42 +0200
+Message-Id: <20191003154603.127383955@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
-References: <20191003154540.062170222@linuxfoundation.org>
+In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
+References: <20191003154533.590915454@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit fab273595507a9ec7035df6d5512a955d80a80ba upstream.
+commit 6565c182094f69e4ffdece337d395eb7ec760efc upstream.
 
-[BUG]
-With v5.3 kernel, we can't convert to SINGLE profile:
+Quoted from
+commit 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
 
-  # btrfs balance start -f -dconvert=single $mnt
-  ERROR: error during balancing '/mnt/btrfs': Invalid argument
-  # dmesg -t | tail
-  validate_convert_profile: data profile=0x1000000000000 allowed=0x20 is_valid=1 final=0x1000000000000 ret=1
-  BTRFS error (device dm-3): balance: invalid convert data profile single
+" At LSF we decided that if we truncate up from isize we shouldn't trim
+  fallocated blocks that were fallocated with KEEP_SIZE and are past the
+ new i_size.  This patch fixes ext4 to do this. "
 
-[CAUSE]
-With the extra debug output added, it shows that the @allowed bit is
-lacking the special in-memory only SINGLE profile bit.
+And generic/092 of fstest have covered this case for long time, however
+is_quota_modification() didn't adjust based on that rule, so that in
+below condition, we will lose to quota block change:
+- fallocate blocks beyond EOF
+- remount
+- truncate(file_path, file_size)
 
-Thus we fail at that (profile & ~allowed) check.
+Fix it.
 
-This regression is caused by commit 081db89b13cb ("btrfs: use raid_attr
-to get allowed profiles for balance conversion") and the fact that we
-don't use any bit to indicate SINGLE profile on-disk, but uses special
-in-memory only bit to help distinguish different profiles.
-
-[FIX]
-Add that BTRFS_AVAIL_ALLOC_BIT_SINGLE to @allowed, so the code should be
-the same as it was and fix the regression.
-
-Reported-by: Chris Murphy <lists@colorremedies.com>
-Fixes: 081db89b13cb ("btrfs: use raid_attr to get allowed profiles for balance conversion")
-CC: stable@vger.kernel.org # 5.3+
-Reviewed-by: Anand Jain <anand.jain@oracle.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Link: https://lore.kernel.org/r/20190911093650.35329-1-yuchao0@huawei.com
+Fixes: 3da40c7b0898 ("ext4: only call ext4_truncate when size <= isize")
+CC: stable@vger.kernel.org
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/quotaops.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -4072,7 +4072,13 @@ int btrfs_balance(struct btrfs_fs_info *
- 	}
- 
- 	num_devices = btrfs_num_devices(fs_info);
--	allowed = 0;
-+
-+	/*
-+	 * SINGLE profile on-disk has no profile bit, but in-memory we have a
-+	 * special bit for it, to make it easier to distinguish.  Thus we need
-+	 * to set it manually, or balance would refuse the profile.
-+	 */
-+	allowed = BTRFS_AVAIL_ALLOC_BIT_SINGLE;
- 	for (i = 0; i < ARRAY_SIZE(btrfs_raid_array); i++)
- 		if (num_devices >= btrfs_raid_array[i].devs_min)
- 			allowed |= btrfs_raid_array[i].bg_flag;
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -22,7 +22,7 @@ static inline struct quota_info *sb_dqop
+ /* i_mutex must being held */
+ static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
+ {
+-	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
++	return (ia->ia_valid & ATTR_SIZE) ||
+ 		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
+ 		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
+ }
 
 
