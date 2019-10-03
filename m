@@ -2,43 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1030FCA4A0
+	by mail.lfdr.de (Postfix) with ESMTP id 79AE3CA4A1
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391120AbfJCQ0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:26:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57942 "EHLO mail.kernel.org"
+        id S2391129AbfJCQ0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:26:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391100AbfJCQ0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:26:39 -0400
+        id S2391117AbfJCQ0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:26:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2BF720867;
-        Thu,  3 Oct 2019 16:26:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D03F4222C2;
+        Thu,  3 Oct 2019 16:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119998;
-        bh=R6nvQTWWdY2hSuO8CYz1sdOi8H89MTYKjyyPSd3VUKY=;
+        s=default; t=1570120001;
+        bh=o0TPlNlA6sE8SAGKH4X9ZsJIGV0LCZYH5UcKTwQ4ZXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WMIckvtJTvoR39oLsgJfRz/m18daZBrACFkN3C69ZAL8CDPo6hWErgKwWUdXfzenq
-         l/D5dAges3CS0tcqXnUm5jCSj+77Sdk5plim2SSB5beDqv3k85JvViVZGBjfeZUpLe
-         KYNgBQXArmF56cx5q0OC5xMC0yFBw0VcFKxDfh9k=
+        b=YBq5OM7zwtd08hkdJqFdz5EOi6R+TTuIDF5qYE4kcig/ToXLocGGsfb1qE+OxW1mr
+         5yBYfU7OHwy7EW4qoUKwzlqYGeGbSwwJMTJC1r24KNPTwL/IcNAnThK78Y8r72eYLZ
+         GMSoSe2PlFn6PadLzVJO8DMCSQ5BczD+CPPFd6BQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
-        claudio@evidence.eu.com, lizefan@huawei.com, longman@redhat.com,
-        luca.abeni@santannapisa.it, mathieu.poirier@linaro.org,
-        rostedt@goodmis.org, tj@kernel.org,
-        tommaso.cucinotta@santannapisa.it, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 059/313] rcu/tree: Call setschedule() gp ktread to SCHED_FIFO outside of atomic region
-Date:   Thu,  3 Oct 2019 17:50:37 +0200
-Message-Id: <20191003154538.830790877@linuxfoundation.org>
+Subject: [PATCH 5.2 060/313] x86/apic: Soft disable APIC before initializing it
+Date:   Thu,  3 Oct 2019 17:50:38 +0200
+Message-Id: <20191003154538.921711368@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
 References: <20191003154533.590915454@linuxfoundation.org>
@@ -51,60 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juri Lelli <juri.lelli@redhat.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit 1a763fd7c6335e3122c1cc09576ef6c99ada4267 ]
+[ Upstream commit 2640da4cccf5cc613bf26f0998b9e340f4b5f69c ]
 
-sched_setscheduler() needs to acquire cpuset_rwsem, but it is currently
-called from an invalid (atomic) context by rcu_spawn_gp_kthread().
+If the APIC was already enabled on entry of setup_local_APIC() then
+disabling it soft via the SPIV register makes a lot of sense.
 
-Fix that by simply moving sched_setscheduler_nocheck() call outside of
-the atomic region, as it doesn't actually require to be guarded by
-rcu_node lock.
+That masks all LVT entries and brings it into a well defined state.
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Cc: claudio@evidence.eu.com
-Cc: lizefan@huawei.com
-Cc: longman@redhat.com
-Cc: luca.abeni@santannapisa.it
-Cc: mathieu.poirier@linaro.org
-Cc: rostedt@goodmis.org
-Cc: tj@kernel.org
-Cc: tommaso.cucinotta@santannapisa.it
-Link: https://lkml.kernel.org/r/20190719140000.31694-8-juri.lelli@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Otherwise previously enabled LVTs which are not touched in the setup
+function stay unmasked and might surprise the just booting kernel.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190722105219.068290579@linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/rcu/tree.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/apic/apic.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 980ca3ca643fb..32ea75acba144 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3123,13 +3123,13 @@ static int __init rcu_spawn_gp_kthread(void)
- 	t = kthread_create(rcu_gp_kthread, NULL, "%s", rcu_state.name);
- 	if (WARN_ONCE(IS_ERR(t), "%s: Could not start grace-period kthread, OOM is now expected behavior\n", __func__))
- 		return 0;
-+	if (kthread_prio)
-+		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
- 	rnp = rcu_get_root();
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	rcu_state.gp_kthread = t;
--	if (kthread_prio) {
-+	if (kthread_prio)
- 		sp.sched_priority = kthread_prio;
--		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
--	}
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	wake_up_process(t);
- 	rcu_spawn_nocb_kthreads();
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 67d1259e0f7c0..a18d6dd934e55 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1550,6 +1550,14 @@ static void setup_local_APIC(void)
+ 		return;
+ 	}
+ 
++	/*
++	 * If this comes from kexec/kcrash the APIC might be enabled in
++	 * SPIV. Soft disable it before doing further initialization.
++	 */
++	value = apic_read(APIC_SPIV);
++	value &= ~APIC_SPIV_APIC_ENABLED;
++	apic_write(APIC_SPIV, value);
++
+ #ifdef CONFIG_X86_32
+ 	/* Pound the ESR really hard over the head with a big hammer - mbligh */
+ 	if (lapic_is_integrated() && apic->disable_esr) {
 -- 
 2.20.1
 
