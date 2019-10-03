@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4748ACA39F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24CD5CA3A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389200AbfJCQRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:17:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42672 "EHLO mail.kernel.org"
+        id S2389212AbfJCQRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:17:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389171AbfJCQRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:17:09 -0400
+        id S2389143AbfJCQRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:17:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 189CB20865;
-        Thu,  3 Oct 2019 16:17:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C312120700;
+        Thu,  3 Oct 2019 16:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119428;
-        bh=qv9ygTfvEiKSBYql2/cnEalR9CuEm7hiXBuwEhcKLyI=;
+        s=default; t=1570119431;
+        bh=pqNJ8pNu97tfTX6kEisVmJXTZF0n5AhEugcUW9k3lp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TvHc88VYQMPY2SdiL9nVJQdwQRQeQFwTe1esTj100DTlim+HCjbqk9gv1DhijsRtJ
-         /TZdBpBugbnK8fGpWGObRdu8h+yDNKusdc6+8txz8EDb0oVYse0SkO9dgs3qET3wi2
-         m30iTXNQ7wTN6rW6rEgl1k6qwrexuduCcBkW1HQw=
+        b=nK3Ufs2xO+io3JVZUw20QG0yVYzBOcNUv+aJNN1dH6EqjEYHqJgGhK6CDiFrz6JWN
+         Z2L1P3rGE9klxMBe/LOfdBOcP0dFAsuk9oUoOucpPS8euagZs9jXuyVvF9XqNNGOIx
+         kLVnuhfWTAuaWTjKstz0ARHWQoOpeGMgEUPD/eng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Alessio Balsini <balsini@android.com>,
+        stable@vger.kernel.org, Stephen Douthit <stephend@silicom-usa.com>,
+        Tony Luck <tony.luck@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 060/211] loop: Add LOOP_SET_DIRECT_IO to compat ioctl
-Date:   Thu,  3 Oct 2019 17:52:06 +0200
-Message-Id: <20191003154502.001730641@linuxfoundation.org>
+Subject: [PATCH 4.19 061/211] EDAC, pnd2: Fix ioremap() size in dnv_rd_reg()
+Date:   Thu,  3 Oct 2019 17:52:07 +0200
+Message-Id: <20191003154502.401660435@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -44,40 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alessio Balsini <balsini@android.com>
+From: Stephen Douthit <stephend@silicom-usa.com>
 
-[ Upstream commit fdbe4eeeb1aac219b14f10c0ed31ae5d1123e9b8 ]
+[ Upstream commit 29a3388bfcce7a6d087051376ea02bf8326a957b ]
 
-Enabling Direct I/O with loop devices helps reducing memory usage by
-avoiding double caching.  32 bit applications running on 64 bits systems
-are currently not able to request direct I/O because is missing from the
-lo_compat_ioctl.
+Depending on how BIOS has marked the reserved region containing the 32KB
+MCHBAR you can get warnings like:
 
-This patch fixes the compatibility issue mentioned above by exporting
-LOOP_SET_DIRECT_IO as additional lo_compat_ioctl() entry.
-The input argument for this ioctl is a single long converted to a 1-bit
-boolean, so compatibility is preserved.
+resource sanity check: requesting [mem 0xfed10000-0xfed1ffff], which spans more than reserved [mem 0xfed10000-0xfed17fff]
+caller dnv_rd_reg+0xc8/0x240 [pnd2_edac] mapping multiple BARs
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Alessio Balsini <balsini@android.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Not all of the mmio regions used in dnv_rd_reg() are the same size.  The
+MCHBAR window is 32KB and the sideband ports are 64KB.  Pass the correct
+size to ioremap() depending on which resource we're reading from.
+
+Signed-off-by: Stephen Douthit <stephend@silicom-usa.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/loop.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/edac/pnd2_edac.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index cef8e00c9d9d6..126c2c5146732 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1719,6 +1719,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 	case LOOP_SET_FD:
- 	case LOOP_CHANGE_FD:
- 	case LOOP_SET_BLOCK_SIZE:
-+	case LOOP_SET_DIRECT_IO:
- 		err = lo_ioctl(bdev, mode, cmd, arg);
- 		break;
- 	default:
+diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c
+index 903a4f1fadcc3..0153c730750e5 100644
+--- a/drivers/edac/pnd2_edac.c
++++ b/drivers/edac/pnd2_edac.c
+@@ -268,11 +268,14 @@ static u64 get_sideband_reg_base_addr(void)
+ 	}
+ }
+ 
++#define DNV_MCHBAR_SIZE  0x8000
++#define DNV_SB_PORT_SIZE 0x10000
+ static int dnv_rd_reg(int port, int off, int op, void *data, size_t sz, char *name)
+ {
+ 	struct pci_dev *pdev;
+ 	char *base;
+ 	u64 addr;
++	unsigned long size;
+ 
+ 	if (op == 4) {
+ 		pdev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x1980, NULL);
+@@ -287,15 +290,17 @@ static int dnv_rd_reg(int port, int off, int op, void *data, size_t sz, char *na
+ 			addr = get_mem_ctrl_hub_base_addr();
+ 			if (!addr)
+ 				return -ENODEV;
++			size = DNV_MCHBAR_SIZE;
+ 		} else {
+ 			/* MMIO via sideband register base address */
+ 			addr = get_sideband_reg_base_addr();
+ 			if (!addr)
+ 				return -ENODEV;
+ 			addr += (port << 16);
++			size = DNV_SB_PORT_SIZE;
+ 		}
+ 
+-		base = ioremap((resource_size_t)addr, 0x10000);
++		base = ioremap((resource_size_t)addr, size);
+ 		if (!base)
+ 			return -ENODEV;
+ 
 -- 
 2.20.1
 
