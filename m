@@ -2,111 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57928CB051
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B720CB05D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 22:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389434AbfJCUm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 16:42:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:56256 "EHLO foss.arm.com"
+        id S2389583AbfJCUnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 16:43:53 -0400
+Received: from mout.gmx.net ([212.227.17.20]:52565 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbfJCUm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 16:42:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF79F337;
-        Thu,  3 Oct 2019 13:42:25 -0700 (PDT)
-Received: from [192.168.1.124] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E00273F739;
-        Thu,  3 Oct 2019 13:42:23 -0700 (PDT)
-Subject: Re: [PATCH v2] iommu/arm-smmu: Break insecure users by disabling
- bypass by default
-To:     Tim Harvey <tharvey@gateworks.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Tirumalesh Chalamarla <tchalamarla@caviumnetworks.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>,
-        linux-arm-msm@vger.kernel.org, evgreen@chromium.org,
-        tfiga@chromium.org, Rob Clark <robdclark@gmail.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190301192017.39770-1-dianders@chromium.org>
- <CAJ+vNU0Ma5nG9_ThLO4cdO+=ivf7rmXiHZonF0HY0xx6X3R6Hw@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <5dce2964-8761-e7d0-8963-f0f5cb2feb02@arm.com>
-Date:   Thu, 3 Oct 2019 21:42:20 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1726669AbfJCUnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 16:43:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1570135423;
+        bh=l2CbPv9jk4BcyrfIzeSPwwhOsl4Gd994nCXq0Vmbh28=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=itpAuLG84a5TUKCzS4QroJhxcXIOyGIK/3l0uC3RRKfoPQmpDO7JLQIvbookLTHts
+         5qzFd/FfR01jdjjd6UgWr1vwXo6doCEnrZoe7VP2Ho6JUDGwTGU6SwYp+h00/0jAL9
+         NZmXkkdtm8x73zM6BjEfa98fe1NlgLSkLQ8k/FPk=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([89.0.25.131]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N8GQy-1i30vu3TRA-014Gha; Thu, 03
+ Oct 2019 22:43:42 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-doc@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: networking: phy: Improve phrasing
+Date:   Thu,  3 Oct 2019 22:43:22 +0200
+Message-Id: <20191003204322.32349-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAJ+vNU0Ma5nG9_ThLO4cdO+=ivf7rmXiHZonF0HY0xx6X3R6Hw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XJsOsYtApZH0rV1lXp8DalL+58oNvmqsYzOrgY1nQM537zaV0ba
+ ZYqC9w+If/nsL+aYKTkGs5WUHTh8PUsl4tu+ktuXKF334p4voyzC8wB+i7abuL8W5XVomVN
+ +IxsM5+75B3cfxmQQPhc1xMDPkY30Xgbh0BcXRIbXla+94DHHu0z6djVOt4Q4sQ3L4UuA/v
+ eH//bM8/btqpZ0Y8uyckg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yH8n8hS1C+o=:PeQ8fC747eH8ki7EEwTzEO
+ ncS3Zp4nIDKNYBs4EyIyjkeIGO1yhVPyvv/0EP/KSNcH4zF/Y8QZArL2HmTuYQJkrbOdbWkag
+ CFQwrlvZyQPYmzfFPCSluR94hpIpzk+OjUT2AIXHBMsjolfKRFcGKuPD2BAUVkJmbUSk+i0H2
+ g/2fmZbaVoE/8aYgOVUNgEtKPWsL6Jq1AQ2Me26ITtA2tDSqDKVc/wcOpbP818j1l6XVv+gWn
+ l+qD+LSkFlP3vBb2s6avIYCzstS5it+IDYzdkLAo1ScuGcM0bzJYOhq1NlduVi9Ddir7nbEmi
+ w3iYRJ4tO8v6hfZ0Ha1p2oRRF+e7LxEspnSehQs0zeVLUG34JM19+wvv+NFxk+mdPpahVDT9G
+ fUAORsHlsNx0yqaBHB1NYBRc1Y6mXiZxtrVo5fgkklM4RKPkWbXDJCtCEZaCc+XAYBnVOakEx
+ e08MlaE/pzgIXZBc0fi9pQTOz/lIk0f8ZCS3E/zQXkdKIqKoVRPOoH+12XzJ6ek9NMnVKPRRU
+ JiagGotCF8tEEDf7lxC8l7Y84/koh/IPe7hkAs2FuTaqhVwJKZFoCcSIw3TMf3RFDCB/OLCx5
+ C2+S9ZvlFEACFFyzR6bAOYsY5t/PmlCLOkz4oBS+KOc28Y5CqR3psFuurVF0emO2TcG+yQxbu
+ QJaxxXojsyKLoi/mztSo1YoGxP0Cxi+51hPle3s0xiQy/Z46h/RGMiB01CCZi8ywBF0nL5BxQ
+ P6KpcdZnTudijwWg3+DifpDUKq05OzUxXElnDC0EavWLF72hpVa3ICglD+yor5D/yxSf9LW4n
+ f3E8UXba79OYiOLe0FZujqtsfuZKuCfN5QwRpoXb3eUZpvVeUgf5Zzp9zJ1vnt7iSdwOtjQuY
+ /+ESeDcIDCylrMCJzPr/7InF+oEI5Ey7d0/XEI29rfBZ6PZ5CCyo31FwpbvtPS5nqgG4AMZ3l
+ 8x9o3jJQ/62YZ4SbsmKUVpSFTYzUWT0aeFiKbz/4J66+b0EdF/bO5s8sXUHoLqCwGDNfRsjx6
+ suVeLmOYnYZm4knRgUVXv9SGLddPou9+3rUwTwamqmxkVbG4jtLpRjjTc9LniqqcORCpWs10O
+ YO0zNoKYZXXzIP4UrJkDwxFqz7NoFTrdU73iwOeXfs9uVUosl7drKOlxE+CkkHDpTR3GQh9mM
+ Umafhbn3yjr+6gEQOEakDOCbi2LvbB9SEBx4htN0Op0wUBTxLbOeyZjhpUo69r9W2t//RyX6N
+ Sv/ZDuAx3yGIEa4rHZDAN6+6wzak/nrTblfPJmeLpYdwkchxzyuZoqq938+c=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tim,
+It's not about times (multiple occurences of an event) but about the
+duration of a time interval.
 
-On 2019-10-03 7:27 pm, Tim Harvey wrote:
-> On Fri, Mar 1, 2019 at 11:21 AM Douglas Anderson <dianders@chromium.org> wrote:
->>
->> If you're bisecting why your peripherals stopped working, it's
->> probably this CL.  Specifically if you see this in your dmesg:
->>    Unexpected global fault, this could be serious
->> ...then it's almost certainly this CL.
->>
->> Running your IOMMU-enabled peripherals with the IOMMU in bypass mode
->> is insecure and effectively disables the protection they provide.
->> There are few reasons to allow unmatched stream bypass, and even fewer
->> good ones.
->>
->> This patch starts the transition over to make it much harder to run
->> your system insecurely.  Expected steps:
->>
->> 1. By default disable bypass (so anyone insecure will notice) but make
->>     it easy for someone to re-enable bypass with just a KConfig change.
->>     That's this patch.
->>
->> 2. After people have had a little time to come to grips with the fact
->>     that they need to set their IOMMUs properly and have had time to
->>     dig into how to do this, the KConfig will be eliminated and bypass
->>     will simply be disabled.  Folks who are truly upset and still
->>     haven't fixed their system can either figure out how to add
->>     'arm-smmu.disable_bypass=n' to their command line or revert the
->>     patch in their own private kernel.  Of course these folks will be
->>     less secure.
->>
->> Suggested-by: Robin Murphy <robin.murphy@arm.com>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
-> 
-> Hi Doug / Robin,
-> 
-> I ran into this breaking things on OcteonTx boards based on CN80XX
-> CPU. The IOMMU configuration is a bit beyond me and I'm hoping you can
-> offer some advice. The IOMMU here is cavium,smmu-v2 as defined in
-> https://github.com/Gateworks/dts-newport/blob/master/cn81xx-linux.dtsi
-> 
-> Booting with 'arm-smmu.disable_bypass=n' does indeed work around the
-> breakage as the commit suggests.
-> 
-> Any suggestions for a proper fix?
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ Documentation/networking/phy.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ah, you're using the old "mmu-masters" binding (and in a way which isn't 
-well-defined - it's never been specified what the stream ID argument(s) 
-would mean for a PCI host bridge, and Linux just ignores them). The 
-ideal thing would be to update the DT to generic "iommu-map" properties 
-- it's been a long time since I last played with a ThunderX, but I 
-believe the SMMU stream IDs should just be the same as the ITS device 
-IDs (which is how the "mmu-masters" mapping would have played out anyway).
+diff --git a/Documentation/networking/phy.rst b/Documentation/networking/p=
+hy.rst
+index a689966bc4be..3f5bd83034df 100644
+=2D-- a/Documentation/networking/phy.rst
++++ b/Documentation/networking/phy.rst
+@@ -73,7 +73,7 @@ The Reduced Gigabit Medium Independent Interface (RGMII)=
+ is a 12-pin
+ electrical signal interface using a synchronous 125Mhz clock signal and s=
+everal
+ data lines. Due to this design decision, a 1.5ns to 2ns delay must be add=
+ed
+ between the clock line (RXC or TXC) and the data lines to let the PHY (cl=
+ock
+-sink) have enough setup and hold times to sample the data lines correctly=
+. The
++sink) have a large enough setup and hold time to sample the data lines co=
+rrectly. The
+ PHY library offers different types of PHY_INTERFACE_MODE_RGMII* values to=
+ let
+ the PHY driver and optionally the MAC driver, implement the required dela=
+y. The
+ values of phy_interface_t must be understood from the perspective of the =
+PHY
+=2D-
+2.20.1
 
-The arm-smmu driver support for the old binding has always relied on 
-implicit bypass - there are technical reasons why we can't realistically 
-support the full functionality offered to the generic bindings, but it 
-would be possible to add some degree of workaround to prevent it 
-interacting quite so poorly with disable_bypass, if necessary. Do you 
-have deployed systems with DTs that can't be updated, but still might 
-need to run new kernels?
-
-Robin.
