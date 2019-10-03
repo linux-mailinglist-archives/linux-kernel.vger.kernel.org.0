@@ -2,111 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B55CA1E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:00:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91724CA183
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 17:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbfJCQAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:00:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43466 "EHLO mail.kernel.org"
+        id S1730711AbfJCP4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 11:56:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731473AbfJCQAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:00:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730614AbfJCP4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 11:56:32 -0400
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D28321848;
-        Thu,  3 Oct 2019 15:59:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B18C222C8;
+        Thu,  3 Oct 2019 15:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118399;
-        bh=UBCdzCG37r0flkITDq3m10cAnvvif7pzX4cphOzD3yw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Clx3ng8ZY68RlSz+gn7khC8BMzR/MkZxtEf9Q4glpUDpTVb3qhVuKBrJbHZMeYWVb
-         CqT5HM+582IfOmvhN3enZcDzlLVqXcUom6m5C6vMUwvup74v8ym0tMD17FgI3HBwL8
-         cKcA7dVUIFHI9AiZbMy/SgTO5PBU/jUMsqRZQ58I=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 98/99] btrfs: Relinquish CPUs in btrfs_compare_trees
-Date:   Thu,  3 Oct 2019 17:54:01 +0200
-Message-Id: <20191003154344.957569945@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154252.297991283@linuxfoundation.org>
-References: <20191003154252.297991283@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1570118191;
+        bh=i4Gdla/qLYCwUY8TXC0PxpCn/O4eLhZk3Oh4yJNbqjQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=y+LYdsAyYVPU+ogedopimwB/UhsnGsp2oUl5tLvk654eTHDmIeoSWG2nCGII7q6zW
+         8/Axawckxy8TxeX/6wm6AHbtuWHbXt5CjRRIqm68o9nzigMg4+pQjLefid3sH8WUKU
+         BEnk+1qMQXkvQCMtJdagzQSxknxFVWIvIJHvHP7U=
+Received: by mail-qt1-f170.google.com with SMTP id n7so4287238qtb.6;
+        Thu, 03 Oct 2019 08:56:31 -0700 (PDT)
+X-Gm-Message-State: APjAAAXmlS7+fJ+TCZeTTUwZUbiSyFC4mD20SWVSlrHlcalh1isF0IVD
+        19fiWqBYLdnmAq2IrNU5s82NfCD3LZqHh0OP7w==
+X-Google-Smtp-Source: APXvYqx6BBDgfwU9lYgWoBXJNLC1ki+lOywVLMS4eE76V10EcL1hEp0zvvi4cS5atfEMr32Ls+zx4zC9aO+o+md64fo=
+X-Received: by 2002:ac8:31b3:: with SMTP id h48mr11022378qte.300.1570118190216;
+ Thu, 03 Oct 2019 08:56:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1568837198-27211-1-git-send-email-vincent.cheng.xh@renesas.com>
+ <5d93ce84.1c69fb81.8e964.4dc1@mx.google.com> <20191003145546.GA19695@renesas.com>
+In-Reply-To: <20191003145546.GA19695@renesas.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 3 Oct 2019 10:56:19 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK12p48gqZdwNfYGNsBafmjMY=5U=QcHPHZy5sD-nGntA@mail.gmail.com>
+Message-ID: <CAL_JsqK12p48gqZdwNfYGNsBafmjMY=5U=QcHPHZy5sD-nGntA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: ptp: Add binding doc for IDT ClockMatrix
+ based PTP clock
+To:     Vincent Cheng <vincent.cheng.xh@renesas.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Borisov <nborisov@suse.com>
+On Thu, Oct 3, 2019 at 10:12 AM Vincent Cheng
+<vincent.cheng.xh@renesas.com> wrote:
+>
+> On Tue, Oct 01, 2019 at 06:09:06PM EDT, Rob Herring wrote:
+> >On Wed, Sep 18, 2019 at 04:06:37PM -0400, vincent.cheng.xh@renesas.com wrote:
+> >> From: Vincent Cheng <vincent.cheng.xh@renesas.com>
+>
+> Hi Rob,
+>
+> Welcome back.  Thank-you for providing feedback.
+>
+> >>
+> >> Add device tree binding doc for the IDT ClockMatrix PTP clock driver.
+> >
+> >Bindings are for h/w, not drivers...
+>
+> Yes, will remove 'driver'.
+>
+> >>  Documentation/devicetree/bindings/ptp/ptp-idtcm.txt | 15 +++++++++++++++
+> >>  1 file changed, 15 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/ptp/ptp-idtcm.txt
+> >
+> >Please make this a DT schema.
+>
+> Sure, will give it a try.
+>
+> >> +  - compatible  Should be "idt,8a3400x-ptp" for System Synchronizer
+> >> +                Should be "idt,8a3401x-ptp" for Port Synchronizer
+> >> +                Should be "idt,8a3404x-ptp" for Universal Frequency Translator (UFT)
+> >
+> >If PTP is the only function of the chip, you don't need to append
+> >'-ptp'.
+>
+> Okay, will remove '-ptp'.  Thanks.
+>
+>
+> >What's the 'x' for? We generally don't use wildcards in compatible
+> >strings.
+>
+> We were hoping to use 'x' to represent a single driver to match the various
+> part numbers 8A34001, 8A34002, 8A34003, 8A34004, 8A34011, 8A34012, etc.
+>
+> What should be used instead of 'x'?
 
-commit 6af112b11a4bc1b560f60a618ac9c1dcefe9836e upstream.
+Enumerate all the part numbers. Are the differences discoverable in
+some other way? If so, then 'x' is fine, but just add a note how
+models are distinguished.
 
-When doing any form of incremental send the parent and the child trees
-need to be compared via btrfs_compare_trees. This  can result in long
-loop chains without ever relinquishing the CPU. This causes softlockup
-detector to trigger when comparing trees with a lot of items. Example
-report:
-
-watchdog: BUG: soft lockup - CPU#0 stuck for 24s! [snapperd:16153]
-CPU: 0 PID: 16153 Comm: snapperd Not tainted 5.2.9-1-default #1 openSUSE Tumbleweed (unreleased)
-Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-pstate: 40000005 (nZcv daif -PAN -UAO)
-pc : __ll_sc_arch_atomic_sub_return+0x14/0x20
-lr : btrfs_release_extent_buffer_pages+0xe0/0x1e8 [btrfs]
-sp : ffff00001273b7e0
-Call trace:
- __ll_sc_arch_atomic_sub_return+0x14/0x20
- release_extent_buffer+0xdc/0x120 [btrfs]
- free_extent_buffer.part.0+0xb0/0x118 [btrfs]
- free_extent_buffer+0x24/0x30 [btrfs]
- btrfs_release_path+0x4c/0xa0 [btrfs]
- btrfs_free_path.part.0+0x20/0x40 [btrfs]
- btrfs_free_path+0x24/0x30 [btrfs]
- get_inode_info+0xa8/0xf8 [btrfs]
- finish_inode_if_needed+0xe0/0x6d8 [btrfs]
- changed_cb+0x9c/0x410 [btrfs]
- btrfs_compare_trees+0x284/0x648 [btrfs]
- send_subvol+0x33c/0x520 [btrfs]
- btrfs_ioctl_send+0x8a0/0xaf0 [btrfs]
- btrfs_ioctl+0x199c/0x2288 [btrfs]
- do_vfs_ioctl+0x4b0/0x820
- ksys_ioctl+0x84/0xb8
- __arm64_sys_ioctl+0x28/0x38
- el0_svc_common.constprop.0+0x7c/0x188
- el0_svc_handler+0x34/0x90
- el0_svc+0x8/0xc
-
-Fix this by adding a call to cond_resched at the beginning of the main
-loop in btrfs_compare_trees.
-
-Fixes: 7069830a9e38 ("Btrfs: add btrfs_compare_trees function")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/btrfs/ctree.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -5435,6 +5435,7 @@ int btrfs_compare_trees(struct btrfs_roo
- 	advance_left = advance_right = 0;
- 
- 	while (1) {
-+		cond_resched();
- 		if (advance_left && !left_end_reached) {
- 			ret = tree_advance(left_root, left_path, &left_level,
- 					left_root_level,
-
-
+Rob
