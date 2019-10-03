@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ABF4CA3B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE1BCA3B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389545AbfJCQSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:18:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44580 "EHLO mail.kernel.org"
+        id S2389391AbfJCQSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:18:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733160AbfJCQSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:18:08 -0400
+        id S2387876AbfJCQST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:18:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF076222BE;
-        Thu,  3 Oct 2019 16:18:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56E1D21783;
+        Thu,  3 Oct 2019 16:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119488;
-        bh=n46A0WxBsaP3OlEwVOYLlKlMlSHCyjYYFsBf+0xaCu4=;
+        s=default; t=1570119498;
+        bh=CQ1VJV5SGEcxU1DDwi4WGZ9oGRxifBDjq7NGuSu/3LU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ceCVFHzjtiyIm1ymkgxUu3F0sy2FIGaNZC/BuwqfCrIuh03k07FlzLcLU/XMa2K+I
-         Bj2gjuXrULlb95p4tRX+vS3UsmsvxZQNsDU4NHNMUKyIOOqCxtMeZ1tQBvlIRRU8yA
-         dGMnNCmJk+iDBaLOwxoRUqg0sqaq0yfSprRVQiHY=
+        b=R+V91hcpsQiZ7i747xodx/V83ABWmb5EvtUE22r05RcH6RgvuuAzZkrGo0UpJebdP
+         b+zVVwbEqegZ4pYGreZU5Een9sPJrr6w0tnGWgz+ivvqM8U9bUqjTRUAwJpkP9Tzxj
+         7VSmm6ptq1RzTd3y0tuAhLrjuR1Lr/JTKTQZ4kEI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        syzbot+79d18aac4bf1770dd050@syzkaller.appspotmail.com
-Subject: [PATCH 4.19 084/211] media: hdpvr: add terminating 0 at end of string
-Date:   Thu,  3 Oct 2019 17:52:30 +0200
-Message-Id: <20191003154506.337068277@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 088/211] led: triggers: Fix a memory leak bug
+Date:   Thu,  3 Oct 2019 17:52:34 +0200
+Message-Id: <20191003154507.088788611@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
 References: <20191003154447.010950442@linuxfoundation.org>
@@ -45,38 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 8b8900b729e4f31f12ac1127bde137c775c327e6 ]
+[ Upstream commit 60e2dde1e91ae0addb21ac380cc36ebee7534e49 ]
 
-dev->usbc_buf was passed as argument for %s, but it was not safeguarded
-by a terminating 0.
+In led_trigger_set(), 'event' is allocated in kasprintf(). However, it is
+not deallocated in the following execution if the label 'err_activate' or
+'err_add_groups' is entered, leading to memory leaks. To fix this issue,
+free 'event' before returning the error.
 
-This caused this syzbot issue:
-
-https://syzkaller.appspot.com/bug?extid=79d18aac4bf1770dd050
-
-Reported-and-tested-by: syzbot+79d18aac4bf1770dd050@syzkaller.appspotmail.com
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 52c47742f79d ("leds: triggers: send uevent when changing triggers")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/hdpvr/hdpvr-core.c | 1 +
+ drivers/leds/led-triggers.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/usb/hdpvr/hdpvr-core.c b/drivers/media/usb/hdpvr/hdpvr-core.c
-index 46adee95f89d5..3316a17c141be 100644
---- a/drivers/media/usb/hdpvr/hdpvr-core.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-core.c
-@@ -141,6 +141,7 @@ static int device_authorization(struct hdpvr_device *dev)
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index 17d73db1456eb..e4cb3811e82a3 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -177,6 +177,7 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 	list_del(&led_cdev->trig_list);
+ 	write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock, flags);
+ 	led_set_brightness(led_cdev, LED_OFF);
++	kfree(event);
  
- 	dev->fw_ver = dev->usbc_buf[1];
- 
-+	dev->usbc_buf[46] = '\0';
- 	v4l2_info(&dev->v4l2_dev, "firmware version 0x%x dated %s\n",
- 			  dev->fw_ver, &dev->usbc_buf[2]);
- 
+ 	return ret;
+ }
 -- 
 2.20.1
 
