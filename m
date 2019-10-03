@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE7ECA2D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8CACA211
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733197AbfJCQJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:09:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58268 "EHLO mail.kernel.org"
+        id S1731881AbfJCQBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:01:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731103AbfJCQJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:09:27 -0400
+        id S1731860AbfJCQBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:01:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4ADF21848;
-        Thu,  3 Oct 2019 16:09:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18226207FF;
+        Thu,  3 Oct 2019 16:01:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118967;
-        bh=di/LEEoX9xwrR2IcaRxTlEuaG7kUjZEk3SJJ3usJhEA=;
+        s=default; t=1570118498;
+        bh=kkSBR+c0g8g/8nWU/VkMes6KGJAkUReibvt3+FKxTc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i7AcBQJGIJ/uJJstR/8+DC2vSTrjEE9eRREOCLuXdLxGISQFE7D7gafenoO7TxbYl
-         BvDd79klbenmfc9pPD9LUP2JWtGjcSAKBZEh4G7Sv4Y0LChXMHUxMcVaitWEJbHAUG
-         +0VwO0T+PD157NuBUmi9KL5J1qZzKI9uNkb3WiIw=
+        b=OkyOh6eW7Xwj63Uuhn9vKFBdfwJxqYsOoF/Ltqs/5mo9X+A/ipcmVswhWmDf08hEL
+         vB3Y7m4+L/WZzlujsnxjoOavaA0kqs6F4w+WwQkW/ZjVnmQY3bKy15XnlYttUfJYPF
+         hSjmHHFuWHK5lZdrXoOSVISX6rnP5RaEF0ZzEMvk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Kong <Leon.KONG@cn.bosch.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 075/185] ASoC: rsnd: dont call clk_get_rate() under atomic context
-Date:   Thu,  3 Oct 2019 17:52:33 +0200
-Message-Id: <20191003154454.516362566@linuxfoundation.org>
+        stable@vger.kernel.org, Benoit <benoit.sansoni@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 031/129] skge: fix checksum byte order
+Date:   Thu,  3 Oct 2019 17:52:34 +0200
+Message-Id: <20191003154333.372124180@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,89 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 06e8f5c842f2dbb232897ba967ea7b422745c271 ]
+[ Upstream commit 5aafeb74b5bb65b34cc87c7623f9fa163a34fa3b ]
 
-ADG is using clk_get_rate() under atomic context, thus, we might
-have scheduling issue.
-To avoid this issue, we need to get/keep clk rate under
-non atomic context.
+Running old skge driver on PowerPC causes checksum errors
+because hardware reported 1's complement checksum is in little-endian
+byte order.
 
-We need to handle ADG as special device at Renesas Sound driver.
->From SW point of view, we want to impletent it as
-rsnd_mod_ops :: prepare, but it makes code just complicate.
-
-To avoid complicated code/patch, this patch adds new clk_rate[] array,
-and keep clk IN rate when rsnd_adg_clk_enable() was called.
-
-Reported-by: Leon Kong <Leon.KONG@cn.bosch.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Leon Kong <Leon.KONG@cn.bosch.com>
-Link: https://lore.kernel.org/r/87v9vb0xkp.wl-kuninori.morimoto.gx@renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Benoit <benoit.sansoni@gmail.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/sh/rcar/adg.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/marvell/skge.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index eb7879bcc6a79..686401bcd1f53 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -33,6 +33,7 @@ struct rsnd_adg {
- 	struct clk *clkout[CLKOUTMAX];
- 	struct clk_onecell_data onecell;
- 	struct rsnd_mod mod;
-+	int clk_rate[CLKMAX];
- 	u32 flags;
- 	u32 ckr;
- 	u32 rbga;
-@@ -110,9 +111,9 @@ static void __rsnd_adg_get_timesel_ratio(struct rsnd_priv *priv,
- 	unsigned int val, en;
- 	unsigned int min, diff;
- 	unsigned int sel_rate[] = {
--		clk_get_rate(adg->clk[CLKA]),	/* 0000: CLKA */
--		clk_get_rate(adg->clk[CLKB]),	/* 0001: CLKB */
--		clk_get_rate(adg->clk[CLKC]),	/* 0010: CLKC */
-+		adg->clk_rate[CLKA],	/* 0000: CLKA */
-+		adg->clk_rate[CLKB],	/* 0001: CLKB */
-+		adg->clk_rate[CLKC],	/* 0010: CLKC */
- 		adg->rbga_rate_for_441khz,	/* 0011: RBGA */
- 		adg->rbgb_rate_for_48khz,	/* 0100: RBGB */
- 	};
-@@ -328,7 +329,7 @@ int rsnd_adg_clk_query(struct rsnd_priv *priv, unsigned int rate)
- 	 * AUDIO_CLKA/AUDIO_CLKB/AUDIO_CLKC/AUDIO_CLKI.
- 	 */
- 	for_each_rsnd_clk(clk, adg, i) {
--		if (rate == clk_get_rate(clk))
-+		if (rate == adg->clk_rate[i])
- 			return sel_table[i];
+--- a/drivers/net/ethernet/marvell/skge.c
++++ b/drivers/net/ethernet/marvell/skge.c
+@@ -3114,7 +3114,7 @@ static struct sk_buff *skge_rx_get(struc
+ 	skb_put(skb, len);
+ 
+ 	if (dev->features & NETIF_F_RXCSUM) {
+-		skb->csum = csum;
++		skb->csum = le16_to_cpu(csum);
+ 		skb->ip_summed = CHECKSUM_COMPLETE;
  	}
  
-@@ -394,10 +395,18 @@ void rsnd_adg_clk_control(struct rsnd_priv *priv, int enable)
- 
- 	for_each_rsnd_clk(clk, adg, i) {
- 		ret = 0;
--		if (enable)
-+		if (enable) {
- 			ret = clk_prepare_enable(clk);
--		else
-+
-+			/*
-+			 * We shouldn't use clk_get_rate() under
-+			 * atomic context. Let's keep it when
-+			 * rsnd_adg_clk_enable() was called
-+			 */
-+			adg->clk_rate[i] = clk_get_rate(adg->clk[i]);
-+		} else {
- 			clk_disable_unprepare(clk);
-+		}
- 
- 		if (ret < 0)
- 			dev_warn(dev, "can't use clk %d\n", i);
--- 
-2.20.1
-
 
 
