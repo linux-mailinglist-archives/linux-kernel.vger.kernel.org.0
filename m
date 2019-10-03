@@ -2,98 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0FDECAD7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9BA3CAD76
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390494AbfJCRmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 13:42:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52354 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730924AbfJCRmd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 13:42:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nf/a9nA4bn0QDOAEh3Gtmr3XveoV2qcS349ATkCN8DY=; b=b7R1gJJMOHY2rx1890LyO+KeD
-        j8fuNvwP0oW4Sm1dpQwB5Jbu8zLmqoOpj/XL51LiBqaWJXYW22+URM5FLmzDn1hH1f2Slpt1N7xtR
-        iFYGLSKGIzENlbQnNXFS5jgC/OB5SoH6RFoB6hliL2b+i92/+DAcUS/40J1DjaxEoKqLud5dcGwcj
-        +L9Si9h5LNxUaQACOWqs/z0NhVKqTSt6Rdxgk2zHFwRiV7DmTcAzX3IuuGTT49qE58Rl31kwBtx0V
-        gCScwHvoBTeHJajYcAAWKXlbrZSWqHUMB8ggNscNG8FIvxtpunyCxRBrIYKxqt4Ajrwq4j8d6DLL/
-        BYEkFJsCg==;
-Received: from 177.133.68.49.dynamic.adsl.gvt.net.br ([177.133.68.49] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iG57W-0005Nu-Ch; Thu, 03 Oct 2019 17:42:30 +0000
-Date:   Thu, 3 Oct 2019 14:42:25 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Gon Solo <gonsolo@gmail.com>
-Cc:     JP <jp@jpvw.nl>, crope@iki.fi, Sean Young <sean@mess.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
-Message-ID: <20191003144225.0137bf6c@coco.lan>
-In-Reply-To: <20191003162326.GA2727@Limone>
-References: <20191002150650.GA4227@gofer.mess.org>
-        <CANL0fFRoL6NxOCbNC=XjQ6LDkeeqAayaLUbm9xARWX9ttqfPFg@mail.gmail.com>
-        <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
-        <20191002154922.7f1cfc76@coco.lan>
-        <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
-        <20191003080539.2b13c03b@coco.lan>
-        <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
-        <20191003120238.75811da6@coco.lan>
-        <20191003160336.GA5125@Limone>
-        <20191003130909.01d29b77@coco.lan>
-        <20191003162326.GA2727@Limone>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S2390361AbfJCRmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:42:20 -0400
+Received: from mx5.ucr.edu ([138.23.62.67]:47406 "EHLO mx5.ucr.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730945AbfJCRmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 13:42:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1570124537; x=1601660537;
+  h=mime-version:references:in-reply-to:from:date:message-id:
+   subject:to:cc;
+  bh=2oSVnWrA/ed2JzasVs3JgdgieJU/Tv5Q4JjDOo4kYyI=;
+  b=SpaGV/wayM93jNINO+cvDhmNcdyLInESdxEmD9+E8tDQPhnoMQ3jW1N5
+   6g1N3IfICH01AxEldzCWLSVM4WVBLrHo3Oss9czziYzGtKLcODVVuS8Bp
+   /OFrXEZEdjxqttoNf8EoRPMaCh8Yo+SSsbAXFqeUnTBHLy6bekthyEupC
+   X3Q0nFfrTkkGPxomo2j5Q9CJXYFmMZv3KlM2VdgdsTLBnLs3enNQavuQ4
+   aV1r5NkaDmvDLfe7sbIPhKUclRE4JOoXEC5BnvD5LrNm+rE9cQdPLcEef
+   yoT1kYunZLVrA4Ih+SIomGYVvpaUZr5SO4+HdfUeSjxDXEOQnIZlsmPsf
+   g==;
+IronPort-SDR: 7yFG385H+NjQx2c4MMYsQvpX9JygRFPnAVIFczh9dl91etTnNR10q2cKXSsOErM7p1ohJJftM1
+ xzQxL7db6q8wxRZJ0x6RuD9LSEpIRSJTpyd0pr+UNYc34K06K8YLuVqaY7BK9hC7k50VtyglKg
+ rPIWy1089fq/7ZzCmon7m6h4k1O99siPBzHEHdr6PCqC7ZYYb3zcUs26Y2vdsPdhl8DgAsFi9s
+ ZPrcQSWVdGxhgKilpGR9vzQNZKrqr/yxfysxUlO/UxHLxRVp4ChFCtXClS4TJCA3Zy9ivAuJzj
+ md4=
+IronPort-PHdr: =?us-ascii?q?9a23=3ARqJfGRNN92krWgkYiTMl6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0LfT5rarrMEGX3/hxlliBBdydt6sfzbaG+Pm5AiQp2tWoiDg6aptCVh?=
+ =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
+ =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTagb75+Nhq7oAbeusULnIdvJLs6xw?=
+ =?us-ascii?q?fUrHdPZ+lY335jK0iJnxb76Mew/Zpj/DpVtvk86cNOUrj0crohQ7BAAzsoL2?=
+ =?us-ascii?q?465MvwtRneVgSP/WcTUn8XkhVTHQfI6gzxU4rrvSv7sup93zSaPdHzQLspVz?=
+ =?us-ascii?q?mu87tnRRn1gyocKTU37H/YhdBxjKJDoRKuuRp/w5LPYIqIMPZyZ77Rcc8GSW?=
+ =?us-ascii?q?ZEWMtaSi5PDZ6mb4YXAOUBM+RXoYnzqVUNsBWwGxWjCfjzyjNUnHL6wbE23/?=
+ =?us-ascii?q?gjHAzAwQcuH8gOsHPRrNjtNqgSUOG0zKnVzTXEcvhZ2jf955LJchs8pvyNXb?=
+ =?us-ascii?q?NxccrLxkkuCw/JkludpJf4PzyJzOQBqXaU4Pd9Ve+2jWMstgJ/oiC3y8sylo?=
+ =?us-ascii?q?XEgpgZx1PE+Clj3oo5Od61RFRlbdK4DJddsTyROZFsTcM4WW5ovT43yrgBuZ?=
+ =?us-ascii?q?GmYicH0I8nxxvDa/yfdIiI/w7jWP6RIThmgHJlf6qyhxOo/kihzu3wT8200F?=
+ =?us-ascii?q?RXoiZcnNnAqGwB2wDJ5siITft9+Uih2TKR2AzJ9u5EJkU0mbLaK54n3LEwio?=
+ =?us-ascii?q?IevVrfEiLygkn7j6+bel869uS06OnreKvqqoOAO4NsjwHxKKUumsixAeQiNQ?=
+ =?us-ascii?q?gOWnCW+OS91b3j50L5QalGguE4n6TCrZDVOd4bqrSnDABIz4Yv8wy/ACu+0N?=
+ =?us-ascii?q?QEgXkHK0pIeBaGj4jvJlHPL+n0DfShjFS2ljdk2fTGM6b/ApXCMHfDiq3tfb?=
+ =?us-ascii?q?Vj5E5Gzgo809Rf64hTCrEbL/KgEnP24fDREB41eym1x+LqEp0p2ooAVGenDq?=
+ =?us-ascii?q?aHPabWtlGUoOQiP7/fSpUSvWPMKuol+vmmv38wmBdJbLup1JpPMCuQA/98ZU?=
+ =?us-ascii?q?iVfCy/0Z86DW4Ws19mH6TRg1qYXGsWPi7qUg=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EZAAA8MpZdgMjQVdFlHAEBAQQBAQw?=
+ =?us-ascii?q?EAQGBUwcBAQsBhA8qhCKIIoY7gg+TfoUogXsBCAEBAQ4vAQGEQAKCRiM0CQ4?=
+ =?us-ascii?q?CAwkBAQUBAQEBAQUEAQECEAEBCQ0JCCeFQoI6KQGDPAEBAQEDEhEEUhALCwM?=
+ =?us-ascii?q?GAQMCAh8HAgIiEgEFARwGEyKDAIILBaIqgQM8ijF1fzOIZgEJDYFIEnooAYw?=
+ =?us-ascii?q?NgheDdS4+h1GCWASBNwEBAZUrllIBBgKCERSMVIhEG4I6i3qLDC2nSA8jgS+?=
+ =?us-ascii?q?CEjMaJS1SBmeBTlAQFIIHji4kMJFdAQE?=
+X-IPAS-Result: =?us-ascii?q?A2EZAAA8MpZdgMjQVdFlHAEBAQQBAQwEAQGBUwcBAQsBh?=
+ =?us-ascii?q?A8qhCKIIoY7gg+TfoUogXsBCAEBAQ4vAQGEQAKCRiM0CQ4CAwkBAQUBAQEBA?=
+ =?us-ascii?q?QUEAQECEAEBCQ0JCCeFQoI6KQGDPAEBAQEDEhEEUhALCwMGAQMCAh8HAgIiE?=
+ =?us-ascii?q?gEFARwGEyKDAIILBaIqgQM8ijF1fzOIZgEJDYFIEnooAYwNgheDdS4+h1GCW?=
+ =?us-ascii?q?ASBNwEBAZUrllIBBgKCERSMVIhEG4I6i3qLDC2nSA8jgS+CEjMaJS1SBmeBT?=
+ =?us-ascii?q?lAQFIIHji4kMJFdAQE?=
+X-IronPort-AV: E=Sophos;i="5.67,253,1566889200"; 
+   d="scan'208";a="80445868"
+Received: from mail-lj1-f200.google.com ([209.85.208.200])
+  by smtpmx5.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Oct 2019 10:42:16 -0700
+Received: by mail-lj1-f200.google.com with SMTP id l13so1088789lji.7
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 10:42:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wd1GZqfs3ucUwfHbxzulPDp/Jo879CDaNWhNw++ir9w=;
+        b=rsy+g75NaCHnKzF8Kzyi7vub8k2G4vCZ03b6HIZQRtDqobSr8BRRsvxBWNtvSe4n8K
+         W2FqEu75YairoOAj1GN0hTbw6ybXNyaulS+naHix3rk8zC4vvGEFsZ0IeBGxcj7tovG2
+         LVZe4h5UjfLSHus4z2Q874AAAmkkusjXzhQKXxiXNo6SEioZ+kP6hJ4eRFJUKhxssssm
+         xOF++zMuPQraTcEWllABUV7bkh2S4lhCCTZbrzo3XjwMBVdTKKn52bXLUF2vgx7s5Gey
+         f9oOgsakDKgsqzXkLo1dmiApEup90d1IGKo1QiN0eG+YWU8OXbGgAuFN4HK9SFdhbTlQ
+         VrbA==
+X-Gm-Message-State: APjAAAXd7ijPWHhM5TKs9HCjMCPWjfh+bnnvmNVfwrw4es5Vy6hLpYNU
+        7Lorffi+IiaWeD3GxLDxwTV0niIm+la677ZkLu40//pFcqBxey0MxH+qaFWqe0jVZ4vtiIjbHgp
+        Es6GiN+JaYrcZc+9h/djPxdSKh5vPIrUV08VOIOFIAQ==
+X-Received: by 2002:a2e:89cd:: with SMTP id c13mr6816564ljk.92.1570124534490;
+        Thu, 03 Oct 2019 10:42:14 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzgu0O4OmhLkdiHm32veyD7C/ytrOWhZhDZJotP5u235A/EygW4DdMB91Rj/Yujb4YY94JdkOSA+bQNUAlgoYs=
+X-Received: by 2002:a2e:89cd:: with SMTP id c13mr6816554ljk.92.1570124534252;
+ Thu, 03 Oct 2019 10:42:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20191001202439.15766-1-yzhai003@ucr.edu> <20191002.142214.252882219207569928.davem@davemloft.net>
+In-Reply-To: <20191002.142214.252882219207569928.davem@davemloft.net>
+From:   Yizhuo Zhai <yzhai003@ucr.edu>
+Date:   Thu, 3 Oct 2019 10:42:58 -0700
+Message-ID: <CABvMjLTzcwN5h+Fn-nNc4VcSr71skh-813u+mCb+EW5wGOT0+g@mail.gmail.com>
+Subject: Re: [PATCH] net: hisilicon: Fix usage of uninitialized variable in
+ function mdio_sc_cfg_reg_write()
+To:     David Miller <davem@davemloft.net>
+Cc:     Chengyu Song <csong@cs.ucr.edu>, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 3 Oct 2019 18:23:26 +0200
-Gon Solo <gonsolo@gmail.com> escreveu:
+Hi David:
 
-> > No, I mean with the first patch you sent to the ML, with the powerup
-> > hack.  
-> 
-> Boot time:
-> 
-> [    4.653257] si2168 1-0067: Silicon Labs Si2168-B40 successfully identified
-> [    4.653259] si2168 1-0067: firmware version: B 4.0.2
-> [    4.653279] usb 2-1: DVB: registering adapter 0 frontend 0 (Silicon Labs Si2168)...
-> [    4.653284] dvbdev: dvb_create_media_entity: media entity 'Silicon Labs Si2168' registered.
-> ...
-> [    4.694785] si2157 2-0063: found a 'Silicon Labs Si2147-A30'
-> [    4.694787] si2157 2-0063: Silicon Labs Si2147/2148/2157/2158 successfully attached
-> [    4.717814] usb 2-1: dvb_usb_v2: 'Logilink VG0022A' successfully initialized and connected
-> [    4.717880] usbcore: registered new interface driver dvb_usb_af9035
-> 
-> VLC time:
-> 
-> [  175.490609] si2168 1-0067: downloading firmware from file 'dvb-demod-si2168-b40-01.fw'
-> [  176.746585] si2168 1-0067: firmware version: B 4.0.25
-> [  176.781570] si2157 2-0063: firmware version: \xff.\xff.255
+Thanks for your feedback. "regmap_write()" could also fail and cause
+influence on the caller. If patches for "regmap_write()" are needed,
+then the title could be changed from "uninitialized use" to "miss
+return check".
 
-Weird... it sounds that, after si2168 has its firmware updated, it
-starts interfering at si2157. Perhaps there's a bug at si2168 I2C
-gate mux logic. Are you using a new Kernel like 5.2?
+On Wed, Oct 2, 2019 at 2:22 PM David Miller <davem@davemloft.net> wrote:
+>
+> From: Yizhuo <yzhai003@ucr.edu>
+> Date: Tue,  1 Oct 2019 13:24:39 -0700
+>
+> > In function mdio_sc_cfg_reg_write(), variable "reg_value" could be
+> > uninitialized if regmap_read() fails. However, "reg_value" is used
+> > to decide the control flow later in the if statement, which is
+> > potentially unsafe.
+> >
+> > Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+>
+> Applied, but really this is such a pervasive problem.
+>
+> So much code doesn't check the return value from either regmap_read
+> or regmap_write.
+>
+> _EVEN_ in the code you are editing, the patch context shows an unchecked
+> regmap_write() call.
+>
+> > @@ -148,11 +148,15 @@ static int mdio_sc_cfg_reg_write(struct hns_mdio_device *mdio_dev,
+> >  {
+> >       u32 time_cnt;
+> >       u32 reg_value;
+> > +     int ret;
+> >
+> >       regmap_write(mdio_dev->subctrl_vbase, cfg_reg, set_val);
+>         ^^^^^^^^^^^^
+>
+> Grepping for regmap_{read,write}() shows how big an issue this is.
+>
+> I don't know what to do, maybe we can work over time to add checks to
+> all calls and then force warnings on unchecked return values so that
+> the problem is not introduced in the future.
 
-I guess the best is to enable the debug logs in order to see what's
-happening on both cases.
-
-You can enable all debug messages (after loading the modules) with:
-
-	# for i in $(cat /sys/kernel/debug/dynamic_debug/control |grep -E '(si21|af9035)' |cut -d' ' -f 1); do echo "file $i +p" >>/sys/kernel/debug/dynamic_debug/control; done
-
-You could also try to disable the firmware upload at si2168 and see
-if the si2157 reads will succeed.
 
 
-Thanks,
-Mauro
+-- 
+Kind Regards,
+
+Yizhuo Zhai
+
+Computer Science, Graduate Student
+University of California, Riverside
