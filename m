@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A0BDCAC78
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B71ECAD3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 19:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387674AbfJCQKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:10:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59998 "EHLO mail.kernel.org"
+        id S2389022AbfJCRhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 13:37:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730267AbfJCQKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:10:32 -0400
+        id S1732259AbfJCQDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:03:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2589215EA;
-        Thu,  3 Oct 2019 16:10:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64BB0215EA;
+        Thu,  3 Oct 2019 16:03:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570119031;
-        bh=uR4aGca4FN9wadKYbMaF/W0aRTC4nJx9UHIMFrXBdn0=;
+        s=default; t=1570118614;
+        bh=PadI4hNMBQz1BBj05eX8H/07KfBXPx1HULQqD62W7BE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nYYvtGzzkn9hTknMnUmNiSt8JsNr6l32NzDccBdeJh4Y1lgTdGjKPO+0UR9rCPXmZ
-         G36Qvqv4CuKbjgRGtK87kV3nhL5Ih9qAY7rzyqwimMGLnjNISiC6CKVnvfmeSw0dCR
-         f8+dT+7FOLfIbU7QxiJuSs6Pmbamohy45SUYeVpU=
+        b=bZrSWvoNcjwR6OiHzlr1HbQInEl6PVBYHB3ePYjnCS/kovhsYWuGweAZ778RS6mu9
+         G/Q4jptizbWZGwy3I2QsBlWFGtBD8m66chuAMO1qII9wgoajNYuoGbc/8TmQNY/iH0
+         IYhkcxnQbIMf+kojWKHou5S85wZmfJBsESib95BE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Auld <pauld@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 083/185] sched/fair: Use rq_lock/unlock in online_fair_sched_group
-Date:   Thu,  3 Oct 2019 17:52:41 +0200
-Message-Id: <20191003154456.332104405@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 039/129] ALSA: hda: Flush interrupts on disabling
+Date:   Thu,  3 Oct 2019 17:52:42 +0200
+Message-Id: <20191003154335.740186284@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
-References: <20191003154437.541662648@linuxfoundation.org>
+In-Reply-To: <20191003154318.081116689@linuxfoundation.org>
+References: <20191003154318.081116689@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,72 +43,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Auld <pauld@redhat.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit a46d14eca7b75fffe35603aa8b81df654353d80f ]
+[ Upstream commit caa8422d01e983782548648e125fd617cadcec3f ]
 
-Enabling WARN_DOUBLE_CLOCK in /sys/kernel/debug/sched_features causes
-warning to fire in update_rq_clock. This seems to be caused by onlining
-a new fair sched group not using the rq lock wrappers.
+I was looking at
 
-  [] rq->clock_update_flags & RQCF_UPDATED
-  [] WARNING: CPU: 5 PID: 54385 at kernel/sched/core.c:210 update_rq_clock+0xec/0x150
+<4> [241.835158] general protection fault: 0000 [#1] PREEMPT SMP PTI
+<4> [241.835181] CPU: 1 PID: 214 Comm: kworker/1:3 Tainted: G     U            5.2.0-CI-CI_DRM_6509+ #1
+<4> [241.835199] Hardware name: Dell Inc.                 OptiPlex 745                 /0GW726, BIOS 2.3.1  05/21/2007
+<4> [241.835234] Workqueue: events snd_hdac_bus_process_unsol_events [snd_hda_core]
+<4> [241.835256] RIP: 0010:input_handle_event+0x16d/0x5e0
+<4> [241.835270] Code: 48 8b 93 58 01 00 00 8b 52 08 89 50 04 8b 83 f8 06 00 00 48 8b 93 00 07 00 00 8d 70 01 48 8d 04 c2 83 e1 08 89 b3 f8 06 00 00 <66> 89 28 66 44 89 60 02 44 89 68 04 8b 93 f8 06 00 00 0f 84 fd fe
+<4> [241.835304] RSP: 0018:ffffc9000019fda0 EFLAGS: 00010046
+<4> [241.835317] RAX: 6b6b6b6ec6c6c6c3 RBX: ffff8880290fefc8 RCX: 0000000000000000
+<4> [241.835332] RDX: 000000006b6b6b6b RSI: 000000006b6b6b6c RDI: 0000000000000046
+<4> [241.835347] RBP: 0000000000000005 R08: 0000000000000000 R09: 0000000000000001
+<4> [241.835362] R10: ffffc9000019faa0 R11: 0000000000000000 R12: 0000000000000004
+<4> [241.835377] R13: 0000000000000000 R14: ffff8880290ff1d0 R15: 0000000000000293
+<4> [241.835392] FS:  0000000000000000(0000) GS:ffff88803de80000(0000) knlGS:0000000000000000
+<4> [241.835409] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4> [241.835422] CR2: 00007ffe9a99e9b7 CR3: 000000002f588000 CR4: 00000000000006e0
+<4> [241.835436] Call Trace:
+<4> [241.835449]  input_event+0x45/0x70
+<4> [241.835464]  snd_jack_report+0xdc/0x100
+<4> [241.835490]  snd_hda_jack_report_sync+0x83/0xc0 [snd_hda_codec]
+<4> [241.835512]  snd_hdac_bus_process_unsol_events+0x5a/0x70 [snd_hda_core]
+<4> [241.835530]  process_one_work+0x245/0x610
 
-  [] Call Trace:
-  []  online_fair_sched_group+0x53/0x100
-  []  cpu_cgroup_css_online+0x16/0x20
-  []  online_css+0x1c/0x60
-  []  cgroup_apply_control_enable+0x231/0x3b0
-  []  cgroup_mkdir+0x41b/0x530
-  []  kernfs_iop_mkdir+0x61/0xa0
-  []  vfs_mkdir+0x108/0x1a0
-  []  do_mkdirat+0x77/0xe0
-  []  do_syscall_64+0x55/0x1d0
-  []  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+which has the hallmarks of a worker queued from interrupt after it was
+supposedly cancelled (note the POISON_FREE), and I could not see where
+the interrupt would be flushed on shutdown so added the likely suspects.
 
-Using the wrappers in online_fair_sched_group instead of the raw locking
-removes this warning.
-
-[ tglx: Use rq_*lock_irq() ]
-
-Signed-off-by: Phil Auld <pauld@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/20190801133749.11033-1-pauld@redhat.com
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111174
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/fair.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/hda/hdac_controller.c | 2 ++
+ sound/pci/hda/hda_intel.c   | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 808db3566ddbc..55a33009f9a54 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9423,18 +9423,18 @@ int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
- void online_fair_sched_group(struct task_group *tg)
- {
- 	struct sched_entity *se;
-+	struct rq_flags rf;
- 	struct rq *rq;
- 	int i;
+diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
+index 00c6af2ae1c29..433f3280f7098 100644
+--- a/sound/hda/hdac_controller.c
++++ b/sound/hda/hdac_controller.c
+@@ -441,6 +441,8 @@ static void azx_int_disable(struct hdac_bus *bus)
+ 	list_for_each_entry(azx_dev, &bus->stream_list, list)
+ 		snd_hdac_stream_updateb(azx_dev, SD_CTL, SD_INT_MASK, 0);
  
- 	for_each_possible_cpu(i) {
- 		rq = cpu_rq(i);
- 		se = tg->se[i];
--
--		raw_spin_lock_irq(&rq->lock);
-+		rq_lock_irq(rq, &rf);
- 		update_rq_clock(rq);
- 		attach_entity_cfs_rq(se);
- 		sync_throttle(tg, i);
--		raw_spin_unlock_irq(&rq->lock);
-+		rq_unlock_irq(rq, &rf);
++	synchronize_irq(bus->irq);
++
+ 	/* disable SIE for all streams */
+ 	snd_hdac_chip_writeb(bus, INTCTL, 0);
+ 
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index f2f1d9fd848c8..3d4ea5fd75bf5 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1239,9 +1239,9 @@ static int azx_free(struct azx *chip)
  	}
- }
  
+ 	if (bus->chip_init) {
++		azx_stop_chip(chip);
+ 		azx_clear_irq_pending(chip);
+ 		azx_stop_all_streams(chip);
+-		azx_stop_chip(chip);
+ 	}
+ 
+ 	if (bus->irq >= 0)
 -- 
 2.20.1
 
