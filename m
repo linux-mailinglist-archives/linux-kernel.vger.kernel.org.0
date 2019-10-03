@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E64D9CA5F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C65CA77B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:57:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392160AbfJCQiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:38:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48012 "EHLO mail.kernel.org"
+        id S2406462AbfJCQy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:54:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733111AbfJCQiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:38:20 -0400
+        id S2406415AbfJCQxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:53:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3782221783;
-        Thu,  3 Oct 2019 16:38:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 080FE20862;
+        Thu,  3 Oct 2019 16:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570120699;
-        bh=AVrR9+tsKYdOfYBrPs/yN9cRUzxjuwMAG5sQEM8OOFY=;
+        s=default; t=1570121609;
+        bh=Tek2S5ozdBKs5F5n9CWzI7W0uvZebdyiHH8VgKUx6vE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fhz1XJ/9MNv4CoE6k3DwV7ZPmCi0FYU9T0EU9oiYBdICUbiKJGePCYpOzoxJMLDvp
-         0/O3nvUgBgsfUiUJYASXK0kVP6pk0d0+mCbaGT938FeZWMW44ZwX0PSpweqMoZeNH/
-         bXCIGE4ujJQDYFPk13GUW55gj8RE4ZLBsKcBV1uo=
+        b=Oc2QdUuNHHtExiv1wQzV0esZxyfMV7sQHg9EDiPEcqGHGp/rHVq8BBgwvCHSWJWYP
+         G3bj7NRg/XAoqVXuvfb8VAA82uTIFrVr5Dp4OC+jJyaOdALNBbI1KKw+9g78H+2WKC
+         M3+OBt07/4pKrHigeU1dUz8z/gdpufVcyh5QWqHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Curtis Malainey <cujomalainey@chromium.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.2 291/313] ACPI / LPSS: Save/restore LPSS private registers also on Lynxpoint
-Date:   Thu,  3 Oct 2019 17:54:29 +0200
-Message-Id: <20191003154601.784501883@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>
+Subject: [PATCH 5.3 305/344] smb3: fix unmount hang in open_shroot
+Date:   Thu,  3 Oct 2019 17:54:30 +0200
+Message-Id: <20191003154609.431149924@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-References: <20191003154533.590915454@linuxfoundation.org>
+In-Reply-To: <20191003154540.062170222@linuxfoundation.org>
+References: <20191003154540.062170222@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,64 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit 57b3006492a4c11b2d4a772b5b2905d544a32037 upstream.
+commit 96d9f7ed00b86104bf03adeffc8980897e9694ab upstream.
 
-My assumption in commit b53548f9d9e4 ("spi: pxa2xx: Remove LPSS private
-register restoring during resume") that Intel Lynxpoint and compatible
-based chipsets may not need LPSS private registers saving and restoring
-over suspend/resume cycle turned out to be false on Intel Broadwell.
+An earlier patch "CIFS: fix deadlock in cached root handling"
+did not completely address the deadlock in open_shroot. This
+patch addresses the deadlock.
 
-Curtis Malainey sent a patch bringing above change back and reported the
-LPSS SPI Chip Select control was lost over suspend/resume cycle on
-Broadwell machine.
+In testing the recent patch:
+  smb3: improve handling of share deleted (and share recreated)
+we were able to reproduce the open_shroot deadlock to one
+of the target servers in unmount in a delete share scenario.
 
-Instead of reverting above commit lets add LPSS private register
-saving/restoring also for all LPSS SPI, I2C and UART controllers on
-Lynxpoint and compatible chipset to make sure context is not lost in
-case nothing else preserves it like firmware or if LPSS is always on.
+Fixes: 7e5a70ad88b1e ("CIFS: fix deadlock in cached root handling")
 
-Fixes: b53548f9d9e4 ("spi: pxa2xx: Remove LPSS private register restoring during resume")
-Reported-by: Curtis Malainey <cujomalainey@chromium.org>
-Tested-by: Curtis Malainey <cujomalainey@chromium.org>
-Cc: 5.0+ <stable@vger.kernel.org> # 5.0+
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This is version 2 of this patch. An earlier version of this
+patch "smb3: fix unmount hang in open_shroot" had a problem
+found by Dan.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Suggested-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpi_lpss.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/cifs/smb2ops.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -219,12 +219,13 @@ static void bsw_pwm_setup(struct lpss_pr
- }
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -656,6 +656,15 @@ int open_shroot(unsigned int xid, struct
+ 		return 0;
+ 	}
  
- static const struct lpss_device_desc lpt_dev_desc = {
--	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR,
-+	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR
-+			| LPSS_SAVE_CTX,
- 	.prv_offset = 0x800,
- };
++	/*
++	 * We do not hold the lock for the open because in case
++	 * SMB2_open needs to reconnect, it will end up calling
++	 * cifs_mark_open_files_invalid() which takes the lock again
++	 * thus causing a deadlock
++	 */
++
++	mutex_unlock(&tcon->crfid.fid_mutex);
++
+ 	if (smb3_encryption_required(tcon))
+ 		flags |= CIFS_TRANSFORM_REQ;
  
- static const struct lpss_device_desc lpt_i2c_dev_desc = {
--	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_LTR,
-+	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_LTR | LPSS_SAVE_CTX,
- 	.prv_offset = 0x800,
- };
+@@ -677,7 +686,7 @@ int open_shroot(unsigned int xid, struct
  
-@@ -236,7 +237,8 @@ static struct property_entry uart_proper
- };
+ 	rc = SMB2_open_init(tcon, &rqst[0], &oplock, &oparms, &utf16_path);
+ 	if (rc)
+-		goto oshr_exit;
++		goto oshr_free;
+ 	smb2_set_next_command(tcon, &rqst[0]);
  
- static const struct lpss_device_desc lpt_uart_dev_desc = {
--	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR,
-+	.flags = LPSS_CLK | LPSS_CLK_GATE | LPSS_CLK_DIVIDER | LPSS_LTR
-+			| LPSS_SAVE_CTX,
- 	.clk_con_id = "baudclk",
- 	.prv_offset = 0x800,
- 	.setup = lpss_uart_setup,
+ 	memset(&qi_iov, 0, sizeof(qi_iov));
+@@ -690,18 +699,10 @@ int open_shroot(unsigned int xid, struct
+ 				  sizeof(struct smb2_file_all_info) +
+ 				  PATH_MAX * 2, 0, NULL);
+ 	if (rc)
+-		goto oshr_exit;
++		goto oshr_free;
+ 
+ 	smb2_set_related(&rqst[1]);
+ 
+-	/*
+-	 * We do not hold the lock for the open because in case
+-	 * SMB2_open needs to reconnect, it will end up calling
+-	 * cifs_mark_open_files_invalid() which takes the lock again
+-	 * thus causing a deadlock
+-	 */
+-
+-	mutex_unlock(&tcon->crfid.fid_mutex);
+ 	rc = compound_send_recv(xid, ses, flags, 2, rqst,
+ 				resp_buftype, rsp_iov);
+ 	mutex_lock(&tcon->crfid.fid_mutex);
 
 
