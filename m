@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3AECA29A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C914CA29F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2019 18:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732876AbfJCQHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 12:07:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54420 "EHLO mail.kernel.org"
+        id S1732954AbfJCQH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 12:07:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732847AbfJCQGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 12:06:55 -0400
+        id S1730672AbfJCQHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 12:07:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F352215EA;
-        Thu,  3 Oct 2019 16:06:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BE1F215EA;
+        Thu,  3 Oct 2019 16:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570118815;
-        bh=W/MQtJc3HNF8IPyUepQOWlDMkAdB3bVfVEgqHk2M5u0=;
+        s=default; t=1570118844;
+        bh=1LUJwptwuEKrRHmrKifsxa6dnt9TLOJz1E43bpOEK+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uVxOKL3/Icl4kYvWeNhKD1ECXxYkWrflId52G1ZdVPMqiM4GtM1cGLaWFoYVA9/U2
-         CP9lwvqzNHnygqAXENu3+k6QDsgvmuNNwT/46I1AfDI0gWwpyUnbU1oAvFrXyFnmhs
-         AEuOc0sDgjRVkv4H1poUqIhuWeJB/XKEYriGCuEs=
+        b=2KEkv7B4J6hVCMJi7twB7gakPcGgLiH6PrWt+nh/5RhQN7gkDcqlZH5ymz5YCUu/+
+         0BqttHTf9aGI4cwljGN/nwuaxaqk9hcCOxjXv2/129SJD/tqAg1BQU060e3s5de8nh
+         7SsMPr27ZaE9nVLM/dx4/TAQc1i89hrcGcaOtwf0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 002/185] powerpc/xive: Fix bogus error code returned by OPAL
-Date:   Thu,  3 Oct 2019 17:51:20 +0200
-Message-Id: <20191003154437.856017779@linuxfoundation.org>
+        stable@vger.kernel.org, Rolf Eike Beer <eb@emlix.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 003/185] objtool: Query pkg-config for libelf location
+Date:   Thu,  3 Oct 2019 17:51:21 +0200
+Message-Id: <20191003154438.213505914@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191003154437.541662648@linuxfoundation.org>
 References: <20191003154437.541662648@linuxfoundation.org>
@@ -44,84 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kurz <groug@kaod.org>
+From: Rolf Eike Beer <eb@emlix.com>
 
-commit 6ccb4ac2bf8a35c694ead92f8ac5530a16e8f2c8 upstream.
+commit 056d28d135bca0b1d0908990338e00e9dadaf057 upstream.
 
-There's a bug in skiboot that causes the OPAL_XIVE_ALLOCATE_IRQ call
-to return the 32-bit value 0xffffffff when OPAL has run out of IRQs.
-Unfortunatelty, OPAL return values are signed 64-bit entities and
-errors are supposed to be negative. If that happens, the linux code
-confusingly treats 0xffffffff as a valid IRQ number and panics at some
-point.
+If it is not in the default location, compilation fails at several points.
 
-A fix was recently merged in skiboot:
-
-e97391ae2bb5 ("xive: fix return value of opal_xive_allocate_irq()")
-
-but we need a workaround anyway to support older skiboots already
-in the field.
-
-Internally convert 0xffffffff to OPAL_RESOURCE which is the usual error
-returned upon resource exhaustion.
-
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Greg Kurz <groug@kaod.org>
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/156821713818.1985334.14123187368108582810.stgit@bahia.lan
-(groug: fix arch/powerpc/platforms/powernv/opal-wrappers.S instead of
-        non-existing arch/powerpc/platforms/powernv/opal-call.c)
-Signed-off-by: Greg Kurz <groug@kaod.org>
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/91a25e992566a7968fedc89ec80e7f4c83ad0548.1553622500.git.jpoimboe@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/opal.h                |    2 +-
- arch/powerpc/platforms/powernv/opal-wrappers.S |    2 +-
- arch/powerpc/sysdev/xive/native.c              |   11 +++++++++++
- 3 files changed, 13 insertions(+), 2 deletions(-)
+ Makefile               |    4 +++-
+ tools/objtool/Makefile |    7 +++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/include/asm/opal.h
-+++ b/arch/powerpc/include/asm/opal.h
-@@ -266,7 +266,7 @@ int64_t opal_xive_get_vp_info(uint64_t v
- int64_t opal_xive_set_vp_info(uint64_t vp,
- 			      uint64_t flags,
- 			      uint64_t report_cl_pair);
--int64_t opal_xive_allocate_irq(uint32_t chip_id);
-+int64_t opal_xive_allocate_irq_raw(uint32_t chip_id);
- int64_t opal_xive_free_irq(uint32_t girq);
- int64_t opal_xive_sync(uint32_t type, uint32_t id);
- int64_t opal_xive_dump(uint32_t type, uint32_t id);
---- a/arch/powerpc/platforms/powernv/opal-wrappers.S
-+++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
-@@ -301,7 +301,7 @@ OPAL_CALL(opal_xive_set_queue_info,		OPA
- OPAL_CALL(opal_xive_donate_page,		OPAL_XIVE_DONATE_PAGE);
- OPAL_CALL(opal_xive_alloc_vp_block,		OPAL_XIVE_ALLOCATE_VP_BLOCK);
- OPAL_CALL(opal_xive_free_vp_block,		OPAL_XIVE_FREE_VP_BLOCK);
--OPAL_CALL(opal_xive_allocate_irq,		OPAL_XIVE_ALLOCATE_IRQ);
-+OPAL_CALL(opal_xive_allocate_irq_raw,		OPAL_XIVE_ALLOCATE_IRQ);
- OPAL_CALL(opal_xive_free_irq,			OPAL_XIVE_FREE_IRQ);
- OPAL_CALL(opal_xive_get_vp_info,		OPAL_XIVE_GET_VP_INFO);
- OPAL_CALL(opal_xive_set_vp_info,		OPAL_XIVE_SET_VP_INFO);
---- a/arch/powerpc/sysdev/xive/native.c
-+++ b/arch/powerpc/sysdev/xive/native.c
-@@ -234,6 +234,17 @@ static bool xive_native_match(struct dev
- 	return of_device_is_compatible(node, "ibm,opal-xive-vc");
- }
+--- a/Makefile
++++ b/Makefile
+@@ -949,9 +949,11 @@ mod_sign_cmd = true
+ endif
+ export mod_sign_cmd
  
-+static s64 opal_xive_allocate_irq(u32 chip_id)
-+{
-+	s64 irq = opal_xive_allocate_irq_raw(chip_id);
++HOST_LIBELF_LIBS = $(shell pkg-config libelf --libs 2>/dev/null || echo -lelf)
 +
-+	/*
-+	 * Old versions of skiboot can incorrectly return 0xffffffff to
-+	 * indicate no space, fix it up here.
-+	 */
-+	return irq == 0xffffffff ? OPAL_RESOURCE : irq;
-+}
+ ifdef CONFIG_STACK_VALIDATION
+   has_libelf := $(call try-run,\
+-		echo "int main() {}" | $(HOSTCC) -xc -o /dev/null -lelf -,1,0)
++		echo "int main() {}" | $(HOSTCC) -xc -o /dev/null $(HOST_LIBELF_LIBS) -,1,0)
+   ifeq ($(has_libelf),1)
+     objtool_target := tools/objtool FORCE
+   else
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -26,14 +26,17 @@ LIBSUBCMD		= $(LIBSUBCMD_OUTPUT)libsubcm
+ OBJTOOL    := $(OUTPUT)objtool
+ OBJTOOL_IN := $(OBJTOOL)-in.o
+ 
++LIBELF_FLAGS := $(shell pkg-config libelf --cflags 2>/dev/null)
++LIBELF_LIBS  := $(shell pkg-config libelf --libs 2>/dev/null || echo -lelf)
 +
- #ifdef CONFIG_SMP
- static int xive_native_get_ipi(unsigned int cpu, struct xive_cpu *xc)
- {
+ all: $(OBJTOOL)
+ 
+ INCLUDES := -I$(srctree)/tools/include \
+ 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
+ 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
+ WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
+-CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
+-LDFLAGS  += -lelf $(LIBSUBCMD)
++CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES) $(LIBELF_FLAGS)
++LDFLAGS  += $(LIBELF_LIBS) $(LIBSUBCMD)
+ 
+ # Allow old libelf to be used:
+ elfshdr := $(shell echo '$(pound)include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
 
 
