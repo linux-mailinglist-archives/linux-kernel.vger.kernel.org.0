@@ -2,93 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27D57CBF77
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:41:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71939CBF7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389950AbfJDPlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:41:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52916 "EHLO mx1.redhat.com"
+        id S2389981AbfJDPmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:42:15 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:42500 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389669AbfJDPlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:41:14 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 267433086E24;
-        Fri,  4 Oct 2019 15:41:14 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DF5E95DAAE;
-        Fri,  4 Oct 2019 15:41:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri,  4 Oct 2019 17:41:13 +0200 (CEST)
-Date:   Fri, 4 Oct 2019 17:41:03 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, bristot@redhat.com,
-        peterz@infradead.org, paulmck@kernel.org, rcu@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] Remove GP_REPLAY state from rcu_sync
-Message-ID: <20191004154102.GA20945@redhat.com>
-References: <20191004145741.118292-1-joel@joelfernandes.org>
+        id S2389131AbfJDPmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 11:42:13 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1iGPhq-0001GL-PW; Sat, 05 Oct 2019 01:41:23 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2019 01:41:18 +1000
+Date:   Sat, 5 Oct 2019 01:41:18 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Nagadheeraj Rottela <rnagadheeraj@marvell.com>
+Cc:     "davem@davemloft.net" <davem@davemloft.net>,
+        Srikanth Jampala <jsrikanth@marvell.com>,
+        "mallesham.jatharakonda@oneconvergence.com" 
+        <mallesham.jatharakonda@oneconvergence.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: cavium/nitrox - check assoclen and authsize for
+ gcm(aes) cipher
+Message-ID: <20191004154118.GM5148@gondor.apana.org.au>
+References: <20190916064140.24387-1-rnagadheeraj@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191004145741.118292-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 04 Oct 2019 15:41:14 +0000 (UTC)
+In-Reply-To: <20190916064140.24387-1-rnagadheeraj@marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04, Joel Fernandes (Google) wrote:
->
-> But this is not always true if you consider the following events:
+On Mon, Sep 16, 2019 at 06:42:06AM +0000, Nagadheeraj Rottela wrote:
+> Check if device supports assoclen to solve hung task timeout error when
+> extra tests are enabled. Return -EINVAL if assoclen is not supported.
+> Check authsize to return -EINVAL if authentication tag size is invalid.
+> Change blocksize to 1 to match with generic implementation.
+> 
+> Signed-off-by: Nagadheeraj Rottela <rnagadheeraj@marvell.com>
+> Reported-by: Mallesham Jatharakonda <mallesham.jatharakonda@oneconvergence.com>
+> Suggested-by: Mallesham Jatharakonda <mallesham.jatharakonda@oneconvergence.com>
+> Reviewed-by: Srikanth Jampala <jsrikanth@marvell.com>
+> ---
+>  drivers/crypto/cavium/nitrox/nitrox_aead.c | 39 +++++++++++++++++++++++++++---
+>  1 file changed, 36 insertions(+), 3 deletions(-)
 
-I'm afraid I missed your point, but...
-
-> ---------------------->
-> GP num         111111     22222222222222222222222222222222233333333
-> GP state  i    e     p    x                 r              rx     i
-> CPU0 :         rse	  rsx
-> CPU1 :                         rse     rsx
-> CPU2 :                                         rse     rsx
->
-> Here, we had 3 grace periods that elapsed, 1 for the rcu_sync_enter(),
-> and 2 for the rcu_sync_exit(s).
-
-But this is fine?
-
-We only need to ensure that we have a full GP pass between the "last"
-rcu_sync_exit() and GP_XXX -> GP_IDLE transition.
-
-> However, we had 3 rcu_sync_exit()s, not 2. In other words, the
-> rcu_sync_exit() got batched.
->
-> So my point here is, rcu_sync_exit() does not really always cause a new
-> GP to happen
-
-See above, it should not.
-
-> Then what is the point of the GP_REPLAY state at all if it does not
-> always wait for a new GP?
-
-Again, I don't understand... GP_REPLAY ensures that we will have a full GP
-before rcu_sync_func() sets GP_IDLE, note that it does another "recursive"
-call_rcu() if it sees GP_REPLAY.
-
-> Taking a step back, why did we intend to have
-> to wait for a new GP if another rcu_sync_exit() comes while one is still
-> in progress?
-
-To ensure that if another CPU sees rcu_sync_is_idle() (GP_IDLE) after you
-do rcu_sync_exit(), then it must also see all memory changes you did before
-rcu_sync_exit().
-
-Oleg.
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
