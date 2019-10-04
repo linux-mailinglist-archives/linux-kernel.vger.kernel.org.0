@@ -2,34 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAD18CC0C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1F98CC0BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:30:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731549AbfJDQ3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 12:29:53 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:14644 "EHLO
+        id S2390332AbfJDQ3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 12:29:43 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14657 "EHLO
         hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731502AbfJDQ3a (ORCPT
+        with ESMTP id S1731526AbfJDQ3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 12:29:30 -0400
+        Fri, 4 Oct 2019 12:29:39 -0400
 Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d9773690000>; Fri, 04 Oct 2019 09:29:29 -0700
+        id <B5d9773710000>; Fri, 04 Oct 2019 09:29:37 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 04 Oct 2019 09:29:28 -0700
+  Fri, 04 Oct 2019 09:29:36 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 04 Oct 2019 09:29:28 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 4 Oct
- 2019 16:29:28 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 4 Oct
- 2019 16:29:28 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 4 Oct 2019 16:29:28 +0000
+        by hqpgpgate102.nvidia.com on Fri, 04 Oct 2019 09:29:36 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 4 Oct
+ 2019 16:29:36 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 4 Oct 2019 16:29:36 +0000
 Received: from jckuo-lt.nvidia.com (Not Verified[10.19.101.223]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d9773660000>; Fri, 04 Oct 2019 09:29:28 -0700
+        id <B5d9773680000>; Fri, 04 Oct 2019 09:29:34 -0700
 From:   JC Kuo <jckuo@nvidia.com>
 To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>
@@ -37,9 +34,9 @@ CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <nkristam@nvidia.com>, <skomatineni@nvidia.com>,
         JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v3 6/7] arm64: tegra: Add XUSB and pad controller on Tegra194
-Date:   Sat, 5 Oct 2019 00:29:05 +0800
-Message-ID: <20191004162906.4818-7-jckuo@nvidia.com>
+Subject: [PATCH v3 7/7] arm64: tegra: Enable XUSB host in P2972-0000 board
+Date:   Sat, 5 Oct 2019 00:29:06 +0800
+Message-ID: <20191004162906.4818-8-jckuo@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191004162906.4818-1-jckuo@nvidia.com>
 References: <20191004162906.4818-1-jckuo@nvidia.com>
@@ -47,82 +44,115 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1570206569; bh=JX8qhrz1+zKt2qJcgVcn5aN9RkoATiw8FgiV/Gtk4ZU=;
+        t=1570206577; bh=6BG4OlYKtCKIJ3gJVhnqd/SjEaS+UOhl1AFVKs7S4U0=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=cIprtILGf3ZotoEhAzqEVd1oKrSBwM8IvL7XYoWESK2wmIIj/aQMrpsDxazULjURa
-         +BdNKHjD6PQqZ2vUzWKswmpXeJxM8xmh9q5Ia07O+cscsUd9IPdMDIluSqeewi5Iac
-         FCUGHebj3I3SP1xPDY//03NNDepAiR7pjEIAZTTtIGxmsCPlXRPmCGDX8bYNs+4Fh5
-         wmUX10xPLSuy9AsKsWt3UNVncm0cp8mZFywNU+L3X6pCUBiQrySiSCgcAqPIs2iqs/
-         XQ6GbHP8IsbadSanjVE8dokVmccwElQzZSnCJI3AcwJztA96SPx6jJagBy5DPRkApM
-         NluKwoECaGffw==
+        b=JE2AsgypRfe5SMrxbXiQAzx2mRKhIUnYNeujc42syGMvr4ycD2c6mt08FVGqWmRdB
+         87TQSnyGpjV0CWeI1HUHAjoP/kyOKyzRjUmDveiOrLHgJZpv913Z+4tk4hkDv++OLF
+         h5T6Db1vVpoAmltvADOu1nhgYIyzO8x8Grn8yfZF0x9RDE+YdjiEInqNDiddnQ8bHX
+         14q1Ae1M+ASkH4wKsPe93BkJk1ngGhvxtESgaKJ5tfETEL6YHjlguoqLd6Gsq3mHCn
+         hFtN5thrlCEF4TvdlNjV2444Gj7aymzYbrWepErP5JctySx3hGXVsnWcM6hoDCdXq7
+         Zhdt0qEvtAbmA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds the XUSB pad and XUSB controllers on Tegra194.
+This commit enables XUSB host and pad controller in Tegra194
+P2972-0000 board.
 
 Signed-off-by: JC Kuo <jckuo@nvidia.com>
 ---
 Changes in v3: none
 Changes in v2:
- - renamed xhci@3610000 with usb@3610000
- - moved padctl@3520000 and usb@3610000 inside /cbb
- - cleaned up "clocks" property of usb@3610000 node
- - added blanks lines to visually separate blocks
+- use capitalization of regulator names
+- fix gpio property of VDD_5V_SATA regulator
 
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 139 +++++++++++++++++++++++
- 1 file changed, 139 insertions(+)
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 36 ++++++++++-
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 62 +++++++++++++++++++
+ 2 files changed, 97 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 3c0cf54f0aab..3c7ea264bc1c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -487,6 +487,145 @@
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+index 4c38426a6969..e7d5e8a30f93 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+@@ -66,6 +66,29 @@
+ 			vmmc-supply = <&vdd_emmc_3v3>;
  		};
  
-+		xusb_padctl: padctl@3520000 {
-+			compatible = "nvidia,tegra194-xusb-padctl";
-+			reg = <0x03520000 0x1000>,
-+			      <0x03540000 0x1000>;
-+			reg-names = "padctl", "ao";
++		padctl@3520000 {
++			avdd-usb-supply = <&vdd_usb_3v3>;
++			vclamp-usb-supply = <&vdd_1v8ao>;
 +
-+			resets = <&bpmp TEGRA194_RESET_XUSB_PADCTL>;
-+			reset-names = "padctl";
++			ports {
++				usb2-1 {
++					vbus-supply = <&vdd_5v0_sys>;
++				};
 +
-+			status = "disabled";
++				usb2-3 {
++					vbus-supply = <&vdd_5v_sata>;
++				};
++
++				usb3-0 {
++					vbus-supply = <&vdd_5v0_sys>;
++				};
++
++				usb3-3 {
++					vbus-supply = <&vdd_5v0_sys>;
++				};
++			};
++		};
++
+ 		rtc@c2a0000 {
+ 			status = "okay";
+ 		};
+@@ -229,7 +252,7 @@
+ 						regulator-max-microvolt = <3300000>;
+ 					};
+ 
+-					ldo5 {
++					vdd_usb_3v3: ldo5 {
+ 						regulator-name = "VDD_USB_3V3";
+ 						regulator-min-microvolt = <3300000>;
+ 						regulator-max-microvolt = <3300000>;
+@@ -313,5 +336,16 @@
+ 			regulator-boot-on;
+ 			enable-active-low;
+ 		};
++
++		vdd_5v_sata: regulator@4 {
++			compatible = "regulator-fixed";
++			reg = <4>;
++
++			regulator-name = "VDD_5V_SATA";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA194_MAIN_GPIO(Z, 1) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+index d47cd8c4dd24..b60eef64c487 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+@@ -62,6 +62,68 @@
+ 							 GPIO_ACTIVE_LOW>;
+ 			};
+ 		};
++		padctl@3520000 {
++			status = "okay";
 +
 +			pads {
 +				usb2 {
-+					clocks = <&bpmp TEGRA194_CLK_USB2_TRK>;
-+					clock-names = "trk";
-+
 +					lanes {
-+						usb2-0 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
 +						usb2-1 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb2-2 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
++							status = "okay";
 +						};
 +
 +						usb2-3 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
++							status = "okay";
 +						};
 +					};
 +				};
@@ -130,102 +160,52 @@ index 3c0cf54f0aab..3c7ea264bc1c 100644
 +				usb3 {
 +					lanes {
 +						usb3-0 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb3-1 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
-+						};
-+
-+						usb3-2 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
++							status = "okay";
 +						};
 +
 +						usb3-3 {
-+							nvidia,function = "xusb";
-+							status = "disabled";
-+							#phy-cells = <0>;
++							status = "okay";
 +						};
 +					};
 +				};
 +			};
 +
 +			ports {
-+				usb2-0 {
-+					status = "disabled";
-+				};
-+
 +				usb2-1 {
-+					status = "disabled";
-+				};
-+
-+				usb2-2 {
-+					status = "disabled";
++					mode = "host";
++					status = "okay";
 +				};
 +
 +				usb2-3 {
-+					status = "disabled";
++					mode = "host";
++					status = "okay";
 +				};
 +
 +				usb3-0 {
-+					status = "disabled";
-+				};
-+
-+				usb3-1 {
-+					status = "disabled";
-+				};
-+
-+				usb3-2 {
-+					status = "disabled";
++					nvidia,usb2-companion = <1>;
++					status = "okay";
 +				};
 +
 +				usb3-3 {
-+					status = "disabled";
++					nvidia,usb2-companion = <3>;
++					nvidia,disable-gen2;
++					status = "okay";
 +				};
 +			};
 +		};
 +
 +		usb@3610000 {
-+			compatible = "nvidia,tegra194-xusb";
-+			reg = <0x03610000 0x40000>,
-+			      < 0x03600000 0x10000>;
-+			reg-names = "hcd", "fpci";
++			status = "okay";
 +
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&bpmp TEGRA194_CLK_XUSB_CORE_HOST>,
-+				 <&bpmp TEGRA194_CLK_XUSB_FALCON>,
-+				 <&bpmp TEGRA194_CLK_XUSB_CORE_SS>,
-+				 <&bpmp TEGRA194_CLK_XUSB_SS>,
-+				 <&bpmp TEGRA194_CLK_CLK_M>,
-+				 <&bpmp TEGRA194_CLK_XUSB_FS>,
-+				 <&bpmp TEGRA194_CLK_UTMIPLL>,
-+				 <&bpmp TEGRA194_CLK_CLK_M>,
-+				 <&bpmp TEGRA194_CLK_PLLE>;
-+			clock-names = "xusb_host", "xusb_falcon_src",
-+				      "xusb_ss", "xusb_ss_src", "xusb_hs_src",
-+				      "xusb_fs_src", "pll_u_480m", "clk_m",
-+				      "pll_e";
-+
-+			power-domains = <&bpmp TEGRA194_POWER_DOMAIN_XUSBC>,
-+					<&bpmp TEGRA194_POWER_DOMAIN_XUSBA>;
-+			power-domain-names = "xusb_host", "xusb_ss";
-+
-+			nvidia,xusb-padctl = <&xusb_padctl>;
-+			status = "disabled";
++			phys =	<&{/cbb/padctl@3520000/pads/usb2/lanes/usb2-1}>,
++				<&{/cbb/padctl@3520000/pads/usb2/lanes/usb2-3}>,
++				<&{/cbb/padctl@3520000/pads/usb3/lanes/usb3-0}>,
++				<&{/cbb/padctl@3520000/pads/usb3/lanes/usb3-3}>;
++			phy-names = "usb2-1", "usb2-3", "usb3-0", "usb3-3";
 +		};
-+
- 		gic: interrupt-controller@3881000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+ 	};
+ 
+ 	pcie@14100000 {
 -- 
 2.17.1
 
