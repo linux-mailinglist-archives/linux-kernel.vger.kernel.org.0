@@ -2,296 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30813CBECC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60900CBEC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389802AbfJDPOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:14:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52402 "EHLO mail.kernel.org"
+        id S2389345AbfJDPO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:14:27 -0400
+Received: from mga12.intel.com ([192.55.52.136]:14927 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388802AbfJDPOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:14:35 -0400
-Received: from localhost.localdomain (unknown [194.230.155.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4B08207FF;
-        Fri,  4 Oct 2019 15:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570202074;
-        bh=jGn2GriHknRcM7VEKcN/Vhe/Y3uO7QORd6PlkeTX3q4=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=biAfqQM7ksmdl6mE9+E6iqLHtsiTP7ck7fq/ivIpyTTedBKFP9Se204xAqgDrwbNI
-         jc/1GqGw5vGRFIzak0OnN/rnzhz6AFddTd+72tYCbnN6dVR/AbLTFaWYf8vf09giWG
-         l5YRnMkEZuVKfYWfVWLpMBAoiP24ZYbX7xMUR79c=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: serial: Convert Samsung UART bindings to json-schema
-Date:   Fri,  4 Oct 2019 17:14:14 +0200
-Message-Id: <20191004151414.8458-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191004151414.8458-1-krzk@kernel.org>
-References: <20191004151414.8458-1-krzk@kernel.org>
+        id S2389596AbfJDPO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 11:14:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 08:14:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,256,1566889200"; 
+   d="scan'208";a="196708983"
+Received: from jjin4-mobl.ccr.corp.intel.com (HELO [10.251.12.250]) ([10.251.12.250])
+  by orsmga006.jf.intel.com with ESMTP; 04 Oct 2019 08:14:25 -0700
+Subject: Re: [PATCH] x86/mm: determine whether the fault address is canonical
+To:     Andy Lutomirski <luto@kernel.org>,
+        Changbin Du <changbin.du@gmail.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191004134501.30651-1-changbin.du@gmail.com>
+ <CALCETrWEhNCWDz7OVpbYJceJ5eShsWWhuyuAQQSzAdKncUo7zA@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <2d078dbc-73ca-0868-71f8-16e413ebdbf4@intel.com>
+Date:   Fri, 4 Oct 2019 08:14:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CALCETrWEhNCWDz7OVpbYJceJ5eShsWWhuyuAQQSzAdKncUo7zA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert Samsung S3C/S5P/Exynos Serial/UART bindings to DT schema format
-using json-schema.
+On 10/4/19 7:59 AM, Andy Lutomirski wrote:
+>> @@ -123,7 +125,8 @@ __visible bool ex_handler_uaccess(const struct exception_table_entry *fixup,
+>>                                   unsigned long error_code,
+>>                                   unsigned long fault_addr)
+>>  {
+>> -       WARN_ONCE(trapnr == X86_TRAP_GP, "General protection fault in user access. Non-canonical address?");
+>> +       WARN_ONCE(trapnr == X86_TRAP_GP, "General protection fault at %s address in user access.",
+>> +                 is_canonical_addr(fault_addr) ? "canonical" : "non-canonical");
+> Unless the hardware behaves rather differently from the way I think it
+> does, fault_addr is garbage for anything other than #PF and sometimes
+> for #DF.  (And maybe the virtualization faults?)  I don't believe that
+> #GP fills in CR2.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../bindings/mfd/samsung,exynos5433-lpass.txt |   2 +-
- .../bindings/serial/samsung_uart.txt          |  58 -------
- .../bindings/serial/samsung_uart.yaml         | 148 ++++++++++++++++++
- 3 files changed, 149 insertions(+), 59 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/serial/samsung_uart.txt
- create mode 100644 Documentation/devicetree/bindings/serial/samsung_uart.yaml
+For #GP, we do:
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-index d759da606f75..30ea27c3936d 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-+++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-@@ -18,7 +18,7 @@ an optional sub-node. For "samsung,exynos5433-lpass" compatible this includes:
- UART, SLIMBUS, PCM, I2S, DMAC, Timers 0...4, VIC, WDT 0...1 devices.
- 
- Bindings of the sub-nodes are described in:
--  ../serial/samsung_uart.txt
-+  ../serial/samsung_uart.yaml
-   ../sound/samsung-i2s.txt
-   ../dma/arm-pl330.txt
- 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.txt b/Documentation/devicetree/bindings/serial/samsung_uart.txt
-deleted file mode 100644
-index e85f37ec33f0..000000000000
---- a/Documentation/devicetree/bindings/serial/samsung_uart.txt
-+++ /dev/null
-@@ -1,58 +0,0 @@
--* Samsung's UART Controller
--
--The Samsung's UART controller is used for interfacing SoC with serial
--communicaion devices.
--
--Required properties:
--- compatible: should be one of following:
--  - "samsung,exynos4210-uart" -  Exynos4210 SoC,
--  - "samsung,s3c2410-uart" - compatible with ports present on S3C2410 SoC,
--  - "samsung,s3c2412-uart" - compatible with ports present on S3C2412 SoC,
--  - "samsung,s3c2440-uart" - compatible with ports present on S3C2440 SoC,
--  - "samsung,s3c6400-uart" - compatible with ports present on S3C6400 SoC,
--  - "samsung,s5pv210-uart" - compatible with ports present on S5PV210 SoC.
--
--- reg: base physical address of the controller and length of memory mapped
--  region.
--
--- interrupts: a single interrupt signal to SoC interrupt controller,
--  according to interrupt bindings documentation [1].
--
--- clock-names: input names of clocks used by the controller:
--  - "uart" - controller bus clock,
--  - "clk_uart_baudN" - Nth baud base clock input (N = 0, 1, ...),
--    according to SoC User's Manual (only N = 0 is allowedfor SoCs without
--    internal baud clock mux).
--- clocks: phandles and specifiers for all clocks specified in "clock-names"
--  property, in the same order, according to clock bindings documentation [2].
--
--[1] Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
--[2] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Optional properties:
--- samsung,uart-fifosize: The fifo size supported by the UART channel
--
--Note: Each Samsung UART should have an alias correctly numbered in the
--"aliases" node, according to serialN format, where N is the port number
--(non-negative decimal integer) as specified by User's Manual of respective
--SoC.
--
--Example:
--	aliases {
--		serial0 = &uart0;
--		serial1 = &uart1;
--		serial2 = &uart2;
--	};
--
--Example:
--	uart1: serial@7f005400 {
--		compatible = "samsung,s3c6400-uart";
--		reg = <0x7f005400 0x100>;
--		interrupt-parent = <&vic1>;
--		interrupts = <6>;
--		clock-names = "uart", "clk_uart_baud2",
--				"clk_uart_baud3";
--		clocks = <&clocks PCLK_UART1>, <&clocks PCLK_UART1>,
--				<&clocks SCLK_UART>;
--		samsung,uart-fifosize = <16>;
--	};
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-new file mode 100644
-index 000000000000..276bea1c231a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -0,0 +1,148 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/serial/samsung_uart.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S3C, S5P and Exynos SoC UART Controller
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+
-+description: |+
-+  Each Samsung UART should have an alias correctly numbered in the "aliases"
-+  node, according to serialN format, where N is the port number (non-negative
-+  decimal integer) as specified by User's Manual of respective SoC.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - samsung,s3c2410-uart
-+          - samsung,s3c2412-uart
-+          - samsung,s3c2440-uart
-+          - samsung,s3c6400-uart
-+          - samsung,s5pv210-uart
-+          - samsung,exynos4210-uart
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 5
-+
-+  clock-names:
-+    description: |
-+      List of clock names:
-+        - "uart" - controller bus clock,
-+        - "clk_uart_baudN" - Nth baud base clock input (N = 0, 1, ...).
-+      N = 0 is allowed for SoCs without internal baud clock mux.
-+    minItems: 2
-+    maxItems: 5
-+    allOf:
-+      - uniqueItems: true
-+      - oneOf:
-+          - items:
-+              - const: uart
-+              - pattern: '^clk_uart_baud[0-3]$'
-+          - items:
-+              - const: uart
-+              - pattern: '^clk_uart_baud[0-3]$'
-+              - pattern: '^clk_uart_baud[0-3]$'
-+          - items:
-+              - const: uart
-+              - pattern: '^clk_uart_baud[0-3]$'
-+              - pattern: '^clk_uart_baud[0-3]$'
-+              - pattern: '^clk_uart_baud[0-3]$'
-+          - items:
-+              - const: uart
-+              - pattern: '^clk_uart_baud[0-3]$'
-+              - pattern: '^clk_uart_baud[0-3]$'
-+              - pattern: '^clk_uart_baud[0-3]$'
-+              - pattern: '^clk_uart_baud[0-3]$'
-+
-+  interrupts:
-+    minItems: 1
-+    maxItems: 2
-+
-+  samsung,uart-fifosize:
-+    description: The fifo size supported by the UART channel
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [16, 64, 256]
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,s3c2410-uart
-+              - samsung,s5pv210-uart
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 3
-+        clock-names:
-+          minItems: 2
-+          maxItems: 3
-+          allOf:
-+            - uniqueItems: true
-+            - oneOf:
-+                - items:
-+                    - const: uart
-+                    - pattern: '^clk_uart_baud[0-1]$'
-+                - items:
-+                    - const: uart
-+                    - pattern: '^clk_uart_baud[0-1]$'
-+                    - pattern: '^clk_uart_baud[0-1]$'
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos4210-uart
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          minItems: 2
-+          maxItems: 2
-+          allOf:
-+            - uniqueItems: true
-+            - items:
-+                - const: uart
-+                - const: clk_uart_baud0
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
-+
-+    aliases {
-+        serial0 = &uart0;
-+    };
-+
-+    uart0: serial@7f005000 {
-+        compatible = "samsung,s3c6400-uart";
-+        reg = <0x7f005000 0x100>;
-+        interrupt-parent = <&vic1>;
-+        interrupts = <5>;
-+        clock-names = "uart", "clk_uart_baud2",
-+                      "clk_uart_baud3";
-+        clocks = <&clocks PCLK_UART0>, <&clocks PCLK_UART0>,
-+                 <&clocks SCLK_UART>;
-+        samsung,uart-fifosize = <16>;
-+    };
--- 
-2.17.1
+do_general_protection(struct pt_regs *regs, long error_code)
+{
+...
+        if (!user_mode(regs)) {
+                if (fixup_exception(regs, X86_TRAP_GP, error_code, 0))
+                        return;
 
+Where the 0 is 'fault_addr'.  I'm not sure any other way that
+ex_handler_uaccess() can get called with trapnr == X86_TRAP_GP.  0 is
+canonical last I checked, which would make this patch a bit academic. :)
