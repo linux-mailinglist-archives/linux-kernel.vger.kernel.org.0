@@ -2,58 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C972DCBD4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C08CBD56
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387917AbfJDOdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:33:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48786 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389081AbfJDOdF (ORCPT
+        id S2389157AbfJDOeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:34:15 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50382 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388689AbfJDOeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:33:05 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iGOdi-00051C-Us; Fri, 04 Oct 2019 14:33:03 +0000
-Date:   Fri, 4 Oct 2019 16:33:02 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Varad Gautam <vrd@amazon.de>, stable@vger.kernel.org,
-        Jan Glauber <jglauber@marvell.com>
-Subject: Re: [PATCH] devpts: Fix NULL pointer dereference in dcache_readdir()
-Message-ID: <20191004143301.kfzcut6a6z5owfee@wittgenstein>
-References: <20191004140503.9817-1-christian.brauner@ubuntu.com>
- <20191004142748.GG26530@ZenIV.linux.org.uk>
+        Fri, 4 Oct 2019 10:34:15 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 5so6100685wmg.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 07:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RQJh9hvK7qALdXSAmt00zw7fon92emAdLHkzgMEfZAU=;
+        b=A5xAhDi4VxeW70QhY5FJe+8RmSvwZMyHEsszULCP3W83MMkQu6R8WecCVtslsj6Hbl
+         8ixZAjkhHQyM7pGmRK64/u0qBgVFZNkipFoRcXJ1+7OwaI5gC9D+9WiwoKt73IaloA0E
+         E951Gimb5ld2eDmFJ0PVTd/SNHoHMrTfeiBnVMelgwzwfx1X2qJ8rRU/Hg4LPQOvoIgt
+         MyZOzb9rt02XQOgtY7ImVqI1e7S51KsrtGfAjqmQvsqU62rWaswtv3nY8Z4wR/K2B1wY
+         WFQ6tvfkOYyYAt2vpjG8KznLvXJV1fvnXjsIX/Yawkj27W3IV6QqUAqDAL03QWqe9lhB
+         TYaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=RQJh9hvK7qALdXSAmt00zw7fon92emAdLHkzgMEfZAU=;
+        b=IaAQE2uApZAaMfcxOJ5AOaUsDGL+vrwbXyM38U/Vd6JsLq5zq0T2daj4IWnzM1ueJy
+         Mto9qhqI99x1jFcRQxQJn8Sp+QEqeVJdZ9cZeC6rUjeNxC3uCvWCyyXgzi207NXlpsN3
+         SAw/Ck5s01t8+M0VtKvTRzdJHtmF8M/5aEmmrrGt+Kl8WFf52bc3XZG+o6O+Hvrq+oIm
+         dpQc9kZtdZdsB2Cb1db03xE1l+oIWIDK2c0NOzXIK52/rcZ8skaa29os9abKrWoBzL+I
+         GcHc7lVi6d+d5wgqK/cliK29xT/MfcEnRFPoLfmAbVuSChPqi3zvD2nyiB89TRYc6CJJ
+         wCNg==
+X-Gm-Message-State: APjAAAX1srUlDTJXqvjP/AFsjwv669VA+kZCMp2Jrk5vhxVDzWRlZz/9
+        mXUOO7GXKwSAJEOfc6xYPh1GCRniFz4=
+X-Google-Smtp-Source: APXvYqys+RSbYX+JuRrYPwaOgyHiXn90FgRVEBpkF/Fx+THn0V1divQz33rNrvMJYu+E0K0qBI+Okw==
+X-Received: by 2002:a1c:3946:: with SMTP id g67mr11865974wma.52.1570199652841;
+        Fri, 04 Oct 2019 07:34:12 -0700 (PDT)
+Received: from dell ([2.27.167.122])
+        by smtp.gmail.com with ESMTPSA id e18sm8432541wrv.63.2019.10.04.07.34.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 04 Oct 2019 07:34:12 -0700 (PDT)
+Date:   Fri, 4 Oct 2019 15:34:10 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH v3 3/3] mfd: madera: Add support for requesting the
+ supply clocks
+Message-ID: <20191004143410.GJ18429@dell>
+References: <20191001134617.12093-1-ckeepax@opensource.cirrus.com>
+ <20191001134617.12093-3-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191004142748.GG26530@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191001134617.12093-3-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 03:27:48PM +0100, Al Viro wrote:
-> On Fri, Oct 04, 2019 at 04:05:03PM +0200, Christian Brauner wrote:
-> > From: Will Deacon <will@kernel.org>
-> > 
-> > Closing /dev/pts/ptmx removes the corresponding pty under /dev/pts/
-> > without synchronizing against concurrent path walkers. This can lead to
-> > 'dcache_readdir()' tripping over a 'struct dentry' with a NULL 'd_inode'
-> > field:
+On Tue, 01 Oct 2019, Charles Keepax wrote:
+
+> Add the ability to get the clock for each clock input pin of the chip
+> and enable MCLK2 since that is expected to be a permanently enabled
+> 32kHz clock.
 > 
-> FWIW, vfs.git#fixes (or #next.dcache) ought to deal with that one.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
+> 
+> Changes since v2:
+>  - Use new devm_clk_bulk_get_optional API
+> 
+> Thanks,
+> Charles
+> 
+>  drivers/mfd/madera-core.c       | 27 ++++++++++++++++++++++++++-
+>  include/linux/mfd/madera/core.h | 11 +++++++++++
+>  2 files changed, 37 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+> index 29540cbf75934..88d904eb016ea 100644
+> --- a/drivers/mfd/madera-core.c
+> +++ b/drivers/mfd/madera-core.c
+> @@ -450,6 +450,21 @@ int madera_dev_init(struct madera *madera)
+>  		       sizeof(madera->pdata));
+>  	}
+>  
+> +	madera->mclk[MADERA_MCLK1].id = "mclk1";
+> +	madera->mclk[MADERA_MCLK2].id = "mclk2";
+> +	madera->mclk[MADERA_MCLK3].id = "mclk3";
+> +
+> +	ret = devm_clk_bulk_get_optional(madera->dev, ARRAY_SIZE(madera->mclk),
+> +					 madera->mclk);
+> +	if (ret) {
+> +		dev_err(madera->dev, "Failed to get clocks: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Not using devm_clk_get to prevent breakage of existing DTs */
+> +	if (!madera->mclk[MADERA_MCLK2].clk)
+> +		dev_warn(madera->dev, "Missing MCLK2, requires 32kHz clock\n");
+> +
+>  	ret = madera_get_reset_gpio(madera);
+>  	if (ret)
+>  		return ret;
+> @@ -660,13 +675,19 @@ int madera_dev_init(struct madera *madera)
+>  	}
+>  
+>  	/* Init 32k clock sourced from MCLK2 */
+> +	ret = clk_prepare_enable(madera->mclk[MADERA_MCLK2].clk);
+> +	if (ret != 0) {
 
-Is it feasible to backport your changes? Or do we want to merge the one
-here first and backport?
+Nit: Why is this not 'if (ret)' like in the rest of the file?
 
-Christian
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
