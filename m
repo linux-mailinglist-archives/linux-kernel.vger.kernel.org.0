@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E5D2CC2F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61590CC2F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:52:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730739AbfJDSwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 14:52:39 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41467 "EHLO
+        id S1730841AbfJDSwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 14:52:44 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37772 "EHLO
         mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfJDSwj (ORCPT
+        with ESMTP id S1730801AbfJDSwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 14:52:39 -0400
-Received: by mail-qt1-f194.google.com with SMTP id d16so9913662qtq.8
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:52:38 -0700 (PDT)
+        Fri, 4 Oct 2019 14:52:41 -0400
+Received: by mail-qt1-f194.google.com with SMTP id l3so9973906qtr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:52:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=7bTbY9wWGaJLNQvZeFd+1QuaD6S0qAHt0InnROLT/Os=;
-        b=KXyyk/U3a3Ake5uIAGMpLeR7Q0kB8Wyp7yvAxZlB92sLZghjiV0BDpeYoj/wbGt1l5
-         R3q6AjsnUJ6GLrTbwcmOjdnD4CfHBskZbK8TylbWz6ggsmCqOLReOj7ep29t7/s1EeMG
-         KGyTKjJxepS8HkKhwSwFy8BmvkL8yDyMXA17xxIXrqwj6MbaKGqKD2QLoip8jD45Hegf
-         4b2L8PDJJB/IHOltXinsIZSRf0VXkxxhBpgSD9OdK0kkj6VLz2CSySr0rYTU/+Mt/vHw
-         q3shV+dlqn+vajvIWrEMx872Uhxs3k0r5vXSsN52gKNReVdOlx/YZVeqOKeqmQWibfwZ
-         k5KA==
+        bh=3zTijyt8B1oVtT9JT6yCKls7nJQIDBWuYolaWDAK7ic=;
+        b=QBfxsXlV7QG8qGyT7yovERfIlFzUSjbPWKWeYhz6on/h85J+eTplEGg+PnYLNe2g2V
+         5K1buQ67xs+gJJrvrxE2PnrXBiC/WKbpjDK/y05bxM9jw4pW7RhuVOwtWUQQ+KiXF7ml
+         JA751aW5xF8qW02iqVleyASrW/+TGd3dgtpvq7AFHfGO6TV+tsjdz0sbYDOTj56WsKwM
+         zDdQJgSHc3StoExrI2ytE0r7vFhhZZdhdq3IqWEzHDTYn3s/BTm/QtNy654271iMnGcu
+         mtGsbJLQWQSsE1Vg/9uQta2yjEZvs3zI6mJ3pmibJMTwXefrPnfkV4n4jpIrmPvjFu5r
+         2e9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7bTbY9wWGaJLNQvZeFd+1QuaD6S0qAHt0InnROLT/Os=;
-        b=L+2Z5aTt14hhEHXwyTtUoXywvVh7IbB0aG7dxpOSgZMgomad2M68tRxRZymdUVyTak
-         isYVgJY399xsFq2nE7VktgaPY0dZYxLJjvLcPHNoKeCHX9Pd/r6oCuUznslqX7MbZZRO
-         KhbA0Pg/ujbJx9auDIP9m5VlewRolyWJLGN2jInHaH0hsABI5cin3riQK9A0+1eR9Qr9
-         sqENIPPBIof5pBNKUqm5Xd1S4SLFraUfB0kpogcVvClD6uVSj239b2W392bZpPJF4shd
-         DdUc0Vugm51P5HDzMoAWc5pzJeWb5rraK3H1C0NWVnv93vZQYfGLk3ttwpFhtyf+5d0g
-         ZGCg==
-X-Gm-Message-State: APjAAAVat8PTNJvjcTk9GBBFL4/GDc2qIP24g23wGqyD7UZ1zxectH2T
-        T/ydES9QcqY2On/6DgOHiVSTyQ==
-X-Google-Smtp-Source: APXvYqyThUzTiS+dwSZXvbUyY+dR397sqlmVrBPBWuKY07TnEBwjhKxQlTHaFo2sBRO2G5DpOma8FQ==
-X-Received: by 2002:ac8:3061:: with SMTP id g30mr17524356qte.46.1570215158266;
-        Fri, 04 Oct 2019 11:52:38 -0700 (PDT)
+        bh=3zTijyt8B1oVtT9JT6yCKls7nJQIDBWuYolaWDAK7ic=;
+        b=o94sgHVgPhbLxy3GGw/f1bbH9WmdeLhaFPpZ3VNv9VVAiJ3N1ponAY00WHA1cPDXGY
+         7s6dITtykrObhBsUfPrLW1RiCmlD6Y+0404atHcv1J6lB9sAS/thPN/H6cVJEVgOSgAH
+         d66+V66SKS76Ih7PYbMfJ78VviU7u/b931OjNTud1FPveJ69CKBWl8omj2U6Q1bJa1y+
+         7XmSutvg2NR8utRHHjL9dAY/QdnnHDBc7Tr+/3UTc3URz1x/2XI0JLcZyswLmzlrkUjF
+         JhtoIpk4cSKY5AZroilOnADrtJ3U15FzCKiYzskyVp1hrdL2V2Y2KnOi0ZtNux/rB6Ub
+         9AUg==
+X-Gm-Message-State: APjAAAU9CrEO7G4WXzhsf65RIaq8p2UYZXuWvIlSpz1mMoNWhNRSNSFh
+        fGhMB8EsyHYVwQgGIZTiH+uLeA==
+X-Google-Smtp-Source: APXvYqz0VrEtbfOPZiQUcwn5FhaB6/JDqh7xKU3KH/BA6dVj2t/BXgqShHLdvVsoAFfqxEftxuHL5A==
+X-Received: by 2002:ac8:6bc5:: with SMTP id b5mr17605033qtt.244.1570215160265;
+        Fri, 04 Oct 2019 11:52:40 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id p77sm4042514qke.6.2019.10.04.11.52.36
+        by smtp.gmail.com with ESMTPSA id p77sm4042514qke.6.2019.10.04.11.52.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 11:52:37 -0700 (PDT)
+        Fri, 04 Oct 2019 11:52:39 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -54,9 +54,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         james.morse@arm.com, vladimir.murzin@arm.com,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com
-Subject: [PATCH v6 01/17] kexec: quiet down kexec reboot
-Date:   Fri,  4 Oct 2019 14:52:18 -0400
-Message-Id: <20191004185234.31471-2-pasha.tatashin@soleen.com>
+Subject: [PATCH v6 02/17] arm64: hibernate: pass the allocated pgdp to ttbr0
+Date:   Fri,  4 Oct 2019 14:52:19 -0400
+Message-Id: <20191004185234.31471-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191004185234.31471-1-pasha.tatashin@soleen.com>
 References: <20191004185234.31471-1-pasha.tatashin@soleen.com>
@@ -67,44 +67,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is a regular kexec command sequence and output:
-=====
-$ kexec --reuse-cmdline -i --load Image
-$ kexec -e
-[  161.342002] kexec_core: Starting new kernel
+ttbr0 should be set to the beginning of pgdp, however, currently
+in create_safe_exec_page it is set to pgdp after pgd_offset_raw(),
+which works by accident.
 
-Welcome to Buildroot
-buildroot login:
-=====
-
-Even when "quiet" kernel parameter is specified, "kexec_core: Starting
-new kernel" is printed.
-
-This message has  KERN_EMERG level, but there is no emergency, it is a
-normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
-
-Machines that have slow console baud rate benefit from less output.
+Fixes: 0194e760f7d2 ("arm64: hibernate: avoid potential TLB conflict")
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Simon Horman <horms@verge.net.au>
-Acked-by: Dave Young <dyoung@redhat.com>
 ---
- kernel/kexec_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/hibernate.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 15d70a90b50d..f7ae04b8de6f 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -1171,7 +1171,7 @@ int kernel_kexec(void)
- 		 * CPU hotplug again; so re-enable it here.
- 		 */
- 		cpu_hotplug_enable();
--		pr_emerg("Starting new kernel\n");
-+		pr_notice("Starting new kernel\n");
- 		machine_shutdown();
- 	}
+diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+index e0a7fce0e01c..d52f69462c8f 100644
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -201,6 +201,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 				 gfp_t mask)
+ {
+ 	int rc = 0;
++	pgd_t *trans_pgd;
+ 	pgd_t *pgdp;
+ 	pud_t *pudp;
+ 	pmd_t *pmdp;
+@@ -215,7 +216,8 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	memcpy((void *)dst, src_start, length);
+ 	__flush_icache_range(dst, dst + length);
  
+-	pgdp = pgd_offset_raw(allocator(mask), dst_addr);
++	trans_pgd = allocator(mask);
++	pgdp = pgd_offset_raw(trans_pgd, dst_addr);
+ 	if (pgd_none(READ_ONCE(*pgdp))) {
+ 		pudp = allocator(mask);
+ 		if (!pudp) {
+@@ -262,7 +264,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	 */
+ 	cpu_set_reserved_ttbr0();
+ 	local_flush_tlb_all();
+-	write_sysreg(phys_to_ttbr(virt_to_phys(pgdp)), ttbr0_el1);
++	write_sysreg(phys_to_ttbr(virt_to_phys(trans_pgd)), ttbr0_el1);
+ 	isb();
+ 
+ 	*phys_dst_addr = virt_to_phys((void *)dst);
 -- 
 2.23.0
 
