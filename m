@@ -2,157 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F49CBEB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83EC0CBEBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:13:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389681AbfJDPMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:12:31 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45001 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389086AbfJDPMb (ORCPT
+        id S2389707AbfJDPNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:13:30 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:55362 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389086AbfJDPN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:12:31 -0400
-Received: by mail-io1-f66.google.com with SMTP id w12so14202212iol.11
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 08:12:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=cWRdLiwQJAJJAJeYx45YFgevjCqiCyRsVMde8/zsJ6A=;
-        b=f0LGMOO+QGwV68JTQXruh+AqnwraIvphJ9rXbYuICywU3+WNjjBoC5yX90kY20UaPG
-         oorPZEkmRyvxkFAIJVNimLUYleYdudogrG58Vz0F1YYs94ESlt4sD/JkVZRfJxZHaenT
-         NRo2seZ06B71stP4w2Tk9nLWSOCbJ0ymeQ9TdDMGU9En/VrkRmrgL/E9P5gd58qGb5dN
-         N4gLewWqvEji28X4e78L7waSh5spQL6DGGDA+lVJAzy/74nCl0K3F/nU/729hPgX+QBH
-         WxbHVGsf6mI/0G2+jeJE5JDN01gVUGzDFFf+EB3oTlgLGZjcgE9bWSjcKaE4lnhy8UWe
-         80Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=cWRdLiwQJAJJAJeYx45YFgevjCqiCyRsVMde8/zsJ6A=;
-        b=l5tk5El+x9zGDxG+Jaff79Y1VE93Mp1ils5sedx8u3Un4DLY2GR8T2TFecu19DYASa
-         IekCTNZthcGgxxgAe9EOgrNaKxzjtjTir0JWG8ZPf8mpd//LI1rihTCndjBmCJZtM2Wt
-         H5j2Bl9BXwDneTztPJxgU/ySHqiQLwj+iAk7NHTncqlsQ4qmJRddJ9JssEASiPmwBAab
-         SZGukS66ci8O1n8UuGxdEUkB5syrUbxBMaT0LvQS6PzES/8meXJfyC6aWDKCc1yRHuZM
-         6+KKjONVfCRYzm+M3t5EGFjLyuCsv4HhcKUYexEm9P/lxPlOIj2rolmSXflZ9unelYft
-         YZ8A==
-X-Gm-Message-State: APjAAAV4tfHM5epR+BbkaWd2W+O3jCpn8xjhSC+xVg44D7W/QNYCmWhR
-        aNBNHzWN9/9/cOwIDNNQCTRUcg==
-X-Google-Smtp-Source: APXvYqxqIXCzfNNEjTBNMu5NySqCyk/eRVksf1vOt8+a3Fv6hjdsOkifkyV9BcOCqt/nTTJdnhh7FQ==
-X-Received: by 2002:a5e:df04:: with SMTP id f4mr13760675ioq.192.1570201950070;
-        Fri, 04 Oct 2019 08:12:30 -0700 (PDT)
-Received: from localhost (c-75-72-120-115.hsd1.mn.comcast.net. [75.72.120.115])
-        by smtp.gmail.com with ESMTPSA id l82sm4099655ilh.23.2019.10.04.08.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 08:12:29 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 10:12:28 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/211] 4.19.77-stable review
-Message-ID: <20191004151228.25fe3upo5jncvyme@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20191003154447.010950442@linuxfoundation.org>
+        Fri, 4 Oct 2019 11:13:29 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x94FDH8I117781;
+        Fri, 4 Oct 2019 10:13:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570201997;
+        bh=aWz10fmIXx+gUjLiGBjJkxuwFaREky92Azp3aqmUDuU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=jAXv7dVQrIT8YcJvuU675D0UM7cua4NjMs5nlDwC2L8cWQmYZauOR9OvXbPScu4Kx
+         7iT72jT1qpqZ7TO9iemlztLdY+kwsCe/vpTVZcE77u1c+umE8P3p56zdPnVAYE8+kL
+         t0qToAANSv7YI0YFgHAJExcVRDbmj5G0HRae2ru8=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x94FDH0o102033;
+        Fri, 4 Oct 2019 10:13:17 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 4 Oct
+ 2019 10:13:16 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 4 Oct 2019 10:13:16 -0500
+Received: from [10.250.99.146] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x94FDEUv040225;
+        Fri, 4 Oct 2019 10:13:14 -0500
+Subject: Re: Should regulator core support parsing OF based fwnode?
+To:     Mark Brown <broonie@kernel.org>
+CC:     <mark.rutland@arm.com>, <daniel.thompson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, <tomi.valkeinen@ti.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <lee.jones@linaro.org>, <linux-leds@vger.kernel.org>,
+        <dmurphy@ti.com>
+References: <20191003082812.28491-3-jjhiblot@ti.com>
+ <20191003104228.c5nho6eimwzqwxpt@earth.universe>
+ <acd11fe1-1d51-eda5-f807-c16319514c3a@ti.com>
+ <62591735-9082-1fd7-d791-07929ddaa223@gmail.com>
+ <20191003183554.GA37096@sirena.co.uk>
+ <25b9614f-d6be-9da5-0fe5-eb58c8c93850@gmail.com>
+ <20191003194140.GE6090@sirena.co.uk>
+ <a9f668f9-ad26-4e18-178a-8403b8b3b1db@gmail.com>
+ <20191004113942.GB4866@sirena.co.uk>
+ <b6318ba5-e76e-dc1c-6921-a702abf6749c@ti.com>
+ <20191004144029.GC4866@sirena.co.uk>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <6df68ecb-f92e-fd9c-7f55-f66fa463263a@ti.com>
+Date:   Fri, 4 Oct 2019 17:13:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20191004144029.GC4866@sirena.co.uk>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191003154447.010950442@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 05:51:06PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.77 release.
-> There are 211 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat 05 Oct 2019 03:37:47 PM UTC.
-> Anything received after that time might be too late.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+On 04/10/2019 16:40, Mark Brown wrote:
+> On Fri, Oct 04, 2019 at 03:33:13PM +0200, Jean-Jacques Hiblot wrote:
+>> On 04/10/2019 13:39, Mark Brown wrote:
+>>> Consumers should just be able to request a regulator without having to
+>>> worry about how that's being provided - they should have no knowledge at
+>>> all of firmware bindings or platform data for defining this.  If they
+>>> do that suggests there's an abstraction issue somewhere, what makes you
+>>> think that doing something with of_node is required?
+>> The regulator core accesses consumer->of_node to get a phandle to a
+>> regulator's node. The trouble arises from the fact that the LED core does
+>> not populate of_node anymore, instead it populates fwnode. This allows the
+>> LED core to be agnostic of ACPI or OF to get the properties of a LED.
+> Why is the LED core populating anything?  Is the LED core copying bits
+> out of the struct device for the actual device into a synthetic device
+> rather than passing the actual device in?  That really doesn't seem like
+> a good idea, it's likely to lead to things like this where you don't
+> copy something that's required (or worse where something directly in the
+> struct device that can't be copied is needed).
 
-Summary
-------------------------------------------------------------------------
+This is not a copy of a device of parent's of_node or something like that.
 
-kernel: 4.19.77-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.19.y
-git commit: 319532606385c7221dfbfba6f857bd03e97e20d0
-git describe: v4.19.76-212-g319532606385
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/build/v4.19.76-212-g319532606385
+You can think of a LED controller as a bus. It 'enumerates' its children 
+LED, create the children devices (one per LED) and provides the 
+functions to interact with them.
 
-No regressions (compared to build v4.19.76)
+The device node we are talking about here is a per-LED thing, it is a 
+child node of the node of the LED controller.
 
-No fixes (compared to build v4.19.76)
+here is an example:
 
-Ran 22570 total tests in the following environments and test suites.
+     tlc59108: tlc59116@40 { /* this is the node for the LED controller */
+         status = "okay";
+         #address-cells = <1>;
+         #size-cells = <0>;
+         compatible = "ti,tlc59108";
+         reg = <0x40>;
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+         backlight_led: led@2 { /* this is the node of one LED attached 
+to pin#2 of the LED controller */
+             power-supply = <&bkl_fixed>;
+             reg = <0x2>;
+         };
+         other_led: led@3 { /* this is the node another LED attached to 
+pin #3 of the LED controller */
+             power-supply = <&reg_3v3>;
+             reg = <0x3>;
+         };
+     };
 
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-fs-tests
-* ltp-open-posix-tests
-* network-basic-tests
-* kvm-unit-tests
-* ssuite
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
 
--- 
-Linaro LKFT
-https://lkft.linaro.org
+>
+>> IMO it is better to populate both of_node and fwnode in the LED core at the
+>> moment. It has already been fixed this way for the platform driver [0], MTD
+>> [1] and PCI-OF [2].
+> Yeah, if you're going to be copying stuff out of the real device I'd
+> copy the of_node as well.
+>
+>>> Further, unless you have LEDs that work without power you probably
+>>> shouldn't be using _get_optional() for their supply.  That interface is
+>>> intended only for supplies that may be physically absent.
+>> Not all LEDs have a regulator to provide the power. The power can be
+>> supplied by the LED controller for example.
+> This code probably shouldn't be being run at all for LEDs like that, I
+> was assuming this was just for GPIO LEDs and similar rather than all
+> LEDs.
+
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
