@@ -2,152 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABACDCC213
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 19:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E25AFCC224
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 19:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388952AbfJDRwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 13:52:54 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51102 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388880AbfJDRwv (ORCPT
+        id S2389155AbfJDRxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 13:53:14 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37192 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388880AbfJDRxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 13:52:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=icF1PnfaBIU2wuXv0YbLmQz3SxUsELWwRB6fPKw37KE=; b=Wjnnd151pMcb
-        epSb5ND2XSeyUmu/xmByfs7NfzcFT0jmyvjgmQYbCkGORIdSlWIhx2jbcDJuePesoWYNn5kZpGhuD
-        3zgjomxvbwfxbTgLI1ffz18hKsKTsQQamhFI4LX4eZ57BxUCei+d4oUK16l5Ulzes+8dBeycvd1GE
-        t7Fgc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iGRl3-0003xC-Gn; Fri, 04 Oct 2019 17:52:49 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 06BDF2741EF2; Fri,  4 Oct 2019 18:52:48 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     broonie@kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: spi-fsl-dspi: Always use the TCFQ devices in poll mode" to the spi tree
-In-Reply-To: <20191001205216.32115-1-olteanv@gmail.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191004175249.06BDF2741EF2@ypsilon.sirena.org.uk>
-Date:   Fri,  4 Oct 2019 18:52:48 +0100 (BST)
+        Fri, 4 Oct 2019 13:53:12 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f22so6734395wmc.2;
+        Fri, 04 Oct 2019 10:53:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SiYnbzF7WkjqWKJjUmGyqc1k8qogotE1jvdb1MCejmk=;
+        b=rqFfmPBjt5rNehUrfCoog3sBIjQKw8DOTHfqANDdbh6jLSdp3Jt4BHH2BqNPxDJkPf
+         X9GmB0XLf5OILRwmuglpo4UHl9sJPPoTlrXu6ADQEiAZEetGw2XgIlzniuQdX8DCAHje
+         4USGkdxGIrdT0zkJ87uc27k538trG28T3Jo3c7cZE6FYXI40/vp3QY58vrjZGd7tCFBJ
+         16gdzjIHv+UtYdOz1n2+9TbrnQfQYNT/a8cPNeyboqCehSOnkRQGg67jSRVJ3pIhxflF
+         IY8/P91g35XLJfSnbnjHsfQW0c/ML1NcmgXpv6KFcWdfqjbcKsZ5yTQioEB+YWCTH+gM
+         oWUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SiYnbzF7WkjqWKJjUmGyqc1k8qogotE1jvdb1MCejmk=;
+        b=LVnDQ04qMrZ5znamXsk/HkfKI5M5yN5FmBQ2m+fsvArUTyxCt5OQnnaHZzf9Y4DRpm
+         CNui/c6GqE6JaKuxHY46KK03Cfl4EYcPjfkXgnYEv0+cmTBw7bWxyeIwoIQRz4CwB3lZ
+         CVYc1TBA8DqOTqN+QajuRPH7ZZGQJaqXLhWfJILt04snSCEej4OthidIOihD10SZMI0J
+         VbGEmxcJawtsOBZLnQ+N1HYbYdZkSj95MQyDDpcS29rHjQYiLv0X77SuMyuzYkj0ZsNU
+         vcfBUxmVOmSPf1nxDo8Voz+5R3H/iERvRfJxtF2nJuzMeT3/dkKiX4lg+0nm/rXoruY/
+         SK5A==
+X-Gm-Message-State: APjAAAUZzjhueG2+H7/E3OYxfwKGPx+al/uAhDLGXTGt5FZ08w2sjQK8
+        hHdX/wmTGdLq7EtZJ0Kb2do=
+X-Google-Smtp-Source: APXvYqyyUV/AKwxAyN9TZuMCT9wd+X8T76PBdPNUsiucJS6dHYCgcxvSYkeRlQ7nwRaHVXmuaanUnw==
+X-Received: by 2002:a05:600c:2252:: with SMTP id a18mr5967972wmm.141.1570211590660;
+        Fri, 04 Oct 2019 10:53:10 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id e9sm17598865wme.3.2019.10.04.10.53.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Oct 2019 10:53:09 -0700 (PDT)
+Date:   Fri, 4 Oct 2019 19:53:07 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     catalin.marinas@arm.com, davem@davemloft.net,
+        herbert@gondor.apana.org.au, linux@armlinux.org.uk,
+        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        will@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 03/11] dt-bindings: crypto: Add DT bindings
+ documentation for sun8i-ce Crypto Engine
+Message-ID: <20191004175307.GB11208@Red>
+References: <20191001184141.27956-1-clabbe.montjoie@gmail.com>
+ <20191001184141.27956-4-clabbe.montjoie@gmail.com>
+ <20191002055458.zo2vdbxodj3ch53g@gilmour>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002055458.zo2vdbxodj3ch53g@gilmour>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, Oct 02, 2019 at 07:54:58AM +0200, Maxime Ripard wrote:
+> On Tue, Oct 01, 2019 at 08:41:33PM +0200, Corentin Labbe wrote:
+> > This patch adds documentation for Device-Tree bindings for the
+> > Crypto Engine cryptographic accelerator driver.
+> >
+> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > ---
+> >  .../bindings/crypto/allwinner,sun8i-ce.yaml   | 92 +++++++++++++++++++
+> >  1 file changed, 92 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml b/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml
+> > new file mode 100644
+> > index 000000000000..9bd26a2eff33
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.yaml
+> > @@ -0,0 +1,92 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/crypto/allwinner,sun8i-ce.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Allwinner Crypto Engine driver
+> > +
+> > +maintainers:
+> > +  - Corentin Labbe <clabbe.montjoie@gmail.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - allwinner,sun8i-h3-crypto
+> > +      - allwinner,sun8i-r40-crypto
+> > +      - allwinner,sun50i-a64-crypto
+> > +      - allwinner,sun50i-h5-crypto
+> > +      - allwinner,sun50i-h6-crypto
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: Bus clock
+> > +      - description: Module clock
+> > +      - description: MBus clock
+> > +    minItems: 2
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: bus
+> > +      - const: mod
+> > +      - const: ram
+> > +    minItems: 2
+> > +    maxItems: 3
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +  reset-names:
+> > +    const: bus
+> > +
+> > +if:
+> > +  properties:
+> > +    compatible:
+> > +      items:
+> > +        const: allwinner,sun50i-h6-crypto
+> > +then:
+> > +  properties:
+> > +      clocks:
+> > +        minItems: 3
+> > +      clock-names:
+> > +        minItems: 3
+> > +else:
+> > +  properties:
+> > +      clocks:
+> > +        maxItems: 2
+> > +      clock-names:
+> > +        maxItems: 2
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +  - clock-names
+> > +  - resets
+> > +
+> > +additionalProperties: true
+> 
+> I guess you meant false here?
+> 
 
-   spi: spi-fsl-dspi: Always use the TCFQ devices in poll mode
+Yes. i wil fix that.
 
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 3c0f9d8bcf47ed33f479cf9dc933d405020aefe4 Mon Sep 17 00:00:00 2001
-From: Vladimir Oltean <olteanv@gmail.com>
-Date: Tue, 1 Oct 2019 23:52:16 +0300
-Subject: [PATCH] spi: spi-fsl-dspi: Always use the TCFQ devices in poll mode
-
-With this patch, the "interrupts" property from the device tree bindings
-is ignored, even if present, if the driver runs in TCFQ mode.
-
-Switching to using the DSPI in poll mode has several distinct
-benefits:
-
-- With interrupts, the DSPI driver in TCFQ mode raises an IRQ after each
-  transmitted word. There is more time wasted for the "waitq" event than
-  for actual I/O. And the DSPI IRQ count can easily get the largest in
-  /proc/interrupts on Freescale boards with attached SPI devices.
-
-- The SPI I/O time is both lower, and more consistently so. Attached to
-  some Freescale devices are either PTP switches, or SPI RTCs. For
-  reading time off of a SPI slave device, it is important that all SPI
-  transfers take a deterministic time to complete.
-
-- In poll mode there is much less time spent by the CPU in hardirq
-  context, which helps with the response latency of the system, and at
-  the same time there is more control over when interrupts must be
-  disabled (to get a precise timestamp measurement, which will come in a
-  future patch): win-win.
-
-On the LS1021A-TSN board, where the SPI device is a SJA1105 PTP switch
-(with a bits_per_word=8 driver), I created a "benchmark" where I
-periodically transferred a 12-byte message once per second, for 120
-seconds. I then recorded the time before putting the first byte in the
-TX FIFO, and the time after reading the last byte from the RX FIFO. That
-is the transfer delay in nanoseconds.
-
-Interrupt mode:
-
-  delay: min 125120 max 168320 mean 150286 std dev 17675.3
-
-Poll mode:
-
-  delay: min 69440 max 119040 mean 70312.9 std dev 8065.34
-
-Both the mean latency and the standard deviation are more than 50% lower
-in poll mode than in interrupt mode, and the 'max' in poll mode is lower
-than the 'min' in interrupt mode. This is with an 'ondemand' governor on
-an otherwise idle system - therefore running mostly at 600 MHz out of a
-max of 1200 MHz.
-
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Link: https://lore.kernel.org/r/20191001205216.32115-1-olteanv@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-fsl-dspi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 2c0f211eed87..c61074502145 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -707,7 +707,7 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- 	regmap_read(dspi->regmap, SPI_SR, &spi_sr);
- 	regmap_write(dspi->regmap, SPI_SR, spi_sr);
- 
--	if (!(spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)))
-+	if (!(spi_sr & SPI_SR_EOQF))
- 		return IRQ_NONE;
- 
- 	if (dspi_rxtx(dspi) == 0) {
-@@ -1134,6 +1134,9 @@ static int dspi_probe(struct platform_device *pdev)
- 
- 	dspi_init(dspi);
- 
-+	if (dspi->devtype_data->trans_mode == DSPI_TCFQ_MODE)
-+		goto poll_mode;
-+
- 	dspi->irq = platform_get_irq(pdev, 0);
- 	if (dspi->irq <= 0) {
- 		dev_info(&pdev->dev,
--- 
-2.20.1
-
+Regards
