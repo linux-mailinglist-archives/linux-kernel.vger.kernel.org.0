@@ -2,124 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F00FCB774
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 11:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A0EFCB77E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 11:41:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388162AbfJDJkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 05:40:09 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3243 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727451AbfJDJkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 05:40:08 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DEEE194FBEF2EFAB3561;
-        Fri,  4 Oct 2019 17:40:06 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.179) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Fri, 4 Oct 2019
- 17:40:01 +0800
-Subject: Re: [PATCH v2 10/22] mtd: spi-nor: Rework write_sr()
-To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "boris.brezillon@collabora.com" <boris.brezillon@collabora.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "jonas@norrbonn.se" <jonas@norrbonn.se>
-References: <20190924074533.6618-1-tudor.ambarus@microchip.com>
- <20190924074533.6618-11-tudor.ambarus@microchip.com>
-CC:     "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "vz@mleia.com" <vz@mleia.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <83d62334-bd1c-20b7-3c58-225392c819f8@huawei.com>
-Date:   Fri, 4 Oct 2019 10:39:51 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S2388315AbfJDJl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 05:41:29 -0400
+Received: from filter01-out3.totaalholding.nl ([31.186.169.213]:49501 "EHLO
+        filter01-out3.totaalholding.nl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388271AbfJDJl3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 05:41:29 -0400
+X-Greylist: delayed 1039 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Oct 2019 05:41:28 EDT
+Received: from www98.totaalholding.nl ([185.94.230.81])
+        by filter01.totaalholding.nl with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mjbaars1977.linux-kernel@cyberfiber.eu>)
+        id 1iGJol-0005lz-2x
+        for linux-kernel@vger.kernel.org; Fri, 04 Oct 2019 11:24:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=cyberfiber.eu; s=default; h=Content-Transfer-Encoding:MIME-Version:
+        Content-Type:Date:To:From:Subject:Message-ID:Sender:Reply-To:Cc:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=7fbCrmBoXH7A68+AJFpjQq9ukOe3qj5mwDOpBcXgXcg=; b=ZB9nbOTyUSvH59bqtyakZIw50V
+        43DBF4n3H6jIHTy8qjk8QM7lJTV1uF4l1qrPixULXJ+ZviWTvY6W5UXt2mfyN+anyxi9QKuOO8pEg
+        VNuHfZypmlwGaV+BUiWhoB5IwcxArkG5pB5QoKLGi+N4arphEJXzISWqyHqRcr8kzSAe/qbT31xT1
+        5Be3/kKNjEeIJJ2KJ+S/9HkGoSE134dvMxuJfiUWx/PeGZIsqgJffM/AofrIzw785PIEEZNrEtJXv
+        bhHqNd1IPHu5BqmsmaOdxb1v2bkfMlO7nlzuetZQ3olR9w9/yS/aw9/RDAJ3s2ZYQqh3u7yxPq+dX
+        dANFGeng==;
+Received: from [85.146.134.134] (port=60958 helo=DT0E.cyberfiber.eu)
+        by www98.totaalholding.nl with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mjbaars1977.linux-kernel@cyberfiber.eu>)
+        id 1iGJok-0000Dw-UX
+        for linux-kernel@vger.kernel.org; Fri, 04 Oct 2019 11:24:06 +0200
+Message-ID: <6dd0cf2a58a7f99da3d2fdfb9b1d1bf957409893.camel@cyberfiber.eu>
+Subject: packet writing support
+From:   Mischa Baars <mjbaars1977.linux-kernel@cyberfiber.eu>
+To:     linux-kernel@vger.kernel.org
+Date:   Fri, 04 Oct 2019 11:22:39 +0200
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <20190924074533.6618-11-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.179]
-X-CFilter-Loop: Reflected
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - www98.totaalholding.nl
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - cyberfiber.eu
+X-Get-Message-Sender-Via: www98.totaalholding.nl: authenticated_id: mjbaars1977.linux-kernel@cyberfiber.eu
+X-Authenticated-Sender: www98.totaalholding.nl: mjbaars1977.linux-kernel@cyberfiber.eu
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Originating-IP: 185.94.230.81
+X-SpamExperts-Domain: out.totaalholding.nl
+X-SpamExperts-Username: 185.94.230.81
+Authentication-Results: totaalholding.nl; auth=pass smtp.auth=185.94.230.81@out.totaalholding.nl
+X-SpamExperts-Outgoing-Class: unsure
+X-SpamExperts-Outgoing-Evidence: Combined (0.37)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0dWQ8c9lblW44odAlK6ziUapSDasLI4SayDByyq9LIhVP66eIxt/agQ7
+ YJNlpgi5CETNWdUk1Ol2OGx3IfrIJKywOmJyM1qr8uRnWBrbSAGD2wvHbfwld3xCwVQvwEuT77Ld
+ J48jzkmtY6e2hJZwYRTnx8yeplRO3sLIqUlSH7OGWh4Em/JI/vUjAvb24AuGwYMlhcTgOXSCz8qb
+ ysTVYVkxZLzl78CRJp/CkBuSEXrbq0f8Oqhr0yw75RiyQ1Tv4oYfDsyVogV4aMr3Qc/zKVxPR9o0
+ 14ICOs9pIWX8OtLJj1pqXi8btQCfqom9tO+O5GjSUnK0zv6WWniSLupvi3/C3VvUdjSCswikK/li
+ cfX+JDrjsxZHhy1AzMPULKZh4Agqdb/JjbdVZfbc9c+Jxpt+54iyUCc8aaknZho9naJYg0bolM7B
+ /rBFul0ycjYHG0NfDxtcqznH5VBUud8O4LV0JmbqROuof5+bHLNCgb4217NirEYyqwqMBGrw8ELi
+ qO86tByCP69i0Qh5ndH5heRCJ7rPXZbjpKeI7vxRvveCIK/1NH5THMtlYvyHAYGOGgjdb5hy4d8/
+ k+RlvkD7ATmoZ2kfng5rdXwjvpU4S+XAhVR1id1GLKHJBvyjlI1w1E/J5phsv+xvB6Q7084Dep/E
+ odhHmgT/Z/aIyKL3sc7t9dFZa5ukDvijt563XwguywX3MPaPCeumOhbpVZ03tIU95AZWtzQOODZY
+ aBS/QaPai/btrmlhC85OkmJRZ+my2YLTiFllyX974CpAmwOWQt/Apnqpdot95Z1s2bBwfdm/8X6o
+ RcYO63BwpS5C898CHX096OhfSRX9R5xa4rGFcC9OL4nawG8z87Sn7OLOV4LikazAQsNf7vua6ysA
+ xFAilnb3SCYVYDSdH4IKBn5oTTl9HKvj+Li+B0slZd4aadi2b667E/1TXseb92FolcPTrPL5sKTz
+ 3tp9wpvGYs38JV+Sgf0DiLPRXTSWmFEPKyP0gxb6VQ9Dyf1mdym/fWDvnb+h1IgCQbaPY30Vfjqb
+ xdTi1AYkryYheSAf/c7kR8HWm3EQIN2pUUDcOX/AZBHcfw==
+X-Report-Abuse-To: spam@filter01.totaalholding.nl
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/09/2019 08:46, Tudor.Ambarus@microchip.com wrote:
-> +}
-> +
-> +/**
-> + * spi_nor_write_sr() - Write the Status Register.
-> + * @nor:	pointer to 'struct spi_nor'.
-> + * @sr:		buffer to write to the Status Register.
-> + * @len:	number of bytes to write to the Status Register.
-> + *
-> + * Return: 0 on success, -errno otherwise.
->   */
-> -static int write_sr(struct spi_nor *nor, u8 val)
-> +static int spi_nor_write_sr(struct spi_nor *nor, const u8 *sr, size_t len)
->  {
-> -	nor->bouncebuf[0] = val;
-> +	int ret;
-> +
-> +	ret = spi_nor_write_enable(nor);
-> +	if (ret)
-> +		return ret;
-> +
+Hi,
 
-Hi Tudor,
+If I'm correct, packet writing support is going to be removed from the
+Linux kernel. Is there any particular reason for
+this, as far as you people know? Both DVD-writers and Blueray-writers are
+still being sold to date.
 
->  	if (nor->spimem) {
->  		struct spi_mem_op op =
->  			SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRSR, 1),
->  				   SPI_MEM_OP_NO_ADDR,
->  				   SPI_MEM_OP_NO_DUMMY,
-> -				   SPI_MEM_OP_DATA_IN(1, nor->bouncebuf, 1));
+I'm currently working on quite a large project. I would be dependent
+solely on USB to store my backup files, when the packet writing support
+is removed. Actually I'm quite uncomfortable with that idea, because
+USB is rewritable. Any serious attempt to do damage to my project will
+result a permanent loss of code. Personally I would do anything to keep
+packet writing support in the kernel.
 
-This be SPI_MEM_OP_DATA_OUT() in the current mainline code also, right?
+I'd hoped you could remove normal floppy disc support instead. That
+seems the more logical course of action. Floppy disc drives aren't
+being sold anymore for quite some years now.
 
-I'm testing my under development driver on top of v5.4-rc1, and 
-flash_lock -u is broken.
+Anybody there?
 
-Cheers,
-John
-
-> +				   SPI_MEM_OP_DATA_OUT(len, sr, 1));
->
-> -		return spi_mem_exec_op(nor->spimem, &op);
-> +		ret = spi_mem_exec_op(nor->spimem, &op);
-> +	} else {
-> +		ret = nor->controller_ops->write_reg(nor, SPINOR_OP_WRSR,
-> +						     sr, len);
->  	}
->
-> -	return nor->controller_ops->write_reg(nor, SPINOR_OP_WRSR,
-> -					      nor->bouncebuf, 1);
-> +	if (ret) {
-> +		dev_err(nor->dev, "error while writing Status Register\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = spi_nor_wait_till_ready(nor);
-> +
-> +	return ret;
->  }
->
->  static struct spi_nor *mtd_to_spi_nor(struct mtd_info *mtd)
-> @@ -741,161 +914,6 @@ static int winbond_set_4byte(struct spi_nor *nor, bool enable)
->  	return ret;
->  }
-
+Have a pleasant day,
+Mischa Baars.
 
