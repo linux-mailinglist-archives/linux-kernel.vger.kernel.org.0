@@ -2,118 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 580AACC3B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:43:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F44CC3BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730903AbfJDTng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 15:43:36 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42758 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727978AbfJDTnf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 15:43:35 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n14so8487766wrw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 12:43:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fr5y/RvlB6x0gWwbCBYcM9hwB+ke8YDXuG6rntGxLCM=;
-        b=ndMx+gJgLIhohBHTBHDLgHFxGPC/IMObaTRm7UIziVbnvT2+nzCGHUbWvkLJaHL5w5
-         bnv6PF2vWG/05jWnf0S/GGapG6dIJfxzX4DrFUdM6HThT3OZUbNn2nG1mM9uTEN35wSx
-         Fv7GBHmkKda60q0rQyRcViOKp7ls7vJl5R3swI/5pH5brlj6emslmsCN3sHfCp++T97s
-         4aBnCM/zQaetMcxBIjFROotY54DiReGqyJV1jrZHx+DKJ7fClKg2/3SNwTiVF6u2wPB2
-         CtKM60aFMbanXHZ3Fo8NZNM8d2gDkqvREs6S0QU2QRk93hG8ohB3uAjBfO8vXO3m3cIO
-         7A3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fr5y/RvlB6x0gWwbCBYcM9hwB+ke8YDXuG6rntGxLCM=;
-        b=gVuOdLtJUNRJXpPhqQEBr9NTtSW6ZqCROyZWWudlXnypGw3qg/JFtLpDGwH9GGVq61
-         Uedffvs+qxrbW0judJNeVvCZH9PHbdipqwK8X4mfH3h821jSzaLEE+No+RfVc+lRL9RV
-         qHsskiBBCKvwtB8tBhjUIQB6axWIlk6bnFLcuXJoSYpTaQysIBqycm/DtWRr/h7e5p8g
-         vlxvp1AsMB3uzVSEEQY9uadIjyIF+fKdXYeh7b/gVAKjzrLcDgskKzEyXlBn8FJV+waL
-         Y+SqxX5TqKqRzqN5F6ga3uO2Ik/zznhYD1xYEX2BeIVoU6WND72Cy1LOW9Bly8FlTgZx
-         2fjQ==
-X-Gm-Message-State: APjAAAUdLylQHUgeWASThS1nHre0Do2JxyunYYO5PGhsiDHyVsluqmH8
-        bgSS7HzmU9Apm41cnsFiChPI2Qwe
-X-Google-Smtp-Source: APXvYqzW+d+PLfKGj/zPSMxQeffxUrBaWf4c1MckZr1+EVwgl9Fn+hKgW8Lauv814+mMr35X6qLBnQ==
-X-Received: by 2002:a5d:670f:: with SMTP id o15mr12473614wru.242.1570218213334;
-        Fri, 04 Oct 2019 12:43:33 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id f143sm11289741wme.40.2019.10.04.12.43.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 12:43:32 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 12:43:30 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] usercopy structs for v5.4-rc2
-Message-ID: <20191004194330.GA1478788@archlinux-threadripper>
-References: <20191004104116.20418-1-christian.brauner@ubuntu.com>
- <CAHk-=whxf5HVdaXqL6RgHCLzb2LNn3U2n_x4GWQZroCC+evRoA@mail.gmail.com>
+        id S1730949AbfJDTp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 15:45:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51634 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729586AbfJDTp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 15:45:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 95809AC2E;
+        Fri,  4 Oct 2019 19:45:55 +0000 (UTC)
+Date:   Fri, 4 Oct 2019 12:44:46 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Michel Lespinasse <walken@google.com>
+Cc:     akpm@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        Michael@google.com, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 07/11] vhost: convert vhost_umem_interval_tree to half
+ closed intervals
+Message-ID: <20191004194446.tomd55ll4nlkelb6@linux-p48b>
+Mail-Followup-To: Michel Lespinasse <walken@google.com>,
+        akpm@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        Michael@google.com, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        Davidlohr Bueso <dbueso@suse.de>
+References: <20191003201858.11666-1-dave@stgolabs.net>
+ <20191003201858.11666-8-dave@stgolabs.net>
+ <20191004121021.GA4541@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whxf5HVdaXqL6RgHCLzb2LNn3U2n_x4GWQZroCC+evRoA@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191004121021.GA4541@google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 10:53:41AM -0700, Linus Torvalds wrote:
-> On Fri, Oct 4, 2019 at 3:42 AM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> >
-> >            The only separate fix we we had to apply
-> > was for a warning by clang when building the tests for using the result of
-> > an assignment as a condition without parantheses.
-> 
-> Hmm. That code is ugly, both before and after the fix.
-> 
-> This just doesn't make sense for so many reasons:
-> 
->         if ((ret |= test(umem_src == NULL, "kmalloc failed")))
-> 
-> where the insanity comes from
-> 
->  - why "|=" when you know that "ret" was zero before (and it had to
-> be, for the test to make sense)
-> 
->  - why do this as a single line anyway?
-> 
->  - don't do the stupid "double parenthesis" to hide a warning. Make it
-> use an actual comparison if you add a layer of parentheses.
-> 
-> So
-> 
->         if ((x = y))
-> 
-> is *wrong*. I know the compiler suggests that, but the compiler is
-> just being stupid, and the suggestion comes from people who don't have
-> any taste.
-> 
-> If you want to test an assignment, you should just use
-> 
->         if ((x = y) != 0)
-> 
-> instead, at which point it's not syntactic noise mind-games any more,
-> but the parenthesis actually make sense.
-> 
-> However, you had no reason to use an assignment in the conditional in
-> the first place.
-> 
-> IOW, the code should have just been
-> 
->         ret = test(umem_src == NULL, "kmalloc failed");
->         if (ret) ...
+On Fri, 04 Oct 2019, Michel Lespinasse wrote:
 
-Yes, I had this as the original fix but I tried to keep the same
-intention as the original author. I should have gone with my gut. Sorry
-for the ugliness, I'll try to be better in the future.
+>On Thu, Oct 03, 2019 at 01:18:54PM -0700, Davidlohr Bueso wrote:
+>> @@ -1320,15 +1320,14 @@ static bool iotlb_access_ok(struct vhost_virtqueue *vq,
+>>  {
+>>  	const struct vhost_umem_node *node;
+>>  	struct vhost_umem *umem = vq->iotlb;
+>> -	u64 s = 0, size, orig_addr = addr, last = addr + len - 1;
+>> +	u64 s = 0, size, orig_addr = addr, last = addr + len;
+>
+>maybe "end" or "end_addr" instead of "last".
+>
+>> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+>> index e9ed2722b633..bb36cb9ed5ec 100644
+>> --- a/drivers/vhost/vhost.h
+>> +++ b/drivers/vhost/vhost.h
+>> @@ -53,13 +53,13 @@ struct vhost_log {
+>>  };
+>>
+>>  #define START(node) ((node)->start)
+>> -#define LAST(node) ((node)->last)
+>> +#define END(node) ((node)->end)
+>>
+>>  struct vhost_umem_node {
+>>  	struct rb_node rb;
+>>  	struct list_head link;
+>>  	__u64 start;
+>> -	__u64 last;
+>> +	__u64 end;
+>>  	__u64 size;
+>>  	__u64 userspace_addr;
+>>  	__u32 perm;
+>
+>Preferably also rename __subtree_last to __subtree_end
 
-Cheers,
-Nathan
+Yes, this was was another one that I had in mind renaming, but
+didn't want to grow the series -- all custom interval trees
+name _last for the subtree iirc. Like my previous reply, I'd
+rather leave this stuff for a followup series.
+
+Thanks,
+Davidlohr
