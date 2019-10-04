@@ -2,82 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A12CECB69D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FCEECB6AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbfJDIsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 04:48:51 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:48721 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725730AbfJDIsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 04:48:50 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id GJGWivNPfjZ8vGJGZisjho; Fri, 04 Oct 2019 10:48:48 +0200
-Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Dariusz Marcinkiewicz <darekm@google.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190814104520.6001-1-darekm@google.com>
- <20190814104520.6001-8-darekm@google.com>
- <f0e99db8-3329-f272-e139-a7c713f200ea@xs4all.nl> <20190828093820.GE2917@ulmo>
- <2eed5ed3-85f3-4c19-4dd2-3d8432829c2a@xs4all.nl>
- <20190828115400.GA30919@ulmo>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <3f7fe51a-8958-a425-f5fd-01df5301d6b2@xs4all.nl>
-Date:   Fri, 4 Oct 2019 10:48:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730304AbfJDIyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 04:54:07 -0400
+Received: from mga12.intel.com ([192.55.52.136]:14755 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfJDIyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 04:54:06 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 01:54:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,255,1566889200"; 
+   d="scan'208";a="205810799"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 04 Oct 2019 01:54:03 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 04 Oct 2019 11:54:02 +0300
+Date:   Fri, 4 Oct 2019 11:54:02 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] software node: Add documentation
+Message-ID: <20191004085402.GI1048@kuha.fi.intel.com>
+References: <20191002123305.80012-1-heikki.krogerus@linux.intel.com>
+ <20191002123305.80012-3-heikki.krogerus@linux.intel.com>
+ <910192ce-7a0e-8a26-39eb-3e6c0e3eb1bc@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190828115400.GA30919@ulmo>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIxtuyQfDELsyaEhapLOQeAHB7QAyJDRd8x05tHFxVJYMlGGvg5VX//j//cdR+KvdtarwKYhD4NRQrssc7yvwEN+yiyuBiFa1CRULA1iQjqwTHvN9hvg
- I3h+Lc4e/ODHchCGAjVhlQiBPgmXfPjyrxWPVPkSccYG25LXhbEas0Absg1gU4QIMKA1fToOk/oIBRS9HNPQEZGQdVoCO8h4pm2Xlz46TM5lW+FGDYiz/gtD
- Ik86LXISf6CXkM3zrizPiGxwMptBjrwicNmd0Z3bMYwDMA/En4sAM5C9qrf8xlPOgYyql4jDscGeIEd7tm4xZZmeoe2wOd8UOod3rpaxRP7/Z0ijvbz7a9zL
- 07DbcgRhu0f2J2Kt07CcgmLOZsCoErFmfK8UiqUCD9mVagvcegJYrdC8Xq4mhjrff1Gi+yt/brLuGMC54uNBvPLP55UHVBLM4NT2BmxTy6356tuWvPM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <910192ce-7a0e-8a26-39eb-3e6c0e3eb1bc@infradead.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+On Thu, Oct 03, 2019 at 07:56:59PM -0700, Randy Dunlap wrote:
+> Hi,
+> Below are a few doc edits for you.
 
-Just a reminder: this patch hasn't been merged yet for v5.5.
+Thank you for the review! I'll fix the v2 according to your comments.
 
-Thanks!
+thanks,
 
-	Hans
-
-On 8/28/19 1:54 PM, Thierry Reding wrote:
-> On Wed, Aug 28, 2019 at 12:06:34PM +0200, Hans Verkuil wrote:
->> On 8/28/19 11:38 AM, Thierry Reding wrote:
->>> On Wed, Aug 28, 2019 at 10:09:30AM +0200, Hans Verkuil wrote:
->>>> Thierry,
->>>>
->>>> Can you review this patch?
->>>>
->>>> Thanks!
->>>>
->>>> 	Hans
->>>
->>> Did you want me to pick this up into the drm/tegra tree? Or do you want
->>> to pick it up into your tree?
->>
->> Can you pick it up for the next cycle? As you mentioned, we missed the
->> deadline for 5.4, so this feature won't be enabled in the public CEC API
->> until 5.5.
->>
->> Thanks!
-> 
-> Sure, will do.
-> 
-> Thierry
-> 
-
+-- 
+heikki
