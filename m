@@ -2,138 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6492CB9F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 271E7CBA2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730970AbfJDMJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:09:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54112 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729189AbfJDMJF (ORCPT
+        id S1730277AbfJDMSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:18:22 -0400
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:55132 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfJDMSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:09:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Qv8kGhW91Tax4P4e+bafmAL2gzBdpy9269d1P/vaNO8=; b=eP+zYvje3k8HF64RmwOEKGW9F
-        LIIn7DE8YtLWjFpFcXSkSqrgmkJl2KBlNWeZtDm4SBlmOiK+K8IdbJsPq+QIHwZEN2Hp1irBMVTaq
-        /eN14/263q86D9TOFe56L1tIZ5e97p1gf5vRhq9FhY8nPP7HVvxi0x3G/H5lYhizkiUvNfKO1g0di
-        oAxF4CpJZqebs5TVWo1GML9Bc0jNBTINU0hE7WeJ+Jwo0F27LvOnifSSakzvOuCr7c10QYBsM/lKw
-        q39WnSGSJ00XwUvfnpqPTTnYSejelMMIApBkTKavEXUT27SVjWQDn5vjweFvDGAcuOAjQ5fSHzeUA
-        gWXlZumRQ==;
-Received: from 177.133.68.49.dynamic.adsl.gvt.net.br ([177.133.68.49] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iGMOJ-0006iY-9q; Fri, 04 Oct 2019 12:08:59 +0000
-Date:   Fri, 4 Oct 2019 09:08:55 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     JP <jp@jpvw.nl>
-Cc:     Gonsolo <gonsolo@gmail.com>, crope@iki.fi,
-        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] si2157: Add support for Logilink VG0022A.
-Message-ID: <20191004090855.14e418ed@coco.lan>
-In-Reply-To: <23d9856c-cc12-7212-9126-90d80f67abfb@jpvw.nl>
-References: <29ab2e43-4374-a3ea-6ae1-a4267867eaa4@jpvw.nl>
-        <20191002154922.7f1cfc76@coco.lan>
-        <CANL0fFRJZBfEDWK_c2w1TomvB5-i4g09LopyJUbO5NtOwKdDTg@mail.gmail.com>
-        <20191003080539.2b13c03b@coco.lan>
-        <CANL0fFSmvEEJhnA=qjTuEPr4N8q8eWLeYC5du+OoTMxe1Gnh5Q@mail.gmail.com>
-        <20191003120238.75811da6@coco.lan>
-        <20191003160336.GA5125@Limone>
-        <20191003130909.01d29b77@coco.lan>
-        <20191003162326.GA2727@Limone>
-        <20191003144225.0137bf6c@coco.lan>
-        <20191003183200.GA2631@Limone>
-        <e468b867-1b45-8220-a5d2-ac40fdb4e0e6@jpvw.nl>
-        <CANL0fFQms9oyec_1UevbJ7aLp+KNJ3h6UhGEbqrnCNO286rbGg@mail.gmail.com>
-        <20191003163914.7c384d36@coco.lan>
-        <20191003164426.6da8538f@coco.lan>
-        <CANL0fFRSNbUhcik7rnhjZ0qUe-tZyzcjY+M1J_iGzUa5jNc9_A@mail.gmail.com>
-        <20191003170329.3624f7f2@coco.lan>
-        <23d9856c-cc12-7212-9126-90d80f67abfb@jpvw.nl>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 4 Oct 2019 08:18:22 -0400
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Oct 2019 08:18:21 EDT
+X-AuditID: c0a8fbf4-d45ff700000042c9-df-5d9735068d53
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id DC.A3.17097.605379D5; Fri,  4 Oct 2019 14:03:18 +0200 (CEST)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Fri, 4 Oct 2019 14:03:13 +0200
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "dianders@chromium.org" <dianders@chromium.org>,
+        "m.felsch@pengutronix.de" <m.felsch@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "zhang.chunyan@linaro.org" <zhang.chunyan@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ckeepax@opensource.cirrus.com" <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 1/3] regulator: core: fix boot-on regulators use_count
+ usage
+Thread-Topic: [PATCH 1/3] regulator: core: fix boot-on regulators use_count
+ usage
+Thread-Index: AQHVeqdp55KhBLOpUES6p/Iah5mM6qdKQI0A
+Date:   Fri, 4 Oct 2019 12:03:12 +0000
+Message-ID: <054bc4c050f1b16988de057f812232b0feb707cb.camel@fi.rohmeurope.com>
+References: <CAD=FV=W7M8mwQqnPyU9vsK5VAdqqJdQdyxcoe9FRRGTY8zjnFw@mail.gmail.com>
+         <20190923181431.GU2036@sirena.org.uk>
+         <CAD=FV=WVGj8xzKFFxsjpeuqtVzSvv22cHmWBRJtTbH00eC=E9w@mail.gmail.com>
+         <20190923184907.GY2036@sirena.org.uk>
+         <CAD=FV=VkaXDn034EFnJWYvWwyLgvq7ajfgMRm9mbhQeRKmPDRQ@mail.gmail.com>
+         <20190924182758.GC2036@sirena.org.uk>
+         <CAD=FV=WZSy6nHjsY2pvjcoR4iy64b35OPGEb3EPSSc5vpeTTuA@mail.gmail.com>
+         <20190927084710.mt42454vsrjm3yh3@pengutronix.de>
+         <CAD=FV=XM0i=GsvttJjug6VPOJJGHRqFmsmCp-1XXNvmsYp9sJA@mail.gmail.com>
+         <20191004063443.GA26028@localhost.localdomain>
+         <20191004113234.GA4866@sirena.co.uk>
+In-Reply-To: <20191004113234.GA4866@sirena.co.uk>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FFA9EDE18EA483488861C9DD46A09804@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXeOZ6+XU8fjZW/rRkNMjbyVNEjComARRGYYCcuOenLSLna2
+        lfalfUhndlvqGs6MmCVihLWE1Ax1WZIlmlPBMGMohXaxKApdtc5xK/30Pu/zf37//wvvAzG6
+        ipDCIq2B5bSMWkaE4N1N3vubiTSbMtlRtk1u9UwT8pEyJ5APNPYQ8mZrOy7/MVIhkrs7rhPy
+        Lx2jmLza0ROUARV1ple4ot3+RqxwNp8nFBNjnYTCdt0HFFd+Jyu+OdcdEOeEpucxhlNZRYXa
+        pB3HQlWzfa2i4gpJia28SmwCndGVIBgiait6OzUJKkEIpKkxgF5cfBq49PGXpgaiEkBIUOmo
+        clwsAJHUZmRdENohEKPMGGoYqiEEIYI6iCwDkyL/UBYa8noDdSrqfODABR+cikF37wChTVL7
+        0eVzbsKfNY+j2asDi0IwlYJqKz4ssoBai86bPi/WGCVBznc/g/yvptCtzkHMX0ehmak/gb4M
+        PZ73LGZhVDxq6UjyoxlorLs/YLMB1VzwiP1vCEfPa6dxC4i2L0uwL9H2ZbR9GW1fRt8EQc0A
+        aZgidSFjYFMSOdaYyOlUGv7I12mcwP/H39uAz7XXBUQQuMAqKJJFkU/OWpX0ijxdQamK0aty
+        OaOa1bsAgpgskhxuqVHSZAFTeobldP+k1RCXSciNnqtKmhKyTrBsMcv9U9dAKEOkO9WmpMM5
+        tpAtOV6kNizJIhgsmIdII/WstoDlGKNBlSvsR66eXxBBCuNzM7fwOKkvZjR814/2g03QMlPv
+        wGBv/W0HRuNanZaVSsj+FH6UEkZVRu3/oFkggUAWQV4TjML4Rf/vM8tHiPiI7TnVQoSBWZKk
+        JkC3PayZmBtOe9mTkRnZ2vtooffQ4Jczvqe9TOOvnUcMmqOXErLcdc+zKyZtnHnf6SdxvtF8
+        GKdb2f6pGWul1V3Pqkx7zLvrLtz45cr4mLe+0V2dNze+88eOWCyRKTfbE07ussTEu6/dq892
+        fs1eY63dNfj6fRfpLY093B3dLimpluF6FZOSgHF65i+lwgxZpQMAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 4 Oct 2019 13:50:43 +0200
-JP <jp@jpvw.nl> escreveu:
-
-> On 10/3/19 10:03 PM, Mauro Carvalho Chehab wrote:
-> > Em Thu, 3 Oct 2019 21:51:35 +0200
-> > Gonsolo <gonsolo@gmail.com> escreveu:
-> >  
-> >>> 1) The firmware file is likely at the Windows driver for this device
-> >>> (probably using a different format). It should be possible to get
-> >>> it from there.  
-> >> If you tell me how I'm willing to do this. :)  
-> > I don't know. I was not the one that extracted the firmware. I guess
-> > Antti did it.
-> >
-> > I suspect that there are some comments about that in the past at the
-> > ML. seek at lore.kernel.org.
-> >  
-> >>> 2) Another possibility would be to add a way to tell the si2168 driver
-> >>> to not try to load a firmware, using the original one. That would
-> >>> require adding a field at si2168_config to allow signalizing to it
-> >>> that it should not try to load a firmware file, and add a quirk at
-> >>> the af9035 that would set such flag for Logilink VG0022A.  
-> >> I don't get this. Which firmware, si2168 or si2157?  
-> > The one that it is causing the problem. If I understood well, the
-> > culprit was the si2168 firmware.
-> >  
-> >> I'm still for option 3: If there is a bogus chip revision number it's
-> >> likely the VG0022A and we can safely set fw to NULL, in which case
-> >> everything works.
-> >> All already working devices will continue to work as before.
-> >> With a low probability there are other devices that will return 0xffff
-> >> but a) they didn't work until now and b) they receive a clear message
-> >> that they return bogus numbers and this works just for the VG0022A, in
-> >> which case this hardware can be tested.
-> >> At last, *my* VG0022A will work without a custom kernel which I'm a
-> >> big fan of. :))
-> >>
-> >> Are there any counterarguments except that it is not the cleanest
-> >> solution in the universe? ;)  
-> > That's a really bad solution. Returning 0xff is what happens when
-> > things go wrong during I2C transfers. Several problems can cause it,
-> > including device misfunction. Every time someone comes with a patch
-> > trying to ignore it, things go sideways for other devices (existing
-> > or future ones).
-> >
-> > Ignoring errors is always a bad idea.  
-> add module param say 'gonso_hack_vg0022a'
-> if true, act on error by setting a flag
-> if this flag is set don't load firmware
-
-Adding a module param should be the last resort, only when there's
-no way for the driver to autodetect.
-
-Making af9035 to detect vg0022a is quite simple.
-
-Considering this device's entry:
-
-	{ DVB_USB_DEVICE(USB_VID_DEXATEK, 0x0100,
-		&it930x_props, "Logilink VG0022A", NULL) },
-
-the check, at af9035 would be:
-
-	if (le16_to_cpu(d->udev->descriptor.idVendor) == USB_VID_DEXATEK &&
-	    le16_to_cpu(d->udev->descriptor.idProduct) == 0x0100)
-		/* do something to disable firmware load */
-
-So, no need to add any load time parameter.
-
-It should be noticed that a change just at af9035 won't work, as the
-firmware is updated by si2168 driver. So, the caller code needs to
-pass a config parameter to si2168 driver.
-
-Thanks,
-Mauro
+DQpPbiBGcmksIDIwMTktMTAtMDQgYXQgMTI6MzIgKzAxMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
+IE9uIEZyaSwgT2N0IDA0LCAyMDE5IGF0IDA5OjM0OjQzQU0gKzAzMDAsIE1hdHRpIFZhaXR0aW5l
+biB3cm90ZToNCj4gPiBPbiBUdWUsIE9jdCAwMSwgMjAxOSBhdCAxMjo1NzozMVBNIC0wNzAwLCBE
+b3VnIEFuZGVyc29uIHdyb3RlOg0KPiA+ID4gSSBkb24ndCB0aGluayB5b3VyIGZpeCBpcyBjb3Jy
+ZWN0LiAgSXQgc291bmRzIGFzIGlmIHRoZSBpbnRlbnRpb24NCj4gPiA+IG9mDQo+ID4gPiAicmVn
+dWxhdG9yLWJvb3Qtb24iIGlzIHRvIGhhdmUgdGhlIE9TIHR1cm4gdGhlIHJlZ3VsYXRvciBvbiBh
+dA0KPiA+ID4gYm9vdHVwDQo+ID4gPiBhbmQgaXQga2VlcCBhbiBpbXBsaWNpdCByZWZlcmVuY2Ug
+dW50aWwgc29tZW9uZSBleHBsaWNpdGx5IHRlbGxzDQo+ID4gPiB0aGUNCj4gPiA+IE9TIHRvIGRy
+b3AgdGhlIHJlZmVyZW5jZS4NCj4gPiBIbW0uLiBXaGF0IGlzIHRoZSBpbnRlbmRlZCB3YXkgdG8g
+ZXhwbGljaXRseSB0ZWxsIHRoZSBPUyB0byBkcm9wDQo+ID4gdGhlDQo+ID4gcmVmZXJlbmNlPyBJ
+IHdvdWxkIGFzc3VtZSB3ZSBzaG91bGQgc3RpbGwgdXNlIHNhbWUgbG9naWMgYXMgd2l0aA0KPiA+
+IG90aGVyDQo+ID4gcmVndWxhdG9ycyAtIGlmIGxhc3QgdXNlciBjYWxscyByZWd1bGF0b3JfZGlz
+YWJsZSgpIHdlIHNob3VsZA0KPiA+IGRpc2FibGUNCj4gPiB0aGUgcmVndWxhdG9yPyAoSSBtYXkg
+bm90IHVuZGVyc3RhbmQgYWxsIHRoaXMgd2VsbCBlbm91Z2ggdGhvdWdoKQ0KPiANCj4gWWVzLg0K
+PiANCj4gPiA+IEl0J3MgYSBmaXhlZCByZWd1bGF0b3IgY29udHJvbGxlZCBieSBhIEdQSU8/ICBQ
+cmVzdW1hYmx5IHRoZSBHUElPDQo+ID4gPiBjYW4NCj4gPiA+IGJlIHJlYWQuICBUaGF0IHdvdWxk
+IG1lYW4gaXQgaWRlYWxseSBzaG91bGRuJ3QgYmUgdXNpbmcNCj4gPiA+ICJyZWd1bGF0b3ItYm9v
+dC1vbiIgc2luY2UgdGhpcyBpcyBfbm90XyBhIHJlZ3VsYXRvciB3aG9zZQ0KPiA+ID4gc29mdHdh
+cmUNCj4gPiA+IHN0YXRlIGNhbid0IGJlIHJlYWQuICBKdXN0IHJlbW92ZSB0aGUgcHJvcGVydHku
+DQo+ID4gSG93IHNob3VsZCB3ZSBoYW5kbGUgY2FzZXMgd2hlcmUgd2Ugd2FudCBPUyB0byBlbmFi
+bGUgcmVndWxhdG9yIGF0DQo+ID4gYm9vdC11cCAtIHBvc3NpYmx5IGJlZm9yZSBjb25zdW1lciBk
+cml2ZXJzIGNhbiBiZSBsb2FkPw0KPiANCj4gSWYgeW91IHdhbnQgdGhlIHJlZ3VsYXRvciB0byBi
+ZSBvbiB3aXRob3V0IGFueSBkcml2ZXIgcHJlc2VudCB0aGVuDQo+IG1hcmsNCj4gaXQgYWx3YXlz
+LW9uLiAgSWYgeW91IHdhbnQgdGhlIHJlZ3VsYXRvciB0byBiZSBlbmFibGVkIHByaW9yIHRvIHRo
+ZQ0KPiBkcml2ZXIgYmVpbmcgbG9hZGVkIHRoZW4gdGhlIGV4cGVjdGF0aW9uIGlzIHRoYXQgdGhl
+IGJvb3Rsb2FkZXIgd2lsbA0KPiBkbw0KPiB0aGF0LCBpdCdzIGRpZmZpY3VsdCB0byBzZWUgd2hh
+dCB0aGUgYmVuZWZpdCB0aGVyZSBpcyBmcm9tIGhhdmluZyB0aGUNCj4ga2VybmVsIGVuYWJsZSB0
+aGluZ3Mgd2hlbiBpdCBzdGFydHMgcHJpb3IgdG8gaGF2aW5nIGEgZHJpdmVyIHVubGVzcw0KPiB0
+aGUNCj4gaW50ZW50IGlzIHRvIGtlZXAgdGhlIHJlZ3VsYXRvciBhbHdheXMgb24uDQoNCkkgdGhv
+dWdodCB0aGUgcmVndWxhdG9yLWJvb3Qtb24gY291bGQgaGF2ZSBiZWVuIHVzZWQgZm9yIHRoYXQu
+IEJ1dCBhcyBJDQpzYWlkIC0gSSBkb24ndCByZWFsbHkga25vdyBhbGwgdGhpcyBzbyB3ZWxsID0p
+IEFuZCBubywgSSBhbSBub3Qgb3Bwb3NlZA0KdG8gb2ZmbG9hZGluZyB0aGlzIGZyb20ga2VybmVs
+IHRvIGJvb3QsIEkgd2FzIGp1c3QgdHJ5aW5nIHRvIGxlYXJuIHdoYXQNCmlzIHRoZSBjb3JyZWN0
+IHRoaW5nIHRvIGRvICh0bSkuIFRoYW5rcyBmb3IgZWR1Y2F0aW5nIG1lIG9uIHRoaXMgOikgSQ0K
+d2lsbCBzdWdnZXN0IGFkZGluZyB0aGUgZW5hYmxpbmcgdG8gYm9vdCBjb2RlIGlmICh3aGVuKSBJ
+IGdldCBxdWVzdGlvbnMNCmNvbmNlcm5pbmcgdGhpcy4gKGFsd2F5cy1vbiB3b24ndCBkbyBmb3Ig
+cmVndWxhdG9ycyB3aGljaCBuZWVkIHRvIGJlDQpjb250cm9sbGVkIGZvciBwb3dlciBzYXZpbmcg
+b3IgaGVhdGluZyBpc3N1ZXMpLg0KDQpCciwNCglNYXR0aSBWYWl0dGluZW4NCg==
