@@ -2,67 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA8E4CBE21
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE8ACCBE2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389366AbfJDOyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:54:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57576 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388870AbfJDOyl (ORCPT
+        id S2389527AbfJDO4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:56:08 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57012 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388870AbfJDO4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:54:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gTXRQBbhy1ecaEZJAUNNxhjec8+HvQ9vY4ubPHtV8dE=; b=ITH2eGdB8rd5ve8IB36pLbbOA
-        CH+AoVH2wSGY542uFnBO99w5AGjDmY9HZrE/M4VrsCNMH6h2K+69Xxfm9l03VVs68BGUm+5GJm1CD
-        hpPnKVPZFEdowycUGDvaiHKrZAtR4RSZU/0es8+c9KDXwkdsg5gTggbMvfymrJXNH//0M2lQexOS0
-        /G7zF7FnOIkXmKbiPsENe/6zV02l3BfkFlg4Rljhr0rI11MEBOUpxlnUyT4wUVeRqI1mbjhJvShwi
-        NfnHXn3mptwNiylcaxiCvDfA86oUdIKI05GywXwzeJKoSOmy3UyUHmhLP6eDP+1YNzWq51ilCSsLe
-        BBs/bKEEg==;
-Received: from [2601:1c0:6280:3f0::9ef4]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iGOyd-00058J-UY; Fri, 04 Oct 2019 14:54:39 +0000
-Subject: Re: linux-next: Tree for Oct 4 (amdgpu)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-References: <20191004155929.3ac043b5@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <06969836-ac7f-0d18-1866-159e48018d98@infradead.org>
-Date:   Fri, 4 Oct 2019 07:54:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 4 Oct 2019 10:56:07 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94EklEK004895;
+        Fri, 4 Oct 2019 16:55:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=C2L2NtjlwiLUFULq78CYy+ANWX8KvARrP/EK8PCiNyo=;
+ b=z2PnPbFQtdklxQRQwWGz628eMZ5h4WVGqFc7SQUFydIqCrs5doQIAQ43lhiuVMJYY4yN
+ o6+b35y9f+dg7R2/E6lXYPUqT+Rt/XfrT/21sei6zE+sP4iCTGIU5sqC6vzpAkU4SE1J
+ kzIBRfPKHCprclV1EcYPSHdoVJfqnn68tRbU7SQcKQEfR2OI2NJ9xku/VDhDZHszkYmt
+ auIzx0IAMUi9oBbfNb8zpiYV1UnD7W4PZOI0qdZTm362w+MPf/WRdD0fZlcpttxIGhAE
+ wVGweKMRID6YHAxYIIqP77VYNBwyHPe93gRDPaMpxa+XSzVS4wfzlqUcPXVsCF5N9g/Z kA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2vcem3ggwv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Oct 2019 16:55:55 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AAED710002A;
+        Fri,  4 Oct 2019 16:55:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A0A2E2C9DF1;
+        Fri,  4 Oct 2019 16:55:54 +0200 (CEST)
+Received: from localhost (10.75.127.51) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 4 Oct 2019 16:55:54
+ +0200
+From:   Alain Volmat <alain.volmat@st.com>
+To:     <wsa@the-dreams.de>, <pierre-yves.mordret@st.com>
+CC:     <alain.volmat@st.com>, <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
+Subject: [PATCH] i2c: i2c-stm32f7: remove warning when compiling with W=1
+Date:   Fri, 4 Oct 2019 16:55:54 +0200
+Message-ID: <1570200954-17919-1-git-send-email-alain.volmat@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20191004155929.3ac043b5@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-04_07:2019-10-03,2019-10-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/19 10:59 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20191003:
-> 
+Remove the following warning:
 
-on x86_64:
-CONFIG_DRM_AMDGPU=y
-# CONFIG_DRM_AMDGPU_SI is not set
-# CONFIG_DRM_AMDGPU_CIK is not set
-CONFIG_DRM_AMDGPU_USERPTR=y
-CONFIG_DRM_AMDGPU_GART_DEBUGFS=y
+drivers/i2c/busses/i2c-stm32f7.c:315:
+warning: cannot understand function prototype:
+'struct stm32f7_i2c_spec i2c_specs[] =
 
-ld: drivers/gpu/drm/amd/amdkfd/kfd_device.o:(.rodata+0xf60): undefined reference to `gfx_v7_kfd2kgd'
+Signed-off-by: Alain Volmat <alain.volmat@st.com>
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index d36cf08..7aa4a47 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -305,7 +305,7 @@ struct stm32f7_i2c_dev {
+ 	struct regmap *regmap;
+ };
+ 
+-/**
++/*
+  * All these values are coming from I2C Specification, Version 6.0, 4th of
+  * April 2014.
+  *
 -- 
-~Randy
+2.7.4
+
