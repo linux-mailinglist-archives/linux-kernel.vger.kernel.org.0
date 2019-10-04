@@ -2,62 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA6ECCBA26
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E37CBA2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:18:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbfJDMR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:17:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbfJDMRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:17:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C6962070B;
-        Fri,  4 Oct 2019 12:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570191475;
-        bh=x1L2ZokeQOne/DqP/usAhgrzcCQTLBVzVANkVMBLdBU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T+8xF3iw9f6DsSsXYXsvqtfnO6A3JLaGPbHeq+6iVIV9vjxzrS2gP3UoMELtgutJg
-         G7xp/hXnHFS/2nDO472YaSJIjK703er6JAW3LtWnK1G2BINzQ8fYEBG/3nRIPWIva5
-         NGZ8Gc8IEyO8vnONSvoTEVHzwXdzTRJZxi2Mqqk8=
-Date:   Fri, 4 Oct 2019 14:17:52 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, youling 257 <youling257@gmail.com>
-Subject: Re: Problem with "driver core: platform: Add an error message to
- platform_get_irq*()" commit
-Message-ID: <20191004121752.GA409122@kroah.com>
-References: <01e3d855-c849-ad7f-a6f8-87c806bb488b@redhat.com>
- <5d965926.1c69fb81.6d844.cdc4@mx.google.com>
+        id S1730466AbfJDMS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:18:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44864 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725826AbfJDMS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 08:18:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2A22EAD7B;
+        Fri,  4 Oct 2019 12:18:25 +0000 (UTC)
+Date:   Fri, 4 Oct 2019 14:18:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     David Rientjes <rientjes@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
+Message-ID: <20191004121824.GH9578@dhcp22.suse.cz>
+References: <20190927074803.GB26848@dhcp22.suse.cz>
+ <CAHk-=wgba5zOJtGBFCBP3Oc1m4ma+AR+80s=hy=BbvNr3GqEmA@mail.gmail.com>
+ <20190930112817.GC15942@dhcp22.suse.cz>
+ <20191001054343.GA15624@dhcp22.suse.cz>
+ <fac13297-424f-33b0-e01d-d72b949a73fe@suse.cz>
+ <alpine.DEB.2.21.1910011318050.38265@chino.kir.corp.google.com>
+ <a5abc877-26de-ed3c-eb33-71474301c852@suse.cz>
+ <20191002103422.GJ15624@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1910021525180.63052@chino.kir.corp.google.com>
+ <788d3e5b-40e6-916a-9e3f-7f03fa9d618d@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d965926.1c69fb81.6d844.cdc4@mx.google.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <788d3e5b-40e6-916a-9e3f-7f03fa9d618d@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 01:25:09PM -0700, Stephen Boyd wrote:
-> Quoting Hans de Goede (2019-10-03 13:20:24)
+On Thu 03-10-19 10:00:08, Vlastimil Babka wrote:
+> On 10/3/19 12:32 AM, David Rientjes wrote:
+> > On Wed, 2 Oct 2019, Michal Hocko wrote:
 > > 
-> > The best solution I can come up with is adding a new
-> > platform_get_irq_byname_optional mirroring platform_get_irq_optional
-> > and using that in drivers such as the dwc3 driver.
+> >>>> If 
+> >>>> hugetlb wants to stress this to the fullest extent possible, it already 
+> >>>> appropriately uses __GFP_RETRY_MAYFAIL.
+> >>>
+> >>> Which doesn't work anymore right now, and should again after this patch.
+> >>
+> >> I didn't get to fully digest the patch Vlastimil is proposing. (Ab)using
+> >> __GFP_NORETRY is quite subtle but it is already in place with some
+> >> explanation and a reference to THPs. So while I am not really happy it
+> >> is at least something you can reason about.
+> >>
 > > 
-> > Does anyone have a better suggestion?
+> > It's a no-op:
 > > 
+> >         /* Do not loop if specifically requested */
+> >         if (gfp_mask & __GFP_NORETRY)
+> >                 goto nopage;
+> > 
+> >         /*
+> >          * Do not retry costly high order allocations unless they are
+> >          * __GFP_RETRY_MAYFAIL
+> >          */
+> >         if (costly_order && !(gfp_mask & __GFP_RETRY_MAYFAIL))
+> >                 goto nopage;
+> > 
+> > So I'm not sure we should spend too much time discussing a hunk of a patch 
+> > that doesn't do anything.
 > 
-> A byname_optional API sounds good to me.
-> 
+> I believe Michal was talking about my (ab)use of __GFP_NORETRY, where it
+> controls the earlier 'goto nopage' condition.
 
-Sounds fine to me as well.
+That is correct. From a maintainability point of view it would be better
+to have only a single bailout of an optimistic compaction attempt. If we
+go with [1] then we have two different criterion to bail out and
+that is really messy and error prone. While sticking __GFP_RETRY_MAYFAIL
+as suggest in [1] fixes up the immediate regression in the simplest way
+this all really begs for a proper analysis and a _real_ fix. Can we move
+that direction finally, please?
 
-greg k-h
+I would really love to conduct further testing but I haven't really
+heard anything to results presented so far. I have no idea whether
+that is even remotely resembling anything David needs for his claimed
+regression.
+
+[1] http://lkml.kernel.org/r/alpine.DEB.2.21.1910021556270.187014@chino.kir.corp.google.com
+
+-- 
+Michal Hocko
+SUSE Labs
