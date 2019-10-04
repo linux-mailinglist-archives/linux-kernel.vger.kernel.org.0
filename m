@@ -2,103 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6418CC17F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 19:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22A44CC185
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 19:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388001AbfJDRTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 13:19:24 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44896 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387635AbfJDRTY (ORCPT
+        id S2387835AbfJDRUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 13:20:33 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45497 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729291AbfJDRUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 13:19:24 -0400
-Received: by mail-io1-f65.google.com with SMTP id w12so15093214iol.11
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 10:19:22 -0700 (PDT)
+        Fri, 4 Oct 2019 13:20:32 -0400
+Received: by mail-io1-f68.google.com with SMTP id c25so15105255iot.12
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 10:20:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jtoSVXtrhkJf1hDDCpHF8eGDYq27zVP1O774BwN2yFA=;
-        b=uEuWIAjmWZC2lobpMCOJTDjl/s5815lvaflCenIocA8vV0nW425V5dnH+6mZPkd4Vz
-         XUxuSFBxRAoNyjtPDEthhP3MdPmPJ+j+UF7q+diD1gOch5U0gI3ACLE2oU+Fs+XJ/23g
-         0eClghImRh8A2lRcvMd+dTegBcIb4mymqkub+xittk11wLhax/0+iubbD6YGCPhlJUpe
-         +A9FZUJQ0gynepj89NG85hfqV5egfEp0SQ02NeHJMqqH3bmzHuDSEVSFeeBXxkNQ/2o3
-         9HNqPQwaklpxPDsSiEHhQGmCCQslyyD6KgD33YfUubmNugxfGji7IorwH3hvzJQmA0k5
-         bIQA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sKSw8LHZWbzHBzhBHzIOue57k2GC5Z1ZStIkEWKfwgk=;
+        b=H8nJut5vMkDRbQ9IMz8Sz2DcHe4QqerOmNEZ82FANGu9ZivVe/t4xGYoF6I9nLVwD7
+         RR8V+7CPA2Y+VP+3wAElS4y9hZu7YTTvaw1t+cjyFpGzAd71HMx7+ehjTXW33GBnOh3O
+         /rGnNXmfNg3RQnvHEOff7bHYgiKEjXxibgufvwO4jnTJYdFsZH8TmUyINqDNFuGQ9IUq
+         hoRQcy32Nv/S5z/SRkd4gbd1RpNOrSpOZXiWk8HaHbUHXqvuZJhvQxdpXZGrm+JMqreg
+         jRT6D0AKj9AbqSt2/vRYYN+zuG13++ESvIXV503LB/YCKzEVnkD2ona1uEXFNkKeZrlk
+         brZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jtoSVXtrhkJf1hDDCpHF8eGDYq27zVP1O774BwN2yFA=;
-        b=q8NGuBjTQv6evrBfjeVw+Qwcd1WRQKUYXhf3TLrHIwDxetYRyMTd/8qrwYqAhFbc8K
-         n4tEm1fY9WI54OeVCaei9kZKbqO/RXm1zTeTRvkToWhtVQE+AvP9dEwo7MdR4aK84sgC
-         7jqs5GscvMhiH5siZx6gz1ijb0wchi4EleeN0LfGo8EeFUGrXsG12JlTAdE6Ke3yqah5
-         vao62Hez1UxBMhf5U6ouZUnJEp0GA2WResxiTAAo6SRTSl0FSFpCvs/76FCHaFLEnHq/
-         oUPTwd02lAktUK5OlSVsEkwbq2Hz+kBchZJKVHEh/N3OuSAem5BGV36O8egHxlUQnZdE
-         HQQA==
-X-Gm-Message-State: APjAAAV3uISPb4c+A005t3ZyQaOS2U5boi3w9X5kN0Pz/RLSqFSHbkGp
-        D1X/PJI1GAWKi3+tCHAJF5g=
-X-Google-Smtp-Source: APXvYqxF0fH1FHeLeb/+4F7Sw9KcP3cCcMmpy0s8scdkUAgLYnFwYQd2ajU1J1M/tSF1hZskuCrn2g==
-X-Received: by 2002:a02:b782:: with SMTP id f2mr15929972jam.48.1570209562004;
-        Fri, 04 Oct 2019 10:19:22 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id i67sm4018502ilf.84.2019.10.04.10.19.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 10:19:21 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     miquel.raynal@bootlin.com
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mtd: onenand: prevent memory leak in onenand_scan
-Date:   Fri,  4 Oct 2019 12:19:05 -0500
-Message-Id: <20191004171909.6378-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sKSw8LHZWbzHBzhBHzIOue57k2GC5Z1ZStIkEWKfwgk=;
+        b=d3bANYmUV3LDdGJOs/7LbksXZgH4klqKYNxhjtj0zVeq4tEafg7RGxeIl9JtLKC/lF
+         Y8wNYLgmBaL2r6jC4nL2jGF/DXAD+ooiXtRNSGPvi4N2FJztmCyIDBIunGpjFtOzcyXX
+         fYfEa8F13+YRQ8zFtLM7VLzRaDJqJ8O910Lo5KY/9W2eEWJaLwGo/PEg/0fZZ0wwiWqZ
+         qPG1Dg6rGtXuB8gR+4H14A4i4IHtcj+OvKjZHhtozvoka50GeMw8+zNfSdii1p/NHLIH
+         /jFwCU11171HnNp5nD4T+hmDn9L/+7gtTsEoHCY49y6eJmB0geTV5iN4rjm035eEDKsG
+         Igyw==
+X-Gm-Message-State: APjAAAWbTHH5xuMs3KrYBhgHilsNcJRCd/rRcNzY5m93T8dOaBp+mKhA
+        l6McdpimagmsB592Q+4SgLzuFrbOBFAZBz587RE=
+X-Google-Smtp-Source: APXvYqzAxM+PiltX2TIBjv/ydm3UZ3bSSprb2UNGgPoDAaW9AZlWIyu5QGysW701lNcNQYSychifgmrLEaiO6SabKUI=
+X-Received: by 2002:a92:b112:: with SMTP id t18mr16647383ilh.252.1570209631842;
+ Fri, 04 Oct 2019 10:20:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190925154302.17708-1-navid.emamdoost@gmail.com>
+ <CAEkB2ETTmCsuOFDsJQ8LbBPHNgckpDFn2XhVePwAQEsCRsJo6g@mail.gmail.com> <20191004175740.5dd84c38@xps13>
 In-Reply-To: <20191004175740.5dd84c38@xps13>
-References: <20191004175740.5dd84c38@xps13>
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Date:   Fri, 4 Oct 2019 12:20:20 -0500
+Message-ID: <CAEkB2ERissJF6EOhMtoO+RBXJOVnZYuMBnkvL2DxxMKfVJoYXQ@mail.gmail.com>
+Subject: Re: [PATCH] mtd: onenand: prevent memory leak in onenand_scan
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In onenand_scan if scan_bbt fails the allocated buffers for oob_buf,
-verify_buf, and page_buf should be released.
+Thanks Miquel for pointing that out. v2 was sent.
 
-Fixes: 5988af231978 ("mtd: Flex-OneNAND support")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
-Changes in v2:
-	-- added release for this->verify_buf (thanks to Miquel Raynal
-for the hint).
----
- drivers/mtd/nand/onenand/onenand_base.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Thank you,
+Navid.
 
-diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
-index 77bd32a683e1..6329ada3f15c 100644
---- a/drivers/mtd/nand/onenand/onenand_base.c
-+++ b/drivers/mtd/nand/onenand/onenand_base.c
-@@ -3977,8 +3977,14 @@ int onenand_scan(struct mtd_info *mtd, int maxchips)
- 	this->badblockpos = ONENAND_BADBLOCK_POS;
- 
- 	ret = this->scan_bbt(mtd);
--	if ((!FLEXONENAND(this)) || ret)
-+	if ((!FLEXONENAND(this)) || ret) {
-+		kfree(this->oob_buf);
-+#ifdef CONFIG_MTD_ONENAND_VERIFY_WRITE
-+		kfree(this->verify_buf);
-+#endif
-+		kfree(this->page_buf);
- 		return ret;
-+	}
- 
- 	/* Change Flex-OneNAND boundaries if required */
- 	for (i = 0; i < MAX_DIES; i++)
--- 
-2.17.1
+On Fri, Oct 4, 2019 at 10:57 AM Miquel Raynal <miquel.raynal@bootlin.com> w=
+rote:
+>
+> Hi Navid,
+>
+> Navid Emamdoost <navid.emamdoost@gmail.com> wrote on Mon, 30 Sep 2019
+> 16:37:17 -0500:
+>
+> > Would you please take a look at this patch?
+> >
+> > On Wed, Sep 25, 2019 at 10:43 AM Navid Emamdoost
+> > <navid.emamdoost@gmail.com> wrote:
+> > >
+> > > In onenand_scan if scan_bbt fails the allocated buffers should be
+> > > released.
+> > >
+> > > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> > > ---
+> > >  drivers/mtd/nand/onenand/onenand_base.c | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/na=
+nd/onenand/onenand_base.c
+> > > index 77bd32a683e1..79c01f42925a 100644
+> > > --- a/drivers/mtd/nand/onenand/onenand_base.c
+> > > +++ b/drivers/mtd/nand/onenand/onenand_base.c
+> > > @@ -3977,8 +3977,11 @@ int onenand_scan(struct mtd_info *mtd, int max=
+chips)
+> > >         this->badblockpos =3D ONENAND_BADBLOCK_POS;
+> > >
+> > >         ret =3D this->scan_bbt(mtd);
+> > > -       if ((!FLEXONENAND(this)) || ret)
+> > > +       if ((!FLEXONENAND(this)) || ret) {
+> > > +               kfree(this->page_buf);
+>
+> Apparently you missed:
+>
+> #ifdef CONFIG_MTD_ONENAND_VERIFY_WRITE
+>         kfree(this->verify_buf);
+> #endif
+>
+> > > +               kfree(this->oob_buf);
+> > >                 return ret;
+> > > +       }
+> > >
+> > >         /* Change Flex-OneNAND boundaries if required */
+> > >         for (i =3D 0; i < MAX_DIES; i++)
+> > > --
+> > > 2.17.1
+> > >
+> >
+> >
+>
+> Thanks,
+> Miqu=C3=A8l
 
+
+
+--=20
+Navid.
