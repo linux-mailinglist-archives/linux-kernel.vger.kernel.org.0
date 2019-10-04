@@ -2,146 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF7FCC263
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C9ACC268
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbfJDSO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 14:14:27 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41133 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbfJDSO0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 14:14:26 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q7so4357105pfh.8
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:14:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1AHLlO9o/KwaGki4nKPADtfseKYS/v6djCxFOcNMEm0=;
-        b=f4g8tW/7NPjiZFgD98Bpc5zywpQpU15RMmETwu0TcYEDHqjebqWt9F3kzpngjibbV/
-         XxXaszVfDIFshLEiVE4BPQhnLppOz8lGVpmr8dgzMsp1p3E/VJwj3gOpGrKdMzIDaO1A
-         DgxZ5C3FyN92ipNzWjM5Q1WZm5i67feHeK1KA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1AHLlO9o/KwaGki4nKPADtfseKYS/v6djCxFOcNMEm0=;
-        b=pwRT5GHtdw/lkt17SW0VqsUKQrGSZ4X2Br3ng+/XEPFoWxaW4VH5a3kEtn0xCMMGoS
-         tryyK5wEkXk4zla0iVvYaqpjRjrGPYlSkG6Nxh/VS5ruRZHkeQbkgyGieTInuk95uFU/
-         VoU0PmnK05EZ+T2aiL+0JcLNP4tuMA0Jp9xA3d/66OjDT60VoXkDcFCnTPf0NuuzknWF
-         U5qvRDm/4b6YcrgYUDIxqLsMJBxld0oHaDKnuQejPH+aQrmHvTGecuLWG4w8bFlao2lh
-         l054q9dmmdbt0h5uqRvffMYm9LtYOkvOjXJgbzNMLSK13hAy7/PV1hC5YePiBlAg3Krt
-         EzuQ==
-X-Gm-Message-State: APjAAAXzlxkxzWfJJ6eV5u06gSuk4NmbD5BGk0MzJfmAu5aAN7vmFt0C
-        DxMLhxJZhfReVKVrykK6g7xz9g==
-X-Google-Smtp-Source: APXvYqwvlV3oQO8IOH+I7CsrDCej3Z39SgfZYy/fw+YC1RqhMDuaWlsBi899LDWqup41ef6LHyEzPQ==
-X-Received: by 2002:a63:7342:: with SMTP id d2mr16987362pgn.264.1570212865922;
-        Fri, 04 Oct 2019 11:14:25 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id l27sm10318277pgc.53.2019.10.04.11.14.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 11:14:25 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 14:14:24 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Dmitry Goldin <dgoldin@protonmail.ch>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH v2] kheaders: making headers archive reproducible
-Message-ID: <20191004181424.GI253167@google.com>
-References: <z4zhwEnRqCVnnV8RYwKbY9H_TEnHePR6grYfw1toELFA-iZidlp3T18y0w35JtWNghJQ3hwL23RrsKXIVJHYiv9wOsqmow33NU6LcHcFWyw=@protonmail.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <z4zhwEnRqCVnnV8RYwKbY9H_TEnHePR6grYfw1toELFA-iZidlp3T18y0w35JtWNghJQ3hwL23RrsKXIVJHYiv9wOsqmow33NU6LcHcFWyw=@protonmail.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730423AbfJDSQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 14:16:59 -0400
+Received: from mga07.intel.com ([134.134.136.100]:15508 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728095AbfJDSQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 14:16:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 11:16:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
+   d="scan'208";a="204394738"
+Received: from chang-linux-3.sc.intel.com ([172.25.66.185])
+  by orsmga002.jf.intel.com with ESMTP; 04 Oct 2019 11:16:57 -0700
+From:   "Chang S. Bae" <chang.seok.bae@intel.com>
+To:     linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        luto@kernel.org
+Cc:     hpa@zytor.com, dave.hansen@intel.com, tony.luck@intel.com,
+        ak@linux.intel.com, ravi.v.shankar@intel.com,
+        chang.seok.bae@intel.com
+Subject: [PATCH v9 00/17] Enable FSGSBASE instructions
+Date:   Fri,  4 Oct 2019 11:15:52 -0700
+Message-Id: <1570212969-21888-1-git-send-email-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 10:40:07AM +0000, Dmitry Goldin wrote:
-> From: Dmitry Goldin <dgoldin+lkml@protonmail.ch>
-> 
-> In commit 43d8ce9d65a5 ("Provide in-kernel headers to make
-> extending kernel easier") a new mechanism was introduced, for kernels
-> >=5.2, which embeds the kernel headers in the kernel image or a module
-> and exposes them in procfs for use by userland tools.
-> 
-> The archive containing the header files has nondeterminism caused by
-> header files metadata. This patch normalizes the metadata and utilizes
-> KBUILD_BUILD_TIMESTAMP if provided and otherwise falls back to the
-> default behaviour.
-> 
-> In commit f7b101d33046 ("kheaders: Move from proc to sysfs") it was
-> modified to use sysfs and the script for generation of the archive was
-> renamed to what is being patched.
-> 
-> Signed-off-by: Dmitry Goldin <dgoldin+lkml@protonmail.ch>
+Benefits:
+Currently a user process that wishes to read or write the FS/GS base must
+make a system call. But recent X86 processors have added new instructions
+for use in 64-bit mode that allow direct access to the FS and GS segment
+base addresses.  The operating system controls whether applications can
+use these instructions with a %cr4 control bit.
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+In addition to benefits to applications, performance improvements to the
+OS context switch code are possible by making use of these instructions. A
+third party reported out promising performance numbers out of their
+initial benchmarking of the previous version of this patch series [9].
 
-> 
-> ---
-> 
-> v1: Initial fix
-> 
-> v2: Added a bit of info about kheaders to the reproducible builds
-> documentation and used the opportunity to fix a few typos in the
-> original patch.
-> 
-> ---
->  Documentation/kbuild/reproducible-builds.rst | 13 +++++++++----
->  kernel/gen_kheaders.sh                       |  5 ++++-
->  2 files changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/kbuild/reproducible-builds.rst b/Documentation/kbuild/reproducible-builds.rst
-> index ab92e98c89c8..ce6a408b3303 100644
-> --- a/Documentation/kbuild/reproducible-builds.rst
-> +++ b/Documentation/kbuild/reproducible-builds.rst
-> @@ -16,16 +16,21 @@ the kernel may be unreproducible, and how to avoid them.
->  Timestamps
->  ----------
-> 
-> -The kernel embeds a timestamp in two places:
-> +The kernel embeds timestamps in three places:
-> 
->  * The version string exposed by ``uname()`` and included in
->    ``/proc/version``
-> 
->  * File timestamps in the embedded initramfs
-> 
-> -By default the timestamp is the current time.  This must be overridden
-> -using the `KBUILD_BUILD_TIMESTAMP`_ variable.  If you are building
-> -from a git commit, you could use its commit date.
-> +* If enabled via ``CONFIG_IKHEADERS``, file timestamps of kernel
-> +  headers embedded in the kernel or respective module,
-> +  exposed via ``/sys/kernel/kheaders.tar.xz``
-> +
-> +By default the timestamp is the current time and in the case of
-> +``kheaders`` the various files' modification times. This must
-> +be overridden using the `KBUILD_BUILD_TIMESTAMP`_ variable.
-> +If you are building from a git commit, you could use its commit date.
-> 
->  The kernel does *not* use the ``__DATE__`` and ``__TIME__`` macros,
->  and enables warnings if they are used.  If you incorporate external
-> diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-> index 9ff449888d9c..aff79e461fc9 100755
-> --- a/kernel/gen_kheaders.sh
-> +++ b/kernel/gen_kheaders.sh
-> @@ -71,7 +71,10 @@ done | cpio --quiet -pd $cpio_dir >/dev/null 2>&1
->  find $cpio_dir -type f -print0 |
->  	xargs -0 -P8 -n1 perl -pi -e 'BEGIN {undef $/;}; s/\/\*((?!SPDX).)*?\*\///smg;'
-> 
-> -tar -Jcf $tarfile -C $cpio_dir/ . > /dev/null
-> +# Create archive and try to normalize metadata for reproducibility
-> +tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
-> +    --owner=0 --group=0 --sort=name --numeric-owner \
-> +    -Jcf $tarfile -C $cpio_dir/ . > /dev/null
-> 
->  echo "$src_files_md5" >  kernel/kheaders.md5
->  echo "$obj_files_md5" >> kernel/kheaders.md5
-> --
-> 2.23.0
+Enablement check:
+The kernel provides information about the enabled state of FSGSBASE to
+applications using the ELF_AUX vector. If the HWCAP2_FSGSBASE bit is set in
+the AUX vector, the kernel has FSGSBASE instructions enabled and
+applications can use them.
+
+Kernel changes:
+Major changes made in the kernel are in context switch, paranoid path, and
+ptrace. In a context switch, a task's FS/GS base will be secured regardless
+of its selector. In the paranoid path, GS base is unconditionally
+overwritten to the kernel GS base on entry and the original GS base is
+restored on exit. Ptrace includes divergence of FS/GS index and base
+values.
+
+Security:
+For mitigating the Spectre v1 SWAPGS issue, LFENCE instructions were added
+on most kernel entries. Those patches are dependent on previous behaviors
+that users couldn't load a kernel address into the GS base. These patches
+change that assumption since the user can load any address into GS base.
+The changes to the kernel entry path in this patch series take account of
+the SWAPGS issue.
+
+Updates from v8 [10]:
+* Internalized the interrupt check in the helper functions (Andy L.)
+* Simplified GS base helper functions (Tony L.)
+* Changed the patch order to put the paranoid path changes before the
+  context switch changes (Tony L.)
+* Fixed typos (Randy D.) and massaged a few sentences in the documentation
+* Massaged the FSGSBASE enablement message
+
+Previous versions: [1-7]
+
+[1] version 1: https://lkml.kernel.org/r/1521481767-22113-1-git-send-email-chang.seok.bae@intel.com/
+[2] version 2: https://lkml.kernel.org/r/1527789525-8857-1-git-send-email-chang.seok.bae@intel.com/
+[3] version 3: https://lkml.kernel.org/r/20181023184234.14025-1-chang.seok.bae@intel.com/
+[4] version 4: https://lkml.kernel.org/r/20190116224849.8617-1-chang.seok.bae@intel.com/
+[5] version 5: https://lkml.kernel.org/r/20190201205319.15995-1-chang.seok.bae@intel.com/
+[6] version 6: https://lkml.kernel.org/r/1552680405-5265-1-git-send-email-chang.seok.bae@intel.com/
+[7] version 7: https://lkml.kernel.org/r/1557309753-24073-1-git-send-email-chang.seok.bae@intel.com/
+[8] previously merged point (right before reverted):
+    https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86-cpu-for-linus&id=697096b14444f458fb81212d1c
+82d7846e932455
+[9] initial benchmark: https://www.phoronix.com/scan.php?page=article&item=linux-wip-fsgsbase&num=1
+[10] version 8: https://lore.kernel.org/lkml/1568318818-4091-1-git-send-email-chang.seok.bae@intel.com/
+
+Andi Kleen (2):
+  x86/fsgsbase/64: Add intrinsics for FSGSBASE instructions
+  x86/elf: Enumerate kernel FSGSBASE capability in AT_HWCAP2
+
+Andy Lutomirski (4):
+  x86/cpu: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
+  x86/entry/64: Clean up paranoid exit
+  x86/fsgsbase/64: Use FSGSBASE in switch_to() if available
+  x86/fsgsbase/64: Enable FSGSBASE on 64bit by default and add a chicken
+    bit
+
+Chang S. Bae (9):
+  x86/ptrace: Prevent ptrace from clearing the FS/GS selector
+  selftests/x86/fsgsbase: Test GS selector on ptracer-induced GS base
+    write
+  x86/entry/64: Switch CR3 before SWAPGS in paranoid entry
+  x86/entry/64: Introduce the FIND_PERCPU_BASE macro
+  x86/entry/64: Handle FSGSBASE enabled paranoid entry/exit
+  x86/entry/64: Document GSBASE handling in the paranoid path
+  x86/fsgsbase/64: Enable FSGSBASE instructions in helper functions
+  x86/fsgsbase/64: Use FSGSBASE instructions on thread copy and ptrace
+  selftests/x86/fsgsbase: Test ptracer-induced GS base write with
+    FSGSBASE
+
+Thomas Gleixner (1):
+  Documentation/x86/64: Add documentation for GS/FS addressing mode
+
+Tony Luck (1):
+  x86/speculation/swapgs: Check FSGSBASE in enabling SWAPGS mitigation
+
+ Documentation/admin-guide/kernel-parameters.txt |   2 +
+ Documentation/x86/entry_64.rst                  |   9 ++
+ Documentation/x86/x86_64/fsgs.rst               | 199 ++++++++++++++++++++++++
+ Documentation/x86/x86_64/index.rst              |   1 +
+ arch/x86/entry/calling.h                        |  40 +++++
+ arch/x86/entry/entry_64.S                       | 134 ++++++++++++----
+ arch/x86/include/asm/fsgsbase.h                 |  45 ++++--
+ arch/x86/include/asm/inst.h                     |  15 ++
+ arch/x86/include/uapi/asm/hwcap2.h              |   3 +
+ arch/x86/kernel/cpu/bugs.c                      |   6 +-
+ arch/x86/kernel/cpu/common.c                    |  22 +++
+ arch/x86/kernel/process_64.c                    | 107 +++++++++++--
+ arch/x86/kernel/ptrace.c                        |  14 +-
+ tools/testing/selftests/x86/fsgsbase.c          |  24 ++-
+ 14 files changed, 549 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/x86/x86_64/fsgs.rst
+
+-- 
+2.7.4
+
