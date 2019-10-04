@@ -2,90 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F44CC3BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69014CC3B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbfJDTp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 15:45:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729586AbfJDTp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 15:45:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 95809AC2E;
-        Fri,  4 Oct 2019 19:45:55 +0000 (UTC)
-Date:   Fri, 4 Oct 2019 12:44:46 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Michel Lespinasse <walken@google.com>
-Cc:     akpm@linux-foundation.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        Michael@google.com, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 07/11] vhost: convert vhost_umem_interval_tree to half
- closed intervals
-Message-ID: <20191004194446.tomd55ll4nlkelb6@linux-p48b>
-Mail-Followup-To: Michel Lespinasse <walken@google.com>,
-        akpm@linux-foundation.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        Michael@google.com, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        Davidlohr Bueso <dbueso@suse.de>
-References: <20191003201858.11666-1-dave@stgolabs.net>
- <20191003201858.11666-8-dave@stgolabs.net>
- <20191004121021.GA4541@google.com>
+        id S1730919AbfJDTpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 15:45:08 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33855 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729586AbfJDTpH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 15:45:07 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r22so5298082lfm.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 12:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ig2bd75GnHMToY2Lt27CYgTDtNYbuy1gGc25rUD2An4=;
+        b=AMunfFNpKE+8jkSxgQ+CmomwXobKVHz4DqW5IBbefEKK+erUajn7p/Qm7dt9Z6mmZH
+         0rS++FlqOof4RDzziQob9sz9zzPwzTrhE5GkE/x/F/amWFcehLUSVXRSDjYCdfXwUTW/
+         PjBIO1alDROA7ICvUJGxxWOuIDhf6j8kKt13KavYOw2GzeIx7vtMEVZXN2uFx3XibqkS
+         Owe1ULicJr+Qh8sKAuDQNjH+SP+37Cj4LnCGNgq0n9LLSGr8c/aILBVaPH98cpusnlLn
+         VOfZa4DSPWHoEJ22H301f8oPbFYOUdFDPY7xDoXHuPXgWcApGpW1pmFQuNvVXwu3KYTu
+         1lfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ig2bd75GnHMToY2Lt27CYgTDtNYbuy1gGc25rUD2An4=;
+        b=Z8w14j5WMzKtk/7qkkwZzmieFi5j8SEzFLn1+ceTqGvIJ6xRpFNjBw95CPizL/FlgO
+         BSpLm1QiOx6NBQ5acOLCLSDet8Ky3tU/VHSXxSlp7fXiYfgAWKJIUJpT2bgjus7tUy6f
+         f872nELaAVc1ndg13Vt/c3+e6H9lw4HKo+k9ynr+IjAOTBuXeY+ByLQCQu5Cr1jqmrqQ
+         o+F2Qqw1yo1JuW7r8+06qnzCGGb21VsVwZu4Ec0AMmvyER27NuMCsziZ6Mb9SwHF973q
+         eOXYE0ZtuBWdPIbNAn3IPyqYrtOr2Boaxal5oac8UJQDV3x2cw34y600qWkF07ax4jIk
+         zZmw==
+X-Gm-Message-State: APjAAAX3BPDOcg+UL4Lv+8cHelCiZFGFAnIKPSTx9ELWDBSuZr+MOni5
+        j1B82DXf+s1WnMHHJ4Z9sbomjewzziKnAlc5XLkh5w==
+X-Google-Smtp-Source: APXvYqyfDJMQJRS/zQ6t2yMjF09Dcf72KV0t+O+BMP8nioJ5Z9vrYI6QxASJCmiz1bsPY3Z4HKU2ONkNeMD7WhAvZho=
+X-Received: by 2002:a19:117:: with SMTP id 23mr9983798lfb.115.1570218304825;
+ Fri, 04 Oct 2019 12:45:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191004121021.GA4541@google.com>
-User-Agent: NeoMutt/20180716
+References: <b17404cd-294f-fe2f-e8a3-2218a0dae14f@web.de>
+In-Reply-To: <b17404cd-294f-fe2f-e8a3-2218a0dae14f@web.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 4 Oct 2019 21:44:52 +0200
+Message-ID: <CACRpkdbgUVm_6MdHw+6MJBc-oHYp-MA7_3jM3buQtKJEtEMtnA@mail.gmail.com>
+Subject: Re: [PATCH] sata_gemini: Use devm_platform_ioremap_resource() in gemini_sata_probe()
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-ide@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Himanshu Jha <himanshujha199640@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 04 Oct 2019, Michel Lespinasse wrote:
+On Wed, Sep 18, 2019 at 8:34 AM Markus Elfring <Markus.Elfring@web.de> wrote:
 
->On Thu, Oct 03, 2019 at 01:18:54PM -0700, Davidlohr Bueso wrote:
->> @@ -1320,15 +1320,14 @@ static bool iotlb_access_ok(struct vhost_virtqueue *vq,
->>  {
->>  	const struct vhost_umem_node *node;
->>  	struct vhost_umem *umem = vq->iotlb;
->> -	u64 s = 0, size, orig_addr = addr, last = addr + len - 1;
->> +	u64 s = 0, size, orig_addr = addr, last = addr + len;
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Sep 2019 08:28:09 +0200
 >
->maybe "end" or "end_addr" instead of "last".
+> Simplify this function implementation by using a known wrapper function.
 >
->> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
->> index e9ed2722b633..bb36cb9ed5ec 100644
->> --- a/drivers/vhost/vhost.h
->> +++ b/drivers/vhost/vhost.h
->> @@ -53,13 +53,13 @@ struct vhost_log {
->>  };
->>
->>  #define START(node) ((node)->start)
->> -#define LAST(node) ((node)->last)
->> +#define END(node) ((node)->end)
->>
->>  struct vhost_umem_node {
->>  	struct rb_node rb;
->>  	struct list_head link;
->>  	__u64 start;
->> -	__u64 last;
->> +	__u64 end;
->>  	__u64 size;
->>  	__u64 userspace_addr;
->>  	__u32 perm;
+> This issue was detected by using the Coccinelle software.
 >
->Preferably also rename __subtree_last to __subtree_end
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Yes, this was was another one that I had in mind renaming, but
-didn't want to grow the series -- all custom interval trees
-name _last for the subtree iirc. Like my previous reply, I'd
-rather leave this stuff for a followup series.
+Looks correct.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks,
-Davidlohr
+Yours,
+Linus Walleij
