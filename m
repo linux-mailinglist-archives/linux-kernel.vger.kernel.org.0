@@ -2,77 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 543D1CB95E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 13:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8ADDCB975
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 13:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfJDLny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 07:43:54 -0400
-Received: from foss.arm.com ([217.140.110.172]:42562 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbfJDLny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 07:43:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8873015A1;
-        Fri,  4 Oct 2019 04:43:53 -0700 (PDT)
-Received: from [10.163.1.5] (unknown [10.163.1.5])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97CAF3F706;
-        Fri,  4 Oct 2019 04:43:50 -0700 (PDT)
-Subject: Re: [PATCH] mm/page_alloc: Add a reason for reserved pages in
- has_unmovable_pages()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        linux-kernel@vger.kernel.org
-References: <1570090257-25001-1-git-send-email-anshuman.khandual@arm.com>
- <20191004105824.GD9578@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <91128b73-9a47-100b-d3de-e83f0b941e9f@arm.com>
-Date:   Fri, 4 Oct 2019 17:14:11 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1731158AbfJDLsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 07:48:04 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:50339 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726024AbfJDLsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 07:48:04 -0400
+Received: from dimstar.local.net (n122-110-44-45.sun2.vic.optusnet.com.au [122.110.44.45])
+        by mail105.syd.optusnet.com.au (Postfix) with SMTP id 4235D3638C7
+        for <linux-kernel@vger.kernel.org>; Fri,  4 Oct 2019 21:47:46 +1000 (AEST)
+Received: (qmail 23038 invoked by uid 501); 4 Oct 2019 11:47:45 -0000
+Date:   Fri, 4 Oct 2019 21:47:45 +1000
+From:   Duncan Roe <duncan_roe@optusnet.com.au>
+To:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Cc:     Julian Anastasov <ja@ssi.bg>, Shuah Khan <shuah@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] selftests: netfilter: introduce test cases for
+ ipvs
+Message-ID: <20191004114745.GB6803@dimstar.local.net>
+Mail-Followup-To: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        Julian Anastasov <ja@ssi.bg>, Shuah Khan <shuah@kernel.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+References: <1569939599-1872-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+ <alpine.LFD.2.21.1910012133330.3887@ja.home.ssi.bg>
+ <20191002012726.GB9810@dimstar.local.net>
+ <8E2E81F3-8385-4397-9A22-F513E507507D@cmss.chinamobile.com>
 MIME-Version: 1.0
-In-Reply-To: <20191004105824.GD9578@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8E2E81F3-8385-4397-9A22-F513E507507D@cmss.chinamobile.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=4DzML1vCOQ6Odsy8BUtSXQ==:117 a=4DzML1vCOQ6Odsy8BUtSXQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=XobE76Q3jBoA:10
+        a=PO7r1zJSAAAA:8 a=YExiR9hJhUxYzP8DYcgA:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 03, 2019 at 10:41:06PM +0800, Haishuang Yan wrote:
+>
+>
+> > On 2019??10??2??, at ????9:27, Duncan Roe <duncan_roe@optusnet.com.au> wrote:
+> >
+> > On Tue, Oct 01, 2019 at 09:34:13PM +0300, Julian Anastasov wrote:
+> >>
+> >> 	Hello,
+> >>
+> >> On Tue, 1 Oct 2019, Haishuang Yan wrote:
+> >>
+> >>> This series patch include test cases for ipvs.
+> >>>
+> >>> The test topology is who as below:
+> >>> +--------------------------------------------------------------+
+> >>> |                      |                                       |
+> >>> |         ns0          |         ns1                           |
+> >>> |      -----------     |     -----------    -----------        |
+> >>> |      | veth01  | --------- | veth10  |    | veth12  |        |
+> >>> |      -----------    peer   -----------    -----------        |
+> >>> |           |          |                        |              |
+> >>> |      -----------     |                        |              |
+> >>> |      |  br0    |     |-----------------  peer |--------------|
+> >>> |      -----------     |                        |              |
+> >>> |           |          |                        |              |
+> >>> |      ----------     peer   ----------      -----------       |
+> >>> |      |  veth02 | --------- |  veth20 |     | veth12  |       |
+> >>> |      ----------      |     ----------      -----------       |
+> >>> |                      |         ns2                           |
+> >>> |                      |                                       |
+> >>> +--------------------------------------------------------------+
+> >>>
+> >>> Test results:
+> >>> # selftests: netfilter: ipvs.sh
+> >>> # Testing DR mode...
+> >>> # Testing NAT mode...
+> >>> # Testing Tunnel mode...
+> >>> # ipvs.sh: PASS
+> >>> ok 6 selftests: netfilter: ipvs.sh
+> >>>
+> >>> Haishuang Yan (3):
+> >>>  selftests: netfilter: add ipvs test script
+> >>>  selftests: netfilter: add ipvs nat test case
+> >>>  selftests: netfilter: add ipvs tunnel test case
+> >>
+> >> Acked-by: Julian Anastasov <ja@ssi.bg>
+> >>
+> >>> tools/testing/selftests/netfilter/Makefile |   2 +-
+> >>> tools/testing/selftests/netfilter/ipvs.sh  | 234 +++++++++++++++++++++++++++++
+> >>> 2 files changed, 235 insertions(+), 1 deletion(-)
+> >>> create mode 100755 tools/testing/selftests/netfilter/ipvs.sh
+> >>
+> >> Regards
+> >>
+> >> --
+> >> Julian Anastasov <ja@ssi.bg>
+> >
+> > I still prefer #!/bin/sh in 1/3. You never know what's in someone's environment
+> >
+> > Cheers ... Duncan.
+> >
+>
+> It??s also my preference too. "_"	
+>
+> I have tested both #!/bin/bash and #!/bin/sh script, they all works properly.
 
+Enter these 2 lines:
+> ip(){ return 0; }
+> export -f ip
 
-On 10/04/2019 04:28 PM, Michal Hocko wrote:
-> On Thu 03-10-19 13:40:57, Anshuman Khandual wrote:
->> Having unmovable pages on a given pageblock should be reported correctly
->> when required with REPORT_FAILURE flag. But there can be a scenario where a
->> reserved page in the page block will get reported as a generic "unmovable"
->> reason code. Instead this should be changed to a more appropriate reason
->> code like "Reserved page".
-> 
-> Others have already pointed out this is just redundant but I will have a
+Now try the #!/bin/bash script. If that now fails, try again with #!/bin/bash
+changed to #!/bin/bash -p
 
-Sure.
+Any better now?
 
-> more generic comment on the changelog. There is essentially no
-> information why the current state is bad/unhelpful and why the chnage is
-
-The current state is not necessarily bad or unhelpful. I just though that it
-could be improved upon. Some how calling out explicitly only the CMA page
-failure case just felt adhoc, where as there are other reasons like HugeTLB
-immovability which might depend on other factors apart from just page flags
-(though I did not propose that originally).
-
-> needed. All you claim is that something is a certain way and then assert
-> that it should be done differently. That is not how changelogs should
-> look like.
-> 
-
-Okay, probably I should have explained more on why "unmovable" is less than
-adequate to capture the exact reason for specific failure cases and how
-"Reserved Page" instead would been better. But got the point, will improve.
+Cheers ... Duncan.
