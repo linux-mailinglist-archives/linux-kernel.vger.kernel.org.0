@@ -2,90 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9A57CBA96
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52CE2CBA97
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387493AbfJDMhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:37:18 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38706 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731019AbfJDMhQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:37:16 -0400
-Received: by mail-lj1-f195.google.com with SMTP id b20so6350210ljj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 05:37:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=lXdrmzX9gvMPf+pY38oS/1a5CbfVp85B6xeXbwFPwdC1N/Gmzt2G9MKd7louqq+TPt
-         B6/QefMdI6s8jRrOacqJMXvv4K6SA3jwL/kpadK8M1IqHt3/ljMjEOZX2iyt/+g/rxKn
-         EjlnuGTjj9QG5Jr/Z1NA6dY2c0aiUI7wRVseRE5/M0BplQylZTvwHUsQxXaDqXa/IPLn
-         qT6aaG0xJ2wv/pDHJMbSulmABpzb89otDnYNEhsZc2MdImzgmNZIJrVJRR/xdD8+/fIm
-         mUrGHYvCyMRfWNt3uRJ8BL/TV3Z6EI5q4FkcBoXOiVg6SFi2ddFMUBUVzBXkfL+2HHh4
-         5f2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=s5544PIAqNq4JKx4TgEpcTu1rtf/fibrODb7ASkIqxyPUZ48Xth2xuQqJlbQ72Hftu
-         wqk/DEo/sXaqNtokCSn/1ATjfDpFqUHddVJ2S7ddxzpTzMS0O2vV1NyyDRpoFBL7Acsz
-         zHSmimLBRErbSVYYfU0za6j+SCGqX6EoistYQffWZB40ySeOlrfjGRX/NweHqm1rnj8U
-         qe5LhncYyh2ZhZ0ijgBzA76dwQ1EvB8OqH3Uh2ZR0HnUmvUQXe8cSCQQOG4Iz3oR9BiK
-         yJUR0jZ+D/HjQvp9lK+AzfNnEE5az/ehqyr3e6M5/L4YwtM+JSwdiwpTl/rbmHCImrqS
-         jghg==
-X-Gm-Message-State: APjAAAUuD9q47gsYMaYQm2RZBaWY7MT0wdepk9h0gmCH9M63uTxVffZB
-        8aRMxGQVC16ErZtWscLTcxholEU3GDuocPsHU3k=
-X-Google-Smtp-Source: APXvYqxu/n4CjmMQk+sFU6boPKWpyRhsD/UlaJnp95Kk6e9xa9Y9eWdF8jKKRFYWmPmMupMpj7xRuGIs5IiA3+4VCL8=
-X-Received: by 2002:a2e:9798:: with SMTP id y24mr9428830lji.150.1570192634308;
- Fri, 04 Oct 2019 05:37:14 -0700 (PDT)
+        id S2387559AbfJDMhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:37:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58972 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387501AbfJDMhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 08:37:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C5899B125;
+        Fri,  4 Oct 2019 12:37:18 +0000 (UTC)
+Date:   Fri, 4 Oct 2019 14:37:18 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/swap: piggyback lru_add_drain_all() calls
+Message-ID: <20191004123718.GI9578@dhcp22.suse.cz>
+References: <157018386639.6110.3058050375244904201.stgit@buzz>
+ <20191004121017.GG32665@bombadil.infradead.org>
+ <20191004122727.GA10845@dhcp22.suse.cz>
+ <257f6172-971b-e0bd-0a74-30a0d143d6f9@yandex-team.ru>
 MIME-Version: 1.0
-Received: by 2002:a19:614b:0:0:0:0:0 with HTTP; Fri, 4 Oct 2019 05:37:13 -0700 (PDT)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <barristerlevi@gmail.com>
-Date:   Fri, 4 Oct 2019 14:37:13 +0200
-Message-ID: <CAEJ6Chcw_zdYCTprhYQXF-OgsgiNNzeCrGRjkBee340jW=oLYQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <257f6172-971b-e0bd-0a74-30a0d143d6f9@yandex-team.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Fri 04-10-19 15:32:01, Konstantin Khlebnikov wrote:
+> 
+> 
+> On 04/10/2019 15.27, Michal Hocko wrote:
+> > On Fri 04-10-19 05:10:17, Matthew Wilcox wrote:
+> > > On Fri, Oct 04, 2019 at 01:11:06PM +0300, Konstantin Khlebnikov wrote:
+> > > > This is very slow operation. There is no reason to do it again if somebody
+> > > > else already drained all per-cpu vectors after we waited for lock.
+> > > > +	seq = raw_read_seqcount_latch(&seqcount);
+> > > > +
+> > > >   	mutex_lock(&lock);
+> > > > +
+> > > > +	/* Piggyback on drain done by somebody else. */
+> > > > +	if (__read_seqcount_retry(&seqcount, seq))
+> > > > +		goto done;
+> > > > +
+> > > > +	raw_write_seqcount_latch(&seqcount);
+> > > > +
+> > > 
+> > > Do we really need the seqcount to do this?  Wouldn't a mutex_trylock()
+> > > have the same effect?
+> > 
+> > Yeah, this makes sense. From correctness point of view it should be ok
+> > because no caller can expect that per-cpu pvecs are empty on return.
+> > This might have some runtime effects that some paths might retry more -
+> > e.g. offlining path drains pcp pvces before migrating the range away, if
+> > there are pages still waiting for a worker to drain them then the
+> > migration would fail and we would retry. But this not a correctness
+> > issue.
+> > 
+> 
+> Caller might expect that pages added by him before are drained.
+> Exiting after mutex_trylock() will not guarantee that.
+> 
+> For example POSIX_FADV_DONTNEED uses that.
 
-My name is Joe Akaba I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
+OK, I was not aware of this case. Please make sure to document that in
+the changelog and a comment in the code wouldn't hurt either. It would
+certainly explain more thatn "Piggyback on drain done by somebody
+else.".
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:joeakaba00@gmail.com
-
-Many thanks in advance,
-Mr.Joe Akaba
-
-
-Hallo
-
-Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8.5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
-
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: joeakaba00@gmail.com
-
-Vielen Dank im Voraus,
-Mr.Joe Akaba
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
