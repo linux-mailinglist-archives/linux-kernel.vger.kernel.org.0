@@ -2,84 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D09CB60C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A31CB617
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbfJDIXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 04:23:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbfJDIXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 04:23:46 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D49FA215EA;
-        Fri,  4 Oct 2019 08:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570177425;
-        bh=y0a26l5BoLt6LDIhhczFXqNAIo+MU2bPPx6nwZoc6ew=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pc7kKbLNjQ60Htp2grrbUQKS6/ezg4x7E2dvUqm7GjZwB/+c01cbuC/1jTgthnBwS
-         FYO0NB/mrWJG5TxGokI8FzLZf56xeesfHRx/lS98REBrATcIqoZBTxyVbvyC4JHiQS
-         eAlEvYuj7lqvu3QDYCyPIxqk3KM0oRlAMRi6A2Kg=
-Date:   Fri, 4 Oct 2019 10:23:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>
-Cc:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Le Goff <David.Legoff@silabs.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: [PATCH v3 01/20] staging: wfx: add infrastructure for new driver
-Message-ID: <20191004082342.GA94454@kroah.com>
-References: <20190919142527.31797-1-Jerome.Pouiller@silabs.com>
- <20190919142527.31797-2-Jerome.Pouiller@silabs.com>
+        id S1730164AbfJDIZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 04:25:27 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38499 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728462AbfJDIZ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 04:25:26 -0400
+Received: by mail-lj1-f194.google.com with SMTP id b20so5603065ljj.5;
+        Fri, 04 Oct 2019 01:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OzdPwj1paj2i4ey/G9r5ww+KJ7CZQsPnyP1GnSZa7m0=;
+        b=ReelzzAOspekrxwZdMb9F5gmm8wO5OAYe2KNKtKG9dsOU9u03kQtFkPQLrsBqy78VR
+         0t9Lb6kezAXO4Q9xEVAEKNMKdVRsK0llRihoNhwhBIf2UHt4mXOG3ZgbUuENGaRE4KFH
+         w+MRsKj+cSXGg6E34pyaEONSD12b3lN/y/bmSfg/bYmDB+c4DmBj92M8lNBfa+JRzkcp
+         QQzbLkQQsaomPP+zRbg188eZeb1F47BelGPHHtBZ/hQhqDFSz/DFnZW1gYIxGt8alhG/
+         L0KxAxU2+VRfBxOxwepBaK+lf8pAwPtqYF3nJ0SF1BlXvJyBtKgFpJVVXEMP0/yvvicd
+         d7qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OzdPwj1paj2i4ey/G9r5ww+KJ7CZQsPnyP1GnSZa7m0=;
+        b=k3HTlIPwufrJJaFphhcCrgmQThilwddg1W0zXcQNZRo6yCB2+gCboPGO5EvYXilKRK
+         9rbEdoUYT0NOXI4sppnyFwl8eBYBDLO1UdBhkLRhZsdN0VO4V16xQy8/GzBcnR9aLi6H
+         QuxD0F2O3GbrQMKrl10qc4xS/aCm6CXLiB49yHGbbSrrJjAsvmpR+ZAnZ0cMf5WLGayt
+         6fVnZm9hkM/9nF64xComVQ1sDUJRqvHLjV2P016ITGRbZmhxoZOTV952G78rL2NGsFjT
+         nn71zqiMPteWEi2uNfZiKKJQSWXdM6uU+i70yQI3RvGVHeZFZEOvVps+c6MkSs3RSCRG
+         sROg==
+X-Gm-Message-State: APjAAAUzlLRKx0/TvfNci3UO9C0NjfPOT8uZtWvL10k5IGLFsIc/dQW6
+        KLgwffNRJH6xZYsNzLg7DIG/SeGL
+X-Google-Smtp-Source: APXvYqzPlmAwgC1XqZT/EJzrUhHIpdCFSiHJbmGZPOe/mrv3+pM4Cf8HzJxeSLDupxA0A4Jbm5Gvew==
+X-Received: by 2002:a2e:8ec1:: with SMTP id e1mr8890477ljl.14.1570177523994;
+        Fri, 04 Oct 2019 01:25:23 -0700 (PDT)
+Received: from localhost.localdomain (mm-61-74-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.74.61])
+        by smtp.gmail.com with ESMTPSA id q11sm1116765lje.52.2019.10.04.01.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 01:25:22 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH] io_uring: Fix reversed nonblock flag
+Date:   Fri,  4 Oct 2019 11:25:17 +0300
+Message-Id: <75be62996d115a3e2effa6753a6d803069131460.1570177340.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190919142527.31797-2-Jerome.Pouiller@silabs.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 02:25:36PM +0000, Jerome Pouiller wrote:
-> From: Jérôme Pouiller <jerome.pouiller@silabs.com>
-> 
-> Instantiate build infrastructure WFx driver. This driver provides support
-> for Wifi chipset Silicon Labs WF200 and further:
-> 
->    https://www.silabs.com/documents/public/data-sheets/wf200-datasheet.pdf
-> 
-> This chip support SPI and SDIO bus.
-> 
-> SDIO interface has two particularities:
->     1. Some parameters may be useful for end user (I will talk about
->        gpio_wakeup later).
->     2. The SDIO VID and PID of WF200 are 0000:0001 which are too much
->        generic to rely on.
-> 
-> So, current code checks VID/PID and looks for a node in DT (since WF200
-> targets embedded platforms, I don't think it is a problem to rely on
-> DT). DT can also be used to define to parameters for driver. Currently,
-> if no node is found, a warning is emitted, but it could be changed in
-> error.
-> 
-> Signed-off-by: Jérôme Pouiller <jerome.pouiller@silabs.com>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-Personally, I think you are going to find that this is going to take
-more work to get this cleaned up in the staging tree and then out of it
-into the "real" part of the kernel, instead of just doing the needed
-work out of the tree now and then submitting it "properly" to the right
-part of the tree.
+io_queue_link_head() accepts @force_nonblock flag, but io_ring_submit()
+passes something opposite.
 
-But hey, who am I to judge people who like to do extra work!  :)
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll go queue this up now, good luck!
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index c934f91c51e9..ffe66512ca07 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2761,7 +2761,7 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit,
+ 
+ 	if (link)
+ 		io_queue_link_head(ctx, link, &link->submit, shadow_req,
+-					block_for_last);
++					force_nonblock);
+ 	if (statep)
+ 		io_submit_state_end(statep);
+ 
+-- 
+2.23.0
 
-greg k-h
