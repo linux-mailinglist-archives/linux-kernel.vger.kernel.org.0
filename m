@@ -2,142 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A101CC2F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCB03CC2F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:52:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbfJDSvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 14:51:23 -0400
-Received: from mx4.ucr.edu ([138.23.248.66]:41915 "EHLO mx4.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbfJDSvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 14:51:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1570215082; x=1601751082;
-  h=from:to:cc:subject:date:message-id;
-  bh=zeBRvpLS7yocFhDOcjTM7Sf+v5207KV1o2FMvWYXbvw=;
-  b=LhvJkAqw9bninny2Yl/dKzVJFwLjVkWVDK5VPkfFT+p/3v2pMAsESzd1
-   J6g2tUBPBEsshqWbv3NFDhP3f35VCUHFDoOPxZgpxxTSgeM6mZvvgaKTm
-   pJeoPpzuZXLc5nNJkS4q01rfI4qASj5i3XKxlRf3MbUsjkNzqmrd3OhJm
-   USfOmEP0eb4J2LCC0skfR2za/hn2kxnDsK2tr4sP48mn1Kf2WT3N8XbaY
-   hR12NnYbk7eXPqoS1Xgz+yAFH0SazGq6XNvh0ZJoP8ZjaDQZmLQV9Rht5
-   79koapLPjoUmjH03ei+/dnVHGmSW7kTdo62H8HsYHLIxMjDVQ7phUU1bv
-   w==;
-IronPort-SDR: YHq1As9sju1vpZE/rQZLdfkKIGODMvRT1dN4kRrUlquTCTRWU1RhGBo8DsnevXnJhR1RSKbBpv
- cxkkVBfX8ZqV2JmFGfQofe2sP3MQR/3uOkUMYhVqk6Imm4TwwAqba/MrZ0T53cCxHKKo8N5Zom
- lo5AafRf3wIRbOKPftOhGItP5opGRZs0oOLCKVj/CBYK3NxEDKmWYV55oQojRKZa6rtqnUxzO/
- pKqw53mA7zOxdPopkcmTU9xN/wHL/PkFvVsJxT2P9JSmlBfS6Vo+r2DHXmB3P/UJNNJAAaQcYs
- WlM=
-IronPort-PHdr: =?us-ascii?q?9a23=3AmqIOFhXt2HtuHjd2Bi+u0VWCqRLV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYbBaFt8tkgFKBZ4jH8fUM07OQ7/m7HzFZqs/b6jgrS99lb1?=
- =?us-ascii?q?c9k8IYnggtUoauKHbQC7rUVRE8B9lIT1R//nu2YgB/Ecf6YEDO8DXptWZBUh?=
- =?us-ascii?q?rwOhBoKevrB4Xck9q41/yo+53Ufg5EmCexbal9IRmrowjdrMkbjZZtJqos1B?=
- =?us-ascii?q?fFvGZDdvhLy29vOV+dhQv36N2q/J5k/SRQuvYh+NBFXK7nYak2TqFWASo/PW?=
- =?us-ascii?q?wt68LlqRfMTQ2U5nsBSWoWiQZHAxLE7B7hQJj8tDbxu/dn1ymbOc32Sq00WS?=
- =?us-ascii?q?in4qx2RhLklDsLOjgk+2zMlMd+kLxUrw6gpxxnwo7bfoeVNOZlfqjAed8WXH?=
- =?us-ascii?q?dNUtpNWyBEBI68aooPD/EaPeZZqYn9qEYFowWnCwKxCuPvyyFHhnvr0qYn1+?=
- =?us-ascii?q?gsHx3K0AkmEt0JrHnZosn5OLoLXeyp0aXD0DHPY+5W1Dv47oXDbxIvruyWXb?=
- =?us-ascii?q?9occTf11QhGQ3GgFuXsoHpIy+Z2/4Rv2WB8+ZsSeSigHMnpQFrpTivw98hhY?=
- =?us-ascii?q?vIhoMUylDE6CJ5y5syKNy4SU97YcSrEJpMuy2GOYZ7Wd4iTH1yuCog1LIJpI?=
- =?us-ascii?q?O7cTEMxZ86xBDfc+SKf5aU7h/nTuqcIjd1iGh7dL6iiBu+61asxvHgWsWszV?=
- =?us-ascii?q?pHry5InsPSun0D1xHf8NaLR/pn8kqj1juC0R3Y5PteLkAuj6XbLoYswrs3lp?=
- =?us-ascii?q?UOr0vOBjT2mEDqjK+OcUUk5/So5/znYrr4op+cMJd5igTkPaQvnsyzGPw4Mg?=
- =?us-ascii?q?wTU2SC9+SwyqHv8VHjTLVFif02labZsJTEKsgBuqG5BApV3p4i6xa5ETimzM?=
- =?us-ascii?q?wVkWcbIF9BYh6KjIjkN0vQLPzlAvqzmUqgnCt3y/zeO73uGJTNLnzNkLf7er?=
- =?us-ascii?q?Z97lZRyQoyzNBf/Z1UC60NLO79V0LqqdzXEgU5PxaqzOn6FdVxzpkeVn6XAq?=
- =?us-ascii?q?+FLKPStkeF5uYuI+mKeY8Uty/xK/s76P70i382h1sdcLK33ZsYdn+4BO5qI0?=
- =?us-ascii?q?aHbnr2hNcOD2MKshA5TOzwh13RGRBJYHPnbqMu5iw8QNa3H4fKR9j125Sc1z?=
- =?us-ascii?q?39E5FLMDMVQmuQGGvlIt3XE8wHbzifd4o8zzE=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FXAwDkk5ddh8jWVdFmgh6DXkwQjSS?=
- =?us-ascii?q?GMQaLJxhxhXqIM4F7AQgBAQEMAQEtAgEBhECCSiM1CA4CAwkBAQUBAQEBAQU?=
- =?us-ascii?q?EAQECEAEBAQgNCQgphUCCOimDNQsWFVKBFQEFATUiOYJHAYF2FAWifoEDPIw?=
- =?us-ascii?q?lM4hmAQkNgUgJAQiBIoc1hFmBEIEHg25zhA2DWIJEBIE3AQEBlSuWUgEGAoI?=
- =?us-ascii?q?RFIF4kxQnhDyJP4tEAS2nLwIKBwYPI4ExA4INTSWBbAqBRFAQFIFpjkwhM4E?=
- =?us-ascii?q?IjhOCVAE?=
-X-IPAS-Result: =?us-ascii?q?A2FXAwDkk5ddh8jWVdFmgh6DXkwQjSSGMQaLJxhxhXqIM?=
- =?us-ascii?q?4F7AQgBAQEMAQEtAgEBhECCSiM1CA4CAwkBAQUBAQEBAQUEAQECEAEBAQgNC?=
- =?us-ascii?q?QgphUCCOimDNQsWFVKBFQEFATUiOYJHAYF2FAWifoEDPIwlM4hmAQkNgUgJA?=
- =?us-ascii?q?QiBIoc1hFmBEIEHg25zhA2DWIJEBIE3AQEBlSuWUgEGAoIRFIF4kxQnhDyJP?=
- =?us-ascii?q?4tEAS2nLwIKBwYPI4ExA4INTSWBbAqBRFAQFIFpjkwhM4EIjhOCVAE?=
-X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
-   d="scan'208";a="80713781"
-Received: from mail-pl1-f200.google.com ([209.85.214.200])
-  by smtpmx4.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Oct 2019 11:51:22 -0700
-Received: by mail-pl1-f200.google.com with SMTP id y2so4459578plk.19
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:51:21 -0700 (PDT)
+        id S1730792AbfJDSwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 14:52:40 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41346 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730675AbfJDSwj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 14:52:39 -0400
+Received: by mail-qk1-f196.google.com with SMTP id p10so6737242qkg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:52:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h/xuPP1z00AB2qyJdp25q4J5ty46AYUlO1TuGxCBmqA=;
+        b=GhdEUjASbja/6soPIOnSWHDJg3uWHoh5Zqp0pkRHCiFo8XLI7ZHUHIAAd12IJGbkcn
+         b9oML9Dn3rqu1H0N33iR9280ME9NM1YkKZ5Ztz4xj8pln+pkRudvVxaVFk4KM1NgMu9N
+         6rbbxBVdUvJnjFpKFNotBzaECpq744xWzc9YfJBnXNm9gev6+GzB3qaa9/09soQC5qzL
+         63+5hT/wPG2Ap8GuDav0QxwYUXZIkkZ10pmQ9l9oBStJgJhFJjbc77Kbo7PGDw17aeaa
+         cWcbF/YXaAMLjpRMP1vW6Y9vElGeVknNF2pQ7/Ey540WaVZE05ZzMSYhBPGN/ppHD8Pu
+         PfGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Nx7Raw+8VvaKmHv7iUq+/mNfi5w+U2K2Q09elPzOslc=;
-        b=QT/z2Fm9lXCgjt6h6+BDpvP6gLKu0iXH5ok7jT6KH/QISIlphZkTBR89bfw+p6Dcx+
-         Aab3JbHJdMgUh1ECSPNZ2OseyQO6u+xI/hHFZPbV2NfFl/+5OJIcmkxuydY+usk9Xgkx
-         GGVQ6rrAzzzRekp5P0hwFG+FS5KF08Kmlg0iSQVeUVuoK0fbshRifuNaDMHj4mGqzD6X
-         851fXiTM35qYVFKHLrEEHQ8Cm2HELB8i5SFUCr41YuyO5neZ21dEJaerIz7l0s8teW0G
-         FG1euGYsdiFq2XySnEEZ19rRKfCihHzIwtFJ68DhHTt2TUubgGKLhylkyxhA1tj/6xg8
-         R8iA==
-X-Gm-Message-State: APjAAAUzy/Cfnv64dctEHf3QaTOnk8U3kXLOgpWf+UveFo6l7RoNy6P7
-        Q4EetFa4a15/xn2yIOTpPAQYR8E05h5GusVVkk3sqQoxCYdkyzEJI3DozC6M//CblpRvGsWe8nG
-        qWuRoWFz4uvzWLtd+euNktC2oJg==
-X-Received: by 2002:a17:902:6b02:: with SMTP id o2mr16691791plk.302.1570215080757;
-        Fri, 04 Oct 2019 11:51:20 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqw5QtwmXyYfQo5M6IJC7lIS0EJ1qWyQ73hBNC1cEHpkJbeVfKj1RyhZkECc6mcP1X5ruAFGHg==
-X-Received: by 2002:a17:902:6b02:: with SMTP id o2mr16691773plk.302.1570215080459;
-        Fri, 04 Oct 2019 11:51:20 -0700 (PDT)
-Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
-        by smtp.googlemail.com with ESMTPSA id e192sm8101014pfh.83.2019.10.04.11.51.19
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h/xuPP1z00AB2qyJdp25q4J5ty46AYUlO1TuGxCBmqA=;
+        b=Qv4charIize5V/iV0KNlfeJUhekYAHJDb30makqhZ1fE0iD/EBtVe7h6bLgxVuXo6R
+         gRJmOthYOVnNaN1dhRN3KS+mZye6J+8kVr2hkiH3qiwmCNF8sIIdA54yaNjZN71mkKnm
+         LbVqKI4ZdAdyh5I3tggZqoPYjGJNEUdRxL/HPY9xzpI0w3LQanQiiCDMn88RUKsYlIKd
+         /MlOF7MU4nG3taxutCwaGMNB1Rz8pa+R/CqXQG7TO9TDYLurDqxJWLG3IJt6g3MrtKVj
+         vzUT2X0rkeC821ka4STQOQ+hyCO9jlYzfcvFpren8mda1op1BTUrHrukojQM2Gfyrn1J
+         pp+Q==
+X-Gm-Message-State: APjAAAWu+nBU7Yup5PP8xtvT02pgnZWa9xgmuuHnXO5JEqSZQ3QGFiVh
+        /R3u4MHb/+HRK/AaJJz3ieD/vg==
+X-Google-Smtp-Source: APXvYqwrMvumoagSIlOw+V6bfN5smnddRxSOl8Mm3g+z6RSyPW2FSm3v7caZjEiqazF2X5L4bPHy5g==
+X-Received: by 2002:a37:aa58:: with SMTP id t85mr11479750qke.381.1570215156833;
+        Fri, 04 Oct 2019 11:52:36 -0700 (PDT)
+Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id p77sm4042514qke.6.2019.10.04.11.52.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 11:51:19 -0700 (PDT)
-From:   Yizhuo <yzhai003@ucr.edu>
-Cc:     Yizhuo <yzhai003@ucr.edu>, Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtc: snvs: fix uninitialized usage of "lpcr" in snvs_rtc_enable()
-Date:   Fri,  4 Oct 2019 11:52:06 -0700
-Message-Id: <20191004185206.7466-1-yzhai003@ucr.edu>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 04 Oct 2019 11:52:36 -0700 (PDT)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        ebiederm@xmission.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        james.morse@arm.com, vladimir.murzin@arm.com,
+        matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
+        mark.rutland@arm.com
+Subject: [PATCH v6 00/17] arm64: MMU enabled kexec relocation
+Date:   Fri,  4 Oct 2019 14:52:17 -0400
+Message-Id: <20191004185234.31471-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Inside function snvs_rtc_enable(), variable "lpcr" could be
-uninitialized if regmap_read() returns -EINVAL. However,"lpcr"
-is used later in the if statement, which is potentially unsafe.
+Changelog:
+v6:
+	- Sync with mainline tip
+	- Added Acked's from Dave Young
+v5:
+	- Addressed comments from Matthias Brugger: added review-by's, improved
+	  comments, and made cleanups to swsusp_arch_resume() in addition to
+	  create_safe_exec_page().
+	- Synced with mainline tip.
 
-Similar cases happened in function snvs_rtc_irq_handler() with
-variable "lpsr" and function snvs_rtc_read_alarm() with variables
-"lptar", "lpsr". The patch for those two are not easy since
--EINVAL is not an acceptable return value for these functions.
+v4:
+	- Addressed comments from James Morse.
+	- Split "check pgd table allocation" into two patches, and moved to
+	  the beginning of series  for simpler backport of the fixes.
+	  Added "Fixes:" tags to commit logs.
+	- Changed "arm64, hibernate:" to "arm64: hibernate:"
+	- Added Reviewed-by's
+	- Moved "add PUD_SECT_RDONLY" earlier in series to be with other
+	  clean-ups
+	- Added "Derived from:" to arch/arm64/mm/trans_pgd.c
+	- Removed "flags" from trans_info
+	- Changed .trans_alloc_page assumption to return zeroed page.
+	- Simplify changes to trans_pgd_map_page(), by keeping the old
+	  code.
+	- Simplify changes to trans_pgd_create_copy, by keeping the old
+	  code.
+	- Removed: "add trans_pgd_create_empty"
+	- replace init_mm with NULL, and keep using non "__" version of
+	  populate functions.
+v3:
+	- Split changes to create_safe_exec_page() into several patches for
+	  easier review as request by Mark Rutland. This is why this series
+	  has 3 more patches.
+	- Renamed trans_table to tans_pgd as agreed with Mark. The header
+	  comment in trans_pgd.c explains that trans stands for
+	  transitional page tables. Meaning they are used in transition
+	  between two kernels.
+v2:
+	- Fixed hibernate bug reported by James Morse
+	- Addressed comments from James Morse:
+	  * More incremental changes to trans_table
+	  * Removed TRANS_FORCEMAP
+	  * Added kexec reboot data for image with 380M in size.
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
----
- drivers/rtc/rtc-snvs.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Enable MMU during kexec relocation in order to improve reboot performance.
 
-diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
-index 757f4daa7181..dadcc3e193b2 100644
---- a/drivers/rtc/rtc-snvs.c
-+++ b/drivers/rtc/rtc-snvs.c
-@@ -124,12 +124,16 @@ static int snvs_rtc_enable(struct snvs_rtc_data *data, bool enable)
- {
- 	int timeout = 1000;
- 	u32 lpcr;
-+	int ret;
- 
- 	regmap_update_bits(data->regmap, data->offset + SNVS_LPCR, SNVS_LPCR_SRTC_ENV,
- 			   enable ? SNVS_LPCR_SRTC_ENV : 0);
- 
- 	while (--timeout) {
--		regmap_read(data->regmap, data->offset + SNVS_LPCR, &lpcr);
-+		ret = regmap_read(data->regmap,
-+					data->offset + SNVS_LPCR, &lpcr);
-+		if (ret)
-+			return ret;
- 
- 		if (enable) {
- 			if (lpcr & SNVS_LPCR_SRTC_ENV)
+If kexec functionality is used for a fast system update, with a minimal
+downtime, the relocation of kernel + initramfs takes a significant portion
+of reboot.
+
+The reason for slow relocation is because it is done without MMU, and thus
+not benefiting from D-Cache.
+
+Performance data
+----------------
+For this experiment, the size of kernel plus initramfs is small, only 25M.
+If initramfs was larger, than the improvements would be greater, as time
+spent in relocation is proportional to the size of relocation.
+
+Previously:
+kernel shutdown	0.022131328s
+relocation	0.440510736s
+kernel startup	0.294706768s
+
+Relocation was taking: 58.2% of reboot time
+
+Now:
+kernel shutdown	0.032066576s
+relocation	0.022158152s
+kernel startup	0.296055880s
+
+Now: Relocation takes 6.3% of reboot time
+
+Total reboot is x2.16 times faster.
+
+With bigger userland (fitImage 380M), the reboot time is improved by 3.57s,
+and is reduced from 3.9s down to 0.33s
+
+Previous approaches and discussions
+-----------------------------------
+https://lore.kernel.org/lkml/20190923203427.294286-1-pasha.tatashin@soleen.com
+version 5 of this series
+
+https://lore.kernel.org/lkml/20190909181221.309510-1-pasha.tatashin@soleen.com
+version 4 of this series
+
+https://lore.kernel.org/lkml/20190821183204.23576-1-pasha.tatashin@soleen.com
+version 3 of this series
+
+https://lore.kernel.org/lkml/20190817024629.26611-1-pasha.tatashin@soleen.com
+version 2 of this series
+
+https://lore.kernel.org/lkml/20190801152439.11363-1-pasha.tatashin@soleen.com
+version 1 of this series
+
+https://lore.kernel.org/lkml/20190709182014.16052-1-pasha.tatashin@soleen.com
+reserve space for kexec to avoid relocation, involves changes to generic code
+to optimize a problem that exists on arm64 only:
+
+https://lore.kernel.org/lkml/20190716165641.6990-1-pasha.tatashin@soleen.com
+The first attempt to enable MMU, some bugs that prevented performance
+improvement. The page tables unnecessary configured idmap for the whole
+physical space.
+
+https://lore.kernel.org/lkml/20190731153857.4045-1-pasha.tatashin@soleen.com
+No linear copy, bug with EL2 reboots.
+
+Pavel Tatashin (17):
+  kexec: quiet down kexec reboot
+  arm64: hibernate: pass the allocated pgdp to ttbr0
+  arm64: hibernate: check pgd table allocation
+  arm64: hibernate: use get_safe_page directly
+  arm64: hibernate: remove gotos as they are not needed
+  arm64: hibernate: rename dst to page in create_safe_exec_page
+  arm64: hibernate: add PUD_SECT_RDONLY
+  arm64: hibernate: add trans_pgd public functions
+  arm64: hibernate: move page handling function to new trans_pgd.c
+  arm64: trans_pgd: make trans_pgd_map_page generic
+  arm64: trans_pgd: pass allocator trans_pgd_create_copy
+  arm64: trans_pgd: pass NULL instead of init_mm to *_populate functions
+  kexec: add machine_kexec_post_load()
+  arm64: kexec: move relocation function setup and clean up
+  arm64: kexec: add expandable argument to relocation function
+  arm64: kexec: configure trans_pgd page table for kexec
+  arm64: kexec: enable MMU during kexec relocation
+
+ arch/arm64/Kconfig                     |   4 +
+ arch/arm64/include/asm/kexec.h         |  51 ++++-
+ arch/arm64/include/asm/pgtable-hwdef.h |   1 +
+ arch/arm64/include/asm/trans_pgd.h     |  34 ++++
+ arch/arm64/kernel/asm-offsets.c        |  14 ++
+ arch/arm64/kernel/cpu-reset.S          |   4 +-
+ arch/arm64/kernel/cpu-reset.h          |   8 +-
+ arch/arm64/kernel/hibernate.c          | 245 +++++--------------------
+ arch/arm64/kernel/machine_kexec.c      | 196 ++++++++++++++++----
+ arch/arm64/kernel/relocate_kernel.S    | 196 ++++++++++----------
+ arch/arm64/mm/Makefile                 |   1 +
+ arch/arm64/mm/trans_pgd.c              | 244 ++++++++++++++++++++++++
+ kernel/kexec.c                         |   4 +
+ kernel/kexec_core.c                    |   8 +-
+ kernel/kexec_file.c                    |   4 +
+ kernel/kexec_internal.h                |   2 +
+ 16 files changed, 674 insertions(+), 342 deletions(-)
+ create mode 100644 arch/arm64/include/asm/trans_pgd.h
+ create mode 100644 arch/arm64/mm/trans_pgd.c
+
 -- 
-2.17.1
+2.23.0
 
