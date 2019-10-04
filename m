@@ -2,125 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7EF6CBBB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34E2CBBD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:34:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388446AbfJDNco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:32:44 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37229 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388270AbfJDNcn (ORCPT
+        id S2388781AbfJDNdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:33:33 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46378 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388743AbfJDNdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:32:43 -0400
-Received: by mail-io1-f67.google.com with SMTP id b19so13568737iob.4
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 06:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wRHGFsQMIDC8m376mc63E7wEOAD5ITX6WDH77PzxyQ8=;
-        b=NsRPdCT+T6Cc2S2CpDv0rf0WDwFwQeIMg+Sv9DOKGhqre7BaxUUUN8xCcX1UJoWSNL
-         k0pckZdKgODpDOv8eInlAfuomy6pkn3fIsNHZ/oOViFPOGjnWj7eFl33caHnqvqCmFcd
-         5bD7MKgeSnRU2eIrx7+IEx3175Nhabn+GoHSkGuE6TAe0S2WqUMcrPRTiNBllOxTJMnE
-         L9J6BQyCQKQtdYMDrniNKIq0lQXG+8v+elHIcEOLoQZ2u+YZBc2orrNyt3mG/zKZkUpZ
-         zvwuumyIlxyw+39S2usvwuus10IEPBCNg5ED8AChEhJZHZD58jlQXSw9zOG0yFn6qng9
-         aG9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wRHGFsQMIDC8m376mc63E7wEOAD5ITX6WDH77PzxyQ8=;
-        b=XeT2RDY4pqO2BHyXPbcXc8B5wHgzAFqgbMYr+b4hUPr4vPXrpV/c8d22kNrN1xNbWZ
-         jAub0M2U44wdqEYKOINPcrJkOG/F/PiV6h+nMCDZC8sXoayD40ShOWHsT+9fxlA6HpNM
-         rtn6w1qH0WZdGetwmhFwKOg2JGTacxHnPrQFsVcbJWdB7iD9qot9Dzx4wsecJ5eZqRxL
-         E2SGw52XcOHJ18BfCZSzlITwduSWHyFrFSPkJuiocjtW444OMKxBbBcPvtmsRBixWr5D
-         FQDw0VabnW8bLBY/JewrCr44QbUk6tTyw6z/abpXmF7EfgvCzyG+NsAnFZSBp+UqK2Ek
-         u5Jg==
-X-Gm-Message-State: APjAAAUYBM/J3c4oP59ZRNjg6ZxpwumYuoxa8VAdcn0Tm72u8cCN035e
-        x4RkqCdmxk05cIbtSUxIjLu4eIAg6kdWJQ==
-X-Google-Smtp-Source: APXvYqxWwyHE26+gIZ6KDkIhQyxHlYbL+uzCyQoyyQJfAwtrmSEclwpUZMYL5i0Fk1zQmn1woWXR1A==
-X-Received: by 2002:a92:9fdb:: with SMTP id z88mr16669276ilk.38.1570195962479;
-        Fri, 04 Oct 2019 06:32:42 -0700 (PDT)
-Received: from [192.168.1.50] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o17sm2382146ils.46.2019.10.04.06.32.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2019 06:32:41 -0700 (PDT)
-Subject: Re: System hangs if NVMe/SSD is removed during suspend
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Tejun Heo <tj@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        AceLan Kao <acelan.kao@canonical.com>, Jan Kara <jack@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20191002122136.GD2819@lahna.fi.intel.com>
- <20191003165033.GC3247445@devbig004.ftw2.facebook.com>
- <20191004080340.GB2819@lahna.fi.intel.com> <2367934.HCQFgJ56tP@kreacher>
- <20191004110151.GH2819@lahna.fi.intel.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <99b3ffb8-4205-9795-a48a-09125f5fceec@kernel.dk>
-Date:   Fri, 4 Oct 2019 07:32:40 -0600
+        Fri, 4 Oct 2019 09:33:31 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x94DXHsZ011535;
+        Fri, 4 Oct 2019 08:33:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570195997;
+        bh=ICdFi7+va2YgW8u1kII9BM7D1dGZnBwB8N4tj2oyY6U=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=xm/cy/ZDQpxKlKJ+HJJJn6+nRj73V0KAzK9nRnc0pENSQCLduGunQFABQaxTHDLQ5
+         JT0h7F76kq0dqVtFEUOaAn6n/gFylvUXKmrEV2mFDC1s2RsMcb2nyJFz9JE0DZ+Kpq
+         MiFZCdf1n0DNgc0LfeHX1pmv3lY45z+x6k1YN1gI=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x94DXHfK086791
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 4 Oct 2019 08:33:17 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 4 Oct
+ 2019 08:33:15 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 4 Oct 2019 08:33:15 -0500
+Received: from [10.250.99.146] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x94DXDQw076936;
+        Fri, 4 Oct 2019 08:33:14 -0500
+Subject: Re: Should regulator core support parsing OF based fwnode?
+To:     Mark Brown <broonie@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+CC:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        <pavel@ucw.cz>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ti.com>, <dmurphy@ti.com>,
+        <linux-leds@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+References: <20191003082812.28491-1-jjhiblot@ti.com>
+ <20191003082812.28491-3-jjhiblot@ti.com>
+ <20191003104228.c5nho6eimwzqwxpt@earth.universe>
+ <acd11fe1-1d51-eda5-f807-c16319514c3a@ti.com>
+ <62591735-9082-1fd7-d791-07929ddaa223@gmail.com>
+ <20191003183554.GA37096@sirena.co.uk>
+ <25b9614f-d6be-9da5-0fe5-eb58c8c93850@gmail.com>
+ <20191003194140.GE6090@sirena.co.uk>
+ <a9f668f9-ad26-4e18-178a-8403b8b3b1db@gmail.com>
+ <20191004113942.GB4866@sirena.co.uk>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <b6318ba5-e76e-dc1c-6921-a702abf6749c@ti.com>
+Date:   Fri, 4 Oct 2019 15:33:13 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191004110151.GH2819@lahna.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20191004113942.GB4866@sirena.co.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/4/19 5:01 AM, Mika Westerberg wrote:
-> On Fri, Oct 04, 2019 at 11:59:26AM +0200, Rafael J. Wysocki wrote:
->> On Friday, October 4, 2019 10:03:40 AM CEST Mika Westerberg wrote:
->>> On Thu, Oct 03, 2019 at 09:50:33AM -0700, Tejun Heo wrote:
->>>> Hello, Mika.
->>>>
->>>> On Wed, Oct 02, 2019 at 03:21:36PM +0300, Mika Westerberg wrote:
->>>>> but from that discussion I don't see more generic solution to be
->>>>> implemented.
->>>>>
->>>>> Any ideas we should fix this properly?
->>>>
->>>> Yeah, the only fix I can think of is not using freezable wq.  It's
->>>> just not a good idea and not all that difficult to avoid using.
->>>
->>> OK, thanks.
->>>
->>> In that case I will just make a patch that removes WQ_FREEZABLE from
->>> bdi_wq and see what people think about it :)
->>
->> I guess that depends on why WQ_FREEZABLE was added to it in the first place. :-)
->>
->> The reason might be to avoid writes to persistent storage after creating an
->> image during hibernation, since wqs remain frozen throughout the entire
->> hibernation including the image saving phase.
-> 
-> Good point.
-> 
->> Arguably, making the wq freezable is kind of a sledgehammer approach to that
->> particular issue, but in principle it may prevent data corruption from
->> occurring, so be careful there.
-> 
-> I tried to find the commit that introduced the "freezing" and I think it
-> is this one:
-> 
->    03ba3782e8dc writeback: switch to per-bdi threads for flushing data
-> 
-> Unfortunately from that commit it is not clear (at least to me) why it
-> calls set_freezable() for the bdi task. It does not look like it has
-> anything to do with blocking writes to storage while entering
-> hibernation but I may be mistaken.
 
-Wow, a decade ago...
+On 04/10/2019 13:39, Mark Brown wrote:
+> On Thu, Oct 03, 2019 at 10:27:26PM +0200, Jacek Anaszewski wrote:
+>> On 10/3/19 9:41 PM, Mark Brown wrote:
+>>> Why would we want to do that?  We'd continue to support only DT systems,
+>>> just with code that's less obviously DT only and would need to put
+>>> checks in.  I'm not seeing an upside here.
+>> For instance few weeks ago we had a patch [0] in the LED core switching
+>> from using struct device's of_node property to fwnode for conveying
+>> device property data. And this transition to fwnode property API can be
+>> observed as a frequent pattern across subsystems.
+> For most subsystems the intent is to reuse DT bindings on embedded ACPI
+> systems via _DSD.
+>
+>> Recently there is an ongoing effort aiming to add generic support for
+>> handling regulators in the LED core [1], but it turns out to require
+>> bringing back initialization of of_node property for
+>> devm_regulator_get_optional() to work properly.
+> Consumers should just be able to request a regulator without having to
+> worry about how that's being provided - they should have no knowledge at
+> all of firmware bindings or platform data for defining this.  If they
+> do that suggests there's an abstraction issue somewhere, what makes you
+> think that doing something with of_node is required?
 
-Honestly, I don't recall why these were marked freezable, and as I wrote
-in the other reply, I don't think there's a good reason for that to be
-the case.
+The regulator core accesses consumer->of_node to get a phandle to a 
+regulator's node. The trouble arises from the fact that the LED core 
+does not populate of_node anymore, instead it populates fwnode. This 
+allows the LED core to be agnostic of ACPI or OF to get the properties 
+of a LED.
 
--- 
-Jens Axboe
+IMO it is better to populate both of_node and fwnode in the LED core at 
+the moment. It has already been fixed this way for the platform driver 
+[0], MTD [1] and PCI-OF [2].
+
+>
+> Further, unless you have LEDs that work without power you probably
+> shouldn't be using _get_optional() for their supply.  That interface is
+> intended only for supplies that may be physically absent.
+
+Not all LEDs have a regulator to provide the power. The power can be 
+supplied by the LED controller for example.
+
+
+[0] f94277af03ead0d3bf2 of/platform: Initialise dev->fwnode appropriately
+
+[1] c176c6d7e932662668 mfd: core: Set fwnode for created devices
+
+[2] 9b099a6c75e4ddceea PCI: OF: Initialize dev->fwnode appropriately
 
