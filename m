@@ -2,88 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D29CDCBA77
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B45E6CBA83
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387439AbfJDMcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:32:07 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:48532 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727813AbfJDMcH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:32:07 -0400
-Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id B2FD82E14F4;
-        Fri,  4 Oct 2019 15:32:03 +0300 (MSK)
-Received: from sas2-62907d92d1d8.qloud-c.yandex.net (sas2-62907d92d1d8.qloud-c.yandex.net [2a02:6b8:c08:b895:0:640:6290:7d92])
-        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id TxAVv5XQSr-W3VuDMEm;
-        Fri, 04 Oct 2019 15:32:03 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1570192323; bh=+i0jOrrLfQPrDUuheuo6YLNQK4D8UGbkmlbpUExrIVo=;
-        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
-        b=ikR5ETkxTe3SdJiX6aDCiOHtJs6PiHkBJcT7YQGhGZZGinlfS+v3drAb6EnMCdjjR
-         aTuZo3S//Yy+rv+RCEE2p/bnwcRBukXtueRV/EJcHS64g4PzjlU/3+ewksOGCi+57x
-         LBjFnNp/uMpQTKd7dYdpAncztx9m6NdSQNIdXEJA=
-Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:3d4d:a9cb:ef29:4bb1])
-        by sas2-62907d92d1d8.qloud-c.yandex.net (nwsmtp/Yandex) with ESMTPSA id d4v5Xzfe5F-W2IqedPq;
-        Fri, 04 Oct 2019 15:32:03 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: [PATCH] mm/swap: piggyback lru_add_drain_all() calls
-To:     Michal Hocko <mhocko@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <157018386639.6110.3058050375244904201.stgit@buzz>
- <20191004121017.GG32665@bombadil.infradead.org>
- <20191004122727.GA10845@dhcp22.suse.cz>
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <257f6172-971b-e0bd-0a74-30a0d143d6f9@yandex-team.ru>
-Date:   Fri, 4 Oct 2019 15:32:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731010AbfJDMdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:33:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57964 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726024AbfJDMdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 08:33:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 78C55B052;
+        Fri,  4 Oct 2019 12:33:50 +0000 (UTC)
+Date:   Fri, 4 Oct 2019 14:33:49 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Qian Cai <cai@lca.pw>, Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-mm@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: [PATCH] Make SPLIT_RSS_COUNTING configurable
+Message-ID: <20191004123349.GB10845@dhcp22.suse.cz>
+References: <CAKOZuesMoBj-APjCipJmWcAgSzkbD1mvyOp0UvHLnkwR-EU4Ww@mail.gmail.com>
+ <1C584B5C-E04E-4B04-A3B5-4DC8E5E67366@lca.pw>
+ <CAKOZuesKY_=qkSXfmDO_1ALaqQtU0kz5Z+fBh05c8BR7oCDxKw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191004122727.GA10845@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKOZuesKY_=qkSXfmDO_1ALaqQtU0kz5Z+fBh05c8BR7oCDxKw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 04/10/2019 15.27, Michal Hocko wrote:
-> On Fri 04-10-19 05:10:17, Matthew Wilcox wrote:
->> On Fri, Oct 04, 2019 at 01:11:06PM +0300, Konstantin Khlebnikov wrote:
->>> This is very slow operation. There is no reason to do it again if somebody
->>> else already drained all per-cpu vectors after we waited for lock.
->>> +	seq = raw_read_seqcount_latch(&seqcount);
->>> +
->>>   	mutex_lock(&lock);
->>> +
->>> +	/* Piggyback on drain done by somebody else. */
->>> +	if (__read_seqcount_retry(&seqcount, seq))
->>> +		goto done;
->>> +
->>> +	raw_write_seqcount_latch(&seqcount);
->>> +
->>
->> Do we really need the seqcount to do this?  Wouldn't a mutex_trylock()
->> have the same effect?
+On Wed 02-10-19 19:08:16, Daniel Colascione wrote:
+> On Wed, Oct 2, 2019 at 6:56 PM Qian Cai <cai@lca.pw> wrote:
+> > > On Oct 2, 2019, at 4:29 PM, Daniel Colascione <dancol@google.com> wrote:
+> > >
+> > > Adding the correct linux-mm address.
+> > >
+> > >
+> > >> +config SPLIT_RSS_COUNTING
+> > >> +       bool "Per-thread mm counter caching"
+> > >> +       depends on MMU
+> > >> +       default y if NR_CPUS >= SPLIT_PTLOCK_CPUS
+> > >> +       help
+> > >> +         Cache mm counter updates in thread structures and
+> > >> +         flush them to visible per-process statistics in batches.
+> > >> +         Say Y here to slightly reduce cache contention in processes
+> > >> +         with many threads at the expense of decreasing the accuracy
+> > >> +         of memory statistics in /proc.
+> > >> +
+> > >> endmenu
+> >
+> > All those vague words are going to make developers almost impossible to decide the right selection here. It sounds like we should kill SPLIT_RSS_COUNTING at all to simplify the code as the benefit is so small vs the side-effect?
 > 
-> Yeah, this makes sense. From correctness point of view it should be ok
-> because no caller can expect that per-cpu pvecs are empty on return.
-> This might have some runtime effects that some paths might retry more -
-> e.g. offlining path drains pcp pvces before migrating the range away, if
-> there are pages still waiting for a worker to drain them then the
-> migration would fail and we would retry. But this not a correctness
-> issue.
-> 
+> Killing SPLIT_RSS_COUNTING would be my first choice; IME, on mobile
+> and a basic desktop, it doesn't make a difference. I figured making it
+> a knob would help allay concerns about the performance impact in more
+> extreme configurations.
 
-Caller might expect that pages added by him before are drained.
-Exiting after mutex_trylock() will not guarantee that.
+I do agree with Qian. Either it is really helpful (is it? probably on
+the number of cpus) and it should be auto-enabled or it should be
+dropped altogether. You cannot really expect people know how to enable
+this without a deep understanding of the MM internals. Not to mention
+all those users using distro kernels/configs.
 
-For example POSIX_FADV_DONTNEED uses that.
+A config option sounds like a bad way forward.
+
+-- 
+Michal Hocko
+SUSE Labs
