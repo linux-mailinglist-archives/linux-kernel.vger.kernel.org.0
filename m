@@ -2,127 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F38CBB96
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BA09CBB9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:24:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388473AbfJDNW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:22:29 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:38245 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387952AbfJDNW2 (ORCPT
+        id S2388501AbfJDNYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:24:13 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45643 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387952AbfJDNYN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:22:28 -0400
-Received: by mail-io1-f65.google.com with SMTP id u8so13465900iom.5
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 06:22:28 -0700 (PDT)
+        Fri, 4 Oct 2019 09:24:13 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h33so5781426edh.12
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 06:24:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LEJ9dg5xbbVV3C3q2sRRPp0B1uzrgFWed1hhJkYm69Y=;
-        b=vUmqqKfe0iMgqQT1tBxf5L1Tzjr/8LsPzYoTRi5HnnZQi6OPLN+MSrqfkvxFB+KJ8g
-         J9TSTshM2pCNFHqUrXr7VWcEaqbB0zClY5hRVcYS7c2VS3XzldzVcvDZUD/4jUzEglN1
-         L3MxWuOxvJNCHRVQv2ut5Dp0i++aZiOmqPOxf6g80n4QyQWCc9NDVP195xFSbZmFsSw5
-         qSC6svrQG+aRjdCg3/AzDyeO2ufS+lVeOTC8evuIySD7T9s0N44Vh8tGGxGKbex5JbSN
-         xA3mBb26Yj7FdvVCNxGaldGhi0xovY9K+VXUkqFx9sFpxVxMOY6Fln1oLJIdiGCqg6vZ
-         VCmQ==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=kC0wou+Dasn/pd1LnI7XBoVoqfoHQBaDPYzRoYPpQxM=;
+        b=BhRNITA6NTYE/ZXWEXJV/K+t8yiBZHujBRRNrxtrKVoLvxG54Jju2AsHqVYpqDl66d
+         5IMDajpyyDGlD1YO/U95nfJpF/4jV+Ey/euGrG9fR4Vk+3uapwprtymiREEa63kwohhe
+         D1rZimm8b/8e6awZyPZF/1P/LA0YNNQpN5Gqk/jETdi4WgQLWW9APZebz2nHsa7BCAjL
+         cZN8pVP9ytNzsSIahA8CFyrSkwC+kVaDr0yse/8rmb067xI5ZrfvAa5amu+X46qpFX/j
+         EEi+/nd4y5bteKQEFeBrZE4ICHV47H9nKFxONMVwcYUHZeLB3fGBn033B2WTLzGgttCA
+         ugkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LEJ9dg5xbbVV3C3q2sRRPp0B1uzrgFWed1hhJkYm69Y=;
-        b=YukR7eWFGlOMwXQySr/I6fCX/kkv7jr5zGCj2sRmKa9P8HmdiVAlk6Cm/kiDX0T2KR
-         mWfoLSZ12TXSu+kBgK0hVs/ZZ+yxFABKewuQXMsniSfS82/jsXi9Kxi5nkRjRDq4jPFZ
-         wHW7oQZbbjtK8R9Yw2Io/SpglMSb5mMa3JV3v5MLUv4fKL1qeZKcLuVCmcgZEMv1ayog
-         CE9eRTRnYYS3iKsDSLY8RflRWkzSQ7y8XQw6h4Rp80Dm/YK0wr4bkrWEbTOAhjADf/ab
-         h+Ov8AZTEA6L/1fb6c4j7krhBw0CpvfK8ayK7t8nVRKmMPNDSsGDrJV0wcC60riMAelT
-         3MQw==
-X-Gm-Message-State: APjAAAVDulIc6224tRHykr5tLm9vTuvGa+Mg9jgxWwKdkOyovoD8zi9e
-        TKPrdH/hFh5w0DuZ0LRdd2P85Q==
-X-Google-Smtp-Source: APXvYqwQrXsm+JA/LtxH6GpCLZs4bFRPqRu7If4SldN0S4B5xsUwRTuxEufarPrQTL32YciKOaVH/Q==
-X-Received: by 2002:a02:7f49:: with SMTP id r70mr14623123jac.85.1570195347722;
-        Fri, 04 Oct 2019 06:22:27 -0700 (PDT)
-Received: from [192.168.1.50] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c65sm3169547ilg.26.2019.10.04.06.22.26
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=kC0wou+Dasn/pd1LnI7XBoVoqfoHQBaDPYzRoYPpQxM=;
+        b=U0emoTUiWs5c2rAFqVr+L5JuewThMAD5mMCfcqiPl2pGFfN57Qh3pUxI/DZppsciNK
+         ladcFaPKF2TSrQcROFkgn3CD19jovP8qFZjtMkuk2oTtm+unarO8iDz09PtLvLeug2Hi
+         L20+ByAvHrQEfc3cv6kxZU461Ju66nLyD6zRXD/17Ar5p/35sA5ktnk4y2eh5TQJqDyw
+         AJrp4kCStI3DAB8aM8qCJbkpE6gke/HhIX9llQayzb0CAedgXXMJC+iyx5BkLC4QCuXt
+         XUMPdWqVszOlKq2F0vkeSwqV8u/ow5qvZrzwQUx+SX4fxRNN9TugtqZnh2IwIveq7d+V
+         sVAg==
+X-Gm-Message-State: APjAAAXKOSfosnT81+y57WZOzXgqbauldSGiVrG8qAfx4oLxZyBpXlJD
+        B3mPwTfzlQSk8CBviOTHfyXCkg==
+X-Google-Smtp-Source: APXvYqwKMovkTP9ls7BP16QYMpDJXtQ1KEBlJSMu1r2z/XB6HGs81c1HF+I/xgQ/Y7dvK5Ygt7OdXQ==
+X-Received: by 2002:a50:9402:: with SMTP id p2mr15211536eda.111.1570195448996;
+        Fri, 04 Oct 2019 06:24:08 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id ha2sm601859ejb.63.2019.10.04.06.24.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2019 06:22:26 -0700 (PDT)
-Subject: Re: [PATCH 1/2] bdi: Do not use freezable workqueue
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-Cc:     Pavel Machek <pavel@ucw.cz>, Jan Kara <jack@suse.cz>,
-        Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20191004100025.70798-1-mika.westerberg@linux.intel.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0002b2f3-d17c-0d49-52f4-b2ce31832e6c@kernel.dk>
-Date:   Fri, 4 Oct 2019 07:22:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 04 Oct 2019 06:24:08 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 4C3FE102143; Fri,  4 Oct 2019 16:24:07 +0300 (+03)
+Date:   Fri, 4 Oct 2019 16:24:07 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>, Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
+Subject: Re: [PATCH v3 2/7] mm: Add a walk_page_mapping() function to the
+ pagewalk code
+Message-ID: <20191004132407.gzttci7lio6be467@box>
+References: <20191002134730.40985-1-thomas_os@shipmail.org>
+ <20191002134730.40985-3-thomas_os@shipmail.org>
+ <20191003111708.sttkkrhiidleivc6@box>
+ <d336497b-3716-0748-d838-378902399439@shipmail.org>
+ <20191004123732.xpr3vroee5mhg2zt@box.shutemov.name>
+ <8ef9fff3-df8d-cc14-35f9-d83db62e874f@shipmail.org>
 MIME-Version: 1.0
-In-Reply-To: <20191004100025.70798-1-mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8ef9fff3-df8d-cc14-35f9-d83db62e874f@shipmail.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/4/19 4:00 AM, Mika Westerberg wrote:
-> A removable block device, such as NVMe or SSD connected over Thunderbolt
-> can be hot-removed any time including when the system is suspended. When
-> device is hot-removed during suspend and the system gets resumed, kernel
-> first resumes devices and then thaws the userspace including freezable
-> workqueues. What happens in that case is that the NVMe driver notices
-> that the device is unplugged and removes it from the system. This ends
-> up calling bdi_unregister() for the gendisk which then schedules
-> wb_workfn() to be run one more time.
+On Fri, Oct 04, 2019 at 02:58:59PM +0200, Thomas Hellström (VMware) wrote:
+> On 10/4/19 2:37 PM, Kirill A. Shutemov wrote:
+> > On Thu, Oct 03, 2019 at 01:32:45PM +0200, Thomas Hellström (VMware) wrote:
+> > > > > + *   If @mapping allows faulting of huge pmds and puds, it is desirable
+> > > > > + *   that its huge_fault() handler blocks while this function is running on
+> > > > > + *   @mapping. Otherwise a race may occur where the huge entry is split when
+> > > > > + *   it was intended to be handled in a huge entry callback. This requires an
+> > > > > + *   external lock, for example that @mapping->i_mmap_rwsem is held in
+> > > > > + *   write mode in the huge_fault() handlers.
+> > > > Em. No. We have ptl for this. It's the only lock required (plus mmap_sem
+> > > > on read) to split PMD entry into PTE table. And it can happen not only
+> > > > from fault path.
+> > > > 
+> > > > If you care about splitting compound page under you, take a pin or lock a
+> > > > page. It will block split_huge_page().
+> > > > 
+> > > > Suggestion to block fault path is not viable (and it will not happen
+> > > > magically just because of this comment).
+> > > > 
+> > > I was specifically thinking of this:
+> > > 
+> > > https://elixir.bootlin.com/linux/latest/source/mm/pagewalk.c#L103
+> > > 
+> > > If a huge pud is concurrently faulted in here, it will immediatly get split
+> > > without getting processed in pud_entry(). An external lock would protect
+> > > against that, but that's perhaps a bug in the pagewalk code?  For pmds the
+> > > situation is not the same since when pte_entry is used, all pmds will
+> > > unconditionally get split.
+> > I *think* it should be fixed with something like this (there's no
+> > pud_trans_unstable() yet):
+> > 
+> > diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+> > index d48c2a986ea3..221a3b945f42 100644
+> > --- a/mm/pagewalk.c
+> > +++ b/mm/pagewalk.c
+> > @@ -102,10 +102,11 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
+> >   					break;
+> >   				continue;
+> >   			}
+> > +		} else {
+> > +			split_huge_pud(walk->vma, pud, addr);
+> >   		}
+> > -		split_huge_pud(walk->vma, pud, addr);
+> > -		if (pud_none(*pud))
+> > +		if (pud_none(*pud) || pud_trans_unstable(*pud))
+> >   			goto again;
+> >   		if (ops->pmd_entry || ops->pte_entry)
 > 
-> However, since the bdi_wq is still frozen flush_delayed_work() call in
-> wb_shutdown() blocks forever halting system resume process. User sees
-> this as hang as nothing is happening anymore.
+> Yes, this seems better. I was looking at implementing a pud_trans_unstable()
+> as a basis of fixing problems like this, but when I looked at
+> pmd_trans_unstable I got a bit confused:
 > 
-> Triggering sysrq-w reveals this:
-> 
->    Workqueue: nvme-wq nvme_remove_dead_ctrl_work [nvme]
->    Call Trace:
->     ? __schedule+0x2c5/0x630
->     ? wait_for_completion+0xa4/0x120
->     schedule+0x3e/0xc0
->     schedule_timeout+0x1c9/0x320
->     ? resched_curr+0x1f/0xd0
->     ? wait_for_completion+0xa4/0x120
->     wait_for_completion+0xc3/0x120
->     ? wake_up_q+0x60/0x60
->     __flush_work+0x131/0x1e0
->     ? flush_workqueue_prep_pwqs+0x130/0x130
->     bdi_unregister+0xb9/0x130
->     del_gendisk+0x2d2/0x2e0
->     nvme_ns_remove+0xed/0x110 [nvme_core]
->     nvme_remove_namespaces+0x96/0xd0 [nvme_core]
->     nvme_remove+0x5b/0x160 [nvme]
->     pci_device_remove+0x36/0x90
->     device_release_driver_internal+0xdf/0x1c0
->     nvme_remove_dead_ctrl_work+0x14/0x30 [nvme]
->     process_one_work+0x1c2/0x3f0
->     worker_thread+0x48/0x3e0
->     kthread+0x100/0x140
->     ? current_work+0x30/0x30
->     ? kthread_park+0x80/0x80
->     ret_from_fork+0x35/0x40
-> 
-> This is not limited to NVMes so exactly same issue can be reproduced by
-> hot-removing SSD (over Thunderbolt) while the system is suspended.
-> 
-> Prevent this from happening by removing WQ_FREEZABLE from bdi_wq.
+> Why are devmap huge pmds considered stable? I mean, couldn't anybody just
+> run madvise() to clear those just like transhuge pmds?
 
-This series looks good for me, I don't think there's a reason for
-the workers to be marked freezable.
+Matthew, Dan, could you comment on this?
+
+> > Or better yet converted to what we do on pmd level.
+> > 
+> > Honestly, all the code around PUD THP missing a lot of ground work.
+> > Rushing it upstream for DAX was not a right move.
+> > 
+> > > There's a similar more scary race in
+> > > 
+> > > https://elixir.bootlin.com/linux/latest/source/mm/memory.c#L3931
+> > > 
+> > > It looks like if a concurrent thread faults in a huge pud just after the
+> > > test for pud_none in that pmd_alloc, things might go pretty bad.
+> > Hm? It will fail the next pmd_none() check under ptl. Do you have a
+> > particular racing scenarion?
+> > 
+> Yes, I misinterpreted the code somewhat, but here's the scenario that looks
+> racy:
+> 
+> Thread 1		Thread 2
+> huge_fault(pud)					- Fell back, for example because of write fault on dirty-tracking.
+> 			huge_fault(pud)         - Taken, read fault.
+> pmd_alloc()                                     - Will fail pmd_none check and return a pmd_offset()
+
+I see. It also misses pud_tans_unstable() check or its variant.
 
 -- 
-Jens Axboe
-
+ Kirill A. Shutemov
