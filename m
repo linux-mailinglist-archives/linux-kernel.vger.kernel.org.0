@@ -2,121 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14518CBC15
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E48CBC13
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388753AbfJDNp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:45:59 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:36890 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388333AbfJDNp7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:45:59 -0400
-Received: by mail-ua1-f65.google.com with SMTP id w7so2051781uag.4
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 06:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OtRvtwjGRbYCsw+7d1bhF8H4AB/aClk4LmqQQW6q0qg=;
-        b=ICXJkKqzB33AhHPs+SiVfyxcEzmKVXy/oHoYiHTsT120L3kRkyQFSb5X8KQV4+yb9i
-         cTMIASlltOZMk1DOLYLMhmFT1Y81FHsJU57dUaqp65zbBPq9kN90iVEceym588zPTeFz
-         kH398/qc9hF6jakYBk1NMR9R41MuGwH3DXZSZoPEfD6Q3zIHel7h1/jVfspcOEicjLOQ
-         eVNzFiVHxCMhgtMfXUGG02QAvOoRqyF6ySkmuRkUJx3dg+Fx9yjGKXytgL6QlQ2w1oHI
-         KC8NoZ9xpiZs9ftgI/nKG5W4gbbTPhmEtU9bjGhg/aTtan+xypipZkGcnCKQFUCeyG0z
-         9C0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OtRvtwjGRbYCsw+7d1bhF8H4AB/aClk4LmqQQW6q0qg=;
-        b=ImubemK8LWIaGjSNLl9HbxKqHzBRERqxKWFdEuZYBf5RgsQlmzeiCdsaXBQRQzUym8
-         bflyD/gGQEJ4/sy6gXbE1gL9/E0sDAmvFqF7GRviwywlY7In4AGCpTyC9iwrBtOm1mLS
-         iyhXajtITPH5hzKo/5Ly0JAOsLZdnIZySrikVN23BJZm0dbigyhzMyaRvdY10UXunfH+
-         57q0qzh1XQNMd+YsUIjSB2GqaRDBg5Pu4zm6eB4Elgwvzkb7RZdP979lKMsyTJjZRiai
-         QoRaHNgc+l5K4B7OwdzvQv3FEIw8OwU+awTC+0XewBPbN5BB20QRAY3RiZ5+ZkYRXpDA
-         M6fA==
-X-Gm-Message-State: APjAAAVcoLJscKAdet5McYw8BGsoULHKcZ/dvy2DK94RixMdcuKEyw1M
-        lo6lv1rtkSor52MoBud7V5/t6O9rGZPZu0do7n5aai8r5FA=
-X-Google-Smtp-Source: APXvYqxjF0CoPuCnxZytdFRri2vGndk6w36js/uFi10vdA/1zStGf7BrhD+CZCaBm8roV77/jNgn97xelmBnOweWlBQ=
-X-Received: by 2002:ab0:14c4:: with SMTP id f4mr7966949uae.46.1570196758080;
- Fri, 04 Oct 2019 06:45:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAKOZuesMoBj-APjCipJmWcAgSzkbD1mvyOp0UvHLnkwR-EU4Ww@mail.gmail.com>
- <1C584B5C-E04E-4B04-A3B5-4DC8E5E67366@lca.pw> <CAKOZuesKY_=qkSXfmDO_1ALaqQtU0kz5Z+fBh05c8BR7oCDxKw@mail.gmail.com>
- <20191004123349.GB10845@dhcp22.suse.cz> <20191004132624.ctaodxaxsd7wzwlh@box>
-In-Reply-To: <20191004132624.ctaodxaxsd7wzwlh@box>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 4 Oct 2019 06:45:21 -0700
-Message-ID: <CAKOZuesqgEBSNvpsdw1QhVvYBNBUjAL0pu1x_b-C5q22Z7BZ4g@mail.gmail.com>
-Subject: Re: [PATCH] Make SPLIT_RSS_COUNTING configurable
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Michal Hocko <mhocko@kernel.org>, Qian Cai <cai@lca.pw>,
-        Tim Murray <timmurray@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2388658AbfJDNpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:45:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388333AbfJDNpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 09:45:46 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6836720700;
+        Fri,  4 Oct 2019 13:45:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570196745;
+        bh=GcDR2QA5gwcel8zVmm7/+Rqsxv092y7YDdz9PoR1mZs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OJKxCoicMmFUSFKqHEg13ZNV3AOaWmeUaKcZHrF9x/LTwUwieaUuPqZNaC3NTTGFp
+         5LODGEeN9VZkdkALRCxhAWnN5VrwyYTvZ6Yq/ubGNA0MRmIlMiP5hxOlXYeE6k8Hsa
+         QnRDVu2Rn9vbbewkY6KZsbLRh6Z71YpWVHQGQ8qQ=
+Date:   Fri, 4 Oct 2019 22:45:40 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH 1/3] x86/alternatives: Teach text_poke_bp() to emulate
+ instructions
+Message-Id: <20191004224540.766dc0fd824bcd5b8baa2f4c@kernel.org>
+In-Reply-To: <20191003110106.GI4581@hirez.programming.kicks-ass.net>
+References: <20190827180622.159326993@infradead.org>
+        <20190827181147.053490768@infradead.org>
+        <20191003140050.1d4cf59d3de8b5396d36c269@kernel.org>
+        <20191003082751.GQ4536@hirez.programming.kicks-ass.net>
+        <20191003110106.GI4581@hirez.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 6:26 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> On Fri, Oct 04, 2019 at 02:33:49PM +0200, Michal Hocko wrote:
-> > On Wed 02-10-19 19:08:16, Daniel Colascione wrote:
-> > > On Wed, Oct 2, 2019 at 6:56 PM Qian Cai <cai@lca.pw> wrote:
-> > > > > On Oct 2, 2019, at 4:29 PM, Daniel Colascione <dancol@google.com> wrote:
-> > > > >
-> > > > > Adding the correct linux-mm address.
-> > > > >
-> > > > >
-> > > > >> +config SPLIT_RSS_COUNTING
-> > > > >> +       bool "Per-thread mm counter caching"
-> > > > >> +       depends on MMU
-> > > > >> +       default y if NR_CPUS >= SPLIT_PTLOCK_CPUS
-> > > > >> +       help
-> > > > >> +         Cache mm counter updates in thread structures and
-> > > > >> +         flush them to visible per-process statistics in batches.
-> > > > >> +         Say Y here to slightly reduce cache contention in processes
-> > > > >> +         with many threads at the expense of decreasing the accuracy
-> > > > >> +         of memory statistics in /proc.
-> > > > >> +
-> > > > >> endmenu
-> > > >
-> > > > All those vague words are going to make developers almost impossible to decide the right selection here. It sounds like we should kill SPLIT_RSS_COUNTING at all to simplify the code as the benefit is so small vs the side-effect?
-> > >
-> > > Killing SPLIT_RSS_COUNTING would be my first choice; IME, on mobile
-> > > and a basic desktop, it doesn't make a difference. I figured making it
-> > > a knob would help allay concerns about the performance impact in more
-> > > extreme configurations.
-> >
-> > I do agree with Qian. Either it is really helpful (is it? probably on
-> > the number of cpus) and it should be auto-enabled or it should be
-> > dropped altogether. You cannot really expect people know how to enable
-> > this without a deep understanding of the MM internals. Not to mention
-> > all those users using distro kernels/configs.
-> >
-> > A config option sounds like a bad way forward.
->
-> And I don't see much point anyway. Reading RSS counters from proc is
-> inherently racy. It can just either way after the read due to process
-> behaviour.
+Hi Peter,
 
-Split RSS accounting doesn't make reading from mm counters racy. It
-makes these counters *wrong*. We flush task mm counters to the
-mm_struct once every 64 page faults that a task incurs or when that
-task exits. That means that if a thread takes 63 page faults and then
-sleeps for a week, that thread's process's mm counters are wrong by 63
-pages *for a week*. And some processes have a lot of threads,
-compounding the error. Split RSS accounting means that memory usage
-numbers don't add up. I don't think it's unreasonable to want a mode
-where memory counters to agree with other indicators of system
-activity.
+On Thu, 3 Oct 2019 13:01:06 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Nobody has demonstrated that split RSS accounting actually helps in
-the real world. But I've described above, concretely, how split RSS
-accounting hurts. I've been trying for over a year to either disable
-split RSS accounting or to let people opt out of it. If you won't
-remove split RSS accounting and you won't let me add a configuration
-knob that lets people opt out of it, what will you accept?
+> On Thu, Oct 03, 2019 at 10:27:51AM +0200, Peter Zijlstra wrote:
+> > On Thu, Oct 03, 2019 at 02:00:50PM +0900, Masami Hiramatsu wrote:
+> > 
+> > > > This fits almost all text_poke_bp() users, except
+> > > > arch_unoptimize_kprobe() which restores random text, and for that site
+> > > > we have to build an explicit emulate instruction.
+> > > 
+> > > OK, and in this case, I would like to change RELATIVEJUMP_OPCODE
+> > > to JMP32_INSN_OPCODE for readability. (or at least
+> > > making RELATIVEJUMP_OPCODE as an alias of JMP32_INSN_OPCODE)
+> > 
+> > > > @@ -448,12 +447,18 @@ void arch_optimize_kprobes(struct list_h
+> > > >  void arch_unoptimize_kprobe(struct optimized_kprobe *op)
+> > > >  {
+> > > >  	u8 insn_buff[RELATIVEJUMP_SIZE];
+> > > > +	u8 emulate_buff[RELATIVEJUMP_SIZE];
+> > > >  
+> > > >  	/* Set int3 to first byte for kprobes */
+> > > >  	insn_buff[0] = BREAKPOINT_INSTRUCTION;
+> > > >  	memcpy(insn_buff + 1, op->optinsn.copied_insn, RELATIVE_ADDR_SIZE);
+> > > > +
+> > > > +	emulate_buff[0] = RELATIVEJUMP_OPCODE;
+> > > > +	*(s32 *)(&emulate_buff[1]) = (s32)((long)op->optinsn.insn -
+> > > > +			((long)op->kp.addr + RELATIVEJUMP_SIZE));
+> > 
+> > I'm halfway through a patch introducing:
+> > 
+> >   union text_poke_insn {
+> > 	u8 code[POKE_MAX_OPCODE_SUZE];
+> > 	struct {
+> > 		u8 opcode;
+> > 		s32 disp;
+> > 	} __attribute__((packed));
+> >   };
+> > 
+> > to text-patching.h to unify all such custom unions we have all over the
+> > place. I'll mob up the above in that.
+
+I think it is good to unify such unions, but I meant above was, it was
+also important to unify the opcode macro. Since poke_int3_handler()
+clasifies the opcode by your *_INSN_OPCODE macro, it is natual to use
+those opcode for text_poke_bp() interface.
+
+> > > > +
+> > > >  	text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
+> > > > -		     op->optinsn.insn);
+> > > > +		     emulate_buff);
+> > > >  }
+> > 
+> > As argued in a previous thread, text_poke_bp() is broken when it changes
+> > more than a single instruction at a time.
+> > 
+> > Now, ISTR optimized kprobes does something like:
+> > 
+> > 	poke INT3
+> 
+> Hmm, it does this using text_poke(), but lacks a
+> on_each_cpu(do_sync_core, NULL, 1), which I suppose is OK-ish IFF you do
+> that synchronize_rcu_tasks() after it, but less so if you don't.
+> 
+> That is, without either, you can't really tell if the kprobe is in
+> effect or not.
+
+Yes, it doesn't wait the change by design at this moment.
+
+> Also, I think text_poke_bp(INT3) is broken, although I don't think
+> anybody actually does that. Still, let me fix that.
+
+OK.
+
+> 
+> > 	synchronize_rcu_tasks() /* waits for all tasks to schedule
+> > 				   guarantees instructions after INT3
+> > 				   are unused */
+> > 	install optimized probe /* overwrites multiple instrctions with
+> > 				   JMP.d32 */
+> > 
+> > And the above then undoes that by:
+> > 
+> > 	poke INT3 on top of the optimzed probe
+> > 
+> > 	poke tail instructions back /* guaranteed safe because the
+> > 				       above INT3 poke ensures the
+> > 				       JMP.d32 instruction is unused */
+> > 
+> > 	poke head byte back
+
+Yes, anyway, the last poke should recover another INT3... (for kprobe)
+
+> > 
+> > Is this correct? If so, we should probably put a comment in there
+> > explaining how all this is unusual but safe.
+
+OK.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
