@@ -2,75 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 722FFCBA76
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF71CBA78
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730955AbfJDMa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:30:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47596 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730888AbfJDMa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:30:59 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E088307F5E3;
-        Fri,  4 Oct 2019 12:30:59 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-24.rdu2.redhat.com [10.10.123.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 47D847A406;
-        Fri,  4 Oct 2019 12:30:58 +0000 (UTC)
-Subject: Re: [PATCH v2] lib/smp_processor_id: Don't use cpumask_equal()
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Juri Lelli <jlelli@redhat.com>
-References: <20191003203608.21881-1-longman@redhat.com>
- <20191004092048.l2jeutbrffnwfol2@linutronix.de>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <6a57f64c-6145-4191-2e0a-9f90f019b96d@redhat.com>
-Date:   Fri, 4 Oct 2019 08:30:59 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20191004092048.l2jeutbrffnwfol2@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 04 Oct 2019 12:30:59 +0000 (UTC)
+        id S2387484AbfJDMcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:32:14 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38328 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387448AbfJDMcN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 08:32:13 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j31so8282197qta.5
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 05:32:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Hw1We8CfLP0SmMR5o0InXrIroKd+SFzmFpF3ivXp5LM=;
+        b=cAaNojfmryyKfKdO3SRJe1euhDCu8cW2aH/D85tNJwzQ0LfO1GhwSmT9A6tMoDzOwY
+         nz+rEpHh5tD44/XzmXf0SnVKx36KJXQK2nPjoCmjf3pgbTtiSFMlgBVAz/1WTq2UjsGu
+         4YINp2cH8G94VfSWKLocnQFxfFRMlOPyksxowbbvmfNu1fbIWDLGPmwe6DqzA8E4D+O4
+         TbVlO7131CpSQCoIDsLtv3gdwtkjYY/4Ag8+ilq+aVxtRLidvoe66Lq395JJQgERnv2l
+         lTukgnjQqN7nMFX9SADTiXhcZ0EprLeUyE2+RwAQpAe3geQ8ZCywefmNoYRDavVt+fmY
+         ohKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Hw1We8CfLP0SmMR5o0InXrIroKd+SFzmFpF3ivXp5LM=;
+        b=Ek3vgSLof49MFvVkesAkHh4Aqnky8ZCos5sFRxbS0Xl9XwsLZHrfRo3OjjKNlej+1Y
+         7YEct9Ar3hQZoOMCo7oYI3ArxaTBVnrO6RgfeUrIruRG2vX1vLKT4Eh3geEKH93MFV+F
+         vrcGw2SWU6BP20QTbIBdFt87Fl3cfF9jJyr1VnsO02m7y9g76JBLauNQXQ9UNzJmW5aw
+         gMpl9+ypQfs8pN4K59kCcgrWpQTQCptgyWEDWg6+kw0K/CJ5URPo8m0pAwbxKNZiqb1n
+         c94evrTjm9XGF0KgPbVpx2WCkdVMYR/3K5rx6uqdIP34TQvX9uxzfN8M+kXbZoFV+vNg
+         YTbg==
+X-Gm-Message-State: APjAAAWKniH4t+0zh75ezj22Ul2E/sBVk1RglJTWteaHdsFYxF1Bf2av
+        hAc7mzPQwQDjHSGyRUky8UQJXA==
+X-Google-Smtp-Source: APXvYqwbpAN5ELMp+6w5nN6jYaLLbzyMoDeH/vjPeAPPNyULlo3jYy+p9faA2ZMBfWONzOlBN2WXcA==
+X-Received: by 2002:aed:3c27:: with SMTP id t36mr15801812qte.388.1570192332198;
+        Fri, 04 Oct 2019 05:32:12 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id c131sm3352420qke.24.2019.10.04.05.32.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Oct 2019 05:32:11 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     tj@kernel.org, vdavydov.dev@gmail.com, hannes@cmpxchg.org,
+        guro@fb.com, mhocko@suse.com, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] mm/slub: fix a deadlock in show_slab_objects()
+Date:   Fri,  4 Oct 2019 08:31:49 -0400
+Message-Id: <1570192309-10132-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/4/19 5:20 AM, Sebastian Andrzej Siewior wrote:
-> On 2019-10-03 16:36:08 [-0400], Waiman Long wrote:
->> The check_preemption_disabled() function uses cpumask_equal() to see
->> if the task is bounded to the current CPU only. cpumask_equal() calls
->> memcmp() to do the comparison. As x86 doesn't have __HAVE_ARCH_MEMCMP,
->> the slow memcmp() function in lib/string.c is used.
->>
->> On a RT kernel that call check_preemption_disabled() very frequently,
->> below is the perf-record output of a certain microbenchmark:
->>
->>   42.75%  2.45%  testpmd [kernel.kallsyms] [k] check_preemption_disabled
->>   40.01% 39.97%  testpmd [kernel.kallsyms] [k] memcmp
->>
->> We should avoid calling memcmp() in performance critical path. So the
->> cpumask_equal() call is now replaced with an equivalent simpler check.
-> using a simple integer comparison is still more efficient than what
-> __HAVE_ARCH_MEMCMP can offer.
-You are right. My main point is to try to avoid using cpumask_equal() in
-performance critical path irrespective of this patch.
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> Acked-by:  Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->
-> Sebastian
+Long time ago, there fixed a similar deadlock in show_slab_objects()
+[1]. However, it is apparently due to the commits like 01fb58bcba63
+("slab: remove synchronous synchronize_sched() from memcg cache
+deactivation path") and 03afc0e25f7f ("slab: get_online_mems for
+kmem_cache_{create,destroy,shrink}"), this kind of deadlock is back by
+just reading files in /sys/kernel/slab which will generate a lockdep
+splat below.
 
-Cheers,
-Longman
+Since the "mem_hotplug_lock" here is only to obtain a stable online node
+mask while racing with NUMA node hotplug, in the worst case, the results
+may me miscalculated while doing NUMA node hotplug, but they shall be
+corrected by later reads of the same files.
+
+WARNING: possible circular locking dependency detected
+------------------------------------------------------
+cat/5224 is trying to acquire lock:
+ffff900012ac3120 (mem_hotplug_lock.rw_sem){++++}, at:
+show_slab_objects+0x94/0x3a8
+
+but task is already holding lock:
+b8ff009693eee398 (kn->count#45){++++}, at: kernfs_seq_start+0x44/0xf0
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (kn->count#45){++++}:
+       lock_acquire+0x31c/0x360
+       __kernfs_remove+0x290/0x490
+       kernfs_remove+0x30/0x44
+       sysfs_remove_dir+0x70/0x88
+       kobject_del+0x50/0xb0
+       sysfs_slab_unlink+0x2c/0x38
+       shutdown_cache+0xa0/0xf0
+       kmemcg_cache_shutdown_fn+0x1c/0x34
+       kmemcg_workfn+0x44/0x64
+       process_one_work+0x4f4/0x950
+       worker_thread+0x390/0x4bc
+       kthread+0x1cc/0x1e8
+       ret_from_fork+0x10/0x18
+
+-> #1 (slab_mutex){+.+.}:
+       lock_acquire+0x31c/0x360
+       __mutex_lock_common+0x16c/0xf78
+       mutex_lock_nested+0x40/0x50
+       memcg_create_kmem_cache+0x38/0x16c
+       memcg_kmem_cache_create_func+0x3c/0x70
+       process_one_work+0x4f4/0x950
+       worker_thread+0x390/0x4bc
+       kthread+0x1cc/0x1e8
+       ret_from_fork+0x10/0x18
+
+-> #0 (mem_hotplug_lock.rw_sem){++++}:
+       validate_chain+0xd10/0x2bcc
+       __lock_acquire+0x7f4/0xb8c
+       lock_acquire+0x31c/0x360
+       get_online_mems+0x54/0x150
+       show_slab_objects+0x94/0x3a8
+       total_objects_show+0x28/0x34
+       slab_attr_show+0x38/0x54
+       sysfs_kf_seq_show+0x198/0x2d4
+       kernfs_seq_show+0xa4/0xcc
+       seq_read+0x30c/0x8a8
+       kernfs_fop_read+0xa8/0x314
+       __vfs_read+0x88/0x20c
+       vfs_read+0xd8/0x10c
+       ksys_read+0xb0/0x120
+       __arm64_sys_read+0x54/0x88
+       el0_svc_handler+0x170/0x240
+       el0_svc+0x8/0xc
+
+other info that might help us debug this:
+
+Chain exists of:
+  mem_hotplug_lock.rw_sem --> slab_mutex --> kn->count#45
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(kn->count#45);
+                               lock(slab_mutex);
+                               lock(kn->count#45);
+  lock(mem_hotplug_lock.rw_sem);
+
+ *** DEADLOCK ***
+
+3 locks held by cat/5224:
+ #0: 9eff00095b14b2a0 (&p->lock){+.+.}, at: seq_read+0x4c/0x8a8
+ #1: 0eff008997041480 (&of->mutex){+.+.}, at: kernfs_seq_start+0x34/0xf0
+ #2: b8ff009693eee398 (kn->count#45){++++}, at:
+kernfs_seq_start+0x44/0xf0
+
+stack backtrace:
+Call trace:
+ dump_backtrace+0x0/0x248
+ show_stack+0x20/0x2c
+ dump_stack+0xd0/0x140
+ print_circular_bug+0x368/0x380
+ check_noncircular+0x248/0x250
+ validate_chain+0xd10/0x2bcc
+ __lock_acquire+0x7f4/0xb8c
+ lock_acquire+0x31c/0x360
+ get_online_mems+0x54/0x150
+ show_slab_objects+0x94/0x3a8
+ total_objects_show+0x28/0x34
+ slab_attr_show+0x38/0x54
+ sysfs_kf_seq_show+0x198/0x2d4
+ kernfs_seq_show+0xa4/0xcc
+ seq_read+0x30c/0x8a8
+ kernfs_fop_read+0xa8/0x314
+ __vfs_read+0x88/0x20c
+ vfs_read+0xd8/0x10c
+ ksys_read+0xb0/0x120
+ __arm64_sys_read+0x54/0x88
+ el0_svc_handler+0x170/0x240
+ el0_svc+0x8/0xc
+
+[1] http://lkml.iu.edu/hypermail/linux/kernel/1101.0/02850.html
+
+Fixes: 01fb58bcba63 ("slab: remove synchronous synchronize_sched() from memcg cache deactivation path")
+Fixes: 03afc0e25f7f ("slab: get_online_mems for kmem_cache_{create,destroy,shrink}")
+Cc: stable@vger.kernel.org
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+
+v2: fix the comment alignment and improve the changelog.
+
+ mm/slub.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index 42c1b3af3c98..86bfd9d98af5 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4838,7 +4838,13 @@ static ssize_t show_slab_objects(struct kmem_cache *s,
+ 		}
+ 	}
+ 
+-	get_online_mems();
++	/*
++	 * It is impossible to take "mem_hotplug_lock" here with "kernfs_mutex"
++	 * already held which will conflict with an existing lock order:
++	 *
++	 * mem_hotplug_lock->slab_mutex->kernfs_mutex
++	 */
++
+ #ifdef CONFIG_SLUB_DEBUG
+ 	if (flags & SO_ALL) {
+ 		struct kmem_cache_node *n;
+@@ -4879,7 +4885,6 @@ static ssize_t show_slab_objects(struct kmem_cache *s,
+ 			x += sprintf(buf + x, " N%d=%lu",
+ 					node, nodes[node]);
+ #endif
+-	put_online_mems();
+ 	kfree(nodes);
+ 	return x + sprintf(buf + x, "\n");
+ }
+-- 
+1.8.3.1
 
