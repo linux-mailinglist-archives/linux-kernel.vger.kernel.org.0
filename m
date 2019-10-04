@@ -2,90 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D66CC565
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:57:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953F1CC583
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:59:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbfJDV4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 17:56:40 -0400
-Received: from mga09.intel.com ([134.134.136.24]:6002 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731669AbfJDV4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:56:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 14:56:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
-   d="scan'208";a="191710725"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by fmsmga008.fm.intel.com with ESMTP; 04 Oct 2019 14:56:37 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-edac@vger.kernel.org,
-        Borislav Petkov <bp@suse.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 16/16] KVM: VMX: Allow KVM_INTEL when building for Centaur and/or Zhaoxin CPUs
-Date:   Fri,  4 Oct 2019 14:56:15 -0700
-Message-Id: <20191004215615.5479-17-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191004215615.5479-1-sean.j.christopherson@intel.com>
-References: <20191004215615.5479-1-sean.j.christopherson@intel.com>
+        id S1731328AbfJDV64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:58:56 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40379 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731002AbfJDV64 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 17:58:56 -0400
+Received: by mail-lf1-f65.google.com with SMTP id d17so5473647lfa.7
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j453WNsSMfecyCoQY7VzUIyW3gFQh62iMQgb3cot0yo=;
+        b=FCCkoMEVZtJTRMDk1y780eRkneHFdnF4M3fUod6sSrVPv2h4Bswq9TrSTKb8nVuU94
+         yHwzKE807k5FccoAl8T5t1M50cnGwzyUw2IedUw6JSIBak/NvtILQH3CzuWTG0ydrEDD
+         IHSeQdsWuXBkO0Tk5i0ngM2xcI/JFm2E6oQAiQjIVnfjoVT7EdnuaGhrHUzP4gfrNSEf
+         gbu3d9zNlvBE4J2c7XUJOdXXj7TeP4HNIv5agGU7HUgei8nszcLfid709lp1pV6XAFv3
+         +EP+WWBQd1cYmVxTM4u/wavzkaO/qeLYhe724YFhCDPtjGAvI2gHC4XtdrTPRWqc3sSd
+         9bLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j453WNsSMfecyCoQY7VzUIyW3gFQh62iMQgb3cot0yo=;
+        b=IcUOiS9SrFAdQOCD4iHyZrw7fClHM4vPXZXNWM3rE3gIvjmKEmXjXdKfiGHhlDVnQi
+         gzaP3Zz2Qv/OY9sL432dgceiU271H89Z92j7qgPevsKmL1mTkkzYc1BXb0rLNxmzrRrS
+         5wV0a6t06pM+Urj73LddwHrZD3iho6NGxhsoqIZrvGdPyGhIt6xvPGqAIvzSSUhimwlv
+         xjSZLGGiA3CTqzJMocjNszndgYrRHC0N1SABuwKaOGLclsbOar7D9kV8WXRWFsyT4cDJ
+         NfMYtEttAt7eEAikAKBNTkr8PXx551W3CeU27l+pWnbcK03ij6Lw1EpRPEgyBvswJufz
+         Rw2Q==
+X-Gm-Message-State: APjAAAXeN4ryUbhvNFyQ5c+OKW5ekKjEXBOOuRsswD5XiXxhZm9g+d3r
+        CHtJfu6VzLyxFyj4knve9ExgylHnjgWKMzdMpP4UcjQxqsg=
+X-Google-Smtp-Source: APXvYqy3Z3ai5AV08IvVin/TZlw4UG/kdlBlNxOsNMKq/7fVtBn2PEOEbUPCbfoSvLfZseN9UdTg8Hk1wFafNOLhEZg=
+X-Received: by 2002:a19:14f:: with SMTP id 76mr9856396lfb.92.1570226332814;
+ Fri, 04 Oct 2019 14:58:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191002122825.3948322-1-thierry.reding@gmail.com>
+In-Reply-To: <20191002122825.3948322-1-thierry.reding@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 4 Oct 2019 23:58:41 +0200
+Message-ID: <CACRpkdYS+nH5jVixrJbxV4wqPgibp_JS+q=YCVwTMMND6ccwKQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] gpio: max77620: Use correct unit for debounce times
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Timo Alho <talho@nvidia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the dependency for KVM_INTEL, i.e. KVM w/ VMX, from Intel CPUs to
-any CPU that has IA32_FEATURE_CONTROL MSR and thus VMX functionality.
-This effectively allows building KVM_INTEL for Centaur and Zhaoxin CPUs.
+On Wed, Oct 2, 2019 at 2:28 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/Kconfig | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+> From: Thierry Reding <treding@nvidia.com>
+>
+> The gpiod_set_debounce() function takes the debounce time in
+> microseconds. Adjust the switch/case values in the MAX77620 GPIO to use
+> the correct unit.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 840e12583b85..42c7a23c5f28 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -60,13 +60,12 @@ config KVM
- 	  If unsure, say N.
- 
- config KVM_INTEL
--	tristate "KVM for Intel processors support"
-+	tristate "KVM for Intel (and compatible) processors support"
- 	depends on KVM
--	# for perf_guest_get_msrs():
--	depends on CPU_SUP_INTEL
-+	depends on X86_FEATURE_CONTROL_MSR
- 	---help---
--	  Provides support for KVM on Intel processors equipped with the VT
--	  extensions.
-+	  Provides support for KVM on processors equipped with Intel's VT
-+	  extensions, a.k.a. Virtual Machine Extensions (VMX).
- 
- 	  To compile this as a module, choose M here: the module
- 	  will be called kvm-intel.
--- 
-2.22.0
+Patch applied for fixes.
 
+Yours,
+Linus Walleij
