@@ -2,138 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333C4CB638
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF60ACB641
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730827AbfJDIcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 04:32:51 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36888 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730710AbfJDIct (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 04:32:49 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f22so4910312wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 01:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kEN8tPAT2fA9Rfc8gxL4d7nyWjikV+WP3V/1RcMXwQA=;
-        b=oVFmdVVIc11Zlr4x2tuAKbzp/HjGfsCcy3KvaDNrBP3pQyFmahO5cujD6Dgz/X+32V
-         0AfGj9c9G9TKU7Rl18LwQ/fxFmX/eHgsWxH7xZ2s316BEkEiFDm5WY+NptQv+4UU6Xf3
-         fw8BOki+utT0NRmQbzptfCED2+w9XG5eeJTVNKnQFI22ZOgBB5STQIUHEyJQdqwK05uV
-         14XAqphVXRycHew3AAUXuU/sQGkdEOxBEEDAu4BgoN6GhnQZkN3MiGmZEPJwUYNdIZB6
-         ajCsQCjQ5tsUz9iSyLvQSwFtK9KdT/tv1O9HUg+UB+ezyG9LeaD4F5J2ULOKrQFrfs9B
-         JvBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kEN8tPAT2fA9Rfc8gxL4d7nyWjikV+WP3V/1RcMXwQA=;
-        b=INOqQAfJ1rrqs7NYqcWODIgm663nDg6Dd6Aqo4X0NhogoFU9vddufV2GSP++8iRavR
-         SsGpkqnczRaEYFTMQns58srYsqf5pZ+mkjlJzngviDtbpr1yNRjQdA8Y0eX82ry4pZvY
-         7p+o9zm+UI6/aZdPA9AmS5Ceu4mRIHWhgQ4j+9nIqYhFMIdCZmlPC8Q0fQUP4rHbS7eb
-         7rePtLTYDykx2mV4VXH5sawKeBvaKgcU9Rf936mkzfCT/agegdiPAhXskIA68FkVUY3M
-         YXN62U0QPNVbFk783C0OL/+JYgDnMPQEIKEYqBhJqo5jzJHr9wh7zjcU6gwepFtxthvq
-         /yGQ==
-X-Gm-Message-State: APjAAAWrjDNRq0wIxOz8xCF5ogLNbh8VG6EgyT9HM3iEwAOS5MHzjexP
-        t13pryBuDRQUids5OpaBLvsmSw==
-X-Google-Smtp-Source: APXvYqzJFIWMoTzEnQVH74TDRAD+YRGy7EoLnrDhnaHEaPkYov+ye/FVp+PtuZejfYxQPWbE6476Yw==
-X-Received: by 2002:a1c:29c4:: with SMTP id p187mr10545862wmp.28.1570177967088;
-        Fri, 04 Oct 2019 01:32:47 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e34:ed2f:f020:15f7:68ed:c037:86e6])
-        by smtp.gmail.com with ESMTPSA id 59sm6488304wrc.23.2019.10.04.01.32.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 01:32:46 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rjw@rjwysocki.net
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-pm@vger.kernel.org (open list:POWER MANAGEMENT CORE),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V4 3/3] powercap/drivers/idle_inject: Specify the idle state to inject
-Date:   Fri,  4 Oct 2019 10:32:05 +0200
-Message-Id: <20191004083205.29302-3-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191004083205.29302-1-daniel.lezcano@linaro.org>
-References: <20191004083205.29302-1-daniel.lezcano@linaro.org>
+        id S1729949AbfJDIej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 04:34:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:47704 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbfJDIei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 04:34:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 01:34:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,255,1566889200"; 
+   d="scan'208";a="275974766"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
+  by orsmga001.jf.intel.com with ESMTP; 04 Oct 2019 01:34:36 -0700
+Subject: Re: [PATCH 0/6] perf scripts python: exported-sql-viewer.py: Add Time
+ chart by CPU
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+References: <20190821083216.1340-1-adrian.hunter@intel.com>
+ <6f55cdb7-a431-bd1b-8e7f-f8caf92399af@intel.com>
+ <ed9138ac-d035-1be7-9fbd-e82e7f9ca6d0@intel.com>
+ <20191003132531.GA9369@kernel.org> <20191003134340.GB9369@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <858ae8fb-bbc8-a739-a507-6e8ddf1ef3ee@intel.com>
+Date:   Fri, 4 Oct 2019 11:33:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191003134340.GB9369@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the idle injection framework only allows to inject the
-deepest idle state available on the system.
+On 3/10/19 4:43 PM, Arnaldo Carvalho de Melo wrote:
+> Em Thu, Oct 03, 2019 at 10:25:31AM -0300, Arnaldo Carvalho de Melo escreveu:
+>> Em Thu, Oct 03, 2019 at 02:01:16PM +0300, Adrian Hunter escreveu:
+>>> On 6/09/19 11:57 AM, Adrian Hunter wrote:
+>>>> On 21/08/19 11:32 AM, Adrian Hunter wrote:
+>>>>> Hi
+>>>>>
+>>>>> These patches to exported-sql-viewer.py, add a time chart based on context
+>>>>> switch information.  Context switch information was added to the database
+>>>>> export fairly recently, so the chart menu option will only appear if
+>>>>> context switch information is in the database.  Refer to the Exported SQL
+>>>>> Viewer Help option for more information about the chart.
+>>>>>
+>>>>>
+>>>>> Adrian Hunter (6):
+>>>>>       perf scripts python: exported-sql-viewer.py: Add LookupModel()
+>>>>>       perf scripts python: exported-sql-viewer.py: Add HBoxLayout and VBoxLayout
+>>>>>       perf scripts python: exported-sql-viewer.py: Add global time range calculations
+>>>>>       perf scripts python: exported-sql-viewer.py: Tidy up Call tree call_time
+>>>>>       perf scripts python: exported-sql-viewer.py: Add ability for Call tree to open at a specified task and time
+>>>>>       perf scripts python: exported-sql-viewer.py: Add Time chart by CPU
+>>>>>
+>>>>>  tools/perf/scripts/python/exported-sql-viewer.py | 1555 +++++++++++++++++++++-
+>>>>>  1 file changed, 1531 insertions(+), 24 deletions(-)
+>>>>
+>>>> Any comments?
+>>>>
+>>>
+>>> ping
+>>
+>> Nice stuff, but please next time, when you add a new UI accessible
+>> visualization, provide precise steps to collect, then generate the DB
+>> and finally run the GUI, so that interested people (like me, when
+>> testing) can follow those instructions and compare the result described
+>> to the graph the test would see following these instructions.
+>>
+>> I'm trying to do that now.
+> 
+> The F1 help text helps in that direction, but only once you're in the
+> GUI.
+> 
+> I did limited testing this time, couldn't get what is in the help text
+> in the GUI, close but not exactly, I'm applying, since this doesn't
+> affects anything outside these scripts and I think that if some set of
+> instructions, which I encourage you to detail next time, are followed,
+> then the expected result looks promising.
 
-Give the opportunity to specify which idle state we want to inject by
-adding a new function helper to set the state and use it when calling
-play_idle().
-
-There is no functional changes, the cpuidle state is the deepest one.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/powercap/idle_inject.c | 14 +++++++++++++-
- include/linux/idle_inject.h    |  3 +++
- 2 files changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
-index 233c878cbf46..a612c425d74c 100644
---- a/drivers/powercap/idle_inject.c
-+++ b/drivers/powercap/idle_inject.c
-@@ -66,6 +66,7 @@ struct idle_inject_thread {
-  */
- struct idle_inject_device {
- 	struct hrtimer timer;
-+	int state;
- 	unsigned int idle_duration_us;
- 	unsigned int run_duration_us;
- 	unsigned long int cpumask[0];
-@@ -140,7 +141,7 @@ static void idle_inject_fn(unsigned int cpu)
- 	iit->should_run = 0;
- 
- 	play_idle(READ_ONCE(ii_dev->idle_duration_us),
--		  cpuidle_find_deepest_state());
-+		  READ_ONCE(ii_dev->state));
- }
- 
- /**
-@@ -171,6 +172,16 @@ void idle_inject_get_duration(struct idle_inject_device *ii_dev,
- 	*idle_duration_us = READ_ONCE(ii_dev->idle_duration_us);
- }
- 
-+/**
-+ * idle_inject_set_state - set the idle state to inject
-+ * @state: an integer for the idle state to inject
-+ */
-+void idle_inject_set_state(struct idle_inject_device *ii_dev, int state)
-+{
-+	if (state >= CPUIDLE_STATE_NOUSE && state < CPUIDLE_STATE_MAX)
-+		WRITE_ONCE(ii_dev->state, state);
-+}
-+
- /**
-  * idle_inject_start - start idle injections
-  * @ii_dev: idle injection control device structure
-@@ -299,6 +310,7 @@ struct idle_inject_device *idle_inject_register(struct cpumask *cpumask)
- 	cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
- 	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	ii_dev->timer.function = idle_inject_timer_fn;
-+	ii_dev->state = cpuidle_find_deepest_state();
- 
- 	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
- 
-diff --git a/include/linux/idle_inject.h b/include/linux/idle_inject.h
-index a445cd1a36c5..e2b26b9ccd34 100644
---- a/include/linux/idle_inject.h
-+++ b/include/linux/idle_inject.h
-@@ -26,4 +26,7 @@ void idle_inject_set_duration(struct idle_inject_device *ii_dev,
- void idle_inject_get_duration(struct idle_inject_device *ii_dev,
- 				 unsigned int *run_duration_us,
- 				 unsigned int *idle_duration_us);
-+
-+void idle_inject_set_state(struct idle_inject_device *ii_dev, int state);
-+
- #endif /* __IDLE_INJECT_H__ */
--- 
-2.17.1
-
+Thanks for applying.
