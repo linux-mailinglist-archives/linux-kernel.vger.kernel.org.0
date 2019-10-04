@@ -2,64 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E659ACBEF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD26CBF05
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:21:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389861AbfJDPTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:19:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46946 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389461AbfJDPTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:19:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 02FADAF35;
-        Fri,  4 Oct 2019 15:19:50 +0000 (UTC)
-Date:   Fri, 4 Oct 2019 17:20:03 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@suse.de>
-Subject: [PATCH] firmware: dmi: Fix unlikely out-of-bounds read in
- save_mem_devices
-Message-ID: <20191004172003.689f2c04@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S2389641AbfJDPVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:21:45 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:41902 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389165AbfJDPVp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 11:21:45 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94FEqL2023042;
+        Fri, 4 Oct 2019 10:21:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=p7+1RJbWg4qn+lD3vb5E/TJ6wjfRTkxdKjhfoIz+FUM=;
+ b=X2zUH10mirbj+x/n8RnymRCWE63V6+ujHW7xyrMxoxYqbYGsTLoX60M+kOYD0ALkvOlj
+ kJ87bqI1miKgzRN0fnZmJzOb/boYUtKqqWv1detwk7AC1qpBe6EyOiJbHbZ4YVft+NQ8
+ 3bWibyzYdjqz8kA2+B176enacAdVeUiBiYpm8lTdtbkNHaMp0wjVQ3CcAd8JAUi+e+G4
+ 9Jxv3iEGBDd6jucXt8wKQHH8Wswcx8gJQs+ZlW1mX/cIsYLOw9EYaI4zH3bLcRTTRQMF
+ UAU+COcdZkqCuGK4OD7DE+4ZWoyfPORiLxq/65tgK+b5y+aCPjSMGlDI10XuMUuaa1jJ xw== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2va4x4t7rf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 04 Oct 2019 10:21:37 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 4 Oct
+ 2019 16:21:35 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Fri, 4 Oct 2019 16:21:35 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id E49EF2A1;
+        Fri,  4 Oct 2019 15:21:34 +0000 (UTC)
+Date:   Fri, 4 Oct 2019 15:21:34 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH v3 3/3] mfd: madera: Add support for requesting the
+ supply clocks
+Message-ID: <20191004152134.GA31391@ediswmail.ad.cirrus.com>
+References: <20191001134617.12093-1-ckeepax@opensource.cirrus.com>
+ <20191001134617.12093-3-ckeepax@opensource.cirrus.com>
+ <20191004143410.GJ18429@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191004143410.GJ18429@dell>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=852
+ malwarescore=0 adultscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910040136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before reading the Extended Size field, we should ensure it fits in
-the DMI record. There is already a record length check but it does
-not cover that field.
+On Fri, Oct 04, 2019 at 03:34:10PM +0100, Lee Jones wrote:
+> On Tue, 01 Oct 2019, Charles Keepax wrote:
+> 
+> > Add the ability to get the clock for each clock input pin of the chip
+> > and enable MCLK2 since that is expected to be a permanently enabled
+> > 32kHz clock.
+> > 
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > ---
+> >  	/* Init 32k clock sourced from MCLK2 */
+> > +	ret = clk_prepare_enable(madera->mclk[MADERA_MCLK2].clk);
+> > +	if (ret != 0) {
+> 
+> Nit: Why is this not 'if (ret)' like in the rest of the file?
+> 
 
-It would take a seriously corrupted DMI table to hit that bug, so no
-need to worry, but we should still fix it.
+Apologies will get that fixed up.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 6deae96b42eb ("firmware, DMI: Add function to look up a handle and return DIMM size")
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@suse.de>
----
- drivers/firmware/dmi_scan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-5.3.orig/drivers/firmware/dmi_scan.c	2019-10-04 16:14:24.575714482 +0200
-+++ linux-5.3/drivers/firmware/dmi_scan.c	2019-10-04 16:18:18.878669652 +0200
-@@ -408,7 +408,7 @@ static void __init save_mem_devices(cons
- 		bytes = ~0ull;
- 	else if (size & 0x8000)
- 		bytes = (u64)(size & 0x7fff) << 10;
--	else if (size != 0x7fff)
-+	else if (size != 0x7fff || dm->length < 0x20)
- 		bytes = (u64)size << 20;
- 	else
- 		bytes = (u64)get_unaligned((u32 *)&d[0x1C]) << 20;
-
-
--- 
-Jean Delvare
-SUSE L3 Support
+Thanks,
+Charles
