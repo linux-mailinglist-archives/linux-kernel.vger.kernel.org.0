@@ -2,77 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24EACC3AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8C5CC3B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730477AbfJDTjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 15:39:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36256 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfJDTjN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 15:39:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Dh6mxesa35qmVcJTZmiFw6dhEr9tO5B4IZfYPNiUpao=; b=ad3GJvszIb6b9FflfqMXULYkw
-        E5JOdU7XF2SecosMbmOk8xCCOzS15A09lBRxi0UcSiu16qKuCDnzY1eXwaTrB/6oH/uTfSfG152Kp
-        sXJwbgMShnInObtdWqPjgutj+FQ58bGUJIxNt1z0YpEQT2rWeeB0Z85s1MRiOPDGoDskGXUl1/Mdz
-        G0TIKEc46kuQasDEv83v+M7kT1sCT5/FVbuNwqN2VBf8qYcVcXLlOLH9j9Ya52jO3DPxNchG8KBiZ
-        E9hhKKNjoNKrY3R1kfVBAFeJkPPadPDflhgxAj6qeYgDq8IT9Jvkaxre2VLJqRCMZTKC4pthIFRH4
-        InXprJIjA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iGTQ0-0007ms-OK; Fri, 04 Oct 2019 19:39:12 +0000
-Date:   Fri, 4 Oct 2019 12:39:12 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/15] mm: Add file_offset_of_ helpers
-Message-ID: <20191004193912.GP32665@bombadil.infradead.org>
-References: <20190925005214.27240-1-willy@infradead.org>
- <20190925005214.27240-4-willy@infradead.org>
- <20190926140211.rm4b6yn2i5rlyvop@box>
+        id S1730612AbfJDTmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 15:42:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50378 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727978AbfJDTmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 15:42:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AF892AD4F;
+        Fri,  4 Oct 2019 19:42:20 +0000 (UTC)
+Date:   Fri, 4 Oct 2019 12:41:11 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Michel Lespinasse <walken@google.com>
+Cc:     akpm@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 05/11] IB/hfi1: convert __mmu_int_rb to half closed
+ intervals
+Message-ID: <20191004194111.2ntsr5kus5dgnnt4@linux-p48b>
+Mail-Followup-To: Michel Lespinasse <walken@google.com>,
+        akpm@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Davidlohr Bueso <dbueso@suse.de>
+References: <20191003201858.11666-1-dave@stgolabs.net>
+ <20191003201858.11666-6-dave@stgolabs.net>
+ <20191004115057.GA2371@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190926140211.rm4b6yn2i5rlyvop@box>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191004115057.GA2371@google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 05:02:11PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Sep 24, 2019 at 05:52:02PM -0700, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > The page_offset function is badly named for people reading the functions
-> > which call it.  The natural meaning of a function with this name would
-> > be 'offset within a page', not 'page offset in bytes within a file'.
-> > Dave Chinner suggests file_offset_of_page() as a replacement function
-> > name and I'm also adding file_offset_of_next_page() as a helper for the
-> > large page work.  Also add kernel-doc for these functions so they show
-> > up in the kernel API book.
-> > 
-> > page_offset() is retained as a compatibility define for now.
-> 
-> This should be trivial for coccinelle, right?
+On Fri, 04 Oct 2019, Michel Lespinasse wrote:
 
-Yes, should be.  I'd prefer not to do conversions for now to minimise
-conflicts when rebasing.
+>On Thu, Oct 03, 2019 at 01:18:52PM -0700, Davidlohr Bueso wrote:
+>> diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.c b/drivers/infiniband/hw/hfi1/mmu_rb.c
+>> index 14d2a90964c3..fb6382b2d44e 100644
+>> --- a/drivers/infiniband/hw/hfi1/mmu_rb.c
+>> +++ b/drivers/infiniband/hw/hfi1/mmu_rb.c
+>> @@ -47,7 +47,7 @@
+>>  #include <linux/list.h>
+>>  #include <linux/rculist.h>
+>>  #include <linux/mmu_notifier.h>
+>> -#include <linux/interval_tree_generic.h>
+>> +#include <linux/interval_tree_gen.h>
+>>
+>>  #include "mmu_rb.h"
+>>  #include "trace.h"
+>> @@ -89,7 +89,7 @@ static unsigned long mmu_node_start(struct mmu_rb_node *node)
+>>
+>>  static unsigned long mmu_node_last(struct mmu_rb_node *node)
+>>  {
+>> -	return PAGE_ALIGN(node->addr + node->len) - 1;
+>> +	return PAGE_ALIGN(node->addr + node->len);
+>>  }
+>
+>May as well rename the function mmu_node_end(). I was worried if it
+>was used anywhere else, but it turned out it's only used when defining
+>the interval tree.
 
-> > +static inline loff_t file_offset_of_next_page(struct page *page)
-> > +{
-> > +	return ((loff_t)page->index + compound_nr(page)) << PAGE_SHIFT;
-> 
-> Wouldn't it be more readable as
-> 
-> 	return file_offset_of_page(page) + page_size(page);
-> 
-> ?
+Right.
 
-Good idea.  I'll fix that up.
+In general I tried not to rename everything to end because I wanted to
+avoid bloating the diffstat, albeit having naming discrepancies within
+the code (which isn't new either fwiw).
+
+>
+>I would also suggest moving this function (as well as mmu_node_first)
+>right before its use, rather than just after, which would allow you to
+>also remove the function prototype a few lines earlier.
+
+Indeed, but again I don't want to unnecessarily grow the patch. I have
+several notes to come back to once/if this series is settled.
+
+>
+>Looks good to me otherwise.
+>
+>Reviewed-by: Michel Lespinasse <walken@google.com>
+
+Thanks,
+Davidlohr
