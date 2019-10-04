@@ -2,170 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E44A5CBEDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83972CBEE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:17:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389725AbfJDPRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:17:16 -0400
-Received: from mga05.intel.com ([192.55.52.43]:59001 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389165AbfJDPRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:17:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 08:17:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,256,1566889200"; 
-   d="scan'208";a="205878569"
-Received: from spandruv-mobl3.jf.intel.com ([10.255.229.152])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Oct 2019 08:17:12 -0700
-Message-ID: <56f1e864ed93d45e6328d4d015cfda6406fdda42.camel@linux.intel.com>
-Subject: Re: [PATCH v2 2/2] cpufreq: intel_pstate: Conditional frequency
- invariant accounting
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Giovanni Gherdovich <ggherdovich@suse.cz>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@qperret.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Doug Smythies <dsmythies@telus.net>
-Date:   Fri, 04 Oct 2019 08:17:11 -0700
-In-Reply-To: <1570179472.30086.4.camel@suse.cz>
-References: <20191002122926.385-1-ggherdovich@suse.cz>
-         <20191002122926.385-3-ggherdovich@suse.cz> <13106850.QMtCbivBLn@kreacher>
-         <5d6d601d2647644238fc51621407061e1c29320d.camel@linux.intel.com>
-         <1570177786.30086.1.camel@suse.cz>
-         <CAJZ5v0jK1kMjQ3gu8KhQmp2Paq9Rb74NPjMQ1HsVRCD3Fct5TQ@mail.gmail.com>
-         <1570179472.30086.4.camel@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
+        id S2389821AbfJDPRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:17:51 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56652 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388802AbfJDPRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 11:17:49 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CBC177038409EE3651A3;
+        Fri,  4 Oct 2019 23:17:46 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.179) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 4 Oct 2019
+ 23:17:42 +0800
+Subject: Re: [PATCH] mtd: spi-nor: Fix direction of the write_sr() transfer
+To:     <Tudor.Ambarus@microchip.com>, <vigneshr@ti.com>,
+        <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <c703dec2-dd11-5898-83ad-fb06127b6575@huawei.com>
+ <20191004104746.23537-1-tudor.ambarus@microchip.com>
+ <9156860e-d257-bee6-fac8-a1821e4b5bf2@microchip.com>
+ <60f0c52f-1301-57eb-59ba-b2893107d5d6@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <6eecffe2-539f-f1a1-2008-3877c5f5c3ef@huawei.com>
+Date:   Fri, 4 Oct 2019 16:17:38 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <60f0c52f-1301-57eb-59ba-b2893107d5d6@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.179]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-04 at 10:57 +0200, Giovanni Gherdovich wrote:
-> On Fri, 2019-10-04 at 10:29 +0200, Rafael J. Wysocki wrote:
-> > On Fri, Oct 4, 2019 at 10:24 AM Giovanni Gherdovich <
-> > ggherdovich@suse.cz> wrote:
-> > > 
-> > > On Thu, 2019-10-03 at 20:31 -0700, Srinivas Pandruvada wrote:
-> > > > On Thu, 2019-10-03 at 20:05 +0200, Rafael J. Wysocki wrote:
-> > > > > On Wednesday, October 2, 2019 2:29:26 PM CEST Giovanni
-> > > > > Gherdovich
-> > > > > wrote:
-> > > > > > From: Srinivas Pandruvada <
-> > > > > > srinivas.pandruvada@linux.intel.com>
-> > > > > > 
-> > > > > > intel_pstate has two operating modes: active and passive.
-> > > > > > In "active"
-> > > > > > mode, the in-built scaling governor is used and in
-> > > > > > "passive" mode, the
-> > > > > > driver can be used with any governor like "schedutil". In
-> > > > > > "active" mode
-> > > > > > the utilization values from schedutil is not used and there
-> > > > > > is a
-> > > > > > requirement from high performance computing use cases, not
-> > > > > > to readas
-> > > > > > well any APERF/MPERF MSRs.
-> > > > > 
-> > > > > Well, this isn't quite convincing.
-> > > > > 
-> > > > > In particular, I don't see why the "don't read APERF/MPERF
-> > > > > MSRs" argument
-> > > > > applies *only* to intel_pstate in the "active" mode.  What
-> > > > > about
-> > > > > intel_pstate in the "passive" mode combined with the
-> > > > > "performance"
-> > > > > governor?  Or any other governor different from "schedutil"
-> > > > > for that
-> > > > > matter?
-> > > > > 
-> > > > > And what about acpi_cpufreq combined with any governor
-> > > > > different from
-> > > > > "schedutil"?
-> > > > > 
-> > > > > Scale invariance is not really needed in all of those cases
-> > > > > right now
-> > > > > AFAICS, or is it?
-> > > > 
-> > > > Correct. This is just part of the patch to disable in active
-> > > > mode
-> > > > (particularly in HWP and performance mode).
-> > > > 
-> > > > But this patch is 2 years old. The folks who wanted this,
-> > > > disable
-> > > > intel-pstate and use userspace governor with acpi-cpufreq. So
-> > > > may be
-> > > > better to address those cases too.
-> > > 
-> > > I disagree with "scale invariance is needed only by the schedutil
-> > > governor";
-> > > the two other users are the CPU's estimated utilization in the
-> > > wakeup path,
-> > > via cpu_util_without(), as well as the load-balance path, via
-> > > cpu_util() which
-> > > is used by update_sg_lb_stats().
-> > 
-> > OK, so there are reasons to run the scale invariance code which are
-> > not related to the cpufreq governor in use.
-> > 
-> > I wonder then why those reasons are not relevant for intel_pstate
-> > in
-> > the "active" mode.
-> > 
-> > > Also remember that scale invariance is applied to both PELT
-> > > signals util_avg
-> > > and load_avg; schedutil uses the former but not the latter.
-> > > 
-> > > I understand Srinivas patch to disable MSR accesses during the
-> > > tick as a
-> > > band-aid solution to address a specific use case he cares about,
-> > > but I don't
-> > > think that extending this approach to any non-schedutil governor
-> > > is a good
-> > > idea -- you'd be killing load balancing in the process.
-> > 
-> > But that is also the case for intel_pstate in the "active" mode,
-> > isn't it?
-> 
-> Sure it is.
-> 
-> Now, what's the performance impact of loosing scale-invariance in
-> PELT signals?
-> And what's the performance impact of accessing two MSRs at the
-> scheduler tick
-> on each CPU?
-> 
-> I am sporting Srinivas' patch because he expressed the concern that
-> the losses
-> don't justify the gains for a specific class of users
-> (supercomputing),
-> although I don't fully like the idea (and arguably that should be
-> measured).
-> 
-I understand there are other impact of the scale invariance like in
-deadline code, which I didn't see when I submitted this patch.
-You can drop this patch at this time if you like. I can poke HPC folks
-to test a released kernel.
+On 04/10/2019 12:31, John Garry wrote:
+> On 04/10/2019 11:48, Tudor.Ambarus@microchip.com wrote:
+>> John, does this fix your problem?
+>
+> It fixes the problem in the flash_lock -u command no longer errors like
+> this:
+> root@ubuntu:/home/john# sudo flash_lock -u /dev/mtd0
+> flash_lock: error!: could not unlock device: /dev/mtd0
+>
+> However, with this change, even when the flash is unlocked I cannot
+> write, so there is something else wrong. It's probably a bug in my
+> under-development driver. I'm looking at it now.
+
+Just to confirm, I tested an earlier HW version with my driver and flash 
+lock/unlock function is ok. There seems something wrong with the latest 
+HW version which I need to understand.
+
+Anyway:
+Tested-by: John Garry <john.garry@huawei.com>
 
 Thanks,
-Srinivas
+John
+
+>
+>>
+>> On 10/04/2019 01:47 PM, Tudor Ambarus - M18064 wrote:
+>>> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+>>>
+>>> write_sr() sends data to the SPI memory, fix the direction.
+>>>
+>>> Fixes: b35b9a10362d ("mtd: spi-nor: Move m25p80 code in spi-nor.c")
+>>> Reported-by: John Garry <john.garry@huawei.com>
+>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+>>> ---
+>>>  drivers/mtd/spi-nor/spi-nor.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mtd/spi-nor/spi-nor.c
+>>> b/drivers/mtd/spi-nor/spi-nor.c
+>>> index 1d8621d43160..7acf4a93b592 100644
+>>> --- a/drivers/mtd/spi-nor/spi-nor.c
+>>> +++ b/drivers/mtd/spi-nor/spi-nor.c
+>>> @@ -487,7 +487,7 @@ static int write_sr(struct spi_nor *nor, u8 val)
+>>>              SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRSR, 1),
+>>>                     SPI_MEM_OP_NO_ADDR,
+>>>                     SPI_MEM_OP_NO_DUMMY,
+>>> -                   SPI_MEM_OP_DATA_IN(1, nor->bouncebuf, 1));
+>>> +                   SPI_MEM_OP_DATA_OUT(1, nor->bouncebuf, 1));
+>>>
+>>>          return spi_mem_exec_op(nor->spimem, &op);
+>>>      }
+>>>
+>
 
 
