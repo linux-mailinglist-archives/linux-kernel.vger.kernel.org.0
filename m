@@ -2,89 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63F80CBD62
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0675FCBD69
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:37:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389162AbfJDOgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:36:11 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38539 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388724AbfJDOgL (ORCPT
+        id S2389230AbfJDOhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:37:05 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40153 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389100AbfJDOhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:36:11 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w12so7536842wro.5
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 07:36:09 -0700 (PDT)
+        Fri, 4 Oct 2019 10:37:04 -0400
+Received: by mail-qk1-f195.google.com with SMTP id y144so5975292qkb.7
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 07:37:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=H+yr5kS5iH2wmnNe9kPeQU/T3tzbAN3a+t+sjJ+iY7U=;
-        b=yTGJqZkm09u05ribXQL0uDJJ9aCSfe45YY5Zmi6pWlVEFuFQctsjKj7yLyufgnswfX
-         rJd0cAagn5RI67Kf3o9tdxqzvBMT9p9kPSfzME32i5S+eQVWvryxrBzdPlMsUgXwIgHr
-         Ds/Ynp/Yf60O8c7I9AKA45KqfdWShNERMT6WfOpXwXHch1+57zBQymt2GLpYU7WVhQ99
-         gP+pXFbzcFLFKP0GndNbZIJWmH0G5DyjS1yzgO7s0kQ8YtfMhKZFjKu4/Iv55C2oSVNA
-         cCklWMufOaHW4ABU667u118NIZF3O6jrehnSoF/J219zt3lVEZtSgXWz+5WuYfHQwo87
-         ETlA==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F6mLwkQPDdiYFNuWkZb4XRAWNANkZduE6Qp1fMGHTlE=;
+        b=a2tA+/G63bAfQNfNcenU5+9rZeEwkDtMPPO7j6/UyATYoK6zyn3+cRK0hpnx0qUPwZ
+         9MiFNQahytV/7COjlJsWs60xHF49bOLaheXvpP2eE/GjJS505zifkwTVdQfCq6nK4hxd
+         tkl3V48be75qGKSX7/LiZFfNKkRqf6shbs7so0LQePzHvEs/DDPd+BkyWx4iAxSZSR8a
+         QBDedUT67nvtKBtgMcWgMbeIQT5VQZKk2+Y8dlx4HS8ZZ9kySTWevIz6vkUCRWEUgvxI
+         yTYZryyetmbmN+AtdnE4q1NBksSrNL+8Dl0v4f3Q6QdR+8PxDUOZlj4f3z+Iom1h5qFm
+         ugjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=H+yr5kS5iH2wmnNe9kPeQU/T3tzbAN3a+t+sjJ+iY7U=;
-        b=baDgE4rZ7wlO6i0bt9nZ+AYgvmU+1y/pSW4aPBC2EokhcD95yMXOWbOKD+JjSu85kR
-         KOWEqOwUwvmFFr/H5lmJaugMuUeknwu29XjhGGHwhQDmTorcBgZCf4CMwTZERQlK2z1p
-         IWDmyRDXNFTgkdCHLjMSgoRqfBGb/BJs0dONuIFYMMMhBT9l3nU+kBLypXB8mdEB03M6
-         3rC5HAOORCmWQsOKjnmquvwW+4S2ljadsOYFey8w1m6F6wfCQZ9uD8s/c5lj5lgBq3HN
-         EuDiUH+QuhXXBiYJ+Vk/sPV6Y8mtq7lFPeaZEHPB55RFB++TOZopj7JZ+eGmtr+vrBeL
-         4Ctw==
-X-Gm-Message-State: APjAAAXB4p1xcZi2LHGS4wMvVIw0l+0F7BHljsAKJo2QLErUWT9xsncq
-        Tj66My/5A07oSYFm4wVY6MftVgKspDw=
-X-Google-Smtp-Source: APXvYqz2i9TJzrN0Lsg67JBKMSZYobGbOf6d9N2rrnf6nMWRkWoUODo9EYYr7bSLftlbdYhSpmZ0vQ==
-X-Received: by 2002:adf:cc8a:: with SMTP id p10mr11756685wrj.321.1570199769269;
-        Fri, 04 Oct 2019 07:36:09 -0700 (PDT)
-Received: from dell ([2.27.167.122])
-        by smtp.gmail.com with ESMTPSA id z189sm6971821wmc.25.2019.10.04.07.36.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Oct 2019 07:36:08 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 15:36:07 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: max77620: Do not allocate IRQs upfront
-Message-ID: <20191004143607.GL18429@dell>
-References: <20191002144318.140365-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F6mLwkQPDdiYFNuWkZb4XRAWNANkZduE6Qp1fMGHTlE=;
+        b=Fh/yHx4046GcBWlPZnKFQTqfGlWfMJ9xSu8kLLFKH/3gAmzGpty5asw+kUZyE7yCgp
+         2QWJbYU5UUFWkGWMF+3nQm8alUKAycV+fNLLT3DdpZMv1QdI0v+jgxE38mSkPk+dVJuA
+         239dqj8P1f92RffMVxV3xywMFithZMWtHGmg+kmC6n6Uz1yyOMi5vcrxV0K6mJivREB9
+         D/wNyVvCZR09zB9nhFZW1ea6+sjkGyzLPakLdbbIl9+zZM4ISirtzZspOiE7KHAxDq0o
+         LAJsFpdrok6ytKDZ5oqlpj1HlBBr+ncy1Jp5lu4Cx95QVnfXgjL+2NvzcYK6C0kavDJQ
+         GeEA==
+X-Gm-Message-State: APjAAAXVsmwULGkOSuvEq5044pnW4pH8RsSdV6NZht9ZiyMmfx6dUMn5
+        5YTyLXzzPI0RgErt0ThhC6nOI8Pw
+X-Google-Smtp-Source: APXvYqwa3zxxfyeDUgwbEmQSsehJmhUNhLP5Z83CXR2H1C6URjdyL7jDFqeYq61tB70gQtyOgYB/7Q==
+X-Received: by 2002:a37:4b54:: with SMTP id y81mr9967636qka.344.1570199821993;
+        Fri, 04 Oct 2019 07:37:01 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id y58sm3462199qta.1.2019.10.04.07.37.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 07:37:00 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id AB6EF40DD3; Fri,  4 Oct 2019 11:36:58 -0300 (-03)
+Date:   Fri, 4 Oct 2019 11:36:58 -0300
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, will@kernel.org, mark.rutland@arm.com,
+        zhangshaokun@hisilicon.com
+Subject: Re: [PATCH 0/4] HiSilicon hip08 uncore PMU events additions
+Message-ID: <20191004143658.GA17687@kernel.org>
+References: <1567612484-195727-1-git-send-email-john.garry@huawei.com>
+ <27e693fd-124e-1aa8-3b8a-62301a5a1d10@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191002144318.140365-1-thierry.reding@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <27e693fd-124e-1aa8-3b8a-62301a5a1d10@huawei.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 02 Oct 2019, Thierry Reding wrote:
-
-> From: Thierry Reding <treding@nvidia.com>
+Em Fri, Oct 04, 2019 at 03:30:07PM +0100, John Garry escreveu:
+> On 04/09/2019 16:54, John Garry wrote:
+> > This patchset adds some missing uncore PMU events for the hip08 arm64
+> > platform.
+> > 
+> > The missing events were originally mentioned in
+> > https://lkml.org/lkml/2019/6/14/645, when upstreaming the JSONs initially.
+> > 
+> > It also includes a fix for a DDRC eventname.
 > 
-> regmap_add_irq_chip() will try to allocate all of the IRQ descriptors
-> upfront if passed a non-zero irq_base parameter. However, the intention
-> is to allocate IRQ descriptors on an as-needed basis if possible. Pass 0
-> instead of -1 to fix that use-case.
+> Hi guys,
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/mfd/max77620.c       | 5 ++---
->  include/linux/mfd/max77620.h | 1 -
->  2 files changed, 2 insertions(+), 4 deletions(-)
+> Could I get these JSON updates picked up please? Maybe they were missed
+> earlier. Let me know if I should re-post.
 
-Applied, thanks.
+Looking at them now.
+
+- Arnaldo
+ 
+> Thanks in advance,
+> John
+> 
+> > 
+> > John Garry (4):
+> >   perf jevents: Fix Hisi hip08 DDRC PMU eventname
+> >   perf jevents: Add some missing events for Hisi hip08 DDRC PMU
+> >   perf jevents: Add some missing events for Hisi hip08 L3C PMU
+> >   perf jevents: Add some missing events for Hisi hip08 HHA PMU
+> > 
+> >  .../arm64/hisilicon/hip08/uncore-ddrc.json    | 16 +++++-
+> >  .../arm64/hisilicon/hip08/uncore-hha.json     | 23 +++++++-
+> >  .../arm64/hisilicon/hip08/uncore-l3c.json     | 56 +++++++++++++++++++
+> >  3 files changed, 93 insertions(+), 2 deletions(-)
+> > 
+> 
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+
+- Arnaldo
