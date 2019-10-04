@@ -2,33 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47641CBC10
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E3FCBC14
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388433AbfJDNpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:45:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40870 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387917AbfJDNpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:45:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 01C0AAFAE;
-        Fri,  4 Oct 2019 13:45:08 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com
-Cc:     wahrenst@gmx.net, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mmc: sdhci-iproc: fix spurious interrupts on Multiblock reads with bcm2711
-Date:   Fri,  4 Oct 2019 15:44:52 +0200
-Message-Id: <20191004134452.6493-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.23.0
+        id S2388703AbfJDNpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:45:51 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39771 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388333AbfJDNpu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 09:45:50 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so7304317wrj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 06:45:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7b63lo7rprJBUkBEL3uR74RiIh2PXqTM31J1Ekw+88A=;
+        b=QQl3gRnS5Y2PmQjDOkVC8P48bAmTs34sQHqLKCsHpepEjnrG80AXz057RggF1X5S1X
+         iND2mq1+255/Z5jI8mTANxp8vSudP22ck7d9VlyeNFCghL/JRFTNlfHCISq8TZLDRPlw
+         KC6oUNVorpN8wq8YY3JTedMe5ir93vheQ5GglHnfmRKsxkT68Q7+j3eGSKa21ZFHDVwe
+         aHvcIEqpzjHpgjcqLEKxIJP9qnNcWEed5+xsv4P8KhAbT7e5RO9IbLrRS6ZeOFONXQQX
+         7PrdD3p0Ib3eXKn+WVU2LYiZiaTq5sKNsBKB35D0dqTHpRGbo22Cly2+zfBSjz7HLQn3
+         Auag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7b63lo7rprJBUkBEL3uR74RiIh2PXqTM31J1Ekw+88A=;
+        b=tZ2skolh6txwLdqHPXrlixqS0wXDd+i9ZCVijZfXwGpoMTc3PpihByzU0yOAB4TT+i
+         LWZEE0jSvMivB3gr+5gKGcIjn8rjToBbxNeEnJ06A7qjJkAu0kYYPacTzxA6EJJOeVB5
+         GN2+VsenSfisL2Co9eZ8tUVii+1BCDlK3zzmMf4GI/cm0/6IqY9t2ymHfROzGGiWRgU6
+         nDo1XYHWdwKpOUArEdlHDvZjZDa1XuVEw4r87sxuqlV9U0abgMqPEGeHWErn+mVRa6oQ
+         CwTzixNo0+AQztW+Z4Ff6aLWtozWm9NrG60mZeUUWPShIz56oAP4sSKgmWVNVaSW9yVv
+         yuGA==
+X-Gm-Message-State: APjAAAVhvNqZwXSVTGMXRm4JdAkRNm/wrBARgNiBqQp+CjDbntYrsNKV
+        0/DhwsL/74LvZ+Ipou4wllY=
+X-Google-Smtp-Source: APXvYqyuH2pDK0ZacgT1Sh7w09n89xrwx0VUvlJuBAS7apBqNZQjvEdoMoytN4vk2JD9cA5eC/E8qg==
+X-Received: by 2002:adf:e341:: with SMTP id n1mr7308483wrj.133.1570196748545;
+        Fri, 04 Oct 2019 06:45:48 -0700 (PDT)
+Received: from localhost.localdomain ([104.238.174.53])
+        by smtp.gmail.com with ESMTPSA id a18sm11812563wrs.27.2019.10.04.06.45.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 06:45:47 -0700 (PDT)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH] x86/mm: determine whether the fault address is canonical
+Date:   Fri,  4 Oct 2019 21:45:01 +0800
+Message-Id: <20191004134501.30651-1-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,57 +61,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Raspberry Pi 4 SDHCI hardware seems to automatically issue CMD12
-after multiblock reads even when ACMD12 is disabled. This triggers
-spurious interrupts after the data transfer is done with the following
-message:
+We know the answer, so don't ask the user.
 
-  mmc1: Got data interrupt 0x00000002 even though no data operation was in progress.
-  mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-  mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00001002
-  mmc1: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000000
-  mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000033
-  mmc1: sdhci: Present:   0x1fff0000 | Host ctl: 0x00000017
-  mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000080
-  mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
-  mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-  mmc1: sdhci: Int enab:  0x03ff100b | Sig enab: 0x03ff100b
-  mmc1: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-  mmc1: sdhci: Caps:      0x45ee6432 | Caps_1:   0x0000a525
-  mmc1: sdhci: Cmd:       0x00000c1a | Max curr: 0x00080008
-  mmc1: sdhci: Resp[0]:   0x00000b00 | Resp[1]:  0x00edc87f
-  mmc1: sdhci: Resp[2]:   0x325b5900 | Resp[3]:  0x00400e00
-  mmc1: sdhci: Host ctl2: 0x00000001
-  mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0xf3025208
-  mmc1: sdhci: ============================================
-
-Enable SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12 to enable ACMD12 on multiblock
-reads and suppress the spurious interrupts.
-
-Fixes: f84e411c85be ("mmc: sdhci-iproc: Add support for emmc2 of the BCM2711")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Tested-by: Matthias Brugger <mbrugger@suse.com>
-Acked-by: Stefan Wahren <wahrenst@gmx.net>
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
 ---
+ arch/x86/mm/extable.c     |  5 ++++-
+ arch/x86/mm/mm_internal.h | 11 +++++++++++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-Changes since v1:
-- Add Fixes tag and Acked-by
-
- drivers/mmc/host/sdhci-iproc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
-index 2b9cdcd1dd9d..f4f5f0a70cda 100644
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -262,6 +262,7 @@ static const struct sdhci_iproc_data bcm2835_data = {
- };
+diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
+index 4d75bc656f97..5196e586756f 100644
+--- a/arch/x86/mm/extable.c
++++ b/arch/x86/mm/extable.c
+@@ -8,6 +8,8 @@
+ #include <asm/traps.h>
+ #include <asm/kdebug.h>
  
- static const struct sdhci_pltfm_data sdhci_bcm2711_pltfm_data = {
-+	.quirks = SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
- 	.ops = &sdhci_iproc_32only_ops,
- };
++#include "mm_internal.h"
++
+ typedef bool (*ex_handler_t)(const struct exception_table_entry *,
+ 			    struct pt_regs *, int, unsigned long,
+ 			    unsigned long);
+@@ -123,7 +125,8 @@ __visible bool ex_handler_uaccess(const struct exception_table_entry *fixup,
+ 				  unsigned long error_code,
+ 				  unsigned long fault_addr)
+ {
+-	WARN_ONCE(trapnr == X86_TRAP_GP, "General protection fault in user access. Non-canonical address?");
++	WARN_ONCE(trapnr == X86_TRAP_GP, "General protection fault at %s address in user access.",
++		  is_canonical_addr(fault_addr) ? "canonical" : "non-canonical");
+ 	regs->ip = ex_fixup_addr(fixup);
+ 	return true;
+ }
+diff --git a/arch/x86/mm/mm_internal.h b/arch/x86/mm/mm_internal.h
+index eeae142062ed..4c8a0fdd1c64 100644
+--- a/arch/x86/mm/mm_internal.h
++++ b/arch/x86/mm/mm_internal.h
+@@ -2,6 +2,17 @@
+ #ifndef __X86_MM_INTERNAL_H
+ #define __X86_MM_INTERNAL_H
  
++static inline bool is_canonical_addr(u64 addr)
++{
++#ifdef CONFIG_X86_64
++	int shift = 64 - boot_cpu_data.x86_phys_bits;
++
++	return ((int64_t)addr << shift >> shift) == addr;
++#else
++	return true;
++#endif
++}
++
+ void *alloc_low_pages(unsigned int num);
+ static inline void *alloc_low_page(void)
+ {
 -- 
-2.23.0
+2.20.1
 
