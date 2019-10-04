@@ -2,66 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16039CB9D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99424CB9D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:06:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbfJDMFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:05:24 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33165 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfJDMFY (ORCPT
+        id S1730592AbfJDMGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:06:34 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34515 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfJDMGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:05:24 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b9so6901597wrs.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 05:05:21 -0700 (PDT)
+        Fri, 4 Oct 2019 08:06:34 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j11so1086644wrp.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 05:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=0kiQfs8vhDdOITptnzWw+B0dDpP2AER+UC8EB8Xy3mI=;
-        b=XsCW8OpnLzjcS61aOo1Yh3fP+V59Xk+Dc0ZTrTPqN/J2nRW3e2A2aYvG1LM+ZXHVEv
-         MTU0A6zz37X/lriIY3ltpdEtQip/d7rX0/gI53f4v8YvFg0yyfvZgNCJJLh1RA2qi1m8
-         zElLoeK6+IENXsGTMukOHEiPKz0f/hWNXHpifX2gnuNT4urK/xorGBmrR1dYvzG2l+m+
-         Kz6bWHvVCGB+i1Foh1pK3S9IK/VESQCurvDOSmp2xsckr4L/JOimZtJx27zWWKTctX9I
-         WWNq8FiOSpjZdbMg4y88rQ8q/QDnzkz7g8QYmV+rgOi8A/2uF6bt/QXF6q6aLfYgTTjO
-         nlUw==
+        bh=We68HJxGgO15qFx9UZUNDGh7sk7bT+Kwug0ALzuQsgY=;
+        b=NriUHG6VukNQjGu8MNskrjCSxEZSffrlfYToRknIpZeqtR0c55oRRc+ol3gEWrRo1P
+         7dvfIkwMUt2fzCwRZcIV4HqrRqFSvgsPPq0YV9NHuKfzoIqkZVrzcOTLjnBpty1d51JK
+         WagYC6pI2Iu1aYkUPLhSt2Y0qiuZ5hgZCDDLGmJyd3QlcHo8C6Q6yl5ZbCowhn9nSDyD
+         YZQau8nus69zchLlrcbI6rbCYMCHD2XYXzlHtKvo132ZHGG4WpSu6oU504ERhlIUUK7x
+         G3xWYa4MQO40ioao2YQ8a7aA5Rvl/P/mP8XR1d7tNs1nEwgMQOXVT2/KOLNycDyAlrCm
+         8NFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=0kiQfs8vhDdOITptnzWw+B0dDpP2AER+UC8EB8Xy3mI=;
-        b=jq+C8BUhoysluJc/sVOjW+2wyhYAe7NAvgjPbFlGKx/IcQEBxw178yp/4l7oFnOJBX
-         DUzeleYHhJRNJQojGRtdnJrhWuNtpHRAcdJYeUAfVdYOIhnAIIjdTDgPR5yfdo6CsxLi
-         dORL0U/5REjCzF1lhBCFGV/VM7WSJ2UH2X3CgHT1xKcT/HOxz/31kF0WtuMpT3g+yJce
-         a3WcVLix/GXVTgahch5xy2CsBYXcBxB6c33U5Y3q3iwXz5f+vawgAQRv48OZwSLYdYHP
-         QycRdmc70UV4HbSAb86fKYi3a7JaG7DEEY1+2vqzpZSoROhZzpO45HpC6oEt9Dmc4vz7
-         jmLQ==
-X-Gm-Message-State: APjAAAXnh4ypFA7or76OccTwmA7LXYb7vMSMUJjW925/Fcl5r6IghWCv
-        Moai5hwXK66IZlykqGUrtIs7vw==
-X-Google-Smtp-Source: APXvYqyIxodV9sCnDx2rqHYS5wQ73rGu0Kh/d8gY7PvBN4bLJIU5EqfJnKy26vrR8jiNkoPHegsHFw==
-X-Received: by 2002:adf:a1d2:: with SMTP id v18mr11336431wrv.302.1570190721062;
-        Fri, 04 Oct 2019 05:05:21 -0700 (PDT)
+        bh=We68HJxGgO15qFx9UZUNDGh7sk7bT+Kwug0ALzuQsgY=;
+        b=q7M7W/GEqVd38OJTJ4jFRO0JO9G9DHqqmCuC/ToMZr6aN7lDBqhu33/HNszPx3X1dw
+         DPe6xEhMEPgVxDLooEvCHePTPbpIlT9jkvVhSxg7eOIJ128c1A2ypYBrtXLjnByLs1Xb
+         C10BXAxnn5mLr2Vv0rmgPbgYolvBKi/Y82ez96Fjyt+0dQ8/Pxhn6XMMSu2SJ3RmHm1u
+         RuORWBjznts6X7o8zle7w8oY5G0PUaJ1nzrTwZLjk6uJTj5eJKTgknrSIkPFds9Ens03
+         1orYj4AGhE4eg0TBT0RqluTxR69AZeGrMk2DIuvM58hT/23cWi5EAhM/pDT37Fn1+piV
+         jyjg==
+X-Gm-Message-State: APjAAAXKQsf1lfcZNMqbiIlxKXsBGTBINEg2PkYfRG1eg4id7v7OJBMm
+        JMIK/r2+iJ5rIf7Ui1YawunT4Q==
+X-Google-Smtp-Source: APXvYqwbVDl1j0TzxmmaS06SyhmcA22vQ72irFyeh55DhDFBpntHYV03Kg10QTCZ99RU2Jv4m0MTww==
+X-Received: by 2002:adf:fb11:: with SMTP id c17mr12069368wrr.0.1570190790922;
+        Fri, 04 Oct 2019 05:06:30 -0700 (PDT)
 Received: from dell ([2.27.167.122])
-        by smtp.gmail.com with ESMTPSA id b7sm2009455wrx.56.2019.10.04.05.05.20
+        by smtp.gmail.com with ESMTPSA id f83sm6585666wmf.43.2019.10.04.05.06.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Oct 2019 05:05:20 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 13:05:19 +0100
+        Fri, 04 Oct 2019 05:06:30 -0700 (PDT)
+Date:   Fri, 4 Oct 2019 13:06:28 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     linux-kernel@vger.kernel.org, d.schultz@phytec.de,
         linux-rockchip@lists.infradead.org,
         christoph.muellner@theobroma-systems.com, tony.xie@rock-chips.com
-Subject: Re: [PATCH 2/4] mfd: rk808: fix rk817 powerkey integration
-Message-ID: <20191004120519.GB18429@dell>
+Subject: Re: [PATCH 4/4] mfd: rk808: use DEFINE_RES_IRQ for rk808 rtc alarm
+ irq
+Message-ID: <20191004120628.GC18429@dell>
 References: <20190917081256.24919-1-heiko@sntech.de>
- <20190917081256.24919-2-heiko@sntech.de>
+ <20190917081256.24919-4-heiko@sntech.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190917081256.24919-2-heiko@sntech.de>
+In-Reply-To: <20190917081256.24919-4-heiko@sntech.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -70,15 +71,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 17 Sep 2019, Heiko Stuebner wrote:
 
-> The pwrkey integration seems to stem from the vendor kernel, as the
-> compatible is wrong and also the order of key-irqs is swapped.
-> 
-> So fix these issues to make the pwrkey on rk817 actually work.
+> Do not open code the definition, instead use the nice DEFINE_RES_IRQ
+> macro for it.
 > 
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  drivers/mfd/rk808.c | 14 +++-----------
->  1 file changed, 3 insertions(+), 11 deletions(-)
+>  drivers/mfd/rk808.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 
 Applied, thanks.
 
