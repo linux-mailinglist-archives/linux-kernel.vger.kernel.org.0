@@ -2,168 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24656CBE24
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:55:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D61DFCBE1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389449AbfJDOzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:55:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:56592 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388870AbfJDOzA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:55:00 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94EhutG020918;
-        Fri, 4 Oct 2019 14:52:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=71xMsougzFRjhf26xVcD9RH+FFwlVsgZYMghr9MGGOk=;
- b=kko/rqbeQC0h2Cl3LuTG4DijMfU+AMYt4CQrywqEvWg5n+Lst4VOaDS1W965q3NN0qCs
- fHaxsRsjxdrT3Fj7mQ04TZGJGGgDA8I7EF2InhxtYThp3WyFb/T94+MtbFwAQklfNv5a
- c5jFFaLTyfrvvEG9fkJTSANaAND0vzHjgN0PTeXrpET+Jn6m96rJBMXZpx4NXAKkHb0G
- mD/0TYd6nlQNb21LeWrcmXA1nbIhujPIXZidz7XmI6dTcxVw0wlbSKnqJ5dLnrVknKG5
- xzqPsyXQKKvF/PnRPCmELqkFej6ufql0ovRP2SCy/INz1kyDtDshVlztMcNcrgSUrt8E 8g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2v9yfquy3e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Oct 2019 14:52:58 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94EnLvd148212;
-        Fri, 4 Oct 2019 14:52:58 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2vdk0uq7vu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Oct 2019 14:52:57 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x94EqtRY016989;
-        Fri, 4 Oct 2019 14:52:55 GMT
-Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 04 Oct 2019 07:52:54 -0700
-Subject: Re: [PATCH v4 1/4] x86/kvm: Add "nopvspin" parameter to disable PV
- spinlocks
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     vkuznets@redhat.com, linux-hyperv@vger.kernel.org,
-        kvm@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, pbonzini@redhat.com,
-        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
-        jgross@suse.com, sstabellini@kernel.org, peterz@infradead.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will@kernel.org>
-References: <1570111335-12731-1-git-send-email-zhenzhong.duan@oracle.com>
- <1570111335-12731-2-git-send-email-zhenzhong.duan@oracle.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <26ef7beb-dad0-13c9-fc2f-217a5e046e4d@oracle.com>
-Date:   Fri, 4 Oct 2019 10:52:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <1570111335-12731-2-git-send-email-zhenzhong.duan@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        id S2389377AbfJDOxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:53:37 -0400
+Received: from mail-eopbgr710067.outbound.protection.outlook.com ([40.107.71.67]:59461
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389144AbfJDOxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 10:53:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lysfVY40Pz9swsYdtcSi3PqV/3f1ddM2hB/ldcEK3KAC0nzFsvA+sOQmx1d2XC/2iBdNDeaQ2wgz+y0NhfQLzSFKgx1/HvwZuf97GBD1I3q654PRkK4kDrv/VY2o2DjodIFttI/EjeTbW9OuUF1kSvTyWNOVaQD6UnmOld4iT+nWQa+biQY+4L/lgNF2eubzaOkJ2Yjw2YPgIZ6tS8x0T8HQlofpxXM4bS8LtnuBtH2c0Vf/pj4AKTsJTpkMxKyzxdrlZLhfvTibMTyqCVAfLOHYIW9uuyfUESBt354UCzZsDfkypZxk3uuEGh9FrNWf/WXbT1KVKLKZOSwwd7nhpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+JELZhQpDfGwCTK9yQOc5mIET8MmAjxo6dU5jMiZSPI=;
+ b=LGq3dUd3n7KCjsnA7wDPpIgdH7x79jDhDMw1t0c/pV9JNlmgNq4THOYjvZiCAMJ3i7lxVCrTcP/h49EfXS8YRSzKQvlCLcaS1v3w2VFpt5lPJff80R8/j8RENpsK/h8chJsULEr44qTm7kTF4pqO/DD65YyZPH2fUjTOpCTzq7RjM27wUiONgbcVeulZzqCLvWAnmokff9OYeQG7yg4b1exPFP3NWZdqXc6CCCxFNr8HGS0RqwHrZvKGrcUezxXtHN+wH/2QH09CIoxygf9zcd9pHgj4radVwIq3AnGAE9g9G3JIi2/uxkiqqsBmqIT7fAUGLTUPq+0Sp0v9yXUmZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+JELZhQpDfGwCTK9yQOc5mIET8MmAjxo6dU5jMiZSPI=;
+ b=W09EnaQ6tZvDfzl1XQjvTTGhxiwSpRR29xxqTcBmMdbbRBwGL894LEej2mg1Zg1os5yl+YofqeU5BpKP70rtLnLrMPWtdbpr++Y0vJvBebAttToTA9TPou6UiNXexsVjFa9h+E0X4spXmJRKsxWiqn/oofS3410pyQivUBTjkRs=
+Received: from MWHPR12MB1453.namprd12.prod.outlook.com (10.172.55.22) by
+ MWHPR12MB1151.namprd12.prod.outlook.com (10.169.204.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2305.17; Fri, 4 Oct 2019 14:53:32 +0000
+Received: from MWHPR12MB1453.namprd12.prod.outlook.com
+ ([fe80::4803:438a:eb1d:d6a6]) by MWHPR12MB1453.namprd12.prod.outlook.com
+ ([fe80::4803:438a:eb1d:d6a6%10]) with mapi id 15.20.2305.023; Fri, 4 Oct 2019
+ 14:53:32 +0000
+From:   "Grodzovsky, Andrey" <Andrey.Grodzovsky@amd.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Hillf Danton <hdanton@sina.com>
+CC:     "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        Erico Nunes <nunes.erico@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "steven.price@arm.com" <steven.price@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
+Subject: Re: drm_sched with panfrost crash on T820
+Thread-Topic: drm_sched with panfrost crash on T820
+Thread-Index: AQHVdQtdjrcnE/APhki/CyOIa6xfH6c/vsAAgASUhACAAyEmgIABLDGAgAH8RAA=
+Date:   Fri, 4 Oct 2019 14:53:31 +0000
+Message-ID: <94096e4e-0f60-79d1-69b5-c7c3e59a4d78@amd.com>
+References: <e450fbe6-dec7-2704-59c2-db7e869d67f5@baylibre.com>
+ <f0ab487e-8d49-987b-12b8-7a115a6543e1@amd.com>
+ <20190930145228.14000-1-hdanton@sina.com>
+ <d2888614-8644-7d04-b73b-3ab7c6623e9a@amd.com>
+ <7339b7a1-2d1c-4379-89a0-daf8b28d81c8@baylibre.com>
+In-Reply-To: <7339b7a1-2d1c-4379-89a0-daf8b28d81c8@baylibre.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910040135
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910040135
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: YTOPR0101CA0072.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b00:14::49) To MWHPR12MB1453.namprd12.prod.outlook.com
+ (2603:10b6:301:e::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Andrey.Grodzovsky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.55.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a545f729-8bba-48b6-af20-08d748da9fc1
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: MWHPR12MB1151:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MWHPR12MB115188229513CFF65D3251BBEA9E0@MWHPR12MB1151.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1247;
+x-forefront-prvs: 018093A9B5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(4636009)(136003)(376002)(366004)(396003)(346002)(39860400002)(199004)(189003)(76176011)(71200400001)(71190400001)(36756003)(8676002)(31696002)(6246003)(81166006)(478600001)(86362001)(6486002)(102836004)(66946007)(81156014)(66446008)(31686004)(229853002)(66476007)(66556008)(6436002)(64756008)(446003)(14454004)(6512007)(8936002)(486006)(7416002)(3846002)(52116002)(256004)(53546011)(6506007)(386003)(26005)(5660300002)(6116002)(14444005)(476003)(66066001)(4326008)(25786009)(66574012)(110136005)(316002)(2616005)(2906002)(99286004)(305945005)(11346002)(54906003)(7736002)(186003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1151;H:MWHPR12MB1453.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: M9gSh7fs2Zk+S1AinnOnjXKXoHSzOtffgGIFjw4EbPHCKgiQliMlSAy6uLwLshAaQxnOgPxHO+dN33CNcLWloYbFa0CCkdv7vTmbRM1yFYDAivlcZFtF90B7AdbGf+pNj1J4vbSmcX4XtbvLPs7IR2d6n6RKR8VqYg4yb4tkUPDuo/7H3KyGe32kL/5I8rw9rXGX5521+GDvX95Fl0kydXFIsh4JbL+dHsWXr8VVyoOH18tUtIbn716m0J1blPWD3XlHP8QKWS0HwercHzj1GwjNyVArmiywhKqCIbXZZqiOBwdfT0oUXlCvuYM5kO9UOHI7CeN9zlW/eFXV6VCMT9ZMHSBLgXPO5ExFTGgpXYlGTg69RZkx7Ph7OI2Hibx5VCb2dopYGby6pVHPkCmgvaZAnI04b1FWREaoVw83ljc=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BBE56AB76943D44E999E0BB62F75D345@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a545f729-8bba-48b6-af20-08d748da9fc1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Oct 2019 14:53:31.9414
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LgjAS57Jp9TnyRnWmG75G+gl6zum8k5l9CO40nNRsXGObcJMayWaPE+AUMX0zYDU9GEBeYWwZyuTJDCEP6Uhdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/3/19 10:02 AM, Zhenzhong Duan wrote:
->  void __init kvm_spinlock_init(void)
->  {
-> -	/* Does host kernel support KVM_FEATURE_PV_UNHALT? */
-> -	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT))
-> -		return;
-> -
-> -	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
-> +	/*
-> +	 * Don't use the pvqspinlock code if no KVM_FEATURE_PV_UNHALT feature
-> +	 * support, or there is REALTIME hints or only 1 vCPU.
-> +	 */
-> +	if (!kvm_para_has_feature(KVM_FEATURE_PV_UNHALT) ||
-> +	    kvm_para_has_hint(KVM_HINTS_REALTIME) ||
-> +	    num_possible_cpus() == 1) {
-> +		pr_info("PV spinlocks disabled\n");
->  		return;
-> +	}
->  
-> -	/* Don't use the pvqspinlock code if there is only 1 vCPU. */
-> -	if (num_possible_cpus() == 1)
-> +	if (nopvspin) {
-> +		pr_info("PV spinlocks disabled forced by \"nopvspin\" parameter.\n");
-> +		static_branch_disable(&virt_spin_lock_key);
-
-Would it make sense to bring here the other site where the key is
-disabled (in kvm_smp_prepare_cpus())?
-
-(and, in fact, shouldn't all of the checks that result in early return
-above disable the key?)
-
--boris
-
->  		return;
-> +	}
-> +	pr_info("PV spinlocks enabled\n");
->  
->  	__pv_init_lock_hash();
->  	pv_ops.lock.queued_spin_lock_slowpath = __pv_queued_spin_lock_slowpath;
->
-
+DQpPbiAxMC8zLzE5IDQ6MzQgQU0sIE5laWwgQXJtc3Ryb25nIHdyb3RlOg0KPiBIaSBBbmRyZXks
+DQo+DQo+IExlIDAyLzEwLzIwMTkgw6AgMTY6NDAsIEdyb2R6b3Zza3ksIEFuZHJleSBhIMOpY3Jp
+dCA6DQo+PiBPbiA5LzMwLzE5IDEwOjUyIEFNLCBIaWxsZiBEYW50b24gd3JvdGU6DQo+Pj4gT24g
+TW9uLCAzMCBTZXAgMjAxOSAxMToxNzo0NSArMDIwMCBOZWlsIEFybXN0cm9uZyB3cm90ZToNCj4+
+Pj4gRGlkIGEgbmV3IHJ1biBmcm9tIDUuMzoNCj4+Pj4NCj4+Pj4gWyAgIDM1Ljk3MTk3Ml0gQ2Fs
+bCB0cmFjZToNCj4+Pj4gWyAgIDM1Ljk3NDM5MV0gIGRybV9zY2hlZF9pbmNyZWFzZV9rYXJtYSsw
+eDVjLzB4ZjANCj4+Pj4gCQkJZmZmZjAwMDAxMDY2N2YzOAlGRkZGMDAwMDEwNjY3Rjk0DQo+Pj4+
+IAkJCWRyaXZlcnMvZ3B1L2RybS9zY2hlZHVsZXIvc2NoZWRfbWFpbi5jOjMzNQ0KPj4+Pg0KPj4+
+PiBUaGUgY3Jhc2hpbmcgbGluZSBpcyA6DQo+Pj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBpZiAoYmFkLT5zX2ZlbmNlLT5zY2hlZHVsZWQuY29udGV4dCA9PQ0KPj4+PiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVudGl0eS0+ZmVuY2VfY29udGV4dCkg
+ew0KPj4+Pg0KPj4+PiBEb2Vzbid0IHNlZW0gcmVsYXRlZCB0byBndWlsdHkgam9iLg0KPj4+IEJh
+aWwgb3V0IGlmIHNfZmVuY2UgaXMgbm8gbG9uZ2VyIGZyZXNoLg0KPj4+DQo+Pj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL3NjaGVkdWxlci9zY2hlZF9tYWluLmMNCj4+PiArKysgYi9kcml2ZXJzL2dw
+dS9kcm0vc2NoZWR1bGVyL3NjaGVkX21haW4uYw0KPj4+IEBAIC0zMzMsNiArMzMzLDEwIEBAIHZv
+aWQgZHJtX3NjaGVkX2luY3JlYXNlX2thcm1hKHN0cnVjdCBkcm0NCj4+PiAgICANCj4+PiAgICAJ
+CQlzcGluX2xvY2soJnJxLT5sb2NrKTsNCj4+PiAgICAJCQlsaXN0X2Zvcl9lYWNoX2VudHJ5X3Nh
+ZmUoZW50aXR5LCB0bXAsICZycS0+ZW50aXRpZXMsIGxpc3QpIHsNCj4+PiArCQkJCWlmICghc21w
+X2xvYWRfYWNxdWlyZSgmYmFkLT5zX2ZlbmNlKSkgew0KPj4+ICsJCQkJCXNwaW5fdW5sb2NrKCZy
+cS0+bG9jayk7DQo+Pj4gKwkJCQkJcmV0dXJuOw0KPj4+ICsJCQkJfQ0KPj4+ICAgIAkJCQlpZiAo
+YmFkLT5zX2ZlbmNlLT5zY2hlZHVsZWQuY29udGV4dCA9PQ0KPj4+ICAgIAkJCQkgICAgZW50aXR5
+LT5mZW5jZV9jb250ZXh0KSB7DQo+Pj4gICAgCQkJCQlpZiAoYXRvbWljX3JlYWQoJmJhZC0+a2Fy
+bWEpID4NCj4+PiBAQCAtNTQzLDcgKzU0Nyw3IEBAIEVYUE9SVF9TWU1CT0woZHJtX3NjaGVkX2pv
+Yl9pbml0KTsNCj4+PiAgICB2b2lkIGRybV9zY2hlZF9qb2JfY2xlYW51cChzdHJ1Y3QgZHJtX3Nj
+aGVkX2pvYiAqam9iKQ0KPj4+ICAgIHsNCj4+PiAgICAJZG1hX2ZlbmNlX3B1dCgmam9iLT5zX2Zl
+bmNlLT5maW5pc2hlZCk7DQo+Pj4gLQlqb2ItPnNfZmVuY2UgPSBOVUxMOw0KPj4+ICsJc21wX3N0
+b3JlX3JlbGVhc2UoJmpvYi0+c19mZW5jZSwgMCk7DQo+Pj4gICAgfQ0KPj4+ICAgIEVYUE9SVF9T
+WU1CT0woZHJtX3NjaGVkX2pvYl9jbGVhbnVwKTsNCj4gVGhpcyBmaXhlZCB0aGUgcHJvYmxlbSBv
+biB0aGUgMTAgQ0kgcnVucy4NCj4NCj4gTmVpbA0KDQoNClRoZXNlIGFyZSBnb29kIG5ld3MgYnV0
+IEkgc3RpbGwgZmFpbCB0byBzZWUgaG93IHRoaXMgZml4ZXMgdGhlIHByb2JsZW0gLSANCkhpbGxm
+LCBkbyB5b3UgbWluZCBleHBsYWluaW5nIGhvdyB5b3UgY2FtZSB1cCB3aXRoIHRoaXMgcGFydGlj
+dWxhciBmaXggLSANCndoYXQgd2FzIHRoZSBidWcgeW91IHNhdyA/DQoNCkFuZHJleQ0KDQo+DQo+
+PiBEb2VzIHRoaXMgY2hhbmdlIGhlbHAgdGhlIHByb2JsZW0gPyBOb3RlIHRoYXQgZHJtX3NjaGVk
+X2pvYl9jbGVhbnVwIGlzDQo+PiBjYWxsZWQgZnJvbSBzY2hlZHVsZXIgdGhyZWFkIHdoaWNoIGlz
+IHN0b3BwZWQgYXQgYWxsIHRpbWVzIHdoZW4gd29ya190ZHINCj4+IHRocmVhZCBpcyBydW5uaW5n
+IGFuZCBhbnl3YXkgdGhlICdiYWQnIGpvYiBpcyBzdGlsbCBpbiB0aGUNCj4+IHJpbmdfbWlycm9y
+X2xpc3Qgd2hpbGUgaXQncyBiZWluZyBhY2Nlc3NlZCBmcm9tDQo+PiBkcm1fc2NoZWRfaW5jcmVh
+c2Vfa2FybWEgc28gSSBkb24ndCB0aGluayBkcm1fc2NoZWRfam9iX2NsZWFudXAgY2FuIGJlDQo+
+PiBjYWxsZWQgZm9yIGl0IEJFRk9SRSBvciB3aGlsZSBkcm1fc2NoZWRfaW5jcmVhc2Vfa2FybWEg
+aXMgZXhlY3V0ZWQuDQo+Pg0KPj4gQW5kcmV5DQo+Pg0KPj4NCj4+PiAgICANCj4+PiAtLQ0KPj4+
+DQo=
