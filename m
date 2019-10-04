@@ -2,136 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13BABCC118
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3F85CC11C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbfJDQxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 12:53:02 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42447 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfJDQxC (ORCPT
+        id S1729844AbfJDQyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 12:54:31 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48544 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfJDQyb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 12:53:02 -0400
-Received: by mail-qk1-f195.google.com with SMTP id f16so6397906qkl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 09:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=szbrEQ+44GjFscMv1BfBPhkqI0C+sNQmLHo22e0JAFc=;
-        b=Yx4qOeKmD0XWNid+LHX1bDDL6SZHVT2FZ1d+Lk1LZsJp3YgCRrxVe0NoV1WUz/PwLU
-         VM750Iuos8cQz6GTDnquCwvSVGHgK+fV7O+ZYK8ha/zvjamwmK+0LqOjujQ6Xl1Reisl
-         YFUlshXN68dyg3oU8t/UNexrAgauxC3gLdLLxNreI7fDa004Kb1x5Ggd7qDiDo0kmYtq
-         cfYxEgQdQz5TrJo9UnJKNFB+1tEA04/qFIRkB4zzHsJEPEmCuFE9Cznpl8ClP9V4Ioji
-         KkDvcE8KsUSSPdZgXqb2zlAkFedUwOdDVXHx16J9pxNDDXNFDCbN3F45KyOUm8wiQ28Q
-         FKlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=szbrEQ+44GjFscMv1BfBPhkqI0C+sNQmLHo22e0JAFc=;
-        b=GnvwWCf/MVtAUUf8tvrvH5egkJKG5OqNss+eU0PEWpItsvTsQLOpccbfsC75s+MFn/
-         6V45xF3sL/eTiYoNlRKr5okTEUAnKjbTBaLdMKimlfLgkydMfAnBDouT5zS0yArVq2SN
-         CZ9fRkmUK1+upzw4tJXknTzblxvXuXoq72+8/cSn3gXeHbI2MJ02I3xFb0014IXtEF1Z
-         PJKMFAP/bEflxFR894fXBm/rPekauAfOvf2QGRsYjKyoy6XKZ+X71ceW2Xgqt99Wm0NL
-         k+sDGHPhtFg9sAGFwnj8bYzm/MfOqk9VaVNLEoB8Gxfv+BqiTjWMz2WRCgjbBd1t2O9U
-         YlUw==
-X-Gm-Message-State: APjAAAX8phNfyV7Rll1MvUCEmdRrsrxeVo9tfZ3fYNwCRD/GqrUqxGJC
-        RBpv/dEA5+fTmLByYNxNVhItmwRxXzOcgb6idnRG8A==
-X-Google-Smtp-Source: APXvYqzWIGhS5eddfBw1HGeHlIg5Y4jipnTwAaE+Wn20faNnBKw1aq7vtNfqOuReDvRLYOr6H2CtEBWUnjhuxzQi6TY=
-X-Received: by 2002:a37:d84:: with SMTP id 126mr10177395qkn.407.1570207980784;
- Fri, 04 Oct 2019 09:53:00 -0700 (PDT)
+        Fri, 4 Oct 2019 12:54:31 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iGQqa-0007fz-6E; Fri, 04 Oct 2019 16:54:28 +0000
+Date:   Fri, 4 Oct 2019 17:54:28 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Varad Gautam <vrd@amazon.de>, stable@vger.kernel.org,
+        Jan Glauber <jglauber@marvell.com>, linux-cifs@vger.kernel.org,
+        Steve French <sfrench@samba.org>
+Subject: [cifs] semantics of IPC$ shares (was Re: [PATCH] devpts: Fix NULL
+ pointer dereference in dcache_readdir())
+Message-ID: <20191004165428.GA28597@ZenIV.linux.org.uk>
+References: <20191004140503.9817-1-christian.brauner@ubuntu.com>
+ <20191004142748.GG26530@ZenIV.linux.org.uk>
+ <20191004143301.kfzcut6a6z5owfee@wittgenstein>
+ <20191004151058.GH26530@ZenIV.linux.org.uk>
+ <20191004152526.adgg3a7u7jylfk4a@wittgenstein>
+ <20191004160219.GI26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com>
- <20191001211948.GA42035@google.com> <CANpmjNNp=zVzM2iGcQwVYxzNHYjBo==_2nito4Dw=kHopy=0Sg@mail.gmail.com>
- <20191004164859.GD253167@google.com>
-In-Reply-To: <20191004164859.GD253167@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 4 Oct 2019 18:52:49 +0200
-Message-ID: <CACT4Y+bPZOb=h9m__Uo0feEshdGzPz0qGK7f2omsUc6-kEvwZA@mail.gmail.com>
-Subject: Re: Kernel Concurrency Sanitizer (KCSAN)
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Marco Elver <elver@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Paul Turner <pjt@google.com>, Daniel Axtens <dja@axtens.net>,
-        Anatol Pomazau <anatol@google.com>,
-        Will Deacon <willdeacon@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191004160219.GI26530@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 6:49 PM Joel Fernandes <joel@joelfernandes.org> wrote:
->
-> On Wed, Oct 02, 2019 at 09:51:58PM +0200, Marco Elver wrote:
-> > Hi Joel,
-> >
-> > On Tue, 1 Oct 2019 at 23:19, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > >
-> > > On Fri, Sep 20, 2019 at 04:18:57PM +0200, Marco Elver wrote:
-> > > > Hi all,
-> > > >
-> > > > We would like to share a new data-race detector for the Linux kernel:
-> > > > Kernel Concurrency Sanitizer (KCSAN) --
-> > > > https://github.com/google/ktsan/wiki/KCSAN  (Details:
-> > > > https://github.com/google/ktsan/blob/kcsan/Documentation/dev-tools/kcsan.rst)
-> > > >
-> > > > To those of you who we mentioned at LPC that we're working on a
-> > > > watchpoint-based KTSAN inspired by DataCollider [1], this is it (we
-> > > > renamed it to KCSAN to avoid confusion with KTSAN).
-> > > > [1] http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf
-> > > >
-> > > > In the coming weeks we're planning to:
-> > > > * Set up a syzkaller instance.
-> > > > * Share the dashboard so that you can see the races that are found.
-> > > > * Attempt to send fixes for some races upstream (if you find that the
-> > > > kcsan-with-fixes branch contains an important fix, please feel free to
-> > > > point it out and we'll prioritize that).
-> > > >
-> > > > There are a few open questions:
-> > > > * The big one: most of the reported races are due to unmarked
-> > > > accesses; prioritization or pruning of races to focus initial efforts
-> > > > to fix races might be required. Comments on how best to proceed are
-> > > > welcome. We're aware that these are issues that have recently received
-> > > > attention in the context of the LKMM
-> > > > (https://lwn.net/Articles/793253/).
-> > > > * How/when to upstream KCSAN?
-> > >
-> > > Looks exciting. I think based on our discussion at LPC, you mentioned
-> > > one way of pruning is if the compiler generated different code with _ONCE
-> > > annotations than what would have otherwise been generated. Is that still on
-> > > the table, for the purposing of pruning the reports?
-> >
-> > This might be interesting at first, but it's not entirely clear how
-> > feasible it is. It's also dangerous, because the real issue would be
-> > ignored. It may be that one compiler version on a particular
-> > architecture generates the same code, but any change in compiler or
-> > architecture and this would no longer be true. Let me know if you have
-> > any more ideas.
->
-> My thought was this technique of looking at compiler generated code can be
-> used for prioritization of the reports.  Have you tested it though? I think
-> without testing such technique, we could not know how much of benefit (or
-> lack thereof) there is to the issue.
->
-> In fact, IIRC, the compiler generating different code with _ONCE annotation
-> can be given as justification for patches doing such conversions.
+On Fri, Oct 04, 2019 at 05:02:20PM +0100, Al Viro wrote:
 
+> 	* (possibly) cifs hitting the same on eviction by memory pressure alone
+> (no locked inodes anywhere in sight).  Possibly == if cifs IPC$ share happens to
+> show up non-empty (e.g. due to server playing silly buggers).
+> 	* (possibly) cifs hitting *another* lovely issue - lookup in one subdirectory
+> of IPC$ root finding an alias for another subdirectory of said root, triggering
+> d_move() of dentry of the latter.  IF the name happens to be long enough to be
+> externally allocated and if dcache_readdir() on root is currently copying it to
+> userland, Bad Things(tm) will happen.  That one almost certainly depends upon the
+> server playing silly buggers and might or might not be possible.  I'm not familiar
+> enough with CIFS to tell.
 
-We also should not forget about "missed mutex" races (e.g. unprotected
-radix tree), which are much worse and higher priority than a missed
-atomic annotation. If we look at codegen we may discard most of them
-as non important.
+BTW, I would really appreciate somebody familiar with CIFS giving a braindump on
+that.  Questions:
+
+1) What's normally (== without malicious/broken server) seen when you mount
+an IPC$ share?
+
+2) Does it ever have subdirectories (i.e. can we fail a lookup in its root if it
+looks like returning a subdirectory)?
+
+3) If it can be non-empty, is there way to ask the server about its contents?
+Short of "look every possible name up", that is...
+
+As it is, the thing is abusing either cifs_lookup() (if it really shouldn't
+have any files in it) or dcache_readdir().  Sure, dcache_readdir() can (and
+should) pin a dentry while copying the name to userland, but WTF kind of
+semantics it is?  "ls will return the things you'd guessed to look up, until
+there's enough memory pressure to have them forgotten, which can happen at
+any point with no activity on server"?
