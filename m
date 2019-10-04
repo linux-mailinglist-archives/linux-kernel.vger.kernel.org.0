@@ -2,81 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B46CC52C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D33B9CC534
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730643AbfJDVsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 17:48:01 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36152 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728773AbfJDVsA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:48:00 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v24so7936323ljj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:47:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=96jk8p/6XP5ut+JBHE0IBsdTmxOUR/fsv3ZcRWDzMOg=;
-        b=hboFmV/U4IcPI89MtzDp+OzE5KwsWErja8LOnkuuLwv0fksWiRpqJQZRis7rFIeVPP
-         Ooj27rcXns2Y4feoVEtg49n8CryY2RaGyouBUeaqk2ra5EWaVF1b9SJCzpbS0ccPcx6o
-         OKGdwKxr435NLGf2rhVWgjPumSWR2SHoXx0hKGzQWcUyTo9N2UXJEk48l4i2HhDZs/lk
-         /w5UDGdeyD3/r3JdKqYvjgprnF2+BDf/24afsGx6mveKIokPtaSJGfI7WbyMW88ICvUl
-         cpiuvmH0N+uNxhDXRpNNofDROfjzaePmP13ERqR66MmREXUZCh8g2+gPv00qpvzL0Kk7
-         +7fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=96jk8p/6XP5ut+JBHE0IBsdTmxOUR/fsv3ZcRWDzMOg=;
-        b=sOSL9YjctVIX34ZAY9Zrla7NFP9IUePuTpcsB94cpUlM31NOpdbUabUN2ucBPq2Hmr
-         sxAp1bEpC1r4YibOMyMwDEviIXwjvJ0W6q5V79VNo3lphaNngdGQUPBniphM7bPp9PGZ
-         B0KZTbdKXiWpr9Lg3K6V96k8AiP/NxN4p+6XRcMwe5gVgFTCH75I/zIapIYzXu1Vqu5E
-         LShuQk4nLLWBFv2KktZjcqefN/0fmZq/X1x+rEoVtVzSSJuwzxFIpxqPsgiqz1r7YuZx
-         W9Wjz4I6+aMLJE40G0Z2lh87TN7iwkDnnPyX4emW0zs4tByUzlqyl3pOQyjwagnpgvcS
-         BxLA==
-X-Gm-Message-State: APjAAAV5yE2FVpiIuOJmqUfCIHg2WwM7tuMUZE+bOFb0kTq3tyBu0zJc
-        qKamhpV1uQmedQanoeO9WukDI4Q55QEOv/Ye1v30sB/A7LI=
-X-Google-Smtp-Source: APXvYqxdZOCfwMC4ckXG//o/o4H8hELcsXHe3EoTOHIYVBOebIobkD8VaGs1KQIIBFvGy9ppesFAq6cvMyUvfIsKzS0=
-X-Received: by 2002:a2e:6344:: with SMTP id x65mr10670505ljb.59.1570225678386;
- Fri, 04 Oct 2019 14:47:58 -0700 (PDT)
+        id S1730900AbfJDVuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:50:17 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:38224 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727548AbfJDVuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 17:50:17 -0400
+Received: from 94.112.246.102.static.b2b.upcbusiness.cz ([94.112.246.102] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iGVSP-0006tk-DS; Fri, 04 Oct 2019 23:49:49 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     miquel.raynal@bootlin.com, rui.zhang@intel.com,
+        edubezval@gmail.com, daniel.lezcano@linaro.org,
+        amit.kucheria@verdurent.com, eric@anholt.net, wahrenst@gmx.net,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        mmayer@broadcom.com, computersforpeace@gmail.com,
+        gregory.0xf0@gmail.com, matthias.bgg@gmail.com, agross@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        marc.w.gonzalez@free.fr, mans@mansr.com, talel@amazon.com,
+        jun.nie@linaro.org, shawnguo@kernel.org, phil@raspberrypi.org,
+        gregkh@linuxfoundation.org, david.hernandezsanchez@st.com,
+        horms+renesas@verge.net.au, wsa+renesas@sang-engineering.com,
+        bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH -next 09/15] thermal: rockchip: use devm_platform_ioremap_resource() to simplify code
+Date:   Fri, 04 Oct 2019 23:49:47 +0200
+Message-ID: <6308452.QoXZFhLlpT@phil>
+In-Reply-To: <20190904122939.23780-10-yuehaibing@huawei.com>
+References: <20190904122939.23780-1-yuehaibing@huawei.com> <20190904122939.23780-10-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <20191001125837.4472-1-brgl@bgdev.pl> <20191001125837.4472-2-brgl@bgdev.pl>
-In-Reply-To: <20191001125837.4472-2-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 4 Oct 2019 23:47:47 +0200
-Message-ID: <CACRpkdbnkMvcSOoLGWi9nSfcpcNT0T28kFX=gyk6jSZ4UWG3gQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] backlight: gpio: remove unneeded include
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 2:59 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Am Mittwoch, 4. September 2019, 14:29:33 CEST schrieb YueHaibing:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> We no longer use any symbols from of_gpio.h. Remove this include.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/thermal/rockchip_thermal.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index 343c2f5..044e6eb 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -1219,7 +1219,6 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
+>  	struct device_node *np = pdev->dev.of_node;
+>  	struct rockchip_thermal_data *thermal;
+>  	const struct of_device_id *match;
+> -	struct resource *res;
+>  	int irq;
+>  	int i;
+>  	int error;
+> @@ -1245,8 +1244,7 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
+>  	if (!thermal->chip)
+>  		return -EINVAL;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	thermal->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	thermal->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(thermal->regs))
+>  		return PTR_ERR(thermal->regs);
+>  
+> 
 
-Thanks Bartosz,
-Linus Walleij
+
+
+
