@@ -2,125 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C2DCB6AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49738CB6C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 11:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387568AbfJDIwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 04:52:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41874 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725730AbfJDIwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 04:52:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C103BAC16;
-        Fri,  4 Oct 2019 08:52:20 +0000 (UTC)
-Message-ID: <1570179472.30086.4.camel@suse.cz>
-Subject: Re: [PATCH v2 2/2] cpufreq: intel_pstate: Conditional frequency
- invariant accounting
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@suse.de>, Len Brown <lenb@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@qperret.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Doug Smythies <dsmythies@telus.net>
-Date:   Fri, 04 Oct 2019 10:57:52 +0200
-In-Reply-To: <CAJZ5v0jK1kMjQ3gu8KhQmp2Paq9Rb74NPjMQ1HsVRCD3Fct5TQ@mail.gmail.com>
-References: <20191002122926.385-1-ggherdovich@suse.cz>
-         <20191002122926.385-3-ggherdovich@suse.cz> <13106850.QMtCbivBLn@kreacher>
-         <5d6d601d2647644238fc51621407061e1c29320d.camel@linux.intel.com>
-         <1570177786.30086.1.camel@suse.cz>
-         <CAJZ5v0jK1kMjQ3gu8KhQmp2Paq9Rb74NPjMQ1HsVRCD3Fct5TQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S2387631AbfJDJAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 05:00:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:39218 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfJDJAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 05:00:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DBED1597;
+        Fri,  4 Oct 2019 02:00:18 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80D243F739;
+        Fri,  4 Oct 2019 02:00:16 -0700 (PDT)
+Subject: Re: [PATCH v5 01/10] KVM: arm64: Document PV-time interface
+To:     Andrew Jones <drjones@redhat.com>
+Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191002145037.51630-1-steven.price@arm.com>
+ <20191002145037.51630-2-steven.price@arm.com>
+ <20191003121903.vty3gikjrqxffgch@kamzik.brq.redhat.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <666d133c-031d-efe0-9f7d-1711dcf576ef@arm.com>
+Date:   Fri, 4 Oct 2019 10:00:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191003121903.vty3gikjrqxffgch@kamzik.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-04 at 10:29 +0200, Rafael J. Wysocki wrote:
-> On Fri, Oct 4, 2019 at 10:24 AM Giovanni Gherdovich <ggherdovich@suse.cz> wrote:
-> > 
-> > On Thu, 2019-10-03 at 20:31 -0700, Srinivas Pandruvada wrote:
-> > > On Thu, 2019-10-03 at 20:05 +0200, Rafael J. Wysocki wrote:
-> > > > On Wednesday, October 2, 2019 2:29:26 PM CEST Giovanni Gherdovich
-> > > > wrote:
-> > > > > From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > > > > 
-> > > > > intel_pstate has two operating modes: active and passive. In "active"
-> > > > > mode, the in-built scaling governor is used and in "passive" mode, the
-> > > > > driver can be used with any governor like "schedutil". In "active" mode
-> > > > > the utilization values from schedutil is not used and there is a
-> > > > > requirement from high performance computing use cases, not to readas
-> > > > > well any APERF/MPERF MSRs.
-> > > > 
-> > > > Well, this isn't quite convincing.
-> > > > 
-> > > > In particular, I don't see why the "don't read APERF/MPERF MSRs" argument
-> > > > applies *only* to intel_pstate in the "active" mode.  What about
-> > > > intel_pstate in the "passive" mode combined with the "performance"
-> > > > governor?  Or any other governor different from "schedutil" for that
-> > > > matter?
-> > > > 
-> > > > And what about acpi_cpufreq combined with any governor different from
-> > > > "schedutil"?
-> > > > 
-> > > > Scale invariance is not really needed in all of those cases right now
-> > > > AFAICS, or is it?
-> > > 
-> > > Correct. This is just part of the patch to disable in active mode
-> > > (particularly in HWP and performance mode).
-> > > 
-> > > But this patch is 2 years old. The folks who wanted this, disable
-> > > intel-pstate and use userspace governor with acpi-cpufreq. So may be
-> > > better to address those cases too.
-> > 
-> > I disagree with "scale invariance is needed only by the schedutil governor";
-> > the two other users are the CPU's estimated utilization in the wakeup path,
-> > via cpu_util_without(), as well as the load-balance path, via cpu_util() which
-> > is used by update_sg_lb_stats().
+On 03/10/2019 13:19, Andrew Jones wrote:
+> On Wed, Oct 02, 2019 at 03:50:28PM +0100, Steven Price wrote:
+>> Introduce a paravirtualization interface for KVM/arm64 based on the
+>> "Arm Paravirtualized Time for Arm-Base Systems" specification DEN 0057A.
+>>
+>> This only adds the details about "Stolen Time" as the details of "Live
+>> Physical Time" have not been fully agreed.
+>>
+>> User space can specify a reserved area of memory for the guest and
+>> inform KVM to populate the memory with information on time that the host
+>> kernel has stolen from the guest.
+>>
+>> A hypercall interface is provided for the guest to interrogate the
+>> hypervisor's support for this interface and the location of the shared
+>> memory structures.
+>>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>  Documentation/virt/kvm/arm/pvtime.txt   | 65 +++++++++++++++++++++++++
+>>  Documentation/virt/kvm/devices/vcpu.txt | 14 ++++++
+>>  2 files changed, 79 insertions(+)
+>>  create mode 100644 Documentation/virt/kvm/arm/pvtime.txt
+>>
+>> diff --git a/Documentation/virt/kvm/arm/pvtime.txt b/Documentation/virt/kvm/arm/pvtime.txt
+>> new file mode 100644
+>> index 000000000000..fa15c12eec91
+>> --- /dev/null
+>> +++ b/Documentation/virt/kvm/arm/pvtime.txt
 > 
-> OK, so there are reasons to run the scale invariance code which are
-> not related to the cpufreq governor in use.
+> Maybe use .rst instead of .txt?
+
+Fair point - I guess .rst is the way of the future!
+
+>> @@ -0,0 +1,65 @@
+>> +Paravirtualized time support for arm64
+>> +======================================
+>> +
+>> +Arm specification DEN0057/A defined a standard for paravirtualised time
 > 
-> I wonder then why those reasons are not relevant for intel_pstate in
-> the "active" mode.
+> s/defined/defines/ ?
 > 
-> > Also remember that scale invariance is applied to both PELT signals util_avg
-> > and load_avg; schedutil uses the former but not the latter.
-> > 
-> > I understand Srinivas patch to disable MSR accesses during the tick as a
-> > band-aid solution to address a specific use case he cares about, but I don't
-> > think that extending this approach to any non-schedutil governor is a good
-> > idea -- you'd be killing load balancing in the process.
+>> +support for AArch64 guests:
+>> +
+>> +https://developer.arm.com/docs/den0057/a
+>> +
+>> +KVM/arm64 implements the stolen time part of this specification by providing
+>> +some hypervisor service calls to support a paravirtualized guest obtaining a
+>> +view of the amount of time stolen from its execution.
+>> +
+>> +Two new SMCCC compatible hypercalls are defined:
+>> +
+>> +PV_FEATURES 0xC5000020
 > 
-> But that is also the case for intel_pstate in the "active" mode, isn't it?
+> The spec calls this PV_TIME_FEATURES.
+> 
+>> +PV_TIME_ST  0xC5000022
+> 
+> This is 0xC5000021 in the spec.
 
-Sure it is.
+This is somewhat embarrassing. Apparently when I was reviewing the new
+specification I didn't notice these (subtle) changes. Thanks for
+pointing it out to me! I'll update the code to match.
 
-Now, what's the performance impact of loosing scale-invariance in PELT signals?
-And what's the performance impact of accessing two MSRs at the scheduler tick
-on each CPU?
+>> +
+>> +These are only available in the SMC64/HVC64 calling convention as
+>> +paravirtualized time is not available to 32 bit Arm guests. The existence of
+>> +the PV_FEATURES hypercall should be probed using the SMCCC 1.1 ARCH_FEATURES
+>> +mechanism before calling it.
+>> +
+>> +PV_FEATURES
+>> +    Function ID:  (uint32)  : 0xC5000020
+>> +    PV_func_id:   (uint32)  : The function to query for support.
+>> +                              Currently only PV_TIME_ST is supported.
+> 
+> The spec calls this PV_call_id, but maybe PV_func_id would have been better.
 
-I am sporting Srinivas' patch because he expressed the concern that the losses
-don't justify the gains for a specific class of users (supercomputing),
-although I don't fully like the idea (and arguably that should be measured).
+I guess they are generally called "hypercalls" not "hyperfunctions" - so
+I'll match the spec here.
 
+>> +    Return value: (int32)   : NOT_SUPPORTED (-1) or SUCCESS (0) if the relevant
+>> +                              PV-time feature is supported by the hypervisor.
+> 
+> This is an int64 in the spec.
 
-Giovanni
+True - although the values easily fit in int32 too! But I'll update to
+be consistent with the spec.
+
+>> +
+>> +PV_TIME_ST
+>> +    Function ID:  (uint32)  : 0xC5000022
+>> +    Return value: (int64)   : IPA of the stolen time data structure for this
+>> +                              VCPU. On failure:
+>> +                              NOT_SUPPORTED (-1)
+>> +
+>> +The IPA returned by PV_TIME_ST should be mapped by the guest as normal memory
+>> +with inner and outer write back caching attributes, in the inner shareable
+>> +domain. A total of 16 bytes from the IPA returned are guaranteed to be
+>> +meaningfully filled by the hypervisor (see structure below).
+>> +
+>> +PV_TIME_ST returns the structure for the calling VCPU.
+>> +
+>> +Stolen Time
+>> +-----------
+>> +
+>> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
+>> +
+>> +  Field       | Byte Length | Byte Offset | Description
+>> +  ----------- | ----------- | ----------- | --------------------------
+>> +  Revision    |      4      |      0      | Must be 0 for version 0.1
+> 
+> The spec version is 1.0 and Table 1 says "For implementations compliant
+> with this revision of the specification...". So I think this description
+> should be "Must be 0 for version 1.0".
+
+Will update.
+
+Thanks,
+
+Steve
+
+>> +  Attributes  |      4      |      4      | Must be 0
+>> +  Stolen time |      8      |      8      | Stolen time in unsigned
+>> +              |             |             | nanoseconds indicating how
+>> +              |             |             | much time this VCPU thread
+>> +              |             |             | was involuntarily not
+>> +              |             |             | running on a physical CPU.
+>> +
+>> +The structure will be updated by the hypervisor prior to scheduling a VCPU. It
+>> +will be present within a reserved region of the normal memory given to the
+>> +guest. The guest should not attempt to write into this memory. There is a
+>> +structure per VCPU of the guest.
+>> +
+>> +For the user space interface see Documentation/virt/kvm/devices/vcpu.txt
+>> +section "3. GROUP: KVM_ARM_VCPU_PVTIME_CTRL".
+>> +
+>> diff --git a/Documentation/virt/kvm/devices/vcpu.txt b/Documentation/virt/kvm/devices/vcpu.txt
+>> index 2b5dab16c4f2..6f3bd64a05b0 100644
+>> --- a/Documentation/virt/kvm/devices/vcpu.txt
+>> +++ b/Documentation/virt/kvm/devices/vcpu.txt
+>> @@ -60,3 +60,17 @@ time to use the number provided for a given timer, overwriting any previously
+>>  configured values on other VCPUs.  Userspace should configure the interrupt
+>>  numbers on at least one VCPU after creating all VCPUs and before running any
+>>  VCPUs.
+>> +
+>> +3. GROUP: KVM_ARM_VCPU_PVTIME_CTRL
+>> +Architectures: ARM64
+>> +
+>> +3.1 ATTRIBUTE: KVM_ARM_VCPU_PVTIME_IPA
+>> +Parameters: 64-bit base address
+>> +Returns: -ENXIO:  Stolen time not implemented
+>> +         -EEXIST: Base address already set for this VCPU
+>> +         -EINVAL: Base address not 64 byte aligned
+>> +
+>> +Specifies the base address of the stolen time structure for this VCPU. The
+>> +base address must be 64 byte aligned and exist within a valid guest memory
+>> +region. See Documentation/virt/kvm/arm/pvtime.txt for more information
+>> +including the layout of the stolen time structure.
+>> -- 
+>> 2.20.1
+>>
+> 
+> Thanks,
+> drew 
+> 
+
