@@ -2,50 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F17ECB352
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 04:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 909B0CB350
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 04:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbfJDCmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 22:42:47 -0400
-Received: from hn.kd.ny.adsl ([42.231.162.190]:3240 "HELO justrepair.net"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1730823AbfJDCmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 22:42:47 -0400
-Received: from unknown (148.130.30.209)
-        by mxs.perenter.com with QMQP; Fri, 04 Oct 2019 00:30:41 -0200
-Received: from unknown (HELO relay.2yahoo.com) (Fri, 04 Oct 2019 00:12:40 -0200)
-        by smtp.mixedthings.net with SMTP; Fri, 04 Oct 2019 00:12:40 -0200
-Received: from smtp4.cyberemailings.com [15.218.60.244] by mailout.endmonthnow.com with NNFMP; Fri, 04 Oct 2019 00:02:30 -0200
-Received: from smtp.doneohx.com ([98.252.145.18]) by relay37.vosimerkam.net with LOCAL; Fri, 04 Oct 2019 00:00:49 -0200
-Received: from mtu23.bigping.com ([134.68.199.131]) by mx03.listsystemsf.net with SMTP; Thu, 03 Oct 2019 23:59:46 -0200
-Message-ID: <E7E12218.BC49A714@justrepair.net>
-Date:   Thu, 03 Oct 2019 23:49:13 -0200
-From:   "Just Repair" <admin@justrepair.net>
-User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.6) Gecko/20050317 Thunderbird/1.0.2
-X-Accept-Language: en-us
+        id S1731547AbfJDCkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 22:40:17 -0400
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:37199 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728360AbfJDCkR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 Oct 2019 22:40:17 -0400
+Received: by mail-wr1-f44.google.com with SMTP id p14so4168043wro.4
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 19:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=IFqp3FYVQxAZCJNtTZgC4FqFytGhefEpuCZKb+wIGoY=;
+        b=JE50Zo2EfbrPVM+f2F4BiXLxT4hCFfawY+GKQ2rkA5upuPyck20fc+DerrY/EZVW+2
+         6v92Ru/e/o65MMiGS+BH7snP10snnOV+gm0Og5anh7XH1W7MRS9g6GogRblBXSrSrr6P
+         BpxWy5a+UZhDvDQfwJHsSY2IfClvj3dxBZ6QOdHQwycFmARkNCz/hbelABTbxcAVwO7D
+         +mp0TnZqfTuYjQLYxnAWHxxg3cgBfgJNvZEZ+SE8x3ItbdK7ldPYdFIr4GDA22h9uBIe
+         OY46nd33aJ0pNlekEBRscvWRzbp39TEaVn11cdy/KuqWydPal4IsoS1depSuO2IX0eWb
+         QeQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=IFqp3FYVQxAZCJNtTZgC4FqFytGhefEpuCZKb+wIGoY=;
+        b=n8UcbW7/HRlSru1VIWADN0R+f2IDChbiasxoB4G2Nj+elKIr6K5w8xhwZ6KeCL9gPp
+         kE1nPh+oemUcsSxdFqw0DkDUdiIB+L8/1eJewIVnh8Lx8LOdwioPUbF8c9dWhHuSQuGe
+         lEMOwUzGmPwitcm4xH+lwCKDBMOP1IHrCQYt5SPn064l2mJf0nC2VCxdzyzA/ZLn/z/o
+         /iR9X6c6WfjoW4AZr4Kx/YwYouO8yKzZMH/nluffTQjdbMeVfYur1kND9MrGgumlcFgN
+         OFmD+1FOD13mUonCPp1hcOHAFob2LQLKERJNHVTwjF+p7rnLdxhwkINADPb2BWhCCPww
+         I5Rg==
+X-Gm-Message-State: APjAAAXA8Qkgj+13ifk6Q/e2SH5p7Jp+FClHIIeQjcE8DAfRsiRL9ag2
+        quQGulc2zxHihpgDoH43Yko=
+X-Google-Smtp-Source: APXvYqxbyFQvCHjN9AZhweB/EqlYNfT1w5rjiUq6FDFY2Vyz6J3FtrHMClyseckzP50zymAQ68DU9A==
+X-Received: by 2002:a5d:4102:: with SMTP id l2mr9897968wrp.348.1570156814624;
+        Thu, 03 Oct 2019 19:40:14 -0700 (PDT)
+Received: from localhost.localdomain ([104.238.174.53])
+        by smtp.gmail.com with ESMTPSA id o19sm7447776wmh.27.2019.10.03.19.40.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2019 19:40:14 -0700 (PDT)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH v3 1/2] perf: support multiple debug options separated by ','
+Date:   Fri,  4 Oct 2019 10:39:53 +0800
+Message-Id: <20191004023954.1116-2-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191004023954.1116-1-changbin.du@gmail.com>
+References: <20191004023954.1116-1-changbin.du@gmail.com>
 MIME-Version: 1.0
-To:     <linux-assembly@vger.kernel.org>
-Subject: We bring your gadget back to life
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, 
+This patch adds support for multiple debug options separated by ',' and
+non-int values.
+	--debug verbose=2,stderr
 
-Let us repair your phone or gadget right on the spot
-visit us today
-https://www.justrepair.net
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+---
+ tools/perf/Documentation/perf.txt | 10 ++--
+ tools/perf/util/debug.c           | 86 ++++++++++++++++---------------
+ 2 files changed, 50 insertions(+), 46 deletions(-)
 
-or come into our location
-https://goo.gl/maps/k5iRbeJyggiXnZSG6
-Give us a nice review and we`ll make you a big discount
-
-
-Thank you,
-Ameer
-
+diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
+index 401f0ed67439..c05a94b2488e 100644
+--- a/tools/perf/Documentation/perf.txt
++++ b/tools/perf/Documentation/perf.txt
+@@ -19,11 +19,11 @@ OPTIONS
+ 	  --debug verbose=2 # sets verbose = 2
+ 
+ 	List of debug variables allowed to set:
+-	  verbose          - general debug messages
+-	  ordered-events   - ordered events object debug messages
+-	  data-convert     - data convert command debug messages
+-	  stderr           - write debug output (option -v) to stderr
+-	                     in browser mode
++	  verbose=level		- general debug messages
++	  ordered-events=level	- ordered events object debug messages
++	  data-convert=level	- data convert command debug messages
++	  stderr		- write debug output (option -v) to stderr
++				  in browser mode
+ 
+ --buildid-dir::
+ 	Setup buildid cache directory. It has higher priority than
+diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
+index e55114f0336f..df82ad9cd16d 100644
+--- a/tools/perf/util/debug.c
++++ b/tools/perf/util/debug.c
+@@ -26,7 +26,7 @@
+ int verbose;
+ bool dump_trace = false, quiet = false;
+ int debug_ordered_events;
+-static int redirect_to_stderr;
++static bool redirect_to_stderr;
+ int debug_data_convert;
+ 
+ int veprintf(int level, int var, const char *fmt, va_list args)
+@@ -172,41 +172,18 @@ void trace_event(union perf_event *event)
+ 		     trace_event_printer, event);
+ }
+ 
+-static struct debug_variable {
+-	const char *name;
+-	int *ptr;
+-} debug_variables[] = {
+-	{ .name = "verbose",		.ptr = &verbose },
+-	{ .name = "ordered-events",	.ptr = &debug_ordered_events},
+-	{ .name = "stderr",		.ptr = &redirect_to_stderr},
+-	{ .name = "data-convert",	.ptr = &debug_data_convert },
+-	{ .name = NULL, }
+-};
+-
+-int perf_debug_option(const char *str)
++static int str2loglevel(const char *vstr)
+ {
+-	struct debug_variable *var = &debug_variables[0];
+-	char *vstr, *s = strdup(str);
+ 	int v = 1;
+-
+-	vstr = strchr(s, '=');
+-	if (vstr)
+-		*vstr++ = 0;
+-
+-	while (var->name) {
+-		if (!strcmp(s, var->name))
+-			break;
+-		var++;
+-	}
+-
+-	if (!var->name) {
+-		pr_err("Unknown debug variable name '%s'\n", s);
+-		free(s);
+-		return -1;
+-	}
++	char *endptr;
+ 
+ 	if (vstr) {
+-		v = atoi(vstr);
++		v = strtol(vstr, &endptr,0);
++		if (vstr == endptr) {
++			fprintf(stderr, "warning: '%s' is not a digit\n", vstr);
++			return -1;
++		}
++
+ 		/*
+ 		 * Allow only values in range (0, 10),
+ 		 * otherwise set 0.
+@@ -217,20 +194,47 @@ int perf_debug_option(const char *str)
+ 	if (quiet)
+ 		v = -1;
+ 
+-	*var->ptr = v;
+-	free(s);
++	return v;
++}
++
++int perf_debug_option(const char *str)
++{
++	char *sep, *vstr;
++	char *dstr = strdup(str);
++	char *opt = dstr;
++
++	do {
++		if ((sep = strchr(opt, ',')) != NULL)
++			*sep = '\0';
++
++		vstr = strchr(opt, '=');
++		if (vstr)
++			*vstr++ = 0;
++
++		if (!strcmp(opt, "verbose"))
++			verbose = str2loglevel(vstr);
++		else if (!strcmp(opt, "ordered-events"))
++			debug_ordered_events = str2loglevel(vstr);
++		else if (!strcmp(opt, "data-convert"))
++			debug_data_convert = str2loglevel(vstr);
++		else if (!strcmp(opt, "stderr"))
++			redirect_to_stderr = true;
++		else {
++			fprintf(stderr, "unkown debug option '%s'\n", opt);
++			free(dstr);
++			return -1;
++		}
++
++		opt = sep + 1;
++	} while (sep && sep[1]);
++
++	free(dstr);
+ 	return 0;
+ }
+ 
+ int perf_quiet_option(void)
+ {
+-	struct debug_variable *var = &debug_variables[0];
+-
+-	/* disable all debug messages */
+-	while (var->name) {
+-		*var->ptr = -1;
+-		var++;
+-	}
++	verbose = debug_ordered_events = debug_data_convert = -1;
+ 
+ 	return 0;
+ }
+-- 
+2.20.1
 
