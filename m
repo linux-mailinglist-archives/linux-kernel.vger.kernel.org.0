@@ -2,152 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58674CC5D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 00:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36786CC5F0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 00:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388733AbfJDW1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 18:27:25 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45460 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388673AbfJDW1X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 18:27:23 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y72so4702308pfb.12
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 15:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sGtC9Y61I0fWewzKpxnAs5yLawr9FrkTbXzFkx6uKAk=;
-        b=YeeGuXR/EbMstIHwMR+WBpofOCJlBn7xcT75NgBfyAZoiHg/V1PWHpO2epGkRD81Ai
-         4RW+gTAEC4WD2yQ2SDrd5K9D7fdDNSPo3UNYUZZ8Zf+ibkFAmTJbDVSYEarDpJ5oPg1j
-         dg3dC2LmBlg/HcrMgqb9PfzfTOzDXYHOa+/PYROjQTT8qZENzhrzuulgnZ3jTVdd9CoS
-         6vHXpukys6F6ZvGyvO/MC52uvNRRW1RrRmLnirND7BrQ4tM7+hSt8ILrukDjy2Zkorp5
-         a2EePtRfrlsKmCyDjJa9T4B+oNHxvnazyX654xQc9H1YU9WC6Z9K9EsF5+8bMHzSZibS
-         tMmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sGtC9Y61I0fWewzKpxnAs5yLawr9FrkTbXzFkx6uKAk=;
-        b=pvj3iNswcUiS34FkdGnDJO1n4UW3D9AiJGDFOzMdg+sE6eAKAKGKX8ZiYdi9Y8VmSK
-         mLBd0jmdAtQVLp8HGgTuCPsPBbRaZPEhwacH42DnsB9z1M+Ygd8ovURFIbJZPS+0p1/u
-         a6n9LcWCnfkLjpoCPCNIwSqNyizl9hAIf6DmHjkT43hwVLwrZd0ZIxsvAkRYy+gfBzC2
-         xfi6maEasjWZnKPjOksiX7Xb749+HzMCuELFLc0jVcrkLhlwuJLTBXSykA3HizzEH8uf
-         Lw/J1QNvUiDDbAA12jcrYK4yUil7pAf3e8PlbLHlQ8CnYBkzKwBaTV6QfWoFhnDFM4ZG
-         yi4g==
-X-Gm-Message-State: APjAAAUqwX6/RzD5Oh75q4tUaKkgQX2w2i9JCWB9gde2MuMhtQrYWt8q
-        h0FJcjDQ0fvj9c1xxjxs1wesfA==
-X-Google-Smtp-Source: APXvYqz9/Um6buAfhCtRCPjLYgne6gcH8Y83qWem0TWomrvMdMPDQueWyrF35KAweIvctX7qICTVOw==
-X-Received: by 2002:a65:638a:: with SMTP id h10mr8380897pgv.106.1570228039982;
-        Fri, 04 Oct 2019 15:27:19 -0700 (PDT)
-Received: from google.com ([2620:15c:2cb:1:e90c:8e54:c2b4:29e7])
-        by smtp.gmail.com with ESMTPSA id w7sm5066788pjn.1.2019.10.04.15.27.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 15:27:19 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 15:27:14 -0700
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     shuah <shuah@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        kieran.bingham@ideasonboard.com,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, robh@kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>, Tim.Bird@sony.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, jdike@addtoit.com,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-Message-ID: <20191004222714.GA107737@google.com>
-References: <20190923090249.127984-1-brendanhiggins@google.com>
- <20191004213812.GA24644@mit.edu>
- <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
- <56e2e1a7-f8fe-765b-8452-1710b41895bf@kernel.org>
+        id S1730784AbfJDWdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 18:33:49 -0400
+Received: from mga18.intel.com ([134.134.136.126]:36833 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727548AbfJDWds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 18:33:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 15:33:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
+   d="scan'208";a="182850825"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga007.jf.intel.com with ESMTP; 04 Oct 2019 15:33:28 -0700
+Date:   Sat, 5 Oct 2019 06:33:11 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        jglisse@redhat.com, mike.kravetz@oracle.com, riel@surriel.com,
+        khlebnikov@yandex-team.ru, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/rmap.c: reuse mergeable anon_vma as parent when fork
+Message-ID: <20191004223311.GA32588@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20191004160632.30251-1-richardw.yang@linux.intel.com>
+ <20191004161120.GI32665@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <56e2e1a7-f8fe-765b-8452-1710b41895bf@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191004161120.GI32665@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 03:59:10PM -0600, shuah wrote:
-> On 10/4/19 3:42 PM, Linus Torvalds wrote:
-> > On Fri, Oct 4, 2019 at 2:39 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> > > 
-> > > This question is primarily directed at Shuah and Linus....
-> > > 
-> > > What's the current status of the kunit series now that Brendan has
-> > > moved it out of the top-level kunit directory as Linus has requested?
-> > 
-> 
-> The move happened smack in the middle of merge window and landed in
-> linux-next towards the end of the merge window.
-> 
-> > We seemed to decide to just wait for 5.5, but there is nothing that
-> > looks to block that. And I encouraged Shuah to find more kunit cases
-> > for when it _does_ get merged.
-> > 
-> 
-> Right. I communicated that to Brendan that we could work on adding more
-> kunit based tests which would help get more mileage on the kunit.
-> 
-> > So if the kunit branch is stable, and people want to start using it
-> > for their unit tests, then I think that would be a good idea, and then
-> > during the 5.5 merge window we'll not just get the infrastructure,
-> > we'll get a few more users too and not just examples.
+On Fri, Oct 04, 2019 at 09:11:20AM -0700, Matthew Wilcox wrote:
+>On Sat, Oct 05, 2019 at 12:06:32AM +0800, Wei Yang wrote:
+>> After this change, kernel build test reduces 20% anon_vma allocation.
+>
+>But does it have any effect on elapsed time or peak memory consumption?
 
-I was planning on holding off on accepting more tests/changes until
-KUnit is in torvalds/master. As much as I would like to go around
-promoting it, I don't really want to promote too much complexity in a
-non-upstream branch before getting it upstream because I don't want to
-risk adding something that might cause it to get rejected again.
+I didn't evaluate these aspects.
 
-To be clear, I can understand from your perspective why getting more
-tests/usage before accepting it is a good thing. The more people that
-play around with it, the more likely that someone will find an issue
-with it, and more likely that what is accepted into torvalds/master is
-of high quality.
+BTW, how to evaluate peak memory consumption? This looks a transient value.
 
-However, if I encourage arbitrary tests/improvements into my KUnit
-branch, it further diverges away from torvalds/master, and is more
-likely that there will be a merge conflict or issue that is not related
-to the core KUnit changes that will cause the whole thing to be
-rejected again in v5.5.
-
-I don't know. I guess we could maybe address that situation by splitting
-up the pull request into features and tests when we go to send it in,
-but that seems to invite a lot of unnecessary complexity. I actually
-already had some other tests/changes ready to send for review, but was
-holding off until the initial set of patches mad it in.
-
-Looking forward to hearing other people's thoughts.
+-- 
+Wei Yang
+Help you, Help me
