@@ -2,92 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC13CCC422
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 22:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 130D0CC426
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 22:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387852AbfJDUZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 16:25:59 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34289 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387689AbfJDUZ7 (ORCPT
+        id S2388063AbfJDU0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 16:26:35 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34381 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387689AbfJDU0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 16:25:59 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y35so4410743pgl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 13:25:57 -0700 (PDT)
+        Fri, 4 Oct 2019 16:26:34 -0400
+Received: by mail-lf1-f66.google.com with SMTP id r22so5366888lfm.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 13:26:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=w4g0iJ9qE6GBqGrmQNHbJmYQGNfgSU66gamnsISgAnI=;
-        b=LRUKKM0XrQrNsQOxFLOTCBk5GmF+LGwqWPGxk22YyKYEpMhIURnNk34uKwWOLfmvxk
-         2nkMJu9D4/hhr/pqgmpWuqIY7xZMdk1emUAwY56fldOONHD/4KXs/GAI3JJuqKdN+pMF
-         firZTjyRlPMmxPjOkQLePBXV8X4aNZfND5PgI=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZsYBLeosgG67nHnpA9UFSWQuiStl1sE/t4aS6dfWhz0=;
+        b=Cm3I98WO9VJ2gEAchiqSnXcfMomS33yaHkHBu8IWjlPGtMrH4PRP0yXEbeqQPW4Foe
+         4KKAgooSz/Eo3cM3cNGdjpi632jSAX1QihEpm3jasmmntSgg4Vl8lwIorhfqt+YCfWnu
+         7uBJqFj+Qs8nLZKj7IR6LVuVmdEKC7nRN9B1c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=w4g0iJ9qE6GBqGrmQNHbJmYQGNfgSU66gamnsISgAnI=;
-        b=gkLdxXcu+cMTc+Jl4ibjKHNHep2GvqQMhoZyIOIIbm0gqYrUwSX4h5houB4s1/S4nH
-         V4GhFTFKv4CJKaT91ZXc/Nhk3KB4Le9OnE5ydjg/lKi13Y/S0ybsWe3r6AF7UpYROBy1
-         0wxC/KNQD9g/hPnZ0EwY16JFzUGFBEc6I448XRxqFlVJ39DOCbB1qyJM2Sm4YRDf7I6v
-         QsniTZnaQpx1/tEh9So/dX1B3KOe906HABt3DEUvRf7OCgmF9QdX9djGkHT9GYSnT5GD
-         s2dC4uwEC8dw5iWy7t9RGRz62rbVkx6IbI+2oHORPszlSHQtYKf9CwH+WwQpqjV+LVcI
-         qLAQ==
-X-Gm-Message-State: APjAAAX0mPyt+ibpOT3kNLFmuy2ytI1uh1m1wRSnJO9ADIEXrBPKAdA4
-        ADZIci14UXfPCxmZkI56aQTelw==
-X-Google-Smtp-Source: APXvYqyl6XnIpTwr3vnhilw9YEEZ6ArLoOcFdiuKfbUAULNxJ3PfJ2T0boH2Nz++hfXAJXe8DWondQ==
-X-Received: by 2002:a63:1e16:: with SMTP id e22mr17500139pge.413.1570220757037;
-        Fri, 04 Oct 2019 13:25:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j128sm10444222pfg.51.2019.10.04.13.25.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 13:25:56 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 13:25:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Laura Abbott <labbott@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Semmle Security Reports <security-reports@semmle.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-mapping: Lift address space checks out of debug code
-Message-ID: <201910041323.F082AA4B19@keescook>
-References: <201910021341.7819A660@keescook>
- <7a5dc7aa-66ec-0249-e73f-285b8807cb73@arm.com>
- <201910021643.75E856C@keescook>
- <fc9fffc8-3cff-4a6f-d426-4a4cc895ebb1@arm.com>
- <201910031438.A67C40B97C@keescook>
- <91192af8-dc96-eeb9-42ab-01473cf2b7c0@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZsYBLeosgG67nHnpA9UFSWQuiStl1sE/t4aS6dfWhz0=;
+        b=igjA6w75a4teNdUKxr4BjiX79m0kd58n+Jf482OHyBG+o9PbryrDjbL56oj6yZpzd3
+         7zpOvOA/rMRtEGCYOH9t0nExuSMUTGuk4Jjv4gwxLyejHx6tWtO7fCrOa9MD2E1f8M+9
+         7R8e+ZBQyXFfC/9GHz7JZcVU3qVQh6Aw9dAmnBQdARRLhCfveC9VB9v58QEvS3njGfpP
+         pWAtcpyzE2RI/E/ZUfNJSdv1mL0hTBvblqmovzHo+67Q1tf7AIhvkH6Y6Ui5jDAGaVkX
+         Swwb/JQymknHHjGqkcYBIkEMugiigs1rNVuQYVc1I7F5602trdgMgiv0Hc6otGNL0Kvb
+         dlrw==
+X-Gm-Message-State: APjAAAWKwPqBd0+MoNcenbRgXvnEh+/jykYaP0JERCrSmzNyWe8pz+N6
+        gvLXUojG0QvcMPrXBYaYww8CY/yP6j4=
+X-Google-Smtp-Source: APXvYqzCnQkLIfXrePqwqKXPVQYnleLf5TuYjdUKoysx0dIOuvZwxdHwzN1v2zIRgvjrLuCziBeoWg==
+X-Received: by 2002:ac2:46d0:: with SMTP id p16mr9763463lfo.190.1570220792293;
+        Fri, 04 Oct 2019 13:26:32 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id 202sm1492950ljf.75.2019.10.04.13.26.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2019 13:26:31 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id f5so7751221ljg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 13:26:31 -0700 (PDT)
+X-Received: by 2002:a2e:2bdb:: with SMTP id r88mr10689784ljr.82.1570220791008;
+ Fri, 04 Oct 2019 13:26:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91192af8-dc96-eeb9-42ab-01473cf2b7c0@arm.com>
+References: <alpine.DEB.2.21.9999.1910041036010.15827@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1910041036010.15827@viisi.sifive.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 4 Oct 2019 13:26:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi9S6PopwTdeFPybnapKwL17ux80e9mbLXNo52e4B8rHg@mail.gmail.com>
+Message-ID: <CAHk-=wi9S6PopwTdeFPybnapKwL17ux80e9mbLXNo52e4B8rHg@mail.gmail.com>
+Subject: Re: [GIT PULL] RISC-V updates for v5.4-rc2
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 07:50:54PM +0100, Robin Murphy wrote:
-> On 03/10/2019 22:38, Kees Cook wrote:
-> > What do you think about the object_is_on_stack() check? That does a
-> > dereference through "current" to find the stack bounds...
-> 
-> I guess it depends what the aim is - is it just to bail out of operations
-> which have near-zero chance of working correctly and every chance of going
-> catastrophically wrong, or to lay down strict argument checking for the API
-> in general? (for cache-coherent devices, or if the caller is careful to
-> ensure the appropriate alignment, DMA from a non-virtually-mapped stack can
-> be *technically* fine, it's just banned in general because those necessary
-> assumptions can be tricky to meet and aren't at all portable).
+On Fri, Oct 4, 2019 at 10:36 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+> - Ensure that exclusive-load reservations are terminated after system
+>   call or exception handling.  This primarily affects QEMU, which does
+>     not expire load reservations.
 
-Okay, then since the vmap check is both the cheapest and the most
-important to catch in the face of breaking everything, I'll move that
-in and we can keep USB's other checks separately.
+Grr. Can somebody talk sense to the RISC-V architects?
 
--- 
-Kees Cook
+Copying the PowerPC model was broken. PowerPC has now become the
+absolute worst architecture out there wrt just about any memory
+ordering issues, and the exclusive reservation is just another example
+of that.
+
+ARMv8 and even alpha got this right, and clear the reservation on
+return from traps/exceptions.
+
+Why did RISC-V copy the power model? (Yeah, I realize that ARM did too
+originally, but they learnt from their mistakes).
+
+Oh well.
+
+              Linus
