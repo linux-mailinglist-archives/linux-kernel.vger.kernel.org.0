@@ -2,79 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D40FBCBF29
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D869CBF2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389806AbfJDP3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:29:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59338 "EHLO mail.kernel.org"
+        id S2389808AbfJDPai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:30:38 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:42392 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389086AbfJDP3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:29:35 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B024820873;
-        Fri,  4 Oct 2019 15:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570202975;
-        bh=+rHNNYut7o8YfUTtQQNfhljadinAJHDEp+EqN59+kGo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MHsckrCN9PJhU9rhwNJbWaQJXBaduSb6iiknS6yefSHeCLPGIIewQveXTgJOsPyz7
-         nj78/PUkFKvFLQHNvrQVmzJeA9lcE6T33vf8VBBAD0/2HF6GLtpCizKNAjRuUgERo8
-         WHxJRRTx1zCxxhgD0qyx02AyNebnjEqy70gktQq4=
-Date:   Fri, 4 Oct 2019 11:29:33 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     Himadri Pandya <himadrispandya@gmail.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "himadri18.07" <himadri18.07@gmail.com>
-Subject: Re: [PATCH 0/2] Drivers: hv: Specify buffer size using Hyper-V page
- size
-Message-ID: <20191004152933.GI17454@sasha-vm>
-References: <20190725050315.6935-1-himadri18.07@gmail.com>
- <DM5PR21MB01377E1E6DE541E902A12EEFD7B80@DM5PR21MB0137.namprd21.prod.outlook.com>
+        id S2389086AbfJDPai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 11:30:38 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1iGPWu-0000ro-GG; Sat, 05 Oct 2019 01:30:05 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2019 01:29:56 +1000
+Date:   Sat, 5 Oct 2019 01:29:56 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     mpm@selenic.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, avifishman70@gmail.com,
+        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
+        benjaminfair@google.com, sumit.garg@linaro.org,
+        jens.wiklander@linaro.org, vkoul@kernel.org, tglx@linutronix.de,
+        joel@jms.id.au, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v3 0/2] hwrng: npcm: add NPCM RNG driver support
+Message-ID: <20191004152956.GE5148@gondor.apana.org.au>
+References: <20190912090149.7521-1-tmaimon77@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM5PR21MB01377E1E6DE541E902A12EEFD7B80@DM5PR21MB0137.namprd21.prod.outlook.com>
+In-Reply-To: <20190912090149.7521-1-tmaimon77@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 11:40:21PM +0000, Michael Kelley wrote:
->From: Himadri Pandya <himadrispandya@gmail.com>  Sent: Wednesday, July 24, 2019 10:03 PM
->>
->> recv_buffer and VMbus ring buffers are sized based on guest page size
->> which Hyper-V assumes to be 4KB. It might not be the case for some
->> architectures. Hence instead use the Hyper-V page size.
->>
->> Himadri Pandya (2):
->>   Drivers: hv: Specify receive buffer size using Hyper-V page size
->>   Drivers: hv: util: Specify ring buffer size using Hyper-V page size
->>
->>  drivers/hv/hv_fcopy.c    |  3 ++-
->>  drivers/hv/hv_kvp.c      |  3 ++-
->>  drivers/hv/hv_snapshot.c |  3 ++-
->>  drivers/hv/hv_util.c     | 13 +++++++------
->>  4 files changed, 13 insertions(+), 9 deletions(-)
->>
->> --
->> 2.17.1
->
->Thomas -- can you pick up this patch set in the x86/hyperv branch
->of your tip tree along with the other patches to fix wrong page size
->assumptions?
+On Thu, Sep 12, 2019 at 12:01:47PM +0300, Tomer Maimon wrote:
+> This patch set adds Random Number Generator (RNG) support 
+> for the Nuvoton NPCM Baseboard Management Controller (BMC).
+> 
+> The RNG driver we use power consumption when the RNG 
+> is not required.
+> 
+> The NPCM RNG driver tested on NPCM750 evaluation board.
+> 
+> Addressed comments from:.
+>  - Daniel Thompson: https://lkml.org/lkml/2019/9/10/352
+>  - Milton Miller II : https://lkml.org/lkml/2019/9/10/847
+>  - Daniel Thompson: https://lkml.org/lkml/2019/9/10/294
+> 
+> Changes since version 2:
+>  - Rearrange wait parameter in npcm_rng_read function.
+>  - Calling pm_runtime_enable function before hwrng_register function 
+>    called to enable the hwrng before add_early_randomness called.
+>  - Remove quality dt-binding parameter in the driver and documentation.
+>  - Disable CONFIG_PM if devm_hwrng_register failed.
+>  - Remove owner setting in the driver struct.
+> 
+> Changes since version 1:
+>  - Define timout in real-world units.
+>  - Using readl_poll_timeout in rng_read function.
+>  - Honor wait parameter in rng_read function.
+>  - Using local variable instead of #ifndef.
+>  - Remove probe print.
+> 
+> Tomer Maimon (2):
+>   dt-binding: hwrng: add NPCM RNG documentation
+>   hwrng: npcm: add NPCM RNG driver
+> 
+>  .../bindings/rng/nuvoton,npcm-rng.txt         |  12 ++
+>  drivers/char/hw_random/Kconfig                |  13 ++
+>  drivers/char/hw_random/Makefile               |   1 +
+>  drivers/char/hw_random/npcm-rng.c             | 186 ++++++++++++++++++
+>  4 files changed, 212 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt
+>  create mode 100644 drivers/char/hw_random/npcm-rng.c
 
-I've queued these two for hyperv-next, thanks!
-
+All applied.  Thanks.
 -- 
-Thanks,
-Sasha
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
