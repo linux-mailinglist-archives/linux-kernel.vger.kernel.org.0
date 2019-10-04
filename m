@@ -2,126 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D440CBA5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:27:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77C03CBA6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730617AbfJDM1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:27:52 -0400
-Received: from mga03.intel.com ([134.134.136.65]:12125 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729364AbfJDM1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:27:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 05:27:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,256,1566889200"; 
-   d="scan'208";a="205842974"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga001.fm.intel.com with SMTP; 04 Oct 2019 05:27:47 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 04 Oct 2019 15:27:47 +0300
-Date:   Fri, 4 Oct 2019 15:27:47 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     Benjamin Gaignard <benjamin.gaignard@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] drm: atomic helper: fix W=1 warnings
-Message-ID: <20191004122747.GT1208@intel.com>
-References: <20190909135205.10277-1-benjamin.gaignard@st.com>
- <20190909135205.10277-2-benjamin.gaignard@st.com>
- <20191003142738.GM1208@intel.com>
- <CA+M3ks4FBAgCRDDHZ=x7kvQ1Y=0dBdj4+KLO2djh__hW+L=3gQ@mail.gmail.com>
- <20191003150526.GN1208@intel.com>
- <CA+M3ks7-SNusVJsiHqrmy4AN+_OO5e1X=ZRN16Hj6f-V3GnVow@mail.gmail.com>
- <20191003154627.GQ1208@intel.com>
- <CA+M3ks4gpDdZTPdBYRd=CrwgEYiSWJbXqvtPb-0KpW1BhzvmEQ@mail.gmail.com>
+        id S1730766AbfJDM3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:29:33 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22040 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730009AbfJDM3c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 08:29:32 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94CQIm1006703;
+        Fri, 4 Oct 2019 14:29:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=9A+NHcV5pb4nSM8hQ4ARvkipxNSadOGVLrTQhB3YT70=;
+ b=oMGxvVkBNHBhNXKCunTAcmhMuDMMaKR/pka5cAnOKWUJIFOPBsEqnHp4jXOplWml6oR1
+ IO0yL3cy6uzUmgfeqo79i7p+z7963pKcr1+enDnBFhmtwsl/0B234U2Iopl2xh6SCrZV
+ JDeh9J7sme+7dM4XXrY9Bsuee55CfuDdOpnliPczu1icFws6IKg9YgEGS0HWodO2Uaym
+ GeLXjMUNVBANR/rV2nFZmdEYYaYxqwg5snc/fqwYluTa6uxxW7HuEfROfbdnMD2zlhhN
+ kL305zUnZ/qjetGpzJe3DUdzPmkHArsaWOzRdhB+DGpUdDjgEzcghpFHIm7HISWJTgx+ qg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2v9vnatyht-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Oct 2019 14:29:24 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7383A10002A;
+        Fri,  4 Oct 2019 14:29:24 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 655832BE231;
+        Fri,  4 Oct 2019 14:29:24 +0200 (CEST)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019
+ 14:29:24 +0200
+Received: from localhost (10.201.22.141) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019 14:29:23
+ +0200
+From:   Amelie Delaunay <amelie.delaunay@st.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 1/1] pinctrl: stmfx: add irq_request/release_resources callbacks
+Date:   Fri, 4 Oct 2019 14:29:23 +0200
+Message-ID: <20191004122923.22674-1-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+M3ks4gpDdZTPdBYRd=CrwgEYiSWJbXqvtPb-0KpW1BhzvmEQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.201.22.141]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-04_06:2019-10-03,2019-10-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 12:48:02PM +0200, Benjamin Gaignard wrote:
-> Le jeu. 3 oct. 2019 à 17:46, Ville Syrjälä
-> <ville.syrjala@linux.intel.com> a écrit :
-> >
-> > On Thu, Oct 03, 2019 at 05:37:15PM +0200, Benjamin Gaignard wrote:
-> > > Le jeu. 3 oct. 2019 à 17:05, Ville Syrjälä
-> > > <ville.syrjala@linux.intel.com> a écrit :
-> > > >
-> > > > On Thu, Oct 03, 2019 at 04:46:54PM +0200, Benjamin Gaignard wrote:
-> > > > > Le jeu. 3 oct. 2019 à 16:27, Ville Syrjälä
-> > > > > <ville.syrjala@linux.intel.com> a écrit :
-> > > > > >
-> > > > > > On Mon, Sep 09, 2019 at 03:52:05PM +0200, Benjamin Gaignard wrote:
-> > > > > > > Fix warnings with W=1.
-> > > > > > > Few for_each macro set variables that are never used later.
-> > > > > > > Prevent warning by marking these variables as __maybe_unused.
-> > > > > > >
-> > > > > > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> > > > > > > ---
-> > > > > > >  drivers/gpu/drm/drm_atomic_helper.c | 36 ++++++++++++++++++------------------
-> > > > > > >  1 file changed, 18 insertions(+), 18 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> > > > > > > index aa16ea17ff9b..b69d17b0b9bd 100644
-> > > > > > > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> > > > > > > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> > > > > > > @@ -262,7 +262,7 @@ steal_encoder(struct drm_atomic_state *state,
-> > > > > > >             struct drm_encoder *encoder)
-> > > > > > >  {
-> > > > > > >       struct drm_crtc_state *crtc_state;
-> > > > > > > -     struct drm_connector *connector;
-> > > > > > > +     struct drm_connector __maybe_unused *connector;
-> > > > > >
-> > > > > > Rather ugly. IMO would be nicer if we could hide something inside
-> > > > > > the iterator macros to suppress the warning.
-> > > > >
-> > > > > Ok but how ?
-> > > > > connector is assigned in the macros but not used later and we can't
-> > > > > set "__maybe_unused"
-> > > > > in the macro.
-> > > > > Does another keyword exist for that ?
-> > > >
-> > > > Stick a (void)(connector) into the macro?
-> > >
-> > > That could work but it will look strange inside the macro.
-> > >
-> > > >
-> > > > Another (arguably cleaner) idea would be to remove the connector/crtc/plane
-> > > > argument from the iterators entirely since it's redundant, and instead just
-> > > > extract it from the appropriate new/old state as needed.
-> > > >
-> > > > We could then also add a for_each_connector_in_state()/etc. which omit
-> > > > s the state arguments and just has the connector argument, for cases where
-> > > > you don't care about the states when iterating.
-> > >
-> > > That may lead to get a macro for each possible combination of used variables.
-> >
-> > We already have new/old/oldnew, so would "just" add one more.
-> 
-> Not just one, it will be one each new/old/oldnew macro to be able to distinguish
-> when connector is used or not.
+When an STMFX IO is used as interrupt through the interrupt-controller
+binding, the STMFX driver should configure this IO as input. Default
+value of STMFX IO direction is input, but if the IO is used as output
+before the interrupt use, it will not work without these callbacks.
 
-What I'm suggesting is this:
-for_each_connector_in_state(state, connector, i)
-for_each_old_connector_in_state(state, old_conn_state, i)
-for_each_new_connector_in_state(state, new_conn_state, i)
-for_each_oldnew_connector_in_state(state, old_conn_state, new_conn_state, i)
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ drivers/pinctrl/pinctrl-stmfx.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-So only four in total for each object type, instead of the current
-three.
-
+diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
+index 564660028fcc..e3a3dcc145b4 100644
+--- a/drivers/pinctrl/pinctrl-stmfx.c
++++ b/drivers/pinctrl/pinctrl-stmfx.c
+@@ -505,6 +505,34 @@ static void stmfx_pinctrl_irq_bus_sync_unlock(struct irq_data *data)
+ 	mutex_unlock(&pctl->lock);
+ }
+ 
++static int stmfx_gpio_irq_request_resources(struct irq_data *data)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
++	int ret;
++
++	ret = stmfx_gpio_direction_input(&pctl->gpio_chip, data->hwirq);
++	if (ret)
++		return ret;
++
++	ret = gpiochip_lock_as_irq(&pctl->gpio_chip, data->hwirq);
++	if (ret) {
++		dev_err(pctl->dev, "Unable to lock gpio %lu as IRQ: %d\n",
++			data->hwirq, ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static void stmfx_gpio_irq_release_resources(struct irq_data *data)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
++
++	gpiochip_unlock_as_irq(&pctl->gpio_chip, data->hwirq);
++}
++
+ static void stmfx_pinctrl_irq_toggle_trigger(struct stmfx_pinctrl *pctl,
+ 					     unsigned int offset)
+ {
+@@ -678,6 +706,8 @@ static int stmfx_pinctrl_probe(struct platform_device *pdev)
+ 	pctl->irq_chip.irq_set_type = stmfx_pinctrl_irq_set_type;
+ 	pctl->irq_chip.irq_bus_lock = stmfx_pinctrl_irq_bus_lock;
+ 	pctl->irq_chip.irq_bus_sync_unlock = stmfx_pinctrl_irq_bus_sync_unlock;
++	pctl->irq_chip.irq_request_resources = stmfx_gpio_irq_request_resources;
++	pctl->irq_chip.irq_release_resources = stmfx_gpio_irq_release_resources;
+ 
+ 	ret = gpiochip_irqchip_add_nested(&pctl->gpio_chip, &pctl->irq_chip,
+ 					  0, handle_bad_irq, IRQ_TYPE_NONE);
 -- 
-Ville Syrjälä
-Intel
+2.17.1
+
