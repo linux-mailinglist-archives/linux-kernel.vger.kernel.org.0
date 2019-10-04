@@ -2,86 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3446CBDB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A92CBDAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389359AbfJDOpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:45:51 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39005 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389042AbfJDOpv (ORCPT
+        id S2389303AbfJDOpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:45:05 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:32196 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389042AbfJDOpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:45:51 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 72so4671189lfh.6;
-        Fri, 04 Oct 2019 07:45:49 -0700 (PDT)
+        Fri, 4 Oct 2019 10:45:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570200302;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Scxxm9mMdh6m+WuyLezM+86ttbsoWsD/VPmaWFjpaq8=;
+        b=cCAFtarzIYJ0bTLenR+K+k4BZPyNNNcMdvaQ0Jalr1quuH5H7e2E+KOhNLtwq7kMKYqNgx
+        kEz9hXoz9JAMTX8+y3wAxpykEMUUrOC30siwqoH9IAC1pypJEBvMXGAVfDR9WiUmLZqHry
+        F72BW8fXl602J7M90AxBW7oVuDC6GvQ=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-20-CO-nh5t6M3Cnbs4twatciA-1; Fri, 04 Oct 2019 10:44:58 -0400
+Received: by mail-io1-f70.google.com with SMTP id t11so12253407ioc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 07:44:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f8QTZK9sCzxaP06E0HfF24SaxLLLX/pXiHs6qGwe+XA=;
-        b=knPkFB1BlXD+Rt06m2gkaWqTL9SJSHAPwwadA/850KPlweLkfdlHUWw/f0hCHZycYt
-         aD1VBqMPVcOneJomeJc53o96jwXMm1/sba/oBBXz4gIR+lgHScbExWA5Edcmbqq2P+j6
-         RJZCIy0qnkm0r1aBFF2gtw01RYr5ZnMMSKPFgFt/mV24Fal8aPJK+wXDxBSEjyNDBA+b
-         jiqP/9vFg3xk5rk3UKareaJ4MFa6CmYQBt7tDMmEEeE0jHuX08MzLNeQGDLclJ919+lS
-         KBYXwkCrtO8OtHHbCaYQYh6yjXq6dDXpSYh1FDa89Y+hCDtP1d1kwz8Od1VLhq5VzeI+
-         Moog==
-X-Gm-Message-State: APjAAAUsOcjMq8uzQ2aWtwdox6RMnEMHxnQecAYL0yspC/cEV3122jke
-        dEZHMcWhOWrs+cpRCwm8ir0=
-X-Google-Smtp-Source: APXvYqwGCfJTSnB86hgdZ4Gku6DN0lA1FH5FrFessynFlbJyPs2FZbz/5S5l2tTYzg1E3Bxvh7XS/Q==
-X-Received: by 2002:a05:6512:14c:: with SMTP id m12mr9029400lfo.27.1570200349145;
-        Fri, 04 Oct 2019 07:45:49 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id v1sm1198536lfa.87.2019.10.04.07.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2019 07:45:48 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@xi.terra>)
-        id 1iGOqG-0005V4-5l; Fri, 04 Oct 2019 16:46:00 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
-        Siva Rebbagondla <siva8118@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Denis Efremov <efremov@linux.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 2/2] rsi: drop bogus device-id checks from probe
-Date:   Fri,  4 Oct 2019 16:44:22 +0200
-Message-Id: <20191004144422.13003-2-johan@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191004144422.13003-1-johan@kernel.org>
-References: <20191004144422.13003-1-johan@kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M1gxmM/uPdsRdZwv1pytfxIDTxlUEqqas35fhdgrUzY=;
+        b=P6QFRggZ8MJVw9WuAibtWHRdWea25fICkVVFp/XfbgRTsP4dICLdInaAEPZdb8d/wQ
+         C2agYB5IAs9WNixAfECf1dSJEZUofx+pftTPXiSHaBZcmFBOaZxAjxoHcJHq/tTx0976
+         TF4xETvj2ReuSxFGi4t4RshL0ASRvZttWhk2WfuCwMX8h9ZqpFjnmAdPlpObu2WjGT7B
+         DWCJ4q53D4nQUbE/eoTypq1mCDUafXNa4pScHp8ED7M6E38/gONk1R2yFyi2PjpM1m0U
+         38wJjjOkpjSMqmgrI3BcBjLycYkkwwib1u3u6H5siZZ0lJe58OnPqgU0959vWpTtnsir
+         xgzA==
+X-Gm-Message-State: APjAAAVLvMdeSK63R1Z5bSXQv96hAuOE2MVH82Aqv2KC/sul60o6dXzs
+        HsG/h8ykbkqXMx+ipEvr0B/XoHQUQyabWGpsLHQwOPf++H97z8jk5tiMb14suXuJmdOiehWZL7e
+        6KwhL/aDdXMKY3EB5rmZnTGuT
+X-Received: by 2002:a92:d986:: with SMTP id r6mr16324912iln.261.1570200298048;
+        Fri, 04 Oct 2019 07:44:58 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqynU8aLzc2L67grr965+sq19xtkA7gFXzQ8d9Jf5gcnim9HQjGR07NJPTXodyn3I4hYKLuLnA==
+X-Received: by 2002:a92:d986:: with SMTP id r6mr16324881iln.261.1570200297720;
+        Fri, 04 Oct 2019 07:44:57 -0700 (PDT)
+Received: from t460s.bristot.redhat.com ([193.205.82.15])
+        by smtp.gmail.com with ESMTPSA id h62sm3860021ild.78.2019.10.04.07.44.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2019 07:44:56 -0700 (PDT)
+Subject: Re: [PATCH 3/3] x86/ftrace: Use text_poke()
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+References: <20190827180622.159326993@infradead.org>
+ <20190827181147.166658077@infradead.org>
+ <aaffb32f-6ca9-f9e3-9b1a-627125c563ed@redhat.com>
+ <20191002182106.GC4643@worktop.programming.kicks-ass.net>
+ <20191003181045.7fb1a5b3@gandalf.local.home>
+ <7b4196a4-b6e1-7e55-c3e1-a02d97c262c7@redhat.com>
+ <20191004094014.72a990ee@gandalf.local.home>
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+Message-ID: <761c5baf-598d-c2da-bd3e-2a669bf16b50@redhat.com>
+Date:   Fri, 4 Oct 2019 16:44:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191004094014.72a990ee@gandalf.local.home>
+Content-Language: en-US
+X-MC-Unique: CO-nh5t6M3Cnbs4twatciA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB core will never call a USB-driver probe function with a NULL
-device-id pointer.
+On 04/10/2019 15:40, Steven Rostedt wrote:
+> On Fri, 4 Oct 2019 10:10:47 +0200
+> Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
+>=20
+>> [ In addition ]
+>>
+>> Currently, ftrace_rec entries are ordered inside the group of functions,=
+ but
+>> "groups of function" are not ordered. So, the current int3 handler does =
+a (*):
+>>
+>> for_each_group_of_functions:
+>> =09check if the ip is in the range    ----> n by the number of groups.
+>> =09=09do a bsearch.=09=09   ----> log(n) by the numbers of entry
+>> =09=09=09=09=09         in the group.
+>>
+>> If, instead, it uses an ordered vector, the complexity would be log(n) b=
+y the
+>> total number of entries, which is better. So, how bad is the idea of:
+> BTW, I'm currently rewriting the grouping of the vectors, in order to
+> shrink the size of each dyn_ftrace_rec (as we discussed at Kernel
+> Recipes). I can make the groups all sorted in doing so, thus we can
+> load the sorted if that's needed, without doing anything special.
+>=20
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/net/wireless/rsi/rsi_91x_usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Good! if you do they sorted and store the amount of entries in a variable, =
+we
+can have things done for a future "optimized" version.
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
-index 760eaffeebd6..53f41fc2cadf 100644
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -785,10 +785,10 @@ static int rsi_probe(struct usb_interface *pfunction,
- 
- 	rsi_dbg(ERR_ZONE, "%s: Initialized os intf ops\n", __func__);
- 
--	if (id && id->idProduct == RSI_USB_PID_9113) {
-+	if (id->idProduct == RSI_USB_PID_9113) {
- 		rsi_dbg(INIT_ZONE, "%s: 9113 module detected\n", __func__);
- 		adapter->device_model = RSI_DEV_9113;
--	} else if (id && id->idProduct == RSI_USB_PID_9116) {
-+	} else if (id->idProduct == RSI_USB_PID_9116) {
- 		rsi_dbg(INIT_ZONE, "%s: 9116 module detected\n", __func__);
- 		adapter->device_model = RSI_DEV_9116;
- 	} else {
--- 
-2.23.0
+-- Daniel
 
