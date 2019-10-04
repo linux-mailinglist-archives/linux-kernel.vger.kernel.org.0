@@ -2,167 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 610B8CB95C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 13:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A55BCB960
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 13:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731016AbfJDLnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 07:43:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57350 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfJDLnP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 07:43:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WIvDWFtv2p/WZ58W6pXljHGiVfYoXqP27Nes4L6u4OM=; b=Kebviybu4eI80VBS6jZGt8Kia9
-        v/roRs8L242mCUK4xtYI4O+imHzI2lAOI39SuiNHc8S1fwlKmGAMn8npPxn94N7HECIm3tu0JvSGx
-        nnjeGrRUnp9ZN7PEdoSSPhCKMrn8ZVUbD9DzYRsy8RBMQFSoHerrtdvSbrFn0e3z/FcPuFXr3iqgO
-        rWeTgJXWD3+/H1p214aM+GJbVD9m8HWYXEpVOPHvcZcKAwzz5JgD4dGD6fgM6LIP2wG9480tfvcq/
-        SS3KO8+/ivJaZezrOFqCYQnpx4FpJvD5/0BGyKhYzhdklY+XRNHXlY3/Ru9gJfbdZKdvuDDm0Ppeg
-        mr/QvjXA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iGLyp-0006q5-RM; Fri, 04 Oct 2019 11:42:40 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 57BA030034F;
-        Fri,  4 Oct 2019 13:41:47 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 05D67203E50D2; Fri,  4 Oct 2019 13:42:37 +0200 (CEST)
-Date:   Fri, 4 Oct 2019 13:42:36 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Leonardo Bras <leonardo@linux.ibm.com>
-Cc:     Song Liu <songliubraving@fb.com>, Michal Hocko <mhocko@suse.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Keith Busch <keith.busch@intel.com>, linux-mm@kvack.org,
-        Paul Mackerras <paulus@samba.org>,
-        Christoph Lameter <cl@linux.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        linux-arch@vger.kernel.org, Santosh Sivaraj <santosh@fossix.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        kvm-ppc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
+        id S1731060AbfJDLoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 07:44:07 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3246 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728962AbfJDLoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 07:44:07 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 05A2E588E3FAE8D78D9E;
+        Fri,  4 Oct 2019 19:44:05 +0800 (CST)
+Received: from lhrphicprd00229.huawei.com (10.123.41.22) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 4 Oct 2019 19:43:57 +0800
+From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     <linux-mm@kvack.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>
+CC:     Keith Busch <keith.busch@intel.com>, <jglisse@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, <linuxarm@huawei.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, Roman Gushchin <guro@fb.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v5 00/11] Introduces new count-based method for tracking
- lockless pagetable walks
-Message-ID: <20191004114236.GD19463@hirez.programming.kicks-ass.net>
-References: <20191003013325.2614-1-leonardo@linux.ibm.com>
- <20191003072952.GN4536@hirez.programming.kicks-ass.net>
- <c46d6c7301314a2d998cffc47d69b404f2c26ad3.camel@linux.ibm.com>
+        Dan Williams <dan.j.williams@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH V5 0/4] ACPI: Support Generic Initiator proximity domains
+Date:   Fri, 4 Oct 2019 19:43:26 +0800
+Message-ID: <20191004114330.104746-1-Jonathan.Cameron@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c46d6c7301314a2d998cffc47d69b404f2c26ad3.camel@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.123.41.22]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 05:36:31PM -0300, Leonardo Bras wrote:
+Introduces a new type of NUMA node for cases where we want to represent
+the access characteristics of a non CPU initiator of memory requests,
+as these differ from all those for existing nodes containing CPUs and/or
+memory.
 
-> > Also, I'm not sure I understand things properly.
-> >=20
-> > So serialize_against_pte_lookup() wants to wait for all currently
-> > out-standing __find_linux_pte() instances (which are very similar to
-> > gup_fast).
-> >=20
-> > It seems to want to do this before flushing the THP TLB for some reason;
-> > why? Should not THP observe the normal page table freeing rules which
-> > includes a RCU-like grace period like this already.
-> >=20
-> > Why is THP special here? This doesn't seem adequately explained.
->=20
-> "It's necessary to monitor lockless pagetable walks, in order to avoid
-> doing THP splitting/collapsing during them."
->=20
-> If a there is a THP split/collapse during the lockless pagetable walk,
-> the returned ptep can be a pointing to an invalid pte.=20
+This patch set has been sitting around for a long time (rebases only since
+v3 in April) without significant review.
+I would appreciate it very much if anyone has time to take a look.
 
-So the whole premise of lockless page-table walks (gup_fast) is that it
-can work on in-flux page-tables. Specifically gup_fast() never returns
-PTEs, only struct page *, and only if it can increment the page
-refcount.
+One outstanding question to highlight in this series is whether
+we should assume all ACPI supporting architectures support Generic
+Initiator domains, or whether to introduce an
+ARCH_HAS_GENERIC_INITIATOR_DOMAINS entry in Kconfig.
 
-In order to enable this, page-table pages are RCU(-like) freed, such
-that even if we access page-tables that have (concurrently) been
-unlinked, we'll not UaF (see asm-generic/tlb.h, the comment at
-HAVE_RCU_TABLE_FREE). IOW, the worst case if not getting a struct page
-*.
+Changes since V4:
 
-I really don't see how THP splitting/collapsing is special here, either
-we see the PMD and find a struct page * or we see a PTE and find the
-same struct page * (compound page head).
+At Rafael's suggestion:
 
-The only thing that needs to be guaranteed is that both PTEs and PMD
-page-tables are valid. Is this not so?
+Rebase on top of Dan William's Specific Purpose Memory series as that
+moves srat.c Original patches cherry-picked fine onto mmotm with Dan's
+patches applied.
 
-> To avoid that, the pmd is updated, then serialize_against_pte_lookup is
-> ran. Serialize runs a do_nothing in all cpu in cpu_mask.=20
->=20
-> So, after all cpus finish running do_nothing(), there is a guarantee
-> that if there is any 'lockless pagetable walk' it is running on top of
-> a updated version of this pmd, and so, collapsing/splitting THP is
-> safe.
+Applies to mmotm-2019-09-25 +
+https://lore.kernel.org/linux-acpi/156140036490.2951909.1837804994781523185.stgit@dwillia2-desk3.amr.corp.intel.com/
+[PATCH v4 00/10] EFI Specific Purpose Memory Support
+(note there are some trivial conflicts to deal with when applying
+the SPM series).
 
-But why would it matter?! It would find the same struct page * through
-either version of the page-tables. *confused*
+Change since V3.
+* Rebase.
 
-> > Also, specifically to munmap(), this seems entirely superfluous,
-> > munmap() uses the normal page-table freeing code and should be entirely
-> > fine without additional waiting.
->=20
-> To be honest, I remember it being needed in munmap case, but I really
-> don't remember the details. I will take a deeper look and come back
-> with this answer.=20
+Changes since RFC V2.
+* RFC dropped as now we have x86 support, so the lack of guards in in the
+  ACPI code etc should now be fine.
+* Added x86 support.  Note this has only been tested on QEMU as I don't have
+  a convenient x86 NUMA machine to play with.  Note that this fitted together
+  rather differently from arm64 so I'm particularly interested in feedback
+  on the two solutions.
 
-munmap does normal mmu_gather page-table teardown, the THP PMD should be
-RCU-like freed just like any other PMD. Which should be perfectly safe
-vs lockless page-table walks.
+Since RFC V1.
+* Fix incorrect interpretation of the ACPI entry noted by Keith Busch
+* Use the acpica headers definitions that are now in mmotm.
 
-If you can find anything there that isn't right, please explain that in
-detail and we'll need to look hard at fixing _that_.
+It's worth noting that, to safely put a given device in a GI node, may
+require changes to the existing drivers as it's not unusual to assume
+you have local memory or processor core. There may be further constraints
+not yet covered by this patch.
 
-> > Furthermore, Power never accurately tracks mm_cpumask(), so using that
-> > makes the whole thing more expensive than it needs to be. Also, I
-> > suppose that is buggered vs file backed THP.
->=20
-> That accuracy of mm_cpumask is above my knowledge right now. =3D)
+Original cover letter...
 
-Basically PowerPC only ever sets bits in there, unlike x86 that also
-clears bits (at expense, but it's worth it for us).
+ACPI 6.3 introduced a new entity that can be part of a NUMA proximity domain.
+It may share such a domain with the existing options (memory, CPU etc) but it
+may also exist on it's own.
+
+The intent is to allow the description of the NUMA properties (particularly
+via HMAT) of accelerators and other initiators of memory activity that are not
+the host processor running the operating system.
+
+This patch set introduces 'just enough' to make them work for arm64 and x86.
+It should be trivial to support other architectures, I just don't suitable
+NUMA systems readily available to test.
+
+There are a few quirks that need to be considered.
+
+1. Fall back nodes
+******************
+
+As pre ACPI 6.3 supporting operating systems do not have Generic Initiator
+Proximity Domains it is possible to specify, via _PXM in DSDT that another
+device is part of such a GI only node.  This currently blows up spectacularly.
+
+Whilst we can obviously 'now' protect against such a situation (see the related
+thread on PCI _PXM support and the  threadripper board identified there as
+also falling into the  problem of using non existent nodes
+https://patchwork.kernel.org/patch/10723311/ ), there is no way to  be sure
+we will never have legacy OSes that are not protected  against this.  It would
+also be 'non ideal' to fallback to  a default node as there may be a better
+(non GI) node to pick  if GI nodes aren't available.
+
+The work around is that we also have a new system wide OSC bit that allows
+an operating system to 'announce' that it supports Generic Initiators.  This
+allows, the firmware to us DSDT magic to 'move' devices between the nodes
+dependent on whether our new nodes are there or not.
+
+2. New ways of assigning a proximity domain for devices
+*******************************************************
+
+Until now, the only way firmware could indicate that a particular device
+(outside the 'special' set of cpus etc) was to be found in a particular
+Proximity Domain by the use of _PXM in DSDT.
+
+That is equally valid with GI domains, but we have new options. The SRAT
+affinity structure includes a handle (ACPI or PCI) to identify devices
+with the system and specify their proximity domain that way.  If both _PXM
+and this are provided, they should give the same answer.
+
+For now this patch set completely ignores that feature as we don't need
+it to start the discussion.  It will form a follow up set at some point
+(if no one else fancies doing it).
+
+Jonathan Cameron (4):
+  ACPI: Support Generic Initiator only domains
+  arm64: Support Generic Initiator only domains
+  x86: Support Generic Initiator only proximity domains
+  ACPI: Let ACPI know we support Generic Initiator Affinity Structures
+
+ arch/arm64/kernel/smp.c        |  8 +++++
+ arch/x86/include/asm/numa.h    |  2 ++
+ arch/x86/kernel/setup.c        |  1 +
+ arch/x86/mm/numa.c             | 14 ++++++++
+ drivers/acpi/bus.c             |  1 +
+ drivers/acpi/numa/srat.c       | 62 +++++++++++++++++++++++++++++++++-
+ drivers/base/node.c            |  3 ++
+ include/asm-generic/topology.h |  3 ++
+ include/linux/acpi.h           |  1 +
+ include/linux/nodemask.h       |  1 +
+ include/linux/topology.h       |  7 ++++
+ 11 files changed, 102 insertions(+), 1 deletion(-)
+
+-- 
+2.20.1
 
