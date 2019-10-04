@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48706CC279
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB73CC26A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:17:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730651AbfJDSRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 14:17:52 -0400
+        id S1730511AbfJDSRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 14:17:01 -0400
 Received: from mga07.intel.com ([134.134.136.100]:15508 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730454AbfJDSRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730477AbfJDSRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 Oct 2019 14:17:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 11:16:59 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 11:17:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
-   d="scan'208";a="204394753"
+   d="scan'208";a="204394759"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.185])
   by orsmga002.jf.intel.com with ESMTP; 04 Oct 2019 11:16:59 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
@@ -25,10 +25,10 @@ To:     linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
         luto@kernel.org
 Cc:     hpa@zytor.com, dave.hansen@intel.com, tony.luck@intel.com,
         ak@linux.intel.com, ravi.v.shankar@intel.com,
-        chang.seok.bae@intel.com
-Subject: [PATCH v9 03/17] x86/cpu: Add 'unsafe_fsgsbase' to enable CR4.FSGSBASE
-Date:   Fri,  4 Oct 2019 11:15:55 -0700
-Message-Id: <1570212969-21888-4-git-send-email-chang.seok.bae@intel.com>
+        chang.seok.bae@intel.com, Vegard Nossum <vegard.nossum@oracle.com>
+Subject: [PATCH v9 04/17] x86/entry/64: Clean up paranoid exit
+Date:   Fri,  4 Oct 2019 11:15:56 -0700
+Message-Id: <1570212969-21888-5-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1570212969-21888-1-git-send-email-chang.seok.bae@intel.com>
 References: <1570212969-21888-1-git-send-email-chang.seok.bae@intel.com>
@@ -39,10 +39,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andy Lutomirski <luto@kernel.org>
 
-This is temporary.  It will allow the next few patches to be tested
-incrementally.
-
-Setting unsafe_fsgsbase is a root hole.  Don't do it.
+All that paranoid exit needs to do is to disable IRQs, handle IRQ tracing,
+then restore CR3, and restore GS base. Simply do those actions in that
+order. Cleaning up the spaghetti code.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
@@ -54,71 +53,62 @@ Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Vegard Nossum <vegard.nossum@oracle.com>
 ---
 
 Changes from v8: none
-Changes from v7: none
----
- Documentation/admin-guide/kernel-parameters.txt |  3 +++
- arch/x86/kernel/cpu/common.c                    | 24 ++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index c7ac2f3..eb9a491 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2899,6 +2899,9 @@
- 	no5lvl		[X86-64] Disable 5-level paging mode. Forces
- 			kernel to use 4-level paging instead.
- 
-+	unsafe_fsgsbase	[X86] Allow FSGSBASE instructions.  This will be
-+			replaced with a nofsgsbase flag.
+Changes from v7:
+* Included as a new patch. Took the cleanup part from the Andy Lutomirski's
+  original patch [*] and edited its changelog a little bit.
+
+[*] https://lkml.kernel.org/r/59725ceb08977359489fbed979716949ad45f616.1562035429.git.luto@kernel.org
+---
+ arch/x86/entry/entry_64.S | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index b7c3ea4..dd0d62a 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1265,20 +1265,25 @@ END(paranoid_entry)
+ ENTRY(paranoid_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
 +
- 	no_console_suspend
- 			[HW] Never suspend the console
- 			Disable suspending of consoles during suspend and
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 9ae7d1b..9f57fb0 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -438,6 +438,22 @@ static void __init setup_cr_pinning(void)
- }
++	/*
++	 * The order of operations is important. IRQ tracing requires
++	 * kernel GS base and CR3. RESTORE_CR3 requires kernel GS base.
++	 *
++	 * NB to anyone to try to optimize this code: this code does
++	 * not execute at all for exceptions from user mode. Those
++	 * exceptions go through error_exit instead.
++	 */
+ 	TRACE_IRQS_OFF_DEBUG
+-	testl	%ebx, %ebx			/* swapgs needed? */
+-	jnz	.Lparanoid_exit_no_swapgs
+-	TRACE_IRQS_IRETQ
+-	/* Always restore stashed CR3 value (see paranoid_entry) */
+-	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
++	RESTORE_CR3	scratch_reg=%rax save_reg=%r14
++
++	/* If EBX is 0, SWAPGS is required */
++	testl	%ebx, %ebx
++	jnz	restore_regs_and_return_to_kernel
++
++	/* We are returning to a context with user GS base */
+ 	SWAPGS_UNSAFE_STACK
+-	jmp	.Lparanoid_exit_restore
+-.Lparanoid_exit_no_swapgs:
+-	TRACE_IRQS_IRETQ_DEBUG
+-	/* Always restore stashed CR3 value (see paranoid_entry) */
+-	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+-.Lparanoid_exit_restore:
+-	jmp restore_regs_and_return_to_kernel
++	jmp	restore_regs_and_return_to_kernel
+ END(paranoid_exit)
  
  /*
-+ * Temporary hack: FSGSBASE is unsafe until a few kernel code paths are
-+ * updated. This allows us to get the kernel ready incrementally.
-+ *
-+ * Once all the pieces are in place, these will go away and be replaced with
-+ * a nofsgsbase chicken flag.
-+ */
-+static bool unsafe_fsgsbase;
-+
-+static __init int setup_unsafe_fsgsbase(char *arg)
-+{
-+	unsafe_fsgsbase = true;
-+	return 1;
-+}
-+__setup("unsafe_fsgsbase", setup_unsafe_fsgsbase);
-+
-+/*
-  * Protection Keys are not available in 32-bit mode.
-  */
- static bool pku_disabled;
-@@ -1455,6 +1471,14 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	setup_smap(c);
- 	setup_umip(c);
- 
-+	/* Enable FSGSBASE instructions if available. */
-+	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
-+		if (unsafe_fsgsbase)
-+			cr4_set_bits(X86_CR4_FSGSBASE);
-+		else
-+			clear_cpu_cap(c, X86_FEATURE_FSGSBASE);
-+	}
-+
- 	/*
- 	 * The vendor-specific functions might have changed features.
- 	 * Now we do "generic changes."
 -- 
 2.7.4
 
