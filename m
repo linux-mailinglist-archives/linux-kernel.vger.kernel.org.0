@@ -2,95 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58763CB337
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 04:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F277ACB343
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 04:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731443AbfJDCLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 22:11:12 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:34808 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730272AbfJDCLL (ORCPT
+        id S1731812AbfJDCYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 22:24:08 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:33530 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731665AbfJDCYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 22:11:11 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9429W0q056974;
-        Fri, 4 Oct 2019 02:09:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=8FXA0zgZoIW7W0Aa4N8qSvofqWT8uPjI9bd0eZsFQYo=;
- b=HyeGMiSoRNxqiiYAwQ/TW6dEe9h8314AVISrwnAulCy3Lm7Ryd9WUOD633pWVHm2hyI0
- elmpW5ZwRXsUG7cXMAxtEN3GvEGPsf2eJjZE4uvrkdY48iVPsJe2F9JwTRecmo2u+tBb
- M8DsTTsgXvSMjlVRt8Q+nvwVFK9QxGodEmGUcJbIUEK1jzpppG159unfC7BoaW0HKGWQ
- JfF7TUvTPx70gLfEOhv7HVnUSG3h49OtatR92VmdjuFT2Jf6/bFztx345DfvVZFTK3PD
- ul4du3cNzY7xNflQ2SuTfKBf3vko3lCXNnchv+nZ0r3HA4Z9a2+5JqsbfV8M5Z9UMvxo TQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2va05s83x0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Oct 2019 02:09:44 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9429FBv124671;
-        Fri, 4 Oct 2019 02:09:43 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2vdt3nr1tj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Oct 2019 02:09:43 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9429a6k020968;
-        Fri, 4 Oct 2019 02:09:38 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 03 Oct 2019 19:09:35 -0700
-To:     paulmck@kernel.org
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH tip/core/rcu 4/9] drivers/scsi: Replace rcu_swap_protected() with rcu_replace()
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20191003014153.GA13156@paulmck-ThinkPad-P72>
-        <20191003014310.13262-4-paulmck@kernel.org>
-Date:   Thu, 03 Oct 2019 22:09:31 -0400
-In-Reply-To: <20191003014310.13262-4-paulmck@kernel.org> (paulmck@kernel.org's
-        message of "Wed, 2 Oct 2019 18:43:05 -0700")
-Message-ID: <yq1zhihqn1g.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Thu, 3 Oct 2019 22:24:08 -0400
+X-Greylist: delayed 534 seconds by postgrey-1.27 at vger.kernel.org; Thu, 03 Oct 2019 22:24:03 EDT
+Received: from localhost (unknown [192.168.167.69])
+        by lucky1.263xmail.com (Postfix) with ESMTP id CF3F05D332;
+        Fri,  4 Oct 2019 10:15:00 +0800 (CST)
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [192.168.10.106] (unknown [220.200.58.186])
+        by smtp.263.net (postfix) whith ESMTP id P20279T139768363312896S1570155286485644_;
+        Fri, 04 Oct 2019 10:14:59 +0800 (CST)
+X-UNIQUE-TAG: <ba7e53742f06ad9e000d5da00b9ed5d3>
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-SENDER: lintao@rock-chips.com
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-FST-TO: linux-arm-kernel@lists.infradead.org
+X-SENDER-IP: 220.200.58.186
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc:     shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_3/3=5d_arm64=3a_dts=3a_rockchip=3a_fix_Roc?=
+ =?UTF-8?B?a1BybzY0IHNkbW1jIHNldHRpbmdz44CQ6K+35rOo5oSP77yM6YKu5Lu255SxbGlu?=
+ =?UTF-8?Q?ux-rockchip-bounces+shawn=2elin=3drock-chips=2ecom=40lists=2einfr?=
+ =?UTF-8?B?YWRlYWQub3Jn5Luj5Y+R44CR?=
+To:     Soeren Moch <smoch@web.de>, Robin Murphy <robin.murphy@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>
+References: <20191003215036.15023-1-smoch@web.de>
+ <20191003215036.15023-3-smoch@web.de>
+ <31181f3c-20ec-e717-1f7e-8b35cd54d96d@arm.com>
+ <a8b20c45-0426-ee42-4efc-52e56ea6bb20@web.de>
+From:   Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <120e2dbc-55eb-2205-b00f-7e50928ec706@rock-chips.com>
+Date:   Fri, 4 Oct 2019 10:13:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=717
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910040015
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=804 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910040015
+In-Reply-To: <a8b20c45-0426-ee42-4efc-52e56ea6bb20@web.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/10/4 8:53, Soeren Moch wrote:
+> 
+> 
+> On 04.10.19 02:01, Robin Murphy wrote:
+>> On 2019-10-03 10:50 pm, Soeren Moch wrote:
+>>> According to the RockPro64 schematic [1] the rk3399 sdmmc controller is
+>>> connected to a microSD (TF card) slot, which cannot be switched to 1.8V.
+>>
+>> Really? AFAICS the SDMMC0 wiring looks pretty much identical to the
+>> NanoPC-T4 schematic (it's the same reference design, after all), and I
+>> know that board can happily drive a UHS-I microSD card with 1.8v I/Os,
+>> because mine's doing so right now.
+>>
+>> Robin.
+> OK, the RockPro64 does not allow a card reset (power cycle) since
+> VCC3V0_SD is directly connected to VCC3V3_SYS (via R89555), the
+> SDMMC0_PWH_H signal is not connected. So the card fails to identify
+> itself after suspend or reboot when switched to 1.8V operation.
+> 
 
-Paul,
+I believe we addressed this issue long time ago, please check:
 
-No objections from me.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6a11fc47f175c8d87018e89cb58e2d36c66534cb
 
-> +	vpd_pg80 = rcu_replace(sdev->vpd_pg80, vpd_pg80,
-> +			       lockdep_is_held(&sdev->inquiry_mutex));
-> +	vpd_pg83 = rcu_replace(sdev->vpd_pg83, vpd_pg83,
-> +			       lockdep_is_held(&sdev->inquiry_mutex));
+> Regards,
+> Soeren
+>>
+>>> So also configure the vcc_sdio regulator, which drives the i/o voltage
+>>> of the sdmmc controller, accordingly.
+>>>
+>>> While at it, also remove the cap-mmc-highspeed property of the sdmmc
+>>> controller, since no mmc card can be connected here.
+>>>
+>>> [1] http://files.pine64.org/doc/rockpro64/rockpro64_v21-SCH.pdf
+>>>
+>>> Fixes: e4f3fb490967 ("arm64: dts: rockchip: add initial dts support
+>>> for Rockpro64")
+>>> Signed-off-by: Soeren Moch <smoch@web.de>
+>>> ---
+>>> Cc: Heiko Stuebner <heiko@sntech.de>
+>>> Cc: linux-rockchip@lists.infradead.org
+>>> Cc: linux-arm-kernel@lists.infradead.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>> ---
+>>>    arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts | 3 +--
+>>>    1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>> b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>> index 2e44dae4865a..084f1d994a50 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>> @@ -353,7 +353,7 @@
+>>>                    regulator-name = "vcc_sdio";
+>>>                    regulator-always-on;
+>>>                    regulator-boot-on;
+>>> -                regulator-min-microvolt = <1800000>;
+>>> +                regulator-min-microvolt = <3000000>;
+>>>                    regulator-max-microvolt = <3000000>;
+>>>                    regulator-state-mem {
+>>>                        regulator-on-in-suspend;
+>>> @@ -624,7 +624,6 @@
+>>>
+>>>    &sdmmc {
+>>>        bus-width = <4>;
+>>> -    cap-mmc-highspeed;
+>>>        cap-sd-highspeed;
+>>>        cd-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+>>>        disable-wp;
+>>> -- 
+>>> 2.17.1
+>>>
+>>>
+>>> _______________________________________________
+>>> Linux-rockchip mailing list
+>>> Linux-rockchip@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>>>
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
 
-Just a heads-up that we have added a couple of additional VPD pages so
-my 5.5 tree will need additional calls to be updated to rcu_replace().
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Best Regards
+Shawn Lin
+
+
