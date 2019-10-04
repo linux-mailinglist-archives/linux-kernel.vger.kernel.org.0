@@ -2,112 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D37BCBDAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA019CBDB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389346AbfJDOpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:45:12 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:20988 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389042AbfJDOpL (ORCPT
+        id S2389389AbfJDOpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:45:54 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37077 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389136AbfJDOpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:45:11 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94EQRSD026290;
-        Fri, 4 Oct 2019 16:44:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=HxhsqEtkW1PE2z4wk42+db/HcFNDBDuEG576vdtW3hQ=;
- b=lz3bQE9FMHBJXTy5bdUQVmIumhJB17Ko0EuiGplii7OiPoGukqDMKJTud5FPeT4YSq1K
- DK2Eoob4x790WcB5cRq0XuBcWtE+g7pNPdtXN6spExZQligbvWskxkdZZirloHOdjoR6
- PhB1FQRb/jHmWAt9aXyv330fAyNFlkA93AObx+S4Wh/iPrqWNmrgWLfqtaIGMQcOKgOq
- HEQ4EOx7mN70pDaPcmUuZ5gANZjO7qyTHcTTZJmMB4uSU8Z07dHcsICvpst2nz0f/AUs
- 2jkHCaZKboflDJrkl30G3HQJloLd4sg0RI6RtwdqE90zyVs2DAaJFFGVSWGtwxvG4NC+ 5Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2v9vnaundv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Oct 2019 16:44:54 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4351110002A;
-        Fri,  4 Oct 2019 16:44:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2A2702B8FFA;
-        Fri,  4 Oct 2019 16:44:54 +0200 (CEST)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019
- 16:44:54 +0200
-Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019 16:44:53
- +0200
-From:   <patrice.chotard@st.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>
-CC:     <mcoquelin.stm32@gmail.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: ARM: dts: stm32: relax qspi pins slew-rate for stm32mp157
-Date:   Fri, 4 Oct 2019 16:44:21 +0200
-Message-ID: <20191004144421.21069-1-patrice.chotard@st.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 4 Oct 2019 10:45:52 -0400
+Received: by mail-lf1-f65.google.com with SMTP id w67so4681330lff.4;
+        Fri, 04 Oct 2019 07:45:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=41QFKhTKVw0r48ZhA+a3ExQuzLOYbcSClKQP6ZHYplY=;
+        b=NaCJdxmirxyJP/KpxD50qItbwZDFQIlUdsA5gju1LjFOBei/0mpmX24PiLKH4+jHZt
+         Jr5lZ/2/B+mafNMIzNw1eTNGV/Bk2E5AcohEw9J0ViJ93Lzy42uOL13G54n4+YCrdbxz
+         NsRCslGUZGhT+Ccf6F0kQK27WHVbkj8n9MrFJuXxNof5kJdD8n09sTt46FPd9ekwRSf/
+         VjpZxorAFTi9PVu5cBB9VfdwirMAJGd6xoQjbUkrwUTnYYLXdSsWGGgpPODj3WT7q6Ka
+         GQ0mlV4T4rqCagbvyP6yUA+S2S6d9WhONmvvsLMp5JFtdTf30qsnmT6/yjy0w5S9Blh0
+         CiUA==
+X-Gm-Message-State: APjAAAWCL63Z3nM7htbpoz59iyIpn96mK9tl7gnic6pKO6mPgJsogP8w
+        H6/P0rhkxHSAfF9Y/76WIEEsx3k5
+X-Google-Smtp-Source: APXvYqwoyp2pDz11DUVf5PxE3ytN1hgT396kAmXEEpx4FfU2SPT2GaaBEfvO/egu9MZI9T25qQkHRA==
+X-Received: by 2002:a19:710c:: with SMTP id m12mr9438052lfc.41.1570200349750;
+        Fri, 04 Oct 2019 07:45:49 -0700 (PDT)
+Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
+        by smtp.gmail.com with ESMTPSA id g3sm1326422ljj.59.2019.10.04.07.45.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Oct 2019 07:45:48 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92.2)
+        (envelope-from <johan@xi.terra>)
+        id 1iGOqG-0005V1-1n; Fri, 04 Oct 2019 16:46:00 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Denis Efremov <efremov@linux.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 1/2] Revert "rsi: fix potential null dereference in rsi_probe()"
+Date:   Fri,  4 Oct 2019 16:44:21 +0200
+Message-Id: <20191004144422.13003-1-johan@kernel.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-04_07:2019-10-03,2019-10-04 signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
+This reverts commit f170d44bc4ec2feae5f6206980e7ae7fbf0432a0.
 
-Relax qspi pins slew-rate to minimize peak currents.
+USB core will never call a USB-driver probe function with a NULL
+device-id pointer.
 
-Fixes: 844030057339 ("ARM: dts: stm32: add flash nor support on stm32mp157c eval board")
+Reverting before removing the existing checks in order to document this
+and prevent the offending commit from being "autoselected" for stable.
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/rsi/rsi_91x_usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index e4a0d51ec3a8..0a3a7d66737b 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -609,13 +609,13 @@
- 						 <STM32_PINMUX('F', 6, AF9)>; /* QSPI_BK1_IO3 */
- 					bias-disable;
- 					drive-push-pull;
--					slew-rate = <3>;
-+					slew-rate = <1>;
- 				};
- 				pins2 {
- 					pinmux = <STM32_PINMUX('B', 6, AF10)>; /* QSPI_BK1_NCS */
- 					bias-pull-up;
- 					drive-push-pull;
--					slew-rate = <3>;
-+					slew-rate = <1>;
- 				};
- 			};
- 
-@@ -637,13 +637,13 @@
- 						 <STM32_PINMUX('G', 7, AF11)>; /* QSPI_BK2_IO3 */
- 					bias-disable;
- 					drive-push-pull;
--					slew-rate = <3>;
-+					slew-rate = <1>;
- 				};
- 				pins2 {
- 					pinmux = <STM32_PINMUX('C', 0, AF10)>; /* QSPI_BK2_NCS */
- 					bias-pull-up;
- 					drive-push-pull;
--					slew-rate = <3>;
-+					slew-rate = <1>;
- 				};
- 			};
+diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
+index 23a1d00b5f38..760eaffeebd6 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -793,7 +793,7 @@ static int rsi_probe(struct usb_interface *pfunction,
+ 		adapter->device_model = RSI_DEV_9116;
+ 	} else {
+ 		rsi_dbg(ERR_ZONE, "%s: Unsupported RSI device id 0x%x\n",
+-			__func__, id ? id->idProduct : 0x0);
++			__func__, id->idProduct);
+ 		goto err1;
+ 	}
  
 -- 
-2.17.1
+2.23.0
 
