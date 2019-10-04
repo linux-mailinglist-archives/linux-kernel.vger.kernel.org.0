@@ -2,104 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94103CB8B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:52:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDEFFCB8B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbfJDKw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 06:52:26 -0400
-Received: from foss.arm.com ([217.140.110.172]:41692 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbfJDKw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 06:52:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1F6915A1;
-        Fri,  4 Oct 2019 03:52:25 -0700 (PDT)
-Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C78EC3F706;
-        Fri,  4 Oct 2019 03:52:24 -0700 (PDT)
-Subject: Re: [PATCH] arm64/mm: Poison initmem while freeing with
- free_reserved_area()
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-References: <1570163038-32067-1-git-send-email-anshuman.khandual@arm.com>
- <600676fd-1b39-74f4-49a7-3c807ee24cff@arm.com>
- <50d88564-c645-62f4-b5b3-3ce7a4425b0a@arm.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <5d771515-e630-bc6e-b81b-8fd208c21011@arm.com>
-Date:   Fri, 4 Oct 2019 11:52:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728660AbfJDK6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 06:58:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55114 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725730AbfJDK6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 06:58:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4B278AB89;
+        Fri,  4 Oct 2019 10:57:59 +0000 (UTC)
+From:   =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To:     cgroups@vger.kernel.org
+Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: [PATCH 0/5] Optimize single thread migration
+Date:   Fri,  4 Oct 2019 12:57:38 +0200
+Message-Id: <20191004105743.363-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <50d88564-c645-62f4-b5b3-3ce7a4425b0a@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2019 11:48, Anshuman Khandual wrote:
-> 
-> 
-> On 10/04/2019 03:49 PM, Steven Price wrote:
->> On 04/10/2019 05:23, Anshuman Khandual wrote:
->>> Platform implementation for free_initmem() should poison the memory while
->>> freeing it up. Hence pass across POISON_FREE_INITMEM while calling into
->>> free_reserved_area(). The same is being followed in the generic fallback
->>> for free_initmem() and some other platforms overriding it.
->>>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>
->> Is there a good reason you haven't made a similar change to
->> free_initrd_mem() - the same logic seems to apply. However this change
->> looks fine to me.
-> 
-> We will use generic free_initrd_mem() going forward as proposed in a recent
-> patch which does call free_reserved_area() with POISON_FREE_INITMEM.
-> 
-> https://patchwork.kernel.org/patch/11165379/
+Hello.
 
-Great - that sounds like a very good reason!
+The important part is the patch 02 where the reasoning is.
 
-Thanks,
+The rest is mostly auxiliar and split out into separate commits for
+better readability.
 
-Steve
+The patches are based on v5.3. 
 
->>
->> Reviewed-by: Steven Price <steven.price@arm.com>
->>
->>> ---
->>>  arch/arm64/mm/init.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->>> index 45c00a54909c..ea7d38011e83 100644
->>> --- a/arch/arm64/mm/init.c
->>> +++ b/arch/arm64/mm/init.c
->>> @@ -571,7 +571,7 @@ void free_initmem(void)
->>>  {
->>>  	free_reserved_area(lm_alias(__init_begin),
->>>  			   lm_alias(__init_end),
->>> -			   0, "unused kernel");
->>> +			   POISON_FREE_INITMEM, "unused kernel");
->>>  	/*
->>>  	 * Unmap the __init region but leave the VM area in place. This
->>>  	 * prevents the region from being reused for kernel modules, which
->>>
->>
->>
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Michal
+
+
+Michal Koutný (5):
+  cgroup: Update comments about task exit path
+  cgroup: Optimize single thread migration
+  selftests: cgroup: Simplify task self migration
+  selftests: cgroup: Add task migration tests
+  selftests: cgroup: Run test_core under interfering stress
+
+ kernel/cgroup/cgroup-internal.h               |   5 +-
+ kernel/cgroup/cgroup-v1.c                     |   5 +-
+ kernel/cgroup/cgroup.c                        |  68 ++++----
+ tools/testing/selftests/cgroup/Makefile       |   4 +-
+ tools/testing/selftests/cgroup/cgroup_util.c  |  42 ++++-
+ tools/testing/selftests/cgroup/cgroup_util.h  |   6 +-
+ tools/testing/selftests/cgroup/test_core.c    | 146 ++++++++++++++++++
+ tools/testing/selftests/cgroup/test_freezer.c |   2 +-
+ tools/testing/selftests/cgroup/test_stress.sh |   4 +
+ tools/testing/selftests/cgroup/with_stress.sh | 101 ++++++++++++
+ 10 files changed, 342 insertions(+), 41 deletions(-)
+ create mode 100755 tools/testing/selftests/cgroup/test_stress.sh
+ create mode 100755 tools/testing/selftests/cgroup/with_stress.sh
+
+-- 
+2.21.0
 
