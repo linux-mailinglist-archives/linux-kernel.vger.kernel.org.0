@@ -2,86 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D88FCBB83
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73ECCCBB9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388300AbfJDNUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:20:51 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:48494 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387917AbfJDNUv (ORCPT
+        id S2388499AbfJDNXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:23:25 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46727 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387952AbfJDNXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:20:51 -0400
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1iGNVR-0002sV-00; Fri, 04 Oct 2019 13:20:25 +0000
-Date:   Fri, 4 Oct 2019 09:20:25 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Slaby <jslaby@suse.com>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 0/2] drivers: make early_platform code SuperH-specific
-Message-ID: <20191004132025.GQ16318@brightrain.aerifal.cx>
-References: <20191003092913.10731-1-brgl@bgdev.pl>
- <20191004130031.GA596158@kroah.com>
+        Fri, 4 Oct 2019 09:23:25 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1iGNWS-0001sz-5V; Fri, 04 Oct 2019 15:21:28 +0200
+Message-ID: <bc05540f2aa46cff5d6239faab83446401ba7b5f.camel@pengutronix.de>
+Subject: Re: [PATCH v2 00/21] Refine memblock API
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Adam Ford <aford173@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Fri, 04 Oct 2019 15:21:03 +0200
+In-Reply-To: <20191004092727.GX25745@shell.armlinux.org.uk>
+References: <20190926160433.GD32311@linux.ibm.com>
+         <CAHCN7xL1sFXDhKUpj04d3eDZNgLA1yGAOqwEeCxedy1Qm-JOfQ@mail.gmail.com>
+         <20190928073331.GA5269@linux.ibm.com>
+         <CAHCN7xJEvS2Si=M+BYtz+kY0M4NxmqDjiX9Nwq6_3GGBh3yg=w@mail.gmail.com>
+         <CAHCN7xKLhWw4P9-sZKXQcfSfh2r3J_+rLxuxACW0UVgimCzyVw@mail.gmail.com>
+         <20191002073605.GA30433@linux.ibm.com>
+         <CAHCN7xL1MkJh44N3W_1+08DHmX__SqnfH6dqUzYzr2Wpg0kQyQ@mail.gmail.com>
+         <20191003053451.GA23397@linux.ibm.com>
+         <20191003084914.GV25745@shell.armlinux.org.uk>
+         <20191003113010.GC23397@linux.ibm.com>
+         <20191004092727.GX25745@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004130031.GA596158@kroah.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 03:00:31PM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Oct 03, 2019 at 11:29:11AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Am Freitag, den 04.10.2019, 10:27 +0100 schrieb Russell King - ARM
+Linux admin:
+> On Thu, Oct 03, 2019 at 02:30:10PM +0300, Mike Rapoport wrote:
+> > On Thu, Oct 03, 2019 at 09:49:14AM +0100, Russell King - ARM Linux
+> > admin wrote:
+> > > On Thu, Oct 03, 2019 at 08:34:52AM +0300, Mike Rapoport wrote:
+> > > > (trimmed the CC)
+> > > > 
+> > > > On Wed, Oct 02, 2019 at 06:14:11AM -0500, Adam Ford wrote:
+> > > > > On Wed, Oct 2, 2019 at 2:36 AM Mike Rapoport <
+> > > > > rppt@linux.ibm.com> wrote:
+> > > > > 
+> > > > > Before the patch:
+> > > > > 
+> > > > > # cat /sys/kernel/debug/memblock/memory
+> > > > >    0: 0x10000000..0x8fffffff
+> > > > > # cat /sys/kernel/debug/memblock/reserved
+> > > > >    0: 0x10004000..0x10007fff
+> > > > >   34: 0x2fffff88..0x3fffffff
+> > > > > 
+> > > > > 
+> > > > > After the patch:
+> > > > > # cat /sys/kernel/debug/memblock/memory
+> > > > >    0: 0x10000000..0x8fffffff
+> > > > > # cat /sys/kernel/debug/memblock/reserved
+> > > > >    0: 0x10004000..0x10007fff
+> > > > >   36: 0x80000000..0x8fffffff
+> > > > 
+> > > > I'm still not convinced that the memblock refactoring didn't
+> > > > uncovered an
+> > > > issue in etnaviv driver.
+> > > > 
+> > > > Why moving the CMA area from 0x80000000 to 0x30000000 makes it
+> > > > fail?
+> > > 
+> > > I think you have that the wrong way round.
 > > 
-> > Some time ago I started a discussion about the need for a proper early device
-> > probing mechanism[1]. One that would be based on real platform drivers and
-> > support both platform data and device tree.
+> > I'm relying on Adam's reports of working and non-working versions.
+> > According to that etnaviv works when CMA area is at 0x80000000 and
+> > does not
+> > work when it is at 0x30000000.
 > > 
-> > While we're far from reaching any consensus on the implementation, Arnd
-> > suggested that I start off by moving the SuperH-specific early platform
-> > drivers implementation to arch/sh[2].
+> > He also sent logs a few days ago [1], they also confirm that.
 > > 
-> > This series is the first attempt at making way for a new, less hacky
-> > implementation.
-> > 
-> > The first patch moves all the early_platform code to arch/sh.
-> > 
-> > The second patch prefixes all early_platform symbols with 'sh_'.
-> > 
-> > [1] https://lkml.org/lkml/2018/4/26/657
-> > [2] https://lkml.org/lkml/2018/4/27/239
-> > 
-> > v1 -> v2:
-> > - certain drivers are compiled for arm/mach-shmobile too - we need to
-> >   add ifdefs for CONFIG_SUPERH around early_platform calls
-> > 
-> > v2 -> v3:
-> > - added a stub for is_early_platform_device() which always returns false
-> >   on non-SuperH architectures
-> > 
-> > v3 -> v4:
-> > - rebased on top of v5.4-rc1
-> > - removed patches that are already upstream from the series
-> > 
-> > Bartosz Golaszewski (2):
-> >   drivers: move the early platform device support to arch/sh
-> >   sh: add the sh_ prefix to early platform symbols
+> > [1] 
+> > https://lore.kernel.org/linux-mm/CAHCN7xJEvS2Si=M+BYtz+kY0M4NxmqDjiX9Nwq6_3GGBh3yg=w@mail.gmail.com/
 > 
-> I like this, any objection from anyone if I take this in my driver-core
-> tree for 5.5-rc1?
+> Sorry, yes, you're right.  Still, I've reported this same regression
+> a while back, and it's never gone away.
+> 
+> > > > BTW, the code that complained about "command buffer outside
+> > > > valid memory
+> > > > window" has been removed by the commit 17e4660ae3d7
+> > > > ("drm/etnaviv:
+> > > > implement per-process address spaces on MMUv2"). 
+> > > > 
+> > > > Could be that recent changes to MMU management of etnaviv
+> > > > resolve the
+> > > > issue?
+> > > 
+> > > The iMX6 does not have MMUv2 hardware, it has MMUv1.  With MMUv1
+> > > hardware requires command buffers within the first 2GiB of
+> > > physical
+> > > RAM.
+> > 
+> > I've mentioned that patch because it removed the check for cmdbuf
+> > address
+> > for MMUv1:
+> > 
+> > @@ -785,15 +768,7 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+> >                                   PAGE_SIZE);
+> >         if (ret) {
+> >                 dev_err(gpu->dev, "could not create command
+> > buffer\n");
+> > -               goto unmap_suballoc;
+> > -       }
+> > -
+> > -       if (!(gpu->identity.minor_features1 &
+> > chipMinorFeatures1_MMU_VERSION) &&
+> > -           etnaviv_cmdbuf_get_va(&gpu->buffer, &gpu-
+> > >cmdbuf_mapping) > 0x80000000) {
+> > -               ret = -EINVAL;
+> > -               dev_err(gpu->dev,
+> > -                       "command buffer outside valid memory
+> > window\n");
+> > -               goto free_buffer;
+> > +               goto fail;
+> >         }
+> >  
+> >         /* Setup event management */
+> > 
+> > 
+> > I really don't know how etnaviv works, so I hoped that people who
+> > understand it would help.
+> 
+> From what I can see, removing that check is a completely insane thing
+> to do, and I note that these changes are _not_ described in the
+> commit
+> message.  The problem was known about _before_ (June 22) the patch
+> was
+> created (July 5).
+> 
+> Lucas, please can you explain why removing the above check, which is
+> well known to correctly trigger on various platforms to prevent
+> incorrect GPU behaviour, is safe?
 
-I don't think I have any objection. It will probably make gratuitous
-merge conflicts with Sato-san's old device tree sh4 work when we get
-back to finishing that, but that's not really a big deal.
+It isn't. It's a pretty big oversight in this commit to remove this
+check. It can't be done at the same spot in the code anymore, as we
+don't have a mapping context at this time anymore, but it should have
+moved into etnaviv_iommu_context_init(). I'll send a patch to fix this
+up.
 
-Rich
+Regards,
+Lucas
+
