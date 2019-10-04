@@ -2,114 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6836CC68E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F4144CC696
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbfJDXbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 19:31:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35907 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfJDXbf (ORCPT
+        id S1731588AbfJDXfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 19:35:54 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:42470 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729976AbfJDXfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 19:31:35 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 23so4616798pgk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:31:34 -0700 (PDT)
+        Fri, 4 Oct 2019 19:35:54 -0400
+Received: by mail-io1-f65.google.com with SMTP id n197so17040617iod.9
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:35:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Z/e8EWlo6oLC7kCwtiuv+KxxSwajNXvXX9ykyyY6BXQ=;
-        b=A9cyjOZfmGNJRtBUCkiBi2TuxwF55Q/M0+hqtI34DENevjHtgY9umyIm7u36Iz0j+g
-         Lkd4Ob68hSOl0uzuZTbsgLxNwwwb9nHDqlVVzndUFWVcTvi2G8I0/p/YuMAcd79CNQWO
-         5SkxAMqekumVhVpWVAADypyDFqRazJQxzofpQ=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+T7DRRD+UBJWxQqae2a5KokUy893Q+Fh/NFyFQWVL5c=;
+        b=aR+KCZ9iMZp71ShYHM33WPPJZLgnz4zsUdnjqJr8GHFuHLR7FyxN/fle/WUHQd2S1g
+         OfLnAhfjfVGHzOaJK0w0TC11rXg1X4dvELPEblK609VJWdmUv3sZEwya23vmrWxc9DIG
+         vIwRS1tb3jC35O1UM0jW9C+Ii5AJiQBiaQ1Ur7s/C07BnQkMOVZ4W9F3sPzf++A2KGb7
+         xR6BJ5NeINKOa0O4NpITK3QSA5A4hBhi6JPVSDWobx9wowRsCSuZB6NQRnkdoOs+Z2W2
+         osQu5NuuvxVuUBBBHYMDims/a/amUqM21/mCbGDA6dx/4nzkkCX+H13qHMc6NbHauO0N
+         1cfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Z/e8EWlo6oLC7kCwtiuv+KxxSwajNXvXX9ykyyY6BXQ=;
-        b=m8ACbB5FdBQg7SzgExs/Hmcf7UsKiCTWLEsXf4SIznAfpFcIvwJlxBiRAKXu1qE+r6
-         mLf6wBjGrb9DcmiXwF9Z50tJQgZ+tqc2hBUQoIxvUQ1TuAigtK6orICYWm4IxNhXrptP
-         pilfXsdf8TtT+UfpBF/JXpT5BhvFw/Yrff78+QvEE3nDdfFXLihNdmt7BNED4qU5vGB5
-         CGr8rfYbHLWUJkGIseshUwaNIeA6OH9fBjcctiAePTHa3KyiOkzlt66TunhiIBDJ8Efy
-         tM4MJBF3tbNMfE6clN2IoPDpZZr+NuKJsC2MjMl8zt2EuW7HCWdFSe3CW/Rd43beKbns
-         pE9Q==
-X-Gm-Message-State: APjAAAVUlvjjxJuZbSH46sANWO9VqLrgu8HXqS0r9B1/ElNnLqqE05zy
-        4p41LBDxbwBE/Wz9UB/Z/xmcdA==
-X-Google-Smtp-Source: APXvYqy8JT/xvn3Mcha8YwAHzxwblBG3zVfUPB4cSLKRJxVmOvfKOSrnLLhHkWqixsEGTNN59npHyA==
-X-Received: by 2002:a17:90a:8b8c:: with SMTP id z12mr20065560pjn.100.1570231894192;
-        Fri, 04 Oct 2019 16:31:34 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g24sm7893668pfi.81.2019.10.04.16.31.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 16:31:33 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: [PATCH] soc: qcom: llcc: Name regmaps to avoid collisions
-Date:   Fri,  4 Oct 2019 16:31:32 -0700
-Message-Id: <20191004233132.194336-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+T7DRRD+UBJWxQqae2a5KokUy893Q+Fh/NFyFQWVL5c=;
+        b=ZSQ1M50Jy7oLYYe55n+zMxm+UzX4VqKZt3XtkjFOFS6C9Tey8vLvnwA1cosYlexfE0
+         T5H5sJr9zO9Tk2vm1QT0CK5TcqWu1xqBlMhGaTbO32125uuvMHSO8YSiVXJigHlN+Cjt
+         1+3xjaJDN/NdKD/0liEIVAuWe1AD9VXqS1LJdQQw5oiz8uy7PCmoecDHairo+/0rNAdC
+         FpglDp/eSWCpl23FIAwFomNfqTeLtwge06I2G4P5N3o0ZjGR68tbhyWRUni/7mrMnLhz
+         bOQ7aeBEb03JZWg2uSgFL2UR1HkcZYBHSS0y8uz6rBGpwOFsDBizTemJNZAJCsBv6bSW
+         ieHQ==
+X-Gm-Message-State: APjAAAU15fusUYXZl5szGuT4N7H0zijI9FSGUUQd0m2jfTk3WYJjsKr+
+        6a9x1hxnqXWgkxwGnzvTio0uaS5Q+1d9hFaTsMh88g==
+X-Google-Smtp-Source: APXvYqx43jSstCJvk+2c6AUFzK14t9HPWx/edmJdJr8SoFrOND4p+DMir84DYAG2WVlbh9N6FdgDkbxAOENqDWPCqg4=
+X-Received: by 2002:a92:5a10:: with SMTP id o16mr19118181ilb.296.1570232153408;
+ Fri, 04 Oct 2019 16:35:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191004215615.5479-1-sean.j.christopherson@intel.com> <20191004215615.5479-9-sean.j.christopherson@intel.com>
+In-Reply-To: <20191004215615.5479-9-sean.j.christopherson@intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Fri, 4 Oct 2019 16:35:42 -0700
+Message-ID: <CALMp9eSEF-MKxF1+ApTe9-2fJbRBt2svHiCdX=4jP25Ed2LqBg@mail.gmail.com>
+Subject: Re: [PATCH 08/16] KVM: VMX: Check for full VMX support when verifying
+ CPU compatibility
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>, linux-edac@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We'll end up with debugfs collisions if we don't give names to the
-regmaps created inside this driver. Copy the template config over into
-this function and give the regmap the same name as the resource name.
-
-Fixes: 7f9c136216c7 ("soc: qcom: Add broadcast base for Last Level Cache Controller (LLCC)")
-Cc: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Cc: Evan Green <evgreen@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/soc/qcom/llcc-slice.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
-index 9090ea12eaf3..aa342938c403 100644
---- a/drivers/soc/qcom/llcc-slice.c
-+++ b/drivers/soc/qcom/llcc-slice.c
-@@ -48,13 +48,6 @@
- 
- static struct llcc_drv_data *drv_data = (void *) -EPROBE_DEFER;
- 
--static const struct regmap_config llcc_regmap_config = {
--	.reg_bits = 32,
--	.reg_stride = 4,
--	.val_bits = 32,
--	.fast_io = true,
--};
--
- /**
-  * llcc_slice_getd - get llcc slice descriptor
-  * @uid: usecase_id for the client
-@@ -314,6 +307,12 @@ static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
- {
- 	struct resource *res;
- 	void __iomem *base;
-+	static struct regmap_config llcc_regmap_config = {
-+		.reg_bits = 32,
-+		.reg_stride = 4,
-+		.val_bits = 32,
-+		.fast_io = true,
-+	};
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
- 	if (!res)
-@@ -323,6 +322,7 @@ static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
- 	if (IS_ERR(base))
- 		return ERR_CAST(base);
- 
-+	llcc_regmap_config.name = name;
- 	return devm_regmap_init_mmio(&pdev->dev, base, &llcc_regmap_config);
- }
- 
--- 
-Sent by a computer through tubes
-
+On Fri, Oct 4, 2019 at 2:56 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> Explicitly check the current CPU's VMX feature flag when verifying
+> compatibility across physical CPUs.  This effectively adds a check on
+> IA32_FEATURE_CONTROL to ensure that VMX is fully enabled on all CPUs.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
