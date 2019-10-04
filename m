@@ -2,98 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9909ACBD90
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:40:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A3D3CBD96
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389319AbfJDOkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:40:52 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40782 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389177AbfJDOkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:40:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l3so7523716wru.7
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 07:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=bVYB3iaBKu6hqEMy7IiK8W2xGcuTKRwNP5QMtv3wYFQ=;
-        b=tJopKaUBlABenT4ylmGSDy+I7t0hIGjesgfpNtSX0xCQ4wdftG4tbz0fWZ1ZW9yfVn
-         qnor0XLIlQJe3nszHCPcuh5nQF/kpXBia4CYizl15KL/+djYfrXQCqNMoFvQkeb6xbw8
-         9iDF6a1qCpXZ3KfIzHm/41NSPoHZpt5eZ3UhrCrZ9FFeb3HlSVchIWIPy0R6jWISxeIq
-         xgc7P2GJSJ+8CZTFUhR1PjY5KCBKUXCNlGxEt2BIY8/Zf41oIgMW961ZPQJPVlqK1QeW
-         OwRJz1zdzDOjxWO6iC7SjAGCOC3mJ59hlp8jnqGV0O0w1TbvbSZIGWMp6u3cQ7sMyrih
-         0/Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=bVYB3iaBKu6hqEMy7IiK8W2xGcuTKRwNP5QMtv3wYFQ=;
-        b=tLyHM7+IyLaNtUR6LxR1K31CwJNl8Ow9mDgjqTnPHqCSgwvTKa4/40UhZHvOnZ3qBv
-         v/+ywucptXEZoDpD9QNnG6rQEASAWvxRWA62zg7jYWir6p6Yj4OlYcmnpH6YJ5tan944
-         ZAq05Zix1AfVTn6R2Ddy6+p1jFreyU5mRKBT3V0XkMuIJo5Ls/SAu1gqL46UwVMzmDFM
-         WBXpzTsVTOven/qjvWpemtwzqutkOH9zW/BioCmMh7s4PG8S9APM3EipvRl2szkm+ezV
-         8P0hhNqg54G0kvX7LC60fD9ZtZKAhEELPUqvjTLN96V5LI/CU6OCEeoyNtSWJQSzX8qj
-         6A4Q==
-X-Gm-Message-State: APjAAAVvsL7r+VlEbPekoo2Y49TJF9kbkNNPtJtamrkle29P3RovyV5U
-        aaRNYxWlEjX2yG4FOoAmvvwNnw==
-X-Google-Smtp-Source: APXvYqy9slbJZlb7IwHee5m1NXEKgsFSSD+s3ZkGv7TbF7FJLKEyUO3VrYbQ2U8x31bmys0HDopIvg==
-X-Received: by 2002:adf:97cb:: with SMTP id t11mr5495100wrb.312.1570200049218;
-        Fri, 04 Oct 2019 07:40:49 -0700 (PDT)
-Received: from dell ([2.27.167.122])
-        by smtp.gmail.com with ESMTPSA id r2sm5638979wrm.3.2019.10.04.07.40.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Oct 2019 07:40:48 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 15:40:46 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>, kbuild-all@01.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v6 3/4] mfd: ioc3: Add driver for SGI IOC3 chip
-Message-ID: <20191004144046.GP18429@dell>
-References: <20190923114636.6748-4-tbogendoerfer@suse.de>
- <201909232145.eyOJqt2k%lkp@intel.com>
- <20191004143718.GM18429@dell>
+        id S2389135AbfJDOly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:41:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48480 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388733AbfJDOlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 10:41:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D7730AC69;
+        Fri,  4 Oct 2019 14:41:51 +0000 (UTC)
+Date:   Fri, 4 Oct 2019 16:41:50 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Add a reason for reserved pages in
+ has_unmovable_pages()
+Message-ID: <20191004144150.GO9578@dhcp22.suse.cz>
+References: <1570090257-25001-1-git-send-email-anshuman.khandual@arm.com>
+ <20191004105824.GD9578@dhcp22.suse.cz>
+ <91128b73-9a47-100b-d3de-e83f0b941e9f@arm.com>
+ <1570193776.5576.270.camel@lca.pw>
+ <20191004130713.GK9578@dhcp22.suse.cz>
+ <1570195839.5576.273.camel@lca.pw>
+ <20191004133814.GM9578@dhcp22.suse.cz>
+ <1570197360.5576.275.camel@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191004143718.GM18429@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1570197360.5576.275.camel@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >    drivers//mfd/ioc3.c: In function 'ioc3_eth_setup':
-> > >> drivers//mfd/ioc3.c:281:54: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'resource_size_t {aka unsigned int}' [-Wformat=]
-> >        sizeof(ioc3_w1_platform_data.dev_id), "ioc3-%012llx",
-> >                                                    ~~~~~~^
-> >                                                    %012x
-> >        ipd->pdev->resource->start);
-> >        ~~~~~~~~~~~~~~~~~~~~~~~~~~                         
+On Fri 04-10-19 09:56:00, Qian Cai wrote:
+> On Fri, 2019-10-04 at 15:38 +0200, Michal Hocko wrote:
+> > On Fri 04-10-19 09:30:39, Qian Cai wrote:
+> > > On Fri, 2019-10-04 at 15:07 +0200, Michal Hocko wrote:
+> > > > On Fri 04-10-19 08:56:16, Qian Cai wrote:
+> > > > [...]
+> > > > > It might be a good time to rethink if it is really a good idea to dump_page()
+> > > > > at all inside has_unmovable_pages(). As it is right now, it is a a potential
+> > > > > deadlock between console vs memory offline. More details are in this thread,
+> > > > > 
+> > > > > https://lore.kernel.org/lkml/1568817579.5576.172.camel@lca.pw/
+> > > > 
+> > > > Huh. That would imply we cannot do any printk from that path, no?
+> > > 
+> > > Yes, or use something like printk_deferred()
+> > 
+> > This is just insane. The hotplug code is in no way special wrt printk.
+> > It is never called from the printk code AFAIK and thus there is no real
+> > reason why this particular code should be any special. Not to mention
+> > it calls printk indirectly from a code that is shared with other code
+> > paths.
 > 
-> I assume you plan on fixing this Thomas?
+> Basically, printk() while holding the zone_lock will be problematic as console
+> is doing the opposite as it always needs to allocate some memory. Then, it will
+> always find some way to form this chain,
+> 
+> console_lock -> * -> zone_lock.
 
-Ah, I see the new set - ignore this.
-
+So this is not as much a hotplug specific problem but zone->lock ->
+printk -> alloc chain that is a problem, right? Who is doing an
+allocation from this atomic context? I do not see any atomic allocation
+in kernel/printk/printk.c.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Michal Hocko
+SUSE Labs
