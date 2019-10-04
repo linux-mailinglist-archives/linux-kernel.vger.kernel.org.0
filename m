@@ -2,25 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EFBECB415
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 07:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C353CB41E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 07:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388059AbfJDFGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 01:06:00 -0400
-Received: from pindarots.xs4all.nl ([82.161.210.87]:36850 "EHLO
+        id S2388080AbfJDFR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 01:17:56 -0400
+Received: from pindarots.xs4all.nl ([82.161.210.87]:37294 "EHLO
         pindarots.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726569AbfJDFGA (ORCPT
+        with ESMTP id S1729363AbfJDFRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 01:06:00 -0400
-X-Greylist: delayed 482 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Oct 2019 01:05:59 EDT
+        Fri, 4 Oct 2019 01:17:55 -0400
 Received: from surfplank2.hierzo (localhost.localdomain [127.0.0.1])
-        by pindarots.xs4all.nl (8.15.2/8.14.5) with ESMTPS id x9455wgg004973
+        by pindarots.xs4all.nl (8.15.2/8.14.5) with ESMTPS id x944vtK9004569
         (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO)
-        for <linux-kernel@vger.kernel.org>; Fri, 4 Oct 2019 07:05:58 +0200
-Subject: Re: 4*/5*: ppp0: recursion detected
-From:   Udo van den Heuvel <udovdh@xs4all.nl>
+        for <linux-kernel@vger.kernel.org>; Fri, 4 Oct 2019 06:57:55 +0200
 To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <f142716c-30bb-f1c6-1d88-94cd308a7adf@xs4all.nl>
+From:   Udo van den Heuvel <udovdh@xs4all.nl>
+Subject: 4*/5*: ppp0: recursion detected
 Autocrypt: addr=udovdh@xs4all.nl; prefer-encrypt=mutual; keydata=
  mQINBFTtuO0BEACwwf5qDINuMWL9poNLJdZh/FM5RxwfCFgfbM29Aip4wAUD3CaQHRLILtNO
  Oo4JwIPtDp7fXZ3MB82tqhBRU3W3HVHodSzvUk2VzV0dE1prJiVizpPtIeYRRDr4KnWTvJOx
@@ -66,12 +64,11 @@ Autocrypt: addr=udovdh@xs4all.nl; prefer-encrypt=mutual; keydata=
  QYrlFbsVCXOM9TvO5ppqJowfdKmqFUjQPAsO40bwbphkt1NBalgZaxMCinpqEggVm/rGqbj2
  JjyRAfO8kEkwCkTZ6/Mnrxsunx9VNLGDEw==
 Organization: hierzo
-Message-ID: <7e6210ee-1292-87fa-e2ac-a1928b0f9ad0@xs4all.nl>
-Date:   Fri, 4 Oct 2019 07:05:58 +0200
+Message-ID: <f142716c-30bb-f1c6-1d88-94cd308a7adf@xs4all.nl>
+Date:   Fri, 4 Oct 2019 06:57:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <f142716c-30bb-f1c6-1d88-94cd308a7adf@xs4all.nl>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,18 +77,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04-10-2019 06:57, Udo van den Heuvel wrote:
-> To fix the 'ppp0: recursion detected' messages we see on our firewall I
-> found a solution at:
-> 
-> https://forum.openwrt.org/t/pptp-recursion-detected-system-reboot-itself/12585
-> 
-> Can we please implement this solution if deemed OK?
+Hello,
 
-Or perhaps this variant:
-https://bugzilla.kernel.org/show_bug.cgi?id=199109 which does not appear
-to be implemented in 4.19 yet...
+To fix the 'ppp0: recursion detected' messages we see on our firewall I
+found a solution at:
+
+https://forum.openwrt.org/t/pptp-recursion-detected-system-reboot-itself/12585
+
+Can we please implement this solution if deemed OK?
 
 
+Kind regards,
 Udo
-
