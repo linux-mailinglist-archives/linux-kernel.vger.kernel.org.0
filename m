@@ -2,359 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CAFBCB639
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE777CB62F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387430AbfJDIcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 04:32:55 -0400
-Received: from mga17.intel.com ([192.55.52.151]:57519 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730880AbfJDIcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 04:32:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 01:32:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,255,1566889200"; 
-   d="scan'208";a="204236469"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.66])
-  by orsmga002.jf.intel.com with ESMTP; 04 Oct 2019 01:32:50 -0700
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] perf record: Put a copy of kcore into the perf.data directory
-Date:   Fri,  4 Oct 2019 11:31:21 +0300
-Message-Id: <20191004083121.12182-6-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191004083121.12182-1-adrian.hunter@intel.com>
-References: <20191004083121.12182-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1730055AbfJDIcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 04:32:09 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39850 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfJDIcJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 04:32:09 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y3so5612776ljj.6;
+        Fri, 04 Oct 2019 01:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=NPQ5cZjeAKLubxvECYH8lKvd804y+Ly8agJKLsQA30A=;
+        b=XlDUpf/LQ1ng0doQW6R8Au7b6U7WkZN1JRB/fMdIsJ/1tD9fQnkMcz8cHcRYbpBaNT
+         OT3XvKtOLyxT+u7+x/4AV/qTipUYH6l5load3Q0t5m2hPbQFTMMPhdRw0wBvNhBnDyPT
+         /K4qUSiZ0PXtV1RwOZ3EFSX003r4eYo2D6HQG02/kExvD2zoPWEG5e4CPKcDEdr0o5Xj
+         g4xq8FiTkWoUioDP1QHbClu1ZZUDi+/m3tIQ92BiXWVjmXg63kzYtvq2/VsoazgJj43I
+         h6UJ9n7Whw/IAH1YMd/W6Ve542DP3NAleaGa3J/nkUs9/vdDRlrQ5CpIEmQceTLNZC3p
+         VYlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=NPQ5cZjeAKLubxvECYH8lKvd804y+Ly8agJKLsQA30A=;
+        b=EFpXq4tg/lHdDjbPskePlcZSAoMcKPXpONkG1LFXLLGFY/it76ec48AMNbH0Z7CaiQ
+         Q+J/oQdYXLxWrpU+w+yGm/uzBgn35cMHeCkuIIkHc8wt/Dapq2JZAbitBiOmjV/jCbzH
+         7ascLqkYp8Lnrzekh9oMdwLiuSQAxvA1ySb0NdyXa5Hp8LwIwxyICGYW9jDpoHl4+KNZ
+         rMxZk5M+yqgpRf5EwNRifyU+N+6Irkb6qsCHTbrigBQ9owl4MnNqKv9H6cKqFQaOYaw2
+         2KfdbKePE58m65nJHWiPrqjSYq0F3W2pc6SCxVdoAtrFx25IoZk68nfNsbvMEt6oFh5Z
+         vrfg==
+X-Gm-Message-State: APjAAAV43ZSOB6OtwfnswiIGk4br4VV2aJuNIOGeHFFjxhada2TSbhV0
+        nR61XCgZpk0eNhfJTqGcRh4M77BE
+X-Google-Smtp-Source: APXvYqzLxS7n6FT1JetYlU1lm0Gp1CAIoBnDhgxYjByOima/TEF3aD+tp25sES0XsiSPTFM7uJF4vw==
+X-Received: by 2002:a2e:3808:: with SMTP id f8mr8688996lja.7.1570177924558;
+        Fri, 04 Oct 2019 01:32:04 -0700 (PDT)
+Received: from [192.168.100.64] (mm-61-74-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.74.61])
+        by smtp.gmail.com with ESMTPSA id 28sm989185lfy.47.2019.10.04.01.32.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Oct 2019 01:32:03 -0700 (PDT)
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <75be62996d115a3e2effa6753a6d803069131460.1570177340.git.asml.silence@gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH] io_uring: Fix reversed nonblock flag
+Message-ID: <cfd89ec4-f632-9274-6982-826bc9f45284@gmail.com>
+Date:   Fri, 4 Oct 2019 11:32:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <75be62996d115a3e2effa6753a6d803069131460.1570177340.git.asml.silence@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="Bw0tPhRScHj7UlXCvIrrxiJmaZn9Ij0bm"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new 'perf record' option '--kcore' which will put a copy of
-/proc/kcore, kallsyms and modules into a perf.data directory. Note, that
-without the --kcore option, output goes to a file as previously.
-The tools' -o and -i options work with either a file name or directory
-name.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Bw0tPhRScHj7UlXCvIrrxiJmaZn9Ij0bm
+Content-Type: multipart/mixed; boundary="AJAJmnyxlAO8z74yubWeROTM09DJBPT06";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <cfd89ec4-f632-9274-6982-826bc9f45284@gmail.com>
+Subject: Re: [PATCH] io_uring: Fix reversed nonblock flag
+References: <75be62996d115a3e2effa6753a6d803069131460.1570177340.git.asml.silence@gmail.com>
+In-Reply-To: <75be62996d115a3e2effa6753a6d803069131460.1570177340.git.asml.silence@gmail.com>
 
-Example:
+--AJAJmnyxlAO8z74yubWeROTM09DJBPT06
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
- $ sudo perf record --kcore uname
+I haven't followed the code path properly, but it looks strange to me.
+Jens, could you take a look?
 
- $ sudo tree perf.data
- perf.data
- ├── kcore_dir
- │   ├── kallsyms
- │   ├── kcore
- │   └── modules
- └── data
 
- $ sudo perf script -v
- build id event received for vmlinux: 1eaa285996affce2d74d8e66dcea09a80c9941de
- build id event received for [vdso]: 8bbaf5dc62a9b644b4d4e4539737e104e4a84541
- Samples for 'cycles' event do not have CPU attribute set. Skipping 'cpu' field.
- Using CPUID GenuineIntel-6-8E-A
- Using perf.data/kcore_dir/kcore for kernel data
- Using perf.data/kcore_dir/kallsyms for symbols
-             perf 19058 506778.423729:          1 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
-             perf 19058 506778.423733:          1 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
-             perf 19058 506778.423734:          7 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
-             perf 19058 506778.423736:        117 cycles:  ffffffffa2caa54a native_write_msr+0xa (vmlinux)
-             perf 19058 506778.423738:       2092 cycles:  ffffffffa2c9b7b0 native_apic_msr_write+0x0 (vmlinux)
-             perf 19058 506778.423740:      37380 cycles:  ffffffffa2f121d0 perf_event_addr_filters_exec+0x0 (vmlinux)
-            uname 19058 506778.423751:     582673 cycles:  ffffffffa303a407 propagate_protected_usage+0x147 (vmlinux)
-            uname 19058 506778.423892:    2241841 cycles:  ffffffffa2cae0c9 unwind_next_frame.part.5+0x79 (vmlinux)
-            uname 19058 506778.424430:    2457397 cycles:  ffffffffa3019232 check_memory_region+0x52 (vmlinux)
+On 04/10/2019 11:25, Pavel Begunkov (Silence) wrote:
+> From: Pavel Begunkov <asml.silence@gmail.com>
+>=20
+> io_queue_link_head() accepts @force_nonblock flag, but io_ring_submit()=
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/Documentation/perf-record.txt      |  3 ++
- .../perf.data-directory-format.txt            | 35 +++++++++++++
- tools/perf/builtin-record.c                   | 52 +++++++++++++++++++
- tools/perf/util/data.c                        | 33 ++++++++++++
- tools/perf/util/data.h                        |  2 +
- tools/perf/util/record.h                      |  1 +
- tools/perf/util/session.c                     |  4 ++
- tools/perf/util/util.c                        | 17 ++++++
- 8 files changed, 147 insertions(+)
+> passes something opposite.
+>=20
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index c934f91c51e9..ffe66512ca07 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2761,7 +2761,7 @@ static int io_ring_submit(struct io_ring_ctx *ctx=
+, unsigned int to_submit,
+> =20
+>  	if (link)
+>  		io_queue_link_head(ctx, link, &link->submit, shadow_req,
+> -					block_for_last);
+> +					force_nonblock);
+>  	if (statep)
+>  		io_submit_state_end(statep);
+> =20
+>=20
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index c6f9f31b6039..8a4506113d9f 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -571,6 +571,9 @@ config terms. For example: 'cycles/overwrite/' and 'instructions/no-overwrite/'.
- 
- Implies --tail-synthesize.
- 
-+--kcore::
-+Make a copy of /proc/kcore and place it into a directory with the perf data file.
-+
- SEE ALSO
- --------
- linkperf:perf-stat[1], linkperf:perf-list[1]
-diff --git a/tools/perf/Documentation/perf.data-directory-format.txt b/tools/perf/Documentation/perf.data-directory-format.txt
-index 4bf08908178d..f37fbd29112e 100644
---- a/tools/perf/Documentation/perf.data-directory-format.txt
-+++ b/tools/perf/Documentation/perf.data-directory-format.txt
-@@ -26,3 +26,38 @@ The current only version value 0 means that:
- 
- Future versions are expected to describe different data files
- layout according to special needs.
-+
-+Currently the only 'perf record' option to output to a directory is
-+the --kcore option which puts a copy of /proc/kcore into the directory.
-+e.g.
-+
-+  $ sudo perf record --kcore uname
-+  Linux
-+  [ perf record: Woken up 1 times to write data ]
-+  [ perf record: Captured and wrote 0.015 MB perf.data (9 samples) ]
-+  $ sudo tree -ps perf.data
-+  perf.data
-+  ├── [-rw-------       23744]  data
-+  └── [drwx------        4096]  kcore_dir
-+      ├── [-r--------     6731125]  kallsyms
-+      ├── [-r--------    40230912]  kcore
-+      └── [-r--------        5419]  modules
-+
-+  1 directory, 4 files
-+  $ sudo perf script -v
-+  build id event received for vmlinux: 1eaa285996affce2d74d8e66dcea09a80c9941de
-+  build id event received for [vdso]: 8bbaf5dc62a9b644b4d4e4539737e104e4a84541
-+  build id event received for /lib/x86_64-linux-gnu/libc-2.28.so: 5b157f49586a3ca84d55837f97ff466767dd3445
-+  Samples for 'cycles' event do not have CPU attribute set. Skipping 'cpu' field.
-+  Using CPUID GenuineIntel-6-8E-A
-+  Using perf.data/kcore_dir/kcore for kernel data
-+  Using perf.data/kcore_dir/kallsyms for symbols
-+              perf 15316 2060795.480902:          1 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
-+              perf 15316 2060795.480906:          1 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
-+              perf 15316 2060795.480908:          7 cycles:  ffffffffa2caa548 native_write_msr+0x8 (vmlinux)
-+              perf 15316 2060795.480910:        119 cycles:  ffffffffa2caa54a native_write_msr+0xa (vmlinux)
-+              perf 15316 2060795.480912:       2109 cycles:  ffffffffa2c9b7b0 native_apic_msr_write+0x0 (vmlinux)
-+              perf 15316 2060795.480914:      37606 cycles:  ffffffffa2f121fe perf_event_addr_filters_exec+0x2e (vmlinux)
-+             uname 15316 2060795.480924:     588287 cycles:  ffffffffa303a56d page_counter_try_charge+0x6d (vmlinux)
-+             uname 15316 2060795.481067:    2261945 cycles:  ffffffffa301438f kmem_cache_free+0x4f (vmlinux)
-+             uname 15316 2060795.481643:    2172167 cycles:      7f1a48c393c0 _IO_un_link+0x0 (/lib/x86_64-linux-gnu/libc-2.28.so)
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index fceac9d42b4e..ca9bf249cfb2 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -55,6 +55,9 @@
- #include <signal.h>
- #include <sys/mman.h>
- #include <sys/wait.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
- #include <linux/err.h>
- #include <linux/string.h>
- #include <linux/time64.h>
-@@ -699,6 +702,37 @@ static int record__auxtrace_init(struct record *rec __maybe_unused)
- 
- #endif
- 
-+static bool record__kcore_readable(struct machine *machine)
-+{
-+	char kcore[PATH_MAX];
-+	int fd;
-+
-+	scnprintf(kcore, sizeof(kcore), "%s/proc/kcore", machine->root_dir);
-+
-+	fd = open(kcore, O_RDONLY);
-+	if (fd < 0)
-+		return false;
-+
-+	close(fd);
-+
-+	return true;
-+}
-+
-+static int record__kcore_copy(struct machine *machine, struct perf_data *data)
-+{
-+	char from_dir[PATH_MAX];
-+	char kcore_dir[PATH_MAX];
-+	int ret;
-+
-+	snprintf(from_dir, sizeof(from_dir), "%s/proc", machine->root_dir);
-+
-+	ret = perf_data__make_kcore_dir(data, kcore_dir, sizeof(kcore_dir));
-+	if (ret)
-+		return ret;
-+
-+	return kcore_copy(from_dir, kcore_dir);
-+}
-+
- static int record__mmap_evlist(struct record *rec,
- 			       struct evlist *evlist)
- {
-@@ -1383,6 +1417,12 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 	session->header.env.comp_type  = PERF_COMP_ZSTD;
- 	session->header.env.comp_level = rec->opts.comp_level;
- 
-+	if (rec->opts.kcore &&
-+	    !record__kcore_readable(&session->machines.host)) {
-+		pr_err("ERROR: kcore is not readable.\n");
-+		return -1;
-+	}
-+
- 	record__init_features(rec);
- 
- 	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
-@@ -1414,6 +1454,14 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 	}
- 	session->header.env.comp_mmap_len = session->evlist->core.mmap_len;
- 
-+	if (rec->opts.kcore) {
-+		err = record__kcore_copy(&session->machines.host, data);
-+		if (err) {
-+			pr_err("ERROR: Failed to copy kcore\n");
-+			goto out_child;
-+		}
-+	}
-+
- 	err = bpf__apply_obj_config();
- 	if (err) {
- 		char errbuf[BUFSIZ];
-@@ -2184,6 +2232,7 @@ static struct option __record_options[] = {
- 		     parse_cgroups),
- 	OPT_UINTEGER('D', "delay", &record.opts.initial_delay,
- 		  "ms to wait before starting measurement after program start"),
-+	OPT_BOOLEAN(0, "kcore", &record.opts.kcore, "copy /proc/kcore"),
- 	OPT_STRING('u', "uid", &record.opts.target.uid_str, "user",
- 		   "user to profile"),
- 
-@@ -2322,6 +2371,9 @@ int cmd_record(int argc, const char **argv)
- 
- 	}
- 
-+	if (rec->opts.kcore)
-+		rec->data.is_dir = true;
-+
- 	if (rec->opts.comp_level != 0) {
- 		pr_debug("Compression enabled, disabling build id collection at the end of the session.\n");
- 		rec->no_buildid = true;
-diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index 964ea101dba6..c47aa34fdc0a 100644
---- a/tools/perf/util/data.c
-+++ b/tools/perf/util/data.c
-@@ -424,3 +424,36 @@ unsigned long perf_data__size(struct perf_data *data)
- 
- 	return size;
- }
-+
-+int perf_data__make_kcore_dir(struct perf_data *data, char *buf, size_t buf_sz)
-+{
-+	int ret;
-+
-+	if (!data->is_dir)
-+		return -1;
-+
-+	ret = snprintf(buf, buf_sz, "%s/kcore_dir", data->path);
-+	if (ret < 0 || (size_t)ret >= buf_sz)
-+		return -1;
-+
-+	return mkdir(buf, S_IRWXU);
-+}
-+
-+char *perf_data__kallsyms_name(struct perf_data *data)
-+{
-+	char *kallsyms_name;
-+	struct stat st;
-+
-+	if (!data->is_dir)
-+		return NULL;
-+
-+	if (asprintf(&kallsyms_name, "%s/kcore_dir/kallsyms", data->path) < 0)
-+		return NULL;
-+
-+	if (stat(kallsyms_name, &st)) {
-+		free(kallsyms_name);
-+		return NULL;
-+	}
-+
-+	return kallsyms_name;
-+}
-diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
-index f68815f7e428..75947ef6bc17 100644
---- a/tools/perf/util/data.h
-+++ b/tools/perf/util/data.h
-@@ -87,4 +87,6 @@ int perf_data__open_dir(struct perf_data *data);
- void perf_data__close_dir(struct perf_data *data);
- int perf_data__update_dir(struct perf_data *data);
- unsigned long perf_data__size(struct perf_data *data);
-+int perf_data__make_kcore_dir(struct perf_data *data, char *buf, size_t buf_sz);
-+char *perf_data__kallsyms_name(struct perf_data *data);
- #endif /* __PERF_DATA_H */
-diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-index 00275afc524d..948bbcf9aef3 100644
---- a/tools/perf/util/record.h
-+++ b/tools/perf/util/record.h
-@@ -44,6 +44,7 @@ struct record_opts {
- 	bool	      strict_freq;
- 	bool	      sample_id;
- 	bool	      no_bpf_event;
-+	bool	      kcore;
- 	unsigned int  freq;
- 	unsigned int  mmap_pages;
- 	unsigned int  auxtrace_mmap_pages;
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 061bb4d6a3f5..bfa80fe8d369 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -230,6 +230,10 @@ struct perf_session *perf_session__new(struct perf_data *data,
- 			if (ret)
- 				goto out_delete;
- 			}
-+
-+			if (!symbol_conf.kallsyms_name &&
-+			    !symbol_conf.vmlinux_name)
-+				symbol_conf.kallsyms_name = perf_data__kallsyms_name(data);
- 		}
- 	} else  {
- 		session->machines.host.env = &perf_env;
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 56f30ad29ca7..16f81a0a9208 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -180,6 +180,21 @@ static int rm_rf_depth_pat(const char *path, int depth, const char **pat)
- 	return rmdir(path);
- }
- 
-+static int rm_rf_kcore_dir(const char *path)
-+{
-+	char kcore_dir_path[PATH_MAX];
-+	const char *pat[] = {
-+		"kcore",
-+		"kallsyms",
-+		"modules",
-+		NULL,
-+	};
-+
-+	snprintf(kcore_dir_path, sizeof(kcore_dir_path), "%s/kcore_dir", path);
-+
-+	return rm_rf_depth_pat(kcore_dir_path, 0, pat);
-+}
-+
- int rm_rf_perf_data(const char *path)
- {
- 	const char *pat[] = {
-@@ -188,6 +203,8 @@ int rm_rf_perf_data(const char *path)
- 		NULL,
- 	};
- 
-+	rm_rf_kcore_dir(path);
-+
- 	return rm_rf_depth_pat(path, 0, pat);
- }
- 
--- 
-2.17.1
+--=20
+Yours sincerely,
+Pavel Begunkov
 
+
+--AJAJmnyxlAO8z74yubWeROTM09DJBPT06--
+
+--Bw0tPhRScHj7UlXCvIrrxiJmaZn9Ij0bm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl2XA4YACgkQWt5b1Glr
++6XHTQ/+PGwwouus5oMwpLXP1+9kaNm9TNeWb7RDLjZtiZhYz29BKg1fIwu48Cz3
+AiaE5BvhB3p9iXDGo6rgaawjXHVQ6wXzU7FHub6T00gfZC9jycu/IqdgDRpwfp4e
+pPisIpljx2fZd7oVNZes0lrtKueTuzozsAPHvg4j5mcbCRS8nnkqvW19daMjlavg
+brq7wB5VjD40zSvXS4a64FLgReLhdb8wqcIwdLpymIG6JI+KQsQGX1EDepZHcwyl
+Ze3L6FBfa8jbSBud0Kmzr7poaaEZng1inacje8n4P6ukk6lbqjiNrfkFL3Om+B0P
+dR5w3XgaLH20l7eStl1eg65frWw9ebDCHzHiAqzzb/P9h9huGKiiipWMMWqG163Q
+XWC0x3APpyicd7y/mgabPVxrlWSXqNmcTAfenrhVG/wT8hjflAlyKv3QWd9MeKtB
+h4uYloD9O9TIMPQxkfcwr1P5Oi9wgeeLHFvA8zpCi928/s2wQdX1uFplJ6dD4vZi
+nRreZsuzTpzcOyToANEo/S9K40pVFp0xhyi0hAWXoIdkq1xuEQkGzwJVQMdcDIQa
+hCu3bAwJCrwZaWq7SBSSLPetaTv56AEodtxHW1sOPQ8TFYopTJVILpzUUwr7eUXt
+ku5piIHy+te7HVp4g1YRuStYMH0eTUTtHlTMVdQsF3t9umxqGOs=
+=U4gt
+-----END PGP SIGNATURE-----
+
+--Bw0tPhRScHj7UlXCvIrrxiJmaZn9Ij0bm--
