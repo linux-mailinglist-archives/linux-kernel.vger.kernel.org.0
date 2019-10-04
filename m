@@ -2,58 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45782CC503
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0C2CC50B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731004AbfJDVnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 17:43:41 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36482 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730590AbfJDVnj (ORCPT
+        id S1731270AbfJDVno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:43:44 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38381 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730842AbfJDVnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:43:39 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 23so4496612pgk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:43:38 -0700 (PDT)
+        Fri, 4 Oct 2019 17:43:40 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w8so3728501plq.5
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:43:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ubsbJVfyaxxi8UEKJtUs1pHXgsPvFxblh2S9JiFfFEQ=;
-        b=UFkwlLQnUNyI5WNntdW9sbZ+MOSMgf2+fOLF8RG0Idqq0BiDJ31IThtlWGL76sEsh8
-         ZOXjRMMhS2+jDESxPJYaF23djnnmvObforQfo9Lci5kCDyLYBF8PRkwvnwVf8Yl/9q4/
-         sLymgqNYk/o0RadXVPMTvlSeFll8zoJ8X+f5s=
+        bh=bAfMi4NSBoja5vxxnTEYMZ6gxDSssSgVHfIbff12mb4=;
+        b=I0UP6QjOkuk9029ycIGlBRYjuryADPNl2rs34QcwDy7DnSdfOXcB/b4kY7TUCGXC/k
+         IJiGk5ETewSWBrF7ld044EOqYn1Pdu43lwCaDi9y6kk9EwIJtcCsSJvqR9/L1EzcsfJT
+         uqI7gqcYOF9lRF314+CkfUmQdzqeJGSTbKmVE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ubsbJVfyaxxi8UEKJtUs1pHXgsPvFxblh2S9JiFfFEQ=;
-        b=HBkD4WFisjrJaVFxJpsFbJBECryJ9jseRX8tvQLZVsNLPaXdbwoT1Mes62snub54eG
-         VlyCgclcBWuU5sgCDEaI8IIA7DKCIEkQ7g8HvKW0VmdIgRxd1qHu4As1Gp8XfvJaGeG4
-         cJVi/CqwPeJO08RaOpirI4vOntr++8DNWyRi7RuB1/WHWfmnPlRpvjB2AkIGzgNtr4dJ
-         3U+koBRf9TZf7PYycVf/pxTCM7s6nKF4y5kwXeX0N6Tk4knc9XjFvE8Pkny9vsYyiNsQ
-         xtRKWWMREX8uhPjEE2Asx4b7XrBIzm5oQixgEZgQBC8mQ50xlGyWC5pe9Cl8OdW1Gwnf
-         zJSw==
-X-Gm-Message-State: APjAAAWAA5cEDD3uTTeUPaRm+jmQ93gyGilxlnMOMxNuTUZTnMcsw5K7
-        bNOwvXoZP02QyfG5hPL4RTADzI6GP8M=
-X-Google-Smtp-Source: APXvYqxWNvMZbZVIHoPzbXHXqx4rR45wvPydpGvMiAUC+AaI6mlLIv/J0XRSrindMPfHhhURSHgsxQ==
-X-Received: by 2002:a17:90a:77c7:: with SMTP id e7mr19330232pjs.59.1570225418345;
-        Fri, 04 Oct 2019 14:43:38 -0700 (PDT)
+        bh=bAfMi4NSBoja5vxxnTEYMZ6gxDSssSgVHfIbff12mb4=;
+        b=rO1XfKyhG0081QFdzf3uTcpwbZb8JNIZVIZPD8fvl3WlCHz1JwVmiaLQ72ElxGOq31
+         kjDUzpGbs1wNlL7NFwWwhXgHicC9kg1SBc7fyD+9b7pGGDT/hvxphsz3688Iy1MbisYz
+         XfdDGHGMX90jci3EQ4Hrfxe87qQ2VohG97VoJhCuOOCwjz51V6JmCwpvxBSsdCxkaOzx
+         h+7mDT7A+GHrl6DdCDn3UM2Ysv5WYHkfhGhQpZXr6ynx3q8pVrimMGC/BmM1fVkWsRyZ
+         aq5r8RlFFgxz+GNTTTbqCgwtMUTBA+2wlAjKEW1Mo2QUn/HdY+R24Y1ucHUas9ltafaD
+         hIaA==
+X-Gm-Message-State: APjAAAWH0cJzhb2CXGIE9n35Puku5DBGSQKlCCvm8qS5DawK6ZWL7vxQ
+        7YsvmJWLqOUVrYjxN3hsGWMW871mOeQ=
+X-Google-Smtp-Source: APXvYqxihsu1cUaj4qIQSJ2iXk6r9CdGaCYQYuCvV6SJdCiuuuOPIC9sLcbvOHlmoausFB13h9lJTg==
+X-Received: by 2002:a17:902:5987:: with SMTP id p7mr17651026pli.242.1570225419271;
+        Fri, 04 Oct 2019 14:43:39 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id a11sm10446799pfg.94.2019.10.04.14.43.37
+        by smtp.gmail.com with ESMTPSA id a11sm10446799pfg.94.2019.10.04.14.43.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 14:43:37 -0700 (PDT)
+        Fri, 04 Oct 2019 14:43:38 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 02/10] media: renesas-ceu: Use of_device_get_match_data()
-Date:   Fri,  4 Oct 2019 14:43:26 -0700
-Message-Id: <20191004214334.149976-3-swboyd@chromium.org>
+        linux-rtc@vger.kernel.org
+Subject: [PATCH 03/10] rtc: armada38x: Use of_device_get_match_data()
+Date:   Fri,  4 Oct 2019 14:43:27 -0700
+Message-Id: <20191004214334.149976-4-swboyd@chromium.org>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 In-Reply-To: <20191004214334.149976-1-swboyd@chromium.org>
 References: <20191004214334.149976-1-swboyd@chromium.org>
@@ -64,40 +68,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver can use the replacement API instead of calling
-of_match_device() and then dereferencing the pointer that is returned.
-This nicely avoids referencing the match table when it is undefined with
-configurations where CONFIG_OF=n.
+Use the more modern API to get the match data out of the of match table.
+This saves some code, lines, and nicely avoids referencing the match
+table when it is undefined with configurations where CONFIG_OF=n.
 
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo@jmondi.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: <linux-media@vger.kernel.org>
-Cc: <linux-renesas-soc@vger.kernel.org>
+Cc: <linux-rtc@vger.kernel.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please ack or pick for immediate merge so the last patch can be merged.
 
- drivers/media/platform/renesas-ceu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-armada38x.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index 197b3991330d..60518bbc2cd5 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -1679,7 +1679,7 @@ static int ceu_probe(struct platform_device *pdev)
- 	v4l2_async_notifier_init(&ceudev->notifier);
+diff --git a/drivers/rtc/rtc-armada38x.c b/drivers/rtc/rtc-armada38x.c
+index 9351bd52477e..94d7c22fc4f3 100644
+--- a/drivers/rtc/rtc-armada38x.c
++++ b/drivers/rtc/rtc-armada38x.c
+@@ -74,7 +74,7 @@ struct armada38x_rtc {
+ 	int		    irq;
+ 	bool		    initialized;
+ 	struct value_to_freq *val_to_freq;
+-	struct armada38x_rtc_data *data;
++	const struct armada38x_rtc_data *data;
+ };
  
- 	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
--		ceu_data = of_match_device(ceu_of_match, dev)->data;
-+		ceu_data = of_device_get_match_data(dev);
- 		num_subdevs = ceu_parse_dt(ceudev);
- 	} else if (dev->platform_data) {
- 		/* Assume SH4 if booting with platform data. */
+ #define ALARM1	0
+@@ -501,17 +501,14 @@ static __init int armada38x_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	struct armada38x_rtc *rtc;
+-	const struct of_device_id *match;
+-
+-	match = of_match_device(armada38x_rtc_of_match_table, &pdev->dev);
+-	if (!match)
+-		return -ENODEV;
+ 
+ 	rtc = devm_kzalloc(&pdev->dev, sizeof(struct armada38x_rtc),
+ 			    GFP_KERNEL);
+ 	if (!rtc)
+ 		return -ENOMEM;
+ 
++	rtc->data = of_device_get_match_data(&pdev->dev);
++
+ 	rtc->val_to_freq = devm_kcalloc(&pdev->dev, SAMPLE_NR,
+ 				sizeof(struct value_to_freq), GFP_KERNEL);
+ 	if (!rtc->val_to_freq)
+@@ -553,7 +550,6 @@ static __init int armada38x_rtc_probe(struct platform_device *pdev)
+ 		 */
+ 		rtc->rtc_dev->ops = &armada38x_rtc_ops_noirq;
+ 	}
+-	rtc->data = (struct armada38x_rtc_data *)match->data;
+ 
+ 	/* Update RTC-MBUS bridge timing parameters */
+ 	rtc->data->update_mbus_timing(rtc);
 -- 
 Sent by a computer through tubes
 
