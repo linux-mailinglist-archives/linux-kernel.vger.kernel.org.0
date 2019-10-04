@@ -2,93 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAA47CC035
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86BE1CC02E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390398AbfJDQHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 12:07:44 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:58858 "EHLO
+        id S2390279AbfJDQHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 12:07:32 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:58834 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390128AbfJDQHn (ORCPT
+        with ESMTP id S2389968AbfJDQHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 12:07:43 -0400
+        Fri, 4 Oct 2019 12:07:31 -0400
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x94G6tgi076297;
-        Fri, 4 Oct 2019 11:06:55 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x94G7RnY076403;
+        Fri, 4 Oct 2019 11:07:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570205215;
-        bh=BsWmvlcQuJmrgH47mTCBTA5XIa3Tj4rOkLTCsDrH5lI=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=s5zIP7p/cygckP402n3In5MDCx6l9VOg6OJ0y+y3FVaUzY6kIrV4NAtkgQw6BkLZ9
-         MLnBvtxoDIQJ6Fk8TPW0GV8SZVEoOLZVuJxHv8dkzoX8MJXnzC3SCsbhmoi9rtCyHn
-         b2ktdoIQEN6w0B9xUzQZbtD8QMtetWQauCVBPRdU=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x94G6tso024225
+        s=ti-com-17Q1; t=1570205247;
+        bh=EQy/Mm3OOex5bExLsCtlrPlLzadZWkr+8aDvqHfvdSI=;
+        h=From:To:CC:Subject:Date;
+        b=I/JTOs7taQszVTeNMzIs9b/wmhp3+R+jIlFmj7ExwAwvudz7nxBQtcqJjhIgGI/LH
+         +6EvdJRWB3RHu2SS3sLybB4EQw4ecU4hFnRPhPxrFDcH9eErM1T9isz7aGLzLP9QuO
+         8cfAogtspSJBB2m6IsjbkQ/yiWys0eHGePygkPtQ=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x94G7RvC025365
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 4 Oct 2019 11:06:55 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 4 Oct 2019 11:07:27 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 4 Oct
- 2019 11:06:55 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 11:07:26 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 4 Oct 2019 11:06:55 -0500
-Received: from [10.250.132.26] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x94G6qn9059591;
-        Fri, 4 Oct 2019 11:06:53 -0500
-Subject: Re: [PATCH] mtd: spi-nor: Fix direction of the write_sr() transfer
-To:     <Tudor.Ambarus@microchip.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <john.garry@huawei.com>
-References: <c703dec2-dd11-5898-83ad-fb06127b6575@huawei.com>
- <20191004104746.23537-1-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <3a09e103-a705-7e4c-6b75-82a928cac2d6@ti.com>
-Date:   Fri, 4 Oct 2019 21:36:51 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Frontend Transport; Fri, 4 Oct 2019 11:07:26 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x94G7QSN129119;
+        Fri, 4 Oct 2019 11:07:26 -0500
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dmurphy@ti.com>, <tomi.valkeinen@ti.com>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v6 0/2] leds: Add control of the voltage/current regulator to the LED core
+Date:   Fri, 4 Oct 2019 18:07:22 +0200
+Message-ID: <20191004160724.18390-1-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20191004104746.23537-1-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series makes it possible for the LED core to manage the power supply
+of a LED. It uses the regulator API to disable/enable the power if when the
+LED is turned on/off.
+This is especially useful in situations where the LED driver/controller is
+not supplying the power.
+Because updating a regulator state can block, it is always a defered job.
 
+Note: this series relies on led_cdev->dev->of_node being populated [0]
 
-On 04-Oct-19 4:17 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> write_sr() sends data to the SPI memory, fix the direction.
-> 
-> Fixes: b35b9a10362d ("mtd: spi-nor: Move m25p80 code in spi-nor.c")
-> Reported-by: John Garry <john.garry@huawei.com>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
+[0] https://lkml.org/lkml/2019/10/3/139
 
-Thanks for the quick fix!
+changes in v6:
+- Introduce a new property in DT binding to delay turning OFF the regulator
+  The idea is to keep the regulator ON for some time after the LED is turned
+  off in order to not change the regulator state when the LED is blinking.
+- Use an atomic to track the state of the regulator to ensure consistency.
+- Remove changes in led_set_brightness_sync().
 
-Acked-by: Vignesh Raghavendra <vigneshr@ti.com>
+changes in v5:
+- fixed build error in led_set_brightness_sync(). Explain the role of
+  flush__work()
 
->  drivers/mtd/spi-nor/spi-nor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 1d8621d43160..7acf4a93b592 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -487,7 +487,7 @@ static int write_sr(struct spi_nor *nor, u8 val)
->  			SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRSR, 1),
->  				   SPI_MEM_OP_NO_ADDR,
->  				   SPI_MEM_OP_NO_DUMMY,
-> -				   SPI_MEM_OP_DATA_IN(1, nor->bouncebuf, 1));
-> +				   SPI_MEM_OP_DATA_OUT(1, nor->bouncebuf, 1));
->  
->  		return spi_mem_exec_op(nor->spimem, &op);
->  	}
-> 
+changes in v4:
+- Add a new patch to make led_set_brightness_sync() use
+  led_set_brightness_nosleep() and then wait the work to be done
+- Rework how the core knows how the regulator needs to be updated.
+
+changes in v3:
+- reword device-tree description
+- reword commit log
+- remove regulator updates from functions used in atomic context. If the
+  regulator must be updated, it is defered to a workqueue.
+- Fix led_set_brightness_sync() to work with the non-blocking function
+  __led_set_brightness()
+
+changes in v2:
+- use devm_regulator_get_optional() to avoid using the dummy regulator and
+  do some unnecessary work
+
+Jean-Jacques Hiblot (2):
+  dt-bindings: leds: document the "power-supply" property
+  leds: Add control of the voltage/current regulator to the LED core
+
+ .../devicetree/bindings/leds/common.txt       |  14 ++
+ drivers/leds/led-class.c                      |  21 +++
+ drivers/leds/led-core.c                       | 122 +++++++++++++++++-
+ drivers/leds/leds.h                           |  18 +++
+ include/linux/leds.h                          |   8 ++
+ 5 files changed, 181 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
