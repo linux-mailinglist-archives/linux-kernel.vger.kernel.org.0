@@ -2,156 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E48CBC13
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C96DECBC18
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388658AbfJDNpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:45:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50330 "EHLO mail.kernel.org"
+        id S2388779AbfJDNqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:46:30 -0400
+Received: from foss.arm.com ([217.140.110.172]:45510 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388333AbfJDNpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:45:46 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6836720700;
-        Fri,  4 Oct 2019 13:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570196745;
-        bh=GcDR2QA5gwcel8zVmm7/+Rqsxv092y7YDdz9PoR1mZs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OJKxCoicMmFUSFKqHEg13ZNV3AOaWmeUaKcZHrF9x/LTwUwieaUuPqZNaC3NTTGFp
-         5LODGEeN9VZkdkALRCxhAWnN5VrwyYTvZ6Yq/ubGNA0MRmIlMiP5hxOlXYeE6k8Hsa
-         QnRDVu2Rn9vbbewkY6KZsbLRh6Z71YpWVHQGQ8qQ=
-Date:   Fri, 4 Oct 2019 22:45:40 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 1/3] x86/alternatives: Teach text_poke_bp() to emulate
- instructions
-Message-Id: <20191004224540.766dc0fd824bcd5b8baa2f4c@kernel.org>
-In-Reply-To: <20191003110106.GI4581@hirez.programming.kicks-ass.net>
-References: <20190827180622.159326993@infradead.org>
-        <20190827181147.053490768@infradead.org>
-        <20191003140050.1d4cf59d3de8b5396d36c269@kernel.org>
-        <20191003082751.GQ4536@hirez.programming.kicks-ass.net>
-        <20191003110106.GI4581@hirez.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388333AbfJDNqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 09:46:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6845B15A1;
+        Fri,  4 Oct 2019 06:46:29 -0700 (PDT)
+Received: from arrakis.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7E22F3F739;
+        Fri,  4 Oct 2019 06:46:28 -0700 (PDT)
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Marc Dionne <marc.c.dionne@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] kmemleak: Do not corrupt the object_list during clean-up
+Date:   Fri,  4 Oct 2019 14:46:24 +0100
+Message-Id: <20191004134624.46216-1-catalin.marinas@arm.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+In case of an error (e.g. memory pool too small), kmemleak disables
+itself and cleans up the already allocated metadata objects. However, if
+this happens early before the RCU callback mechanism is available,
+put_object() skips call_rcu() and frees the object directly. This is not
+safe with the RCU list traversal in __kmemleak_do_cleanup().
 
-On Thu, 3 Oct 2019 13:01:06 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Change the list traversal in __kmemleak_do_cleanup() to
+list_for_each_entry_safe() and remove the rcu_read_{lock,unlock} since
+the kmemleak is already disabled at this point. In addition, avoid an
+unnecessary metadata object rb-tree look-up since it already has the
+struct kmemleak_object pointer.
 
-> On Thu, Oct 03, 2019 at 10:27:51AM +0200, Peter Zijlstra wrote:
-> > On Thu, Oct 03, 2019 at 02:00:50PM +0900, Masami Hiramatsu wrote:
-> > 
-> > > > This fits almost all text_poke_bp() users, except
-> > > > arch_unoptimize_kprobe() which restores random text, and for that site
-> > > > we have to build an explicit emulate instruction.
-> > > 
-> > > OK, and in this case, I would like to change RELATIVEJUMP_OPCODE
-> > > to JMP32_INSN_OPCODE for readability. (or at least
-> > > making RELATIVEJUMP_OPCODE as an alias of JMP32_INSN_OPCODE)
-> > 
-> > > > @@ -448,12 +447,18 @@ void arch_optimize_kprobes(struct list_h
-> > > >  void arch_unoptimize_kprobe(struct optimized_kprobe *op)
-> > > >  {
-> > > >  	u8 insn_buff[RELATIVEJUMP_SIZE];
-> > > > +	u8 emulate_buff[RELATIVEJUMP_SIZE];
-> > > >  
-> > > >  	/* Set int3 to first byte for kprobes */
-> > > >  	insn_buff[0] = BREAKPOINT_INSTRUCTION;
-> > > >  	memcpy(insn_buff + 1, op->optinsn.copied_insn, RELATIVE_ADDR_SIZE);
-> > > > +
-> > > > +	emulate_buff[0] = RELATIVEJUMP_OPCODE;
-> > > > +	*(s32 *)(&emulate_buff[1]) = (s32)((long)op->optinsn.insn -
-> > > > +			((long)op->kp.addr + RELATIVEJUMP_SIZE));
-> > 
-> > I'm halfway through a patch introducing:
-> > 
-> >   union text_poke_insn {
-> > 	u8 code[POKE_MAX_OPCODE_SUZE];
-> > 	struct {
-> > 		u8 opcode;
-> > 		s32 disp;
-> > 	} __attribute__((packed));
-> >   };
-> > 
-> > to text-patching.h to unify all such custom unions we have all over the
-> > place. I'll mob up the above in that.
+Fixes: c5665868183f ("mm: kmemleak: use the memory pool for early allocations")
+Reported-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reported-by: Marc Dionne <marc.c.dionne@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+---
+ mm/kmemleak.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-I think it is good to unify such unions, but I meant above was, it was
-also important to unify the opcode macro. Since poke_int3_handler()
-clasifies the opcode by your *_INSN_OPCODE macro, it is natual to use
-those opcode for text_poke_bp() interface.
-
-> > > > +
-> > > >  	text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
-> > > > -		     op->optinsn.insn);
-> > > > +		     emulate_buff);
-> > > >  }
-> > 
-> > As argued in a previous thread, text_poke_bp() is broken when it changes
-> > more than a single instruction at a time.
-> > 
-> > Now, ISTR optimized kprobes does something like:
-> > 
-> > 	poke INT3
-> 
-> Hmm, it does this using text_poke(), but lacks a
-> on_each_cpu(do_sync_core, NULL, 1), which I suppose is OK-ish IFF you do
-> that synchronize_rcu_tasks() after it, but less so if you don't.
-> 
-> That is, without either, you can't really tell if the kprobe is in
-> effect or not.
-
-Yes, it doesn't wait the change by design at this moment.
-
-> Also, I think text_poke_bp(INT3) is broken, although I don't think
-> anybody actually does that. Still, let me fix that.
-
-OK.
-
-> 
-> > 	synchronize_rcu_tasks() /* waits for all tasks to schedule
-> > 				   guarantees instructions after INT3
-> > 				   are unused */
-> > 	install optimized probe /* overwrites multiple instrctions with
-> > 				   JMP.d32 */
-> > 
-> > And the above then undoes that by:
-> > 
-> > 	poke INT3 on top of the optimzed probe
-> > 
-> > 	poke tail instructions back /* guaranteed safe because the
-> > 				       above INT3 poke ensures the
-> > 				       JMP.d32 instruction is unused */
-> > 
-> > 	poke head byte back
-
-Yes, anyway, the last poke should recover another INT3... (for kprobe)
-
-> > 
-> > Is this correct? If so, we should probably put a comment in there
-> > explaining how all this is unusual but safe.
-
-OK.
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 03a8d84badad..244607663363 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -526,6 +526,16 @@ static struct kmemleak_object *find_and_get_object(unsigned long ptr, int alias)
+ 	return object;
+ }
+ 
++/*
++ * Remove an object from the object_tree_root and object_list. Must be called
++ * with the kmemleak_lock held _if_ kmemleak is still enabled.
++ */
++static void __remove_object(struct kmemleak_object *object)
++{
++	rb_erase(&object->rb_node, &object_tree_root);
++	list_del_rcu(&object->object_list);
++}
++
+ /*
+  * Look up an object in the object search tree and remove it from both
+  * object_tree_root and object_list. The returned object's use_count should be
+@@ -538,10 +548,8 @@ static struct kmemleak_object *find_and_remove_object(unsigned long ptr, int ali
+ 
+ 	write_lock_irqsave(&kmemleak_lock, flags);
+ 	object = lookup_object(ptr, alias);
+-	if (object) {
+-		rb_erase(&object->rb_node, &object_tree_root);
+-		list_del_rcu(&object->object_list);
+-	}
++	if (object)
++		__remove_object(object);
+ 	write_unlock_irqrestore(&kmemleak_lock, flags);
+ 
+ 	return object;
+@@ -1834,12 +1842,16 @@ static const struct file_operations kmemleak_fops = {
+ 
+ static void __kmemleak_do_cleanup(void)
+ {
+-	struct kmemleak_object *object;
++	struct kmemleak_object *object, *tmp;
+ 
+-	rcu_read_lock();
+-	list_for_each_entry_rcu(object, &object_list, object_list)
+-		delete_object_full(object->pointer);
+-	rcu_read_unlock();
++	/*
++	 * Kmemleak has already been disabled, no need for RCU list traversal
++	 * or kmemleak_lock held.
++	 */
++	list_for_each_entry_safe(object, tmp, &object_list, object_list) {
++		__remove_object(object);
++		__delete_object(object);
++	}
+ }
+ 
+ /*
