@@ -2,184 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20494CC127
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D038FCC134
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 19:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730134AbfJDQ6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 12:58:25 -0400
-Received: from ms.lwn.net ([45.79.88.28]:40310 "EHLO ms.lwn.net"
+        id S2387478AbfJDRB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 13:01:56 -0400
+Received: from mout.gmx.net ([212.227.15.18]:53509 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbfJDQ6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 12:58:25 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id D70A12C1;
-        Fri,  4 Oct 2019 16:58:23 +0000 (UTC)
-Date:   Fri, 4 Oct 2019 10:58:22 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
+        id S1725730AbfJDRB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 13:01:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1570208501;
+        bh=rMXMlquVolHdzq3iMBKYhvNEjZXTAD9wUTb0Zleuwe4=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=AM/+rTiHGXkxTHTXipWBFZehlfnX39NLfa93IG8q7gWiH2wZV2sltpdEBeTDZ9pEw
+         FqaQlhIFL25iREhQ9PpRH3Lyv/1yZSLjFLd1qIuarPPLha+18pC6uDT78CiLY7330w
+         iFi9FNh8sJuYHce6epCyPhJnjyf9Jp/kb9wUv3xw=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([89.0.25.131]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MzQkE-1huUBp0tnM-00vS1g; Fri, 04
+ Oct 2019 19:01:41 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-doc@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Alan Stern" <stern@rowland.harvard.edu>,
-        "Andrea Parri" <parri.andrea@gmail.com>,
-        "Will Deacon" <will@kernel.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Boqun Feng" <boqun.feng@gmail.com>,
-        "Nicholas Piggin" <npiggin@gmail.com>,
-        "David Howells" <dhowells@redhat.com>,
-        "Jade Alglave" <j.alglave@ucl.ac.uk>,
-        "Luc Maranget" <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Akira Yokosawa" <akiyks@gmail.com>,
-        "Daniel Lustig" <dlustig@nvidia.com>
-Subject: [PATCH] docs: remove :c:func: from refcount-vs-atomic.rst
-Message-ID: <20191004105449.3671ff78@lwn.net>
-Organization: LWN.net
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: driver-api: pti_intel_mid: Enable syntax highlighting for C code block
+Date:   Fri,  4 Oct 2019 19:01:19 +0200
+Message-Id: <20191004170124.13543-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gciz2EElTa6KfXaWKUA+P3Az3klSD2od1ANJqJFKJ8B3e0BMfkt
+ eKgd9hwRLo95M3C6jcfKjXn51vXguSDl40z44+7CUQ8lAjaGfGhePBTm+daNb52T/5xW6aC
+ FKLWaMEvHC1A0N5tDvWdTQB4229ZEwYDwNUupjdzcZtf8zsWpaHd1UvREMU93JZdx7IINRd
+ 5Q7HISLEB7lhFvNPkY/6g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6+AqMcmrvRM=:IFG58wDC1/JOLCHxgF/HoV
+ 7olDa2e7dZQj13GaG8UJQ8oQhDUgEHLxVFvKMhZ8etpc1ZCFCZ3LwBaz9VWFkny5ifiAfjM21
+ dgs0tSfJ73oNR9rSs5mFd7zlLIBKZ8DEy7RI9oINHWOR4I+4HNMK6xNMrAWOXdxi4wEb0czwV
+ pKH3cTB1O4iixfh7xDUHEowk7WvejWlEtlq7U7b7APne3EF3irs3tG2xqpAl3cCGY+orMq8AG
+ 5+RVdL4BdFfEs7IjcgqOlgNUUMutoeeNgNq+5gaYxkIFWgZM/M/VmstxFNhNxBnSEsC4SGTfg
+ VyIt6h59xNPs/47x4DZba6CetV1t2uUhrrfs3GGndLIduHLrGeyNd3cggAW/hUpq/8bopooIc
+ bqMVwg+r3BNm92Yt9fozfUJyYJqByyfiWk2aye5BrsJoQ9SFwL5MYi+DV8qHTmb5CAXMrQCp6
+ zxweL6v3tmD8sODxpR0TJLjM0bGYB1VKzrR/qvNxFco7pADExCMbdpkz8ZBPV+Fzw0x//Shnq
+ JmLIfne+3WbzGAPmFKEfVXqNZZcvHUBbnCNNJQ2bk063V6V/sDhQDPjJCrbsl7NHYDtgJUVsC
+ ZtI9ImfaNIloUaWsYzzNjv8oHMEIJ5TWpiRsPWYlwinLwpEkrcd0vZWVm272H5wExK1RKq1BW
+ CjwMd9XRC31OFptIsHb+hz0vJAixj4jzRjmw2BfaaXagwsS/vI1boRa+j9a2gyW9A/1PLAGOz
+ BYcfXmsa2FNx+LOKKoR+t7Hy8Mu/cUxn2+K3jXLG71bR9Tw1KtUR17Dw5tGQ2EPyDOzd8wIZg
+ OX1+mYhxEnyjQQygDF0E1sJ6QBnwDzEmW+6tyRsGZJs8QOWONhYu4Zx7lWG9vbjTnrC/I2kUP
+ BxRzzToVf1Cr020k1tM0pNksk+OSGXiw8ZOwOlLvc8+NnmtgnNfy6f1vL0wTNlWOL6OJUSm1x
+ 2ygfX90XO93ipfch47KgNKb5IqCS4ReMeC2iJlv1mmKOPCTHnxVzlJtMEpt7jJTNyPIQ67RyI
+ eWuxdmoZQzxL0o7bBC2rkNndwJcBJk7kai/CQA9VUW8q/vXmunb0eXjE0L3eeDh3aprQwsuce
+ Wrz1u366cORLVn56S5LFf5IwezmryPT43rCggEjAmjvUoP3F4rP5HKsAbp+9+V5cYF2N6oeZN
+ 9vQeWk+516a3Qr8VNIu2fY0ATa0RaJjC1r8kXN+LcjhqG9StzBMn/+YR9uXqM1o5EiD6N8JKx
+ wnQvwnTlB8bezfU9rhXbINmM7UUIdmtFKgiqzEBrzwJs0PAVu7IhOJ1782dc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of 5.3, the automarkup extension will do the right thing with function()
-notation, so we don't need to clutter the text with :c:func: invocations.
-So remove them.
+This makes the code snippet more readable.
 
-Looking at the generated output reveals that we lack kerneldoc coverage for
-much of this API, but that's a separate problem.
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ Documentation/driver-api/pti_intel_mid.rst | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
-I'll feed this through docs-next unless somebody tells me otherwise...
+diff --git a/Documentation/driver-api/pti_intel_mid.rst b/Documentation/dr=
+iver-api/pti_intel_mid.rst
+index 20f1cff42d5f..bacc2a4ee89f 100644
+=2D-- a/Documentation/driver-api/pti_intel_mid.rst
++++ b/Documentation/driver-api/pti_intel_mid.rst
+@@ -49,7 +49,9 @@ but is not just blindly executing as 'root'. Keep in min=
+d
+ the use of ioctl(,TIOCSETD,) is not specific to the n_tracerouter
+ and n_tracesink line discpline drivers but is a generic
+ operation for a program to use a line discpline driver
+-on a tty port other than the default n_tty::
++on a tty port other than the default n_tty:
++
++.. code-block:: c
 
- Documentation/core-api/refcount-vs-atomic.rst | 36 +++++++++----------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+   /////////// To hook up n_tracerouter and n_tracesink /////////
 
-diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
-index 976e85adffe8..79a009ce11df 100644
---- a/Documentation/core-api/refcount-vs-atomic.rst
-+++ b/Documentation/core-api/refcount-vs-atomic.rst
-@@ -35,7 +35,7 @@ atomics & refcounters only provide atomicity and
- program order (po) relation (on the same CPU). It guarantees that
- each ``atomic_*()`` and ``refcount_*()`` operation is atomic and instructions
- are executed in program order on a single CPU.
--This is implemented using :c:func:`READ_ONCE`/:c:func:`WRITE_ONCE` and
-+This is implemented using READ_ONCE()/WRITE_ONCE() and
- compare-and-swap primitives.
- 
- A strong (full) memory ordering guarantees that all prior loads and
-@@ -44,7 +44,7 @@ before any po-later instruction is executed on the same CPU.
- It also guarantees that all po-earlier stores on the same CPU
- and all propagated stores from other CPUs must propagate to all
- other CPUs before any po-later instruction is executed on the original
--CPU (A-cumulative property). This is implemented using :c:func:`smp_mb`.
-+CPU (A-cumulative property). This is implemented using smp_mb().
- 
- A RELEASE memory ordering guarantees that all prior loads and
- stores (all po-earlier instructions) on the same CPU are completed
-@@ -52,14 +52,14 @@ before the operation. It also guarantees that all po-earlier
- stores on the same CPU and all propagated stores from other CPUs
- must propagate to all other CPUs before the release operation
- (A-cumulative property). This is implemented using
--:c:func:`smp_store_release`.
-+smp_store_release().
- 
- An ACQUIRE memory ordering guarantees that all post loads and
- stores (all po-later instructions) on the same CPU are
- completed after the acquire operation. It also guarantees that all
- po-later stores on the same CPU must propagate to all other CPUs
- after the acquire operation executes. This is implemented using
--:c:func:`smp_acquire__after_ctrl_dep`.
-+smp_acquire__after_ctrl_dep().
- 
- A control dependency (on success) for refcounters guarantees that
- if a reference for an object was successfully obtained (reference
-@@ -78,8 +78,8 @@ case 1) - non-"Read/Modify/Write" (RMW) ops
- 
- Function changes:
- 
-- * :c:func:`atomic_set` --> :c:func:`refcount_set`
-- * :c:func:`atomic_read` --> :c:func:`refcount_read`
-+ * atomic_set() --> refcount_set()
-+ * atomic_read() --> refcount_read()
- 
- Memory ordering guarantee changes:
- 
-@@ -91,8 +91,8 @@ case 2) - increment-based ops that return no value
- 
- Function changes:
- 
-- * :c:func:`atomic_inc` --> :c:func:`refcount_inc`
-- * :c:func:`atomic_add` --> :c:func:`refcount_add`
-+ * atomic_inc() --> refcount_inc()
-+ * atomic_add() --> refcount_add()
- 
- Memory ordering guarantee changes:
- 
-@@ -103,7 +103,7 @@ case 3) - decrement-based RMW ops that return no value
- 
- Function changes:
- 
-- * :c:func:`atomic_dec` --> :c:func:`refcount_dec`
-+ * atomic_dec() --> refcount_dec()
- 
- Memory ordering guarantee changes:
- 
-@@ -115,8 +115,8 @@ case 4) - increment-based RMW ops that return a value
- 
- Function changes:
- 
-- * :c:func:`atomic_inc_not_zero` --> :c:func:`refcount_inc_not_zero`
-- * no atomic counterpart --> :c:func:`refcount_add_not_zero`
-+ * atomic_inc_not_zero() --> refcount_inc_not_zero()
-+ * no atomic counterpart --> refcount_add_not_zero()
- 
- Memory ordering guarantees changes:
- 
-@@ -131,8 +131,8 @@ case 5) - generic dec/sub decrement-based RMW ops that return a value
- 
- Function changes:
- 
-- * :c:func:`atomic_dec_and_test` --> :c:func:`refcount_dec_and_test`
-- * :c:func:`atomic_sub_and_test` --> :c:func:`refcount_sub_and_test`
-+ * atomic_dec_and_test() --> refcount_dec_and_test()
-+ * atomic_sub_and_test() --> refcount_sub_and_test()
- 
- Memory ordering guarantees changes:
- 
-@@ -144,14 +144,14 @@ case 6) other decrement-based RMW ops that return a value
- 
- Function changes:
- 
-- * no atomic counterpart --> :c:func:`refcount_dec_if_one`
-+ * no atomic counterpart --> refcount_dec_if_one()
-  * ``atomic_add_unless(&var, -1, 1)`` --> ``refcount_dec_not_one(&var)``
- 
- Memory ordering guarantees changes:
- 
-  * fully ordered --> RELEASE ordering + control dependency
- 
--.. note:: :c:func:`atomic_add_unless` only provides full order on success.
-+.. note:: atomic_add_unless() only provides full order on success.
- 
- 
- case 7) - lock-based RMW
-@@ -159,10 +159,10 @@ case 7) - lock-based RMW
- 
- Function changes:
- 
-- * :c:func:`atomic_dec_and_lock` --> :c:func:`refcount_dec_and_lock`
-- * :c:func:`atomic_dec_and_mutex_lock` --> :c:func:`refcount_dec_and_mutex_lock`
-+ * atomic_dec_and_lock() --> refcount_dec_and_lock()
-+ * atomic_dec_and_mutex_lock() --> refcount_dec_and_mutex_lock()
- 
- Memory ordering guarantees changes:
- 
-  * fully ordered --> RELEASE ordering + control dependency + hold
--   :c:func:`spin_lock` on success
-+   spin_lock() on success
--- 
-2.21.0
+=2D-
+2.20.1
 
