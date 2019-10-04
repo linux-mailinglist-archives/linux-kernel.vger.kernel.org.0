@@ -2,90 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF32CB8B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F5BCB8A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:51:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387550AbfJDKw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 06:52:28 -0400
-Received: from mout1.fh-giessen.de ([212.201.18.42]:50006 "EHLO
-        mout1.fh-giessen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbfJDKw1 (ORCPT
+        id S1730406AbfJDKvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 06:51:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37668 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbfJDKvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 06:52:27 -0400
-X-Greylist: delayed 1068 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Oct 2019 06:52:26 EDT
-Received: from mx3.fh-giessen.de ([212.201.18.28])
-        by mout1.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1iGKuw-0000Qg-10; Fri, 04 Oct 2019 12:34:34 +0200
-Received: from mailgate-2.its.fh-giessen.de ([212.201.18.14])
-        by mx3.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1iGKuv-00F8NC-UG; Fri, 04 Oct 2019 12:34:33 +0200
-Received: from p549d322d.dip0.t-ipconnect.de ([84.157.50.45] helo=zwei.fritz.box)
-        by mailgate-2.its.fh-giessen.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1iGKuv-0000cY-Om; Fri, 04 Oct 2019 12:34:33 +0200
-To:     kai.heng.feng@canonical.com, jeffrey.t.kirsher@intel.com,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-From:   Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
-Subject: e1000e regression - 5.4rc1
-Cc:     tobias.klausmann@freenet.de
-Message-ID: <171f0c61-73a2-81c2-5c8a-7c140f548803@mni.thm.de>
-Date:   Fri, 4 Oct 2019 12:34:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:71.0) Gecko/20100101
- Thunderbird/71.0a1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Fri, 4 Oct 2019 06:51:18 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 27062619F8; Fri,  4 Oct 2019 10:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570186277;
+        bh=HV49UDYcx9vV6GbDfltmdOxPSBL7taXdXdyTC0caYgE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=i57Z6hf/kPqvxGmcVZYTBu7fd5vapnsRg5tH7j1C1lf2306KAd0UEozaI65aYnaQi
+         xNDsJpKfkPNU7E8fKhICOALnWfOirPAQ0orNjWuhxhjhWx1pBJTWLFYL8tIUOthW5t
+         ubdajj/Q91XUJetOJDoepXHLVVXQudHur4Nh70zQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from kgunda-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kgunda@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4FC52615C2;
+        Fri,  4 Oct 2019 10:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570186276;
+        bh=HV49UDYcx9vV6GbDfltmdOxPSBL7taXdXdyTC0caYgE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=USInRJTDeyRMxdPGVMYt84yx5J+en5EUGC0T0vgzzo10krozg4sMgfJVCA8STamcP
+         k8OD5HiBvIjlYUg/KxtSH2feXSPvP8XDaAfmIINjWqRlmc0S99fxKXR2Hnfos34MQO
+         HGV/sve5RppBb0BGqLa+qgWvDiulNPYcO+0EYfqY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4FC52615C2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
+From:   Kiran Gunda <kgunda@codeaurora.org>
+To:     bjorn.andersson@linaro.org, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Kiran Gunda <kgunda@codeaurora.org>
+Subject: [PATCH V1 1/2] ARM: dts: qcom: pm6150: Add PM6150/PM6150L PMIC peripherals
+Date:   Fri,  4 Oct 2019 16:20:56 +0530
+Message-Id: <1570186257-10254-2-git-send-email-kgunda@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1570186257-10254-1-git-send-email-kgunda@codeaurora.org>
+References: <1570186257-10254-1-git-send-email-kgunda@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
+Add PM6150/PM6150L peripherals such as PON, GPIOs, ADC and other
+PMIC infra modules.
 
-While testing the 5.4rc1 release, i noticed my Ethernet never coming 
-fully up, seemingly having a timeout problem. While bisecting this i 
-landed at the commit dee23594d587386e9fda76732aa5f5a487709510 ("e1000e: 
-Make speed detection on hotplugging cable more reliable") as the first 
-bad commit. And indeed just reverting the commit on top of 5.4rc1 
-resolves the problem. Let me know if you have further questions, or 
-patches to test!
+Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/pm6150.dtsi  | 82 +++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/pm6150l.dtsi | 47 ++++++++++++++++++++
+ 2 files changed, 129 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/pm6150.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/pm6150l.dtsi
 
-Greetings,
-
-Tobias
-
-
-lspci:
-
-00:19.0 Ethernet controller: Intel Corporation 82579V Gigabit Network 
-Connection (rev 06)
-         DeviceName:  Onboard LAN
-         Subsystem: ASUSTeK Computer Inc. P8P67 Deluxe Motherboard
-         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
-ParErr- Stepping- SERR- FastB2B- DisINTx+
-         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- 
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-         Latency: 0
-         Interrupt: pin A routed to IRQ 56
-         Region 0: Memory at fbf00000 (32-bit, non-prefetchable) [size=128K]
-         Region 1: Memory at fbf28000 (32-bit, non-prefetchable) [size=4K]
-         Region 2: I/O ports at f040 [size=32]
-         Capabilities: [c8] Power Management version 2
-                 Flags: PMEClk- DSI+ D1- D2- AuxCurrent=0mA 
-PME(D0+,D1-,D2-,D3hot+,D3cold+)
-                 Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=1 PME-
-         Capabilities: [d0] MSI: Enable+ Count=1/1 Maskable- 64bit+
-                 Address: 00000000fee00698  Data: 0000
-         Capabilities: [e0] PCI Advanced Features
-                 AFCap: TP+ FLR+
-                 AFCtrl: FLR-
-                 AFStatus: TP-
-         Kernel driver in use: e1000e
-         Kernel modules: e1000e
+diff --git a/arch/arm64/boot/dts/qcom/pm6150.dtsi b/arch/arm64/boot/dts/qcom/pm6150.dtsi
+new file mode 100644
+index 0000000..c2389866
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/pm6150.dtsi
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2019, The Linux Foundation. All rights reserved.
++
++#include <dt-bindings/iio/qcom,spmi-vadc.h>
++#include <dt-bindings/input/linux-event-codes.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/spmi/spmi.h>
++#include <dt-bindings/thermal/thermal.h>
++
++&spmi_bus {
++	pm6150_lsid0: pmic@0 {
++		compatible = "qcom,pm6150", "qcom,spmi-pmic";
++		reg = <0x0 SPMI_USID>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pm6150_pon: pon@800 {
++			compatible = "qcom,pm8998-pon";
++			reg = <0x800>;
++			mode-bootloader = <0x2>;
++			mode-recovery = <0x1>;
++
++			pwrkey {
++				compatible = "qcom,pm8941-pwrkey";
++				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
++				debounce = <15625>;
++				bias-pull-up;
++				linux,code = <KEY_POWER>;
++			};
++		};
++
++		pm6150_temp: temp-alarm@2400 {
++			compatible = "qcom,spmi-temp-alarm";
++			reg = <0x2400>;
++			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
++			io-channels = <&pm6150_adc ADC5_DIE_TEMP>;
++			io-channel-names = "thermal";
++			#thermal-sensor-cells = <0>;
++		};
++
++		pm6150_adc: adc@3100 {
++			compatible = "qcom,spmi-adc5";
++			reg = <0x3100>;
++			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#io-channel-cells = <1>;
++
++			adc-chan@ADC5_DIE_TEMP {
++				reg = <ADC5_DIE_TEMP>;
++				label = "die_temp";
++			};
++		};
++
++		pm6150_gpio: gpios@c000 {
++			compatible = "qcom,pm6150-gpio", "qcom,spmi-gpio";
++			reg = <0xc000 0xa00>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
++				     <0 0xc1 0 IRQ_TYPE_NONE>,
++				     <0 0xc2 0 IRQ_TYPE_NONE>,
++				     <0 0xc3 0 IRQ_TYPE_NONE>,
++				     <0 0xc4 0 IRQ_TYPE_NONE>,
++				     <0 0xc5 0 IRQ_TYPE_NONE>,
++				     <0 0xc6 0 IRQ_TYPE_NONE>,
++				     <0 0xc7 0 IRQ_TYPE_NONE>;
++
++			interrupt-names = "pm6150_gpio1", "pm6150_gpio2",
++					"pm6150_gpio3", "pm6150_gpio4",
++					"pm6150_gpio5", "pm6150_gpio6",
++					"pm6150_gpio7", "pm6150_gpio8";
++		};
++	};
++
++	pm6150_lsid1: pmic@1 {
++		compatible = "qcom,pm6150", "qcom,spmi-pmic";
++		reg = <0x1 SPMI_USID>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/pm6150l.dtsi b/arch/arm64/boot/dts/qcom/pm6150l.dtsi
+new file mode 100644
+index 0000000..a262092
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/pm6150l.dtsi
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2019, The Linux Foundation. All rights reserved.
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/spmi/spmi.h>
++
++&spmi_bus {
++	pm6150l_lsid4: pmic@4 {
++		compatible = "qcom,pm6150l", "qcom,spmi-pmic";
++		reg = <0x4 SPMI_USID>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pm6150l_gpios: gpios@c000 {
++			compatible = "qcom,pm6150l-gpio", "qcom,spmi-gpio";
++			reg = <0xc000 0xc00>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupts = <4 0xc0 0 IRQ_TYPE_NONE>,
++				     <4 0xc1 0 IRQ_TYPE_NONE>,
++				     <4 0xc2 0 IRQ_TYPE_NONE>,
++				     <4 0xc3 0 IRQ_TYPE_NONE>,
++				     <4 0xc4 0 IRQ_TYPE_NONE>,
++				     <4 0xc5 0 IRQ_TYPE_NONE>,
++				     <4 0xc6 0 IRQ_TYPE_NONE>,
++				     <4 0xc7 0 IRQ_TYPE_NONE>,
++				     <4 0xc8 0 IRQ_TYPE_NONE>,
++				     <4 0xc9 0 IRQ_TYPE_NONE>,
++				     <4 0xca 0 IRQ_TYPE_NONE>,
++				     <4 0xcb 0 IRQ_TYPE_NONE>;
++
++			interrupt-names = "pm6150l_gpio1", "pm6150l_gpio2",
++					"pm6150l_gpio3", "pm6150l_gpio4",
++					"pm6150l_gpio5", "pm6150l_gpio6",
++					"pm6150l_gpio7", "pm6150l_gpio8",
++					"pm6150l_gpio9", "pm6150l_gpio10",
++					"pm6150l_gpio11", "pm6150l_gpio12";
++		};
++	};
++
++	pm6150l_lsid5: pmic@5 {
++		compatible = "qcom,pm6150l", "qcom,spmi-pmic";
++		reg = <0x5 SPMI_USID>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++};
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+ a Linux Foundation Collaborative Project
 
