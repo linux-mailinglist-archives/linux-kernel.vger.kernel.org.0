@@ -2,145 +2,316 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5220CCB9C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7317CB9D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 14:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbfJDMEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 08:04:00 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37449 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfJDMEA (ORCPT
+        id S1730549AbfJDMF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 08:05:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:21634 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726002AbfJDMF2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:04:00 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f22so5578586wmc.2;
-        Fri, 04 Oct 2019 05:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=KVrTSfhJQkcjGUoc6/wChtJatdSgDTO1rfWfls9h3Lo=;
-        b=gCuTIPxBpH1goz7Jtyo4AdIW3vOQiGnlAioh/38P0AiDodj95Ep7QBms8Ew3szTn6H
-         z3ZyAMgJGNRgKN/pBecNOh/f/7/QpdK1uwz8VnFWQtbhsspZLn2dyxz6ELYD1MXTgmhn
-         6KwcNNuPg/qV1HdMzNChLLuxaN0MgX4w8DpqCmAz9OBcdkKx029FT70ShiSul5a2CUmR
-         YIJZ4Eq2+U6qgyu6r4JXErswh6ZiLmOcU8cW+LlpVSGTXPvyrrUlbFv59X9e9w6rbnZb
-         BaKafSsJzR2R1RRATANDjKaIn0umprbD44+wpvQzyv86ERHeQwbfMRIdLPmD/E/WtAIJ
-         Zu2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=KVrTSfhJQkcjGUoc6/wChtJatdSgDTO1rfWfls9h3Lo=;
-        b=sMKZjd70Jl9W1nSjXj6m6r1BTGUoVXWhMjKFsXhS0Aax7D0wDideJiPsxmml37oFoj
-         l9yAhFNO92EINE98hG0vhdUWGYlzejpuBRQ/eKpF+HjZ4LhXJQ/zIle121H3c9Uz+KPc
-         KWQUH9EBjA1eANjUSPyOlruWSmQU9/SsGPNmB2cA45CSSYaYxibCVEpZLNNyQIMr+sVm
-         5+4aBWZHi28Bkv2Cxs2TmC5bZ9yIPUN8436BIHs7hr1B6BH3E6RmMfo8B1YT6Lfq/RlY
-         Te14ivUihFCNyje8kUsllPSlNTakakM+G55uLZtgU44rSekEbo+JgqNZ6kyisKu/9gqD
-         QfzQ==
-X-Gm-Message-State: APjAAAXFw2I1MU/XqFJinvyJJoov+HrfZ9FlYapLrtzhQoR1Caicqnp2
-        OdaV9vh3xdQF8RkjJunmqmQ=
-X-Google-Smtp-Source: APXvYqy8k3bgKZ6SInwf+MtKGz30qnvpeRSYEDcISJ/9qHK4gqkYxjgovCiY5DiyZ7FrOUPil/on6Q==
-X-Received: by 2002:a1c:66c2:: with SMTP id a185mr10587954wmc.2.1570190636233;
-        Fri, 04 Oct 2019 05:03:56 -0700 (PDT)
-Received: from 640k.localdomain ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id t83sm9325709wmt.18.2019.10.04.05.03.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2019 05:03:55 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 5.4-rc2
-Date:   Fri,  4 Oct 2019 14:03:52 +0200
-Message-Id: <1570190632-22964-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 4 Oct 2019 08:05:28 -0400
+X-UUID: c97804f9dddc466e9f70f2b3cd8152ad-20191004
+X-UUID: c97804f9dddc466e9f70f2b3cd8152ad-20191004
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1481575917; Fri, 04 Oct 2019 20:05:20 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 4 Oct 2019 20:05:16 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 4 Oct 2019 20:05:16 +0800
+Message-ID: <1570190718.19702.125.camel@mtksdccf07>
+Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy
+ with CONFIG_KASAN_GENERIC=y
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+CC:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Date:   Fri, 4 Oct 2019 20:05:18 +0800
+In-Reply-To: <CACT4Y+ZnWPEO-9DkE6C3MX-Wo+8pdS6Gr6-2a8LzqBS=2fe84w@mail.gmail.com>
+References: <20190927034338.15813-1-walter-zh.wu@mediatek.com>
+         <CACT4Y+Zxz+R=qQxSMoipXoLjRqyApD3O0eYpK0nyrfGHE4NNPw@mail.gmail.com>
+         <1569594142.9045.24.camel@mtksdccf07>
+         <CACT4Y+YuAxhKtL7ho7jpVAPkjG-JcGyczMXmw8qae2iaZjTh_w@mail.gmail.com>
+         <1569818173.17361.19.camel@mtksdccf07>
+         <1570018513.19702.36.camel@mtksdccf07>
+         <CACT4Y+bbZhvz9ZpHtgL8rCCsV=ybU5jA6zFnJBL7gY2cNXDLyQ@mail.gmail.com>
+         <1570069078.19702.57.camel@mtksdccf07>
+         <CACT4Y+ZwNv2-QBrvuR2JvemovmKPQ9Ggrr=ZkdTg6xy_Ki6UAg@mail.gmail.com>
+         <1570095525.19702.59.camel@mtksdccf07>
+         <1570110681.19702.64.camel@mtksdccf07>
+         <CACT4Y+aKrC8mtcDTVhM-So-TTLjOyFCD7r6jryWFH6i2he1WJA@mail.gmail.com>
+         <1570164140.19702.97.camel@mtksdccf07>
+         <1570176131.19702.105.camel@mtksdccf07>
+         <CACT4Y+ZvhomaeXFKr4za6MJi=fW2SpPaCFP=fk06CMRhNcmFvQ@mail.gmail.com>
+         <1570182257.19702.109.camel@mtksdccf07>
+         <CACT4Y+ZnWPEO-9DkE6C3MX-Wo+8pdS6Gr6-2a8LzqBS=2fe84w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri, 2019-10-04 at 11:54 +0200, Dmitry Vyukov wrote:
+> > > "out-of-bounds" is the _least_ frequent KASAN bug type. So saying
+> > > "out-of-bounds" has downsides of both approaches and won't prevent
+> > > duplicate reports by syzbot...
+> > >
+> > maybe i should add your comment into the comment in get_bug_type?
+> 
+> Yes, that's exactly what I meant above:
+> 
+> "I would change get_bug_type() to return "slab-out-of-bounds" (as the
+> most common OOB) in such case (with a comment)."
+> 
+>  ;)
 
-The following changes since commit fd3edd4a9066f28de99a16685a586d68a9f551f8:
 
-  KVM: nVMX: cleanup and fix host 64-bit mode checks (2019-09-25 19:22:33 +0200)
+The patchset help to produce KASAN report when size is negative size in
+memory operation function. It is helpful for programmer to solve the
+undefined behavior issue. Patch 1 based on Dmitry's suggestion and
+review, patch 2 is a test in order to verify the patch 1.
 
-are available in the git repository at:
+[1]https://bugzilla.kernel.org/show_bug.cgi?id=199341
+[2]https://lore.kernel.org/linux-arm-kernel/20190927034338.15813-1-walter-zh.wu@mediatek.com/
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+Walter Wu (2):
+kasan: detect invalid size in memory operation function
+kasan: add test for invalid size in memmove
 
-for you to fetch changes up to cf05a67b68b8d9d6469bedb63ee461f8c7de62e6:
+lib/test_kasan.c          | 18 ++++++++++++++++++
+mm/kasan/common.c         | 13 ++++++++-----
+mm/kasan/generic.c        |  5 +++++
+mm/kasan/generic_report.c | 10 ++++++++++
+mm/kasan/tags.c           |  5 +++++
+mm/kasan/tags_report.c    | 10 ++++++++++
+6 files changed, 56 insertions(+), 5 deletions(-)
 
-  KVM: x86: omit "impossible" pmu MSRs from MSR list (2019-10-04 14:01:28 +0200)
 
-----------------------------------------------------------------
-ARM and x86 bugfixes of all kinds.  The most visible one is that migrating
-a nested hypervisor has always been busted on Broadwell and newer processors,
-and that has finally been fixed.
 
-----------------------------------------------------------------
-Jim Mattson (5):
-      kvm: x86: Fix a spurious -E2BIG in __do_cpuid_func
-      kvm: x86: Improve emulation of CPUID leaves 0BH and 1FH
-      kvm: x86: Use AMD CPUID semantics for AMD vCPUs
-      kvm: x86: Enumerate support for CLZERO instruction
-      kvm: vmx: Limit guest PMCs to those supported on the host
 
-Marc Zyngier (3):
-      arm64: KVM: Drop hyp_alternate_select for checking for ARM64_WORKAROUND_834220
-      arm64: KVM: Replace hyp_alternate_select with has_vhe()
-      arm64: KVM: Kill hyp_alternate_select()
+commit 0bc50c759a425fa0aafb7ef623aa1598b3542c67
+Author: Walter Wu <walter-zh.wu@mediatek.com>
+Date:   Fri Oct 4 18:38:31 2019 +0800
 
-Paolo Bonzini (7):
-      KVM: x86: assign two bits to track SPTE kinds
-      KVM: x86: fix nested guest live migration with PML
-      selftests: kvm: add test for dirty logging inside nested guests
-      kvm: x86, powerpc: do not allow clearing largepages debugfs entry
-      KVM: x86: omit absent pmu MSRs from MSR list
-      Merge tag 'kvmarm-fixes-5.4-1' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
-      KVM: x86: omit "impossible" pmu MSRs from MSR list
+    kasan: detect invalid size in memory operation function
+    
+    It is an undefined behavior to pass a negative value to
+memset()/memcpy()/memmove()
+    , so need to be detected by KASAN.
+    
+    If size is negative value, then it will be larger than ULONG_MAX/2,
+    so that we will qualify as out-of-bounds issue.
+    
+    KASAN report:
+    
+     BUG: KASAN: out-of-bounds in kmalloc_memmove_invalid_size+0x70/0xa0
+     Read of size 18446744073709551608 at addr ffffff8069660904 by task
+cat/72
+    
+     CPU: 2 PID: 72 Comm: cat Not tainted
+5.4.0-rc1-next-20191004ajb-00001-gdb8af2f372b2-dirty #1
+     Hardware name: linux,dummy-virt (DT)
+     Call trace:
+      dump_backtrace+0x0/0x288
+      show_stack+0x14/0x20
+      dump_stack+0x10c/0x164
+      print_address_description.isra.9+0x68/0x378
+      __kasan_report+0x164/0x1a0
+      kasan_report+0xc/0x18
+      check_memory_region+0x174/0x1d0
+      memmove+0x34/0x88
+      kmalloc_memmove_invalid_size+0x70/0xa0
+    
+    [1] https://bugzilla.kernel.org/show_bug.cgi?id=199341
+    
+    Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+    Reported -by: Dmitry Vyukov <dvyukov@google.com>
+    Suggested-by: Dmitry Vyukov <dvyukov@google.com>
 
-Sean Christopherson (1):
-      KVM: nVMX: Fix consistency check on injected exception error code
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 6814d6d6a023..6ef0abd27f06 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -102,7 +102,8 @@ EXPORT_SYMBOL(__kasan_check_write);
+ #undef memset
+ void *memset(void *addr, int c, size_t len)
+ {
+-	check_memory_region((unsigned long)addr, len, true, _RET_IP_);
++	if (!check_memory_region((unsigned long)addr, len, true, _RET_IP_))
++		return NULL;
+ 
+ 	return __memset(addr, c, len);
+ }
+@@ -110,8 +111,9 @@ void *memset(void *addr, int c, size_t len)
+ #undef memmove
+ void *memmove(void *dest, const void *src, size_t len)
+ {
+-	check_memory_region((unsigned long)src, len, false, _RET_IP_);
+-	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
++	if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
++	!check_memory_region((unsigned long)dest, len, true, _RET_IP_))
++		return NULL;
+ 
+ 	return __memmove(dest, src, len);
+ }
+@@ -119,8 +121,9 @@ void *memmove(void *dest, const void *src, size_t
+len)
+ #undef memcpy
+ void *memcpy(void *dest, const void *src, size_t len)
+ {
+-	check_memory_region((unsigned long)src, len, false, _RET_IP_);
+-	check_memory_region((unsigned long)dest, len, true, _RET_IP_);
++	if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
++	!check_memory_region((unsigned long)dest, len, true, _RET_IP_))
++		return NULL;
+ 
+ 	return __memcpy(dest, src, len);
+ }
+diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+index 616f9dd82d12..02148a317d27 100644
+--- a/mm/kasan/generic.c
++++ b/mm/kasan/generic.c
+@@ -173,6 +173,11 @@ static __always_inline bool
+check_memory_region_inline(unsigned long addr,
+ 	if (unlikely(size == 0))
+ 		return true;
+ 
++	if (unlikely((long)size < 0)) {
++		kasan_report(addr, size, write, ret_ip);
++		return false;
++	}
++
+ 	if (unlikely((void *)addr <
+ 		kasan_shadow_to_mem((void *)KASAN_SHADOW_START))) {
+ 		kasan_report(addr, size, write, ret_ip);
+diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+index 36c645939bc9..23951a453681 100644
+--- a/mm/kasan/generic_report.c
++++ b/mm/kasan/generic_report.c
+@@ -107,6 +107,16 @@ static const char *get_wild_bug_type(struct
+kasan_access_info *info)
+ 
+ const char *get_bug_type(struct kasan_access_info *info)
+ {
++	/*
++	 * if access_size < 0, then it will be larger than ULONG_MAX/2,
++	 * so that this can qualify as out-of-bounds.
++	 * out-of-bounds is the _least_ frequent KASAN bug type. So saying
++	 * out-of-bounds has downsides of both approaches and won't prevent
++	 * duplicate reports by syzbot.
++	 */
++	if ((long)info->access_size < 0)
++		return "out-of-bounds";
++
+ 	if (addr_has_shadow(info->access_addr))
+ 		return get_shadow_bug_type(info);
+ 	return get_wild_bug_type(info);
+diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
+index 0e987c9ca052..b829535a3ad7 100644
+--- a/mm/kasan/tags.c
++++ b/mm/kasan/tags.c
+@@ -86,6 +86,11 @@ bool check_memory_region(unsigned long addr, size_t
+size, bool write,
+ 	if (unlikely(size == 0))
+ 		return true;
+ 
++	if (unlikely((long)size < 0)) {
++		kasan_report(addr, size, write, ret_ip);
++		return false;
++	}
++
+ 	tag = get_tag((const void *)addr);
+ 
+ 	/*
+diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
+index 969ae08f59d7..19b9e364b397 100644
+--- a/mm/kasan/tags_report.c
++++ b/mm/kasan/tags_report.c
+@@ -36,6 +36,16 @@
+ 
+ const char *get_bug_type(struct kasan_access_info *info)
+ {
++	/*
++	 * if access_size < 0, then it will be larger than ULONG_MAX/2,
++	 * so that this can qualify as out-of-bounds.
++	 * out-of-bounds is the _least_ frequent KASAN bug type. So saying
++	 * out-of-bounds has downsides of both approaches and won't prevent
++	 * duplicate reports by syzbot.
++	 */
++	if ((long)info->access_size < 0)
++		return "out-of-bounds";
++
+ #ifdef CONFIG_KASAN_SW_TAGS_IDENTIFY
+ 	struct kasan_alloc_meta *alloc_meta;
+ 	struct kmem_cache *cache;
 
-Sebastian Andrzej Siewior (1):
-      KVM: x86: Expose XSAVEERPTR to the guest
 
-Shuah Khan (1):
-      selftests: kvm: Fix libkvm build error
 
-Vitaly Kuznetsov (1):
-      KVM: selftests: x86: clarify what is reported on KVM_GET_MSRS failure
+commit fb5cf7bd16e939d1feef229af0211a8616c9ea03
+Author: Walter Wu <walter-zh.wu@mediatek.com>
+Date:   Fri Oct 4 18:32:03 2019 +0800
 
-Waiman Long (1):
-      KVM: VMX: Set VMENTER_L1D_FLUSH_NOT_REQUIRED if !X86_BUG_L1TF
+    kasan: add test for invalid size in memmove
+    
+    Test size is negative vaule in memmove in order to verify
+    if it correctly produce KASAN report.
+    
+    Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
 
-Wanpeng Li (2):
-      KVM: LAPIC: Loosen filter for adaptive tuning of lapic_timer_advance_ns
-      KVM: X86: Fix userspace set invalid CR4
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index 49cc4d570a40..06942cf585cc 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -283,6 +283,23 @@ static noinline void __init
+kmalloc_oob_in_memset(void)
+ 	kfree(ptr);
+ }
+ 
++static noinline void __init kmalloc_memmove_invalid_size(void)
++{
++	char *ptr;
++	size_t size = 64;
++
++	pr_info("invalid size in memmove\n");
++	ptr = kmalloc(size, GFP_KERNEL);
++	if (!ptr) {
++		pr_err("Allocation failed\n");
++		return;
++	}
++
++	memset((char *)ptr, 0, 64);
++	memmove((char *)ptr, (char *)ptr + 4, -2);
++	kfree(ptr);
++}
++
+ static noinline void __init kmalloc_uaf(void)
+ {
+ 	char *ptr;
+@@ -773,6 +790,7 @@ static int __init kmalloc_tests_init(void)
+ 	kmalloc_oob_memset_4();
+ 	kmalloc_oob_memset_8();
+ 	kmalloc_oob_memset_16();
++	kmalloc_memmove_invalid_size();
+ 	kmalloc_uaf();
+ 	kmalloc_uaf_memset();
+ 	kmalloc_uaf2();
 
-Zenghui Yu (1):
-      KVM: arm/arm64: vgic: Use the appropriate TRACE_INCLUDE_PATH
 
- arch/arm64/include/asm/kvm_hyp.h                   |  24 ---
- arch/arm64/kvm/hyp/switch.c                        |  17 +-
- arch/arm64/kvm/hyp/tlb.c                           |  36 ++--
- arch/powerpc/kvm/book3s.c                          |   8 +-
- arch/x86/include/asm/kvm_host.h                    |   7 -
- arch/x86/kvm/cpuid.c                               | 102 ++++++-----
- arch/x86/kvm/lapic.c                               |  13 +-
- arch/x86/kvm/mmu.c                                 |  65 +++++--
- arch/x86/kvm/vmx/nested.c                          |   2 +-
- arch/x86/kvm/vmx/pmu_intel.c                       |   7 +-
- arch/x86/kvm/vmx/vmx.c                             |  15 +-
- arch/x86/kvm/x86.c                                 |  72 ++++----
- include/linux/kvm_host.h                           |   2 +
- tools/testing/selftests/kvm/Makefile               |   3 +-
- .../selftests/kvm/include/x86_64/processor.h       |   3 +
- tools/testing/selftests/kvm/include/x86_64/vmx.h   |  14 ++
- tools/testing/selftests/kvm/lib/kvm_util.c         |   2 +-
- .../testing/selftests/kvm/lib/kvm_util_internal.h  |   3 +
- tools/testing/selftests/kvm/lib/x86_64/processor.c |   2 +-
- tools/testing/selftests/kvm/lib/x86_64/vmx.c       | 201 ++++++++++++++++++++-
- .../selftests/kvm/x86_64/vmx_dirty_log_test.c      | 156 ++++++++++++++++
- virt/kvm/arm/vgic/trace.h                          |   2 +-
- virt/kvm/kvm_main.c                                |  10 +-
- 23 files changed, 584 insertions(+), 182 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/x86_64/vmx_dirty_log_test.c
+
+
