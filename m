@@ -2,272 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE407CB880
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B947CB88B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbfJDKkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 06:40:15 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38410 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfJDKkP (ORCPT
+        id S1730215AbfJDKmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 06:42:50 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42906 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfJDKmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 06:40:15 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 3so5318997wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 03:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ObH9+JWT5QlzGuiPiIPPz8SadjDsdoqDZZO8TLwA4Wg=;
-        b=ERmKYlHxhYJJlaT7s9PRcGzr1SmeXV00PBHtfynFVd/R5NXHpyZeeQhRK653MT3L/p
-         rQBVUIixRjWRntgz6lrBuD1naZDPZHcGWiX2z+8vsS6/Trt+FYi7BtLzgN5LhFpfXbZV
-         jr8o3lxw9MvQSo/lXWef5V3MrpaXTxgYiT+3uxkEVbzrF0SjoxkngX0sHdUIEotEYzCn
-         JryqYqGC1IaLTwk9lB8EorEUqEJ56Ospm/DIbv4cYSkQ9r17inpmR0jKeGbQEqPmfJuc
-         J7lYzXwCVxWBkcvgxsiSMGdWY3pQGhNTVrbMZVxD7CxbX1gahuXRvCvaTNpi2bYfMB6M
-         e0Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ObH9+JWT5QlzGuiPiIPPz8SadjDsdoqDZZO8TLwA4Wg=;
-        b=He1LB1BvJ2zlsj7kIgGm4ZC6Bt5o0duGU7xmASlabF80MtjfXlxFOA/798gOpxzXa1
-         qNQWEXuI4PLuQDyWpZlT6otLfWaFnXbQu2fC9kvaIfhAvbttBJ+Zwc0iPdRLXmrzaPVM
-         dj935r52Qa96n7AYqkpUryWyCHftpVr29RoCMrRc/8Guft/+JM1U3LvSihVmSxO5LZh5
-         AISFf4rjs5wAhUkEtMAoB/ZfTQ5i7yovukImvFgu2pcu1F5Wps/Ah3RDGyOKpAvEgBCM
-         GF+JU5gyuFvykWQP3Eb7S/18mV8qxw7BcFSH7YSSZeUYWegJFwnI2W0n4el4W3E9tD/S
-         LYBQ==
-X-Gm-Message-State: APjAAAXJWuokmg3SgTwYVJbHX1GTx49ZPF+zIJjOSjc5+zVXSNxMCE7x
-        py2lXFMniBZJVtb8eIxGv+IweA==
-X-Google-Smtp-Source: APXvYqwSFtxCK4lDOz7PwbHKo0+dQi51HBVhbeSrDiK8qujtfY+6jbEplDUl4zLzyMP055hAnXj2pw==
-X-Received: by 2002:a1c:4945:: with SMTP id w66mr10180402wma.40.1570185611599;
-        Fri, 04 Oct 2019 03:40:11 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
-        by smtp.gmail.com with ESMTPSA id n22sm4139704wmk.19.2019.10.04.03.40.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 03:40:10 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 11:40:10 +0100
-From:   Matthias Maennich <maennich@google.com>
-To:     Steve French <smfrench@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, Jessica Yu <jeyu@kernel.org>
-Subject: Re: nsdeps not working on modules in 5.4-rc1
-Message-ID: <20191004104010.GA93243@google.com>
-References: <CAH2r5mv49T9gwwoJxKJfkgdi6xbf+hDALUiAJHghGikgUNParw@mail.gmail.com>
- <CAH2r5mtVW=3-2L+0QFJAqBG+uj2sYmF=dtzT_kqwK59cu94vGw@mail.gmail.com>
- <20191003104356.GA77584@google.com>
- <CAH2r5msF5DF2ac+-V0xRR-8RYeQdwpsS1iBLHM6iKTB+aEVc5Q@mail.gmail.com>
- <CAK7LNARrdQad9=U1LknT9yRYtRagNVS8T5r_Ovv5Sa91QO3TsA@mail.gmail.com>
- <CAH2r5ms_GdhAG4q3kcadeU44EQPjnebzBG8=DUcsi9Gh5J8UXw@mail.gmail.com>
- <CAK7LNATLCG6DOsnqfFNe61NkcEHV1fS4fCWyy2qzMHVvDDHHHw@mail.gmail.com>
- <CAH2r5muRXaaa4MV0455Sx5JOPyO0ZE_TVTkhuy3rAJXAHyhccQ@mail.gmail.com>
- <CAK7LNASNu2iovxs84_0ouD_GKNfkqnwy4k0QhUGu+XbH9oT0UQ@mail.gmail.com>
- <CAH2r5mu8SiZUMwnfA6zZXUrNZhofc3pUFJOhKvq=0X6MZXVjyQ@mail.gmail.com>
+        Fri, 4 Oct 2019 06:42:49 -0400
+Received: from [185.81.136.18] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iGL1d-0002fw-KF; Fri, 04 Oct 2019 10:41:29 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] usercopy structs for v5.4-rc2
+Date:   Fri,  4 Oct 2019 12:41:16 +0200
+Message-Id: <20191004104116.20418-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAH2r5mu8SiZUMwnfA6zZXUrNZhofc3pUFJOhKvq=0X6MZXVjyQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+Hi Linus,
 
-On Fri, Oct 04, 2019 at 12:01:20AM -0500, Steve French wrote:
->ok - so to sum up, it sounds like you are saying the 350 false
->positives (see attached file) that happen on building cifs.ko .will be
->fixed by a
->future change to modpost?  This is  a typical module build ...
+/* Summary */
+This pull request contains the copy_struct_from_user() helper which got
+split out from the openat2() patchset. It is a generic interface designed
+to copy a struct from userspace.
 
-Yes, the reason for you to see these false positive warnings is a bug in
-modpost. The patch series we were referring to addresses this problem
-(and some others). I do not believe you need to run nsdeps to fixup
-anything in fs/cifs at this time.
+The helper will be especially useful for structs versioned by size of which
+we have quite a few. This allows for backwards compatibility, i.e. an
+extended struct can be passed to an older kernel, or a legacy struct can be
+passed to a newer kernel. For the first case (extended struct, older
+kernel) the new fields in an extended struct can be set to zero and the
+struct safely passed to an older kernel.
 
->download and install current kernel package (in this case Ubuntu
->5.4-rc1). which saves huge amount of build time, then build just the
->module of interest (in my case cifs.ko)
->
->                   cd fs/cifs
->                   make C=1 -C /usr/src/linux-headers-`uname -r` M=`pwd` modules
->
->If nsdeps is not needed to fixup some namespace issue then shouldn't
->be a problem, just trying to avoid the distraction of 300+
->warning messages every time I build just this one module.  Is there a
->workaround?
+The most obvious benefit is that this helper lets us get rid of duplicate
+code present in at least sched_setattr(), perf_event_open(), and clone3().
+More importantly it will also help to ensure that users implementing
+versioning-by-size end up with the same core semantics. This point is
+especially crucial since we have at least one case where versioning-by-size
+is used but with slighly different semantics: sched_setattr(),
+perf_event_open(), and clone3() all do do similar checks to
+copy_struct_from_user() while rt_sigprocmask(2) always rejects
+differently-sized struct arguments.
 
-Sorry for the noise this creates. The only known workaround is to
-locally apply the complete patch series.
+With this pull request we also switch over sched_setattr(),
+perf_event_open(), and clone3() to use the new helper.
 
-Cheers,
-Matthias
+I have carried these patches in a separate branch and taken care for them
+to show up in linux-next. The only separate fix we we had to apply
+was for a warning by clang when building the tests for using the result of
+an assignment as a condition without parantheses. Given that this is a
+reasonably sized change with proper testing it seemed ok to me to include
+this in an rc2. If things break, we're around to fix them.
 
->On Thu, Oct 3, 2019 at 11:51 PM Masahiro Yamada
-><yamada.masahiro@socionext.com> wrote:
->>
->> Hi Steve,
->>
->> On Fri, Oct 4, 2019 at 1:28 PM Steve French <smfrench@gmail.com> wrote:
->> >
->> > On Thu, Oct 3, 2019 at 10:41 PM Masahiro Yamada
->> > <yamada.masahiro@socionext.com> wrote:
->> > >
->> > > Hi Steve,
->> > >
->> > > On Fri, Oct 4, 2019 at 1:07 AM Steve French <smfrench@gmail.com> wrote:
->> > > >
->> > > > On Thu, Oct 3, 2019 at 10:24 AM Masahiro Yamada
->> > > > <yamada.masahiro@socionext.com> wrote:
->> > > > >
->> > > > > Hi Steve,
->> > > > >
->> > > > > On Fri, Oct 4, 2019 at 12:15 AM Steve French <smfrench@gmail.com> wrote:
->> > > > > >
->> > > > > > On Thu, Oct 3, 2019 at 5:43 AM Matthias Maennich <maennich@google.com> wrote:
->> > > > > > >
->> > > > > > > Hi Steve!
->> > > > > > >
->> > > > > > > On Wed, Oct 02, 2019 at 06:54:26PM -0500, Steve French wrote:
->> > > > > > > >And running the build differently, from the root of the git tree
->> > > > > > > >(5.4-rc1) rather than using the Ubuntu 5.4-rc1 headers also fails
->> > > > > > > >
->> > > > > > > >e.g. "make  M=fs/cifs modules nsdeps"
->> > > > > > > >
->> > > > > > > >...
->> > > > > > > >  LD [M]  fs/cifs/cifs.o
->> > > > > > > >  Building modules, stage 2.
->> > > > > > > >  MODPOST 1 modules
->> > > > > > > >WARNING: module cifs uses symbol sigprocmask from namespace
->> > > > > > > >_fs/cifs/cache.o), but does not import it.
->> > > > > > > >...
->> > > > > > > >WARNING: module cifs uses symbol posix_test_lock from namespace
->> > > > > > > >cifs/cache.o), but does not import it.
->> > > > > > > >  CC [M]  fs/cifs/cifs.mod.o
->> > > > > > > >  LD [M]  fs/cifs/cifs.ko
->> > > > > > > >  Building modules, stage 2.
->> > > > > > > >  MODPOST 1 modules
->> > > > > > > >./scripts/nsdeps: 34: local: ./fs/cifs/cifsfs.c: bad variable name
->> > > > > > > >make: *** [Makefile:1710: nsdeps] Error 2
->> > > > > > >
->> > > > > > > Thanks for reporting this. It appears to me you hit a bug that was
->> > > > > > > recently discovered: when building with `make M=some/subdirectory`,
->> > > > > > > modpost is misbehaving. Can you try whether this patch series solves
->> > > > > > > your problems:
->> > > > > > > https://lore.kernel.org/lkml/20191003075826.7478-1-yamada.masahiro@socionext.com/
->> > > > > > > In particular patch 2/6 out of the series.
->> > > > > > >
->> > > > > > > Cheers,
->> > > > > > > Matthias
->> > > > > >
->> > > > > >
->> > > > > > Applying just patch 2 and doing "make" from the root of the git tree
->> > > > > > (5.4-rc1), at the tail end of the build I got
->> > > > > >
->> > > > > > ...
->> > > > > > Kernel: arch/x86/boot/bzImage is ready  (#87)
->> > > > > >   Building modules, stage 2.
->> > > > > >   MODPOST 5340 modules
->> > > > > > free(): invalid pointer
->> > > > > > Aborted (core dumped)
->> > > > >
->> > > > >
->> > > > > Right.
->> > > > >
->> > > > > Since 2/6 depends on 1/6,
->> > > > > applying only the second one does not work.
->> > > >
->> > > > Applying both 1 and 2 I get the following error doing make (although
->> > > > it makes it a long way into the build)
->> > > >
->> > > > <snip>
->> > > > WARNING: drivers/usb/storage/usb-storage: 'USB_STORAGE' exported
->> > > > twice. Previous export was in drivers/usb/storage/usb-storage.ko
->> > > > ERROR: "usb_stor_set_xfer_buf" [drivers/usb/storage/ums-usbat.ko] undefined!
->> > > > ERROR: "usb_stor_access_xfer_buf" [drivers/usb/storage/ums-usbat.ko] undefined!
->> > > > ERROR: "usb_stor_post_reset" [drivers/usb/storage/ums-usbat.ko] undefined!
->> > > > ERROR: "usb_stor_disconnect" [drivers/usb/storage/ums-usbat.ko] undefined!
->> > > > <snip>
->> > > > ERROR: "usb_stor_adjust_quirks" [drivers/usb/storage/uas.ko] undefined!
->> > > > ERROR: "usb_stor_sense_invalidCDB" [drivers/usb/storage/uas.ko] undefined!
->> > > > WARNING: "USB_STORAGE" [drivers/usb/storage/usb-storage] is a static
->> > > > EXPORT_SYMBOL_GPL
->> > > > make[1]: *** [scripts/Makefile.modpost:94: __modpost] Error 1
->> > > > make: *** [Makefile:1303: modules] Error 2
->> > >
->> > >
->> > > Hmm, I do not see those error.
->> > > I was able to build the kernel successfully.
->> > > (I asked the 0-day bot to test whole of my patch set
->> > > in case I am missing something.)
->> > >
->> > >
->> > > Could you share the steps to reproduce the errors and your .config file?
->> >
->> > From the root of git tree - at exactly 5.4-rc1
->> >
->> > ~/cifs-2.6$ make nsdeps
->> >   CALL    scripts/checksyscalls.sh
->> >   CALL    scripts/atomic/check-atomics.sh
->> >   DESCEND  objtool
->> >   CHK     include/generated/compile.h
->> >   CHK     kernel/kheaders_data.tar.xz
->> >   Building modules, stage 2.
->> >   MODPOST 5340 modules
->> >   Building modules, stage 2.
->> >   MODPOST 5340 modules
->> > ./scripts/nsdeps: 34: local: ./fs/cifs/cifsfs.c: bad variable name
->> > make: *** [Makefile:1710: nsdeps] Error 2
->> >
->> > I get the same error doing "rm fs/cifs/*.o" and repeating the "make
->> > nsdeps" command
->> >
->> > I will send you the .config
->>
->>
->>
->> You need to clarify your problem.
->>
->> In the first post from you, you pointed out
->> "hundreds of new warnings introduced by namespaces in 5.4-rc1 when
->> building my module"
->>
->> So, 1/6 and 2/6 should address that problem.
->> https://lore.kernel.org/patchwork/patch/1133628/
->> https://lore.kernel.org/patchwork/patch/1133626/
->>
->>
->> Then, in the previous email ("Applying both 1 and 2 I get the
->> following error doing make")
->> it looks like you were talking about in-kernel building
->> instead of the external module.
->>
->>
->> Then, in this email, you are talking about "make nsdeps".
->> "make nsdeps" obviously does not support M=.
->>
->>
->> I am afraid you are mixing up different issues,
->> which is so confusing. (and I am afraid you were too confused)
->>
->> Currently, the namespace is used only by USB_STORAGE.
->> So, it should not be a problem for your module.
->>
->> To sum up, you do not need to run nsdeps at all.
->> The hundreds of false-positive warnings came from the modpost bug,
->> and should be fixed soon.
->>
->>
->> --
->> Best Regards
->> Masahiro Yamada
->
->
->
->-- 
->Thanks,
->
->Steve
+[1]: 1251201c0d34 ("sched/core: Fix uclamp ABI bug, clean up and robustify sched_read_attr() ABI logic and code")
 
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/copy-struct-from-user-v5.4-rc2
+
+for you to fetch changes up to 341115822f8832f0c2d8af2f7e151c4c9a77bcd1:
+
+  usercopy: Add parentheses around assignment in test_copy_struct_from_user (2019-10-03 21:13:27 +0200)
+
+/* Testing */
+All patches have seen exposure in linux-next and are based on v5.4-rc1. The
+copy_struct_from_user() helper comes with selftests.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next.
+
+Please consider pulling these changes from the signed
+copy-struct-from-user-v5.4-rc2 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+copy-struct-from-user-v5.4-rc2
+
+----------------------------------------------------------------
+Aleksa Sarai (4):
+      lib: introduce copy_struct_from_user() helper
+      clone3: switch to copy_struct_from_user()
+      sched_setattr: switch to copy_struct_from_user()
+      perf_event_open: switch to copy_struct_from_user()
+
+Nathan Chancellor (1):
+      usercopy: Add parentheses around assignment in test_copy_struct_from_user
+
+ include/linux/bitops.h     |   7 +++
+ include/linux/uaccess.h    |  70 +++++++++++++++++++++++
+ include/uapi/linux/sched.h |   2 +
+ kernel/events/core.c       |  47 +++-------------
+ kernel/fork.c              |  34 +++---------
+ kernel/sched/core.c        |  43 +++-----------
+ lib/strnlen_user.c         |   8 +--
+ lib/test_user_copy.c       | 136 +++++++++++++++++++++++++++++++++++++++++++--
+ lib/usercopy.c             |  55 ++++++++++++++++++
+ 9 files changed, 288 insertions(+), 114 deletions(-)
