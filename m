@@ -2,56 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F91CC649
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC0ACC640
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731657AbfJDXKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 19:10:49 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45588 "EHLO
+        id S1731568AbfJDXKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 19:10:31 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36803 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731452AbfJDXKZ (ORCPT
+        with ESMTP id S1731444AbfJDXK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 19:10:25 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u12so3795514pls.12
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
+        Fri, 4 Oct 2019 19:10:28 -0400
+Received: by mail-pl1-f195.google.com with SMTP id j11so3817760plk.3;
+        Fri, 04 Oct 2019 16:10:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cm58LI6h4jAqsDBKxV++l0e4ZOMCLYhH6Wxp6SfSZww=;
-        b=YlMTkoM+/Jlxqs3Sq21Fb3tLnvPSM/+KqpMO5/nwQZgzlrgLD+5UCoK7wwOBrunMOo
-         FzcZyaHjF4MN27ftKyNjhLYFlrYn+LcA1KltQ7YupR7cNp60JvbzBM5OCGkSuYVmH9q1
-         g87WGTrTDkwR2IKQN+FRlUBHzVi+WwaFaOgZxNnE/kkFEGTcokSFT6c2ghzmT890cqYd
-         yONTx/1RPPo/BHTb8u4ePV8fjmpExhx5oROer6WJXyP8WY2/GN1SamS8e/Qxne9x6StD
-         38LWKVVm2p5siEnOwIrNOZMzZ+WDLmI3qiML4ga987sfWDS8EQ2t9RQM9u6npX1pLUAB
-         l6/A==
+        bh=jc9tGVeJ4olVgaKePn3t6HbonR38LaaryzX91Se5rAI=;
+        b=SodK6+/xa+e4ldidjLKc5QB0qs8HJbZzihBLhcV41Gv49iVQLtoRhio/UufZW9ir7G
+         dXvlkyc/2BZ6QhUKfynNyAr/RiD2y00kNLlVrP/jKjIQgda5CYA8mSS8f9Ra5+wjzW2q
+         BoPfRRuRIZowm8ac84qqkHNo54j1t3zqwKfrHj0GiL1NTR+HHoahivJq693U91HEeAkB
+         AidC5XPHHZ9V456LZlJ3TrtvDRsdkjoFEDhVBy1IWgw0BuEJZH3rCvETf3TmiHK1FVO8
+         JV/6m79OL6XSqQzLhnkOwoBZ6NRqk1yLC1Xz78EE1LoonNYgXFFipFgmraWvHi9cubVc
+         oc6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cm58LI6h4jAqsDBKxV++l0e4ZOMCLYhH6Wxp6SfSZww=;
-        b=ov3OePpRsKhaeTEXUUMOMqwsUxQmSwpDsHIxra8jbxlcg72IGD4vYWaaKXR63iumPf
-         TK9NQubp6PhVTdy6NsU49y0TuFCGSnNuNPH0mduZVnifX2T4S/CViAVQGH/d1zPKugq3
-         R/8lf6clBGP66ZhkMnKYPg0xvdEl31jkbpp10l4K1lwyeLWfC3+M9d++na9yfUDWLMl/
-         V263se86tvahYsqJyfj/t1q+LII4KwYB5tvJNiu/Nn/ATW3B7sq+J5zyW+EtCZHugpaV
-         e47LyuP+HZF8nAh9Y2/T1ohcwz1+jOH+uou85yQkBrmaGHicNxLy0T4WkeI/M915tYkh
-         B42g==
-X-Gm-Message-State: APjAAAUr+4CnUorQo+u1I1VVwcYAtTNDBDp9BPEZUpyWD9Oo7tPr7JA6
-        eBm9LWs6obc0qEbO6tsY6Dg=
-X-Google-Smtp-Source: APXvYqyCmVp4XhLd0gKGmmYx/OReapyUsshneu034hXsRRXZ3s4A5oJoHCg8M3Hcu0yl5d2JLUi4wQ==
-X-Received: by 2002:a17:902:7c94:: with SMTP id y20mr17003667pll.229.1570230624731;
-        Fri, 04 Oct 2019 16:10:24 -0700 (PDT)
+        bh=jc9tGVeJ4olVgaKePn3t6HbonR38LaaryzX91Se5rAI=;
+        b=dFWKd3r4Rr4zsVolcAkHV+34psAeeORnAzIQfYD4NF0kAfQUf8YuGJiP8EWajbvl2K
+         0TZX7bYrEkXFj8f2qNzMJzy+EYw92toNrxqJ9cOwyFN2xJN751vz6qgeY0p6/k/9M6Ld
+         oRNF4PGtABtG0SHHD4GisJgYG/E3w280OkqYNb4yxvd061D76AOHvbz3wgNWHkzye7IE
+         1H3Q9bgzlin69HVngkPwoiiSL/uGXNnJ2aOPtojg63pG8SXvv/YQ13UEaQB5scxTcRcH
+         YK0QuxSilpavEDVIIQHnTdYKRJZAIBo3A/+xSJv5qy/w2V/KkvhoEV1bj77GKxYMaSmn
+         HEbA==
+X-Gm-Message-State: APjAAAWkKKjEajlIuQAa1gta8g1Gt/qcwP6XgHWwdIP2gO/ykNSQlvax
+        XS7cfuz8uAYm6UKzeOYdXgY=
+X-Google-Smtp-Source: APXvYqxc1YTK7GZZaOa6IlN4K3qw0kyub04c7nWYesQHa+EsVVo+UARwT22654v3Yt6yrKNzkUxwPw==
+X-Received: by 2002:a17:902:322:: with SMTP id 31mr17719352pld.150.1570230625926;
+        Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
         by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 16:10:24 -0700 (PDT)
+        Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH 3/7] regulator: tps65090: switch to using devm_fwnode_gpiod_get
-Date:   Fri,  4 Oct 2019 16:10:13 -0700
-Message-Id: <20191004231017.130290-4-dmitry.torokhov@gmail.com>
+        linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 4/7] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+Date:   Fri,  4 Oct 2019 16:10:14 -0700
+Message-Id: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 In-Reply-To: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
@@ -72,66 +77,27 @@ Let's switch this driver over.
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
- drivers/regulator/tps65090-regulator.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/regulator/s2mps11.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-index 10ea4b5a0f55..f0b660e9f15f 100644
---- a/drivers/regulator/tps65090-regulator.c
-+++ b/drivers/regulator/tps65090-regulator.c
-@@ -346,16 +346,20 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
- 	for (idx = 0; idx < ARRAY_SIZE(tps65090_matches); idx++) {
- 		struct regulator_init_data *ri_data;
- 		struct tps65090_regulator_plat_data *rpdata;
-+		struct device_node *np;
- 
- 		rpdata = &reg_pdata[idx];
- 		ri_data = tps65090_matches[idx].init_data;
--		if (!ri_data || !tps65090_matches[idx].of_node)
-+		if (!ri_data)
-+			continue;
-+
-+		np = tps65090_matches[idx].of_node;
-+		if (!np)
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 5bc00884cf51..4f2dc5ebffdc 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		if (!rdata[reg].init_data || !rdata[reg].of_node)
  			continue;
  
- 		rpdata->reg_init_data = ri_data;
--		rpdata->enable_ext_control = of_property_read_bool(
--					tps65090_matches[idx].of_node,
--					"ti,enable-ext-control");
-+		rpdata->enable_ext_control = of_property_read_bool(np,
-+						"ti,enable-ext-control");
- 		if (rpdata->enable_ext_control) {
- 			enum gpiod_flags gflags;
- 
-@@ -366,11 +370,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
- 				gflags = GPIOD_OUT_LOW;
- 			gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
- 
--			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
--								    tps65090_matches[idx].of_node,
--								    "dcdc-ext-control-gpios", 0,
--								    gflags,
--								    "tps65090");
-+			rpdata->gpiod = devm_fwnode_gpiod_get(
-+							&pdev->dev,
-+							of_fwnode_handle(np),
-+							"dcdc-ext-control",
-+							gflags,
-+							"tps65090");
- 			if (PTR_ERR(rpdata->gpiod) == -ENOENT) {
- 				dev_err(&pdev->dev,
- 					"could not find DCDC external control GPIO\n");
-@@ -379,8 +384,7 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
- 				return ERR_CAST(rpdata->gpiod);
- 		}
- 
--		if (of_property_read_u32(tps65090_matches[idx].of_node,
--					 "ti,overcurrent-wait",
-+		if (of_property_read_u32(np, "ti,overcurrent-wait",
- 					 &rpdata->overcurrent_wait) == 0)
- 			rpdata->overcurrent_wait_valid = true;
- 
+-		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
+-				rdata[reg].of_node,
+-				"samsung,ext-control-gpios",
+-				0,
++		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
++				of_fwnode_handle(rdata[reg].of_node),
++				"samsung,ext-control",
+ 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				"s2mps11-regulator");
+ 		if (PTR_ERR(gpio[reg]) == -ENOENT)
 -- 
 2.23.0.581.g78d2f28ef7-goog
 
