@@ -2,97 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9487ACC64E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 473A9CC656
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:16:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731665AbfJDXOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 19:14:06 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41324 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfJDXOE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 19:14:04 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q7so4773406pfh.8;
-        Fri, 04 Oct 2019 16:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lISiiaIRIYcWBibBe1iOZ/5qzUoajo4AJ6kmzzJGjtM=;
-        b=NfB/9dhy9h2aOSJ8PnppKjzSkOOgwvS2D6bnO1+bR7jvlX3Mp/ZbBb3Sep0gy682So
-         TYgpwjm9l3JjiOuxWwt/MMfqtDEgEtPo2wO8IUs7ltlTOU8lsy8t9m3ObbKUm1BuY2Rh
-         QbKDwzKPQ7Vco+kt5zwVD3JTts2khhj0zJk1dQhJpcJWqD8zmiBFzLjXKF/rXV1oOPfA
-         3MWNAl2U5m/jJA7dhPCb4q+wpg/rbhOrs4qTHwn7DnbIktKaZlfFGsVCZXq5W3WKK1Q7
-         Z7jqzBt391pGfmxDEpl1LHeP26ckLtfFNRzrczoethPCzBWf9OM+fbgkvZ+HNXOEPRFa
-         wPMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lISiiaIRIYcWBibBe1iOZ/5qzUoajo4AJ6kmzzJGjtM=;
-        b=P7/CiOBmf7w1KomdyxlyDPZJP2SSsvsipPhq7CYHhDtLKaCYzZx+/x7BbTlxFKCMsS
-         SsgLxL0JVAi9X+ig6B5gZyj+Kt7ev3g96jJKKf9s/3Tkxzn6R0+kBG8NzuwZbeYaA/+G
-         cPlqyRpD7CBZ4elHMH4Z5ubA00jMGHrHCAuyM9o3bVFJyiJ/hQr3HmyvOTOpy1YGuCx1
-         dvUWY/3l3jWGF0Wj+fkUDL3iEj0TMAT3NrAFd41nSor+UDthQtaBrYsNW/9pgo1AGqxZ
-         +SiMOynhdq1V3OXzNTb3gjYJb+5cMPtvE/VY/UpLtc8pH8mjfbJ49EJgbDY3KtFI1mNv
-         G5zQ==
-X-Gm-Message-State: APjAAAWGCVicGFR698MKGwY8Srq3YcVd9MPmZRH+3Wr2+nHWa6ck5om+
-        qYeZTFip+JmvOPq4omzXIns=
-X-Google-Smtp-Source: APXvYqwxv6Gmfx1v5s4xL2Ayn/oB8k7vRfxLHY+NJRMEHLsw1FiFBsrHZdupVqlfzLRQJSlDN+RIMQ==
-X-Received: by 2002:a63:fc55:: with SMTP id r21mr17412509pgk.432.1570230842435;
-        Fri, 04 Oct 2019 16:14:02 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id y6sm9514353pfp.82.2019.10.04.16.14.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 16:14:01 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 3/3] net: phy: fixed_phy: switch to using fwnode_gpiod_get_index
-Date:   Fri,  4 Oct 2019 16:13:56 -0700
-Message-Id: <20191004231356.135996-4-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-In-Reply-To: <20191004231356.135996-1-dmitry.torokhov@gmail.com>
-References: <20191004231356.135996-1-dmitry.torokhov@gmail.com>
+        id S1731585AbfJDXQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 19:16:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728913AbfJDXQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 19:16:04 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07CB7215EA;
+        Fri,  4 Oct 2019 23:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570230963;
+        bh=ed2Oj0Rtnhm1rXJkcqfJxOLIvuDPtA/O2HMmNV71h1A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WM0U4KZ8Yc4SM5CiFfv5XPcZ0aRzdXwsYvoXnNevsXnJsPyjQKtdRXjIMQzZ+kVOJ
+         6YPavRWeR2P5RDQEazsuY+5qqP9SteouIZAzdGwtjgnZiXBW45gWTz4CaJtz77mMLh
+         9WfdeFi7Wi/iRWJWlEXKUF33HUEeeyYS7Fk3RiSQ=
+Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        shuah <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+References: <20190923090249.127984-1-brendanhiggins@google.com>
+ <20191004213812.GA24644@mit.edu>
+ <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
+ <56e2e1a7-f8fe-765b-8452-1710b41895bf@kernel.org>
+ <20191004222714.GA107737@google.com>
+ <ad800337-1ae2-49d2-e715-aa1974e28a10@kernel.org>
+ <CAFd5g46pzu=Bh5X7-ttfhTP+NYNDCAxN16OCGFxc5ohjTL-v0g@mail.gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <b38b118f-9bcb-c2fc-4365-0b94fde4e1ec@kernel.org>
+Date:   Fri, 4 Oct 2019 17:15:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFd5g46pzu=Bh5X7-ttfhTP+NYNDCAxN16OCGFxc5ohjTL-v0g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gpiod_get_from_of_node() is being retired in favor of
-[devm_]fwnode_gpiod_get_index(), that behaves similar to
-[devm_]gpiod_get_index(), but can work with arbitrary firmware node. It
-will also be able to support secondary software nodes.
+On 10/4/19 5:10 PM, Brendan Higgins wrote:
+> On Fri, Oct 4, 2019 at 3:47 PM shuah <shuah@kernel.org> wrote:
+>>
+>> On 10/4/19 4:27 PM, Brendan Higgins wrote:
+>>> On Fri, Oct 04, 2019 at 03:59:10PM -0600, shuah wrote:
+>>>> On 10/4/19 3:42 PM, Linus Torvalds wrote:
+>>>>> On Fri, Oct 4, 2019 at 2:39 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>>>>>>
+>>>>>> This question is primarily directed at Shuah and Linus....
+>>>>>>
+>>>>>> What's the current status of the kunit series now that Brendan has
+>>>>>> moved it out of the top-level kunit directory as Linus has requested?
+>>>>>
+>>>>
+>>>> The move happened smack in the middle of merge window and landed in
+>>>> linux-next towards the end of the merge window.
+>>>>
+>>>>> We seemed to decide to just wait for 5.5, but there is nothing that
+>>>>> looks to block that. And I encouraged Shuah to find more kunit cases
+>>>>> for when it _does_ get merged.
+>>>>>
+>>>>
+>>>> Right. I communicated that to Brendan that we could work on adding more
+>>>> kunit based tests which would help get more mileage on the kunit.
+>>>>
+>>>>> So if the kunit branch is stable, and people want to start using it
+>>>>> for their unit tests, then I think that would be a good idea, and then
+>>>>> during the 5.5 merge window we'll not just get the infrastructure,
+>>>>> we'll get a few more users too and not just examples.
+>>>
+>>> I was planning on holding off on accepting more tests/changes until
+>>> KUnit is in torvalds/master. As much as I would like to go around
+>>> promoting it, I don't really want to promote too much complexity in a
+>>> non-upstream branch before getting it upstream because I don't want to
+>>> risk adding something that might cause it to get rejected again.
+>>>
+>>> To be clear, I can understand from your perspective why getting more
+>>> tests/usage before accepting it is a good thing. The more people that
+>>> play around with it, the more likely that someone will find an issue
+>>> with it, and more likely that what is accepted into torvalds/master is
+>>> of high quality.
+>>>
+>>> However, if I encourage arbitrary tests/improvements into my KUnit
+>>> branch, it further diverges away from torvalds/master, and is more
+>>> likely that there will be a merge conflict or issue that is not related
+>>> to the core KUnit changes that will cause the whole thing to be
+>>> rejected again in v5.5.
+>>>
+>>
+>> The idea is that the new development will happen based on kunit in
+>> linux-kselftest next. It will work just fine. As we accepts patches,
+>> they will go on top of kunit that is in linux-next now.
+> 
+> But then wouldn't we want to limit what KUnit changes are going into
+> linux-kselftest next for v5.5? For example, we probably don't want to
+> do anymore feature development on it until it is in v5.5, since the
+> goal is to make it more stable, right?
+> 
+> I am guessing that it will probably be fine, but it still sounds like
+> we need to establish some ground rules, and play it *very* safe.
+> 
 
-Let's switch this driver over.
+How about we identify a small number tests that can add value and focus
+on them. I am thinking a number between 2 and 5. This way we get a feel
+for the API, if it changes for the better great, if it doesn't have to,
+then you know you already did a great job.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Does that sound reasonable to you?
 
----
-
- drivers/net/phy/fixed_phy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/fixed_phy.c b/drivers/net/phy/fixed_phy.c
-index 4190f9ed5313..73a72ff0fb16 100644
---- a/drivers/net/phy/fixed_phy.c
-+++ b/drivers/net/phy/fixed_phy.c
-@@ -210,8 +210,8 @@ static struct gpio_desc *fixed_phy_get_gpiod(struct device_node *np)
- 	 * Linux device associated with it, we simply have obtain
- 	 * the GPIO descriptor from the device tree like this.
- 	 */
--	gpiod = gpiod_get_from_of_node(fixed_link_node, "link-gpios", 0,
--				       GPIOD_IN, "mdio");
-+	gpiod = fwnode_gpiod_get_index(of_fwnode_handle(fixed_link_node),
-+				       "link-gpios", 0, GPIOD_IN, "mdio");
- 	if (IS_ERR(gpiod) && PTR_ERR(gpiod) != -EPROBE_DEFER) {
- 		if (PTR_ERR(gpiod) != -ENOENT)
- 			pr_err("error getting GPIO for fixed link %pOF, proceed without\n",
--- 
-2.23.0.581.g78d2f28ef7-goog
-
+thanks,
+-- Shuah
