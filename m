@@ -2,104 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA26CB826
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2DC8CB834
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730438AbfJDKXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 06:23:23 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41324 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730173AbfJDKXW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 06:23:22 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94AMe8G034304;
-        Fri, 4 Oct 2019 10:23:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=swaVTqtr5y/z7JmmgDSDknFRcupEJeXLjsqarFMdI80=;
- b=I2h95FJdtEletzPZq92JHCKmVl+FDkvM6O9nEcDf40oGqhJ2ezdPN6bYpgfpsdVzanEI
- V6SO63YwFPsqby03b82MXXxKnjXJg08K/uIebEknmWcbdniauEtWzxZnI+HqeTryGGD1
- YX4cHdDyNsh2P5lcoEjL8tXLAtWA3PeaifTgxi6Dx4so+twknPI5rsM+mTt2VSMGY2cW
- J4HrElj+tUVY7EdfFTWQTJzZJIwXqRCf50HpQwzRdNSbuDNA7w94jSsB0AbgghjMBvZ/
- EVGI8I04gi9tPm+8qUwttaz8TAMxou3EUg2B/NzLyPDUzmHCr2pbZpAHre3b1Z4EJIG7 Tw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2va05sa90e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Oct 2019 10:23:08 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94AIftW045278;
-        Fri, 4 Oct 2019 10:23:08 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2vdt3pdguf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Oct 2019 10:23:07 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x94AN0ET030028;
-        Fri, 4 Oct 2019 10:23:02 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 04 Oct 2019 03:23:00 -0700
-Date:   Fri, 4 Oct 2019 13:22:51 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     David Airlie <airlied@linux.ie>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/i810: Prevent underflow in ioctl
-Message-ID: <20191004102251.GC823@mwanda>
+        id S1728795AbfJDK1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 06:27:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3200 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726111AbfJDK1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 06:27:05 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A76BFFD8EF33CB53B3BE;
+        Fri,  4 Oct 2019 18:26:59 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.179) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Fri, 4 Oct 2019
+ 18:26:57 +0800
+Subject: Re: [PATCH v2 10/22] mtd: spi-nor: Rework write_sr()
+To:     <Tudor.Ambarus@microchip.com>, <vigneshr@ti.com>,
+        <boris.brezillon@collabora.com>, <marek.vasut@gmail.com>,
+        <linux-mtd@lists.infradead.org>, <geert+renesas@glider.be>,
+        <jonas@norrbonn.se>
+References: <20190924074533.6618-1-tudor.ambarus@microchip.com>
+ <20190924074533.6618-11-tudor.ambarus@microchip.com>
+ <83d62334-bd1c-20b7-3c58-225392c819f8@huawei.com>
+ <e5d9b91f-cb86-0b82-5631-af0868ba4796@microchip.com>
+CC:     <linux-aspeed@lists.ozlabs.org>, <andrew@aj.id.au>,
+        <richard@nod.at>, <linux-kernel@vger.kernel.org>, <vz@mleia.com>,
+        <linux-mediatek@lists.infradead.org>, <joel@jms.id.au>,
+        <miquel.raynal@bootlin.com>, <matthias.bgg@gmail.com>,
+        <computersforpeace@gmail.com>, <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <c703dec2-dd11-5898-83ad-fb06127b6575@huawei.com>
+Date:   Fri, 4 Oct 2019 11:26:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910040096
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910040096
+In-Reply-To: <e5d9b91f-cb86-0b82-5631-af0868ba4796@microchip.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.179]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "used" variables here come from the user in the ioctl and it can be
-negative.  It could result in an out of bounds write.
+On 04/10/2019 11:03, Tudor.Ambarus@microchip.com wrote:
+> Hi, John,
+>
+> On 10/04/2019 12:39 PM, John Garry wrote:
+>> External E-Mail
+>>
+>>
+>> On 24/09/2019 08:46, Tudor.Ambarus@microchip.com wrote:
+>>> +}
+>>> +
+>>> +/**
+>>> + * spi_nor_write_sr() - Write the Status Register.
+>>> + * @nor:    pointer to 'struct spi_nor'.
+>>> + * @sr:        buffer to write to the Status Register.
+>>> + * @len:    number of bytes to write to the Status Register.
+>>> + *
+>>> + * Return: 0 on success, -errno otherwise.
+>>>   */
+>>> -static int write_sr(struct spi_nor *nor, u8 val)
+>>> +static int spi_nor_write_sr(struct spi_nor *nor, const u8 *sr, size_t len)
+>>>  {
+>>> -    nor->bouncebuf[0] = val;
+>>> +    int ret;
+>>> +
+>>> +    ret = spi_nor_write_enable(nor);
+>>> +    if (ret)
+>>> +        return ret;
+>>> +
+>>
+>> Hi Tudor,
+>>
+>>>      if (nor->spimem) {
+>>>          struct spi_mem_op op =
+>>>              SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRSR, 1),
+>>>                     SPI_MEM_OP_NO_ADDR,
+>>>                     SPI_MEM_OP_NO_DUMMY,
+>>> -                   SPI_MEM_OP_DATA_IN(1, nor->bouncebuf, 1));
+>>
+>> This be SPI_MEM_OP_DATA_OUT() in the current mainline code also, right?
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/gpu/drm/i810/i810_dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Tudor,
 
-diff --git a/drivers/gpu/drm/i810/i810_dma.c b/drivers/gpu/drm/i810/i810_dma.c
-index 2a77823b8e9a..e66c38332df4 100644
---- a/drivers/gpu/drm/i810/i810_dma.c
-+++ b/drivers/gpu/drm/i810/i810_dma.c
-@@ -728,7 +728,7 @@ static void i810_dma_dispatch_vertex(struct drm_device *dev,
- 	if (nbox > I810_NR_SAREA_CLIPRECTS)
- 		nbox = I810_NR_SAREA_CLIPRECTS;
- 
--	if (used > 4 * 1024)
-+	if (used < 0 || used > 4 * 1024)
- 		used = 0;
- 
- 	if (sarea_priv->dirty)
-@@ -1048,7 +1048,7 @@ static void i810_dma_dispatch_mc(struct drm_device *dev, struct drm_buf *buf, in
- 	if (u != I810_BUF_CLIENT)
- 		DRM_DEBUG("MC found buffer that isn't mine!\n");
- 
--	if (used > 4 * 1024)
-+	if (used < 0 || used > 4 * 1024)
- 		used = 0;
- 
- 	sarea_priv->dirty = 0x7f;
--- 
-2.20.1
+>
+> In v5.4-rc1 this is defined as SPI_MEM_OP_DATA_IN, so the Mainline code should
+> fail. This looks like a bug. I didn't noticed it when doing the patch.
+>
+>>
+>> I'm testing my under development driver on top of v5.4-rc1, and flash_lock -u is broken.
+>
+> It's not clear to me, does flash_lock fail with my patches on top of v5.4-rc1?
+
+No, I haven't tested these patches. I'm just testing my out-of-tree 
+driver on top of vanilla v5.4-rc1. I'm just mentioning the issue here as 
+it seemed like a reasonably appropriate place.
+
+However it looks like I will also need to test on top of these patches.
+
+> Or it fails when testing v5.4-rc1?
+>
+> Can you test v5.4-rc1 and see if flash_lock works on you flash or not?
+
+flash_lock -u errors for my driver on top of vanilla v5.4-rc1.
+
+When I make the change, as above, flash_lock -u and -l succeed, but I 
+can still write to the flash - I need to check that more - it may be my 
+buggy driver.
+
+IIRC, it did work for my driver based on v5.3
+
+>
+> Please specify which flash do you use, and which controller.
+
+The flash is n25q128a11:
+[   14.917868] spi-nor spi-PRP0001:00: n25q128a11 (16384 Kbytes)
+
+As for the driver, it's another HiSilicon SPI NOR controller driver 
+which I'm developing - I eluded to it here already: 
+https://lore.kernel.org/linux-mtd/c5e063e8-5025-8206-f819-6ce5228ef0fb@huawei.com/
+
+Cheers,
+John
+
+>
+> Thanks for testing this!
+> ta
+>
+
 
