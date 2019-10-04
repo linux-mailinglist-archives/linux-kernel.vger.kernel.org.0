@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 444B1CC639
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40F91CC649
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731487AbfJDXK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 19:10:26 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38365 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731444AbfJDXKZ (ORCPT
+        id S1731657AbfJDXKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 19:10:49 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45588 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731452AbfJDXKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 Oct 2019 19:10:25 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w8so3808581plq.5
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:10:24 -0700 (PDT)
+Received: by mail-pl1-f195.google.com with SMTP id u12so3795514pls.12
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=V9Tcr8H66a/ItWUKfyzgngKKlcGkzwk48GNoumxAsGU=;
-        b=DtyrvbQvGOExbukCQcV+ZhSehiVj45mWdMpVe8rk+5ULj6b+828TKo0meBgkrFG7sr
-         FWyKMxOvrfzRGtn8GISG6942bAa0z23ve2DBkQq61s6j8Uelk6WK/onpnhV5ekM9BEjy
-         uyG5GxaWyLZ4FDvyACLaIWbONxAbboIPhePGbqY+JSPEncu3SndiC10aZkgXd0fx5Jxq
-         B/I3LoEuOOm0GI7r4B5I6EWN2650eC0vjkWgsHtIqjTb3QeU3GYKbg8faoHNFIZXu16d
-         Oxxl8Vgz4O0H2YjFUFOrSLy80Xp5acW2ns68HeztHeDWug1WkEcHhkWZXa1BaKXELeEk
-         tB+A==
+        bh=cm58LI6h4jAqsDBKxV++l0e4ZOMCLYhH6Wxp6SfSZww=;
+        b=YlMTkoM+/Jlxqs3Sq21Fb3tLnvPSM/+KqpMO5/nwQZgzlrgLD+5UCoK7wwOBrunMOo
+         FzcZyaHjF4MN27ftKyNjhLYFlrYn+LcA1KltQ7YupR7cNp60JvbzBM5OCGkSuYVmH9q1
+         g87WGTrTDkwR2IKQN+FRlUBHzVi+WwaFaOgZxNnE/kkFEGTcokSFT6c2ghzmT890cqYd
+         yONTx/1RPPo/BHTb8u4ePV8fjmpExhx5oROer6WJXyP8WY2/GN1SamS8e/Qxne9x6StD
+         38LWKVVm2p5siEnOwIrNOZMzZ+WDLmI3qiML4ga987sfWDS8EQ2t9RQM9u6npX1pLUAB
+         l6/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=V9Tcr8H66a/ItWUKfyzgngKKlcGkzwk48GNoumxAsGU=;
-        b=c4A2IUIeAh1iL6X5riGitN5IZGic3OaSCp4dFkIBgw8XKFAeKMALHD1QPxQ4qT7XXc
-         rjRQt68gnZmvdwM7jNLdwCVsSOGpECgJ/IDW/c8ahfY2SXiJoW7kHk/0XWVqZ9Xc6Rxe
-         DwFHWpTlJzFb7AHxq/NvpDCKcYzNlQngAHHUGmHEr++b7rJn5x3kS/eFyXzGYZKOPnfT
-         +K6rW6qGB0LxZCwA/wQfAqiKS8qmb6TX1HsTyqVFqvMD6QMj8rskyYWGx1QfzPu+KDsZ
-         36sfh1FCX/q/vjx2Jz916E2NLRODVil/53CwX/J4fsSK16WdmOsCdhibi3OKWHGzMk/3
-         yC9g==
-X-Gm-Message-State: APjAAAXFD4eSAqbskZnvcRslZLA7Mq1+HhTa6OEWAJx+ko+ta19hd63E
-        LHqHzf7HTrE307CRrlCXQXQ=
-X-Google-Smtp-Source: APXvYqys2V9xdyLefeURldgYi/4pamBqBS19ybhuqrGvzipZhaleiPO7tgFJ1lw2+G2Do9oilGhShA==
-X-Received: by 2002:a17:902:8f88:: with SMTP id z8mr18089936plo.232.1570230623837;
-        Fri, 04 Oct 2019 16:10:23 -0700 (PDT)
+        bh=cm58LI6h4jAqsDBKxV++l0e4ZOMCLYhH6Wxp6SfSZww=;
+        b=ov3OePpRsKhaeTEXUUMOMqwsUxQmSwpDsHIxra8jbxlcg72IGD4vYWaaKXR63iumPf
+         TK9NQubp6PhVTdy6NsU49y0TuFCGSnNuNPH0mduZVnifX2T4S/CViAVQGH/d1zPKugq3
+         R/8lf6clBGP66ZhkMnKYPg0xvdEl31jkbpp10l4K1lwyeLWfC3+M9d++na9yfUDWLMl/
+         V263se86tvahYsqJyfj/t1q+LII4KwYB5tvJNiu/Nn/ATW3B7sq+J5zyW+EtCZHugpaV
+         e47LyuP+HZF8nAh9Y2/T1ohcwz1+jOH+uou85yQkBrmaGHicNxLy0T4WkeI/M915tYkh
+         B42g==
+X-Gm-Message-State: APjAAAUr+4CnUorQo+u1I1VVwcYAtTNDBDp9BPEZUpyWD9Oo7tPr7JA6
+        eBm9LWs6obc0qEbO6tsY6Dg=
+X-Google-Smtp-Source: APXvYqyCmVp4XhLd0gKGmmYx/OReapyUsshneu034hXsRRXZ3s4A5oJoHCg8M3Hcu0yl5d2JLUi4wQ==
+X-Received: by 2002:a17:902:7c94:: with SMTP id y20mr17003667pll.229.1570230624731;
+        Fri, 04 Oct 2019 16:10:24 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.22
+        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 16:10:22 -0700 (PDT)
+        Fri, 04 Oct 2019 16:10:24 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: [PATCH 2/7] regulator: slg51000: switch to using fwnode_gpiod_get_index
-Date:   Fri,  4 Oct 2019 16:10:12 -0700
-Message-Id: <20191004231017.130290-3-dmitry.torokhov@gmail.com>
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH 3/7] regulator: tps65090: switch to using devm_fwnode_gpiod_get
+Date:   Fri,  4 Oct 2019 16:10:13 -0700
+Message-Id: <20191004231017.130290-4-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 In-Reply-To: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
@@ -64,50 +63,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 devm_gpiod_get_from_of_node() is being retired in favor of
-[devm_]fwnode_gpiod_get_index(), that behaves similar to
+devm_fwnode_gpiod_get_index(), that behaves similar to
 devm_gpiod_get_index(), but can work with arbitrary firmware node. It
 will also be able to support secondary software nodes.
 
 Let's switch this driver over.
 
-Note that now that we have a good non-devm API for getting GPIO from
-arbitrary firmware node, there is no reason to use devm API here as
-regulator core takes care of managing lifetime of "enable" GPIO and we
-were immediately detaching requested GPIO from devm anyway.
-
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
- drivers/regulator/slg51000-regulator.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/regulator/tps65090-regulator.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
-index a0565daecace..bf1a3508ebc4 100644
---- a/drivers/regulator/slg51000-regulator.c
-+++ b/drivers/regulator/slg51000-regulator.c
-@@ -198,17 +198,14 @@ static int slg51000_of_parse_cb(struct device_node *np,
- 				const struct regulator_desc *desc,
- 				struct regulator_config *config)
- {
--	struct slg51000 *chip = config->driver_data;
- 	struct gpio_desc *ena_gpiod;
--	enum gpiod_flags gflags = GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index 10ea4b5a0f55..f0b660e9f15f 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -346,16 +346,20 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 	for (idx = 0; idx < ARRAY_SIZE(tps65090_matches); idx++) {
+ 		struct regulator_init_data *ri_data;
+ 		struct tps65090_regulator_plat_data *rpdata;
++		struct device_node *np;
  
--	ena_gpiod = devm_gpiod_get_from_of_node(chip->dev, np,
--						"enable-gpios", 0,
--						gflags, "gpio-en-ldo");
--	if (!IS_ERR(ena_gpiod)) {
-+	ena_gpiod = fwnode_gpiod_get_index(of_fwnode_handle(np), "enable", 0,
-+					   GPIOD_OUT_LOW |
-+						GPIOD_FLAGS_BIT_NONEXCLUSIVE,
-+					   "gpio-en-ldo");
-+	if (!IS_ERR(ena_gpiod))
- 		config->ena_gpiod = ena_gpiod;
--		devm_gpiod_unhinge(chip->dev, config->ena_gpiod);
--	}
+ 		rpdata = &reg_pdata[idx];
+ 		ri_data = tps65090_matches[idx].init_data;
+-		if (!ri_data || !tps65090_matches[idx].of_node)
++		if (!ri_data)
++			continue;
++
++		np = tps65090_matches[idx].of_node;
++		if (!np)
+ 			continue;
  
- 	return 0;
- }
+ 		rpdata->reg_init_data = ri_data;
+-		rpdata->enable_ext_control = of_property_read_bool(
+-					tps65090_matches[idx].of_node,
+-					"ti,enable-ext-control");
++		rpdata->enable_ext_control = of_property_read_bool(np,
++						"ti,enable-ext-control");
+ 		if (rpdata->enable_ext_control) {
+ 			enum gpiod_flags gflags;
+ 
+@@ -366,11 +370,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 				gflags = GPIOD_OUT_LOW;
+ 			gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+ 
+-			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
+-								    tps65090_matches[idx].of_node,
+-								    "dcdc-ext-control-gpios", 0,
+-								    gflags,
+-								    "tps65090");
++			rpdata->gpiod = devm_fwnode_gpiod_get(
++							&pdev->dev,
++							of_fwnode_handle(np),
++							"dcdc-ext-control",
++							gflags,
++							"tps65090");
+ 			if (PTR_ERR(rpdata->gpiod) == -ENOENT) {
+ 				dev_err(&pdev->dev,
+ 					"could not find DCDC external control GPIO\n");
+@@ -379,8 +384,7 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 				return ERR_CAST(rpdata->gpiod);
+ 		}
+ 
+-		if (of_property_read_u32(tps65090_matches[idx].of_node,
+-					 "ti,overcurrent-wait",
++		if (of_property_read_u32(np, "ti,overcurrent-wait",
+ 					 &rpdata->overcurrent_wait) == 0)
+ 			rpdata->overcurrent_wait_valid = true;
+ 
 -- 
 2.23.0.581.g78d2f28ef7-goog
 
