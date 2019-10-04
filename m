@@ -2,84 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F0ECBB44
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8492ECBB48
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388227AbfJDNIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:08:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37882 "EHLO mail.kernel.org"
+        id S2388266AbfJDNIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:08:40 -0400
+Received: from mga14.intel.com ([192.55.52.115]:38014 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387874AbfJDNIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:08:05 -0400
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C17D5215EA;
-        Fri,  4 Oct 2019 13:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570194485;
-        bh=HhQ69B1WDttqkP35gsTsi8yNjEKoaJWoVrSxdX3Mblg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=SeSYW+Q8gv30sLvK4tKZE1hvuDAvospSwtjV7/z2VkMpHqizNd3HB1rr5g7soVPuV
-         l3/L2MKWk78SuBIGkQK+uMguRzosy7vTa1Gy445Z3E21q0el4egfijlmQq82XRAKy6
-         Zl5YLo4H3pJZXiBN2Y8j6+GQaP0EYiwbwPIrizjI=
-Date:   Fri, 4 Oct 2019 08:08:03 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
-Cc:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "logang@deltatee.com" <logang@deltatee.com>
-Subject: Re: [PATCH v8 0/6] Patch series to support Thunderbolt without any
- BIOS support
-Message-ID: <20191004130803.GA41961@google.com>
+        id S2387545AbfJDNIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 09:08:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 06:08:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,256,1566889200"; 
+   d="scan'208";a="276041229"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga001.jf.intel.com with SMTP; 04 Oct 2019 06:08:36 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 04 Oct 2019 16:08:35 +0300
+Date:   Fri, 4 Oct 2019 16:08:35 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Cc:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] drm: atomic helper: fix W=1 warnings
+Message-ID: <20191004130835.GX1208@intel.com>
+References: <20190909135205.10277-1-benjamin.gaignard@st.com>
+ <20190909135205.10277-2-benjamin.gaignard@st.com>
+ <20191003142738.GM1208@intel.com>
+ <CA+M3ks4FBAgCRDDHZ=x7kvQ1Y=0dBdj4+KLO2djh__hW+L=3gQ@mail.gmail.com>
+ <20191003150526.GN1208@intel.com>
+ <CA+M3ks7-SNusVJsiHqrmy4AN+_OO5e1X=ZRN16Hj6f-V3GnVow@mail.gmail.com>
+ <20191003154627.GQ1208@intel.com>
+ <CA+M3ks4gpDdZTPdBYRd=CrwgEYiSWJbXqvtPb-0KpW1BhzvmEQ@mail.gmail.com>
+ <20191004122747.GT1208@intel.com>
+ <5fe9d7e2-f434-70cb-ac0f-ad66a565093d@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191003121946.GS2819@lahna.fi.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5fe9d7e2-f434-70cb-ac0f-ad66a565093d@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 03:19:46PM +0300, mika.westerberg@linux.intel.com wrote:
-> On Fri, Jul 26, 2019 at 12:52:58PM +0000, Nicholas Johnson wrote:
-> > Patch series rebased to 5.3-rc1.
-> > 
-> > If possible, please have a quick read over while I am away (2019-07-27
-> > to mid 2019-08-04), so I can fix any mistakes or make simple changes to
-> > get problems out of the way for a more thorough examination later.
-> > 
-> > Thanks!
-> > 
-> > Kind regards,
-> > Nicholas
-> > 
-> > Nicholas Johnson (6):
-> >   PCI: Consider alignment of hot-added bridges when distributing
-> >     available resources
-> >   PCI: In extend_bridge_window() change available to new_size
-> >   PCI: Change extend_bridge_window() to set resource size directly
-> >   PCI: Allow extend_bridge_window() to shrink resource if necessary
-> >   PCI: Add hp_mmio_size and hp_mmio_pref_size parameters
-> >   PCI: Fix bug resulting in double hpmemsize being assigned to MMIO
-> >     window
+On Fri, Oct 04, 2019 at 12:36:56PM +0000, Benjamin GAIGNARD wrote:
 > 
-> Hi Bjorn,
+> On 10/4/19 2:27 PM, Ville Syrjälä wrote:
+> > On Fri, Oct 04, 2019 at 12:48:02PM +0200, Benjamin Gaignard wrote:
+> >> Le jeu. 3 oct. 2019 à 17:46, Ville Syrjälä
+> >> <ville.syrjala@linux.intel.com> a écrit :
+> >>> On Thu, Oct 03, 2019 at 05:37:15PM +0200, Benjamin Gaignard wrote:
+> >>>> Le jeu. 3 oct. 2019 à 17:05, Ville Syrjälä
+> >>>> <ville.syrjala@linux.intel.com> a écrit :
+> >>>>> On Thu, Oct 03, 2019 at 04:46:54PM +0200, Benjamin Gaignard wrote:
+> >>>>>> Le jeu. 3 oct. 2019 à 16:27, Ville Syrjälä
+> >>>>>> <ville.syrjala@linux.intel.com> a écrit :
+> >>>>>>> On Mon, Sep 09, 2019 at 03:52:05PM +0200, Benjamin Gaignard wrote:
+> >>>>>>>> Fix warnings with W=1.
+> >>>>>>>> Few for_each macro set variables that are never used later.
+> >>>>>>>> Prevent warning by marking these variables as __maybe_unused.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> >>>>>>>> ---
+> >>>>>>>>   drivers/gpu/drm/drm_atomic_helper.c | 36 ++++++++++++++++++------------------
+> >>>>>>>>   1 file changed, 18 insertions(+), 18 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> >>>>>>>> index aa16ea17ff9b..b69d17b0b9bd 100644
+> >>>>>>>> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> >>>>>>>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> >>>>>>>> @@ -262,7 +262,7 @@ steal_encoder(struct drm_atomic_state *state,
+> >>>>>>>>              struct drm_encoder *encoder)
+> >>>>>>>>   {
+> >>>>>>>>        struct drm_crtc_state *crtc_state;
+> >>>>>>>> -     struct drm_connector *connector;
+> >>>>>>>> +     struct drm_connector __maybe_unused *connector;
+> >>>>>>> Rather ugly. IMO would be nicer if we could hide something inside
+> >>>>>>> the iterator macros to suppress the warning.
+> >>>>>> Ok but how ?
+> >>>>>> connector is assigned in the macros but not used later and we can't
+> >>>>>> set "__maybe_unused"
+> >>>>>> in the macro.
+> >>>>>> Does another keyword exist for that ?
+> >>>>> Stick a (void)(connector) into the macro?
+> >>>> That could work but it will look strange inside the macro.
+> >>>>
+> >>>>> Another (arguably cleaner) idea would be to remove the connector/crtc/plane
+> >>>>> argument from the iterators entirely since it's redundant, and instead just
+> >>>>> extract it from the appropriate new/old state as needed.
+> >>>>>
+> >>>>> We could then also add a for_each_connector_in_state()/etc. which omit
+> >>>>> s the state arguments and just has the connector argument, for cases where
+> >>>>> you don't care about the states when iterating.
+> >>>> That may lead to get a macro for each possible combination of used variables.
+> >>> We already have new/old/oldnew, so would "just" add one more.
+> >> Not just one, it will be one each new/old/oldnew macro to be able to distinguish
+> >> when connector is used or not.
+> > What I'm suggesting is this:
+> > for_each_connector_in_state(state, connector, i)
+> > for_each_old_connector_in_state(state, old_conn_state, i)
+> > for_each_new_connector_in_state(state, new_conn_state, i)
+> > for_each_oldnew_connector_in_state(state, old_conn_state, new_conn_state, i)
+> >
+> > So only four in total for each object type, instead of the current
+> > three.
 > 
-> What's the status of this series? I don't see them in v5.4-rc1.
+> You are missing these cases: old and connector, new and connector,
+> 
+> old and new and connector are needed together.
 
-They're still on my to-do list but are currently languishing because
-they touch critical but complicated code that I don't understand and
-nobody else has chimed in to help review them.  Testing reports would
-also be helpful.
+No, that's redundant. You can always get the connector from
+old/new_conn_state->connector if you need it.
 
-It's been a long time since I've looked at these, but I wonder if at
-least the incremental step of adding the parameter to set the
-MMIO_PREF size separately from the MMIO size would be more
-approachable.
-
-Bjorn
+-- 
+Ville Syrjälä
+Intel
