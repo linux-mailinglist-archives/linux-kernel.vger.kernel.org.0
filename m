@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C72AECC21D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 19:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB46CC210
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 19:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388743AbfJDRwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 13:52:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50930 "EHLO
+        id S2388900AbfJDRwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 13:52:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51038 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388643AbfJDRwr (ORCPT
+        with ESMTP id S2388814AbfJDRwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 13:52:47 -0400
+        Fri, 4 Oct 2019 13:52:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DZteKWiCg/rzRkGg/VW0yCwD7S2qYWJWyPuyGedcDZc=; b=YtY6+wThIvSZ
-        Vh4I5gFdI+VGZtDtGv4taDLVXjfuMAXgj8+BjJHVBHei20mw//JqV9sOFmz8JSPXPSL37R6wJREpd
-        G1pJ9Pg/+tlatuWnx0WVs5SfIZkbhZThmrxrk8CfkYAIJ8i1nutNYXZqtGVvb6zq58mRy/v4/lVWS
-        WugLM=;
+        List-Archive; bh=EV6mJV9fbq+0/IGUxZm9F6zPrU/8DDn5KRx+8Yb0f8c=; b=A5o4qkr7WfjT
+        HSjlWPPegxn56c5LCBWgEfCS9G5JWLdse+J5hdcb5ld9U9dE4Q35edLC45X8HZvcrGisGpm0ucBJz
+        J1clEYjbBE8EPPHV1bCVUQcSnK4u8El2Sk2J5k1ueIySnr2HIjbXVsnSOERi1UCjMpydm3jGbMxZg
+        gBVIQ=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iGRkx-0003wJ-7e; Fri, 04 Oct 2019 17:52:43 +0000
+        id 1iGRky-0003wa-0S; Fri, 04 Oct 2019 17:52:44 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id C0B6B2741EF2; Fri,  4 Oct 2019 18:52:42 +0100 (BST)
+        id 843C82741EF2; Fri,  4 Oct 2019 18:52:43 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Kiran Gunda <kgunda@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     ckeepax@opensource.cirrus.com, devicetree@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Marco Felsch <m.felsch@pengutronix.de>,
         Mark Brown <broonie@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Applied "regulator: dt-bindings: Add PM6150x compatibles" to the regulator tree
-In-Reply-To: <1570183734-30706-2-git-send-email-kgunda@codeaurora.org>
+        Rob Herring <robh+dt@kernel.org>, zhang.chunyan@linaro.org
+Subject: Applied "regulator: Document "regulator-boot-on" binding more thoroughly" to the regulator tree
+In-Reply-To: <20191001124531.v2.1.Ice34ad5970a375c3c03cb15c3859b3ee501561bf@changeid>
 X-Patchwork-Hint: ignore
-Message-Id: <20191004175242.C0B6B2741EF2@ypsilon.sirena.org.uk>
-Date:   Fri,  4 Oct 2019 18:52:42 +0100 (BST)
+Message-Id: <20191004175243.843C82741EF2@ypsilon.sirena.org.uk>
+Date:   Fri,  4 Oct 2019 18:52:43 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: dt-bindings: Add PM6150x compatibles
+   regulator: Document "regulator-boot-on" binding more thoroughly
 
 has been applied to the regulator tree at
 
@@ -74,42 +75,47 @@ to this mail.
 Thanks,
 Mark
 
-From 0c06b311c053ab12a9690e17a98ff4e4a90ab3e5 Mon Sep 17 00:00:00 2001
-From: Kiran Gunda <kgunda@codeaurora.org>
-Date: Fri, 4 Oct 2019 15:38:53 +0530
-Subject: [PATCH] regulator: dt-bindings: Add PM6150x compatibles
+From 87fd0db6d7df1cf4cc6e9b09e2155d1f324bf836 Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Tue, 1 Oct 2019 12:45:54 -0700
+Subject: [PATCH] regulator: Document "regulator-boot-on" binding more
+ thoroughly
 
-Add PM6150 and PM6150L compatibles for Qualcomm SC7180 platfrom.
+The description of "regulator-boot-on" was a little unclear, at least
+to me.  Did this property mean that we should turn the regulator on at
+boot?  Or perhaps it was intended only to be used for regulators where
+we couldn't read the state at bootup to indicate what state we should
+assume?  The answer, it turns out, is both [1].
 
-Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-Link: https://lore.kernel.org/r/1570183734-30706-2-git-send-email-kgunda@codeaurora.org
+Let's document this.
+
+[1] https://lore.kernel.org/r/20190923181431.GU2036@sirena.org.uk
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Link: https://lore.kernel.org/r/20191001124531.v2.1.Ice34ad5970a375c3c03cb15c3859b3ee501561bf@changeid
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/regulator/qcom,rpmh-regulator.txt     | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/regulator/regulator.yaml | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-index bab9f71140b8..97c3e0b7611c 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-@@ -28,6 +28,8 @@ Supported regulator node names:
- 	PM8150L:	smps1 - smps8, ldo1 - ldo11, bob, flash, rgb
- 	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
- 	PMI8998:	bob
-+	PM6150:         smps1 - smps5, ldo1 - ldo19
-+	PM6150L:        smps1 - smps8, ldo1 - ldo11, bob
+diff --git a/Documentation/devicetree/bindings/regulator/regulator.yaml b/Documentation/devicetree/bindings/regulator/regulator.yaml
+index 02c3043ce419..92ff2e8ad572 100644
+--- a/Documentation/devicetree/bindings/regulator/regulator.yaml
++++ b/Documentation/devicetree/bindings/regulator/regulator.yaml
+@@ -38,7 +38,12 @@ properties:
+     type: boolean
  
- ========================
- First Level Nodes - PMIC
-@@ -43,6 +45,8 @@ First Level Nodes - PMIC
- 		    "qcom,pm8150l-rpmh-regulators"
- 		    "qcom,pm8998-rpmh-regulators"
- 		    "qcom,pmi8998-rpmh-regulators"
-+		    "qcom,pm6150-rpmh-regulators"
-+		    "qcom,pm6150l-rpmh-regulators"
+   regulator-boot-on:
+-    description: bootloader/firmware enabled regulator
++    description: bootloader/firmware enabled regulator.
++      It's expected that this regulator was left on by the bootloader.
++      If the bootloader didn't leave it on then OS should turn it on
++      at boot but shouldn't prevent it from being turned off later.
++      This property is intended to only be used for regulators where
++      software cannot read the state of the regulator.
+     type: boolean
  
- - qcom,pmic-id
- 	Usage:      required
+   regulator-allow-bypass:
 -- 
 2.20.1
 
