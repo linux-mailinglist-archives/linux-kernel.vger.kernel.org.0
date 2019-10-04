@@ -2,85 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C10E4CC266
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F59ACC280
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730389AbfJDSQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 14:16:50 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43758 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbfJDSQu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 14:16:50 -0400
-Received: by mail-qk1-f193.google.com with SMTP id h126so6635991qke.10
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oE8kJevCjFytZL5gkVb9MuZ6rIst5eLpSx35aqrnebg=;
-        b=k3uUdgwfl9Cz0kx/EDhh59plZ+l28scx0fVqHmhifNeXUymGqaSl7Uf4puFaTIz2ST
-         oa+Vb7NxDocz3oofGxej2mZedKtpy/fJielHurjm8p2w/npL/WpdrLS7bi05YaUwuNv4
-         NYQq6tFmutgh1NQzItIp+i9kt2iUGhgjwhHgUldfUNx68xXL1gYaHIhiTxrl2yvGag55
-         n2pPwX7wud/ntgUiBYsdUI3bF4eTs4cJDp83ZVc/P7cnBcWLsx70OWDeIHKlvGDqbYnk
-         V7j8EWSb1CNc6BFWDW3K9oEKYy95dBGaEcuYfsDye4fgx7J8YlXq3gLWqRefhfCK0dvz
-         pxcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oE8kJevCjFytZL5gkVb9MuZ6rIst5eLpSx35aqrnebg=;
-        b=VakqGn8j1bjSsvhDXR5kyy2yUmNIZRqV7U8nTCXAOTjwa/jwuogmkN5E5iIgrSKRdn
-         MaYS/fgrzkTlM+WTlkWCIFGr+q/wJU1SZarRdABBcfCw5XAeneYBWN+I+aPOEA1S3sXD
-         DOc/P3WfjDJZ47igOilGmKlZ2bNxzeuZFTC4emLLabvj63mOoOOHjntro5/DsUS2AUYo
-         4guDyGfoZwyvw5DcKTkQ9vBovy6O2llHzYNJJ7Mlkbq2WDGNlnyGT0gG8G6iD9MPqzqg
-         oupxvSKvIVj9gMYjC3UBHSGnNj7Ctc0tctLRabrGWDo6yHuUf4OjZwr9n6gRnvL+ofdq
-         n4ZQ==
-X-Gm-Message-State: APjAAAXSS1V1fvCe8ccMCGBi5/uj3kl7yTw7yGruYpGqPn1gfMJi+iCI
-        feq4Ec5ni7E4fubNka2Zl7GCrQ==
-X-Google-Smtp-Source: APXvYqyLD4FU0kk1pDF8XqG+vg9smodSRU4af+tYKvmuGU4fCYOwPtKL+q2OaApNxmlOwxF2Jqizig==
-X-Received: by 2002:a37:2e01:: with SMTP id u1mr11588779qkh.455.1570213009234;
-        Fri, 04 Oct 2019 11:16:49 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
-        by smtp.gmail.com with ESMTPSA id v5sm5089978qtk.66.2019.10.04.11.16.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Oct 2019 11:16:48 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1iGS8G-0007JC-41; Fri, 04 Oct 2019 15:16:48 -0300
-Date:   Fri, 4 Oct 2019 15:16:48 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Potnuri Bharat Teja <bharat@chelsio.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicolas Waisman <nico@semmle.com>
-Subject: Re: [PATCH v2] cxgb4: do not dma memory off of the stack
-Message-ID: <20191004181648.GA28069@ziepe.ca>
-References: <20191001153917.GA3498459@kroah.com>
- <20191001165611.GA3542072@kroah.com>
+        id S1728336AbfJDSUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 14:20:16 -0400
+Received: from mga07.intel.com ([134.134.136.100]:15752 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfJDSUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 14:20:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 11:20:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
+   d="scan'208";a="205910170"
+Received: from nzaki1-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.4.57])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Oct 2019 11:20:08 -0700
+Date:   Fri, 4 Oct 2019 21:20:07 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     David Safford <david.safford@ge.com>,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
+Message-ID: <20191004182007.GA6945@linux.intel.com>
+References: <20190926171601.30404-1-jarkko.sakkinen@linux.intel.com>
+ <1570024819.4999.119.camel@linux.ibm.com>
+ <20191003114119.GF8933@linux.intel.com>
+ <1570107752.4421.183.camel@linux.ibm.com>
+ <20191003175854.GB19679@linux.intel.com>
+ <1570128827.5046.19.camel@linux.ibm.com>
+ <20191003215125.GA30511@linux.intel.com>
+ <20191003215743.GB30511@linux.intel.com>
+ <1570140491.5046.33.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191001165611.GA3542072@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1570140491.5046.33.camel@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2019 at 06:56:11PM +0200, Greg KH wrote:
-> Nicolas pointed out that the cxgb4 driver is doing dma off of the stack,
-> which is generally considered a very bad thing.  On some architectures
-> it could be a security problem, but odds are none of them actually run
-> this driver, so it's just a "normal" bug.
+On Thu, Oct 03, 2019 at 06:08:11PM -0400, Mimi Zohar wrote:
+> > At the time when trusted keys was introduced I'd say that it was a wrong
+> > design decision and badly implemented code. But you are right in that as
+> > far that code is considered it would unfair to speak of a regression.
+> > 
+> > asym-tpm.c on the other hand this is fresh new code. There has been
+> > *countless* of discussions over the years that random numbers should
+> > come from multiple sources of entropy. There is no other categorization
+> > than a bug for the tpm_get_random() there.
 > 
-> Resolve this by allocating the memory for a message off of the heap
-> instead of the stack.  kmalloc() always will give us a proper memory
-> location that DMA will work correctly from.
-> 
-> Reported-by: Nicolas Waisman <nico@semmle.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> This week's LWN article on "5.4 Merge window, part 2" discusses "boot-
+> time entropy".  This article couldn't have been more perfectly timed.
 
-Applied to for-rc, thanks
+Do not see any obvious relation to this dicussion. Are you saying that
+you should not use the defacto kernel API's but instead bake your own
+hacks because even defacto stuff bumps into issues from time to time?
 
-Jason
+And BTW, at the time you call tpm_get_random(), TPM driver is already
+contributing to the entropy pool (registered as hwrng).
+
+/Jarkko
