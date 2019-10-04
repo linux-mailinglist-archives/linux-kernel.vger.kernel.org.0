@@ -2,58 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6992CC516
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D63D9CC50D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731524AbfJDVoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 17:44:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39815 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729291AbfJDVnn (ORCPT
+        id S1731465AbfJDVn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:43:59 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38359 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731223AbfJDVno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:43:43 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e1so4484396pgj.6
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:43:42 -0700 (PDT)
+        Fri, 4 Oct 2019 17:43:44 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h195so4685400pfe.5
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:43:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kKHG7UTsDPcnCMtVxGV72BXVFFtNiiXVrgsu7N6vxI4=;
-        b=dUHt+jCIixU+I2Q5iiGOtz5ZLigFhCMop4kFDCvfXwqMApUQHan0clusE1HE9LZPTr
-         kTm1Sf08Dy/4mnp5fIxaCLIYm1CtgcsETkD0e/um/x2SznUJ3BMRFDDQ19Ps0nYJOPri
-         f6gEqnwUOTN2RyHZ8d+g5Am+X+uP4NhdPdb68=
+        bh=GlE7EV9ZCAIebEa+EIBxR8fUoerT1/7sfKy7D9MHjI4=;
+        b=eVxW6KgtyZ8JQrKs0J/lCOximSvmXNsC1eBefIROkzFGAjbHwvP1CIkoAjV00sn/ZT
+         c37j0oEoOCfnf42J6h13VbuR1Plru4KL2pAmil/2mEiCxIC+/eOl5vhe/yZ2QsOOQryF
+         NfODdc9R4JjgUz3eIt3BqOdX3FRAu3XS9Vu2k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kKHG7UTsDPcnCMtVxGV72BXVFFtNiiXVrgsu7N6vxI4=;
-        b=CKNVQo7C6ciu2xza7DjL1FbB4+T1wV7e9TMCtHNAnYfqnmqOxWn9ck3gbP34R3GBKn
-         Ecj7pSszeycCjbPjlv9NMvJH2MuQ+3YRPN40gw31PUlhx2p8rz4yVhCRWgk09RCjm2f8
-         s5E3+cqxbFJ5CSshHVDo2K5gr2NRsu2jdVKfSx7WUH54/0WmwRZUCI+Pjb863H0M1OAs
-         WyvvHLBaH9wYPUb+9mYHIB12PQ7xJJXxFR5s75udygu7MsT20OQ6i8jVqavJQxbjm4Fz
-         D6TKZaAy2dj2LYKFmxN2o5d13i5Re/d06Up8L1sbOC3MVywLemgBGi2DrjqAYe5X55mY
-         T5lw==
-X-Gm-Message-State: APjAAAXFzGkEjWzAnJ8Z/w41fkORKpN/4Ccvc242pynbmFeLO2lYBBIF
-        0jJ3s0TpfMsxay/VwLdPrh6d2ixlhc4=
-X-Google-Smtp-Source: APXvYqxRakS5XLryNdBetTMDUVY49wiIkkoe+7l2+YKQd+NSkcecQAoD98r+dwCVJDzmBco1sQvNuA==
-X-Received: by 2002:a65:4686:: with SMTP id h6mr18021406pgr.212.1570225422072;
-        Fri, 04 Oct 2019 14:43:42 -0700 (PDT)
+        bh=GlE7EV9ZCAIebEa+EIBxR8fUoerT1/7sfKy7D9MHjI4=;
+        b=CUZhm4LGRxF04HJPTppDVcSHK39rMoYXjhuM2LUQ3s1ZhxlDl4N6B96rKIFor+ySaV
+         rtCLww+dqFBf3uMFKyFiXuehXwBUlW1BHbiL3Zlscr2EAACwnb0kcKGsp7E3Oqa3CgeA
+         WcGLqA5/598JOlpKuvWHeucjMFyGm9C0Afr1MHCq/nJGiH2h4ET+tRj2B57lP9SG59mx
+         d1h6n1yKJWmikrijXRaEya3pCwPQpTZy54WV983ojsNKXUg5K7Roh490am+0tZjyrJpS
+         nXRgWBuYVpo/LJmP1rETA0/f+lCBykq3cCecSRszYizcBRCDFj/xlnzVaxPjhLG5cO/Y
+         9/7A==
+X-Gm-Message-State: APjAAAXlsM8Y6t5usmZz8vw2H2z4QI8sEyTq1zpThvDeRcFZIubZEwgf
+        xzX/wSGmY487JfbD+zil3rnUChw59KE=
+X-Google-Smtp-Source: APXvYqz/zeAfOFLn8InrUDsSwRMd8ffzxCvY/3n479aCfXR18qlzfF6acmga5aGS3E9hIODd6McEkw==
+X-Received: by 2002:a63:df50:: with SMTP id h16mr17395692pgj.126.1570225423141;
+        Fri, 04 Oct 2019 14:43:43 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id a11sm10446799pfg.94.2019.10.04.14.43.41
+        by smtp.gmail.com with ESMTPSA id a11sm10446799pfg.94.2019.10.04.14.43.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 14:43:41 -0700 (PDT)
+        Fri, 04 Oct 2019 14:43:42 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
         Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH 06/10] usb: usb251xb: Use of_device_get_match_data()
-Date:   Fri,  4 Oct 2019 14:43:30 -0700
-Message-Id: <20191004214334.149976-7-swboyd@chromium.org>
+        alsa-devel@alsa-project.org
+Subject: [PATCH 07/10] ASoC: jz4740: Use of_device_get_match_data()
+Date:   Fri,  4 Oct 2019 14:43:31 -0700
+Message-Id: <20191004214334.149976-8-swboyd@chromium.org>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 In-Reply-To: <20191004214334.149976-1-swboyd@chromium.org>
 References: <20191004214334.149976-1-swboyd@chromium.org>
@@ -64,66 +67,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the more modern API here instead of using of_match_device() and
-avoid casting away const from the returned pointer by pushing the const
-type through to the users. This nicely avoids referencing the match
-table when it is undefined with configurations where CONFIG_OF=n and
-avoids const issues.
+This probe function is only called if the device is backed by a DT node,
+so switch this call to of_device_get_match_data() to reduce code size
+and simplify a bit. This also avoids needing to reference a potentially
+undefined variable because of_device_get_match_data() doesn't need to
+know anything beyond the struct device to find the match table.
 
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Richard Leitner <richard.leitner@skidata.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: <linux-usb@vger.kernel.org>
+Cc: <alsa-devel@alsa-project.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please ack or pick for immediate merge so the last patch can be merged.
 
- drivers/usb/misc/usb251xb.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ sound/soc/jz4740/jz4740-i2s.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/misc/usb251xb.c b/drivers/usb/misc/usb251xb.c
-index 6ca9111d150a..84f218a6843c 100644
---- a/drivers/usb/misc/usb251xb.c
-+++ b/drivers/usb/misc/usb251xb.c
-@@ -392,7 +392,7 @@ static void usb251xb_get_ports_field(struct usb251xb *hub,
- }
+diff --git a/sound/soc/jz4740/jz4740-i2s.c b/sound/soc/jz4740/jz4740-i2s.c
+index 13408de34055..d2dab4d24b87 100644
+--- a/sound/soc/jz4740/jz4740-i2s.c
++++ b/sound/soc/jz4740/jz4740-i2s.c
+@@ -503,9 +503,8 @@ static int jz4740_i2s_dev_probe(struct platform_device *pdev)
+ 	if (!i2s)
+ 		return -ENOMEM;
  
- static int usb251xb_get_ofdata(struct usb251xb *hub,
--			       struct usb251xb_data *data)
-+			       const struct usb251xb_data *data)
- {
- 	struct device *dev = hub->dev;
- 	struct device_node *np = dev->of_node;
-@@ -623,7 +623,7 @@ static const struct of_device_id usb251xb_of_match[] = {
- MODULE_DEVICE_TABLE(of, usb251xb_of_match);
- #else /* CONFIG_OF */
- static int usb251xb_get_ofdata(struct usb251xb *hub,
--			       struct usb251xb_data *data)
-+			       const struct usb251xb_data *data)
- {
- 	return 0;
- }
-@@ -633,13 +633,11 @@ static int usb251xb_probe(struct usb251xb *hub)
- {
- 	struct device *dev = hub->dev;
- 	struct device_node *np = dev->of_node;
--	const struct of_device_id *of_id = of_match_device(usb251xb_of_match,
--							   dev);
-+	const struct usb251xb_data *usb_data = of_device_get_match_data(dev);
- 	int err;
+-	match = of_match_device(jz4740_of_matches, &pdev->dev);
+-	if (match)
+-		i2s->version = (enum jz47xx_i2s_version)match->data;
++	i2s->version =
++		(enum jz47xx_i2s_version)of_device_get_match_data(&pdev->dev);
  
--	if (np && of_id) {
--		err = usb251xb_get_ofdata(hub,
--					  (struct usb251xb_data *)of_id->data);
-+	if (np && usb_data) {
-+		err = usb251xb_get_ofdata(hub, usb_data);
- 		if (err) {
- 			dev_err(dev, "failed to get ofdata: %d\n", err);
- 			return err;
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	i2s->base = devm_ioremap_resource(&pdev->dev, mem);
 -- 
 Sent by a computer through tubes
 
