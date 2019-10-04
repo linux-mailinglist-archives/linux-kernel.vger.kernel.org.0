@@ -2,61 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC0ACC640
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA50ECC63F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731568AbfJDXKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 19:10:31 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36803 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731444AbfJDXK2 (ORCPT
+        id S1731538AbfJDXK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 19:10:29 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43373 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731499AbfJDXK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 Oct 2019 19:10:28 -0400
-Received: by mail-pl1-f195.google.com with SMTP id j11so3817760plk.3;
-        Fri, 04 Oct 2019 16:10:26 -0700 (PDT)
+Received: by mail-pf1-f196.google.com with SMTP id a2so4766395pfo.10
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:10:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jc9tGVeJ4olVgaKePn3t6HbonR38LaaryzX91Se5rAI=;
-        b=SodK6+/xa+e4ldidjLKc5QB0qs8HJbZzihBLhcV41Gv49iVQLtoRhio/UufZW9ir7G
-         dXvlkyc/2BZ6QhUKfynNyAr/RiD2y00kNLlVrP/jKjIQgda5CYA8mSS8f9Ra5+wjzW2q
-         BoPfRRuRIZowm8ac84qqkHNo54j1t3zqwKfrHj0GiL1NTR+HHoahivJq693U91HEeAkB
-         AidC5XPHHZ9V456LZlJ3TrtvDRsdkjoFEDhVBy1IWgw0BuEJZH3rCvETf3TmiHK1FVO8
-         JV/6m79OL6XSqQzLhnkOwoBZ6NRqk1yLC1Xz78EE1LoonNYgXFFipFgmraWvHi9cubVc
-         oc6A==
+        bh=jA8Id7H3gvB/5w4U6JX8arL8+ZxiSG8MjiEy+YBa328=;
+        b=nkJ51fSTlMtMCtbP0JNdD/fCfLz0SoZPzTOt7uTZ/qr/G1pN+r8PBe0jZERkRKa97a
+         8TL4zdjDpos3J1FpkD22Vok1U6bCLkjYYFLzSk/QucnFg0rG85uIyyk5muO80hdxUQSU
+         u1N5cSSlOljIlqYzW84TANZzgrKZxrpGXnTiakBpfs3CFZpAhOXeQuKEcbt1Bc610Ay0
+         O0rYahtLo6dzcXAklzFskmlIevjUwVrS3pwknB4E/qNl7R3uIrddDrR6q/Q04c/diafX
+         aPq5/5iB8xrDuAADWD1cNNjSra4dn/qUTVpxWw3iGMxL5bNUxUKgMssYBY+xlV0nXRQz
+         gW+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jc9tGVeJ4olVgaKePn3t6HbonR38LaaryzX91Se5rAI=;
-        b=dFWKd3r4Rr4zsVolcAkHV+34psAeeORnAzIQfYD4NF0kAfQUf8YuGJiP8EWajbvl2K
-         0TZX7bYrEkXFj8f2qNzMJzy+EYw92toNrxqJ9cOwyFN2xJN751vz6qgeY0p6/k/9M6Ld
-         oRNF4PGtABtG0SHHD4GisJgYG/E3w280OkqYNb4yxvd061D76AOHvbz3wgNWHkzye7IE
-         1H3Q9bgzlin69HVngkPwoiiSL/uGXNnJ2aOPtojg63pG8SXvv/YQ13UEaQB5scxTcRcH
-         YK0QuxSilpavEDVIIQHnTdYKRJZAIBo3A/+xSJv5qy/w2V/KkvhoEV1bj77GKxYMaSmn
-         HEbA==
-X-Gm-Message-State: APjAAAWkKKjEajlIuQAa1gta8g1Gt/qcwP6XgHWwdIP2gO/ykNSQlvax
-        XS7cfuz8uAYm6UKzeOYdXgY=
-X-Google-Smtp-Source: APXvYqxc1YTK7GZZaOa6IlN4K3qw0kyub04c7nWYesQHa+EsVVo+UARwT22654v3Yt6yrKNzkUxwPw==
-X-Received: by 2002:a17:902:322:: with SMTP id 31mr17719352pld.150.1570230625926;
-        Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
+        bh=jA8Id7H3gvB/5w4U6JX8arL8+ZxiSG8MjiEy+YBa328=;
+        b=j2eO+AxANy2P/64o5ZgSvpy93QhpdSWhZvAx0SZ3PnLhd9UJx16sFJNjEOSolAPoAv
+         E2i95HJhkmvnJiWP4MP8lYXotPgtDTCGnwwTlU3nhuWCSY7WIJzZMdHEjE/DqqGcmY7F
+         ZsHGJrbdowOUwSY2YtlS+Hzyrk8PqGrUCIZ1UxP0ArH69AFw496/hpHuqV7RjtdPk4gp
+         HrU9ik9ux9EM5LUZS5tNCTdFnhmcUfYThR6U/pLl5Pc6zlKSVOOiMSHco9IUdjb8GEpf
+         TUGFZsQW0Rb+7/etMl+VqZBXQ6S/+ABwi57c4Y/8Gk4r+7V4s8+ptfiiBLf9UMcKUp10
+         C/XQ==
+X-Gm-Message-State: APjAAAV/cAnkbxsfGY2i+bXrazBXAoPFReXWZrg2iRiHakB0GvFou2YB
+        ZuzFD9EnffEgzkmIW4S8uJ0=
+X-Google-Smtp-Source: APXvYqzo5GHBpyCIxQxXTb61QdW1ylX1LxNG552iSo9B2lmx7ukh6R97MiDqZ+fEzw8TUOzODXelyw==
+X-Received: by 2002:aa7:9486:: with SMTP id z6mr19772387pfk.118.1570230627268;
+        Fri, 04 Oct 2019 16:10:27 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.24
+        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
+        Fri, 04 Oct 2019 16:10:26 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 4/7] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
-Date:   Fri,  4 Oct 2019 16:10:14 -0700
-Message-Id: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Support Opensource <support.opensource@diasemi.com>
+Subject: [PATCH 5/7] regulator: da9211: switch to using devm_fwnode_gpiod_get
+Date:   Fri,  4 Oct 2019 16:10:15 -0700
+Message-Id: <20191004231017.130290-6-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 In-Reply-To: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
@@ -77,27 +73,32 @@ Let's switch this driver over.
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
- drivers/regulator/s2mps11.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/regulator/da9211-regulator.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 5bc00884cf51..4f2dc5ebffdc 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
- 			continue;
+diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+index bf80748f1ccc..523dc1b95826 100644
+--- a/drivers/regulator/da9211-regulator.c
++++ b/drivers/regulator/da9211-regulator.c
+@@ -283,12 +283,12 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
  
--		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
--				rdata[reg].of_node,
--				"samsung,ext-control-gpios",
--				0,
-+		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
-+				of_fwnode_handle(rdata[reg].of_node),
-+				"samsung,ext-control",
- 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 				"s2mps11-regulator");
- 		if (PTR_ERR(gpio[reg]) == -ENOENT)
+ 		pdata->init_data[n] = da9211_matches[i].init_data;
+ 		pdata->reg_node[n] = da9211_matches[i].of_node;
+-		pdata->gpiod_ren[n] = devm_gpiod_get_from_of_node(dev,
+-				  da9211_matches[i].of_node,
+-				  "enable-gpios",
+-				  0,
+-				  GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+-				  "da9211-enable");
++		pdata->gpiod_ren[n] = devm_fwnode_gpiod_get(dev,
++					of_fwnode_handle(pdata->reg_node[n]),
++					"enable",
++					GPIOD_OUT_HIGH |
++						GPIOD_FLAGS_BIT_NONEXCLUSIVE,
++					"da9211-enable");
+ 		if (IS_ERR(pdata->gpiod_ren[n]))
+ 			pdata->gpiod_ren[n] = NULL;
+ 		n++;
 -- 
 2.23.0.581.g78d2f28ef7-goog
 
