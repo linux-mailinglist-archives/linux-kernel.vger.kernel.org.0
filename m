@@ -2,70 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEECDCBDA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D37BCBDAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:45:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbfJDOoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:44:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:47154 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388724AbfJDOoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:44:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46C1E1597;
-        Fri,  4 Oct 2019 07:44:20 -0700 (PDT)
-Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27B823F68E;
-        Fri,  4 Oct 2019 07:44:19 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panfrost: Remove NULL check for regulator
-Date:   Fri,  4 Oct 2019 15:44:13 +0100
-Message-Id: <20191004144413.42586-1-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
+        id S2389346AbfJDOpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:45:12 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:20988 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389042AbfJDOpL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 10:45:11 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94EQRSD026290;
+        Fri, 4 Oct 2019 16:44:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=HxhsqEtkW1PE2z4wk42+db/HcFNDBDuEG576vdtW3hQ=;
+ b=lz3bQE9FMHBJXTy5bdUQVmIumhJB17Ko0EuiGplii7OiPoGukqDMKJTud5FPeT4YSq1K
+ DK2Eoob4x790WcB5cRq0XuBcWtE+g7pNPdtXN6spExZQligbvWskxkdZZirloHOdjoR6
+ PhB1FQRb/jHmWAt9aXyv330fAyNFlkA93AObx+S4Wh/iPrqWNmrgWLfqtaIGMQcOKgOq
+ HEQ4EOx7mN70pDaPcmUuZ5gANZjO7qyTHcTTZJmMB4uSU8Z07dHcsICvpst2nz0f/AUs
+ 2jkHCaZKboflDJrkl30G3HQJloLd4sg0RI6RtwdqE90zyVs2DAaJFFGVSWGtwxvG4NC+ 5Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2v9vnaundv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Oct 2019 16:44:54 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4351110002A;
+        Fri,  4 Oct 2019 16:44:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2A2702B8FFA;
+        Fri,  4 Oct 2019 16:44:54 +0200 (CEST)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019
+ 16:44:54 +0200
+Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019 16:44:53
+ +0200
+From:   <patrice.chotard@st.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>
+CC:     <mcoquelin.stm32@gmail.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: ARM: dts: stm32: relax qspi pins slew-rate for stm32mp157
+Date:   Fri, 4 Oct 2019 16:44:21 +0200
+Message-ID: <20191004144421.21069-1-patrice.chotard@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.73]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-04_07:2019-10-03,2019-10-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_regulator_get() is used to populate pfdev->regulator which ensures
-that this cannot be NULL (a dummy regulator will be returned if
-necessary). So remove the check in panfrost_devfreq_target().
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
-This looks like it was accidentally reintroduced by the merge from
-drm-next into drm-misc-next due to the duplication of "drm/panfrost: Add
-missing check for pfdev-regulator" (commits c90f30812a79 and
-52282163dfa6).
----
- drivers/gpu/drm/panfrost/panfrost_devfreq.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Relax qspi pins slew-rate to minimize peak currents.
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-index c1eb8cfe6aeb..12ff77dacc95 100644
---- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-@@ -53,10 +53,8 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
- 	if (err) {
- 		dev_err(dev, "Cannot set frequency %lu (%d)\n", target_rate,
- 			err);
--		if (pfdev->regulator)
--			regulator_set_voltage(pfdev->regulator,
--					      pfdev->devfreq.cur_volt,
--					      pfdev->devfreq.cur_volt);
-+		regulator_set_voltage(pfdev->regulator, pfdev->devfreq.cur_volt,
-+				      pfdev->devfreq.cur_volt);
- 		return err;
- 	}
+Fixes: 844030057339 ("ARM: dts: stm32: add flash nor support on stm32mp157c eval board")
+
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+index e4a0d51ec3a8..0a3a7d66737b 100644
+--- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+@@ -609,13 +609,13 @@
+ 						 <STM32_PINMUX('F', 6, AF9)>; /* QSPI_BK1_IO3 */
+ 					bias-disable;
+ 					drive-push-pull;
+-					slew-rate = <3>;
++					slew-rate = <1>;
+ 				};
+ 				pins2 {
+ 					pinmux = <STM32_PINMUX('B', 6, AF10)>; /* QSPI_BK1_NCS */
+ 					bias-pull-up;
+ 					drive-push-pull;
+-					slew-rate = <3>;
++					slew-rate = <1>;
+ 				};
+ 			};
+ 
+@@ -637,13 +637,13 @@
+ 						 <STM32_PINMUX('G', 7, AF11)>; /* QSPI_BK2_IO3 */
+ 					bias-disable;
+ 					drive-push-pull;
+-					slew-rate = <3>;
++					slew-rate = <1>;
+ 				};
+ 				pins2 {
+ 					pinmux = <STM32_PINMUX('C', 0, AF10)>; /* QSPI_BK2_NCS */
+ 					bias-pull-up;
+ 					drive-push-pull;
+-					slew-rate = <3>;
++					slew-rate = <1>;
+ 				};
+ 			};
  
 -- 
-2.20.1
+2.17.1
 
