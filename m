@@ -2,91 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D9E1CC3C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9118CC3CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:55:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731065AbfJDTxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 15:53:24 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40488 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730746AbfJDTxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 15:53:24 -0400
-Received: by mail-io1-f68.google.com with SMTP id h144so16072146iof.7;
-        Fri, 04 Oct 2019 12:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=MS6KPA7Zwid+VvXpcQaJcC4Lhg7r0UTgc+r5bTRTQzQ=;
-        b=GxQstqbCOnLx126tgUZiwbsF2HdhWFfLVbG+e7xb9YbNaC6njmdUbzMzN9hS0DGF2R
-         sCdH2HCG67lanBOwPlb0dywPzS3GkIh1bQJmVjcTxJfy9IcXrGP3gydoilg6SbK1D3WU
-         fTopxDbTJUzZJOrOm43pQT6TPyanbS/pZdUjRmpaHAFag65or/YOsJ/m9nCcx7FPiFfU
-         5EZ78zQXs2t1aBxFtr3v+0Vj4gwQ5VOaA2R+0vc1ZcLUf8EqHrSK/krgcsi3Ne1wet/m
-         dD0goUMsqDttAaGSGJKTqO5zk3zwpfQg9NLaMCi7Tm6dYbWl5QPU3bH/JKcau1qQvcKN
-         INFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MS6KPA7Zwid+VvXpcQaJcC4Lhg7r0UTgc+r5bTRTQzQ=;
-        b=slJE3/amUNdhsDLKpndhZkaLmtiq+9Fj7lGj0GbJn4qH5mI/8BfmaKa2pBJ/Po9da+
-         XsJP059xy5OcCHNBOPD5GLeNMaCgfhh2tRdJ+OTY/n00Vf3H/Sn0zi6U6e+eDMytNOnA
-         a0B9OPc/euWHI6n9lrDb31dkuTf4vRrt7Q+7zakEceZsvs43SS9OBLycubjMy4Q2E0k4
-         Ba/nxv0maIWzhG2w8+YKjETokh+CmRFLHN28Tq4UzC4m044oMkFr9dNHm6tLxTdIvR7y
-         ZILwNQ61ed6I5kVc0zjXeqoOwW6wVDccdjJU2TQ1PrYB6JGtfD1WwhHZYafYqZh+treD
-         74KQ==
-X-Gm-Message-State: APjAAAXocd0F+QrGt2dZL7u7sg2b5PGrdcHM89B+AWOSmERHsgFdAt5T
-        +cHCW7KLfnOGkrJY3YwOTs6atrnaBqc=
-X-Google-Smtp-Source: APXvYqydhL1ReOzniYD5VzA4lRSsmW1hKT4R+X4IRWehJs3tidGK8O1cUqJEdOSyeOWpsRQpCOoyaQ==
-X-Received: by 2002:a92:db0c:: with SMTP id b12mr16542465iln.27.1570218803179;
-        Fri, 04 Oct 2019 12:53:23 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id t9sm2420224iop.86.2019.10.04.12.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 12:53:22 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: fix memory leak in rtl_usb_probe
-Date:   Fri,  4 Oct 2019 14:53:14 -0500
-Message-Id: <20191004195315.21168-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        id S1731167AbfJDTzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 15:55:02 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:37374 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730836AbfJDTzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 15:55:02 -0400
+Received: from 94.112.246.102.static.b2b.upcbusiness.cz ([94.112.246.102] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iGTfI-0006St-CU; Fri, 04 Oct 2019 21:55:00 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: rockchip: add analog audio nodes on rk3399-rockpro64
+Date:   Fri, 04 Oct 2019 21:54:59 +0200
+Message-ID: <3908342.LUz8zmGQAZ@phil>
+In-Reply-To: <74097d16-ec3e-70e9-f835-25ae265b0ad9@katsuster.net>
+References: <20190907174833.19957-1-katsuhiro@katsuster.net> <74097d16-ec3e-70e9-f835-25ae265b0ad9@katsuster.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In rtl_usb_probe, a new hw is allocated via ieee80211_alloc_hw(). This
-allocation should be released in case of allocation failure for
-rtlpriv->usb_data.
+Hi Katsuhiro,
 
-Fixes: a7959c1394d4 ("rtlwifi: Preallocate USB read buffers and eliminate kalloc in read routine")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/net/wireless/realtek/rtlwifi/usb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Am Freitag, 4. Oktober 2019, 19:26:00 CEST schrieb Katsuhiro Suzuki:
+> Past about 1 month, so I send a ping...
+> 
+> On 2019/09/08 2:48, Katsuhiro Suzuki wrote:
+> > This patch adds audio codec (Everest ES8316) and I2S audio nodes for
+> > RK3399 RockPro64.
+> > 
+> > Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/usb.c b/drivers/net/wireless/realtek/rtlwifi/usb.c
-index 4b59f3b46b28..265f95261da8 100644
---- a/drivers/net/wireless/realtek/rtlwifi/usb.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
-@@ -1021,8 +1021,10 @@ int rtl_usb_probe(struct usb_interface *intf,
- 	rtlpriv->hw = hw;
- 	rtlpriv->usb_data = kcalloc(RTL_USB_MAX_RX_COUNT, sizeof(u32),
- 				    GFP_KERNEL);
--	if (!rtlpriv->usb_data)
-+	if (!rtlpriv->usb_data) {
-+		ieee80211_free_hw(hw);
- 		return -ENOMEM;
-+	}
- 
- 	/* this spin lock must be initialized early */
- 	spin_lock_init(&rtlpriv->locks.usb_lock);
--- 
-2.17.1
+thanks for the reminder, applied for 5.5
+
+Heiko
+
 
