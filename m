@@ -2,209 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F04CB5F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6725BCB5E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 10:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbfJDIUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 04:20:10 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9863 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388566AbfJDIUE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 04:20:04 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d9700b20000>; Fri, 04 Oct 2019 01:20:02 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 04 Oct 2019 01:20:02 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 04 Oct 2019 01:20:02 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 4 Oct
- 2019 08:20:01 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 4 Oct 2019 08:20:01 +0000
-Received: from jckuo-lt.nvidia.com (Not Verified[10.19.108.105]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d9700b00000>; Fri, 04 Oct 2019 01:20:01 -0700
-From:   JC Kuo <jckuo@nvidia.com>
-To:     <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nkristam@nvidia.com>, <skomatineni@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>
-Subject: [PATCH v2 7/7] arm64: tegra: Enable XUSB host in P2972-0000 board
-Date:   Fri, 4 Oct 2019 16:19:41 +0800
-Message-ID: <20191004081941.4831-8-jckuo@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191004081941.4831-1-jckuo@nvidia.com>
-References: <20191004081941.4831-1-jckuo@nvidia.com>
-X-NVConfidentiality: public
+        id S2388526AbfJDIT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 04:19:58 -0400
+Received: from mga17.intel.com ([192.55.52.151]:56639 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388246AbfJDIT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 04:19:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 01:19:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,255,1566889200"; 
+   d="scan'208";a="205805350"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 04 Oct 2019 01:19:52 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 04 Oct 2019 11:19:51 +0300
+Date:   Fri, 4 Oct 2019 11:19:51 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Yehezkel Bernat <yehezkelshb@gmail.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        linux-usb@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        nicholas.johnson-opensource@outlook.com.au,
+        Lukas Wunner <lukas@wunner.de>, gregkh@linuxfoundation.org,
+        stern@rowland.harvard.edu,
+        Anthony Wong <anthony.wong@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
+Message-ID: <20191004081951.GD2819@lahna.fi.intel.com>
+References: <184c95fc476146939b240557e54ee2c9@AUSX13MPC105.AMER.DELL.COM>
+ <5357cb96013445d79f5c2016df8a194e@AUSX13MPC105.AMER.DELL.COM>
+ <20191002083913.GG2714@lahna.fi.intel.com>
+ <767f2f97059e4e9f861080672aaa18d3@AUSX13MPC105.AMER.DELL.COM>
+ <CA+CmpXs4YsTA3QnD77SaXq3mRYX6oFwx+pm-3wEErwkF-02M+A@mail.gmail.com>
+ <bb84da73d1df468da1707a2af09eb2de@AUSX13MPC105.AMER.DELL.COM>
+ <20191003080028.GK2819@lahna.fi.intel.com>
+ <06a04bff94494da99c5359a7fb645d19@AUSX13MPC105.AMER.DELL.COM>
+ <20191004075426.GA2819@lahna.fi.intel.com>
+ <CA+CmpXsMkwZhCegGYPYQo2GwN6ROwDYbY3RVZTEeN+FfZ-PbMQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1570177202; bh=Erbkds484JhNPrRLOYyEGFIbfjLX8oEulW7BxazUJQQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=Sj/rpfsJNnGQPGJBMWbZB6HeaZgQ9rZUdaNTFGeQkRVmTp8ew2pWUjcCxMpYf7JW9
-         jyCmQMS34CITD6fo27FjL7bJaPmIuVIiHph0c6wfczSL84aayAPrIRNOYe8f8AtSj+
-         C2nujaLiGNlOJlXx3ILBgBqwN1mgGMH/TJcbk06SKnSyrTZdjwav3oUAm0DYUSnBW3
-         8x+vOSzVRbJLYO1tdgZbjIUp8VnYT6L362kmMP9J9RloldM9ZPFQGLkcP/wQ80beKM
-         VTHXpVMqXRo8bdb87jbsspKcXtjk6Xe3+1y0euwej+IdFLmssHq5pxkjsK8G0YSMLH
-         CiydQhgp9u+tA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CmpXsMkwZhCegGYPYQo2GwN6ROwDYbY3RVZTEeN+FfZ-PbMQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit enables XUSB host and pad controller in Tegra194
-P2972-0000 board.
+On Fri, Oct 04, 2019 at 11:07:34AM +0300, Yehezkel Bernat wrote:
+> > Also if you can get the hw_vendor_id and hw_product_id from the kernel
+> > does that mean you don't need to do the two reads or you still need
+> > those?
+> 
+> Are those the chip vendor or the OEM, in case they are different?
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
----
-Changes in v2:
-- use capitalization of regulator names
-- fix gpio property of VDD_5V_SATA regulator
+Those are the actual USB4 hardware maker values, directly from
+ROUTER_CS_0 (p. 287 in the USB4 spec). This almost certainly differ from
+the OEM values from DROM we currently expose.
 
- .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 36 ++++++++++-
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 62 +++++++++++++++++++
- 2 files changed, 97 insertions(+), 1 deletion(-)
+> Thinking about it again, I'd guess it shouldn't matter much, if the chip is from
+> Intel, the FW supports NVM upgrade, isn't it?
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index 4c38426a6969..e7d5e8a30f93 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -66,6 +66,29 @@
- 			vmmc-supply = <&vdd_emmc_3v3>;
- 		};
- 
-+		padctl@3520000 {
-+			avdd-usb-supply = <&vdd_usb_3v3>;
-+			vclamp-usb-supply = <&vdd_1v8ao>;
-+
-+			ports {
-+				usb2-1 {
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+
-+				usb2-3 {
-+					vbus-supply = <&vdd_5v_sata>;
-+				};
-+
-+				usb3-0 {
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+
-+				usb3-3 {
-+					vbus-supply = <&vdd_5v0_sys>;
-+				};
-+			};
-+		};
-+
- 		rtc@c2a0000 {
- 			status = "okay";
- 		};
-@@ -229,7 +252,7 @@
- 						regulator-max-microvolt = <3300000>;
- 					};
- 
--					ldo5 {
-+					vdd_usb_3v3: ldo5 {
- 						regulator-name = "VDD_USB_3V3";
- 						regulator-min-microvolt = <3300000>;
- 						regulator-max-microvolt = <3300000>;
-@@ -313,5 +336,16 @@
- 			regulator-boot-on;
- 			enable-active-low;
- 		};
-+
-+		vdd_5v_sata: regulator@4 {
-+			compatible = "regulator-fixed";
-+			reg = <4>;
-+
-+			regulator-name = "VDD_5V_SATA";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio TEGRA194_MAIN_GPIO(Z, 1) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index d47cd8c4dd24..b60eef64c487 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -62,6 +62,68 @@
- 							 GPIO_ACTIVE_LOW>;
- 			};
- 		};
-+		padctl@3520000 {
-+			status = "okay";
-+
-+			pads {
-+				usb2 {
-+					lanes {
-+						usb2-1 {
-+							status = "okay";
-+						};
-+
-+						usb2-3 {
-+							status = "okay";
-+						};
-+					};
-+				};
-+
-+				usb3 {
-+					lanes {
-+						usb3-0 {
-+							status = "okay";
-+						};
-+
-+						usb3-3 {
-+							status = "okay";
-+						};
-+					};
-+				};
-+			};
-+
-+			ports {
-+				usb2-1 {
-+					mode = "host";
-+					status = "okay";
-+				};
-+
-+				usb2-3 {
-+					mode = "host";
-+					status = "okay";
-+				};
-+
-+				usb3-0 {
-+					nvidia,usb2-companion = <1>;
-+					status = "okay";
-+				};
-+
-+				usb3-3 {
-+					nvidia,usb2-companion = <3>;
-+					nvidia,disable-gen2;
-+					status = "okay";
-+				};
-+			};
-+		};
-+
-+		usb@3610000 {
-+			status = "okay";
-+
-+			phys =	<&{/cbb/padctl@3520000/pads/usb2/lanes/usb2-1}>,
-+				<&{/cbb/padctl@3520000/pads/usb2/lanes/usb2-3}>,
-+				<&{/cbb/padctl@3520000/pads/usb3/lanes/usb3-0}>,
-+				<&{/cbb/padctl@3520000/pads/usb3/lanes/usb3-3}>;
-+			phy-names = "usb2-1", "usb2-3", "usb3-0", "usb3-3";
-+		};
- 	};
- 
- 	pcie@14100000 {
--- 
-2.17.1
+So the bottom line is that if the kernel thinks the router supports NVM
+upgrade it exposes the nvm_active/nvm_non_active files etc. I think
+fwupd uses this information to display user whether the device can be
+upgraded or not (for example ICL cannot as the NVM is part of BIOS).
 
+Exposing hw_vendor_id and hw_product_id may speed up fwupd because it
+does not need to go over the active NVM to figure out whether the new
+image is for the correct controller.
