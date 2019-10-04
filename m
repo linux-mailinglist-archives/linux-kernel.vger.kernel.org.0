@@ -2,84 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 137E2CC544
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB632CC549
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbfJDVyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 17:54:24 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37069 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728841AbfJDVyY (ORCPT
+        id S1731322AbfJDVzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:55:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44440 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726780AbfJDVzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:54:24 -0400
-Received: by mail-lf1-f65.google.com with SMTP id w67so5476394lff.4
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:54:22 -0700 (PDT)
+        Fri, 4 Oct 2019 17:55:50 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i14so4467658pgt.11;
+        Fri, 04 Oct 2019 14:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zoPNMzdQSsaX6T9xeXeKifKMZMvmutkXru6+TSI0b7Y=;
-        b=wPWEuKlFUYzqdz4qs+FuWOkgujk6xQg4W88Gbwdt69yuCS4wF7jXBJ4GRPkZgyv8Kn
-         gK3sYtTACAkkDIUWPIZxxu/0w1Eg23rseLUrwOcuHfzFts5eaU2ossk8ApAjQMalVPBh
-         v/j+CjSbylx2eql609qx6b5pr/aMdpGxO+GwWP5fJlJL0YOCSX+tr4e5YbT0x/k5AWzK
-         SwQVCCveut9k7OqNDYdHhgBL00/dvo11ApelQlPEGNEN2wE56jYEVWfGecor/prMr+fw
-         blM71t5HKQTpeN7ZQUyQfoi0MuHKD/nGja/CpKC9T8UldLJFGLerfT0g3clJhEkHa6Uq
-         tB3Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vkZt0GXM6qo82WWXoUdTiYWmectwUJ8fNOCzw+vFaZA=;
+        b=TMYufGuSnVoxWfOa8/Z/yRVBCyCrAwDmi57il930HlXUOWstAn1VqNgqDpxG1/s6FO
+         jVzxb47Maw5QTKV6BdRdm2QHqkXXajXuMft5uydWJ99ug99ePO0JfKZ7Yzs3AUFszp4z
+         oNO2bNEo5kVLPtTCaUmeaoeLPIFKW7K5j2s9Fuvd4oV86SZ9BhW+YIDKpSPrhj7Pzr5A
+         EQcZ5Y0bvs+1S/4dvq7NnL0CQLhxkGBTzgg6WUuRT2qhJlxsogGuTPP+NKpQ1/OdALTq
+         O0ToFvndKTQat/q1uNOZrmIfItPPQ8GhI9SnH5APlRoQS97Uu1BT7ZfL7paW94ySCiPj
+         CbYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zoPNMzdQSsaX6T9xeXeKifKMZMvmutkXru6+TSI0b7Y=;
-        b=kG3dfPK2Bs4ATWO/QrWVsFeAPo/D4wahpdqJE7LALYPYle+8ilqXc0ZQKX8QguOYfj
-         spJPN1R0Pvdh6mmYQmWzUW/z9AnvQN1K7TMmsFtpIsEU4SMJCCVrE98NKENwPFJF8VVp
-         uHK3uBCpUtcBz99jl1WMr0mi2GB4VcE3g0WSnGfx9Dj7GDvzPQLlO4cmHU4fbppK70Vl
-         qAO4MMtZAwaZCC0uJpn5hADKVBpyRFr9cDAK1yKaeh3WGtfTsg6vuovXfTpX4NVLV5Lb
-         aBKVc/xUuFM8yl5QoWeo+GpGP1VVEFHGMJE8M3CDs/5mFPAp/EM+ixsxEZk2kiXhf7Gx
-         fIKw==
-X-Gm-Message-State: APjAAAWGy0201LEekvJUm3QtP5JySc3NRK/E8MGKyp/tfeXKDXa2KMIJ
-        C+f+uh+61sr3to8HrIS83w5C/jim6paiXkoS3EeAV9iogjc=
-X-Google-Smtp-Source: APXvYqws72vP4SKYhJ249ciHl03mUZyS9feS1uY1gUxq8IxgZYM6e4vR28Xp5ay5FGaGgDRYYJMV4A6rfFLyAwnEyp4=
-X-Received: by 2002:a19:117:: with SMTP id 23mr10232144lfb.115.1570226062105;
- Fri, 04 Oct 2019 14:54:22 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vkZt0GXM6qo82WWXoUdTiYWmectwUJ8fNOCzw+vFaZA=;
+        b=c2GQDB9SWaEzFF6cFO25N7vNut0AAaQLW0WQWVHoTAEG6ySsrRyjl7iIdyCQUg6mWn
+         fZ2G0AHiV44p1StiYOMyvbrPSF4Qagq2DlRnyZWP6T5NOa/OuGmPQShFMiK2zsP0mj1o
+         kiDMxFhkDdwQ1VWVW9Ugw/zFQZFyqLZ+eptwb74XR57MSEwJGV5SPdbyN5XkUo8mZHjP
+         hvCxoK+b5gPwA8aW7Rc5tQC4J54e5Tk8vZoDN5lWgre3ECo3p7emIHocfsqtxshXsdpt
+         HxEetOW+fgFjScTXxHYxKqnRZbf16JqD0+mgKgF3F/cLuUmKdGuwSENhyUjC69+3TaUu
+         nljg==
+X-Gm-Message-State: APjAAAW9sgnutfhSI90DCXX+3HDRlKsIDxzhLcoZKxvK0UXe4XOY1O8Z
+        WBtDF3AO9H3eVlUknsRao8g=
+X-Google-Smtp-Source: APXvYqwx/LQCYgX/lCyiMKyiW7/oppBn2dDWhtxoXzCzqXC9DuFsGT8gP6S4+j+MAh1N3GHx0oTurA==
+X-Received: by 2002:a17:90a:1609:: with SMTP id n9mr19150165pja.64.1570226149687;
+        Fri, 04 Oct 2019 14:55:49 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id 207sm8094732pfu.129.2019.10.04.14.55.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 14:55:48 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Stefan Agner <stefan@agner.ch>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tty: serial: fsl_lpuart: Fix lpuart_flush_buffer()
+Date:   Fri,  4 Oct 2019 14:55:37 -0700
+Message-Id: <20191004215537.5308-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190618160105.26343-3-alpawi@amazon.com> <20191001154634.96165-1-alpawi@amazon.com>
-In-Reply-To: <20191001154634.96165-1-alpawi@amazon.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 4 Oct 2019 23:54:10 +0200
-Message-ID: <CACRpkdY7bYBytGq-AnMrRVWn=-ASz=xTA-_-5wCfsymch4qW9A@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: armada-37xx: fix control of pins 32 and up
-To:     Patrick Williams <alpawi@amazon.com>
-Cc:     Patrick Williams <patrick@stwcx.xyz>,
-        stable <stable@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 1, 2019 at 5:49 PM Patrick Williams <alpawi@amazon.com> wrote:
+Fix incorrect read-modify-write sequence in lpuart_flush_buffer() that
+was reading from UARTPFIFO and writing to UARTCFIFO instead of
+operating solely on the latter.
 
-> The 37xx configuration registers are only 32 bits long, so
-> pins 32-35 spill over into the next register.  The calculation
-> for the register address was done, but the bitmask was not, so
-> any configuration to pin 32 or above resulted in a bitmask that
-> overflowed and performed no action.
->
-> Fix the register / offset calculation to also adjust the offset.
->
-> Fixes: 5715092a458c ("pinctrl: armada-37xx: Add gpio support")
-> Signed-off-by: Patrick Williams <alpawi@amazon.com>
-> Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> Cc: <stable@vger.kernel.org>
+Fixes: 9bc19af9dacb ("tty: serial: fsl_lpuart: Flush HW FIFOs in .flush_buffer")
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Vivien Didelot <vivien.didelot@gmail.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Cory Tusar <cory.tusar@zii.aero>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: linux-imx@nxp.com
+Cc: linux-serial@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
 
-Patch applied for fixes.
+Greg:
 
-Yours,
-Linus Walleij
+This bug causes occasional boot hang on 5.4-rc1 on Vybrid, so it might
+be good to push that for 5.4-rc2.
+
+Thanks,
+Andrey Sirnov
+
+ drivers/tty/serial/fsl_lpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 3e17bb8a0b16..537896c4d887 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -548,7 +548,7 @@ static void lpuart_flush_buffer(struct uart_port *port)
+ 		val |= UARTFIFO_TXFLUSH | UARTFIFO_RXFLUSH;
+ 		lpuart32_write(&sport->port, val, UARTFIFO);
+ 	} else {
+-		val = readb(sport->port.membase + UARTPFIFO);
++		val = readb(sport->port.membase + UARTCFIFO);
+ 		val |= UARTCFIFO_TXFLUSH | UARTCFIFO_RXFLUSH;
+ 		writeb(val, sport->port.membase + UARTCFIFO);
+ 	}
+-- 
+2.21.0
+
