@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C565CC308
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72099CC2FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:53:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731168AbfJDSxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 14:53:00 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44219 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731045AbfJDSwz (ORCPT
+        id S1731209AbfJDSxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 14:53:02 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34801 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731054AbfJDSw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 14:52:55 -0400
-Received: by mail-qt1-f194.google.com with SMTP id u40so9909498qth.11
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:52:54 -0700 (PDT)
+        Fri, 4 Oct 2019 14:52:56 -0400
+Received: by mail-qk1-f195.google.com with SMTP id q203so6793196qke.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 11:52:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=zqjz6RgOj4sr7JAtiYy2U5c4q561GRonF/uToZbvMtQ=;
-        b=cbV0/XSbNFTSiiM+0+QH8MvL54ryMmCHecyN10p82JZMgUjz4NAuNaO4H/8MqO02uB
-         DH5SqTvw31/30Cm17haSt+OXKyVHeNUl3YmogImEDO9sn/UnPxH0qAmMXipRrR/Uct9n
-         2N5X+rQMndJrc7PhVMCH+5DsPAoYqxx9FqvprPInWfziR8Nf18WMI8GaVe6CICmQJK58
-         yzWF8Alzj6bWOxiHa4QlAiP+YJVJtikGcD8sofq9y2mv8v0DSK3A753WD828e7L0hCwc
-         cV+hsQIYQ1Xmbx0reRqkJ6HbkysxUw64kuNp59klxTXpTAWwY+r+9avQLJTGJ+uZWrl/
-         3Iqw==
+        bh=XbQaUimD78vcQ5YhGt3SAqPD0eC6PCpt9aPKURlFvbA=;
+        b=T3HSMOsCC7MVlPJHQkMuk8eh/ngyjURlVWD+pEyqUObu1vLcvCV1KihS2VJd5EHh4x
+         6Gt9YscgCCnZlG2b2GH133S/moS24v0RANnkaZji6KEb2A2/AR1zs5HSLFNrE1crGVUO
+         93+iAhb2NBRetq53GDzx6AuY0LshLWMb9Izo46ZT0WVt2vTHX5ZVbjROVUGiasHKRrg+
+         8HSu/vmrHXeDgx9MBtTx1VTfpdJZ0Z6uu70TmlyVP5aTnkP/xIkgocR43XzFuMRfY7et
+         k+/Gyh+HPhrUWHD2N2rLGbTWrRdbS1ipeYd2ReBRjSTHvsOPDXezAkX8q3k4bzd7fv1D
+         nUhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zqjz6RgOj4sr7JAtiYy2U5c4q561GRonF/uToZbvMtQ=;
-        b=pmI4gC32T0kullLXxtUqwBAYmUdrRtfbOd+zDi/wnnfYT5mJ66zXveHTLXo54/eMWS
-         k1zPGB7qYMee6q5N5QW7ZIw7kvEgXG/89Tmj1NFlkzvwlp2xDdRFYa6ynmQq+mHlY2o7
-         JxA1UWcHO2FX9JUE1Ywtp7xbpqM+mvvjr6rgpo/V6M02hirK8dp94ZzJxF5Izr6Rn5BT
-         9cdM5Rg+zA8ToB7b3/W5GDuo4ClgaYtui5shnYuvxF4lOI7wPWhe1Xr21ae5UYSMnz5I
-         50K/14f/w8NEmJOgM19oktV68JTE42cMPVEwbL6elw3FGUq9zzelBWuOTdQlLqfAO/w/
-         MT1Q==
-X-Gm-Message-State: APjAAAWzehAwGLoOQPJGFe/Z8p1fhKZOUURY/tg08+5vOxd6UF4ZdSAp
-        BQqFaM7R+3hlv6TnB9U5ASix9A==
-X-Google-Smtp-Source: APXvYqz/SlNz26COPOm3ZkvwHkWqmnKJHKOZXNlZegzlLgw/1j5CqwFayRpSluooPsIp5pEFfeC7dQ==
-X-Received: by 2002:ac8:65d9:: with SMTP id t25mr18010890qto.261.1570215174236;
-        Fri, 04 Oct 2019 11:52:54 -0700 (PDT)
+        bh=XbQaUimD78vcQ5YhGt3SAqPD0eC6PCpt9aPKURlFvbA=;
+        b=U16P/UV4gNoUDOniKra6mgf4oDLBzlNfhhpiwKdGGddiq3DFhNM9ERcss2vkxb7Uz1
+         /tjeLCepcEMEcFf7LJKbAFnnjuxIaxW5VmAuI1OGZ2pG9f7D6T0S2n99eO/lwLtG0+ay
+         Y2iLLMF2/haYIDdj3+tyKFzmmY8Xx1ne3CZfVC9tjh4itTEBcDFlbN3YetFzA3uM1mga
+         x/qmOKIJrBUQPVFF/G5QtLm2DwjftU9V7Kecy05fm7pHKVIw38EVywSj6DSNcHA19Qg8
+         z6B70ifTgErQW/hhrC0S2jsEtSLsE40Y5OGczhYYFmGPy2yRTLM+B2sM6g41MNM4z7G5
+         0nfw==
+X-Gm-Message-State: APjAAAX5HiwpltGbRnU+FQZzhyr2z/JL5JQepicuA/A6rmqZ5vAZov8v
+        G+c3AAe1R+i7NBZh6zfBnNcWRw==
+X-Google-Smtp-Source: APXvYqyXNbkCwVmR0CUBX2ljNW39KDWX97Q+N0JERDBOfmUDqQlQHHKsgP5kmx41XkPyxQ3t3F45eg==
+X-Received: by 2002:a05:620a:13ce:: with SMTP id g14mr11609764qkl.199.1570215175626;
+        Fri, 04 Oct 2019 11:52:55 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id p77sm4042514qke.6.2019.10.04.11.52.52
+        by smtp.gmail.com with ESMTPSA id p77sm4042514qke.6.2019.10.04.11.52.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 11:52:53 -0700 (PDT)
+        Fri, 04 Oct 2019 11:52:55 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -54,9 +54,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         james.morse@arm.com, vladimir.murzin@arm.com,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com
-Subject: [PATCH v6 12/17] arm64: trans_pgd: pass NULL instead of init_mm to *_populate functions
-Date:   Fri,  4 Oct 2019 14:52:29 -0400
-Message-Id: <20191004185234.31471-13-pasha.tatashin@soleen.com>
+Subject: [PATCH v6 13/17] kexec: add machine_kexec_post_load()
+Date:   Fri,  4 Oct 2019 14:52:30 -0400
+Message-Id: <20191004185234.31471-14-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191004185234.31471-1-pasha.tatashin@soleen.com>
 References: <20191004185234.31471-1-pasha.tatashin@soleen.com>
@@ -67,73 +67,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-trans_pgd_* should be independent from mm context because the tables that
-are created by this code are used when there are no mm context around, as
-it is between kernels. Simply replace mm_init's with NULL.
+It is the same as machine_kexec_prepare(), but is called after segments are
+loaded. This way, can do processing work with already loaded relocation
+segments. One such example is arm64: it has to have segments loaded in
+order to create a page table, but it cannot do it during kexec time,
+because at that time allocations won't be possible anymore.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Acked-by: Dave Young <dyoung@redhat.com>
 ---
- arch/arm64/mm/trans_pgd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ kernel/kexec.c          | 4 ++++
+ kernel/kexec_core.c     | 6 ++++++
+ kernel/kexec_file.c     | 4 ++++
+ kernel/kexec_internal.h | 2 ++
+ 4 files changed, 16 insertions(+)
 
-diff --git a/arch/arm64/mm/trans_pgd.c b/arch/arm64/mm/trans_pgd.c
-index df3a10d36f62..2b02a646101f 100644
---- a/arch/arm64/mm/trans_pgd.c
-+++ b/arch/arm64/mm/trans_pgd.c
-@@ -67,7 +67,7 @@ static int copy_pte(struct trans_pgd_info *info, pmd_t *dst_pmdp,
- 	dst_ptep = trans_alloc(info);
- 	if (!dst_ptep)
- 		return -ENOMEM;
--	pmd_populate_kernel(&init_mm, dst_pmdp, dst_ptep);
-+	pmd_populate_kernel(NULL, dst_pmdp, dst_ptep);
- 	dst_ptep = pte_offset_kernel(dst_pmdp, start);
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index bc933c0db9bf..f977786fe498 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -159,6 +159,10 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
  
- 	src_ptep = pte_offset_kernel(src_pmdp, start);
-@@ -90,7 +90,7 @@ static int copy_pmd(struct trans_pgd_info *info, pud_t *dst_pudp,
- 		dst_pmdp = trans_alloc(info);
- 		if (!dst_pmdp)
- 			return -ENOMEM;
--		pud_populate(&init_mm, dst_pudp, dst_pmdp);
-+		pud_populate(NULL, dst_pudp, dst_pmdp);
- 	}
- 	dst_pmdp = pmd_offset(dst_pudp, start);
+ 	kimage_terminate(image);
  
-@@ -126,7 +126,7 @@ static int copy_pud(struct trans_pgd_info *info, pgd_t *dst_pgdp,
- 		dst_pudp = trans_alloc(info);
- 		if (!dst_pudp)
- 			return -ENOMEM;
--		pgd_populate(&init_mm, dst_pgdp, dst_pudp);
-+		pgd_populate(NULL, dst_pgdp, dst_pudp);
- 	}
- 	dst_pudp = pud_offset(dst_pgdp, start);
++	ret = machine_kexec_post_load(image);
++	if (ret)
++		goto out;
++
+ 	/* Install the new kernel and uninstall the old */
+ 	image = xchg(dest_image, image);
  
-@@ -218,7 +218,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
- 		pudp = trans_alloc(info);
- 		if (!pudp)
- 			return -ENOMEM;
--		pgd_populate(&init_mm, pgdp, pudp);
-+		pgd_populate(NULL, pgdp, pudp);
- 	}
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index f7ae04b8de6f..c19c0dad1ebe 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -589,6 +589,12 @@ static void kimage_free_extra_pages(struct kimage *image)
+ 	kimage_free_page_list(&image->unusable_pages);
  
- 	pudp = pud_offset(pgdp, dst_addr);
-@@ -226,7 +226,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
- 		pmdp = trans_alloc(info);
- 		if (!pmdp)
- 			return -ENOMEM;
--		pud_populate(&init_mm, pudp, pmdp);
-+		pud_populate(NULL, pudp, pmdp);
- 	}
+ }
++
++int __weak machine_kexec_post_load(struct kimage *image)
++{
++	return 0;
++}
++
+ void kimage_terminate(struct kimage *image)
+ {
+ 	if (*image->entry != 0)
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 79f252af7dee..5b7f802be177 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -441,6 +441,10 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
  
- 	pmdp = pmd_offset(pudp, dst_addr);
-@@ -234,7 +234,7 @@ int trans_pgd_map_page(struct trans_pgd_info *info, pgd_t *trans_pgd,
- 		ptep = trans_alloc(info);
- 		if (!ptep)
- 			return -ENOMEM;
--		pmd_populate_kernel(&init_mm, pmdp, ptep);
-+		pmd_populate_kernel(NULL, pmdp, ptep);
- 	}
+ 	kimage_terminate(image);
  
- 	ptep = pte_offset_kernel(pmdp, dst_addr);
++	ret = machine_kexec_post_load(image);
++	if (ret)
++		goto out;
++
+ 	/*
+ 	 * Free up any temporary buffers allocated which are not needed
+ 	 * after image has been loaded
+diff --git a/kernel/kexec_internal.h b/kernel/kexec_internal.h
+index 48aaf2ac0d0d..39d30ccf8d87 100644
+--- a/kernel/kexec_internal.h
++++ b/kernel/kexec_internal.h
+@@ -13,6 +13,8 @@ void kimage_terminate(struct kimage *image);
+ int kimage_is_destination_range(struct kimage *image,
+ 				unsigned long start, unsigned long end);
+ 
++int machine_kexec_post_load(struct kimage *image);
++
+ extern struct mutex kexec_mutex;
+ 
+ #ifdef CONFIG_KEXEC_FILE
 -- 
 2.23.0
 
