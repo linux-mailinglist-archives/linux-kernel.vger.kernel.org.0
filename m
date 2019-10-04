@@ -2,57 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B65D0CBFA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60970CBFAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390109AbfJDPp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:45:58 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:42678 "EHLO fornost.hmeau.com"
+        id S2390127AbfJDPqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:46:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389952AbfJDPp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:45:58 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1iGPmC-0001Xm-Bc; Sat, 05 Oct 2019 01:45:53 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2019 01:45:51 +1000
-Date:   Sat, 5 Oct 2019 01:45:51 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v2] crypto: caam - use mapped_{src,dst}_nents for
- descriptor
-Message-ID: <20191004154551.GC5148@gondor.apana.org.au>
-References: <1569500789-7443-1-git-send-email-iuliana.prodan@nxp.com>
+        id S2389952AbfJDPqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 11:46:18 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2C0620830;
+        Fri,  4 Oct 2019 15:46:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570203977;
+        bh=RtSEgS9Ir5OhXsBQuEonT/del/hDREk1xI0g6Q4VtDY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rZVxQVRpDReG0V6jQUbrt9ODsMJ7hGNR1UpN39oTXrVtvT70zLAw7bDg89/C8wa8e
+         Q5wKW2ggEuEoE9rmgkQ+E70WEy40QxCIbhIFAchIWO9qdn0jnVN8g694FQzMxe5vd+
+         iVyXu0GmxSGV93WkricbtkNeTGePfp4aE7QVwlp8=
+Date:   Fri, 4 Oct 2019 11:46:15 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Michael Kelley <mikelley@microsoft.com>
+Cc:     Himadri Pandya <himadrispandya@gmail.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "himadri18.07" <himadri18.07@gmail.com>
+Subject: Re: [PATCH] Drivers: hv: balloon: Remove dependencies on guest page
+ size
+Message-ID: <20191004154615.GK17454@sasha-vm>
+References: <20190817040850.4812-1-himadri18.07@gmail.com>
+ <DM5PR21MB01379A15CEBBABFB0B165EDDD7B80@DM5PR21MB0137.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1569500789-7443-1-git-send-email-iuliana.prodan@nxp.com>
+In-Reply-To: <DM5PR21MB01379A15CEBBABFB0B165EDDD7B80@DM5PR21MB0137.namprd21.prod.outlook.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 03:26:29PM +0300, Iuliana Prodan wrote:
-> The mapped_{src,dst}_nents _returned_ from the dma_map_sg
-> call (which could be less than src/dst_nents) have to be
-> used to generate the job descriptors.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> ---
-> Changes since v1:
-> - updated, with mapped_{src,dst}_nents, the set_rsa_pub_pdb, set_rsa_priv_f{1,2,3}_pdb functions.
-> ---
->  drivers/crypto/caam/caampkc.c | 72 +++++++++++++++++++++++--------------------
->  drivers/crypto/caam/caampkc.h |  8 +++--
->  2 files changed, 45 insertions(+), 35 deletions(-)
+On Wed, Sep 04, 2019 at 11:37:12PM +0000, Michael Kelley wrote:
+>From: Himadri Pandya <himadrispandya@gmail.com> Sent: Friday, August 16, 2019 9:09 PM
+>>
+>> Hyper-V assumes page size to be 4K. This might not be the case for
+>> ARM64 architecture. Hence use hyper-v specific page size and page
+>> shift definitions to avoid conflicts between different host and guest
+>> page sizes on ARM64.
+>>
+>> Also, remove some old and incorrect comments and redefine ballooning
+>> granularities to handle larger page sizes correctly.
+>>
+>> Signed-off-by: Himadri Pandya <himadri18.07@gmail.com>
+>> ---
+>>  drivers/hv/hv_balloon.c | 25 ++++++++++++-------------
+>>  1 file changed, 12 insertions(+), 13 deletions(-)
+>>
+>
+>Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+>
+>Thomas -- can you pick up this patch in the x86/hyperv branch of your
+>tip tree along with the other patches to fix wrong page size assumptions?
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I've queued this for hyperv-next, thanks!
+
+--
+Thanks,
+Sasha
