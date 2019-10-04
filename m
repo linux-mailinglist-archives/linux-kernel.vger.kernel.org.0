@@ -2,179 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14496CC0EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62CD7CC0F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfJDQj3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 12:39:29 -0400
-Received: from mout.web.de ([217.72.192.78]:49821 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726525AbfJDQj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 12:39:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1570207152;
-        bh=3qY51AIDbh0D6yCJlWeGuCtssREDMvHYUAYtv8hxk2Q=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=d1ZQzp8oEHb5qeQGtCB0Nnx7YTR9xtE9kwzR3Rs5jkxGGF/Q16WaibQGHl0k9+wO5
-         zPrL5BRFKhUKvjKa6dMrydOeWNn0a//4jWe1So2yFVnQJpOO++Us++3cQoe3lxDsB4
-         siPsGX/IvPzGsGPbmJkmq7grRm0/eZXGnsf5Y9bw=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.27] ([77.191.3.29]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MYvxn-1ibTzH00pP-00Vk1a; Fri, 04
- Oct 2019 18:39:12 +0200
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH_3/3=5d_arm64=3a_dts=3a_rockchip=3a_fix_Roc?=
- =?UTF-8?B?a1BybzY0IHNkbW1jIHNldHRpbmdz44CQ6K+35rOo5oSP77yM6YKu5Lu255SxbGlu?=
- =?UTF-8?Q?ux-rockchip-bounces+shawn=2elin=3drock-chips=2ecom=40lists=2einfr?=
- =?UTF-8?B?YWRlYWQub3Jn5Luj5Y+R44CR?=
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20191003215036.15023-1-smoch@web.de>
- <20191003215036.15023-3-smoch@web.de>
- <31181f3c-20ec-e717-1f7e-8b35cd54d96d@arm.com>
- <a8b20c45-0426-ee42-4efc-52e56ea6bb20@web.de>
- <120e2dbc-55eb-2205-b00f-7e50928ec706@rock-chips.com>
- <1c452b8b-853f-8f58-5f3a-0bbecbe20557@web.de>
- <fc7dce53-ad39-26e3-7c19-ab60ff4cc332@arm.com>
-From:   Soeren Moch <smoch@web.de>
-Message-ID: <a5b7caab-ffde-30e0-88bc-53a53748701a@web.de>
-Date:   Fri, 4 Oct 2019 18:39:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728479AbfJDQkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 12:40:11 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47658 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfJDQkI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 12:40:08 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94GOKIT145942;
+        Fri, 4 Oct 2019 16:37:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=51ThAHTVRLLrLX7DDUUketK1Xn5udBHC8gklOuQw7w4=;
+ b=poGgqbX6JCl/NL0NREIW4P9+l8QLaal32Xkto+/gKm9KzGXG36J3t9Y97IxbfC79abuc
+ HIhJcvwgU73VKa+HhUYWIpCN14vCfAWcuykFg8ecFCTacZSd9CNbsvDrj5/EnIrO7zZd
+ SnwCs6AysNBsPxEQu+OM86HU/KXoTrvfvgl0uFeMuiL/Urusogu37yaibi7r7bw1mRXl
+ P+U7Do6b28k22LsC3kulgYBA2XxWdLTCodBCIzLu9N6fRpGQGYkQF1JQyrUaoEKGwtaN
+ b6g/DpZETiiQ7cEIsMCUf+7h0vD9o3h4LFWUFwJWWR3f41akUitzgfesOp1b6XbHzdK6 ew== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2va05sckk2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Oct 2019 16:37:34 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x94GNGmV029717;
+        Fri, 4 Oct 2019 16:35:33 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2vdk0uxdww-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Oct 2019 16:35:33 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x94GZUL7027727;
+        Fri, 4 Oct 2019 16:35:31 GMT
+Received: from [10.209.227.25] (/10.209.227.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 04 Oct 2019 09:35:30 -0700
+Subject: Re: [PATCH v3 00/14] dmaengine/soc: Add Texas Instruments UDMA
+ support
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
+        robh+dt@kernel.org, nm@ti.com, ssantosh@kernel.org
+Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, grygorii.strashko@ti.com,
+        lokeshvutla@ti.com, t-kristo@ti.com, tony@atomide.com,
+        j-keerthy@ti.com
+References: <20191001061704.2399-1-peter.ujfalusi@ti.com>
+From:   santosh.shilimkar@oracle.com
+Organization: Oracle Corporation
+Message-ID: <c567c1a2-2e74-3809-8e0f-4c2049ba4747@oracle.com>
+Date:   Fri, 4 Oct 2019 09:35:29 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <fc7dce53-ad39-26e3-7c19-ab60ff4cc332@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-GB
-X-Provags-ID: V03:K1:WDXMF7fUaHGooh/FbZ81ORhv2SFSl3PKXdEyI/BLdwRZsAjbggD
- 8VTFxf353pFadfg+sHKcWdv5+RETJjI5q9jF4pdx5lcrnQv0QtpjAps5dFHtwBP9Ih05Znn
- sVL+FE/0rFaGbOU972rfTgvTZXw8xKiajaoscxXpD4vO9YYHhFdaRGdWkg+eGO47DIhf+9b
- BGRCq9LyxG+eF9Nhf0HzQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:j89oGVrDlDU=:ezMJXZgomRb8VO2z1FXus6
- lUrP5ck2RvSf/mJ+sYU21+PJdqM+tz+81kdT7Um8IpY1Nt5pYRwMfIgDltZf1vFX0cKJIpOos
- 8nnLknq1eAbKfEg+48nonn/JBg3l9G0Dpkzt40CHJq94sf3EnvXHf4lma6EBcXwETYY2kziF/
- bYOIwIqC+wZCmUmG6X0wamlnUWKfqgPNi7uq8WHTLhOpEpqX/FHiyYQz39G7INrcgS+bt+T68
- H7oB2A0gwSSzCtgCkbk0jWSC2RYS5Hh8Zhr3Em6IKxZGHWVrqOwwLRHj8I/JSc12oERWj8NQB
- jCNwCrNTqLlbZKS8xMIDsUZGpxm0quyOY9YmteQRzZtpPqaEzZdavTw6ps8NpqsqsIU5FAlpw
- XaUPbwqrwcMjtgt0+dQyubG5dtmy/o2Wxf7/gKV0777H9w7P+n6hxxUBIc5ovqxQ+1i5uqvF7
- gDEdQ1SeCtHJHP00WRdYTzhs3ANXbvKRuiZ2gSRsWGQCKro9zYT20JPF6J9jT43coluS6dqI6
- EKGiRw/VeDUDRVfUjRsDybBGkg27P4HqAhOS+wY+pev5HRR3MHcn+bLImcRCfKpLmHs8P4ztc
- Nr8yA7/+IzcU0q1J/SNoux4N1tQMe2S2uXC+SJ4KBvo9W45bpJTZELIQoWACfBoHq1xIMV568
- bL6X//YpsT3wM0zJ9ChZrGJXhw/ZROB8QMKCddBiOSGRd7bDnIAsmuaIXpu4koMsGkAzcNiGr
- l07/7pLEM9MKfw6ZxJcV6K13sLb5n5W5cOoc5T51OXUHvxxDLYXnnxdyrizXm11WzgCn9QMAW
- A3eBmIJiHruGSCbEqnzmrTX4kkj1yVUiKu7dYWO5DE+8BdXTjHbtIGPf+fF3Tnsap7tBbiVSW
- JoijeUwuBoBstF/ARU7uYPTBBaynqo+HVKI7KY9RV/+g8LKMtpM6KMzhEgRnnktcJQbP7r4Rf
- voAHisdL43f6JdIsfaw40/4ZUJrJehD2nhugslrFwtq/nPBf/KLpp8s6M6k9Q70qhMdYbH5Ad
- yY4g1DJd8uGO1DpRjDmsT561bX9Bj/seIlNB7wIFlfnc8Gyb0bcmL7l5MJGXVoGLSnAqvi0rH
- QQO7xbTyOaBhsWZuXtBHu6Yn1ZU6QGcqghVXwg7fcmc6v8FzpZuC83JvPYca+iViKYXT68aTR
- W0tW58w5zw6pRz8TeTJqVqw4rlSzYS7dqctEJbTL/PaE51jmqYDdNlQAO4E8iLLOMqXhjWkWs
- b6+2LO3ldd7VTiG9kG++o4qkBkLwnGr6IpYP7tw==
+In-Reply-To: <20191001061704.2399-1-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910040145
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9399 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910040145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9/30/19 11:16 PM, Peter Ujfalusi wrote:
+> Hi,
+> 
+> Changes since v2
+> )https://patchwork.kernel.org/project/linux-dmaengine/list/?series=152609&state=*)
+> - Based on 5.4-rc1
+> - Support for Flow only data transfer for the glue layer
+> 
 
+> 
+> Grygorii Strashko (3):
+>    bindings: soc: ti: add documentation for k3 ringacc
+>    soc: ti: k3: add navss ringacc driver
+>    dmaengine: ti: k3-udma: Add glue layer for non DMAengine users
+> 
+> Peter Ujfalusi (11):
+>    dmaengine: doc: Add sections for per descriptor metadata support
+>    dmaengine: Add metadata_ops for dma_async_tx_descriptor
+>    dmaengine: Add support for reporting DMA cached data amount
+>    dmaengine: ti: Add cppi5 header for UDMA
+>    dt-bindings: dma: ti: Add document for K3 UDMA
+>    dmaengine: ti: New driver for K3 UDMA - split#1: defines, structs, io
+>      func
+>    dmaengine: ti: New driver for K3 UDMA - split#2: probe/remove, xlate
+>      and filter_fn
+>    dmaengine: ti: New driver for K3 UDMA - split#3: alloc/free
+>      chan_resources
+>    dmaengine: ti: New driver for K3 UDMA - split#4: dma_device callbacks
+>      1
+>    dmaengine: ti: New driver for K3 UDMA - split#5: dma_device callbacks
+>      2
+>    dmaengine: ti: New driver for K3 UDMA - split#6: Kconfig and Makefile
+> 
+>   .../devicetree/bindings/dma/ti/k3-udma.txt    |  185 +
+>   .../devicetree/bindings/soc/ti/k3-ringacc.txt |   59 +
+>   Documentation/driver-api/dmaengine/client.rst |   75 +
+>   .../driver-api/dmaengine/provider.rst         |   46 +
+>   drivers/dma/dmaengine.c                       |   73 +
+>   drivers/dma/dmaengine.h                       |    8 +
+>   drivers/dma/ti/Kconfig                        |   22 +
+>   drivers/dma/ti/Makefile                       |    2 +
+>   drivers/dma/ti/k3-udma-glue.c                 | 1225 ++++++
+>   drivers/dma/ti/k3-udma-private.c              |  141 +
+>   drivers/dma/ti/k3-udma.c                      | 3525 +++++++++++++++++
+>   drivers/dma/ti/k3-udma.h                      |  161 +
+>   drivers/soc/ti/Kconfig                        |   12 +
+>   drivers/soc/ti/Makefile                       |    1 +
+>   drivers/soc/ti/k3-ringacc.c                   | 1165 ++++++
+>   include/dt-bindings/dma/k3-udma.h             |   10 +
+>   include/linux/dma/k3-udma-glue.h              |  134 +
+>   include/linux/dma/ti-cppi5.h                  | 1049 +++++
+>   include/linux/dmaengine.h                     |  110 +
+>   include/linux/soc/ti/k3-ringacc.h             |  245 ++
+>   20 files changed, 8248 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/dma/ti/k3-udma.txt
+>   create mode 100644 Documentation/devicetree/bindings/soc/ti/k3-ringacc.txt
+>   create mode 100644 drivers/dma/ti/k3-udma-glue.c
+>   create mode 100644 drivers/dma/ti/k3-udma-private.c
+>   create mode 100644 drivers/dma/ti/k3-udma.c
+>   create mode 100644 drivers/dma/ti/k3-udma.h
+>   create mode 100644 drivers/soc/ti/k3-ringacc.c
+>   create mode 100644 include/dt-bindings/dma/k3-udma.h
+>   create mode 100644 include/linux/dma/k3-udma-glue.h
+>   create mode 100644 include/linux/dma/ti-cppi5.h
+>   create mode 100644 include/linux/soc/ti/k3-ringacc.h
+> 
+Can you please split this series and post drivers/soc/* bits
+separately ?  If its ready, I can apply k3-ringacc.c changes.
 
-On 04.10.19 16:20, Robin Murphy wrote:
-> On 04/10/2019 04:39, Soeren Moch wrote:
->>
->>
->> On 04.10.19 04:13, Shawn Lin wrote:
->>> On 2019/10/4 8:53, Soeren Moch wrote:
->>>>
->>>>
->>>> On 04.10.19 02:01, Robin Murphy wrote:
->>>>> On 2019-10-03 10:50 pm, Soeren Moch wrote:
->>>>>> According to the RockPro64 schematic [1] the rk3399 sdmmc
->>>>>> controller is
->>>>>> connected to a microSD (TF card) slot, which cannot be switched to
->>>>>> 1.8V.
->>>>>
->>>>> Really? AFAICS the SDMMC0 wiring looks pretty much identical to the
->>>>> NanoPC-T4 schematic (it's the same reference design, after all),
->>>>> and I
->>>>> know that board can happily drive a UHS-I microSD card with 1.8v
->>>>> I/Os,
->>>>> because mine's doing so right now.
->>>>>
->>>>> Robin.
->>>> OK, the RockPro64 does not allow a card reset (power cycle) since
->>>> VCC3V0_SD is directly connected to VCC3V3_SYS (via R89555), the
->>>> SDMMC0_PWH_H signal is not connected. So the card fails to identify
->>>> itself after suspend or reboot when switched to 1.8V operation.
->
-> Ah, thanks for clarifying - I did overlook the subtlety that U12 and
-> friends have "NC" as alternative part numbers, even though they aren't
-> actually marked as DNP. So it's still not so much "cannot be switched"
-> as "switching can lead to other problems".
-Agreed. I should have been more precise about this in the commit message.
-
-Soeren
->
->>>
->>> I believe we addressed this issue long time ago, please check:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/com=
-mit/?id=3D6a11fc47f175c8d87018e89cb58e2d36c66534cb
->>>
->>>
->> Thanks for the pointer.
->> In this case I guess I should use following patch instead:
->>
->> --- rk3399-rockpro64.dts.bak =C2=A0=C2=A0 2019-10-03 22:14:00.067745799=
- +0200
->> +++ rk3399-rockpro64.dts=C2=A0=C2=A0=C2=A0 2019-10-04 00:02:50.04789236=
-6 +0200
->> @@ -619,6 +619,8 @@
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 max-frequency =3D <150000000>;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl-names =3D "default";
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl-0 =3D <&sdmmc_clk &sdmmc_cmd &sd=
-mmc_bus4>;
->> +=C2=A0=C2=A0=C2=A0 sd-uhs-sdr104;
->> +=C2=A0=C2=A0=C2=A0 vqmmc-supply =3D <&vcc_sdio>;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 status =3D "okay";
->> =C2=A0=C2=A0};
->> =C2=A0 When I do so, the sd card is detected as SDR104, but a reboot ha=
-ngs:
->>
->> Boot1: 2018-06-26, version: 1.14
->> CPUId =3D 0x0
->> ChipType =3D 0x10, 286
->> Spi_ChipId =3D c84018
->> no find rkpartition
->> SpiBootInit:ffffffff
->> mmc: ERROR: SDHCI ERR:cmd:0x102,stat:0x18000
->> mmc: ERROR: Card did not respond to voltage select!
->> emmc reinit
->> mmc: ERROR: SDHCI ERR:cmd:0x102,stat:0x18000
->> mmc: ERROR: Card did not respond to voltage select!
->> emmc reinit
->> mmc: ERROR: SDHCI ERR:cmd:0x102,stat:0x18000
->> mmc: ERROR: Card did not respond to voltage select!
->> SdmmcInit=3D2 1
->> mmc0:cmd5,32
->> mmc0:cmd7,32
->> mmc0:cmd5,32
->> mmc0:cmd7,32
->> mmc0:cmd5,32
->> mmc0:cmd7,32
->> SdmmcInit=3D0 1
->>
->> So I guess I should use a different miniloader for this reboot to work!=
-?
->> Or what else could be wrong here?
->
-> Hmm, I guess this is "the Tinkerboard problem" again - the patch above
-> would be OK if we could get as far as the kernel, but can't help if
-> the offending card is itself the boot medium. There was a proposal here:
->
-> https://patchwork.kernel.org/patch/10817217/
->
-> although I'm not sure what if any progress has been made since then.
->
-> Robin.
-
+Regards,
+Santosh
