@@ -2,88 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B86FCBBAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65200CBBB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388422AbfJDNap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:30:45 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33402 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387917AbfJDNao (ORCPT
+        id S2388548AbfJDNdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:33:00 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37225 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388498AbfJDNc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:30:44 -0400
-Received: by mail-qt1-f194.google.com with SMTP id r5so8581111qtd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 06:30:42 -0700 (PDT)
+        Fri, 4 Oct 2019 09:32:59 -0400
+Received: by mail-lj1-f196.google.com with SMTP id l21so6548373lje.4
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 06:32:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=B5vnSSCIcbplBcWNA19HtmeOraO3xHVwUmiEjyji+dc=;
-        b=e8IRDuL5YyKeZPPnATe7X4oE8SALc3CKjZg+DyKSbhJqyrlr+9MFiRisQJfTHCFGUN
-         I1v3KWVu3KlqiHLDMEgkPLKD7QK7oWnmxeciqctHX3o80NnUmRSbjoP/M5GZ+a3r/v4w
-         0qpwZGqBg2SqYUYhO+S6AqTU4vMxa9zfsBzjRH8i3sRB2gw747U5qDthrVlBCGck6c09
-         rAr8Xx2waDW6mV+hJs5aJvyEjUK2dpAkyz5rtJXkuCs5PVJndm9xm8HQ9TYQgp9ImdtL
-         JTNezfq/awagUkCVuzXYghiyNmwjngYkcfH7Dsp7ZVo3JVY41hIPxnzaLxJQYpBFS1fH
-         aNlg==
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6e6kNUFkOwggtKh2FtgQ72TKMBXQJNnsWv0kpOgx0sI=;
+        b=XZkKHdG2crSiyzrMy2VYonGv0szQi+UnZmCse5Bf56kipSTq4oGJhOVzSkBSoZFHR1
+         +ZF/LdhdrF5138bRvPtoMvzxccaUeOYRvhGHeLff0IJzgfXgOwBh7uHZdnco99ie3Xd7
+         t0vZOi9c0XtZONz49s5W+o1BWQlyXdSavQ1zA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B5vnSSCIcbplBcWNA19HtmeOraO3xHVwUmiEjyji+dc=;
-        b=PRRFULch4qa9e5i8M613V2yid3RWW2k9Q0YEkRxAEmjN8ePpYQGaz19+A1EwnkD3yd
-         cuFkKf7wrivvbvnktgW/IFVfgy+NKL/KkK7SEgk65JvBJ3WFUwuHKVC4Cu1qSjyvO8nM
-         cl9dynnsseLzrh+pRwpFlHOpgmzXNbwW9zD8A8PXYAeKg3MYmc5fTHbYtXK9fD8u4ACD
-         i0dF6VKEdtpzh233O4F+PWupbfN1AwYaVuSKy3q20rhN2U1NP70ErlOuAFGJg1cMfFe3
-         DZwdYUP5/iSWUWcBXC8+vTBaV8faA3q0+QM6kuzVmBPVqrdwBNs9QrS/GwOhbrpOVirU
-         p8Ug==
-X-Gm-Message-State: APjAAAXp51CGFruu93Q1INMmKd+3T8OJFCxr6q15lR/gDmctEW7oBnSR
-        I6R7PIa44HFFePWK6DrTB9R5Aw==
-X-Google-Smtp-Source: APXvYqyifeRTX7SmGTGjjWVD0NCxVG8ZiHqtUI/fVbaztaXVCrdZ2DBwCZvtleHH5tDQUjLVjdAEtw==
-X-Received: by 2002:a0c:f3c1:: with SMTP id f1mr1163664qvm.165.1570195842396;
-        Fri, 04 Oct 2019 06:30:42 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id i66sm3176454qkb.105.2019.10.04.06.30.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Oct 2019 06:30:41 -0700 (PDT)
-Message-ID: <1570195839.5576.273.camel@lca.pw>
-Subject: Re: [PATCH] mm/page_alloc: Add a reason for reserved pages in
- has_unmovable_pages()
-From:   Qian Cai <cai@lca.pw>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 04 Oct 2019 09:30:39 -0400
-In-Reply-To: <20191004130713.GK9578@dhcp22.suse.cz>
-References: <1570090257-25001-1-git-send-email-anshuman.khandual@arm.com>
-         <20191004105824.GD9578@dhcp22.suse.cz>
-         <91128b73-9a47-100b-d3de-e83f0b941e9f@arm.com>
-         <1570193776.5576.270.camel@lca.pw> <20191004130713.GK9578@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6e6kNUFkOwggtKh2FtgQ72TKMBXQJNnsWv0kpOgx0sI=;
+        b=WyEaVmGH3RYmYHLBv+Xc0VqnIsxnBu7EQfG3jrH7rx0RxMBhpjj3XUsN7evDumBPgg
+         VaWgNvbO4DfOjcsMSYEba5SAAifJwVDmxzByURvvQApf27uSCOz7vO24WeK1EurkOznY
+         yIUyC8UpbhOjzluiSmkJVCITnrwfQ/fhZK/FgNLqNWis6hotKqOvBzlN8gLOfdb1xMhD
+         83ksvqdsEptogI0q4rdGFlnhgId42iob8UnTJJ2+ALwUsbzLhr1BhsLoN1rFbNUQpCSZ
+         ope5ox6fqHWVWFghAVctkaec2oqtD1NWzQW5pOEqf/Jb/aekSitDNmE4NfK2thqCnLx9
+         oUew==
+X-Gm-Message-State: APjAAAXPUZrmwz+xbYPLWkkyFo83y0HzLX55qgQFFMgIFjxwf3y9ZzQl
+        EAgp0DfXniOOWFE9KvlrXvI4AQ==
+X-Google-Smtp-Source: APXvYqxG/5L0LFLLyQDBwiDl6JJamRel6vq19pDlrjEK0hxD7neje+Af0NtighCjwoCkw70qCO0Dag==
+X-Received: by 2002:a2e:9692:: with SMTP id q18mr9757018lji.73.1570195977546;
+        Fri, 04 Oct 2019 06:32:57 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id y26sm1534991ljj.90.2019.10.04.06.32.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 06:32:56 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 0/6] pwm: mxs: add support for setting polarity via DT
+Date:   Fri,  4 Oct 2019 15:32:01 +0200
+Message-Id: <20191004133207.6663-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-10-04 at 15:07 +0200, Michal Hocko wrote:
-> On Fri 04-10-19 08:56:16, Qian Cai wrote:
-> [...]
-> > It might be a good time to rethink if it is really a good idea to dump_page()
-> > at all inside has_unmovable_pages(). As it is right now, it is a a potential
-> > deadlock between console vs memory offline. More details are in this thread,
-> > 
-> > https://lore.kernel.org/lkml/1568817579.5576.172.camel@lca.pw/
-> 
-> Huh. That would imply we cannot do any printk from that path, no?
+This series adds support for setting the polarity via DT to the
+pwm-mxs driver.
 
-Yes, or use something like printk_deferred() or it needs to rework of the
-current console locking which I have no clue yet.
+The DT binding is updated, but I'm not touching the existing .dts or
+.dtsi files - it seems that the same was done for bcm2835 in commits
+46421d9d8e802e570dfa4d793a4938d2642ec7a7 and
+8a88b2a2017d1e7e80db53080baff591fd454722, while
+arch/arm/boot/dts/bcm283x.dtsi still has #pwm-cells = <2>.
+
+v2:
+- Rebase to v5.4-rc1
+- Address comments from Uwe.
+- Add Rob's ack to patch 4.
+- New patches 5 and 6. The last one is independent of the others, but
+  I stumbled on this when rebasing and found the signature had
+  changed.
+
+Rasmus Villemoes (6):
+  pwm: mxs: implement ->apply
+  pwm: mxs: remove legacy methods
+  pwm: mxs: add support for inverse polarity
+  dt-bindings: pwm: mxs-pwm: Increase #pwm-cells
+  pwm: mxs: avoid a division in mxs_pwm_apply()
+  pwm: update comment on struct pwm_ops::apply
+
+ .../devicetree/bindings/pwm/mxs-pwm.txt       |   4 +-
+ drivers/pwm/pwm-mxs.c                         | 101 +++++++++---------
+ include/linux/pwm.h                           |   5 +-
+ 3 files changed, 53 insertions(+), 57 deletions(-)
+
+-- 
+2.20.1
+
