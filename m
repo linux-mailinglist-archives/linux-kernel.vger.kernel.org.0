@@ -2,108 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 297CBCC507
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16062CC51B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:45:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731385AbfJDVns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 17:43:48 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46255 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731333AbfJDVnq (ORCPT
+        id S1730508AbfJDVon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:44:43 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38484 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728841AbfJDVon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:43:46 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a3so4444738pgm.13
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:43:46 -0700 (PDT)
+        Fri, 4 Oct 2019 17:44:43 -0400
+Received: by mail-lj1-f194.google.com with SMTP id b20so7928648ljj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:44:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=U687kcs42BoDsE/q/6DCWOZs4StRfj7ND2JiKRPjwLU=;
-        b=cWdi/ApPfxI7Bo65buQpCZ4N3rNLjP83vRSk0AWnM/jnreA8jzFvvW9MLqK0XY2pPa
-         0cy8ye3wi1DxCULqrnaJ/8zVot2CmrvzDewSixLDwg6+ip/B/Z7Pvk+RKPQZ9Lkp9O2s
-         FBDrGVIk5nbcHdEoCwkPjuLc+/9mx2tZ/ujLg=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Am86CuSg4L4/4SThzqZ+x3OfLvEnqGtERkpRQqbTyyo=;
+        b=mHoyMz44D2WiAxEQObuEHX6G00RlGGHzOJlRf4ram5Uw4WSYGsCgGObrFsOGL0bJUT
+         aiOzQh7CHwV1qQrdMAcusBqOeNWE6EjE6sSFbCZcwuTGGZn02ga15PNfBS2AMwITwVdF
+         EgKmzjP7XWS2xGmR0xPdrifdKD01SMM9eyR/Bt3tAd77+2Ivj48bbb+2FqdbrTquiFwI
+         AcH8C6wUr68r8TNz0boFXRi344UGq9c9qA49TbQE5FyalLJ0dE328a/7G+MyE//kvAAz
+         jYVahOt3Ou685MUsdu1JMEGKJNG2KJmxEad8vqpvyFD797Go+4+z9KOMWd+4luzNMZhI
+         +H7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=U687kcs42BoDsE/q/6DCWOZs4StRfj7ND2JiKRPjwLU=;
-        b=eurc78MMv3wi1NIr7V58gLOYT6CfrwqMukBy7Wd4vacsvjMZEPUuSJ5P3RUN0z5Tu1
-         GeIWDAPZLgjLxHnTFnQbttCSnB0mUM4a1AS7DxXv6v+9FShtVMvYTYsa2CqSapOJxelT
-         DD/G4HdJd+3FGKnf7fTyy+u7u4Nc9vaZqtal0ttyUOuDY44vMM9IJor/3uNF4mbEueQA
-         6uCgZ6/cm72/NjwQBNcOvB+6Apsbx2YYgdfIbasQkXIlDPmqLzFsjM7aUIKJ+7b1wvpG
-         eEMhYl+CXeE3/s2yIoDEzn0rDDmfgft8QchCZ2YaIZp2QMVDOVP5odYK/TbxsxfxM02O
-         /IAQ==
-X-Gm-Message-State: APjAAAUlxAl8kdPDjotOmmZ6h2gg49T+uEixkTaZruF24hIQqD/lFrUQ
-        HUYcuIbOQQDBe8RMXrA/etWNXjgvh1o=
-X-Google-Smtp-Source: APXvYqz3Q4iZMi2/1NRaABshb8EYhS6zB/mSD/pg1wsvGQ7g6idpyOk9EJ3Z0PHwsxXWW1eDwBfcWA==
-X-Received: by 2002:a63:ea16:: with SMTP id c22mr12828948pgi.162.1570225425617;
-        Fri, 04 Oct 2019 14:43:45 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id a11sm10446799pfg.94.2019.10.04.14.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 14:43:45 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH 10/10] of/device: Don't NULLify match table in of_match_device() with CONFIG_OF=n
-Date:   Fri,  4 Oct 2019 14:43:34 -0700
-Message-Id: <20191004214334.149976-11-swboyd@chromium.org>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-In-Reply-To: <20191004214334.149976-1-swboyd@chromium.org>
-References: <20191004214334.149976-1-swboyd@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Am86CuSg4L4/4SThzqZ+x3OfLvEnqGtERkpRQqbTyyo=;
+        b=dRgrjdlu/vxKrLz1wxxAf97ZNYw5BBf+jV5BsgcTr8c8OEN3+vDR2K606ubYaVm90R
+         p5LZfmD8WjYfzHB6dVDgQLJ0QCacf9A1z+fPaANPNoxwWBDF8Wfx1b8sVNasGtzyQ/bN
+         rCO6mnvJLUqTSpPhOtKFmccPE9pgy/3PWc7wS5FF2RXnQnpgkvwG/klMZ09jwzrQUjRu
+         2g+iWvQiwYyk1ojAQmlmSi6sUPe2QEJHIdRloQ+t8IFMJBXmjfcn1F9AFY2xDW/aBfWP
+         884OGTpZPYDn1fRrYfvtGy7BX9lp+gQK6HXj+DLpcT/+B4LFwYEly+IJovJY0dyyOw0B
+         S5OA==
+X-Gm-Message-State: APjAAAVotFrErSZVkSHo5z0a+W6Ma1F8hwXrQ2HVvW9LPNW3+6ulgnPm
+        SqlOLaqBSUUtw/a71IZLWaOg79duMw5iukwK4f1xy+pSias=
+X-Google-Smtp-Source: APXvYqwroM5221kd6DE0lMFbDD6+AtmXgtU5HwVqu+4VQvfXVATqsHb0Kap1NezC3fWlTCLdds9tQ/fVqjmiw3vaPP0=
+X-Received: by 2002:a2e:894b:: with SMTP id b11mr10681582ljk.152.1570225481142;
+ Fri, 04 Oct 2019 14:44:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
+ <CACRpkdb=s67w2DCGubhbLQTtxpWtiW8S1MECMO4cvec=bF6OdA@mail.gmail.com>
+ <20190917002207.GJ237523@dtor-ws> <20190930224456.GV237523@dtor-ws>
+In-Reply-To: <20190930224456.GV237523@dtor-ws>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 4 Oct 2019 23:44:29 +0200
+Message-ID: <CACRpkdZB2Z5fgbgq=aqBmw7wJ_uSE0_fyeOx6f7JvxJwfwjjMg@mail.gmail.com>
+Subject: Re: [PATCH 00/11] Add support for software nodes to gpiolib
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This effectively reverts 1db73ae39a97 ("of/device: Nullify match table
-in of_match_device() for CONFIG_OF=n") because that commit makes it more
-surprising to users of this API that the arguments may never be
-referenced by any code. This is because the pre-processor will replace
-the argument with NULL and then the match table will be left unreferenced
-by any code but the compiler optimizer doesn't know to drop it. This can
-lead to compilers warning that match tables are unused, when we really
-want to pass the match table to the API but have the compiler see that
-it's all inlined and not used and then drop the match table while
-silencing the warning. We're being too smart here and not giving the
-compiler the chance to do dead code elimination.
+On Tue, Oct 1, 2019 at 12:45 AM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
+> So I guess we missed -rc1. Any chance we could get an immutable branch
+> off -rc1 that you will pull into your main branch and I hopefully can
+> persuade other maintainers to pull as well so we do not need to drag it
+> over 2+ merge windows?
 
-Please ack or pick for immediate merge so the last patch can be merged.
+Yes I'm sorry. I was swamped with stabilizing the kernel.
+I made an immutable branch and tried to use zeroday for testing
+but it timed out so I folded it in for-next anyways after som basic
+tests.
 
- include/linux/of_device.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/include/linux/of_device.h b/include/linux/of_device.h
-index 8d31e39dd564..3f8ca55bc693 100644
---- a/include/linux/of_device.h
-+++ b/include/linux/of_device.h
-@@ -93,13 +93,11 @@ static inline int of_device_uevent_modalias(struct device *dev,
- 
- static inline void of_device_node_put(struct device *dev) { }
- 
--static inline const struct of_device_id *__of_match_device(
-+static inline const struct of_device_id *of_match_device(
- 		const struct of_device_id *matches, const struct device *dev)
- {
- 	return NULL;
- }
--#define of_match_device(matches, dev)	\
--	__of_match_device(of_match_ptr(matches), (dev))
- 
- static inline struct device_node *of_cpu_device_node_get(int cpu)
- {
--- 
-Sent by a computer through tubes
-
+Yours,
+Linus Walleij
