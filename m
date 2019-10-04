@@ -2,84 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3620CC6AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D0ABCC6B1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:50:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731733AbfJDXt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 19:49:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:59002 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbfJDXt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 19:49:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 16:49:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,258,1566889200"; 
-   d="scan'208";a="205963785"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Oct 2019 16:49:25 -0700
-Date:   Sat, 5 Oct 2019 07:49:07 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        jglisse@redhat.com, mike.kravetz@oracle.com,
-        khlebnikov@yandex-team.ru, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/rmap.c: reuse mergeable anon_vma as parent when fork
-Message-ID: <20191004234907.GC15415@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20191004160632.30251-1-richardw.yang@linux.intel.com>
- <9358295b1d9cc173940a58038123128b4dafc5d0.camel@surriel.com>
+        id S1730246AbfJDXui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 19:50:38 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37381 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728172AbfJDXui (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 19:50:38 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p1so2844655pgi.4
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:to:cc:subject:user-agent:date;
+        bh=+cA64aGiQh2XvxdgS1/kXznRBIkrC4uuJUojLH5zI/w=;
+        b=m07RfMZJ+dNKXdfwGwWBU4If2vcyX5tlS66q9QyzbnOIokoZkKtHkLkmTnyKSOBZgs
+         HmPb7i0B9g4zkNxuV3kkTFH0eqfDFs0hw0hKezeCZvz7tn82q9oi91RWo2FzfYpDw/v/
+         V2l+YI6HghzKZpquVUOmlIezE8tqSepIJmMb4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
+         :user-agent:date;
+        bh=+cA64aGiQh2XvxdgS1/kXznRBIkrC4uuJUojLH5zI/w=;
+        b=NT/hrhXSTq91pFytR5h9UGk/DGEUJKcCN2jxFomciEbKu9cLa2c/bfoFFjzTrF8amw
+         AQbS++ZJa5tNbDo27MPov6K7sYs147IWDYO+JWacGHx/ShHA794JCeVr9zSp8Oo3PJ7/
+         X2FAlsNS7qYs+OCYyCSTJmus9cuBbN3+h0kPLOVeIpbCuwMk/NRB9xmadiy2QogZPwN8
+         5+nmVsBqMH1rdZmyhhAkYp3Uh4Fp9OWtvVmTv1sZcMwEMQsShuPOH68H9PxEn2PB+AzP
+         79lwjQx9jSFcYuF6Ufeq3Ue5HT6+b1N80dFLOu3pTQEcDMleXvLM0iDCeWEfkiDi5vkO
+         8uwA==
+X-Gm-Message-State: APjAAAX0UWw72L8Idhu626BzojkGG4nHE445a52mVKBzM++nt+Eix2RL
+        q6pbQwuWZeGBLBrZ8eFUriEJUQ==
+X-Google-Smtp-Source: APXvYqz5LX4mNmtaQuwX3deyaws5m9/nh/cVjz6uBXRxD6/mxr9VDemqwXdjO2IZwNNgZJi9EPuCqQ==
+X-Received: by 2002:a63:2903:: with SMTP id p3mr18130458pgp.306.1570233037240;
+        Fri, 04 Oct 2019 16:50:37 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id m9sm6546309pjf.11.2019.10.04.16.50.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 16:50:36 -0700 (PDT)
+Message-ID: <5d97dacc.1c69fb81.b5612.3794@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9358295b1d9cc173940a58038123128b4dafc5d0.camel@surriel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <256a1ad3-6a0c-b4bd-e12c-9ab35db2939a@infradead.org>
+References: <20191004212311.141538-1-swboyd@chromium.org> <256a1ad3-6a0c-b4bd-e12c-9ab35db2939a@infradead.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] .gitattributes: Use 'dts' diff driver for dts files
+User-Agent: alot/0.8.1
+Date:   Fri, 04 Oct 2019 16:50:35 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 07:45:26PM -0400, Rik van Riel wrote:
->On Sat, 2019-10-05 at 00:06 +0800, Wei Yang wrote:
->> In function __anon_vma_prepare(), we will try to find anon_vma if it
->> is
->> possible to reuse it. While on fork, the logic is different.
->> 
->> Since commit 5beb49305251 ("mm: change anon_vma linking to fix
->> multi-process server scalability issue"), function anon_vma_clone()
->> tries to allocate new anon_vma for child process. But the logic here
->> will allocate a new anon_vma for each vma, even in parent this vma
->> is mergeable and share the same anon_vma with its sibling. This may
->> do
->> better for scalability issue, while it is not necessary to do so
->> especially after interval tree is used.
->> 
->> Commit 7a3ef208e662 ("mm: prevent endless growth of anon_vma
->> hierarchy")
->> tries to reuse some anon_vma by counting child anon_vma and attached
->> vmas. While for those mergeable anon_vmas, we can just reuse it and
->> not
->> necessary to go through the logic.
->> 
->> After this change, kernel build test reduces 20% anon_vma allocation.
->> 
->> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->
->Acked-by: Rik van Riel <riel@surriel.com>
->
+Quoting Randy Dunlap (2019-10-04 15:08:08)
+> On 10/4/19 2:23 PM, Stephen Boyd wrote:
+> >=20
+> > diff --git a/.gitattributes b/.gitattributes
+> > index 89c411b5ce6b..4b32eaa9571e 100644
+> > --- a/.gitattributes
+> > +++ b/.gitattributes
+> > @@ -1,2 +1,4 @@
+> >  *.c   diff=3Dcpp
+> >  *.h   diff=3Dcpp
+> > +*.dtsi diff=3Ddts
+> > +*.dts  diff=3Ddts
+> >=20
+>=20
+> Hm, I have a "cpp" installed but not a "dts".
+> Where would I find this "dts" so that I can install it?
+>=20
 
-Thanks
+It's not released yet but it is staged to be in the next release[1]. You
+can probably build git from source and try it out if you're interested.
 
->-- 
->All Rights Reversed.
+[1] https://git.kernel.org/pub/scm/git/git.git/commit/?id=3Dd49c2c3466d2c8c=
+b0b3d0a43e6b406b07078fdb1
 
-
-
--- 
-Wei Yang
-Help you, Help me
