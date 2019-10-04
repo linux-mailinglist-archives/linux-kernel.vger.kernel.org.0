@@ -2,50 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E774CBF94
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:44:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E935CBF8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390026AbfJDPoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:44:24 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:42592 "EHLO fornost.hmeau.com"
+        id S2390012AbfJDPnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:43:53 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:42574 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389898AbfJDPoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:44:23 -0400
+        id S2389131AbfJDPnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 11:43:53 -0400
 Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
         by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1iGPil-0001Kq-Cx; Sat, 05 Oct 2019 01:42:20 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2019 01:42:16 +1000
-Date:   Sat, 5 Oct 2019 01:42:16 +1000
+        id 1iGPjG-0001Md-5y; Sat, 05 Oct 2019 01:42:51 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2019 01:42:49 +1000
+Date:   Sat, 5 Oct 2019 01:42:49 +1000
 From:   Herbert Xu <herbert@gondor.apana.org.au>
 To:     Markus Elfring <Markus.Elfring@web.de>
 Cc:     linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-mediatek@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matt Mackall <mpm@selenic.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
         LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Himanshu Jha <himanshujha199640@gmail.com>
-Subject: Re: [PATCH] hwrng: iproc-rng200 - Use
- devm_platform_ioremap_resource() in iproc_rng200_probe()
-Message-ID: <20191004154216.GR5148@gondor.apana.org.au>
-References: <0ecb0679-0558-6cbe-af2f-6ee9122a4a7e@web.de>
+Subject: Re: [PATCH] hwrng: mediatek: Use devm_platform_ioremap_resource() in
+ mtk_rng_probe()
+Message-ID: <20191004154249.GS5148@gondor.apana.org.au>
+References: <e6e03822-c68f-55ea-3a65-ee2a44f50e8c@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0ecb0679-0558-6cbe-af2f-6ee9122a4a7e@web.de>
+In-Reply-To: <e6e03822-c68f-55ea-3a65-ee2a44f50e8c@web.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 09:19:18AM +0200, Markus Elfring wrote:
+On Wed, Sep 18, 2019 at 09:44:06AM +0200, Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 18 Sep 2019 09:09:22 +0200
+> Date: Wed, 18 Sep 2019 09:34:11 +0200
 > 
 > Simplify this function implementation by using a known wrapper function.
 > 
@@ -53,7 +52,7 @@ On Wed, Sep 18, 2019 at 09:19:18AM +0200, Markus Elfring wrote:
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/char/hw_random/iproc-rng200.c | 9 +--------
+>  drivers/char/hw_random/mtk-rng.c | 9 +--------
 >  1 file changed, 1 insertion(+), 8 deletions(-)
 
 Patch applied.  Thanks.
