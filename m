@@ -2,158 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69ECBCBD02
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD997CBCFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389088AbfJDOWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:22:08 -0400
-Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:5362 "EHLO
-        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388270AbfJDOWH (ORCPT
+        id S1730426AbfJDOUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:20:45 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45419 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729638AbfJDOUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:22:07 -0400
-Received: from pps.filterd (m0170397.ppops.net [127.0.0.1])
-        by mx0b-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94EJrBS000829;
-        Fri, 4 Oct 2019 10:22:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=z6tKitNU8BBCheCk/Afn9TT4d4VeUpUcfmoKOg4dTcA=;
- b=alyH3XLk+NyqDbviY/nLkRHj/7SNeWpSAwRCJQN3ks7w0fEa4kxj5Z0AWSYLL0vXGFRE
- BuVAy54ywAvhG7u8zOyMiAZysm9n8TWwqyppGE5cGRk+uXBU8dJjfW4ScmmNntZtcSEO
- P0khi9WphgJS2Tjm8il1B46AiQVf1pd3MuHzM9eJWMdpz6yg7aXhm6NKi8tJb44Bxluw
- ac9OFfAyFgftlglBTnD8qDOFe9g2AZtfmbJ4BhVJ9v5Gv2q3ObkYsvi1t6/TeXNwd2Jl
- +XlEyT2fEjEMWJdMSLI9ecS48K7JcpD+nNbJiGW2rBMHV8HSpFR/YNyX2KcLSaJ9bztC 4w== 
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-        by mx0b-00154904.pphosted.com with ESMTP id 2vdv95tw02-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Oct 2019 10:22:05 -0400
-Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94EHvJW159279;
-        Fri, 4 Oct 2019 10:22:04 -0400
-Received: from ausxippc106.us.dell.com (AUSXIPPC106.us.dell.com [143.166.85.156])
-        by mx0a-00154901.pphosted.com with ESMTP id 2vdbb4m8gw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 04 Oct 2019 10:22:04 -0400
-X-LoopCount0: from 10.166.132.127
-X-PREM-Routing: D-Outbound
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="468622187"
-From:   <Mario.Limonciello@dell.com>
-To:     <yehezkelshb@gmail.com>, <mika.westerberg@linux.intel.com>
-CC:     <linux-usb@vger.kernel.org>, <andreas.noever@gmail.com>,
-        <michael.jamet@intel.com>, <rajmohan.mani@intel.com>,
-        <nicholas.johnson-opensource@outlook.com.au>, <lukas@wunner.de>,
-        <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
-        <anthony.wong@canonical.com>, <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
-Thread-Topic: [RFC PATCH 17/22] thunderbolt: Add initial support for USB4
-Thread-Index: AQHVeEzShOhklesInk+gx9St4A7986dGAqiggAATYiCAAUbqgIAAF+AwgABczAD//7D1UIABYeAAgAAaodCAAXYEAIAAA6wAgAADboCAADI8gP//2PrggAAFUsA=
-Date:   Fri, 4 Oct 2019 14:19:33 +0000
-Message-ID: <7025a9ad0ba54f7381e1455088206aed@AUSX13MPC105.AMER.DELL.COM>
-References: <184c95fc476146939b240557e54ee2c9@AUSX13MPC105.AMER.DELL.COM>
- <5357cb96013445d79f5c2016df8a194e@AUSX13MPC105.AMER.DELL.COM>
- <20191002083913.GG2714@lahna.fi.intel.com>
- <767f2f97059e4e9f861080672aaa18d3@AUSX13MPC105.AMER.DELL.COM>
- <CA+CmpXs4YsTA3QnD77SaXq3mRYX6oFwx+pm-3wEErwkF-02M+A@mail.gmail.com>
- <bb84da73d1df468da1707a2af09eb2de@AUSX13MPC105.AMER.DELL.COM>
- <20191003080028.GK2819@lahna.fi.intel.com>
- <06a04bff94494da99c5359a7fb645d19@AUSX13MPC105.AMER.DELL.COM>
- <20191004075426.GA2819@lahna.fi.intel.com>
- <CA+CmpXsMkwZhCegGYPYQo2GwN6ROwDYbY3RVZTEeN+FfZ-PbMQ@mail.gmail.com>
- <20191004081951.GD2819@lahna.fi.intel.com>
- <CA+CmpXvoro+m-NZLguMtDq_r_Og8LAFQgPGosvA+WsjMhi6m1Q@mail.gmail.com>
- <332849ed8714496587251b6319a11b0b@AUSX13MPC105.AMER.DELL.COM>
-In-Reply-To: <332849ed8714496587251b6319a11b0b@AUSX13MPC105.AMER.DELL.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-10-04T14:00:22.8568787Z;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
- aiplabel=External Public
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 4 Oct 2019 10:20:44 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iGORh-0008UR-Aw; Fri, 04 Oct 2019 16:20:37 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iGORg-0004n2-VN; Fri, 04 Oct 2019 16:20:36 +0200
+Date:   Fri, 4 Oct 2019 16:20:36 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] pwm: mxs: add support for inverse polarity
+Message-ID: <20191004142036.apzjf54dlzfah5xl@pengutronix.de>
+References: <20191004133207.6663-1-linux@rasmusvillemoes.dk>
+ <20191004133207.6663-4-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-04_07:2019-10-03,2019-10-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 mlxlogscore=999 phishscore=0 adultscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910040132
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1910040132
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191004133207.6663-4-linux@rasmusvillemoes.dk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW1vbmNpZWxsbywgTWFyaW8N
-Cj4gU2VudDogRnJpZGF5LCBPY3RvYmVyIDQsIDIwMTkgOTowNiBBTQ0KPiBUbzogJ1llaGV6a2Vs
-IEJlcm5hdCc7IE1pa2EgV2VzdGVyYmVyZw0KPiBDYzogbGludXgtdXNiQHZnZXIua2VybmVsLm9y
-ZzsgQW5kcmVhcyBOb2V2ZXI7IE1pY2hhZWwgSmFtZXQ7IFJham1vaGFuIE1hbmk7DQo+IG5pY2hv
-bGFzLmpvaG5zb24tb3BlbnNvdXJjZUBvdXRsb29rLmNvbS5hdTsgTHVrYXMgV3VubmVyOw0KPiBn
-cmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgc3Rlcm5Acm93bGFuZC5oYXJ2YXJkLmVkdTsgQW50
-aG9ueSBXb25nOyBMS01MDQo+IFN1YmplY3Q6IFJFOiBbUkZDIFBBVENIIDE3LzIyXSB0aHVuZGVy
-Ym9sdDogQWRkIGluaXRpYWwgc3VwcG9ydCBmb3IgVVNCNA0KPiANCj4gPg0KPiA+IE9uIEZyaSwg
-T2N0IDQsIDIwMTkgYXQgMTE6MTkgQU0gTWlrYSBXZXN0ZXJiZXJnDQo+ID4gPG1pa2Eud2VzdGVy
-YmVyZ0BsaW51eC5pbnRlbC5jb20+IHdyb3RlOg0KPiA+ID4NCj4gPiA+IE9uIEZyaSwgT2N0IDA0
-LCAyMDE5IGF0IDExOjA3OjM0QU0gKzAzMDAsIFllaGV6a2VsIEJlcm5hdCB3cm90ZToNCj4gPiA+
-ID4gPiBBbHNvIGlmIHlvdSBjYW4gZ2V0IHRoZSBod192ZW5kb3JfaWQgYW5kIGh3X3Byb2R1Y3Rf
-aWQgZnJvbSB0aGUga2VybmVsDQo+ID4gPiA+ID4gZG9lcyB0aGF0IG1lYW4geW91IGRvbid0IG5l
-ZWQgdG8gZG8gdGhlIHR3byByZWFkcyBvciB5b3Ugc3RpbGwgbmVlZA0KPiA+ID4gPiA+IHRob3Nl
-Pw0KPiA+ID4gPg0KPiA+ID4gPiBBcmUgdGhvc2UgdGhlIGNoaXAgdmVuZG9yIG9yIHRoZSBPRU0s
-IGluIGNhc2UgdGhleSBhcmUgZGlmZmVyZW50Pw0KPiA+ID4NCj4gPiA+IFRob3NlIGFyZSB0aGUg
-YWN0dWFsIFVTQjQgaGFyZHdhcmUgbWFrZXIgdmFsdWVzLCBkaXJlY3RseSBmcm9tDQo+ID4gPiBS
-T1VURVJfQ1NfMCAocC4gMjg3IGluIHRoZSBVU0I0IHNwZWMpLiBUaGlzIGFsbW9zdCBjZXJ0YWlu
-bHkgZGlmZmVyIGZyb20NCj4gPiA+IHRoZSBPRU0gdmFsdWVzIGZyb20gRFJPTSB3ZSBjdXJyZW50
-bHkgZXhwb3NlLg0KPiA+DQo+ID4gTWFrZXMgc2Vuc2UgdG8gbWUuIFVzZXJzcGFjZSBjYW4gbGVh
-cm4gdGhlIHJlbGV2YW50IElEcyB0aGF0IHRoZWlyIE5WTQ0KPiBmb3JtYXQNCj4gPiBpcw0KPiA+
-IGtub3duLg0KPiA+DQo+ID4gPg0KPiA+ID4gPiBUaGlua2luZyBhYm91dCBpdCBhZ2FpbiwgSSdk
-IGd1ZXNzIGl0IHNob3VsZG4ndCBtYXR0ZXIgbXVjaCwgaWYgdGhlIGNoaXAgaXMgZnJvbQ0KPiA+
-ID4gPiBJbnRlbCwgdGhlIEZXIHN1cHBvcnRzIE5WTSB1cGdyYWRlLCBpc24ndCBpdD8NCj4gPiA+
-DQo+ID4gPiBTbyB0aGUgYm90dG9tIGxpbmUgaXMgdGhhdCBpZiB0aGUga2VybmVsIHRoaW5rcyB0
-aGUgcm91dGVyIHN1cHBvcnRzIE5WTQ0KPiA+ID4gdXBncmFkZSBpdCBleHBvc2VzIHRoZSBudm1f
-YWN0aXZlL252bV9ub25fYWN0aXZlIGZpbGVzIGV0Yy4gSSB0aGluaw0KPiA+ID4gZnd1cGQgdXNl
-cyB0aGlzIGluZm9ybWF0aW9uIHRvIGRpc3BsYXkgdXNlciB3aGV0aGVyIHRoZSBkZXZpY2UgY2Fu
-IGJlDQo+ID4gPiB1cGdyYWRlZCBvciBub3QgKGZvciBleGFtcGxlIElDTCBjYW5ub3QgYXMgdGhl
-IE5WTSBpcyBwYXJ0IG9mIEJJT1MpLg0KPiA+DQo+ID4gWWVzLCBmd3VwZCBhbHJlYWR5IHRha2Vz
-IHRoaXMgaW50byBhY2NvdW50LCBidXQgdGhlIHF1ZXN0aW9uIGhlcmUgaXMgaG93IHRvDQo+ID4g
-aGFuZGxlIGNhc2VzIHRoYXQgTlZNIGlzIGF2YWlsYWJsZSBidXQgdGhlIGZvcm1hdCBpc24ndCBr
-bm93biB0bw0KPiA+IHVzZXJzcGFjZSAoeWV0KS4NCj4gDQo+IEV4YWN0bHkuDQo+IA0KPiA+DQo+
-ID4gPg0KPiA+ID4gRXhwb3NpbmcgaHdfdmVuZG9yX2lkIGFuZCBod19wcm9kdWN0X2lkIG1heSBz
-cGVlZCB1cCBmd3VwZCBiZWNhdXNlIGl0DQo+ID4gPiBkb2VzIG5vdCBuZWVkIHRvIGdvIG92ZXIg
-dGhlIGFjdGl2ZSBOVk0gdG8gZmlndXJlIG91dCB3aGV0aGVyIHRoZSBuZXcNCj4gPiA+IGltYWdl
-IGlzIGZvciB0aGUgY29ycmVjdCBjb250cm9sbGVyLg0KPiA+DQo+ID4gSXQncyBub3QgYWJvdXQg
-ZmluZGluZyB0aGUgcmVsZXZhbnQgaW1hZ2UgZm9yIHVwZ3JhZGUgKHdoaWNoIG11c3QgYmUgc2Vh
-cmNoZWQNCj4gPiBmb3IgYnkgbG9va2luZyBpbiB0aGUgRFJPTSB2ZW5kb3IvcHJvZHVjdCB2YWx1
-ZXMpLCBidXQgYWJvdXQgdGhlIHF1ZXN0aW9uIGlmDQo+IHRoZQ0KPiA+IE5WTSBmb3JtYXQgaXMg
-a25vd24gdG8gdXNlcnNwYWNlIGFuZCBza2lwIHRoZSBwYXJzaW5nIHdvcmsgaWYgaXQncyBhbnl3
-YXkNCj4gZ29pbmcNCj4gPiB0byBmYWlsLg0KPiA+DQo+ID4gU28geWVzLCBJIHRoaW5rIGV4cG9z
-aW5nIHZlbmRvciBJRCAoYW5kIG1heWJlIGFsc28gcHJvZHVjdCBJRCkgY2FuIGltcHJvdmUgdGhl
-DQo+ID4gc2l0dWF0aW9uLg0KPiA+DQo+IA0KPiBDdXJyZW50bHkgYXQgcHJvYmUgdGltZSBldmVy
-eXRoaW5nIGNvbWVzIGZyb20gdWRldiBleGNlcHQgZm9yIHRoZSBiaXQgaW5kaWNhdGluZw0KPiBy
-dW5uaW5nIGluICJuYXRpdmUiIG1vZGUgb3Igbm90LiAgSnVzdCBlbm91Z2ggY2h1bmtzIG9mIHRo
-ZSBOVk0gYXJlIHJlYWQgdG8NCj4gZGV0ZXJtaW5lDQo+IHRoYXQgKElFIG5vIHJlYWRpbmcgdXAg
-dGhyb3VnaCBEUk9NIG9yIGp1bXBpbmcgYXJvdW5kKS4NCj4gDQo+IElmIENocmlzdGlhbidzIHBh
-dGNoIHRvIGV4cG9ydCBnZW5lcmF0aW9uIGlzIGFjY2VwdGVkIEkgdGhpbmsgdGhhdCB3ZSBjb3Vs
-ZCBtb3ZlDQo+IHRoYXQgY2hlY2sNCj4gdG8gb25seSByZWFkIC1uYXRpdmUgaWYgZ2VuZXJhdGlv
-biA8IDMuDQo+IA0KDQpTb3JyeSBmb3IgdGhlIHR5cG87ICBnZW5lcmF0aW9uIDwgNC4NCg0KPiBB
-bmQgaWYgeW91IGV4cG9ydCB0aGUgaHdfdmVuZG9yX2lkIGFuZCBod19wcm9kdWN0X2lkIGZpZWxk
-cyB0aGVuIHRoYXQgbWVhbnMNCj4gVVNCNCBkZXZpY2VzDQo+IHdvdWxkIHJlcXVpcmUgbm8gcmVh
-ZGluZyBmcm9tIE5WTSBhdCAicHJvYmUiIHNpbmNlIHdlIGRvbid0IGhhdmUgdG8gcmVhZCBhIC0N
-Cj4gbmF0aXZlIGJpdC4NCj4gDQo+IFdlIHdvdWxkIHN0aWxsIG9mIGNvdXJzZSByZWFkIGFuZCBh
-bmFseXplIHRoZSBOVk0gd2hlbiBpdCBjb21lcyB0aW1lIHRvIGZsYXNoIGENCj4gbmV3IGRldmlj
-ZQ0KPiB0aG91Z2guDQo=
+On Fri, Oct 04, 2019 at 03:32:04PM +0200, Rasmus Villemoes wrote:
+> If I'm reading of_pwm_xlate_with_flags() right, existing device trees
+> that set #pwm-cells = 2 will continue to work.
+
+Yes, that's what I expect, too.
+
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+>  drivers/pwm/pwm-mxs.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-mxs.c b/drivers/pwm/pwm-mxs.c
+> index 5a6835e18fc6..57562221c439 100644
+> --- a/drivers/pwm/pwm-mxs.c
+> +++ b/drivers/pwm/pwm-mxs.c
+> @@ -25,8 +25,11 @@
+>  #define  PERIOD_PERIOD(p)	((p) & 0xffff)
+>  #define  PERIOD_PERIOD_MAX	0x10000
+>  #define  PERIOD_ACTIVE_HIGH	(3 << 16)
+> +#define  PERIOD_ACTIVE_LOW	(2 << 16)
+> +#define  PERIOD_INACTIVE_HIGH	(3 << 18)
+>  #define  PERIOD_INACTIVE_LOW	(2 << 18)
+>  #define  PERIOD_POLARITY_NORMAL	(PERIOD_ACTIVE_HIGH | PERIOD_INACTIVE_LOW)
+> +#define  PERIOD_POLARITY_INVERSE	(PERIOD_ACTIVE_LOW | PERIOD_INACTIVE_HIGH)
+>  #define  PERIOD_CDIV(div)	(((div) & 0x7) << 20)
+>  #define  PERIOD_CDIV_MAX	8
+>  
+> @@ -50,9 +53,7 @@ static int mxs_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	unsigned int period_cycles, duty_cycles;
+>  	unsigned long rate;
+>  	unsigned long long c;
+> -
+> -	if (state->polarity != PWM_POLARITY_NORMAL)
+> -		return -ENOTSUPP;
+> +	unsigned int pol_bits;
+>  
+>  	/*
+>  	 * If the PWM channel is disabled, make sure to turn on the
+> @@ -91,9 +92,12 @@ static int mxs_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	 * only take effect at the beginning of a new period, avoiding
+>  	 * glitches.
+>  	 */
+> +
+> +	pol_bits = state->polarity == PWM_POLARITY_NORMAL ?
+> +		PERIOD_POLARITY_NORMAL : PERIOD_POLARITY_INVERSE;
+>  	writel(duty_cycles << 16,
+>  	       mxs->base + PWM_ACTIVE0 + pwm->hwpwm * 0x20);
+> -	writel(PERIOD_PERIOD(period_cycles) | PERIOD_POLARITY_NORMAL | PERIOD_CDIV(div),
+> +	writel(PERIOD_PERIOD(period_cycles) | pol_bits | PERIOD_CDIV(div),
+>  	       mxs->base + PWM_PERIOD0 + pwm->hwpwm * 0x20);
+
+Is the avoidance of glitches still true when period changes? I assume
+that yes, but I wonder if you tested that.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
