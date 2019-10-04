@@ -2,121 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79AEBCB87B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA37CB881
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 12:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730132AbfJDKjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 06:39:12 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46487 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729319AbfJDKjM (ORCPT
+        id S1730262AbfJDKkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 06:40:18 -0400
+Received: from mail4.protonmail.ch ([185.70.40.27]:36480 "EHLO
+        mail4.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729319AbfJDKkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 06:39:12 -0400
-Received: by mail-io1-f67.google.com with SMTP id c6so12344806ioo.13;
-        Fri, 04 Oct 2019 03:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=qZkq2IFXpYdFUAnRVtV16PjDv6kvLyNtOPmSknMDol4=;
-        b=Mp2DLOFOq3R1RI5KaWj39fc1oBw6TxRdIvXzsQ0B0fhH/lbeuSRNfiJKbUfuQrK7WH
-         5luCH418ZMKmk7qe9lJvudy6XbTFEhj7D24H5TAsxvrxV9kq6YvyOUFFCSEJQTbWr3i8
-         QbzrQTlwPeXbbkREqQ7/g37cQ9U+TPxmI3kcGQT/HFPvRsiNQp9ok+J4fvOV22K0oTHf
-         C/vE9TMqxqjz4qzKwM6517/YXKAE3/+7CqG9BLlzpl2DT3ffDBl1/2aEBm4lH4gaAnhp
-         ZIKW5V7EqoetyfZ4eF1VqmLidThv1DLK79zUP3ikQRTs7AIT8W8LGkyER9YzZvO9u2Ry
-         k1xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=qZkq2IFXpYdFUAnRVtV16PjDv6kvLyNtOPmSknMDol4=;
-        b=Wdl7ISq4J9kwt1hnhdu44b95oUsN/aRLoCE4u2NelaYpbJHncV/8wObUCCVgTYjurt
-         umNwNvKUwQ+JoFuJziyzHcl94u7WYFOEZS79wl3HgwyxsJPF/0nRM+1vbofGMWuqqPW4
-         vIjWeHNS46HOn4wGklGTKBv76hmr2GkTNaK6VY8gLfzwEQymIhqooOn+j97i6GI14Zb6
-         RXd/DxScQkPz93xSlbVroSq68k7MokDfvNR/e6BOdv8RG1kyqk/IOaRCSNNvAadbZwpo
-         dTVuR4UVR63Rty6KSWlLUdpswS7NZVMd1OnxEEtdT4/DGEib0qtR2D0fMfUZ4ZX0TCP9
-         sNPw==
-X-Gm-Message-State: APjAAAXO8ZW3xS4aN513bkWf4o4nb4YuqvNBKkmmZXrRi+Y8Z6/LFTV8
-        MsAM73gAGizBUQnct+kfRkHe4/0DDEcDjczpGSM=
-X-Google-Smtp-Source: APXvYqz+Xj/q8hbRyOg8+71Aa+R2dm9DnYdbORf3IizXzCYBaNRlGKcl0yuGyJeYNFdYvisEVnWOazRJtqbNoFnP1I0=
-X-Received: by 2002:a02:65cd:: with SMTP id u196mr13949946jab.3.1570185550237;
- Fri, 04 Oct 2019 03:39:10 -0700 (PDT)
+        Fri, 4 Oct 2019 06:40:16 -0400
+Date:   Fri, 04 Oct 2019 10:40:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1570185611;
+        bh=jcjMzfd4m+XfL4rmlu4IOvLrfeypogFn7NmUoqG8CF0=;
+        h=Date:To:From:Cc:Reply-To:Subject:Feedback-ID:From;
+        b=RWgHCOpTrMaUH32uevd5OxbmiZBGUXsPuGCjBJVJYAEeYVvsx9Zr2Xz++GaeylX9g
+         vvf+RVO+I1C7OCpFDUCX60tstIZ7btsSxBwo+8S0MAbwEPyvhHGXmXjjyZoLg2CAQE
+         PhGJMjzIYRFzETPU6iCcaffCeZG2GPqGbNXa7q3Y=
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+From:   Dmitry Goldin <dgoldin@protonmail.ch>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joel@joelfernandes.org" <joel@joelfernandes.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Ben Hutchings <ben@decadent.org.uk>
+Reply-To: Dmitry Goldin <dgoldin@protonmail.ch>
+Subject: [PATCH v2] kheaders: making headers archive reproducible
+Message-ID: <z4zhwEnRqCVnnV8RYwKbY9H_TEnHePR6grYfw1toELFA-iZidlp3T18y0w35JtWNghJQ3hwL23RrsKXIVJHYiv9wOsqmow33NU6LcHcFWyw=@protonmail.ch>
+Feedback-ID: Z14zYPZ70AFJyYagXjx-jk2Vw9RTvF5p9C9xp4Pq6DJAMFg9PDsfB7GoMmtR_dfa0BaFgToZb9Q4V0UiY2YiMQ==:Ext:ProtonMail
 MIME-Version: 1.0
-References: <CAHCN7xLO5VgA6tW4p7QjwPv_QXv==zbC38TxXtsR5x9H0mUGJA@mail.gmail.com>
-In-Reply-To: <CAHCN7xLO5VgA6tW4p7QjwPv_QXv==zbC38TxXtsR5x9H0mUGJA@mail.gmail.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Fri, 4 Oct 2019 05:38:59 -0500
-Message-ID: <CAHCN7xJPv7W381R7LS4bB8xWWpugz2NwbTUtj-hqHnDBZ9MFzA@mail.gmail.com>
-Subject: Re: DM3730 Bluetooth Performance differences between SERIAL_8250_OMAP
- vs SERIAL_OMAP
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Vignesh R <vigneshr@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 5:02 AM Adam Ford <aford173@gmail.com> wrote:
->
-> I am running Kernel 5.3.2 trying to troubleshoot some intermittent
-> Bluetooth issues, and I think I have narrowed it down to the serial
-> driver in use.
+From: Dmitry Goldin <dgoldin+lkml@protonmail.ch>
 
-I should have also noted that it's using UART2 with CTS and RTS on the
-DM3730 (omap3630) and its configured with a baud rate of 3M.
-I tried slowing it to 115200, but that didn't help.  I tried disabling
-the DMA hooks from the device tree, and that didn't help.
+In commit 43d8ce9d65a5 ("Provide in-kernel headers to make
+extending kernel easier") a new mechanism was introduced, for kernels
+>=3D5.2, which embeds the kernel headers in the kernel image or a module
+and exposes them in procfs for use by userland tools.
 
-> By default, omap2plus_defconfig enables both SERIAL_8250_OMAP and
-> SERIAL_OMAP.  I have my console device configured as  ttyS0, and all
-> appears fine.  When I enable Bluetooth, however, I get intermittent
-> errors on an DM3730 / OMAP3630.
->
-> Using the 8250 driver for Blueotooth I get intermittent frame errors
-> and data loss.
->
-> Scanning ...
-> [   28.482452] Bluetooth: hci0: Frame reassembly failed (-84)
-> [   36.162170] Bluetooth: hci0: Frame reassembly failed (-84)
->         F4:4E:FC:C9:2F:57       BluJax
-> # l2ping F4:4E:FC:C9:2F:57
-> Ping: F4:4E:FC:C9:2F:57 from 00:18:30:49:7D:63 (data size 44) ...
-> 44 bytes from F4:4E:FC:C9:2F:57 id 0 time 8.27ms
-> no response from F4:4E:FC:C9:2F:57: id 1
-> ^C2 sent, 1 received, 50% loss
->
-> (after a fairly long hang, I hit control-c)
->
-> However, disabling the 8250 driver and using the only SERIAL_OMAP and
-> the console routed to ttyO0, the Bluetooth works well, so I believe it
-> to be a serial driver issue and not a Bluetooth error.
->
-> # hcitool scan
-> Scanning ...
->         F4:4E:FC:C9:2F:57       BluJax
-> ^C
-> # l2ping F4:4E:FC:C9:2F:57
-> Ping: F4:4E:FC:C9:2F:57 from 00:18:30:49:7D:63 (data size 44) ...
-> 44 bytes from F4:4E:FC:C9:2F:57 id 0 time 6.90ms
-> ...
-> 44 bytes from F4:4E:FC:C9:2F:57 id 14 time 28.29ms
-> ^C15 sent, 15 received, 0% loss
-> #
->
-> 0% loss and regular, repeatable communication without any Frame
-> reassembly errors.
->
+The archive containing the header files has nondeterminism caused by
+header files metadata. This patch normalizes the metadata and utilizes
+KBUILD_BUILD_TIMESTAMP if provided and otherwise falls back to the
+default behaviour.
 
-I tried disabling SERIAL_OMAP and using only SERIAL_8250_OMAP, but
-that didn't help.  Because the issue goes away when I disable
-SERIAL_8250_OMAP, I am wondering if something is either being
-misconfigured or some IRQ or DMA integration is missing that may be
-present with the older SERIAL_OMAP driver.
+In commit f7b101d33046 ("kheaders: Move from proc to sysfs") it was
+modified to use sysfs and the script for generation of the archive was
+renamed to what is being patched.
 
-> Any suggestions on how to troubleshoot or what might cause the
-> difference between the two drivers?
->
-> adam
+Signed-off-by: Dmitry Goldin <dgoldin+lkml@protonmail.ch>
+
+---
+
+v1: Initial fix
+
+v2: Added a bit of info about kheaders to the reproducible builds
+documentation and used the opportunity to fix a few typos in the
+original patch.
+
+---
+ Documentation/kbuild/reproducible-builds.rst | 13 +++++++++----
+ kernel/gen_kheaders.sh                       |  5 ++++-
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/kbuild/reproducible-builds.rst b/Documentation/k=
+build/reproducible-builds.rst
+index ab92e98c89c8..ce6a408b3303 100644
+--- a/Documentation/kbuild/reproducible-builds.rst
++++ b/Documentation/kbuild/reproducible-builds.rst
+@@ -16,16 +16,21 @@ the kernel may be unreproducible, and how to avoid them=
+.
+ Timestamps
+ ----------
+
+-The kernel embeds a timestamp in two places:
++The kernel embeds timestamps in three places:
+
+ * The version string exposed by ``uname()`` and included in
+   ``/proc/version``
+
+ * File timestamps in the embedded initramfs
+
+-By default the timestamp is the current time.  This must be overridden
+-using the `KBUILD_BUILD_TIMESTAMP`_ variable.  If you are building
+-from a git commit, you could use its commit date.
++* If enabled via ``CONFIG_IKHEADERS``, file timestamps of kernel
++  headers embedded in the kernel or respective module,
++  exposed via ``/sys/kernel/kheaders.tar.xz``
++
++By default the timestamp is the current time and in the case of
++``kheaders`` the various files' modification times. This must
++be overridden using the `KBUILD_BUILD_TIMESTAMP`_ variable.
++If you are building from a git commit, you could use its commit date.
+
+ The kernel does *not* use the ``__DATE__`` and ``__TIME__`` macros,
+ and enables warnings if they are used.  If you incorporate external
+diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
+index 9ff449888d9c..aff79e461fc9 100755
+--- a/kernel/gen_kheaders.sh
++++ b/kernel/gen_kheaders.sh
+@@ -71,7 +71,10 @@ done | cpio --quiet -pd $cpio_dir >/dev/null 2>&1
+ find $cpio_dir -type f -print0 |
+ =09xargs -0 -P8 -n1 perl -pi -e 'BEGIN {undef $/;}; s/\/\*((?!SPDX).)*?\*\=
+///smg;'
+
+-tar -Jcf $tarfile -C $cpio_dir/ . > /dev/null
++# Create archive and try to normalize metadata for reproducibility
++tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=3D$KBUILD_BUILD_TIMESTAMP}" \
++    --owner=3D0 --group=3D0 --sort=3Dname --numeric-owner \
++    -Jcf $tarfile -C $cpio_dir/ . > /dev/null
+
+ echo "$src_files_md5" >  kernel/kheaders.md5
+ echo "$obj_files_md5" >> kernel/kheaders.md5
+--
+2.23.0
