@@ -2,115 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A404CC52F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:48:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7351CC502
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730867AbfJDVsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 17:48:39 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37417 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728773AbfJDVsj (ORCPT
+        id S1730873AbfJDVnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:43:40 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36396 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728773AbfJDVni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:48:39 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l21so7940141lje.4
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:48:37 -0700 (PDT)
+        Fri, 4 Oct 2019 17:43:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y22so4697812pfr.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kSvi6bN3MgmA9q6zMgIL0cUcdQWLY9tbHblghBTgstI=;
-        b=hBuewRInP5i+6gtlRLW9UtlDY0YPe0z67E0xbXSSSKYA7biQf+uXTlrPp7zLuAUPeq
-         5uQ2rwixtXebf99m1RfUdMDyjGKPh3VgF3DuF8NvshRtQGRa2wNkvwDCWMNQ0VKjXHWB
-         ZmI6XqYkyQwmdmiffnmLI1+ZMJ0oT9STysqR8=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=42znpoZzZjmG9yaRFQAzNvyi78UFWYqHsVeXsUAMBvM=;
+        b=MJ9Cw0wp0Mh+XkAZ37PArMbq3cXXTtMOK8MgPDNXCkP0yXajJDHPB5xaYgU0YftimM
+         IZ9Xr5C2yJosZi22FLfNZvyhDcgs9mFbobfjnE1WeFcBQ21xU74RMtcoRM+q4pMigeCm
+         sJyAZ9okOsrTu89hmigncAMqTy1HVXQqwb/PM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kSvi6bN3MgmA9q6zMgIL0cUcdQWLY9tbHblghBTgstI=;
-        b=gtFvGo54fP6FCMpghCBK0KW0WxtOwtI17EEhfbDZeIr30IaABFRMcXG9qF6dY2A13Z
-         9hQVgFwQSuEVu4DAwQh9a7s8tba8WjftVOSwwP18Xn1qg6hopiON751fVG4YhyT55a2n
-         8VuTw4/9G2wiy6Kf3V9+OOsR01E+mzlgoHrFgge4hIfPKi3d9+sSwFatwuBlteK5u8q2
-         Lq9tB6EccwJECkIjNiuOJoKYyfg+42rB988RaR6PxUmYDU0jDBtNVeLrmCTTXlJz0OSn
-         G/to35Zddr+/YphnD38lzbqbiDqIvgmACohMp8HiTZPBU3PyjqCIVC2BKlQaPUbUnSLZ
-         0F9A==
-X-Gm-Message-State: APjAAAXC2tBUn/zgmboHbn8PF0H2z7NMPq1pgztS/HhExgL0AZOeZWDN
-        znXRgxeQRCq9IDAuf9QYG7hPtPfvGzI=
-X-Google-Smtp-Source: APXvYqyYoPX0suHREaVTfCqPa1djgbBm9vi35cZDHzpc6+3ezCSM2a9/5U8VtWXfEncjDzHHUexgNg==
-X-Received: by 2002:a2e:7d0d:: with SMTP id y13mr10876610ljc.170.1570225716623;
-        Fri, 04 Oct 2019 14:48:36 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id n3sm1344200lfl.62.2019.10.04.14.48.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Oct 2019 14:48:36 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id x80so5476444lff.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 14:48:36 -0700 (PDT)
-X-Received: by 2002:a19:7d55:: with SMTP id y82mr10113290lfc.106.1570225353484;
- Fri, 04 Oct 2019 14:42:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190923090249.127984-1-brendanhiggins@google.com> <20191004213812.GA24644@mit.edu>
-In-Reply-To: <20191004213812.GA24644@mit.edu>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 4 Oct 2019 14:42:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
-Message-ID: <CAHk-=whX-JbpM2Sc85epng_GAgGGzxRAJ2SSKkMf9N1Lsqe+OA@mail.gmail.com>
-Subject: Re: [PATCH v18 00/19] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=42znpoZzZjmG9yaRFQAzNvyi78UFWYqHsVeXsUAMBvM=;
+        b=O+V3ycPrBMeN5GyHaCKTAO0trwuPhnJTIWshUHKHnEbrXyqlwFeVygwxtQvO9BQW1+
+         7lZsev9qh5zzGRwpiSkGGN4GTq9bXAPjmwBzJIMW56oRBcomSDoOrYmDcymbD6SuaeCc
+         Qs+U+FDla4mhfNJkEPwzARlAnIPjKOAsnFrHZn+fXzVfyuGQNu6V49qNxhEr821nQjJ1
+         juZ5KHFSQQPehGPwmNSWrQ+ukYZvRs+4Ht1V26r3ziV0UxsrtQQ9Iwfz0Nb2jqoAGRio
+         3T4BUZXaPsPQoTvACr0Zwt+knLc0ilbAiFLin7fX4dXSahT3geLyyw5Gdg8vSPPDRe83
+         9umw==
+X-Gm-Message-State: APjAAAVbiOgkdj1UTnjmKd1AYDttxOGIHIWlOskJteyPVkZibOfbiZbS
+        PBNeGkQLsAVyzJ95RyOjdX7QAu26C70=
+X-Google-Smtp-Source: APXvYqy1SG4O+l1PxmR4D+2nW3K5VMykMwaSO5DOFDZyCRsqYuEK129X6z1/RcOxIP4TfZnnBe0BMw==
+X-Received: by 2002:a17:90a:e017:: with SMTP id u23mr4003152pjy.55.1570225416541;
+        Fri, 04 Oct 2019 14:43:36 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id a11sm10446799pfg.94.2019.10.04.14.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 14:43:36 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        alsa-devel@alsa-project.org, Andrew Lunn <andrew@lunn.ch>,
+        Arnd Bergmann <arnd@arndb.de>, Dan Murphy <dmurphy@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        kieran.bingham@ideasonboard.com,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, robh@kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>, Tim.Bird@sony.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, jdike@addtoit.com,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>, khilman@baylibre.com,
-        knut.omang@oracle.com, logang@deltatee.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Jean Delvare <jdelvare@suse.com>, Jiri Slaby <jslaby@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        Riku Voipio <riku.voipio@iki.fi>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: [PATCH 00/10] Stop NULLifying match pointer in of_match_device()
+Date:   Fri,  4 Oct 2019 14:43:24 -0700
+Message-Id: <20191004214334.149976-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 2:39 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> This question is primarily directed at Shuah and Linus....
->
-> What's the current status of the kunit series now that Brendan has
-> moved it out of the top-level kunit directory as Linus has requested?
+of_match_device() uses of_match_ptr() to make the match table argument
+NULL via the pre-processor when CONFIG_OF=n. This makes life harder for
+compilers who think that match tables are never used and warn about
+unused variables when CONFIG_OF=n. This series changes various callers
+to use of_device_get_match_data() instead, which doesn't have this
+problem, and removes the of_match_ptr() usage from of_match_device() so
+that the compiler can stop complaining about unused variables. It will
+do dead code elimination instead and remove the match table if it isn't
+actually used.
 
-We seemed to decide to just wait for 5.5, but there is nothing that
-looks to block that. And I encouraged Shuah to find more kunit cases
-for when it _does_ get merged.
+Huge Cc list!
 
-So if the kunit branch is stable, and people want to start using it
-for their unit tests, then I think that would be a good idea, and then
-during the 5.5 merge window we'll not just get the infrastructure,
-we'll get a few more users too and not just examples.
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: <alsa-devel@alsa-project.org>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dan Murphy <dmurphy@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: <linux-hwmon@vger.kernel.org>
+Cc: <linux-leds@vger.kernel.org>
+Cc: <linux-media@vger.kernel.org>
+Cc: <linux-omap@vger.kernel.org>
+Cc: <linux-renesas-soc@vger.kernel.org>
+Cc: <linux-rtc@vger.kernel.org>
+Cc: <linux-serial@vger.kernel.org>
+Cc: <linux-spi@vger.kernel.org>
+Cc: <linux-usb@vger.kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Richard Leitner <richard.leitner@skidata.com>
+Cc: Riku Voipio <riku.voipio@iki.fi>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.com>
 
-             Linus
+Stephen Boyd (10):
+  leds: pca953x: Use of_device_get_match_data()
+  media: renesas-ceu: Use of_device_get_match_data()
+  rtc: armada38x: Use of_device_get_match_data()
+  drivers: net: davinci_mdio: Use of_device_get_match_data()
+  serial: stm32: Use of_device_get_match_data()
+  usb: usb251xb: Use of_device_get_match_data()
+  ASoC: jz4740: Use of_device_get_match_data()
+  spi: gpio: Look for a device node instead of match
+  hwmon: (lm70) Avoid undefined reference to match table
+  of/device: Don't NULLify match table in of_match_device() with
+    CONFIG_OF=n
+
+ drivers/hwmon/lm70.c                   |  2 +-
+ drivers/leds/leds-pca9532.c            | 14 +----
+ drivers/media/platform/renesas-ceu.c   |  2 +-
+ drivers/net/ethernet/ti/davinci_mdio.c | 12 ++---
+ drivers/rtc/rtc-armada38x.c            | 10 ++--
+ drivers/spi/spi-gpio.c                 |  5 +-
+ drivers/tty/serial/stm32-usart.c       | 71 ++++++++++++--------------
+ drivers/tty/serial/stm32-usart.h       |  2 +-
+ drivers/usb/misc/usb251xb.c            | 12 ++---
+ include/linux/of_device.h              |  4 +-
+ sound/soc/jz4740/jz4740-i2s.c          |  5 +-
+ 11 files changed, 55 insertions(+), 84 deletions(-)
+
+
+base-commit: 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c
+-- 
+Sent by a computer through tubes
