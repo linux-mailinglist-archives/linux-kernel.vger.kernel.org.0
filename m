@@ -2,97 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34695CC3AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A06CC3B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 21:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387468AbfJDTl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 15:41:28 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39434 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727978AbfJDTl1 (ORCPT
+        id S1730865AbfJDTma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 15:42:30 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34092 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727978AbfJDTm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 15:41:27 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y3so7661746ljj.6
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 12:41:25 -0700 (PDT)
+        Fri, 4 Oct 2019 15:42:29 -0400
+Received: by mail-io1-f66.google.com with SMTP id q1so16130919ion.1;
+        Fri, 04 Oct 2019 12:42:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lKdiNzyflX1qifC5XC0/R1ENRYDqFG5nqNIeHJGhC9c=;
-        b=KTwXzKKXxYtdYVYAyRPHF5pabKA8YkMM0SRyWPhD/SpHiZ5JiNFPBkCEeMw9/3PqZU
-         /KB8zyT7qfMfNp/S5nfmS2hQTwPdPfhP2er0Oeg2qOINbkqOCFnRkq4bUY3h6Rv2nlfT
-         1ZquD6PxAawVJm0tLCJVEep05bgPNEs2qJo2GQW84SP+GuErKh+d0I/iNYYb9s6sJVA0
-         X11fWhKRQeyVj1Qzx8a0cN+yz4sVpCJUNUMCE1bCrjz1IjvjMCt0UsgxpfvT3w/dWw6o
-         3RwY1eK31O/i6p8w6fbSMuXwfAsOiI2bPO1s7ITVaJFCNpVaBpsGwip2JYRX3fOOKL8H
-         58nw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6BXYfSwt6S2bUCRJ7kdKcLjYfKsE5OTiBqsT8oWEIdk=;
+        b=Z+fbZVxeP1BB9h3aBY5Vc8ABBOQxPOQSDHr68Bj2NCOV/Yco6n4WR+H+PyOjRpVR0l
+         W8UMqQK3aTsDmpvC0oQgybcWw/OR8QY0D5jCJoBRXEyyE7MAabJRAX+PL15VlNxpQWNX
+         7QqYiKVavN9RZqC62dZLLaDCDNGCUOh79LH0oEtIjOSJU2xqHn4GzcG4OjjdY4c75Ske
+         AshyucaJYg6uBjcXZ2vYpgBQ4A578gA3cUC3n6JowKvJkBjQBCc6x9FgQCoWZf64GpKk
+         xuOFui0U22GNKVuIl92m5jRO5TSUVc1UvhNQF1RNCIz4JQckcS5wz9MWpTFbNN+WH3pz
+         d4kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lKdiNzyflX1qifC5XC0/R1ENRYDqFG5nqNIeHJGhC9c=;
-        b=LFbrPtkJ1MF2FObM9SI8JOowQI1CS/yaeGQZDXpgQ9Kt3I10o22sNAmMtv9KxN+96i
-         RFcIuw4nPq3XCrTcOj57DXgN2VnodbKt1x5TLj5RlFODDNYwMruFdyKkytnk8onsxoKu
-         HjwL4jn0kZ6gthGYLAZWJBGV413Mpp5AnOkaWppftOb5BXhGNSZdegwF9+nRBDyu40ll
-         xlH0AL+/z9AzBVSGBlOBqR13GaKc2M7xE4NuECz1rb9HteReP7n5m84o1ofdW6IMQAbR
-         s4jYVYU3IMBB8US/kZbn/i3wG6IEiKFLFkRcQNvJtOL5tdYOfK8Ob07yXWnbfaW/bwES
-         gHqQ==
-X-Gm-Message-State: APjAAAXuuP4H/BteOPxy//qz5uKGZdZ+ZGhSLT7lubwBnmoy4kjTyKar
-        EcXJJGlIWGZVplMdHJMZyIQFlCPqEjmx+5FdmyNbsg==
-X-Google-Smtp-Source: APXvYqxcAjEf5jSw1FQIUN5tjMJ7zHHze2fmxgHbMJDye516yP2RLhmHOWNNK8dMzlSsiqV2U5SsXtnT8VHpBX+Oaxk=
-X-Received: by 2002:a2e:80d3:: with SMTP id r19mr10309621ljg.41.1570218084405;
- Fri, 04 Oct 2019 12:41:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190917124246.11732-1-m.felsch@pengutronix.de> <20190917124246.11732-4-m.felsch@pengutronix.de>
-In-Reply-To: <20190917124246.11732-4-m.felsch@pengutronix.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 4 Oct 2019 21:41:12 +0200
-Message-ID: <CACRpkdYAjj+EuF+iu4fKjt2Cviu8V+U66HnQThawwU58UGRUzQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] regulator: da9062: add voltage selection gpio support
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     Support Opensource <support.opensource@diasemi.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, stwiss.opensource@diasemi.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6BXYfSwt6S2bUCRJ7kdKcLjYfKsE5OTiBqsT8oWEIdk=;
+        b=O39cNC4B2daowrL+rmU7sDH3e2vudZo8Pa9Mt/aBHhxH/XvEA63BtqSa1VInNjEwb7
+         B+MN0jdOIDyW8TawS1+25QPWK8rZl4V/cMAiLMma1st+/GKETvQCwT4tc0Lewat5WSEB
+         bbOiSj9ir8H2nRRAEGIuTK3u02U/x1kQp27yi86V57Ak21Q9I4zMUBlyQYsk45+GsH1J
+         2TjkSbdKpH3hvBGyHnIKhV63Tkjy8DvR8CkXdGvEFbK2Krj6/69YXaA9G/LxjJ04qgEE
+         Sn5hBK8dO97w43qw/jT+Z2/WCeI4x1LmagXO3hr0egRn3TN7Lroh0qbEFw+EuVw0E46V
+         w8Ng==
+X-Gm-Message-State: APjAAAXaLIwo3UbzfunZrkI06lR479VbNn9sclUoI2nTNhI/+Sd753k2
+        6J6vcL4YY7m3BQWku/qYk5mT9Uou43M=
+X-Google-Smtp-Source: APXvYqwIqPqUaUtZkxGmJFCcYz2Kv1eMF8I2/gMKXeYv75IkMbeSZCgbZUJY49EEiRw7gNQQZaytFg==
+X-Received: by 2002:a92:8fda:: with SMTP id r87mr17155295ilk.210.1570218148669;
+        Fri, 04 Oct 2019 12:42:28 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id d9sm2458243ioq.9.2019.10.04.12.42.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2019 12:42:28 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] nl80211: fix memory leak in nl80211_get_ftm_responder_stats
+Date:   Fri,  4 Oct 2019 14:42:19 -0500
+Message-Id: <20191004194220.19412-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 2:43 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
+In nl80211_get_ftm_responder_stats, a new skb is created via nlmsg_new
+named msg. If nl80211hdr_put() fails, then msg should be released. The
+return statement should be replace by goto to error handling code.
 
-> +       /*
-> +        * We only must ensure that the gpio device is probed before the
-> +        * regulator driver so no need to store the reference global. Luckily
-> +        * devm_* releases the gpio upon a unbound action.
-> +        */
-> +       gpi = devm_gpiod_get_from_of_node(cfg->dev, np, prop, 0, GPIOD_IN |
-> +                                         GPIOD_FLAGS_BIT_NONEXCLUSIVE, label);
+Fixes: 81e54d08d9d8 ("cfg80211: support FTM responder configuration/statistics")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ net/wireless/nl80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Do you really need the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag here?
-I don't think so, but describe what usecase you have that warrants this
-being claimed twice. Normally that is just needed when you let the
-regulator core handle enablement of a regulator over GPIO, i.e.
-ena_gpiod in struct regulator_config.
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index d21b1581a665..cecd3bf101f8 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -13644,7 +13644,7 @@ static int nl80211_get_ftm_responder_stats(struct sk_buff *skb,
+ 	hdr = nl80211hdr_put(msg, info->snd_portid, info->snd_seq, 0,
+ 			     NL80211_CMD_GET_FTM_RESPONDER_STATS);
+ 	if (!hdr)
+-		return -ENOBUFS;
++		goto nla_put_failure;
+ 
+ 	if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, dev->ifindex))
+ 		goto nla_put_failure;
+-- 
+2.17.1
 
-> +       /* We need the local number */
-> +       nr = da9062_gpio_get_hwgpio(gpi);
-
-If you really need this we should add a public API to gpiolib and not
-create custom APIs.
-
-Just make a patch adding
-
-int gpiod_to_offset(struct gpio_desc *d);
-
-to the public gpiolib API in include/linux/gpio/consumer.h
-
-and add the code in gpiolib.c to do this trick.
-
-Yours,
-Linus Walleij
