@@ -2,85 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E91CBC1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C12CBC26
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:47:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388821AbfJDNqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:46:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50854 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388733AbfJDNqm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:46:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 62F9D61A37; Fri,  4 Oct 2019 13:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570196801;
-        bh=7z8K8z1kVtW4QRmy9LQUNBsQnTcmL+HKDaKSTRVrlrk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=jN7pYUj2OrIhhdjp/i8GP2SYmK6REE/SkjCzJwZvh4FlUWwxB14XZpz9n/ulXpeue
-         ikaeeDigxkc9pO0IXRR1GXLLbY1moi0FKgATgM8OSxxGvDockGl4qbS+VTY+x9+Owr
-         08eOjd2JjsNQZvTfLFkKPYplzOXGP5hpWB6I9lbU=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        id S2388860AbfJDNre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:47:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51822 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388438AbfJDNre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 09:47:34 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 40FD2613A8;
-        Fri,  4 Oct 2019 13:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570196800;
-        bh=7z8K8z1kVtW4QRmy9LQUNBsQnTcmL+HKDaKSTRVrlrk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=ViTfqnTxmBIMf4p1Hx277E8BubfHs+nBxCPzvrE/JNSgJ1JjSfbBjO+SzAWFQpDWw
-         NMi5PtAtTJw96KeSqS0vcM8BKX82vv3jiQ542DUG6ovIS6xMyT6P6IfNWdFefh0iOO
-         7gKaeeclOdMMHzX/S8JIFNdXaEeMeAGqlqB+a/gE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 40FD2613A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        by mail.kernel.org (Postfix) with ESMTPSA id 744DD20700;
+        Fri,  4 Oct 2019 13:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570196853;
+        bh=wVlonrP/JbwtKS/oWoDn/qqfNjewswSIuSebV205v1Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LeIfYo+wgThfjYSZyRICJlknNQ79leOAX+LOXPxa8Blx1MxYaD+iTZ4n2ghzx6vsO
+         nZFQw0lRDh17h5aVdhrllE0ZXXg7+CrBAsyBcLxIECjSVbMQpFxYPzEPpc1ENhR2u8
+         JvnU6vntVJXblTljjs6Zk6jdx0gg0WQDZ5uxDHNo=
+Date:   Fri, 4 Oct 2019 09:47:32 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        A Sun <as1033x@comcast.net>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: [PATCH 4.19 090/211] media: mceusb: fix (eliminate) TX IR signal
+ length limit
+Message-ID: <20191004134732.GG17454@sasha-vm>
+References: <20191003154447.010950442@linuxfoundation.org>
+ <20191003154507.534538747@linuxfoundation.org>
+ <20191004101215.GB24970@amd>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] libertas: remove redundant assignment to variable ret
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20191002101517.10836-1-colin.king@canonical.com>
-References: <20191002101517.10836-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20191004134641.62F9D61A37@smtp.codeaurora.org>
-Date:   Fri,  4 Oct 2019 13:46:41 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191004101215.GB24970@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+On Fri, Oct 04, 2019 at 12:12:15PM +0200, Pavel Machek wrote:
+>On Thu 2019-10-03 17:52:36, Greg Kroah-Hartman wrote:
+>> From: A Sun <as1033x@comcast.net>
+>
+>> Other changes:
+>>
+>> The driver's write to USB device architecture change (async to sync I/O)
+>> is significant so we bump DRIVER_VERSION to "1.95" (from "1.94").
+>
+>> ---
+>>  drivers/media/rc/mceusb.c | 334 ++++++++++++++++++++++----------------
+>>  1 file changed, 196 insertions(+), 138 deletions(-)
+>
+>This is not a bugfix, this is rewrite that happens to remove a
+>limitation, and it is way over the 100 line limit. What is going on
+>here? Why is it even considered for stable?
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being assigned a value that is never read and is
-> being re-assigned a little later on. The assignment is redundant and hence
-> can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's on the bigger side, sure, but it's contained inside a driver and
+seems to fix an actual issue.
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-60b5b49f6a6e libertas: remove redundant assignment to variable ret
-
--- 
-https://patchwork.kernel.org/patch/11170731/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+--
+Thanks,
+Sasha
