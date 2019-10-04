@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4FEACC47F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 22:59:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 372E2CC482
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 23:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730544AbfJDU7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 16:59:03 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:58924 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfJDU7C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 16:59:02 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f00:1e2::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3DDE614EC3094;
-        Fri,  4 Oct 2019 13:59:02 -0700 (PDT)
-Date:   Fri, 04 Oct 2019 13:59:01 -0700 (PDT)
-Message-Id: <20191004.135901.2236530388885343464.davem@davemloft.net>
-To:     dhowells@redhat.com
-Cc:     netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: Add missing "new peer" trace
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <157012115701.21124.13973726693523106899.stgit@warthog.procyon.org.uk>
-References: <157012115701.21124.13973726693523106899.stgit@warthog.procyon.org.uk>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1730396AbfJDVAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 17:00:54 -0400
+Received: from hn.kd.ny.adsl ([42.231.162.190]:2604 "HELO justrepair.net"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1725730AbfJDVAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 17:00:54 -0400
+Received: from smtp.endend.nl [162.102.4.126] by snmp.otwaloow.com with SMTP; Sat, 05 Oct 2019 02:50:01 +0600
+Received: from unknown (HELO relay37.vosimerkam.net) (Sat, 05 Oct 2019 02:33:55 +0600)
+        by asx121.turbo-inline.com with QMQP; Sat, 05 Oct 2019 02:33:55 +0600
+Message-ID: <10E09276.079BB767@justrepair.net>
+Date:   Sat, 05 Oct 2019 02:11:11 +0600
+From:   "Just Repair" <admin@justrepair.net>
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.24) Gecko/20100411 Thunderbird/2.0.0.24
+X-Accept-Language: en-us
+MIME-Version: 1.0
+To:     <linux-assembly@vger.kernel.org>
+Cc:     <linux-kernel@vger.kernel.org>
+Subject: We bring your gadget back to life
+Content-Type: text/plain;
+        charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 04 Oct 2019 13:59:02 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Thu, 03 Oct 2019 17:45:57 +0100
+Hello, 
 
-> There was supposed to be a trace indicating that a new peer had been
-> created.  Add it.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
+Let us repair your phone or gadget right on the spot
+visit us today
+https://www.justrepair.net
 
-Applied.
+or come into our location
+https://goo.gl/maps/k5iRbeJyggiXnZSG6
+Give us a nice review and we`ll make you a big discount
+
+
+Thank you,
+Ameer
+
+
