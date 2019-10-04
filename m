@@ -2,86 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28545CBB78
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90D56CBB8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 15:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388507AbfJDNRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 09:17:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388149AbfJDNRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 09:17:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBF8D215EA;
-        Fri,  4 Oct 2019 13:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570195019;
-        bh=JhC4q3xQd1BuHOAbskODkPKUuTj7CTnwNuwebrzeljI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GnefFeSdOLNAo25NzwCIS2oDkpTO5ngijHOLf6DtdkxA6RLo//Ab/4PS3f14/JcMK
-         /1pmZ3dS8n/GuoZlyAL03kcZllwSmcwIMya6GMsvw8FDoMBfD8TqH8keYW4u4xKN87
-         FcZwl01OScs31EXVQExe76jyycGeanL53X+i9vJg=
-Date:   Fri, 4 Oct 2019 15:16:56 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tomas Winkler <tomas.winkler@intel.com>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Re: [char-misc for v4.5-rc2 2/2] mei: avoid FW version request on
- Ibex Peak and earlier
-Message-ID: <20191004131656.GA703365@kroah.com>
-References: <20191001235958.19979-1-tomas.winkler@intel.com>
- <20191001235958.19979-2-tomas.winkler@intel.com>
+        id S2388416AbfJDNVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 09:21:24 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35396 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388313AbfJDNVX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 09:21:23 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x94DLFI7001754;
+        Fri, 4 Oct 2019 15:21:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=9Uex5pTCkhp4v8CMWAiUWlq97PLFUphIHvTvPnjz9jk=;
+ b=I2csExbB326H9vM0Ed1LTD8ceGt2FGDV3BkbfYTOzMVxxOPSg2F+glSGDKrK/AfV1k/L
+ yMWDbitX7LXxb8FUMpzP0Ih2CBhLHxxcUOmvnKd5SPg3vqq6hrqZv/G2anYlj/OnxT12
+ Oazv7elhxpnnWW2/hctDa2QLG004/43nO4sg+yoHhGzYHTT656Ei8v9UI5mmKF5SXlxz
+ gjGPH+xylHeN65JODXEW3gXZQz00QLg9SSeSlJ488jwPSyg3/6trsA72UDLWrzHqN7DQ
+ 9U8TihQi/9PGF5q7xjwInI6QzZL1pdaZlnaeuYJR+Hg//Wce1xB99Xiuon5u/p4FucgF zw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2v9xdhau44-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Oct 2019 15:21:15 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C993B10002A;
+        Fri,  4 Oct 2019 15:21:09 +0200 (CEST)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B8A4C2C434C;
+        Fri,  4 Oct 2019 15:21:09 +0200 (CEST)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019
+ 15:21:09 +0200
+Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 4 Oct 2019 15:21:09
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Subject: [PATCH] ARM: dts: stm32: add focaltech touchscreen on stm32mp157c-dk2 board
+Date:   Fri, 4 Oct 2019 15:17:02 +0200
+Message-ID: <1570195022-23327-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191001235958.19979-2-tomas.winkler@intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.23.97]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-04_06:2019-10-03,2019-10-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 02:59:58AM +0300, Tomas Winkler wrote:
-> From: Alexander Usyskin <alexander.usyskin@intel.com>
-> 
-> The fixed MKHI client on PCH 6 gen platforms
-> does not support fw version retrieval.
-> The error is not fatal, but it fills up the kernel logs and
-> slows down the driver start.
-> This patch disables requesting FW version on GEN6 and earlier platforms.
-> 
-> Fixes warning:
-> [   15.964298] mei mei::55213584-9a29-4916-badf-0fb7ed682aeb:01: Could not read FW version
-> [   15.964301] mei mei::55213584-9a29-4916-badf-0fb7ed682aeb:01: version command failed -5
-> 
-> Cc: <stable@vger.kernel.org> +v4.18
-> Cc: Paul Menzel <pmenzel@molgen.mpg.de>
-> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> ---
->  drivers/misc/mei/bus-fixup.c | 16 +++++++++++++---
->  drivers/misc/mei/hw-me.c     | 21 ++++++++++++++++++---
->  drivers/misc/mei/hw-me.h     |  8 ++++++--
->  drivers/misc/mei/mei_dev.h   |  4 ++++
->  drivers/misc/mei/pci-me.c    | 10 +++++-----
->  5 files changed, 46 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c
-> index 32e9b1aed2ca..5ac679ac9b19 100644
-> --- a/drivers/misc/mei/bus-fixup.c
-> +++ b/drivers/misc/mei/bus-fixup.c
-> @@ -218,13 +218,23 @@ static void mei_mkhi_fix(struct mei_cl_device *cldev)
->  {
->  	int ret;
->  
-> +	dev_dbg(&cldev->dev, "running hook %s\n", __func__);
+Enable focaltech ft6236 touchscreen on STM32MP157C-DK2 board.
 
-That is what ftrace is for, don't sprinkle that all over the kernel for
-no reason :(
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c-dk2.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-thanks,
+diff --git a/arch/arm/boot/dts/stm32mp157c-dk2.dts b/arch/arm/boot/dts/stm32mp157c-dk2.dts
+index 20ea601..d44a7c6 100644
+--- a/arch/arm/boot/dts/stm32mp157c-dk2.dts
++++ b/arch/arm/boot/dts/stm32mp157c-dk2.dts
+@@ -61,6 +61,19 @@
+ 	};
+ };
+ 
++&i2c1 {
++	touchscreen@38 {
++		compatible = "focaltech,ft6236";
++		reg = <0x38>;
++		interrupts = <2 2>;
++		interrupt-parent = <&gpiof>;
++		interrupt-controller;
++		touchscreen-size-x = <480>;
++		touchscreen-size-y = <800>;
++		status = "okay";
++	};
++};
++
+ &ltdc {
+ 	status = "okay";
+ 
+-- 
+2.7.4
 
-greg k-h
