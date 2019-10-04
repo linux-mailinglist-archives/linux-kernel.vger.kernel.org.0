@@ -2,73 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABD8CCC008
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C82CC00D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 18:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390278AbfJDQEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 12:04:49 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:40133 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390043AbfJDQEt (ORCPT
+        id S2390307AbfJDQFE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 4 Oct 2019 12:05:04 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:58938 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2390027AbfJDQFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 12:04:49 -0400
-X-Originating-IP: 93.23.105.117
-Received: from xps13.stephanxp.local (117.105.23.93.rev.sfr.net [93.23.105.117])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 164A524000A;
-        Fri,  4 Oct 2019 16:04:44 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Piotr Sroka <piotrs@cadence.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [v2] mtd: rawnand: Change calculating of position page containing BBM
-Date:   Fri,  4 Oct 2019 18:04:43 +0200
-Message-Id: <20191004160443.6258-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924055439.4212-1-piotrs@cadence.com>
-References: 
+        Fri, 4 Oct 2019 12:05:03 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 18726097-1500050 
+        for multiple; Fri, 04 Oct 2019 17:04:48 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: a3c4c2339f8948b0f578e938970303a7372e60c0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        David Airlie <airlied@linux.ie>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <157019813720.18712.6286079822254824652@skylake-alporthouse-com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>,
+        Emil Velikov <emil.velikov@collabora.com>
+References: <20191004102251.GC823@mwanda>
+ <157019813720.18712.6286079822254824652@skylake-alporthouse-com>
+Message-ID: <157020508581.18712.9108329337994387428@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH] drm/i810: Prevent underflow in ioctl
+Date:   Fri, 04 Oct 2019 17:04:45 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-24 at 05:54:31 UTC, Piotr Sroka wrote:
-> Change calculating of position page containing BBM
+Quoting Chris Wilson (2019-10-04 15:08:57)
+> Quoting Dan Carpenter (2019-10-04 11:22:51)
+> > The "used" variables here come from the user in the ioctl and it can be
+> > negative.  It could result in an out of bounds write.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/gpu/drm/i810/i810_dma.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/i810/i810_dma.c b/drivers/gpu/drm/i810/i810_dma.c
+> > index 2a77823b8e9a..e66c38332df4 100644
+> > --- a/drivers/gpu/drm/i810/i810_dma.c
+> > +++ b/drivers/gpu/drm/i810/i810_dma.c
+> > @@ -728,7 +728,7 @@ static void i810_dma_dispatch_vertex(struct drm_device *dev,
+> >         if (nbox > I810_NR_SAREA_CLIPRECTS)
+> >                 nbox = I810_NR_SAREA_CLIPRECTS;
+> >  
+> > -       if (used > 4 * 1024)
+> > +       if (used < 0 || used > 4 * 1024)
+> >                 used = 0;
 > 
-> If none of BBM flags are set then function nand_bbm_get_next_page 
-> reports EINVAL. It causes that BBM is not read at all during scanning
-> factory bad blocks. The result is that the BBT table is build without 
-> checking factory BBM at all. For Micron flash memories none of these 
-> flags are set if page size is different than 2048 bytes.
+> Yes, as passed to the GPU instruction, negative used is invalid.
 > 
-> Address this regression by:
-> - adding NAND_BBM_FIRSTPAGE chip flag without any condition. It solves
->   issue only for Micron devices.
-> - changing the nand_bbm_get_next_page_function. It will return 0 
->   if no of BBM flag is set and page parameter is 0. After that modification
->   way of discovering factory bad blocks will work similar as in kernel 
->   version 5.1.
+> Then it is used as an offset into a memblock, where a negative offset
+> would be very bad.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: f90da7818b14 (mtd: rawnand: Support bad block markers in first, second or last page)
-> Signed-off-by: Piotr Sroka <piotrs@cadence.com>
-> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
-
-Miquel
+Applied to drm-misc-next with cc'ed stable.
+-Chris
