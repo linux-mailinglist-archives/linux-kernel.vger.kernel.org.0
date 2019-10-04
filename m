@@ -2,101 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40185CDECC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:09:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89426CDF06
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:16:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfJGKJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 06:09:10 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18164 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbfJGKJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 06:09:10 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d9b0ece0000>; Mon, 07 Oct 2019 03:09:18 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 07 Oct 2019 03:09:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 07 Oct 2019 03:09:09 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 7 Oct
- 2019 10:09:09 +0000
-Received: from [10.21.133.51] (172.20.13.39) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 7 Oct 2019
- 10:09:06 +0000
-Subject: Re: [PATCH 5.3 000/166] 5.3.5-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20191006171212.850660298@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b71f3543-ba23-9e23-40aa-f958c0012182@nvidia.com>
-Date:   Mon, 7 Oct 2019 11:09:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727809AbfJGKQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 06:16:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58894 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727755AbfJGKQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 06:16:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 688B2B206;
+        Mon,  7 Oct 2019 10:16:18 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E6A461E4813; Fri,  4 Oct 2019 09:51:00 +0200 (CEST)
+Date:   Fri, 4 Oct 2019 09:51:00 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: Lease semantic proposal
+Message-ID: <20191004075100.GA12412@quack2.suse.cz>
+References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
+ <20190923222620.GC16973@dread.disaster.area>
+ <20190925234602.GB12748@iweiny-DESK2.sc.intel.com>
+ <20190930084233.GO16973@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1570442958; bh=VozzKtlqX2N3epaOgA57RUukBHtTSD9rzkZ9uNledCA=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=oS5k35WbVU9mIEJkumYodEqydmRZzImrlKUKxAjTLZZRzJCTptTiwITI5lrg+Yb6V
-         c3s69l/OkNfEkvS8rVdGqokeZGF1L5HftCJ58bHPGOesAtHTypJC7DDIYEx4Uy7/0q
-         8V37p+Sy5JMXNjec56ysUqiIRQp66FcBNw7HkedxH50O1gEVbyhOj+7IEujx5bJ9sN
-         XaY9ll3W+UVCwQgO8a/Kg3MmJcRXXs1EYFgq0agSawRHy9svaBDxA4or3QOVb1gdQ2
-         /1NGU8pmuUtWo8CiRHwebfyQt+VDgU7Q8pddC6QJq2v8jCDZ10crv2bsFYam0rX89H
-         VgRWXr86LbdTw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190930084233.GO16973@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 06/10/2019 18:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.3.5 release.
-> There are 166 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon 30-09-19 18:42:33, Dave Chinner wrote:
+> On Wed, Sep 25, 2019 at 04:46:03PM -0700, Ira Weiny wrote:
+> > On Tue, Sep 24, 2019 at 08:26:20AM +1000, Dave Chinner wrote:
+> > > Hence, AFIACT, the above definition of a F_RDLCK|F_LAYOUT lease
+> > > doesn't appear to be compatible with the semantics required by
+> > > existing users of layout leases.
+> > 
+> > I disagree.  Other than the addition of F_UNBREAK, I think this is consistent
+> > with what is currently implemented.  Also, by exporting all this to user space
+> > we can now write tests for it independent of the RDMA pinning.
 > 
-> Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
-> Anything received after that time might be too late.
+> The current usage of F_RDLCK | F_LAYOUT by the pNFS code allows
+> layout changes to occur to the file while the layout lease is held.
+
+I remember you saying that in the past conversations. But I agree with Ira
+that I don't see where in the code this would be implemented. AFAICS
+break_layout() called from xfs_break_leased_layouts() simply breaks all the
+leases with F_LAYOUT set attached to the inode... Now I'm not any expert on
+file leases but what am I missing?
+
+> IOWs, your definition of F_RDLCK | F_LAYOUT not being allowed
+> to change the is in direct contradition to existing users.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> I've said this several times over the past few months now: shared
+> layout leases must allow layout modifications to be made. Only
+> allowing an exclusive layout lease to modify the layout rules out
+> many potential use cases for direct data placement and p2p DMA
+> applications, not to mention conflicts with the existing pNFS usage.
+> Layout leases need to support more than just RDMA, and tailoring the
+> API to exactly the immediate needs of RDMA is just going to make it
+> useless for anything else.
 
-All tests are passing for Tegra ...
+I agree we should not tailor the layout lease definition to just RDMA
+usecase. But let's talk about the semantics once our confusion about how
+pNFS currently uses layout leases is clear out.
 
-Test results for stable-v5.3:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.3.5-rc1-ga2703e78c28a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
+								Honza
 -- 
-nvpublic
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
