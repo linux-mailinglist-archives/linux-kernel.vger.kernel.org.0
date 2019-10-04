@@ -2,119 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C880CB2FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 03:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 651FECB307
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 03:25:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732830AbfJDBVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 3 Oct 2019 21:21:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44525 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731860AbfJDBVC (ORCPT
+        id S1732961AbfJDBZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 3 Oct 2019 21:25:42 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:57882 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730677AbfJDBZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 Oct 2019 21:21:02 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z9so4903397wrl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2019 18:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KG0ezs+b9rI/gjrdngdJh2WIuRvdCqz/n29uB7/zJto=;
-        b=YlghlkVkA7qOIJy8Cm29fBlWjbmjspe7213n9yGIHtVF7hT6TJqcKaIAjJscKNyLPg
-         r3BjXO/lg1qZPfVoMvfjUb4nrx3WhOS6OdELed4VKCRfy/Y/x8QdT+ApbJtdBSeSGDHn
-         NRGguTqW9dpvev+iY0FwHdBHTSGpF3gzVqJ6rT2s52ReE5PTQk7K8uZPwjgW1riYRRxq
-         OsG0iU21ojSiwajTUqklCMYW+9rhPjBgEdRDd2tNaDh7O7cyH2mh1KxV81AyaiV2BfZE
-         /zIBdR5eaENsFzfYGA2i4VSpkTJx5XCblouSHH5W/bQFKm97NxjiRlTW+UL8nwEWC5zl
-         BovQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KG0ezs+b9rI/gjrdngdJh2WIuRvdCqz/n29uB7/zJto=;
-        b=AjMIBZek9BGTX6NTorq77c87FvMqRgT62ty03uIsqJ5yyHgx05UrmhWTPmgUufYCOm
-         xJCHAs6Myjyj14aW4MR72Pza3Y5Ds31oNnvErdN72aWaOzYqB6d/zjBBwGqJAOGOHdQH
-         NnZ9p9CwEMMTPImF8/Q1n7y/ZQ5hHrcuO/GWOfSNV6MQ1W9ODAY31RSeH3Tg2hMs/EjQ
-         gjntlolVNHUbrmluNKWMpDed98mLDB2o2pcDdeM56E7HbjBaPxep3cXbc+Be6GBXAhWO
-         99sZgTUdsHMgvoHhnxPRVwqZQOshrVB1yeJz911MTVXkeG7qov1xvfyIC6XBYyLaz0q+
-         /ciA==
-X-Gm-Message-State: APjAAAV5Oa8VeoUJyxsZ/wJTZEUEsCxzt8lO/8YyZU420BeqPCFekqyE
-        6OgLH9Jum8Qv6yySDDe8y7vX/wwCR5Z+KA==
-X-Google-Smtp-Source: APXvYqxMx8kRAaR0oXAV8VE2fW5HQq9l86dUvU717rlccEItLRvk4rVkxzAX1w0XoVm8OrgN7YO31Q==
-X-Received: by 2002:adf:fe8b:: with SMTP id l11mr5137124wrr.23.1570152059785;
-        Thu, 03 Oct 2019 18:20:59 -0700 (PDT)
-Received: from localhost.localdomain ([104.238.174.53])
-        by smtp.gmail.com with ESMTPSA id a4sm4097404wmm.10.2019.10.03.18.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2019 18:20:59 -0700 (PDT)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: [RESEND PATCH v3 9/9] hacking: Move DEBUG_FS to 'Generic Kernel Debugging Instruments'
-Date:   Fri,  4 Oct 2019 09:20:10 +0800
-Message-Id: <20191004012010.11287-10-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191004012010.11287-1-changbin.du@gmail.com>
-References: <20191004012010.11287-1-changbin.du@gmail.com>
+        Thu, 3 Oct 2019 21:25:41 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9B922806B7;
+        Fri,  4 Oct 2019 14:25:35 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1570152335;
+        bh=zCae1sRbj0T6w6Pf0TMZ7dOtwYoAvCI5r5bzgSVd7is=;
+        h=From:To:Cc:Subject:Date;
+        b=gE3CLqDQfQxwk3emWTRF6EnaYpDOPuk/7z4VpP+D4O3gA9TzX+NhT8WoSrXnswZrE
+         khQ/rp0CWO5mvbc0ENMqwcqujeVsVW9l++0Q+q9V5h14uGGKl1vsTZY0PFzkMiFeJd
+         R/KrqKmBvmEKLL/g2e4mIdGyu3F2WL+gVMUG92wCB9vjHlqTmi7tzcefZSGtzUQbHS
+         OlM0VJWZyH880KdwwmJDhpesQrSS148TEH823+LLI4PkcvdCYmjyII0AZY9NKbwHcy
+         dhrG5ZO4nktkNi4nGH1zIwHlFrXhvotcCbs949HIvxkzLuYFVWutHHybkzluGYHBBm
+         FuGkbzPbzgQUA==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d969f8b0000>; Fri, 04 Oct 2019 14:25:36 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
+        by smtp (Postfix) with ESMTP id 3C7D413EC71;
+        Fri,  4 Oct 2019 14:25:34 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 5A32B28003E; Fri,  4 Oct 2019 14:25:30 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, rjui@broadcom.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        f.fainelli@gmail.com, richard.laing@alliedtelesis.co.nz
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 0/2] gpio: brcm: XGS iProc GPIO driver
+Date:   Fri,  4 Oct 2019 14:25:23 +1300
+Message-Id: <20191004012525.26647-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DEBUG_FS does not belong to 'Compile-time checks and compiler options'.
+This is ported this from Broadcom's XLDK. There seem to be 3 different
+IP blocks for 3 separate banks of GPIOs in the iProc chips.
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
----
- lib/Kconfig.debug | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+I've dropped everything except support for the Chip Common A GPIO
+controller because the other blocks actually seem to be supportable with
+other drivers. The driver itself is halfway between pinctrl-nsp-gpio.c
+and pinctrl-iproc-gpio.c.
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 12727e12a28b..82cb1bcf07a8 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -286,18 +286,6 @@ config READABLE_ASM
-           to keep kernel developers who have to stare a lot at assembler listings
-           sane.
- 
--config DEBUG_FS
--	bool "Debug Filesystem"
--	help
--	  debugfs is a virtual file system that kernel developers use to put
--	  debugging files into.  Enable this option to be able to read and
--	  write to these files.
--
--	  For detailed documentation on the debugfs API, see
--	  Documentation/filesystems/.
--
--	  If unsure, say N.
--
- config HEADERS_INSTALL
- 	bool "Install uapi headers to usr/include"
- 	depends on !UML
-@@ -445,6 +433,18 @@ config MAGIC_SYSRQ_SERIAL
- 	  This option allows you to decide whether you want to enable the
- 	  magic SysRq key.
- 
-+config DEBUG_FS
-+	bool "Debug Filesystem"
-+	help
-+	  debugfs is a virtual file system that kernel developers use to put
-+	  debugging files into.  Enable this option to be able to read and
-+	  write to these files.
-+
-+	  For detailed documentation on the debugfs API, see
-+	  Documentation/filesystems/.
-+
-+	  If unsure, say N.
-+
- source "lib/Kconfig.kgdb"
- 
- source "lib/Kconfig.ubsan"
--- 
-2.20.1
+Chris Packham (2):
+  dt-bindings: gpio: brcm: Add bindings for xgs-iproc
+  gpio: Add xgs-iproc driver
+
+ .../bindings/gpio/brcm,xgs-iproc.txt          |  41 ++
+ drivers/gpio/Kconfig                          |   9 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-xgs-iproc.c                 | 422 ++++++++++++++++++
+ 4 files changed, 473 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,xgs-iproc=
+.txt
+ create mode 100644 drivers/gpio/gpio-xgs-iproc.c
+
+--=20
+2.23.0
 
