@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CFC0CC275
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0284ACC270
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 20:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389132AbfJDSRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 14:17:40 -0400
-Received: from mga07.intel.com ([134.134.136.100]:15531 "EHLO mga07.intel.com"
+        id S2388872AbfJDSRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 14:17:14 -0400
+Received: from mga07.intel.com ([134.134.136.100]:15535 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388586AbfJDSRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388603AbfJDSRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 Oct 2019 14:17:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -17,18 +17,18 @@ Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 11:17:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
-   d="scan'208";a="204394808"
+   d="scan'208";a="204394813"
 Received: from chang-linux-3.sc.intel.com ([172.25.66.185])
-  by orsmga002.jf.intel.com with ESMTP; 04 Oct 2019 11:17:04 -0700
+  by orsmga002.jf.intel.com with ESMTP; 04 Oct 2019 11:17:05 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
         luto@kernel.org
 Cc:     hpa@zytor.com, dave.hansen@intel.com, tony.luck@intel.com,
         ak@linux.intel.com, ravi.v.shankar@intel.com,
         chang.seok.bae@intel.com
-Subject: [PATCH v9 12/17] x86/fsgsbase/64: Use FSGSBASE instructions on thread copy and ptrace
-Date:   Fri,  4 Oct 2019 11:16:04 -0700
-Message-Id: <1570212969-21888-13-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v9 13/17] x86/speculation/swapgs: Check FSGSBASE in enabling SWAPGS mitigation
+Date:   Fri,  4 Oct 2019 11:16:05 -0700
+Message-Id: <1570212969-21888-14-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1570212969-21888-1-git-send-email-chang.seok.bae@intel.com>
 References: <1570212969-21888-1-git-send-email-chang.seok.bae@intel.com>
@@ -37,16 +37,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When FSGSBASE is enabled, copying threads and reading FS/GS base using
-ptrace must read the actual values.
+From: Tony Luck <tony.luck@intel.com>
 
-When copying a thread, use fsgs_save() and copy the saved values. For
-ptrace, the bases must be read from memory regardless of the selector
-if FSGSBASE is enabled.
+Before enabling FSGSBASE the kernel could safely assume that the content
+of GS base was a user address. Thus any speculative access as the result
+of a mispredicted branch controlling the execution of SWAPGS would be to
+a user address. So systems with speculation-proof SMAP did not need to
+add additional LFENCE instructions to mitigate.
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+With FSGSBASE enabled a hostile user can set GS base to a kernel address.
+So they can make the kernel speculatively access data they wish to leak
+via a side channel. This means that SMAP provides no protection.
+
+Add FSGSBASE as an additional condition to enable the fence-based SWAPGS
+mitigation.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -59,52 +66,32 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Changes from v8: none
 
 Changes from v7:
-* No code change
-* Massaged changelog by Andy Lutomirski
+* Included as a new patch.
 ---
- arch/x86/kernel/process_64.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 56c0e5b..b67f656 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -415,7 +415,8 @@ unsigned long x86_fsbase_read_task(struct task_struct *task)
- 
- 	if (task == current)
- 		fsbase = x86_fsbase_read_cpu();
--	else if (task->thread.fsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.fsindex == 0))
- 		fsbase = task->thread.fsbase;
- 	else
- 		fsbase = x86_fsgsbase_read_task(task, task->thread.fsindex);
-@@ -429,7 +430,8 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
- 
- 	if (task == current)
- 		gsbase = x86_gsbase_read_cpu_inactive();
--	else if (task->thread.gsindex == 0)
-+	else if (static_cpu_has(X86_FEATURE_FSGSBASE) ||
-+		 (task->thread.gsindex == 0))
- 		gsbase = task->thread.gsbase;
- 	else
- 		gsbase = x86_fsgsbase_read_task(task, task->thread.gsindex);
-@@ -469,10 +471,11 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 	p->thread.sp = (unsigned long) fork_frame;
- 	p->thread.io_bitmap_ptr = NULL;
- 
--	savesegment(gs, p->thread.gsindex);
--	p->thread.gsbase = p->thread.gsindex ? 0 : me->thread.gsbase;
--	savesegment(fs, p->thread.fsindex);
--	p->thread.fsbase = p->thread.fsindex ? 0 : me->thread.fsbase;
-+	save_fsgs(me);
-+	p->thread.fsindex = me->thread.fsindex;
-+	p->thread.fsbase = me->thread.fsbase;
-+	p->thread.gsindex = me->thread.gsindex;
-+	p->thread.gsbase = me->thread.gsbase;
- 	savesegment(es, p->thread.es);
- 	savesegment(ds, p->thread.ds);
- 	memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 91c2561..e06356f 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -321,14 +321,12 @@ static void __init spectre_v1_select_mitigation(void)
+ 		 * If FSGSBASE is enabled, the user can put a kernel address in
+ 		 * GS, in which case SMAP provides no protection.
+ 		 *
+-		 * [ NOTE: Don't check for X86_FEATURE_FSGSBASE until the
+-		 *	   FSGSBASE enablement patches have been merged. ]
+-		 *
+ 		 * If FSGSBASE is disabled, the user can only put a user space
+ 		 * address in GS.  That makes an attack harder, but still
+ 		 * possible if there's no SMAP protection.
+ 		 */
+-		if (!smap_works_speculatively()) {
++		if (boot_cpu_has(X86_FEATURE_FSGSBASE) ||
++		    !smap_works_speculatively()) {
+ 			/*
+ 			 * Mitigation can be provided from SWAPGS itself or
+ 			 * PTI as the CR3 write in the Meltdown mitigation
 -- 
 2.7.4
 
