@@ -2,299 +2,583 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7580ACBDA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 151CECBDBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 16:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389276AbfJDOpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 10:45:01 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45808 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389042AbfJDOo7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 10:44:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r5so7502154wrm.12
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 07:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=YL1+xzu/cZ1djhCIgv97dfpN2GQ4y52hUuut5JPL6dU=;
-        b=U08PLMbyxiCY6k4xCWlu4rPa2dJk7qmmsOBF7dcvjBNjy9dgwtO7fBcvQzbaiLO7Bt
-         XT1Fdzc83BUC9OOiR5lk7wVOVhzy2VXrNRc1Tr6gRlMv9FHkrZwj2LFGwnoTDiCsCaZ9
-         3SWqwC3CexqunRgvoOLbXH7jM3cyflrrXMCVeA6HdlyRQrDRy+WQkjfZ2lHX3sG2G5Ou
-         NWc5E0EcVZ2WYiNEs4WKYuNr7FcGNQwbpGEuSgwtxtnA4MggdjueAXoYRT7coc1vA0d6
-         PKkru9cscsiHWz1hYt0AohMMKvEi0+66/jmqGC4BCzvDEwUD3ntxcJMvoUJYmfAKcnHG
-         lKFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=YL1+xzu/cZ1djhCIgv97dfpN2GQ4y52hUuut5JPL6dU=;
-        b=YHtXY12Xr5JJ+WaAuYBrG79mh5OPtno8Ecv7AnY7XEwKaJQQBA93WPXp7ti6IjrUoL
-         LcqrLBo1k4JOiD119VrDwR+JzlNJKogubJvv42YTkpobFeXEQeTWUmnB8rJCdglWxQ/E
-         N+CfTd1L+nv0BvJJUOqGS7oYnVrZQ74KVwa9tmZeuYCDsropuTxwNzRAVmA32D7xijD9
-         c6pFVMm3RGDB/wwPQrX1emUsLFeSPpwzZCVXjtPog0403SzM9E2saqDiXXMzX9F+W1Tw
-         ywEnnQZdTyKLzg94riijYV/7tZ5OIRXycZzglcUkhQC4Fa4Do2k07sAYXUt4547GDd5R
-         +6WQ==
-X-Gm-Message-State: APjAAAXldUAL0hSxEUQlPUvhM0yc49jyDjR7w4PZdRAJjBE1LfmQE0R4
-        q+GcFHZ5KDyYQs9cI1icH/JYlmwL4E8=
-X-Google-Smtp-Source: APXvYqwxPfS8/0yhOel4L1wkC6OKjnOA6TnL2eNx9+tn+rISSASvJUX7XrFJ4jtY+5c7LIBWVJTEXA==
-X-Received: by 2002:a5d:6943:: with SMTP id r3mr11708214wrw.21.1570200295354;
-        Fri, 04 Oct 2019 07:44:55 -0700 (PDT)
-Received: from dell ([2.27.167.122])
-        by smtp.gmail.com with ESMTPSA id f18sm7103765wrv.38.2019.10.04.07.44.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 04 Oct 2019 07:44:54 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 15:44:53 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v7 3/5] mfd: ioc3: Add driver for SGI IOC3 chip
-Message-ID: <20191004144453.GQ18429@dell>
-References: <20191003095235.5158-1-tbogendoerfer@suse.de>
- <20191003095235.5158-4-tbogendoerfer@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191003095235.5158-4-tbogendoerfer@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2389418AbfJDOqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 10:46:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388982AbfJDOqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 10:46:15 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7332920659;
+        Fri,  4 Oct 2019 14:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570200373;
+        bh=dQL2fC9VvCzTjScxkV1h3zjnJh/luUky5kOf4oisgNs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=unXuT7183LQK6F8lpqOxb2CO6Q/bKxgDzb/JR4b6n0dVKs3Z1aaFDO2MNWU/u6Pk9
+         R1sRf+8bs0uOkNhxGr+4+3x1sUk92cil8eNe/chJGRw+S2Qc/jkiDSQQvfNRkaRjyt
+         84FhGdEwjfviPWWVQl0cINivsFrXCsnA+Vro5pFQ=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jiri Kosina <trivial@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        lima@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH TRIVIAL v2] gpu: Fix Kconfig indentation
+Date:   Fri,  4 Oct 2019 16:45:49 +0200
+Message-Id: <20191004144549.3567-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 03 Oct 2019, Thomas Bogendoerfer wrote:
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+    $ sed -e 's/^        /\t/' -i */Kconfig
 
-> SGI IOC3 chip has integrated ethernet, keyboard and mouse interface.
-> It also supports connecting a SuperIO chip for serial and parallel
-> interfaces. IOC3 is used inside various SGI systemboards and add-on
-> cards with different equipped external interfaces.
-> 
-> Support for ethernet and serial interfaces were implemented inside
-> the network driver. This patchset moves out the not network related
-> parts to a new MFD driver, which takes care of card detection,
-> setup of platform devices and interrupt distribution for the subdevices.
-> 
-> Serial portion: Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> ---
->  arch/mips/sgi-ip27/ip27-timer.c     |  20 --
->  drivers/mfd/Kconfig                 |  13 +
->  drivers/mfd/Makefile                |   1 +
->  drivers/mfd/ioc3.c                  | 585 ++++++++++++++++++++++++++++++++++++
->  drivers/net/ethernet/sgi/Kconfig    |   4 +-
->  drivers/net/ethernet/sgi/ioc3-eth.c | 561 ++++++----------------------------
->  drivers/tty/serial/8250/8250_ioc3.c |  98 ++++++
->  drivers/tty/serial/8250/Kconfig     |  11 +
->  drivers/tty/serial/8250/Makefile    |   1 +
->  9 files changed, 809 insertions(+), 485 deletions(-)
->  create mode 100644 drivers/mfd/ioc3.c
->  create mode 100644 drivers/tty/serial/8250/8250_ioc3.c
-> 
-> diff --git a/arch/mips/sgi-ip27/ip27-timer.c b/arch/mips/sgi-ip27/ip27-timer.c
-> index 9b4b9ac621a3..5631e93ea350 100644
-> --- a/arch/mips/sgi-ip27/ip27-timer.c
-> +++ b/arch/mips/sgi-ip27/ip27-timer.c
-> @@ -188,23 +188,3 @@ void hub_rtc_init(cnodeid_t cnode)
->  		LOCAL_HUB_S(PI_RT_PEND_B, 0);
->  	}
->  }
-> -
-> -static int __init sgi_ip27_rtc_devinit(void)
-> -{
-> -	struct resource res;
-> -
-> -	memset(&res, 0, sizeof(res));
-> -	res.start = XPHYSADDR(KL_CONFIG_CH_CONS_INFO(master_nasid)->memory_base +
-> -			      IOC3_BYTEBUS_DEV0);
-> -	res.end = res.start + 32767;
-> -	res.flags = IORESOURCE_MEM;
-> -
-> -	return IS_ERR(platform_device_register_simple("rtc-m48t35", -1,
-> -						      &res, 1));
-> -}
-> -
-> -/*
-> - * kludge make this a device_initcall after ioc3 resource conflicts
-> - * are resolved
-> - */
-> -late_initcall(sgi_ip27_rtc_devinit);
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index ae24d3ea68ea..a762342065a2 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2011,5 +2011,18 @@ config RAVE_SP_CORE
->  	  Select this to get support for the Supervisory Processor
->  	  device found on several devices in RAVE line of hardware.
->  
-> +config SGI_MFD_IOC3
-> +	tristate "SGI IOC3 core driver"
-> +	depends on PCI && MIPS && 64BIT
-> +	select MFD_CORE
-> +	help
-> +	  This option enables basic support for the SGI IOC3-based
-> +	  controller cards.  This option does not enable any specific
-> +	  functions on such a card, but provides necessary infrastructure
-> +	  for other drivers to utilize.
-> +
-> +	  If you have an SGI Origin, Octane, or a PCI IOC3 card,
-> +	  then say Y. Otherwise say N.
-> +
->  endmenu
->  endif
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index c1067ea46204..0d89b9e1055f 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -256,3 +256,4 @@ obj-$(CONFIG_MFD_ROHM_BD70528)	+= rohm-bd70528.o
->  obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
->  obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
->  
-> +obj-$(CONFIG_SGI_MFD_IOC3)	+= ioc3.o
-> diff --git a/drivers/mfd/ioc3.c b/drivers/mfd/ioc3.c
-> new file mode 100644
-> index 000000000000..889b7e7ff485
-> --- /dev/null
-> +++ b/drivers/mfd/ioc3.c
-> @@ -0,0 +1,585 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * SGI IOC3 multifunction device driver
-> + *
-> + * Copyright (C) 2018, 2019 Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> + *
-> + * Based on work by:
-> + *   Stanislaw Skowronek <skylark@unaligned.org>
-> + *   Joshua Kinard <kumba@gentoo.org>
-> + *   Brent Casavant <bcasavan@sgi.com> - IOC4 master driver
-> + *   Pat Gefre <pfg@sgi.com> - IOC3 serial port IRQ demuxer
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/errno.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/platform_data/sgi-w1.h>
-> +
-> +#include <asm/pci/bridge.h>
-> +#include <asm/sn/ioc3.h>
-> +
-> +#define IOC3_IRQ_SERIAL_A	6
-> +#define IOC3_IRQ_SERIAL_B	15
-> +#define IOC3_IRQ_KBD		22
-> +#define IOC3_IRQ_ETH_DOMAIN	23
-> +
-> +/* Bitmask for selecting which IRQs are level triggered */
-> +#define IOC3_LVL_MASK	(BIT(IOC3_IRQ_SERIAL_A) | BIT(IOC3_IRQ_SERIAL_B))
-> +
-> +#define M48T35_REG_SIZE	32768	/* size of m48t35 registers */
-> +
-> +/* 1.2 us latency timer (40 cycles at 33 MHz) */
-> +#define IOC3_LATENCY	40
-> +
-> +struct ioc3_priv_data {
-> +	struct irq_domain *domain;
-> +	struct ioc3 __iomem *regs;
-> +	struct pci_dev *pdev;
-> +	int domain_irq;
-> +};
-> +
-> +static void ioc3_irq_ack(struct irq_data *d)
-> +{
-> +	struct ioc3_priv_data *ipd = irq_data_get_irq_chip_data(d);
-> +	unsigned int hwirq = irqd_to_hwirq(d);
-> +
-> +	writel(BIT(hwirq), &ipd->regs->sio_ir);
-> +}
-> +
-> +static void ioc3_irq_mask(struct irq_data *d)
-> +{
-> +	struct ioc3_priv_data *ipd = irq_data_get_irq_chip_data(d);
-> +	unsigned int hwirq = irqd_to_hwirq(d);
-> +
-> +	writel(BIT(hwirq), &ipd->regs->sio_iec);
-> +}
-> +
-> +static void ioc3_irq_unmask(struct irq_data *d)
-> +{
-> +	struct ioc3_priv_data *ipd = irq_data_get_irq_chip_data(d);
-> +	unsigned int hwirq = irqd_to_hwirq(d);
-> +
-> +	writel(BIT(hwirq), &ipd->regs->sio_ies);
-> +}
-> +
-> +static struct irq_chip ioc3_irq_chip = {
-> +	.name		= "IOC3",
-> +	.irq_ack	= ioc3_irq_ack,
-> +	.irq_mask	= ioc3_irq_mask,
-> +	.irq_unmask	= ioc3_irq_unmask,
-> +};
-> +
-> +static int ioc3_irq_domain_map(struct irq_domain *d, unsigned int irq,
-> +			      irq_hw_number_t hwirq)
-> +{
-> +	/* Set level IRQs for every interrupt contained in IOC3_LVL_MASK */
-> +	if (BIT(hwirq) & IOC3_LVL_MASK)
-> +		irq_set_chip_and_handler(irq, &ioc3_irq_chip, handle_level_irq);
-> +	else
-> +		irq_set_chip_and_handler(irq, &ioc3_irq_chip, handle_edge_irq);
-> +
-> +	irq_set_chip_data(irq, d->host_data);
-> +	return 0;
-> +}
-> +
-> +static const struct irq_domain_ops ioc3_irq_domain_ops = {
-> +	.map = ioc3_irq_domain_map,
-> +};
-> +
-> +static void ioc3_irq_handler(struct irq_desc *desc)
-> +{
-> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
-> +	struct ioc3_priv_data *ipd = domain->host_data;
-> +	struct ioc3 __iomem *regs = ipd->regs;
-> +	u32 pending, mask;
-> +	unsigned int irq;
-> +
-> +	pending = readl(&regs->sio_ir);
-> +	mask = readl(&regs->sio_ies);
-> +	pending &= mask; /* mask off not enabled but pending irqs */
-> +
-> +	if (mask & BIT(IOC3_IRQ_ETH_DOMAIN))
-> +		/* if eth irq is enabled we need to check in eth irq regs */
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Nit: Comments should be expressive.  Please expand all of the
-short-hand in this sentence.  It would also be nicer if you started
-with an uppercase character.
+---
 
-Same with all of the other comments in this file.
+Changes since v1:
+1. Fix also DRM_AMD_DC_HDCP (new arrival since v1).
+---
+ drivers/gpu/drm/Kconfig                  |  10 +-
+ drivers/gpu/drm/amd/display/Kconfig      |  32 ++---
+ drivers/gpu/drm/bridge/Kconfig           |   8 +-
+ drivers/gpu/drm/i915/Kconfig             |  12 +-
+ drivers/gpu/drm/i915/Kconfig.debug       | 144 +++++++++++------------
+ drivers/gpu/drm/lima/Kconfig             |   2 +-
+ drivers/gpu/drm/mgag200/Kconfig          |   8 +-
+ drivers/gpu/drm/nouveau/Kconfig          |   2 +-
+ drivers/gpu/drm/omapdrm/displays/Kconfig |   6 +-
+ drivers/gpu/drm/omapdrm/dss/Kconfig      |  12 +-
+ drivers/gpu/drm/rockchip/Kconfig         |   8 +-
+ drivers/gpu/drm/udl/Kconfig              |   2 +-
+ drivers/gpu/vga/Kconfig                  |   2 +-
+ 13 files changed, 124 insertions(+), 124 deletions(-)
 
-Other than that, it looks like it's really coming together.  Once the
-above is fixed, please re-sumbit with my:
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index e67c194c2aca..7cb6e4eb99e8 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -207,8 +207,8 @@ config DRM_RADEON
+ 	tristate "ATI Radeon"
+ 	depends on DRM && PCI && MMU
+ 	select FW_LOADER
+-        select DRM_KMS_HELPER
+-        select DRM_TTM
++	select DRM_KMS_HELPER
++	select DRM_TTM
+ 	select POWER_SUPPLY
+ 	select HWMON
+ 	select BACKLIGHT_CLASS_DEVICE
+@@ -226,9 +226,9 @@ config DRM_AMDGPU
+ 	tristate "AMD GPU"
+ 	depends on DRM && PCI && MMU
+ 	select FW_LOADER
+-        select DRM_KMS_HELPER
++	select DRM_KMS_HELPER
+ 	select DRM_SCHED
+-        select DRM_TTM
++	select DRM_TTM
+ 	select POWER_SUPPLY
+ 	select HWMON
+ 	select BACKLIGHT_CLASS_DEVICE
+@@ -266,7 +266,7 @@ config DRM_VKMS
+ 	  If M is selected the module will be called vkms.
+ 
+ config DRM_ATI_PCIGART
+-        bool
++	bool
+ 
+ source "drivers/gpu/drm/exynos/Kconfig"
+ 
+diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+index 1bbe762ee6ba..313183b80032 100644
+--- a/drivers/gpu/drm/amd/display/Kconfig
++++ b/drivers/gpu/drm/amd/display/Kconfig
+@@ -23,16 +23,16 @@ config DRM_AMD_DC_DCN2_0
+ 	depends on DRM_AMD_DC && X86
+ 	depends on DRM_AMD_DC_DCN1_0
+ 	help
+-	    Choose this option if you want to have
+-	    Navi support for display engine
++	  Choose this option if you want to have
++	  Navi support for display engine
+ 
+ config DRM_AMD_DC_DCN2_1
+-        bool "DCN 2.1 family"
+-        depends on DRM_AMD_DC && X86
+-        depends on DRM_AMD_DC_DCN2_0
+-        help
+-            Choose this option if you want to have
+-            Renoir support for display engine
++	bool "DCN 2.1 family"
++	depends on DRM_AMD_DC && X86
++	depends on DRM_AMD_DC_DCN2_0
++	help
++	  Choose this option if you want to have
++	  Renoir support for display engine
+ 
+ config DRM_AMD_DC_DSC_SUPPORT
+ 	bool "DSC support"
+@@ -41,16 +41,16 @@ config DRM_AMD_DC_DSC_SUPPORT
+ 	depends on DRM_AMD_DC_DCN1_0
+ 	depends on DRM_AMD_DC_DCN2_0
+ 	help
+-	    Choose this option if you want to have
+-	    Dynamic Stream Compression support
++	  Choose this option if you want to have
++	  Dynamic Stream Compression support
+ 
+ config DRM_AMD_DC_HDCP
+-        bool "Enable HDCP support in DC"
+-        depends on DRM_AMD_DC
+-        help
+-         Choose this option
+-         if you want to support
+-         HDCP authentication
++	bool "Enable HDCP support in DC"
++	depends on DRM_AMD_DC
++	help
++	 Choose this option
++	 if you want to support
++	 HDCP authentication
+ 
+ config DEBUG_KERNEL_DC
+ 	bool "Enable kgdb break in DC"
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 1cc9f502c1f2..a5aa7ec16000 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -60,10 +60,10 @@ config DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW
+ 	select DRM_KMS_HELPER
+ 	select DRM_PANEL
+ 	---help---
+-          This is a driver for the display bridges of
+-          GE B850v3 that convert dual channel LVDS
+-          to DP++. This is used with the i.MX6 imx-ldb
+-          driver. You are likely to say N here.
++	  This is a driver for the display bridges of
++	  GE B850v3 that convert dual channel LVDS
++	  to DP++. This is used with the i.MX6 imx-ldb
++	  driver. You are likely to say N here.
+ 
+ config DRM_NXP_PTN3460
+ 	tristate "NXP PTN3460 DP/LVDS bridge"
+diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+index 0d21402945ab..3c6d57df262d 100644
+--- a/drivers/gpu/drm/i915/Kconfig
++++ b/drivers/gpu/drm/i915/Kconfig
+@@ -76,7 +76,7 @@ config DRM_I915_CAPTURE_ERROR
+ 	  This option enables capturing the GPU state when a hang is detected.
+ 	  This information is vital for triaging hangs and assists in debugging.
+ 	  Please report any hang to
+-            https://bugs.freedesktop.org/enter_bug.cgi?product=DRI
++	    https://bugs.freedesktop.org/enter_bug.cgi?product=DRI
+ 	  for triaging.
+ 
+ 	  If in doubt, say "Y".
+@@ -105,11 +105,11 @@ config DRM_I915_USERPTR
+ 	  If in doubt, say "Y".
+ 
+ config DRM_I915_GVT
+-        bool "Enable Intel GVT-g graphics virtualization host support"
+-        depends on DRM_I915
+-        depends on 64BIT
+-        default n
+-        help
++	bool "Enable Intel GVT-g graphics virtualization host support"
++	depends on DRM_I915
++	depends on 64BIT
++	default n
++	help
+ 	  Choose this option if you want to enable Intel GVT-g graphics
+ 	  virtualization technology host support with integrated graphics.
+ 	  With GVT-g, it's possible to have one integrated graphics
+diff --git a/drivers/gpu/drm/i915/Kconfig.debug b/drivers/gpu/drm/i915/Kconfig.debug
+index 00786a142ff0..eea79125b3ea 100644
+--- a/drivers/gpu/drm/i915/Kconfig.debug
++++ b/drivers/gpu/drm/i915/Kconfig.debug
+@@ -1,34 +1,34 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_I915_WERROR
+-        bool "Force GCC to throw an error instead of a warning when compiling"
+-        # As this may inadvertently break the build, only allow the user
+-        # to shoot oneself in the foot iff they aim really hard
+-        depends on EXPERT
+-        # We use the dependency on !COMPILE_TEST to not be enabled in
+-        # allmodconfig or allyesconfig configurations
+-        depends on !COMPILE_TEST
++	bool "Force GCC to throw an error instead of a warning when compiling"
++	# As this may inadvertently break the build, only allow the user
++	# to shoot oneself in the foot iff they aim really hard
++	depends on EXPERT
++	# We use the dependency on !COMPILE_TEST to not be enabled in
++	# allmodconfig or allyesconfig configurations
++	depends on !COMPILE_TEST
+ 	select HEADER_TEST
+-        default n
+-        help
+-          Add -Werror to the build flags for (and only for) i915.ko.
+-          Do not enable this unless you are writing code for the i915.ko module.
++	default n
++	help
++	  Add -Werror to the build flags for (and only for) i915.ko.
++	  Do not enable this unless you are writing code for the i915.ko module.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG
+-        bool "Enable additional driver debugging"
+-        depends on DRM_I915
+-        select DEBUG_FS
+-        select PREEMPT_COUNT
+-        select REFCOUNT_FULL
+-        select I2C_CHARDEV
+-        select STACKDEPOT
+-        select DRM_DP_AUX_CHARDEV
+-        select X86_MSR # used by igt/pm_rpm
+-        select DRM_VGEM # used by igt/prime_vgem (dmabuf interop checks)
+-        select DRM_DEBUG_MM if DRM=y
++	bool "Enable additional driver debugging"
++	depends on DRM_I915
++	select DEBUG_FS
++	select PREEMPT_COUNT
++	select REFCOUNT_FULL
++	select I2C_CHARDEV
++	select STACKDEPOT
++	select DRM_DP_AUX_CHARDEV
++	select X86_MSR # used by igt/pm_rpm
++	select DRM_VGEM # used by igt/prime_vgem (dmabuf interop checks)
++	select DRM_DEBUG_MM if DRM=y
+ 	select DRM_DEBUG_SELFTEST
+ 	select DMABUF_SELFTESTS
+ 	select SW_SYNC # signaling validation framework (igt/syncobj*)
+@@ -36,14 +36,14 @@ config DRM_I915_DEBUG
+ 	select DRM_I915_SELFTEST
+ 	select DRM_I915_DEBUG_RUNTIME_PM
+ 	select DRM_I915_DEBUG_MMIO
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will catch some internal issues.
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will catch some internal issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_MMIO
+ 	bool "Always insert extra checks around mmio access by default"
+@@ -59,16 +59,16 @@ config DRM_I915_DEBUG_MMIO
+ 	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_GEM
+-        bool "Insert extra checks into the GEM internals"
+-        default n
+-        depends on DRM_I915_WERROR
+-        help
+-          Enable extra sanity checks (including BUGs) along the GEM driver
+-          paths that may slow the system down and if hit hang the machine.
++	bool "Insert extra checks into the GEM internals"
++	default n
++	depends on DRM_I915_WERROR
++	help
++	  Enable extra sanity checks (including BUGs) along the GEM driver
++	  paths that may slow the system down and if hit hang the machine.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_ERRLOG_GEM
+ 	bool "Insert extra logging (very verbose) for common GEM errors"
+@@ -111,41 +111,41 @@ config DRM_I915_TRACE_GTT
+ 	  If in doubt, say "N".
+ 
+ config DRM_I915_SW_FENCE_DEBUG_OBJECTS
+-        bool "Enable additional driver debugging for fence objects"
+-        depends on DRM_I915
+-        select DEBUG_OBJECTS
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will catch some internal issues.
++	bool "Enable additional driver debugging for fence objects"
++	depends on DRM_I915
++	select DEBUG_OBJECTS
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will catch some internal issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_SW_FENCE_CHECK_DAG
+-        bool "Enable additional driver debugging for detecting dependency cycles"
+-        depends on DRM_I915
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will catch some internal issues.
++	bool "Enable additional driver debugging for detecting dependency cycles"
++	depends on DRM_I915
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will catch some internal issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_GUC
+-        bool "Enable additional driver debugging for GuC"
+-        depends on DRM_I915
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will help resolve GuC related issues.
++	bool "Enable additional driver debugging for GuC"
++	depends on DRM_I915
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will help resolve GuC related issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_SELFTEST
+ 	bool "Enable selftests upon driver load"
+@@ -178,15 +178,15 @@ config DRM_I915_SELFTEST_BROKEN
+ 	  If in doubt, say "N".
+ 
+ config DRM_I915_LOW_LEVEL_TRACEPOINTS
+-        bool "Enable low level request tracing events"
+-        depends on DRM_I915
+-        default n
+-        help
+-          Choose this option to turn on low level request tracing events.
+-          This provides the ability to precisely monitor engine utilisation
+-          and also analyze the request dependency resolving timeline.
+-
+-          If in doubt, say "N".
++	bool "Enable low level request tracing events"
++	depends on DRM_I915
++	default n
++	help
++	  Choose this option to turn on low level request tracing events.
++	  This provides the ability to precisely monitor engine utilisation
++	  and also analyze the request dependency resolving timeline.
++
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_VBLANK_EVADE
+ 	bool "Enable extra debug warnings for vblank evasion"
+diff --git a/drivers/gpu/drm/lima/Kconfig b/drivers/gpu/drm/lima/Kconfig
+index bb4ddc6bb0a6..652af7f50ea9 100644
+--- a/drivers/gpu/drm/lima/Kconfig
++++ b/drivers/gpu/drm/lima/Kconfig
+@@ -10,4 +10,4 @@ config DRM_LIMA
+        depends on OF
+        select DRM_SCHED
+        help
+-         DRM driver for ARM Mali 400/450 GPUs.
++	 DRM driver for ARM Mali 400/450 GPUs.
+diff --git a/drivers/gpu/drm/mgag200/Kconfig b/drivers/gpu/drm/mgag200/Kconfig
+index 76fee0fbdcae..4b31ef376abc 100644
+--- a/drivers/gpu/drm/mgag200/Kconfig
++++ b/drivers/gpu/drm/mgag200/Kconfig
+@@ -6,8 +6,8 @@ config DRM_MGAG200
+ 	select DRM_VRAM_HELPER
+ 	help
+ 	 This is a KMS driver for the MGA G200 server chips, it
+-         does not support the original MGA G200 or any of the desktop
+-         chips. It requires 0.3.0 of the modesetting userspace driver,
+-         and a version of mga driver that will fail on KMS enabled
+-         devices.
++	 does not support the original MGA G200 or any of the desktop
++	 chips. It requires 0.3.0 of the modesetting userspace driver,
++	 and a version of mga driver that will fail on KMS enabled
++	 devices.
+ 
+diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+index 3558df043592..9c990266e876 100644
+--- a/drivers/gpu/drm/nouveau/Kconfig
++++ b/drivers/gpu/drm/nouveau/Kconfig
+@@ -2,7 +2,7 @@
+ config DRM_NOUVEAU
+ 	tristate "Nouveau (NVIDIA) cards"
+ 	depends on DRM && PCI && MMU
+-        select FW_LOADER
++	select FW_LOADER
+ 	select DRM_KMS_HELPER
+ 	select DRM_TTM
+ 	select BACKLIGHT_CLASS_DEVICE if DRM_NOUVEAU_BACKLIGHT
+diff --git a/drivers/gpu/drm/omapdrm/displays/Kconfig b/drivers/gpu/drm/omapdrm/displays/Kconfig
+index 240dda102845..b562a8cd61bf 100644
+--- a/drivers/gpu/drm/omapdrm/displays/Kconfig
++++ b/drivers/gpu/drm/omapdrm/displays/Kconfig
+@@ -8,18 +8,18 @@ config DRM_OMAP_ENCODER_OPA362
+ 	  through a GPIO.
+ 
+ config DRM_OMAP_ENCODER_TPD12S015
+-        tristate "TPD12S015 HDMI ESD protection and level shifter"
++	tristate "TPD12S015 HDMI ESD protection and level shifter"
+ 	help
+ 	  Driver for TPD12S015, which offers HDMI ESD protection and level
+ 	  shifting.
+ 
+ config DRM_OMAP_CONNECTOR_HDMI
+-        tristate "HDMI Connector"
++	tristate "HDMI Connector"
+ 	help
+ 	  Driver for a generic HDMI connector.
+ 
+ config DRM_OMAP_CONNECTOR_ANALOG_TV
+-        tristate "Analog TV Connector"
++	tristate "Analog TV Connector"
+ 	help
+ 	  Driver for a generic analog TV connector.
+ 
+diff --git a/drivers/gpu/drm/omapdrm/dss/Kconfig b/drivers/gpu/drm/omapdrm/dss/Kconfig
+index 956f23e1452d..72ae79c0c9b4 100644
+--- a/drivers/gpu/drm/omapdrm/dss/Kconfig
++++ b/drivers/gpu/drm/omapdrm/dss/Kconfig
+@@ -6,12 +6,12 @@ config OMAP_DSS_BASE
+ 	tristate
+ 
+ menuconfig OMAP2_DSS
+-        tristate "OMAP2+ Display Subsystem support"
++	tristate "OMAP2+ Display Subsystem support"
+ 	select OMAP_DSS_BASE
+ 	select VIDEOMODE_HELPERS
+ 	select OMAP2_DSS_INIT
+ 	select HDMI
+-        help
++	help
+ 	  OMAP2+ Display Subsystem support.
+ 
+ if OMAP2_DSS
+@@ -52,7 +52,7 @@ config OMAP2_DSS_DPI
+ 
+ config OMAP2_DSS_VENC
+ 	bool "VENC support"
+-        default y
++	default y
+ 	help
+ 	  OMAP Video Encoder support for S-Video and composite TV-out.
+ 
+@@ -61,7 +61,7 @@ config OMAP2_DSS_HDMI_COMMON
+ 
+ config OMAP4_DSS_HDMI
+ 	bool "HDMI support for OMAP4"
+-        default y
++	default y
+ 	select OMAP2_DSS_HDMI_COMMON
+ 	help
+ 	  HDMI support for OMAP4 based SoCs.
+@@ -85,7 +85,7 @@ config OMAP5_DSS_HDMI
+ 
+ config OMAP2_DSS_SDI
+ 	bool "SDI support"
+-        default n
++	default n
+ 	help
+ 	  SDI (Serial Display Interface) support.
+ 
+@@ -94,7 +94,7 @@ config OMAP2_DSS_SDI
+ 
+ config OMAP2_DSS_DSI
+ 	bool "DSI support"
+-        default n
++	default n
+ 	help
+ 	  MIPI DSI (Display Serial Interface) support.
+ 
+diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+index 6f4222f8beeb..1670a5cae3c7 100644
+--- a/drivers/gpu/drm/rockchip/Kconfig
++++ b/drivers/gpu/drm/rockchip/Kconfig
+@@ -28,17 +28,17 @@ config ROCKCHIP_ANALOGIX_DP
+ 	  on RK3288 or RK3399 based SoC, you should select this option.
+ 
+ config ROCKCHIP_CDN_DP
+-        bool "Rockchip cdn DP"
++	bool "Rockchip cdn DP"
+ 	depends on EXTCON=y || (EXTCON=m && DRM_ROCKCHIP=m)
+-        help
++	help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the cdn DP driver. If you want to enable Dp on
+ 	  RK3399 based SoC, you should select this
+ 	  option.
+ 
+ config ROCKCHIP_DW_HDMI
+-        bool "Rockchip specific extensions for Synopsys DW HDMI"
+-        help
++	bool "Rockchip specific extensions for Synopsys DW HDMI"
++	help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the Synopsys DesignWare HDMI driver. If you want to
+ 	  enable HDMI on RK3288 or RK3399 based SoC, you should select
+diff --git a/drivers/gpu/drm/udl/Kconfig b/drivers/gpu/drm/udl/Kconfig
+index b4d179b87f01..b13aa33990f3 100644
+--- a/drivers/gpu/drm/udl/Kconfig
++++ b/drivers/gpu/drm/udl/Kconfig
+@@ -8,4 +8,4 @@ config DRM_UDL
+ 	select DRM_KMS_HELPER
+ 	help
+ 	  This is a KMS driver for the USB displaylink video adapters.
+-          Say M/Y to add support for these devices via drm/kms interfaces.
++	  Say M/Y to add support for these devices via drm/kms interfaces.
+diff --git a/drivers/gpu/vga/Kconfig b/drivers/gpu/vga/Kconfig
+index c8c770b05ed9..1ad4c4ef0b5e 100644
+--- a/drivers/gpu/vga/Kconfig
++++ b/drivers/gpu/vga/Kconfig
+@@ -28,6 +28,6 @@ config VGA_SWITCHEROO
+ 	help
+ 	  Many laptops released in 2008/9/10 have two GPUs with a multiplexer
+ 	  to switch between them. This adds support for dynamic switching when
+-          X isn't running and delayed switching until the next logoff. This
++	  X isn't running and delayed switching until the next logoff. This
+ 	  feature is called hybrid graphics, ATI PowerXpress, and Nvidia
+ 	  HybridPower.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
