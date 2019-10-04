@@ -2,56 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EC9ACC642
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B96C1CC641
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 01:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731605AbfJDXKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 19:10:39 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46790 "EHLO
+        id S1731591AbfJDXKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 19:10:33 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43467 "EHLO
         mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731515AbfJDXK3 (ORCPT
+        with ESMTP id S1731542AbfJDXKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 19:10:29 -0400
-Received: by mail-pl1-f193.google.com with SMTP id q24so3789484plr.13
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:10:28 -0700 (PDT)
+        Fri, 4 Oct 2019 19:10:30 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f21so3792424plj.10
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 16:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sTz6nyg/advJIHntHVaaSCimDTaVYqsOmP4OveuoExU=;
-        b=uh8tbv6FBWgRU1Hs/xPQuSapOx08gQpOnktegtniodTDgIT1ZHHTEZLiwQQXp8D13I
-         nj3IyAudwNlXUbyO4DaVwIHdYXNpjxppQNEUzp5N19GYNfInN1rE0+nzqmgOCfL1a40u
-         zWgjtPobEP3zE3qzgHtizQ383fQIl3IaHVsbKSNVoA/qpxx1C7TuzgRGdE7G0oZ9OncV
-         VMQa98fm1HhHpwNeY5DEzgv3QSSMRfFl7i6pj+sIEXLCF3moVLqn6Lhr8ArR1d/2DpoC
-         hyjOl8aG+mfOaZYz2jEyYhAEVBBYG7avDPKp7mGq0WvdDrtpqJ55447QdCooeC/D+89A
-         MWjA==
+        bh=ojNP7Td0CUinpeHoy78zg0GiX9Nta1E6KaAC40KDS60=;
+        b=gfNW7ITAa74FBrUtA/tqio3QLWUaA0+HAhPpjJzsneOE6vWib61lTv5MYZQiKTkKJy
+         Nmgqmwi3Dj3cqzogFQdvYxnb383TGHXYr1YFo5Qq3Mfx/vwbq4IvzKQXGdNPG214qric
+         loG9nBCVdq3VhUZuFxSJTzyZrBt8qrTuWtKzS1Go0AHk2tZwN1uiMW2ZdiWnBGVDLubO
+         ++6oqGW8DWt3+xlc/Q4GssLzHlPNhWiz7DcsxlSlEINLAlo0exkRqkkvADH9rKXJY1cJ
+         IhCLcKX/UAl8tfpe7wPIG2xmqF2+iNbY+PHEARXiPeODucowl0lq8Hiyy88qmp34W+w1
+         NFYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sTz6nyg/advJIHntHVaaSCimDTaVYqsOmP4OveuoExU=;
-        b=Vy8UbYlf0p+moVX5XfLpiH890M//cfLgbYHVkMVgrbWExOS833fu84G0VkQhBGeVlb
-         eA9mdt9zBuHvJGNf95mB5b3NuwbfOjRReuyvrXqc1nmcre9cLRqBYw95xR51QpE1ztuo
-         CbFKL2DLfQbQD6DF5WeAS+0wySRSTDBQkQq7XJg74OM7QC3f1YKJSg1kJH+cqaLBD1rZ
-         ESJ3fOxH87GEXYNWxQ3pK12KEOzU+MoOtdLNQJJ3w45ELznuQkcLj9YJXmxqonHMU07M
-         u15LkCZXB7k+1IBsbEayYclIIt4fQYkYMy5JErrxb3klQoViBwxv6XSTno5gtJa+HBff
-         YQJw==
-X-Gm-Message-State: APjAAAUdMlpku7eCiAaifq8yzCbqDuVVuxg8n25bRXs6EeKxbEYJJ8dY
-        Ue506+3LzDi6CXqP8HPiVtGXcDkf
-X-Google-Smtp-Source: APXvYqw7LJ2rTn96J12AST+hg2ekZuCE8wKMpn1PCkkdk45zOOE1at6c2qRqvW0cjDasyM4swa42dw==
-X-Received: by 2002:a17:902:bd48:: with SMTP id b8mr17794742plx.19.1570230628432;
-        Fri, 04 Oct 2019 16:10:28 -0700 (PDT)
+        bh=ojNP7Td0CUinpeHoy78zg0GiX9Nta1E6KaAC40KDS60=;
+        b=Z3xCuMqREMy+ESBlDeLBBrtArUyhXPGz+IWtzRVzbKMDUmk0TQjp/ohZAc07N05l4i
+         FS5rQCI2AGXUhHtHFe30Ho1/nnaLy7d1CXxMh6XkLp6a5YpwklURfrejEI1XYgfyV7Fl
+         TsdFMqwXrE6e4prdkQtbMW2e8mDPT7eeegjnVLIiePGda4MBTmYqt+7PgMZ7GLp8rNle
+         LbVEnSduo+OALaeP2wA9UztZLUgYAXsxx+EUcX81BS7egwukDwh2PdJvd7qikZ71oDNd
+         qCqoMRkEXeTg2GdvaUMpU/jx1V9ebQZu9rI10ELjFd7629cS55XGJvXaiK130IvTrf4j
+         BTcA==
+X-Gm-Message-State: APjAAAUeXrMhkZy2cqDYNFbx98pq9RwaXq8T19+91rzgWF/uH8+G2bUa
+        bMpkdPDoD/y7DRRrr3CoHlVWiENd
+X-Google-Smtp-Source: APXvYqz8zM9iw9dpSO9jg59OOS9I9qJAmNyfpDkatcyFiYbNqb+zGpkUhqItUu5DHFykSB1aCcRBpg==
+X-Received: by 2002:a17:902:24c:: with SMTP id 70mr18250148plc.41.1570230629470;
+        Fri, 04 Oct 2019 16:10:29 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.27
+        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 16:10:27 -0700 (PDT)
+        Fri, 04 Oct 2019 16:10:28 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH 6/7] regulator: tps65132: switch to using devm_fwnode_gpiod_get()
-Date:   Fri,  4 Oct 2019 16:10:16 -0700
-Message-Id: <20191004231017.130290-7-dmitry.torokhov@gmail.com>
+        linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH 7/7] regulator: max77686: switch to using fwnode_gpiod_get_index
+Date:   Fri,  4 Oct 2019 16:10:17 -0700
+Message-Id: <20191004231017.130290-8-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 In-Reply-To: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
@@ -62,53 +66,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_fwnode_get_index_gpiod_from_child() is going away as the name is
-too unwieldy, let's switch to using the new devm_fwnode_gpiod_get().
+gpiod_get_from_of_node() is being retired in favor of
+fwnode_gpiod_get_index(), that behaves similar to gpiod_get_index(),
+but can work with arbitrary firmware node. It will also be able to
+support secondary software nodes.
 
-Note that we no longer need to check for NULL as devm_fwnode_gpiod_get()
-will return -ENOENT if GPIO is missing.
+Let's switch this driver over.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
 ---
 
- drivers/regulator/tps65132-regulator.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/regulator/max77686-regulator.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/tps65132-regulator.c b/drivers/regulator/tps65132-regulator.c
-index e302bd01a084..7b0e38f8d627 100644
---- a/drivers/regulator/tps65132-regulator.c
-+++ b/drivers/regulator/tps65132-regulator.c
-@@ -136,9 +136,10 @@ static int tps65132_of_parse_cb(struct device_node *np,
- 	struct tps65132_reg_pdata *rpdata = &tps->reg_pdata[desc->id];
- 	int ret;
- 
--	rpdata->en_gpiod = devm_fwnode_get_index_gpiod_from_child(tps->dev,
--					"enable", 0, &np->fwnode, 0, "enable");
--	if (IS_ERR_OR_NULL(rpdata->en_gpiod)) {
-+	rpdata->en_gpiod = devm_fwnode_gpiod_get(tps->dev, of_fwnode_handle(np),
-+						 "enable", GPIOD_ASIS,
-+						 "enable");
-+	if (IS_ERR(rpdata->en_gpiod)) {
- 		ret = PTR_ERR(rpdata->en_gpiod);
- 
- 		/* Ignore the error other than probe defer */
-@@ -147,10 +148,12 @@ static int tps65132_of_parse_cb(struct device_node *np,
- 		return 0;
- 	}
- 
--	rpdata->act_dis_gpiod = devm_fwnode_get_index_gpiod_from_child(
--					tps->dev, "active-discharge", 0,
--					&np->fwnode, 0, "active-discharge");
--	if (IS_ERR_OR_NULL(rpdata->act_dis_gpiod)) {
-+	rpdata->act_dis_gpiod = devm_fwnode_gpiod_get(tps->dev,
-+						      of_fwnode_handle(np),
-+						      "active-discharge",
-+						      GPIOD_ASIS,
-+						      "active-discharge");
-+	if (IS_ERR(rpdata->act_dis_gpiod)) {
- 		ret = PTR_ERR(rpdata->act_dis_gpiod);
- 
- 		/* Ignore the error other than probe defer */
+diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
+index c8e579e99316..9089ec608fcc 100644
+--- a/drivers/regulator/max77686-regulator.c
++++ b/drivers/regulator/max77686-regulator.c
+@@ -256,8 +256,9 @@ static int max77686_of_parse_cb(struct device_node *np,
+ 	case MAX77686_BUCK8:
+ 	case MAX77686_BUCK9:
+ 	case MAX77686_LDO20 ... MAX77686_LDO22:
+-		config->ena_gpiod = gpiod_get_from_of_node(np,
+-				"maxim,ena-gpios",
++		config->ena_gpiod = fwnode_gpiod_get_index(
++				of_fwnode_handle(np),
++				"maxim,ena",
+ 				0,
+ 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				"max77686-regulator");
 -- 
 2.23.0.581.g78d2f28ef7-goog
 
