@@ -2,160 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF72ACBF4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2377CBF50
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2019 17:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389897AbfJDPfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 11:35:50 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38503 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389884AbfJDPfu (ORCPT
+        id S2389929AbfJDPgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 11:36:05 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38603 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389913AbfJDPgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:35:50 -0400
-Received: by mail-io1-f68.google.com with SMTP id u8so14474909iom.5
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 08:35:48 -0700 (PDT)
+        Fri, 4 Oct 2019 11:36:05 -0400
+Received: by mail-io1-f66.google.com with SMTP id u8so14476947iom.5
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 08:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dROkjRhuJBueSR+dDq1NoT4P1fIz/YTzmwLwTy/DezM=;
-        b=Gc5dmIpC08P2H+lwgac88JMU2dPhythpOQCpcuiCzCtd9a9VKfD/odxhiT2p7kgicq
-         gOH2BfK0YV+NVQwVYgVlQYFLxXZ1pdIoYNK3u061GLn037F9XhLbxOpy7IG+t2+AIu3X
-         RwHn0MBy/z02qkNoV+gMHTpiRE5T43dZd12aV2Rw59ygnpT1MMwkjhr5oKZDsPa5U6in
-         x/MhOyTGPZut/CpthoBp+iu96Ee25EH7UoquLn55HuOHatF0VyPWuR2r9ypN4Dx1KuKZ
-         dev8pg+0Fq+pCAnuRb//VQrK/5C1XolzsCLZil0HzMDRmA2WFYTl63nLeoSxnj/AgjLc
-         LrmA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=7wtWmNaBzWvHZFXd7ETJjhq/Ls8R+LbN1dmWdsPcLY8=;
+        b=dVsyXeM+omMSii7CtpS0Du2za9NVA5njCkQUFjCWvClC5TIp4AfWCO4StgcM+JsVYO
+         lj2RQdcQ7punxe1uv6ZBQBHk1CW5E+xCoVocUtDIquHCr9hdFneeQcAGmipReTC/pU6W
+         lLTqG8QfMAqlPdFapGoA6BTIG5MKWJycO00e5pjiS0dRgDYsyZVFUKpcSWHcxE/9gUeL
+         nbJhvaX0/XVgmENdcRDA5da1eh2dw/d7/0Pe5LIJuSAJOT+ASgS8ysIed0PwDZaS7eXJ
+         Hcu0fqTZNPVsUVDDu9CbYJAXK88Sb5XS9WwhFXYh/MFJmJ8ytp/BiPWwDn+V1cuilSkV
+         8NAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=dROkjRhuJBueSR+dDq1NoT4P1fIz/YTzmwLwTy/DezM=;
-        b=UPDgftfdtyqi1rslzp6gUEMeBi839J5RqNOr34EqKAWXkQt8Dj9xwmiOQpFPq/FrPY
-         FFWsfE11tBqvD/dVTQ9dZiUaLz9LvEJ2RNQNZtoQeC2RBzzAoIRckSZMLu1KOGQ7WxEu
-         vU2oxiqYEBYiZXtz7855t8dS2q1AyGtidqU8EbYYDoLzsRd8XhW5M+fgb3DnkyFPY4Yb
-         cpboH8T5Z2+CL+k9Yfl7xCdx7uQpdc6ebswFCjKGQqLiq0UBBOIajCucv995rRUVJWRK
-         FC7Hta8YjYmf+M47X4xNShVkCnms7TIyE1msZLRudEBz4JUuP+i6BP11lnWJsttrDO6B
-         M1lg==
-X-Gm-Message-State: APjAAAU5sBvUIHoMZagHJnffyR7plC4tjUcOYFj0KP78RAkI1AX9TI6T
-        ZyvNjDPoPdFB3aoorv12ltKW7pjc6Co=
-X-Google-Smtp-Source: APXvYqxT9dLwW/IsgbIqQruWVLrIRJuQcWSKVe1jRBBbxUJtKDMZKHkYVRVJgClWB6dE3tX5oT0c7g==
-X-Received: by 2002:a92:d789:: with SMTP id d9mr12547406iln.144.1570203347723;
-        Fri, 04 Oct 2019 08:35:47 -0700 (PDT)
-Received: from localhost (c-75-72-120-115.hsd1.mn.comcast.net. [75.72.120.115])
-        by smtp.gmail.com with ESMTPSA id 17sm2217420ioo.21.2019.10.04.08.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 08:35:46 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 10:35:46 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-Subject: Re: [PATCH 5.2 000/313] 5.2.19-stable review
-Message-ID: <20191004153546.fnyclkhmkzjzllii@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-References: <20191003154533.590915454@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=7wtWmNaBzWvHZFXd7ETJjhq/Ls8R+LbN1dmWdsPcLY8=;
+        b=ovbQr/pdqVcxj8s5M6nXhyhlsGYj3A4HUmP1uWjCCqBVPCieOVNc7XGMnxzB1yDp0H
+         Kay2xNBX7M1WaKSw52v183XvuOGAH1x9v+eEvagNVfh0tVD6L13V4bBPsYroqyGVtzi7
+         Hwn6oCKcQ2WLtb/WQhswlT6RfA0sEzvJrUwl/uSV7iBLe8lhzoSnUj93qrsksjG+ytGT
+         BA/x6RvvDxZNbDP9qqTp/cmtvN0veYZGhPX7A+38WqcoGUjzF5CggTY3LOy1r2E1hekq
+         8d2PmbVBessoZd6uuQ7KtQ78nmuzuSBdVdyVHdMOdCI0aDHKFrNtTKAB8MY2M8i/IAQH
+         Lugg==
+X-Gm-Message-State: APjAAAUJVN5S7xD2FOoZaJkNGY8NSnX4G4/P8Ni/j9Mh9WOyWhvGC1LL
+        lS5bzd5f1xjN2o09nkcqLPU9OdT34aZWG2V0arY=
+X-Google-Smtp-Source: APXvYqwyXYuqJXNQSyqexuyIk1RBvL29kVGFINewYpKfKOnPBcgWsjdT14kVqNJH+073EwFW0A+Dv6sYwrOooEet4mk=
+X-Received: by 2002:a6b:c8cf:: with SMTP id y198mr9811572iof.179.1570203364443;
+ Fri, 04 Oct 2019 08:36:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191003154533.590915454@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+References: <20191003191354.GA4481@Serenity>
+In-Reply-To: <20191003191354.GA4481@Serenity>
+From:   Tyler Ramer <tyaramer@gmail.com>
+Date:   Fri, 4 Oct 2019 11:36:42 -0400
+Message-ID: <CAKcoMVC2LdcmUx6j5JzuT-TsFGz=mwQ0MsprrKR2qeXoTmQ-TQ@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Shutdown when removing dead controller
+To:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 05:49:38PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.19 release.
-> There are 313 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat 05 Oct 2019 03:37:47 PM UTC.
-> Anything received after that time might be too late.
+Here's a failure we had which represents the issue the patch is
+intended to solve:
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Aug 26 15:00:56 testhost kernel: nvme nvme4: async event result 00010300
+Aug 26 15:01:27 testhost kernel: nvme nvme4: controller is down; will
+reset: CSTS=0x3, PCI_STATUS=0x10
+Aug 26 15:02:10 testhost kernel: nvme nvme4: Device not ready; aborting reset
+Aug 26 15:02:10 testhost kernel: nvme nvme4: Removing after probe
+failure status: -19
 
-Summary
-------------------------------------------------------------------------
+The CSTS warnings comes from nvme_timeout, and is printed by
+nvme_warn_reset. A reset then occurs
+Controller state should be NVME_CTRL_RESETTING
 
-kernel: 5.2.19-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-5.2.y
-git commit: 2c8369f13ff8c1375690964c79ffdc0e41ab4f97
-git describe: v5.2.18-314-g2c8369f13ff8
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.2-oe/build/v5.2.18-314-g2c8369f13ff8
+Now, in nvme_reset_work, controller is never marked "CONNECTING"  at:
 
-No regressions (compared to build v5.2.18)
+     if (!nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_CONNECTING))
 
-No fixes (compared to build v5.2.18)
+because several lines above, we can determine that
+nvme_pci_configure_admin_queues returns
+a bad result, which triggers a goto out_unlock and prints "removing
+after probe failure status: -19"
 
-Ran 24453 total tests in the following environments and test suites.
+Because state is never changed to NVME_CTRL_CONNECTING or
+NVME_CTRL_DELETING, the
+logic added in https://github.com/torvalds/linux/commit/2036f7263d70e67d70a67899a468588cb7356bc9
+should not apply. We can further validate that dev->ctrl.state ==
+NVME_CTRL_RESETTING thanks to
+the WARN_ON in nvme_reset_work.
 
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
 
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-dio-tests
-* ltp-io-tests
-* ltp-syscalls-tests
-* network-basic-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* ssuite
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
 
--- 
-Linaro LKFT
-https://lkft.linaro.org
+
+
+
+On Thu, Oct 3, 2019 at 3:13 PM Tyler Ramer <tyaramer@gmail.com> wrote:
+>
+> Always shutdown the controller when nvme_remove_dead_controller is
+> reached.
+>
+> It's possible for nvme_remove_dead_controller to be called as part of a
+> failed reset, when there is a bad NVME_CSTS. The controller won't
+> be comming back online, so we should shut it down rather than just
+> disabling.
+>
+> Signed-off-by: Tyler Ramer <tyaramer@gmail.com>
+> ---
+>  drivers/nvme/host/pci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index c0808f9eb8ab..c3f5ba22c625 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2509,7 +2509,7 @@ static void nvme_pci_free_ctrl(struct nvme_ctrl *ctrl)
+>  static void nvme_remove_dead_ctrl(struct nvme_dev *dev)
+>  {
+>         nvme_get_ctrl(&dev->ctrl);
+> -       nvme_dev_disable(dev, false);
+> +       nvme_dev_disable(dev, true);
+>         nvme_kill_queues(&dev->ctrl);
+>         if (!queue_work(nvme_wq, &dev->remove_work))
+>                 nvme_put_ctrl(&dev->ctrl);
+> --
+> 2.23.0
+>
