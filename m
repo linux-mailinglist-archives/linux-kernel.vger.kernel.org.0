@@ -2,99 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35164CCEEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 07:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA180CCEF0
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 08:06:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfJFF7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 01:59:01 -0400
-Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25526 "EHLO
-        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfJFF7B (ORCPT
+        id S1726185AbfJFGGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 02:06:36 -0400
+Received: from fml1in-th.brunet.bn ([61.6.254.100]:37559 "EHLO
+        fml1in-th.brunet.bn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbfJFGGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 01:59:01 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1570341511; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=QruYSnbHA0yyNDY/sgQYXicI+jC/qwjzuFoMQZmVs3usxOg5E0lE34ZdydyhHFQxpn5PK/9ezuZTqcghGsQprHTmFcSwPMW/0t16ziNS7PE5UqiyawJyUg5NTkvyoNlBbz6Waavgb/ktngkWZbCTowIW/jTl7HTGG/awOf9xkdw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1570341511; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=FIVmd6RsuPA3669yj2KqpaCMQ3WoQUu2gHxtBlIpTTU=; 
-        b=N6xELN1wDY83oG4cUNWMwaGGJu+btURHCd7oQ99dulTcestCPPzjeZ2+NGcdSvWJEq86hiO6ZyFnMWcOiug9SvEK1LZXhbSq65gQbbaylAyFgU6E9u31z93e12TAU5CBWJeKRT54/Bwe0jNchGbmcey4zXu3A433xX3q6tVm1oM=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
-  b=tge/DNPCR423FXM+9+fHt2KFD7ONafxrNKUeOCHFbuXuXI76etVqhZ3+brx9obILTPiKVJTOwD44
-    5WUB37H3f/dLuSM5LxorQxwPEpBXvj47T8sPFuyeuszc+7aKPttq  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1570341511;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        l=747; bh=FIVmd6RsuPA3669yj2KqpaCMQ3WoQUu2gHxtBlIpTTU=;
-        b=fopFJTxW+5Sq2WarzwK+qaEywXDKt1iyvpK360sR8zEDpLzrp6NPRYJwhR9rzOoU
-        uZG1bLt/SJVMLuUVBsR7OyBQLGxckhu+xf8ToBT3Uie7HVOQ6KBN6p77mERJyrixO1A
-        RsybX5KbZ7L1+e+jWNrgYXfQiHDyP/F/oTDiMEag=
-Received: from [192.168.88.140] (171.221.113.164 [171.221.113.164]) by mx.zohomail.com
-        with SMTPS id 1570341509230422.7816399434387; Sat, 5 Oct 2019 22:58:29 -0700 (PDT)
-Subject: Re: [PATCH 4/4] MMC: Ingenic: Add support for JZ4760 and support for
- LPM.
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-References: <1567669089-88693-1-git-send-email-zhouyanjie@zoho.com>
- <1567669089-88693-5-git-send-email-zhouyanjie@zoho.com>
- <CAPDyKFo0aR2fhCd8qCNAf7hoXSjV+9vG1BqB6vEM=B9Vpmpovg@mail.gmail.com>
-Cc:     linux-mips@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, syq@debian.org,
-        jiaxun.yang@flygoat.com
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-Message-ID: <5D99827E.9070505@zoho.com>
-Date:   Sun, 6 Oct 2019 13:58:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+        Sun, 6 Oct 2019 02:06:36 -0400
+X-Greylist: delayed 39391 seconds by postgrey-1.27 at vger.kernel.org; Sun, 06 Oct 2019 02:06:35 EDT
+Received: from mta1.brunet.bn (ftml.brunet.bn [61.6.254.129])
+        by fml1in-th.brunet.bn  with ESMTP id x95J9aEB026717-x95J9aEU026717;
+        Sun, 6 Oct 2019 03:09:41 +0800
+Received: from mb01.brunet.bn (node4.brunet.bn [10.18.4.112])
+        by mta1.brunet.bn (Postfix) with ESMTP id 4954F48389;
+        Sat,  5 Oct 2019 23:41:21 +0800 (BNT)
+Date:   Sat, 5 Oct 2019 23:41:21 +0800 (BNT)
+From:   Mrs Margaret Ko Leung <kd-didactic@brunet.bn>
+Reply-To: Mrs Margaret Ko Leung <margaretkoleung8290@gmail.co>
+Message-ID: <467145357.153817783.1570290081291.JavaMail.root@node4.brunet.bn>
+Subject: Combined Effort
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFo0aR2fhCd8qCNAf7hoXSjV+9vG1BqB6vEM=B9Vpmpovg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.4.129]
+X-Mailer: Zimbra 6.0.10_GA_2692 (zclient/6.0.10_GA_2692)
+To:     undisclosed-recipients:;
+Authentication-Results: fml1in-th.brunet.bn;
+        spf=softfail (brunet.bn: domain of kd-didactic@brunet.bn does not designate 61.6.254.129 as permitted sender) smtp.mailfrom=kd-didactic@brunet.bn
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uffe,
-On 2019=E5=B9=B410=E6=9C=8803=E6=97=A5 18:00, Ulf Hansson wrote:
-> On Thu, 5 Sep 2019 at 09:40, Zhou Yanjie <zhouyanjie@zoho.com> wrote:
->> 1.add support for probing mmc driver on the JZ4760 Soc from Ingenic.
->> 2.add support for Low Power Mode of Ingenic's MMC/SD Controller.
-> Normally we try to make "one" change per patch, unless there are some
-> good reasons not to.
->
-> In this case, it seems like you should rather split this patch into
-> two separate pieces. Can you please do that?
+For more information about establishing a business partnership with you, please send me an email.
 
-OK,I'll split it in v2.
-
->
-> Additionally, please change the prefix for the commit message header
-> to start with "mmc: jz4740:"
-
-sure, it will be change in v2.
-
->
-> [...]
->
-> Kind regards
-> Uffe
-Thanks  and best regards!
-
-
+sincere
+Margaret Ko Leung
