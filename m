@@ -2,104 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E446ECCCF0
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 23:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42480CCCFA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 00:05:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726128AbfJEV6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 17:58:16 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41331 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfJEV6O (ORCPT
+        id S1726087AbfJEWFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 18:05:38 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36266 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfJEWFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 17:58:14 -0400
-Received: by mail-io1-f68.google.com with SMTP id n26so20909625ioj.8
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 14:58:14 -0700 (PDT)
+        Sat, 5 Oct 2019 18:05:37 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 23so5830462pgk.3;
+        Sat, 05 Oct 2019 15:05:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=G3GiBa1jUTyLkRA1lkNHAhMtxcRwrlIdapCLYa7uKjU=;
-        b=r4wuP4xvj41CIb0744foDaOX+cmTo+WKgHTlLTYy+YlLTYIS8wfbTtSgjBfmQhTEzc
-         HA+igB0G72DNBpejdeq2ZkSD5D9FHM5uKVXPp6MVInV4fqcSCxHQMjqGmkijai9P8Brm
-         m989hcO2OeWQss7TrXXCM5JWIYPV5uQPAGbRsH0koB/wUiUhp+Cs1UChXA6jd7dQUORa
-         5C8ZkuCjPLNAJyptUHEbVsJZ75GsJJjZWTeq7xr+W1kF2YELje1JfmqRBgLmV2nfgYTR
-         MMElMGLn50uyIFBCihMhGR5t/FInrJhPc07SUuRcz3REtOihSghZ8FdYn1dbWyFWh0vG
-         Mqbw==
+        h=from:to:cc:subject:date:message-id;
+        bh=wMdnRrOTU2CPivpJ8e4AUiay63xgWFU0Eh0sVZPpASc=;
+        b=PXyr/deDTtZ/qPQGlH79o3Z72KMrIniG8nTh81X4+1ELiiHKpY923XfzYvuQ1ILrJ9
+         Fg0n3qCLNle+CZ5dBkZzy0hJ/+mXn4iHDedomDzdv3bSWV6FWdamZd/Y3rkzKOGLITHX
+         N05zD9xRBt/MnqPa3TXPOuYfKWrAupRDcxYFq2pnmuT/h3odOMRxKaWJLcP0coDduKB4
+         BuAUWjn8/gXOFjT+6OPdMbOMytpgj7MAEoBqplHwjpd9CBCIzv2wT81CwfxI3O1f1d09
+         qoMwN0GFQejMfnF4VnuDgJuC7d0wzm9hRsJP8Ss+DB6n9In3my07WVl2sktDDUGHdL9R
+         0C0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=G3GiBa1jUTyLkRA1lkNHAhMtxcRwrlIdapCLYa7uKjU=;
-        b=f35GZ32gacd8zsKlG0wBIvs1Rdcbl2afZ9rb+YIZhzSXCcf0uxr0rohq28BuJFKgma
-         1CozDNuxa4eJBEnqn+FaLE/aDVG62aI647woS+pNnWRE2GTts550TPmnJBgMMr+eNson
-         8Fn+f3jhcBEb5Zc20IelWkebzbij9lA26/277AwEoDNMLj8eEmfxbtafbnrl89+YyQxz
-         VndOl55ZesuOCkH6TH0TjL4G54Lqf4Gw0BXIDdZlJ0MaO+oJiZ4pmLBaSsCLsRS7elLl
-         vo2CBI5cFTt0pzbnxo+PXZioNnthpDZnyS6Nsk82ADHNTfYvTmPoPp3IIeYtIBMdiyjK
-         cSnQ==
-X-Gm-Message-State: APjAAAXc+pL5B7Ltwmvg3U6bK1chbkRG+zkLng1cSVIwgwqljgjS5KdM
-        h4D9zHLMUr2DyD1Ir+foYluN87n8uokKPW2hKzQ=
-X-Google-Smtp-Source: APXvYqz44vCH9BONx7KQjbv9AZGFNrvMgpEkN/sLzw2EiiujFbKRVZiMg2lpFGS6CB5F6TBc6jSrFM1Nu//i50jwAtg=
-X-Received: by 2002:a92:c8d2:: with SMTP id c18mr9251832ilq.4.1570312693821;
- Sat, 05 Oct 2019 14:58:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191003191354.GA4481@Serenity> <CAKcoMVC2LdcmUx6j5JzuT-TsFGz=mwQ0MsprrKR2qeXoTmQ-TQ@mail.gmail.com>
- <e0edf48eb84fe038c2912328b28e931900684de2.camel@amazon.com>
-In-Reply-To: <e0edf48eb84fe038c2912328b28e931900684de2.camel@amazon.com>
-From:   Tyler Ramer <tyaramer@gmail.com>
-Date:   Sat, 5 Oct 2019 17:58:52 -0400
-Message-ID: <CAKcoMVBjzM6dq33DaTYBK6U32U3NQaR5mf6ppGr6iTKRuZ2KNg@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Shutdown when removing dead controller
-To:     "Singh, Balbir" <sblbir@amazon.com>
-Cc:     "kbusch@kernel.org" <kbusch@kernel.org>, "hch@lst.de" <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "axboe@fb.com" <axboe@fb.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wMdnRrOTU2CPivpJ8e4AUiay63xgWFU0Eh0sVZPpASc=;
+        b=XtzcAueVfF1UdL8Cdsc9BV/LVnIzfrZOWXajwKR63L02x2VoKvMZVxztYm5VqZlhxr
+         St01WqB9wX5wxIPGpp3/nGIO5hfookaa84m1KC0AcznJUcgFuRnEv+uHQcfU0mEduSsr
+         mvwRVAv6wx045m3VgO/Vx3jmxMWp8lfwOpe6kT45GLu85WP/T0w6QLOe+WGwizzKlS3k
+         s3hkLqzTp3IsHXqrkgVqofXht+nrw0rf18+m1/0Fy2gt+4eErr/J46FKbzWGrEVs6ERF
+         2O5A+6au2kqodc/l6wgy4/z4cEUA1KL1I3FkX+S2PVgu5f4x0t/7j6GIL+7638bx4zjg
+         Y3LA==
+X-Gm-Message-State: APjAAAUbZPPlVwxuk/Sy7FwHr7K9zmeDDzJdg2NzJgGORXZIAXaz9Fsw
+        cT5PpsS6Ee1RjCO91h7t+g0EmG8M
+X-Google-Smtp-Source: APXvYqx69mBvNIOOPk4tWTJtD+p8MPh8GSYPL7Zx+/tgS+l6/wPsaplXW57K7GEFJZv9bmeKvMP/4A==
+X-Received: by 2002:a63:2006:: with SMTP id g6mr22335071pgg.287.1570313136391;
+        Sat, 05 Oct 2019 15:05:36 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 195sm13989120pfz.103.2019.10.05.15.05.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2019 15:05:35 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Hubert Feurstein <h.feurstein@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: dsa: b53: Do not clear existing mirrored port mask
+Date:   Sat,  5 Oct 2019 15:05:18 -0700
+Message-Id: <20191005220518.14008-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> What is the bad CSTS bit? CSTS.RDY?
+Clearing the existing bitmask of mirrored ports essentially prevents us
+from capturing more than one port at any given time. This is clearly
+wrong, do not clear the bitmask prior to setting up the new port.
 
-The reset will be triggered by the result of nvme_should_reset():
+Reported-by: Hubert Feurstein <h.feurstein@gmail.com>
+Fixes: ed3af5fd08eb ("net: dsa: b53: Add support for port mirroring")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/dsa/b53/b53_common.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-1196 static bool nvme_should_reset(struct nvme_dev *dev, u32 csts)
-1197 {
-1198
-1199 =E2=87=A5       /* If true, indicates loss of adapter communication, p=
-ossibly by a
-1200 =E2=87=A5        * NVMe Subsystem reset.
-1201 =E2=87=A5        */
-1202 =E2=87=A5       bool nssro =3D dev->subsystem && (csts & NVME_CSTS_NSS=
-RO);
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index 526ba2ab66f1..cc3536315eff 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -1845,7 +1845,6 @@ int b53_mirror_add(struct dsa_switch *ds, int port,
+ 		loc = B53_EG_MIR_CTL;
+ 
+ 	b53_read16(dev, B53_MGMT_PAGE, loc, &reg);
+-	reg &= ~MIRROR_MASK;
+ 	reg |= BIT(port);
+ 	b53_write16(dev, B53_MGMT_PAGE, loc, reg);
+ 
+-- 
+2.17.1
 
-This csts value is set in nvme_timeout:
-
-1240 static enum blk_eh_timer_return nvme_timeout(struct request *req,
-bool reserved)
-1241 {
-...
-1247 =E2=87=A5       u32 csts =3D readl(dev->bar + NVME_REG_CSTS);
-...
-1256 =E2=87=A5       /*
-1257 =E2=87=A5        * Reset immediately if the controller is failed
-1258 =E2=87=A5        */
-1259 =E2=87=A5       if (nvme_should_reset(dev, csts)) {
-1260 =E2=87=A5       =E2=87=A5       nvme_warn_reset(dev, csts);
-1261 =E2=87=A5       =E2=87=A5       nvme_dev_disable(dev, false);
-1262 =E2=87=A5       =E2=87=A5       nvme_reset_ctrl(&dev->ctrl);
-
-
-Again, here's the message printed by nvme_warn_reset:
-
-Aug 26 15:01:27 testhost kernel: nvme nvme4: controller is down; will
-reset: CSTS=3D0x3, PCI_STATUS=3D0x10
-
-From  include/linux/nvme.h:
- 105 =E2=87=A5       NVME_REG_CSTS=E2=87=A5  =3D 0x001c,=E2=87=A5      /* C=
-ontroller Status */
-
-- Tyler
