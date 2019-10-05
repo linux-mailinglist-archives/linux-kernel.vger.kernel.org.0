@@ -2,173 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F04CCC62
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 20:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3CD7CCC6F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 21:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388124AbfJESq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 14:46:56 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:42515 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387861AbfJESqz (ORCPT
+        id S1729737AbfJETBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 15:01:45 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45127 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbfJETBp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 14:46:55 -0400
-Received: by mail-yb1-f194.google.com with SMTP id z5so2101864ybk.9;
-        Sat, 05 Oct 2019 11:46:54 -0700 (PDT)
+        Sat, 5 Oct 2019 15:01:45 -0400
+Received: by mail-pl1-f193.google.com with SMTP id u12so4736491pls.12;
+        Sat, 05 Oct 2019 12:01:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TBJjABokkrKZ/d54kCejrL00qG1tE+E2KRyIwFedZfQ=;
-        b=RODcag4X4gLNgSIcrEODfVVVCxgSvlzgu2+GzOBREj+1fYMTpqnIi3FaI3Gij0vbxO
-         teEzYNgVAMvOT9ghtfx0DVSy0VNyihzmempv+773xWR5LlJvR14sndko+V5lO75yEC5x
-         HN2OS01Wqb1OH5a2mrpqlhapTCz56K3b77FpiYl/x3LoviZNbP1DoSU4QaRQCxjP26BJ
-         Vet5FFTzOliBWSKomDmoCVkOkLVGzZGnrZuFJo53pV5hVs0jnLd/mzWdvOO6N/GOmgfZ
-         jr0BKOowuP5rBZoBuN3Ca+UHTQ9TnF+TCHK5Mb6y8jxTktTVxn1e240U0uOn/ve3yGs9
-         s53w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w5oAZiGSPpXNuK1uwtnytopuj3PDV8HZJHuPSIRCGfY=;
+        b=SMQ6xjltP8wFyQBHo1N9WhWtUM90tqi1NAC1mTHsQ5WApkLvtUXvR9nI17r23qJ/31
+         Gtjck5swaNEY0aIz0uH0tJQngvDL8806g9UXp/gikykefvPZBMrrwNTwHesnVhndtbNB
+         uKx4fQy5yGJ9N6dH1anVp8pdl0342GNzIdxeggJXw4disfuNBns8KSOEGadVD1fQnvmC
+         3lhvAhmAeTv+ZxVa1natV28wDG70nWk6PeYUiYYlGFE5zoLY5snDNy2K7aK6K8C7UtnN
+         idBSgpXP7aTNsjoJB2xU4+Kn6wtPE9x/lRLfyAjTJmX6evSiFj2vBLvlZJVFkTBEsq9V
+         lDdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TBJjABokkrKZ/d54kCejrL00qG1tE+E2KRyIwFedZfQ=;
-        b=XnjqZ1qZaAJHoEAvBVW8tqy5/wTKY03mzvQwfknH6JGKpD8U+MYGBr+EdFXiBxOQtm
-         tYwMZLTM/aSSQBr0TIDFlXnwWqC8rvNlqSc29GTPxlM2ySFOkm3VfhE1aJpX7znXw+gz
-         kQHFvYQ4sI6vzuOahAhVz4vX7VVeUrgDGW2YWuabJUfRlrbJSvN0jb7MoZ2h5s6SPzFJ
-         FjQtV3nKzdHRVgrsAltq4q0B+vwq9qKfyMTn2xj6rWvP6NocnNJl7ebR5+4CghcsbuS0
-         LOH2qvidH+SZOSFJ73CJnIkmQ3mH0fKqN9Yhl2v/otT4bNjraG7t67vNKp7B5NbufVYA
-         50pQ==
-X-Gm-Message-State: APjAAAVELzTX/iFjjWy9ZKmZkylto65wvf3/OKdxeqMytkkaJ5snfPj8
-        hm3kE/X3H5q7hCVMgJNo4aw=
-X-Google-Smtp-Source: APXvYqypjGkV6aP1OrkE5Eb3ln3sgMaerj4stbaQyuaW82pGa7hVgOgDYlnVuxRaYbSmwQJ8cx8w9w==
-X-Received: by 2002:a25:ab21:: with SMTP id u30mr1521570ybi.143.1570301214234;
-        Sat, 05 Oct 2019 11:46:54 -0700 (PDT)
-Received: from icarus (072-189-084-142.res.spectrum.com. [72.189.84.142])
-        by smtp.gmail.com with ESMTPSA id p204sm2597405ywp.110.2019.10.05.11.46.52
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w5oAZiGSPpXNuK1uwtnytopuj3PDV8HZJHuPSIRCGfY=;
+        b=SMQlOmB8USeNZOUhxBqw9RMr+wPr0fGlBC5dSaVqiGcJl1ZV3midWwDFWov5uA8XVk
+         jted13tq/e/KxL35qvpoTA081GjAYsph/Z17YTOUinIQfm1yCNmtY5BiD4m5m1kBesZR
+         O4mtVwPor3h5h4bfeqpB9mzbL1Y4tiVyetspJuD/h/LUsgy/GmNplmjfTBMMouoZ+jlR
+         NiXQwgM0rjAlzyAf1zS/9uHKPDb5y1ZjpXU+7/sW8yaq1Z2LYTLKQnJU5/TMM/L9IUcG
+         9joKQ3Q8rtZEoQjEOGMAsNugsjJxmNIwhxKHqTfMj00aA+57H28wXAdfC/sUEVMD2zlG
+         l+cQ==
+X-Gm-Message-State: APjAAAXW+iVqirPzEa1hPDyFGkZfPLLwpBigHDRc/Iq6IQa5BRCO1ghY
+        1NRSS0XAayecjWkgdB9pU1eMvmJz8gg=
+X-Google-Smtp-Source: APXvYqytt2XwZKYsjUEoqIT1JSjH+1dps/xHrJqBU0UlLsZtG8NBhuUg/Pm+hzNcsH5cULf8KNwrqw==
+X-Received: by 2002:a17:902:b789:: with SMTP id e9mr14712011pls.7.1570302103828;
+        Sat, 05 Oct 2019 12:01:43 -0700 (PDT)
+Received: from harshads0.svl.corp.google.com ([2620:15c:2cd:202:ec1e:207a:e951:9a5b])
+        by smtp.googlemail.com with ESMTPSA id ep10sm23686288pjb.2.2019.10.05.12.01.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2019 11:46:53 -0700 (PDT)
-Date:   Sat, 5 Oct 2019 14:46:40 -0400
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        yamada.masahiro@socionext.com,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de,
-        sean.nyekjaer@prevas.dk, morten.tiljeset@prevas.dk
-Subject: Re: [PATCH v15 00/14] Introduce the for_each_set_clump8 macro
-Message-ID: <20191005184640.GA117093@icarus>
-References: <cover.1570299719.git.vilhelm.gray@gmail.com>
+        Sat, 05 Oct 2019 12:01:43 -0700 (PDT)
+From:   Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, axboe@kernel.dk,
+        vaibhavrustagi@google.com,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Josef Bacik <jbacik@fb.com>
+Subject: [PATCH v2] blk-wbt: fix performance regression in wbt scale_up/scale_down
+Date:   Sat,  5 Oct 2019 11:59:27 -0700
+Message-Id: <20191005185927.91209-1-harshadshirwadkar@gmail.com>
+X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1570299719.git.vilhelm.gray@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 05, 2019 at 02:36:54PM -0400, William Breathitt Gray wrote:
-> Changes in v15:
->   - Move find_next_clump8 to lib/find_bit.c since it requires round_down
->     (I want this to be static inline like the others, but I need help)
->   - Utilize for_each_set_clump8 in pisosr, max3191x, and pca953x
-> 
-> While adding GPIO get_multiple/set_multiple callback support for various
-> drivers, I noticed a pattern of looping manifesting that would be useful
-> standardized as a macro.
-> 
-> This patchset introduces the for_each_set_clump8 macro and utilizes it
-> in several GPIO drivers. The for_each_set_clump macro8 facilitates a
-> for-loop syntax that iterates over a memory region entire groups of set
-> bits at a time.
-> 
-> For example, suppose you would like to iterate over a 32-bit integer 8
-> bits at a time, skipping over 8-bit groups with no set bit, where
-> XXXXXXXX represents the current 8-bit group:
-> 
->     Example:        10111110 00000000 11111111 00110011
->     First loop:     10111110 00000000 11111111 XXXXXXXX
->     Second loop:    10111110 00000000 XXXXXXXX 00110011
->     Third loop:     XXXXXXXX 00000000 11111111 00110011
-> 
-> Each iteration of the loop returns the next 8-bit group that has at
-> least one set bit.
-> 
-> The for_each_set_clump8 macro has four parameters:
-> 
->     * start: set to the bit offset of the current clump
->     * clump: set to the current clump value
->     * bits: bitmap to search within
->     * size: bitmap size in number of bits
-> 
-> In this version of the patchset, the for_each_set_clump macro has been
-> reimplemented and simplified based on the suggestions provided by Rasmus
-> Villemoes and Andy Shevchenko in the version 4 submission.
-> 
-> In particular, the function of the for_each_set_clump macro has been
-> restricted to handle only 8-bit clumps; the drivers that use the
-> for_each_set_clump macro only handle 8-bit ports so a generic
-> for_each_set_clump implementation is not necessary. Thus, a solution for
-> large clumps (i.e. those larger than the width of a bitmap word) can be
-> postponed until a driver appears that actually requires such a generic
-> for_each_set_clump implementation.
-> 
-> For what it's worth, a semi-generic for_each_set_clump (i.e. for clumps
-> smaller than the width of a bitmap word) can be implemented by simply
-> replacing the hardcoded '8' and '0xFF' instances with respective
-> variables. I have not yet had a need for such an implementation, and
-> since it falls short of a true generic for_each_set_clump function, I
-> have decided to forgo such an implementation for now.
-> 
-> In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
-> introduced to get and set 8-bit values respectively. Their use is based
-> on the behavior suggested in the patchset version 4 review.
-> 
-> William Breathitt Gray (14):
->   bitops: Introduce the for_each_set_clump8 macro
->   lib/test_bitmap.c: Add for_each_set_clump8 test cases
->   gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
->   gpio: 104-idi-48: Utilize for_each_set_clump8 macro
->   gpio: gpio-mm: Utilize for_each_set_clump8 macro
->   gpio: ws16c48: Utilize for_each_set_clump8 macro
->   gpio: pci-idio-16: Utilize for_each_set_clump8 macro
->   gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
->   gpio: uniphier: Utilize for_each_set_clump8 macro
->   gpio: 74x164: Utilize the for_each_set_clump8 macro
->   thermal: intel: intel_soc_dts_iosf: Utilize for_each_set_clump8 macro
->   gpio: pisosr: Utilize the for_each_set_clump8 macro
->   gpio: max3191x: Utilize the for_each_set_clump8 macro
->   gpio: pca953x: Utilize the for_each_set_clump8 macro
-> 
->  drivers/gpio/gpio-104-dio-48e.c            |  73 ++++----------
->  drivers/gpio/gpio-104-idi-48.c             |  36 ++-----
->  drivers/gpio/gpio-74x164.c                 |  19 ++--
->  drivers/gpio/gpio-gpio-mm.c                |  73 ++++----------
->  drivers/gpio/gpio-max3191x.c               |  19 ++--
->  drivers/gpio/gpio-pca953x.c                |  17 ++--
->  drivers/gpio/gpio-pci-idio-16.c            |  75 +++++---------
->  drivers/gpio/gpio-pcie-idio-24.c           | 109 ++++++++-------------
->  drivers/gpio/gpio-pisosr.c                 |  12 +--
->  drivers/gpio/gpio-uniphier.c               |  16 ++-
->  drivers/gpio/gpio-ws16c48.c                |  73 ++++----------
->  drivers/thermal/intel/intel_soc_dts_iosf.c |  29 +++---
->  drivers/thermal/intel/intel_soc_dts_iosf.h |   2 -
->  include/asm-generic/bitops/find.h          |  50 ++++++++++
->  include/linux/bitops.h                     |   5 +
->  lib/find_bit.c                             |  14 +++
->  lib/test_bitmap.c                          |  65 ++++++++++++
->  17 files changed, 325 insertions(+), 362 deletions(-)
-> 
-> -- 
-> 2.23.0
+scale_up wakes up waiters after scaling up. But after scaling max, it
+should not wake up more waiters as waiters will not have anything to
+do. This patch fixes this by making scale_up (and also scale_down)
+return when threshold is reached.
 
-This patchset only implements for_each_set_clump8 which restricts the
-looping to 8 bits at a time. The drivers/gpio/gpio-thunderx.c file has a
-set_multiple callback that loops 64 bits at a time. That would be one
-case where a more general for_each_set_clump macro would be useful.
+This bug causes increased fdatasync latency when fdatasync and dd
+conv=sync are performed in parallel on 4.19 compared to 4.14. This
+bug was introduced during refactoring of blk-wbt code.
 
-However, we can focus on the simpler for_each_set_clump8 macro for now
-since looping by 8 bits at a time is the most common situation.
+Changes since V1:
+- Replaced incorrect "return 0" with "return true" in
+  rq_depth_scale_down()
 
-William Breathitt Gray
+Fixes: a79050434b45 ("blk-rq-qos: refactor out common elements of blk-wbt")
+Cc: Josef Bacik <jbacik@fb.com>
+Signed-off-by: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+---
+ block/blk-rq-qos.c | 14 +++++++++-----
+ block/blk-rq-qos.h |  4 ++--
+ block/blk-wbt.c    |  6 ++++--
+ 3 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+index 3954c0dc1443..de04b89e9157 100644
+--- a/block/blk-rq-qos.c
++++ b/block/blk-rq-qos.c
+@@ -142,24 +142,27 @@ bool rq_depth_calc_max_depth(struct rq_depth *rqd)
+ 	return ret;
+ }
+ 
+-void rq_depth_scale_up(struct rq_depth *rqd)
++/* Returns true on success and false if scaling up wasn't possible */
++bool rq_depth_scale_up(struct rq_depth *rqd)
+ {
+ 	/*
+ 	 * Hit max in previous round, stop here
+ 	 */
+ 	if (rqd->scaled_max)
+-		return;
++		return false;
+ 
+ 	rqd->scale_step--;
+ 
+ 	rqd->scaled_max = rq_depth_calc_max_depth(rqd);
++	return true;
+ }
+ 
+ /*
+  * Scale rwb down. If 'hard_throttle' is set, do it quicker, since we
+- * had a latency violation.
++ * had a latency violation. Returns true on success and returns false if
++ * scaling down wasn't possible.
+  */
+-void rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle)
++bool rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle)
+ {
+ 	/*
+ 	 * Stop scaling down when we've hit the limit. This also prevents
+@@ -167,7 +170,7 @@ void rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle)
+ 	 * keep up.
+ 	 */
+ 	if (rqd->max_depth == 1)
+-		return;
++		return false;
+ 
+ 	if (rqd->scale_step < 0 && hard_throttle)
+ 		rqd->scale_step = 0;
+@@ -176,6 +179,7 @@ void rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle)
+ 
+ 	rqd->scaled_max = false;
+ 	rq_depth_calc_max_depth(rqd);
++	return true;
+ }
+ 
+ struct rq_qos_wait_data {
+diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
+index 2300e038b9fa..c0f0778d5396 100644
+--- a/block/blk-rq-qos.h
++++ b/block/blk-rq-qos.h
+@@ -125,8 +125,8 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
+ 		 acquire_inflight_cb_t *acquire_inflight_cb,
+ 		 cleanup_cb_t *cleanup_cb);
+ bool rq_wait_inc_below(struct rq_wait *rq_wait, unsigned int limit);
+-void rq_depth_scale_up(struct rq_depth *rqd);
+-void rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle);
++bool rq_depth_scale_up(struct rq_depth *rqd);
++bool rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle);
+ bool rq_depth_calc_max_depth(struct rq_depth *rqd);
+ 
+ void __rq_qos_cleanup(struct rq_qos *rqos, struct bio *bio);
+diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+index 313f45a37e9d..5a96881e7a52 100644
+--- a/block/blk-wbt.c
++++ b/block/blk-wbt.c
+@@ -308,7 +308,8 @@ static void calc_wb_limits(struct rq_wb *rwb)
+ 
+ static void scale_up(struct rq_wb *rwb)
+ {
+-	rq_depth_scale_up(&rwb->rq_depth);
++	if (!rq_depth_scale_up(&rwb->rq_depth))
++		return;
+ 	calc_wb_limits(rwb);
+ 	rwb->unknown_cnt = 0;
+ 	rwb_wake_all(rwb);
+@@ -317,7 +318,8 @@ static void scale_up(struct rq_wb *rwb)
+ 
+ static void scale_down(struct rq_wb *rwb, bool hard_throttle)
+ {
+-	rq_depth_scale_down(&rwb->rq_depth, hard_throttle);
++	if (!rq_depth_scale_down(&rwb->rq_depth, hard_throttle))
++		return;
+ 	calc_wb_limits(rwb);
+ 	rwb->unknown_cnt = 0;
+ 	rwb_trace_step(rwb, "scale down");
+-- 
+2.23.0.581.g78d2f28ef7-goog
+
