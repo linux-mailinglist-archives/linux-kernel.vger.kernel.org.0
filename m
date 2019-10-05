@@ -2,152 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3413CCCB99
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 19:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31CEBCCB9E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 19:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbfJERRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 13:17:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727466AbfJERRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 13:17:40 -0400
-Received: from paulmck-ThinkPad-P72 (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64CAC222C0;
-        Sat,  5 Oct 2019 17:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570295858;
-        bh=B07W4I3WgUNHxtJGxr5YZWY6gh+o546/XEfwQmXK+y8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=IndVB5aCE6VB1XE3ZANgzNHVYkyJ7+DfCLdji0SxXVKToxcvEuse8tt0rzPoap89B
-         BgAnTDlWY5eejxpzfPWrKMFkZtWwj4GDPpvW62cm7020MiGQ2oYhBst+rFhhc5M4+4
-         wUzMKkq+Ucb/juZlr9el1ZbzDcr6Xg1VxSVTXv5I=
-Date:   Sat, 5 Oct 2019 10:17:37 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 06/12] rcu: Make CPU-hotplug removal
- operations enable tick
-Message-ID: <20191005171737.GK2689@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191003013834.GA12927@paulmck-ThinkPad-P72>
- <20191003013903.13079-6-paulmck@kernel.org>
- <20191003143408.GB27555@lenoir>
+        id S1728545AbfJERT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 13:19:59 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37001 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbfJERT7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Oct 2019 13:19:59 -0400
+Received: by mail-yw1-f67.google.com with SMTP id m7so3538137ywe.4;
+        Sat, 05 Oct 2019 10:19:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MGAToH7gf0cf1NNYqYOLRrO0bNygR1ZINN+gs4KcfjI=;
+        b=hInKtJ1wQDIAaaHqSxMc1KyxX4ngqQzK06TYsc/fewv9OUTewxjNvhoAA22E2/loFi
+         wasFDBlq9zqGi2r4tcMli2676VkrYeWc1VXonj2huB9BN3/KO62U593XrF3cCPk9zh6/
+         Ro3i0ArBfq+DiD4Hjv4cx+SzU6bYwnUpYuNYZyv3BwS51hHP+2oNYpbFzTziWvHPq8uA
+         rxkpkdoCpCasIyeZOFSod3u9r/N1cd2scssUF3wZUa98SWne/8/bY2otB/XZ9Pu6S6ie
+         GdABnngINi8bA5qSz0P8R+JqRAjS6T41wKr3An9fF/dYeSQaFX8z5Jmv3S99rwN62CoH
+         a1gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MGAToH7gf0cf1NNYqYOLRrO0bNygR1ZINN+gs4KcfjI=;
+        b=ar4ZQ2DbRujuifOQqYF29wn1um0T2hCrz0+e0O/xQSeVaE8Jni/nFkf+zvybjTwgbb
+         XTGKPnFUUlPV4Hu6Q59jFyHyV7Cy5Fopcz0PiPqrzoThdTGxbypiHdCRBefRrJBpblkb
+         wiNpxveRBcb45/zjLXFSvt/kPhCBuAVUn4PjMaTclBzL7aRZOrIzDIa4oys6BTPWnnJs
+         xwzKTHln4fwpjs/q6+Jrsq/3YLvFLv+8eymnc/j9B+k2Ee+RwwAIPs+j+ZXelh8q96iX
+         NYyHjJPkad49DDmYUbRV8OScpVd7kwGcxAfmucC0noVACTJMBHcK9NPyJwguvsXiJ2vm
+         cncA==
+X-Gm-Message-State: APjAAAW7iGxYVIfiI2PebtI6pwqTILfCSsy8wLtASpwRykG5ehESlYVK
+        ekRpdTk91WaWEbEKCYGLEz4=
+X-Google-Smtp-Source: APXvYqwwjA05OEJO+32btwCbv0PRqgBlNIanc9PkgxO2kfSjusl2VL25zMbuvWbNGxLNX46za0Mg4Q==
+X-Received: by 2002:a81:3601:: with SMTP id d1mr15208844ywa.103.1570295998277;
+        Sat, 05 Oct 2019 10:19:58 -0700 (PDT)
+Received: from icarus (072-189-084-142.res.spectrum.com. [72.189.84.142])
+        by smtp.gmail.com with ESMTPSA id y205sm2445684ywc.6.2019.10.05.10.19.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2019 10:19:57 -0700 (PDT)
+Date:   Sat, 5 Oct 2019 13:19:38 -0400
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        patrick.havelange@essensium.com, fabrice.gasnier@st.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, benjamin.gaignard@linaro.org,
+        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
+        David Lechner <david@lechnology.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: Re: [PATCH v3 0/2] Simplify count_read/count_write/signal_read
+Message-ID: <20191005171938.GA7199@icarus>
+References: <cover.1568816248.git.vilhelm.gray@gmail.com>
+ <20191005153255.4290ce81@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191003143408.GB27555@lenoir>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191005153255.4290ce81@archlinux>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 04:34:09PM +0200, Frederic Weisbecker wrote:
-> On Wed, Oct 02, 2019 at 06:38:57PM -0700, paulmck@kernel.org wrote:
-> > From: "Paul E. McKenney" <paulmck@linux.ibm.com>
+On Sat, Oct 05, 2019 at 03:33:08PM +0100, Jonathan Cameron wrote:
+> Hi William,
+> 
+> This all makes sense to me.  Do you want to wait for some more reviews
+> or should I pick them up now through IIO?  We are really early in
+> the cycle so plenty of time, unless there are new drivers coming you
+> want to use these from the start.
+> 
+> Thanks,
+> 
+> Jonathan
+
+Getting this in sooner would be better since that will save Fabien from
+having to introduce the COUNTER_COUNT_TALLY type in the cros_ec patch
+submission.
+
+The only concern left now is that the TI eQEP driver needs to be updated
+as well for these changes, but it's not in the IIO testing branch yet.
+
+Do you want to merge this patchset first, or wait until TI eQEP makes it
+into the testing branch? Alternatively, I can merge the cros_ec patchset
+and Intel QEP patchset into my personal repository when they are ready,
+then later submit a git pull request to you with these changes if you
+prefer that route.
+
+William Breathitt Gray
+
+> On Wed, 18 Sep 2019 23:22:44 +0900
+> William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
+> 
+> > Changes in v3:
+> >  - Squash code changes to single patch to avoid compilation error
 > > 
-> > CPU-hotplug removal operations run the multi_cpu_stop() function, which
-> > relies on the scheduler to gain control from whatever is running on the
-> > various online CPUs, including any nohz_full CPUs running long loops in
-> > kernel-mode code.  Lack of the scheduler-clock interrupt on such CPUs
-> > can delay multi_cpu_stop() for several minutes and can also result in
-> > RCU CPU stall warnings.  This commit therefore causes CPU-hotplug removal
-> > operations to enable the scheduler-clock interrupt on all online CPUs.
-> 
-> So, like Peter said back then, there must be an issue in the scheduler
-> such as a missing or mishandled preemption point.
-
-Fair enough, but this is useful in the meantime.
-
-> > [ paulmck: Apply Joel Fernandes TICK_DEP_MASK_RCU->TICK_DEP_BIT_RCU fix. ]
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> > ---
-> >  kernel/rcu/tree.c | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
+> > The changes in this patchset will not affect the userspace interface.
+> > Rather, these changes are intended to simplify the kernelspace Counter
+> > callbacks for counter device driver authors.
 > > 
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index f708d54..74bf5c65 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -2091,6 +2091,7 @@ static void rcu_cleanup_dead_rnp(struct rcu_node *rnp_leaf)
-> >   */
-> >  int rcutree_dead_cpu(unsigned int cpu)
-> >  {
-> > +	int c;
-> >  	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
-> >  	struct rcu_node *rnp = rdp->mynode;  /* Outgoing CPU's rdp & rnp. */
-> >  
-> > @@ -2101,6 +2102,10 @@ int rcutree_dead_cpu(unsigned int cpu)
-> >  	rcu_boost_kthread_setaffinity(rnp, -1);
-> >  	/* Do any needed no-CB deferred wakeups from this CPU. */
-> >  	do_nocb_deferred_wakeup(per_cpu_ptr(&rcu_data, cpu));
-> > +
-> > +	// Stop-machine done, so allow nohz_full to disable tick.
-> > +	for_each_online_cpu(c)
-> > +		tick_dep_clear_cpu(c, TICK_DEP_BIT_RCU);
-> 
-> Just use tick_dep_clear() without for_each_online_cpu().
-> 
-> >  	return 0;
-> >  }
-> >  
-> > @@ -3074,6 +3079,7 @@ static void rcutree_affinity_setting(unsigned int cpu, int outgoing)
-> >   */
-> >  int rcutree_online_cpu(unsigned int cpu)
-> >  {
-> > +	int c;
-> >  	unsigned long flags;
-> >  	struct rcu_data *rdp;
-> >  	struct rcu_node *rnp;
-> > @@ -3087,6 +3093,10 @@ int rcutree_online_cpu(unsigned int cpu)
-> >  		return 0; /* Too early in boot for scheduler work. */
-> >  	sync_sched_exp_online_cleanup(cpu);
-> >  	rcutree_affinity_setting(cpu, -1);
-> > +
-> > +	// Stop-machine done, so allow nohz_full to disable tick.
-> > +	for_each_online_cpu(c)
-> > +		tick_dep_clear_cpu(c, TICK_DEP_BIT_RCU);
-> 
-> Same here.
-> 
-> >  	return 0;
-> >  }
-> >  
-> > @@ -3096,6 +3106,7 @@ int rcutree_online_cpu(unsigned int cpu)
-> >   */
-> >  int rcutree_offline_cpu(unsigned int cpu)
-> >  {
-> > +	int c;
-> >  	unsigned long flags;
-> >  	struct rcu_data *rdp;
-> >  	struct rcu_node *rnp;
-> > @@ -3107,6 +3118,10 @@ int rcutree_offline_cpu(unsigned int cpu)
-> >  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> >  
-> >  	rcutree_affinity_setting(cpu, cpu);
-> > +
-> > +	// nohz_full CPUs need the tick for stop-machine to work quickly
-> > +	for_each_online_cpu(c)
-> > +		tick_dep_set_cpu(c, TICK_DEP_BIT_RCU);
-> 
-> And here you only need tick_dep_set() without for_each_online_cpu().
-
-Thank you!  I applied all three simplifications.
-
-							Thanx, Paul
-
-> Thanks.
-> 
-> >  	return 0;
-> >  }
-> >  
-> > -- 
-> > 2.9.5
+> > The following main changes are proposed:
 > > 
+> > * Retire the opaque counter_count_read_value/counter_count_write_value
+> >   structures and simply represent count data as an unsigned integer.
+> > 
+> > * Retire the opaque counter_signal_read_value structure and represent
+> >   Signal data as a counter_signal_value enum.
+> > 
+> > These changes should reduce some complexity and code in the use and
+> > implementation of the count_read, count_write, and signal_read
+> > callbacks.
+> > 
+> > The opaque structures for Count data and Signal data were introduced
+> > originally in anticipation of supporting various representations of
+> > counter data (e.g. arbitrary-precision tallies, floating-point spherical
+> > coordinate positions, etc). However, with the counter device drivers
+> > that have appeared, it's become apparent that utilizing opaque
+> > structures in kernelspace is not the best approach to take.
+> > 
+> > I believe it is best to let userspace applications decide how to
+> > interpret the count data they receive. There are a couple of reasons why
+> > it would be good to do so:
+> > 
+> > * Users use their devices in unexpected ways.
+> > 
+> >   For example, a quadrature encoder counter device is typically used to
+> >   keep track of the position of a motor, but a user could set the device
+> >   in a pulse-direction mode and instead use it to count sporadic rising
+> >   edges from an arbitrary signal line unrelated to positioning. Users
+> >   should have the freedom to decide what their data represents.
+> > 
+> > * Most counter devices represent data as unsigned integers anyway.
+> > 
+> >   For example, whether the device is a tally counter or position
+> >   counter, the count data is represented to the user as an unsigned
+> >   integer value. So specifying that one device is representing tallies
+> >   while the other specifies positions does not provide much utility from
+> >   an interface perspective.
+> > 
+> > For these reasons, the count_read and count_write callbacks have been
+> > redefined to pass count data directly as unsigned long instead of passed
+> > via opaque structures:
+> > 
+> >         count_read(struct counter_device *counter,
+> >                    struct counter_count *count, unsigned long *val);
+> >         count_write(struct counter_device *counter,
+> >                     struct counter_count *count, unsigned long val);
+> > 
+> > Similarly, the signal_read is redefined to pass Signal data directly as
+> > a counter_signal_value enum instead of via an opaque structure:
+> > 
+> >         signal_read(struct counter_device *counter,
+> >                     struct counter_signal *signal,
+> >                     enum counter_signal_value *val);
+> > 
+> > The counter_signal_value enum is simply the counter_signal_level enum
+> > redefined to remove the references to the Signal data "level" data type.
+> > 
+> > William Breathitt Gray (2):
+> >   counter: Simplify the count_read and count_write callbacks
+> >   docs: driver-api: generic-counter: Update Count and Signal data types
+> > 
+> >  Documentation/driver-api/generic-counter.rst |  22 ++--
+> >  drivers/counter/104-quad-8.c                 |  33 ++----
+> >  drivers/counter/counter.c                    | 101 +++----------------
+> >  drivers/counter/ftm-quaddec.c                |  14 +--
+> >  drivers/counter/stm32-lptimer-cnt.c          |   5 +-
+> >  drivers/counter/stm32-timer-cnt.c            |  17 +---
+> >  include/linux/counter.h                      |  74 ++------------
+> >  7 files changed, 53 insertions(+), 213 deletions(-)
+> > 
+> 
