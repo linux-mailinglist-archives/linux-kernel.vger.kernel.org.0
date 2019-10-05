@@ -2,319 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3507CCC6EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 02:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C54CDCC6F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 02:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731410AbfJEA2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 20:28:32 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51760 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731221AbfJEA2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 20:28:31 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 7so7390856wme.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 17:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PJwesKN0Is219mNF64hfY/kw11eEsy/0j8tNwxs1DJA=;
-        b=AnMhXUJF8+z1tHPJ/FIGM3DCjkcy+X4PJ54beMEF9AtkwdC/DOMI9laxGlWaZjqVTN
-         nIeyLmUvn9iIzav2DU2x8LrjJGxKQOxnCLfMklyirLjaCI0136T+RdNhWeeQYwLvvHHM
-         StsrTa3d9+RVd7wSzgkdKdoFELxUUI9DV09w3FnFj2p734jyEFyT8CoveJIXLPbPU7T8
-         McaSLpA1fc167vTehFKxoIzA+b8j4FniXKBKAyfYRPWhxBdTKptpE8NO9UPeTCFxyQJL
-         nEl0WjnEwzafQc4JYmjgnczf9A/gaqRTJCMfVFms4Mcnpf5e3YyhaM8SSr0UAmR+kzV2
-         +JIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PJwesKN0Is219mNF64hfY/kw11eEsy/0j8tNwxs1DJA=;
-        b=UBJ4+TiJmR9b42b6Ep9Xt54KssElbZsXzpL5dcPdprufFchxl5WV08+xXNlpsHeN1x
-         NI/JFE0saGrcXOAr0uIXXTS1O2cK5quKGG0iq79FXvIeBLPby1Z6tp9sbbz8RUA3CWSs
-         +UET37nrICKuaYLdKjq5QGFOsVnj4CZL13m9vabLNdvgMxsxxdo1MC4KF92eIk0BS7Gt
-         3gwY5enFu+vj5w93web9OFeB/UyYzHLg3/z+0QWcWXOUxPEd5X3tqF1MsTjklFAPAMW+
-         g9I84MpXqLRM/4iryZjmn0CGownlbaWq9v0+jsCSYJQVvEWhf5DZuqgO18y1kjGP4Nzl
-         56gA==
-X-Gm-Message-State: APjAAAWk3NWR2kNAas5VO9/V38eOtGJh0QkFMiHHXdG4NgwvotIFIcIB
-        lRdRzmsdwROlqMJUg19T0Ry8FmiHk4wEOEKI77rj0Q==
-X-Google-Smtp-Source: APXvYqzI0rIG0wqXAwtaDOJKrCcsCfXxfx+Mka86mIDcf7oXXqxJStAEgz+oeCVqpjtjJlqjXM+ugYQ+pd6SDyI5+Bc=
-X-Received: by 2002:a7b:c10b:: with SMTP id w11mr12087632wmi.108.1570235306479;
- Fri, 04 Oct 2019 17:28:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191004001243.140897-1-xueweiz@google.com> <20191004005423.GA19076@lorien.usersys.redhat.com>
- <CAPtwhKrswHQ1Ue2YO2hJi7h-Dsk6eGPiQ2UmLCq1AxGxMoHr2w@mail.gmail.com> <20191004131432.GA9498@pauld.bos.csb>
-In-Reply-To: <20191004131432.GA9498@pauld.bos.csb>
-From:   Xuewei Zhang <xueweiz@google.com>
-Date:   Fri, 4 Oct 2019 17:28:15 -0700
-Message-ID: <CAPtwhKo1YND6VG1u8brj8ZRpn33p2xH1cdSRBs-cBSEm78V=Lw@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: scale quota and period without losing
- quota/period ratio precision
-To:     Phil Auld <pauld@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        trivial@kernel.org, Neel Natu <neelnatu@google.com>,
-        Hao Luo <haoluo@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1731525AbfJEAdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 20:33:25 -0400
+Received: from mga06.intel.com ([134.134.136.31]:34432 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730400AbfJEAdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Oct 2019 20:33:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 17:33:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,258,1566889200"; 
+   d="scan'208";a="191743043"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Oct 2019 17:33:22 -0700
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     mike.kravetz@oracle.com, akpm@linux-foundation.org,
+        hughd@google.com, aarcange@redhat.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH] hugetlb: remove unused hstate in hugetlb_fault_mutex_hash()
+Date:   Sat,  5 Oct 2019 08:33:02 +0800
+Message-Id: <20191005003302.785-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190927151033.aad57472652a0b3a6948df6e@linux-foundation.org>
+References: <20190927151033.aad57472652a0b3a6948df6e@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 6:14 AM Phil Auld <pauld@redhat.com> wrote:
->
-> On Thu, Oct 03, 2019 at 07:05:56PM -0700 Xuewei Zhang wrote:
-> > +cc neelnatu@google.com and haoluo@google.com, they helped a lot
-> > for this issue. Sorry I forgot to include them when sending out the patch.
-> >
-> > On Thu, Oct 3, 2019 at 5:55 PM Phil Auld <pauld@redhat.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Thu, Oct 03, 2019 at 05:12:43PM -0700 Xuewei Zhang wrote:
-> > > > quota/period ratio is used to ensure a child task group won't get more
-> > > > bandwidth than the parent task group, and is calculated as:
-> > > > normalized_cfs_quota() = [(quota_us << 20) / period_us]
-> > > >
-> > > > If the quota/period ratio was changed during this scaling due to
-> > > > precision loss, it will cause inconsistency between parent and child
-> > > > task groups. See below example:
-> > > > A userspace container manager (kubelet) does three operations:
-> > > > 1) Create a parent cgroup, set quota to 1,000us and period to 10,000us.
-> > > > 2) Create a few children cgroups.
-> > > > 3) Set quota to 1,000us and period to 10,000us on a child cgroup.
-> > > >
-> > > > These operations are expected to succeed. However, if the scaling of
-> > > > 147/128 happens before step 3), quota and period of the parent cgroup
-> > > > will be changed:
-> > > > new_quota: 1148437ns, 1148us
-> > > > new_period: 11484375ns, 11484us
-> > > >
-> > > > And when step 3) comes in, the ratio of the child cgroup will be 104857,
-> > > > which will be larger than the parent cgroup ratio (104821), and will
-> > > > fail.
-> > > >
-> > > > Scaling them by a factor of 2 will fix the problem.
-> > >
-> > > I have no issues with the concept. We went around a bit about the actual
-> > > numbers and made it an approximation.
-> > >
-> > > >
-> > > > Fixes: 2e8e19226398 ("sched/fair: Limit sched_cfs_period_timer() loop to avoid hard lockup")
-> > > > Signed-off-by: Xuewei Zhang <xueweiz@google.com>
-> > > > ---
-> > > >  kernel/sched/fair.c | 36 ++++++++++++++++++++++--------------
-> > > >  1 file changed, 22 insertions(+), 14 deletions(-)
-> > > >
-> > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > > index 83ab35e2374f..b3d3d0a231cd 100644
-> > > > --- a/kernel/sched/fair.c
-> > > > +++ b/kernel/sched/fair.c
-> > > > @@ -4926,20 +4926,28 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
-> > > >               if (++count > 3) {
-> > > >                       u64 new, old = ktime_to_ns(cfs_b->period);
-> > > >
-> > > > -                     new = (old * 147) / 128; /* ~115% */
-> > > > -                     new = min(new, max_cfs_quota_period);
-> > > > -
-> > > > -                     cfs_b->period = ns_to_ktime(new);
-> > > > -
-> > > > -                     /* since max is 1s, this is limited to 1e9^2, which fits in u64 */
-> > > > -                     cfs_b->quota *= new;
-> > > > -                     cfs_b->quota = div64_u64(cfs_b->quota, old);
-> > > > -
-> > > > -                     pr_warn_ratelimited(
-> > > > -     "cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us %lld, cfs_quota_us = %lld)\n",
-> > > > -                             smp_processor_id(),
-> > > > -                             div_u64(new, NSEC_PER_USEC),
-> > > > -                             div_u64(cfs_b->quota, NSEC_PER_USEC));
-> > > > +                     /*
-> > > > +                      * Grow period by a factor of 2 to avoid lossing precision.
-> > > > +                      * Precision loss in the quota/period ratio can cause __cfs_schedulable
-> > > > +                      * to fail.
-> > > > +                      */
-> > > > +                     new = old * 2;
-> > > > +                     if (new < max_cfs_quota_period) {
-> > >
-> > > I don't like this part as much. There may be a value between
-> > > max_cfs_quota_period/2 and max_cfs_quota_period that would get us out of
-> > > the loop. Possibly in practice it won't matter but here you trigger the
-> > > warning and take no action to keep it from continuing.
-> > >
-> > > Also, if you are actually hitting this then you might want to just start at
-> > > a higher but proportional quota and period.
-> >
-> > I'd like to do what you suggested. A quick idea would be to scale period to
-> > max_cfs_quota_period, and scale quota proportionally. However the naive
-> > implementation won't work under this edge case:
-> > original:
-> > quota: 500,000us  period: 570,000us
-> > after scaling:
-> > quota: 877,192us  period: 1,000,000us
-> > original ratio: 919803
-> > new ratio: 919802
-> >
-> > To do this right, the code would have to keep an eye out on the precision loss,
-> > and increase quota by 1us sometimes to cancel out the precision loss.
-> >
-> > Also, I think this case is not that important. Because if we are
-> > hitting this case, that
-> > suggests the period is already >0.5s. And if we are still hitting
-> > timeouts with a 0.5s
-> > period, scaling it to 1s probably won't help much.
-> > When this happens, I'd imagine the parent cgroup would have a LOT of child
-> > cgroups. It might make sense for the userspace to create the parent cgroup with
-> > 1s period.
-> >
-> > If you think automatically scaling 0.5s+ to 1s is still important, I'm
-> > happy to stash
-> > this patch, and send in another one that handles the 0.5+s -> 1s
-> > scaling the right
-> > way. :) Thanks!
->
-> First let me understand your use case better. I was thinking about this more last
-> night and it doesn't make sense.
->
-> You are setting a small quota and period on the parent cgroup and then setting the
-> same small quota and period on the child. As you say to keep the child from getting
-> more quota than the parent. But that should already be the case simply by setting
-> it on the parent. The child can't get more quota than the parent.   All this does
-> is make the kernel do more work handling more period timers and such.
+The first parameter hstate in function hugetlb_fault_mutex_hash() is not
+used anymore.
 
-Sorry for not being clear enough. Let me provide a bit more additional context:
+This patch removes it.
 
-kubelet [1] is the userspace program setting the cfs quota and period.
-kubelet is essentially a container manager for the end user. The end user
-can specify any attainable configurations for a pod (which contains multiple
-containers).
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+---
+ fs/hugetlbfs/inode.c    |  4 ++--
+ include/linux/hugetlb.h |  4 ++--
+ mm/hugetlb.c            | 12 ++++++------
+ mm/userfaultfd.c        |  5 +----
+ 4 files changed, 11 insertions(+), 14 deletions(-)
 
-The user interface of kubelet allows end user to specify the amount of CPU
-granted to any pod or container (in the form of mCPU). And then kubelet will
-convert the spec to quota/period accepted by cgroup fs, using this rule:
-the period of any pod/container will be set to 100000us
-the quota of the pod/container will be calculated using the allowed mCPU
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index a478df035651..715db1e34174 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -440,7 +440,7 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
+ 			u32 hash;
+ 
+ 			index = page->index;
+-			hash = hugetlb_fault_mutex_hash(h, mapping, index, 0);
++			hash = hugetlb_fault_mutex_hash(mapping, index, 0);
+ 			mutex_lock(&hugetlb_fault_mutex_table[hash]);
+ 
+ 			/*
+@@ -644,7 +644,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
+ 		addr = index * hpage_size;
+ 
+ 		/* mutex taken here, fault path and hole punch */
+-		hash = hugetlb_fault_mutex_hash(h, mapping, index, addr);
++		hash = hugetlb_fault_mutex_hash(mapping, index, addr);
+ 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
+ 
+ 		/* See if already present in mapping to avoid alloc/free */
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 53fc34f930d0..40e9e3fad1cf 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -105,8 +105,8 @@ void move_hugetlb_state(struct page *oldpage, struct page *newpage, int reason);
+ void free_huge_page(struct page *page);
+ void hugetlb_fix_reserve_counts(struct inode *inode);
+ extern struct mutex *hugetlb_fault_mutex_table;
+-u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
+-				pgoff_t idx, unsigned long address);
++u32 hugetlb_fault_mutex_hash(struct address_space *mapping, pgoff_t idx,
++				unsigned long address);
+ 
+ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud);
+ 
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ef37c85423a5..e0f033baac9d 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3916,7 +3916,7 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+ 			 * handling userfault.  Reacquire after handling
+ 			 * fault to make calling code simpler.
+ 			 */
+-			hash = hugetlb_fault_mutex_hash(h, mapping, idx, haddr);
++			hash = hugetlb_fault_mutex_hash(mapping, idx, haddr);
+ 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+ 			ret = handle_userfault(&vmf, VM_UFFD_MISSING);
+ 			mutex_lock(&hugetlb_fault_mutex_table[hash]);
+@@ -4043,8 +4043,8 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+ }
+ 
+ #ifdef CONFIG_SMP
+-u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
+-			    pgoff_t idx, unsigned long address)
++u32 hugetlb_fault_mutex_hash(struct address_space *mapping, pgoff_t idx,
++				unsigned long address)
+ {
+ 	unsigned long key[2];
+ 	u32 hash;
+@@ -4061,8 +4061,8 @@ u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
+  * For uniprocesor systems we always use a single mutex, so just
+  * return 0 and avoid the hashing overhead.
+  */
+-u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
+-			    pgoff_t idx, unsigned long address)
++u32 hugetlb_fault_mutex_hash(struct address_space *mapping, pgoff_t idx,
++				unsigned long address)
+ {
+ 	return 0;
+ }
+@@ -4106,7 +4106,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	 * get spurious allocation failures if two CPUs race to instantiate
+ 	 * the same page in the page cache.
+ 	 */
+-	hash = hugetlb_fault_mutex_hash(h, mapping, idx, haddr);
++	hash = hugetlb_fault_mutex_hash(mapping, idx, haddr);
+ 	mutex_lock(&hugetlb_fault_mutex_table[hash]);
+ 
+ 	entry = huge_ptep_get(ptep);
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 0a40746a5b1e..5c0a80626cf0 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -214,7 +214,6 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
+ 	unsigned long src_addr, dst_addr;
+ 	long copied;
+ 	struct page *page;
+-	struct hstate *h;
+ 	unsigned long vma_hpagesize;
+ 	pgoff_t idx;
+ 	u32 hash;
+@@ -271,8 +270,6 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
+ 			goto out_unlock;
+ 	}
+ 
+-	h = hstate_vma(dst_vma);
+-
+ 	while (src_addr < src_start + len) {
+ 		pte_t dst_pteval;
+ 
+@@ -283,7 +280,7 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
+ 		 */
+ 		idx = linear_page_index(dst_vma, dst_addr);
+ 		mapping = dst_vma->vm_file->f_mapping;
+-		hash = hugetlb_fault_mutex_hash(h, mapping, idx, dst_addr);
++		hash = hugetlb_fault_mutex_hash(mapping, idx, dst_addr);
+ 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
+ 
+ 		err = -ENOMEM;
+-- 
+2.17.1
 
-And kubelet simply then writes the calculated period and quota to cgroup fs.
-
-It's very common to specify a pod with multiple containers, and setting
-different quota for the child containers: some granted with 5-50% of the
-bandwidth available to the parent, while some other granted with 100%. For
-simplicity, kubelet writes quota/period to cgroup fs for all pods and
-containers.
-
-----
-Now back to our discussion. :)
-
-You see, the reason that kubelet write identical quota and period to parent and
-child cgroup, is not because it want to enforce that child doesn't get more
-quota than parent. It is simply because kubelet needs to manage the quota for
-all containers and pods, and it's more convenenient to just set the quota and
-period for all of them (because in many cases, child cgroups actually gets less
-bandwidth than the parent, and has to be set specifically).
-
-I agree that your suggestion would work. If a child cgroup is set to the same
-bandwidth of the parent cgroup, we could change the userspace program, and ask
-it to skip setting the child cgroup bandwidth.
-However, this logic would be a special case, and will require significant logic
-change to the userspace container managers.
-
-
-This issue is affecting many Kubernetes users, see this open issue:
-https://github.com/kubernetes/kubernetes/issues/72878
-kubelet on their machines are doing the three operations mentioned in the patch.
-I also explained them in more detail in this doc:
-https://docs.google.com/document/d/13KLD__6A935igLXpTFFomqfclATC89nAkhPOxsuKA0I/edit?usp=sharing
-
-Basically, Kubernetes is operating on the below assumption of kernel today:
-Setting the cpu quota/period of a child cgroup should not be rejected unless
-the bandwidth is exceeding what the quota/period set for the parent cgroup.
-
-I think this assumption is fair. Please let me know if you think otherwise. And
-if so, since the kernel broke this assumption today, I don't think it's the
-responsibility for the userspace to deal with the problem that kernel may change
-the quota/period ratio at any time.
-
-[1] https://github.com/kubernetes/kubernetes/tree/master/pkg/kubelet
-
->
-> Setting the child quota/period only makes sense when setting it smaller than
-> the parent.
-
-As mentioned above, in the use case of kublet, it's much easier to always
-set the child quota/period, than to only set it when it is different
-(i.e. smaller)
-than the parent.
-
->
-> Also, in order to hit this problem you need to have many hundreds of children, in
-> my experience. In that case it makes even less sense to write the same quota/preiod
-> as the parent into each of the children.
-
-Here is a problematic scenario:
-The parent cgroup have 1000 children with a small quota/period, and after a
-few minutes, kubelet wants to add one additional child with the same
-quota/period.
-This bug could prevent kubelet from setting that one additional child
-successfully.
-
-
-Thanks a lot for taking time reviewing and responding the patch Phil!
-Really appreciate it.
-
-Best regards,
-Xuewei
-
->
-> Or there is something else causing the timer to take too long to run...
->
->
-> I agree that if we are taking > 1/2s to run do_sched_cfs_period_timer() it may
-> not matter, as I said above.
->
->
-> Cheers,
-> Phil
->
-> >
-> > Best regards,
-> > Xuewei
-> >
-> > >
-> > >
-> > > Cheers,
-> > > Phil
-> > >
-> > > > +                             cfs_b->period = ns_to_ktime(new);
-> > > > +                             cfs_b->quota *= 2;
-> > > > +
-> > > > +                             pr_warn_ratelimited(
-> > > > +     "cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us = %lld, cfs_quota_us = %lld)\n",
-> > > > +                                     smp_processor_id(),
-> > > > +                                     div_u64(new, NSEC_PER_USEC),
-> > > > +                                     div_u64(cfs_b->quota, NSEC_PER_USEC));
-> > > > +                     } else {
-> > > > +                             pr_warn_ratelimited(
-> > > > +     "cfs_period_timer[cpu%d]: period too short, but cannot scale up without losing precision (cfs_period_us = %lld, cfs_quota_us = %lld)\n",
-> > > > +                                     smp_processor_id(),
-> > > > +                                     div_u64(old, NSEC_PER_USEC),
-> > > > +                                     div_u64(cfs_b->quota, NSEC_PER_USEC));
-> > > > +                     }
-> > > >
-> > > >                       /* reset count so we don't come right back in here */
-> > > >                       count = 0;
-> > > > --
-> > > > 2.23.0.581.g78d2f28ef7-goog
-> > > >
-> > >
-> > > --
->
-> --
