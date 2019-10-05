@@ -2,110 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3433CC949
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 12:15:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2777CC94E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 12:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfJEKO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 06:14:58 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34775 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfJEKO5 (ORCPT
+        id S1727963AbfJEKPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 06:15:17 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39721 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727930AbfJEKPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 06:14:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b128so5466068pfa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 03:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3RTNY8wK4fg6Ur2FSGs8j8MYz5LC7K5RU1Q9U1f79zE=;
-        b=bd/SpF5Z6uDGHkSQeb9tqR1c4yP+9mM2N9y/zARpg7UBQjUfkGuHWVD77pi+c099tj
-         +wXHtq/uN3a7co3rwkD4JKB9YLAEu1l5Sgy29gzliPJvDlGGMiYV+siW6/bvfFqgiqSz
-         owpXUicJzYPD5Rygwqj3waXUdqN7oOWKN2lik=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3RTNY8wK4fg6Ur2FSGs8j8MYz5LC7K5RU1Q9U1f79zE=;
-        b=r0X6WR6b9YhNi6gC1wKhH3DZZX09g7l+6yrUj7XtSTVXJrq6oWg7tPScS7MJ3WMu6z
-         dNkpeBJeBrXVsXncN0lZygpdL/WOjYC8AyJZBeidF0xma798o1LpUSR0v8Kas9Ore9kc
-         anJfP1xWRjcgFAGQtrjWo+tryjzF9lWWld2TT0HWnepSgfPP0QDuFLbZasAv2OBjH0RR
-         nYRSRyiMfVG02MJygi072hJ/8HWxLyOFVKShsPCqLQJgJQr3feMemFjGXyUnbdMCkXf+
-         hJhYMSmzEXBFZDfm1cfjBg/g9Y1rS6Kzht+jzoYDAGJa9cJ3j3ngdHLP/604HLo7H9re
-         OsXw==
-X-Gm-Message-State: APjAAAW85QTnwdug4XTKbMnCXGEwm6cCbil70CWyltHNrQAhCOP/FDx4
-        RksH5VrkQ6FcEPMZvPd8+F7Btg==
-X-Google-Smtp-Source: APXvYqy819c+zDO2gbBv4p7WXcuJLsdEBSZATNeDcK4UJhT+HMC7FijTUsBwBco/wu4fFgEuDbevRw==
-X-Received: by 2002:a63:4616:: with SMTP id t22mr20787000pga.123.1570270496997;
-        Sat, 05 Oct 2019 03:14:56 -0700 (PDT)
-Received: from ikjn-glaptop.roam.corp.google.com ([61.254.209.103])
-        by smtp.gmail.com with ESMTPSA id m123sm9607933pfb.133.2019.10.05.03.14.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2019 03:14:56 -0700 (PDT)
-From:   Ikjoon Jang <ikjn@chromium.org>
-To:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Enrico Granata <egranata@google.com>,
-        Ting Shen <phoenixshen@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ikjoon Jang <ikjn@chromium.org>
-Subject: [PATCH 2/3] HID: google: Add of_match table to Whiskers switch device.
-Date:   Sat,  5 Oct 2019 18:14:44 +0800
-Message-Id: <20191005101444.146554-1-ikjn@chromium.org>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
+        Sat, 5 Oct 2019 06:15:16 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iGh5W-0001FC-Ee; Sat, 05 Oct 2019 12:14:58 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B74151C073C;
+        Sat,  5 Oct 2019 12:14:57 +0200 (CEST)
+Date:   Sat, 05 Oct 2019 10:14:57 -0000
+From:   "tip-bot2 for Jiri Slaby" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] x86/asm: Reorder early variables
+Cc:     Jiri Slaby <jslaby@suse.cz>, Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <20191003095238.29831-1-jslaby@suse.cz>
+References: <20191003095238.29831-1-jslaby@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <157027049768.9978.11005637397803915038.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a device tree match table.
+The following commit has been merged into the x86/asm branch of tip:
 
-Change-Id: Iaee68311073cefa4b99cde182bd37d1a67c94ea6
-Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+Commit-ID:     1a8770b746bd05ef68217989cd723b2c24d2208d
+Gitweb:        https://git.kernel.org/tip/1a8770b746bd05ef68217989cd723b2c24d2208d
+Author:        Jiri Slaby <jslaby@suse.cz>
+AuthorDate:    Thu, 03 Oct 2019 11:52:37 +02:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Sat, 05 Oct 2019 12:11:00 +02:00
+
+x86/asm: Reorder early variables
+
+Moving early_recursion_flag (4 bytes) after early_level4_pgt (4k) and
+early_dynamic_pgts (256k) saves 4k which are used for alignment of
+early_level4_pgt after early_recursion_flag.
+
+The real improvement is merely on the source code side. Previously it
+was:
+* __INITDATA + .balign
+* early_recursion_flag variable
+* a ton of CPP MACROS
+* __INITDATA (again)
+* early_top_pgt and early_recursion_flag variables
+* .data
+
+Now, it is a bit simpler:
+* a ton of CPP MACROS
+* __INITDATA + .balign
+* early_top_pgt and early_recursion_flag variables
+* early_recursion_flag variable
+* .data
+
+On the binary level the change looks like this:
+Before:
+ (sections)
+  12 .init.data    00042000  0000000000000000  0000000000000000 00008000  2**12
+ (symbols)
+  000000       4 OBJECT  GLOBAL DEFAULT   22 early_recursion_flag
+  001000    4096 OBJECT  GLOBAL DEFAULT   22 early_top_pgt
+  002000 0x40000 OBJECT  GLOBAL DEFAULT   22 early_dynamic_pgts
+
+After:
+ (sections)
+  12 .init.data    00041004  0000000000000000  0000000000000000 00008000  2**12
+ (symbols)
+  000000    4096 OBJECT  GLOBAL DEFAULT   22 early_top_pgt
+  001000 0x40000 OBJECT  GLOBAL DEFAULT   22 early_dynamic_pgts
+  041000       4 OBJECT  GLOBAL DEFAULT   22 early_recursion_flag
+
+So the resulting vmlinux is smaller by 4k with my toolchain as many
+other variables can be placed after early_recursion_flag to fill the
+rest of the page. Note that this is only .init data, so it is freed
+right after being booted anyway. Savings on-disk are none -- compression
+of zeros is easy, so the size of bzImage is the same pre and post the
+change.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191003095238.29831-1-jslaby@suse.cz
 ---
- drivers/hid/hid-google-hammer.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/kernel/head_64.S | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
-index 31e4a39946f5..bf2b6c6c9787 100644
---- a/drivers/hid/hid-google-hammer.c
-+++ b/drivers/hid/hid-google-hammer.c
-@@ -17,6 +17,7 @@
- #include <linux/hid.h>
- #include <linux/leds.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
- #include <linux/platform_device.h>
-@@ -272,12 +273,21 @@ static const struct acpi_device_id cbas_ec_acpi_ids[] = {
- };
- MODULE_DEVICE_TABLE(acpi, cbas_ec_acpi_ids);
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index f3d3e96..f00d7c0 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -335,12 +335,6 @@ early_idt_handler_common:
+ 	jmp restore_regs_and_return_to_kernel
+ END(early_idt_handler_common)
  
-+#ifdef CONFIG_OF
-+static const struct of_device_id cbas_ec_of_match[] = {
-+	{ .compatible = "google,cros-cbas" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, cbas_ec_of_match);
-+#endif
+-	__INITDATA
+-
+-	.balign 4
+-GLOBAL(early_recursion_flag)
+-	.long 0
+-
+ #define NEXT_PAGE(name) \
+ 	.balign	PAGE_SIZE; \
+ GLOBAL(name)
+@@ -375,6 +369,8 @@ GLOBAL(name)
+ 	.endr
+ 
+ 	__INITDATA
++	.balign 4
 +
- static struct platform_driver cbas_ec_driver = {
- 	.probe = cbas_ec_probe,
- 	.remove = cbas_ec_remove,
- 	.driver = {
- 		.name = "cbas_ec",
- 		.acpi_match_table = ACPI_PTR(cbas_ec_acpi_ids),
-+		.of_match_table = of_match_ptr(cbas_ec_of_match),
- 		.pm = &cbas_ec_pm_ops,
- 	},
- };
--- 
-2.23.0.581.g78d2f28ef7-goog
-
+ NEXT_PGD_PAGE(early_top_pgt)
+ 	.fill	512,8,0
+ 	.fill	PTI_USER_PGD_FILL,8,0
+@@ -382,6 +378,9 @@ NEXT_PGD_PAGE(early_top_pgt)
+ NEXT_PAGE(early_dynamic_pgts)
+ 	.fill	512*EARLY_DYNAMIC_PAGE_TABLES,8,0
+ 
++GLOBAL(early_recursion_flag)
++	.long 0
++
+ 	.data
+ 
+ #if defined(CONFIG_XEN_PV) || defined(CONFIG_PVH)
