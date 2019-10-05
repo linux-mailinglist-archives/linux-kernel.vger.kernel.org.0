@@ -2,91 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D885CCC91
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 22:02:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46A99CCC93
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 22:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbfJEUB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 16:01:57 -0400
-Received: from mout.gmx.net ([212.227.17.21]:40579 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727980AbfJEUB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 16:01:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1570305703;
-        bh=Sd6wnYA5peSeUXZgrCIT4VavGWnDDP0WSYqtpfAm27I=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=CPIKC/3tttXa7O+9qL2uEu0knAoH/GnmjSg+Lbl+Z0W4wmjW+v33/ndqIGmaS/0f2
-         Bq3OCTvd+qoeHsJI733FaGD2VJPOe6TutR9BqY2RkeXxMcLeqQ7rqtCH0FWnGwvFqT
-         /lHj43UYFYxHW2I3SGmW4JLm9I9S4FLNipNhtUgI=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([109.90.233.87]) by mail.gmx.com (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N1fii-1i5bsl2IB6-011ziw; Sat, 05
- Oct 2019 22:01:43 +0200
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-doc@vger.kernel.org
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Evgeniy Polyakov <zbr@ioremap.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] docs: w1: Fix SPDX-License-Identifier syntax
-Date:   Sat,  5 Oct 2019 22:01:23 +0200
-Message-Id: <20191005200126.25809-2-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191005200126.25809-1-j.neuschaefer@gmx.net>
-References: <20191005200126.25809-1-j.neuschaefer@gmx.net>
+        id S1729874AbfJEUDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 16:03:40 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:44706 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728245AbfJEUDk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Oct 2019 16:03:40 -0400
+Received: by mail-vs1-f67.google.com with SMTP id w195so6355517vsw.11
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 13:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=mWjSAXlUwzy3Q8E4umbGAcK1sBVI8Xohqeo2EqB9CF0=;
+        b=GdQkjXIdzOnbla+zlPPSBw394nLd/fkklkoJfh0olSXCYl1wlWO/cdZBZiwGDV2CdX
+         mRUxqKfW5y18cM5lVWkzPAAphPQdtynI8I6hdyrb/ZEvzBiY8qGR3iLYLitkqE6UUbvI
+         J7oTLhttnrOcBYwqINENf8/lYoA0j5f/pl77SSwudceCiBfYXI7S1Av0IvFV0Pu8LGc+
+         XpyXVMeXcsNu5BnC6gH9F/jakbD6twfYKzoah5R6lpnC5wZWJMABXyVEtWPeYdheQDXC
+         fHXwaZ5GJ77EEh3q17p02dJKwS/WSmweqovRZHCy2uiaCoH1hiDTI0i5DrLH+QdJK7nh
+         k8hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=mWjSAXlUwzy3Q8E4umbGAcK1sBVI8Xohqeo2EqB9CF0=;
+        b=IT50kFWsB8GgbmCKUIfjFdKO6NwGAZI45oPswEp6dnOuSFnGGayhSFaBNlOqo1Sv46
+         PZFaFtRNTCdaizWvyTkY0ihmuIlrBVADBV9av2xjA/dCQh38Uh7blTAx1jwBCPiT6tNH
+         NgEgN7ggxcOWs9ESnXtFP4Y63U+HaLvnVP3ySqimDK5GLDfg9vRxLalITytuZuwDOSjj
+         GpuohB0HS5og0hnwZfKAuzrmkAu/JKiLeNDSLSb241fY6gY/AXNeinVmMn4qDSoLl4ys
+         s8po6j9DAJOh+uJy4XLLuGOg1HTvlGZsidcG1fZd3fuSRMHMUv//r7XEJC9NRonIPFo6
+         JCRA==
+X-Gm-Message-State: APjAAAWOfU3I1XpIL2dtuqqIqpdP3YfGUCADxyFjVp1PqfMtGL8KikYz
+        2YrxWSpIRHkBbUd1jLF1dhO8ddYe859B+f7gSUM=
+X-Google-Smtp-Source: APXvYqxrab9X/Hk3XAtMnH5Ap1ZOd7VJhImNW8jlL3NKYqjLCNsuJgAPuKHLcrecu+byUHL5+gDCkE47MvSjjIZ5WRQ=
+X-Received: by 2002:a67:d789:: with SMTP id q9mr11288496vsj.159.1570305819055;
+ Sat, 05 Oct 2019 13:03:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vEBOidDYkGWn2b+oD9USOnqO+ERK5jkgjnUkCxTovQgwzcIc+t7
- DE31k2Sw3ChwPqaNTGVv+gVQ+xThXl5FRaC/YV0oAOL1cz/9rtzH8KeHoASul5oodZF+GWE
- fEosmgniJxkpq3Sitha1ffmOs3INl+yN3uaTomPw6OtyZOrKA+kbC0dE5nv5gZGlXjeBqN3
- cNQQxQiH03HpvrBccVm0w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rM+MbWlQiRw=:6lE+gzGOxQe4A9jSmb2OE+
- nBLLt4QLCfjQTFQMOcgZh0MAJ1wau5sqsfygogY4cFfdlxUyaioeWjqURB1rt6R+V4HCzpm+3
- gdTS1Rrfzi3e85WmbCY1Tqhhk9n7TArXHsBMizxJAblnzmFL9UGOcJ1/OJCGq9wHc24uSLLMg
- 4pMplfYvcs6Xy1GIyrk4RUEwTarOIvU7H+9/tQF5P6tj2/XnFA/GPBk8q55zDNIU8/xsgc91k
- FfGCyjk6v/c1QMKl226uwBxIEVzf4VLxWXhoe53Bgx0vqJWsNL0OjpAFLJw3AIhh9CjlhR7dN
- Ynf52N+HdU7GRrM5Pd/7JajcYKb+dLZJkUfpn//kAsGOLJZ2N+zf41/ClIq6Bsvy6Ljw9dgVk
- SYTPNWhjf9NwrckqTRbiXGs/yKj86tyGZEGgmUPHcJ8N4hXSxoqluPctloqxVUMwl6eswZcU1
- EYoBB63FD9TDTR0SeayJBrD2OVBdKOH4D84COFlv0Ny7xDZELOoJwvrUbKDq2xD9w4RlXW+6S
- takwy2u27M0L8TpLIqomcazeVgwEl+e4rxX5zQ4Igq+NvQkC2PBcC2IyIk+719SFI57mPuuJo
- TNc8OlQhAMW80a6Z2smO+JfMX4EuI55ZR1p3+Tb4jdF8S55sKdunGU3BoECKAoC9Cc9Z+iBKj
- wFzBDVjo2XSpuo7XGYckNc3tex5lDfkKDkRr/PiDrAMXlAdhp+j1LLSgtFhiMVoeGKC4WtN4B
- dJdDeNEAaAbNuK5JrfXXaiiE59DJgD+ci8ynfKg0hjjS3HVTAtgc5sMY4C5K/XPO5dxRGZyXb
- cUQDHLc0FRScg5c2hzNG61XFQvdQ17QaX66CeUu9NGOwUuMC1UMu/u4FQkIFdpxFwKHQBcy3z
- lK+q3E+Kx+6Gp+HVL4Mfv7CYIqQI4V+MwVom09yARTuN8zup9uaIdZy422XWTlL9HRvJl4WXW
- XtG/MrPMk3RJq5JRBwiZmybDu2hr8YF3vdgUXI6nfPvvXi7jO7csnPJNppVo2v6zWlQ3NdBpR
- v0geNRehq5jUI3lg00dLjaYXF0/AjvliMJKrzOYrIun34aVifqdRP6N5QJIKPNOSMN6mMDUpB
- U9hr/ZrOV7P4zWOJ+futIZ1GaJluHrfinwBHOiER+aa26eB1v49Ogj4LbeyyeHc8sEixk/VaF
- LOriwILfHeFCGcXhuXzRMoEI6TCU3pJyh5Ijw//f2LFL6u5+HYL2LV0tzFLUkyRxLCQ8t+IRv
- 3Y17z6PKOhJT9UFLkqLxOL8eYlCKTqaxYx1RbsqbrTCsNa83MUHvjcKzt7Oc=
+Received: by 2002:ab0:5a4:0:0:0:0:0 with HTTP; Sat, 5 Oct 2019 13:03:38 -0700 (PDT)
+From:   Francis Hasmin <francishashimmr@gmail.com>
+Date:   Sat, 5 Oct 2019 22:03:38 +0200
+X-Google-Sender-Auth: qreLATgpc-N9VIf1hVixedMUf1Y
+Message-ID: <CAAVrDueuta42GQchx6prqYDXAWrq+3yWP8J9wz9vMJhjrTiRoA@mail.gmail.com>
+Subject: Please forgive me if my request is not acceptable by your kind person.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ReST directives are introduced with two dots.
+-- 
+Dear Sir/ Madam,
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- Documentation/w1/index.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/w1/index.rst b/Documentation/w1/index.rst
-index 57cba81865e2..156279f17553 100644
-=2D-- a/Documentation/w1/index.rst
-+++ b/Documentation/w1/index.rst
-@@ -1,4 +1,4 @@
--. SPDX-License-Identifier: GPL-2.0
-+.. SPDX-License-Identifier: GPL-2.0
+Please forgive me if my request is not acceptable by your kind person.
 
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
- 1-Wire Subsystem
-=2D-
-2.20.1
+ I am Mr.Francis Hashim, Working at One of the bank here in (Burkina
+Faso) as the Independent Non-Executive Director & Audit Committee.
+During our last banking Audits we discovered an abandoned account
+belongs to one of our Foreign Deceased Customer, Late Mr. Wang Jian,
+The Co-founder and Co-chairman of HNA Group, a Chinese conglomerate
+with significant real estate ownerships across the U.S., died in an
+accident while on a business trip in France on Tuesday.
 
+
+Please go through this
+link:https://observer.com/2018/07/wang-jian-hna-founder-dies-tragic-fall/
+
+I am writing to request your assistance in transferring the sum of
+$15.000.000.00 (Fifteen Million United States Dollars) into your
+account as the Late Mr. Wang Jian Foreign Business Partner. Meanwhile,
+before I contacted you I have done personal investigation in locating
+any of Late Mr. Wang Jian relatives who knows about the account, but I
+came out unsuccessful.
+
+I will like to bring to your notice that I have made all the necessary
+arrangements with my colleagues to transfer the funds into your
+nominated bank account without any problem.  Upon your consideration
+and acceptance of this offer, I am willing to offer you 40% for your
+assistant, while 60% for me which I am planning to invest into a
+profitable business venture in your country.
+
+More details information will be forwarded to you to breakdown
+explaining comprehensively what require of you. Reply me on my private
+E-Mail Address: francishashimmr@gmail.com
+
+
+Waiting for your urgent reply,
+Best Regards
+Mr.Francis Hashim.
