@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB902CC94C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 12:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B07ACC94F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 12:16:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbfJEKPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 06:15:10 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39717 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfJEKPK (ORCPT
+        id S1727477AbfJEKQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 06:16:43 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33977 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfJEKQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 06:15:10 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iGh5W-0001FB-Ea; Sat, 05 Oct 2019 12:14:58 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 94F1C1C0334;
-        Sat,  5 Oct 2019 12:14:57 +0200 (CEST)
-Date:   Sat, 05 Oct 2019 10:14:57 -0000
-From:   "tip-bot2 for Jiri Slaby" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86/asm: Make boot_gdt_descr local
-Cc:     Jiri Slaby <jslaby@suse.cz>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20191003095238.29831-2-jslaby@suse.cz>
-References: <20191003095238.29831-2-jslaby@suse.cz>
+        Sat, 5 Oct 2019 06:16:43 -0400
+Received: by mail-pl1-f193.google.com with SMTP id k7so4360005pll.1
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 03:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=By/tkFXpcovd+/oyN3ineSJ0gYN93wEee4C2ekIO2Ic=;
+        b=oKYr8rvm7PDDnBB0z2S6/KdLSYzcUNHwSOj1J9T/ChP0bnupJTdyM+SfvEPl1GzLPt
+         NeFCQ/a7Nmqv03dECle5ic16CoB8H2UHbglD+VB4p79kmUVMZUNJtdq6rjozXagtM6Ez
+         OIoz2fWoVuXD2zAk35AyB0F+h2mnTKUPFPMB0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=By/tkFXpcovd+/oyN3ineSJ0gYN93wEee4C2ekIO2Ic=;
+        b=MXQEjLDGNTxa4O0VjCj0Pxg0WydcZVRmG8uRVuYN9xSurvlgbKlxWLAnTLB4EJo51Y
+         ZaYxuAPQGVJP5SinMPXCH3aKjFBFWzjMl71YTm/7UciRooAQcP5mTfWtUg5H2vefDyJ0
+         5gcNYelSl1w3llNFeqJxRrQhRbto3yRpSet6XRPwbUqldni3SKiyfN4BH9cb6oNWIZlf
+         wSZlmq3jOqF/pdQRjeoIRan8+eiQNR2PEMmjLuNRuvg+dqphPXtQYPtncU34ilN2tRal
+         M1wY4zYuNvR/rWAZVLz3bo+odJrheBC8lqJJTzWEkEDPsE/Jj1+mlCusdASjtZkrmgW7
+         AQwg==
+X-Gm-Message-State: APjAAAXeJ8orlud6i8uu3m1S881pUcLq48e/cbQtkFjVmBJBBVodynz0
+        2tFHdnbRosDgDzIcTnx775reLA==
+X-Google-Smtp-Source: APXvYqyx6DaEE0oraB7LAbHSkND2TJ8TnSGts/p6253FS+92EDlqSNGabp0guVGGBosi3GSyYCx/1w==
+X-Received: by 2002:a17:902:720a:: with SMTP id ba10mr20268276plb.328.1570270602686;
+        Sat, 05 Oct 2019 03:16:42 -0700 (PDT)
+Received: from ikjn-glaptop.roam.corp.google.com ([61.254.209.103])
+        by smtp.gmail.com with ESMTPSA id v68sm10682279pfv.47.2019.10.05.03.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2019 03:16:42 -0700 (PDT)
+From:   Ikjoon Jang <ikjn@chromium.org>
+To:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Enrico Granata <egranata@google.com>,
+        Ting Shen <phoenixshen@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ikjoon Jang <ikjn@chromium.org>
+Subject: [PATCH 3/3] HID: google: whiskers: mask out extra flags in EC event_type
+Date:   Sat,  5 Oct 2019 18:16:29 +0800
+Message-Id: <20191005101629.146710-1-ikjn@chromium.org>
+X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 MIME-Version: 1.0
-Message-ID: <157027049748.9978.13067332350014336578.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/asm branch of tip:
+Whiskers needs to get notifications from EC for getting current base
+attached state. EC sends extra bits in event_type field that receiver
+should mask out.
 
-Commit-ID:     5aa5cbd2e95e0079b2cc6b4b66f0d0de5e0fbbfd
-Gitweb:        https://git.kernel.org/tip/5aa5cbd2e95e0079b2cc6b4b66f0d0de5e0fbbfd
-Author:        Jiri Slaby <jslaby@suse.cz>
-AuthorDate:    Thu, 03 Oct 2019 11:52:38 +02:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Sat, 05 Oct 2019 12:11:05 +02:00
-
-x86/asm: Make boot_gdt_descr local
-
-As far as I can see, it was never used outside of head_32.S. Not even
-when added in 2004. So make it local.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191003095238.29831-2-jslaby@suse.cz
+Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
 ---
- arch/x86/kernel/head_32.S | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/hid/hid-google-hammer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index 30f9cb2..7feb953 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -597,8 +597,6 @@ int_msg:
-  */
+diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
+index bf2b6c6c9787..91cb62afbc2b 100644
+--- a/drivers/hid/hid-google-hammer.c
++++ b/drivers/hid/hid-google-hammer.c
+@@ -96,8 +96,9 @@ static int cbas_ec_notify(struct notifier_block *nb,
+ 	struct cros_ec_device *ec = _notify;
+ 	unsigned long flags;
+ 	bool base_present;
++	const u8 event_type = ec->event_data.event_type & EC_MKBP_EVENT_TYPE_MASK;
  
- 	.data
--.globl boot_gdt_descr
--
- 	ALIGN
- # early boot GDT descriptor (must use 1:1 address mapping)
- 	.word 0				# 32 bit align gdt_desc.address
+-	if (ec->event_data.event_type == EC_MKBP_EVENT_SWITCH) {
++	if (event_type == EC_MKBP_EVENT_SWITCH) {
+ 		base_present = cbas_parse_base_state(
+ 					&ec->event_data.data.switches);
+ 		dev_dbg(cbas_ec.dev,
+-- 
+2.23.0.581.g78d2f28ef7-goog
+
