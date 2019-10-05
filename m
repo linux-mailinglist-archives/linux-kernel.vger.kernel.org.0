@@ -2,76 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35CF6CC921
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 11:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2F2CC922
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 11:39:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfJEJgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 05:36:10 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:42723 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfJEJgK (ORCPT
+        id S1727307AbfJEJjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 05:39:41 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35253 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfJEJjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 05:36:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=skogtun.org
-        ; s=ds201810; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Yhr3P6QDJ5P2/xa5/OMk/WHlqGvYCHv5owId7eV5XsQ=; b=mUqGfMVwBTYwljYtKD2Y0lJ7dp
-        peIQk1FY8oLW5H1rBykiA5eiAf47IXz3D4ZtMh07AFOBcPJnbdrN71PV0Kb+2yZsaDdl24uktYZsP
-        4KRqA98eKhW/RhBazqdHAOmj0gEgVAM2xeHlaGDC4U5pXOxf9ba+VMeJz3Yqhft9ffdYOGMhN02uT
-        1VK1IjZH2RRhW4nR/h0VbVbgy89yfa8pabL9C3iQb79btSaI5Mt0NdCDNmGl3FuKE86SfpDRtquMF
-        nbaLlADnxvYvm05GKMY/iehPKs/vyaxcACFU1rLSBRR+USnR68HYg6s05j/3zxH90YlKt101TKmem
-        A3zzE+EA==;
-Received: from [2a01:79c:cebe:b88c:caff:28ff:fe94:90a0] (port=55756)
-        by smtp.domeneshop.no with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <harald@skogtun.org>)
-        id 1iGgTw-0003w6-9X; Sat, 05 Oct 2019 11:36:08 +0200
-Subject: Re: BISECTED: Compile error on 5.4-rc1
-From:   Harald Arnesen <harald@skogtun.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <cf947abb-c94e-9b6f-229a-1e219fd38e94@skogtun.org>
- <CAK7LNAS-msvdv+=msqfSYX3ZKPQm_AJ0B=Uu7hfah1V+NGPjmQ@mail.gmail.com>
- <240d0353-2e66-7d0c-3dc0-f58f62c999be@skogtun.org>
-Message-ID: <fafb9730-6d0c-eac1-e2e2-374de509244a@skogtun.org>
-Date:   Sat, 5 Oct 2019 11:36:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Sat, 5 Oct 2019 05:39:41 -0400
+Received: by mail-vs1-f68.google.com with SMTP id s7so5777996vsl.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 02:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=NZANNlbDfOPTwgMCr1GPLNdbWJYOZ3Xy//dqVnJM5yYLRhek4xjk2NezCM0wyxVRay
+         hw9QJ3cArlUMPjSZQNNAKBkKUJkzOdPw01lwC6i66ExukJsDbHNeqPGZWpKzv9JqtvAS
+         qEW9tQxzC/HA+jfjwnJGxHEwrZtz9PPuYLm70A9NNUCXxo91lV885YBaxiBAj2T49gt7
+         WTueRzxPbA3eMh640kR2HPr9dFtv1MVvhMkONeydQP5hoS3RCnGRqXm/D7/d6+WbP84b
+         yHbn37jwuR+vCGI2GORyl/TTYwZ4C1/xfv7hDBuMqY+kGd4ZP75bM5UUpH8UXixGjdAq
+         twHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=OBqOkiMVNC3pc0L/GqDFsICavmAxKDvc+MUOSCCIctNdLUULVD7lWHM5LehLSB8IDQ
+         u2qraJDnmJBf8H+K/SsOFxf2EOWwVURUaCe/Jh6OmV1NVDX+kUxc0o219F3+yMHh6Yhd
+         aUHSZHp0xj2ViQ7FyGA3xc6C6llCgBfLTSpMJRkHKKCmGS2Hi8iejF1x/NOuygyk81B2
+         ir7P+TGI1DxmVn8BHlwJ9vc8BQZ2TvqGNYJbxbBLPBgIQeStgZP8cJKTQVCKkXTtG/as
+         y4LRwMDL/z9je9SvM4aiOFQlQ5mbqlK/bwU97PmOi/I1N6B60EqDLd+OJR8FbLz7PUBA
+         XHuQ==
+X-Gm-Message-State: APjAAAXWiE6Bus4yqbcPU4qP0uMn4SaIfxqn08tM6K/RYRhx/yGGB+eR
+        t1ITGgNcmg5XBK/8Atj5Z+2tcVfa6+x0h+ehOII=
+X-Google-Smtp-Source: APXvYqyVBfZlwMFr7IBhQhXLXz52fCUWNyS9ofLCX/a1jhuMSS0MhVdd4GBYA0rzXt13dNsKQHlHxn/YLm2dF8s20Pk=
+X-Received: by 2002:a67:f4d1:: with SMTP id s17mr9369704vsn.58.1570268380316;
+ Sat, 05 Oct 2019 02:39:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <240d0353-2e66-7d0c-3dc0-f58f62c999be@skogtun.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: nb-NO
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ab0:2a8d:0:0:0:0:0 with HTTP; Sat, 5 Oct 2019 02:39:39 -0700 (PDT)
+Reply-To: robertandersongood1@gmail.com
+From:   robert anderson <robertanderson6016@gmail.com>
+Date:   Sat, 5 Oct 2019 02:39:39 -0700
+Message-ID: <CA+o7mw0frV5Ch5ofTMe_DU5YSFF5K95qVbdn=f0VarNMrqvPtg@mail.gmail.com>
+Subject: Dear friend, My name is Bar.robert anderson I am an attorney and a
+ private account manager to my late client. In the Year 2014, my client by
+ name Mr. Carlos, passed away,The reason why I contacted you is because you
+ bear the same last name with the deceased, and I can present you as the
+ beneficiary and next of kin to my late client funds then you will stand as
+ his next of kin and claim the funds. leaving behind a cash inheritance of
+ seven Million Five Hundred Thousand United States Dollars (US$7.500,000,00).My
+ late client and bosom friend grew up in a "Motherless Babies Home". He had no
+ family, no beneficiary nor next of kin to the inheritance Funds left behind
+ at the Bank. You should contact me through my private email address:
+ robertandersonhappy1@gmail.com Best Regards, Bar. robert anderson
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Harald Arnesen [05.10.2019 11:03]:
-
-> Masahiro Yamada [05.10.2019 05:24]:
-> 
->> I cannot reproduce it.
->> 
->> I tested bindeb-pkg for the latest Linus tree successfully.
-> 
-> Strange, I have now tried another machine running the same distro
-> (Devuan Beowulf), and I get the same result there. Will check further.
-
-I found out what was wrong.
-
-Both machines have been used for dvd burning, and I have used Jörg
-Schilling's cdrecord - and I had installed all of the "Schily Tools",
-which unfortunately includes a shell command. Now, I had (by mistake)
-/opt/schily/bin early in my path, and his OpenSolaris-derived shell
-didn't work as expected.
-
-Moving /opt/schily/bin to the end of the path fixes the problem.
-
-But shouldn't it work even if "sh" is not equal to "/bin/sh"?
--- 
-Hilsen Harald
 
