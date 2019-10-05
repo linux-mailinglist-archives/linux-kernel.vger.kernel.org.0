@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23B8DCC9E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 14:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70AF7CC9EC
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 14:26:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbfJEMWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 08:22:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726198AbfJEMWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 08:22:30 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BD412133F;
-        Sat,  5 Oct 2019 12:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570278149;
-        bh=3btm0i9Jw2jAGC2vk2TzyudcZjIAbZJevaaA7q42kDI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ULciMT7q1Ifab+Ce7gpWYG4BY3lC39MOhrnndHW6XgjSHlwUkRM5mQop8v2QAmVFn
-         TSAIVu2+gCgvGJx3A8EX9Y8hCkudgmbej6qfj5UinDN2AG8/Z4opgPJfhxugg1OjDK
-         GyVe2JN+SZMhxYGeCzID8ui9F4x7MMH6aYDfObO8=
-Date:   Sat, 5 Oct 2019 13:22:25 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Tomasz Duszynski <tduszyns@gmail.com>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH 2/2] MAINTAINERS: add entry for ROHM BH1750 driver
-Message-ID: <20191005132225.63019df2@archlinux>
-In-Reply-To: <20190916190024.9955-3-tduszyns@gmail.com>
-References: <20190916190024.9955-1-tduszyns@gmail.com>
-        <20190916190024.9955-3-tduszyns@gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728265AbfJEM0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 08:26:11 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:35359 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726198AbfJEM0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Oct 2019 08:26:11 -0400
+X-IronPort-AV: E=Sophos;i="5.67,260,1566856800"; 
+   d="scan'208";a="404856155"
+Received: from 81-65-53-202.rev.numericable.fr (HELO hadrien) ([81.65.53.202])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2019 14:26:09 +0200
+Date:   Sat, 5 Oct 2019 14:26:08 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Martijn Coenen <maco@android.com>,
+        =?ISO-8859-15?Q?Matthias_M=E4nnich?= <maennich@google.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Yue Haibing <yuehaibing@huawei.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Cocci] [RFC] scripts: Fix coccicheck failed
+In-Reply-To: <21684307-d05c-1856-c849-95436aedeb86@web.de>
+Message-ID: <alpine.DEB.2.21.1910051425050.2653@hadrien>
+References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com> <21684307-d05c-1856-c849-95436aedeb86@web.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323329-1481532127-1570278369=:2653"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Sep 2019 21:00:24 +0200
-Tomasz Duszynski <tduszyns@gmail.com> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> Add myself as a ROHM BH1750 ambient light sensor driver maintainer.
-> 
-> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-Applied.
+--8323329-1481532127-1570278369=:2653
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-Thanks,
 
-Jonathan
 
-> ---
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f0c03740b9fb..928059c5cd49 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13792,6 +13792,12 @@ L:	linux-serial@vger.kernel.org
->  S:	Odd Fixes
->  F:	drivers/tty/serial/rp2.*
->  
-> +ROHM BH1750 AMBIENT LIGHT SENSOR DRIVER
-> +M:	Tomasz Duszynski <tduszyns@gmail.com>
-> +S:	Maintained
-> +F:	drivers/iio/light/bh1750.c
-> +F:	Documentation/devicetree/bindings/iio/light/bh1750.yaml
-> +
->  ROHM MULTIFUNCTION BD9571MWV-M PMIC DEVICE DRIVERS
->  M:	Marek Vasut <marek.vasut+renesas@gmail.com>
->  L:	linux-kernel@vger.kernel.org
+On Sat, 5 Oct 2019, Markus Elfring wrote:
 
+> > You gave Acked-by to the one-liner fix "virtual report",
+>
+> It was (temporarily?) accepted to use the script “add_namespace.cocci”
+> without such a type of SmPL variable.
+>
+>
+> > and I am happy to apply it to my tree.
+>
+> Would you like to take the change possibility into account
+> that the coccicheck system configuration should be adapted instead?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/coccicheck?id=4ea655343ce4180fe9b2c7ec8cb8ef9884a47901#n257
+
+I prefer the one line change for now.  If more issues arise one can see
+what is more desirable at a larger scale.
+
+julia
+
+>
+> Regards,
+> Markus
+>
+--8323329-1481532127-1570278369=:2653--
