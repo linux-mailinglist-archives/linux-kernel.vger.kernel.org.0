@@ -2,129 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20179CC745
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 03:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33CECCC74D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 04:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfJEBwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 21:52:00 -0400
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:41670 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725887AbfJEBv7 (ORCPT
+        id S1726436AbfJECEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 22:04:47 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41867 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfJECEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 21:51:59 -0400
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x951oUxb029524;
-        Fri, 4 Oct 2019 18:51:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=YQGfsH0shssQjKa2A9r/wSWebplsjsw02CKkIbDxKaE=;
- b=sZi9wHpbSS/eLsULcFxxrCTL6dZQCiNoRsGu+UZeextTKwoh/zC2wueLgP4N9nqiBUBB
- 0JUYaUx1oKTPmoYyIk6zMSHW8XdOGqG17nCNUq3rEp0pGddWPVFH6U5nY4BXlFoqXj6R
- RlTw86G8vzO0cRCcn3ch0/s6jIOY2q2yWRZiXnDG7flbYC2suGbbFqx6d++8BqnGYwwD
- 9hURVMRygUiUDV5S3Tnu/4H8VvmKGQkXCNLeTsOLeijbYelrfRocaHz8ktot3+73T2uw
- BRbByfv0bP/wA1WbQs41sqooCPkwruMU3l9ozNwx2Ce/8HulfSRFttCx0u0piIcNa6qF EQ== 
-Received: from sc-exch03.marvell.com ([199.233.58.183])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2vd0y7at74-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 04 Oct 2019 18:51:55 -0700
-Received: from SC-EXCH01.marvell.com (10.93.176.81) by SC-EXCH03.marvell.com
- (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 4 Oct
- 2019 18:51:54 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (104.47.33.58) by
- SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Fri, 4 Oct 2019 18:51:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QGHYu2kIT/LBI10LNmO0/1v+g86+04zYpa8MLxwsIa/avmPuu3A+MgcoTFVts+Y0bY3hgfiE1J09zkLM2wkUmiJkO1O1hY85jhhwC6yDvl8q8O4sOk3JUAWU22qefBQej0DEMSuBcC7k579w1zAMKiGh9Eh9OrKCO9ckwtD+IhqUMCbus8Bsn4u4kF3hD9MyPqHwMOmSzZER1/DQMG/dZqi4v8DRxMBGhHzVsLEwy/zHZKT6DpkuKbHYT3XbmnMdvw8bp6q6L/nG7DAhxCfyIhmY/POs9XNba8u8ubCXZaUPbneXsGj7YBYXDSeyN5g2Knqwb2rPK2bUuqs3nTvPvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YQGfsH0shssQjKa2A9r/wSWebplsjsw02CKkIbDxKaE=;
- b=Ni3zHo7HdMER2cEjstbUkF9FQOcDWDffBKuwsWpeNZtXw9vhty1ZMAB0XWvfNE1skE43pbBJmhe0nYN/Zfb6Z53VC4C3/dcWDhIiclMI6Tc1vwdlZiGjM0dcfcK5zK5FLlfmaF4y94Dd/kk6VPj22CzInfCgKpkEvF8hwLQA8q2xdc+bqA7K9speccBxl2Kg9TFLI5kofG2vw2YccKPsndwjK1JkqsnUyogNhS2MAr79wyoTQx6HJZVe9MxWjRbbbh2+QtjE9e29pD9GZpGwHnU3sAlD6/ZsAVoz6nE8QH+oAb/r8WQGLLOtbjbmqzw4nXbzBFhMR9A1orHdx5/C8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
+        Fri, 4 Oct 2019 22:04:46 -0400
+Received: by mail-io1-f68.google.com with SMTP id n26so17477640ioj.8;
+        Fri, 04 Oct 2019 19:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YQGfsH0shssQjKa2A9r/wSWebplsjsw02CKkIbDxKaE=;
- b=c+OtHLALv6iwXt/FjENSOHyN4Ieu6FJwyl+GUIHydUhtZMIzXwhpDV2cYwiZreh0NARddZOsQ5idnNaU0T3cKFiCD/vnN0lUxLLwb0SbPc03n9/DkwsigVQZ9dOdOMLkQiggBKaSlh3wQRDdSXMwv/KDzOMyn3dPbNHX01CTI9s=
-Received: from MN2PR18MB2637.namprd18.prod.outlook.com (20.179.80.147) by
- MN2PR18MB3085.namprd18.prod.outlook.com (20.179.21.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.20; Sat, 5 Oct 2019 01:51:52 +0000
-Received: from MN2PR18MB2637.namprd18.prod.outlook.com
- ([fe80::cf1:1b59:ac77:5828]) by MN2PR18MB2637.namprd18.prod.outlook.com
- ([fe80::cf1:1b59:ac77:5828%7]) with mapi id 15.20.2305.023; Sat, 5 Oct 2019
- 01:51:52 +0000
-From:   Ganapathi Bhat <gbhat@marvell.com>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-CC:     "emamd001@umn.edu" <emamd001@umn.edu>,
-        "kjlu@umn.edu" <kjlu@umn.edu>,
-        "smccaman@umn.edu" <smccaman@umn.edu>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] [PATCH] mwifiex: pcie: Fix memory leak in
- mwifiex_pcie_init_evt_ring
-Thread-Topic: [EXT] [PATCH] mwifiex: pcie: Fix memory leak in
- mwifiex_pcie_init_evt_ring
-Thread-Index: AQHVevCvqZz3fSipjUm3Cukc3coKCqdLQXcA
-Date:   Sat, 5 Oct 2019 01:51:51 +0000
-Message-ID: <MN2PR18MB2637C5898C7F09F8C208439DA0990@MN2PR18MB2637.namprd18.prod.outlook.com>
-References: <20191004201649.25087-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20191004201649.25087-1-navid.emamdoost@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [106.193.243.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7acb441c-cc51-4b3c-24f4-08d7493697d1
-x-ms-traffictypediagnostic: MN2PR18MB3085:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR18MB30856FA6735EA19E2FA7C622A0990@MN2PR18MB3085.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 0181F4652A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(376002)(346002)(396003)(39860400002)(51914003)(189003)(199004)(66476007)(86362001)(55016002)(229853002)(558084003)(9686003)(66946007)(4326008)(3846002)(6116002)(66066001)(66556008)(316002)(6436002)(81166006)(81156014)(54906003)(6246003)(8936002)(446003)(71190400001)(476003)(26005)(33656002)(7416002)(7736002)(478600001)(74316002)(2906002)(5660300002)(25786009)(52536014)(6916009)(305945005)(186003)(11346002)(71200400001)(7696005)(256004)(76176011)(99286004)(76116006)(6506007)(102836004)(64756008)(14454004)(66446008)(8676002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB3085;H:MN2PR18MB2637.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ztbXzWB5IRiryAQ2NegbdeiK3k6jaadVlwm4X8YXk5r845xyxiK/Fap9bR7NSA5ehYgeYhmfppGcqH6NTwj6UZJazIiy0EwYYhZYiu8vQFy5t9Db7bL719Qz8fBRnnznTtV4z3dYREV18DXWwFk7nYt/1NYOtPSo4+cyc6r7oWz7mK/LpD2VHHu1xj78/qNk0jOgZfYYIQY9Wd5UJSE+zTuQa+0V1hrjLU6u0yVInyIqfXQYHG0eJ37a8dEO9yOCRnfaWDviuv6RuZI0VZ3egB3fYOXJZzBe6C8Tf0GaEhVwD6LQ+ZfseA+viPdGLE+Lwy/FHT1ZJBnK6mMnaKWoV85fLHuYsrfMKC4rtVVEZaEVsFJTFNDlHxxEyJGqwoh3qR09elF7eKOHzBGCYU/2j86RRCjKFG9TtUf3vGd5Sxg=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dKFFeqNEIfC6bfYX2MCvoQDPGT0qQ00+CPFZGAhucyY=;
+        b=XBe5Lfr1WO/ehyz2z39XQtwaT6/KSwCbVEkv+2+0BqSdThjVgBjDT1cuh1+asCPLPx
+         7QTCbGMiz4NzONlXxyuS+vu/g3czW4Fyux9aI/D8wbAdKY+FTdHb/l+Dimq5bdZeEzYD
+         4PjV2HAXhU3I46PSY0ygDCaTG+Ru7LcYyB6UX2Am/0LP7qsksngNjNGyBQyIMySnfFN1
+         726mZeM8PEajpVSZxXtpNoNmFFOwjt1cIweKDUr1Ruq9U/VrEnc87f0/bqTjY1C9PjRL
+         CvHxOHCgL0RXpJQPyzDv17vfNua7aQ2gBTO64mLIXl0NIDm8B29bBrZMGg41IB64Hpze
+         Hm2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dKFFeqNEIfC6bfYX2MCvoQDPGT0qQ00+CPFZGAhucyY=;
+        b=mjzsRr4SWmviCrF0sh+PRQSqmFbRjNK7kYT2kzNmQj5JqvyhLlrVf7LBeyN3jhS1AL
+         DeoUqWbAyNiJKKTtvxhJx56o1hOFGUCsOThIDyVo5dTitoOQRG5tgrhz0F+JiStxMPZ6
+         AmPRjasswn86AHBo+I/Qt809pN3/DrKSZbuX9rH7cKN/oOSEtjKOz0TFItuuxCFC1QrH
+         7jd+RrCAe67m2XigCBC3W+pY63i6BJPW3dK+/sxaqn1X+b2QwCDEZBaGaojox8kt50Sc
+         BjUyeWaWEpXIReBr5wnsO8HvAPCFxeEWmwaLI2oca8yaDmtM6pHKcB0J4H8/l3wVV7rH
+         0OBQ==
+X-Gm-Message-State: APjAAAXEU5nyCk8HT/pQsQ4iRMDPRrIpOxqM6iVh8XnLJMplcj341cY/
+        fz0+p9XccNF0ucDSTry6xFF2BOONymnSDF9TQBw=
+X-Google-Smtp-Source: APXvYqwBIAoHkqwaCUKDOqze9cchvM+P00vkTrkL1lxkk2uirCl29/HUsptcngeC6wh302S1+9ApJXpS9WjXydrEuD0=
+X-Received: by 2002:a5d:8f02:: with SMTP id f2mr8826897iof.272.1570241084953;
+ Fri, 04 Oct 2019 19:04:44 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7acb441c-cc51-4b3c-24f4-08d7493697d1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2019 01:51:51.8543
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NF2rTlDQ6GqopP9I4/mmjIx+ehU8GRBpRMOiLOcZimmDuIb2FqC71ICYarTiM5dXJCM7AgxQBrrS93eDueW5NA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3085
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-04_15:2019-10-03,2019-10-04 signatures=0
+References: <20191004140503.9817-1-christian.brauner@ubuntu.com>
+ <20191004142748.GG26530@ZenIV.linux.org.uk> <20191004143301.kfzcut6a6z5owfee@wittgenstein>
+ <20191004151058.GH26530@ZenIV.linux.org.uk> <20191004152526.adgg3a7u7jylfk4a@wittgenstein>
+ <20191004160219.GI26530@ZenIV.linux.org.uk> <20191004165428.GA28597@ZenIV.linux.org.uk>
+In-Reply-To: <20191004165428.GA28597@ZenIV.linux.org.uk>
+From:   Steve French <smfrench@gmail.com>
+Date:   Fri, 4 Oct 2019 21:04:33 -0500
+Message-ID: <CAH2r5msU43=Nc=Az05y9mXwKSpe5YC1gL1KHYiu7eowP+sYZog@mail.gmail.com>
+Subject: Re: [cifs] semantics of IPC$ shares (was Re: [PATCH] devpts: Fix NULL
+ pointer dereference in dcache_readdir())
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Varad Gautam <vrd@amazon.de>, Stable <stable@vger.kernel.org>,
+        Jan Glauber <jglauber@marvell.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Navid,
+Your questions are interesting and rarely asked.
 
-> Fixes: 0732484b47b5 ("mwifiex: separate ring initialization and ring crea=
-tion
-> routines")
+On Fri, Oct 4, 2019 at 11:57 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Fri, Oct 04, 2019 at 05:02:20PM +0100, Al Viro wrote:
+>
+> >       * (possibly) cifs hitting the same on eviction by memory pressure alone
+> > (no locked inodes anywhere in sight).  Possibly == if cifs IPC$ share happens to
+> > show up non-empty (e.g. due to server playing silly buggers).
+> >       * (possibly) cifs hitting *another* lovely issue - lookup in one subdirectory
+> > of IPC$ root finding an alias for another subdirectory of said root, triggering
+> > d_move() of dentry of the latter.  IF the name happens to be long enough to be
+> > externally allocated and if dcache_readdir() on root is currently copying it to
+> > userland, Bad Things(tm) will happen.  That one almost certainly depends upon the
+> > server playing silly buggers and might or might not be possible.  I'm not familiar
+> > enough with CIFS to tell.
+>
+> BTW, I would really appreciate somebody familiar with CIFS giving a braindump on
+> that.  Questions:
+>
+> 1) What's normally (== without malicious/broken server) seen when you mount
+> an IPC$ share?
 
-Thanks for the this change as well;
+IPC$ is for "inter process communication" so is basically an
+abstraction for named pipes (used
+for remote procedure call queries using the old DCE/RPC standard).
 
-Acked-by: Ganapathi Bhat <gbhat@marvell.com>
+To Windows it is possible to mount IPC$, to Samba you can connect to
+the share but
+due to a Samba server bug you can't do a query info on "." (the 'root'
+of the IPC$ share).
 
-Regards,
-Ganapathi
+
+> 2) Does it ever have subdirectories (i.e. can we fail a lookup in its root if it
+> looks like returning a subdirectory)?
+
+In Samba you can't query subdirectories on IPC$ because even open of "."
+fails, but to Windows the query directory would get "STATUS_INVALID_INFO_CLASS"
+
+An interesting question, and one that I will bring up with the spec
+writers is whether
+there are info level which would be allowed for query directory (probably not).
+
+Another interesting question this brings up is ... "should we allow
+enumerating the 'services' under IPC$
+via readdir"?   You could imagine a case where mounting IPC$ would
+allow you to see the 'services'
+exported by the server over remote procedure call ("server service"
+and "workstation server" and "netlogon service"
+and the global name space (DFS) service and  perhaps "witness protocol
+services" and "branch cache service" etc.)
+
+And then thinking about Dave Howell's changes to the mount API -
+should this be a mechanism that is allowed to be
+used to either browse the valid shares or better access the root of
+the (DFS) global name space.
+
+But the short answer is "no you can't query the directory contents
+under IPC$" (at least not without changing the
+abstraction that we export on the client) but I am open to ideas if
+this would fit with Dave Howell's changes to the
+mount API or other ideas.
+> 3) If it can be non-empty, is there way to ask the server about its contents?
+> Short of "look every possible name up", that is...
+>
+> As it is, the thing is abusing either cifs_lookup() (if it really shouldn't
+> have any files in it) or dcache_readdir().  Sure, dcache_readdir() can (and
+> should) pin a dentry while copying the name to userland, but WTF kind of
+> semantics it is?  "ls will return the things you'd guessed to look up, until
+> there's enough memory pressure to have them forgotten, which can happen at
+> any point with no activity on server"?
+
+Server's realistically must expose a share "IPC$" so in theory it can be mounted
+(despite Samba server's current bug there) and there were some experiments
+that Shirish did a few years ago opening well known services under mounts
+to IPC$ (to allow doing remote procedure calls over SMB3 mounts which has
+some value) but AFAIK you would never do a readdir over IPC$ and no
+current users would ever mount IPC$
+
+-- 
+Thanks,
+
+Steve
