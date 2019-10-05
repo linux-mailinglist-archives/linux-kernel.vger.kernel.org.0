@@ -2,95 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46A99CCC93
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 22:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FC3CCC95
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 22:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729874AbfJEUDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 16:03:40 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:44706 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728245AbfJEUDk (ORCPT
+        id S1729981AbfJEUEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 16:04:04 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38817 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728245AbfJEUEE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 16:03:40 -0400
-Received: by mail-vs1-f67.google.com with SMTP id w195so6355517vsw.11
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 13:03:39 -0700 (PDT)
+        Sat, 5 Oct 2019 16:04:04 -0400
+Received: by mail-io1-f66.google.com with SMTP id u8so20703176iom.5
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 13:04:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=mWjSAXlUwzy3Q8E4umbGAcK1sBVI8Xohqeo2EqB9CF0=;
-        b=GdQkjXIdzOnbla+zlPPSBw394nLd/fkklkoJfh0olSXCYl1wlWO/cdZBZiwGDV2CdX
-         mRUxqKfW5y18cM5lVWkzPAAphPQdtynI8I6hdyrb/ZEvzBiY8qGR3iLYLitkqE6UUbvI
-         J7oTLhttnrOcBYwqINENf8/lYoA0j5f/pl77SSwudceCiBfYXI7S1Av0IvFV0Pu8LGc+
-         XpyXVMeXcsNu5BnC6gH9F/jakbD6twfYKzoah5R6lpnC5wZWJMABXyVEtWPeYdheQDXC
-         fHXwaZ5GJ77EEh3q17p02dJKwS/WSmweqovRZHCy2uiaCoH1hiDTI0i5DrLH+QdJK7nh
-         k8hg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mRHgwxZdGw0blwU74PDIectE4sOFeAoxwqMR6ZTtSjU=;
+        b=HkYm1YbP6dhP5HDrvhFJiVGj0WMBirms1vp0+/Dp4li8Rvy0DQ9X4+delTdtfmi3Py
+         fySH0qUwpqO0SpoBuhDqygMEfYV8TKIybhe5uVnusupZQvLT+2HrATBMXO+3Hgi4tb0n
+         WJIUcc3n1Gbqv9oIFBnSWHh98uADLYgPPxmv3SMKEM8S7VsTwwANAq1F0aHecJcYmGJE
+         wC5pK6o77+Ls5d0gdraEJsF7mMdFV9EYaVtVukrwL3fQzLAaPwDPL8tt6bckpw1JJkh8
+         MPWS+sqOm06P+IjTjvlrANW12l1OQFIVbhe6l+Ub1nhei9TdlEOYl7ZOMLB73rjhnNuo
+         fDzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=mWjSAXlUwzy3Q8E4umbGAcK1sBVI8Xohqeo2EqB9CF0=;
-        b=IT50kFWsB8GgbmCKUIfjFdKO6NwGAZI45oPswEp6dnOuSFnGGayhSFaBNlOqo1Sv46
-         PZFaFtRNTCdaizWvyTkY0ihmuIlrBVADBV9av2xjA/dCQh38Uh7blTAx1jwBCPiT6tNH
-         NgEgN7ggxcOWs9ESnXtFP4Y63U+HaLvnVP3ySqimDK5GLDfg9vRxLalITytuZuwDOSjj
-         GpuohB0HS5og0hnwZfKAuzrmkAu/JKiLeNDSLSb241fY6gY/AXNeinVmMn4qDSoLl4ys
-         s8po6j9DAJOh+uJy4XLLuGOg1HTvlGZsidcG1fZd3fuSRMHMUv//r7XEJC9NRonIPFo6
-         JCRA==
-X-Gm-Message-State: APjAAAWOfU3I1XpIL2dtuqqIqpdP3YfGUCADxyFjVp1PqfMtGL8KikYz
-        2YrxWSpIRHkBbUd1jLF1dhO8ddYe859B+f7gSUM=
-X-Google-Smtp-Source: APXvYqxrab9X/Hk3XAtMnH5Ap1ZOd7VJhImNW8jlL3NKYqjLCNsuJgAPuKHLcrecu+byUHL5+gDCkE47MvSjjIZ5WRQ=
-X-Received: by 2002:a67:d789:: with SMTP id q9mr11288496vsj.159.1570305819055;
- Sat, 05 Oct 2019 13:03:39 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mRHgwxZdGw0blwU74PDIectE4sOFeAoxwqMR6ZTtSjU=;
+        b=QzT6zW+q054pujdtLerR2fYocFKRtDTqcAakCSnCrsTIfFOAUhldCYUQqj0ZRlKGUi
+         i+EwJCT+/OXwa8NCIlD7qryWxZMYEeGwaOHkky2AHiTZpeQsHWH4pTRGUIR/sHSizdTU
+         3y1y/qOKMlzR00WCdY9ZbqvS49jAOI+kRj1PXRsno/nIzf2qo3pz4Ivv9BAy649nhYmh
+         Zfw2Cas7BiE5wkQiDsIOTbZk8GPqRqjgmKRslV9Id6VpgfeIjTE2SMMaHyN337L1GMKo
+         piz4ZQ6AfzH+ixCcalNBWSWGww1BJNFh5xJrcR1OFG1TwmLxtLC4Dv8MqRXXmq0BBj9w
+         /GOA==
+X-Gm-Message-State: APjAAAUVmf25wiq0qoeGJfSI8Gluy0Q2QnAhYRP41/EJU9T1NevuWZuq
+        8hTdryGsX2/Y+UiaUvBzvxNHIMvKKON17kSkKKk0K85j
+X-Google-Smtp-Source: APXvYqwOrc0R/c3VOz/QM5b3vD7qEJVUgTKPFzQytiP7GeQI2Rf77AeDFQs4Rii1UaUX2u4CEmwV/h5mSqlM6ZRWB34=
+X-Received: by 2002:a02:4487:: with SMTP id o129mr21197311jaa.136.1570305843122;
+ Sat, 05 Oct 2019 13:04:03 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:5a4:0:0:0:0:0 with HTTP; Sat, 5 Oct 2019 13:03:38 -0700 (PDT)
-From:   Francis Hasmin <francishashimmr@gmail.com>
-Date:   Sat, 5 Oct 2019 22:03:38 +0200
-X-Google-Sender-Auth: qreLATgpc-N9VIf1hVixedMUf1Y
-Message-ID: <CAAVrDueuta42GQchx6prqYDXAWrq+3yWP8J9wz9vMJhjrTiRoA@mail.gmail.com>
-Subject: Please forgive me if my request is not acceptable by your kind person.
-To:     undisclosed-recipients:;
+References: <157019456205.3142.3369423180908482020.stgit@buzz> <20191005123523.0db4ad1b9f268c419f8a59eb@linux-foundation.org>
+In-Reply-To: <20191005123523.0db4ad1b9f268c419f8a59eb@linux-foundation.org>
+From:   Konstantin Khlebnikov <koct9i@gmail.com>
+Date:   Sat, 5 Oct 2019 23:03:50 +0300
+Message-ID: <CALYGNiPSr-cxV9MX9czaVh6Wz_gzSv3H_8KPvgjBTGbJywUJpA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/swap: piggyback lru_add_drain_all() calls
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Dear Sir/ Madam,
+On Sat, Oct 5, 2019 at 10:35 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Fri, 04 Oct 2019 16:09:22 +0300 Konstantin Khlebnikov <khlebnikov@yandex-team.ru> wrote:
+>
+> > This is very slow operation. There is no reason to do it again if somebody
+> > else already drained all per-cpu vectors while we waited for lock.
+> >
+> > Piggyback on drain started and finished while we waited for lock:
+> > all pages pended at the time of our enter were drained from vectors.
+> >
+> > Callers like POSIX_FADV_DONTNEED retry their operations once after
+> > draining per-cpu vectors when pages have unexpected references.
+> >
+> > ...
+> >
+> > --- a/mm/swap.c
+> > +++ b/mm/swap.c
+> > @@ -708,9 +708,10 @@ static void lru_add_drain_per_cpu(struct work_struct *dummy)
+> >   */
+> >  void lru_add_drain_all(void)
+> >  {
+> > +     static seqcount_t seqcount = SEQCNT_ZERO(seqcount);
+> >       static DEFINE_MUTEX(lock);
+> >       static struct cpumask has_work;
+> > -     int cpu;
+> > +     int cpu, seq;
+> >
+> >       /*
+> >        * Make sure nobody triggers this path before mm_percpu_wq is fully
+> > @@ -719,7 +720,19 @@ void lru_add_drain_all(void)
+> >       if (WARN_ON(!mm_percpu_wq))
+> >               return;
+> >
+> > +     seq = raw_read_seqcount_latch(&seqcount);
+> > +
+> >       mutex_lock(&lock);
+> > +
+> > +     /*
+> > +      * Piggyback on drain started and finished while we waited for lock:
+> > +      * all pages pended at the time of our enter were drained from vectors.
+> > +      */
+> > +     if (__read_seqcount_retry(&seqcount, seq))
+> > +             goto done;
+> > +
+> > +     raw_write_seqcount_latch(&seqcount);
+> > +
+> >       cpumask_clear(&has_work);
+> >
+> >       for_each_online_cpu(cpu) {
+> > @@ -740,6 +753,7 @@ void lru_add_drain_all(void)
+> >       for_each_cpu(cpu, &has_work)
+> >               flush_work(&per_cpu(lru_add_drain_work, cpu));
+> >
+> > +done:
+> >       mutex_unlock(&lock);
+> >  }
+>
+> I'm not sure this works as intended.
+>
+> Suppose CPU #30 is presently executing the for_each_online_cpu() loop
+> and has reached CPU #15's per-cpu data.
+>
+> Now CPU #2 comes along, adds some pages to its per-cpu vectors then
+> calls lru_add_drain_all().  AFAICT the code will assume that CPU #30
+> has flushed out all of the pages which CPU #2 just added, but that
+> isn't the case.
+>
+> Moving the raw_write_seqcount_latch() to the point where all processing
+> has completed might fix?
+>
+>
 
+No, raw_write_seqcount_latch() should be exactly before draining.
 
-Please forgive me if my request is not acceptable by your kind person.
+Here seqcount works as generation of pages that could be in vectors.
+And all steps are serialized by mutex: only after taking lock we could be
+sure that all previous generations are gone.
 
- I am Mr.Francis Hashim, Working at One of the bank here in (Burkina
-Faso) as the Independent Non-Executive Director & Audit Committee.
-During our last banking Audits we discovered an abandoned account
-belongs to one of our Foreign Deceased Customer, Late Mr. Wang Jian,
-The Co-founder and Co-chairman of HNA Group, a Chinese conglomerate
-with significant real estate ownerships across the U.S., died in an
-accident while on a business trip in France on Tuesday.
-
-
-Please go through this
-link:https://observer.com/2018/07/wang-jian-hna-founder-dies-tragic-fall/
-
-I am writing to request your assistance in transferring the sum of
-$15.000.000.00 (Fifteen Million United States Dollars) into your
-account as the Late Mr. Wang Jian Foreign Business Partner. Meanwhile,
-before I contacted you I have done personal investigation in locating
-any of Late Mr. Wang Jian relatives who knows about the account, but I
-came out unsuccessful.
-
-I will like to bring to your notice that I have made all the necessary
-arrangements with my colleagues to transfer the funds into your
-nominated bank account without any problem.  Upon your consideration
-and acceptance of this offer, I am willing to offer you 40% for your
-assistant, while 60% for me which I am planning to invest into a
-profitable business venture in your country.
-
-More details information will be forwarded to you to breakdown
-explaining comprehensively what require of you. Reply me on my private
-E-Mail Address: francishashimmr@gmail.com
-
-
-Waiting for your urgent reply,
-Best Regards
-Mr.Francis Hashim.
+Here CPU #2 will see same generation at entry and after taking lock.
+So it will drain own pages.
