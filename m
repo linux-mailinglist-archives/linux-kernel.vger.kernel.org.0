@@ -2,90 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48DFACC742
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 03:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BF56CC748
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 03:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfJEBtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 4 Oct 2019 21:49:49 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44139 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbfJEBts (ORCPT
+        id S1726780AbfJEBwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 4 Oct 2019 21:52:06 -0400
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:45388 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725887AbfJEBwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Oct 2019 21:49:48 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i14so4704027pgt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Oct 2019 18:49:48 -0700 (PDT)
+        Fri, 4 Oct 2019 21:52:05 -0400
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x951p68P005145;
+        Fri, 4 Oct 2019 18:51:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=IoOO84f11ZbaAq15IbvyLBf5+bIoLDCYU2mb+DJwKO0=;
+ b=E1+y1nHBrGMEQClmp0o+eeOiUpmv1aNw+JZCta7tb0xNGfP5aJjHWFWBT01Zuk/qWNIC
+ KX7Jm/3mzCiP6Wp3fP6s3xU3axXn0grvxnps5J7oGSEL8xxq6AlcY+ihUXU/sBArlVR0
+ eHY6I6x7JEh2uDs/JB2VG+ceIGpkAJpTVtKQil4HvdepXi8O3i7nkpFDTUrUSKpxsAFx
+ ReVs9+0SRLPxMQfCDQebR7dzAOzSuprtIvthcvEJJdsHjSBpF0QumZVRXLH72t9Xq9aZ
+ mAY0vO4GmcIHmqD2yRihvH6vMS3P5T1rfYeRr7nQtnLMFXfZapO+vDGcOrObbmRNPXFZ /A== 
+Received: from sc-exch03.marvell.com ([199.233.58.183])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2vd0yaaagh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 04 Oct 2019 18:51:48 -0700
+Received: from SC-EXCH01.marvell.com (10.93.176.81) by SC-EXCH03.marvell.com
+ (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 4 Oct
+ 2019 18:51:47 -0700
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (104.47.32.51) by
+ SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Fri, 4 Oct 2019 18:51:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H3Uq812PHGZub8/N02KIC4JCwE0wX9aMA0hY5K3y98gywmCFdrquhy7boaekwSpyvhNqaS1V+7SwddRJBK95K8yifcuv9k+HVpDHUfiG3IU04rlO51jWa83bYxdAlDJc3TWPKhF0c1U0+izz4JnBtWl8YbnoV5LcB5CQmcEJzieR5k08I/Vigeggb4DfMRDu9CZJjjjB0LvZMgimiOe/yBHN+TGp5z5oRYtDapmMdagrLmTLF2I9E3JkxHjeDzfdRoavlPmQayB0exVkSDfBU5iWWsicl32Nv04AL/7cL5iepVSgudifSf9Ntu/ybSkWZKaUNW5vnuXbsyeHya8iwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IoOO84f11ZbaAq15IbvyLBf5+bIoLDCYU2mb+DJwKO0=;
+ b=AaJdxrbonGMOhKk+d2GDctYYP+66YACfNGuFI5nQRVw+0L54lpiE2D76EEphos4fpSkEChzoD4R3nDNxTajVTafGbwsYVRC2KOFNxHf+hJ7h/f3uh6oDlK7lTzz48Q9FI9TVi78VGkxATiGzED/1tk+cCyMyACT7WG/9+7w2ZGgk3Atn1eR1DE346RPxoQLsScaAT0snzbq+zhk6+ckDuTyaH9tx/Jxl1OLAItSw8YCvqRU3eEuiKPvYLOwjjWxQJvshayI27SHQ0ZRICXgajt5sHl3nzs0KST89gPWra/U0k6XqYMUwKshgt2t1JUbQqn4ANz64ZDXh6qvb6Ln/1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=QsfvGFuRohKr1l6pObvG2zaoMC/SPwYl/b1JcIlr95c=;
-        b=AoBRZZiyqE2wu0IBRSVdfsYjxtvIDFc3OFQ3/Q68YAZySmonyeEsWhuaR4uILfkOUz
-         b+xjnizRVuvqQXE0M9iRa9q+5fph3BCYk0aEg8NDiT1gc0Fg4rjpz/W1vu9aTgWcTZYH
-         MWKAdMtkoJULfy5aZXPyw+7pb6rIDJ8a2nmUez/mFCUwzR7Au5yef+mzhLaCowgzdKvR
-         yx2ziB6ARAWAap2YmLIIhYtiusy3Ko7oayx7bguSzUNQT7fKBQqgoiO7YUTsqvMNiSMQ
-         IIQ4Ufne5uaSTeJsdft2L3TdI6B4Aw8zP6AyL+a3Ln5OsGmrTtKJ6Nan+B/dKGHYunI+
-         wcYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QsfvGFuRohKr1l6pObvG2zaoMC/SPwYl/b1JcIlr95c=;
-        b=tmCSnwQ0Bf6dzekPHtem0gDdEcp96gUqPg5qZ10P5DmtKMW88RMZ/QAYJfQ4SwkzEi
-         x/YRuqzY/1WOi66bc1PygcVHHz8H8hiyxlg7TcH5rxOTtSlY0Nje4ILupi430f62dSRa
-         oeJWzXlObT7f2o5GBnBDxq/juEpr9uOkcwbRPvEGowQ9w77K6i6t/c2Wi9EbXyeeaUpU
-         RSr/RNP9b1hLoOT9McHVktBKAddOSK3YG/tQzSGXsSPpCp6VOlYdqWEIliwawaoQm6jN
-         gSrZ3mtwVA9ebB2MGptycNDD9aUL/KjPtoHqKcW7qGT7Knx7xMD7OQCn/Iowzx4DDStV
-         gcHw==
-X-Gm-Message-State: APjAAAVWtb/VuYPqsKiJAU35qvKqgT8f4z/Uj/0f8teg2Gzit4hmQ6QL
-        lpC1ejCgm4+V8OsRVEHF5iV76jRcWyY=
-X-Google-Smtp-Source: APXvYqzZ5yXKAtja0JWgYFKJLxEwtSMznwcaM9dAht2NSa3+keiDxwDqMaNqRGVqvLI/hLm52rHI8A==
-X-Received: by 2002:a63:705b:: with SMTP id a27mr18180320pgn.136.1570240187537;
-        Fri, 04 Oct 2019 18:49:47 -0700 (PDT)
-Received: from nuc7.sifive.com ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id b185sm7529508pfg.14.2019.10.04.18.49.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 04 Oct 2019 18:49:46 -0700 (PDT)
-From:   Alan Mikhak <alan.mikhak@sifive.com>
-X-Google-Original-From: Alan Mikhak < alan.mikhak@sifive.com >
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        kishon@ti.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        palmer@sifive.com, paul.walmsley@sifive.com
-Cc:     Alan Mikhak <alan.mikhak@sifive.com>
-Subject: [PATCH] PCI: endpoint: cast the page number to phys_addr_t
-Date:   Fri,  4 Oct 2019 18:49:37 -0700
-Message-Id: <1570240177-8934-1-git-send-email-alan.mikhak@sifive.com>
-X-Mailer: git-send-email 2.7.4
+ d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IoOO84f11ZbaAq15IbvyLBf5+bIoLDCYU2mb+DJwKO0=;
+ b=dzHZyzRNtJJN7SmBVq6DIuPq7BB4V0F8Mi+0F7k5Wb+VaXlShIcNldcSXS2kLQlsbczcHx+MBUm7+ECC1KVnT1MVnqtOdAVCD03KP4owEhFT1Clk3E7lQY4WT7pDO8J2fWPzP/UzGhDNS9i6spbYyj1n7PeU6puo6jGaYUNaghE=
+Received: from MN2PR18MB2637.namprd18.prod.outlook.com (20.179.80.147) by
+ MN2PR18MB3133.namprd18.prod.outlook.com (10.255.238.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2327.23; Sat, 5 Oct 2019 01:51:45 +0000
+Received: from MN2PR18MB2637.namprd18.prod.outlook.com
+ ([fe80::cf1:1b59:ac77:5828]) by MN2PR18MB2637.namprd18.prod.outlook.com
+ ([fe80::cf1:1b59:ac77:5828%7]) with mapi id 15.20.2305.023; Sat, 5 Oct 2019
+ 01:51:45 +0000
+From:   Ganapathi Bhat <gbhat@marvell.com>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+CC:     "emamd001@umn.edu" <emamd001@umn.edu>,
+        "kjlu@umn.edu" <kjlu@umn.edu>,
+        "smccaman@umn.edu" <smccaman@umn.edu>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] [PATCH] mwifiex: pcie: Fix memory leak in
+ mwifiex_pcie_alloc_cmdrsp_buf
+Thread-Topic: [EXT] [PATCH] mwifiex: pcie: Fix memory leak in
+ mwifiex_pcie_alloc_cmdrsp_buf
+Thread-Index: AQHVeu+VjJmN3rtj6Em9c/YO9xW8c6dLQGQQ
+Date:   Sat, 5 Oct 2019 01:51:44 +0000
+Message-ID: <MN2PR18MB263767B6B7B771837F0137F7A0990@MN2PR18MB2637.namprd18.prod.outlook.com>
+References: <20191004200853.23353-1-navid.emamdoost@gmail.com>
+In-Reply-To: <20191004200853.23353-1-navid.emamdoost@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [106.193.243.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6edf8c16-65ab-4db6-4e60-08d7493693a9
+x-ms-traffictypediagnostic: MN2PR18MB3133:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR18MB313387612ACD01A37C35969EA0990@MN2PR18MB3133.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 0181F4652A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(376002)(39860400002)(366004)(136003)(199004)(189003)(51914003)(6916009)(6506007)(26005)(102836004)(7696005)(14454004)(74316002)(76176011)(2906002)(7736002)(305945005)(7416002)(8936002)(33656002)(8676002)(99286004)(25786009)(478600001)(81156014)(81166006)(476003)(66556008)(64756008)(66446008)(66476007)(76116006)(66946007)(71200400001)(71190400001)(486006)(5660300002)(52536014)(66066001)(11346002)(446003)(256004)(186003)(3846002)(6116002)(316002)(86362001)(6246003)(4326008)(6436002)(229853002)(9686003)(55016002)(558084003)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB3133;H:MN2PR18MB2637.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 4fugZ09RWy7jpDc/69RCmFObwP9nc4wwyV/WaRBSgLaOMDV2U1EFzkWpe3ldeFvbKpipfi/7C3FybBcwe76MQVofT+Gw4ukMQtvZcnO4Dsn0+084l1O9sSbrIJtym1Wt2gbCV5Ihu7FhB0ZQ2nr/wWg1NzdZC/u41jChMPuQZEYc36nZUSHRboCBGmjLKDmrqpafoOW1pK/RT4aeM+eLRwYhb1gDBbw3drpN4Aak0+jBIF3++DkwFr/w7kr5+3OcMp7oCDbTU6CDfzqoS4fIAxZFO5FOhteGO9v9QpiDLM1TA219bVqg4Sbdy0MA3W5h+8hlNOZ7KyW4W2DHyX3n/ksWZwRLjwKgehMGFSR1qySMfqYr7CPPVeD92HJqj2etJF3nW7Mk7XMt4WAdeU7fkDP2tQDjRTysq8q00c5qlE0=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6edf8c16-65ab-4db6-4e60-08d7493693a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2019 01:51:44.9023
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tE2xeGGPnSff8BVMs590dtTPIszakXCbGZZBrgLDb1LqYbEhwpaHMnCAxll9S6XnFCfZOykowMJAUWk4AcehtA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3133
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-04_15:2019-10-03,2019-10-04 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Mikhak <alan.mikhak@sifive.com>
+Hi Navid,
 
-Modify pci_epc_mem_alloc_addr() to cast the variable 'pageno'
-from type 'int' to 'phys_addr_t' before shifting left. This
-cast is needed to avoid treating bit 31 of 'pageno' as the
-sign bit which would otherwise get sign-extended to produce
-a negative value. When added to the base address of PCI memory
-space, the negative value would produce an invalid physical
-address which falls before the start of the PCI memory space.
+> Fixes: fc3314609047 ("mwifiex: use pci_alloc/free_consistent APIs for PCI=
+e")
 
-Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
----
- drivers/pci/endpoint/pci-epc-mem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the change;
 
-diff --git a/drivers/pci/endpoint/pci-epc-mem.c b/drivers/pci/endpoint/pci-epc-mem.c
-index 2bf8bd1f0563..d2b174ce15de 100644
---- a/drivers/pci/endpoint/pci-epc-mem.c
-+++ b/drivers/pci/endpoint/pci-epc-mem.c
-@@ -134,7 +134,7 @@ void __iomem *pci_epc_mem_alloc_addr(struct pci_epc *epc,
- 	if (pageno < 0)
- 		return NULL;
- 
--	*phys_addr = mem->phys_base + (pageno << page_shift);
-+	*phys_addr = mem->phys_base + ((phys_addr_t)pageno << page_shift);
- 	virt_addr = ioremap(*phys_addr, size);
- 	if (!virt_addr)
- 		bitmap_release_region(mem->bitmap, pageno, order);
--- 
-2.7.4
+Acked-by: Ganapathi Bhat <gbhat@marvell.com>
+
+Regards,
+Ganapathi
+
+
+
 
