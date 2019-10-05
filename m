@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE469CCB28
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 18:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 427B6CCB37
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Oct 2019 18:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbfJEQf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 12:35:57 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38819 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbfJEQf4 (ORCPT
+        id S1729291AbfJEQho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 12:37:44 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44722 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729035AbfJEQhn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 12:35:56 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u28so6531701lfc.5
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 09:35:55 -0700 (PDT)
+        Sat, 5 Oct 2019 12:37:43 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m13so9484408ljj.11
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 09:37:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Pn6mxtcEEEc3owMIwbkt2TQL3Wmbd6NRz2v8eZ+RVTk=;
-        b=rpEtxSVEvEX2HhDQUFGyl3RdGfgjIagn3D9aobXi/wZtjscUnA1mkJD0kM3fiNupTG
-         AfnKtyqJeYJ2uOTaQs6ySZeaNTCqFfo0/LKAfsZG6XIHVgRQWHGjbI4X+8tR86xbgh58
-         UxZZo2Z8FOTYmp7b39uIYNs66Brkx9UEIKIyeGX7lge6cL6kKDMj9FaHEFKuhUJoIrou
-         aEWJ35sYx+gYXF4Ss9Yohhnn31dOWy2cV94C52WosfyCgY4tR3/6M6q+HpHrqtJkL9IN
-         V7orx4r/DU5hbKtRoeY/W3lxfG/Iy2raEXipla9KnUlwGY2BgV32P1ctLRpxvIGgWLm1
-         qLAg==
+        bh=prTkz2BDct+kznOCTl84BP6+isxcds/VL5wpAYcwHBY=;
+        b=m2jT+U/AjYzHW1iLL25RrSATBB+XM5O+wb9pHkyxDDzOz+5wGDsqcWYu+xHIj20FMA
+         Xwu2HpckrIcTSmbFz4sWXa/wECnqJsrKouRHo8gp5QslS74mYPCyeObXJ6VxItdD/YOC
+         ce/yz+2TEzQmEUTxeWuakUD29l/+b5pbv0n+t/YNdn7lWrpgzfmUjaLRamPvaA81a1Zs
+         bTJLBgiswBGT+nqqJsALx6ClmKePzLHjFXqbmXRXKl4a6OgkzLIBLODmJg58g4XgC6Sg
+         0fJZ8c+uj0/bGFwpeORcThh4OgIe4OKl4jO0bbkLdQx7LlUw15JmDX9Am5AL/OoEzK8b
+         kTsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Pn6mxtcEEEc3owMIwbkt2TQL3Wmbd6NRz2v8eZ+RVTk=;
-        b=mNB0rkIs/x9dlHwzWk97uhxPNhsCLnd7aExGA6IwGM9EllhD/H16D7E9HefULNSSCJ
-         xTpe3TbSCH8vPP6fJzrOERkh+/yMRckgLepf2az6Yn4WjKJEMOepgK8EH5FxIEFk8UY/
-         3F8630s/QB9AcZSgCvfWvly0u6ko0OoKGuRSKHS/wKzvYfoF8QmPpa7z0FgndLZrcyU0
-         yjyzCzyExDPAfG0i8KyXxaU1+ELNVr5cl1phThL5M7ZQRIBa4AQR4y0zQkSTHqH+AAg+
-         vCuEID1leftSBIJ4SjfpudHgttcH065MIYvUJAhdDg6CurVP2cZ75NExThGGSSX78oiT
-         WUlQ==
-X-Gm-Message-State: APjAAAVGCl1Ck9qlskLNu6YS6PxdvExaieNO2UMSnPvBVo4Nxl59SsFc
-        Qyn7w9BG5JiXZnQF+yX631BsyJIYZuZxLP+6rxbvrA==
-X-Google-Smtp-Source: APXvYqy99lBsuY63SZm1Hovkzqrn5mNe5uNYRXbJEe6kopZaSTzsWTlUs5zAiyKhJwvIMM8Ytt5JplveuThrYIBo6hg=
-X-Received: by 2002:a05:6512:25b:: with SMTP id b27mr12485234lfo.60.1570293354605;
- Sat, 05 Oct 2019 09:35:54 -0700 (PDT)
+        bh=prTkz2BDct+kznOCTl84BP6+isxcds/VL5wpAYcwHBY=;
+        b=b90iBhbD51SngosTco5x2YWzEb0r+OjirPasSejdttmvx/hEuSGwYI1/QahXV78Zt1
+         th2sso3+55eSxpvH0z9ZnClRmkx3KBJr1YN5ei+nED4uoziRW1Z0LMPdH/itU27Ei4DD
+         ZImC8GeejolLc89KCjY1DfHs5Z9B+WDOrIQuOZ01vG3vCB1Ox509IEoT6hqETdemxXqj
+         u74mjj6DX1pGivsofVpJpPMHGKk8C8ONk4HrUCNGdfTLTM9W4zKtFTJSZZWn/Jfs9poT
+         FgWEdlgnxlyvvJFO/ilmmwEDmc7XuXeM8sO6FMSEiRevall/6PnSZ8zx0ShZ4NwiN02B
+         E3Ag==
+X-Gm-Message-State: APjAAAXHkCbKPwsALvNW30Si/6Vsba0xyGh2UgmhtG0kOEbquYmM46tC
+        uG8SMRrOcfMzXQCYCS4lcne+7jXWNAgHg0L/GdUCXKzhcnM=
+X-Google-Smtp-Source: APXvYqxZDMfqx8V17O+f48DGUFf1jTMmQs1PnbGuYwpAD58xGCuDybqkY6PymiQ5pg31cLHibQqXMFRqO2iNX6kIrBM=
+X-Received: by 2002:a2e:6344:: with SMTP id x65mr12909835ljb.59.1570293461231;
+ Sat, 05 Oct 2019 09:37:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191003000310.17099-1-chris.packham@alliedtelesis.co.nz> <20191003000310.17099-2-chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20191003000310.17099-2-chris.packham@alliedtelesis.co.nz>
+References: <20191003000310.17099-1-chris.packham@alliedtelesis.co.nz> <20191003000310.17099-3-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20191003000310.17099-3-chris.packham@alliedtelesis.co.nz>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 5 Oct 2019 18:35:43 +0200
-Message-ID: <CACRpkdbQapKs5f7=7U-=jRYN_CYQ4Rtrwrk_1nLwZJHD26bw2A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: iproc: allow for error from platform_get_irq()
+Date:   Sat, 5 Oct 2019 18:37:29 +0200
+Message-ID: <CACRpkdYuJgjLEbYVA-cVxyy6v-L8Hnf2kmZt3S72nFQnrrzMmA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: iproc: use unique name for irq chip
 To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
 Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
         bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
@@ -65,13 +65,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Thu, Oct 3, 2019 at 2:03 AM Chris Packham
 <chris.packham@alliedtelesis.co.nz> wrote:
 
-> platform_get_irq() can return an error code. Allow for this when getting
-> the irq.
+> Use the dev_name(dev) for the irqc->name so that we get unique names
+> when we have multiple instances of this driver.
 >
-> Fixes: 6f265e5d4da7 ("pinctrl: bcm-iproc: Pass irqchip when adding gpiochip")
 > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-Patch applied for fixes.
+Patch applied.
 
 Yours,
 Linus Walleij
