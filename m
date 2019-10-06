@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3613BCD542
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FFD8CD57B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729922AbfJFReR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:34:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60982 "EHLO mail.kernel.org"
+        id S1730329AbfJFRgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:36:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728042AbfJFReP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:34:15 -0400
+        id S1730315AbfJFRgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:36:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC92F2080F;
-        Sun,  6 Oct 2019 17:34:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA4112053B;
+        Sun,  6 Oct 2019 17:36:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383254;
-        bh=hzSleYMWTRtUF8dgUsifvE5JwF7V349DimY1uSYzY1A=;
+        s=default; t=1570383400;
+        bh=NjzupDenoqLLyLpB0bUoEgIBSgtmb3n0NUd2iv3HQdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1IoG70fQkahvoGDVefN6RuaihoF9IgoA87RZowBbf6UfpI+Q46jSRK+StbSBW1Ik7
-         2qFMXXkCHsZ5ItnNJug8lCxyiYinXN3EW2eVAfqshBBWIVlR/YSvwA1rcs+21VsVGf
-         0mQgpiLaVH6d5vK5K51Ucn+XaduTJFEg86fbQ47k=
+        b=2tMNiPChmOiXbtxxketd8PlkmNkIEZbB/1+30VZqkdIfQk9u/izESIs1EMdSQovO2
+         8SbT3yYkVNUgpq78gwiwzykUE2EpFrksYwVaQqiDeNCCMZO7skWO2ZNaVk/FNVP40o
+         MW6p0DGXpOFWaVpoOeOL/kTEOyCyqh03dSr1txt0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zain Wang <wzz@rock-chips.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sean Paul <seanpaul@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 035/137] drm/rockchip: Check for fast link training before enabling psr
-Date:   Sun,  6 Oct 2019 19:20:19 +0200
-Message-Id: <20191006171212.048527159@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Shirish S <shirish.s@amd.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 036/137] drm/amdgpu: Fix hard hang for S/G display BOs.
+Date:   Sun,  6 Oct 2019 19:20:20 +0200
+Message-Id: <20191006171212.121400912@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
 References: <20191006171209.403038733@linuxfoundation.org>
@@ -46,65 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
 
-[ Upstream commit ad309284a52be47c8b3126c9376358bf381861bc ]
+[ Upstream commit e4c4073b0139d055d43a9568690fc560aab4fa5c ]
 
-Once we start shutting off the link during PSR, we're going to want fast
-training to work. If the display doesn't support fast training, don't
-enable psr.
+HW requires for caching to be unset for scanout BO
+mappings when the BO placement is in GTT memory.
+Usually the flag to unset is passed from user mode
+but for FB mode this was missing.
 
-Changes in v2:
-- None
-Changes in v3:
-- None
-Changes in v4:
-- None
-Changes in v5:
-- None
+v2:
+Keep all BO placement logic in amdgpu_display_supported_domains
 
-Link to v1: https://patchwork.freedesktop.org/patch/msgid/20190228210939.83386-3-sean@poorly.run
-Link to v2: https://patchwork.freedesktop.org/patch/msgid/20190326204509.96515-2-sean@poorly.run
-Link to v3: https://patchwork.freedesktop.org/patch/msgid/20190502194956.218441-9-sean@poorly.run
-Link to v4: https://patchwork.freedesktop.org/patch/msgid/20190508160920.144739-8-sean@poorly.run
-
-Cc: Zain Wang <wzz@rock-chips.com>
-Cc: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190611160844.257498-8-sean@poorly.run
+Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Tested-by: Shirish S <shirish.s@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c  | 7 +++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 3 ++-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 3666c308c34a6..53676b5fec684 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1036,16 +1036,17 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- 	if (ret)
- 		return ret;
- 
-+	/* Check whether panel supports fast training */
-+	ret = analogix_dp_fast_link_train_detection(dp);
-+	if (ret)
-+		dp->psr_enable = false;
-+
- 	if (dp->psr_enable) {
- 		ret = analogix_dp_enable_sink_psr(dp);
- 		if (ret)
- 			return ret;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
+index e476092188392..bf0c61baa05c7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
+@@ -137,14 +137,14 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
+ 	mode_cmd->pitches[0] = amdgpu_align_pitch(adev, mode_cmd->width, cpp,
+ 						  fb_tiled);
+ 	domain = amdgpu_display_supported_domains(adev);
+-
+ 	height = ALIGN(mode_cmd->height, 8);
+ 	size = mode_cmd->pitches[0] * height;
+ 	aligned_size = ALIGN(size, PAGE_SIZE);
+ 	ret = amdgpu_gem_object_create(adev, aligned_size, 0, domain,
+ 				       AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED |
+-				       AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS |
+-				       AMDGPU_GEM_CREATE_VRAM_CLEARED,
++				       AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS     |
++				       AMDGPU_GEM_CREATE_VRAM_CLEARED 	     |
++				       AMDGPU_GEM_CREATE_CPU_GTT_USWC,
+ 				       ttm_bo_type_kernel, NULL, &gobj);
+ 	if (ret) {
+ 		pr_err("failed to allocate framebuffer (%d)\n", aligned_size);
+@@ -166,7 +166,6 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
+ 			dev_err(adev->dev, "FB failed to set tiling flags\n");
  	}
  
--	/* Check whether panel supports fast training */
--	ret =  analogix_dp_fast_link_train_detection(dp);
--	if (ret)
--		dp->psr_enable = false;
+-
+ 	ret = amdgpu_bo_pin(abo, domain);
+ 	if (ret) {
+ 		amdgpu_bo_unreserve(abo);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index d4fcf54754646..6fc77ac814d8e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -746,7 +746,8 @@ int amdgpu_mode_dumb_create(struct drm_file *file_priv,
+ 	struct amdgpu_device *adev = dev->dev_private;
+ 	struct drm_gem_object *gobj;
+ 	uint32_t handle;
+-	u64 flags = AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED;
++	u64 flags = AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED |
++		    AMDGPU_GEM_CREATE_CPU_GTT_USWC;
+ 	u32 domain;
+ 	int r;
  
- 	return ret;
- }
 -- 
 2.20.1
 
