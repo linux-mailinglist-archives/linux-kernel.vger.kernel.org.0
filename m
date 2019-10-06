@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01CBBCD572
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B5BCD4E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfJFRgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:36:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35134 "EHLO mail.kernel.org"
+        id S1729260AbfJFRag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:30:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730253AbfJFRgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:36:21 -0400
+        id S1727783AbfJFRa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:30:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC0392064A;
-        Sun,  6 Oct 2019 17:36:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD1832133F;
+        Sun,  6 Oct 2019 17:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383381;
-        bh=vNJVuAcZSGd4JfMJeT1HcCWqm+jXlfUf9xrhXZuLZQE=;
+        s=default; t=1570383027;
+        bh=SZIa8j9CJhCBRyj+SHTyx1EHRbuknY5E3dcb6CrkBkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aJrwfydg2FKRy2Du4/460ZborG+lODzGxQKSfAqJZD+qai+f+dxwlVofXd+Hiz3I7
-         TwZDXev9IpgvD/kfxqdN+fFyfvEmuUDqWJTl5vHXFle8MPmfwRJuBwBUrUzhxqL6JC
-         mmE2QbL6eHEsT0LcfTiK4uKhRAsO1P2GAneSZLFk=
+        b=WZE2Y1avhzMjDcdd74ZDkxcPz7TznF1uPzYE170RpDsJOHbJFwXbb/xFLX18Zz0KB
+         22rs1RJpbUM3ODsF5Kzpupm7sOBKRlrMV5mpHcYaSlLwjNAhgcdYk7C4jvdiWZWJkf
+         btedxBVuxC1RknBzDl0MEtFSCGhNJnv5u1kfeLls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Biwen Li <biwen.li@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 081/137] clk: imx: clk-pll14xx: unbypass PLL by default
+Subject: [PATCH 4.19 059/106] rtc: pcf85363/pcf85263: fix regmap error in set_time
 Date:   Sun,  6 Oct 2019 19:21:05 +0200
-Message-Id: <20191006171215.641511098@linuxfoundation.org>
+Message-Id: <20191006171149.162400490@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+From: Biwen Li <biwen.li@nxp.com>
 
-[ Upstream commit a9aa8306074d9519dd6e5fdf07240b01bac72e04 ]
+[ Upstream commit 7ef66122bdb3b839e9f51b76d7e600b6e21ef648 ]
 
-When registering the PLL, unbypass the PLL.
-The PLL has two bypass control bit, BYPASS and EXT_BYPASS.
-we will expose EXT_BYPASS to clk driver for mux usage, and keep
-BYPASS inside pll14xx usage. The PLL has a restriction that
-when M/P change, need to RESET/BYPASS pll to avoid glitch, so
-we could not expose BYPASS.
+Issue:
+    - # hwclock -w
+      hwclock: RTC_SET_TIME: Invalid argument
 
-To make it easy for clk driver usage, unbypass PLL which does
-not hurt current function.
+Why:
+    - Relative commit: 8b9f9d4dc511 ("regmap: verify if register is
+      writeable before writing operations"), this patch
+      will always check for unwritable registers, it will compare reg
+      with max_register in regmap_writeable.
 
-Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Link: https://lkml.kernel.org/r/1568043491-20680-3-git-send-email-peng.fan@nxp.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+    - The pcf85363/pcf85263 has the capability of address wrapping
+      which means if you access an address outside the allowed range
+      (0x00-0x2f) hardware actually wraps the access to a lower address.
+      The rtc-pcf85363 driver will use this feature to configure the time
+      and execute 2 actions in the same i2c write operation (stopping the
+      clock and configure the time). However the driver has also
+      configured the `regmap maxregister` protection mechanism that will
+      block accessing addresses outside valid range (0x00-0x2f).
+
+How:
+    - Split of writing regs to two parts, first part writes control
+      registers about stop_enable and resets, second part writes
+      RTC time and date registers.
+
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+Link: https://lore.kernel.org/r/20190829021418.4607-1-biwen.li@nxp.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-pll14xx.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/rtc/rtc-pcf85363.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 656f48b002dd3..7a815ec76aa5c 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -368,6 +368,7 @@ struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
- 	struct clk_pll14xx *pll;
- 	struct clk *clk;
- 	struct clk_init_data init;
-+	u32 val;
+diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
+index c04a1edcd5716..c3702684b3426 100644
+--- a/drivers/rtc/rtc-pcf85363.c
++++ b/drivers/rtc/rtc-pcf85363.c
+@@ -169,7 +169,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
  
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
- 	if (!pll)
-@@ -399,6 +400,10 @@ struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
- 	pll->rate_table = pll_clk->rate_table;
- 	pll->rate_count = pll_clk->rate_count;
- 
-+	val = readl_relaxed(pll->base + GNRL_CTL);
-+	val &= ~BYPASS_MASK;
-+	writel_relaxed(val, pll->base + GNRL_CTL);
+ 	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
+-				tmp, sizeof(tmp));
++				tmp, 2);
++	if (ret)
++		return ret;
 +
- 	clk = clk_register(NULL, &pll->hw);
- 	if (IS_ERR(clk)) {
- 		pr_err("%s: failed to register pll %s %lu\n",
++	ret = regmap_bulk_write(pcf85363->regmap, DT_100THS,
++				buf, sizeof(tmp) - 2);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.20.1
 
