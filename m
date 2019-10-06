@@ -2,41 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD12CD426
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:23:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 543AFCD473
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:26:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfJFRXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:23:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47608 "EHLO mail.kernel.org"
+        id S1728180AbfJFR0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:26:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726714AbfJFRXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:23:13 -0400
+        id S1728134AbfJFRZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:25:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D42D2077B;
-        Sun,  6 Oct 2019 17:23:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C662C2077B;
+        Sun,  6 Oct 2019 17:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382592;
-        bh=9SHFMyTZ1b8A1lNB7zidcHr+FW0PPNHHLbMg322wdgI=;
+        s=default; t=1570382754;
+        bh=lyaSHlybl3saQoS0Vm8qn2d3taxZeJAkBJEs05fm3uA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IGb6MiD8MjdvBjAReTTNHr/AN/JLAH9lD4ONuuhYJ/Xe3ziHYNA0wTE47a/idEYgP
-         uaC2bWtMDTtIFRZtVGCT8xZAKV9gLJQbPY9naeCxgMVvD/UgpTFv2seEbnnDf1PN1E
-         hyCkjXQBKTtNtTJSJ7p3/5vrhdx+DdO1IfdFGSec=
+        b=B8bTQ0av72zeb76TVrXycVJyUgr6zBG5nEB2KwIrpIBfofikrQyeAfNLwBcL76y+o
+         aVS+nerg/WZolOSa/Tq2IZjYhc3SLKZUwon6ClDoHfSnCFmtK6ttd59qNoekOjaofD
+         yHzyHUS80AA1wSUA9epiiqj3J1px98X7Tj+5MPCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
+        stable@vger.kernel.org, Jan Palus <jpalus@fastmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 16/47] arm64: fix unreachable code issue with cmpxchg
+Subject: [PATCH 4.14 27/68] scsi: core: Reduce memory required for SCSI logging
 Date:   Sun,  6 Oct 2019 19:21:03 +0200
-Message-Id: <20191006172017.742579866@linuxfoundation.org>
+Message-Id: <20191006171120.748993294@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,67 +49,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 920fdab7b3ce98c14c840261e364f490f3679a62 ]
+[ Upstream commit dccc96abfb21dc19d69e707c38c8ba439bba7160 ]
 
-On arm64 build with clang, sometimes the __cmpxchg_mb is not inlined
-when CONFIG_OPTIMIZE_INLINING is set.
-Clang then fails a compile-time assertion, because it cannot tell at
-compile time what the size of the argument is:
+The data structure used for log messages is so large that it can cause a
+boot failure. Since allocations from that data structure can fail anyway,
+use kmalloc() / kfree() instead of that data structure.
 
-mm/memcontrol.o: In function `__cmpxchg_mb':
-memcontrol.c:(.text+0x1a4c): undefined reference to `__compiletime_assert_175'
-memcontrol.c:(.text+0x1a4c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__compiletime_assert_175'
+See also https://bugzilla.kernel.org/show_bug.cgi?id=204119.
+See also commit ded85c193a39 ("scsi: Implement per-cpu logging buffer") # v4.0.
 
-Mark all of the cmpxchg() style functions as __always_inline to
-ensure that the compiler can see the result.
-
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-Link: https://github.com/ClangBuiltLinux/linux/issues/648
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Tested-by: Andrew Murray <andrew.murray@arm.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will@kernel.org>
+Reported-by: Jan Palus <jpalus@fastmail.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Jan Palus <jpalus@fastmail.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/cmpxchg.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/scsi_logging.c | 48 +++----------------------------------
+ include/scsi/scsi_dbg.h     |  2 --
+ 2 files changed, 3 insertions(+), 47 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
-index 0f2e1ab5e1666..9b2e2e2e728ae 100644
---- a/arch/arm64/include/asm/cmpxchg.h
-+++ b/arch/arm64/include/asm/cmpxchg.h
-@@ -73,7 +73,7 @@ __XCHG_CASE( ,  ,  mb_8, dmb ish, nop,  , a, l, "memory")
- #undef __XCHG_CASE
+diff --git a/drivers/scsi/scsi_logging.c b/drivers/scsi/scsi_logging.c
+index bd70339c1242e..03d9855a6afd7 100644
+--- a/drivers/scsi/scsi_logging.c
++++ b/drivers/scsi/scsi_logging.c
+@@ -16,57 +16,15 @@
+ #include <scsi/scsi_eh.h>
+ #include <scsi/scsi_dbg.h>
  
- #define __XCHG_GEN(sfx)							\
--static inline unsigned long __xchg##sfx(unsigned long x,		\
-+static __always_inline  unsigned long __xchg##sfx(unsigned long x,	\
- 					volatile void *ptr,		\
- 					int size)			\
- {									\
-@@ -115,7 +115,7 @@ __XCHG_GEN(_mb)
- #define xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
+-#define SCSI_LOG_SPOOLSIZE 4096
+-
+-#if (SCSI_LOG_SPOOLSIZE / SCSI_LOG_BUFSIZE) > BITS_PER_LONG
+-#warning SCSI logging bitmask too large
+-#endif
+-
+-struct scsi_log_buf {
+-	char buffer[SCSI_LOG_SPOOLSIZE];
+-	unsigned long map;
+-};
+-
+-static DEFINE_PER_CPU(struct scsi_log_buf, scsi_format_log);
+-
+ static char *scsi_log_reserve_buffer(size_t *len)
+ {
+-	struct scsi_log_buf *buf;
+-	unsigned long map_bits = sizeof(buf->buffer) / SCSI_LOG_BUFSIZE;
+-	unsigned long idx = 0;
+-
+-	preempt_disable();
+-	buf = this_cpu_ptr(&scsi_format_log);
+-	idx = find_first_zero_bit(&buf->map, map_bits);
+-	if (likely(idx < map_bits)) {
+-		while (test_and_set_bit(idx, &buf->map)) {
+-			idx = find_next_zero_bit(&buf->map, map_bits, idx);
+-			if (idx >= map_bits)
+-				break;
+-		}
+-	}
+-	if (WARN_ON(idx >= map_bits)) {
+-		preempt_enable();
+-		return NULL;
+-	}
+-	*len = SCSI_LOG_BUFSIZE;
+-	return buf->buffer + idx * SCSI_LOG_BUFSIZE;
++	*len = 128;
++	return kmalloc(*len, GFP_ATOMIC);
+ }
  
- #define __CMPXCHG_GEN(sfx)						\
--static inline unsigned long __cmpxchg##sfx(volatile void *ptr,		\
-+static __always_inline unsigned long __cmpxchg##sfx(volatile void *ptr,	\
- 					   unsigned long old,		\
- 					   unsigned long new,		\
- 					   int size)			\
-@@ -248,7 +248,7 @@ __CMPWAIT_CASE( ,  , 8);
- #undef __CMPWAIT_CASE
+ static void scsi_log_release_buffer(char *bufptr)
+ {
+-	struct scsi_log_buf *buf;
+-	unsigned long idx;
+-	int ret;
+-
+-	buf = this_cpu_ptr(&scsi_format_log);
+-	if (bufptr >= buf->buffer &&
+-	    bufptr < buf->buffer + SCSI_LOG_SPOOLSIZE) {
+-		idx = (bufptr - buf->buffer) / SCSI_LOG_BUFSIZE;
+-		ret = test_and_clear_bit(idx, &buf->map);
+-		WARN_ON(!ret);
+-	}
+-	preempt_enable();
++	kfree(bufptr);
+ }
  
- #define __CMPWAIT_GEN(sfx)						\
--static inline void __cmpwait##sfx(volatile void *ptr,			\
-+static __always_inline void __cmpwait##sfx(volatile void *ptr,		\
- 				  unsigned long val,			\
- 				  int size)				\
- {									\
+ static inline const char *scmd_name(const struct scsi_cmnd *scmd)
+diff --git a/include/scsi/scsi_dbg.h b/include/scsi/scsi_dbg.h
+index 04e0679767f63..2b5dfae782722 100644
+--- a/include/scsi/scsi_dbg.h
++++ b/include/scsi/scsi_dbg.h
+@@ -6,8 +6,6 @@ struct scsi_cmnd;
+ struct scsi_device;
+ struct scsi_sense_hdr;
+ 
+-#define SCSI_LOG_BUFSIZE 128
+-
+ extern void scsi_print_command(struct scsi_cmnd *);
+ extern size_t __scsi_format_command(char *, size_t,
+ 				   const unsigned char *, size_t);
 -- 
 2.20.1
 
