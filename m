@@ -2,69 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD664CCE6A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 06:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F09BCCEAA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 07:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbfJFEps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 00:45:48 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3249 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725958AbfJFEps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 00:45:48 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 21C9011A9C1C129B634B;
-        Sun,  6 Oct 2019 12:45:45 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Sun, 6 Oct 2019
- 12:45:35 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <Julia.Lawall@lip6.fr>, <Gilles.Muller@lip6.fr>,
-        <nicolas.palix@imag.fr>, <michal.lkml@markovi.net>,
-        <maennich@google.com>, <yuehaibing@huawei.com>, <jeyu@kernel.org>,
-        <gregkh@linuxfoundation.org>, <yamada.masahiro@socionext.com>,
-        <Markus.Elfring@web.de>
-CC:     <cocci@systeme.lip6.fr>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] scripts: add_namespace: Fix coccicheck failed
-Date:   Sun, 6 Oct 2019 12:44:56 +0800
-Message-ID: <20191006044456.57608-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
-References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
+        id S1726097AbfJFFBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 01:01:44 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37978 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfJFFBn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 01:01:43 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 3so9251398wmi.3
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 22:01:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tTvAuzGrj/MaPLYLsAwRasMomLPOQMmMC24Exul2pJo=;
+        b=GuL7aQSDIQWPIdAcQ9Nt/0D4W+tz6PgwMt55Bhf1YJo6ds/MBb/JvrI3avuLcMq+Os
+         Mzx7Ced4FgCUuIRkGwSz8AdrSrS0fn+BAuytVpeujtg3fgw/V/KhYQNzdkAlXsFBBjHT
+         kU+AsWK78V4XQ+hM5yhfsenI1W51D1hWTyOGhjeIkERaz0MYANAiQYXTe98NfR1ncDId
+         roIE0kyOcOJn0uoAvq+fBq4HIH1Z802qxRBuuiKKUAgPYlqZBDZcvw2FZeuJ05m6kskL
+         GeT06yX8zVZfEghgVSULaDGgwNSNFImn1VKljDsTlRScSHQ+iEITXnV7FnjIm3OfPkqu
+         OnTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tTvAuzGrj/MaPLYLsAwRasMomLPOQMmMC24Exul2pJo=;
+        b=I68eLzTAlcHAtM7xnLF1fCe8GaqH7ktLP259/IPcz26NKgdTQHDyDWeog+F+0IPcz9
+         Alz59YQozuWkXTEgyw84mnOyy7GEwA4FWi7rV8//bPrcwxq5AQTiw6Mf3eqrro581bhx
+         tMUW3xtPB5TX6kAO2BzdIjD1DkCtx57ZIN0h8ysTEVgpXbEgMmHCHUT8AbfFwWqJd7OE
+         nGxr/Hma/ZB6LvOSnrtw+RujSOARoINWcfeQ84HdH+MajSg5yABiPfnAvwJn4KamMob1
+         /lu+sNvGnrSp4M9AtlttPvmzpOhCgolk7UGv4o+7ILZ7F0GNPREaXrLgpOlZKhWCLiej
+         nglw==
+X-Gm-Message-State: APjAAAWhkIGQxJjDenlxEnVsr+VJGN8yQdKPW840C3LkK+NeHurDHb+D
+        dcGbAAHDXMgvdSa67Nv7vU8=
+X-Google-Smtp-Source: APXvYqxp25S/Q6VgwuI0Y8RtglJDYEwB/uyXL3HZuMWNDz2aalxr3wtvUdlrm/wHN06+uREqzjhV1g==
+X-Received: by 2002:a1c:968b:: with SMTP id y133mr15582411wmd.56.1570338099787;
+        Sat, 05 Oct 2019 22:01:39 -0700 (PDT)
+Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id r27sm32339652wrc.55.2019.10.05.22.01.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Oct 2019 22:01:39 -0700 (PDT)
+Date:   Sat, 5 Oct 2019 22:01:37 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: test_user_copy: style cleanup
+Message-ID: <20191006050137.GA1789703@archlinux-threadripper>
+References: <20191005233028.18566-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191005233028.18566-1-cyphar@cyphar.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now all scripts in scripts/coccinelle to be automatically called
-by coccicheck. However new adding add_namespace.cocci does not
-support report mode, which make coccicheck failed.
-This add "virtual report" to  make the coccicheck go ahead smoothly.
+On Sun, Oct 06, 2019 at 10:30:28AM +1100, Aleksa Sarai wrote:
+> While writing the tests for copy_struct_from_user(), I used a construct
+> that Linus doesn't appear to be too fond of:
+> 
+> On 2019-10-04, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > Hmm. That code is ugly, both before and after the fix.
+> >
+> > This just doesn't make sense for so many reasons:
+> >
+> >         if ((ret |= test(umem_src == NULL, "kmalloc failed")))
+> >
+> > where the insanity comes from
+> >
+> >  - why "|=" when you know that "ret" was zero before (and it had to
+> >    be, for the test to make sense)
+> >
+> >  - why do this as a single line anyway?
+> >
+> >  - don't do the stupid "double parenthesis" to hide a warning. Make it
+> >    use an actual comparison if you add a layer of parentheses.
+> 
+> So instead, use a bog-standard check that isn't nearly as ugly.
+> 
+> Fixes: 341115822f88 ("usercopy: Add parentheses around assignment in test_copy_struct_from_user")
+> Fixes: f5a1a536fa14 ("lib: introduce copy_struct_from_user() helper")
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 
-Fixes: eb8305aecb95 ("scripts: Coccinelle script for namespace dependencies.")
-Acked-by: Julia Lawall <julia.lawall@lip6.fr>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- scripts/coccinelle/misc/add_namespace.cocci | 2 ++
- 1 file changed, 2 insertions(+)
+I assume the comment diff is a line length/alignment thing? The commit
+message does not mention it.
 
-diff --git a/scripts/coccinelle/misc/add_namespace.cocci b/scripts/coccinelle/misc/add_namespace.cocci
-index c832bb6445a8..99e93a6c2e24 100644
---- a/scripts/coccinelle/misc/add_namespace.cocci
-+++ b/scripts/coccinelle/misc/add_namespace.cocci
-@@ -6,6 +6,8 @@
- /// add a missing namespace tag to a module source file.
- ///
- 
-+virtual report
-+
- @has_ns_import@
- declarer name MODULE_IMPORT_NS;
- identifier virtual.ns;
--- 
-2.20.1
+Regardless, thank you for providing the fix that I should have.
 
-
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
