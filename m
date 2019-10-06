@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17A6ACD50A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CEFCCD566
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbfJFRbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58040 "EHLO mail.kernel.org"
+        id S1730207AbfJFRfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:35:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729467AbfJFRbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:46 -0400
+        id S1727716AbfJFRfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:35:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 295F82087E;
-        Sun,  6 Oct 2019 17:31:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34C3820700;
+        Sun,  6 Oct 2019 17:35:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383105;
-        bh=z73psTK34fbmksqrLT4/YfS8TjnQVVU5eQzrEgt7u9Y=;
+        s=default; t=1570383343;
+        bh=yA0ixIBS3z8e761p4m39tkzRdNSu+e5GDsFxVfi1h/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dxxx0C1WFJD3p18l0UdZCbGGaCe21mG9rOXYkeqXTVwRcjMyA5TPRNWUwIog8/92z
-         FrTs+rOidl/erwTizjKQCsmG0IUb9PQUCG3/d9KItHezGuxt1KnnQEe39UOJUgfa+c
-         WEx1vk39smXX3MPcXY8ffiynejIyOvYHZPjtAf4g=
+        b=jAqB+JTSMO/VI2M3mKPBDqTRsABc4HjLBiJZVQdqeiUJa9BSE2j/XRni9UvMN8QQq
+         SKlwS/WukEHG0oOKZXcR9VCQ3lRWxOOWCEInD/BZSLL2qg/Y76qZkach73D3nMiwc9
+         vl2OUlF/sSV8MA54hAF3vPziE0rTeST+6L0burvQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Palus <jpalus@fastmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Ming Lei <ming.lei@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Charlene Liu <charlene.liu@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 045/106] scsi: core: Reduce memory required for SCSI logging
-Date:   Sun,  6 Oct 2019 19:20:51 +0200
-Message-Id: <20191006171143.338610512@linuxfoundation.org>
+Subject: [PATCH 5.2 068/137] drm/amd/display: support spdif
+Date:   Sun,  6 Oct 2019 19:20:52 +0200
+Message-Id: <20191006171214.871993976@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,109 +46,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Charlene Liu <charlene.liu@amd.com>
 
-[ Upstream commit dccc96abfb21dc19d69e707c38c8ba439bba7160 ]
+[ Upstream commit b5a41620bb88efb9fb31a4fa5e652e3d5bead7d4 ]
 
-The data structure used for log messages is so large that it can cause a
-boot failure. Since allocations from that data structure can fail anyway,
-use kmalloc() / kfree() instead of that data structure.
+[Description]
+port spdif fix to staging:
+ spdif hardwired to afmt inst 1.
+ spdif func pointer
+ spdif resource allocation (reserve last audio endpoint for spdif only)
 
-See also https://bugzilla.kernel.org/show_bug.cgi?id=204119.
-See also commit ded85c193a39 ("scsi: Implement per-cpu logging buffer") # v4.0.
-
-Reported-by: Jan Palus <jpalus@fastmail.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Jan Palus <jpalus@fastmail.com>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Charlene Liu <charlene.liu@amd.com>
+Reviewed-by: Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/scsi_logging.c | 48 +++----------------------------------
- include/scsi/scsi_dbg.h     |  2 --
- 2 files changed, 3 insertions(+), 47 deletions(-)
+ .../gpu/drm/amd/display/dc/core/dc_resource.c   | 17 ++++++++---------
+ drivers/gpu/drm/amd/display/dc/dce/dce_audio.c  |  4 ++--
+ 2 files changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/scsi/scsi_logging.c b/drivers/scsi/scsi_logging.c
-index bd70339c1242e..03d9855a6afd7 100644
---- a/drivers/scsi/scsi_logging.c
-+++ b/drivers/scsi/scsi_logging.c
-@@ -16,57 +16,15 @@
- #include <scsi/scsi_eh.h>
- #include <scsi/scsi_dbg.h>
- 
--#define SCSI_LOG_SPOOLSIZE 4096
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+index b459ce056b609..c404b5e930f04 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+@@ -261,12 +261,10 @@ bool resource_construct(
+ 				DC_ERR("DC: failed to create audio!\n");
+ 				return false;
+ 			}
 -
--#if (SCSI_LOG_SPOOLSIZE / SCSI_LOG_BUFSIZE) > BITS_PER_LONG
--#warning SCSI logging bitmask too large
--#endif
+ 			if (!aud->funcs->endpoint_valid(aud)) {
+ 				aud->funcs->destroy(&aud);
+ 				break;
+ 			}
 -
--struct scsi_log_buf {
--	char buffer[SCSI_LOG_SPOOLSIZE];
--	unsigned long map;
--};
--
--static DEFINE_PER_CPU(struct scsi_log_buf, scsi_format_log);
--
- static char *scsi_log_reserve_buffer(size_t *len)
+ 			pool->audios[i] = aud;
+ 			pool->audio_count++;
+ 		}
+@@ -1692,24 +1690,25 @@ static struct audio *find_first_free_audio(
+ 		const struct resource_pool *pool,
+ 		enum engine_id id)
  {
--	struct scsi_log_buf *buf;
--	unsigned long map_bits = sizeof(buf->buffer) / SCSI_LOG_BUFSIZE;
--	unsigned long idx = 0;
+-	int i;
+-	for (i = 0; i < pool->audio_count; i++) {
++	int i, available_audio_count;
++
++	available_audio_count = pool->audio_count;
++
++	for (i = 0; i < available_audio_count; i++) {
+ 		if ((res_ctx->is_audio_acquired[i] == false) && (res_ctx->is_stream_enc_acquired[i] == true)) {
+ 			/*we have enough audio endpoint, find the matching inst*/
+ 			if (id != i)
+ 				continue;
 -
--	preempt_disable();
--	buf = this_cpu_ptr(&scsi_format_log);
--	idx = find_first_zero_bit(&buf->map, map_bits);
--	if (likely(idx < map_bits)) {
--		while (test_and_set_bit(idx, &buf->map)) {
--			idx = find_next_zero_bit(&buf->map, map_bits, idx);
--			if (idx >= map_bits)
--				break;
--		}
--	}
--	if (WARN_ON(idx >= map_bits)) {
--		preempt_enable();
--		return NULL;
--	}
--	*len = SCSI_LOG_BUFSIZE;
--	return buf->buffer + idx * SCSI_LOG_BUFSIZE;
-+	*len = 128;
-+	return kmalloc(*len, GFP_ATOMIC);
+ 			return pool->audios[i];
+ 		}
+ 	}
+ 
+-    /* use engine id to find free audio */
+-	if ((id < pool->audio_count) && (res_ctx->is_audio_acquired[id] == false)) {
++	/* use engine id to find free audio */
++	if ((id < available_audio_count) && (res_ctx->is_audio_acquired[id] == false)) {
+ 		return pool->audios[id];
+ 	}
+-
+ 	/*not found the matching one, first come first serve*/
+-	for (i = 0; i < pool->audio_count; i++) {
++	for (i = 0; i < available_audio_count; i++) {
+ 		if (res_ctx->is_audio_acquired[i] == false) {
+ 			return pool->audios[i];
+ 		}
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c b/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
+index 7f6d724686f1a..abb559ce64085 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
+@@ -611,6 +611,8 @@ void dce_aud_az_configure(
+ 
+ 	AZ_REG_WRITE(AZALIA_F0_CODEC_PIN_CONTROL_SINK_INFO1,
+ 		value);
++	DC_LOG_HW_AUDIO("\n\tAUDIO:az_configure: index: %u data, 0x%x, displayName %s: \n",
++		audio->inst, value, audio_info->display_name);
+ 
+ 	/*
+ 	*write the port ID:
+@@ -922,7 +924,6 @@ static const struct audio_funcs funcs = {
+ 	.az_configure = dce_aud_az_configure,
+ 	.destroy = dce_aud_destroy,
+ };
+-
+ void dce_aud_destroy(struct audio **audio)
+ {
+ 	struct dce_audio *aud = DCE_AUD(*audio);
+@@ -953,7 +954,6 @@ struct audio *dce_audio_create(
+ 	audio->regs = reg;
+ 	audio->shifts = shifts;
+ 	audio->masks = masks;
+-
+ 	return &audio->base;
  }
  
- static void scsi_log_release_buffer(char *bufptr)
- {
--	struct scsi_log_buf *buf;
--	unsigned long idx;
--	int ret;
--
--	buf = this_cpu_ptr(&scsi_format_log);
--	if (bufptr >= buf->buffer &&
--	    bufptr < buf->buffer + SCSI_LOG_SPOOLSIZE) {
--		idx = (bufptr - buf->buffer) / SCSI_LOG_BUFSIZE;
--		ret = test_and_clear_bit(idx, &buf->map);
--		WARN_ON(!ret);
--	}
--	preempt_enable();
-+	kfree(bufptr);
- }
- 
- static inline const char *scmd_name(const struct scsi_cmnd *scmd)
-diff --git a/include/scsi/scsi_dbg.h b/include/scsi/scsi_dbg.h
-index e03bd9d41fa8f..7b196d2346264 100644
---- a/include/scsi/scsi_dbg.h
-+++ b/include/scsi/scsi_dbg.h
-@@ -6,8 +6,6 @@ struct scsi_cmnd;
- struct scsi_device;
- struct scsi_sense_hdr;
- 
--#define SCSI_LOG_BUFSIZE 128
--
- extern void scsi_print_command(struct scsi_cmnd *);
- extern size_t __scsi_format_command(char *, size_t,
- 				   const unsigned char *, size_t);
 -- 
 2.20.1
 
