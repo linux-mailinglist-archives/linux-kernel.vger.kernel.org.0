@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3A7CD591
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55EDBCD520
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730450AbfJFRhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:37:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36498 "EHLO mail.kernel.org"
+        id S1729642AbfJFRcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:32:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729495AbfJFRha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:37:30 -0400
+        id S1728484AbfJFRcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:32:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 927342080F;
-        Sun,  6 Oct 2019 17:37:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9D6221479;
+        Sun,  6 Oct 2019 17:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383449;
-        bh=hkctlvyNTnBfIMJFghBmAj+o0d3mrZHtRkI+IrQdr+g=;
+        s=default; t=1570383162;
+        bh=AQXNI7teH9zY0Nt9DoZxtSd3C3DNrzzuqdtfyzz2xB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VEDsER8qBA3zKBW0FwJvDPjA7oUXbFJjcm6zfv9cVHhEPiBzsuxWoe0boygbnFWQc
-         V9VnkxKHkI7yxMpPNBNTVKYze9iqcNEW4T2f3CYBRO1dR+CK2eVvuzXFoQtich4N2s
-         5mMCEAHqiBAosPAM/8E0yfV6nIVWHNCH/pEFT9MI=
+        b=IQ1G4bbIy0w9pybsGVjT4oh5YHFH+WbaiLaSnmgWAsfH1OrKgcJFxiS0b+sbthtVX
+         G+QaXDErUhVSyonlEwdvaXP3XdEuL4UshmkqZAfLA6+w7jA/2CrDcp12kTcPY3N1/x
+         3yJjGm5+o93tM6mXCLOUoMTty0SdNiyiVd0x0LOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Wilczynski <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 108/137] PCI: Add pci_info_ratelimited() to ratelimit PCI separately
-Date:   Sun,  6 Oct 2019 19:21:32 +0200
-Message-Id: <20191006171217.986222664@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 087/106] net: Unpublish sk from sk_reuseport_cb before call_rcu
+Date:   Sun,  6 Oct 2019 19:21:33 +0200
+Message-Id: <20191006171159.147815837@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Wilczynski <kw@linux.com>
+From: Martin KaFai Lau <kafai@fb.com>
 
-[ Upstream commit 7f1c62c443a453deb6eb3515e3c05650ffe0dcf0 ]
+[ Upstream commit 8c7138b33e5c690c308b2a7085f6313fdcb3f616 ]
 
-Do not use printk_ratelimit() in drivers/pci/pci.c as it shares the rate
-limiting state with all other callers to the printk_ratelimit().
+The "reuse->sock[]" array is shared by multiple sockets.  The going away
+sk must unpublish itself from "reuse->sock[]" before making call_rcu()
+call.  However, this unpublish-action is currently done after a grace
+period and it may cause use-after-free.
 
-Add pci_info_ratelimited() (similar to pci_notice_ratelimited() added in
-the commit a88a7b3eb076 ("vfio: Use dev_printk() when possible")) and use
-it instead of printk_ratelimit() + pci_info().
+The fix is to move reuseport_detach_sock() to sk_destruct().
+Due to the above reason, any socket with sk_reuseport_cb has
+to go through the rcu grace period before freeing it.
 
-Link: https://lore.kernel.org/r/20190825224616.8021-1-kw@linux.com
-Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+It is a rather old bug (~3 yrs).  The Fixes tag is not necessary
+the right commit but it is the one that introduced the SOCK_RCU_FREE
+logic and this fix is depending on it.
+
+Fixes: a4298e4522d6 ("net: add SOCK_RCU_FREE socket flag")
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
+Signed-off-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/pci.c   | 4 ++--
- include/linux/pci.h | 3 +++
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ net/core/sock.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 088fcdc8d2b4d..f2ab112c0a71f 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -884,8 +884,8 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1563,8 +1563,6 @@ static void __sk_destruct(struct rcu_hea
+ 		sk_filter_uncharge(sk, filter);
+ 		RCU_INIT_POINTER(sk->sk_filter, NULL);
+ 	}
+-	if (rcu_access_pointer(sk->sk_reuseport_cb))
+-		reuseport_detach_sock(sk);
  
- 	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
- 	dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
--	if (dev->current_state != state && printk_ratelimit())
--		pci_info(dev, "Refused to change power state, currently in D%d\n",
-+	if (dev->current_state != state)
-+		pci_info_ratelimited(dev, "Refused to change power state, currently in D%d\n",
- 			 dev->current_state);
+ 	sock_disable_timestamp(sk, SK_FLAGS_TIMESTAMP);
  
- 	/*
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index dd436da7eccc1..9feb59ac85507 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2375,4 +2375,7 @@ void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result err_type);
- #define pci_notice_ratelimited(pdev, fmt, arg...) \
- 	dev_notice_ratelimited(&(pdev)->dev, fmt, ##arg)
+@@ -1587,7 +1585,14 @@ static void __sk_destruct(struct rcu_hea
  
-+#define pci_info_ratelimited(pdev, fmt, arg...) \
-+	dev_info_ratelimited(&(pdev)->dev, fmt, ##arg)
+ void sk_destruct(struct sock *sk)
+ {
+-	if (sock_flag(sk, SOCK_RCU_FREE))
++	bool use_call_rcu = sock_flag(sk, SOCK_RCU_FREE);
 +
- #endif /* LINUX_PCI_H */
--- 
-2.20.1
-
++	if (rcu_access_pointer(sk->sk_reuseport_cb)) {
++		reuseport_detach_sock(sk);
++		use_call_rcu = true;
++	}
++
++	if (use_call_rcu)
+ 		call_rcu(&sk->sk_rcu, __sk_destruct);
+ 	else
+ 		__sk_destruct(&sk->sk_rcu);
 
 
