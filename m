@@ -2,113 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B058CD2F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BC84CD307
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfJFPfE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 6 Oct 2019 11:35:04 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37052 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfJFPfE (ORCPT
+        id S1726684AbfJFPs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 11:48:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53478 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfJFPs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 11:35:04 -0400
-Received: by mail-oi1-f193.google.com with SMTP id i16so9641897oie.4;
-        Sun, 06 Oct 2019 08:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vJ/fN1Td6yKGxz4rSrSmUvRGVTLM8nHHs5htnjPWdus=;
-        b=U8vUSZ8AHnwmo0wbddLUYzZzGp3f1sIWCM591LQM5tvFAY7kfGDCapugDUWJ3xddXb
-         b02itqtrqAf0ddxRE3z9pVlW2zpmvHRTlhOuuKzQG0lKvxwSE/AlVah4HfVX29CAk7+X
-         JvQJ4ukD7mVdrYhkAtQQCHs3c0Nxf5KaNE8fxtJjL9mwK9gGMLduUxcWH1OL0rKV8B6c
-         VMWp4ZtDYU+1rpTSim6ksxlwfbUkHc61X4Uc+d88BNEHoa4Vy7WRtNtvZfa4U+KW3exL
-         ejCXKNqhgIhpVwlvN5HEg1pxwxDJ/zG/iKp9zItmTaxuMtFpspcfkD0gc7KX3vW3w8ID
-         ueQg==
-X-Gm-Message-State: APjAAAUSGr+einD1Pnfkta4OIYD2x9HzKT1C55HeTWlnqS0Ka23LGcVV
-        LRrttxqovGh7o/BTGFJEdsrdKiaJrDctw+yEUXo=
-X-Google-Smtp-Source: APXvYqwYT9OUUNLx0nEf+PiDEhafjGnfYuD/XrtvHL6roRxoSb0ZP2ty4iqUH8Km5t2frUwDctDFJ2muIxViqyBBbWo=
-X-Received: by 2002:aca:4890:: with SMTP id v138mr15295460oia.57.1570376103413;
- Sun, 06 Oct 2019 08:35:03 -0700 (PDT)
+        Sun, 6 Oct 2019 11:48:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QAs/+BWA4bVLGbdXB7THsaqLie2jYrpmwgS6OGWaAB8=; b=QgKASS/rB8/myTZ9eXz+cBebd
+        cqkvzl6OdnV/P9O1NoS3sOo1pYeCV6MvSouWZwKxHKA/EeBWVNrRpucFCZyktDcBk5Ym7UHoNPEfU
+        gwXrOcXCwTHEC+sOcjZrvTAMkTY09QJY84w/3Sb4Zr+RJxaHqBwCPoFOe6pXzTmv272KQDLszxGyf
+        a8ZAAub5E1qUg7ZUkP/3/Lfi1mPs2cbge9NKA8pGAJOES0iPvR2MQnsOzqecrIbnYAm9lwNfRXDEa
+        zSuipiXTieKOY4JWtwMDPzDfdRVHY0uB01ZcC+MuufDxWHx3tV787pXXKhdU2PuGIlNxg7FZdSTb1
+        ddpWa2zGQ==;
+Received: from 089144211233.atnat0020.highway.a1.net ([89.144.211.233] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iH8li-0008Qh-Ie; Sun, 06 Oct 2019 15:48:22 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: lift the xfs writepage code into iomap v6
+Date:   Sun,  6 Oct 2019 17:45:57 +0200
+Message-Id: <20191006154608.24738-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191003140828.14801-1-ville.syrjala@linux.intel.com>
- <2393023.mJgu6cDs6C@kreacher> <20191004123026.GU1208@intel.com>
-In-Reply-To: <20191004123026.GU1208@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 6 Oct 2019 17:34:52 +0200
-Message-ID: <CAJZ5v0hsiyKfVcDFbnJKqDkCKWhbSfNrmm7yVhudONuS0SWALw@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Fix RCU reboot regression on x86 PIC machines
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 2:30 PM Ville Syrjälä
-<ville.syrjala@linux.intel.com> wrote:
->
-> On Thu, Oct 03, 2019 at 05:05:28PM +0200, Rafael J. Wysocki wrote:
-> > On Thursday, October 3, 2019 4:08:28 PM CEST Ville Syrjala wrote:
-> > > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > >
-> > > Since 4.20-rc1 my PIC machines no longer reboot/shutdown.
-> > > I bisected this down to commit 45975c7d21a1 ("rcu: Define RCU-sched
-> > > API in terms of RCU for Tree RCU PREEMPT builds").
-> > >
-> > > I traced the hang into
-> > > -> cpufreq_suspend()
-> > >  -> cpufreq_stop_governor()
-> > >   -> cpufreq_dbs_governor_stop()
-> > >    -> gov_clear_update_util()
-> > >     -> synchronize_sched()
-> > >      -> synchronize_rcu()
-> > >
-> > > Only PREEMPT=y is affected for obvious reasons. The problem
-> > > is limited to PIC machines since they mask off interrupts
-> > > in i8259A_shutdown() (syscore_ops.shutdown() registered
-> > > from device_initcall()).
-> >
-> > Let me treat this as a fresh bug report. :-)
-> >
-> > > I reported this long ago but no better fix has surfaced,
-> >
-> > So I don't recall seeing the original report or if I did, I had not understood
-> > the problem then.
-> >
-> > > hence sending out my initial workaround which I've been
-> > > carrying around ever since. I just move cpufreq_core_init()
-> > > to late_initcall() so the syscore_ops get registered in the
-> > > oppsite order and thus the .shutdown() hooks get executed
-> > > in the opposite order as well. Not 100% convinced this is
-> > > safe (especially moving the cpufreq_global_kobject creation
-> > > to late_initcall()) but I've not had any problems with it
-> > > at least.
-> >
-> > The problem is a bug in cpufreq that shouldn't point its syscore shutdown
-> > callback pointer to cpufreq_suspend(), because the syscore stage is generally
-> > too lat to call that function and I'm not sure why this has not been causing
-> > any other issues to trigger (or maybe it did, but they were not reported).
-> >
-> > Does the patch below work for you?
->
-> It does. Thanks.
->
-> Feel free to slap on
-> Tested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
->
-> if you want to go with that.
+Hi all,
 
-I will, thank you!
+this series cleans up the xfs writepage code and then lifts it to
+fs/iomap.c so that it could be use by other file system.  I've been
+wanting to this for a while so that I could eventually convert gfs2
+over to it, but I never got to it.  Now Damien has a new zonefs
+file system for semi-raw access to zoned block devices that would
+like to use the iomap code instead of reinventing it, so I finally
+had to do the work.
+
+Changes since v5:
+ - move the tracing code to fs/iomap/trace.[ch]
+ - fix a bisection issue with the tracing code
+ - add an assert that xfs_end_io now only gets "complicated" completions
+ - better document the iomap_writeback_ops methods in iomap.h
+
+Changes since v4:
+ - rebased on top 5.4-rc1
+ - drop the addition of list_pop / list_pop_entry
+ - re-split a few patches to better fit Darricks scheme of keeping the
+   iomap additions separate from the XFS switchover
+
+Changes since v3:
+ - re-split the pages to add new code to iomap and then switch xfs to
+   it later (Darrick)
+
+Changes since v2:
+ - rebased to v5.3-rc1
+ - folded in a few changes from the gfs2 enablement series
+
+Changes since v1:
+ - rebased to the latest xfs for-next tree
+ - keep the preallocated transactions for size updates
+ - rename list_pop to list_pop_entry and related cleanups
+ - better document the nofs context handling
+ - document that the iomap tracepoints are not a stable API
