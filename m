@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD512CD4F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FA96CD5B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfJFRbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57052 "EHLO mail.kernel.org"
+        id S1730668AbfJFRip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:38:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729333AbfJFRbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:00 -0400
+        id S1730655AbfJFRim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:38:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 283A52080F;
-        Sun,  6 Oct 2019 17:30:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0F53214D9;
+        Sun,  6 Oct 2019 17:38:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383059;
-        bh=d5x6H7X8RM/sSGV+fpNeGD/8PnIzqMfJl2docqT8a5o=;
+        s=default; t=1570383521;
+        bh=47e/QRH3Lx+tLsLUboT3gBgack0Ca/VqP2tRR39YmZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=07G0A0PfQ+o+2jE8AT11dzYsNR6EMf/WcffFkfFfvIpF5duO2pRSXTn2vjIRg9OOo
-         WaM4g89itjkanJCl9RazgPlitWS2fX6Ky4Rv79TwEnPtQxsXkP9dAkXGfTPIeArgbl
-         +h4EB36JvTrp2e2MIL8bIhpG1YzMboHWR5XzhcJg=
+        b=z5WGwtLuIGiG72btRD/637SMdpcsqw68MNMtlW5DOK6tY3kRiFrnzJA1Y4tG3p1Wr
+         UCXee62XGSJ+rItaMztiLeUf+rqpHqddKbFp+iVvj71CUrX59J+pOiEHdy2owjkhot
+         kOGhZcUb1AzPugqIFDYvGWt2x6+ryjf/bwf7pXTA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-mips@vger.kernel.org, clang-built-linux@googlegroups.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/106] crypto: hisilicon - Fix double free in sec_free_hw_sgl()
+Subject: [PATCH 5.2 092/137] MIPS: tlbex: Explicitly cast _PAGE_NO_EXEC to a boolean
 Date:   Sun,  6 Oct 2019 19:21:16 +0200
-Message-Id: <20191006171152.609263690@linuxfoundation.org>
+Message-Id: <20191006171216.522212342@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +49,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 24fbf7bad888767bed952f540ac963bc57e47e15 ]
+[ Upstream commit c59ae0a1055127dd3828a88e111a0db59b254104 ]
 
-There are two problems in sec_free_hw_sgl():
+clang warns:
 
-First, when sgl_current->next is valid, @hw_sgl will be freed in the
-first loop, but it free again after the loop.
+arch/mips/mm/tlbex.c:634:19: error: use of logical '&&' with constant
+operand [-Werror,-Wconstant-logical-operand]
+        if (cpu_has_rixi && _PAGE_NO_EXEC) {
+                         ^  ~~~~~~~~~~~~~
+arch/mips/mm/tlbex.c:634:19: note: use '&' for a bitwise operation
+        if (cpu_has_rixi && _PAGE_NO_EXEC) {
+                         ^~
+                         &
+arch/mips/mm/tlbex.c:634:19: note: remove constant to silence this
+warning
+        if (cpu_has_rixi && _PAGE_NO_EXEC) {
+                        ~^~~~~~~~~~~~~~~~
+1 error generated.
 
-Second, sgl_current and sgl_current->next_sgl is not match when
-dma_pool_free() is invoked, the third parameter should be the dma
-address of sgl_current, but sgl_current->next_sgl is the dma address
-of next chain, so use sgl_current->next_sgl is wrong.
+Explicitly cast this value to a boolean so that clang understands we
+intend for this to be a non-zero value.
 
-Fix this by deleting the last dma_pool_free() in sec_free_hw_sgl(),
-modifying the condition for while loop, and matching the address for
-dma_pool_free().
-
-Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 00bf1c691d08 ("MIPS: tlbex: Avoid placing software PTE bits in Entry* PFN fields")
+Link: https://github.com/ClangBuiltLinux/linux/issues/609
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: clang-built-linux@googlegroups.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/hisilicon/sec/sec_algs.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/mips/mm/tlbex.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
-index cdc4f9a171d98..db2983c51f1e6 100644
---- a/drivers/crypto/hisilicon/sec/sec_algs.c
-+++ b/drivers/crypto/hisilicon/sec/sec_algs.c
-@@ -215,17 +215,18 @@ static void sec_free_hw_sgl(struct sec_hw_sgl *hw_sgl,
- 			    dma_addr_t psec_sgl, struct sec_dev_info *info)
- {
- 	struct sec_hw_sgl *sgl_current, *sgl_next;
-+	dma_addr_t sgl_next_dma;
- 
--	if (!hw_sgl)
--		return;
- 	sgl_current = hw_sgl;
--	while (sgl_current->next) {
-+	while (sgl_current) {
- 		sgl_next = sgl_current->next;
--		dma_pool_free(info->hw_sgl_pool, sgl_current,
--			      sgl_current->next_sgl);
-+		sgl_next_dma = sgl_current->next_sgl;
-+
-+		dma_pool_free(info->hw_sgl_pool, sgl_current, psec_sgl);
-+
- 		sgl_current = sgl_next;
-+		psec_sgl = sgl_next_dma;
+diff --git a/arch/mips/mm/tlbex.c b/arch/mips/mm/tlbex.c
+index 144ceb0fba88f..bece1264d1c5a 100644
+--- a/arch/mips/mm/tlbex.c
++++ b/arch/mips/mm/tlbex.c
+@@ -631,7 +631,7 @@ static __maybe_unused void build_convert_pte_to_entrylo(u32 **p,
+ 		return;
  	}
--	dma_pool_free(info->hw_sgl_pool, hw_sgl, psec_sgl);
- }
  
- static int sec_alg_skcipher_setkey(struct crypto_skcipher *tfm,
+-	if (cpu_has_rixi && _PAGE_NO_EXEC) {
++	if (cpu_has_rixi && !!_PAGE_NO_EXEC) {
+ 		if (fill_includes_sw_bits) {
+ 			UASM_i_ROTR(p, reg, reg, ilog2(_PAGE_GLOBAL));
+ 		} else {
 -- 
 2.20.1
 
