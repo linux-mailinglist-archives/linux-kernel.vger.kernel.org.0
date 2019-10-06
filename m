@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5302CD525
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57FDACD58B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfJFRc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59518 "EHLO mail.kernel.org"
+        id S1730430AbfJFRhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:37:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729677AbfJFRc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:32:56 -0400
+        id S1729505AbfJFRhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:37:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80FE92087E;
-        Sun,  6 Oct 2019 17:32:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEB022080F;
+        Sun,  6 Oct 2019 17:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383176;
-        bh=pUQzzgviHZAl9J4RPTZPd1/kHJ8JsYvcDV5EOmgKvJM=;
+        s=default; t=1570383438;
+        bh=Wm5o5GS0w1SM6itP8Ry0jGS2hvCfJY2Z44Hswv46aDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JMCK4o6kVrxEVt4u2OG6/9ZrRRbV2Iuu2l4xJY2ANvlE8uQ7CS4AA4rdhl/+5wYlW
-         x2WUhCMcB0Plg0gAcRND0Jrrmvk3naBblWmRBTduZi6HSiRCd3biLBU1Z4ar59zhcU
-         VnhQpb6wUxNQsx6biEwLu4RILzYY3l23D+Pgoe6k=
+        b=AalMWeFTcYe5hP1yJrdYxGgDiqnWGfwoIYyCAsgNYt6bjNGKJTgeJf39ebxYc/sZv
+         szWRYo49/tEHpri5SOUOeYuGnQ9fLwb0gJOOyoQaPgSa5Swk9fEvcg24BNBX9T7zNw
+         8Kpm96qDcsQr3G5ws7lR6jHtLnfhBJHjkEHevnZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 082/106] hso: fix NULL-deref on tty open
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 104/137] ARM: 8875/1: Kconfig: default to AEABI w/ Clang
 Date:   Sun,  6 Oct 2019 19:21:28 +0200
-Message-Id: <20191006171157.664209125@linuxfoundation.org>
+Message-Id: <20191006171217.601678408@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-[ Upstream commit 8353da9fa69722b54cba82b2ec740afd3d438748 ]
+[ Upstream commit a05b9608456e0d4464c6f7ca8572324ace57a3f4 ]
 
-Fix NULL-pointer dereference on tty open due to a failure to handle a
-missing interrupt-in endpoint when probing modem ports:
+Clang produces references to __aeabi_uidivmod and __aeabi_idivmod for
+arm-linux-gnueabi and arm-linux-gnueabihf targets incorrectly when AEABI
+is not selected (such as when OABI_COMPAT is selected).
 
-	BUG: kernel NULL pointer dereference, address: 0000000000000006
-	...
-	RIP: 0010:tiocmget_submit_urb+0x1c/0xe0 [hso]
-	...
-	Call Trace:
-	hso_start_serial_device+0xdc/0x140 [hso]
-	hso_serial_open+0x118/0x1b0 [hso]
-	tty_open+0xf1/0x490
+While this means that OABI userspaces wont be able to upgraded to
+kernels built with Clang, it means that boards that don't enable AEABI
+like s3c2410_defconfig will stop failing to link in KernelCI when built
+with Clang.
 
-Fixes: 542f54823614 ("tty: Modem functions for the HSO driver")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/482
+Link: https://groups.google.com/forum/#!msg/clang-built-linux/yydsAAux5hk/GxjqJSW-AQAJ
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/hso.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/arm/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2634,14 +2634,18 @@ static struct hso_device *hso_create_bul
- 		 */
- 		if (serial->tiocmget) {
- 			tiocmget = serial->tiocmget;
-+			tiocmget->endp = hso_get_ep(interface,
-+						    USB_ENDPOINT_XFER_INT,
-+						    USB_DIR_IN);
-+			if (!tiocmget->endp) {
-+				dev_err(&interface->dev, "Failed to find INT IN ep\n");
-+				goto exit;
-+			}
-+
- 			tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
- 			if (tiocmget->urb) {
- 				mutex_init(&tiocmget->mutex);
- 				init_waitqueue_head(&tiocmget->waitq);
--				tiocmget->endp = hso_get_ep(
--					interface,
--					USB_ENDPOINT_XFER_INT,
--					USB_DIR_IN);
- 			} else
- 				hso_free_tiomget(serial);
- 		}
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 8869742a85df1..3539be8700558 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1545,8 +1545,9 @@ config ARM_PATCH_IDIV
+ 	  code to do integer division.
+ 
+ config AEABI
+-	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && !CPU_V7M && !CPU_V6 && !CPU_V6K
+-	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K
++	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && \
++		!CPU_V7M && !CPU_V6 && !CPU_V6K && !CC_IS_CLANG
++	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K || CC_IS_CLANG
+ 	help
+ 	  This option allows for the kernel to be compiled using the latest
+ 	  ARM ABI (aka EABI).  This is only useful if you are using a user
+-- 
+2.20.1
+
 
 
