@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ABBFCCF2D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 09:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 410BACCF31
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 09:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfJFHnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 03:43:50 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52432 "EHLO huawei.com"
+        id S1726329AbfJFHo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 03:44:29 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3250 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726227AbfJFHnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 03:43:49 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CC4B08C2D312005FC304;
-        Sun,  6 Oct 2019 15:43:44 +0800 (CST)
+        id S1726216AbfJFHo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 03:44:28 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C1C11CD79D031C936330;
+        Sun,  6 Oct 2019 15:44:22 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Sun, 6 Oct 2019 15:43:35 +0800
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Sun, 6 Oct 2019 15:44:14 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Wenwen Wang <wenwen@cs.uga.edu>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-media@vger.kernel.org>,
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>, <le.ma@amd.com>,
+        <Yong.Zhao@amd.com>, <Trigger.Huang@amd.com>, <tao.zhou1@amd.com>,
+        <Hawking.Zhang@amd.com>, <Felix.Kuehling@amd.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
         <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] media: cx231xx: remove duplicated include from cx231xx-417.c
-Date:   Sun, 6 Oct 2019 07:43:24 +0000
-Message-ID: <20191006074324.48283-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] drm/amdgpu: remove duplicated include from mmhub_v1_0.c
+Date:   Sun, 6 Oct 2019 07:44:04 +0000
+Message-ID: <20191006074404.48416-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -44,21 +44,23 @@ Remove duplicated include.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/media/usb/cx231xx/cx231xx-417.c | 1 -
+ drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-index 46d0215deee6..1aec4459f50a 100644
---- a/drivers/media/usb/cx231xx/cx231xx-417.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-@@ -22,7 +22,6 @@
- #include <linux/firmware.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
--#include <linux/slab.h>
- #include <media/v4l2-common.h>
- #include <media/v4l2-ioctl.h>
- #include <media/v4l2-event.h>
+diff --git a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
+index 4c7e8c64a94e..6965e1e6fa9e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c
+@@ -31,7 +31,6 @@
+ #include "vega10_enum.h"
+ 
+ #include "soc15_common.h"
+-#include "amdgpu_ras.h"
+ 
+ #define mmDAGB0_CNTL_MISC2_RV 0x008f
+ #define mmDAGB0_CNTL_MISC2_RV_BASE_IDX 0
+
+
 
 
 
