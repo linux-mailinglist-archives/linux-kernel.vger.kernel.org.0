@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F241CD479
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:26:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49755CD436
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbfJFR0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:26:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51334 "EHLO mail.kernel.org"
+        id S1727290AbfJFRXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:23:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728236AbfJFR0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:26:17 -0400
+        id S1727270AbfJFRXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:23:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EC982077B;
-        Sun,  6 Oct 2019 17:26:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 428EE20862;
+        Sun,  6 Oct 2019 17:23:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382775;
-        bh=QAeX3pYl1wm9N0GeIoBGX1XUJSECbBcflCV8F8zifwE=;
+        s=default; t=1570382616;
+        bh=k0WRcftLWCJFmPtrnYj3DMs1DmJ+wd/GPgYnzJMQtT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=agS+mN0T5crT/ZIt5E+k4wSEbeZjzgoe8rB89ntkcCQBMsx/+B2ASbQePuQmA7W+C
-         n/cTONITq2G/vCbWfSrMEvzlvBsHJzHJX+Y99RANJvn9dBChvrCv11VM+SvuEIlb/I
-         wLdKiEbqOanQ44woW8mv46iJvHpHPhETlgKynblw=
+        b=imM9SydDtJHkmAgjnlweRkLL2fOGGp83qkkXdABxjPmzBvMag+FQc9Cv9uoMZObRT
+         7tgjFK9wCn1xAAHHWbIi96/Od/lkgmd6VCoBYAO9ccp3jFVZheftkBisRbtuOBw4eq
+         iEyt7y27B1vcqrohkZC/BOKURKJinPBsLIKqkkm4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Orion Hodson <oth@google.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 34/68] ARM: 8898/1: mm: Dont treat faults reported from cache maintenance as writes
-Date:   Sun,  6 Oct 2019 19:21:10 +0200
-Message-Id: <20191006171124.524201751@linuxfoundation.org>
+Subject: [PATCH 4.9 24/47] security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
+Date:   Sun,  6 Oct 2019 19:21:11 +0200
+Message-Id: <20191006172018.166510775@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
-References: <20191006171108.150129403@linuxfoundation.org>
+In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
+References: <20191006172016.873463083@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 834020366da9ab3fb87d1eb9a3160eb22dbed63a ]
+[ Upstream commit 3f4287e7d98a2954f20bf96c567fdffcd2b63eb9 ]
 
-Translation faults arising from cache maintenance instructions are
-rather unhelpfully reported with an FSR value where the WnR field is set
-to 1, indicating that the faulting access was a write. Since cache
-maintenance instructions on 32-bit ARM do not require any particular
-permissions, this can cause our private 'cacheflush' system call to fail
-spuriously if a translation fault is generated due to page aging when
-targetting a read-only VMA.
+In smack_socket_sock_rcv_skb(), there is an if statement
+on line 3920 to check whether skb is NULL:
+    if (skb && skb->secmark != 0)
 
-In this situation, we will return -EFAULT to userspace, although this is
-unfortunately suppressed by the popular '__builtin___clear_cache()'
-intrinsic provided by GCC, which returns void.
+This check indicates skb can be NULL in some cases.
 
-Although it's tempting to write this off as a userspace issue, we can
-actually do a little bit better on CPUs that support LPAE, even if the
-short-descriptor format is in use. On these CPUs, cache maintenance
-faults additionally set the CM field in the FSR, which we can use to
-suppress the write permission checks in the page fault handler and
-succeed in performing cache maintenance to read-only areas even in the
-presence of a translation fault.
+But on lines 3931 and 3932, skb is used:
+    ad.a.u.net->netif = skb->skb_iif;
+    ipv6_skb_to_auditdata(skb, &ad.a, NULL);
 
-Reported-by: Orion Hodson <oth@google.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Thus, possible null-pointer dereferences may occur when skb is NULL.
+
+To fix these possible bugs, an if statement is added to check skb.
+
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/fault.c | 4 ++--
- arch/arm/mm/fault.h | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ security/smack/smack_lsm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index 49b1b80486358..9bb446cc135d1 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -215,7 +215,7 @@ static inline bool access_error(unsigned int fsr, struct vm_area_struct *vma)
- {
- 	unsigned int mask = VM_READ | VM_WRITE | VM_EXEC;
- 
--	if (fsr & FSR_WRITE)
-+	if ((fsr & FSR_WRITE) && !(fsr & FSR_CM))
- 		mask = VM_WRITE;
- 	if (fsr & FSR_LNX_PF)
- 		mask = VM_EXEC;
-@@ -285,7 +285,7 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 
- 	if (user_mode(regs))
- 		flags |= FAULT_FLAG_USER;
--	if (fsr & FSR_WRITE)
-+	if ((fsr & FSR_WRITE) && !(fsr & FSR_CM))
- 		flags |= FAULT_FLAG_WRITE;
- 
- 	/*
-diff --git a/arch/arm/mm/fault.h b/arch/arm/mm/fault.h
-index c063708fa5032..9ecc2097a87a0 100644
---- a/arch/arm/mm/fault.h
-+++ b/arch/arm/mm/fault.h
-@@ -6,6 +6,7 @@
-  * Fault status register encodings.  We steal bit 31 for our own purposes.
-  */
- #define FSR_LNX_PF		(1 << 31)
-+#define FSR_CM			(1 << 13)
- #define FSR_WRITE		(1 << 11)
- #define FSR_FS4			(1 << 10)
- #define FSR_FS3_0		(15)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index aeb3ba70f9077..19d1702aa9856 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4037,6 +4037,8 @@ access_check:
+ 			skp = smack_ipv6host_label(&sadd);
+ 		if (skp == NULL)
+ 			skp = smack_net_ambient;
++		if (skb == NULL)
++			break;
+ #ifdef CONFIG_AUDIT
+ 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+ 		ad.a.u.net->family = family;
 -- 
 2.20.1
 
