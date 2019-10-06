@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB2AFCD55A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37BEFCD4FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbfJFRf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:35:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34074 "EHLO mail.kernel.org"
+        id S1729398AbfJFRbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729403AbfJFRfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:35:25 -0400
+        id S1729392AbfJFRbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E6D320700;
-        Sun,  6 Oct 2019 17:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ABFA214D9;
+        Sun,  6 Oct 2019 17:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383324;
-        bh=C/gvul4pQ/MCqY9bjfcyrpOzvUH27jWmlmQUkP3PWqs=;
+        s=default; t=1570383075;
+        bh=3Yxm805HcMBC0NVzEht6kknUPgIVytbLs66C3vx93cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qIyiXN1jAGKB7CLLGu0muG+VxM62qg5cJnRj1QcgPzfRNcfr6s0MapZipx2C3Sxsw
-         ZMowwsr7ktwf3PoRBVAP6KYookLa8wqWzhhvHWhgchFx908G/D0km0e83c9wnVaNji
-         Dcsu0UESaBOaLcnxlEfD42sS739hoIHCCUF5CCtU=
+        b=L7JY4OBz5I3IrUbCdqkNU+ZAqNRIwMduUAWGL5o5ZFgh1YvyiOt4sp96I64nCqfIQ
+         5OcsXef64RIe9V8AdF0cQLmT+mlWwmP3XhofVuW2yT5iE9uJm62yV+0lHG6d7i4/Q6
+         OmPBOEHRBV3MjgBc8gC5EkOCid1/ZYbt0iqodSZ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, hexin <hexin15@baidu.com>,
-        Liu Qi <liuqi16@baidu.com>, Zhang Yu <zhangyu31@baidu.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 062/137] vfio_pci: Restore original state on release
+Subject: [PATCH 4.19 040/106] arm64: fix unreachable code issue with cmpxchg
 Date:   Sun,  6 Oct 2019 19:20:46 +0200
-Message-Id: <20191006171213.689825178@linuxfoundation.org>
+Message-Id: <20191006171141.791897867@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +46,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: hexin <hexin.op@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 92c8026854c25093946e0d7fe536fd9eac440f06 ]
+[ Upstream commit 920fdab7b3ce98c14c840261e364f490f3679a62 ]
 
-vfio_pci_enable() saves the device's initial configuration information
-with the intent that it is restored in vfio_pci_disable().  However,
-the commit referenced in Fixes: below replaced the call to
-__pci_reset_function_locked(), which is not wrapped in a state save
-and restore, with pci_try_reset_function(), which overwrites the
-restored device state with the current state before applying it to the
-device.  Reinstate use of __pci_reset_function_locked() to return to
-the desired behavior.
+On arm64 build with clang, sometimes the __cmpxchg_mb is not inlined
+when CONFIG_OPTIMIZE_INLINING is set.
+Clang then fails a compile-time assertion, because it cannot tell at
+compile time what the size of the argument is:
 
-Fixes: 890ed578df82 ("vfio-pci: Use pci "try" reset interface")
-Signed-off-by: hexin <hexin15@baidu.com>
-Signed-off-by: Liu Qi <liuqi16@baidu.com>
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+mm/memcontrol.o: In function `__cmpxchg_mb':
+memcontrol.c:(.text+0x1a4c): undefined reference to `__compiletime_assert_175'
+memcontrol.c:(.text+0x1a4c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__compiletime_assert_175'
+
+Mark all of the cmpxchg() style functions as __always_inline to
+ensure that the compiler can see the result.
+
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/648
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Tested-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/pci/vfio_pci.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ arch/arm64/include/asm/cmpxchg.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index 703948c9fbe10..02206162eaa9e 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -438,11 +438,20 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
- 	pci_write_config_word(pdev, PCI_COMMAND, PCI_COMMAND_INTX_DISABLE);
+diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
+index 3b09382815419..d8b01c7c9cd3f 100644
+--- a/arch/arm64/include/asm/cmpxchg.h
++++ b/arch/arm64/include/asm/cmpxchg.h
+@@ -74,7 +74,7 @@ __XCHG_CASE( ,  ,  mb_8, dmb ish, nop,  , a, l, "memory")
+ #undef __XCHG_CASE
  
- 	/*
--	 * Try to reset the device.  The success of this is dependent on
--	 * being able to lock the device, which is not always possible.
-+	 * Try to get the locks ourselves to prevent a deadlock. The
-+	 * success of this is dependent on being able to lock the device,
-+	 * which is not always possible.
-+	 * We can not use the "try" reset interface here, which will
-+	 * overwrite the previously restored configuration information.
- 	 */
--	if (vdev->reset_works && !pci_try_reset_function(pdev))
--		vdev->needs_reset = false;
-+	if (vdev->reset_works && pci_cfg_access_trylock(pdev)) {
-+		if (device_trylock(&pdev->dev)) {
-+			if (!__pci_reset_function_locked(pdev))
-+				vdev->needs_reset = false;
-+			device_unlock(&pdev->dev);
-+		}
-+		pci_cfg_access_unlock(pdev);
-+	}
+ #define __XCHG_GEN(sfx)							\
+-static inline unsigned long __xchg##sfx(unsigned long x,		\
++static __always_inline  unsigned long __xchg##sfx(unsigned long x,	\
+ 					volatile void *ptr,		\
+ 					int size)			\
+ {									\
+@@ -116,7 +116,7 @@ __XCHG_GEN(_mb)
+ #define xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
  
- 	pci_restore_state(pdev);
- out:
+ #define __CMPXCHG_GEN(sfx)						\
+-static inline unsigned long __cmpxchg##sfx(volatile void *ptr,		\
++static __always_inline unsigned long __cmpxchg##sfx(volatile void *ptr,	\
+ 					   unsigned long old,		\
+ 					   unsigned long new,		\
+ 					   int size)			\
+@@ -223,7 +223,7 @@ __CMPWAIT_CASE( ,  , 8);
+ #undef __CMPWAIT_CASE
+ 
+ #define __CMPWAIT_GEN(sfx)						\
+-static inline void __cmpwait##sfx(volatile void *ptr,			\
++static __always_inline void __cmpwait##sfx(volatile void *ptr,		\
+ 				  unsigned long val,			\
+ 				  int size)				\
+ {									\
 -- 
 2.20.1
 
