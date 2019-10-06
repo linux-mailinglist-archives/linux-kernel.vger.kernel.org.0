@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF701CD7FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D524CD7EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbfJFRzQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:55:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51358 "EHLO mail.kernel.org"
+        id S1729650AbfJFRyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:54:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728611AbfJFRy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:54:29 -0400
+        id S1728644AbfJFRya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:54:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE0F522466;
-        Sun,  6 Oct 2019 17:46:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D6FC22469;
+        Sun,  6 Oct 2019 17:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383968;
-        bh=lcB1mFJcKFF8tbCYE5shlRbzQ7T708HoKSgtww14kP0=;
+        s=default; t=1570383971;
+        bh=QYuncw7U6eCu+v+lSMJpPfdq8LmiWt9sdzhJZ8oWmNQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KgHLO9rUSmNjHgHcMYwDbplbKrycCoKgj1WxVYXgPdtriWCrgK4d2N85u0Iw6pEfb
-         lXA3QanfuyXoYzDuY9OH3VscHtpdFfahr5H7xuAzcD0Kv4heGYMOk/Xm4+vNW65SCt
-         2aaZsePRbk+d4z3JowGkj63VgATSuJUq591XymXE=
+        b=KYoTfUH5FBdrKW6tmkzt5awG6PavgbrPFyZVt0Zu/hcgx50Ty3qDuEL9Q+YPSsvFv
+         A1EI7vzGyyNJiwDetfKZBU9z2Hmheb96bo3Ze0/fM0/Zbb2H0EO9wbRr8sAfoSNrLk
+         jdk9SAIqY6Crqr6EFxqVQXlFBHu2/b5kUphapKLo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 5.3 161/166] dm zoned: fix invalid memory access
-Date:   Sun,  6 Oct 2019 19:22:07 +0200
-Message-Id: <20191006171226.412783993@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 162/166] NFC: fix attrs checks in netlink interface
+Date:   Sun,  6 Oct 2019 19:22:08 +0200
+Message-Id: <20191006171226.494412163@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -42,27 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Andrey Konovalov <andreyknvl@google.com>
 
-commit 0c8e9c2d668278652af028c3cc068c65f66342f4 upstream.
+commit 18917d51472fe3b126a3a8f756c6b18085eb8130 upstream.
 
-Commit 75d66ffb48efb30f2dd42f041ba8b39c5b2bd115 ("dm zoned: properly
-handle backing device failure") triggers a coverity warning:
+nfc_genl_deactivate_target() relies on the NFC_ATTR_TARGET_INDEX
+attribute being present, but doesn't check whether it is actually
+provided by the user. Same goes for nfc_genl_fw_download() and
+NFC_ATTR_FIRMWARE_NAME.
+
+This patch adds appropriate checks.
+
+Found with syzkaller.
+
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-zoned-target.c |    2 --
- 1 file changed, 2 deletions(-)
+ net/nfc/netlink.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/md/dm-zoned-target.c
-+++ b/drivers/md/dm-zoned-target.c
-@@ -134,8 +134,6 @@ static int dmz_submit_bio(struct dmz_tar
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -970,7 +970,8 @@ static int nfc_genl_dep_link_down(struct
+ 	int rc;
+ 	u32 idx;
  
- 	refcount_inc(&bioctx->ref);
- 	generic_make_request(clone);
--	if (clone->bi_status == BLK_STS_IOERR)
--		return -EIO;
+-	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
++	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
++	    !info->attrs[NFC_ATTR_TARGET_INDEX])
+ 		return -EINVAL;
  
- 	if (bio_op(bio) == REQ_OP_WRITE && dmz_is_seq(zone))
- 		zone->wp_block += nr_blocks;
+ 	idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
+@@ -1018,7 +1019,8 @@ static int nfc_genl_llc_get_params(struc
+ 	struct sk_buff *msg = NULL;
+ 	u32 idx;
+ 
+-	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
++	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
++	    !info->attrs[NFC_ATTR_FIRMWARE_NAME])
+ 		return -EINVAL;
+ 
+ 	idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
 
 
