@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3ED4CD5D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56017CD686
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:49:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbfJFRkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:40:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40038 "EHLO mail.kernel.org"
+        id S1729415AbfJFRs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:48:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729391AbfJFRka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:40:30 -0400
+        id S1731401AbfJFRmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:42:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD98920700;
-        Sun,  6 Oct 2019 17:40:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DD4B20862;
+        Sun,  6 Oct 2019 17:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383628;
-        bh=ZFiPp8ngyxu+/Da+Enw9S3iTkIS4pdRuux3QPVR7nWQ=;
+        s=default; t=1570383773;
+        bh=2q6xEFHuaBCJckqpbWV8+FPNL6zSQ5+BT+Wwq/4urfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oM8gpV/vsjPoaW4HWNCPzfN3I6Yr3BQYrm7O4XjxY1FeahcgoXHtm3KfRea10t1af
-         novFQBJuIrrVB7aYIK4JgRSdpR39/dodNDGFykSwAp05aeC4x24ZqE5LGqIlYgR98+
-         HQcZa7kdXCjjRVgq+wAANPNaddi0qwGttSPrELeI=
+        b=fohcY4F6xt0IKkYA8Q42kwfO+1ZNe2QkVpw+SStqj9/RzPZV8rH7nW4NnDWmyQJ9r
+         1BjK1V8brQyMIFKTssOheT++MWMP+wugLJliT8hlxoBGCrasLV/WBE++TKPjbbrT/8
+         97RIqWDrSixlVhdIfWSJHq1ZgxmExWekEHb4lhv4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        stable@vger.kernel.org, Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 035/166] clk: meson: axg-audio: Dont reference clk_init_data after registration
-Date:   Sun,  6 Oct 2019 19:20:01 +0200
-Message-Id: <20191006171215.889274917@linuxfoundation.org>
+Subject: [PATCH 5.3 036/166] clk: sprd: Dont reference clk_init_data after registration
+Date:   Sun,  6 Oct 2019 19:20:02 +0200
+Message-Id: <20191006171215.967153034@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -47,45 +47,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit 1610dd79d0f6202c5c1a91122255fa598679c13a ]
+[ Upstream commit f6c90df8e7e33c3dc33d4d7471bc42c232b0510e ]
 
 A future patch is going to change semantics of clk_register() so that
 clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
 referencing this member here so that we don't run into NULL pointer
 exceptions.
 
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc: Baolin Wang <baolin.wang@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-4-sboyd@kernel.org
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20190731193517.237136-8-sboyd@kernel.org
+Acked-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/axg-audio.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/sprd/common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 8028ff6f66107..db0b73d53551d 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -992,15 +992,18 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+index a5bdca1de5d07..9d56eac43832a 100644
+--- a/drivers/clk/sprd/common.c
++++ b/drivers/clk/sprd/common.c
+@@ -76,16 +76,17 @@ int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
+ 	struct clk_hw *hw;
  
- 	/* Take care to skip the registered input clocks */
- 	for (i = AUD_CLKID_DDR_ARB; i < data->hw_onecell_data->num; i++) {
+ 	for (i = 0; i < clkhw->num; i++) {
 +		const char *name;
-+
- 		hw = data->hw_onecell_data->hws[i];
- 		/* array might be sparse */
+ 
+ 		hw = clkhw->hws[i];
+-
  		if (!hw)
  			continue;
  
 +		name = hw->init->name;
-+
  		ret = devm_clk_hw_register(dev, hw);
  		if (ret) {
--			dev_err(dev, "failed to register clock %s\n",
--				hw->init->name);
-+			dev_err(dev, "failed to register clock %s\n", name);
+ 			dev_err(dev, "Couldn't register clock %d - %s\n",
+-				i, hw->init->name);
++				i, name);
  			return ret;
  		}
  	}
