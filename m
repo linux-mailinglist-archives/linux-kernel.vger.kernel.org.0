@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93368CD77D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 210EBCD806
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729029AbfJFR36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:29:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55610 "EHLO mail.kernel.org"
+        id S1729946AbfJFR4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:56:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729056AbfJFR3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:29:50 -0400
+        id S1730176AbfJFRft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:35:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBAC92080F;
-        Sun,  6 Oct 2019 17:29:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79AD62080F;
+        Sun,  6 Oct 2019 17:35:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382989;
-        bh=xd9FKbZCNcSShJBGOLUkhgzrMnFgc/j0qXHYi6FfljA=;
+        s=default; t=1570383349;
+        bh=3LtsCDgG2wyB0+Zp2EqzJWjVdQVP2cXvkkS19JZpOP0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D9TSdNp+VdDSA7qne2l80GgW+4cpfOAkAf9IHZcFdVFOLLqhwifKopILflvSlF1dE
-         WyVy3I9hoFcbfTyAy5kNmpsFmcSUGeKxCnr4kPhdxHFdRFBR/OLoUqLMwUK6ZfFJtN
-         h8R3WralV4LBL31KPgPeEiOe9yhQ4/ITbrEUhbPY=
+        b=IToYLT5BOsijvhu02fQDIKUT6YalbHjFdNQnA0Bab9VUWeYe+EOTkrVkyPtReOPLX
+         hCrhIM4+5FrlF+5T5OfOVecTxw9rt3/rS21jlGvw8QQH6NZ7ib9NYPIOkICYgkFBun
+         yQEK1H2dSwQYFvVW5p6jlj7BHmDEfJJy2Pfisr6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Gustavo Padovan <gustavo@padovan.org>,
+        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
+        Ken Wang <Qingqing.Wang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 046/106] dma-buf/sw_sync: Synchronize signal vs syncpt free
-Date:   Sun,  6 Oct 2019 19:20:52 +0200
-Message-Id: <20191006171143.424340388@linuxfoundation.org>
+Subject: [PATCH 5.2 070/137] drm/amdgpu/si: fix ASIC tests
+Date:   Sun,  6 Oct 2019 19:20:54 +0200
+Message-Id: <20191006171214.985222700@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,75 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Jean Delvare <jdelvare@suse.de>
 
-[ Upstream commit d3c6dd1fb30d3853c2012549affe75c930f4a2f9 ]
+[ Upstream commit 77efe48a729588527afb4d5811b9e0acb29f5e51 ]
 
-During release of the syncpt, we remove it from the list of syncpt and
-the tree, but only if it is not already been removed. However, during
-signaling, we first remove the syncpt from the list. So, if we
-concurrently free and signal the syncpt, the free may decide that it is
-not part of the tree and immediately free itself -- meanwhile the
-signaler goes on to use the now freed datastructure.
+Comparing adev->family with CHIP constants is not correct.
+adev->family can only be compared with AMDGPU_FAMILY constants and
+adev->asic_type is the struct member to compare with CHIP constants.
+They are separate identification spaces.
 
-In particular, we get struck by commit 0e2f733addbf ("dma-buf: make
-dma_fence structure a bit smaller v2") as the cb_list is immediately
-clobbered by the kfree_rcu.
-
-v2: Avoid calling into timeline_fence_release() from under the spinlock
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111381
-Fixes: d3862e44daa7 ("dma-buf/sw-sync: Fix locking around sync_timeline lists")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Sean Paul <seanpaul@chromium.org>
-Cc: Gustavo Padovan <gustavo@padovan.org>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: <stable@vger.kernel.org> # v4.14+
-Acked-by: Christian König <christian.koenig@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190812154247.20508-1-chris@chris-wilson.co.uk
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 62a37553414a ("drm/amdgpu: add si implementation v10")
+Cc: Ken Wang <Qingqing.Wang@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma-buf/sw_sync.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/si.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
-index 53c1d6d36a642..81ba4eb348909 100644
---- a/drivers/dma-buf/sw_sync.c
-+++ b/drivers/dma-buf/sw_sync.c
-@@ -141,17 +141,14 @@ static void timeline_fence_release(struct dma_fence *fence)
- {
- 	struct sync_pt *pt = dma_fence_to_sync_pt(fence);
- 	struct sync_timeline *parent = dma_fence_parent(fence);
-+	unsigned long flags;
+diff --git a/drivers/gpu/drm/amd/amdgpu/si.c b/drivers/gpu/drm/amd/amdgpu/si.c
+index 9d8df68893b9d..1e34dfc143556 100644
+--- a/drivers/gpu/drm/amd/amdgpu/si.c
++++ b/drivers/gpu/drm/amd/amdgpu/si.c
+@@ -1867,7 +1867,7 @@ static void si_program_aspm(struct amdgpu_device *adev)
+ 			if (orig != data)
+ 				si_pif_phy1_wreg(adev,PB1_PIF_PWRDOWN_1, data);
  
-+	spin_lock_irqsave(fence->lock, flags);
- 	if (!list_empty(&pt->link)) {
--		unsigned long flags;
--
--		spin_lock_irqsave(fence->lock, flags);
--		if (!list_empty(&pt->link)) {
--			list_del(&pt->link);
--			rb_erase(&pt->node, &parent->pt_tree);
--		}
--		spin_unlock_irqrestore(fence->lock, flags);
-+		list_del(&pt->link);
-+		rb_erase(&pt->node, &parent->pt_tree);
- 	}
-+	spin_unlock_irqrestore(fence->lock, flags);
+-			if ((adev->family != CHIP_OLAND) && (adev->family != CHIP_HAINAN)) {
++			if ((adev->asic_type != CHIP_OLAND) && (adev->asic_type != CHIP_HAINAN)) {
+ 				orig = data = si_pif_phy0_rreg(adev,PB0_PIF_PWRDOWN_0);
+ 				data &= ~PLL_RAMP_UP_TIME_0_MASK;
+ 				if (orig != data)
+@@ -1916,14 +1916,14 @@ static void si_program_aspm(struct amdgpu_device *adev)
  
- 	sync_timeline_put(parent);
- 	dma_fence_free(fence);
-@@ -274,7 +271,8 @@ static struct sync_pt *sync_pt_create(struct sync_timeline *obj,
- 				p = &parent->rb_left;
- 			} else {
- 				if (dma_fence_get_rcu(&other->base)) {
--					dma_fence_put(&pt->base);
-+					sync_timeline_put(obj);
-+					kfree(pt);
- 					pt = other;
- 					goto unlock;
- 				}
+ 			orig = data = si_pif_phy0_rreg(adev,PB0_PIF_CNTL);
+ 			data &= ~LS2_EXIT_TIME_MASK;
+-			if ((adev->family == CHIP_OLAND) || (adev->family == CHIP_HAINAN))
++			if ((adev->asic_type == CHIP_OLAND) || (adev->asic_type == CHIP_HAINAN))
+ 				data |= LS2_EXIT_TIME(5);
+ 			if (orig != data)
+ 				si_pif_phy0_wreg(adev,PB0_PIF_CNTL, data);
+ 
+ 			orig = data = si_pif_phy1_rreg(adev,PB1_PIF_CNTL);
+ 			data &= ~LS2_EXIT_TIME_MASK;
+-			if ((adev->family == CHIP_OLAND) || (adev->family == CHIP_HAINAN))
++			if ((adev->asic_type == CHIP_OLAND) || (adev->asic_type == CHIP_HAINAN))
+ 				data |= LS2_EXIT_TIME(5);
+ 			if (orig != data)
+ 				si_pif_phy1_wreg(adev,PB1_PIF_CNTL, data);
 -- 
 2.20.1
 
