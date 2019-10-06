@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE77CD549
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D0CCD526
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbfJFRef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:34:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33080 "EHLO mail.kernel.org"
+        id S1729702AbfJFRdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:33:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729963AbfJFReb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:34:31 -0400
+        id S1729681AbfJFRdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:33:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F13E21479;
-        Sun,  6 Oct 2019 17:34:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAE4D2087E;
+        Sun,  6 Oct 2019 17:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383270;
-        bh=rxifHShgDK6BaHrF++DXZtdZcyy6KQLBsTZCsmQ+7Sc=;
+        s=default; t=1570383181;
+        bh=dTYb9XmPpGezQJA6U/RlhJTJ+F2VVzbzIQ64FdtB7Hw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qaRtH7aCRXCyT3P1htAK7xQZ2IiZGQOYv2FZL9KtEhuSYptJ56AmJq5Baz/XQ50r1
-         fmAfctyqa45j1qDMGS1CORozgkvvpLMLHqAPrz1sLYv7xGADQPY7XpgO7o+6JvvFeF
-         VtGmpuEfJpqffVUVmU1TLGkT3EO7MxnHIlGoR7kw=
+        b=GaOlcHjIn+h5xYIEGUxzelsJLQ88wzAGt7pUfoI//N33/PndC7NoclZBcj024ulgE
+         D0WQJmBhQnyx2+DnIDndhAq6C6dZupf1sb3/k8z15e4lo8N4QQJfjhb/9V7ZF8zDqU
+         7x5uq8AdkPN2GhBg+/WjNFsE+YZpEuB/p3v+q2PQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 009/137] net: Unpublish sk from sk_reuseport_cb before call_rcu
-Date:   Sun,  6 Oct 2019 19:19:53 +0200
-Message-Id: <20191006171210.323569529@linuxfoundation.org>
+Subject: [PATCH 5.2 010/137] nfc: fix memory leak in llcp_sock_bind()
+Date:   Sun,  6 Oct 2019 19:19:54 +0200
+Message-Id: <20191006171210.378920663@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
 References: <20191006171209.403038733@linuxfoundation.org>
@@ -44,59 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin KaFai Lau <kafai@fb.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 8c7138b33e5c690c308b2a7085f6313fdcb3f616 ]
+[ Upstream commit a0c2dc1fe63e2869b74c1c7f6a81d1745c8a695d ]
 
-The "reuse->sock[]" array is shared by multiple sockets.  The going away
-sk must unpublish itself from "reuse->sock[]" before making call_rcu()
-call.  However, this unpublish-action is currently done after a grace
-period and it may cause use-after-free.
+sysbot reported a memory leak after a bind() has failed.
 
-The fix is to move reuseport_detach_sock() to sk_destruct().
-Due to the above reason, any socket with sk_reuseport_cb has
-to go through the rcu grace period before freeing it.
+While we are at it, abort the operation if kmemdup() has failed.
 
-It is a rather old bug (~3 yrs).  The Fixes tag is not necessary
-the right commit but it is the one that introduced the SOCK_RCU_FREE
-logic and this fix is depending on it.
+BUG: memory leak
+unreferenced object 0xffff888105d83ec0 (size 32):
+  comm "syz-executor067", pid 7207, jiffies 4294956228 (age 19.430s)
+  hex dump (first 32 bytes):
+    00 69 6c 65 20 72 65 61 64 00 6e 65 74 3a 5b 34  .ile read.net:[4
+    30 32 36 35 33 33 30 39 37 5d 00 00 00 00 00 00  026533097]......
+  backtrace:
+    [<0000000036bac473>] kmemleak_alloc_recursive /./include/linux/kmemleak.h:43 [inline]
+    [<0000000036bac473>] slab_post_alloc_hook /mm/slab.h:522 [inline]
+    [<0000000036bac473>] slab_alloc /mm/slab.c:3319 [inline]
+    [<0000000036bac473>] __do_kmalloc /mm/slab.c:3653 [inline]
+    [<0000000036bac473>] __kmalloc_track_caller+0x169/0x2d0 /mm/slab.c:3670
+    [<000000000cd39d07>] kmemdup+0x27/0x60 /mm/util.c:120
+    [<000000008e57e5fc>] kmemdup /./include/linux/string.h:432 [inline]
+    [<000000008e57e5fc>] llcp_sock_bind+0x1b3/0x230 /net/nfc/llcp_sock.c:107
+    [<000000009cb0b5d3>] __sys_bind+0x11c/0x140 /net/socket.c:1647
+    [<00000000492c3bbc>] __do_sys_bind /net/socket.c:1658 [inline]
+    [<00000000492c3bbc>] __se_sys_bind /net/socket.c:1656 [inline]
+    [<00000000492c3bbc>] __x64_sys_bind+0x1e/0x30 /net/socket.c:1656
+    [<0000000008704b2a>] do_syscall_64+0x76/0x1a0 /arch/x86/entry/common.c:296
+    [<000000009f4c57a4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Fixes: a4298e4522d6 ("net: add SOCK_RCU_FREE socket flag")
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
+Fixes: 30cc4587659e ("NFC: Move LLCP code to the NFC top level diirectory")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/sock.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ net/nfc/llcp_sock.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1696,8 +1696,6 @@ static void __sk_destruct(struct rcu_hea
- 		sk_filter_uncharge(sk, filter);
- 		RCU_INIT_POINTER(sk->sk_filter, NULL);
- 	}
--	if (rcu_access_pointer(sk->sk_reuseport_cb))
--		reuseport_detach_sock(sk);
- 
- 	sock_disable_timestamp(sk, SK_FLAGS_TIMESTAMP);
- 
-@@ -1724,7 +1722,14 @@ static void __sk_destruct(struct rcu_hea
- 
- void sk_destruct(struct sock *sk)
- {
--	if (sock_flag(sk, SOCK_RCU_FREE))
-+	bool use_call_rcu = sock_flag(sk, SOCK_RCU_FREE);
-+
-+	if (rcu_access_pointer(sk->sk_reuseport_cb)) {
-+		reuseport_detach_sock(sk);
-+		use_call_rcu = true;
+--- a/net/nfc/llcp_sock.c
++++ b/net/nfc/llcp_sock.c
+@@ -107,9 +107,14 @@ static int llcp_sock_bind(struct socket
+ 	llcp_sock->service_name = kmemdup(llcp_addr.service_name,
+ 					  llcp_sock->service_name_len,
+ 					  GFP_KERNEL);
+-
++	if (!llcp_sock->service_name) {
++		ret = -ENOMEM;
++		goto put_dev;
 +	}
-+
-+	if (use_call_rcu)
- 		call_rcu(&sk->sk_rcu, __sk_destruct);
- 	else
- 		__sk_destruct(&sk->sk_rcu);
+ 	llcp_sock->ssap = nfc_llcp_get_sdp_ssap(local, llcp_sock);
+ 	if (llcp_sock->ssap == LLCP_SAP_MAX) {
++		kfree(llcp_sock->service_name);
++		llcp_sock->service_name = NULL;
+ 		ret = -EADDRINUSE;
+ 		goto put_dev;
+ 	}
 
 
