@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 439E5CD55D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C413CD508
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbfJFRfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:35:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34202 "EHLO mail.kernel.org"
+        id S1729486AbfJFRbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730140AbfJFRfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:35:34 -0400
+        id S1729467AbfJFRbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 618ED2080F;
-        Sun,  6 Oct 2019 17:35:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4F0A2087E;
+        Sun,  6 Oct 2019 17:31:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383332;
-        bh=2Qwsm8loPfoLwUa6cnWbCON9/e9C/jsrHa0Bssbv39I=;
+        s=default; t=1570383100;
+        bh=JpYnaaRnpqG1IJ9LpF43Ky4t2CfiGETqsYi76zPHC88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yrw/u7pd1W6jsjgD0eict3sh1DycRxqsFiXVbzSarx5/vX+6GZM6ed/bVAkg6jqdr
-         yXaJcjBrkkrCPX0HrqbtE0k4Yi2akBiuecLhjuWhquKYL7WdRH08Yt2ItcFTpChGtA
-         YrU05vG2ZAN6DH/Ma0t5NHjluPauo+LkvCCHsi3U=
+        b=a7O6W5dSXPbSKfiMKeR3+zfkflS/yMdEay4OqQgANHpm3mXZALn+OaWLt8svpVNqq
+         Glv7nW/04fevPgKOFfu2ylanIcrGTNa6IySFX3ShXYrWZ08A74iMSWcLV4YUDzj1KF
+         GTx1T9iZyVTgbNooJNoEXPNwRKwNvLuMIX38yIz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 065/137] pinctrl: amd: disable spurious-firing GPIO IRQs
+Subject: [PATCH 4.19 043/106] mbox: qcom: add APCS child device for QCS404
 Date:   Sun,  6 Oct 2019 19:20:49 +0200
-Message-Id: <20191006171214.463369079@linuxfoundation.org>
+Message-Id: <20191006171142.875607212@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 
-[ Upstream commit d21b8adbd475dba19ac2086d3306327b4a297418 ]
+[ Upstream commit 78c86458a440ff356073c21b568cb58ddb67b82b ]
 
-When cold-booting Asus X434DA, GPIO 7 is found to be already configured
-as an interrupt, and the GPIO level is found to be in a state that
-causes the interrupt to fire.
+There is clock controller functionality in the APCS hardware block of
+qcs404 devices similar to msm8916.
 
-As soon as pinctrl-amd probes, this interrupt fires and invokes
-amd_gpio_irq_handler(). The IRQ is acked, but no GPIO-IRQ handler was
-invoked, so the GPIO level being unchanged just causes another interrupt
-to fire again immediately after.
-
-This results in an interrupt storm causing this platform to hang
-during boot, right after pinctrl-amd is probed.
-
-Detect this situation and disable the GPIO interrupt when this happens.
-This enables the affected platform to boot as normal. GPIO 7 actually is
-the I2C touchpad interrupt line, and later on, i2c-multitouch loads and
-re-enables this interrupt when it is ready to handle it.
-
-Instead of this approach, I considered disabling all GPIO interrupts at
-probe time, however that seems a little risky, and I also confirmed that
-Windows does not seem to have this behaviour: the same 41 GPIO IRQs are
-enabled under both Linux and Windows, which is a far larger collection
-than the GPIOs referenced by the DSDT on this platform.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Link: https://lore.kernel.org/r/20190814090540.7152-1-drake@endlessm.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-amd.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 9b9c61e3f0652..977792654e017 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -565,15 +565,25 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
- 			    !(regval & BIT(INTERRUPT_MASK_OFF)))
- 				continue;
- 			irq = irq_find_mapping(gc->irq.domain, irqnr + i);
--			generic_handle_irq(irq);
-+			if (irq != 0)
-+				generic_handle_irq(irq);
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index 333ed4a9d4b8f..5255dcb551a78 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -55,7 +55,6 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
  
- 			/* Clear interrupt.
- 			 * We must read the pin register again, in case the
- 			 * value was changed while executing
- 			 * generic_handle_irq() above.
-+			 * If we didn't find a mapping for the interrupt,
-+			 * disable it in order to avoid a system hang caused
-+			 * by an interrupt storm.
- 			 */
- 			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 			regval = readl(regs + i);
-+			if (irq == 0) {
-+				regval &= ~BIT(INTERRUPT_ENABLE_OFF);
-+				dev_dbg(&gpio_dev->pdev->dev,
-+					"Disabling spurious GPIO IRQ %d\n",
-+					irqnr + i);
-+			}
- 			writel(regval, regs + i);
- 			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 			ret = IRQ_HANDLED;
+ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ {
+-	struct device_node *np = pdev->dev.of_node;
+ 	struct qcom_apcs_ipc *apcs;
+ 	struct regmap *regmap;
+ 	struct resource *res;
+@@ -63,6 +62,11 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	unsigned long i;
+ 	int ret;
++	const struct of_device_id apcs_clk_match_table[] = {
++		{ .compatible = "qcom,msm8916-apcs-kpss-global", },
++		{ .compatible = "qcom,qcs404-apcs-apps-global", },
++		{}
++	};
+ 
+ 	apcs = devm_kzalloc(&pdev->dev, sizeof(*apcs), GFP_KERNEL);
+ 	if (!apcs)
+@@ -97,7 +101,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
++	if (of_match_device(apcs_clk_match_table, &pdev->dev)) {
+ 		apcs->clk = platform_device_register_data(&pdev->dev,
+ 							  "qcom-apcs-msm8916-clk",
+ 							  -1, NULL, 0);
 -- 
 2.20.1
 
