@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC654CD46D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED435CD41C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:23:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfJFRZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:25:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50674 "EHLO mail.kernel.org"
+        id S1727028AbfJFRW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:22:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727491AbfJFRZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:25:39 -0400
+        id S1726508AbfJFRW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:22:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C511420867;
-        Sun,  6 Oct 2019 17:25:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 299282080F;
+        Sun,  6 Oct 2019 17:22:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382738;
-        bh=xnovLF+3uh2WwoA52FYSiy8zjjoMSiF+mmojNkCbgjQ=;
+        s=default; t=1570382576;
+        bh=AA3UGzytwFlaFFB0h7c09QGX5TW/ljwxPmgI+tY/N1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sI5vkZznz/hAQMEDNXN2+SGxKfR3tLfz3IzElk65aDlanoqAuG/jGjM0F7tST1iU
-         qbkkFoBkA3fIjZ7i6X+nwDHlTMkzGnbTzB56eBUOs09uvz6MYfjYK4bciSMBuR2D+T
-         k3FXCGGVOIziSu/CojskVDk+/OrEhcQxeJpefegg=
+        b=L/HGCrcJqWCBQ7WDDXuFCEz7HGK3Gxp7aA7p43ZVIP1Yj6KCcPblza3jvg0UPg+WB
+         YjjGCzJqTepM6jtYc7W5Wy6sZ65+0ETpfM3mh7aW3Tl+OxxwHJKkUZ72grX23u5jh/
+         p2227y3QBIkDnI8wUoiGhDxtvl9yQBdd4k2iikRo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Mark Menzynski <mmenzyns@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/68] drm/nouveau/volt: Fix for some cards having 0 maximum voltage
+Subject: [PATCH 4.9 10/47] powerpc/pseries/mobility: use cond_resched when updating device tree
 Date:   Sun,  6 Oct 2019 19:20:57 +0200
-Message-Id: <20191006171117.932761231@linuxfoundation.org>
+Message-Id: <20191006172017.431913166@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
-References: <20191006171108.150129403@linuxfoundation.org>
+In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
+References: <20191006172016.873463083@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,36 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Menzynski <mmenzyns@redhat.com>
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
-[ Upstream commit a1af2afbd244089560794c260b2d4326a86e39b6 ]
+[ Upstream commit ccfb5bd71d3d1228090a8633800ae7cdf42a94ac ]
 
-Some, mostly Fermi, vbioses appear to have zero max voltage. That causes Nouveau to not parse voltage entries, thus users not being able to set higher clocks.
+After a partition migration, pseries_devicetree_update() processes
+changes to the device tree communicated from the platform to
+Linux. This is a relatively heavyweight operation, with multiple
+device tree searches, memory allocations, and conversations with
+partition firmware.
 
-When changing this value Nvidia driver still appeared to ignore it, and I wasn't able to find out why, thus the code is ignoring the value if it is zero.
+There's a few levels of nested loops which are bounded only by
+decisions made by the platform, outside of Linux's control, and indeed
+we have seen RCU stalls on large systems while executing this call
+graph. Use cond_resched() in these loops so that the cpu is yielded
+when needed.
 
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Signed-off-by: Mark Menzynski <mmenzyns@redhat.com>
-Reviewed-by: Karol Herbst <kherbst@redhat.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190802192926.19277-4-nathanl@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/bios/volt.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/platforms/pseries/mobility.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/volt.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/volt.c
-index 7143ea4611aa3..33a9fb5ac5585 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/volt.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/volt.c
-@@ -96,6 +96,8 @@ nvbios_volt_parse(struct nvkm_bios *bios, u8 *ver, u8 *hdr, u8 *cnt, u8 *len,
- 		info->min     = min(info->base,
- 				    info->base + info->step * info->vidmask);
- 		info->max     = nvbios_rd32(bios, volt + 0x0e);
-+		if (!info->max)
-+			info->max = max(info->base, info->base + info->step * info->vidmask);
- 		break;
- 	case 0x50:
- 		info->min     = nvbios_rd32(bios, volt + 0x0a);
+diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
+index 3784a7abfcc80..74791e8382d22 100644
+--- a/arch/powerpc/platforms/pseries/mobility.c
++++ b/arch/powerpc/platforms/pseries/mobility.c
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/kobject.h>
++#include <linux/sched.h>
+ #include <linux/smp.h>
+ #include <linux/stat.h>
+ #include <linux/completion.h>
+@@ -206,7 +207,11 @@ static int update_dt_node(__be32 phandle, s32 scope)
+ 
+ 				prop_data += vd;
+ 			}
++
++			cond_resched();
+ 		}
++
++		cond_resched();
+ 	} while (rtas_rc == 1);
+ 
+ 	of_node_put(dn);
+@@ -282,8 +287,12 @@ int pseries_devicetree_update(s32 scope)
+ 					add_dt_node(phandle, drc_index);
+ 					break;
+ 				}
++
++				cond_resched();
+ 			}
+ 		}
++
++		cond_resched();
+ 	} while (rc == 1);
+ 
+ 	kfree(rtas_buf);
 -- 
 2.20.1
 
