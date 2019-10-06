@@ -2,39 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 846CCCD51C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95ABECD5A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbfJFRcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:32:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58952 "EHLO mail.kernel.org"
+        id S1730614AbfJFRi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:38:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729573AbfJFRc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:32:29 -0400
+        id S1730600AbfJFRiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:38:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72F3F2133F;
-        Sun,  6 Oct 2019 17:32:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 277D72080F;
+        Sun,  6 Oct 2019 17:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383149;
-        bh=SQJ2TA1+dys19b096G1EEsqcCLyoAwdRC5caxt6qv2c=;
+        s=default; t=1570383502;
+        bh=w2whw1Hr/775putsFnagWM9RGPe7vXYrduAUtGNqhKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CJOkCvGFdGVGmCLiWbhf0vI8hY+FOUX6YutoVzqwtutyRDJjx4zKR9VeIkVc0R317
-         RWa+ZMqfMTRY00V4chUsRKvOHAgI8VHqczdgYcwtOMn8XI2MRUvSJ6C9cnVybzKCH+
-         OhUaECGB29VUFH07oSt0jCnqjeHAPNwzROQ/DcgI=
+        b=0ugRFQp/cd5K5EGcZztNDWs0/IkEh2S30RM/cWqAUaMSKqAljE91qkEs24zKoomLH
+         Sa8WhpO8cSgWrxLID5gsuKg0Ip5DlD29umepl/xkMIF2LOAa/ovCCnYxh0D+z58JhK
+         9IFDur/SgGDtQT7hEaX3DRp74bqZF8bHWpHqNqlI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 104/106] NFC: fix attrs checks in netlink interface
+        stable@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christoph Hellwig <hch@lst.de>,
+        James Hogan <jhogan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 126/137] mips: properly account for stack randomization and stack guard gap
 Date:   Sun,  6 Oct 2019 19:21:50 +0200
-Message-Id: <20191006171204.760312069@linuxfoundation.org>
+Message-Id: <20191006171219.819609010@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +58,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Konovalov <andreyknvl@google.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
 
-commit 18917d51472fe3b126a3a8f756c6b18085eb8130 upstream.
+[ Upstream commit b1f61b5bde3a1f50392c97b4c8513d1b8efb1cf2 ]
 
-nfc_genl_deactivate_target() relies on the NFC_ATTR_TARGET_INDEX
-attribute being present, but doesn't check whether it is actually
-provided by the user. Same goes for nfc_genl_fw_download() and
-NFC_ATTR_FIRMWARE_NAME.
+This commit takes care of stack randomization and stack guard gap when
+computing mmap base address and checks if the task asked for
+randomization.  This fixes the problem uncovered and not fixed for arm
+here: https://lkml.kernel.org/r/20170622200033.25714-1-riel@redhat.com
 
-This patch adds appropriate checks.
-
-Found with syzkaller.
-
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/20190730055113.23635-10-alex@ghiti.fr
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/nfc/netlink.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/mips/mm/mmap.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -981,7 +981,8 @@ static int nfc_genl_dep_link_down(struct
- 	int rc;
- 	u32 idx;
+diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
+index d79f2b4323187..f5c778113384b 100644
+--- a/arch/mips/mm/mmap.c
++++ b/arch/mips/mm/mmap.c
+@@ -21,8 +21,9 @@ unsigned long shm_align_mask = PAGE_SIZE - 1;	/* Sane caches */
+ EXPORT_SYMBOL(shm_align_mask);
  
--	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
-+	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
-+	    !info->attrs[NFC_ATTR_TARGET_INDEX])
- 		return -EINVAL;
+ /* gap between mmap and stack */
+-#define MIN_GAP (128*1024*1024UL)
+-#define MAX_GAP ((TASK_SIZE)/6*5)
++#define MIN_GAP		(128*1024*1024UL)
++#define MAX_GAP		((TASK_SIZE)/6*5)
++#define STACK_RND_MASK	(0x7ff >> (PAGE_SHIFT - 12))
  
- 	idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
-@@ -1029,7 +1030,8 @@ static int nfc_genl_llc_get_params(struc
- 	struct sk_buff *msg = NULL;
- 	u32 idx;
+ static int mmap_is_legacy(struct rlimit *rlim_stack)
+ {
+@@ -38,6 +39,15 @@ static int mmap_is_legacy(struct rlimit *rlim_stack)
+ static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
+ {
+ 	unsigned long gap = rlim_stack->rlim_cur;
++	unsigned long pad = stack_guard_gap;
++
++	/* Account for stack randomization if necessary */
++	if (current->flags & PF_RANDOMIZE)
++		pad += (STACK_RND_MASK << PAGE_SHIFT);
++
++	/* Values close to RLIM_INFINITY can overflow. */
++	if (gap + pad > gap)
++		gap += pad;
  
--	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
-+	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
-+	    !info->attrs[NFC_ATTR_FIRMWARE_NAME])
- 		return -EINVAL;
- 
- 	idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
+ 	if (gap < MIN_GAP)
+ 		gap = MIN_GAP;
+-- 
+2.20.1
+
 
 
