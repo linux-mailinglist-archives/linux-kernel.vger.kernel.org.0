@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1C48CD50E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C370ACD59C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbfJFRb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58326 "EHLO mail.kernel.org"
+        id S1730535AbfJFRh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:37:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729527AbfJFRb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:57 -0400
+        id S1729588AbfJFRhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:37:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07F122133F;
-        Sun,  6 Oct 2019 17:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA7A020700;
+        Sun,  6 Oct 2019 17:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383116;
-        bh=ocmlQhmbrOJ5xSoPlVt/zwsFqdeOGrlzZtRTlLOjigU=;
+        s=default; t=1570383473;
+        bh=oRgLhrKc4k3mo0FARYlSzSkP3Mf1sLVjO6FzgjI3NpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dY3Qr927GKSrgdCbYTgvU/PWLMmmGny26UIrJURZNA7x6JRxmQb2iQbhsQJCBDvz/
-         3cNDShRb5mUGlR5ZLscORuBJ2lQm/eE+D0BegJgAmkmypGMYd/faZ8iypcqHJaFmkM
-         ik4pS/kZrHVq21gRLiCwIkJD1Mly7r7rKQm08ltQ=
+        b=mLdk52nBYASOlEfIvMML0ZhD9MqtpFWIgxvXvo0aoAEFd1lMMYZd2tUrD6Vmg8DmD
+         3t/v4/ZFHGdIHD/uvr5zU78hYGiZdV5pkDfYizMLnyKRrCz2Of+NkYUsCfhXVg1jgV
+         Arqr0thOBfbAlxF+YyiJL+sG8vyvGcSQOIyRSCco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 093/106] vsock: Fix a lockdep warning in __vsock_release()
-Date:   Sun,  6 Oct 2019 19:21:39 +0200
-Message-Id: <20191006171201.105134142@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 116/137] ARM: 8905/1: Emit __gnu_mcount_nc when using Clang 10.0.0 or newer
+Date:   Sun,  6 Oct 2019 19:21:40 +0200
+Message-Id: <20191006171218.851692845@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,146 +47,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 0d9138ffac24cf8b75366ede3a68c951e6dcc575 ]
+[ Upstream commit b0fe66cf095016e0b238374c10ae366e1f087d11 ]
 
-Lockdep is unhappy if two locks from the same class are held.
+Currently, multi_v7_defconfig + CONFIG_FUNCTION_TRACER fails to build
+with clang:
 
-Fix the below warning for hyperv and virtio sockets (vmci socket code
-doesn't have the issue) by using lock_sock_nested() when __vsock_release()
-is called recursively:
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `_local_bh_enable':
+softirq.c:(.text+0x504): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `__local_bh_enable_ip':
+softirq.c:(.text+0x58c): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `do_softirq':
+softirq.c:(.text+0x6c8): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_enter':
+softirq.c:(.text+0x75c): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_exit':
+softirq.c:(.text+0x840): undefined reference to `mcount'
+arm-linux-gnueabi-ld: kernel/softirq.o:softirq.c:(.text+0xa50): more undefined references to `mcount' follow
 
-============================================
-WARNING: possible recursive locking detected
-5.3.0+ #1 Not tainted
---------------------------------------------
-server/1795 is trying to acquire lock:
-ffff8880c5158990 (sk_lock-AF_VSOCK){+.+.}, at: hvs_release+0x10/0x120 [hv_sock]
+clang can emit a working mcount symbol, __gnu_mcount_nc, when
+'-meabi gnu' is passed to it. Until r369147 in LLVM, this was
+broken and caused the kernel not to boot with '-pg' because the
+calling convention was not correct. Always build with '-meabi gnu'
+when using clang but ensure that '-pg' (which is added with
+CONFIG_FUNCTION_TRACER and its prereq CONFIG_HAVE_FUNCTION_TRACER)
+cannot be added with it unless this is fixed (which means using
+clang 10.0.0 and newer).
 
-but task is already holding lock:
-ffff8880c5158150 (sk_lock-AF_VSOCK){+.+.}, at: __vsock_release+0x2e/0xf0 [vsock]
+Link: https://github.com/ClangBuiltLinux/linux/issues/35
+Link: https://bugs.llvm.org/show_bug.cgi?id=33845
+Link: https://github.com/llvm/llvm-project/commit/16fa8b09702378bacfa3d07081afe6b353b99e60
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(sk_lock-AF_VSOCK);
-  lock(sk_lock-AF_VSOCK);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by server/1795:
- #0: ffff8880c5d05ff8 (&sb->s_type->i_mutex_key#10){+.+.}, at: __sock_release+0x2d/0xa0
- #1: ffff8880c5158150 (sk_lock-AF_VSOCK){+.+.}, at: __vsock_release+0x2e/0xf0 [vsock]
-
-stack backtrace:
-CPU: 5 PID: 1795 Comm: server Not tainted 5.3.0+ #1
-Call Trace:
- dump_stack+0x67/0x90
- __lock_acquire.cold.67+0xd2/0x20b
- lock_acquire+0xb5/0x1c0
- lock_sock_nested+0x6d/0x90
- hvs_release+0x10/0x120 [hv_sock]
- __vsock_release+0x24/0xf0 [vsock]
- __vsock_release+0xa0/0xf0 [vsock]
- vsock_release+0x12/0x30 [vsock]
- __sock_release+0x37/0xa0
- sock_close+0x14/0x20
- __fput+0xc1/0x250
- task_work_run+0x98/0xc0
- do_exit+0x344/0xc60
- do_group_exit+0x47/0xb0
- get_signal+0x15c/0xc50
- do_signal+0x30/0x720
- exit_to_usermode_loop+0x50/0xa0
- do_syscall_64+0x24e/0x270
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f4184e85f31
-
-Tested-by: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/vmw_vsock/af_vsock.c                |   16 ++++++++++++----
- net/vmw_vsock/hyperv_transport.c        |    2 +-
- net/vmw_vsock/virtio_transport_common.c |    2 +-
- 3 files changed, 14 insertions(+), 6 deletions(-)
+ arch/arm/Kconfig  | 2 +-
+ arch/arm/Makefile | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -641,7 +641,7 @@ struct sock *__vsock_create(struct net *
- }
- EXPORT_SYMBOL_GPL(__vsock_create);
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 3539be8700558..6029d324911cf 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -75,7 +75,7 @@ config ARM
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
+ 	select HAVE_FUNCTION_GRAPH_TRACER if !THUMB2_KERNEL && !CC_IS_CLANG
+-	select HAVE_FUNCTION_TRACER if !XIP_KERNEL
++	select HAVE_FUNCTION_TRACER if !XIP_KERNEL && (CC_IS_GCC || CLANG_VERSION >= 100000)
+ 	select HAVE_GCC_PLUGINS
+ 	select HAVE_HW_BREAKPOINT if PERF_EVENTS && (CPU_V6 || CPU_V6K || CPU_V7)
+ 	select HAVE_IDE if PCI || ISA || PCMCIA
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index f863c6935d0e5..c0b2783583016 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -112,6 +112,10 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
+ CFLAGS_ABI	+=-funwind-tables
+ endif
  
--static void __vsock_release(struct sock *sk)
-+static void __vsock_release(struct sock *sk, int level)
- {
- 	if (sk) {
- 		struct sk_buff *skb;
-@@ -651,9 +651,17 @@ static void __vsock_release(struct sock
- 		vsk = vsock_sk(sk);
- 		pending = NULL;	/* Compiler warning. */
++ifeq ($(CONFIG_CC_IS_CLANG),y)
++CFLAGS_ABI	+= -meabi gnu
++endif
++
+ # Accept old syntax despite ".syntax unified"
+ AFLAGS_NOWARN	:=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
  
-+		/* The release call is supposed to use lock_sock_nested()
-+		 * rather than lock_sock(), if a sock lock should be acquired.
-+		 */
- 		transport->release(vsk);
- 
--		lock_sock(sk);
-+		/* When "level" is SINGLE_DEPTH_NESTING, use the nested
-+		 * version to avoid the warning "possible recursive locking
-+		 * detected". When "level" is 0, lock_sock_nested(sk, level)
-+		 * is the same as lock_sock(sk).
-+		 */
-+		lock_sock_nested(sk, level);
- 		sock_orphan(sk);
- 		sk->sk_shutdown = SHUTDOWN_MASK;
- 
-@@ -662,7 +670,7 @@ static void __vsock_release(struct sock
- 
- 		/* Clean up any sockets that never were accepted. */
- 		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
--			__vsock_release(pending);
-+			__vsock_release(pending, SINGLE_DEPTH_NESTING);
- 			sock_put(pending);
- 		}
- 
-@@ -711,7 +719,7 @@ EXPORT_SYMBOL_GPL(vsock_stream_has_space
- 
- static int vsock_release(struct socket *sock)
- {
--	__vsock_release(sock->sk);
-+	__vsock_release(sock->sk, 0);
- 	sock->sk = NULL;
- 	sock->state = SS_FREE;
- 
---- a/net/vmw_vsock/hyperv_transport.c
-+++ b/net/vmw_vsock/hyperv_transport.c
-@@ -538,7 +538,7 @@ static void hvs_release(struct vsock_soc
- 	struct sock *sk = sk_vsock(vsk);
- 	bool remove_sock;
- 
--	lock_sock(sk);
-+	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
- 	remove_sock = hvs_close_lock_held(vsk);
- 	release_sock(sk);
- 	if (remove_sock)
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -791,7 +791,7 @@ void virtio_transport_release(struct vso
- 	struct sock *sk = &vsk->sk;
- 	bool remove_sock = true;
- 
--	lock_sock(sk);
-+	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
- 	if (sk->sk_type == SOCK_STREAM)
- 		remove_sock = virtio_transport_close(vsk);
- 
+-- 
+2.20.1
+
 
 
