@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D99CACD40F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31AC7CD418
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:22:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfJFRTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:19:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44462 "EHLO mail.kernel.org"
+        id S1727511AbfJFRVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:21:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbfJFRTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:19:37 -0400
+        id S1726855AbfJFRTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:19:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E6A420835;
-        Sun,  6 Oct 2019 17:19:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 881972077B;
+        Sun,  6 Oct 2019 17:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382376;
-        bh=JWnS6eCa3vkdo1jTO8fCCNR5Mxxo+4+dhhhRNHODc+g=;
+        s=default; t=1570382382;
+        bh=FRowA1mgth8qSVn5n86QD5RHhQy4jDtxItqvkVd170Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JbYtJUEmRdxeoIpPvzt3g9QKLHkmD2/Slihf/MGhQnkGVqLv5+XuJ6Ai+H3i52/wN
-         69aelOXGM1b5ULIwJjocUgsYULJTMSWxZOhD1PpH42ZGiQDXUsdG2c6+VHeNN9YXu5
-         fKaHtzK7rTPgw2fQ22Z00EPl3/g0tsAO+oSMFVFk=
+        b=1+JzWi4haKkRNyqssaNB0/8kCTTu13cQZ9WtXD2KOcK8/D60ktqLRYiFczDMWtFmj
+         cLqexSntgliJyX5rBcNMd3LDta/lbhLnd17fhXVE8TnftENg4mpYE52Wy3nD7Q+l11
+         CGWjT0uVKtWZxE6K9KhhL5IRMXzKSvfZt54nj3v8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 13/36] powerpc/pseries: correctly track irq state in default idle
-Date:   Sun,  6 Oct 2019 19:18:55 +0200
-Message-Id: <20191006171049.740975554@linuxfoundation.org>
+Subject: [PATCH 4.4 15/36] mfd: intel-lpss: Remove D3cold delay
+Date:   Sun,  6 Oct 2019 19:18:57 +0200
+Message-Id: <20191006171050.488742985@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171038.266461022@linuxfoundation.org>
 References: <20191006171038.266461022@linuxfoundation.org>
@@ -44,56 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Lynch <nathanl@linux.ibm.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 92c94dfb69e350471473fd3075c74bc68150879e ]
+[ Upstream commit 76380a607ba0b28627c9b4b55cd47a079a59624b ]
 
-prep_irq_for_idle() is intended to be called before entering
-H_CEDE (and it is used by the pseries cpuidle driver). However the
-default pseries idle routine does not call it, leading to mismanaged
-lazy irq state when the cpuidle driver isn't in use. Manifestations of
-this include:
+Goodix touchpad may drop its first couple input events when
+i2c-designware-platdrv and intel-lpss it connects to took too long to
+runtime resume from runtime suspended state.
 
-* Dropped IPIs in the time immediately after a cpu comes
-  online (before it has installed the cpuidle handler), making the
-  online operation block indefinitely waiting for the new cpu to
-  respond.
+This issue happens becuase the touchpad has a rather small buffer to
+store up to 13 input events, so if the host doesn't read those events in
+time (i.e. runtime resume takes too long), events are dropped from the
+touchpad's buffer.
 
-* Hitting this WARN_ON in arch_local_irq_restore():
-	/*
-	 * We should already be hard disabled here. We had bugs
-	 * where that wasn't the case so let's dbl check it and
-	 * warn if we are wrong. Only do that when IRQ tracing
-	 * is enabled as mfmsr() can be costly.
-	 */
-	if (WARN_ON_ONCE(mfmsr() & MSR_EE))
-		__hard_irq_disable();
+The bottleneck is D3cold delay it waits when transitioning from D3cold
+to D0, hence remove the delay to make the resume faster. I've tested
+some systems with intel-lpss and haven't seen any regression.
 
-Call prep_irq_for_idle() from pseries_lpar_idle() and honor its
-result.
-
-Fixes: 363edbe2614a ("powerpc: Default arch idle could cede processor on pseries")
-Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190910225244.25056-1-nathanl@linux.ibm.com
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202683
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/setup.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mfd/intel-lpss-pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
-index 9cc976ff7fecc..88fcf6a95fa67 100644
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -369,6 +369,9 @@ static void pseries_lpar_idle(void)
- 	 * low power mode by cedeing processor to hypervisor
- 	 */
+diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+index 5bfdfccbb9a1a..032c95157497f 100644
+--- a/drivers/mfd/intel-lpss-pci.c
++++ b/drivers/mfd/intel-lpss-pci.c
+@@ -38,6 +38,8 @@ static int intel_lpss_pci_probe(struct pci_dev *pdev,
+ 	info->mem = &pdev->resource[0];
+ 	info->irq = pdev->irq;
  
-+	if (!prep_irq_for_idle())
-+		return;
++	pdev->d3cold_delay = 0;
 +
- 	/* Indicate to hypervisor that we are idle. */
- 	get_lppaca()->idle = 1;
+ 	/* Probably it is enough to set this for iDMA capable devices only */
+ 	pci_set_master(pdev);
  
 -- 
 2.20.1
