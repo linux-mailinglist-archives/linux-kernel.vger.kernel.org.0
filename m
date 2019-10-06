@@ -2,127 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C96CD5BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:39:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694E0CD513
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbfJFRjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:39:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38566 "EHLO mail.kernel.org"
+        id S1728599AbfJFRcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:32:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729767AbfJFRjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:39:07 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1729060AbfJFRcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:32:05 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BADE4222BE;
-        Sun,  6 Oct 2019 17:39:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F13E52133F;
+        Sun,  6 Oct 2019 17:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383546;
-        bh=mQyM+MYzJfX0sMNye8DCPt5zXmK09F28LgbBWbDWYCw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JUiZ5cgOTjDAR/aAnvCPEBk+pdx+0uGQ6KJnWH0PHYB5ltx80IBEn7G3BhGAm2XNS
-         PX41yGr/108zRWPmd0xDdI7H1WlgmFKwNJV3l3zAHwF1Ywislk0Y2xPjy6YBQ/GPr3
-         3caKbNizFEG8EFw3cKZgZcvmE6rJ1OAs8XbrFDA4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7d6a57304857423318a5@syzkaller.appspotmail.com,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 5.2 137/137] vfs: set fs_context::user_ns for reconfigure
-Date:   Sun,  6 Oct 2019 19:22:01 +0200
-Message-Id: <20191006171220.808492952@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1570383124;
+        bh=y24o64+df+bFr+XImQr+ZOI4HN+DUwtAyK/fL7vJzEc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=121vaGNXc5JT+w6LQYymQyiF+FborDuGpo6Ui2V0O43iWVlulxml28rUZ13kv/E4a
+         DoNY6rdxiTSf83cnUFu8sVhH6pPl62muoxkHCqy63gRp2TFT6A2hy4tpfwJhFuJOs5
+         8TJVRrxgdx+3GePIn8QezPRMNO+sIq8nuisUinns=
+Date:   Sun, 6 Oct 2019 10:32:02 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Martijn Coenen <maco@android.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Mattias Nissler <mnissler@chromium.org>
+Subject: Re: [PATCH 4.9 30/47] ANDROID: binder: remove waitqueue when thread
+ exits.
+Message-ID: <20191006173202.GA832@sol.localdomain>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Martijn Coenen <maco@android.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Mattias Nissler <mnissler@chromium.org>
+References: <20191006172016.873463083@linuxfoundation.org>
+ <20191006172018.480360174@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191006172018.480360174@linuxfoundation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Sun, Oct 06, 2019 at 07:21:17PM +0200, Greg Kroah-Hartman wrote:
+> From: Martijn Coenen <maco@android.com>
+> 
+> commit f5cb779ba16334b45ba8946d6bfa6d9834d1527f upstream.
+> 
+> binder_poll() passes the thread->wait waitqueue that
+> can be slept on for work. When a thread that uses
+> epoll explicitly exits using BINDER_THREAD_EXIT,
+> the waitqueue is freed, but it is never removed
+> from the corresponding epoll data structure. When
+> the process subsequently exits, the epoll cleanup
+> code tries to access the waitlist, which results in
+> a use-after-free.
+> 
+> Prevent this by using POLLFREE when the thread exits.
+> 
+> Signed-off-by: Martijn Coenen <maco@android.com>
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Cc: stable <stable@vger.kernel.org> # 4.14
+> [backport BINDER_LOOPER_STATE_POLL logic as well]
+> Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/android/binder.c |   17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -334,7 +334,8 @@ enum {
+>  	BINDER_LOOPER_STATE_EXITED      = 0x04,
+>  	BINDER_LOOPER_STATE_INVALID     = 0x08,
+>  	BINDER_LOOPER_STATE_WAITING     = 0x10,
+> -	BINDER_LOOPER_STATE_NEED_RETURN = 0x20
+> +	BINDER_LOOPER_STATE_NEED_RETURN = 0x20,
+> +	BINDER_LOOPER_STATE_POLL	= 0x40,
+>  };
+>  
+>  struct binder_thread {
+> @@ -2628,6 +2629,18 @@ static int binder_free_thread(struct bin
+>  		} else
+>  			BUG();
+>  	}
+> +
+> +	/*
+> +	 * If this thread used poll, make sure we remove the waitqueue
+> +	 * from any epoll data structures holding it with POLLFREE.
+> +	 * waitqueue_active() is safe to use here because we're holding
+> +	 * the inner lock.
+> +	 */
+> +	if ((thread->looper & BINDER_LOOPER_STATE_POLL) &&
+> +	    waitqueue_active(&thread->wait)) {
+> +		wake_up_poll(&thread->wait, POLLHUP | POLLFREE);
+> +	}
+> +
+>  	if (send_reply)
+>  		binder_send_failed_reply(send_reply, BR_DEAD_REPLY);
+>  	binder_release_work(&thread->todo);
+> @@ -2651,6 +2664,8 @@ static unsigned int binder_poll(struct f
+>  		return POLLERR;
+>  	}
+>  
+> +	thread->looper |= BINDER_LOOPER_STATE_POLL;
+> +
+>  	wait_for_proc_work = thread->transaction_stack == NULL &&
+>  		list_empty(&thread->todo) && thread->return_error == BR_OK;
+>  
 
-commit 1dd9bc08cf1420d466dd8dcfcc233777e61ca5d2 upstream.
+Are you sure this backport is correct, given that in 4.9, binder_poll()
+sometimes uses proc->wait instead of thread->wait?:
 
-fs_context::user_ns is used by fuse_parse_param(), even during remount,
-so it needs to be set to the existing value for reconfigure.
+        wait_for_proc_work = thread->transaction_stack == NULL &&
+                list_empty(&thread->todo) && thread->return_error == BR_OK;
 
-Reproducer:
+        binder_unlock(__func__);
 
-	#include <fcntl.h>
-	#include <sys/mount.h>
-
-	int main()
-	{
-		char opts[128];
-		int fd = open("/dev/fuse", O_RDWR);
-
-		sprintf(opts, "fd=%d,rootmode=040000,user_id=0,group_id=0", fd);
-		mkdir("mnt", 0777);
-		mount("foo",  "mnt", "fuse.foo", 0, opts);
-		mount("foo", "mnt", "fuse.foo", MS_REMOUNT, opts);
-	}
-
-Crash:
-	BUG: kernel NULL pointer dereference, address: 0000000000000000
-	#PF: supervisor read access in kernel mode
-	#PF: error_code(0x0000) - not-present page
-	PGD 0 P4D 0
-	Oops: 0000 [#1] SMP
-	CPU: 0 PID: 129 Comm: syz_make_kuid Not tainted 5.3.0-rc5-next-20190821 #3
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-20181126_142135-anatol 04/01/2014
-	RIP: 0010:map_id_range_down+0xb/0xc0 kernel/user_namespace.c:291
-	[...]
-	Call Trace:
-	 map_id_down kernel/user_namespace.c:312 [inline]
-	 make_kuid+0xe/0x10 kernel/user_namespace.c:389
-	 fuse_parse_param+0x116/0x210 fs/fuse/inode.c:523
-	 vfs_parse_fs_param+0xdb/0x1b0 fs/fs_context.c:145
-	 vfs_parse_fs_string+0x6a/0xa0 fs/fs_context.c:188
-	 generic_parse_monolithic+0x85/0xc0 fs/fs_context.c:228
-	 parse_monolithic_mount_data+0x1b/0x20 fs/fs_context.c:708
-	 do_remount fs/namespace.c:2525 [inline]
-	 do_mount+0x39a/0xa60 fs/namespace.c:3107
-	 ksys_mount+0x7d/0xd0 fs/namespace.c:3325
-	 __do_sys_mount fs/namespace.c:3339 [inline]
-	 __se_sys_mount fs/namespace.c:3336 [inline]
-	 __x64_sys_mount+0x20/0x30 fs/namespace.c:3336
-	 do_syscall_64+0x4a/0x1a0 arch/x86/entry/common.c:290
-	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Reported-by: syzbot+7d6a57304857423318a5@syzkaller.appspotmail.com
-Fixes: 408cbe695350 ("vfs: Convert fuse to use the new mount API")
-Cc: David Howells <dhowells@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/fs_context.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -279,10 +279,8 @@ static struct fs_context *alloc_fs_conte
- 		fc->user_ns = get_user_ns(reference->d_sb->s_user_ns);
- 		break;
- 	case FS_CONTEXT_FOR_RECONFIGURE:
--		/* We don't pin any namespaces as the superblock's
--		 * subscriptions cannot be changed at this point.
--		 */
- 		atomic_inc(&reference->d_sb->s_active);
-+		fc->user_ns = get_user_ns(reference->d_sb->s_user_ns);
- 		fc->root = dget(reference);
- 		break;
- 	}
-
-
+        if (wait_for_proc_work) {
+                if (binder_has_proc_work(proc, thread))
+                        return POLLIN;
+                poll_wait(filp, &proc->wait, wait);
+                if (binder_has_proc_work(proc, thread))
+                        return POLLIN;
+        } else {
+                if (binder_has_thread_work(thread))
+                        return POLLIN;
+                poll_wait(filp, &thread->wait, wait);
+                if (binder_has_thread_work(thread))
+                        return POLLIN;
+        }
+        return 0;
