@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84658CD7C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38074CD80F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbfJFReH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:34:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60760 "EHLO mail.kernel.org"
+        id S1729379AbfJFR5C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:57:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729876AbfJFReE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:34:04 -0400
+        id S1729056AbfJFReM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:34:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E2252087E;
-        Sun,  6 Oct 2019 17:34:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52C4A2087E;
+        Sun,  6 Oct 2019 17:34:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383243;
-        bh=n8/k4oZ0PLenkMBuev9BeTxhWUwwjV3am2iTIBr4tZ0=;
+        s=default; t=1570383251;
+        bh=qqZxm8KNU3bkkqJKEYWUqs8sTqIDkTaNn9u3huRE85Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uhgsJivwZvhHpA3ijQlsoMQq3NhvFt3DIGg9oCp7OAvYd0QEmOixNbO+x6/3OHEUZ
-         HKjP7fIyN5Mpc0Yik/TGzxGcrVo5S5t5RCh7SBnGGeSVSHMyxWLyYAVBQ91E0XC/0Z
-         tIqFABlf9UF/4aJlp1KIuYZa9VJy9nETuqXpGdgQ=
+        b=1WgbQx9erCnUZX18H/9JicJdVrjGttJ0zkfNuR66Rtdg9N6dBSfBRVcF6s18gKUUh
+         2kgw411wqYAZ4fl9gh39H6z3nU6/VYsJLDKDf890mHu4zuK/SvTYQIhzBsWkcUwNm4
+         m78aQAEEgt/lyhH18SXTD/zZdKLcvfeRIvRZiGyE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marko Kohtala <marko.kohtala@okoko.fi>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 031/137] video: ssd1307fb: Start page range at page_offset
-Date:   Sun,  6 Oct 2019 19:20:15 +0200
-Message-Id: <20191006171211.661002137@linuxfoundation.org>
+Subject: [PATCH 5.2 034/137] drm/panel: check failure cases in the probe func
+Date:   Sun,  6 Oct 2019 19:20:18 +0200
+Message-Id: <20191006171211.971876273@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
 References: <20191006171209.403038733@linuxfoundation.org>
@@ -49,42 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marko Kohtala <marko.kohtala@okoko.fi>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit dd9782834dd9dde3624ff1acea8859f3d3e792d4 ]
+[ Upstream commit afd6d4f5a52c16e1483328ac074abb1cde92c29f ]
 
-The page_offset was only applied to the end of the page range. This caused
-the display updates to cause a scrolling effect on the display because the
-amount of data written to the display did not match the range display
-expected.
+The following function calls may fail and return NULL, so the null check
+is added.
+of_graph_get_next_endpoint
+of_graph_get_remote_port_parent
+of_graph_get_remote_port
 
-Fixes: 301bc0675b67 ("video: ssd1307fb: Make use of horizontal addressing mode")
-Signed-off-by: Marko Kohtala <marko.kohtala@okoko.fi>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Michal Vokáč <michal.vokac@ysoft.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190618074111.9309-4-marko.kohtala@okoko.fi
+Update: Thanks to Sam Ravnborg, for suggession on the use of goto to avoid
+leaking endpoint.
+
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190724195534.9303-1-navid.emamdoost@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/ssd1307fb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../gpu/drm/panel/panel-raspberrypi-touchscreen.c   | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
-index 021b727e8b5c4..6afd0d3ae5690 100644
---- a/drivers/video/fbdev/ssd1307fb.c
-+++ b/drivers/video/fbdev/ssd1307fb.c
-@@ -432,7 +432,7 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
- 	if (ret < 0)
+diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+index 2c9c9722734f5..9a2cb8aeab3a4 100644
+--- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
++++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+@@ -400,7 +400,13 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+ 
+ 	/* Look up the DSI host.  It needs to probe before we do. */
+ 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
++	if (!endpoint)
++		return -ENODEV;
++
+ 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
++	if (!dsi_host_node)
++		goto error;
++
+ 	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
+ 	of_node_put(dsi_host_node);
+ 	if (!host) {
+@@ -409,6 +415,9 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	info.node = of_graph_get_remote_port(endpoint);
++	if (!info.node)
++		goto error;
++
+ 	of_node_put(endpoint);
+ 
+ 	ts->dsi = mipi_dsi_device_register_full(host, &info);
+@@ -429,6 +438,10 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
  		return ret;
  
--	ret = ssd1307fb_write_cmd(par->client, 0x0);
-+	ret = ssd1307fb_write_cmd(par->client, par->page_offset);
- 	if (ret < 0)
- 		return ret;
+ 	return 0;
++
++error:
++	of_node_put(endpoint);
++	return -ENODEV;
+ }
  
+ static int rpi_touchscreen_remove(struct i2c_client *i2c)
 -- 
 2.20.1
 
