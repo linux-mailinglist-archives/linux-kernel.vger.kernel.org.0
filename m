@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B527CD50C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B148CD4DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729512AbfJFRbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58114 "EHLO mail.kernel.org"
+        id S1728312AbfJFR34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:29:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729497AbfJFRbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:48 -0400
+        id S1729016AbfJFR3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:29:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCB3B21479;
-        Sun,  6 Oct 2019 17:31:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47B7D2080F;
+        Sun,  6 Oct 2019 17:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383108;
-        bh=xwr8Gf+ZGbLNOhIHlpy1MgCwANMR3tLyATZ+L+siVIk=;
+        s=default; t=1570382986;
+        bh=SOE6ACuDJrpTLEalUwUdaGYcVNC0GWFqk/MsVyT7T58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qc9437Gx7P+XPhxMDWvw245ccppvWjRvl2xw5i6a8Ea/XfZB3lVZa5pEvvAfTMeD9
-         6KNighCRHMdBlRGC6vjyPnzkMs08FxUpNR0ACGue04EYE0MTeKZtfC7SMMpqIUEYhe
-         cM1S8KE3kHRM5TVKQ3MyvVU5/S4N1Z9O0teUC6PA=
+        b=qhwdXWBgAaS2rsAxACeWqPlyWtuQTFADu/o4Z2DO99oXbBY9a0MhPlSRnnM5rThgq
+         3E7r3pOfPQuCu9zQz2jVTDfilZv0IASmmvSKjpSkfGyO5bW+/csfEBzsEakaefKkOU
+         b09p9SJHftnLR8vv06rzTzLHc1bHlUS4633vRTC4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jeff Layton <jlayton@kernel.org>, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 036/106] pstore: fs superblock limits
-Date:   Sun,  6 Oct 2019 19:20:42 +0200
-Message-Id: <20191006171140.714722041@linuxfoundation.org>
+Subject: [PATCH 4.19 037/106] clk: qcom: gcc-sdm845: Use floor ops for sdcc clks
+Date:   Sun,  6 Oct 2019 19:20:43 +0200
+Message-Id: <20191006171141.256483190@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
 References: <20191006171124.641144086@linuxfoundation.org>
@@ -46,50 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Deepa Dinamani <deepa.kernel@gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 83b8a3fbe3aa82ac3c253b698ae6a9be2dbdd5e0 ]
+[ Upstream commit 5e4b7e82d497580bc430576c4c9bce157dd72512 ]
 
-Leaving granularity at 1ns because it is dependent on the specific
-attached backing pstore module. ramoops has microsecond resolution.
+Some MMC cards fail to enumerate properly when inserted into an MMC slot
+on sdm845 devices. This is because the clk ops for qcom clks round the
+frequency up to the nearest rate instead of down to the nearest rate.
+For example, the MMC driver requests a frequency of 52MHz from
+clk_set_rate() but the qcom implementation for these clks rounds 52MHz
+up to the next supported frequency of 100MHz. The MMC driver could be
+modified to request clk rate ranges but for now we can fix this in the
+clk driver by changing the rounding policy for this clk to be round down
+instead of round up.
 
-Fix the readback of ramoops fractional timestamp microseconds,
-which has incorrectly been reporting the value as nanoseconds.
-
-Fixes: 3f8f80f0cfeb ("pstore/ram: Read and write to the 'compressed' flag of pstore").
-
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Jeff Layton <jlayton@kernel.org>
-Cc: anton@enomsg.org
-Cc: ccross@android.com
-Cc: keescook@chromium.org
-Cc: tony.luck@intel.com
+Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
+Reported-by: Douglas Anderson <dianders@chromium.org>
+Cc: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lkml.kernel.org/r/20190830195142.103564-1-swboyd@chromium.org
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/pstore/ram.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/qcom/gcc-sdm845.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index 316c16463b20f..015d74ee31a03 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -162,6 +162,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
- 	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu-%c\n%n",
- 		   (time64_t *)&time->tv_sec, &time->tv_nsec, &data_type,
- 		   &header_length) == 3) {
-+		time->tv_nsec *= 1000;
- 		if (data_type == 'C')
- 			*compressed = true;
- 		else
-@@ -169,6 +170,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
- 	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu\n%n",
- 			  (time64_t *)&time->tv_sec, &time->tv_nsec,
- 			  &header_length) == 2) {
-+		time->tv_nsec *= 1000;
- 		*compressed = false;
- 	} else {
- 		time->tv_sec = 0;
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 3bf11a6200942..ada3e4aeb38f9 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -647,7 +647,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.name = "gcc_sdcc2_apps_clk_src",
+ 		.parent_names = gcc_parent_names_10,
+ 		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -671,7 +671,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+ 		.name = "gcc_sdcc4_apps_clk_src",
+ 		.parent_names = gcc_parent_names_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
 -- 
 2.20.1
 
