@@ -2,128 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E4FCCD25E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD151CD265
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfJFPIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 11:08:12 -0400
-Received: from orion.archlinux.org ([88.198.91.70]:55626 "EHLO
-        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfJFPIL (ORCPT
+        id S1726613AbfJFPIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 11:08:49 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39935 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfJFPIt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 11:08:11 -0400
-Received: from orion.archlinux.org (localhost [127.0.0.1])
-        by orion.archlinux.org (Postfix) with ESMTP id 5E61215A9B9BEC;
-        Sun,  6 Oct 2019 15:08:01 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on orion.archlinux.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
-        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-BL-Results: 
-Received: from saetre (unknown [79.140.127.125])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ffy00)
-        by orion.archlinux.org (Postfix) with ESMTPSA;
-        Sun,  6 Oct 2019 15:08:00 +0000 (UTC)
-Message-ID: <c440435a1fb8a04a9fca83f17b7cc1ebb95bcc44.camel@archlinux.org>
-Subject: Re: [PATCH v3 1/4] HID: logitech: Add MX Mice over Bluetooth
-From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
-To:     Mazin Rezk <mnrzk@protonmail.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Cc:     "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "jikos@kernel.org" <jikos@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-In-Reply-To: <l7xYjnA9EGfZe03FsrFhnH2aMq8qS8plWhHVvOtY_l4ShZ1NV6HA6hn9aI-jAzbLYUGFCIQCIKkx9z42Uoj4-AZDwBfRcAecYIn-0ZA5upE=@protonmail.com>
-References: <l7xYjnA9EGfZe03FsrFhnH2aMq8qS8plWhHVvOtY_l4ShZ1NV6HA6hn9aI-jAzbLYUGFCIQCIKkx9z42Uoj4-AZDwBfRcAecYIn-0ZA5upE=@protonmail.com>
-Organization: Archlinux
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-4zPzoW7jzVovkqYvJJGf"
-Date:   Sun, 06 Oct 2019 16:07:59 +0100
+        Sun, 6 Oct 2019 11:08:49 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w144so9601655oia.6;
+        Sun, 06 Oct 2019 08:08:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nqvbMIqcq67/i2yVAL0YTUW6apJz4THEkuKthWl5fgE=;
+        b=HyuJR8DjoVRp3FQ/QPDhQ8MWC1olcnGcpYbztk9CrqxZsP36w3DsfPimCpoYbhYxzw
+         gEFmfDsx6EVn2Q3r6FO9wXlWi47XGbuaeKC9B1ZNLTC+4tAaRzaSxUtWAIviov9R6Zhc
+         lnub7hyvPqV5LF0xZH1T5VpS77nuLRAtRVNIWvTyd/4+JndLsdceolILatucNytVd25r
+         XY/FaW+Nv9117xLbyyvN78vw67Adjz+Dp91ntFwoGtAy2jpEvOqyvyA28piRnnd7slkl
+         YP9fuA8H+pho/BdnjlHM5b3no2jMFCtFVdc/H54Lzv9SdA5zhkCWfIv9OvHDc1uEZACa
+         ivRA==
+X-Gm-Message-State: APjAAAVc5B10z/TQwCLK6B1U+/4TDn5tKhGxu1lexambBi+YRuURW1H3
+        Hv0tDKOqSlE+FEPJ5ayEI452liOP72f96Neu8Mw=
+X-Google-Smtp-Source: APXvYqwq60LmDn6AGtgdwDclNIdBSotjYjNaDAYj0L2DIdw3d2KLe0BdN5/cm86sCM6ESSLo3pGS2cGtZt9GawUo8cM=
+X-Received: by 2002:aca:50ca:: with SMTP id e193mr15226415oib.110.1570374526444;
+ Sun, 06 Oct 2019 08:08:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Evolution 3.34.0 
+References: <20191004100025.70798-1-mika.westerberg@linux.intel.com> <0002b2f3-d17c-0d49-52f4-b2ce31832e6c@kernel.dk>
+In-Reply-To: <0002b2f3-d17c-0d49-52f4-b2ce31832e6c@kernel.dk>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Sun, 6 Oct 2019 17:08:31 +0200
+Message-ID: <CAJZ5v0i=rc6DiZfch6J8ZOyj8ksK-2Dyb+qH_o=NQxtSntfnOw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] bdi: Do not use freezable workqueue
+To:     Jens Axboe <axboe@kernel.dk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Jan Kara <jack@suse.cz>,
+        Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        AceLan Kao <acelan.kao@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 4, 2019 at 3:22 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 10/4/19 4:00 AM, Mika Westerberg wrote:
+> > A removable block device, such as NVMe or SSD connected over Thunderbolt
+> > can be hot-removed any time including when the system is suspended. When
+> > device is hot-removed during suspend and the system gets resumed, kernel
+> > first resumes devices and then thaws the userspace including freezable
+> > workqueues. What happens in that case is that the NVMe driver notices
+> > that the device is unplugged and removes it from the system. This ends
+> > up calling bdi_unregister() for the gendisk which then schedules
+> > wb_workfn() to be run one more time.
+> >
+> > However, since the bdi_wq is still frozen flush_delayed_work() call in
+> > wb_shutdown() blocks forever halting system resume process. User sees
+> > this as hang as nothing is happening anymore.
+> >
+> > Triggering sysrq-w reveals this:
+> >
+> >    Workqueue: nvme-wq nvme_remove_dead_ctrl_work [nvme]
+> >    Call Trace:
+> >     ? __schedule+0x2c5/0x630
+> >     ? wait_for_completion+0xa4/0x120
+> >     schedule+0x3e/0xc0
+> >     schedule_timeout+0x1c9/0x320
+> >     ? resched_curr+0x1f/0xd0
+> >     ? wait_for_completion+0xa4/0x120
+> >     wait_for_completion+0xc3/0x120
+> >     ? wake_up_q+0x60/0x60
+> >     __flush_work+0x131/0x1e0
+> >     ? flush_workqueue_prep_pwqs+0x130/0x130
+> >     bdi_unregister+0xb9/0x130
+> >     del_gendisk+0x2d2/0x2e0
+> >     nvme_ns_remove+0xed/0x110 [nvme_core]
+> >     nvme_remove_namespaces+0x96/0xd0 [nvme_core]
+> >     nvme_remove+0x5b/0x160 [nvme]
+> >     pci_device_remove+0x36/0x90
+> >     device_release_driver_internal+0xdf/0x1c0
+> >     nvme_remove_dead_ctrl_work+0x14/0x30 [nvme]
+> >     process_one_work+0x1c2/0x3f0
+> >     worker_thread+0x48/0x3e0
+> >     kthread+0x100/0x140
+> >     ? current_work+0x30/0x30
+> >     ? kthread_park+0x80/0x80
+> >     ret_from_fork+0x35/0x40
+> >
+> > This is not limited to NVMes so exactly same issue can be reproduced by
+> > hot-removing SSD (over Thunderbolt) while the system is suspended.
+> >
+> > Prevent this from happening by removing WQ_FREEZABLE from bdi_wq.
+>
+> This series looks good for me, I don't think there's a reason for
+> the workers to be marked freezable.
 
---=-4zPzoW7jzVovkqYvJJGf
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I was a bit concerned that the original idea might be to prevent
+writes to the persistent storage from occurring after creating an
+image during hibernation, but if that's not the case, the series is
+fine from the general power management standpoint, so
 
-On Sun, 2019-10-06 at 01:04 +0000, Mazin Rezk wrote:
-> This patch adds support for several MX mice over Bluetooth. The device ID=
-s
-> have been copied from the libratbag device database and their features
-> have been based on their DJ device counterparts.
->=20
-> Signed-off-by: Mazin Rezk <mnrzk@protonmail.com>
-> ---
->  drivers/hid/hid-logitech-hidpp.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->=20
-> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-=
-hidpp.c
-> index 0179f7ed77e5..85fd0c17cc2f 100644
-> --- a/drivers/hid/hid-logitech-hidpp.c
-> +++ b/drivers/hid/hid-logitech-hidpp.c
-> @@ -3773,6 +3773,24 @@ static const struct hid_device_id hidpp_devices[] =
-=3D {
->  	{ /* MX5500 keyboard over Bluetooth */
->  	  HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb30b),
->  	  .driver_data =3D HIDPP_QUIRK_HIDPP_CONSUMER_VENDOR_KEYS },
-> +	{ /* MX Anywhere 2 mouse over Bluetooth */
-> +	  HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb013),
-> +	  .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-> +	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb018),
-> +	  .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-> +	{ /* MX Anywhere 2S mouse over Bluetooth */
-> +	  HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb01a),
-> +	  .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-> +	{ /* MX Master mouse over Bluetooth */
-> +	  HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb012),
-> +	  .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-> +	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb017),
-> +	  .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-> +	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb01e),
-> +	  .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
-> +	{ /* MX Master 2S mouse over Bluetooth */
-> +	  HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb019),
-> +	  .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_X2121 },
->  	{}
->  };
->=20
-> --
-> 2.23.0
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I think you should only add the mice you tested. We are not sure if
-this devices actually do work properly with the current stack. I will
-try to test some devices after Tuesday.
-
-Filipe La=C3=ADns
-
---=-4zPzoW7jzVovkqYvJJGf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAl2aA0UACgkQ+JPGdIFq
-qV2tShAAmhubw9I/kSIhhapRmz2G0cNdy0pa2TS5Aai1RQulADup1aIHEAQpH+dW
-WxeNSeNkuB0pFgGIw+weOmuvvV5H2M+J+K+dWxdfuM08lJmmXSIbJBXSkDy0FZLd
-8Ausxvwg+RHVPmVhQg7h6pe3FpLEKEpM0T/D8cvyUGJmbbCNgBtz12sltY4XKyo/
-tOJ0g0TU4STocg722fFYaQCh2MeBQzCj5qIMITM84Q7Wv7GUSIbVHmYfBHbC7EvY
-wyJEkX2y12HQeJOsUVYPMArmzVX0xqe/v72V8m0lpNH55KUYzzy5HFqqzKzEq1v0
-FTCJHdIZRoDIKz4rd85175v2hEnsdEju9dD0UmfGPbasvaMQb6qxYRMMlve7G+tg
-bzblD6UgD7sU7jsmFdj/Cnu5gxQqZqT6GfENLtK7IFy6fFURtR5qxnGUZuxh6j3m
-o8CyPDjp2dwt+k6jpOUmFXinMw0oqpUD0g1pJ3jkVy8XEiMRIsrMt141B+osmJYT
-ZOHpRSARTh1WkTBxi7mfFNh9TOYxur+6llGIdReKYtfLTQyN73Ae+FQexjsf8beQ
-4xB4/9C8e3tBV5ApxcHhDrt5EqOW84gMD54tDL93GeGsAVlLDTB6jvrrTIlW+GKk
-A2I1ZQwChJYunDEIO8eXxqBePp2qPZSwu2SkUGIhLugDN8byS6s=
-=QMFT
------END PGP SIGNATURE-----
-
---=-4zPzoW7jzVovkqYvJJGf--
+for both patches.
