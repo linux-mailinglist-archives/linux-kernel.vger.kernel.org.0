@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A118CD5AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB56CD4F3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730641AbfJFRig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:38:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37836 "EHLO mail.kernel.org"
+        id S1729324AbfJFRaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:30:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730630AbfJFRib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:38:31 -0400
+        id S1728047AbfJFRat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:30:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 543BE2080F;
-        Sun,  6 Oct 2019 17:38:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AA5B2087E;
+        Sun,  6 Oct 2019 17:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383510;
-        bh=VQvzdB4+euS16B1nRt9g7D9Y0DJawliTTWFFI4GaiJU=;
+        s=default; t=1570383048;
+        bh=1gGCjJia8yEAWiHCMurLorhELpMT7PCKhoCa6fsupq0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nc5gYqH0oNZSiuhUTdzvLO4m+EZ74K2nhoGZ3L6oGIv/NDrLd9wA6DVWCuRpmWimE
-         eRR+E73XVLXHbgKtlV/zVG2AI4Wn01ZZj2NIPIyVhsv4V0WvTdCU/t9BkebTtM7thZ
-         XTh/aXJoN7JFaqBm7Xu89Z+dewofYX3a5gNHEH4M=
+        b=vwtrygrdJMWrCsfj24H6MIjKItxI8cwHBa4f3uZNWtt8YjwJ51xjJYpSuS2WNj2So
+         hqtVa/Jf1sSNbm4uAjtv1ceg4VuQtWCvmLO/YtQcv4C7cIDyS1rZ0N2TbE1LExPfHQ
+         zH66/mWgVPuIGWp4TTkb2gzrMLa3n1U95BtZR9JM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 088/137] f2fs: fix to drop meta/node pages during umount
+Subject: [PATCH 4.19 066/106] ARM: 8903/1: ensure that usable memory in bank 0 starts from a PMD-aligned address
 Date:   Sun,  6 Oct 2019 19:21:12 +0200
-Message-Id: <20191006171216.158393309@linuxfoundation.org>
+Message-Id: <20191006171151.524099905@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,76 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Mike Rapoport <mike.rapoport@gmail.com>
 
-[ Upstream commit a8933b6b68f775b5774e7b075447fae13f4d01fe ]
+[ Upstream commit 00d2ec1e6bd82c0538e6dd3e4a4040de93ba4fef ]
 
-As reported in bugzilla:
+The calculation of memblock_limit in adjust_lowmem_bounds() assumes that
+bank 0 starts from a PMD-aligned address. However, the beginning of the
+first bank may be NOMAP memory and the start of usable memory
+will be not aligned to PMD boundary. In such case the memblock_limit will
+be set to the end of the NOMAP region, which will prevent any memblock
+allocations.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=204193
+Mark the region between the end of the NOMAP area and the next PMD-aligned
+address as NOMAP as well, so that the usable memory will start at
+PMD-aligned address.
 
-A null pointer dereference bug is triggered in f2fs under kernel-5.1.3.
-
- kasan_report.cold+0x5/0x32
- f2fs_write_end_io+0x215/0x650
- bio_endio+0x26e/0x320
- blk_update_request+0x209/0x5d0
- blk_mq_end_request+0x2e/0x230
- lo_complete_rq+0x12c/0x190
- blk_done_softirq+0x14a/0x1a0
- __do_softirq+0x119/0x3e5
- irq_exit+0x94/0xe0
- call_function_single_interrupt+0xf/0x20
-
-During umount, we will access NULL sbi->node_inode pointer in
-f2fs_write_end_io():
-
-	f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
-				page->index != nid_of_node(page));
-
-The reason is if disable_checkpoint mount option is on, meta dirty
-pages can remain during umount, and then be flushed by iput() of
-meta_inode, however node_inode has been iput()ed before
-meta_inode's iput().
-
-Since checkpoint is disabled, all meta/node datas are useless and
-should be dropped in next mount, so in umount, let's adjust
-drop_inode() to give a hint to iput_final() to drop all those dirty
-datas correctly.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/mm/mmu.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 973f1e8187706..01038aff5d8e0 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -894,7 +894,21 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index e46a6a446cdd2..70e560cf8ca03 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -1175,6 +1175,22 @@ void __init adjust_lowmem_bounds(void)
+ 	 */
+ 	vmalloc_limit = (u64)(uintptr_t)vmalloc_min - PAGE_OFFSET + PHYS_OFFSET;
  
- static int f2fs_drop_inode(struct inode *inode)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int ret;
-+
 +	/*
-+	 * during filesystem shutdown, if checkpoint is disabled,
-+	 * drop useless meta/node dirty pages.
++	 * The first usable region must be PMD aligned. Mark its start
++	 * as MEMBLOCK_NOMAP if it isn't
 +	 */
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		if (inode->i_ino == F2FS_NODE_INO(sbi) ||
-+			inode->i_ino == F2FS_META_INO(sbi)) {
-+			trace_f2fs_drop_inode(inode, 1);
-+			return 1;
++	for_each_memblock(memory, reg) {
++		if (!memblock_is_nomap(reg)) {
++			if (!IS_ALIGNED(reg->base, PMD_SIZE)) {
++				phys_addr_t len;
++
++				len = round_up(reg->base, PMD_SIZE) - reg->base;
++				memblock_mark_nomap(reg->base, len);
++			}
++			break;
 +		}
 +	}
 +
- 	/*
- 	 * This is to avoid a deadlock condition like below.
- 	 * writeback_single_inode(inode)
+ 	for_each_memblock(memory, reg) {
+ 		phys_addr_t block_start = reg->base;
+ 		phys_addr_t block_end = reg->base + reg->size;
 -- 
 2.20.1
 
