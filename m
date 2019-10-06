@@ -2,53 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E95CCD6F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 02:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7766CCD7A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 02:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbfJFAUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 5 Oct 2019 20:20:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41774 "EHLO mail.kernel.org"
+        id S1726939AbfJFA3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 5 Oct 2019 20:29:14 -0400
+Received: from mga06.intel.com ([134.134.136.31]:56818 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbfJFAUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 Oct 2019 20:20:11 -0400
-Received: from dragon (li937-157.members.linode.com [45.56.119.157])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07CB5222C8;
-        Sun,  6 Oct 2019 00:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570321206;
-        bh=qQ+AM7HzTxUatAdVYalvXuoGaXRz+y1gBg/GtTj6Ly0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IT94Vl4UeNiaxnAbEub0yaKVQCYfGFVYkKazdQwfLNbPy/C6nLnSoqGZg/UpeeHAo
-         oHTJBQToZ94hp52JtZSPUL6MbpnnNh3x9zuyuKPaaKMtU7iPCzceU0aRvmjErAaGmh
-         GMEKwVTY/vua6Qsmu1psHg8iMLS8CJWCLdrbU+so=
-Date:   Sun, 6 Oct 2019 08:19:50 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        dmurphy@ti.com
-Subject: Re: [PATCH V2] arm64: dts: imx8mn-ddr4-evk: Enable GPIO LED
-Message-ID: <20191006001948.GC7150@dragon>
-References: <1567517277-30919-1-git-send-email-Anson.Huang@nxp.com>
+        id S1726863AbfJFA3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 Oct 2019 20:29:13 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2019 17:29:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,261,1566889200"; 
+   d="scan'208";a="206126883"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Oct 2019 17:29:10 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1iGuQA-0000qr-5n; Sun, 06 Oct 2019 08:29:10 +0800
+Date:   Sun, 6 Oct 2019 08:28:02 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Carlos E. C. Barbosa" <climacobarbosacee@gmail.com>
+Cc:     kbuild-all@01.org, lkcamp@lists.libreplanetbr.org,
+        Helen Koike <helen.koike@collabora.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: vimc: get pixformat info from v4l2_format_info to
+ avoid code repetition
+Message-ID: <201910060859.oiVSDnT0%lkp@intel.com>
+References: <20191005211136.552305-1-carlosecb@tutanota.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1567517277-30919-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20191005211136.552305-1-carlosecb@tutanota.com>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 09:27:57AM -0400, Anson Huang wrote:
-> i.MX8MN DDR4 EVK board has a GPIO LED to indicate status,
-> add support for it.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Hi "Carlos,
 
-Applied, thanks.
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on linuxtv-media/master]
+[cannot apply to v5.4-rc1 next-20191004]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Carlos-E-C-Barbosa/media-vimc-get-pixformat-info-from-v4l2_format_info-to-avoid-code-repetition/20191006-053120
+base:   git://linuxtv.org/media_tree.git master
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-42-g38eda53-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/media/platform/vimc/vimc-common.c:121:21: sparse: sparse: symbol 'vimc_pix_map_fmt_info' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
