@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9267CD6E5
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BC0ACD6C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730877AbfJFRkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:40:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39570 "EHLO mail.kernel.org"
+        id S1730997AbfJFRkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:40:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730262AbfJFRkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:40:04 -0400
+        id S1729997AbfJFRkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:40:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94FEA2053B;
-        Sun,  6 Oct 2019 17:40:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EDCF2053B;
+        Sun,  6 Oct 2019 17:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383603;
-        bh=PnbnIcgZjtEdYqUlBBBWYErDr6FSx8IYXnn0vmGA5PY=;
+        s=default; t=1570383617;
+        bh=jP5aR8QFUuqvh6IsxqjL6IewN0qsy7Z1B9ECwlveLB8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y6r/1mPbvmIR2ggNjRx//96bi0qTacFDDqAqCSZmDyeCv7CcM+RL4ldKOfDg8bV2p
-         J8CU25WMEVM/Qf1Qk09HxnY1hZCgkh4kg2keCGjlamd6V3dfmCDHNsOYBp69txMOzu
-         mqK5YxuFdlMy9tbYM5IJoHt9uQEjhHumQ0ZspBcQ=
+        b=ltyf0fPx3QsE5e/m991m43YA2xN+15PhZ2vo6MU1WPVx33cCtPAHeQWTcMWiCj12B
+         sRS/H7sXUYgAopUz3G2ExxYJQEH5BijqdyilzsBsmHYxWPTX+CDVcgIoE9LgaJOewR
+         y0elRgf8Li/sMbd3WNe6Vfcg+fD/8yKpymBNLiho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Francis <David.Francis@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 027/166] clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
-Date:   Sun,  6 Oct 2019 19:19:53 +0200
-Message-Id: <20191006171215.381887646@linuxfoundation.org>
+Subject: [PATCH 5.3 031/166] drm/amd/display: Register VUPDATE_NO_LOCK interrupts for DCN2
+Date:   Sun,  6 Oct 2019 19:19:57 +0200
+Message-Id: <20191006171215.621657686@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -44,37 +47,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-[ Upstream commit 720099603d1f62e37b789366d7e89824b009ca28 ]
+[ Upstream commit e40837afb9b011757e17e9f71d97853ca574bcff ]
 
-The MMC2 clock slices are currently not defined in V3s CCU driver, which
-makes MMC2 not working.
+[Why]
+These are needed to send back DRM vblank events in the case where VRR
+is on. Without the interrupt enabled we're deferring the events into the
+vblank queue and userspace is left waiting forever to get back the
+events they need.
 
-Fix this issue.
+Found using igt@kms_vrr - the test fails immediately due to vblank
+timeout.
 
-Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+[How]
+Register them the same way we're handling it for DCN1.
+
+This fixes igt@kms_vrr for DCN2.
+
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: David Francis <David.Francis@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../display/dc/irq/dcn20/irq_service_dcn20.c  | 28 ++++++++++++-------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index 9b3939fc7faa6..5ca4d34b4094f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -502,6 +502,9 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
- 		[CLK_MMC1]		= &mmc1_clk.common.hw,
- 		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common.hw,
- 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
-+		[CLK_MMC2]		= &mmc2_clk.common.hw,
-+		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common.hw,
-+		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common.hw,
- 		[CLK_CE]		= &ce_clk.common.hw,
- 		[CLK_SPI0]		= &spi0_clk.common.hw,
- 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
+diff --git a/drivers/gpu/drm/amd/display/dc/irq/dcn20/irq_service_dcn20.c b/drivers/gpu/drm/amd/display/dc/irq/dcn20/irq_service_dcn20.c
+index 3cc0f2a1f77cc..5db29bf582d31 100644
+--- a/drivers/gpu/drm/amd/display/dc/irq/dcn20/irq_service_dcn20.c
++++ b/drivers/gpu/drm/amd/display/dc/irq/dcn20/irq_service_dcn20.c
+@@ -167,6 +167,11 @@ static const struct irq_source_info_funcs vblank_irq_info_funcs = {
+ 	.ack = NULL
+ };
+ 
++static const struct irq_source_info_funcs vupdate_no_lock_irq_info_funcs = {
++	.set = NULL,
++	.ack = NULL
++};
++
+ #undef BASE_INNER
+ #define BASE_INNER(seg) DCN_BASE__INST0_SEG ## seg
+ 
+@@ -221,12 +226,15 @@ static const struct irq_source_info_funcs vblank_irq_info_funcs = {
+ 		.funcs = &pflip_irq_info_funcs\
+ 	}
+ 
+-#define vupdate_int_entry(reg_num)\
++/* vupdate_no_lock_int_entry maps to DC_IRQ_SOURCE_VUPDATEx, to match semantic
++ * of DCE's DC_IRQ_SOURCE_VUPDATEx.
++ */
++#define vupdate_no_lock_int_entry(reg_num)\
+ 	[DC_IRQ_SOURCE_VUPDATE1 + reg_num] = {\
+ 		IRQ_REG_ENTRY(OTG, reg_num,\
+-			OTG_GLOBAL_SYNC_STATUS, VUPDATE_INT_EN,\
+-			OTG_GLOBAL_SYNC_STATUS, VUPDATE_EVENT_CLEAR),\
+-		.funcs = &vblank_irq_info_funcs\
++			OTG_GLOBAL_SYNC_STATUS, VUPDATE_NO_LOCK_INT_EN,\
++			OTG_GLOBAL_SYNC_STATUS, VUPDATE_NO_LOCK_EVENT_CLEAR),\
++		.funcs = &vupdate_no_lock_irq_info_funcs\
+ 	}
+ 
+ #define vblank_int_entry(reg_num)\
+@@ -333,12 +341,12 @@ irq_source_info_dcn20[DAL_IRQ_SOURCES_NUMBER] = {
+ 	dc_underflow_int_entry(6),
+ 	[DC_IRQ_SOURCE_DMCU_SCP] = dummy_irq_entry(),
+ 	[DC_IRQ_SOURCE_VBIOS_SW] = dummy_irq_entry(),
+-	vupdate_int_entry(0),
+-	vupdate_int_entry(1),
+-	vupdate_int_entry(2),
+-	vupdate_int_entry(3),
+-	vupdate_int_entry(4),
+-	vupdate_int_entry(5),
++	vupdate_no_lock_int_entry(0),
++	vupdate_no_lock_int_entry(1),
++	vupdate_no_lock_int_entry(2),
++	vupdate_no_lock_int_entry(3),
++	vupdate_no_lock_int_entry(4),
++	vupdate_no_lock_int_entry(5),
+ 	vblank_int_entry(0),
+ 	vblank_int_entry(1),
+ 	vblank_int_entry(2),
 -- 
 2.20.1
 
