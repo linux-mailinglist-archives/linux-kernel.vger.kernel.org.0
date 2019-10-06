@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDBF5CD52E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:33:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57E8FCD52F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:33:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbfJFRda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:33:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60036 "EHLO mail.kernel.org"
+        id S1729793AbfJFRdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:33:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729747AbfJFRd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:33:26 -0400
+        id S1729778AbfJFRde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:33:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DDB92080F;
-        Sun,  6 Oct 2019 17:33:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 609952133F;
+        Sun,  6 Oct 2019 17:33:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383205;
-        bh=/MaTq+pll+q1PEJdVMBNeWdM6vcaLTRr/4d4y9623qE=;
+        s=default; t=1570383213;
+        bh=lzf4NezQwvnIwgsemkILbMCirg6UhvXpkxXQMME+7bw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qKhBr1Rw+iHpXK8/MhN+B2NlDuk+A41+K8FY9rERr/EL6fCc9ktNdsg5i6U8MJAr6
-         zEHoEbkpaNpsdyOP6CEojrpIfuOtJB7CYkFPI+Rc9SCsJZfbz71Jx49GXfY+LbOWO8
-         za9eAF7CzOu0jWL8xQIiEZAKfl8N2oqzL+rVrk2E=
+        b=JY+U/XRJXTKq12C52l06bIzz3/s0dBB6sbkeoeFFVvvq4sjag7CFNq/O3tqsc7kU7
+         h00Mo5oE+bleE6Y7Nma+Dh077rOWBU4gR6yRld+pot5EU6eFukq6S2FNpFQDi+bDdH
+         DX6aTMP25r1nV4Q9HI3bUyHe3xLsgMWjO1JC+mZ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Marek Majkowski <marek@cloudflare.com>,
+        stable@vger.kernel.org, Dotan Barak <dotanb@dev.mellanox.co.il>,
+        Sudhakar Dindukurti <sudhakar.dindukurti@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 019/137] tcp: adjust rto_base in retransmits_timed_out()
-Date:   Sun,  6 Oct 2019 19:20:03 +0200
-Message-Id: <20191006171210.959241083@linuxfoundation.org>
+Subject: [PATCH 5.2 021/137] net/rds: Fix error handling in rds_ib_add_one()
+Date:   Sun,  6 Oct 2019 19:20:05 +0200
+Message-Id: <20191006171211.070959061@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
 References: <20191006171209.403038733@linuxfoundation.org>
@@ -45,48 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dotan Barak <dotanb@dev.mellanox.co.il>
 
-[ Upstream commit 3256a2d6ab1f71f9a1bd2d7f6f18eb8108c48d17 ]
+[ Upstream commit d64bf89a75b65f83f06be9fb8f978e60d53752db ]
 
-The cited commit exposed an old retransmits_timed_out() bug
-which assumed it could call tcp_model_timeout() with
-TCP_RTO_MIN as rto_base for all states.
+rds_ibdev:ipaddr_list and rds_ibdev:conn_list are initialized
+after allocation some resources such as protection domain.
+If allocation of such resources fail, then these uninitialized
+variables are accessed in rds_ib_dev_free() in failure path. This
+can potentially crash the system. The code has been updated to
+initialize these variables very early in the function.
 
-But flows in SYN_SENT or SYN_RECV state uses a different
-RTO base (1 sec instead of 200 ms, unless BPF choses
-another value)
-
-This caused a reduction of SYN retransmits from 6 to 4 with
-the default /proc/sys/net/ipv4/tcp_syn_retries value.
-
-Fixes: a41e8a88b06e ("tcp: better handle TCP_USER_TIMEOUT in SYN_SENT state")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Yuchung Cheng <ycheng@google.com>
-Cc: Marek Majkowski <marek@cloudflare.com>
+Signed-off-by: Dotan Barak <dotanb@dev.mellanox.co.il>
+Signed-off-by: Sudhakar Dindukurti <sudhakar.dindukurti@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_timer.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/rds/ib.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -198,8 +198,13 @@ static bool retransmits_timed_out(struct
- 		return false;
+--- a/net/rds/ib.c
++++ b/net/rds/ib.c
+@@ -143,6 +143,9 @@ static void rds_ib_add_one(struct ib_dev
+ 	refcount_set(&rds_ibdev->refcount, 1);
+ 	INIT_WORK(&rds_ibdev->free_work, rds_ib_dev_free);
  
- 	start_ts = tcp_sk(sk)->retrans_stamp;
--	if (likely(timeout == 0))
--		timeout = tcp_model_timeout(sk, boundary, TCP_RTO_MIN);
-+	if (likely(timeout == 0)) {
-+		unsigned int rto_base = TCP_RTO_MIN;
++	INIT_LIST_HEAD(&rds_ibdev->ipaddr_list);
++	INIT_LIST_HEAD(&rds_ibdev->conn_list);
 +
-+		if ((1 << sk->sk_state) & (TCPF_SYN_SENT | TCPF_SYN_RECV))
-+			rto_base = tcp_timeout_init(sk);
-+		timeout = tcp_model_timeout(sk, boundary, rto_base);
-+	}
+ 	rds_ibdev->max_wrs = device->attrs.max_qp_wr;
+ 	rds_ibdev->max_sge = min(device->attrs.max_send_sge, RDS_IB_MAX_SGE);
  
- 	return (s32)(tcp_time_stamp(tcp_sk(sk)) - start_ts - timeout) >= 0;
- }
+@@ -203,9 +206,6 @@ static void rds_ib_add_one(struct ib_dev
+ 		device->name,
+ 		rds_ibdev->use_fastreg ? "FRMR" : "FMR");
+ 
+-	INIT_LIST_HEAD(&rds_ibdev->ipaddr_list);
+-	INIT_LIST_HEAD(&rds_ibdev->conn_list);
+-
+ 	down_write(&rds_ib_devices_lock);
+ 	list_add_tail_rcu(&rds_ibdev->list, &rds_ib_devices);
+ 	up_write(&rds_ib_devices_lock);
 
 
