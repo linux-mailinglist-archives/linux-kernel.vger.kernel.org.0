@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA160CD7E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66CD7CD7F7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbfJFRye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:54:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51362 "EHLO mail.kernel.org"
+        id S1727500AbfJFRzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728637AbfJFRy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:54:29 -0400
+        id S1727316AbfJFRy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:54:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2875522478;
-        Sun,  6 Oct 2019 17:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D33C32247A;
+        Sun,  6 Oct 2019 17:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383992;
-        bh=xXalf5xqeX1/i6O/O50rC1iTJLzLihvL1a3MH8qpFyI=;
+        s=default; t=1570383995;
+        bh=35T8UIzRCNiDttKKFdbMJmiuJrtXjpVVa+1qrFBi4Vo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C2ikIAyrdlUGkuyxuwzPJPcZzPUSTQoBd/3rCOytCcqBxrOwTDj0g6gWsa52VMKlv
-         gHABzYTrbqtCBPTwFedydmI4jLx9rfffwGhtwDU4z5/tWwDWYedWY3IbbGQuO1Ea1K
-         moFVNRat/2An1aZRy0312AZJEQt3J+PzNpDhkIOw=
+        b=TbCGLDAciGvHzQgp81pYY1BN/lcFQ0DyTvYJ9mNJcN41t2tVomlTMYWgQ7JRI0L3L
+         gJP1hdqwpdkQHzYvYJi8eurWFYNqPs0fOahuDukGs4t5jo5xHzREETMA3VPI/uAZGm
+         O2+ni9NrRoa/qdI0v7HBGMKS9x783kxAwrvymct0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 135/166] net: sched: taprio: Fix potential integer overflow in taprio_set_picos_per_byte
-Date:   Sun,  6 Oct 2019 19:21:41 +0200
-Message-Id: <20191006171224.523399591@linuxfoundation.org>
+Subject: [PATCH 5.3 136/166] net: Unpublish sk from sk_reuseport_cb before call_rcu
+Date:   Sun,  6 Oct 2019 19:21:42 +0200
+Message-Id: <20191006171224.590814877@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -47,39 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
+From: Martin KaFai Lau <kafai@fb.com>
 
-[ Upstream commit 68ce6688a5baefde30914fc07fc27292dbbe8320 ]
+[ Upstream commit 8c7138b33e5c690c308b2a7085f6313fdcb3f616 ]
 
-The speed divisor is used in a context expecting an s64, but it is
-evaluated using 32-bit arithmetic.
+The "reuse->sock[]" array is shared by multiple sockets.  The going away
+sk must unpublish itself from "reuse->sock[]" before making call_rcu()
+call.  However, this unpublish-action is currently done after a grace
+period and it may cause use-after-free.
 
-To avoid that happening, instead of multiplying by 1,000,000 in the
-first place, simplify the fraction and do a standard 32 bit division
-instead.
+The fix is to move reuseport_detach_sock() to sk_destruct().
+Due to the above reason, any socket with sk_reuseport_cb has
+to go through the rcu grace period before freeing it.
 
-Fixes: f04b514c0ce2 ("taprio: Set default link speed to 10 Mbps in taprio_set_picos_per_byte")
-Reported-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+It is a rather old bug (~3 yrs).  The Fixes tag is not necessary
+the right commit but it is the one that introduced the SOCK_RCU_FREE
+logic and this fix is depending on it.
+
+Fixes: a4298e4522d6 ("net: add SOCK_RCU_FREE socket flag")
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
 Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: Martin KaFai Lau <kafai@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_taprio.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/core/sock.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/net/sched/sch_taprio.c
-+++ b/net/sched/sch_taprio.c
-@@ -965,8 +965,7 @@ static void taprio_set_picos_per_byte(st
- 		speed = ecmd.base.speed;
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1700,8 +1700,6 @@ static void __sk_destruct(struct rcu_hea
+ 		sk_filter_uncharge(sk, filter);
+ 		RCU_INIT_POINTER(sk->sk_filter, NULL);
+ 	}
+-	if (rcu_access_pointer(sk->sk_reuseport_cb))
+-		reuseport_detach_sock(sk);
  
- skip:
--	picos_per_byte = div64_s64(NSEC_PER_SEC * 1000LL * 8,
--				   speed * 1000 * 1000);
-+	picos_per_byte = (USEC_PER_SEC * 8) / speed;
+ 	sock_disable_timestamp(sk, SK_FLAGS_TIMESTAMP);
  
- 	atomic64_set(&q->picos_per_byte, picos_per_byte);
- 	netdev_dbg(dev, "taprio: set %s's picos_per_byte to: %lld, linkspeed: %d\n",
+@@ -1728,7 +1726,14 @@ static void __sk_destruct(struct rcu_hea
+ 
+ void sk_destruct(struct sock *sk)
+ {
+-	if (sock_flag(sk, SOCK_RCU_FREE))
++	bool use_call_rcu = sock_flag(sk, SOCK_RCU_FREE);
++
++	if (rcu_access_pointer(sk->sk_reuseport_cb)) {
++		reuseport_detach_sock(sk);
++		use_call_rcu = true;
++	}
++
++	if (use_call_rcu)
+ 		call_rcu(&sk->sk_rcu, __sk_destruct);
+ 	else
+ 		__sk_destruct(&sk->sk_rcu);
 
 
