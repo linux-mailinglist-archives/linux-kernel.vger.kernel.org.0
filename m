@@ -2,112 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D090CCD7CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF8CCD886
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbfJFRfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:35:08 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53906 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730127AbfJFRfF (ORCPT
+        id S1726852AbfJFSHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 14:07:01 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39537 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbfJFSHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:35:05 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 88382804A9; Sun,  6 Oct 2019 19:34:47 +0200 (CEST)
-Date:   Sun, 6 Oct 2019 19:35:02 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Sun, 6 Oct 2019 14:07:01 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y3so11291133ljj.6
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2019 11:06:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LYZhJ8z29L9VXaq40W7IaPRpHSPw3yWamQCRA+/ko3U=;
+        b=bGADQTdQUdcHqbYbNLqk9QwKozcUBscZ2f20slYeCKfCvmhN38YzMKFvX2ufUc7FXY
+         ODiodrltVBR1zqdLTv38xj3MP/5BMFzRTbjwiz51A8ILCCXUKeHQexCepEAVI85inw7X
+         VnAVOK7Rvj9ezJaN6A43dtjOY05DLDXYKJxuQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LYZhJ8z29L9VXaq40W7IaPRpHSPw3yWamQCRA+/ko3U=;
+        b=Ct/fkEnzpyVmEp/IOX399QyRjhHEa2RI+QjevTMPeqGb1wu+oH93mrfe7dhpD1afx1
+         hfvHyXqdefMZthGcbGFurlUhRpbK7EmqKaQE0tZ7SmNpB0DJtyj1s80fqZd7IzyxzHr6
+         c2nsFe6RzllJGuU6GFPHorLOIoF9iKisqcnxnbJ8I6Tfg8tC8MSku51i5B9Yp25GH2Kq
+         14qZe7aJQ+Z53aklnu0PwrHwB9cCBo5ix/w+LwrVYdnrt0BAJfKAUZWNzKqp4sjcYlkV
+         ezK06Q+hUf8mlegbJTpVwaWojG+XWyTXvgTus2oMM5+5sZLmREdL73JHTgOw3XnijW6i
+         Oh7w==
+X-Gm-Message-State: APjAAAWc6QWxFsWSuWYgguJ5AoPuznrmf92V3okFIbzqtJS9LOr7xL8E
+        o+3K3wNZ4MCrjMzN8oJw++lRB6h/2YY=
+X-Google-Smtp-Source: APXvYqxl7Yi78ER+qSOIF1u82NyFH6Xm7K17/2FM+VrkSru27m4vAxPvzYR0OnpdWhvGLdOQWYj9Eg==
+X-Received: by 2002:a2e:84d0:: with SMTP id q16mr16057961ljh.106.1570385216821;
+        Sun, 06 Oct 2019 11:06:56 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id q24sm2422376lfa.94.2019.10.06.11.06.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2019 11:06:55 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 7so11281963ljw.7
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2019 11:06:54 -0700 (PDT)
+X-Received: by 2002:a2e:9556:: with SMTP id t22mr15616404ljh.97.1570385214720;
+ Sun, 06 Oct 2019 11:06:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
+ <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
+ <20191006114129.GD24605@amd> <CAHk-=wjvhovO6V4-zT=xEMFnRonYteZvsPo-S0_n_DetSTUk5A@mail.gmail.com>
+ <20191006173501.GA31243@amd>
+In-Reply-To: <20191006173501.GA31243@amd>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 6 Oct 2019 11:06:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whgfz2+OgBTVrHLoHK57emYb4gN6TtJ_s-607U=jBQ+ig@mail.gmail.com>
+Message-ID: <CAHk-=whgfz2+OgBTVrHLoHK57emYb4gN6TtJ_s-607U=jBQ+ig@mail.gmail.com>
+Subject: Re: x86/random: Speculation to the rescue
+To:     Pavel Machek <pavel@ucw.cz>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         "Ahmed S. Darwish" <darwish.07@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
+        "Theodore Ts'o" <tytso@mit.edu>,
         Nicholas Mc Guire <hofrat@opentech.at>,
-        the arch/x86 maintainers <x86@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Kees Cook <keescook@chromium.org>
-Subject: Re: x86/random: Speculation to the rescue
-Message-ID: <20191006173501.GA31243@amd>
-References: <alpine.DEB.2.21.1909290010500.2636@nanos.tec.linutronix.de>
- <CAHk-=wgjC01UaoV35PZvGPnrQ812SRGPoV7Xp63BBFxAsJjvrg@mail.gmail.com>
- <20191006114129.GD24605@amd>
- <CAHk-=wjvhovO6V4-zT=xEMFnRonYteZvsPo-S0_n_DetSTUk5A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjvhovO6V4-zT=xEMFnRonYteZvsPo-S0_n_DetSTUk5A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Oct 6, 2019 at 10:35 AM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> It will not: boot is now halted because systemd wants some
+> entropy. Everything is idle and very little interrupts are
+> happening. We have spinning rust, but it is idle, and thus not
+> generating any interrupts.
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, but we have that problem now solved.
 
-On Sun 2019-10-06 10:26:18, Linus Torvalds wrote:
-> On Sun, Oct 6, 2019 at 4:41 AM Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> > Should we have some kind of notifier chain, so that we could utilize
-> > better random sources (spinning rust) if we had them?
->=20
-> The spinning rust will get entropy on its own just thanks to the
-> regular interrupt stuff. And the kernel tryin gto do IO is a bad
-> idea.
+Except on embedded platforms that have garbage CPU's without even a
+cycle counter.
 
-It will not: boot is now halted because systemd wants some
-entropy. Everything is idle and very little interrupts are
-happening. We have spinning rust, but it is idle, and thus not
-generating any interrupts.
+But those won't have spinning rust anyway.
 
-> Plus I think it's kind of pointless to do anythign at all for things
-> like spinning rust in this day and age. It's no longer relevant, and
-> never really was in the area where this was a problem.
->=20
-> Also, I don't really like the notion of random (sic) notifiers that
-> different drivers or things could attach to this thing. People will
-> disagree about how much entropy it has anyway, and I'd rather have
-> _one_ clear implementation that people can look at and comment on and
-> try to actually write an academic paper on and suggest improvements
-> to, than some generic "entropy notifier interface" that then gets
-> whatever input somebody decides is appropriate.
->=20
-> We already have interfaces for "I think I have interesting data":
-> add_interrupt_randomness(), add_device_randomness(),
-> add_hwgenerator_randomness() are all for different sources of
-> entropy.
+Yes, bad SSD's and MMC disks (that they do have) will generate timing
+noise too, but in the absense of a cycle counter, that noise won't be
+much use.
 
-I'm not suggesting the notifier would invent some entropy... I agree
-that kernel doing IO is strange, but I'm suggesting just that: if
-userspace is blocked waiting for entropy, do some I/O, and let
-interrupt randomness do its job.
-
-It will work great on spinning rust. It will also work somehow on SSDs
-and SD cards etc, because they have separate CPUs these days. They'll
-certainly generate some interrupts, and we already assign some
-randomness to that... It will let the machine boot, and entropy
-calculation rules do not need to change.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl2aJcUACgkQMOfwapXb+vJoQwCfVYSJea7N8MJtkKLYFp8F2PgP
-PG0AnRqDVeQLLkeq8toHSyfHc5+0kESP
-=QjAp
------END PGP SIGNATURE-----
-
---u3/rZRmxL6MmkK24--
+                 Linus
