@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55E2ACD5F1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C27C3CD5CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731289AbfJFRlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:41:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39352 "EHLO mail.kernel.org"
+        id S1730978AbfJFRkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:40:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730904AbfJFRjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:39:53 -0400
+        id S1730967AbfJFRkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:40:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC6F020700;
-        Sun,  6 Oct 2019 17:39:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC9B92087E;
+        Sun,  6 Oct 2019 17:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383592;
-        bh=/P72MjB8XhN4/ZZi1bmLbv5QAnQz2BwhA6RjE5T6u/4=;
+        s=default; t=1570383600;
+        bh=UAfTYj9dSSWlNwqhJHR1m9xmDES6sax0XfOL7/szap8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UByN6hUw8+16soSfpBR1tScePHSYCMBpLPc+2ccI9VHDr7gF6N0OY9Gnoukqes24h
-         dM0D5oiCrf8lpMtkuCiyEuuys2YpNHzRvG1sE4GnmhCd38JpKWG+TwWwUUYoe7IaKF
-         0Pe8rSUoRSc3BxfJ1rL8l654C9x++9QE+tT0OZOM=
+        b=cG+Re7QleUuPwYWPTGjOlV+Mt4LswALube3/NKTmJ0KekTWKj89k3Ya/OU5UbUGiZ
+         S2xgvZZcLyE0e/A7NVaTHiZjeQIw5eULn8Ko1ZWYTxOePmAC3STuocqvxI1MqBDGQh
+         upfH4rBNQuN+gmsMDIZZhzzueB4ODoCiVMc1uTyc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 023/166] pinctrl: stmfx: update pinconf settings
-Date:   Sun,  6 Oct 2019 19:19:49 +0200
-Message-Id: <20191006171215.115873449@linuxfoundation.org>
+Subject: [PATCH 5.3 026/166] clk: ingenic/jz4740: Fix "pll half" divider not read/written properly
+Date:   Sun,  6 Oct 2019 19:19:52 +0200
+Message-Id: <20191006171215.318003328@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -45,88 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Torgue <alexandre.torgue@st.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit a502b343ebd0eab38f3cb33fbb84011847cf5aac ]
+[ Upstream commit 568b9de48d80bcf1a92e2c4fa67651abbb8ebfe2 ]
 
-According to the following tab (coming from STMFX datasheet), updates
-have to done in stmfx_pinconf_set function:
+The code was setting the bit 21 of the CPCCR register to use a divider
+of 2 for the "pll half" clock, and clearing the bit to use a divider
+of 1.
 
--"type" has to be set when "bias" is configured as "pull-up or pull-down"
--PIN_CONFIG_DRIVE_PUSH_PULL should only be used when gpio is configured as
- output. There is so no need to check direction.
+This is the opposite of how this register field works: a cleared bit
+means that the /2 divider is used, and a set bit means that the divider
+is 1.
 
-DIR | TYPE | PUPD | MFX GPIO configuration
-----|------|------|---------------------------------------------------
-1   | 1    | 1    | OUTPUT open drain with internal pull-up resistor
-----|------|------|---------------------------------------------------
-1   | 1    | 0    | OUTPUT open drain with internal pull-down resistor
-----|------|------|---------------------------------------------------
-1   | 0    | 0/1  | OUTPUT push pull no pull
-----|------|------|---------------------------------------------------
-0   | 1    | 1    | INPUT with internal pull-up resistor
-----|------|------|---------------------------------------------------
-0   | 1    | 0    | INPUT with internal pull-down resistor
-----|------|------|---------------------------------------------------
-0   | 0    | 1    | INPUT floating
-----|------|------|---------------------------------------------------
-0   | 0    | 0    | analog (GPIO not used, default setting)
+Restore the correct behaviour using the newly introduced .div_table
+field.
 
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Link: https://lore.kernel.org/r/1564053416-32192-1-git-send-email-amelie.delaunay@st.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Link: https://lkml.kernel.org/r/20190701113606.4130-1-paul@crapouillou.net
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-stmfx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/clk/ingenic/jz4740-cgu.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
-index d3332da356372..31b6e511670fc 100644
---- a/drivers/pinctrl/pinctrl-stmfx.c
-+++ b/drivers/pinctrl/pinctrl-stmfx.c
-@@ -296,29 +296,29 @@ static int stmfx_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		switch (param) {
- 		case PIN_CONFIG_BIAS_PULL_PIN_DEFAULT:
- 		case PIN_CONFIG_BIAS_DISABLE:
-+		case PIN_CONFIG_DRIVE_PUSH_PULL:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			if (ret)
-+				return ret;
-+			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+			if (ret)
-+				return ret;
- 			ret = stmfx_pinconf_set_pupd(pctl, pin, 0);
- 			if (ret)
- 				return ret;
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
--			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
- 			if (ret)
- 				return ret;
--			break;
--		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--			if (!dir)
--				ret = stmfx_pinconf_set_type(pctl, pin, 1);
--			else
--				ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
- 			if (ret)
- 				return ret;
- 			break;
--		case PIN_CONFIG_DRIVE_PUSH_PULL:
--			if (!dir)
--				ret = stmfx_pinconf_set_type(pctl, pin, 0);
--			else
--				ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
- 			if (ret)
- 				return ret;
- 			break;
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 4c0a20949c2c2..9b27d75d9485c 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -53,6 +53,10 @@ static const u8 jz4740_cgu_cpccr_div_table[] = {
+ 	1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
+ };
+ 
++static const u8 jz4740_cgu_pll_half_div_table[] = {
++	2, 1,
++};
++
+ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 
+ 	/* External clocks */
+@@ -86,7 +90,10 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 	[JZ4740_CLK_PLL_HALF] = {
+ 		"pll half", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1,
++			jz4740_cgu_pll_half_div_table,
++		},
+ 	},
+ 
+ 	[JZ4740_CLK_CCLK] = {
 -- 
 2.20.1
 
