@@ -2,38 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3B7DCD762
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C07CD81D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfJFR2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:28:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53524 "EHLO mail.kernel.org"
+        id S1728566AbfJFR7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:59:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728631AbfJFR17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:27:59 -0400
+        id S1729365AbfJFRbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CE4E2087E;
-        Sun,  6 Oct 2019 17:27:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 926B42080F;
+        Sun,  6 Oct 2019 17:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382878;
-        bh=4cRE8BoO5Dnzu1LM5gTDzH31eoGrRlvqL7fvAltIum8=;
+        s=default; t=1570383070;
+        bh=YKuU+kYbU+qp3AoO0U64mMtZkgbjNXI03bOyU1hCA+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gmW3t4tH50zvhNkoHeziDgwnM0XwBT+KRbZ8gcpnZTm2jm3tonh6Ref0E9iCZ/HKx
-         jjTYLY3qyIk13zOzBDoCGB6XFDKOVB9pf3/Q1iTn8rsGbrLsXnZVcg502zvlyKFGrL
-         N4MQwvlAjhcZWG9VYARkHXp3OdD9dpMMQLUi2wzo=
+        b=xFtwYTWR1xAbZjSczLRkSwbcvoWFj6p7H4rcxWRArL10wRAHx92p8bN+7ZtN/5fYT
+         rBzRqSuzhgGnuqUclLV6PMOShk4tjf7WpvHFy3YA5932WlHEa7jtvCcw0y5iFixwW3
+         1TeTbJ2fIazId3y361UsjlKe5uZD/H1XNtAx1H9c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anatoly Pugachev <matorola@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 43/68] pktcdvd: remove warning on attempting to register non-passthrough dev
-Date:   Sun,  6 Oct 2019 19:21:19 +0200
-Message-Id: <20191006171128.702814317@linuxfoundation.org>
+        stable@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        James Hogan <jhogan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 074/106] arm64: consider stack randomization for mmap base only when necessary
+Date:   Sun,  6 Oct 2019 19:21:20 +0200
+Message-Id: <20191006171155.088265734@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
-References: <20191006171108.150129403@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,85 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Alexandre Ghiti <alex@ghiti.fr>
 
-[ Upstream commit eb09b3cc464d2c3bbde9a6648603c8d599ea8582 ]
+[ Upstream commit e8d54b62c55ab6201de6d195fc2c276294c1f6ae ]
 
-Anatoly reports that he gets the below warning when booting -git on
-a sparc64 box on debian unstable:
+Do not offset mmap base address because of stack randomization if current
+task does not want randomization.  Note that x86 already implements this
+behaviour.
 
-...
-[   13.352975] aes_sparc64: Using sparc64 aes opcodes optimized AES
-implementation
-[   13.428002] ------------[ cut here ]------------
-[   13.428081] WARNING: CPU: 21 PID: 586 at
-drivers/block/pktcdvd.c:2597 pkt_setup_dev+0x2e4/0x5a0 [pktcdvd]
-[   13.428147] Attempt to register a non-SCSI queue
-[   13.428184] Modules linked in: pktcdvd libdes cdrom aes_sparc64
-n2_rng md5_sparc64 sha512_sparc64 rng_core sha256_sparc64 flash
-sha1_sparc64 ip_tables x_tables ipv6 crc_ccitt nf_defrag_ipv6 autofs4
-ext4 crc16 mbcache jbd2 raid10 raid456 async_raid6_recov async_memcpy
-async_pq async_xor xor async_tx raid6_pq raid1 raid0 multipath linear
-md_mod crc32c_sparc64
-[   13.428452] CPU: 21 PID: 586 Comm: pktsetup Not tainted
-5.3.0-10169-g574cc4539762 #1234
-[   13.428507] Call Trace:
-[   13.428542]  [00000000004635c0] __warn+0xc0/0x100
-[   13.428582]  [0000000000463634] warn_slowpath_fmt+0x34/0x60
-[   13.428626]  [000000001045b244] pkt_setup_dev+0x2e4/0x5a0 [pktcdvd]
-[   13.428674]  [000000001045ccf4] pkt_ctl_ioctl+0x94/0x220 [pktcdvd]
-[   13.428724]  [00000000006b95c8] do_vfs_ioctl+0x628/0x6e0
-[   13.428764]  [00000000006b96c8] ksys_ioctl+0x48/0x80
-[   13.428803]  [00000000006b9714] sys_ioctl+0x14/0x40
-[   13.428847]  [0000000000406294] linux_sparc_syscall+0x34/0x44
-[   13.428890] irq event stamp: 4181
-[   13.428924] hardirqs last  enabled at (4189): [<00000000004e0a74>]
-console_unlock+0x634/0x6c0
-[   13.428984] hardirqs last disabled at (4196): [<00000000004e0540>]
-console_unlock+0x100/0x6c0
-[   13.429048] softirqs last  enabled at (3978): [<0000000000b2e2d8>]
-__do_softirq+0x498/0x520
-[   13.429110] softirqs last disabled at (3967): [<000000000042cfb4>]
-do_softirq_own_stack+0x34/0x60
-[   13.429172] ---[ end trace 2220ca468f32967d ]---
-[   13.430018] pktcdvd: setup of pktcdvd device failed
-[   13.455589] des_sparc64: Using sparc64 des opcodes optimized DES
-implementation
-[   13.515334] camellia_sparc64: Using sparc64 camellia opcodes
-optimized CAMELLIA implementation
-[   13.522856] pktcdvd: setup of pktcdvd device failed
-[   13.529327] pktcdvd: setup of pktcdvd device failed
-[   13.532932] pktcdvd: setup of pktcdvd device failed
-[   13.536165] pktcdvd: setup of pktcdvd device failed
-[   13.539372] pktcdvd: setup of pktcdvd device failed
-[   13.542834] pktcdvd: setup of pktcdvd device failed
-[   13.546536] pktcdvd: setup of pktcdvd device failed
-[   15.431071] XFS (dm-0): Mounting V5 Filesystem
-...
-
-Apparently debian auto-attaches any cdrom like device to pktcdvd, which
-can lead to the above warning. There's really no reason to warn for this
-situation, kill it.
-
-Reported-by: Anatoly Pugachev <matorola@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Link: http://lkml.kernel.org/r/20190730055113.23635-4-alex@ghiti.fr
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/pktcdvd.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm64/mm/mmap.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 11ec92e47455a..94944d063b372 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2585,7 +2585,6 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
- 	if (ret)
- 		return ret;
- 	if (!blk_queue_scsi_passthrough(bdev_get_queue(bdev))) {
--		WARN_ONCE(true, "Attempt to register a non-SCSI queue\n");
- 		blkdev_put(bdev, FMODE_READ | FMODE_NDELAY);
- 		return -EINVAL;
- 	}
+diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
+index 842c8a5fcd53c..157f2caa13516 100644
+--- a/arch/arm64/mm/mmap.c
++++ b/arch/arm64/mm/mmap.c
+@@ -65,7 +65,11 @@ unsigned long arch_mmap_rnd(void)
+ static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
+ {
+ 	unsigned long gap = rlim_stack->rlim_cur;
+-	unsigned long pad = (STACK_RND_MASK << PAGE_SHIFT) + stack_guard_gap;
++	unsigned long pad = stack_guard_gap;
++
++	/* Account for stack randomization if necessary */
++	if (current->flags & PF_RANDOMIZE)
++		pad += (STACK_RND_MASK << PAGE_SHIFT);
+ 
+ 	/* Values close to RLIM_INFINITY can overflow. */
+ 	if (gap + pad > gap)
 -- 
 2.20.1
 
