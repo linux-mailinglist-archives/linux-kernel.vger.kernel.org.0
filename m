@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B8BCD50D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF5CCD58F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfJFRbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58196 "EHLO mail.kernel.org"
+        id S1730447AbfJFRh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:37:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729508AbfJFRbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:51 -0400
+        id S1729843AbfJFRhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:37:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9213C214D9;
-        Sun,  6 Oct 2019 17:31:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D5672080F;
+        Sun,  6 Oct 2019 17:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383111;
-        bh=PN8UHtNwigitmdOdkJPPzy0Vh1N4HblG7c/fKFSVhbA=;
+        s=default; t=1570383443;
+        bh=YDlb7eJfsCJYSe+W+bAGfQM6oR+1wKO4K2sY+007I9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KUu9PVLRDnRbU9anjmeCg6j9oJgBY52HQxg8WmgU4W6FJ7x4HpMKp2MwxjAj1Kqyi
-         Ht0wG5aMzryCXifiIlY0sjkHIiaZHQG6Pard4u8ZU/Ig7A1F+X2JI/CK0YqFu8s4GX
-         8vbo5QqhZGitMX3eiUsT9sdYfug/eCyKcxo8iUcI=
+        b=OTedgxhNjAYfCVyAZc7SlpfSXEyp507E5pz7ACzR0VlP60rEvOWMC8KEZT506w9WN
+         vuvsZ9qRCw6FSZUPYvgOc2Z1AgG4nJtwILE0JZb0IMfeBwoXoM/EKcRauFOtFnLiEk
+         sxHnE3vL4CYJqtYrWquYMLFeANALX22CaFKNTyjQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 083/106] ipv6: drop incoming packets having a v4mapped source address
-Date:   Sun,  6 Oct 2019 19:21:29 +0200
-Message-Id: <20191006171158.031506094@linuxfoundation.org>
+        stable@vger.kernel.org, Biwen Li <biwen.li@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 106/137] rtc: pcf85363/pcf85263: fix regmap error in set_time
+Date:   Sun,  6 Oct 2019 19:21:30 +0200
+Message-Id: <20191006171217.782857765@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,67 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Biwen Li <biwen.li@nxp.com>
 
-[ Upstream commit 6af1799aaf3f1bc8defedddfa00df3192445bbf3 ]
+[ Upstream commit 7ef66122bdb3b839e9f51b76d7e600b6e21ef648 ]
 
-This began with a syzbot report. syzkaller was injecting
-IPv6 TCP SYN packets having a v4mapped source address.
+Issue:
+    - # hwclock -w
+      hwclock: RTC_SET_TIME: Invalid argument
 
-After an unsuccessful 4-tuple lookup, TCP creates a request
-socket (SYN_RECV) and calls reqsk_queue_hash_req()
+Why:
+    - Relative commit: 8b9f9d4dc511 ("regmap: verify if register is
+      writeable before writing operations"), this patch
+      will always check for unwritable registers, it will compare reg
+      with max_register in regmap_writeable.
 
-reqsk_queue_hash_req() calls sk_ehashfn(sk)
+    - The pcf85363/pcf85263 has the capability of address wrapping
+      which means if you access an address outside the allowed range
+      (0x00-0x2f) hardware actually wraps the access to a lower address.
+      The rtc-pcf85363 driver will use this feature to configure the time
+      and execute 2 actions in the same i2c write operation (stopping the
+      clock and configure the time). However the driver has also
+      configured the `regmap maxregister` protection mechanism that will
+      block accessing addresses outside valid range (0x00-0x2f).
 
-At this point we have AF_INET6 sockets, and the heuristic
-used by sk_ehashfn() to either hash the IPv4 or IPv6 addresses
-is to use ipv6_addr_v4mapped(&sk->sk_v6_daddr)
+How:
+    - Split of writing regs to two parts, first part writes control
+      registers about stop_enable and resets, second part writes
+      RTC time and date registers.
 
-For the particular spoofed packet, we end up hashing V4 addresses
-which were not initialized by the TCP IPv6 stack, so KMSAN fired
-a warning.
-
-I first fixed sk_ehashfn() to test both source and destination addresses,
-but then faced various problems, including user-space programs
-like packetdrill that had similar assumptions.
-
-Instead of trying to fix the whole ecosystem, it is better
-to admit that we have a dual stack behavior, and that we
-can not build linux kernels without V4 stack anyway.
-
-The dual stack API automatically forces the traffic to be IPv4
-if v4mapped addresses are used at bind() or connect(), so it makes
-no sense to allow IPv6 traffic to use the same v4mapped class.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+Link: https://lore.kernel.org/r/20190829021418.4607-1-biwen.li@nxp.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ip6_input.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/rtc/rtc-pcf85363.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_input.c
-+++ b/net/ipv6/ip6_input.c
-@@ -220,6 +220,16 @@ static struct sk_buff *ip6_rcv_core(stru
- 	if (ipv6_addr_is_multicast(&hdr->saddr))
- 		goto err;
+diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
+index a075e77617dcb..3450d615974d5 100644
+--- a/drivers/rtc/rtc-pcf85363.c
++++ b/drivers/rtc/rtc-pcf85363.c
+@@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
  
-+	/* While RFC4291 is not explicit about v4mapped addresses
-+	 * in IPv6 headers, it seems clear linux dual-stack
-+	 * model can not deal properly with these.
-+	 * Security models could be fooled by ::ffff:127.0.0.1 for example.
-+	 *
-+	 * https://tools.ietf.org/html/draft-itojun-v6ops-v4mapped-harmful-02
-+	 */
-+	if (ipv6_addr_v4mapped(&hdr->saddr))
-+		goto err;
+ 	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
+-				tmp, sizeof(tmp));
++				tmp, 2);
++	if (ret)
++		return ret;
 +
- 	skb->transport_header = skb->network_header + sizeof(*hdr);
- 	IP6CB(skb)->nhoff = offsetof(struct ipv6hdr, nexthdr);
++	ret = regmap_bulk_write(pcf85363->regmap, DT_100THS,
++				buf, sizeof(tmp) - 2);
+ 	if (ret)
+ 		return ret;
  
+-- 
+2.20.1
+
 
 
