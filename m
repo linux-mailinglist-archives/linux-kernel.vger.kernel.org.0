@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC0CCD783
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C928CD84C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbfJFRaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:30:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56234 "EHLO mail.kernel.org"
+        id S1728810AbfJFSCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 14:02:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727326AbfJFRaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:30:20 -0400
+        id S1728145AbfJFRZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:25:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6E152087E;
-        Sun,  6 Oct 2019 17:30:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78DD82070B;
+        Sun,  6 Oct 2019 17:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383019;
-        bh=HG5hHxCXr/7SYGLS3y8yVDNosPel9kbxaaWVanjJFcE=;
+        s=default; t=1570382757;
+        bh=amDmrhtd7S+OYG+hIT3jMeWRCF3PInftd+EiIusg/Hk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sXanqBHRSYfj9Q61Lmwv1IZeWGha8GE8jR5QKP2TY95sIuKcOQeCzMcFHqKlC+pKq
-         MdPbDa2wdbc7OOaLCfxQCAqX+EBFiSmo1O+h/MgOxqMqQHZTO0t/m9aBzfstb+874o
-         yqZxkqHE9Ls5y8H/P74XCRgZ2mJL+831OHv60reI=
+        b=IOdJXIi+KveRBwRLvKb0skfybm6F04fypK6dsZDWxUMJK8EK48WiztHvc4nAz3G8x
+         uaRovaGQ8idNI1pO8dQ2BkhJ9ZlmzmXBhCxPG+Yt62+zt4SxzaR2KJjm4X5IZAEk4S
+         LLLlIk0LddKI6Yim+sTzkczbRMNeogRCm79XExZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 056/106] soundwire: intel: fix channel number reported by hardware
-Date:   Sun,  6 Oct 2019 19:21:02 +0200
-Message-Id: <20191006171147.789863879@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 28/68] dma-buf/sw_sync: Synchronize signal vs syncpt free
+Date:   Sun,  6 Oct 2019 19:21:04 +0200
+Message-Id: <20191006171120.827270506@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +47,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 18046335643de6d21327f5ae034c8fb8463f6715 ]
+[ Upstream commit d3c6dd1fb30d3853c2012549affe75c930f4a2f9 ]
 
-On all released Intel controllers (CNL/CML/ICL), PDI2 reports an
-invalid count, force the correct hardware-supported value
+During release of the syncpt, we remove it from the list of syncpt and
+the tree, but only if it is not already been removed. However, during
+signaling, we first remove the syncpt from the list. So, if we
+concurrently free and signal the syncpt, the free may decide that it is
+not part of the tree and immediately free itself -- meanwhile the
+signaler goes on to use the now freed datastructure.
 
-This may have to be revisited with platform-specific values if the
-hardware changes, but for now this is good enough.
+In particular, we get struck by commit 0e2f733addbf ("dma-buf: make
+dma_fence structure a bit smaller v2") as the cb_list is immediately
+clobbered by the kfree_rcu.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20190806005522.22642-3-pierre-louis.bossart@linux.intel.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+v2: Avoid calling into timeline_fence_release() from under the spinlock
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111381
+Fixes: d3862e44daa7 ("dma-buf/sw-sync: Fix locking around sync_timeline lists")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Sean Paul <seanpaul@chromium.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: <stable@vger.kernel.org> # v4.14+
+Acked-by: Christian König <christian.koenig@amd.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190812154247.20508-1-chris@chris-wilson.co.uk
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soundwire/intel.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/dma-buf/sw_sync.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index a6e2581ada703..29bc99c4a7b66 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -282,6 +282,16 @@ intel_pdi_get_ch_cap(struct sdw_intel *sdw, unsigned int pdi_num, bool pcm)
+diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+index 24f83f9eeaedc..114b36674af42 100644
+--- a/drivers/dma-buf/sw_sync.c
++++ b/drivers/dma-buf/sw_sync.c
+@@ -141,17 +141,14 @@ static void timeline_fence_release(struct dma_fence *fence)
+ {
+ 	struct sync_pt *pt = dma_fence_to_sync_pt(fence);
+ 	struct sync_timeline *parent = dma_fence_parent(fence);
++	unsigned long flags;
  
- 	if (pcm) {
- 		count = intel_readw(shim, SDW_SHIM_PCMSYCHC(link_id, pdi_num));
-+
-+		/*
-+		 * WORKAROUND: on all existing Intel controllers, pdi
-+		 * number 2 reports channel count as 1 even though it
-+		 * supports 8 channels. Performing hardcoding for pdi
-+		 * number 2.
-+		 */
-+		if (pdi_num == 2)
-+			count = 7;
-+
- 	} else {
- 		count = intel_readw(shim, SDW_SHIM_PDMSCAP(link_id));
- 		count = ((count & SDW_SHIM_PDMSCAP_CPSS) >>
++	spin_lock_irqsave(fence->lock, flags);
+ 	if (!list_empty(&pt->link)) {
+-		unsigned long flags;
+-
+-		spin_lock_irqsave(fence->lock, flags);
+-		if (!list_empty(&pt->link)) {
+-			list_del(&pt->link);
+-			rb_erase(&pt->node, &parent->pt_tree);
+-		}
+-		spin_unlock_irqrestore(fence->lock, flags);
++		list_del(&pt->link);
++		rb_erase(&pt->node, &parent->pt_tree);
+ 	}
++	spin_unlock_irqrestore(fence->lock, flags);
+ 
+ 	sync_timeline_put(parent);
+ 	dma_fence_free(fence);
+@@ -275,7 +272,8 @@ static struct sync_pt *sync_pt_create(struct sync_timeline *obj,
+ 				p = &parent->rb_left;
+ 			} else {
+ 				if (dma_fence_get_rcu(&other->base)) {
+-					dma_fence_put(&pt->base);
++					sync_timeline_put(obj);
++					kfree(pt);
+ 					pt = other;
+ 					goto unlock;
+ 				}
 -- 
 2.20.1
 
