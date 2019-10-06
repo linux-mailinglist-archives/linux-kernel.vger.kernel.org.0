@@ -2,87 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D75CCF1A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 09:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50206CCF1F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 09:18:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfJFHJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 03:09:00 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54624 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726204AbfJFHJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 03:09:00 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 825AFBAE63C8E18FDC26;
-        Sun,  6 Oct 2019 15:08:57 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Sun, 6 Oct 2019
- 15:08:51 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <santosh.shilimkar@oracle.com>, <davem@davemloft.net>,
-        <ka-cheong.poon@oracle.com>
-CC:     <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <rds-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] net/rds: Add missing include file
-Date:   Sun, 6 Oct 2019 15:08:32 +0800
-Message-ID: <20191006070832.55532-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726289AbfJFHSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 03:18:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726198AbfJFHSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 03:18:24 -0400
+Received: from dragon (li937-157.members.linode.com [45.56.119.157])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E6D520835;
+        Sun,  6 Oct 2019 07:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570346303;
+        bh=Dx2ngyCt4BCp8rcZLEP0l/DTMAqBneUTAAXlZNm0TwU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RSgvJNTzYFqurlcEcPNpcX2m/FODAiB2HL+3jqObfh94KqVd5bFa3Je2nZshTRB1n
+         9HSzOSQ65Np+nhNLI9xORa7PNZcoPhsbGExbj0ycJOjDAEdv0keyVOO/CsWSPsN5Pu
+         cWU/zlYUJfBqAd840NnmedHqJ8upLnh/6MyHIo48=
+Date:   Sun, 6 Oct 2019 15:17:47 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        daniel.baluta@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH 1/2] arm64: dts: imx8mn: Add system counter node
+Message-ID: <20191006071743.GR7150@dragon>
+References: <1568129118-31114-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568129118-31114-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix build error:
+On Tue, Sep 10, 2019 at 11:25:17AM -0400, Anson Huang wrote:
+> Add i.MX8MN system counter node to enable timer-imx-sysctr
+> broadcast timer driver.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-net/rds/ib_cm.c: In function rds_dma_hdrs_alloc:
-net/rds/ib_cm.c:475:13: error: implicit declaration of function dma_pool_zalloc; did you mean mempool_alloc? [-Werror=implicit-function-declaration]
-   hdrs[i] = dma_pool_zalloc(pool, GFP_KERNEL, &hdr_daddrs[i]);
-             ^~~~~~~~~~~~~~~
-             mempool_alloc
-
-net/rds/ib.c: In function rds_ib_dev_free:
-net/rds/ib.c:111:3: error: implicit declaration of function dma_pool_destroy; did you mean mempool_destroy? [-Werror=implicit-function-declaration]
-   dma_pool_destroy(rds_ibdev->rid_hdrs_pool);
-   ^~~~~~~~~~~~~~~~
-   mempool_destroy
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 9b17f5884be4 ("net/rds: Use DMA memory pool allocation for rds_header")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/rds/ib.c    | 1 +
- net/rds/ib_cm.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/net/rds/ib.c b/net/rds/ib.c
-index 23a2ae53f231..62d4ebeb08c1 100644
---- a/net/rds/ib.c
-+++ b/net/rds/ib.c
-@@ -30,6 +30,7 @@
-  * SOFTWARE.
-  *
-  */
-+#include <linux/dmapool.h>
- #include <linux/kernel.h>
- #include <linux/in.h>
- #include <linux/if.h>
-diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
-index d08251f4a00c..6b345c858dba 100644
---- a/net/rds/ib_cm.c
-+++ b/net/rds/ib_cm.c
-@@ -30,6 +30,7 @@
-  * SOFTWARE.
-  *
-  */
-+#include <linux/dmapool.h>
- #include <linux/kernel.h>
- #include <linux/in.h>
- #include <linux/slab.h>
--- 
-2.20.1
-
-
+Applied both, thanks.
