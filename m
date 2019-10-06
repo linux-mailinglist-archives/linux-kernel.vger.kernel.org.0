@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC739CD7EB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5DAECD7F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbfJFRyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:54:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51358 "EHLO mail.kernel.org"
+        id S1729307AbfJFRzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:55:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727224AbfJFRya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:54:30 -0400
+        id S1727101AbfJFRy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:54:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7096D2245B;
-        Sun,  6 Oct 2019 17:46:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29C842077B;
+        Sun,  6 Oct 2019 17:46:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383962;
-        bh=axRY1t3IiJXvhDfhisGregAKW7gK5qc9mX5zwfxCozw=;
+        s=default; t=1570383965;
+        bh=BH/a5c+bXXYLg/uA0RRJfRa6LSxsadgUgOffxgQNYPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qm1xjHJ7AiuLqtyinaGCVNn9oct4SuGtaCFe+TQHc8Hzv2gpIuZ7zmPoKNDge7G7F
-         ULGhakVnxLeLg/wDq9Mbh1z8pvDadJRJwi9YHDdVKberjsdeL64ZL+UIBJXWQdPjnK
-         jq8/YBbN2EIlBC8IKmH4Y8Tcp95B6ZyotWmP/tW4=
+        b=GQfLimJ5aC0pLiFBUaKmxAkvQO0ShxEPSEBJIfEqOPmWypLb/uqXvAf+Jh+zA0DCW
+         Oh6mGxwZRSSlV4mYEAWoxoWUCWYBQ2u9ZEPGkM8COwhhUyJA3nzDKPtmVUQY6SO4cz
+         7v53pdX67adRTVueXiiWvfA00Hf8QELHZdQVeLq0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH 5.3 159/166] smack: use GFP_NOFS while holding inode_smack::smk_lock
-Date:   Sun,  6 Oct 2019 19:22:05 +0200
-Message-Id: <20191006171226.243917600@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.3 160/166] dm raid: fix updating of max_discard_sectors limit
+Date:   Sun,  6 Oct 2019 19:22:06 +0200
+Message-Id: <20191006171226.329297991@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -45,66 +43,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit e5bfad3d7acc5702f32aafeb388362994f4d7bd0 upstream.
+commit c8156fc77d0796ba2618936dbb3084e769e916c1 upstream.
 
-inode_smack::smk_lock is taken during smack_d_instantiate(), which is
-called during a filesystem transaction when creating a file on ext4.
-Therefore to avoid a deadlock, all code that takes this lock must use
-GFP_NOFS, to prevent memory reclaim from waiting for the filesystem
-transaction to complete.
+Unit of 'chunk_size' is byte, instead of sector, so fix it by setting
+the queue_limits' max_discard_sectors to rs->md.chunk_sectors.  Also,
+rename chunk_size to chunk_size_bytes.
 
-Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
+Without this fix, too big max_discard_sectors is applied on the request
+queue of dm-raid, finally raid code has to split the bio again.
+
+This re-split done by raid causes the following nested clone_endio:
+
+1) one big bio 'A' is submitted to dm queue, and served as the original
+bio
+
+2) one new bio 'B' is cloned from the original bio 'A', and .map()
+is run on this bio of 'B', and B's original bio points to 'A'
+
+3) raid code sees that 'B' is too big, and split 'B' and re-submit
+the remainded part of 'B' to dm-raid queue via generic_make_request().
+
+4) now dm will handle 'B' as new original bio, then allocate a new
+clone bio of 'C' and run .map() on 'C'. Meantime C's original bio
+points to 'B'.
+
+5) suppose now 'C' is completed by raid directly, then the following
+clone_endio() is called recursively:
+
+	clone_endio(C)
+		->clone_endio(B)		#B is original bio of 'C'
+			->bio_endio(A)
+
+'A' can be big enough to make hundreds of nested clone_endio(), then
+stack can be corrupted easily.
+
+Fixes: 61697a6abd24a ("dm: eliminate 'split_discard_bios' flag from DM target interface")
 Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/smack/smack_access.c |    6 +++---
- security/smack/smack_lsm.c    |    2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/md/dm-raid.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -465,7 +465,7 @@ char *smk_parse_smack(const char *string
- 	if (i == 0 || i >= SMK_LONGLABEL)
- 		return ERR_PTR(-EINVAL);
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -3738,18 +3738,18 @@ static int raid_iterate_devices(struct d
+ static void raid_io_hints(struct dm_target *ti, struct queue_limits *limits)
+ {
+ 	struct raid_set *rs = ti->private;
+-	unsigned int chunk_size = to_bytes(rs->md.chunk_sectors);
++	unsigned int chunk_size_bytes = to_bytes(rs->md.chunk_sectors);
  
--	smack = kzalloc(i + 1, GFP_KERNEL);
-+	smack = kzalloc(i + 1, GFP_NOFS);
- 	if (smack == NULL)
- 		return ERR_PTR(-ENOMEM);
+-	blk_limits_io_min(limits, chunk_size);
+-	blk_limits_io_opt(limits, chunk_size * mddev_data_stripes(rs));
++	blk_limits_io_min(limits, chunk_size_bytes);
++	blk_limits_io_opt(limits, chunk_size_bytes * mddev_data_stripes(rs));
  
-@@ -500,7 +500,7 @@ int smk_netlbl_mls(int level, char *cats
- 			if ((m & *cp) == 0)
- 				continue;
- 			rc = netlbl_catmap_setbit(&sap->attr.mls.cat,
--						  cat, GFP_KERNEL);
-+						  cat, GFP_NOFS);
- 			if (rc < 0) {
- 				netlbl_catmap_free(sap->attr.mls.cat);
- 				return rc;
-@@ -536,7 +536,7 @@ struct smack_known *smk_import_entry(con
- 	if (skp != NULL)
- 		goto freeout;
- 
--	skp = kzalloc(sizeof(*skp), GFP_KERNEL);
-+	skp = kzalloc(sizeof(*skp), GFP_NOFS);
- 	if (skp == NULL) {
- 		skp = ERR_PTR(-ENOMEM);
- 		goto freeout;
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -288,7 +288,7 @@ static struct smack_known *smk_fetch(con
- 	if (!(ip->i_opflags & IOP_XATTR))
- 		return ERR_PTR(-EOPNOTSUPP);
- 
--	buffer = kzalloc(SMK_LONGLABEL, GFP_KERNEL);
-+	buffer = kzalloc(SMK_LONGLABEL, GFP_NOFS);
- 	if (buffer == NULL)
- 		return ERR_PTR(-ENOMEM);
+ 	/*
+ 	 * RAID1 and RAID10 personalities require bio splitting,
+ 	 * RAID0/4/5/6 don't and process large discard bios properly.
+ 	 */
+ 	if (rs_is_raid1(rs) || rs_is_raid10(rs)) {
+-		limits->discard_granularity = chunk_size;
+-		limits->max_discard_sectors = chunk_size;
++		limits->discard_granularity = chunk_size_bytes;
++		limits->max_discard_sectors = rs->md.chunk_sectors;
+ 	}
+ }
  
 
 
