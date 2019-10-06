@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D8B2CD857
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DBA2CD802
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbfJFSCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 14:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50560 "EHLO mail.kernel.org"
+        id S1726916AbfJFRz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727504AbfJFRZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:25:30 -0400
+        id S1730214AbfJFRfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:35:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C16F52080F;
-        Sun,  6 Oct 2019 17:25:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF9662087E;
+        Sun,  6 Oct 2019 17:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382730;
-        bh=w5w50r3vpJG9CJUPiNhcuqcLYA7qlpR6IwB/g4wCeDE=;
+        s=default; t=1570383354;
+        bh=2n/Df1WVmgoy0vgbYlwsWecg+mwB5LQ52yY6MOGpQcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GCV5TC6tHF6TaGWmmXgqjMnFrjhc9QpbEgm3TmFAMrwqySpvR46swcJW1XQSY5WIk
-         MtestDpD8Z3RsIqiklW/I9I8V9KGdzynjiQ7SixiPZkpDm6NnUh8ypWIuRbGDgRy9d
-         8CZ1fWfvkv4YNVU3+ucVpPNITalny95zKtHsn6bk=
+        b=lK/CUGbyXPhlULOEyC1W/HWC8tXfnDXsXQG1aap79Ko8j31MajkSm6/+mmsUQKg3o
+         Wamh+3iX4H8uqsrQ0NmJTHUUAxdivr3ko6OLXKbt0KdAc2JYRKGTonYYc5Jy7FTQUB
+         5FJxDvWEYiJIt5nOz+AUeFGDmkei5jNVgcbPHXs4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jeff Layton <jlayton@kernel.org>, anton@enomsg.org,
+        ccross@android.com, tony.luck@intel.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/68] pinctrl: tegra: Fix write barrier placement in pmx_writel
-Date:   Sun,  6 Oct 2019 19:20:55 +0200
-Message-Id: <20191006171117.069060684@linuxfoundation.org>
+Subject: [PATCH 5.2 072/137] pstore: fs superblock limits
+Date:   Sun,  6 Oct 2019 19:20:56 +0200
+Message-Id: <20191006171215.116163269@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
-References: <20191006171108.150129403@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
 
-[ Upstream commit c2cf351eba2ff6002ce8eb178452219d2521e38e ]
+[ Upstream commit 83b8a3fbe3aa82ac3c253b698ae6a9be2dbdd5e0 ]
 
-pmx_writel uses writel which inserts write barrier before the
-register write.
+Leaving granularity at 1ns because it is dependent on the specific
+attached backing pstore module. ramoops has microsecond resolution.
 
-This patch has fix to replace writel with writel_relaxed followed
-by a readback and memory barrier to ensure write operation is
-completed for successful pinctrl change.
+Fix the readback of ramoops fractional timestamp microseconds,
+which has incorrectly been reporting the value as nanoseconds.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Link: https://lore.kernel.org/r/1565984527-5272-2-git-send-email-skomatineni@nvidia.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 3f8f80f0cfeb ("pstore/ram: Read and write to the 'compressed' flag of pstore").
+
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Jeff Layton <jlayton@kernel.org>
+Cc: anton@enomsg.org
+Cc: ccross@android.com
+Cc: keescook@chromium.org
+Cc: tony.luck@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/pstore/ram.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 51716819129d2..e5c9b9c684289 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -51,7 +51,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
- 
- static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
- {
--	writel(val, pmx->regs[bank] + reg);
-+	writel_relaxed(val, pmx->regs[bank] + reg);
-+	/* make sure pinmux register write completed */
-+	pmx_readl(pmx, bank, reg);
- }
- 
- static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 5b77098944151..db9f67d34af37 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -144,6 +144,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
+ 	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu-%c\n%n",
+ 		   (time64_t *)&time->tv_sec, &time->tv_nsec, &data_type,
+ 		   &header_length) == 3) {
++		time->tv_nsec *= 1000;
+ 		if (data_type == 'C')
+ 			*compressed = true;
+ 		else
+@@ -151,6 +152,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
+ 	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu\n%n",
+ 			  (time64_t *)&time->tv_sec, &time->tv_nsec,
+ 			  &header_length) == 2) {
++		time->tv_nsec *= 1000;
+ 		*compressed = false;
+ 	} else {
+ 		time->tv_sec = 0;
 -- 
 2.20.1
 
