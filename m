@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1001CD768
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A5FCD80B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbfJFR20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:28:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54036 "EHLO mail.kernel.org"
+        id S1729753AbfJFR4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:56:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727617AbfJFR2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:28:23 -0400
+        id S1728970AbfJFRfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:35:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C5652087E;
-        Sun,  6 Oct 2019 17:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45CBE2166E;
+        Sun,  6 Oct 2019 17:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382902;
-        bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
+        s=default; t=1570383305;
+        bh=Z1FFPx6rPMa1a37d/+3Howuwq5SBIclNgoWtIm1mxP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l+89mkUe6PrCFU8tJ0KVfIJG+xUvtX09gKHCfjeSY1U5BZMOsb9PWJOhItisqKqvP
-         ID7x0eyNdT1hk6Ez9r5y9Bj9pfKNII2csqUDDRuVkKTN+f77lf7GSuOq4EsTnMW4H7
-         0SE8qgFk97wUvs73gAu3JE/Gq1eh+WmRztj+bbkM=
+        b=dJPHwnHpGqpAzm7ZCRWxLEchqP+ubOzPMDr1Sr29bS02WXApou4HxiROvQ6IEdgZq
+         dls6FSaREm2n+XGWOkG9gk4TNxitfvET3asuyR+mopeZKMmUp++fiAzMmjQHdDzD1G
+         IqXoNqPN5R2uc+AHU/6M2phcchk7JFbnT6qLB09g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 014/106] clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
-Date:   Sun,  6 Oct 2019 19:20:20 +0200
-Message-Id: <20191006171131.298859425@linuxfoundation.org>
+Subject: [PATCH 5.2 038/137] gpu: drm: radeon: Fix a possible null-pointer dereference in radeon_connector_set_property()
+Date:   Sun,  6 Oct 2019 19:20:22 +0200
+Message-Id: <20191006171212.237302580@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 720099603d1f62e37b789366d7e89824b009ca28 ]
+[ Upstream commit f3eb9b8f67bc28783eddc142ad805ebdc53d6339 ]
 
-The MMC2 clock slices are currently not defined in V3s CCU driver, which
-makes MMC2 not working.
+In radeon_connector_set_property(), there is an if statement on line 743
+to check whether connector->encoder is NULL:
+    if (connector->encoder)
 
-Fix this issue.
+When connector->encoder is NULL, it is used on line 755:
+    if (connector->encoder->crtc)
 
-Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Thus, a possible null-pointer dereference may occur.
+
+To fix this bug, connector->encoder is checked before being used.
+
+This bug is found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/radeon/radeon_connectors.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index ac12f261f8caa..9e3f4088724b4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -499,6 +499,9 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
- 		[CLK_MMC1]		= &mmc1_clk.common.hw,
- 		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common.hw,
- 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
-+		[CLK_MMC2]		= &mmc2_clk.common.hw,
-+		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common.hw,
-+		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common.hw,
- 		[CLK_CE]		= &ce_clk.common.hw,
- 		[CLK_SPI0]		= &spi0_clk.common.hw,
- 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
+diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
+index de1745adccccb..c7f2e073a82fd 100644
+--- a/drivers/gpu/drm/radeon/radeon_connectors.c
++++ b/drivers/gpu/drm/radeon/radeon_connectors.c
+@@ -752,7 +752,7 @@ static int radeon_connector_set_property(struct drm_connector *connector, struct
+ 
+ 		radeon_encoder->output_csc = val;
+ 
+-		if (connector->encoder->crtc) {
++		if (connector->encoder && connector->encoder->crtc) {
+ 			struct drm_crtc *crtc  = connector->encoder->crtc;
+ 			struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
+ 
 -- 
 2.20.1
 
