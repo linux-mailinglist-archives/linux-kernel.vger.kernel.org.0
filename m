@@ -2,52 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C282CD5A7
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE8ECD519
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730592AbfJFRiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:38:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37476 "EHLO mail.kernel.org"
+        id S1729570AbfJFRc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:32:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729990AbfJFRiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:38:17 -0400
+        id S1729557AbfJFRcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:32:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F01CF2053B;
-        Sun,  6 Oct 2019 17:38:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22C822133F;
+        Sun,  6 Oct 2019 17:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383497;
-        bh=BU1jzN53PqmlJ8ONEqVVq43OmhXY/UNCrwZY04OTspg=;
+        s=default; t=1570383143;
+        bh=fjJrdjq9ByRxGdjY6wKrvDvBEtcNvBtzbjBhKXMgaT0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n2tIN4L4M8k6dtm1jwsfa+HkDKcU2rBNY05US2HCqQRAmIpM9HFLcGC2sA+b2DZnE
-         50dmpTClZfq/mZM6G0eLgKjjm1TfaY6r1mBd73zlhi1GsbPTzVZHIrU6DvUH0f/ghW
-         DRpjjs/ZZcsSzQL4twg7no9GiG9vcc5m5Q/gBzug=
+        b=UzMuSkyD+PMAWEA7YppHXXThhuWfkFyXh+920M3jWGLioyfD5alQmpRge4i+BnnmI
+         I0kpifbFPoDek2A4LQEOVQx9g6KdgS8KE1TfIyPEqB0ftgKLXqpT2LC4nnlQthjrm6
+         KbgqopKPS/UOPdxckewjC4TWXWcKtTvVmLr5TOuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 124/137] kmemleak: increase DEBUG_KMEMLEAK_EARLY_LOG_SIZE default to 16K
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH 4.19 102/106] Smack: Dont ignore other bprm->unsafe flags if LSM_UNSAFE_PTRACE is set
 Date:   Sun,  6 Oct 2019 19:21:48 +0200
-Message-Id: <20191006171219.630329117@linuxfoundation.org>
+Message-Id: <20191006171204.088611292@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -57,57 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Boichat <drinkcat@chromium.org>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit b751c52bb587ae66f773b15204ef7a147467f4c7 ]
+commit 3675f052b43ba51b99b85b073c7070e083f3e6fb upstream.
 
-The current default value (400) is too low on many systems (e.g.  some
-ARM64 platform takes up 1000+ entries).
+There is a logic bug in the current smack_bprm_set_creds():
+If LSM_UNSAFE_PTRACE is set, but the ptrace state is deemed to be
+acceptable (e.g. because the ptracer detached in the meantime), the other
+->unsafe flags aren't checked. As far as I can tell, this means that
+something like the following could work (but I haven't tested it):
 
-syzbot uses 16000 as default value, and has proved to be enough on beefy
-configurations, so let's pick that value.
+ - task A: create task B with fork()
+ - task B: set NO_NEW_PRIVS
+ - task B: install a seccomp filter that makes open() return 0 under some
+   conditions
+ - task B: replace fd 0 with a malicious library
+ - task A: attach to task B with PTRACE_ATTACH
+ - task B: execve() a file with an SMACK64EXEC extended attribute
+ - task A: while task B is still in the middle of execve(), exit (which
+   destroys the ptrace relationship)
 
-This consumes more RAM on boot (each entry is 160 bytes, so in total
-~2.5MB of RAM), but the memory would later be freed (early_log is
-__initdata).
+Make sure that if any flags other than LSM_UNSAFE_PTRACE are set in
+bprm->unsafe, we reject the execve().
 
-Link: http://lkml.kernel.org/r/20190730154027.101525-1-drinkcat@chromium.org
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-Suggested-by: Dmitry Vyukov <dvyukov@google.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 5663884caab1 ("Smack: unify all ptrace accesses in the smack")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- lib/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/smack/smack_lsm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index cbdfae3798965..120ec6f64bbc3 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -599,7 +599,7 @@ config DEBUG_KMEMLEAK_EARLY_LOG_SIZE
- 	int "Maximum kmemleak early log entries"
- 	depends on DEBUG_KMEMLEAK
- 	range 200 40000
--	default 400
-+	default 16000
- 	help
- 	  Kmemleak must track all the memory allocations to avoid
- 	  reporting false positives. Since memory may be allocated or
--- 
-2.20.1
-
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -947,7 +947,8 @@ static int smack_bprm_set_creds(struct l
+ 
+ 		if (rc != 0)
+ 			return rc;
+-	} else if (bprm->unsafe)
++	}
++	if (bprm->unsafe & ~LSM_UNSAFE_PTRACE)
+ 		return -EPERM;
+ 
+ 	bsp->smk_task = isp->smk_task;
 
 
