@@ -2,40 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84711CD446
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C50CD487
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbfJFRYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:24:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49026 "EHLO mail.kernel.org"
+        id S1727487AbfJFR0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727798AbfJFRYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:24:09 -0400
+        id S1726859AbfJFR0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:26:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB5921479;
-        Sun,  6 Oct 2019 17:24:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3026214D9;
+        Sun,  6 Oct 2019 17:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382648;
-        bh=F0AV2r5DMBlc+V5iWCahKWm3KkH3txRZ3r87QnIBRpA=;
+        s=default; t=1570382805;
+        bh=/PUV6/gLISDR5QzXmZ1W1d7c2RECLlOac0UTFTta2Hg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iCOe0ZlmCuwltWSyfBr5jGfFHhB7UrwgPftk7XO5Gk/3QXQun6Gb6UHNYTVuztpPM
-         JXWq3nMBtH2bUVbYn9tHBJv5mGLjNVWqeDdkgzuJEGoWMLCepJ5xqiZbomEFDtuG3D
-         bwwihTVOOpSUV1XnuYf5aXpEt7NZ1hnvcbtquFxI=
+        b=voZkqRmpPGAXarJmudsCw7aJD7TLT4sR3a4C+wtDquseDr/fwLSkmjkoZQsQEvEti
+         BB0BFPYC5+HF/xiaBW4ofg2v3Xqtwf7tMgPqAg42byyutCJ8cy6B7aKkNCzeYMX1s5
+         3qM4SnKGcQwVoAboK71+yD0m90hX+uww7kTfVVpc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 35/47] net: ipv4: avoid mixed n_redirects and rate_tokens usage
-Date:   Sun,  6 Oct 2019 19:21:22 +0200
-Message-Id: <20191006172018.743249193@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 47/68] kmemleak: increase DEBUG_KMEMLEAK_EARLY_LOG_SIZE default to 16K
+Date:   Sun,  6 Oct 2019 19:21:23 +0200
+Message-Id: <20191006171130.491140517@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +57,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Nicolas Boichat <drinkcat@chromium.org>
 
-[ Upstream commit b406472b5ad79ede8d10077f0c8f05505ace8b6d ]
+[ Upstream commit b751c52bb587ae66f773b15204ef7a147467f4c7 ]
 
-Since commit c09551c6ff7f ("net: ipv4: use a dedicated counter
-for icmp_v4 redirect packets") we use 'n_redirects' to account
-for redirect packets, but we still use 'rate_tokens' to compute
-the redirect packets exponential backoff.
+The current default value (400) is too low on many systems (e.g.  some
+ARM64 platform takes up 1000+ entries).
 
-If the device sent to the relevant peer any ICMP error packet
-after sending a redirect, it will also update 'rate_token' according
-to the leaking bucket schema; typically 'rate_token' will raise
-above BITS_PER_LONG and the redirect packets backoff algorithm
-will produce undefined behavior.
+syzbot uses 16000 as default value, and has proved to be enough on beefy
+configurations, so let's pick that value.
 
-Fix the issue using 'n_redirects' to compute the exponential backoff
-in ip_rt_send_redirect().
+This consumes more RAM on boot (each entry is 160 bytes, so in total
+~2.5MB of RAM), but the memory would later be freed (early_log is
+__initdata).
 
-Note that we still clear rate_tokens after a redirect silence period,
-to avoid changing an established behaviour.
-
-The root cause predates git history; before the mentioned commit in
-the critical scenario, the kernel stopped sending redirects, after
-the mentioned commit the behavior more randomic.
-
-Reported-by: Xiumei Mu <xmu@redhat.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Fixes: c09551c6ff7f ("net: ipv4: use a dedicated counter for icmp_v4 redirect packets")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/20190730154027.101525-1-drinkcat@chromium.org
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Suggested-by: Dmitry Vyukov <dvyukov@google.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/route.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ lib/Kconfig.debug | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -903,16 +903,15 @@ void ip_rt_send_redirect(struct sk_buff
- 	if (peer->rate_tokens == 0 ||
- 	    time_after(jiffies,
- 		       (peer->rate_last +
--			(ip_rt_redirect_load << peer->rate_tokens)))) {
-+			(ip_rt_redirect_load << peer->n_redirects)))) {
- 		__be32 gw = rt_nexthop(rt, ip_hdr(skb)->daddr);
- 
- 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
- 		peer->rate_last = jiffies;
--		++peer->rate_tokens;
- 		++peer->n_redirects;
- #ifdef CONFIG_IP_ROUTE_VERBOSE
- 		if (log_martians &&
--		    peer->rate_tokens == ip_rt_redirect_number)
-+		    peer->n_redirects == ip_rt_redirect_number)
- 			net_warn_ratelimited("host %pI4/if%d ignores redirects for %pI4 to %pI4\n",
- 					     &ip_hdr(skb)->saddr, inet_iif(skb),
- 					     &ip_hdr(skb)->daddr, &gw);
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 131d5871f8c98..e1df563cdfe7e 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -570,7 +570,7 @@ config DEBUG_KMEMLEAK_EARLY_LOG_SIZE
+ 	int "Maximum kmemleak early log entries"
+ 	depends on DEBUG_KMEMLEAK
+ 	range 200 40000
+-	default 400
++	default 16000
+ 	help
+ 	  Kmemleak must track all the memory allocations to avoid
+ 	  reporting false positives. Since memory may be allocated or
+-- 
+2.20.1
+
 
 
