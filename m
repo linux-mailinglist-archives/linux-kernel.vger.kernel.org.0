@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192BDCD864
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:04:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A54CD792
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfJFRYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:24:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49710 "EHLO mail.kernel.org"
+        id S1729461AbfJFRbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727967AbfJFRYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:24:44 -0400
+        id S1729440AbfJFRbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5559120867;
-        Sun,  6 Oct 2019 17:24:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6823321479;
+        Sun,  6 Oct 2019 17:31:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382683;
-        bh=EZXCOgWMcyDlbQcr4EQRifzZAxCGdL9unuxEcc414Jo=;
+        s=default; t=1570383091;
+        bh=cgZgFd/MyqZp+VRVFZzQX0V4eZcpcLt7lcRV3xNctrY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FrE9yWNc5NzsOYrM6MT6ld2xl0kwK4NOAaWmPviTzqmNH+g8tN8g3Fd3Yk+LO9/Z7
-         Li2ZjMCxMzM4B9EE1YNyvPL6XGnDXO2ZzxfZlHeH2obtnALRaBkf6mbqipShn2zLbO
-         yB5HDQ/g1BZV0gRI7FdbYJBDqYtwzeWSyIfuHTmo=
+        b=RDYCMtYYFgyQ431ffcEuF49Hbi1LDfnmk2I54E3ury3ATYtZeZpK0MY65WM9yDX6R
+         txHOavugkxhtudc0CrFO2Jyw+tfKgha8qprIX03S7UqVS+TE2bKZI0qmb5dKzNuZIH
+         eJ7juJvr8Q1/8UxqZWtaQyAhcKMVuurWLom8O73Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 40/47] sch_dsmark: fix potential NULL deref in dsmark_init()
+Subject: [PATCH 4.19 081/106] erspan: remove the incorrect mtu limit for erspan
 Date:   Sun,  6 Oct 2019 19:21:27 +0200
-Message-Id: <20191006172019.001134445@linuxfoundation.org>
+Message-Id: <20191006171157.579189883@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-[ Upstream commit 474f0813a3002cb299bb73a5a93aa1f537a80ca8 ]
+[ Upstream commit 0e141f757b2c78c983df893e9993313e2dc21e38 ]
 
-Make sure TCA_DSMARK_INDICES was provided by the user.
+erspan driver calls ether_setup(), after commit 61e84623ace3
+("net: centralize net_device min/max MTU checking"), the range
+of mtu is [min_mtu, max_mtu], which is [68, 1500] by default.
 
-syzbot reported :
+It causes the dev mtu of the erspan device to not be greater
+than 1500, this limit value is not correct for ipgre tap device.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8799 Comm: syz-executor235 Not tainted 5.3.0+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:nla_get_u16 include/net/netlink.h:1501 [inline]
-RIP: 0010:dsmark_init net/sched/sch_dsmark.c:364 [inline]
-RIP: 0010:dsmark_init+0x193/0x640 net/sched/sch_dsmark.c:339
-Code: 85 db 58 0f 88 7d 03 00 00 e8 e9 1a ac fb 48 8b 9d 70 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 04 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 ca
-RSP: 0018:ffff88809426f3b8 EFLAGS: 00010247
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff85c6eb09
-RDX: 0000000000000000 RSI: ffffffff85c6eb17 RDI: 0000000000000004
-RBP: ffff88809426f4b0 R08: ffff88808c4085c0 R09: ffffed1015d26159
-R10: ffffed1015d26158 R11: ffff8880ae930ac7 R12: ffff8880a7e96940
-R13: dffffc0000000000 R14: ffff88809426f8c0 R15: 0000000000000000
-FS:  0000000001292880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 000000008ca1b000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- qdisc_create+0x4ee/0x1210 net/sched/sch_api.c:1237
- tc_modify_qdisc+0x524/0x1c50 net/sched/sch_api.c:1653
- rtnetlink_rcv_msg+0x463/0xb00 net/core/rtnetlink.c:5223
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5241
- netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
- netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
- netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:637 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:657
- ___sys_sendmsg+0x803/0x920 net/socket.c:2311
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
- __do_sys_sendmsg net/socket.c:2365 [inline]
- __se_sys_sendmsg net/socket.c:2363 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
- do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440369
+Tested:
+Before patch:
+# ip link set erspan0 mtu 1600
+Error: mtu greater than device maximum.
+After patch:
+# ip link set erspan0 mtu 1600
+# ip -d link show erspan0
+21: erspan0@NONE: <BROADCAST,MULTICAST> mtu 1600 qdisc noop state DOWN
+mode DEFAULT group default qlen 1000
+    link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 0
 
-Fixes: 758cc43c6d73 ("[PKT_SCHED]: Fix dsmark to apply changes consistent")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 61e84623ace3 ("net: centralize net_device min/max MTU checking")
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_dsmark.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/ip_gre.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sched/sch_dsmark.c
-+++ b/net/sched/sch_dsmark.c
-@@ -346,6 +346,8 @@ static int dsmark_init(struct Qdisc *sch
- 		goto errout;
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -1531,6 +1531,7 @@ static void erspan_setup(struct net_devi
+ 	struct ip_tunnel *t = netdev_priv(dev);
  
- 	err = -EINVAL;
-+	if (!tb[TCA_DSMARK_INDICES])
-+		goto errout;
- 	indices = nla_get_u16(tb[TCA_DSMARK_INDICES]);
- 
- 	if (hweight32(indices) != 1)
+ 	ether_setup(dev);
++	dev->max_mtu = 0;
+ 	dev->netdev_ops = &erspan_netdev_ops;
+ 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
+ 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
 
 
