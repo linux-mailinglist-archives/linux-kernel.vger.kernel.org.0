@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0952CD440
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BC91CD4A7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:28:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbfJFRX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48700 "EHLO mail.kernel.org"
+        id S1728627AbfJFR16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:27:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727717AbfJFRX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:23:56 -0400
+        id S1728590AbfJFR14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:27:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAF222080F;
-        Sun,  6 Oct 2019 17:23:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BC702087E;
+        Sun,  6 Oct 2019 17:27:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382635;
-        bh=/7Y+A3zi2z3Cmfpukxe6iEBE6UJaBfI64iHRMUpeFEg=;
+        s=default; t=1570382876;
+        bh=Z3gg7toFusQ8G83NuL8W/6ebw284rA429OWzMxyU7RA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q2biKQmHBY0g1FaVZMrcm0hrPdPaNJ5vD7B1SAtsepgaoR/YX8EHw+ki+RlLzKUnJ
-         //jddaReLuV7PYiy9FlFnJLpzCCiL5JMShTd+5Tz4x5T6O9wuc1+3VQbWP//H1OMYk
-         TaZmYcpj5fOqmxjzU52fLBMagGIH2QzviIR4rhq4=
+        b=mFY8xPIJXnSvA9+pwRxdYbzBl5fF9ic99Lf4iHk8yxmRzJ1g222laAiqNuwrB9p7W
+         oOe3TJJwRDCCB87U1KX6O8vAHSdM7Car6zcGScYOsZLw96IcK8L7PhhuDd+EJFOq4X
+         wfwsc5MoBhriqxukBHr78CgFwTHj3ETV4VWJ4Qa4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martijn Coenen <maco@android.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Mattias Nissler <mnissler@chromium.org>
-Subject: [PATCH 4.9 30/47] ANDROID: binder: remove waitqueue when thread exits.
-Date:   Sun,  6 Oct 2019 19:21:17 +0200
-Message-Id: <20191006172018.480360174@linuxfoundation.org>
+        stable@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Jan Stancek <jstancek@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 42/68] fat: work around race with userspaces read via blockdev while mounting
+Date:   Sun,  6 Oct 2019 19:21:18 +0200
+Message-Id: <20191006171128.135279102@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +47,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martijn Coenen <maco@android.com>
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-commit f5cb779ba16334b45ba8946d6bfa6d9834d1527f upstream.
+[ Upstream commit 07bfa4415ab607e459b69bd86aa7e7602ce10b4f ]
 
-binder_poll() passes the thread->wait waitqueue that
-can be slept on for work. When a thread that uses
-epoll explicitly exits using BINDER_THREAD_EXIT,
-the waitqueue is freed, but it is never removed
-from the corresponding epoll data structure. When
-the process subsequently exits, the epoll cleanup
-code tries to access the waitlist, which results in
-a use-after-free.
+If userspace reads the buffer via blockdev while mounting,
+sb_getblk()+modify can race with buffer read via blockdev.
 
-Prevent this by using POLLFREE when the thread exits.
+For example,
 
-Signed-off-by: Martijn Coenen <maco@android.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: stable <stable@vger.kernel.org> # 4.14
-[backport BINDER_LOOPER_STATE_POLL logic as well]
-Signed-off-by: Mattias Nissler <mnissler@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+            FS                               userspace
+    bh = sb_getblk()
+    modify bh->b_data
+                                  read
+				    ll_rw_block(bh)
+				      fill bh->b_data by on-disk data
+				      /* lost modified data by FS */
+				      set_buffer_uptodate(bh)
+    set_buffer_uptodate(bh)
+
+Userspace should not use the blockdev while mounting though, the udev
+seems to be already doing this.  Although I think the udev should try to
+avoid this, workaround the race by small overhead.
+
+Link: http://lkml.kernel.org/r/87pnk7l3sw.fsf_-_@mail.parknet.co.jp
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Reported-by: Jan Stancek <jstancek@redhat.com>
+Tested-by: Jan Stancek <jstancek@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/android/binder.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ fs/fat/dir.c    | 13 +++++++++++--
+ fs/fat/fatent.c |  3 +++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -334,7 +334,8 @@ enum {
- 	BINDER_LOOPER_STATE_EXITED      = 0x04,
- 	BINDER_LOOPER_STATE_INVALID     = 0x08,
- 	BINDER_LOOPER_STATE_WAITING     = 0x10,
--	BINDER_LOOPER_STATE_NEED_RETURN = 0x20
-+	BINDER_LOOPER_STATE_NEED_RETURN = 0x20,
-+	BINDER_LOOPER_STATE_POLL	= 0x40,
- };
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 81cecbe6d7cf6..971e369517a73 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -1097,8 +1097,11 @@ static int fat_zeroed_cluster(struct inode *dir, sector_t blknr, int nr_used,
+ 			err = -ENOMEM;
+ 			goto error;
+ 		}
++		/* Avoid race with userspace read via bdev */
++		lock_buffer(bhs[n]);
+ 		memset(bhs[n]->b_data, 0, sb->s_blocksize);
+ 		set_buffer_uptodate(bhs[n]);
++		unlock_buffer(bhs[n]);
+ 		mark_buffer_dirty_inode(bhs[n], dir);
  
- struct binder_thread {
-@@ -2628,6 +2629,18 @@ static int binder_free_thread(struct bin
- 		} else
- 			BUG();
- 	}
-+
-+	/*
-+	 * If this thread used poll, make sure we remove the waitqueue
-+	 * from any epoll data structures holding it with POLLFREE.
-+	 * waitqueue_active() is safe to use here because we're holding
-+	 * the inner lock.
-+	 */
-+	if ((thread->looper & BINDER_LOOPER_STATE_POLL) &&
-+	    waitqueue_active(&thread->wait)) {
-+		wake_up_poll(&thread->wait, POLLHUP | POLLFREE);
-+	}
-+
- 	if (send_reply)
- 		binder_send_failed_reply(send_reply, BR_DEAD_REPLY);
- 	binder_release_work(&thread->todo);
-@@ -2651,6 +2664,8 @@ static unsigned int binder_poll(struct f
- 		return POLLERR;
- 	}
+ 		n++;
+@@ -1155,6 +1158,8 @@ int fat_alloc_new_dir(struct inode *dir, struct timespec *ts)
+ 	fat_time_unix2fat(sbi, ts, &time, &date, &time_cs);
  
-+	thread->looper |= BINDER_LOOPER_STATE_POLL;
-+
- 	wait_for_proc_work = thread->transaction_stack == NULL &&
- 		list_empty(&thread->todo) && thread->return_error == BR_OK;
+ 	de = (struct msdos_dir_entry *)bhs[0]->b_data;
++	/* Avoid race with userspace read via bdev */
++	lock_buffer(bhs[0]);
+ 	/* filling the new directory slots ("." and ".." entries) */
+ 	memcpy(de[0].name, MSDOS_DOT, MSDOS_NAME);
+ 	memcpy(de[1].name, MSDOS_DOTDOT, MSDOS_NAME);
+@@ -1177,6 +1182,7 @@ int fat_alloc_new_dir(struct inode *dir, struct timespec *ts)
+ 	de[0].size = de[1].size = 0;
+ 	memset(de + 2, 0, sb->s_blocksize - 2 * sizeof(*de));
+ 	set_buffer_uptodate(bhs[0]);
++	unlock_buffer(bhs[0]);
+ 	mark_buffer_dirty_inode(bhs[0], dir);
  
+ 	err = fat_zeroed_cluster(dir, blknr, 1, bhs, MAX_BUF_PER_PAGE);
+@@ -1234,11 +1240,14 @@ static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
+ 
+ 			/* fill the directory entry */
+ 			copy = min(size, sb->s_blocksize);
++			/* Avoid race with userspace read via bdev */
++			lock_buffer(bhs[n]);
+ 			memcpy(bhs[n]->b_data, slots, copy);
+-			slots += copy;
+-			size -= copy;
+ 			set_buffer_uptodate(bhs[n]);
++			unlock_buffer(bhs[n]);
+ 			mark_buffer_dirty_inode(bhs[n], dir);
++			slots += copy;
++			size -= copy;
+ 			if (!size)
+ 				break;
+ 			n++;
+diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+index 9635df94db7d9..24ed1f4e48ae2 100644
+--- a/fs/fat/fatent.c
++++ b/fs/fat/fatent.c
+@@ -389,8 +389,11 @@ static int fat_mirror_bhs(struct super_block *sb, struct buffer_head **bhs,
+ 				err = -ENOMEM;
+ 				goto error;
+ 			}
++			/* Avoid race with userspace read via bdev */
++			lock_buffer(c_bh);
+ 			memcpy(c_bh->b_data, bhs[n]->b_data, sb->s_blocksize);
+ 			set_buffer_uptodate(c_bh);
++			unlock_buffer(c_bh);
+ 			mark_buffer_dirty_inode(c_bh, sbi->fat_inode);
+ 			if (sb->s_flags & MS_SYNCHRONOUS)
+ 				err = sync_dirty_buffer(c_bh);
+-- 
+2.20.1
+
 
 
