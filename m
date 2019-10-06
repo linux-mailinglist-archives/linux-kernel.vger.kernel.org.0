@@ -2,107 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 275D5CD043
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 12:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3259CCD048
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 12:09:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbfJFKGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 06:06:35 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51348 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726261AbfJFKGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 06:06:35 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3BE62B1B645913D1E252;
-        Sun,  6 Oct 2019 18:06:33 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Sun, 6 Oct 2019
- 18:06:29 +0800
-Subject: Re: [alsa-devel] [PATCH -next] ASoc: tas2770: Fix build error without
- GPIOLIB
-To:     Ladislav Michl <ladis@linux-mips.org>
-References: <20191006072241.56808-1-yuehaibing@huawei.com>
- <20191006095720.GA13261@lenoch>
-CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <ckeepax@opensource.cirrus.com>,
-        <rf@opensource.wolfsonmicro.com>, <piotrs@opensource.cirrus.com>,
-        <enric.balletbo@collabora.com>, <paul@crapouillou.net>,
-        <srinivas.kandagatla@linaro.org>, <andradanciu1997@gmail.com>,
-        <mirq-linux@rere.qmqm.pl>, <kuninori.morimoto.gx@renesas.com>,
-        <m.felsch@pengutronix.de>, <shifu0704@thundersoft.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <4f5b8272-c299-ecc2-83f2-e7cdc534f061@huawei.com>
-Date:   Sun, 6 Oct 2019 18:06:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1726481AbfJFKJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 06:09:29 -0400
+Received: from smtprelay0109.hostedemail.com ([216.40.44.109]:52988 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726261AbfJFKJ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 06:09:29 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 0D0B318224D86;
+        Sun,  6 Oct 2019 10:09:28 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3351:3622:3865:3871:3872:3873:4250:4321:5007:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:30012:30054:30070:30090:30091,0,RBL:47.151.152.152:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: night97_5277490531e42
+X-Filterd-Recvd-Size: 1619
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  6 Oct 2019 10:09:26 +0000 (UTC)
+Message-ID: <2ed3bf96312dbd9abcd626868ce84e01a066b201.camel@perches.com>
+Subject: Re: [PATCH] staging: greybus: add blank line after declarations
+From:   Joe Perches <joe@perches.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com, johan@kernel.org,
+        elder@kernel.org, greybus-dev@lists.linaro.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Sun, 06 Oct 2019 03:09:25 -0700
+In-Reply-To: <20191006095042.GA2918514@kroah.com>
+References: <20191005210046.27224-1-gabrielabittencourt00@gmail.com>
+         <20191006095042.GA2918514@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20191006095720.GA13261@lenoch>
-Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/10/6 17:57, Ladislav Michl wrote:
-> Dear YueHaibing,
+On Sun, 2019-10-06 at 11:50 +0200, Greg KH wrote:
+> On Sat, Oct 05, 2019 at 06:00:46PM -0300, Gabriela Bittencourt wrote:
+> > Fix CHECK: add blank line after declarations
+[]
+> > diff --git a/drivers/staging/greybus/control.h b/drivers/staging/greybus/control.h
+[]
+> > @@ -24,6 +24,7 @@ struct gb_control {
+> >  	char *vendor_string;
+> >  	char *product_string;
+> >  };
+> > +
+> >  #define to_gb_control(d) container_of(d, struct gb_control, dev)
 > 
-> On Sun, Oct 06, 2019 at 03:22:41PM +0800, YueHaibing wrote:
->> If GPIOLIB is not set, building fails:
->>
->> sound/soc/codecs/tas2770.c: In function tas2770_reset:
->> sound/soc/codecs/tas2770.c:38:3: error: implicit declaration of function gpiod_set_value_cansleep; did you mean gpio_set_value_cansleep? [-Werror=implicit-function-declaration]
->>    gpiod_set_value_cansleep(tas2770->reset_gpio, 0);
->>    ^~~~~~~~~~~~~~~~~~~~~~~~
->>    gpio_set_value_cansleep
->> sound/soc/codecs/tas2770.c: In function tas2770_i2c_probe:
->> sound/soc/codecs/tas2770.c:749:24: error: implicit declaration of function devm_gpiod_get_optional; did you mean devm_regulator_get_optional? [-Werror=implicit-function-declaration]
->>   tas2770->reset_gpio = devm_gpiod_get_optional(tas2770->dev,
->>                         ^~~~~~~~~~~~~~~~~~~~~~~
->>                         devm_regulator_get_optional
->> sound/soc/codecs/tas2770.c:751:13: error: GPIOD_OUT_HIGH undeclared (first use in this function); did you mean GPIOF_INIT_HIGH?
->>              GPIOD_OUT_HIGH);
->>              ^~~~~~~~~~~~~~
->>              GPIOF_INIT_HIGH
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Fixes: 1a476abc723e ("tas2770: add tas2770 smart PA kernel driver")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  sound/soc/codecs/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
->> index bcac957..d639f17 100644
->> --- a/sound/soc/codecs/Kconfig
->> +++ b/sound/soc/codecs/Kconfig
->> @@ -1108,6 +1108,7 @@ config SND_SOC_TAS2552
->>  config SND_SOC_TAS2770
->>  	tristate "Texas Instruments TAS2770 speaker amplifier"
->>  	depends on I2C
->> +	select GPIOLIB
-> 
-> GPIOLIB API is working perfectly fine even if GPIOLIB is not selected
-> and gpiod_* functions will merely return -ENOSYS in this case.
-> Please see <linux/gpio/consumer.h> and fix your patch accordingly.
+> No, the original code is "better" here, it's a common pattern despite
+> what checkpatch.pl tells you, sorry.
 
+Statistics please.
 
-Thanks, will send v2 as your suggestion.
+I believe it's not a common pattern.
 
-> 
->>  config SND_SOC_TAS5086
->>  	tristate "Texas Instruments TAS5086 speaker amplifier"
->> -- 
->> 2.7.4
->>
->>
->> _______________________________________________
->> Alsa-devel mailing list
->> Alsa-devel@alsa-project.org
->> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
-> 
-> .
-> 
 
