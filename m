@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF618CD7A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2D2CD7FC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbfJFRcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:32:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59020 "EHLO mail.kernel.org"
+        id S1730081AbfJFRzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:55:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729587AbfJFRcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:32:32 -0400
+        id S1728359AbfJFRy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:54:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A0F52080F;
-        Sun,  6 Oct 2019 17:32:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3A9422459;
+        Sun,  6 Oct 2019 17:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383151;
-        bh=Ffas5AgijVqWvr/TSM4XOh15N+KI9nuJSQvvBxjlz8c=;
+        s=default; t=1570383960;
+        bh=tQiSvNVTkjv8Ne/BbocQ9GxSGV/1O9mRi+mOMl8LBM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IiwILHY42ZTXfaumbrB+lrP7yv4Ga0fiZSMXAydkU1rC2vMpXvLWavdx5o2t1ler8
-         8jV7eYkcJ2okmJ8jiV0jw0WL91GwKs7wN4R3ABT0KXCGV6VUKTsn3NxLcHJ+Znl8kJ
-         KlaE+CA3vtNtezK2aNRgvyJRyqoSWDiSnKIs0nvc=
+        b=IoysWNZhRF4xeeTVy0QMREhX0WUqU4w7gP8JgiXkaeBoeGTWIpntUW/nYX0+/lsZH
+         KmNLOPHbKtcP7GtmsS0TLe6scUnwqmOyZ+AsBJt5aS5idCNL9ZNmLKg73xYevZLNc8
+         QC555pdytUOszLc4ZRWUyjYmHPUXfK+L7K8Y9nGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 105/106] kexec: bail out upon SIGKILL when allocating memory.
-Date:   Sun,  6 Oct 2019 19:21:51 +0200
-Message-Id: <20191006171204.889444159@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH 5.3 158/166] Smack: Dont ignore other bprm->unsafe flags if LSM_UNSAFE_PTRACE is set
+Date:   Sun,  6 Oct 2019 19:22:04 +0200
+Message-Id: <20191006171226.169743782@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
+References: <20191006171212.850660298@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,41 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Jann Horn <jannh@google.com>
 
-commit 7c3a6aedcd6aae0a32a527e68669f7dd667492d1 upstream.
+commit 3675f052b43ba51b99b85b073c7070e083f3e6fb upstream.
 
-syzbot found that a thread can stall for minutes inside kexec_load() after
-that thread was killed by SIGKILL [1].  It turned out that the reproducer
-was trying to allocate 2408MB of memory using kimage_alloc_page() from
-kimage_load_normal_segment().  Let's check for SIGKILL before doing memory
-allocation.
+There is a logic bug in the current smack_bprm_set_creds():
+If LSM_UNSAFE_PTRACE is set, but the ptrace state is deemed to be
+acceptable (e.g. because the ptracer detached in the meantime), the other
+->unsafe flags aren't checked. As far as I can tell, this means that
+something like the following could work (but I haven't tested it):
 
-[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
+ - task A: create task B with fork()
+ - task B: set NO_NEW_PRIVS
+ - task B: install a seccomp filter that makes open() return 0 under some
+   conditions
+ - task B: replace fd 0 with a malicious library
+ - task A: attach to task B with PTRACE_ATTACH
+ - task B: execve() a file with an SMACK64EXEC extended attribute
+ - task A: while task B is still in the middle of execve(), exit (which
+   destroys the ptrace relationship)
 
-Link: http://lkml.kernel.org/r/993c9185-d324-2640-d061-bed2dd18b1f7@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Make sure that if any flags other than LSM_UNSAFE_PTRACE are set in
+bprm->unsafe, we reject the execve().
+
+Cc: stable@vger.kernel.org
+Fixes: 5663884caab1 ("Smack: unify all ptrace accesses in the smack")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/kexec_core.c |    2 ++
- 1 file changed, 2 insertions(+)
+ security/smack/smack_lsm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -301,6 +301,8 @@ static struct page *kimage_alloc_pages(g
- {
- 	struct page *pages;
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -937,7 +937,8 @@ static int smack_bprm_set_creds(struct l
  
-+	if (fatal_signal_pending(current))
-+		return NULL;
- 	pages = alloc_pages(gfp_mask & ~__GFP_ZERO, order);
- 	if (pages) {
- 		unsigned int count, i;
+ 		if (rc != 0)
+ 			return rc;
+-	} else if (bprm->unsafe)
++	}
++	if (bprm->unsafe & ~LSM_UNSAFE_PTRACE)
+ 		return -EPERM;
+ 
+ 	bsp->smk_task = isp->smk_task;
 
 
