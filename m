@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E01CCD4B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F263CCD4BC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728819AbfJFR2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:28:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54260 "EHLO mail.kernel.org"
+        id S1728851AbfJFR2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:28:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728804AbfJFR2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:28:35 -0400
+        id S1728829AbfJFR2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:28:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99990217D6;
-        Sun,  6 Oct 2019 17:28:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CF1F2087E;
+        Sun,  6 Oct 2019 17:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382914;
-        bh=VZnmPg5IckIkj42+lltGSiTdBTdV0VvKLXMECgyNU+E=;
+        s=default; t=1570382922;
+        bh=imc0Q0pspsvYgj/52o+N72nnGePu1STZj1a8QPV/zXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PP1+i57VwXe55SzaBmyFFBN6uC1eqlN7b6Ye4JBVOOIpuQteP5eIcjh7e+rOkLEeI
-         CMuGr2xL7xA7+PcQVWowiO4xnPO2jug/4DrDyyH/G6fJeLiHxPtHgz6SlW8KsESEcK
-         Qp8dYVWmFWfzW6Ucy2O40t+pJbnczhdlbbfksnoE=
+        b=gB8/XH7Tov3QOPnEBDlfiX43WIx0XwGyPijUv9pscUylb2eAyNDOcIBIaYJyvtMVs
+         +TYMgF/tQNio4NHeT/GwM7SZv3GCQLSUSkFQcTZaWoKgHDrPOvMYp6wQCaByaa9eJp
+         Podi9fEopORmqHG/U0j3e6qxdA2OjU9mdhwYZYy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        stable@vger.kernel.org, Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 018/106] clk: actions: Dont reference clk_init_data after registration
-Date:   Sun,  6 Oct 2019 19:20:24 +0200
-Message-Id: <20191006171132.803572044@linuxfoundation.org>
+Subject: [PATCH 4.19 020/106] clk: sprd: Dont reference clk_init_data after registration
+Date:   Sun,  6 Oct 2019 19:20:26 +0200
+Message-Id: <20191006171134.651188987@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
 References: <20191006171124.641144086@linuxfoundation.org>
@@ -47,36 +47,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit cf9ec1fc6d7cceb73e7f1efd079d2eae173fdf57 ]
+[ Upstream commit f6c90df8e7e33c3dc33d4d7471bc42c232b0510e ]
 
 A future patch is going to change semantics of clk_register() so that
 clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
 referencing this member here so that we don't run into NULL pointer
 exceptions.
 
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc: Baolin Wang <baolin.wang@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-2-sboyd@kernel.org
-[sboyd@kernel.org: Move name to after checking for error or NULL hw]
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Link: https://lkml.kernel.org/r/20190731193517.237136-8-sboyd@kernel.org
+Acked-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/actions/owl-common.c | 5 +++--
+ drivers/clk/sprd/common.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 61c1071b5180a..e9be34b17f3f5 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -67,16 +67,17 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
+diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+index e038b04472061..8bdab1c3013b8 100644
+--- a/drivers/clk/sprd/common.c
++++ b/drivers/clk/sprd/common.c
+@@ -71,16 +71,17 @@ int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
  	struct clk_hw *hw;
  
- 	for (i = 0; i < hw_clks->num; i++) {
+ 	for (i = 0; i < clkhw->num; i++) {
 +		const char *name;
  
- 		hw = hw_clks->hws[i];
+ 		hw = clkhw->hws[i];
 -
- 		if (IS_ERR_OR_NULL(hw))
+ 		if (!hw)
  			continue;
  
 +		name = hw->init->name;
