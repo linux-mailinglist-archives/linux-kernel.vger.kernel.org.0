@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BDA0CD47C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:26:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C084CCD437
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbfJFR0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:26:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51392 "EHLO mail.kernel.org"
+        id S1727662AbfJFRXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:23:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbfJFR0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:26:19 -0400
+        id S1726976AbfJFRXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:23:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F300C2080F;
-        Sun,  6 Oct 2019 17:26:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1DB12080F;
+        Sun,  6 Oct 2019 17:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382778;
-        bh=QKRCG8f/z7TmRpXy/oFC4HCqvZVx9ImvcBK7A1PeQ10=;
+        s=default; t=1570382619;
+        bh=CQnZku+V2XYvD/uLD2B3L9n+D2PqQKOkNufdS9zUJCQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kMVc0OUZXiu083lTRy9/0lvf/TW3bPXkCSFNI/KVJ+VYNuKCSnaxjj4Fdc/NM/S0I
-         CrafPORzC8l4bVsZQfEReifnzaCxs3Eb7wgamEYDjluEdzrjoR+rycxQ9kc/7SXaWg
-         RAB8fy5vTPp2bEoeZ1qzoNzol+kOsXBJBNukNyVE=
+        b=sDX5cb4Cavtv76zQDy8fy56brwLqoD34YFtz2Wj1AmBQ+P2AEx3M5onYpjauGMx7k
+         quuuxvyKhSCpHdvnrKWl1oKRksCyRBcHm1YItjHOzOAzbHcFsShXOvQBlHDjJ4Rs7d
+         xrEscNJXixFQ0VRplTQ6L/DSiFeUf5QmPsUn3eCk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 35/68] rtc: snvs: fix possible race condition
-Date:   Sun,  6 Oct 2019 19:21:11 +0200
-Message-Id: <20191006171124.973127408@linuxfoundation.org>
+Subject: [PATCH 4.9 25/47] ARM: 8903/1: ensure that usable memory in bank 0 starts from a PMD-aligned address
+Date:   Sun,  6 Oct 2019 19:21:12 +0200
+Message-Id: <20191006172018.218122485@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
-References: <20191006171108.150129403@linuxfoundation.org>
+In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
+References: <20191006172016.873463083@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Mike Rapoport <mike.rapoport@gmail.com>
 
-[ Upstream commit 6fd4fe9b496d9ba3382992ff4fde3871d1b6f63d ]
+[ Upstream commit 00d2ec1e6bd82c0538e6dd3e4a4040de93ba4fef ]
 
-The RTC IRQ is requested before the struct rtc_device is allocated,
-this may lead to a NULL pointer dereference in IRQ handler.
+The calculation of memblock_limit in adjust_lowmem_bounds() assumes that
+bank 0 starts from a PMD-aligned address. However, the beginning of the
+first bank may be NOMAP memory and the start of usable memory
+will be not aligned to PMD boundary. In such case the memblock_limit will
+be set to the end of the NOMAP region, which will prevent any memblock
+allocations.
 
-To fix this issue, allocating the rtc_device struct before requesting
-the RTC IRQ using devm_rtc_allocate_device, and use rtc_register_device
-to register the RTC device.
+Mark the region between the end of the NOMAP area and the next PMD-aligned
+address as NOMAP as well, so that the usable memory will start at
+PMD-aligned address.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Link: https://lore.kernel.org/r/20190716071858.36750-1-Anson.Huang@nxp.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-snvs.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/arm/mm/mmu.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
-index 71eee39520f0b..7aa2c5ea0de4f 100644
---- a/drivers/rtc/rtc-snvs.c
-+++ b/drivers/rtc/rtc-snvs.c
-@@ -280,6 +280,10 @@ static int snvs_rtc_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -ENOMEM;
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index f7c741358f37e..241bf898adf5b 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -1168,6 +1168,22 @@ void __init adjust_lowmem_bounds(void)
+ 	 */
+ 	vmalloc_limit = (u64)(uintptr_t)vmalloc_min - PAGE_OFFSET + PHYS_OFFSET;
  
-+	data->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(data->rtc))
-+		return PTR_ERR(data->rtc);
++	/*
++	 * The first usable region must be PMD aligned. Mark its start
++	 * as MEMBLOCK_NOMAP if it isn't
++	 */
++	for_each_memblock(memory, reg) {
++		if (!memblock_is_nomap(reg)) {
++			if (!IS_ALIGNED(reg->base, PMD_SIZE)) {
++				phys_addr_t len;
 +
- 	data->regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "regmap");
- 
- 	if (IS_ERR(data->regmap)) {
-@@ -342,10 +346,9 @@ static int snvs_rtc_probe(struct platform_device *pdev)
- 		goto error_rtc_device_register;
- 	}
- 
--	data->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
--					&snvs_rtc_ops, THIS_MODULE);
--	if (IS_ERR(data->rtc)) {
--		ret = PTR_ERR(data->rtc);
-+	data->rtc->ops = &snvs_rtc_ops;
-+	ret = rtc_register_device(data->rtc);
-+	if (ret) {
- 		dev_err(&pdev->dev, "failed to register rtc: %d\n", ret);
- 		goto error_rtc_device_register;
- 	}
++				len = round_up(reg->base, PMD_SIZE) - reg->base;
++				memblock_mark_nomap(reg->base, len);
++			}
++			break;
++		}
++	}
++
+ 	for_each_memblock(memory, reg) {
+ 		phys_addr_t block_start = reg->base;
+ 		phys_addr_t block_end = reg->base + reg->size;
 -- 
 2.20.1
 
