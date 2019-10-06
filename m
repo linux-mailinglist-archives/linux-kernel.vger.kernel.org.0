@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 119C9CD7AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9431CCD7FE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbfJFRc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:32:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59470 "EHLO mail.kernel.org"
+        id S1728497AbfJFRzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:55:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727680AbfJFRcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:32:54 -0400
+        id S1728632AbfJFRya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:54:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C13692080F;
-        Sun,  6 Oct 2019 17:32:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFE5522473;
+        Sun,  6 Oct 2019 17:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383173;
-        bh=YObjyu4dg2oNKw8aD2FnpyBOuVLnwL6K6CQg8iywsis=;
+        s=default; t=1570383984;
+        bh=7pzP4N3IP6jfi4j71+ehXaA+mibn5YhMNZhqmUZG5D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ndeklQOU0+yoi7P4hbbYO1w+zqnZImgplmIC08Cos3GATHJsUnRp+L6JiSvkvqK2e
-         6udPdohSX2tmAK/Zm7i9ZnB1V5DYkCkpEJbGqx6iwtUvL00KMVaDhm7wx9k4fs8gpv
-         vrNL8+gS5DsKwi1g8NaWj9d1hG8Ykb0unC6cx0e4=
+        b=T9c80g299hblyEGWe1+psPfYExLZTxbxq8f0E6/54oLGeyEY6dArDfYw9LUvRzHrN
+         maVcBjERQHDDyVDmt/M4Sppj/1/B5cTboy9qLguMspRbDPKkJne1//ouWkCJY4gjz4
+         EgvI+bu2X+eD7oybbxBZ4i/cvSN/oT891JOHsuGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org,
+        Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>,
+        David Ahern <dsahern@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 091/106] sch_dsmark: fix potential NULL deref in dsmark_init()
-Date:   Sun,  6 Oct 2019 19:21:37 +0200
-Message-Id: <20191006171200.275441258@linuxfoundation.org>
+Subject: [PATCH 5.3 132/166] ipv6: Handle missing host route in __ipv6_ifa_notify
+Date:   Sun,  6 Oct 2019 19:21:38 +0200
+Message-Id: <20191006171224.321221708@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
+References: <20191006171212.850660298@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 474f0813a3002cb299bb73a5a93aa1f537a80ca8 ]
+[ Upstream commit 2d819d250a1393a3e725715425ab70a0e0772a71 ]
 
-Make sure TCA_DSMARK_INDICES was provided by the user.
+Rajendra reported a kernel panic when a link was taken down:
 
-syzbot reported :
+    [ 6870.263084] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8
+    [ 6870.271856] IP: [<ffffffff8efc5764>] __ipv6_ifa_notify+0x154/0x290
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8799 Comm: syz-executor235 Not tainted 5.3.0+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:nla_get_u16 include/net/netlink.h:1501 [inline]
-RIP: 0010:dsmark_init net/sched/sch_dsmark.c:364 [inline]
-RIP: 0010:dsmark_init+0x193/0x640 net/sched/sch_dsmark.c:339
-Code: 85 db 58 0f 88 7d 03 00 00 e8 e9 1a ac fb 48 8b 9d 70 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 04 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 ca
-RSP: 0018:ffff88809426f3b8 EFLAGS: 00010247
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff85c6eb09
-RDX: 0000000000000000 RSI: ffffffff85c6eb17 RDI: 0000000000000004
-RBP: ffff88809426f4b0 R08: ffff88808c4085c0 R09: ffffed1015d26159
-R10: ffffed1015d26158 R11: ffff8880ae930ac7 R12: ffff8880a7e96940
-R13: dffffc0000000000 R14: ffff88809426f8c0 R15: 0000000000000000
-FS:  0000000001292880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 000000008ca1b000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- qdisc_create+0x4ee/0x1210 net/sched/sch_api.c:1237
- tc_modify_qdisc+0x524/0x1c50 net/sched/sch_api.c:1653
- rtnetlink_rcv_msg+0x463/0xb00 net/core/rtnetlink.c:5223
- netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5241
- netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
- netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
- netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:637 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:657
- ___sys_sendmsg+0x803/0x920 net/socket.c:2311
- __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
- __do_sys_sendmsg net/socket.c:2365 [inline]
- __se_sys_sendmsg net/socket.c:2363 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
- do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440369
+    <snip>
 
-Fixes: 758cc43c6d73 ("[PKT_SCHED]: Fix dsmark to apply changes consistent")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+    [ 6870.570501] Call Trace:
+    [ 6870.573238] [<ffffffff8efc58c6>] ? ipv6_ifa_notify+0x26/0x40
+    [ 6870.579665] [<ffffffff8efc98ec>] ? addrconf_dad_completed+0x4c/0x2c0
+    [ 6870.586869] [<ffffffff8efe70c6>] ? ipv6_dev_mc_inc+0x196/0x260
+    [ 6870.593491] [<ffffffff8efc9c6a>] ? addrconf_dad_work+0x10a/0x430
+    [ 6870.600305] [<ffffffff8f01ade4>] ? __switch_to_asm+0x34/0x70
+    [ 6870.606732] [<ffffffff8ea93a7a>] ? process_one_work+0x18a/0x430
+    [ 6870.613449] [<ffffffff8ea93d6d>] ? worker_thread+0x4d/0x490
+    [ 6870.619778] [<ffffffff8ea93d20>] ? process_one_work+0x430/0x430
+    [ 6870.626495] [<ffffffff8ea99dd9>] ? kthread+0xd9/0xf0
+    [ 6870.632145] [<ffffffff8f01ade4>] ? __switch_to_asm+0x34/0x70
+    [ 6870.638573] [<ffffffff8ea99d00>] ? kthread_park+0x60/0x60
+    [ 6870.644707] [<ffffffff8f01ae77>] ? ret_from_fork+0x57/0x70
+    [ 6870.650936] Code: 31 c0 31 d2 41 b9 20 00 08 02 b9 09 00 00 0
+
+addrconf_dad_work is kicked to be scheduled when a device is brought
+up. There is a race between addrcond_dad_work getting scheduled and
+taking the rtnl lock and a process taking the link down (under rtnl).
+The latter removes the host route from the inet6_addr as part of
+addrconf_ifdown which is run for NETDEV_DOWN. The former attempts
+to use the host route in __ipv6_ifa_notify. If the down event removes
+the host route due to the race to the rtnl, then the BUG listed above
+occurs.
+
+Since the DAD sequence can not be aborted, add a check for the missing
+host route in __ipv6_ifa_notify. The only way this should happen is due
+to the previously mentioned race. The host route is created when the
+address is added to an interface; it is only removed on a down event
+where the address is kept. Add a warning if the host route is missing
+AND the device is up; this is a situation that should never happen.
+
+Fixes: f1705ec197e7 ("net: ipv6: Make address flushing on ifdown optional")
+Reported-by: Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_dsmark.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv6/addrconf.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/net/sched/sch_dsmark.c
-+++ b/net/sched/sch_dsmark.c
-@@ -357,6 +357,8 @@ static int dsmark_init(struct Qdisc *sch
- 		goto errout;
- 
- 	err = -EINVAL;
-+	if (!tb[TCA_DSMARK_INDICES])
-+		goto errout;
- 	indices = nla_get_u16(tb[TCA_DSMARK_INDICES]);
- 
- 	if (hweight32(indices) != 1)
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -5964,13 +5964,20 @@ static void __ipv6_ifa_notify(int event,
+ 	switch (event) {
+ 	case RTM_NEWADDR:
+ 		/*
+-		 * If the address was optimistic
+-		 * we inserted the route at the start of
+-		 * our DAD process, so we don't need
+-		 * to do it again
++		 * If the address was optimistic we inserted the route at the
++		 * start of our DAD process, so we don't need to do it again.
++		 * If the device was taken down in the middle of the DAD
++		 * cycle there is a race where we could get here without a
++		 * host route, so nothing to insert. That will be fixed when
++		 * the device is brought up.
+ 		 */
+-		if (!rcu_access_pointer(ifp->rt->fib6_node))
++		if (ifp->rt && !rcu_access_pointer(ifp->rt->fib6_node)) {
+ 			ip6_ins_rt(net, ifp->rt);
++		} else if (!ifp->rt && (ifp->idev->dev->flags & IFF_UP)) {
++			pr_warn("BUG: Address %pI6c on device %s is missing its host route.\n",
++				&ifp->addr, ifp->idev->dev->name);
++		}
++
+ 		if (ifp->idev->cnf.forwarding)
+ 			addrconf_join_anycast(ifp);
+ 		if (!ipv6_addr_any(&ifp->peer_addr))
 
 
