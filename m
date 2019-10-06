@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A6FCD770
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FDEECD7DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbfJFR3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:29:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54662 "EHLO mail.kernel.org"
+        id S1730240AbfJFRgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:36:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728891AbfJFR26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:28:58 -0400
+        id S1730071AbfJFRex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:34:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96F142133F;
-        Sun,  6 Oct 2019 17:28:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFB942087E;
+        Sun,  6 Oct 2019 17:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382938;
-        bh=idS9ft4PoldZTWTcbysRgHOMFEngjStNMRW5fk1OU7E=;
+        s=default; t=1570383292;
+        bh=ZFiPp8ngyxu+/Da+Enw9S3iTkIS4pdRuux3QPVR7nWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AOV68vEKcLTD1B9pCw8xQBlpnMhaHUg+lSXi25bJBXH1fHmudYkjynmc3m2O3EjT2
-         jfQ3O7np+FqYwJmEGliiH9YS0E3wKtOoup6s/eW0E5FCNszresX4X3aVVfark5JHEW
-         MmNKnX8pjxl1DbJZsusX8l0duDo6sDWJIdtGW79E=
+        b=oeJL2z8p60I3MhR/ijHN98bTOKSxOVWrChoKsk9zIqMMoAcKbfLYQxp1owjD/cFgR
+         kD68eSY9jAiOjxLQCGPLBDxkWi9V1schpw34oFdguerb94hHHd15Ykwk+fu8j1fUHO
+         w/5pwgOAm0r6ptzFEESr3zWTqqyeaewmxuXNpH2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 026/106] pinctrl: tegra: Fix write barrier placement in pmx_writel
-Date:   Sun,  6 Oct 2019 19:20:32 +0200
-Message-Id: <20191006171137.992118437@linuxfoundation.org>
+Subject: [PATCH 5.2 051/137] clk: meson: axg-audio: Dont reference clk_init_data after registration
+Date:   Sun,  6 Oct 2019 19:20:35 +0200
+Message-Id: <20191006171213.024227401@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit c2cf351eba2ff6002ce8eb178452219d2521e38e ]
+[ Upstream commit 1610dd79d0f6202c5c1a91122255fa598679c13a ]
 
-pmx_writel uses writel which inserts write barrier before the
-register write.
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-This patch has fix to replace writel with writel_relaxed followed
-by a readback and memory barrier to ensure write operation is
-completed for successful pinctrl change.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Link: https://lore.kernel.org/r/1565984527-5272-2-git-send-email-skomatineni@nvidia.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190731193517.237136-4-sboyd@kernel.org
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/meson/axg-audio.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 1aba75897d147..26a3f1eb9c6bf 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -40,7 +40,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index 8028ff6f66107..db0b73d53551d 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -992,15 +992,18 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
  
- static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
- {
--	writel(val, pmx->regs[bank] + reg);
-+	writel_relaxed(val, pmx->regs[bank] + reg);
-+	/* make sure pinmux register write completed */
-+	pmx_readl(pmx, bank, reg);
- }
+ 	/* Take care to skip the registered input clocks */
+ 	for (i = AUD_CLKID_DDR_ARB; i < data->hw_onecell_data->num; i++) {
++		const char *name;
++
+ 		hw = data->hw_onecell_data->hws[i];
+ 		/* array might be sparse */
+ 		if (!hw)
+ 			continue;
  
- static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
++		name = hw->init->name;
++
+ 		ret = devm_clk_hw_register(dev, hw);
+ 		if (ret) {
+-			dev_err(dev, "failed to register clock %s\n",
+-				hw->init->name);
++			dev_err(dev, "failed to register clock %s\n", name);
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.20.1
 
