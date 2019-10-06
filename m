@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B49E9CD60B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9825CCD5E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbfJFRm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:42:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42746 "EHLO mail.kernel.org"
+        id S1731107AbfJFRk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:40:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730705AbfJFRmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:42:52 -0400
+        id S1731091AbfJFRkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:40:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69B272087E;
-        Sun,  6 Oct 2019 17:42:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46CA02133F;
+        Sun,  6 Oct 2019 17:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383770;
-        bh=hotPHqNA0Hauqn1+we+VM6z41hs1TrkZFPv6VGRGl50=;
+        s=default; t=1570383652;
+        bh=QEzS84l9KQQJCNWHSl88ZGBwPCWjjxkz8jzDybGM6bc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OWvSNPpH1j8jYgq12vg1MkQlADdrebNmE7aHAbvZZz3fH0EGcz3EF1SLwYkb/fupX
-         Ug1aP/QzCk16RKC/Nuuhla2+laPjtK5gEmBqBgMb7dyEgweFmQVAe6Gzb0NJNiGR1q
-         17EdNyXgR+dpnoGvjOfsOKRKXwUMM9eQHWnsuGwU=
+        b=spYGapJmlQqoC0pR57YiVvwfgBNCPyJrYxXfblszcYw42hNbW8pcadcMQinHJMUPq
+         Eq1p18BJk8e3HtF6nqWpB5NDniG8DpVca7IkaGexKb6mE7q5T5G1pa7VodXpkWO4lG
+         uwEF04NI4A4ZxP3X5d4EIbvM5ynDC8ee1n/ZAdxs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 045/166] powerpc/perf: fix imc allocation failure handling
-Date:   Sun,  6 Oct 2019 19:20:11 +0200
-Message-Id: <20191006171216.768222939@linuxfoundation.org>
+Subject: [PATCH 5.3 046/166] pinctrl: tegra: Fix write barrier placement in pmx_writel
+Date:   Sun,  6 Oct 2019 19:20:12 +0200
+Message-Id: <20191006171216.864783027@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -46,92 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-[ Upstream commit 10c4bd7cd28e77aeb8cfa65b23cb3c632ede2a49 ]
+[ Upstream commit c2cf351eba2ff6002ce8eb178452219d2521e38e ]
 
-The alloc_pages_node return value should be tested for failure
-before being passed to page_address.
+pmx_writel uses writel which inserts write barrier before the
+register write.
 
-Tested-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190724084638.24982-3-npiggin@gmail.com
+This patch has fix to replace writel with writel_relaxed followed
+by a readback and memory barrier to ensure write operation is
+completed for successful pinctrl change.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Link: https://lore.kernel.org/r/1565984527-5272-2-git-send-email-skomatineni@nvidia.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/perf/imc-pmu.c | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
-index dea243185ea4b..cb50a9e1fd2d7 100644
---- a/arch/powerpc/perf/imc-pmu.c
-+++ b/arch/powerpc/perf/imc-pmu.c
-@@ -577,6 +577,7 @@ static int core_imc_mem_init(int cpu, int size)
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 186ef98e7b2b8..f1b523beec5b3 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -32,7 +32,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+ 
+ static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
  {
- 	int nid, rc = 0, core_id = (cpu / threads_per_core);
- 	struct imc_mem_info *mem_info;
-+	struct page *page;
+-	writel(val, pmx->regs[bank] + reg);
++	writel_relaxed(val, pmx->regs[bank] + reg);
++	/* make sure pinmux register write completed */
++	pmx_readl(pmx, bank, reg);
+ }
  
- 	/*
- 	 * alloc_pages_node() will allocate memory for core in the
-@@ -587,11 +588,12 @@ static int core_imc_mem_init(int cpu, int size)
- 	mem_info->id = core_id;
- 
- 	/* We need only vbase for core counters */
--	mem_info->vbase = page_address(alloc_pages_node(nid,
--					  GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
--					  __GFP_NOWARN, get_order(size)));
--	if (!mem_info->vbase)
-+	page = alloc_pages_node(nid,
-+				GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
-+				__GFP_NOWARN, get_order(size));
-+	if (!page)
- 		return -ENOMEM;
-+	mem_info->vbase = page_address(page);
- 
- 	/* Init the mutex */
- 	core_imc_refc[core_id].id = core_id;
-@@ -849,15 +851,17 @@ static int thread_imc_mem_alloc(int cpu_id, int size)
- 	int nid = cpu_to_node(cpu_id);
- 
- 	if (!local_mem) {
-+		struct page *page;
- 		/*
- 		 * This case could happen only once at start, since we dont
- 		 * free the memory in cpu offline path.
- 		 */
--		local_mem = page_address(alloc_pages_node(nid,
-+		page = alloc_pages_node(nid,
- 				  GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
--				  __GFP_NOWARN, get_order(size)));
--		if (!local_mem)
-+				  __GFP_NOWARN, get_order(size));
-+		if (!page)
- 			return -ENOMEM;
-+		local_mem = page_address(page);
- 
- 		per_cpu(thread_imc_mem, cpu_id) = local_mem;
- 	}
-@@ -1095,11 +1099,14 @@ static int trace_imc_mem_alloc(int cpu_id, int size)
- 	int core_id = (cpu_id / threads_per_core);
- 
- 	if (!local_mem) {
--		local_mem = page_address(alloc_pages_node(phys_id,
--					GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
--					__GFP_NOWARN, get_order(size)));
--		if (!local_mem)
-+		struct page *page;
-+
-+		page = alloc_pages_node(phys_id,
-+				GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
-+				__GFP_NOWARN, get_order(size));
-+		if (!page)
- 			return -ENOMEM;
-+		local_mem = page_address(page);
- 		per_cpu(trace_imc_mem, cpu_id) = local_mem;
- 
- 		/* Initialise the counters for trace mode */
+ static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
 -- 
 2.20.1
 
