@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 423D0CD42B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07670CD431
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbfJFRXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:23:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47808 "EHLO mail.kernel.org"
+        id S1727600AbfJFRX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:23:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727190AbfJFRXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:23:21 -0400
+        id S1727231AbfJFRX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:23:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2392720862;
-        Sun,  6 Oct 2019 17:23:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71A1E2077B;
+        Sun,  6 Oct 2019 17:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382600;
-        bh=bMhHC+db4nOccSOwhA0fo5dCCOAtbBpAxKWNgXMQHcw=;
+        s=default; t=1570382606;
+        bh=Qdk2g6rFXA19O83ksX68LoEMe9e94G5/RP8eW++x/4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I+xBPV2lKlhWM12vb6TUcgupzMn4H/OTRl+X97LlL5txJZ6ity6FvVxEnSQ2UfBkJ
-         9/vc+pYab3+41nq3xvO3S6hGaYnDaxKiNNnPikxfmJ7uUEUsk8EYCui+uQoADHBZj1
-         CV6/o/1PF1D0DPCr9a3GaY5hQ9gnDBsEdxyT1xeU=
+        b=TM6ej8mD6Uv9OTK2YWFZID6LiGyGwf/Us2rMqLxrAzgFqA/ggXfvBSoX9nZbHjnsC
+         bpBKehACAtmKy/fRLXsF0ALFvToibzKeUWLq4s1VO9EnsSXv+NMgwpD96L5su+Jy5j
+         Aay9vUbY26K7c/kaQjn5ez0+KNLAjPEO73VWlS2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-mips@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 19/47] MIPS: tlbex: Explicitly cast _PAGE_NO_EXEC to a boolean
-Date:   Sun,  6 Oct 2019 19:21:06 +0200
-Message-Id: <20191006172017.899294811@linuxfoundation.org>
+Subject: [PATCH 4.9 20/47] mfd: intel-lpss: Remove D3cold delay
+Date:   Sun,  6 Oct 2019 19:21:07 +0200
+Message-Id: <20191006172017.950996167@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
 References: <20191006172016.873463083@linuxfoundation.org>
@@ -49,57 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit c59ae0a1055127dd3828a88e111a0db59b254104 ]
+[ Upstream commit 76380a607ba0b28627c9b4b55cd47a079a59624b ]
 
-clang warns:
+Goodix touchpad may drop its first couple input events when
+i2c-designware-platdrv and intel-lpss it connects to took too long to
+runtime resume from runtime suspended state.
 
-arch/mips/mm/tlbex.c:634:19: error: use of logical '&&' with constant
-operand [-Werror,-Wconstant-logical-operand]
-        if (cpu_has_rixi && _PAGE_NO_EXEC) {
-                         ^  ~~~~~~~~~~~~~
-arch/mips/mm/tlbex.c:634:19: note: use '&' for a bitwise operation
-        if (cpu_has_rixi && _PAGE_NO_EXEC) {
-                         ^~
-                         &
-arch/mips/mm/tlbex.c:634:19: note: remove constant to silence this
-warning
-        if (cpu_has_rixi && _PAGE_NO_EXEC) {
-                        ~^~~~~~~~~~~~~~~~
-1 error generated.
+This issue happens becuase the touchpad has a rather small buffer to
+store up to 13 input events, so if the host doesn't read those events in
+time (i.e. runtime resume takes too long), events are dropped from the
+touchpad's buffer.
 
-Explicitly cast this value to a boolean so that clang understands we
-intend for this to be a non-zero value.
+The bottleneck is D3cold delay it waits when transitioning from D3cold
+to D0, hence remove the delay to make the resume faster. I've tested
+some systems with intel-lpss and haven't seen any regression.
 
-Fixes: 00bf1c691d08 ("MIPS: tlbex: Avoid placing software PTE bits in Entry* PFN fields")
-Link: https://github.com/ClangBuiltLinux/linux/issues/609
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: clang-built-linux@googlegroups.com
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202683
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/mm/tlbex.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/intel-lpss-pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/mm/tlbex.c b/arch/mips/mm/tlbex.c
-index 3cc5b2e4263c0..47d50197789be 100644
---- a/arch/mips/mm/tlbex.c
-+++ b/arch/mips/mm/tlbex.c
-@@ -637,7 +637,7 @@ static __maybe_unused void build_convert_pte_to_entrylo(u32 **p,
- 		return;
- 	}
+diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+index 9ff243970e93e..5b41111e62fd1 100644
+--- a/drivers/mfd/intel-lpss-pci.c
++++ b/drivers/mfd/intel-lpss-pci.c
+@@ -39,6 +39,8 @@ static int intel_lpss_pci_probe(struct pci_dev *pdev,
+ 	info->mem = &pdev->resource[0];
+ 	info->irq = pdev->irq;
  
--	if (cpu_has_rixi && _PAGE_NO_EXEC) {
-+	if (cpu_has_rixi && !!_PAGE_NO_EXEC) {
- 		if (fill_includes_sw_bits) {
- 			UASM_i_ROTR(p, reg, reg, ilog2(_PAGE_GLOBAL));
- 		} else {
++	pdev->d3cold_delay = 0;
++
+ 	/* Probably it is enough to set this for iDMA capable devices only */
+ 	pci_set_master(pdev);
+ 
 -- 
 2.20.1
 
