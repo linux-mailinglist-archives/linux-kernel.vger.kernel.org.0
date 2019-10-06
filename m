@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03229CD866
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96DE7CD79E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbfJFSDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 14:03:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49806 "EHLO mail.kernel.org"
+        id S1729560AbfJFRcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:32:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727993AbfJFRYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:24:50 -0400
+        id S1729549AbfJFRcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:32:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB60F2077B;
-        Sun,  6 Oct 2019 17:24:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B9562080F;
+        Sun,  6 Oct 2019 17:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382689;
-        bh=5muGls6zdq2aSu60E7lYhAaT5thiCPeLqQs4MJKKU+U=;
+        s=default; t=1570383140;
+        bh=anC2h8HLrJ225GNI/6kpNgNtxjSNr0e6gzPUyAcYfdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cBglWPJlEzBqU5TwvIZ8sY9F8KUpyaLpRZiZwWKYFTLZnP0zPuhOgP81YpOp0fV9t
-         GO5yKw8qPywP2vM6bVUr69NfewAdT430x5BcpxSkT8tPdPObhqinOnO1wz7RmCWkj/
-         vk9g9r8ZkUnpVxR+OHZuwUldZCbaH8QKAMSDY4lw=
+        b=QZRvN+wvJDQC9P15RWvM0OWSymTmkryqsFoI7jygdz7LB6+l776YUaxR8dXvYL/MB
+         cmvmTo9/aPqFYRrnW30LSGqROj1QWJdzKSQuOZbzYDcjSCdki6o5005P3S3Sie+jrF
+         ipq6lyrARj/H+wKlTdffwkCXrdC8z+YqiZUl8YW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org,
+        Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>,
+        David Ahern <dsahern@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 42/47] xen-netfront: do not use ~0U as error return value for xennet_fill_frags()
-Date:   Sun,  6 Oct 2019 19:21:29 +0200
-Message-Id: <20191006172019.105543596@linuxfoundation.org>
+Subject: [PATCH 4.19 084/106] ipv6: Handle missing host route in __ipv6_ifa_notify
+Date:   Sun,  6 Oct 2019 19:21:30 +0200
+Message-Id: <20191006171158.119464512@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,95 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongli Zhang <dongli.zhang@oracle.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit a761129e3625688310aecf26e1be9e98e85f8eb5 ]
+[ Upstream commit 2d819d250a1393a3e725715425ab70a0e0772a71 ]
 
-xennet_fill_frags() uses ~0U as return value when the sk_buff is not able
-to cache extra fragments. This is incorrect because the return type of
-xennet_fill_frags() is RING_IDX and 0xffffffff is an expected value for
-ring buffer index.
+Rajendra reported a kernel panic when a link was taken down:
 
-In the situation when the rsp_cons is approaching 0xffffffff, the return
-value of xennet_fill_frags() may become 0xffffffff which xennet_poll() (the
-caller) would regard as error. As a result, queue->rx.rsp_cons is set
-incorrectly because it is updated only when there is error. If there is no
-error, xennet_poll() would be responsible to update queue->rx.rsp_cons.
-Finally, queue->rx.rsp_cons would point to the rx ring buffer entries whose
-queue->rx_skbs[i] and queue->grant_rx_ref[i] are already cleared to NULL.
-This leads to NULL pointer access in the next iteration to process rx ring
-buffer entries.
+    [ 6870.263084] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8
+    [ 6870.271856] IP: [<ffffffff8efc5764>] __ipv6_ifa_notify+0x154/0x290
 
-The symptom is similar to the one fixed in
-commit 00b368502d18 ("xen-netfront: do not assume sk_buff_head list is
-empty in error handling").
+    <snip>
 
-This patch changes the return type of xennet_fill_frags() to indicate
-whether it is successful or failed. The queue->rx.rsp_cons will be
-always updated inside this function.
+    [ 6870.570501] Call Trace:
+    [ 6870.573238] [<ffffffff8efc58c6>] ? ipv6_ifa_notify+0x26/0x40
+    [ 6870.579665] [<ffffffff8efc98ec>] ? addrconf_dad_completed+0x4c/0x2c0
+    [ 6870.586869] [<ffffffff8efe70c6>] ? ipv6_dev_mc_inc+0x196/0x260
+    [ 6870.593491] [<ffffffff8efc9c6a>] ? addrconf_dad_work+0x10a/0x430
+    [ 6870.600305] [<ffffffff8f01ade4>] ? __switch_to_asm+0x34/0x70
+    [ 6870.606732] [<ffffffff8ea93a7a>] ? process_one_work+0x18a/0x430
+    [ 6870.613449] [<ffffffff8ea93d6d>] ? worker_thread+0x4d/0x490
+    [ 6870.619778] [<ffffffff8ea93d20>] ? process_one_work+0x430/0x430
+    [ 6870.626495] [<ffffffff8ea99dd9>] ? kthread+0xd9/0xf0
+    [ 6870.632145] [<ffffffff8f01ade4>] ? __switch_to_asm+0x34/0x70
+    [ 6870.638573] [<ffffffff8ea99d00>] ? kthread_park+0x60/0x60
+    [ 6870.644707] [<ffffffff8f01ae77>] ? ret_from_fork+0x57/0x70
+    [ 6870.650936] Code: 31 c0 31 d2 41 b9 20 00 08 02 b9 09 00 00 0
 
-Fixes: ad4f15dc2c70 ("xen/netfront: don't bug in case of too many frags")
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+addrconf_dad_work is kicked to be scheduled when a device is brought
+up. There is a race between addrcond_dad_work getting scheduled and
+taking the rtnl lock and a process taking the link down (under rtnl).
+The latter removes the host route from the inet6_addr as part of
+addrconf_ifdown which is run for NETDEV_DOWN. The former attempts
+to use the host route in __ipv6_ifa_notify. If the down event removes
+the host route due to the race to the rtnl, then the BUG listed above
+occurs.
+
+Since the DAD sequence can not be aborted, add a check for the missing
+host route in __ipv6_ifa_notify. The only way this should happen is due
+to the previously mentioned race. The host route is created when the
+address is added to an interface; it is only removed on a down event
+where the address is kept. Add a warning if the host route is missing
+AND the device is up; this is a situation that should never happen.
+
+Fixes: f1705ec197e7 ("net: ipv6: Make address flushing on ifdown optional")
+Reported-by: Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ net/ipv6/addrconf.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -888,9 +888,9 @@ static int xennet_set_skb_gso(struct sk_
- 	return 0;
- }
- 
--static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
--				  struct sk_buff *skb,
--				  struct sk_buff_head *list)
-+static int xennet_fill_frags(struct netfront_queue *queue,
-+			     struct sk_buff *skb,
-+			     struct sk_buff_head *list)
- {
- 	RING_IDX cons = queue->rx.rsp_cons;
- 	struct sk_buff *nskb;
-@@ -909,7 +909,7 @@ static RING_IDX xennet_fill_frags(struct
- 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
- 			queue->rx.rsp_cons = ++cons + skb_queue_len(list);
- 			kfree_skb(nskb);
--			return ~0U;
-+			return -ENOENT;
- 		}
- 
- 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
-@@ -920,7 +920,9 @@ static RING_IDX xennet_fill_frags(struct
- 		kfree_skb(nskb);
- 	}
- 
--	return cons;
-+	queue->rx.rsp_cons = cons;
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -5678,13 +5678,20 @@ static void __ipv6_ifa_notify(int event,
+ 	switch (event) {
+ 	case RTM_NEWADDR:
+ 		/*
+-		 * If the address was optimistic
+-		 * we inserted the route at the start of
+-		 * our DAD process, so we don't need
+-		 * to do it again
++		 * If the address was optimistic we inserted the route at the
++		 * start of our DAD process, so we don't need to do it again.
++		 * If the device was taken down in the middle of the DAD
++		 * cycle there is a race where we could get here without a
++		 * host route, so nothing to insert. That will be fixed when
++		 * the device is brought up.
+ 		 */
+-		if (!rcu_access_pointer(ifp->rt->fib6_node))
++		if (ifp->rt && !rcu_access_pointer(ifp->rt->fib6_node)) {
+ 			ip6_ins_rt(net, ifp->rt);
++		} else if (!ifp->rt && (ifp->idev->dev->flags & IFF_UP)) {
++			pr_warn("BUG: Address %pI6c on device %s is missing its host route.\n",
++				&ifp->addr, ifp->idev->dev->name);
++		}
 +
-+	return 0;
- }
- 
- static int checksum_setup(struct net_device *dev, struct sk_buff *skb)
-@@ -1046,8 +1048,7 @@ err:
- 		skb->data_len = rx->status;
- 		skb->len += rx->status;
- 
--		i = xennet_fill_frags(queue, skb, &tmpq);
--		if (unlikely(i == ~0U))
-+		if (unlikely(xennet_fill_frags(queue, skb, &tmpq)))
- 			goto err;
- 
- 		if (rx->flags & XEN_NETRXF_csum_blank)
-@@ -1057,7 +1058,7 @@ err:
- 
- 		__skb_queue_tail(&rxq, skb);
- 
--		queue->rx.rsp_cons = ++i;
-+		i = ++queue->rx.rsp_cons;
- 		work_done++;
- 	}
- 
+ 		if (ifp->idev->cnf.forwarding)
+ 			addrconf_join_anycast(ifp);
+ 		if (!ipv6_addr_any(&ifp->peer_addr))
 
 
