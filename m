@@ -2,168 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C09ECCFCA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 11:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB074CCFDE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 11:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbfJFJGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 05:06:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfJFJGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 05:06:22 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ADDD20867;
-        Sun,  6 Oct 2019 09:06:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570352780;
-        bh=JdURTiID1yp/2RP4eC0dH6NY8wSmqc9AX+HO914lYkQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HctI3CIy8wDLg8OxNiN/7Jo9Ly6P7TviuX7ZjlKiDX5j5A8utPQWa0cmRUvSbRlrg
-         9LQDsadtZzSW3BViIhMk/1Hx8t0wfT4yYlQHacb1iBWv3RgdSCdPjD7l3VfcyDN24w
-         nx4I1vlgU3kQr8lIo40d26jes7ySKYPHQs33m7Ks=
-Date:   Sun, 6 Oct 2019 10:06:14 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] iio: imu: adis: rename txrx_lock -> state_lock
-Message-ID: <20191006100604.6425167c@archlinux>
-In-Reply-To: <20191006095333.7532cc5e@archlinux>
-References: <20190926111812.15957-1-alexandru.ardelean@analog.com>
-        <20190926111812.15957-2-alexandru.ardelean@analog.com>
-        <20191006095333.7532cc5e@archlinux>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726330AbfJFJSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 05:18:55 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:26538 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfJFJSy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 05:18:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1570353534; x=1601889534;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=DvFDDRFwzFZpm+9W9t8azYWL1u/Z9uXnIXeKEaiewcg=;
+  b=BIF5Ii9LHene3X6hc/jjfpm9SSQCSojXINxUEWgFs70e4y5S8hnTbZL6
+   Bc203boKAlxDlFAKf29fBOoocU5G3JQDdH1w7LcogOL87cP8Zmy63tgjX
+   zOjRtP4Z5FyShdyyvhAT7cBltdIE4b6P8s/abyeXdaoJgx/vlvoix2lfW
+   M=;
+X-IronPort-AV: E=Sophos;i="5.67,263,1566864000"; 
+   d="scan'208";a="707021097"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-f14f4a47.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 06 Oct 2019 09:11:37 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-f14f4a47.us-west-2.amazon.com (Postfix) with ESMTPS id C8E90A22EE;
+        Sun,  6 Oct 2019 09:11:05 +0000 (UTC)
+Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Sun, 6 Oct 2019 09:11:05 +0000
+Received: from [10.125.238.52] (10.43.161.192) by EX13D01EUB001.ant.amazon.com
+ (10.43.166.194) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Sun, 6 Oct
+ 2019 09:10:56 +0000
+Subject: Re: [PATCH v4 1/2] dt-bindings: soc: al-pos: Amazon's Annapurna Labs
+ POS
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "Arnd Bergmann" <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Hawa, Hanna" <hhhawa@amazon.com>,
+        "Krupnik, Ronen" <ronenk@amazon.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        "Hanoch, Uri" <hanochu@amazon.com>, <amirkl@amazon.com>,
+        "Wasserstrom, Barak" <barakw@amazon.com>
+References: <1570102361-11696-1-git-send-email-talel@amazon.com>
+ <1570102361-11696-2-git-send-email-talel@amazon.com>
+ <CAL_JsqJDJF7h=nSw3dkNF=H3ghJeLR=MUgrEh+qxw0jhDnfxFw@mail.gmail.com>
+From:   "Shenhar, Talel" <talel@amazon.com>
+Message-ID: <ee5a0727-6cc0-062b-0797-20fecdf1a450@amazon.com>
+Date:   Sun, 6 Oct 2019 12:10:50 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAL_JsqJDJF7h=nSw3dkNF=H3ghJeLR=MUgrEh+qxw0jhDnfxFw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.43.161.192]
+X-ClientProxiedBy: EX13D04UWB001.ant.amazon.com (10.43.161.46) To
+ EX13D01EUB001.ant.amazon.com (10.43.166.194)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 6 Oct 2019 09:53:33 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+thanks for the review.
 
-> On Thu, 26 Sep 2019 14:18:03 +0300
-> Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
-> 
-> > The lock can be extended a bit to protect other elements that are not
-> > particular to just TX/RX. Another idea would have been to just add a new
-> > `state_lock`, but that would mean 2 locks which would be redundant, and
-> > probably cause more potential for dead-locks.
-> > 
-> > What will be done in the next patches, will be to add some unlocked
-> > versions for read/write_reg functions.
-> > 
-> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>  
-> 
-> Would be good to document the scope of the lock as a comment when it
-> is defined.  What exactly is 'state' in this case?
-As this can be done as a follow up and the rest of the series is fine
-as is...
+On 10/4/2019 6:05 PM, Rob Herring wrote:
+> On Thu, Oct 3, 2019 at 6:33 AM Talel Shenhar <talel@amazon.com> wrote:
+>
+> Fails 'make dt_binding_check' (drop the '-'):
+ack, shall be part of v5
+>
+>> +
+>> +examples:
+>> +  - |
+>> +    al_pos_edac@f0070084 {
+> edac@...
+ack, shall be part of v5
+>
+>> +      compatible = "amazon,al-pos-edac";
+>> +      reg = <0x0 0xf0070084 0x0 0x00000008>;
+>> +      interrupt-parent = <&amazon_system_fabric>;
+>> +      interrupts = <24 IRQ_TYPE_LEVEL_HIGH>;
+> Not documented.
 
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+looks good?
 
-Thanks,
+    interrupts:
 
-Jonathan
+     description: Interrupt for the error event.
+     maxItems: 1
 
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> >  drivers/iio/imu/adis.c        | 10 +++++-----
-> >  drivers/iio/imu/adis_buffer.c |  4 ++--
-> >  include/linux/iio/imu/adis.h  |  2 +-
-> >  3 files changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-> > index 1631c255deab..3c2d896e3a96 100644
-> > --- a/drivers/iio/imu/adis.c
-> > +++ b/drivers/iio/imu/adis.c
-> > @@ -70,7 +70,7 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
-> >  		},
-> >  	};
-> >  
-> > -	mutex_lock(&adis->txrx_lock);
-> > +	mutex_lock(&adis->state_lock);
-> >  
-> >  	spi_message_init(&msg);
-> >  
-> > @@ -114,7 +114,7 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
-> >  	}
-> >  
-> >  out_unlock:
-> > -	mutex_unlock(&adis->txrx_lock);
-> > +	mutex_unlock(&adis->state_lock);
-> >  
-> >  	return ret;
-> >  }
-> > @@ -166,7 +166,7 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
-> >  		},
-> >  	};
-> >  
-> > -	mutex_lock(&adis->txrx_lock);
-> > +	mutex_lock(&adis->state_lock);
-> >  	spi_message_init(&msg);
-> >  
-> >  	if (adis->current_page != page) {
-> > @@ -211,7 +211,7 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
-> >  	}
-> >  
-> >  out_unlock:
-> > -	mutex_unlock(&adis->txrx_lock);
-> > +	mutex_unlock(&adis->state_lock);
-> >  
-> >  	return ret;
-> >  }
-> > @@ -437,7 +437,7 @@ EXPORT_SYMBOL_GPL(adis_single_conversion);
-> >  int adis_init(struct adis *adis, struct iio_dev *indio_dev,
-> >  	struct spi_device *spi, const struct adis_data *data)
-> >  {
-> > -	mutex_init(&adis->txrx_lock);
-> > +	mutex_init(&adis->state_lock);
-> >  	adis->spi = spi;
-> >  	adis->data = data;
-> >  	iio_device_set_drvdata(indio_dev, adis);
-> > diff --git a/drivers/iio/imu/adis_buffer.c b/drivers/iio/imu/adis_buffer.c
-> > index 9ac8356d9a95..bf581a2c321d 100644
-> > --- a/drivers/iio/imu/adis_buffer.c
-> > +++ b/drivers/iio/imu/adis_buffer.c
-> > @@ -123,7 +123,7 @@ static irqreturn_t adis_trigger_handler(int irq, void *p)
-> >  		return -ENOMEM;
-> >  
-> >  	if (adis->data->has_paging) {
-> > -		mutex_lock(&adis->txrx_lock);
-> > +		mutex_lock(&adis->state_lock);
-> >  		if (adis->current_page != 0) {
-> >  			adis->tx[0] = ADIS_WRITE_REG(ADIS_REG_PAGE_ID);
-> >  			adis->tx[1] = 0;
-> > @@ -138,7 +138,7 @@ static irqreturn_t adis_trigger_handler(int irq, void *p)
-> >  
-> >  	if (adis->data->has_paging) {
-> >  		adis->current_page = 0;
-> > -		mutex_unlock(&adis->txrx_lock);
-> > +		mutex_unlock(&adis->state_lock);
-> >  	}
-> >  
-> >  	iio_push_to_buffers_with_timestamp(indio_dev, adis->buffer,
-> > diff --git a/include/linux/iio/imu/adis.h b/include/linux/iio/imu/adis.h
-> > index 4c53815bb729..3ed5eceaac2d 100644
-> > --- a/include/linux/iio/imu/adis.h
-> > +++ b/include/linux/iio/imu/adis.h
-> > @@ -61,7 +61,7 @@ struct adis {
-> >  	const struct adis_data	*data;
-> >  	struct adis_burst	*burst;
-> >  
-> > -	struct mutex		txrx_lock;
-> > +	struct mutex		state_lock;
-> >  	struct spi_message	msg;
-> >  	struct spi_transfer	*xfer;
-> >  	unsigned int		current_page;  
-> 
 
