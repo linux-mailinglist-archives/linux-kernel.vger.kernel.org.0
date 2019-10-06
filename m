@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC3ACD789
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD969CD875
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbfJFRbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57018 "EHLO mail.kernel.org"
+        id S1727763AbfJFRYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:24:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727403AbfJFRa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:30:58 -0400
+        id S1727732AbfJFRX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:23:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FBCA2133F;
-        Sun,  6 Oct 2019 17:30:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B2422080F;
+        Sun,  6 Oct 2019 17:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383056;
-        bh=NW/m6R8uPelyLkG1YSOb/QZBuuaoEuyf1FdlJras63U=;
+        s=default; t=1570382637;
+        bh=6QPtUIVWERq86ViWEnx4jphwcdTZYGRW02K4DAWvmN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WCYORMYd4Oo5bB3xwq8dn2vinnRUzJ4i6zYfT2Hf0RvExe2doWQboimw/Sc36vuwZ
-         mfCXIF0wvwDOiuJxN0e6B1bikoffxWvgpo8JgIdQgorbsdtYfVxWSS1I0CbpxRtwcR
-         Tti+4GX9kqaiT5E/IL1Qi1VWSsYK/TVf1Tr8M4OU=
+        b=EHZJdYN+kllWSlXS1EYYXc2V6kz8y9kdWQKhin/EIQ3kPT64Z3lIT+HdkrqOztJxM
+         hdjLXhHlOd+GASvOgEXw9XmnwR+CRkiqYdfKs+JXtJsiLR7NEDzrmkGbxN2QThxMx6
+         e9YwY88dRgzBE5KzO/yBpCfvwHAocbEsCAWw+y8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 069/106] hypfs: Fix error number left in struct pointer member
-Date:   Sun,  6 Oct 2019 19:21:15 +0200
-Message-Id: <20191006171152.503987621@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a2a3c4909716e271487e@syzkaller.appspotmail.com,
+        Martijn Coenen <maco@android.com>,
+        Mattias Nissler <mnissler@chromium.org>
+Subject: [PATCH 4.9 31/47] ANDROID: binder: synchronize_rcu() when using POLLFREE.
+Date:   Sun,  6 Oct 2019 19:21:18 +0200
+Message-Id: <20191006172018.533551246@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
+References: <20191006172016.873463083@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Martijn Coenen <maco@android.com>
 
-[ Upstream commit b54c64f7adeb241423cd46598f458b5486b0375e ]
+commit 5eeb2ca02a2f6084fc57ae5c244a38baab07033a upstream.
 
-In hypfs_fill_super(), if hypfs_create_update_file() fails,
-sbi->update_file is left holding an error number.  This is passed to
-hypfs_kill_super() which doesn't check for this.
+To prevent races with ep_remove_waitqueue() removing the
+waitqueue at the same time.
 
-Fix this by not setting sbi->update_value until after we've checked for
-error.
-
-Fixes: 24bbb1faf3f0 ("[PATCH] s390_hypfs filesystem")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-cc: linux-s390@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: syzbot+a2a3c4909716e271487e@syzkaller.appspotmail.com
+Signed-off-by: Martijn Coenen <maco@android.com>
+Cc: stable <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/hypfs/inode.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/android/binder.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index c681329fdeec6..e4d17d9ea93d8 100644
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -269,7 +269,7 @@ static int hypfs_show_options(struct seq_file *s, struct dentry *root)
- static int hypfs_fill_super(struct super_block *sb, void *data, int silent)
- {
- 	struct inode *root_inode;
--	struct dentry *root_dentry;
-+	struct dentry *root_dentry, *update_file;
- 	int rc = 0;
- 	struct hypfs_sb_info *sbi;
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2641,6 +2641,15 @@ static int binder_free_thread(struct bin
+ 		wake_up_poll(&thread->wait, POLLHUP | POLLFREE);
+ 	}
  
-@@ -300,9 +300,10 @@ static int hypfs_fill_super(struct super_block *sb, void *data, int silent)
- 		rc = hypfs_diag_create_files(root_dentry);
- 	if (rc)
- 		return rc;
--	sbi->update_file = hypfs_create_update_file(root_dentry);
--	if (IS_ERR(sbi->update_file))
--		return PTR_ERR(sbi->update_file);
-+	update_file = hypfs_create_update_file(root_dentry);
-+	if (IS_ERR(update_file))
-+		return PTR_ERR(update_file);
-+	sbi->update_file = update_file;
- 	hypfs_update_update(sb);
- 	pr_info("Hypervisor filesystem mounted\n");
- 	return 0;
--- 
-2.20.1
-
++	/*
++	 * This is needed to avoid races between wake_up_poll() above and
++	 * and ep_remove_waitqueue() called for other reasons (eg the epoll file
++	 * descriptor being closed); ep_remove_waitqueue() holds an RCU read
++	 * lock, so we can be sure it's done after calling synchronize_rcu().
++	 */
++	if (thread->looper & BINDER_LOOPER_STATE_POLL)
++		synchronize_rcu();
++
+ 	if (send_reply)
+ 		binder_send_failed_reply(send_reply, BR_DEAD_REPLY);
+ 	binder_release_work(&thread->todo);
 
 
