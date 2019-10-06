@@ -2,79 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD82BCCE68
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 06:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD664CCE6A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 06:46:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbfJFEoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 00:44:07 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35038 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfJFEoG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 00:44:06 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m15so14589418qtq.2;
-        Sat, 05 Oct 2019 21:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:message-id:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-disposition:content-transfer-encoding;
-        bh=kB/2w61oZEEDGxbrCbsRG0VuZG0GVdwPCxnFggz0cLA=;
-        b=M4CU5YWvaVJ944N26oDgpXQsy2aR1zNuNwSiJtdycs06E1qlNroM8+Qeizdw9sG1cd
-         9MkYCVd3d29lrb+w6Ip7E7CaJWw6qspTZy15Lg3gFNHjfPAckLR3mehq5HVjgXsRMkRj
-         T0ZVTBL1Q9HhVhE3t11O0nIHoWMEC53CnTX0gCep+Z+u7ciFUW5AavZhCkiYJ3qT6WzG
-         PJA8SqBkT9NwxauIXg9xzIyicFVRLTyHIgqaaGbwTQ+khF2dW5mucxqG4bGQIkwHjx7N
-         prlw8/yya69BJsP6d6SAqzJ5h+62sScye2BONrjzdwcnWXoXTInPv24tbOVGuHm9NcD3
-         t8FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=kB/2w61oZEEDGxbrCbsRG0VuZG0GVdwPCxnFggz0cLA=;
-        b=emmG2q8OjxazTTls3q/I2+Co98T2hS2FrrPQ2Vpec43dVHskuNOaq9qqTSVoOrgOTe
-         4huuzVyJihuDO3Iap/g9RjBtC2nsVwHHOZ+3PKhJnSe/A+D17igh6mJjKxEfi4FIiDvF
-         h78lr5bQnbKQD7j+IAnL5hdvaSuRSHdn8e6DbD9rnVqy6sGxuuS0eivOFWKJyBU99eqi
-         5AFKngZ/KpvpyRFKc0oxL03reEf4FiUybhwy2ihHO7Sme4oTeoyPTaHjGkTfCtP+zS3M
-         jvU5BzPqCzc9Jm+HEhNxiCyWH2ZDQzqQZFvIXxNzC8NVWrWxhQL4+x6ozCyweepBw2kh
-         WkjA==
-X-Gm-Message-State: APjAAAUWZFsNLg63lx8jrG4YPtUUQlTUbSDiK6Hn4O0zJFuchglHc5yU
-        dRQdYVDuK0WFyep+++ftU3E=
-X-Google-Smtp-Source: APXvYqyiWBhEDCgSLul9zWwJiBJzk2MCHTxnFgnSxR4sGrmaoMdKyQJD58Gz+hrhZAVkr4kgPmczKA==
-X-Received: by 2002:ac8:1099:: with SMTP id a25mr23919221qtj.308.1570337045549;
-        Sat, 05 Oct 2019 21:44:05 -0700 (PDT)
-Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
-        by smtp.gmail.com with ESMTPSA id 199sm5890955qkk.112.2019.10.05.21.44.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2019 21:44:04 -0700 (PDT)
-Date:   Sun, 6 Oct 2019 00:44:03 -0400
-Message-ID: <20191006004403.GB709015@t480s.localdomain>
-From:   Vivien Didelot <vivien.didelot@gmail.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, Hubert Feurstein <h.feurstein@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: dsa: b53: Do not clear existing mirrored port
- mask
-In-Reply-To: <20191005220518.14008-1-f.fainelli@gmail.com>
-References: <20191005220518.14008-1-f.fainelli@gmail.com>
+        id S1726194AbfJFEps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 00:45:48 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3249 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725958AbfJFEps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 00:45:48 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 21C9011A9C1C129B634B;
+        Sun,  6 Oct 2019 12:45:45 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Sun, 6 Oct 2019
+ 12:45:35 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <Julia.Lawall@lip6.fr>, <Gilles.Muller@lip6.fr>,
+        <nicolas.palix@imag.fr>, <michal.lkml@markovi.net>,
+        <maennich@google.com>, <yuehaibing@huawei.com>, <jeyu@kernel.org>,
+        <gregkh@linuxfoundation.org>, <yamada.masahiro@socionext.com>,
+        <Markus.Elfring@web.de>
+CC:     <cocci@systeme.lip6.fr>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] scripts: add_namespace: Fix coccicheck failed
+Date:   Sun, 6 Oct 2019 12:44:56 +0800
+Message-ID: <20191006044456.57608-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
+References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  5 Oct 2019 15:05:18 -0700, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> Clearing the existing bitmask of mirrored ports essentially prevents us
-> from capturing more than one port at any given time. This is clearly
-> wrong, do not clear the bitmask prior to setting up the new port.
-> 
-> Reported-by: Hubert Feurstein <h.feurstein@gmail.com>
-> Fixes: ed3af5fd08eb ("net: dsa: b53: Add support for port mirroring")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Now all scripts in scripts/coccinelle to be automatically called
+by coccicheck. However new adding add_namespace.cocci does not
+support report mode, which make coccicheck failed.
+This add "virtual report" to  make the coccicheck go ahead smoothly.
 
-Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
+Fixes: eb8305aecb95 ("scripts: Coccinelle script for namespace dependencies.")
+Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ scripts/coccinelle/misc/add_namespace.cocci | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/scripts/coccinelle/misc/add_namespace.cocci b/scripts/coccinelle/misc/add_namespace.cocci
+index c832bb6445a8..99e93a6c2e24 100644
+--- a/scripts/coccinelle/misc/add_namespace.cocci
++++ b/scripts/coccinelle/misc/add_namespace.cocci
+@@ -6,6 +6,8 @@
+ /// add a missing namespace tag to a module source file.
+ ///
+ 
++virtual report
++
+ @has_ns_import@
+ declarer name MODULE_IMPORT_NS;
+ identifier virtual.ns;
+-- 
+2.20.1
+
+
