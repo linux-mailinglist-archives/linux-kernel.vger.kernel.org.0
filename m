@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69B06CD821
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDB47CD764
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbfJFR7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:59:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56460 "EHLO mail.kernel.org"
+        id S1728691AbfJFR2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:28:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729240AbfJFRad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:30:33 -0400
+        id S1727646AbfJFR2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:28:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2937A2133F;
-        Sun,  6 Oct 2019 17:30:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 441982133F;
+        Sun,  6 Oct 2019 17:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383032;
-        bh=BlvHyFvAAZGnC7hOjDp5jrec36iSCywnYRv27tgvF7A=;
+        s=default; t=1570382886;
+        bh=loZr7MLJpU4XU6TOPh2BVQXDVFm5QAyJaqArvekhQzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zC6vyocBNTQwUyjpr3JgLhgtXcvztFX6aeLZdrOFrCibNBePcgfAzWbBjgJ1W4Hwu
-         2disBdBkLtiPZCIxxq9fCS4xrGwEDV/xzZMiEUS98qDfy6IUsGAflGQAwf9HNPcRGF
-         m310Mi3QndLOVjDdr5XZ4SyFX4lxTgt8JcoGpb70=
+        b=xPaTqd5LAQWVxdz3TczeNJO2ngMtDk/W+VGsltK1Qg3rvQUs8M4YGxt0NLe9nQLOF
+         d3Lg8XEB+k8Daw+gtf+fMF2Lbi/gS696oJTE42H6NL6kMUWoa5FnrJXgpjhxrZu6Wc
+         Ea4EiyXiVHIuib4AwTvw6mq6Tbx+xNhmzaGtnvng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <treding@nvidia.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        linux-rockchip@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 061/106] PCI: rockchip: Propagate errors for optional regulators
-Date:   Sun,  6 Oct 2019 19:21:07 +0200
-Message-Id: <20191006171149.476262829@linuxfoundation.org>
+        stable@vger.kernel.org, Joao Moreno <mail@joaomoreno.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 36/68] HID: apple: Fix stuck function keys when using FN
+Date:   Sun,  6 Oct 2019 19:21:12 +0200
+Message-Id: <20191006171125.503172493@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Joao Moreno <mail@joaomoreno.com>
 
-[ Upstream commit 0e3ff0ac5f71bdb6be2a698de0ed0c7e6e738269 ]
+[ Upstream commit aec256d0ecd561036f188dbc8fa7924c47a9edfd ]
 
-regulator_get_optional() can fail for a number of reasons besides probe
-deferral. It can for example return -ENOMEM if it runs out of memory as
-it tries to allocate data structures. Propagating only -EPROBE_DEFER is
-problematic because it results in these legitimately fatal errors being
-treated as "regulator not specified in DT".
+This fixes an issue in which key down events for function keys would be
+repeatedly emitted even after the user has raised the physical key. For
+example, the driver fails to emit the F5 key up event when going through
+the following steps:
+- fnmode=1: hold FN, hold F5, release FN, release F5
+- fnmode=2: hold F5, hold FN, release F5, release FN
 
-What we really want is to ignore the optional regulators only if they
-have not been specified in DT. regulator_get_optional() returns -ENODEV
-in this case, so that's the special case that we need to handle. So we
-propagate all errors, except -ENODEV, so that real failures will still
-cause the driver to fail probe.
+The repeated F5 key down events can be easily verified using xev.
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org
+Signed-off-by: Joao Moreno <mail@joaomoreno.com>
+Co-developed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-rockchip-host.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/hid/hid-apple.c | 49 +++++++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
-index 1372d270764f9..5ce8e63756875 100644
---- a/drivers/pci/controller/pcie-rockchip-host.c
-+++ b/drivers/pci/controller/pcie-rockchip-host.c
-@@ -608,29 +608,29 @@ static int rockchip_pcie_parse_host_dt(struct rockchip_pcie *rockchip)
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index 1cb41992aaa1f..d0a81a03ddbdd 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -57,7 +57,6 @@ MODULE_PARM_DESC(swap_opt_cmd, "Swap the Option (\"Alt\") and Command (\"Flag\")
+ struct apple_sc {
+ 	unsigned long quirks;
+ 	unsigned int fn_on;
+-	DECLARE_BITMAP(pressed_fn, KEY_CNT);
+ 	DECLARE_BITMAP(pressed_numlock, KEY_CNT);
+ };
  
- 	rockchip->vpcie12v = devm_regulator_get_optional(dev, "vpcie12v");
- 	if (IS_ERR(rockchip->vpcie12v)) {
--		if (PTR_ERR(rockchip->vpcie12v) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(rockchip->vpcie12v) != -ENODEV)
-+			return PTR_ERR(rockchip->vpcie12v);
- 		dev_info(dev, "no vpcie12v regulator found\n");
+@@ -184,6 +183,8 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
+ {
+ 	struct apple_sc *asc = hid_get_drvdata(hid);
+ 	const struct apple_key_translation *trans, *table;
++	bool do_translate;
++	u16 code = 0;
+ 
+ 	if (usage->code == KEY_FN) {
+ 		asc->fn_on = !!value;
+@@ -192,8 +193,6 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
  	}
  
- 	rockchip->vpcie3v3 = devm_regulator_get_optional(dev, "vpcie3v3");
- 	if (IS_ERR(rockchip->vpcie3v3)) {
--		if (PTR_ERR(rockchip->vpcie3v3) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(rockchip->vpcie3v3) != -ENODEV)
-+			return PTR_ERR(rockchip->vpcie3v3);
- 		dev_info(dev, "no vpcie3v3 regulator found\n");
- 	}
+ 	if (fnmode) {
+-		int do_translate;
+-
+ 		if (hid->product >= USB_DEVICE_ID_APPLE_WELLSPRING4_ANSI &&
+ 				hid->product <= USB_DEVICE_ID_APPLE_WELLSPRING4A_JIS)
+ 			table = macbookair_fn_keys;
+@@ -205,25 +204,33 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
+ 		trans = apple_find_translation (table, usage->code);
  
- 	rockchip->vpcie1v8 = devm_regulator_get_optional(dev, "vpcie1v8");
- 	if (IS_ERR(rockchip->vpcie1v8)) {
--		if (PTR_ERR(rockchip->vpcie1v8) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(rockchip->vpcie1v8) != -ENODEV)
-+			return PTR_ERR(rockchip->vpcie1v8);
- 		dev_info(dev, "no vpcie1v8 regulator found\n");
- 	}
+ 		if (trans) {
+-			if (test_bit(usage->code, asc->pressed_fn))
+-				do_translate = 1;
+-			else if (trans->flags & APPLE_FLAG_FKEY)
+-				do_translate = (fnmode == 2 && asc->fn_on) ||
+-					(fnmode == 1 && !asc->fn_on);
+-			else
+-				do_translate = asc->fn_on;
+-
+-			if (do_translate) {
+-				if (value)
+-					set_bit(usage->code, asc->pressed_fn);
+-				else
+-					clear_bit(usage->code, asc->pressed_fn);
+-
+-				input_event(input, usage->type, trans->to,
+-						value);
+-
+-				return 1;
++			if (test_bit(trans->from, input->key))
++				code = trans->from;
++			else if (test_bit(trans->to, input->key))
++				code = trans->to;
++
++			if (!code) {
++				if (trans->flags & APPLE_FLAG_FKEY) {
++					switch (fnmode) {
++					case 1:
++						do_translate = !asc->fn_on;
++						break;
++					case 2:
++						do_translate = asc->fn_on;
++						break;
++					default:
++						/* should never happen */
++						do_translate = false;
++					}
++				} else {
++					do_translate = asc->fn_on;
++				}
++
++				code = do_translate ? trans->to : trans->from;
+ 			}
++
++			input_event(input, usage->type, code, value);
++			return 1;
+ 		}
  
- 	rockchip->vpcie0v9 = devm_regulator_get_optional(dev, "vpcie0v9");
- 	if (IS_ERR(rockchip->vpcie0v9)) {
--		if (PTR_ERR(rockchip->vpcie0v9) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(rockchip->vpcie0v9) != -ENODEV)
-+			return PTR_ERR(rockchip->vpcie0v9);
- 		dev_info(dev, "no vpcie0v9 regulator found\n");
- 	}
- 
+ 		if (asc->quirks & APPLE_NUMLOCK_EMULATION &&
 -- 
 2.20.1
 
