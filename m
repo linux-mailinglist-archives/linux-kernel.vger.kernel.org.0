@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A73F9CD507
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 439E5CD55D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:35:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729475AbfJFRbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57912 "EHLO mail.kernel.org"
+        id S1730165AbfJFRfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:35:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729460AbfJFRbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:38 -0400
+        id S1730140AbfJFRfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:35:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E77BB214D9;
-        Sun,  6 Oct 2019 17:31:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 618ED2080F;
+        Sun,  6 Oct 2019 17:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383097;
-        bh=XjRzfQOC8cj7/J/AH0SqkxazC1NYpjmNDLJsQklIF1Q=;
+        s=default; t=1570383332;
+        bh=2Qwsm8loPfoLwUa6cnWbCON9/e9C/jsrHa0Bssbv39I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NuXSllGWiif9jaK1x/OP2CcRW1iOq8VlAoWDXzc4J/VPrL+L4jB/7ncYH9RopSpw3
-         zE79Daxe1BRmLW57utSZeHpk8kFYBJ0DH/rJKoBafuYgRlqIox06UCbv5RapE5ep2z
-         b0TQRXmrTZAeXphhQs0AEgBGZ0EUnS35yxLifiuQ=
+        b=Yrw/u7pd1W6jsjgD0eict3sh1DycRxqsFiXVbzSarx5/vX+6GZM6ed/bVAkg6jqdr
+         yXaJcjBrkkrCPX0HrqbtE0k4Yi2akBiuecLhjuWhquKYL7WdRH08Yt2ItcFTpChGtA
+         YrU05vG2ZAN6DH/Ma0t5NHjluPauo+LkvCCHsi3U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ganesh Goudar <ganeshgr@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 042/106] powerpc: dump kernel log before carrying out fadump or kdump
-Date:   Sun,  6 Oct 2019 19:20:48 +0200
-Message-Id: <20191006171142.256051357@linuxfoundation.org>
+Subject: [PATCH 5.2 065/137] pinctrl: amd: disable spurious-firing GPIO IRQs
+Date:   Sun,  6 Oct 2019 19:20:49 +0200
+Message-Id: <20191006171214.463369079@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,41 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ganesh Goudar <ganeshgr@linux.ibm.com>
+From: Daniel Drake <drake@endlessm.com>
 
-[ Upstream commit e7ca44ed3ba77fc26cf32650bb71584896662474 ]
+[ Upstream commit d21b8adbd475dba19ac2086d3306327b4a297418 ]
 
-Since commit 4388c9b3a6ee ("powerpc: Do not send system reset request
-through the oops path"), pstore dmesg file is not updated when dump is
-triggered from HMC. This commit modified system reset (sreset) handler
-to invoke fadump or kdump (if configured), without pushing dmesg to
-pstore. This leaves pstore to have old dmesg data which won't be much
-of a help if kdump fails to capture the dump. This patch fixes that by
-calling kmsg_dump() before heading to fadump ot kdump.
+When cold-booting Asus X434DA, GPIO 7 is found to be already configured
+as an interrupt, and the GPIO level is found to be in a state that
+causes the interrupt to fire.
 
-Fixes: 4388c9b3a6ee ("powerpc: Do not send system reset request through the oops path")
-Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190904075949.15607-1-ganeshgr@linux.ibm.com
+As soon as pinctrl-amd probes, this interrupt fires and invokes
+amd_gpio_irq_handler(). The IRQ is acked, but no GPIO-IRQ handler was
+invoked, so the GPIO level being unchanged just causes another interrupt
+to fire again immediately after.
+
+This results in an interrupt storm causing this platform to hang
+during boot, right after pinctrl-amd is probed.
+
+Detect this situation and disable the GPIO interrupt when this happens.
+This enables the affected platform to boot as normal. GPIO 7 actually is
+the I2C touchpad interrupt line, and later on, i2c-multitouch loads and
+re-enables this interrupt when it is ready to handle it.
+
+Instead of this approach, I considered disabling all GPIO interrupts at
+probe time, however that seems a little risky, and I also confirmed that
+Windows does not seem to have this behaviour: the same 41 GPIO IRQs are
+enabled under both Linux and Windows, which is a far larger collection
+than the GPIOs referenced by the DSDT on this platform.
+
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Link: https://lore.kernel.org/r/20190814090540.7152-1-drake@endlessm.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/traps.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/pinctrl-amd.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index 02fe6d0201741..d5f351f02c153 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -399,6 +399,7 @@ void system_reset_exception(struct pt_regs *regs)
- 	if (debugger(regs))
- 		goto out;
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 9b9c61e3f0652..977792654e017 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -565,15 +565,25 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+ 			    !(regval & BIT(INTERRUPT_MASK_OFF)))
+ 				continue;
+ 			irq = irq_find_mapping(gc->irq.domain, irqnr + i);
+-			generic_handle_irq(irq);
++			if (irq != 0)
++				generic_handle_irq(irq);
  
-+	kmsg_dump(KMSG_DUMP_OOPS);
- 	/*
- 	 * A system reset is a request to dump, so we always send
- 	 * it through the crashdump code (if fadump or kdump are
+ 			/* Clear interrupt.
+ 			 * We must read the pin register again, in case the
+ 			 * value was changed while executing
+ 			 * generic_handle_irq() above.
++			 * If we didn't find a mapping for the interrupt,
++			 * disable it in order to avoid a system hang caused
++			 * by an interrupt storm.
+ 			 */
+ 			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+ 			regval = readl(regs + i);
++			if (irq == 0) {
++				regval &= ~BIT(INTERRUPT_ENABLE_OFF);
++				dev_dbg(&gpio_dev->pdev->dev,
++					"Disabling spurious GPIO IRQ %d\n",
++					irqnr + i);
++			}
+ 			writel(regval, regs + i);
+ 			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ 			ret = IRQ_HANDLED;
 -- 
 2.20.1
 
