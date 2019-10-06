@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B002CD4E4
+	by mail.lfdr.de (Postfix) with ESMTP id E45F4CD4E5
 	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbfJFRa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:30:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56262 "EHLO mail.kernel.org"
+        id S1727983AbfJFRa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:30:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729216AbfJFRaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:30:22 -0400
+        id S1728405AbfJFRaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:30:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DB092133F;
-        Sun,  6 Oct 2019 17:30:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2787B2087E;
+        Sun,  6 Oct 2019 17:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383022;
-        bh=hfNg8Nm40zRI8TDF/Icp+MSffb6Vg+BWyaWKFeR4cw4=;
+        s=default; t=1570383024;
+        bh=l7NP07G1Ea8ObzNjqXfvhMjFFJVuFFmr/gpg2A2d3/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LRZjk+728IAntQ3/DJQxRUoWlzEafzlLf4ERhTICJUy0wZVMIc9ipb3CppTMF2VXG
-         X02GnqX9Y4TQEAXOzVAdBygDc4sh3rj6s7FA/3+HYePTdJlNFswJ90z0HRIEDz97Qj
-         dGf/56050kvO3k1f+402S068F37B/alv8WcH9YGo=
+        b=n0NRMstMWEtcz8MeQO7fBSQb98B8iUPXL7fyNVG6UyOglLlLVOnUDWNzfyDt3/EiO
+         GwmI+wZGH8x47mdhPenyCnEK4lUf7xAtPRFsu/hpv1SGrVh6O9DHo1rXQDWSKQmEkp
+         SY/28PEKHZN/e26y1lAXfuBbkJPqp5ZsEJzMo/10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 057/106] ARM: 8875/1: Kconfig: default to AEABI w/ Clang
-Date:   Sun,  6 Oct 2019 19:21:03 +0200
-Message-Id: <20191006171147.869327445@linuxfoundation.org>
+Subject: [PATCH 4.19 058/106] rtc: snvs: fix possible race condition
+Date:   Sun,  6 Oct 2019 19:21:04 +0200
+Message-Id: <20191006171147.945904228@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
 References: <20191006171124.641144086@linuxfoundation.org>
@@ -46,48 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit a05b9608456e0d4464c6f7ca8572324ace57a3f4 ]
+[ Upstream commit 6fd4fe9b496d9ba3382992ff4fde3871d1b6f63d ]
 
-Clang produces references to __aeabi_uidivmod and __aeabi_idivmod for
-arm-linux-gnueabi and arm-linux-gnueabihf targets incorrectly when AEABI
-is not selected (such as when OABI_COMPAT is selected).
+The RTC IRQ is requested before the struct rtc_device is allocated,
+this may lead to a NULL pointer dereference in IRQ handler.
 
-While this means that OABI userspaces wont be able to upgraded to
-kernels built with Clang, it means that boards that don't enable AEABI
-like s3c2410_defconfig will stop failing to link in KernelCI when built
-with Clang.
+To fix this issue, allocating the rtc_device struct before requesting
+the RTC IRQ using devm_rtc_allocate_device, and use rtc_register_device
+to register the RTC device.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/482
-Link: https://groups.google.com/forum/#!msg/clang-built-linux/yydsAAux5hk/GxjqJSW-AQAJ
-
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Link: https://lore.kernel.org/r/20190716071858.36750-1-Anson.Huang@nxp.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/Kconfig | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-snvs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 51794c7fa6d5b..185e552f14610 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1586,8 +1586,9 @@ config ARM_PATCH_IDIV
- 	  code to do integer division.
+diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
+index b2483a749ac45..3cf011e120530 100644
+--- a/drivers/rtc/rtc-snvs.c
++++ b/drivers/rtc/rtc-snvs.c
+@@ -273,6 +273,10 @@ static int snvs_rtc_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
  
- config AEABI
--	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && !CPU_V7M && !CPU_V6 && !CPU_V6K
--	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K
-+	bool "Use the ARM EABI to compile the kernel" if !CPU_V7 && \
-+		!CPU_V7M && !CPU_V6 && !CPU_V6K && !CC_IS_CLANG
-+	default CPU_V7 || CPU_V7M || CPU_V6 || CPU_V6K || CC_IS_CLANG
- 	help
- 	  This option allows for the kernel to be compiled using the latest
- 	  ARM ABI (aka EABI).  This is only useful if you are using a user
++	data->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(data->rtc))
++		return PTR_ERR(data->rtc);
++
+ 	data->regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "regmap");
+ 
+ 	if (IS_ERR(data->regmap)) {
+@@ -335,10 +339,9 @@ static int snvs_rtc_probe(struct platform_device *pdev)
+ 		goto error_rtc_device_register;
+ 	}
+ 
+-	data->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
+-					&snvs_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(data->rtc)) {
+-		ret = PTR_ERR(data->rtc);
++	data->rtc->ops = &snvs_rtc_ops;
++	ret = rtc_register_device(data->rtc);
++	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register rtc: %d\n", ret);
+ 		goto error_rtc_device_register;
+ 	}
 -- 
 2.20.1
 
