@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC84CD7B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF49CD7C4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729774AbfJFRdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:33:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60074 "EHLO mail.kernel.org"
+        id S1729941AbfJFReY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:34:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729048AbfJFRd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:33:29 -0400
+        id S1729927AbfJFReU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:34:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06C7D2087E;
-        Sun,  6 Oct 2019 17:33:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 460352080F;
+        Sun,  6 Oct 2019 17:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383208;
-        bh=UGUU/8QyejhUdLsO3Qp6xSfeNn8zrabgD53ZEOe+6Z8=;
+        s=default; t=1570383259;
+        bh=Jbi6amqW/v8CYVXQA06UFDffvZQJOUPYCkTYaT+G2XU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zq/EeK9OSeTLQycDP9B4GlHKOcTmWTSSdqmSTIc4QjEbZIjWrrjFuYMhzCny7POQf
-         jIZm9FNcV5IjXz8Rv1H46z1vPVXcT5FFMHkUtCepE/oUqS05bYqY7x1lK3KxAeeLLM
-         TsLferWlH3FXR8rQSwUFTma/EcSxiO8seNHfcf3s=
+        b=K+Y3iu45/D5nBL5xrYSl7lvrRt25v/GM5byiz2KIEKTcAsakKpZCvIXQRXpoPjrsl
+         NtJFE0TN4iCNVVYmEC9y/30Jr4vqhZPnn9v8AMOl3m6Oi2hFi9nldr3AYwoW4EDUL6
+         qgoCFN80h0vuzPx89/z8FsRsMxjB0EV2sjthQPxM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>,
+        David Ahern <dsahern@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 002/137] erspan: remove the incorrect mtu limit for erspan
-Date:   Sun,  6 Oct 2019 19:19:46 +0200
-Message-Id: <20191006171209.761851478@linuxfoundation.org>
+Subject: [PATCH 5.2 005/137] ipv6: Handle missing host route in __ipv6_ifa_notify
+Date:   Sun,  6 Oct 2019 19:19:49 +0200
+Message-Id: <20191006171210.032118824@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
 References: <20191006171209.403038733@linuxfoundation.org>
@@ -44,45 +46,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 0e141f757b2c78c983df893e9993313e2dc21e38 ]
+[ Upstream commit 2d819d250a1393a3e725715425ab70a0e0772a71 ]
 
-erspan driver calls ether_setup(), after commit 61e84623ace3
-("net: centralize net_device min/max MTU checking"), the range
-of mtu is [min_mtu, max_mtu], which is [68, 1500] by default.
+Rajendra reported a kernel panic when a link was taken down:
 
-It causes the dev mtu of the erspan device to not be greater
-than 1500, this limit value is not correct for ipgre tap device.
+    [ 6870.263084] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a8
+    [ 6870.271856] IP: [<ffffffff8efc5764>] __ipv6_ifa_notify+0x154/0x290
 
-Tested:
-Before patch:
-# ip link set erspan0 mtu 1600
-Error: mtu greater than device maximum.
-After patch:
-# ip link set erspan0 mtu 1600
-# ip -d link show erspan0
-21: erspan0@NONE: <BROADCAST,MULTICAST> mtu 1600 qdisc noop state DOWN
-mode DEFAULT group default qlen 1000
-    link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 0
+    <snip>
 
-Fixes: 61e84623ace3 ("net: centralize net_device min/max MTU checking")
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+    [ 6870.570501] Call Trace:
+    [ 6870.573238] [<ffffffff8efc58c6>] ? ipv6_ifa_notify+0x26/0x40
+    [ 6870.579665] [<ffffffff8efc98ec>] ? addrconf_dad_completed+0x4c/0x2c0
+    [ 6870.586869] [<ffffffff8efe70c6>] ? ipv6_dev_mc_inc+0x196/0x260
+    [ 6870.593491] [<ffffffff8efc9c6a>] ? addrconf_dad_work+0x10a/0x430
+    [ 6870.600305] [<ffffffff8f01ade4>] ? __switch_to_asm+0x34/0x70
+    [ 6870.606732] [<ffffffff8ea93a7a>] ? process_one_work+0x18a/0x430
+    [ 6870.613449] [<ffffffff8ea93d6d>] ? worker_thread+0x4d/0x490
+    [ 6870.619778] [<ffffffff8ea93d20>] ? process_one_work+0x430/0x430
+    [ 6870.626495] [<ffffffff8ea99dd9>] ? kthread+0xd9/0xf0
+    [ 6870.632145] [<ffffffff8f01ade4>] ? __switch_to_asm+0x34/0x70
+    [ 6870.638573] [<ffffffff8ea99d00>] ? kthread_park+0x60/0x60
+    [ 6870.644707] [<ffffffff8f01ae77>] ? ret_from_fork+0x57/0x70
+    [ 6870.650936] Code: 31 c0 31 d2 41 b9 20 00 08 02 b9 09 00 00 0
+
+addrconf_dad_work is kicked to be scheduled when a device is brought
+up. There is a race between addrcond_dad_work getting scheduled and
+taking the rtnl lock and a process taking the link down (under rtnl).
+The latter removes the host route from the inet6_addr as part of
+addrconf_ifdown which is run for NETDEV_DOWN. The former attempts
+to use the host route in __ipv6_ifa_notify. If the down event removes
+the host route due to the race to the rtnl, then the BUG listed above
+occurs.
+
+Since the DAD sequence can not be aborted, add a check for the missing
+host route in __ipv6_ifa_notify. The only way this should happen is due
+to the previously mentioned race. The host route is created when the
+address is added to an interface; it is only removed on a down event
+where the address is kept. Add a warning if the host route is missing
+AND the device is up; this is a situation that should never happen.
+
+Fixes: f1705ec197e7 ("net: ipv6: Make address flushing on ifdown optional")
+Reported-by: Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv6/addrconf.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -1446,6 +1446,7 @@ static void erspan_setup(struct net_devi
- 	struct ip_tunnel *t = netdev_priv(dev);
- 
- 	ether_setup(dev);
-+	dev->max_mtu = 0;
- 	dev->netdev_ops = &erspan_netdev_ops;
- 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
- 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -5962,13 +5962,20 @@ static void __ipv6_ifa_notify(int event,
+ 	switch (event) {
+ 	case RTM_NEWADDR:
+ 		/*
+-		 * If the address was optimistic
+-		 * we inserted the route at the start of
+-		 * our DAD process, so we don't need
+-		 * to do it again
++		 * If the address was optimistic we inserted the route at the
++		 * start of our DAD process, so we don't need to do it again.
++		 * If the device was taken down in the middle of the DAD
++		 * cycle there is a race where we could get here without a
++		 * host route, so nothing to insert. That will be fixed when
++		 * the device is brought up.
+ 		 */
+-		if (!rcu_access_pointer(ifp->rt->fib6_node))
++		if (ifp->rt && !rcu_access_pointer(ifp->rt->fib6_node)) {
+ 			ip6_ins_rt(net, ifp->rt);
++		} else if (!ifp->rt && (ifp->idev->dev->flags & IFF_UP)) {
++			pr_warn("BUG: Address %pI6c on device %s is missing its host route.\n",
++				&ifp->addr, ifp->idev->dev->name);
++		}
++
+ 		if (ifp->idev->cnf.forwarding)
+ 			addrconf_join_anycast(ifp);
+ 		if (!ipv6_addr_any(&ifp->peer_addr))
 
 
