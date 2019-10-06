@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA5CCD4F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E0FCD57D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfJFRbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57174 "EHLO mail.kernel.org"
+        id S1730355AbfJFRgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:36:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726949AbfJFRbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:05 -0400
+        id S1730339AbfJFRgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:36:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FFE72133F;
-        Sun,  6 Oct 2019 17:31:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB3112053B;
+        Sun,  6 Oct 2019 17:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383065;
-        bh=+7ukwZYjRuqp0HaB2giqWF8t5YMps7LpkoRS2U8DhoA=;
+        s=default; t=1570383408;
+        bh=2r8AeKYGjMupGol4CtMYkDcX41Wu5e//UTgfixnBy/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=To5ys4tHXG7LK/9wekfvLZq65o5Goj+Oa4Pz/HxCd7SOZj2B10eetQGZPShc1mhng
-         U2X4ZTNTOqVa12Wu2JLckHqaGBy1lGJJpKjCM8tHzN/xo4UQ95+Y2SzCEo6Xn2n/xp
-         btHcIDKMkdy+RPTLhP/3jsDviHE2/93UAEe0RkoM=
+        b=hUd+lxD4JzYJGyzFsZand6W/6W+zpMcjrxy1uYcS3yVcJELKDMl3/Fh6lXwf5a2+8
+         WvJQOGCF0BbyT8Izi4KNz73owNwOnBJN0rFBaYLYKQhifoiEJL2QnAhScAuww4PHhK
+         gtr1zrrG0XRUz6N/O5s0ob2v0ndh4yr00AIW4QYM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Changwei Ge <gechangwei@live.cn>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 072/106] ocfs2: wait for recovering done after direct unlock request
+Subject: [PATCH 5.2 094/137] mfd: intel-lpss: Remove D3cold delay
 Date:   Sun,  6 Oct 2019 19:21:18 +0200
-Message-Id: <20191006171153.744922590@linuxfoundation.org>
+Message-Id: <20191006171216.696748415@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,92 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Changwei Ge <gechangwei@live.cn>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 0a3775e4f883912944481cf2ef36eb6383a9cc74 ]
+[ Upstream commit 76380a607ba0b28627c9b4b55cd47a079a59624b ]
 
-There is a scenario causing ocfs2 umount hang when multiple hosts are
-rebooting at the same time.
+Goodix touchpad may drop its first couple input events when
+i2c-designware-platdrv and intel-lpss it connects to took too long to
+runtime resume from runtime suspended state.
 
-NODE1                           NODE2               NODE3
-send unlock requset to NODE2
-                                dies
-                                                    become recovery master
-                                                    recover NODE2
-find NODE2 dead
-mark resource RECOVERING
-directly remove lock from grant list
-calculate usage but RECOVERING marked
-**miss the window of purging
-clear RECOVERING
+This issue happens becuase the touchpad has a rather small buffer to
+store up to 13 input events, so if the host doesn't read those events in
+time (i.e. runtime resume takes too long), events are dropped from the
+touchpad's buffer.
 
-To reproduce this issue, crash a host and then umount ocfs2
-from another node.
+The bottleneck is D3cold delay it waits when transitioning from D3cold
+to D0, hence remove the delay to make the resume faster. I've tested
+some systems with intel-lpss and haven't seen any regression.
 
-To solve this, just let unlock progress wait for recovery done.
-
-Link: http://lkml.kernel.org/r/1550124866-20367-1-git-send-email-gechangwei@live.cn
-Signed-off-by: Changwei Ge <gechangwei@live.cn>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202683
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/dlm/dlmunlock.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ drivers/mfd/intel-lpss-pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/ocfs2/dlm/dlmunlock.c b/fs/ocfs2/dlm/dlmunlock.c
-index 63d701cd1e2e7..c8e9b7031d9ad 100644
---- a/fs/ocfs2/dlm/dlmunlock.c
-+++ b/fs/ocfs2/dlm/dlmunlock.c
-@@ -105,7 +105,8 @@ static enum dlm_status dlmunlock_common(struct dlm_ctxt *dlm,
- 	enum dlm_status status;
- 	int actions = 0;
- 	int in_use;
--        u8 owner;
-+	u8 owner;
-+	int recovery_wait = 0;
+diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+index aed2c04479663..3c271b14e7c6c 100644
+--- a/drivers/mfd/intel-lpss-pci.c
++++ b/drivers/mfd/intel-lpss-pci.c
+@@ -35,6 +35,8 @@ static int intel_lpss_pci_probe(struct pci_dev *pdev,
+ 	info->mem = &pdev->resource[0];
+ 	info->irq = pdev->irq;
  
- 	mlog(0, "master_node = %d, valblk = %d\n", master_node,
- 	     flags & LKM_VALBLK);
-@@ -208,9 +209,12 @@ static enum dlm_status dlmunlock_common(struct dlm_ctxt *dlm,
- 		}
- 		if (flags & LKM_CANCEL)
- 			lock->cancel_pending = 0;
--		else
--			lock->unlock_pending = 0;
--
-+		else {
-+			if (!lock->unlock_pending)
-+				recovery_wait = 1;
-+			else
-+				lock->unlock_pending = 0;
-+		}
- 	}
- 
- 	/* get an extra ref on lock.  if we are just switching
-@@ -244,6 +248,17 @@ leave:
- 	spin_unlock(&res->spinlock);
- 	wake_up(&res->wq);
- 
-+	if (recovery_wait) {
-+		spin_lock(&res->spinlock);
-+		/* Unlock request will directly succeed after owner dies,
-+		 * and the lock is already removed from grant list. We have to
-+		 * wait for RECOVERING done or we miss the chance to purge it
-+		 * since the removement is much faster than RECOVERING proc.
-+		 */
-+		__dlm_wait_on_lockres_flags(res, DLM_LOCK_RES_RECOVERING);
-+		spin_unlock(&res->spinlock);
-+	}
++	pdev->d3cold_delay = 0;
 +
- 	/* let the caller's final dlm_lock_put handle the actual kfree */
- 	if (actions & DLM_UNLOCK_FREE_LOCK) {
- 		/* this should always be coupled with list removal */
+ 	/* Probably it is enough to set this for iDMA capable devices only */
+ 	pci_set_master(pdev);
+ 	pci_try_set_mwi(pdev);
 -- 
 2.20.1
 
