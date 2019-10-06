@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF553CD45E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3478CD496
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbfJFRZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:25:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49978 "EHLO mail.kernel.org"
+        id S1727733AbfJFR1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:27:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727369AbfJFRY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:24:59 -0400
+        id S1728457AbfJFR1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:27:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D053B20867;
-        Sun,  6 Oct 2019 17:24:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB6652133F;
+        Sun,  6 Oct 2019 17:27:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382698;
-        bh=2j+/gI1kT0XXYZxN5raqCvPcTTi9Id+99HHXOsb92Q8=;
+        s=default; t=1570382835;
+        bh=6EJhm0EbcpkgQTDBb8j7GoPXvjaTxeRmKVXhZNeWiK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d9m+Ofo7RbgVFE0w8pKXAhc4ug9k5GdJd3sqCLsLWRLJ5XJnEDgsfXGqNpjZMcFci
-         O3G+OeLBfV6lbMGaAcr+VsRHvHD7N7j2cc40BGmAF38gHeFHWBbrCYgAaiuueSn9i3
-         i37rpQywBnh6j/BLX895xlqPJVU/D6biNwMaUVTM=
+        b=twkRI07LswZSFO7F/1IyjBhP3HfnWlSmcotJ9qfHakHIhGkENulHV5w4H6i+0YG8M
+         pVEP/kHX+75vWq4a1YKoB7n2XhV7XedzHqFmESV+Mb+Yg4ooLGk5KB3fmnh4So7oDa
+         ePZdeclHMa62Cqpk3V/6JHMFJTJrqgDyCuc0k1tU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH 4.9 45/47] Smack: Dont ignore other bprm->unsafe flags if LSM_UNSAFE_PTRACE is set
-Date:   Sun,  6 Oct 2019 19:21:32 +0200
-Message-Id: <20191006172019.260683324@linuxfoundation.org>
+        stable@vger.kernel.org, Reinhard Speyerer <rspmn@arcor.de>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 57/68] qmi_wwan: add support for Cinterion CLS8 devices
+Date:   Sun,  6 Oct 2019 19:21:33 +0200
+Message-Id: <20191006171134.358512447@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Reinhard Speyerer <rspmn@arcor.de>
 
-commit 3675f052b43ba51b99b85b073c7070e083f3e6fb upstream.
+[ Upstream commit cf74ac6db25d4002089e85cc623ad149ecc25614 ]
 
-There is a logic bug in the current smack_bprm_set_creds():
-If LSM_UNSAFE_PTRACE is set, but the ptrace state is deemed to be
-acceptable (e.g. because the ptracer detached in the meantime), the other
-->unsafe flags aren't checked. As far as I can tell, this means that
-something like the following could work (but I haven't tested it):
+Add support for Cinterion CLS8 devices.
+Use QMI_QUIRK_SET_DTR as required for Qualcomm MDM9x07 chipsets.
 
- - task A: create task B with fork()
- - task B: set NO_NEW_PRIVS
- - task B: install a seccomp filter that makes open() return 0 under some
-   conditions
- - task B: replace fd 0 with a malicious library
- - task A: attach to task B with PTRACE_ATTACH
- - task B: execve() a file with an SMACK64EXEC extended attribute
- - task A: while task B is still in the middle of execve(), exit (which
-   destroys the ptrace relationship)
+T:  Bus=01 Lev=03 Prnt=05 Port=01 Cnt=02 Dev#= 25 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1e2d ProdID=00b0 Rev= 3.18
+S:  Manufacturer=GEMALTO
+S:  Product=USB Modem
+C:* #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+E:  Ad=89(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
+E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-Make sure that if any flags other than LSM_UNSAFE_PTRACE are set in
-bprm->unsafe, we reject the execve().
-
-Cc: stable@vger.kernel.org
-Fixes: 5663884caab1 ("Smack: unify all ptrace accesses in the smack")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Reinhard Speyerer <rspmn@arcor.de>
+Acked-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- security/smack/smack_lsm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -949,7 +949,8 @@ static int smack_bprm_set_creds(struct l
- 
- 		if (rc != 0)
- 			return rc;
--	} else if (bprm->unsafe)
-+	}
-+	if (bprm->unsafe & ~LSM_UNSAFE_PTRACE)
- 		return -EPERM;
- 
- 	bsp->smk_task = isp->smk_task;
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -1275,6 +1275,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x1e2d, 0x0082, 4)},	/* Cinterion PHxx,PXxx (2 RmNet) */
+ 	{QMI_FIXED_INTF(0x1e2d, 0x0082, 5)},	/* Cinterion PHxx,PXxx (2 RmNet) */
+ 	{QMI_FIXED_INTF(0x1e2d, 0x0083, 4)},	/* Cinterion PHxx,PXxx (1 RmNet + USB Audio)*/
++	{QMI_QUIRK_SET_DTR(0x1e2d, 0x00b0, 4)},	/* Cinterion CLS8 */
+ 	{QMI_FIXED_INTF(0x413c, 0x81a2, 8)},	/* Dell Wireless 5806 Gobi(TM) 4G LTE Mobile Broadband Card */
+ 	{QMI_FIXED_INTF(0x413c, 0x81a3, 8)},	/* Dell Wireless 5570 HSPA+ (42Mbps) Mobile Broadband Card */
+ 	{QMI_FIXED_INTF(0x413c, 0x81a4, 8)},	/* Dell Wireless 5570e HSPA+ (42Mbps) Mobile Broadband Card */
 
 
