@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B188BCD585
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7981CD505
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbfJFRhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:37:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36038 "EHLO mail.kernel.org"
+        id S1729433AbfJFRba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730385AbfJFRhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:37:09 -0400
+        id S1729392AbfJFRb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D79BB214D9;
-        Sun,  6 Oct 2019 17:37:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC2E22133F;
+        Sun,  6 Oct 2019 17:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383427;
-        bh=smAebgwElg5eVjeQ13XBYCnDi8FVgsL1uCxXTbb1uow=;
+        s=default; t=1570383086;
+        bh=FbcdFuzSwmId2fZQ0uYOVyPR1pmmmnXDIYZeu+TvAk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V1y4m7fhLhoyal6BNJ63oyEARd5kjW7+Da7KuVcXVnRA1S8Mb90DLH7b6KkodduF9
-         PQ9IyWj3bwiCazNCqV+/yRRTPhfp0KuMMDi88nYdD8zT/z3ALa7JSSCxFiw5qZR/c+
-         Ckh3rMKmRgRUfgLNwehcX7UemJ0klIthMFKPFYYs=
+        b=SuzX2cwCI3mW4Z0PiDYL2x47LPRo4hYqGUSGBPsRaogFeVyx9kmvQ1qiULA2zLq0I
+         F3dVi9mzYzgvLoq0vvd30W48gq8DaXJ9tzFuIst8rWraMEYeIsobtecFzdrxr5Rffd
+         S6DTbBM6w10dVmxGGiGmqayJBGL5iEL8BA13Qm9Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Paul Burton <paul.burton@mips.com>,
+        syzbot+bd3bba6ff3fcea7a6ec6@syzkaller.appspotmail.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Song Liu <songliubraving@fb.com>,
+        Zubin Mithra <zsm@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 101/137] mips/atomic: Fix smp_mb__{before,after}_atomic()
+Subject: [PATCH 4.19 079/106] bpf: fix use after free in prog symbol exposure
 Date:   Sun,  6 Oct 2019 19:21:25 +0200
-Message-Id: <20191006171217.337780063@linuxfoundation.org>
+Message-Id: <20191006171157.020028143@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,335 +47,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit 42344113ba7a1ed7b5654cd5270af0d5698d8521 ]
+commit c751798aa224fadc5124b49eeb38fb468c0fa039 upstream.
 
-Recent probing at the Linux Kernel Memory Model uncovered a
-'surprise'. Strongly ordered architectures where the atomic RmW
-primitive implies full memory ordering and
-smp_mb__{before,after}_atomic() are a simple barrier() (such as MIPS
-without WEAK_REORDERING_BEYOND_LLSC) fail for:
+syzkaller managed to trigger the warning in bpf_jit_free() which checks via
+bpf_prog_kallsyms_verify_off() for potentially unlinked JITed BPF progs
+in kallsyms, and subsequently trips over GPF when walking kallsyms entries:
 
-	*x = 1;
-	atomic_inc(u);
-	smp_mb__after_atomic();
-	r0 = *y;
+  [...]
+  8021q: adding VLAN 0 to HW filter on device batadv0
+  8021q: adding VLAN 0 to HW filter on device batadv0
+  WARNING: CPU: 0 PID: 9869 at kernel/bpf/core.c:810 bpf_jit_free+0x1e8/0x2a0
+  Kernel panic - not syncing: panic_on_warn set ...
+  CPU: 0 PID: 9869 Comm: kworker/0:7 Not tainted 5.0.0-rc8+ #1
+  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+  Workqueue: events bpf_prog_free_deferred
+  Call Trace:
+   __dump_stack lib/dump_stack.c:77 [inline]
+   dump_stack+0x113/0x167 lib/dump_stack.c:113
+   panic+0x212/0x40b kernel/panic.c:214
+   __warn.cold.8+0x1b/0x38 kernel/panic.c:571
+   report_bug+0x1a4/0x200 lib/bug.c:186
+   fixup_bug arch/x86/kernel/traps.c:178 [inline]
+   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+   do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+  RIP: 0010:bpf_jit_free+0x1e8/0x2a0
+  Code: 02 4c 89 e2 83 e2 07 38 d0 7f 08 84 c0 0f 85 86 00 00 00 48 ba 00 02 00 00 00 00 ad de 0f b6 43 02 49 39 d6 0f 84 5f fe ff ff <0f> 0b e9 58 fe ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1
+  RSP: 0018:ffff888092f67cd8 EFLAGS: 00010202
+  RAX: 0000000000000007 RBX: ffffc90001947000 RCX: ffffffff816e9d88
+  RDX: dead000000000200 RSI: 0000000000000008 RDI: ffff88808769f7f0
+  RBP: ffff888092f67d00 R08: fffffbfff1394059 R09: fffffbfff1394058
+  R10: fffffbfff1394058 R11: ffffffff89ca02c7 R12: ffffc90001947002
+  R13: ffffc90001947020 R14: ffffffff881eca80 R15: ffff88808769f7e8
+  BUG: unable to handle kernel paging request at fffffbfff400d000
+  #PF error: [normal kernel read fault]
+  PGD 21ffee067 P4D 21ffee067 PUD 21ffed067 PMD 9f942067 PTE 0
+  Oops: 0000 [#1] PREEMPT SMP KASAN
+  CPU: 0 PID: 9869 Comm: kworker/0:7 Not tainted 5.0.0-rc8+ #1
+  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+  Workqueue: events bpf_prog_free_deferred
+  RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:495 [inline]
+  RIP: 0010:bpf_tree_comp kernel/bpf/core.c:558 [inline]
+  RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+  RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+  RIP: 0010:bpf_prog_kallsyms_find+0x107/0x2e0 kernel/bpf/core.c:632
+  Code: 00 f0 ff ff 44 38 c8 7f 08 84 c0 0f 85 fa 00 00 00 41 f6 45 02 01 75 02 0f 0b 48 39 da 0f 82 92 00 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 74 08 3c 03 0f 8e 45 01 00 00 8b 03 48 c1 e0
+  [...]
 
-Because, while the atomic_inc() implies memory order, it
-(surprisingly) does not provide a compiler barrier. This then allows
-the compiler to re-order like so:
+Upon further debugging, it turns out that whenever we trigger this
+issue, the kallsyms removal in bpf_prog_ksym_node_del() was /skipped/
+but yet bpf_jit_free() reported that the entry is /in use/.
 
-	atomic_inc(u);
-	*x = 1;
-	smp_mb__after_atomic();
-	r0 = *y;
+Problem is that symbol exposure via bpf_prog_kallsyms_add() but also
+perf_event_bpf_event() were done /after/ bpf_prog_new_fd(). Once the
+fd is exposed to the public, a parallel close request came in right
+before we attempted to do the bpf_prog_kallsyms_add().
 
-Which the CPU is then allowed to re-order (under TSO rules) like:
+Given at this time the prog reference count is one, we start to rip
+everything underneath us via bpf_prog_release() -> bpf_prog_put().
+The memory is eventually released via deferred free, so we're seeing
+that bpf_jit_free() has a kallsym entry because we added it from
+bpf_prog_load() but /after/ bpf_prog_put() from the remote CPU.
 
-	atomic_inc(u);
-	r0 = *y;
-	*x = 1;
+Therefore, move both notifications /before/ we install the fd. The
+issue was never seen between bpf_prog_alloc_id() and bpf_prog_new_fd()
+because upon bpf_prog_get_fd_by_id() we'll take another reference to
+the BPF prog, so we're still holding the original reference from the
+bpf_prog_load().
 
-And this very much was not intended. Therefore strengthen the atomic
-RmW ops to include a compiler barrier.
-
-Reported-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 6ee52e2a3fe4 ("perf, bpf: Introduce PERF_RECORD_BPF_EVENT")
+Fixes: 74451e66d516 ("bpf: make jited programs visible in traces")
+Reported-by: syzbot+bd3bba6ff3fcea7a6ec6@syzkaller.appspotmail.com
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Song Liu <songliubraving@fb.com>
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/asm/atomic.h  | 14 +++++------
- arch/mips/include/asm/barrier.h | 12 ++++++++--
- arch/mips/include/asm/bitops.h  | 42 ++++++++++++++++++++-------------
- arch/mips/include/asm/cmpxchg.h |  6 ++---
- 4 files changed, 45 insertions(+), 29 deletions(-)
+ kernel/bpf/syscall.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/arch/mips/include/asm/atomic.h b/arch/mips/include/asm/atomic.h
-index c85405afba5ed..50cc2f0962e56 100644
---- a/arch/mips/include/asm/atomic.h
-+++ b/arch/mips/include/asm/atomic.h
-@@ -68,7 +68,7 @@ static __inline__ void atomic_##op(int i, atomic_t * v)			      \
- 		"\t" __scbeqz "	%0, 1b					\n"   \
- 		"	.set	pop					\n"   \
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (v->counter)	      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -98,7 +98,7 @@ static __inline__ int atomic_##op##_return_relaxed(int i, atomic_t * v)	      \
- 		"	.set	pop					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -132,7 +132,7 @@ static __inline__ int atomic_fetch_##op##_relaxed(int i, atomic_t * v)	      \
- 		"	move	%0, %1					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -210,7 +210,7 @@ static __inline__ int atomic_sub_if_positive(int i, atomic_t * v)
- 		"	.set	pop					\n"
- 		: "=&r" (result), "=&r" (temp),
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)
--		: "Ir" (i));
-+		: "Ir" (i) : __LLSC_CLOBBER);
- 	} else {
- 		unsigned long flags;
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 118e3a8fc7646..6e544e364821e 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1454,19 +1454,25 @@ static int bpf_prog_load(union bpf_attr *attr)
+ 	if (err)
+ 		goto free_used_maps;
  
-@@ -270,7 +270,7 @@ static __inline__ void atomic64_##op(long i, atomic64_t * v)		      \
- 		"\t" __scbeqz "	%0, 1b					\n"   \
- 		"	.set	pop					\n"   \
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (v->counter)	      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -300,7 +300,7 @@ static __inline__ long atomic64_##op##_return_relaxed(long i, atomic64_t * v) \
- 		"	.set	pop					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-@@ -334,7 +334,7 @@ static __inline__ long atomic64_fetch_##op##_relaxed(long i, atomic64_t * v)  \
- 		"	.set	pop					\n"   \
- 		: "=&r" (result), "=&r" (temp),				      \
- 		  "+" GCC_OFF_SMALL_ASM() (v->counter)			      \
--		: "Ir" (i));						      \
-+		: "Ir" (i) : __LLSC_CLOBBER);				      \
- 	} else {							      \
- 		unsigned long flags;					      \
- 									      \
-diff --git a/arch/mips/include/asm/barrier.h b/arch/mips/include/asm/barrier.h
-index f9a6da96aae12..9228f73862205 100644
---- a/arch/mips/include/asm/barrier.h
-+++ b/arch/mips/include/asm/barrier.h
-@@ -211,14 +211,22 @@
- #define __smp_wmb()	barrier()
- #endif
- 
-+/*
-+ * When LL/SC does imply order, it must also be a compiler barrier to avoid the
-+ * compiler from reordering where the CPU will not. When it does not imply
-+ * order, the compiler is also free to reorder across the LL/SC loop and
-+ * ordering will be done by smp_llsc_mb() and friends.
-+ */
- #if defined(CONFIG_WEAK_REORDERING_BEYOND_LLSC) && defined(CONFIG_SMP)
- #define __WEAK_LLSC_MB		"	sync	\n"
-+#define smp_llsc_mb()		__asm__ __volatile__(__WEAK_LLSC_MB : : :"memory")
-+#define __LLSC_CLOBBER
- #else
- #define __WEAK_LLSC_MB		"		\n"
-+#define smp_llsc_mb()		do { } while (0)
-+#define __LLSC_CLOBBER		"memory"
- #endif
- 
--#define smp_llsc_mb()	__asm__ __volatile__(__WEAK_LLSC_MB : : :"memory")
++	/* Upon success of bpf_prog_alloc_id(), the BPF prog is
++	 * effectively publicly exposed. However, retrieving via
++	 * bpf_prog_get_fd_by_id() will take another reference,
++	 * therefore it cannot be gone underneath us.
++	 *
++	 * Only for the time /after/ successful bpf_prog_new_fd()
++	 * and before returning to userspace, we might just hold
++	 * one reference and any parallel close on that fd could
++	 * rip everything out. Hence, below notifications must
++	 * happen before bpf_prog_new_fd().
++	 *
++	 * Also, any failure handling from this point onwards must
++	 * be using bpf_prog_put() given the program is exposed.
++	 */
++	bpf_prog_kallsyms_add(prog);
++
+ 	err = bpf_prog_new_fd(prog);
+-	if (err < 0) {
+-		/* failed to allocate fd.
+-		 * bpf_prog_put() is needed because the above
+-		 * bpf_prog_alloc_id() has published the prog
+-		 * to the userspace and the userspace may
+-		 * have refcnt-ed it through BPF_PROG_GET_FD_BY_ID.
+-		 */
++	if (err < 0)
+ 		bpf_prog_put(prog);
+-		return err;
+-	}
 -
- #ifdef CONFIG_CPU_CAVIUM_OCTEON
- #define smp_mb__before_llsc() smp_wmb()
- #define __smp_mb__before_llsc() __smp_wmb()
-diff --git a/arch/mips/include/asm/bitops.h b/arch/mips/include/asm/bitops.h
-index 7bd35e5e2a9e4..985d6a02f9ea1 100644
---- a/arch/mips/include/asm/bitops.h
-+++ b/arch/mips/include/asm/bitops.h
-@@ -66,7 +66,8 @@ static inline void set_bit(unsigned long nr, volatile unsigned long *addr)
- 		"	beqzl	%0, 1b					\n"
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "=" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit), GCC_OFF_SMALL_ASM() (*m));
-+		: "ir" (1UL << bit), GCC_OFF_SMALL_ASM() (*m)
-+		: __LLSC_CLOBBER);
- #if defined(CONFIG_CPU_MIPSR2) || defined(CONFIG_CPU_MIPSR6)
- 	} else if (kernel_uses_llsc && __builtin_constant_p(bit)) {
- 		loongson_llsc_mb();
-@@ -76,7 +77,8 @@ static inline void set_bit(unsigned long nr, volatile unsigned long *addr)
- 			"	" __INS "%0, %3, %2, 1			\n"
- 			"	" __SC "%0, %1				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (bit), "r" (~0));
-+			: "ir" (bit), "r" (~0)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- #endif /* CONFIG_CPU_MIPSR2 || CONFIG_CPU_MIPSR6 */
- 	} else if (kernel_uses_llsc) {
-@@ -90,7 +92,8 @@ static inline void set_bit(unsigned long nr, volatile unsigned long *addr)
- 			"	" __SC	"%0, %1				\n"
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (1UL << bit));
-+			: "ir" (1UL << bit)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- 	} else
- 		__mips_set_bit(nr, addr);
-@@ -122,7 +125,8 @@ static inline void clear_bit(unsigned long nr, volatile unsigned long *addr)
- 		"	beqzl	%0, 1b					\n"
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (~(1UL << bit)));
-+		: "ir" (~(1UL << bit))
-+		: __LLSC_CLOBBER);
- #if defined(CONFIG_CPU_MIPSR2) || defined(CONFIG_CPU_MIPSR6)
- 	} else if (kernel_uses_llsc && __builtin_constant_p(bit)) {
- 		loongson_llsc_mb();
-@@ -132,7 +136,8 @@ static inline void clear_bit(unsigned long nr, volatile unsigned long *addr)
- 			"	" __INS "%0, $0, %2, 1			\n"
- 			"	" __SC "%0, %1				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (bit));
-+			: "ir" (bit)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- #endif /* CONFIG_CPU_MIPSR2 || CONFIG_CPU_MIPSR6 */
- 	} else if (kernel_uses_llsc) {
-@@ -146,7 +151,8 @@ static inline void clear_bit(unsigned long nr, volatile unsigned long *addr)
- 			"	" __SC "%0, %1				\n"
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (~(1UL << bit)));
-+			: "ir" (~(1UL << bit))
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- 	} else
- 		__mips_clear_bit(nr, addr);
-@@ -192,7 +198,8 @@ static inline void change_bit(unsigned long nr, volatile unsigned long *addr)
- 		"	beqzl	%0, 1b				\n"
- 		"	.set	pop				\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--		: "ir" (1UL << bit));
-+		: "ir" (1UL << bit)
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -207,7 +214,8 @@ static inline void change_bit(unsigned long nr, volatile unsigned long *addr)
- 			"	" __SC	"%0, %1				\n"
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m)
--			: "ir" (1UL << bit));
-+			: "ir" (1UL << bit)
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- 	} else
- 		__mips_change_bit(nr, addr);
-@@ -244,7 +252,7 @@ static inline int test_and_set_bit(unsigned long nr,
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -260,7 +268,7 @@ static inline int test_and_set_bit(unsigned long nr,
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
+-	bpf_prog_kallsyms_add(prog);
+ 	return err;
  
- 		res = temp & (1UL << bit);
-@@ -301,7 +309,7 @@ static inline int test_and_set_bit_lock(unsigned long nr,
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+m" (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -317,7 +325,7 @@ static inline int test_and_set_bit_lock(unsigned long nr,
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
- 
- 		res = temp & (1UL << bit);
-@@ -360,7 +368,7 @@ static inline int test_and_clear_bit(unsigned long nr,
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- #if defined(CONFIG_CPU_MIPSR2) || defined(CONFIG_CPU_MIPSR6)
- 	} else if (kernel_uses_llsc && __builtin_constant_p(nr)) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
-@@ -375,7 +383,7 @@ static inline int test_and_clear_bit(unsigned long nr,
- 			"	" __SC	"%0, %1				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "ir" (bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!temp));
- #endif
- 	} else if (kernel_uses_llsc) {
-@@ -394,7 +402,7 @@ static inline int test_and_clear_bit(unsigned long nr,
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
- 
- 		res = temp & (1UL << bit);
-@@ -437,7 +445,7 @@ static inline int test_and_change_bit(unsigned long nr,
- 		"	.set	pop					\n"
- 		: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 		: "r" (1UL << bit)
--		: "memory");
-+		: __LLSC_CLOBBER);
- 	} else if (kernel_uses_llsc) {
- 		unsigned long *m = ((unsigned long *) addr) + (nr >> SZLONG_LOG);
- 		unsigned long temp;
-@@ -453,7 +461,7 @@ static inline int test_and_change_bit(unsigned long nr,
- 			"	.set	pop				\n"
- 			: "=&r" (temp), "+" GCC_OFF_SMALL_ASM() (*m), "=&r" (res)
- 			: "r" (1UL << bit)
--			: "memory");
-+			: __LLSC_CLOBBER);
- 		} while (unlikely(!res));
- 
- 		res = temp & (1UL << bit);
-diff --git a/arch/mips/include/asm/cmpxchg.h b/arch/mips/include/asm/cmpxchg.h
-index f5994a332673b..c8a47d18f6288 100644
---- a/arch/mips/include/asm/cmpxchg.h
-+++ b/arch/mips/include/asm/cmpxchg.h
-@@ -61,7 +61,7 @@ extern unsigned long __xchg_called_with_bad_pointer(void)
- 		"	.set	pop				\n"	\
- 		: "=&r" (__ret), "=" GCC_OFF_SMALL_ASM() (*m)		\
- 		: GCC_OFF_SMALL_ASM() (*m), "Jr" (val)			\
--		: "memory");						\
-+		: __LLSC_CLOBBER);					\
- 	} else {							\
- 		unsigned long __flags;					\
- 									\
-@@ -134,8 +134,8 @@ static inline unsigned long __xchg(volatile void *ptr, unsigned long x,
- 		"	.set	pop				\n"	\
- 		"2:						\n"	\
- 		: "=&r" (__ret), "=" GCC_OFF_SMALL_ASM() (*m)		\
--		: GCC_OFF_SMALL_ASM() (*m), "Jr" (old), "Jr" (new)		\
--		: "memory");						\
-+		: GCC_OFF_SMALL_ASM() (*m), "Jr" (old), "Jr" (new)	\
-+		: __LLSC_CLOBBER);					\
- 		loongson_llsc_mb();					\
- 	} else {							\
- 		unsigned long __flags;					\
+ free_used_maps:
 -- 
 2.20.1
 
