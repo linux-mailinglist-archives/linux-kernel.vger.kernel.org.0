@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C27C3CD5CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3678CD5D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730978AbfJFRkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:40:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39526 "EHLO mail.kernel.org"
+        id S1730895AbfJFRkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:40:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730967AbfJFRkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:40:01 -0400
+        id S1730861AbfJFRkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:40:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC9B92087E;
-        Sun,  6 Oct 2019 17:39:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E0E32087E;
+        Sun,  6 Oct 2019 17:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383600;
-        bh=UAfTYj9dSSWlNwqhJHR1m9xmDES6sax0XfOL7/szap8=;
+        s=default; t=1570383605;
+        bh=RXz6wrou/rLsSHwyEPfyPMYLuJ/X2bB/HTRQZPCvBoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cG+Re7QleUuPwYWPTGjOlV+Mt4LswALube3/NKTmJ0KekTWKj89k3Ya/OU5UbUGiZ
-         S2xgvZZcLyE0e/A7NVaTHiZjeQIw5eULn8Ko1ZWYTxOePmAC3STuocqvxI1MqBDGQh
-         upfH4rBNQuN+gmsMDIZZhzzueB4ODoCiVMc1uTyc=
+        b=oRk5dfOfLyC6UxrqeVchT2t149EuQ68MH0+kfFMfLr7Xae2ASlZdE25eBgWC96BzV
+         UvDGq6EFIOZ8d5giFug/OYjUXTxgHSuX+TL85NU41KZT5meCZij8XJf9v/McYWZMVS
+         pknuOlajaLM0B80Ao6WPojQ0Qord/Zz2Bs1fiJUo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Anthony Koo <Anthony.Koo@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 026/166] clk: ingenic/jz4740: Fix "pll half" divider not read/written properly
-Date:   Sun,  6 Oct 2019 19:19:52 +0200
-Message-Id: <20191006171215.318003328@linuxfoundation.org>
+Subject: [PATCH 5.3 028/166] drm/amd/display: fix issue where 252-255 values are clipped
+Date:   Sun,  6 Oct 2019 19:19:54 +0200
+Message-Id: <20191006171215.436094819@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -44,56 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Anthony Koo <Anthony.Koo@amd.com>
 
-[ Upstream commit 568b9de48d80bcf1a92e2c4fa67651abbb8ebfe2 ]
+[ Upstream commit 1cbcfc975164f397b449efb17f59d81a703090db ]
 
-The code was setting the bit 21 of the CPCCR register to use a divider
-of 2 for the "pll half" clock, and clearing the bit to use a divider
-of 1.
+[Why]
+When endpoint is at the boundary of a region, such as at 2^0=1
+we find that the last segment has a sharp slope and some points
+are clipped at the top.
 
-This is the opposite of how this register field works: a cleared bit
-means that the /2 divider is used, and a set bit means that the divider
-is 1.
+[How]
+If end point is 1, which is exactly at the 2^0 region boundary, we
+need to program an additional region beyond this point.
 
-Restore the correct behaviour using the newly introduced .div_table
-field.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Link: https://lkml.kernel.org/r/20190701113606.4130-1-paul@crapouillou.net
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Anthony Koo <Anthony.Koo@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ingenic/jz4740-cgu.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 4c0a20949c2c2..9b27d75d9485c 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -53,6 +53,10 @@ static const u8 jz4740_cgu_cpccr_div_table[] = {
- 	1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
- };
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
+index 7469333a2c8a5..8166fdbacd732 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
+@@ -357,9 +357,10 @@ bool cm_helper_translate_curve_to_hw_format(
+ 		seg_distr[7] = 4;
+ 		seg_distr[8] = 4;
+ 		seg_distr[9] = 4;
++		seg_distr[10] = 1;
  
-+static const u8 jz4740_cgu_pll_half_div_table[] = {
-+	2, 1,
-+};
-+
- static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		region_start = -10;
+-		region_end = 0;
++		region_end = 1;
+ 	}
  
- 	/* External clocks */
-@@ -86,7 +90,10 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 	[JZ4740_CLK_PLL_HALF] = {
- 		"pll half", CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
--		.div = { CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1 },
-+		.div = {
-+			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1,
-+			jz4740_cgu_pll_half_div_table,
-+		},
- 	},
- 
- 	[JZ4740_CLK_CCLK] = {
+ 	for (i = region_end - region_start; i < MAX_REGIONS_NUMBER ; i++)
 -- 
 2.20.1
 
