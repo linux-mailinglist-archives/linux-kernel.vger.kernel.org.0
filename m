@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6E31CD56C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11BDBCD4E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbfJFRgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:36:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34928 "EHLO mail.kernel.org"
+        id S1727477AbfJFRaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:30:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730077AbfJFRgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:36:11 -0400
+        id S1729196AbfJFRaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:30:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2144220700;
-        Sun,  6 Oct 2019 17:36:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BD4021479;
+        Sun,  6 Oct 2019 17:30:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383370;
-        bh=eSh8T2nSPy8y2TgRE1CffHRlokwH0nJvPtRMTdfQcbQ=;
+        s=default; t=1570383013;
+        bh=3IstOCt8DF1LlC7NwUbUAu1NTRKIhaLMQQKjqiQFfpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a1l7J1s1R6EZkeoSmRU7lbAlcV92TfoMsFRAKSpO2BvagD9jO99qirPUHb8X488DJ
-         IYWcIoan1RBzVTHwGwyUx0wqc6odA8ANsyenqjQS6rk4TY8mJZCC9f+Fd/WSEEDnQE
-         eDkTu5Zhsp1rLwB7GFeTG0ZjcCuDbHAn5rkuoZkI=
+        b=bMySIFxLDNAfTpLk9XX1fNei4g6tF8+0Wft1YKZlgRkWf0fXutNhqLBBmgpkfrtGs
+         mh0DhzZOKR3r7qn9XDFvfcnd+mkq/KYY4wVlptkys/h7fvLNM6o8M8+AUNwLRFSc4S
+         BCBKlxclzxugTxTpw4QTjLfxgthjawAqtVX03Vfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
+        stable@vger.kernel.org, Orion Hodson <oth@google.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 077/137] mailbox: mediatek: cmdq: clear the event in cmdq initial flow
+Subject: [PATCH 4.19 055/106] ARM: 8898/1: mm: Dont treat faults reported from cache maintenance as writes
 Date:   Sun,  6 Oct 2019 19:21:01 +0200
-Message-Id: <20191006171215.411270398@linuxfoundation.org>
+Message-Id: <20191006171147.589399213@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,86 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bibby Hsieh <bibby.hsieh@mediatek.com>
+From: Will Deacon <will@kernel.org>
 
-[ Upstream commit 6058f11870b8e6d4f5cc7b591097c00bf69a000d ]
+[ Upstream commit 834020366da9ab3fb87d1eb9a3160eb22dbed63a ]
 
-GCE hardware stored event information in own internal sysram,
-if the initial value in those sysram is not zero value
-it will cause a situation that gce can wait the event immediately
-after client ask gce to wait event but not really trigger the
-corresponding hardware.
+Translation faults arising from cache maintenance instructions are
+rather unhelpfully reported with an FSR value where the WnR field is set
+to 1, indicating that the faulting access was a write. Since cache
+maintenance instructions on 32-bit ARM do not require any particular
+permissions, this can cause our private 'cacheflush' system call to fail
+spuriously if a translation fault is generated due to page aging when
+targetting a read-only VMA.
 
-In order to make sure that the wait event function is
-exactly correct, we need to clear the sysram value in
-cmdq initial flow.
+In this situation, we will return -EFAULT to userspace, although this is
+unfortunately suppressed by the popular '__builtin___clear_cache()'
+intrinsic provided by GCC, which returns void.
 
-Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
+Although it's tempting to write this off as a userspace issue, we can
+actually do a little bit better on CPUs that support LPAE, even if the
+short-descriptor format is in use. On these CPUs, cache maintenance
+faults additionally set the CM field in the FSR, which we can use to
+suppress the write permission checks in the page fault handler and
+succeed in performing cache maintenance to read-only areas even in the
+presence of a translation fault.
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+Reported-by: Orion Hodson <oth@google.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c       | 5 +++++
- include/linux/mailbox/mtk-cmdq-mailbox.h | 3 +++
- include/linux/soc/mediatek/mtk-cmdq.h    | 3 ---
- 3 files changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/mm/fault.c | 4 ++--
+ arch/arm/mm/fault.h | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 00d5219094e5d..48bba49139523 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -22,6 +22,7 @@
- #define CMDQ_NUM_CMD(t)			(t->cmd_buf_size / CMDQ_INST_SIZE)
- 
- #define CMDQ_CURR_IRQ_STATUS		0x10
-+#define CMDQ_SYNC_TOKEN_UPDATE		0x68
- #define CMDQ_THR_SLOT_CYCLES		0x30
- #define CMDQ_THR_BASE			0x100
- #define CMDQ_THR_SIZE			0x80
-@@ -104,8 +105,12 @@ static void cmdq_thread_resume(struct cmdq_thread *thread)
- 
- static void cmdq_init(struct cmdq *cmdq)
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index 3232afb6fdc00..a9ee0d9dc740a 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -216,7 +216,7 @@ static inline bool access_error(unsigned int fsr, struct vm_area_struct *vma)
  {
-+	int i;
-+
- 	WARN_ON(clk_enable(cmdq->clock) < 0);
- 	writel(CMDQ_THR_ACTIVE_SLOT_CYCLES, cmdq->base + CMDQ_THR_SLOT_CYCLES);
-+	for (i = 0; i <= CMDQ_MAX_EVENT; i++)
-+		writel(i, cmdq->base + CMDQ_SYNC_TOKEN_UPDATE);
- 	clk_disable(cmdq->clock);
- }
+ 	unsigned int mask = VM_READ | VM_WRITE | VM_EXEC;
  
-diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
-index ccb73422c2fa2..e6f54ef6698b1 100644
---- a/include/linux/mailbox/mtk-cmdq-mailbox.h
-+++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
-@@ -20,6 +20,9 @@
- #define CMDQ_WFE_WAIT			BIT(15)
- #define CMDQ_WFE_WAIT_VALUE		0x1
+-	if (fsr & FSR_WRITE)
++	if ((fsr & FSR_WRITE) && !(fsr & FSR_CM))
+ 		mask = VM_WRITE;
+ 	if (fsr & FSR_LNX_PF)
+ 		mask = VM_EXEC;
+@@ -287,7 +287,7 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
  
-+/** cmdq event maximum */
-+#define CMDQ_MAX_EVENT			0x3ff
-+
- /*
-  * CMDQ_CODE_MASK:
-  *   set write mask
-diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 54ade13a9b157..4e8899972db4d 100644
---- a/include/linux/soc/mediatek/mtk-cmdq.h
-+++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -13,9 +13,6 @@
+ 	if (user_mode(regs))
+ 		flags |= FAULT_FLAG_USER;
+-	if (fsr & FSR_WRITE)
++	if ((fsr & FSR_WRITE) && !(fsr & FSR_CM))
+ 		flags |= FAULT_FLAG_WRITE;
  
- #define CMDQ_NO_TIMEOUT		0xffffffffu
- 
--/** cmdq event maximum */
--#define CMDQ_MAX_EVENT				0x3ff
--
- struct cmdq_pkt;
- 
- struct cmdq_client {
+ 	/*
+diff --git a/arch/arm/mm/fault.h b/arch/arm/mm/fault.h
+index c063708fa5032..9ecc2097a87a0 100644
+--- a/arch/arm/mm/fault.h
++++ b/arch/arm/mm/fault.h
+@@ -6,6 +6,7 @@
+  * Fault status register encodings.  We steal bit 31 for our own purposes.
+  */
+ #define FSR_LNX_PF		(1 << 31)
++#define FSR_CM			(1 << 13)
+ #define FSR_WRITE		(1 << 11)
+ #define FSR_FS4			(1 << 10)
+ #define FSR_FS3_0		(15)
 -- 
 2.20.1
 
