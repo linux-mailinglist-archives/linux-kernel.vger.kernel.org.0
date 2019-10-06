@@ -2,87 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F987CD941
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 22:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD196CD94A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 23:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfJFUvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 16:51:45 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33773 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfJFUvp (ORCPT
+        id S1726167AbfJFVPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 17:15:20 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38264 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfJFVPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 16:51:45 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r5so16454569qtd.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2019 13:51:43 -0700 (PDT)
+        Sun, 6 Oct 2019 17:15:19 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u28so7831174lfc.5
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2019 14:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QkysCBSB9fGqKPV8g/1PIAYcEKj+5HCVtkPSug6S7x4=;
-        b=cOcOfoux4Df7/s9EkUQGrbPexSBOt3WXuQ6fU4InY9ASkZfOT1H4oszYBQao6riw/k
-         VXTm3ZxkLndtrobWYJ6Wpm2gLJtAPc+YeDdEU+Vzea9fblEzy8iPj25BZtesJ3Ym0iYU
-         oelu7zpxaomQ0gRsFoW7JhZbb+sLgJgpfMykiu1tRPDtIs9bb482IsrozXiDSKZFdzNc
-         0llDAebPCIEeb6kNpWPRnSR8KRk14Vb+7cNCMLhJULK+PfNS6LGwgvgOul0UqBTL/nKs
-         UX1himK/rZtQPOMeIbSr56wvOpIUGvy737VYgOB+puIXTKwoHvSUNXoso2N3zdTWPaID
-         qanQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LXbxhEgAdieyKJ5fuAzsqlFn8HIyUjW9y8Ps47VX0Fg=;
+        b=TjvsohBpIUlEMZohWwfuphM7aKCJuOx1Jp6+bi7TadNzoKDl4nG3om1x1SOgVLvCDl
+         /FOzKmyhWUVcykBTKFtntJEAJWA5/5WMkYhygH/AumL61lb+JY7V7CSbKlzEhJJKLQ9b
+         Y+G+Nn1TooEF28IjZbrGbDeedH1wub5GCL1R8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QkysCBSB9fGqKPV8g/1PIAYcEKj+5HCVtkPSug6S7x4=;
-        b=YMFsHaNcBuYIP+HeI3R0svdbznlde3wr+0G7lppZrYP3POXlcZri70M0LmGdCk91iQ
-         Wg7jTN3jEU4eQkm/OFBozkIl3XJvSubENMiL+P9xwrk+y0K2wE96IGcdwcNIv2+3xB1F
-         N1MmKvpG7E8QUiQH5C1gFO/qb27k8OyQ/LLjheqQdvfpwdUliXnPsEmM3rObjqqcRk09
-         mm5xDRvWlq7EhbuM93NTXVBuMe3lrdy2J6llAN4eoXFkODW5lIAHKSF/drTOp5PJvhW3
-         Wxabe1hRnp/fa7NV43TH8016iQ2l3mq2jvQ95wbu9R01z86HZqFDKpA5whurikF87UWM
-         vHEQ==
-X-Gm-Message-State: APjAAAVc9yvnm4s1hNj4A+xchttSfVf2e84PGcwS34D91JG1T4VgGURm
-        PV+HVrtDYA+t1PVssxLzQFo=
-X-Google-Smtp-Source: APXvYqwR0q1/blUrqYR+XMlkhidWKj/s2ojzVV8263BY2FCeizUcrqO88TL/aFATj4L8kqpsqpyA4g==
-X-Received: by 2002:aed:2448:: with SMTP id s8mr27213725qtc.173.1570395102993;
-        Sun, 06 Oct 2019 13:51:42 -0700 (PDT)
-Received: from GBdebian.terracota.local ([177.103.155.130])
-        by smtp.gmail.com with ESMTPSA id a36sm6949492qtk.21.2019.10.06.13.51.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2019 13:51:42 -0700 (PDT)
-From:   Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
-To:     outreachy-kernel@googlegroups.com, Larry.Finger@lwfinger.net,
-        florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
-        nishkadg.linux@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org,
-        trivial@kernel.org
-Cc:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
-Subject: [PATCH] staging: rtl8712: align arguments with open parenthesis
-Date:   Sun,  6 Oct 2019 17:51:35 -0300
-Message-Id: <20191006205135.11791-1-gabrielabittencourt00@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LXbxhEgAdieyKJ5fuAzsqlFn8HIyUjW9y8Ps47VX0Fg=;
+        b=OK5IvyhZvjMDCg7UhIFd5gmV8fl1Vw6gFedCgAcgI9ftFU0rZWuXuCRK6Dwid60U60
+         fTFE0fDFKHCjP4ZaQcp98+BNrs9juikxMvwBTlLaezW5wZysm7j1NutkB1uFiji+2U+u
+         B+lTAcz8fosxM5aJwkcln5xuMm0b3cFN4p5mLMVwwy520mv271j+SV+mizdFkUjwba2n
+         g1EiTOFZfuteDK/2f4Fkw/NwE1hhITYSzmwnHB83RnKhJEgkpTCaVgshtW2ofs/eWQMw
+         Ybqn/66P7plc++2Pq4aU2iUPwkLb+bApU4E13+BVg/EIe63J0+o1GrxIDioCRMpbyzYf
+         Nb8A==
+X-Gm-Message-State: APjAAAV2hpTxmOO47W3oc2XeAqZV885s0lGRUIgyMdv0/8bzMIUnRjao
+        L8ALkRh7svg9MMRjdBfG2+wOE8vk/hg=
+X-Google-Smtp-Source: APXvYqyvLRe64YUO/3qKFHmjNeqGQTT1LGes3z5U5TdkCuerSW9GPWpZZOV+hRuU/xk9FwhAJHv2AA==
+X-Received: by 2002:ac2:47e3:: with SMTP id b3mr14014075lfp.80.1570396517316;
+        Sun, 06 Oct 2019 14:15:17 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id c6sm2336572lfh.65.2019.10.06.14.15.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2019 14:15:16 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id x80so7847659lff.3
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2019 14:15:15 -0700 (PDT)
+X-Received: by 2002:a19:2489:: with SMTP id k131mr14363203lfk.52.1570396515673;
+ Sun, 06 Oct 2019 14:15:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191005233227.GB25745@shell.armlinux.org.uk> <CAHk-=wiy9MWteoaoV15FJ7QJeRhBtCVgo6ECiLb4khuc5PxHUg@mail.gmail.com>
+ <20191006130924.GC25745@shell.armlinux.org.uk> <CAHk-=wh6jhO1X3VZuZ28aA4m0k6wGhkHRRrJSQpQ69N901D7Mw@mail.gmail.com>
+In-Reply-To: <CAHk-=wh6jhO1X3VZuZ28aA4m0k6wGhkHRRrJSQpQ69N901D7Mw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 6 Oct 2019 14:14:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg14VfTec2AiW0iSVUzj2x2_PYffH9O5sDV5ZRagjQwRg@mail.gmail.com>
+Message-ID: <CAHk-=wg14VfTec2AiW0iSVUzj2x2_PYffH9O5sDV5ZRagjQwRg@mail.gmail.com>
+Subject: Re: MAP_FIXED_NOREPLACE appears to break older i386 binaries
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Kees Cook <keescook@chromium.org>, Michal Hocko <mhocko@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleans up checks of "Alignment should match open parenthesis"
+On Sun, Oct 6, 2019 at 11:07 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Yes, we should get this fixed. But I continue to ask you to point to
+> the actual binaries for testing..
 
-Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
----
- drivers/staging/rtl8712/recv_linux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just to bring the resolution back publicly to lkml after rmk sent me
+test binaries in private email, the end result is commit b212921b13bd
+("elf: don't use MAP_FIXED_NOREPLACE for elf executable mappings").
 
-diff --git a/drivers/staging/rtl8712/recv_linux.c b/drivers/staging/rtl8712/recv_linux.c
-index 70a4dcd4a1e5..808f21c5767a 100644
---- a/drivers/staging/rtl8712/recv_linux.c
-+++ b/drivers/staging/rtl8712/recv_linux.c
-@@ -61,7 +61,7 @@ int r8712_os_recvbuf_resource_alloc(struct _adapter *padapter,
- 
- /*free os related resource in struct recv_buf*/
- int r8712_os_recvbuf_resource_free(struct _adapter *padapter,
--			     struct recv_buf *precvbuf)
-+				   struct recv_buf *precvbuf)
- {
- 	if (precvbuf->pskb)
- 		dev_kfree_skb_any(precvbuf->pskb);
--- 
-2.20.1
-
+             Linus
