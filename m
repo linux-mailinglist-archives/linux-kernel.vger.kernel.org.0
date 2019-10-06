@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E52F0CD512
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 392C9CD59D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbfJFRcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:32:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58410 "EHLO mail.kernel.org"
+        id S1729956AbfJFRh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:37:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729074AbfJFRcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:32:03 -0400
+        id S1729133AbfJFRh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:37:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E9962080F;
-        Sun,  6 Oct 2019 17:32:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7220A2053B;
+        Sun,  6 Oct 2019 17:37:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383121;
-        bh=W5ko8dKoTxp+EK2S8StLCSW/oIzptL3OD+fCC+I4QfA=;
+        s=default; t=1570383475;
+        bh=mEX6m77D5xfNKL3qk0Z81bvRU50ZjzXX9ZeCSI33gmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T6NE+ElydK+bv0l3ajf9Gzms46dVLr0m5V/BH5e8hA/wS17CwBP2+5QoMMjo6Kknc
-         2+KUhUBeKZweFW1LjrI0DsufEhsVoYk2DVDc4PXCnjaBCdOIIW5z6S7i+a7Xu+e58N
-         i6fK7UPY3n7tBWufJgF4Im3sOR7H02kX5znJIptI=
+        b=ziPO3uNaJafIo83bVBTKgLGTyO+fptOuUwtszwLwfumuuPAKsZZ5OtEOhFZvutWxS
+         ukchm2ThgVE6KWI3Ns0Bqi5tqKeb8B8c9O33t3kKbfddYcqy9ls8s9t8TChuDGfVj9
+         KmV1e2hOyI8SxjBovFDfeH/ZQjmaYIlH2VkHsyf4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Hunt <johunt@akamai.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 095/106] udp: only do GSO if # of segs > 1
+        stable@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 117/137] ARM: 8903/1: ensure that usable memory in bank 0 starts from a PMD-aligned address
 Date:   Sun,  6 Oct 2019 19:21:41 +0200
-Message-Id: <20191006171201.386527724@linuxfoundation.org>
+Message-Id: <20191006171218.964237881@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,140 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Hunt <johunt@akamai.com>
+From: Mike Rapoport <mike.rapoport@gmail.com>
 
-[ Upstream commit 4094871db1d65810acab3d57f6089aa39ef7f648 ]
+[ Upstream commit 00d2ec1e6bd82c0538e6dd3e4a4040de93ba4fef ]
 
-Prior to this change an application sending <= 1MSS worth of data and
-enabling UDP GSO would fail if the system had SW GSO enabled, but the
-same send would succeed if HW GSO offload is enabled. In addition to this
-inconsistency the error in the SW GSO case does not get back to the
-application if sending out of a real device so the user is unaware of this
-failure.
+The calculation of memblock_limit in adjust_lowmem_bounds() assumes that
+bank 0 starts from a PMD-aligned address. However, the beginning of the
+first bank may be NOMAP memory and the start of usable memory
+will be not aligned to PMD boundary. In such case the memblock_limit will
+be set to the end of the NOMAP region, which will prevent any memblock
+allocations.
 
-With this change we only perform GSO if the # of segments is > 1 even
-if the application has enabled segmentation. I've also updated the
-relevant udpgso selftests.
+Mark the region between the end of the NOMAP area and the next PMD-aligned
+address as NOMAP as well, so that the usable memory will start at
+PMD-aligned address.
 
-Fixes: bec1f6f69736 ("udp: generate gso with UDP_SEGMENT")
-Signed-off-by: Josh Hunt <johunt@akamai.com>
-Reviewed-by: Willem de Bruijn <willemb@google.com>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/udp.c                       |   11 +++++++----
- net/ipv6/udp.c                       |   11 +++++++----
- tools/testing/selftests/net/udpgso.c |   16 ++++------------
- 3 files changed, 18 insertions(+), 20 deletions(-)
+ arch/arm/mm/mmu.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -775,6 +775,7 @@ static int udp_send_skb(struct sk_buff *
- 	int is_udplite = IS_UDPLITE(sk);
- 	int offset = skb_transport_offset(skb);
- 	int len = skb->len - offset;
-+	int datalen = len - sizeof(*uh);
- 	__wsum csum = 0;
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index 1aa2586fa597b..13233c7917fe7 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -1177,6 +1177,22 @@ void __init adjust_lowmem_bounds(void)
+ 	 */
+ 	vmalloc_limit = (u64)(uintptr_t)vmalloc_min - PAGE_OFFSET + PHYS_OFFSET;
  
- 	/*
-@@ -808,10 +809,12 @@ static int udp_send_skb(struct sk_buff *
- 			return -EIO;
- 		}
- 
--		skb_shinfo(skb)->gso_size = cork->gso_size;
--		skb_shinfo(skb)->gso_type = SKB_GSO_UDP_L4;
--		skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(len - sizeof(*uh),
--							 cork->gso_size);
-+		if (datalen > cork->gso_size) {
-+			skb_shinfo(skb)->gso_size = cork->gso_size;
-+			skb_shinfo(skb)->gso_type = SKB_GSO_UDP_L4;
-+			skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(datalen,
-+								 cork->gso_size);
++	/*
++	 * The first usable region must be PMD aligned. Mark its start
++	 * as MEMBLOCK_NOMAP if it isn't
++	 */
++	for_each_memblock(memory, reg) {
++		if (!memblock_is_nomap(reg)) {
++			if (!IS_ALIGNED(reg->base, PMD_SIZE)) {
++				phys_addr_t len;
++
++				len = round_up(reg->base, PMD_SIZE) - reg->base;
++				memblock_mark_nomap(reg->base, len);
++			}
++			break;
 +		}
- 		goto csum_partial;
- 	}
- 
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -1047,6 +1047,7 @@ static int udp_v6_send_skb(struct sk_buf
- 	__wsum csum = 0;
- 	int offset = skb_transport_offset(skb);
- 	int len = skb->len - offset;
-+	int datalen = len - sizeof(*uh);
- 
- 	/*
- 	 * Create a UDP header
-@@ -1079,10 +1080,12 @@ static int udp_v6_send_skb(struct sk_buf
- 			return -EIO;
- 		}
- 
--		skb_shinfo(skb)->gso_size = cork->gso_size;
--		skb_shinfo(skb)->gso_type = SKB_GSO_UDP_L4;
--		skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(len - sizeof(*uh),
--							 cork->gso_size);
-+		if (datalen > cork->gso_size) {
-+			skb_shinfo(skb)->gso_size = cork->gso_size;
-+			skb_shinfo(skb)->gso_type = SKB_GSO_UDP_L4;
-+			skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(datalen,
-+								 cork->gso_size);
-+		}
- 		goto csum_partial;
- 	}
- 
---- a/tools/testing/selftests/net/udpgso.c
-+++ b/tools/testing/selftests/net/udpgso.c
-@@ -90,12 +90,9 @@ struct testcase testcases_v4[] = {
- 		.tfail = true,
- 	},
- 	{
--		/* send a single MSS: will fail with GSO, because the segment
--		 * logic in udp4_ufo_fragment demands a gso skb to be > MTU
--		 */
-+		/* send a single MSS: will fall back to no GSO */
- 		.tlen = CONST_MSS_V4,
- 		.gso_len = CONST_MSS_V4,
--		.tfail = true,
- 		.r_num_mss = 1,
- 	},
- 	{
-@@ -140,10 +137,9 @@ struct testcase testcases_v4[] = {
- 		.tfail = true,
- 	},
- 	{
--		/* send a single 1B MSS: will fail, see single MSS above */
-+		/* send a single 1B MSS: will fall back to no GSO */
- 		.tlen = 1,
- 		.gso_len = 1,
--		.tfail = true,
- 		.r_num_mss = 1,
- 	},
- 	{
-@@ -197,12 +193,9 @@ struct testcase testcases_v6[] = {
- 		.tfail = true,
- 	},
- 	{
--		/* send a single MSS: will fail with GSO, because the segment
--		 * logic in udp4_ufo_fragment demands a gso skb to be > MTU
--		 */
-+		/* send a single MSS: will fall back to no GSO */
- 		.tlen = CONST_MSS_V6,
- 		.gso_len = CONST_MSS_V6,
--		.tfail = true,
- 		.r_num_mss = 1,
- 	},
- 	{
-@@ -247,10 +240,9 @@ struct testcase testcases_v6[] = {
- 		.tfail = true,
- 	},
- 	{
--		/* send a single 1B MSS: will fail, see single MSS above */
-+		/* send a single 1B MSS: will fall back to no GSO */
- 		.tlen = 1,
- 		.gso_len = 1,
--		.tfail = true,
- 		.r_num_mss = 1,
- 	},
- 	{
++	}
++
+ 	for_each_memblock(memory, reg) {
+ 		phys_addr_t block_start = reg->base;
+ 		phys_addr_t block_end = reg->base + reg->size;
+-- 
+2.20.1
+
 
 
