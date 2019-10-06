@@ -2,94 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D18C9CD18D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 13:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23825CD194
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 13:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfJFLJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 07:09:08 -0400
-Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:46796 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726256AbfJFLJI (ORCPT
+        id S1726757AbfJFLJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 07:09:47 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55433 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbfJFLJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 07:09:08 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id F27D2C04C2;
-        Sun,  6 Oct 2019 11:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1570360147; bh=LFaf3+7wRgrSGyyxrsz2u9BWasMzLRw65zAzqni4KP0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=LwVvaryBQmGsGWI1yASqXJOnp6B6WcMX2ECJagkeBEtaMISMNaj952xosP+Fdumky
-         /ZH4+uALVgk6eoYlpdzzhblyFkL9QNj0YQ6BQZfIwgo94JoeczN3UynFrMpY2gna2m
-         y7edTDXI2Sgc0CxfowepcKLrh1kstlhRJsbMLvSkBTKEG3YRaLJb1HBgJE8rNM3nop
-         FeNCZ60U5RR8aaHMDn6MKIM913xs1WJdUfXE6l0Jvy1Lx+MaKeZDnFyVv3TFj0OKKP
-         8Mc4C5DJyJJjBXCrMKJEzJZhd219nd0UK0h51yPhQzFVGQTUb18x//eEjsWC1+8iZs
-         Rg+huqBfsacDA==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id A877FA0069;
-        Sun,  6 Oct 2019 11:09:04 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net 3/3] net: stmmac: selftests: Fix L2 Hash Filter test
-Date:   Sun,  6 Oct 2019 13:08:57 +0200
-Message-Id: <9ee5ff5b606fb7aceaa2e31a56737378653345ab.1570359800.git.Jose.Abreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1570359800.git.Jose.Abreu@synopsys.com>
-References: <cover.1570359800.git.Jose.Abreu@synopsys.com>
-In-Reply-To: <cover.1570359800.git.Jose.Abreu@synopsys.com>
-References: <cover.1570359800.git.Jose.Abreu@synopsys.com>
+        Sun, 6 Oct 2019 07:09:47 -0400
+Received: by mail-wm1-f68.google.com with SMTP id a6so9703549wma.5
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2019 04:09:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KNc82HtJTr2S9yPplsKQ29xKge0h6KdPsl2jhs4BKZo=;
+        b=TEnZSkbFr2A7oUM78IHHed3IlgHh0tmkpH8RDssbiR0+mBCHkQe9H1Qxx+vWm2PofE
+         sGToOgCFb6hXoCRurvp2anQnTqIH03RhsFu2lxcDV8uagaxEWpHnmGBp14zXgB7Ji5DK
+         yQkA74rsANN+bsj7tBFGADqhxFVNGCwn0vccgfBJC0S4ul+XS2NGUWI8kKL36SXIEoGi
+         Ys368zcUKr4s1+elLPyEJlWSfNOLEUzVoGLdBwmiXWNtuyUiFQ1CDc8EcteynP4OG/+P
+         1JPy+3ec+C6ru4Rw7bsV4fQWWQz7c42N/jqxS6luY8aIfxhWUly2EHxSYvZRsFg+emn2
+         lNOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KNc82HtJTr2S9yPplsKQ29xKge0h6KdPsl2jhs4BKZo=;
+        b=BBPpX26xpfdi5SYjjAuGbQhS0Xjhu8xU236yXaQJkGy0XuiiVN3ZBmjt8B51ZkjAqm
+         GQLMmYes5415DtGQomBBlKRuiElx748Dl5Q+1bt+XHVrD4X7NsonbgchTAtFbI9C8XvV
+         NEpf8vCqJDCVT2KX0n5DKRlrOVkrqUe5ZkTrfITvQfu5x1W3k7xI3XeoeyW7rttexaPz
+         wOyc12EN0eP7AACLs9Xr2/1iGVbWMTAYdLrH2zvfJY+odJwVN/SLBTH0XJAIRZLIyTmJ
+         PEZYkiZpt5QyKKGtHBAD8IpUNvpXrnMDhXHWbc0SZrShCDt1t7k3mvCH2CQtGgRnNQjY
+         KENw==
+X-Gm-Message-State: APjAAAUBR0tCKGW+9cEwTxkxiR6/o/wrlt1p57KChWdTI0irXPa9JE9W
+        3DNmsz4yZUs+lRm8Tge0tLiiEg==
+X-Google-Smtp-Source: APXvYqze9DN/H2RXzVEdSmtpoum+tTRMTWdWq6wiMUONDwQ1y3I9igSwjnOhiK6Ch9ZxdQYuTaIxmA==
+X-Received: by 2002:a05:600c:2311:: with SMTP id 17mr16465507wmo.39.1570360184748;
+        Sun, 06 Oct 2019 04:09:44 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
+        by smtp.gmail.com with ESMTPSA id n1sm21203796wrg.67.2019.10.06.04.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Oct 2019 04:09:44 -0700 (PDT)
+Date:   Sun, 6 Oct 2019 12:09:43 +0100
+From:   Matthias Maennich <maennich@google.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
+        michal.lkml@markovi.net, jeyu@kernel.org,
+        gregkh@linuxfoundation.org, yamada.masahiro@socionext.com,
+        Markus.Elfring@web.de, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts: add_namespace: Fix coccicheck failed
+Message-ID: <20191006110943.GA172281@google.com>
+References: <CAK7LNAS2K6i+s2A_xTyRq730M6_=tyjtfwHAnEHF37_nrJa4Eg@mail.gmail.com>
+ <20191006044456.57608-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191006044456.57608-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the current MAC addresses hard-coded in the test we can get some
-false positives as we use the Hash Filtering method. Let's change the
-MAC addresses in the tests to be unique when hashed.
+Hi YueHaibing!
 
-Fixes: 091810dbded9 ("net: stmmac: Introduce selftests support")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+On Sun, Oct 06, 2019 at 12:44:56PM +0800, YueHaibing wrote:
+>Now all scripts in scripts/coccinelle to be automatically called
+>by coccicheck. However new adding add_namespace.cocci does not
+>support report mode, which make coccicheck failed.
+>This add "virtual report" to  make the coccicheck go ahead smoothly.
+>
+>Fixes: eb8305aecb95 ("scripts: Coccinelle script for namespace dependencies.")
+>Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+>Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for fixing this!
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-index ed3926d4471d..e4ac3c401432 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-@@ -487,8 +487,8 @@ static int stmmac_filter_check(struct stmmac_priv *priv)
- 
- static int stmmac_test_hfilt(struct stmmac_priv *priv)
- {
--	unsigned char gd_addr[ETH_ALEN] = {0x01, 0x00, 0xcc, 0xcc, 0xdd, 0xdd};
--	unsigned char bd_addr[ETH_ALEN] = {0x09, 0x00, 0xaa, 0xaa, 0xbb, 0xbb};
-+	unsigned char gd_addr[ETH_ALEN] = {0x01, 0xee, 0xdd, 0xcc, 0xbb, 0xaa};
-+	unsigned char bd_addr[ETH_ALEN] = {0x01, 0x01, 0x02, 0x03, 0x04, 0x05};
- 	struct stmmac_packet_attrs attr = { };
- 	int ret;
- 
--- 
-2.7.4
+Acked-by: Matthias Maennich <maennich@google.com>
 
+Cheers,
+Matthias
+
+>---
+> scripts/coccinelle/misc/add_namespace.cocci | 2 ++
+> 1 file changed, 2 insertions(+)
+>
+>diff --git a/scripts/coccinelle/misc/add_namespace.cocci b/scripts/coccinelle/misc/add_namespace.cocci
+>index c832bb6445a8..99e93a6c2e24 100644
+>--- a/scripts/coccinelle/misc/add_namespace.cocci
+>+++ b/scripts/coccinelle/misc/add_namespace.cocci
+>@@ -6,6 +6,8 @@
+> /// add a missing namespace tag to a module source file.
+> ///
+>
+>+virtual report
+>+
+> @has_ns_import@
+> declarer name MODULE_IMPORT_NS;
+> identifier virtual.ns;
+>-- 
+>2.20.1
+>
+>
