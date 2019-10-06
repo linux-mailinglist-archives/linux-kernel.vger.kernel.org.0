@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC2F6CD719
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF79CD726
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730707AbfJFRv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:51:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49014 "EHLO mail.kernel.org"
+        id S1728545AbfJFRxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:53:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727931AbfJFRu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:50:57 -0400
+        id S1729905AbfJFRiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:38:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B8E521835;
-        Sun,  6 Oct 2019 17:45:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31D7B20700;
+        Sun,  6 Oct 2019 17:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383927;
-        bh=2wb1uq+QHh0LuGSRjL9ECKM78xBue/wLBVnlI1ciBn0=;
+        s=default; t=1570383486;
+        bh=VHqFPei1l3XYQuzGwjYB6MtsKq7T/Rtc2e+h2ot99yM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s0SESXCO031fTDNSBiebgGzDXmCnXug+/tZCjQyDD57R6Bp5+KgKbP5Wh8njUzX7g
-         41lUArrKNEVJtuE4PAAVpl09q/ozAX+4s935NDuHVXQNefDKBZBDmQe/Yk1xPa5QGl
-         76OFvAXFstbbaa17RLztIvrq1pprKXl/Na7EdUGI=
+        b=TY2FngfMl5H2kzecF5cBk86Hv6D2gXlcNCNlztPMDL88+bhzrHqV5NDNvK/FaYvw4
+         CFXMv9l0NNrCEoGQEMks1eDSHw0pDA1GZEGdHjhln0zJ+3R1Pc+sCXYjrjvWnjL0l0
+         UlTMkYGlURA9qM5UVa88Q9mmHXqarJyr1u5P+xXE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 130/166] hso: fix NULL-deref on tty open
-Date:   Sun,  6 Oct 2019 19:21:36 +0200
-Message-Id: <20191006171224.182792306@linuxfoundation.org>
+        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 121/137] crypto: hisilicon - Fix double free in sec_free_hw_sgl()
+Date:   Sun,  6 Oct 2019 19:21:45 +0200
+Message-Id: <20191006171219.355393263@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
-References: <20191006171212.850660298@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,54 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-[ Upstream commit 8353da9fa69722b54cba82b2ec740afd3d438748 ]
+[ Upstream commit 24fbf7bad888767bed952f540ac963bc57e47e15 ]
 
-Fix NULL-pointer dereference on tty open due to a failure to handle a
-missing interrupt-in endpoint when probing modem ports:
+There are two problems in sec_free_hw_sgl():
 
-	BUG: kernel NULL pointer dereference, address: 0000000000000006
-	...
-	RIP: 0010:tiocmget_submit_urb+0x1c/0xe0 [hso]
-	...
-	Call Trace:
-	hso_start_serial_device+0xdc/0x140 [hso]
-	hso_serial_open+0x118/0x1b0 [hso]
-	tty_open+0xf1/0x490
+First, when sgl_current->next is valid, @hw_sgl will be freed in the
+first loop, but it free again after the loop.
 
-Fixes: 542f54823614 ("tty: Modem functions for the HSO driver")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Second, sgl_current and sgl_current->next_sgl is not match when
+dma_pool_free() is invoked, the third parameter should be the dma
+address of sgl_current, but sgl_current->next_sgl is the dma address
+of next chain, so use sgl_current->next_sgl is wrong.
+
+Fix this by deleting the last dma_pool_free() in sec_free_hw_sgl(),
+modifying the condition for while loop, and matching the address for
+dma_pool_free().
+
+Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/hso.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/crypto/hisilicon/sec/sec_algs.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2620,14 +2620,18 @@ static struct hso_device *hso_create_bul
- 		 */
- 		if (serial->tiocmget) {
- 			tiocmget = serial->tiocmget;
-+			tiocmget->endp = hso_get_ep(interface,
-+						    USB_ENDPOINT_XFER_INT,
-+						    USB_DIR_IN);
-+			if (!tiocmget->endp) {
-+				dev_err(&interface->dev, "Failed to find INT IN ep\n");
-+				goto exit;
-+			}
+diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
+index 02768af0dccdd..8c789b8671fc4 100644
+--- a/drivers/crypto/hisilicon/sec/sec_algs.c
++++ b/drivers/crypto/hisilicon/sec/sec_algs.c
+@@ -215,17 +215,18 @@ static void sec_free_hw_sgl(struct sec_hw_sgl *hw_sgl,
+ 			    dma_addr_t psec_sgl, struct sec_dev_info *info)
+ {
+ 	struct sec_hw_sgl *sgl_current, *sgl_next;
++	dma_addr_t sgl_next_dma;
+ 
+-	if (!hw_sgl)
+-		return;
+ 	sgl_current = hw_sgl;
+-	while (sgl_current->next) {
++	while (sgl_current) {
+ 		sgl_next = sgl_current->next;
+-		dma_pool_free(info->hw_sgl_pool, sgl_current,
+-			      sgl_current->next_sgl);
++		sgl_next_dma = sgl_current->next_sgl;
 +
- 			tiocmget->urb = usb_alloc_urb(0, GFP_KERNEL);
- 			if (tiocmget->urb) {
- 				mutex_init(&tiocmget->mutex);
- 				init_waitqueue_head(&tiocmget->waitq);
--				tiocmget->endp = hso_get_ep(
--					interface,
--					USB_ENDPOINT_XFER_INT,
--					USB_DIR_IN);
- 			} else
- 				hso_free_tiomget(serial);
- 		}
++		dma_pool_free(info->hw_sgl_pool, sgl_current, psec_sgl);
++
+ 		sgl_current = sgl_next;
++		psec_sgl = sgl_next_dma;
+ 	}
+-	dma_pool_free(info->hw_sgl_pool, hw_sgl, psec_sgl);
+ }
+ 
+ static int sec_alg_skcipher_setkey(struct crypto_skcipher *tfm,
+-- 
+2.20.1
+
 
 
