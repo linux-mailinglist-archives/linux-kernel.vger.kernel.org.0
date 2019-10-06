@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A86BCCD3E4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB36CD3E5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfJFRTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44680 "EHLO mail.kernel.org"
+        id S1727180AbfJFRUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:20:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726828AbfJFRTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:19:46 -0400
+        id S1727127AbfJFRUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:20:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AE7B20835;
-        Sun,  6 Oct 2019 17:19:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF01C21835;
+        Sun,  6 Oct 2019 17:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382384;
-        bh=xqcbefcJOqTr5yezU+WtL17X1hRbLdYNn8J2gsa7Mc8=;
+        s=default; t=1570382417;
+        bh=C6AbjV4f8ptNOGIJz+ANPjxCKhBIdSX/ugZ/YNSZmgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=18mCn1xRAnbpUqmu58T6ti/EnorGx44njQmZPBMWaYP/DmIygtcLfmobpHUnYsP/R
-         KDZbqjVZfCg7Na2/LyM4IpwrNj4VywjV/Fvysl7jP+52lEA78hSgnbV1RxqtP4tUDV
-         zPH2wihcBnj9NI7awnf6HwjbIvsslhhVsNgkH9TM=
+        b=WHaLORJfhGXH/nu/Zyzn1DtkZPLTm5jXzSl8DZ6iwj0tnqS1bxq7T2xFIPx2XDi1F
+         f9YlccdAqVUkk2urplPZ/lzk2BO1Zv/ZwV0mnr18fsqykQW9MRk1Y8mta9atqQV525
+         1BR5J1jSXJ8qRxa9CycOddIHbpC/yaLqSyF/asIQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Orion Hodson <oth@google.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 16/36] ARM: 8898/1: mm: Dont treat faults reported from cache maintenance as writes
-Date:   Sun,  6 Oct 2019 19:18:58 +0200
-Message-Id: <20191006171051.090284415@linuxfoundation.org>
+        stable@vger.kernel.org, Martijn Coenen <maco@android.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Mattias Nissler <mnissler@chromium.org>
+Subject: [PATCH 4.4 23/36] ANDROID: binder: remove waitqueue when thread exits.
+Date:   Sun,  6 Oct 2019 19:19:05 +0200
+Message-Id: <20191006171054.595539874@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171038.266461022@linuxfoundation.org>
 References: <20191006171038.266461022@linuxfoundation.org>
@@ -45,75 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Martijn Coenen <maco@android.com>
 
-[ Upstream commit 834020366da9ab3fb87d1eb9a3160eb22dbed63a ]
+commit f5cb779ba16334b45ba8946d6bfa6d9834d1527f upstream.
 
-Translation faults arising from cache maintenance instructions are
-rather unhelpfully reported with an FSR value where the WnR field is set
-to 1, indicating that the faulting access was a write. Since cache
-maintenance instructions on 32-bit ARM do not require any particular
-permissions, this can cause our private 'cacheflush' system call to fail
-spuriously if a translation fault is generated due to page aging when
-targetting a read-only VMA.
+binder_poll() passes the thread->wait waitqueue that
+can be slept on for work. When a thread that uses
+epoll explicitly exits using BINDER_THREAD_EXIT,
+the waitqueue is freed, but it is never removed
+from the corresponding epoll data structure. When
+the process subsequently exits, the epoll cleanup
+code tries to access the waitlist, which results in
+a use-after-free.
 
-In this situation, we will return -EFAULT to userspace, although this is
-unfortunately suppressed by the popular '__builtin___clear_cache()'
-intrinsic provided by GCC, which returns void.
+Prevent this by using POLLFREE when the thread exits.
 
-Although it's tempting to write this off as a userspace issue, we can
-actually do a little bit better on CPUs that support LPAE, even if the
-short-descriptor format is in use. On these CPUs, cache maintenance
-faults additionally set the CM field in the FSR, which we can use to
-suppress the write permission checks in the page fault handler and
-succeed in performing cache maintenance to read-only areas even in the
-presence of a translation fault.
-
-Reported-by: Orion Hodson <oth@google.com>
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Martijn Coenen <maco@android.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: stable <stable@vger.kernel.org> # 4.14
+[backport BINDER_LOOPER_STATE_POLL logic as well]
+Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mm/fault.c | 4 ++--
- arch/arm/mm/fault.h | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/android/binder.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index 0d20cd5940171..702a5542b11a8 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -211,7 +211,7 @@ static inline bool access_error(unsigned int fsr, struct vm_area_struct *vma)
- {
- 	unsigned int mask = VM_READ | VM_WRITE | VM_EXEC;
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -334,7 +334,8 @@ enum {
+ 	BINDER_LOOPER_STATE_EXITED      = 0x04,
+ 	BINDER_LOOPER_STATE_INVALID     = 0x08,
+ 	BINDER_LOOPER_STATE_WAITING     = 0x10,
+-	BINDER_LOOPER_STATE_NEED_RETURN = 0x20
++	BINDER_LOOPER_STATE_NEED_RETURN = 0x20,
++	BINDER_LOOPER_STATE_POLL	= 0x40,
+ };
  
--	if (fsr & FSR_WRITE)
-+	if ((fsr & FSR_WRITE) && !(fsr & FSR_CM))
- 		mask = VM_WRITE;
- 	if (fsr & FSR_LNX_PF)
- 		mask = VM_EXEC;
-@@ -281,7 +281,7 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ struct binder_thread {
+@@ -2610,6 +2611,18 @@ static int binder_free_thread(struct bin
+ 		} else
+ 			BUG();
+ 	}
++
++	/*
++	 * If this thread used poll, make sure we remove the waitqueue
++	 * from any epoll data structures holding it with POLLFREE.
++	 * waitqueue_active() is safe to use here because we're holding
++	 * the inner lock.
++	 */
++	if ((thread->looper & BINDER_LOOPER_STATE_POLL) &&
++	    waitqueue_active(&thread->wait)) {
++		wake_up_poll(&thread->wait, POLLHUP | POLLFREE);
++	}
++
+ 	if (send_reply)
+ 		binder_send_failed_reply(send_reply, BR_DEAD_REPLY);
+ 	binder_release_work(&thread->todo);
+@@ -2633,6 +2646,8 @@ static unsigned int binder_poll(struct f
+ 		return POLLERR;
+ 	}
  
- 	if (user_mode(regs))
- 		flags |= FAULT_FLAG_USER;
--	if (fsr & FSR_WRITE)
-+	if ((fsr & FSR_WRITE) && !(fsr & FSR_CM))
- 		flags |= FAULT_FLAG_WRITE;
++	thread->looper |= BINDER_LOOPER_STATE_POLL;
++
+ 	wait_for_proc_work = thread->transaction_stack == NULL &&
+ 		list_empty(&thread->todo) && thread->return_error == BR_OK;
  
- 	/*
-diff --git a/arch/arm/mm/fault.h b/arch/arm/mm/fault.h
-index 78830657cab3a..b014e57248044 100644
---- a/arch/arm/mm/fault.h
-+++ b/arch/arm/mm/fault.h
-@@ -5,6 +5,7 @@
-  * Fault status register encodings.  We steal bit 31 for our own purposes.
-  */
- #define FSR_LNX_PF		(1 << 31)
-+#define FSR_CM			(1 << 13)
- #define FSR_WRITE		(1 << 11)
- #define FSR_FS4			(1 << 10)
- #define FSR_FS3_0		(15)
--- 
-2.20.1
-
 
 
