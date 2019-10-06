@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EBDCD5D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B62BCD5D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730861AbfJFRkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:40:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39804 "EHLO mail.kernel.org"
+        id S1731018AbfJFRk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:40:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730928AbfJFRkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:40:15 -0400
+        id S1731004AbfJFRkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:40:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC6C42053B;
-        Sun,  6 Oct 2019 17:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99ACC2053B;
+        Sun,  6 Oct 2019 17:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383615;
-        bh=A3qVF/t/XRmO8w7bZv4r5d8T1Cv1im7d4XBZLdIQcVc=;
+        s=default; t=1570383623;
+        bh=xXqTTNREpLdYn6bT7Dacf3FS8rp75G+TLfM3oBVMFtk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U2rBt73NvGGxBVujtVr3dQg4eHA2VlVktxjA9JrXJ0A4d1lPA3vpuqy0+LDTG2mV0
-         IkyF4qVmhkS4raRFki3plxBXeIgEhYhwNtqlgAFeJmuXi2/iC6ixUT1+kumRwVGq3o
-         b2c8sTBHKB0kFgkD2FgGjnWS2f83mPbMeuogPlX0=
+        b=MNO3if3TGEIOyqg00A7mdYGe0zUBhQdgAbp7NWc+taYvkCIzl0rgJAtEFEou8K90C
+         tFsEEniqNgeZKBZen7+9IKVfsZ2vC254r5lNsQdk5Sv1Zla/U1awYMhKRhGZjECfvJ
+         mGsqMNZpwjTpoGXzZR+jkJlfjptAcgVg33VFVIro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lewis Huang <Lewis.Huang@amd.com>,
-        Jun Lei <Jun.Lei@amd.com>, Eric Yang <eric.yang2@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 030/166] drm/amd/display: reprogram VM config when system resume
-Date:   Sun,  6 Oct 2019 19:19:56 +0200
-Message-Id: <20191006171215.544984636@linuxfoundation.org>
+Subject: [PATCH 5.3 033/166] clk: actions: Dont reference clk_init_data after registration
+Date:   Sun,  6 Oct 2019 19:19:59 +0200
+Message-Id: <20191006171215.748168661@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -46,48 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lewis Huang <Lewis.Huang@amd.com>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit e5382701c3520b3ed66169a6e4aa6ce5df8c56e0 ]
+[ Upstream commit cf9ec1fc6d7cceb73e7f1efd079d2eae173fdf57 ]
 
-[Why]
-The vm config will be clear to 0 when system enter S4. It will
-cause hubbub didn't know how to fetch data when system resume.
-The flip always pending because earliest_inuse_address and
-request_address are different.
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-[How]
-Reprogram VM config when system resume
-
-Signed-off-by: Lewis Huang <Lewis.Huang@amd.com>
-Reviewed-by: Jun Lei <Jun.Lei@amd.com>
-Acked-by: Eric Yang <eric.yang2@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190731193517.237136-2-sboyd@kernel.org
+[sboyd@kernel.org: Move name to after checking for error or NULL hw]
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/actions/owl-common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index cbc480a333764..730f97ba8dbbe 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -2187,6 +2187,14 @@ void dc_set_power_state(
- 		dc_resource_state_construct(dc, dc->current_state);
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+index 32dd29e0a37e1..4de97cc7cb54d 100644
+--- a/drivers/clk/actions/owl-common.c
++++ b/drivers/clk/actions/owl-common.c
+@@ -68,16 +68,17 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
+ 	struct clk_hw *hw;
  
- 		dc->hwss.init_hw(dc);
-+
-+#ifdef CONFIG_DRM_AMD_DC_DCN2_0
-+		if (dc->hwss.init_sys_ctx != NULL &&
-+			dc->vm_pa_config.valid) {
-+			dc->hwss.init_sys_ctx(dc->hwseq, dc, &dc->vm_pa_config);
-+		}
-+#endif
-+
- 		break;
- 	default:
- 		ASSERT(dc->current_state->stream_count == 0);
+ 	for (i = 0; i < hw_clks->num; i++) {
++		const char *name;
+ 
+ 		hw = hw_clks->hws[i];
+-
+ 		if (IS_ERR_OR_NULL(hw))
+ 			continue;
+ 
++		name = hw->init->name;
+ 		ret = devm_clk_hw_register(dev, hw);
+ 		if (ret) {
+ 			dev_err(dev, "Couldn't register clock %d - %s\n",
+-				i, hw->init->name);
++				i, name);
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.20.1
 
