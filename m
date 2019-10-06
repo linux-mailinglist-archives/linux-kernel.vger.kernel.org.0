@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10E7CD5DD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5EECD5DF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbfJFRkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:40:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40204 "EHLO mail.kernel.org"
+        id S1731071AbfJFRkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:40:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730378AbfJFRkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:40:40 -0400
+        id S1730011AbfJFRkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:40:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BBBA20700;
-        Sun,  6 Oct 2019 17:40:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5685A20700;
+        Sun,  6 Oct 2019 17:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383639;
-        bh=p/LTZv2Rg4AcXfx4nYRbWpJmu7o4xkjBC4qUBZfeDW8=;
+        s=default; t=1570383641;
+        bh=R/jTEcosIgI42IvSWc1LupVsH5P7htvyBIlQkVgNgvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3zUrfqvQtjkvnQelTKXHm7KNgfogEsU68anl0oPR5/KnNv93OXUIF8vh4ZgTEZqE
-         JGBWtPFTECT2o5HzsoqPWVcfMSMBh2baTSj5dZpvBItzccgs6STsLqynbwtQjJV82T
-         WJFJxNCGTOOMAsV0LH5pK8qM4QwzaG3xiwfwkOaE=
+        b=HB0OdHzRIEXQL81pFtsx5vCMgoun4xf+eMYIRfqaN5Ha4a1INwNFNTHlvFHiSX7jh
+         JWW/ycF9MgPqeOPplZ8PYFgLdDp8v9/lOjKL2nUzy04P1tBsLYmKSHVEmvjdzhzDqC
+         KssJWHdKxAXu6Ob9/Y5v0EVxRgUGr5TXZU4307W8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikola Cornij <nikola.cornij@amd.com>,
-        Nevenko Stupar <Nevenko.Stupar@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
+        stable@vger.kernel.org, Su Sung Chung <Su.Chung@amd.com>,
+        Eric Yang <eric.yang2@amd.com>, Leo Li <sunpeng.li@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 007/166] drm/amd/display: Power-gate all DSCs at driver init time
-Date:   Sun,  6 Oct 2019 19:19:33 +0200
-Message-Id: <20191006171213.316022291@linuxfoundation.org>
+Subject: [PATCH 5.3 008/166] drm/amd/display: fix not calling ppsmu to trigger PME
+Date:   Sun,  6 Oct 2019 19:19:34 +0200
+Message-Id: <20191006171213.380091770@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -46,41 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikola Cornij <nikola.cornij@amd.com>
+From: Su Sung Chung <Su.Chung@amd.com>
 
-[ Upstream commit 75c35000235f3662f2810e9a59b0c8eed045432e ]
+[ Upstream commit 18b401874aee10c80b5745c9b93280dae5a59809 ]
 
 [why]
-DSC should be powered-on only on as-needed basis, i.e. if the mode
-requires it
+dcn20_clk_mgr_construct was not initializing pp_smu, and PME call gets
+filtered out by the null check
 
 [how]
-Loop over all the DSCs at driver init time and power-gate each
+initialize pp_smu dcn20_clk_mgr_construct
 
-Signed-off-by: Nikola Cornij <nikola.cornij@amd.com>
-Reviewed-by: Nevenko Stupar <Nevenko.Stupar@amd.com>
+Signed-off-by: Su Sung Chung <Su.Chung@amd.com>
+Reviewed-by: Eric Yang <eric.yang2@amd.com>
 Acked-by: Leo Li <sunpeng.li@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/amd/display/dc/clk_mgr/dcn20/dcn20_clk_mgr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-index d810c8940129b..2627e0a98a96a 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-@@ -585,6 +585,10 @@ static void dcn20_init_hw(struct dc *dc)
- 		}
- 	}
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn20/dcn20_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn20/dcn20_clk_mgr.c
+index 50bfb5921de07..2ab0f97719b5a 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn20/dcn20_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn20/dcn20_clk_mgr.c
+@@ -348,6 +348,8 @@ void dcn20_clk_mgr_construct(
  
-+	/* Power gate DSCs */
-+	for (i = 0; i < res_pool->res_cap->num_dsc; i++)
-+		dcn20_dsc_pg_control(hws, res_pool->dscs[i]->inst, false);
+ 	clk_mgr->base.dprefclk_khz = 700000; // 700 MHz planned if VCO is 3.85 GHz, will be retrieved
+ 
++	clk_mgr->pp_smu = pp_smu;
 +
- 	/* Blank pixel data with OPP DPG */
- 	for (i = 0; i < dc->res_pool->timing_generator_count; i++) {
- 		struct timing_generator *tg = dc->res_pool->timing_generators[i];
+ 	if (IS_FPGA_MAXIMUS_DC(ctx->dce_environment)) {
+ 		dcn2_funcs.update_clocks = dcn2_update_clocks_fpga;
+ 		clk_mgr->dentist_vco_freq_khz = 3850000;
 -- 
 2.20.1
 
