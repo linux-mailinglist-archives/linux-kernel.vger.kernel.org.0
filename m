@@ -2,103 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19034CD185
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 13:05:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E33CD192
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 13:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfJFLE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 07:04:59 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43634 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfJFLE6 (ORCPT
+        id S1726736AbfJFLJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 07:09:25 -0400
+Received: from us03-smtprelay2.synopsys.com ([149.117.87.133]:46816 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726322AbfJFLJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 07:04:58 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9D38780476; Sun,  6 Oct 2019 13:04:41 +0200 (CEST)
-Date:   Sun, 6 Oct 2019 13:04:56 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Daniel Thompson <daniel.thompson@linaro.org>, alex@alexanderweb.de,
-        andriy.shevchenko@linux.intel.com
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mat King <mathewk@google.com>, rafael@kernel.org,
-        gregkh@linuxfoundation.org, Ross Zwisler <zwisler@google.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Rajat Jain <rajatja@google.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexander Schremmer <alex@alexanderweb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: New sysfs interface for privacy screens
-Message-ID: <20191006110455.GC24605@amd>
-References: <CAL_quvRknSSVvXN3q_Se0hrziw2oTNS3ENNoeHYhvciCRq9Yww@mail.gmail.com>
- <20191002094650.3fc06a85@lwn.net>
- <87muei9r7i.fsf@intel.com>
- <20191003102254.dmwl6qimdca3dbrv@holly.lan>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zCKi3GIZzVBPywwA"
-Content-Disposition: inline
-In-Reply-To: <20191003102254.dmwl6qimdca3dbrv@holly.lan>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 6 Oct 2019 07:09:08 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E8E11C04C1;
+        Sun,  6 Oct 2019 11:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1570360147; bh=HsZL/b2XjmKMURLvNgIusI3oggJImdu/rO/oTDqojMA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kgXlkXsJ9Y/zbnyCy2qhXDHMGe1cWiyj1MR6m9Z88cewH+JMinOoCVF5teP4IBrnJ
+         2W5TpM8QgD2gVJ6scmaGCA5gE2XPw3PDt6xAQL8BmzJ+HPrAfLxaAZmJIFw6THh+SI
+         3cTrzCpY4FE/coRplublUhMBGF98ZJJF2yUynQwlA+yIFRbfbM+NLD2QsMpq+IpQaX
+         Da5X8FYkqAMpaLGGt6ZLSeWq1znuE/TaqZ3Hx/1hRV0HCvYay+o7uXb8dNeVw/eCNH
+         CRIdGW5vRzZwd8ThjWu2AbGco8QKyCXOjtXDxDohEGX5NyRxta/1tlelIahuJEoHCa
+         um4Mq1bg8ZcYA==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 90F4AA005C;
+        Sun,  6 Oct 2019 11:09:03 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/3] net: stmmac: Fixes for -net
+Date:   Sun,  6 Oct 2019 13:08:54 +0200
+Message-Id: <cover.1570359800.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes for -net. More info in commit logs.
 
---zCKi3GIZzVBPywwA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
 
-Hi!
+Jose Abreu (3):
+  net: stmmac: selftests: Check if filtering is available before running
+  net: stmmac: gmac4+: Not all Unicast addresses may be available
+  net: stmmac: selftests: Fix L2 Hash Filter test
 
-> > >> I have been looking into adding Linux support for electronic privacy
-> > >> screens which is a feature on some new laptops which is built into t=
-he
-> > >> display and allows users to turn it on instead of needing to use a
-> > >> physical privacy filter. In discussions with my colleagues the idea =
-of
-> > >> using either /sys/class/backlight or /sys/class/leds but this new
-> > >> feature does not seem to quite fit into either of those classes.
-> > >
-> > > FWIW, it seems that you're not alone in this; 5.4 got some support for
-> > > such screens if I understand things correctly:
-> > >
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-commit/?id=3D110ea1d833ad
-> >=20
-> > Oh, I didn't realize it got merged already, I thought this was
-> > related...
-> >=20
-> > So we've already replicated the backlight sysfs interface problem for
-> > privacy screens. :(
->=20
-> I guess... although the Thinkpad code hasn't added any standard
-> interfaces (no other laptop should be placing controls for a privacy
-> screen in /proc/acpi/ibm/... ). Maybe its not too late.
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c      |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c | 11 +++++++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-There's new interface for controlling privacyguard... but perhaps we
-need better solution than what went in 5.4. Perhaps it should be
-reconsidered?
+-- 
+2.7.4
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zCKi3GIZzVBPywwA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl2ZylcACgkQMOfwapXb+vIvLwCgv8pM8435FkksDHNB1TjTxnow
-Zm8AoKrwhCDI1rdvOj6Y2H8UU21KaV9E
-=xgty
------END PGP SIGNATURE-----
-
---zCKi3GIZzVBPywwA--
