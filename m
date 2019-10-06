@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 676C5CD23F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 16:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A628BCD246
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 16:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfJFO2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 10:28:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55227 "EHLO
+        id S1726559AbfJFO36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 10:29:58 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55239 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbfJFO2Z (ORCPT
+        with ESMTP id S1726481AbfJFO36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 10:28:25 -0400
+        Sun, 6 Oct 2019 10:29:58 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1iH7WI-0002R8-5q; Sun, 06 Oct 2019 14:28:22 +0000
+        id 1iH7Xo-0002Vh-A0; Sun, 06 Oct 2019 14:29:56 +0000
 From:   Colin King <colin.king@canonical.com>
 To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ata: pata_artop: make arrays static const, makes object smaller
-Date:   Sun,  6 Oct 2019 15:28:21 +0100
-Message-Id: <20191006142821.23249-1-colin.king@canonical.com>
+Subject: [PATCH][V2] ata: pata_artop: make arrays static const, makes object smaller
+Date:   Sun,  6 Oct 2019 15:29:56 +0100
+Message-Id: <20191006142956.23360-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -35,8 +35,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the arrays on the stack but instead make them
-tatic const. Makes the object code smaller by 292 bytes.
+Don't populate the const arrays on the stack but instead make them
+static. Makes the object code smaller by 292 bytes.
 
 Before:
    text	   data	    bss	    dec	    hex	filename
@@ -49,6 +49,10 @@ After:
 (gcc version 9.2.1, amd64)
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: fix up commit message
+
 ---
  drivers/ata/pata_artop.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
