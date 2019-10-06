@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C413CD508
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E8FCD561
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:35:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbfJFRbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57964 "EHLO mail.kernel.org"
+        id S1728672AbfJFRfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:35:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729467AbfJFRbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:40 -0400
+        id S1730166AbfJFRfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:35:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F0A2087E;
-        Sun,  6 Oct 2019 17:31:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C03EA2080F;
+        Sun,  6 Oct 2019 17:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383100;
-        bh=JpYnaaRnpqG1IJ9LpF43Ky4t2CfiGETqsYi76zPHC88=;
+        s=default; t=1570383338;
+        bh=7yTV10pYVwJps/ArPOnO0ZAl1jLzy7XzX1J4ZuIe5xs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a7O6W5dSXPbSKfiMKeR3+zfkflS/yMdEay4OqQgANHpm3mXZALn+OaWLt8svpVNqq
-         Glv7nW/04fevPgKOFfu2ylanIcrGTNa6IySFX3ShXYrWZ08A74iMSWcLV4YUDzj1KF
-         GTx1T9iZyVTgbNooJNoEXPNwRKwNvLuMIX38yIz8=
+        b=DUQjs48oo+OQRAVt7Ymaoz7hNd/6NRo2ese+sqpqf5UCcg+9MSh//5JuLIETLbTY2
+         /J1ulxdcWjSL3v/fQaRpBElFGEDeq6xZDydhBR000QadEKueXqCyrhrK04EfjfAD6f
+         Xked3B6BgMK/BJ8ghegmN5/PismKZpPVDjtglR6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 043/106] mbox: qcom: add APCS child device for QCS404
-Date:   Sun,  6 Oct 2019 19:20:49 +0200
-Message-Id: <20191006171142.875607212@linuxfoundation.org>
+Subject: [PATCH 5.2 066/137] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+Date:   Sun,  6 Oct 2019 19:20:50 +0200
+Message-Id: <20191006171214.598362308@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,57 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 78c86458a440ff356073c21b568cb58ddb67b82b ]
+[ Upstream commit a459a184c978ca9ad538aab93aafdde873953f30 ]
 
-There is clock controller functionality in the APCS hardware block of
-qcs404 devices similar to msm8916.
+The CPG/MSTP Clock Domain driver does not implement the
+generic_pm_domain.power_{on,off}() callbacks, as the domain itself
+cannot be powered down.  Hence the domain should be marked as always-on
+by setting the GENPD_FLAG_ALWAYS_ON flag, to prevent the core PM Domain
+code from considering it for power-off, and doing unnessary processing.
 
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+This also gets rid of a boot warning when the Clock Domain contains an
+IRQ-safe device, e.g. on RZ/A1:
+
+    sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/clk-mstp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 333ed4a9d4b8f..5255dcb551a78 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -55,7 +55,6 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 92ece221b0d44..7f156cf1d7a64 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -338,7 +338,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
  
- static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
- 	struct qcom_apcs_ipc *apcs;
- 	struct regmap *regmap;
- 	struct resource *res;
-@@ -63,6 +62,11 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	unsigned long i;
- 	int ret;
-+	const struct of_device_id apcs_clk_match_table[] = {
-+		{ .compatible = "qcom,msm8916-apcs-kpss-global", },
-+		{ .compatible = "qcom,qcs404-apcs-apps-global", },
-+		{}
-+	};
- 
- 	apcs = devm_kzalloc(&pdev->dev, sizeof(*apcs), GFP_KERNEL);
- 	if (!apcs)
-@@ -97,7 +101,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
-+	if (of_match_device(apcs_clk_match_table, &pdev->dev)) {
- 		apcs->clk = platform_device_register_data(&pdev->dev,
- 							  "qcom-apcs-msm8916-clk",
- 							  -1, NULL, 0);
+ 	pd->name = np->name;
+-	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
++		    GENPD_FLAG_ACTIVE_WAKEUP;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
 2.20.1
 
