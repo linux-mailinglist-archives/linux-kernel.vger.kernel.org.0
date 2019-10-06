@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C958ACD4EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DC9CD4F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbfJFRap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:30:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56666 "EHLO mail.kernel.org"
+        id S1726863AbfJFRas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:30:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728207AbfJFRal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:30:41 -0400
+        id S1726901AbfJFRao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:30:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EF6D2173B;
-        Sun,  6 Oct 2019 17:30:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D858A2080F;
+        Sun,  6 Oct 2019 17:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383040;
-        bh=fmz5hC3yBNgy6dgTbMASSrGRRvVOVbS1qhdGVdbjLH0=;
+        s=default; t=1570383043;
+        bh=Rfxn0Jyw9+iChjaphz3c7XHtw/BM1cry81LxMvSeVTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ltzuFaATQuU8uMFgVy1ynuuQJAetMuhDkdyO8MZOIXgbLAz5iipNJ1AWyrGYPezRj
-         ySayWKqvzg0Z9stq3eKvBMO7u/aIR48NyLfM+4M5MzSCSyDmkIIfAsgT+SWhP65krG
-         nEYADSfL4BHJmvME32x7dzqHekSSoNpA3l4rzcVk=
+        b=QJvk9QCtBUzNYF3bRpNu5o1UeEISY3MIxbFaR3QrledK+ZtQB2ffBdzjQx8LKB0eh
+         wg++8nl/Qyh8UuGysSxObSw7WcQOjuFTznxOUOYo/dbQvHj6KdjC1+u/7+dnHVX4XW
+         Ss7+YayGQcdoOgQGvj/eAZnSBdQ2bwri6qnzysMc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 064/106] PCI: exynos: Propagate errors for optional PHYs
-Date:   Sun,  6 Oct 2019 19:21:10 +0200
-Message-Id: <20191006171150.757811783@linuxfoundation.org>
+Subject: [PATCH 4.19 065/106] security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
+Date:   Sun,  6 Oct 2019 19:21:11 +0200
+Message-Id: <20191006171150.857654535@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
 References: <20191006171124.641144086@linuxfoundation.org>
@@ -48,46 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit ddd6960087d4b45759434146d681a94bbb1c54ad ]
+[ Upstream commit 3f4287e7d98a2954f20bf96c567fdffcd2b63eb9 ]
 
-devm_of_phy_get() can fail for a number of reasons besides probe
-deferral. It can for example return -ENOMEM if it runs out of memory as
-it tries to allocate devres structures. Propagating only -EPROBE_DEFER
-is problematic because it results in these legitimately fatal errors
-being treated as "PHY not specified in DT".
+In smack_socket_sock_rcv_skb(), there is an if statement
+on line 3920 to check whether skb is NULL:
+    if (skb && skb->secmark != 0)
 
-What we really want is to ignore the optional PHYs only if they have not
-been specified in DT. devm_of_phy_get() returns -ENODEV in this case, so
-that's the special case that we need to handle. So we propagate all
-errors, except -ENODEV, so that real failures will still cause the
-driver to fail probe.
+This check indicates skb can be NULL in some cases.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+But on lines 3931 and 3932, skb is used:
+    ad.a.u.net->netif = skb->skb_iif;
+    ipv6_skb_to_auditdata(skb, &ad.a, NULL);
+
+Thus, possible null-pointer dereferences may occur when skb is NULL.
+
+To fix these possible bugs, an if statement is added to check skb.
+
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pci-exynos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/smack/smack_lsm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index cee5f2f590e2d..14a6ba4067fbe 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -465,7 +465,7 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
- 
- 	ep->phy = devm_of_phy_get(dev, np, NULL);
- 	if (IS_ERR(ep->phy)) {
--		if (PTR_ERR(ep->phy) == -EPROBE_DEFER)
-+		if (PTR_ERR(ep->phy) != -ENODEV)
- 			return PTR_ERR(ep->phy);
- 
- 		ep->phy = NULL;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 017c47eb795eb..120bd56e5d89e 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4005,6 +4005,8 @@ access_check:
+ 			skp = smack_ipv6host_label(&sadd);
+ 		if (skp == NULL)
+ 			skp = smack_net_ambient;
++		if (skb == NULL)
++			break;
+ #ifdef CONFIG_AUDIT
+ 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+ 		ad.a.u.net->family = family;
 -- 
 2.20.1
 
