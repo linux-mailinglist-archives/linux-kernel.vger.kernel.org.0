@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC45CD815
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF618CD7A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfJFR6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:58:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58692 "EHLO mail.kernel.org"
+        id S1729600AbfJFRcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:32:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728349AbfJFRcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:32:15 -0400
+        id S1729587AbfJFRcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:32:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0B5F2133F;
-        Sun,  6 Oct 2019 17:32:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A0F52080F;
+        Sun,  6 Oct 2019 17:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383135;
-        bh=eGhmsYZKuBW2PvWz3EQXgbbJszC6F+ic1oPctoDG0lk=;
+        s=default; t=1570383151;
+        bh=Ffas5AgijVqWvr/TSM4XOh15N+KI9nuJSQvvBxjlz8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FdKQbzENdUBzhXn1tkxQfHxz+suYHRoaPmYyCVM8cgTmlQOY3LyPgER1o21+Gf6To
-         hqocmdmBZwKycgpZWRDIERxlYI3ndKM5IOnUXMzDAWWTvjlxDGwPRKnyPmRktltJG+
-         iHD52sh0y+MRHx0vAfAurGIi4q2KFHRN1JsrUNeA=
+        b=IiwILHY42ZTXfaumbrB+lrP7yv4Ga0fiZSMXAydkU1rC2vMpXvLWavdx5o2t1ler8
+         8jV7eYkcJ2okmJ8jiV0jw0WL91GwKs7wN4R3ABT0KXCGV6VUKTsn3NxLcHJ+Znl8kJ
+         KlaE+CA3vtNtezK2aNRgvyJRyqoSWDiSnKIs0nvc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/106] soundwire: Kconfig: fix help format
-Date:   Sun,  6 Oct 2019 19:21:46 +0200
-Message-Id: <20191006171202.852850922@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 105/106] kexec: bail out upon SIGKILL when allocating memory.
+Date:   Sun,  6 Oct 2019 19:21:51 +0200
+Message-Id: <20191006171204.889444159@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
 References: <20191006171124.641144086@linuxfoundation.org>
@@ -44,35 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit 9d7cd9d500826a14fc68fb6994db375432866c6a ]
+commit 7c3a6aedcd6aae0a32a527e68669f7dd667492d1 upstream.
 
-Move to the regular help format, --help-- is no longer recommended.
+syzbot found that a thread can stall for minutes inside kexec_load() after
+that thread was killed by SIGKILL [1].  It turned out that the reproducer
+was trying to allocate 2408MB of memory using kimage_alloc_page() from
+kimage_load_normal_segment().  Let's check for SIGKILL before doing memory
+allocation.
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
+
+Link: http://lkml.kernel.org/r/993c9185-d324-2640-d061-bed2dd18b1f7@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/soundwire/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/kexec_core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soundwire/Kconfig b/drivers/soundwire/Kconfig
-index 19c8efb9a5ee7..84876a74874fb 100644
---- a/drivers/soundwire/Kconfig
-+++ b/drivers/soundwire/Kconfig
-@@ -4,7 +4,7 @@
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -301,6 +301,8 @@ static struct page *kimage_alloc_pages(g
+ {
+ 	struct page *pages;
  
- menuconfig SOUNDWIRE
- 	bool "SoundWire support"
--	---help---
-+	help
- 	  SoundWire is a 2-Pin interface with data and clock line ratified
- 	  by the MIPI Alliance. SoundWire is used for transporting data
- 	  typically related to audio functions. SoundWire interface is
--- 
-2.20.1
-
++	if (fatal_signal_pending(current))
++		return NULL;
+ 	pages = alloc_pages(gfp_mask & ~__GFP_ZERO, order);
+ 	if (pages) {
+ 		unsigned int count, i;
 
 
