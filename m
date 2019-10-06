@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEE5ECD55C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A73F9CD507
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbfJFRfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:35:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34122 "EHLO mail.kernel.org"
+        id S1729475AbfJFRbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730139AbfJFRf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:35:27 -0400
+        id S1729460AbfJFRbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 034FC2080F;
-        Sun,  6 Oct 2019 17:35:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E77BB214D9;
+        Sun,  6 Oct 2019 17:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383327;
-        bh=GMQqub5xp0/4XAi4fDZg0COcqBv/GhT/CjZ1rK/+jCo=;
+        s=default; t=1570383097;
+        bh=XjRzfQOC8cj7/J/AH0SqkxazC1NYpjmNDLJsQklIF1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wJ3gAGAgWdZI3via41frmM/MVxcBcF/eIBPUy7S/FrKVCa8/bLlq/ZD8djwWio7xS
-         mh2w3nlP3t2XKQ5IWFQz4B0otjjLSEEXm2RQ1leETSnuukBNBHMLeMJeWVdkIpZQPO
-         Otk8yw3ftsmM4QoWYdC9JttxQahkSW9YnlQH9ao4=
+        b=NuXSllGWiif9jaK1x/OP2CcRW1iOq8VlAoWDXzc4J/VPrL+L4jB/7ncYH9RopSpw3
+         zE79Daxe1BRmLW57utSZeHpk8kFYBJ0DH/rJKoBafuYgRlqIox06UCbv5RapE5ep2z
+         b0TQRXmrTZAeXphhQs0AEgBGZ0EUnS35yxLifiuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ganesh Goudar <ganeshgr@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 063/137] drm/nouveau/kms/tu102-: disable input lut when input is already FP16
-Date:   Sun,  6 Oct 2019 19:20:47 +0200
-Message-Id: <20191006171213.981899559@linuxfoundation.org>
+Subject: [PATCH 4.19 042/106] powerpc: dump kernel log before carrying out fadump or kdump
+Date:   Sun,  6 Oct 2019 19:20:48 +0200
+Message-Id: <20191006171142.256051357@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Ganesh Goudar <ganeshgr@linux.ibm.com>
 
-[ Upstream commit 1e339ab2ac3c769c1b06b9fb7d532f8495ebc56d ]
+[ Upstream commit e7ca44ed3ba77fc26cf32650bb71584896662474 ]
 
-On Turing, an input LUT is required to transform inputs in fixed-point
-formats to FP16 for the internal display pipe.  We provide an identity
-mapping whenever a window is enabled for this reason.
+Since commit 4388c9b3a6ee ("powerpc: Do not send system reset request
+through the oops path"), pstore dmesg file is not updated when dump is
+triggered from HMC. This commit modified system reset (sreset) handler
+to invoke fadump or kdump (if configured), without pushing dmesg to
+pstore. This leaves pstore to have old dmesg data which won't be much
+of a help if kdump fails to capture the dump. This patch fixes that by
+calling kmsg_dump() before heading to fadump ot kdump.
 
-HW has error checks to ensure when the input is already FP16, that the
-input LUT is also disabled.
-
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes: 4388c9b3a6ee ("powerpc: Do not send system reset request through the oops path")
+Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190904075949.15607-1-ganeshgr@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/dispnv50/wndw.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/traps.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndw.c b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-index 283ff690350ea..50303ec194bbc 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
-@@ -320,7 +320,9 @@ nv50_wndw_atomic_check_lut(struct nv50_wndw *wndw,
- 		asyh->wndw.olut &= ~BIT(wndw->id);
- 	}
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 02fe6d0201741..d5f351f02c153 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -399,6 +399,7 @@ void system_reset_exception(struct pt_regs *regs)
+ 	if (debugger(regs))
+ 		goto out;
  
--	if (!ilut && wndw->func->ilut_identity) {
-+	if (!ilut && wndw->func->ilut_identity &&
-+	    asyw->state.fb->format->format != DRM_FORMAT_XBGR16161616F &&
-+	    asyw->state.fb->format->format != DRM_FORMAT_ABGR16161616F) {
- 		static struct drm_property_blob dummy = {};
- 		ilut = &dummy;
- 	}
++	kmsg_dump(KMSG_DUMP_OOPS);
+ 	/*
+ 	 * A system reset is a request to dump, so we always send
+ 	 * it through the crashdump code (if fadump or kdump are
 -- 
 2.20.1
 
