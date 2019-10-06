@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4FCCD6EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 867BBCD716
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbfJFRvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:51:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48972 "EHLO mail.kernel.org"
+        id S1728278AbfJFRvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:51:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727321AbfJFRuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:50:54 -0400
+        id S1728506AbfJFRu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:50:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ECA02087E;
-        Sun,  6 Oct 2019 17:45:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3DBE21479;
+        Sun,  6 Oct 2019 17:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383919;
-        bh=qbJambDLBU2iCC1IS1jCXXoXh7F8TMycRq4h3giH+D8=;
+        s=default; t=1570383922;
+        bh=/MaTq+pll+q1PEJdVMBNeWdM6vcaLTRr/4d4y9623qE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jgXzoPUKmb3HK6NcHyUiM9e4xQKZriUFIrflYM+TJrXHZB3MUuHiotCFqCOLrmiFL
-         sTIxfYWm/WxWSSWgqtQnXs2suSK8RDbycbYSkHx+8uhOA0ObPaNpYOc+502kBRsuV4
-         GXM6eFMLE/DaafD1+0bqrwzkf+cQXlNIZwjPy0UU=
+        b=xSVrVXGOO5mbcMaS0YRRsmut6C/iwzt4zMYFXiCzgA1q34t2upmT2Uk9u4QUsULcJ
+         IbQKmTPqS4eG/eCI6kAtaT2EEw2dWDwz6CcpoJ4l6tdpMKXk2YxGXbzwYP6799zsX6
+         7XT7VHR73xV+2B3lZMMqWrnd1ZMbIzxA8DURHqL4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Marek Majkowski <marek@cloudflare.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 145/166] net: dsa: rtl8366: Check VLAN ID and not ports
-Date:   Sun,  6 Oct 2019 19:21:51 +0200
-Message-Id: <20191006171225.179123080@linuxfoundation.org>
+Subject: [PATCH 5.3 146/166] tcp: adjust rto_base in retransmits_timed_out()
+Date:   Sun,  6 Oct 2019 19:21:52 +0200
+Message-Id: <20191006171225.244217732@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -43,58 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit e8521e53cca584ddf8ec4584d3c550a6c65f88c4 ]
+[ Upstream commit 3256a2d6ab1f71f9a1bd2d7f6f18eb8108c48d17 ]
 
-There has been some confusion between the port number and
-the VLAN ID in this driver. What we need to check for
-validity is the VLAN ID, nothing else.
+The cited commit exposed an old retransmits_timed_out() bug
+which assumed it could call tcp_model_timeout() with
+TCP_RTO_MIN as rto_base for all states.
 
-The current confusion came from assigning a few default
-VLANs for default routing and we need to rewrite that
-properly.
+But flows in SYN_SENT or SYN_RECV state uses a different
+RTO base (1 sec instead of 200 ms, unless BPF choses
+another value)
 
-Instead of checking if the port number is a valid VLAN
-ID, check the actual VLAN IDs passed in to the callback
-one by one as expected.
+This caused a reduction of SYN retransmits from 6 to 4 with
+the default /proc/sys/net/ipv4/tcp_syn_retries value.
 
-Fixes: d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: a41e8a88b06e ("tcp: better handle TCP_USER_TIMEOUT in SYN_SENT state")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Marek Majkowski <marek@cloudflare.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/rtl8366.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ net/ipv4/tcp_timer.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/dsa/rtl8366.c
-+++ b/drivers/net/dsa/rtl8366.c
-@@ -339,10 +339,12 @@ int rtl8366_vlan_prepare(struct dsa_swit
- 			 const struct switchdev_obj_port_vlan *vlan)
- {
- 	struct realtek_smi *smi = ds->priv;
-+	u16 vid;
- 	int ret;
+--- a/net/ipv4/tcp_timer.c
++++ b/net/ipv4/tcp_timer.c
+@@ -198,8 +198,13 @@ static bool retransmits_timed_out(struct
+ 		return false;
  
--	if (!smi->ops->is_vlan_valid(smi, port))
--		return -EINVAL;
-+	for (vid = vlan->vid_begin; vid < vlan->vid_end; vid++)
-+		if (!smi->ops->is_vlan_valid(smi, vid))
-+			return -EINVAL;
+ 	start_ts = tcp_sk(sk)->retrans_stamp;
+-	if (likely(timeout == 0))
+-		timeout = tcp_model_timeout(sk, boundary, TCP_RTO_MIN);
++	if (likely(timeout == 0)) {
++		unsigned int rto_base = TCP_RTO_MIN;
++
++		if ((1 << sk->sk_state) & (TCPF_SYN_SENT | TCPF_SYN_RECV))
++			rto_base = tcp_timeout_init(sk);
++		timeout = tcp_model_timeout(sk, boundary, rto_base);
++	}
  
- 	dev_info(smi->dev, "prepare VLANs %04x..%04x\n",
- 		 vlan->vid_begin, vlan->vid_end);
-@@ -370,8 +372,9 @@ void rtl8366_vlan_add(struct dsa_switch
- 	u16 vid;
- 	int ret;
- 
--	if (!smi->ops->is_vlan_valid(smi, port))
--		return;
-+	for (vid = vlan->vid_begin; vid < vlan->vid_end; vid++)
-+		if (!smi->ops->is_vlan_valid(smi, vid))
-+			return;
- 
- 	dev_info(smi->dev, "add VLAN on port %d, %s, %s\n",
- 		 port,
+ 	return (s32)(tcp_time_stamp(tcp_sk(sk)) - start_ts - timeout) >= 0;
+ }
 
 
