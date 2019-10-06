@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E9ECD401
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6187ECD40E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfJFRVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:21:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46342 "EHLO mail.kernel.org"
+        id S1726837AbfJFRTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:19:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727452AbfJFRVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:21:11 -0400
+        id S1726508AbfJFRTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:19:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B132B2080F;
-        Sun,  6 Oct 2019 17:21:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BD0620862;
+        Sun,  6 Oct 2019 17:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382471;
-        bh=P5yrhEzdFdo0qVfMiA38Ip22G1j0H8ar9SlOTwIHjD0=;
+        s=default; t=1570382374;
+        bh=iPEH/I3u7cWV6fjDgTXUXyANlZ47x/PQT5QxbCG2sac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p/qf7WzTTiPNUuT2u067SgZwfDQDUWIcbQE6Pb0UmWhXYr5etAovgxvsHBfIA8d6F
-         itQJPD6uXQ3Hpz36962WXvyjDdK00keSDpAsjceXtuFbAwS4ItiA7hcmA60fF+KU/2
-         6cI6dSWSTx8BSZm90T663cUtM85Cu8XmA5umxHC4=
+        b=As/Lt9sBB1B401TM6ucP0a/7WuNcCTVzAsnVU0/+YOrMSIOZotaWXRbhOf5bTZyMN
+         AniwyHfYmnOe2DWbGUFvkuagDc/kdPdTJcTqZd3TLfxxsFMJtp5s87uepa3jPhGfDG
+         9UeoR5ZIxwp+IHIAjUIATY0pamCvZqTMXNfwHtCY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 09/36] pinctrl: tegra: Fix write barrier placement in pmx_writel
-Date:   Sun,  6 Oct 2019 19:18:51 +0200
-Message-Id: <20191006171046.423753793@linuxfoundation.org>
+Subject: [PATCH 4.4 12/36] powerpc/64s/exception: machine check use correct cfar for late handler
+Date:   Sun,  6 Oct 2019 19:18:54 +0200
+Message-Id: <20191006171049.180392314@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171038.266461022@linuxfoundation.org>
 References: <20191006171038.266461022@linuxfoundation.org>
@@ -46,42 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit c2cf351eba2ff6002ce8eb178452219d2521e38e ]
+[ Upstream commit 0b66370c61fcf5fcc1d6901013e110284da6e2bb ]
 
-pmx_writel uses writel which inserts write barrier before the
-register write.
+Bare metal machine checks run an "early" handler in real mode before
+running the main handler which reports the event.
 
-This patch has fix to replace writel with writel_relaxed followed
-by a readback and memory barrier to ensure write operation is
-completed for successful pinctrl change.
+The main handler runs exactly as a normal interrupt handler, after the
+"windup" which sets registers back as they were at interrupt entry.
+CFAR does not get restored by the windup code, so that will be wrong
+when the handler is run.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Link: https://lore.kernel.org/r/1565984527-5272-2-git-send-email-skomatineni@nvidia.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Restore the CFAR to the saved value before running the late handler.
+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190802105709.27696-8-npiggin@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/exceptions-64s.S | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index 0fd7fd2b0f72c..a30e967d75c2a 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -52,7 +52,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+diff --git a/arch/powerpc/kernel/exceptions-64s.S b/arch/powerpc/kernel/exceptions-64s.S
+index a44f1755dc4bf..536718ed033fc 100644
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -1465,6 +1465,10 @@ machine_check_handle_early:
+ 	RFI_TO_USER_OR_KERNEL
+ 9:
+ 	/* Deliver the machine check to host kernel in V mode. */
++BEGIN_FTR_SECTION
++	ld	r10,ORIG_GPR3(r1)
++	mtspr	SPRN_CFAR,r10
++END_FTR_SECTION_IFSET(CPU_FTR_CFAR)
+ 	MACHINE_CHECK_HANDLER_WINDUP
+ 	b	machine_check_pSeries
  
- static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
- {
--	writel(val, pmx->regs[bank] + reg);
-+	writel_relaxed(val, pmx->regs[bank] + reg);
-+	/* make sure pinmux register write completed */
-+	pmx_readl(pmx, bank, reg);
- }
- 
- static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
 -- 
 2.20.1
 
