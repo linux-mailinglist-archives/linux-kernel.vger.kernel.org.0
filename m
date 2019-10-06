@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 394C5CD5B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD512CD4F7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730658AbfJFRim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:38:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37920 "EHLO mail.kernel.org"
+        id S1729354AbfJFRbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730643AbfJFRih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:38:37 -0400
+        id S1729333AbfJFRbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B277B2087E;
-        Sun,  6 Oct 2019 17:38:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 283A52080F;
+        Sun,  6 Oct 2019 17:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383516;
-        bh=9RTI3BxKAQ8c6bSqWTjG3ttwscWdlooxdIEWTE/1ib4=;
+        s=default; t=1570383059;
+        bh=d5x6H7X8RM/sSGV+fpNeGD/8PnIzqMfJl2docqT8a5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IIxHuEHsaN5HOvw/8BoAF1YC5JnxgQaZv/DQTADRex9Z/ztE7LVY6+/i3bELKFuF/
-         7zzPh3NMzHokUTAMkkhnMyvWWit/mWqpEYEwdEv/w9quGiE7FMGGsr8yDzeImPzynH
-         xmNGcl+68BcmSYZiSA6Z8+7pcq+g1fbrjcGhdgk0=
+        b=07G0A0PfQ+o+2jE8AT11dzYsNR6EMf/WcffFkfFfvIpF5duO2pRSXTn2vjIRg9OOo
+         WaM4g89itjkanJCl9RazgPlitWS2fX6Ky4Rv79TwEnPtQxsXkP9dAkXGfTPIeArgbl
+         +h4EB36JvTrp2e2MIL8bIhpG1YzMboHWR5XzhcJg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhou Yanjie <zhouyanjie@zoho.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        ralf@linux-mips.org, paul@crapouillou.net, jhogan@kernel.org,
-        malat@debian.org, tglx@linutronix.de, allison@lohutok.net,
-        syq@debian.org, chenhc@lemote.com, jiaxun.yang@flygoat.com,
+        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 090/137] MIPS: Ingenic: Disable broken BTB lookup optimization.
-Date:   Sun,  6 Oct 2019 19:21:14 +0200
-Message-Id: <20191006171216.329875861@linuxfoundation.org>
+Subject: [PATCH 4.19 070/106] crypto: hisilicon - Fix double free in sec_free_hw_sgl()
+Date:   Sun,  6 Oct 2019 19:21:16 +0200
+Message-Id: <20191006171152.609263690@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,76 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhou Yanjie <zhouyanjie@zoho.com>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-[ Upstream commit 053951dda71ecb4b554a2cdbe26f5f6f9bee9dd2 ]
+[ Upstream commit 24fbf7bad888767bed952f540ac963bc57e47e15 ]
 
-In order to further reduce power consumption, the XBurst core
-by default attempts to avoid branch target buffer lookups by
-detecting & special casing loops. This feature will cause
-BogoMIPS and lpj calculate in error. Set cp0 config7 bit 4 to
-disable this feature.
+There are two problems in sec_free_hw_sgl():
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: ralf@linux-mips.org
-Cc: paul@crapouillou.net
-Cc: jhogan@kernel.org
-Cc: malat@debian.org
-Cc: gregkh@linuxfoundation.org
-Cc: tglx@linutronix.de
-Cc: allison@lohutok.net
-Cc: syq@debian.org
-Cc: chenhc@lemote.com
-Cc: jiaxun.yang@flygoat.com
+First, when sgl_current->next is valid, @hw_sgl will be freed in the
+first loop, but it free again after the loop.
+
+Second, sgl_current and sgl_current->next_sgl is not match when
+dma_pool_free() is invoked, the third parameter should be the dma
+address of sgl_current, but sgl_current->next_sgl is the dma address
+of next chain, so use sgl_current->next_sgl is wrong.
+
+Fix this by deleting the last dma_pool_free() in sec_free_hw_sgl(),
+modifying the condition for while loop, and matching the address for
+dma_pool_free().
+
+Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/asm/mipsregs.h | 4 ++++
- arch/mips/kernel/cpu-probe.c     | 7 +++++++
- 2 files changed, 11 insertions(+)
+ drivers/crypto/hisilicon/sec/sec_algs.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
-index 1e6966e8527e9..bdbdc19a2b8f8 100644
---- a/arch/mips/include/asm/mipsregs.h
-+++ b/arch/mips/include/asm/mipsregs.h
-@@ -689,6 +689,9 @@
- #define MIPS_CONF7_IAR		(_ULCAST_(1) << 10)
- #define MIPS_CONF7_AR		(_ULCAST_(1) << 16)
+diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
+index cdc4f9a171d98..db2983c51f1e6 100644
+--- a/drivers/crypto/hisilicon/sec/sec_algs.c
++++ b/drivers/crypto/hisilicon/sec/sec_algs.c
+@@ -215,17 +215,18 @@ static void sec_free_hw_sgl(struct sec_hw_sgl *hw_sgl,
+ 			    dma_addr_t psec_sgl, struct sec_dev_info *info)
+ {
+ 	struct sec_hw_sgl *sgl_current, *sgl_next;
++	dma_addr_t sgl_next_dma;
  
-+/* Ingenic Config7 bits */
-+#define MIPS_CONF7_BTB_LOOP_EN	(_ULCAST_(1) << 4)
+-	if (!hw_sgl)
+-		return;
+ 	sgl_current = hw_sgl;
+-	while (sgl_current->next) {
++	while (sgl_current) {
+ 		sgl_next = sgl_current->next;
+-		dma_pool_free(info->hw_sgl_pool, sgl_current,
+-			      sgl_current->next_sgl);
++		sgl_next_dma = sgl_current->next_sgl;
 +
- /* Config7 Bits specific to MIPS Technologies. */
++		dma_pool_free(info->hw_sgl_pool, sgl_current, psec_sgl);
++
+ 		sgl_current = sgl_next;
++		psec_sgl = sgl_next_dma;
+ 	}
+-	dma_pool_free(info->hw_sgl_pool, hw_sgl, psec_sgl);
+ }
  
- /* Performance counters implemented Per TC */
-@@ -2813,6 +2816,7 @@ __BUILD_SET_C0(status)
- __BUILD_SET_C0(cause)
- __BUILD_SET_C0(config)
- __BUILD_SET_C0(config5)
-+__BUILD_SET_C0(config7)
- __BUILD_SET_C0(intcontrol)
- __BUILD_SET_C0(intctl)
- __BUILD_SET_C0(srsmap)
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index 9635c1db3ae6a..e654ffc1c8a0d 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1964,6 +1964,13 @@ static inline void cpu_probe_ingenic(struct cpuinfo_mips *c, unsigned int cpu)
- 		c->cputype = CPU_JZRISC;
- 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
- 		__cpu_name[cpu] = "Ingenic JZRISC";
-+		/*
-+		 * The XBurst core by default attempts to avoid branch target
-+		 * buffer lookups by detecting & special casing loops. This
-+		 * feature will cause BogoMIPS and lpj calculate in error.
-+		 * Set cp0 config7 bit 4 to disable this feature.
-+		 */
-+		set_c0_config7(MIPS_CONF7_BTB_LOOP_EN);
- 		break;
- 	default:
- 		panic("Unknown Ingenic Processor ID!");
+ static int sec_alg_skcipher_setkey(struct crypto_skcipher *tfm,
 -- 
 2.20.1
 
