@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6998CD7CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A6FCD770
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfJFRfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:35:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33346 "EHLO mail.kernel.org"
+        id S1727784AbfJFR3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729999AbfJFReq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:34:46 -0400
+        id S1728891AbfJFR26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:28:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C09062087E;
-        Sun,  6 Oct 2019 17:34:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96F142133F;
+        Sun,  6 Oct 2019 17:28:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383284;
-        bh=ewPDMBW4KoVWSQcUUnJMoFvsaA8/6M8dkh5FnhvZZDY=;
+        s=default; t=1570382938;
+        bh=idS9ft4PoldZTWTcbysRgHOMFEngjStNMRW5fk1OU7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zg4hjgtveStNi7TTxxcYt0GAlB1+Zg2eO0aR5jgbXrBljXxq8hbfizwITiRloe8nj
-         hCko58s1jYYojnJz+/0drTAJn6XkY5RRH8Awh8Tt7BlOa5RpKKJthVEgRyseIrS7L5
-         /uezCR/pin/zlP71qO/dNu+3sNt7FxWLsF2HLafg=
+        b=AOV68vEKcLTD1B9pCw8xQBlpnMhaHUg+lSXi25bJBXH1fHmudYkjynmc3m2O3EjT2
+         jfQ3O7np+FqYwJmEGliiH9YS0E3wKtOoup6s/eW0E5FCNszresX4X3aVVfark5JHEW
+         MmNKnX8pjxl1DbJZsusX8l0duDo6sDWJIdtGW79E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Alistair Popple <alistair@popple.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 048/137] powerpc/powernv/ioda2: Allocate TCE table levels on demand for default DMA window
+Subject: [PATCH 4.19 026/106] pinctrl: tegra: Fix write barrier placement in pmx_writel
 Date:   Sun,  6 Oct 2019 19:20:32 +0200
-Message-Id: <20191006171212.845557274@linuxfoundation.org>
+Message-Id: <20191006171137.992118437@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,259 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-[ Upstream commit c37c792dec0929dbb6360a609fb00fa20bb16fc2 ]
+[ Upstream commit c2cf351eba2ff6002ce8eb178452219d2521e38e ]
 
-We allocate only the first level of multilevel TCE tables for KVM
-already (alloc_userspace_copy==true), and the rest is allocated on demand.
-This is not enabled though for bare metal.
+pmx_writel uses writel which inserts write barrier before the
+register write.
 
-This removes the KVM limitation (implicit, via the alloc_userspace_copy
-parameter) and always allocates just the first level. The on-demand
-allocation of missing levels is already implemented.
+This patch has fix to replace writel with writel_relaxed followed
+by a readback and memory barrier to ensure write operation is
+completed for successful pinctrl change.
 
-As from now on DMA map might happen with disabled interrupts, this
-allocates TCEs with GFP_ATOMIC; otherwise lockdep reports errors 1].
-In practice just a single page is allocated there so chances for failure
-are quite low.
-
-To save time when creating a new clean table, this skips non-allocated
-indirect TCE entries in pnv_tce_free just like we already do in
-the VFIO IOMMU TCE driver.
-
-This changes the default level number from 1 to 2 to reduce the amount
-of memory required for the default 32bit DMA window at the boot time.
-The default window size is up to 2GB which requires 4MB of TCEs which is
-unlikely to be used entirely or at all as most devices these days are
-64bit capable so by switching to 2 levels by default we save 4032KB of
-RAM per a device.
-
-While at this, add __GFP_NOWARN to alloc_pages_node() as the userspace
-can trigger this path via VFIO, see the failure and try creating a table
-again with different parameters which might succeed.
-
-[1]:
-===
-BUG: sleeping function called from invalid context at mm/page_alloc.c:4596
-in_atomic(): 1, irqs_disabled(): 1, pid: 1038, name: scsi_eh_1
-2 locks held by scsi_eh_1/1038:
- #0: 000000005efd659a (&host->eh_mutex){+.+.}, at: ata_eh_acquire+0x34/0x80
- #1: 0000000006cf56a6 (&(&host->lock)->rlock){....}, at: ata_exec_internal_sg+0xb0/0x5c0
-irq event stamp: 500
-hardirqs last  enabled at (499): [<c000000000cb8a74>] _raw_spin_unlock_irqrestore+0x94/0xd0
-hardirqs last disabled at (500): [<c000000000cb85c4>] _raw_spin_lock_irqsave+0x44/0x120
-softirqs last  enabled at (0): [<c000000000101120>] copy_process.isra.4.part.5+0x640/0x1a80
-softirqs last disabled at (0): [<0000000000000000>] 0x0
-CPU: 73 PID: 1038 Comm: scsi_eh_1 Not tainted 5.2.0-rc6-le_nv2_aikATfstn1-p1 #634
-Call Trace:
-[c000003d064cef50] [c000000000c8e6c4] dump_stack+0xe8/0x164 (unreliable)
-[c000003d064cefa0] [c00000000014ed78] ___might_sleep+0x2f8/0x310
-[c000003d064cf020] [c0000000003ca084] __alloc_pages_nodemask+0x2a4/0x1560
-[c000003d064cf220] [c0000000000c2530] pnv_alloc_tce_level.isra.0+0x90/0x130
-[c000003d064cf290] [c0000000000c2888] pnv_tce+0x128/0x3b0
-[c000003d064cf360] [c0000000000c2c00] pnv_tce_build+0xb0/0xf0
-[c000003d064cf3c0] [c0000000000bbd9c] pnv_ioda2_tce_build+0x3c/0xb0
-[c000003d064cf400] [c00000000004cfe0] ppc_iommu_map_sg+0x210/0x550
-[c000003d064cf510] [c00000000004b7a4] dma_iommu_map_sg+0x74/0xb0
-[c000003d064cf530] [c000000000863944] ata_qc_issue+0x134/0x470
-[c000003d064cf5b0] [c000000000863ec4] ata_exec_internal_sg+0x244/0x5c0
-[c000003d064cf700] [c0000000008642d0] ata_exec_internal+0x90/0xe0
-[c000003d064cf780] [c0000000008650ac] ata_dev_read_id+0x2ec/0x640
-[c000003d064cf8d0] [c000000000878e28] ata_eh_recover+0x948/0x16d0
-[c000003d064cfa10] [c00000000087d760] sata_pmp_error_handler+0x480/0xbf0
-[c000003d064cfbc0] [c000000000884624] ahci_error_handler+0x74/0xe0
-[c000003d064cfbf0] [c000000000879fa8] ata_scsi_port_error_handler+0x2d8/0x7c0
-[c000003d064cfca0] [c00000000087a544] ata_scsi_error+0xb4/0x100
-[c000003d064cfd00] [c000000000802450] scsi_error_handler+0x120/0x510
-[c000003d064cfdb0] [c000000000140c48] kthread+0x1b8/0x1c0
-[c000003d064cfe20] [c00000000000bd8c] ret_from_kernel_thread+0x5c/0x70
-ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-irq event stamp: 2305
-
-========================================================
-hardirqs last  enabled at (2305): [<c00000000000e4c8>] fast_exc_return_irq+0x28/0x34
-hardirqs last disabled at (2303): [<c000000000cb9fd0>] __do_softirq+0x4a0/0x654
-WARNING: possible irq lock inversion dependency detected
-5.2.0-rc6-le_nv2_aikATfstn1-p1 #634 Tainted: G        W
-softirqs last  enabled at (2304): [<c000000000cba054>] __do_softirq+0x524/0x654
-softirqs last disabled at (2297): [<c00000000010f278>] irq_exit+0x128/0x180
---------------------------------------------------------
-swapper/0/0 just changed the state of lock:
-0000000006cf56a6 (&(&host->lock)->rlock){-...}, at: ahci_single_level_irq_intr+0xac/0x120
-but this lock took another, HARDIRQ-unsafe lock in the past:
- (fs_reclaim){+.+.}
-
-and interrupts could create inverse lock ordering between them.
-
-other info that might help us debug this:
- Possible interrupt unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               local_irq_disable();
-                               lock(&(&host->lock)->rlock);
-                               lock(fs_reclaim);
-  <Interrupt>
-    lock(&(&host->lock)->rlock);
-
- *** DEADLOCK ***
-
-no locks held by swapper/0/0.
-
-the shortest dependencies between 2nd lock and 1st lock:
- -> (fs_reclaim){+.+.} ops: 167579 {
-    HARDIRQ-ON-W at:
-                      lock_acquire+0xf8/0x2a0
-                      fs_reclaim_acquire.part.23+0x44/0x60
-                      kmem_cache_alloc_node_trace+0x80/0x590
-                      alloc_desc+0x64/0x270
-                      __irq_alloc_descs+0x2e4/0x3a0
-                      irq_domain_alloc_descs+0xb0/0x150
-                      irq_create_mapping+0x168/0x2c0
-                      xics_smp_probe+0x2c/0x98
-                      pnv_smp_probe+0x40/0x9c
-                      smp_prepare_cpus+0x524/0x6c4
-                      kernel_init_freeable+0x1b4/0x650
-                      kernel_init+0x2c/0x148
-                      ret_from_kernel_thread+0x5c/0x70
-    SOFTIRQ-ON-W at:
-                      lock_acquire+0xf8/0x2a0
-                      fs_reclaim_acquire.part.23+0x44/0x60
-                      kmem_cache_alloc_node_trace+0x80/0x590
-                      alloc_desc+0x64/0x270
-                      __irq_alloc_descs+0x2e4/0x3a0
-                      irq_domain_alloc_descs+0xb0/0x150
-                      irq_create_mapping+0x168/0x2c0
-                      xics_smp_probe+0x2c/0x98
-                      pnv_smp_probe+0x40/0x9c
-                      smp_prepare_cpus+0x524/0x6c4
-                      kernel_init_freeable+0x1b4/0x650
-                      kernel_init+0x2c/0x148
-                      ret_from_kernel_thread+0x5c/0x70
-    INITIAL USE at:
-                     lock_acquire+0xf8/0x2a0
-                     fs_reclaim_acquire.part.23+0x44/0x60
-                     kmem_cache_alloc_node_trace+0x80/0x590
-                     alloc_desc+0x64/0x270
-                     __irq_alloc_descs+0x2e4/0x3a0
-                     irq_domain_alloc_descs+0xb0/0x150
-                     irq_create_mapping+0x168/0x2c0
-                     xics_smp_probe+0x2c/0x98
-                     pnv_smp_probe+0x40/0x9c
-                     smp_prepare_cpus+0x524/0x6c4
-                     kernel_init_freeable+0x1b4/0x650
-                     kernel_init+0x2c/0x148
-                     ret_from_kernel_thread+0x5c/0x70
-  }
-===
-
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Reviewed-by: Alistair Popple <alistair@popple.id.au>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190718051139.74787-4-aik@ozlabs.ru
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Link: https://lore.kernel.org/r/1565984527-5272-2-git-send-email-skomatineni@nvidia.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/powernv/pci-ioda-tce.c | 20 +++++++++----------
- arch/powerpc/platforms/powernv/pci.h          |  2 +-
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda-tce.c b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-index e28f03e1eb5eb..c75ec37bf0cda 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-@@ -36,7 +36,8 @@ static __be64 *pnv_alloc_tce_level(int nid, unsigned int shift)
- 	struct page *tce_mem = NULL;
- 	__be64 *addr;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 1aba75897d147..26a3f1eb9c6bf 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -40,7 +40,9 @@ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
  
--	tce_mem = alloc_pages_node(nid, GFP_KERNEL, shift - PAGE_SHIFT);
-+	tce_mem = alloc_pages_node(nid, GFP_ATOMIC | __GFP_NOWARN,
-+			shift - PAGE_SHIFT);
- 	if (!tce_mem) {
- 		pr_err("Failed to allocate a TCE memory, level shift=%d\n",
- 				shift);
-@@ -161,6 +162,9 @@ void pnv_tce_free(struct iommu_table *tbl, long index, long npages)
- 
- 		if (ptce)
- 			*ptce = cpu_to_be64(0);
-+		else
-+			/* Skip the rest of the level */
-+			i |= tbl->it_level_size - 1;
- 	}
+ static inline void pmx_writel(struct tegra_pmx *pmx, u32 val, u32 bank, u32 reg)
+ {
+-	writel(val, pmx->regs[bank] + reg);
++	writel_relaxed(val, pmx->regs[bank] + reg);
++	/* make sure pinmux register write completed */
++	pmx_readl(pmx, bank, reg);
  }
  
-@@ -260,7 +264,6 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
- 	unsigned int table_shift = max_t(unsigned int, entries_shift + 3,
- 			PAGE_SHIFT);
- 	const unsigned long tce_table_size = 1UL << table_shift;
--	unsigned int tmplevels = levels;
- 
- 	if (!levels || (levels > POWERNV_IOMMU_MAX_LEVELS))
- 		return -EINVAL;
-@@ -268,9 +271,6 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
- 	if (!is_power_of_2(window_size))
- 		return -EINVAL;
- 
--	if (alloc_userspace_copy && (window_size > (1ULL << 32)))
--		tmplevels = 1;
--
- 	/* Adjust direct table size from window_size and levels */
- 	entries_shift = (entries_shift + levels - 1) / levels;
- 	level_shift = entries_shift + 3;
-@@ -281,7 +281,7 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
- 
- 	/* Allocate TCE table */
- 	addr = pnv_pci_ioda2_table_do_alloc_pages(nid, level_shift,
--			tmplevels, tce_table_size, &offset, &total_allocated);
-+			1, tce_table_size, &offset, &total_allocated);
- 
- 	/* addr==NULL means that the first level allocation failed */
- 	if (!addr)
-@@ -292,18 +292,18 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
- 	 * we did not allocate as much as we wanted,
- 	 * release partially allocated table.
- 	 */
--	if (tmplevels == levels && offset < tce_table_size)
-+	if (levels == 1 && offset < tce_table_size)
- 		goto free_tces_exit;
- 
- 	/* Allocate userspace view of the TCE table */
- 	if (alloc_userspace_copy) {
- 		offset = 0;
- 		uas = pnv_pci_ioda2_table_do_alloc_pages(nid, level_shift,
--				tmplevels, tce_table_size, &offset,
-+				1, tce_table_size, &offset,
- 				&total_allocated_uas);
- 		if (!uas)
- 			goto free_tces_exit;
--		if (tmplevels == levels && (offset < tce_table_size ||
-+		if (levels == 1 && (offset < tce_table_size ||
- 				total_allocated_uas != total_allocated))
- 			goto free_uas_exit;
- 	}
-@@ -318,7 +318,7 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
- 
- 	pr_debug("Created TCE table: ws=%08llx ts=%lx @%08llx base=%lx uas=%p levels=%d/%d\n",
- 			window_size, tce_table_size, bus_offset, tbl->it_base,
--			tbl->it_userspace, tmplevels, levels);
-+			tbl->it_userspace, 1, levels);
- 
- 	return 0;
- 
-diff --git a/arch/powerpc/platforms/powernv/pci.h b/arch/powerpc/platforms/powernv/pci.h
-index be26ab3d99e01..33a52114267d0 100644
---- a/arch/powerpc/platforms/powernv/pci.h
-+++ b/arch/powerpc/platforms/powernv/pci.h
-@@ -225,7 +225,7 @@ extern struct iommu_table_group *pnv_npu_compound_attach(
- 		struct pnv_ioda_pe *pe);
- 
- /* pci-ioda-tce.c */
--#define POWERNV_IOMMU_DEFAULT_LEVELS	1
-+#define POWERNV_IOMMU_DEFAULT_LEVELS	2
- #define POWERNV_IOMMU_MAX_LEVELS	5
- 
- extern int pnv_tce_build(struct iommu_table *tbl, long index, long npages,
+ static int tegra_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
 -- 
 2.20.1
 
