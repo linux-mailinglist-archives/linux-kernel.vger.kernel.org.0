@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F49CD82A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23927CD811
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfJFSAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 14:00:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55342 "EHLO mail.kernel.org"
+        id S1729417AbfJFR5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:57:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728203AbfJFR3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:29:36 -0400
+        id S1729861AbfJFReB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:34:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F1372080F;
-        Sun,  6 Oct 2019 17:29:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54AC72087E;
+        Sun,  6 Oct 2019 17:34:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382975;
-        bh=qqZxm8KNU3bkkqJKEYWUqs8sTqIDkTaNn9u3huRE85Q=;
+        s=default; t=1570383240;
+        bh=J1zur49gsnGltUJR6USs8KZFsOWEQRy5Y0FIf5lKH6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NqmX/2lj0ruEqh/hH10rDgml1pvWSma2L20uPKwwyehyTEfNSp1IcLQNmrMs7Ljp4
-         idul9JaOqHSu6b4QkHHFb3u+92/yq3tjkwPZ9SXC3QEQBpVA2ie0JG+Q4srzB2atVJ
-         IwRH5JHhnFQMfwER9FlqI21rpI2Lg4t3ktho8spg=
+        b=KZ+NIy/7QS7N5nXRzDTY8JztRilzr6kbyhDTm3O3wrVf+sllCSNrbLxgi+vSVySY3
+         mdVt4uwsLefg6h4k1Jg+BjUZOji6Ey2uvHmQJ3gNtBZmuiRF/0bbAVwJzUJcDoVjkg
+         5grULKTLbSZtNfrNEGjI5CYeUl9Q248zyBFa2Tsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
+        stable@vger.kernel.org, Anthony Koo <anthony.koo@amd.com>,
+        Charlene Liu <Charlene.Liu@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 007/106] drm/panel: check failure cases in the probe func
-Date:   Sun,  6 Oct 2019 19:20:13 +0200
-Message-Id: <20191006171128.466992420@linuxfoundation.org>
+Subject: [PATCH 5.2 030/137] drm/amd/display: add monitor patch to add T7 delay
+Date:   Sun,  6 Oct 2019 19:20:14 +0200
+Message-Id: <20191006171211.604415308@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Anthony Koo <anthony.koo@amd.com>
 
-[ Upstream commit afd6d4f5a52c16e1483328ac074abb1cde92c29f ]
+[ Upstream commit 88eac241a1fc500ce5274a09ddc4bd5fc2b5adb6 ]
 
-The following function calls may fail and return NULL, so the null check
-is added.
-of_graph_get_next_endpoint
-of_graph_get_remote_port_parent
-of_graph_get_remote_port
+[Why]
+Specifically to one panel,
+TCON is able to accept active video signal quickly, but
+the Source Driver requires 2-3 frames of extra time.
 
-Update: Thanks to Sam Ravnborg, for suggession on the use of goto to avoid
-leaking endpoint.
+It is a Panel issue since TCON needs to take care of
+all Sink requirements including Source Driver. But in
+this case it does not.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190724195534.9303-1-navid.emamdoost@gmail.com
+Customer is asking to add fixed T7 delay as panel
+workaround.
+
+[How]
+Add monitor specific patch to add T7 delay
+
+Signed-off-by: Anthony Koo <anthony.koo@amd.com>
+Reviewed-by: Charlene Liu <Charlene.Liu@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/panel/panel-raspberrypi-touchscreen.c   | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c | 4 ++++
+ drivers/gpu/drm/amd/display/dc/dc_types.h          | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index 2c9c9722734f5..9a2cb8aeab3a4 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -400,7 +400,13 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 
- 	/* Look up the DSI host.  It needs to probe before we do. */
- 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-+	if (!endpoint)
-+		return -ENODEV;
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
+index b0dea759cd860..8aecf044e2ae8 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
+@@ -154,6 +154,10 @@ bool edp_receiver_ready_T7(struct dc_link *link)
+ 			break;
+ 		udelay(25); //MAx T7 is 50ms
+ 	} while (++tries < 300);
 +
- 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
-+	if (!dsi_host_node)
-+		goto error;
++	if (link->local_sink->edid_caps.panel_patch.extra_t7_ms > 0)
++		udelay(link->local_sink->edid_caps.panel_patch.extra_t7_ms * 1000);
 +
- 	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
- 	of_node_put(dsi_host_node);
- 	if (!host) {
-@@ -409,6 +415,9 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 	}
- 
- 	info.node = of_graph_get_remote_port(endpoint);
-+	if (!info.node)
-+		goto error;
-+
- 	of_node_put(endpoint);
- 
- 	ts->dsi = mipi_dsi_device_register_full(host, &info);
-@@ -429,6 +438,10 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 		return ret;
- 
- 	return 0;
-+
-+error:
-+	of_node_put(endpoint);
-+	return -ENODEV;
+ 	return result;
  }
  
- static int rpi_touchscreen_remove(struct i2c_client *i2c)
+diff --git a/drivers/gpu/drm/amd/display/dc/dc_types.h b/drivers/gpu/drm/amd/display/dc/dc_types.h
+index 6c2a3d9a4c2e7..283082666be51 100644
+--- a/drivers/gpu/drm/amd/display/dc/dc_types.h
++++ b/drivers/gpu/drm/amd/display/dc/dc_types.h
+@@ -202,6 +202,7 @@ struct dc_panel_patch {
+ 	unsigned int dppowerup_delay;
+ 	unsigned int extra_t12_ms;
+ 	unsigned int extra_delay_backlight_off;
++	unsigned int extra_t7_ms;
+ };
+ 
+ struct dc_edid_caps {
 -- 
 2.20.1
 
