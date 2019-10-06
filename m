@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3EBCD48A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26F28CD457
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbfJFR05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:26:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52218 "EHLO mail.kernel.org"
+        id S1727485AbfJFRYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:24:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbfJFR0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:26:54 -0400
+        id S1727446AbfJFRYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:24:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3066B2070B;
-        Sun,  6 Oct 2019 17:26:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 087BA2133F;
+        Sun,  6 Oct 2019 17:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382813;
-        bh=XtQveHy+7t5bV9H6S02QhmT222autKJXMjgLRbyvI9s=;
+        s=default; t=1570382686;
+        bh=ezbkdOij8H/eXqwrs3/HxM1hHXVRSR/KKB0D+kPZAuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iMc/rdUBP94r+kQQqte16GGm4CKbbGhXDIEmUVl8fkMwkl2rUByHdltRU7XM2Q08B
-         B5dXMXT3OX+ujZg6He1JeeNOC0lrv06nrN0oYHY710wN8bWQ2welvcv+mNLhgpsqkt
-         9kX4Ucp9StlZOtSKmKeKyRlZxce0XhfKGcdyfXvg=
+        b=mMie1lrS3+2nnqkjGFsaCq1maPEfpIbYr0gHDPZmPqhME32iu7M0ZE8cnTNinl6U4
+         Qkn6S3y7Obxg8tA4WDawTb4QwvHwtPyuyW9eDhxs76M/aO3KfLLnsP2PFQR4DjMnAW
+         b1dYoXNiH5kMgC4b43MEabz42HgK2X87PbUrWshg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        stable@vger.kernel.org, Dotan Barak <dotanb@dev.mellanox.co.il>,
+        Sudhakar Dindukurti <sudhakar.dindukurti@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 50/68] erspan: remove the incorrect mtu limit for erspan
-Date:   Sun,  6 Oct 2019 19:21:26 +0200
-Message-Id: <20191006171131.476641420@linuxfoundation.org>
+Subject: [PATCH 4.9 41/47] net/rds: Fix error handling in rds_ib_add_one()
+Date:   Sun,  6 Oct 2019 19:21:28 +0200
+Message-Id: <20191006172019.053341501@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
-References: <20191006171108.150129403@linuxfoundation.org>
+In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
+References: <20191006172016.873463083@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+From: Dotan Barak <dotanb@dev.mellanox.co.il>
 
-[ Upstream commit 0e141f757b2c78c983df893e9993313e2dc21e38 ]
+[ Upstream commit d64bf89a75b65f83f06be9fb8f978e60d53752db ]
 
-erspan driver calls ether_setup(), after commit 61e84623ace3
-("net: centralize net_device min/max MTU checking"), the range
-of mtu is [min_mtu, max_mtu], which is [68, 1500] by default.
+rds_ibdev:ipaddr_list and rds_ibdev:conn_list are initialized
+after allocation some resources such as protection domain.
+If allocation of such resources fail, then these uninitialized
+variables are accessed in rds_ib_dev_free() in failure path. This
+can potentially crash the system. The code has been updated to
+initialize these variables very early in the function.
 
-It causes the dev mtu of the erspan device to not be greater
-than 1500, this limit value is not correct for ipgre tap device.
-
-Tested:
-Before patch:
-# ip link set erspan0 mtu 1600
-Error: mtu greater than device maximum.
-After patch:
-# ip link set erspan0 mtu 1600
-# ip -d link show erspan0
-21: erspan0@NONE: <BROADCAST,MULTICAST> mtu 1600 qdisc noop state DOWN
-mode DEFAULT group default qlen 1000
-    link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 0
-
-Fixes: 61e84623ace3 ("net: centralize net_device min/max MTU checking")
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Signed-off-by: Dotan Barak <dotanb@dev.mellanox.co.il>
+Signed-off-by: Sudhakar Dindukurti <sudhakar.dindukurti@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/rds/ib.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -1424,6 +1424,7 @@ nla_put_failure:
- static void erspan_setup(struct net_device *dev)
- {
- 	ether_setup(dev);
-+	dev->max_mtu = 0;
- 	dev->netdev_ops = &erspan_netdev_ops;
- 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
- 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
+--- a/net/rds/ib.c
++++ b/net/rds/ib.c
+@@ -138,6 +138,9 @@ static void rds_ib_add_one(struct ib_dev
+ 	atomic_set(&rds_ibdev->refcount, 1);
+ 	INIT_WORK(&rds_ibdev->free_work, rds_ib_dev_free);
+ 
++	INIT_LIST_HEAD(&rds_ibdev->ipaddr_list);
++	INIT_LIST_HEAD(&rds_ibdev->conn_list);
++
+ 	rds_ibdev->max_wrs = device->attrs.max_qp_wr;
+ 	rds_ibdev->max_sge = min(device->attrs.max_sge, RDS_IB_MAX_SGE);
+ 
+@@ -189,9 +192,6 @@ static void rds_ib_add_one(struct ib_dev
+ 		device->name,
+ 		rds_ibdev->use_fastreg ? "FRMR" : "FMR");
+ 
+-	INIT_LIST_HEAD(&rds_ibdev->ipaddr_list);
+-	INIT_LIST_HEAD(&rds_ibdev->conn_list);
+-
+ 	down_write(&rds_ib_devices_lock);
+ 	list_add_tail_rcu(&rds_ibdev->list, &rds_ib_devices);
+ 	up_write(&rds_ib_devices_lock);
 
 
