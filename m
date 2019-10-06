@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C486CD5AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4552FCD4F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730649AbfJFRii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:38:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37862 "EHLO mail.kernel.org"
+        id S1729334AbfJFRbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730635AbfJFRif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:38:35 -0400
+        id S1729311AbfJFRax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:30:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE04120862;
-        Sun,  6 Oct 2019 17:38:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 184282080F;
+        Sun,  6 Oct 2019 17:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383513;
-        bh=sMYuJcGiyAg5RkLMvJKMuFOeb8Nv1Y0rjVDe5WSf57k=;
+        s=default; t=1570383051;
+        bh=BN/UoRKBV+sw1VEV1yj7fUb/TE6RODNCU0K+r99yFyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K/P/jKmmbcS6hFb3Kxi7nsr9BA7QD84uTe6CRzjHoZDbbdXApFunj82+v9k+GEu1i
-         7mOJkvspJiclZnU3s8co+LXcDnHtOjJratw4m8Rdvq07SBrgqKdNQA9ROek9qGJJ+t
-         iJ31HTiA81J3QninG6TSaqX1dN5+sejWsxorBbWg=
+        b=aQDRvX4F0PqNcVYDDgMECgO/ZPC72rC8SKKJBvsZjceFxEVy68GSAwhVboH++WzDI
+         wd7F+Ep2YXaGLml66Hm9omKOD2CnESkmjOQpU7h9sF1gK937F2HigMHK/dyoiXmiLy
+         7FQB6BmG2JELL7oz1ENNb+btDxEjRlHU1L7Bv1hc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+1e470567330b7ad711d5@syzkaller.appspotmail.com,
-        "zhangyi (F)" <yi.zhang@huawei.com>, Theodore Tso <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 089/137] ext4: fix potential use after free after remounting with noblock_validity
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Jan Stancek <jstancek@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 067/106] fat: work around race with userspaces read via blockdev while mounting
 Date:   Sun,  6 Oct 2019 19:21:13 +0200
-Message-Id: <20191006171216.245245251@linuxfoundation.org>
+Message-Id: <20191006171151.739982449@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,392 +47,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-[ Upstream commit 7727ae52975d4f4ef7ff69ed8e6e25f6a4168158 ]
+[ Upstream commit 07bfa4415ab607e459b69bd86aa7e7602ce10b4f ]
 
-Remount process will release system zone which was allocated before if
-"noblock_validity" is specified. If we mount an ext4 file system to two
-mountpoints with default mount options, and then remount one of them
-with "noblock_validity", it may trigger a use after free problem when
-someone accessing the other one.
+If userspace reads the buffer via blockdev while mounting,
+sb_getblk()+modify can race with buffer read via blockdev.
 
- # mount /dev/sda foo
- # mount /dev/sda bar
+For example,
 
-User access mountpoint "foo"   |   Remount mountpoint "bar"
-                               |
-ext4_map_blocks()              |   ext4_remount()
-check_block_validity()         |   ext4_setup_system_zone()
-ext4_data_block_valid()        |   ext4_release_system_zone()
-                               |   free system_blks rb nodes
-access system_blks rb nodes    |
-trigger use after free         |
+            FS                               userspace
+    bh = sb_getblk()
+    modify bh->b_data
+                                  read
+				    ll_rw_block(bh)
+				      fill bh->b_data by on-disk data
+				      /* lost modified data by FS */
+				      set_buffer_uptodate(bh)
+    set_buffer_uptodate(bh)
 
-This problem can also be reproduced by one mountpint, At the same time,
-add_system_zone() can get called during remount as well so there can be
-racing ext4_data_block_valid() reading the rbtree at the same time.
+Userspace should not use the blockdev while mounting though, the udev
+seems to be already doing this.  Although I think the udev should try to
+avoid this, workaround the race by small overhead.
 
-This patch add RCU to protect system zone from releasing or building
-when doing a remount which inverse current "noblock_validity" mount
-option. It assign the rbtree after the whole tree was complete and
-do actual freeing after rcu grace period, avoid any intermediate state.
-
-Reported-by: syzbot+1e470567330b7ad711d5@syzkaller.appspotmail.com
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Link: http://lkml.kernel.org/r/87pnk7l3sw.fsf_-_@mail.parknet.co.jp
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Reported-by: Jan Stancek <jstancek@redhat.com>
+Tested-by: Jan Stancek <jstancek@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/block_validity.c | 189 ++++++++++++++++++++++++++++-----------
- fs/ext4/ext4.h           |  10 ++-
- 2 files changed, 147 insertions(+), 52 deletions(-)
+ fs/fat/dir.c    | 13 +++++++++++--
+ fs/fat/fatent.c |  3 +++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 8e83741b02e03..d4d4fdfac1a65 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -38,6 +38,7 @@ int __init ext4_init_system_zone(void)
- 
- void ext4_exit_system_zone(void)
- {
-+	rcu_barrier();
- 	kmem_cache_destroy(ext4_system_zone_cachep);
- }
- 
-@@ -49,17 +50,26 @@ static inline int can_merge(struct ext4_system_zone *entry1,
- 	return 0;
- }
- 
-+static void release_system_zone(struct ext4_system_blocks *system_blks)
-+{
-+	struct ext4_system_zone	*entry, *n;
-+
-+	rbtree_postorder_for_each_entry_safe(entry, n,
-+				&system_blks->root, node)
-+		kmem_cache_free(ext4_system_zone_cachep, entry);
-+}
-+
- /*
-  * Mark a range of blocks as belonging to the "system zone" --- that
-  * is, filesystem metadata blocks which should never be used by
-  * inodes.
-  */
--static int add_system_zone(struct ext4_sb_info *sbi,
-+static int add_system_zone(struct ext4_system_blocks *system_blks,
- 			   ext4_fsblk_t start_blk,
- 			   unsigned int count)
- {
- 	struct ext4_system_zone *new_entry = NULL, *entry;
--	struct rb_node **n = &sbi->system_blks.rb_node, *node;
-+	struct rb_node **n = &system_blks->root.rb_node, *node;
- 	struct rb_node *parent = NULL, *new_node = NULL;
- 
- 	while (*n) {
-@@ -91,7 +101,7 @@ static int add_system_zone(struct ext4_sb_info *sbi,
- 		new_node = &new_entry->node;
- 
- 		rb_link_node(new_node, parent, n);
--		rb_insert_color(new_node, &sbi->system_blks);
-+		rb_insert_color(new_node, &system_blks->root);
- 	}
- 
- 	/* Can we merge to the left? */
-@@ -101,7 +111,7 @@ static int add_system_zone(struct ext4_sb_info *sbi,
- 		if (can_merge(entry, new_entry)) {
- 			new_entry->start_blk = entry->start_blk;
- 			new_entry->count += entry->count;
--			rb_erase(node, &sbi->system_blks);
-+			rb_erase(node, &system_blks->root);
- 			kmem_cache_free(ext4_system_zone_cachep, entry);
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 7f5f3699fc6c0..de60c05c0ca1d 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -1097,8 +1097,11 @@ static int fat_zeroed_cluster(struct inode *dir, sector_t blknr, int nr_used,
+ 			err = -ENOMEM;
+ 			goto error;
  		}
- 	}
-@@ -112,7 +122,7 @@ static int add_system_zone(struct ext4_sb_info *sbi,
- 		entry = rb_entry(node, struct ext4_system_zone, node);
- 		if (can_merge(new_entry, entry)) {
- 			new_entry->count += entry->count;
--			rb_erase(node, &sbi->system_blks);
-+			rb_erase(node, &system_blks->root);
- 			kmem_cache_free(ext4_system_zone_cachep, entry);
- 		}
- 	}
-@@ -126,7 +136,7 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
- 	int first = 1;
++		/* Avoid race with userspace read via bdev */
++		lock_buffer(bhs[n]);
+ 		memset(bhs[n]->b_data, 0, sb->s_blocksize);
+ 		set_buffer_uptodate(bhs[n]);
++		unlock_buffer(bhs[n]);
+ 		mark_buffer_dirty_inode(bhs[n], dir);
  
- 	printk(KERN_INFO "System zones: ");
--	node = rb_first(&sbi->system_blks);
-+	node = rb_first(&sbi->system_blks->root);
- 	while (node) {
- 		entry = rb_entry(node, struct ext4_system_zone, node);
- 		printk(KERN_CONT "%s%llu-%llu", first ? "" : ", ",
-@@ -137,7 +147,47 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
- 	printk(KERN_CONT "\n");
- }
+ 		n++;
+@@ -1155,6 +1158,8 @@ int fat_alloc_new_dir(struct inode *dir, struct timespec64 *ts)
+ 	fat_time_unix2fat(sbi, ts, &time, &date, &time_cs);
  
--static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
-+/*
-+ * Returns 1 if the passed-in block region (start_blk,
-+ * start_blk+count) is valid; 0 if some part of the block region
-+ * overlaps with filesystem metadata blocks.
-+ */
-+static int ext4_data_block_valid_rcu(struct ext4_sb_info *sbi,
-+				     struct ext4_system_blocks *system_blks,
-+				     ext4_fsblk_t start_blk,
-+				     unsigned int count)
-+{
-+	struct ext4_system_zone *entry;
-+	struct rb_node *n;
-+
-+	if ((start_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
-+	    (start_blk + count < start_blk) ||
-+	    (start_blk + count > ext4_blocks_count(sbi->s_es))) {
-+		sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
-+		return 0;
-+	}
-+
-+	if (system_blks == NULL)
-+		return 1;
-+
-+	n = system_blks->root.rb_node;
-+	while (n) {
-+		entry = rb_entry(n, struct ext4_system_zone, node);
-+		if (start_blk + count - 1 < entry->start_blk)
-+			n = n->rb_left;
-+		else if (start_blk >= (entry->start_blk + entry->count))
-+			n = n->rb_right;
-+		else {
-+			sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
-+			return 0;
-+		}
-+	}
-+	return 1;
-+}
-+
-+static int ext4_protect_reserved_inode(struct super_block *sb,
-+				       struct ext4_system_blocks *system_blks,
-+				       u32 ino)
- {
- 	struct inode *inode;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
-@@ -163,14 +213,15 @@ static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
- 		if (n == 0) {
- 			i++;
- 		} else {
--			if (!ext4_data_block_valid(sbi, map.m_pblk, n)) {
-+			if (!ext4_data_block_valid_rcu(sbi, system_blks,
-+						map.m_pblk, n)) {
- 				ext4_error(sb, "blocks %llu-%llu from inode %u "
- 					   "overlap system zone", map.m_pblk,
- 					   map.m_pblk + map.m_len - 1, ino);
- 				err = -EFSCORRUPTED;
+ 	de = (struct msdos_dir_entry *)bhs[0]->b_data;
++	/* Avoid race with userspace read via bdev */
++	lock_buffer(bhs[0]);
+ 	/* filling the new directory slots ("." and ".." entries) */
+ 	memcpy(de[0].name, MSDOS_DOT, MSDOS_NAME);
+ 	memcpy(de[1].name, MSDOS_DOTDOT, MSDOS_NAME);
+@@ -1177,6 +1182,7 @@ int fat_alloc_new_dir(struct inode *dir, struct timespec64 *ts)
+ 	de[0].size = de[1].size = 0;
+ 	memset(de + 2, 0, sb->s_blocksize - 2 * sizeof(*de));
+ 	set_buffer_uptodate(bhs[0]);
++	unlock_buffer(bhs[0]);
+ 	mark_buffer_dirty_inode(bhs[0], dir);
+ 
+ 	err = fat_zeroed_cluster(dir, blknr, 1, bhs, MAX_BUF_PER_PAGE);
+@@ -1234,11 +1240,14 @@ static int fat_add_new_entries(struct inode *dir, void *slots, int nr_slots,
+ 
+ 			/* fill the directory entry */
+ 			copy = min(size, sb->s_blocksize);
++			/* Avoid race with userspace read via bdev */
++			lock_buffer(bhs[n]);
+ 			memcpy(bhs[n]->b_data, slots, copy);
+-			slots += copy;
+-			size -= copy;
+ 			set_buffer_uptodate(bhs[n]);
++			unlock_buffer(bhs[n]);
+ 			mark_buffer_dirty_inode(bhs[n], dir);
++			slots += copy;
++			size -= copy;
+ 			if (!size)
  				break;
+ 			n++;
+diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+index f58c0cacc531d..4c6c635bc8aaa 100644
+--- a/fs/fat/fatent.c
++++ b/fs/fat/fatent.c
+@@ -390,8 +390,11 @@ static int fat_mirror_bhs(struct super_block *sb, struct buffer_head **bhs,
+ 				err = -ENOMEM;
+ 				goto error;
  			}
--			err = add_system_zone(sbi, map.m_pblk, n);
-+			err = add_system_zone(system_blks, map.m_pblk, n);
- 			if (err < 0)
- 				break;
- 			i += n;
-@@ -180,94 +231,130 @@ static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
- 	return err;
- }
- 
-+static void ext4_destroy_system_zone(struct rcu_head *rcu)
-+{
-+	struct ext4_system_blocks *system_blks;
-+
-+	system_blks = container_of(rcu, struct ext4_system_blocks, rcu);
-+	release_system_zone(system_blks);
-+	kfree(system_blks);
-+}
-+
-+/*
-+ * Build system zone rbtree which is used for block validity checking.
-+ *
-+ * The update of system_blks pointer in this function is protected by
-+ * sb->s_umount semaphore. However we have to be careful as we can be
-+ * racing with ext4_data_block_valid() calls reading system_blks rbtree
-+ * protected only by RCU. That's why we first build the rbtree and then
-+ * swap it in place.
-+ */
- int ext4_setup_system_zone(struct super_block *sb)
- {
- 	ext4_group_t ngroups = ext4_get_groups_count(sb);
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	struct ext4_system_blocks *system_blks;
- 	struct ext4_group_desc *gdp;
- 	ext4_group_t i;
- 	int flex_size = ext4_flex_bg_size(sbi);
- 	int ret;
- 
- 	if (!test_opt(sb, BLOCK_VALIDITY)) {
--		if (sbi->system_blks.rb_node)
-+		if (sbi->system_blks)
- 			ext4_release_system_zone(sb);
- 		return 0;
- 	}
--	if (sbi->system_blks.rb_node)
-+	if (sbi->system_blks)
- 		return 0;
- 
-+	system_blks = kzalloc(sizeof(*system_blks), GFP_KERNEL);
-+	if (!system_blks)
-+		return -ENOMEM;
-+
- 	for (i=0; i < ngroups; i++) {
- 		cond_resched();
- 		if (ext4_bg_has_super(sb, i) &&
- 		    ((i < 5) || ((i % flex_size) == 0)))
--			add_system_zone(sbi, ext4_group_first_block_no(sb, i),
-+			add_system_zone(system_blks,
-+					ext4_group_first_block_no(sb, i),
- 					ext4_bg_num_gdb(sb, i) + 1);
- 		gdp = ext4_get_group_desc(sb, i, NULL);
--		ret = add_system_zone(sbi, ext4_block_bitmap(sb, gdp), 1);
-+		ret = add_system_zone(system_blks,
-+				ext4_block_bitmap(sb, gdp), 1);
- 		if (ret)
--			return ret;
--		ret = add_system_zone(sbi, ext4_inode_bitmap(sb, gdp), 1);
-+			goto err;
-+		ret = add_system_zone(system_blks,
-+				ext4_inode_bitmap(sb, gdp), 1);
- 		if (ret)
--			return ret;
--		ret = add_system_zone(sbi, ext4_inode_table(sb, gdp),
-+			goto err;
-+		ret = add_system_zone(system_blks,
-+				ext4_inode_table(sb, gdp),
- 				sbi->s_itb_per_group);
- 		if (ret)
--			return ret;
-+			goto err;
- 	}
- 	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
--		ret = ext4_protect_reserved_inode(sb,
-+		ret = ext4_protect_reserved_inode(sb, system_blks,
- 				le32_to_cpu(sbi->s_es->s_journal_inum));
- 		if (ret)
--			return ret;
-+			goto err;
- 	}
- 
-+	/*
-+	 * System blks rbtree complete, announce it once to prevent racing
-+	 * with ext4_data_block_valid() accessing the rbtree at the same
-+	 * time.
-+	 */
-+	rcu_assign_pointer(sbi->system_blks, system_blks);
-+
- 	if (test_opt(sb, DEBUG))
- 		debug_print_tree(sbi);
- 	return 0;
-+err:
-+	release_system_zone(system_blks);
-+	kfree(system_blks);
-+	return ret;
- }
- 
--/* Called when the filesystem is unmounted */
-+/*
-+ * Called when the filesystem is unmounted or when remounting it with
-+ * noblock_validity specified.
-+ *
-+ * The update of system_blks pointer in this function is protected by
-+ * sb->s_umount semaphore. However we have to be careful as we can be
-+ * racing with ext4_data_block_valid() calls reading system_blks rbtree
-+ * protected only by RCU. So we first clear the system_blks pointer and
-+ * then free the rbtree only after RCU grace period expires.
-+ */
- void ext4_release_system_zone(struct super_block *sb)
- {
--	struct ext4_system_zone	*entry, *n;
-+	struct ext4_system_blocks *system_blks;
- 
--	rbtree_postorder_for_each_entry_safe(entry, n,
--			&EXT4_SB(sb)->system_blks, node)
--		kmem_cache_free(ext4_system_zone_cachep, entry);
-+	system_blks = rcu_dereference_protected(EXT4_SB(sb)->system_blks,
-+					lockdep_is_held(&sb->s_umount));
-+	rcu_assign_pointer(EXT4_SB(sb)->system_blks, NULL);
- 
--	EXT4_SB(sb)->system_blks = RB_ROOT;
-+	if (system_blks)
-+		call_rcu(&system_blks->rcu, ext4_destroy_system_zone);
- }
- 
--/*
-- * Returns 1 if the passed-in block region (start_blk,
-- * start_blk+count) is valid; 0 if some part of the block region
-- * overlaps with filesystem metadata blocks.
-- */
- int ext4_data_block_valid(struct ext4_sb_info *sbi, ext4_fsblk_t start_blk,
- 			  unsigned int count)
- {
--	struct ext4_system_zone *entry;
--	struct rb_node *n = sbi->system_blks.rb_node;
-+	struct ext4_system_blocks *system_blks;
-+	int ret;
- 
--	if ((start_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
--	    (start_blk + count < start_blk) ||
--	    (start_blk + count > ext4_blocks_count(sbi->s_es))) {
--		sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
--		return 0;
--	}
--	while (n) {
--		entry = rb_entry(n, struct ext4_system_zone, node);
--		if (start_blk + count - 1 < entry->start_blk)
--			n = n->rb_left;
--		else if (start_blk >= (entry->start_blk + entry->count))
--			n = n->rb_right;
--		else {
--			sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
--			return 0;
--		}
--	}
--	return 1;
-+	/*
-+	 * Lock the system zone to prevent it being released concurrently
-+	 * when doing a remount which inverse current "[no]block_validity"
-+	 * mount option.
-+	 */
-+	rcu_read_lock();
-+	system_blks = rcu_dereference(sbi->system_blks);
-+	ret = ext4_data_block_valid_rcu(sbi, system_blks, start_blk,
-+					count);
-+	rcu_read_unlock();
-+	return ret;
- }
- 
- int ext4_check_blockref(const char *function, unsigned int line,
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 1cb67859e0518..0014b1c5e6be1 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -184,6 +184,14 @@ struct ext4_map_blocks {
- 	unsigned int m_flags;
- };
- 
-+/*
-+ * Block validity checking, system zone rbtree.
-+ */
-+struct ext4_system_blocks {
-+	struct rb_root root;
-+	struct rcu_head rcu;
-+};
-+
- /*
-  * Flags for ext4_io_end->flags
-  */
-@@ -1420,7 +1428,7 @@ struct ext4_sb_info {
- 	int s_jquota_fmt;			/* Format of quota to use */
- #endif
- 	unsigned int s_want_extra_isize; /* New inodes should reserve # bytes */
--	struct rb_root system_blks;
-+	struct ext4_system_blocks __rcu *system_blks;
- 
- #ifdef EXTENTS_STATS
- 	/* ext4 extents stats */
++			/* Avoid race with userspace read via bdev */
++			lock_buffer(c_bh);
+ 			memcpy(c_bh->b_data, bhs[n]->b_data, sb->s_blocksize);
+ 			set_buffer_uptodate(c_bh);
++			unlock_buffer(c_bh);
+ 			mark_buffer_dirty_inode(c_bh, sbi->fat_inode);
+ 			if (sb->s_flags & SB_SYNCHRONOUS)
+ 				err = sync_dirty_buffer(c_bh);
 -- 
 2.20.1
 
