@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51666CD255
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 16:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89120CD25A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:04:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbfJFOwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 10:52:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55460 "EHLO
+        id S1726450AbfJFPEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 11:04:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55527 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfJFOwh (ORCPT
+        with ESMTP id S1725905AbfJFPEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 10:52:37 -0400
+        Sun, 6 Oct 2019 11:04:31 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1iH7tg-0003dx-3q; Sun, 06 Oct 2019 14:52:32 +0000
+        id 1iH85F-0004Ds-HB; Sun, 06 Oct 2019 15:04:29 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: abituguru: make array probe_order static, makes object smaller
-Date:   Sun,  6 Oct 2019 15:52:31 +0100
-Message-Id: <20191006145231.24022-1-colin.king@canonical.com>
+Subject: [PATCH] media: vpx3220: make array input_vals static, makes object smaller
+Date:   Sun,  6 Oct 2019 16:04:29 +0100
+Message-Id: <20191006150429.24311-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -36,37 +35,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Don't populate the array probe_order on the stack but instead make it
-static. Makes the object code smaller by 94 bytes.
+Don't populate the array input_vals on the stack but instead make it
+static. Makes the object code smaller by 106 bytes.
 
 Before:
    text	   data	    bss	    dec	    hex	filename
-  41473	  13448	    320	  55241	   d7c9	drivers/hwmon/abituguru.o
+  11744	   3536	    128	  15408	   3c30	drivers/media/i2c/vpx3220.o
 
 After:
    text	   data	    bss	    dec	    hex	filename
-  41315	  13512	    320	  55147	   d76b	drivers/hwmon/abituguru.o
+  11574	   3600	    128	  15302	   3bc6	drivers/media/i2c/vpx3220.o
 
 (gcc version 9.2.1, amd64)
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/hwmon/abituguru.c | 2 +-
+ drivers/media/i2c/vpx3220.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/abituguru.c b/drivers/hwmon/abituguru.c
-index a5cf6b2a6e49..681f0623868f 100644
---- a/drivers/hwmon/abituguru.c
-+++ b/drivers/hwmon/abituguru.c
-@@ -1264,7 +1264,7 @@ static int abituguru_probe(struct platform_device *pdev)
- 	 * El weirdo probe order, to keep the sysfs order identical to the
- 	 * BIOS and window-appliction listing order.
- 	 */
--	const u8 probe_order[ABIT_UGURU_MAX_BANK1_SENSORS] = {
-+	static const u8 probe_order[ABIT_UGURU_MAX_BANK1_SENSORS] = {
- 		0x00, 0x01, 0x03, 0x04, 0x0A, 0x08, 0x0E, 0x02,
- 		0x09, 0x06, 0x05, 0x0B, 0x0F, 0x0D, 0x07, 0x0C };
+diff --git a/drivers/media/i2c/vpx3220.c b/drivers/media/i2c/vpx3220.c
+index 39f66e7a0e42..8be03fe5928c 100644
+--- a/drivers/media/i2c/vpx3220.c
++++ b/drivers/media/i2c/vpx3220.c
+@@ -375,7 +375,7 @@ static int vpx3220_s_routing(struct v4l2_subdev *sd,
+ 		 input = 1: COMPOSITE  input
+ 		 input = 2: SVHS       input  */
  
+-	const int input_vals[3][2] = {
++	static const int input_vals[3][2] = {
+ 		{0x0c, 0},
+ 		{0x0d, 0},
+ 		{0x0e, 1}
 -- 
 2.20.1
 
