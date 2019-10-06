@@ -2,283 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C15E8CD1A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 13:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A516CD1B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 13:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfJFLRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 07:17:30 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:50030 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726293AbfJFLR3 (ORCPT
+        id S1726661AbfJFLVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 07:21:16 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45511 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfJFLVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 07:17:29 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 9230FC03B1;
-        Sun,  6 Oct 2019 11:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1570360648; bh=TCnuD7ST5ILnum1CP+NipPAW9rfdx0oXmNK8a18Tmik=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=MMD/XXp49v1s9kVmb1aYJL46/TiUtrBRJS0wrGhPhW6gmFob821KguGj6fkWVsp3u
-         dUb+7qoGIQNyNHYtK34Qi86HdsHo7ORV3GpGb9168vCjDe0KILOQayrrCEsCnXaSVc
-         SkthMLUF0L2t7N11SVe8hK0Wq82CB2hqL5JAyg9Yq3QFvjGXUiqlUiOAtBh61q1Qyk
-         ViDvWHFfu13TyPk4J0svzoAIJKZojTh/dnVJ5Umt4bzqqQJ+8Q7Xv2XKFKP089nx6E
-         XfZIvqCzMEDbFSo5mDAMjkB66kYenS6A9Fvryz6jf0j4KVVxeq6BNDlOaaxtGfDCxY
-         qHMTSkhcydrHQ==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 174B0A0068;
-        Sun,  6 Oct 2019 11:17:26 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 3/3] net: stmmac: Implement L3/L4 Filters in GMAC4+
-Date:   Sun,  6 Oct 2019 13:17:14 +0200
-Message-Id: <228bda8c149785c3b313d04a908b080b64ee0c37.1570360411.git.Jose.Abreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1570360411.git.Jose.Abreu@synopsys.com>
-References: <cover.1570360411.git.Jose.Abreu@synopsys.com>
-In-Reply-To: <cover.1570360411.git.Jose.Abreu@synopsys.com>
-References: <cover.1570360411.git.Jose.Abreu@synopsys.com>
+        Sun, 6 Oct 2019 07:21:15 -0400
+Received: by mail-ua1-f66.google.com with SMTP id j5so3233955uak.12;
+        Sun, 06 Oct 2019 04:21:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4Vay00Id+pI6RjlClzNNciuX7zK1DGFy9uT6hpb/ERY=;
+        b=ZQPLMB1krNL3hMSsyoFxqA0dQCGVmcIPPrgiSq4vwIBhevwWLF8DcRJ2LEjTpkeuir
+         mpL5yr2SDwgJ6HBJZHSTUNs0mVNgVK0PZFIha/bDEF8L4H9z1DkTT5iU9wZ3Ivban7kq
+         E5EXXQRsuHLBvqeXt+VHd1dKsjhgfHJgqkSg1lRBejZnA8QxY+VVXo4eg1/EoiW6QwgD
+         pV4Sx6dAhLcExvhCogYHfVMAmHFpBacwbnlGNCeWIwWDUtD+LRKfQKmBdhjACdraTB9F
+         5q4yoQRzERq9uakXcu9pBaGd1FxGMnZjJsG6lVre4aBwiDXJOtyr4yEO1VjXFVxH5XhQ
+         UvLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4Vay00Id+pI6RjlClzNNciuX7zK1DGFy9uT6hpb/ERY=;
+        b=lw8+GbOd07oScjnNdLL/+x5Qmm2AmsaWnwGOII56zxwQ/erI+KFibyDgOHj61k1U0D
+         eau1NY7qiSySTmkEzFKNkYNvWyJJ0+hfInMtGFYlATTokL19XU49XJ8apO+61RrM/yRf
+         Ydklpa+DKwQzMve5GTZwuv9st7A5w7XB8qXpM4NG2sHOLHgycXjMxjo8czGvjOuZdy7w
+         AiWQ6qpMRtn27CSIJVSghuv7Og48QVrgVUHuvaLl4zyYY4uK7drJRlapHLWoyOEXyPS/
+         ap6E43Gwth5y3HYErbhW4pWASAAHn0Wv+TY/OiZBEFZKlu8Gvw2sH1JgKGjlj4gAqHf3
+         Jn8A==
+X-Gm-Message-State: APjAAAWEoXqclJexXxPZEpBlrS/rxIMvZJ0z1j+AivjXEbpSKnZ9QnYx
+        Wo3x0ITaq6gSACp+naNslOZIa5FQIsgVDpBzVDc=
+X-Google-Smtp-Source: APXvYqxvszuL1sCIBfF24kyxwV0jWdJiswW5zfD1BUFs2vwgh9sZIR2O5nozVM8Rar7WLbeULc0EMmPKTUymKPDJ9Fc=
+X-Received: by 2002:ab0:2397:: with SMTP id b23mr5089710uan.91.1570360874474;
+ Sun, 06 Oct 2019 04:21:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191006023254.23841-1-aford173@gmail.com>
+In-Reply-To: <20191006023254.23841-1-aford173@gmail.com>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Sun, 6 Oct 2019 13:21:03 +0200
+Message-ID: <CAGm1_ksBaEN0OWR+dTwT9SgoybtnchcCKasjXf5ybP2fZfRF7A@mail.gmail.com>
+Subject: Re: [PATCH] serial: 8250_omap: Fix gpio check for auto RTS and CTS
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-serial@vger.kernel.org, adam.ford@logicpd.com,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Vignesh R <vigneshr@ti.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Stefan Roese <sr@denx.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <joabreu@synopsys.com>
+Hi Adam,
 
-GMAC4+ cores support Layer 3 and Layer 4 filtering. Add the
-corresponding callbacks in these cores.
+On Sun, Oct 6, 2019 at 4:33 AM Adam Ford <aford173@gmail.com> wrote:
+>
+> There are two checks to see if the manual gpio is configured, but
+> these the check is seeing if the structure is NULL instead it
+> should check to see if there are CTS and/or RTS pins defined.
+>
+> This patch uses checks for those individual pins instead of
+> checking for the structure itself.
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> index c68e2b3a1634..836e736ae188 100644
+> --- a/drivers/tty/serial/8250/8250_omap.c
+> +++ b/drivers/tty/serial/8250/8250_omap.c
+> @@ -141,7 +141,7 @@ static void omap8250_set_mctrl(struct uart_port *port, unsigned int mctrl)
+>
+>         serial8250_do_set_mctrl(port, mctrl);
+>
+> -       if (!up->gpios) {
+> +       if (!mctrl_gpio_to_gpiod(up->gpios, UART_GPIO_RTS)) {
+>                 /*
+>                  * Turn off autoRTS if RTS is lowered and restore autoRTS
+>                  * setting if RTS is raised
+> @@ -456,7 +456,8 @@ static void omap_8250_set_termios(struct uart_port *port,
+>         up->port.status &= ~(UPSTAT_AUTOCTS | UPSTAT_AUTORTS | UPSTAT_AUTOXOFF);
+>
+>         if (termios->c_cflag & CRTSCTS && up->port.flags & UPF_HARD_FLOW &&
+> -           !up->gpios) {
+> +           !mctrl_gpio_to_gpiod(up->gpios, UART_GPIO_RTS) &&
+> +           !mctrl_gpio_to_gpiod(up->gpios, UART_GPIO_CTS)) {
+>                 /* Enable AUTOCTS (autoRTS is enabled when RTS is raised) */
+>                 up->port.status |= UPSTAT_AUTOCTS | UPSTAT_AUTORTS;
+>                 priv->efr |= UART_EFR_CTS;
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Looks good to me but !up->gpios must remain as otherwise, we will get
+NULL pointer dereference. What do you think?
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/ethernet/stmicro/stmmac/dwmac4.h      |  21 +++++
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c | 106 ++++++++++++++++++++++
- drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c  |   1 +
- 3 files changed, 128 insertions(+)
+Also adding some more people who can be interested in testing this approach.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-index 2fe45fa3c482..07e97f45755d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-@@ -43,6 +43,10 @@
- #define GMAC_ARP_ADDR			0x00000210
- #define GMAC_ADDR_HIGH(reg)		(0x300 + reg * 8)
- #define GMAC_ADDR_LOW(reg)		(0x304 + reg * 8)
-+#define GMAC_L3L4_CTRL(reg)		(0x900 + (reg) * 0x30)
-+#define GMAC_L4_ADDR(reg)		(0x904 + (reg) * 0x30)
-+#define GMAC_L3_ADDR0(reg)		(0x910 + (reg) * 0x30)
-+#define GMAC_L3_ADDR1(reg)		(0x914 + (reg) * 0x30)
- 
- /* RX Queues Routing */
- #define GMAC_RXQCTRL_AVCPQ_MASK		GENMASK(2, 0)
-@@ -67,6 +71,7 @@
- #define GMAC_PACKET_FILTER_PCF		BIT(7)
- #define GMAC_PACKET_FILTER_HPF		BIT(10)
- #define GMAC_PACKET_FILTER_VTFE		BIT(16)
-+#define GMAC_PACKET_FILTER_IPFE		BIT(20)
- 
- #define GMAC_MAX_PERFECT_ADDRESSES	128
- 
-@@ -202,6 +207,7 @@ enum power_event {
- #define GMAC_HW_FEAT_MIISEL		BIT(0)
- 
- /* MAC HW features1 bitmap */
-+#define GMAC_HW_FEAT_L3L4FNUM		GENMASK(30, 27)
- #define GMAC_HW_HASH_TB_SZ		GENMASK(25, 24)
- #define GMAC_HW_FEAT_AVSEL		BIT(20)
- #define GMAC_HW_TSOEN			BIT(18)
-@@ -228,6 +234,21 @@ enum power_event {
- #define GMAC_HI_DCS_SHIFT		16
- #define GMAC_HI_REG_AE			BIT(31)
- 
-+/* L3/L4 Filters regs */
-+#define GMAC_L4DPIM0			BIT(21)
-+#define GMAC_L4DPM0			BIT(20)
-+#define GMAC_L4SPIM0			BIT(19)
-+#define GMAC_L4SPM0			BIT(18)
-+#define GMAC_L4PEN0			BIT(16)
-+#define GMAC_L3DAIM0			BIT(5)
-+#define GMAC_L3DAM0			BIT(4)
-+#define GMAC_L3SAIM0			BIT(3)
-+#define GMAC_L3SAM0			BIT(2)
-+#define GMAC_L3PEN0			BIT(0)
-+#define GMAC_L4DP0			GENMASK(31, 16)
-+#define GMAC_L4DP0_SHIFT		16
-+#define GMAC_L4SP0			GENMASK(15, 0)
-+
- /*  MTL registers */
- #define MTL_OPERATION_MODE		0x00000c00
- #define MTL_FRPE			BIT(15)
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-index 1a04815d1d65..dda3e5b50f4d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -809,6 +809,106 @@ static void dwmac4_set_arp_offload(struct mac_device_info *hw, bool en,
- 	writel(value, ioaddr + GMAC_CONFIG);
- }
- 
-+static int dwmac4_config_l3_filter(struct mac_device_info *hw, u32 filter_no,
-+				   bool en, bool ipv6, bool sa, bool inv,
-+				   u32 match)
-+{
-+	void __iomem *ioaddr = hw->pcsr;
-+	u32 value;
-+
-+	value = readl(ioaddr + GMAC_PACKET_FILTER);
-+	value |= GMAC_PACKET_FILTER_IPFE;
-+	writel(value, ioaddr + GMAC_PACKET_FILTER);
-+
-+	value = readl(ioaddr + GMAC_L3L4_CTRL(filter_no));
-+
-+	/* For IPv6 not both SA/DA filters can be active */
-+	if (ipv6) {
-+		value |= GMAC_L3PEN0;
-+		value &= ~(GMAC_L3SAM0 | GMAC_L3SAIM0);
-+		value &= ~(GMAC_L3DAM0 | GMAC_L3DAIM0);
-+		if (sa) {
-+			value |= GMAC_L3SAM0;
-+			if (inv)
-+				value |= GMAC_L3SAIM0;
-+		} else {
-+			value |= GMAC_L3DAM0;
-+			if (inv)
-+				value |= GMAC_L3DAIM0;
-+		}
-+	} else {
-+		value &= ~GMAC_L3PEN0;
-+		if (sa) {
-+			value |= GMAC_L3SAM0;
-+			if (inv)
-+				value |= GMAC_L3SAIM0;
-+		} else {
-+			value |= GMAC_L3DAM0;
-+			if (inv)
-+				value |= GMAC_L3DAIM0;
-+		}
-+	}
-+
-+	writel(value, ioaddr + GMAC_L3L4_CTRL(filter_no));
-+
-+	if (sa) {
-+		writel(match, ioaddr + GMAC_L3_ADDR0(filter_no));
-+	} else {
-+		writel(match, ioaddr + GMAC_L3_ADDR1(filter_no));
-+	}
-+
-+	if (!en)
-+		writel(0, ioaddr + GMAC_L3L4_CTRL(filter_no));
-+
-+	return 0;
-+}
-+
-+static int dwmac4_config_l4_filter(struct mac_device_info *hw, u32 filter_no,
-+				   bool en, bool udp, bool sa, bool inv,
-+				   u32 match)
-+{
-+	void __iomem *ioaddr = hw->pcsr;
-+	u32 value;
-+
-+	value = readl(ioaddr + GMAC_PACKET_FILTER);
-+	value |= GMAC_PACKET_FILTER_IPFE;
-+	writel(value, ioaddr + GMAC_PACKET_FILTER);
-+
-+	value = readl(ioaddr + GMAC_L3L4_CTRL(filter_no));
-+	if (udp) {
-+		value |= GMAC_L4PEN0;
-+	} else {
-+		value &= ~GMAC_L4PEN0;
-+	}
-+
-+	value &= ~(GMAC_L4SPM0 | GMAC_L4SPIM0);
-+	value &= ~(GMAC_L4DPM0 | GMAC_L4DPIM0);
-+	if (sa) {
-+		value |= GMAC_L4SPM0;
-+		if (inv)
-+			value |= GMAC_L4SPIM0;
-+	} else {
-+		value |= GMAC_L4DPM0;
-+		if (inv)
-+			value |= GMAC_L4DPIM0;
-+	}
-+
-+	writel(value, ioaddr + GMAC_L3L4_CTRL(filter_no));
-+
-+	if (sa) {
-+		value = match & GMAC_L4SP0;
-+	} else {
-+		value = (match << GMAC_L4DP0_SHIFT) & GMAC_L4DP0;
-+	}
-+
-+	writel(value, ioaddr + GMAC_L4_ADDR(filter_no));
-+
-+	if (!en)
-+		writel(0, ioaddr + GMAC_L3L4_CTRL(filter_no));
-+
-+	return 0;
-+}
-+
- const struct stmmac_ops dwmac4_ops = {
- 	.core_init = dwmac4_core_init,
- 	.set_mac = stmmac_set_mac,
-@@ -843,6 +943,8 @@ const struct stmmac_ops dwmac4_ops = {
- 	.sarc_configure = dwmac4_sarc_configure,
- 	.enable_vlan = dwmac4_enable_vlan,
- 	.set_arp_offload = dwmac4_set_arp_offload,
-+	.config_l3_filter = dwmac4_config_l3_filter,
-+	.config_l4_filter = dwmac4_config_l4_filter,
- };
- 
- const struct stmmac_ops dwmac410_ops = {
-@@ -879,6 +981,8 @@ const struct stmmac_ops dwmac410_ops = {
- 	.sarc_configure = dwmac4_sarc_configure,
- 	.enable_vlan = dwmac4_enable_vlan,
- 	.set_arp_offload = dwmac4_set_arp_offload,
-+	.config_l3_filter = dwmac4_config_l3_filter,
-+	.config_l4_filter = dwmac4_config_l4_filter,
- };
- 
- const struct stmmac_ops dwmac510_ops = {
-@@ -920,6 +1024,8 @@ const struct stmmac_ops dwmac510_ops = {
- 	.sarc_configure = dwmac4_sarc_configure,
- 	.enable_vlan = dwmac4_enable_vlan,
- 	.set_arp_offload = dwmac4_set_arp_offload,
-+	.config_l3_filter = dwmac4_config_l3_filter,
-+	.config_l4_filter = dwmac4_config_l4_filter,
- };
- 
- int dwmac4_setup(struct stmmac_priv *priv)
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-index 229059cef949..b24c89572745 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-@@ -364,6 +364,7 @@ static void dwmac4_get_hw_feature(void __iomem *ioaddr,
- 
- 	/* MAC HW feature1 */
- 	hw_cap = readl(ioaddr + GMAC_HW_FEATURE1);
-+	dma_cap->l3l4fnum = (hw_cap & GMAC_HW_FEAT_L3L4FNUM) >> 27;
- 	dma_cap->hash_tb_sz = (hw_cap & GMAC_HW_HASH_TB_SZ) >> 24;
- 	dma_cap->av = (hw_cap & GMAC_HW_FEAT_AVSEL) >> 20;
- 	dma_cap->tsoen = (hw_cap & GMAC_HW_TSOEN) >> 18;
--- 
-2.7.4
-
+Cheers,
+Yegor
