@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4267CD44D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CFC6CD44E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbfJFRYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:24:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49262 "EHLO mail.kernel.org"
+        id S1727902AbfJFRY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:24:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbfJFRYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:24:20 -0400
+        id S1727831AbfJFRYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:24:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F36A2217F9;
-        Sun,  6 Oct 2019 17:24:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B02F92077B;
+        Sun,  6 Oct 2019 17:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382659;
-        bh=TkRXmpHdZvwNp4jqEj1dbBI2v217kXfJTlu2W7Axhqk=;
+        s=default; t=1570382662;
+        bh=uzav9WMqexhDvnaLqfBJoM5xcO0X3E4XEDP/pB3N+Ds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W7MN9z9cNIiXqwYMPvY3kPNKhwDc7l+F8U5phMeSYFTXLX7F1Xw/Lu12Bt2FMvfDc
-         gS1YjIPu2wZ1wgNf9C2aUg5DMT/SrlO2kgKxOHdF+QhkBcDQ8pGTxcJYZ5rcgpbslr
-         DTR/qLB77YipVixghTofypEIpLwHlhUtrqeQ1NIk=
+        b=ozU91RhPBYH6ISSguH4SsfWs6+aUlemLxzW7ASXAJRKxdF7Bung+Supc34qlHiTMZ
+         aK0xSU/VDvq1zaILtJW9Wa8Rqew5R71RojWXU/GUBhiMpf2z4/7L2oYhH505UaqVKh
+         nT6Ab0dkLZlRLS9sakdI87Kou0fzdMWos0Iszg/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guo Zeng <Guo.Zeng@csr.com>,
-        Barry Song <Baohua.Song@csr.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 07/47] clk: sirf: Dont reference clk_init_data after registration
-Date:   Sun,  6 Oct 2019 19:20:54 +0200
-Message-Id: <20191006172017.276004519@linuxfoundation.org>
+Subject: [PATCH 4.9 08/47] powerpc/rtas: use device model APIs and serialization during LPM
+Date:   Sun,  6 Oct 2019 19:20:55 +0200
+Message-Id: <20191006172017.327218967@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
 References: <20191006172016.873463083@linuxfoundation.org>
@@ -45,72 +45,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
-[ Upstream commit af55dadfbce35b4f4c6247244ce3e44b2e242b84 ]
+[ Upstream commit a6717c01ddc259f6f73364779df058e2c67309f8 ]
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+The LPAR migration implementation and userspace-initiated cpu hotplug
+can interleave their executions like so:
 
-Cc: Guo Zeng <Guo.Zeng@csr.com>
-Cc: Barry Song <Baohua.Song@csr.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-6-sboyd@kernel.org
+1. Set cpu 7 offline via sysfs.
+
+2. Begin a partition migration, whose implementation requires the OS
+   to ensure all present cpus are online; cpu 7 is onlined:
+
+     rtas_ibm_suspend_me -> rtas_online_cpus_mask -> cpu_up
+
+   This sets cpu 7 online in all respects except for the cpu's
+   corresponding struct device; dev->offline remains true.
+
+3. Set cpu 7 online via sysfs. _cpu_up() determines that cpu 7 is
+   already online and returns success. The driver core (device_online)
+   sets dev->offline = false.
+
+4. The migration completes and restores cpu 7 to offline state:
+
+     rtas_ibm_suspend_me -> rtas_offline_cpus_mask -> cpu_down
+
+This leaves cpu7 in a state where the driver core considers the cpu
+device online, but in all other respects it is offline and
+unused. Attempts to online the cpu via sysfs appear to succeed but the
+driver core actually does not pass the request to the lower-level
+cpuhp support code. This makes the cpu unusable until the cpu device
+is manually set offline and then online again via sysfs.
+
+Instead of directly calling cpu_up/cpu_down, the migration code should
+use the higher-level device core APIs to maintain consistent state and
+serialize operations.
+
+Fixes: 120496ac2d2d ("powerpc: Bring all threads online prior to migration/hibernation")
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190802192926.19277-2-nathanl@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sirf/clk-common.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/rtas.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
-index 77e1e2491689b..edb7197cc4b4d 100644
---- a/drivers/clk/sirf/clk-common.c
-+++ b/drivers/clk/sirf/clk-common.c
-@@ -298,9 +298,10 @@ static u8 dmn_clk_get_parent(struct clk_hw *hw)
- {
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	u32 cfg = clkc_readl(clk->regofs);
-+	const char *name = clk_hw_get_name(hw);
+diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
+index 6a3e5de544ce2..a309a7a29cc60 100644
+--- a/arch/powerpc/kernel/rtas.c
++++ b/arch/powerpc/kernel/rtas.c
+@@ -874,15 +874,17 @@ static int rtas_cpu_state_change_mask(enum rtas_cpu_state state,
+ 		return 0;
  
- 	/* parent of io domain can only be pll3 */
--	if (strcmp(hw->init->name, "io") == 0)
-+	if (strcmp(name, "io") == 0)
- 		return 4;
+ 	for_each_cpu(cpu, cpus) {
++		struct device *dev = get_cpu_device(cpu);
++
+ 		switch (state) {
+ 		case DOWN:
+-			cpuret = cpu_down(cpu);
++			cpuret = device_offline(dev);
+ 			break;
+ 		case UP:
+-			cpuret = cpu_up(cpu);
++			cpuret = device_online(dev);
+ 			break;
+ 		}
+-		if (cpuret) {
++		if (cpuret < 0) {
+ 			pr_debug("%s: cpu_%s for cpu#%d returned %d.\n",
+ 					__func__,
+ 					((state == UP) ? "up" : "down"),
+@@ -971,6 +973,8 @@ int rtas_ibm_suspend_me(u64 handle)
+ 	data.token = rtas_token("ibm,suspend-me");
+ 	data.complete = &done;
  
- 	WARN_ON((cfg & (BIT(3) - 1)) > 4);
-@@ -312,9 +313,10 @@ static int dmn_clk_set_parent(struct clk_hw *hw, u8 parent)
- {
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	u32 cfg = clkc_readl(clk->regofs);
-+	const char *name = clk_hw_get_name(hw);
++	lock_device_hotplug();
++
+ 	/* All present CPUs must be online */
+ 	cpumask_andnot(offline_mask, cpu_present_mask, cpu_online_mask);
+ 	cpuret = rtas_online_cpus_mask(offline_mask);
+@@ -1002,6 +1006,7 @@ int rtas_ibm_suspend_me(u64 handle)
+ 				__func__);
  
- 	/* parent of io domain can only be pll3 */
--	if (strcmp(hw->init->name, "io") == 0)
-+	if (strcmp(name, "io") == 0)
- 		return -EINVAL;
- 
- 	cfg &= ~(BIT(3) - 1);
-@@ -354,7 +356,8 @@ static long dmn_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	unsigned long fin;
- 	unsigned ratio, wait, hold;
--	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
-+	const char *name = clk_hw_get_name(hw);
-+	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
- 
- 	fin = *parent_rate;
- 	ratio = fin / rate;
-@@ -376,7 +379,8 @@ static int dmn_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	unsigned long fin;
- 	unsigned ratio, wait, hold, reg;
--	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
-+	const char *name = clk_hw_get_name(hw);
-+	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
- 
- 	fin = parent_rate;
- 	ratio = fin / rate;
+ out:
++	unlock_device_hotplug();
+ 	free_cpumask_var(offline_mask);
+ 	return atomic_read(&data.error);
+ }
 -- 
 2.20.1
 
