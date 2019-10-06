@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B9D9CD6D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC646CD71D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730784AbfJFRjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:39:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38822 "EHLO mail.kernel.org"
+        id S1730926AbfJFRwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:52:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730762AbfJFRjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:39:20 -0400
+        id S1730783AbfJFRjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:39:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56B9A20862;
-        Sun,  6 Oct 2019 17:39:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C61562087E;
+        Sun,  6 Oct 2019 17:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383559;
-        bh=TmUVAbWSEcYcj+irDhRNLuE3zHUilfSwCYvlTjdtEr8=;
+        s=default; t=1570383565;
+        bh=TcQJWdjIDXDwAH8RWD2Ob2jmrYxZ0FEDUkeX5eqwNmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scefugTjikU8zgudTOdW7ib37UP3d4coLtn8x/EsG1JEnKgDIj2cGzozngLh6Ogz1
-         Xqpneq/ALr2tJ4/4Hdc8WQF7IBXFd3ZIhQax8W7pGlUXPXQ0PMAbWDhNtzAu3iu7V4
-         +1ytSeRIU+bmuGD7vmqk7fp71PG9PmdsiYXo554A=
+        b=e16HH8BZmS3QtGPe4HgC1FsM2i/N82eFyxUJJ7ySdKc4riND8rqwEr4wA+aIL7ejD
+         CuyodP8dAzjULt6pNRmXu3jfvrb5QM5XKlpL222b3lLf0IJXnP8rOhp8PheDdLsZo1
+         s5fEoCkS4cj+HVBSeJjrI5kcYyqOWfNJdYagxaLc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        David Lechner <david@lechnology.com>,
+        stable@vger.kernel.org, Olivier Moysan <olivier.moysan@st.com>,
+        Jyri Sarha <jsarha@ti.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 012/166] drm/tinydrm/Kconfig: drivers: Select BACKLIGHT_CLASS_DEVICE
-Date:   Sun,  6 Oct 2019 19:19:38 +0200
-Message-Id: <20191006171213.614339206@linuxfoundation.org>
+Subject: [PATCH 5.3 014/166] drm/bridge: sii902x: fix missing reference to mclk clock
+Date:   Sun,  6 Oct 2019 19:19:40 +0200
+Message-Id: <20191006171213.963286832@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -45,99 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Noralf Trønnes <noralf@tronnes.org>
+From: Olivier Moysan <olivier.moysan@st.com>
 
-[ Upstream commit 3389669ac5ea598562673c04971d7bb0fab0e9f1 ]
+[ Upstream commit 365d28c92f8cd3d3860f8dd057a8c136e24b3698 ]
 
-The mipi_dbi helper is missing a dependency on DRM_KMS_HELPER and putting
-that in revealed this problem:
+Add devm_clk_get call to retrieve reference to master clock.
 
-drivers/video/fbdev/Kconfig:12:error: recursive dependency detected!
-drivers/video/fbdev/Kconfig:12: symbol FB is selected by DRM_KMS_FB_HELPER
-drivers/gpu/drm/Kconfig:75:     symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
-drivers/gpu/drm/Kconfig:69:     symbol DRM_KMS_HELPER is selected by TINYDRM_MIPI_DBI
-drivers/gpu/drm/tinydrm/Kconfig:11:     symbol TINYDRM_MIPI_DBI is selected by TINYDRM_HX8357D
-drivers/gpu/drm/tinydrm/Kconfig:15:     symbol TINYDRM_HX8357D depends on BACKLIGHT_CLASS_DEVICE
-drivers/video/backlight/Kconfig:144:    symbol BACKLIGHT_CLASS_DEVICE is selected by FB_BACKLIGHT
-drivers/video/fbdev/Kconfig:187:        symbol FB_BACKLIGHT depends on FB
+Fixes: ff5781634c41 ("drm/bridge: sii902x: Implement HDMI audio support")
 
-A symbol that selects DRM_KMS_HELPER can not depend on
-BACKLIGHT_CLASS_DEVICE. The reason for this is that DRM_KMS_FB_HELPER
-selects FB instead of depending on it.
-
-The tinydrm drivers have somehow gotten away with depending on
-BACKLIGHT_CLASS_DEVICE because DRM_TINYDRM selects DRM_KMS_HELPER and the
-drivers depend on that symbol.
-
-An audit shows that all DRM drivers that select DRM_KMS_HELPER and use
-BACKLIGHT_CLASS_DEVICE, selects it:
-  DRM_TILCDC, DRM_GMA500, DRM_SHMOBILE, DRM_NOUVEAU, DRM_FSL_DCU,
-  DRM_I915, DRM_RADEON, DRM_AMDGPU, DRM_PARADE_PS8622
-
-Documentation/kbuild/kconfig-language.txt has a note regarding select:
-1. 'select should be used with care since it doesn't visit dependencies.'
-   This is not a problem since BACKLIGHT_CLASS_DEVICE doesn't have any
-   dependencies.
-2. 'In general use select only for non-visible symbols'
-   BACKLIGHT_CLASS_DEVICE is user visible.
-
-The real solution to this would be to have DRM_KMS_FB_HELPER depend on the
-user visible symbol FB. That is a can of worms I'm not willing to tackle.
-I fear that such a change will result in me handling difficult fallouts
-for the next weeks. So I'm following DRM suite here.
-
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Reviewed-by: David Lechner <david@lechnology.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190722104312.16184-7-noralf@tronnes.org
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+Reviewed-by: Jyri Sarha <jsarha@ti.com>
+Acked-by: Andrzej Hajda <a.hajda@samsung.com
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/1563811560-29589-2-git-send-email-olivier.moysan@st.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/tinydrm/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/sii902x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
-index 87819c82bcce8..f2f0739d1035d 100644
---- a/drivers/gpu/drm/tinydrm/Kconfig
-+++ b/drivers/gpu/drm/tinydrm/Kconfig
-@@ -14,8 +14,8 @@ config TINYDRM_MIPI_DBI
- config TINYDRM_HX8357D
- 	tristate "DRM support for HX8357D display panels"
- 	depends on DRM_TINYDRM && SPI
--	depends on BACKLIGHT_CLASS_DEVICE
- 	select TINYDRM_MIPI_DBI
-+	select BACKLIGHT_CLASS_DEVICE
- 	help
- 	  DRM driver for the following HX8357D panels:
- 	  * YX350HV15-T 3.5" 340x350 TFT (Adafruit 3.5")
-@@ -35,8 +35,8 @@ config TINYDRM_ILI9225
- config TINYDRM_ILI9341
- 	tristate "DRM support for ILI9341 display panels"
- 	depends on DRM_TINYDRM && SPI
--	depends on BACKLIGHT_CLASS_DEVICE
- 	select TINYDRM_MIPI_DBI
-+	select BACKLIGHT_CLASS_DEVICE
- 	help
- 	  DRM driver for the following Ilitek ILI9341 panels:
- 	  * YX240QV29-T 2.4" 240x320 TFT (Adafruit 2.4")
-@@ -46,8 +46,8 @@ config TINYDRM_ILI9341
- config TINYDRM_MI0283QT
- 	tristate "DRM support for MI0283QT"
- 	depends on DRM_TINYDRM && SPI
--	depends on BACKLIGHT_CLASS_DEVICE
- 	select TINYDRM_MIPI_DBI
-+	select BACKLIGHT_CLASS_DEVICE
- 	help
- 	  DRM driver for the Multi-Inno MI0283QT display panel
- 	  If M is selected the module will be called mi0283qt.
-@@ -78,8 +78,8 @@ config TINYDRM_ST7586
- config TINYDRM_ST7735R
- 	tristate "DRM support for Sitronix ST7735R display panels"
- 	depends on DRM_TINYDRM && SPI
--	depends on BACKLIGHT_CLASS_DEVICE
- 	select TINYDRM_MIPI_DBI
-+	select BACKLIGHT_CLASS_DEVICE
- 	help
- 	  DRM driver Sitronix ST7735R with one of the following LCDs:
- 	  * JD-T18003-T01 1.8" 128x160 TFT
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index dd7aa466b2805..36acc256e67e3 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -750,6 +750,7 @@ static int sii902x_audio_codec_init(struct sii902x *sii902x,
+ 		sii902x->audio.i2s_fifo_sequence[i] |= audio_fifo_id[i] |
+ 			i2s_lane_id[lanes[i]] |	SII902X_TPI_I2S_FIFO_ENABLE;
+ 
++	sii902x->audio.mclk = devm_clk_get(dev, "mclk");
+ 	if (IS_ERR(sii902x->audio.mclk)) {
+ 		dev_err(dev, "%s: No clock (audio mclk) found: %ld\n",
+ 			__func__, PTR_ERR(sii902x->audio.mclk));
 -- 
 2.20.1
 
