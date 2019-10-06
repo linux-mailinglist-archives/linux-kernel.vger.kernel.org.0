@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28207CD424
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D84ABCD472
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbfJFRXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:23:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47492 "EHLO mail.kernel.org"
+        id S1728173AbfJFR0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:26:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726508AbfJFRXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:23:07 -0400
+        id S1728129AbfJFRZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:25:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9C6E2077B;
-        Sun,  6 Oct 2019 17:23:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1941120867;
+        Sun,  6 Oct 2019 17:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382587;
-        bh=yXB39dAJ0OPDeSOHA2m2wMUfQ/NcOLpxgJl/vscunP4=;
+        s=default; t=1570382751;
+        bh=on4MoXKLcBAAwcvGInINaSXEOabjhNW79FFPggjuvbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lUtG3X5AgSITwFxU1XEHWdrvjmQwemTgLQFkz/lUewfl4PCzs3vdyu8n6Hude72O/
-         MiYjdyHwaGO1VSwbOJ/LweUfQBu0Hd38VfZHcPYH8E0MiB+1cYnCpfBHxB0S/2kcOn
-         MJqzxI0S5b4/NitzkPBufe6Mm/525Z2NmyW3v69E=
+        b=Ffv4BVgoqTyhmEWH+v9eMSLGIHSuespRUeAT9h72I3mr+dEMW3/k+yktRZ01tbxPf
+         AH1tGRNbCQQrh+PT8p8v1C3+ZeNLkcjWMoarpu4yITyE0blp6vUeEGGREOxifxTUiv
+         3ynNC9uJ7MfSfssECepI/ZHaA/oT7XcHf9y5iWdc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 14/47] powerpc/64s/exception: machine check use correct cfar for late handler
-Date:   Sun,  6 Oct 2019 19:21:01 +0200
-Message-Id: <20191006172017.639416159@linuxfoundation.org>
+Subject: [PATCH 4.14 26/68] clk: at91: select parent if main oscillator or bypass is enabled
+Date:   Sun,  6 Oct 2019 19:21:02 +0200
+Message-Id: <20191006171119.982471947@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +47,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-[ Upstream commit 0b66370c61fcf5fcc1d6901013e110284da6e2bb ]
+[ Upstream commit 69a6bcde7fd3fe6f3268ce26f31d9d9378384c98 ]
 
-Bare metal machine checks run an "early" handler in real mode before
-running the main handler which reports the event.
+Selecting the right parent for the main clock is done using only
+main oscillator enabled bit.
+In case we have this oscillator bypassed by an external signal (no driving
+on the XOUT line), we still use external clock, but with BYPASS bit set.
+So, in this case we must select the same parent as before.
+Create a macro that will select the right parent considering both bits from
+the MOR register.
+Use this macro when looking for the right parent.
 
-The main handler runs exactly as a normal interrupt handler, after the
-"windup" which sets registers back as they were at interrupt entry.
-CFAR does not get restored by the windup code, so that will be wrong
-when the handler is run.
-
-Restore the CFAR to the saved value before running the late handler.
-
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190802105709.27696-8-npiggin@gmail.com
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Link: https://lkml.kernel.org/r/1568042692-11784-2-git-send-email-eugen.hristev@microchip.com
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/exceptions-64s.S | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/at91/clk-main.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kernel/exceptions-64s.S b/arch/powerpc/kernel/exceptions-64s.S
-index 92474227262b4..0c8b966e80702 100644
---- a/arch/powerpc/kernel/exceptions-64s.S
-+++ b/arch/powerpc/kernel/exceptions-64s.S
-@@ -467,6 +467,10 @@ EXC_COMMON_BEGIN(machine_check_handle_early)
- 	RFI_TO_USER_OR_KERNEL
- 9:
- 	/* Deliver the machine check to host kernel in V mode. */
-+BEGIN_FTR_SECTION
-+	ld	r10,ORIG_GPR3(r1)
-+	mtspr	SPRN_CFAR,r10
-+END_FTR_SECTION_IFSET(CPU_FTR_CFAR)
- 	MACHINE_CHECK_HANDLER_WINDUP
- 	b	machine_check_pSeries
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index c813c27f2e58c..2f97a843d6d6b 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -27,6 +27,10 @@
  
+ #define MOR_KEY_MASK		(0xff << 16)
+ 
++#define clk_main_parent_select(s)	(((s) & \
++					(AT91_PMC_MOSCEN | \
++					AT91_PMC_OSCBYPASS)) ? 1 : 0)
++
+ struct clk_main_osc {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -119,7 +123,7 @@ static int clk_main_osc_is_prepared(struct clk_hw *hw)
+ 
+ 	regmap_read(regmap, AT91_PMC_SR, &status);
+ 
+-	return (status & AT91_PMC_MOSCS) && (tmp & AT91_PMC_MOSCEN);
++	return (status & AT91_PMC_MOSCS) && clk_main_parent_select(tmp);
+ }
+ 
+ static const struct clk_ops main_osc_ops = {
+@@ -530,7 +534,7 @@ static u8 clk_sam9x5_main_get_parent(struct clk_hw *hw)
+ 
+ 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
+ 
+-	return status & AT91_PMC_MOSCEN ? 1 : 0;
++	return clk_main_parent_select(status);
+ }
+ 
+ static const struct clk_ops sam9x5_main_ops = {
+@@ -572,7 +576,7 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
+ 	clkmain->hw.init = &init;
+ 	clkmain->regmap = regmap;
+ 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
+-	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
++	clkmain->parent = clk_main_parent_select(status);
+ 
+ 	hw = &clkmain->hw;
+ 	ret = clk_hw_register(NULL, &clkmain->hw);
 -- 
 2.20.1
 
