@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E54EFCD59A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1C48CD50E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730512AbfJFRhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:37:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36914 "EHLO mail.kernel.org"
+        id S1729059AbfJFRb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730496AbfJFRhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:37:51 -0400
+        id S1729527AbfJFRb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E0B72053B;
-        Sun,  6 Oct 2019 17:37:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07F122133F;
+        Sun,  6 Oct 2019 17:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383470;
-        bh=aZliCapHq0JTn6jAEA0jo5fj/W6N/vFQStGVfGggpZg=;
+        s=default; t=1570383116;
+        bh=ocmlQhmbrOJ5xSoPlVt/zwsFqdeOGrlzZtRTlLOjigU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fj27/mijGtf3SPkzhnC7wKDIkZK1D240Mm3TFi+Di97s7Dqo0hMI+X6zkq2A/HrhH
-         UHjeJJuo+Qf7onP2bAOYCoOoI6BwzR+TX8ExCmzeAi77Z3vqkv35dJLGS1WfKBbLLq
-         nU5arr9kksfKZytrWbfR6dVEtHFKiuUftniJncfk=
+        b=dY3Qr927GKSrgdCbYTgvU/PWLMmmGny26UIrJURZNA7x6JRxmQb2iQbhsQJCBDvz/
+         3cNDShRb5mUGlR5ZLscORuBJ2lQm/eE+D0BegJgAmkmypGMYd/faZ8iypcqHJaFmkM
+         ik4pS/kZrHVq21gRLiCwIkJD1Mly7r7rKQm08ltQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Wilczynski <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 115/137] PCI: Use static const struct, not const static struct
+        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 093/106] vsock: Fix a lockdep warning in __vsock_release()
 Date:   Sun,  6 Oct 2019 19:21:39 +0200
-Message-Id: <20191006171218.741239098@linuxfoundation.org>
+Message-Id: <20191006171201.105134142@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +44,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Wilczynski <kw@linux.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit 8050f3f6645ae0f7e4c1304593f6f7eb2ee7d85c ]
+[ Upstream commit 0d9138ffac24cf8b75366ede3a68c951e6dcc575 ]
 
-Move the static keyword to the front of declarations of pci_regs_behavior[]
-and pcie_cap_regs_behavior[], which resolves compiler warnings when
-building with "W=1":
+Lockdep is unhappy if two locks from the same class are held.
 
-  drivers/pci/pci-bridge-emul.c:41:1: warning: ‘static’ is not at beginning of
-  declaration [-Wold-style-declaration]
-   const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
-   ^
-  drivers/pci/pci-bridge-emul.c:176:1: warning: ‘static’ is not at beginning of
-  declaration [-Wold-style-declaration]
-   const static struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
-   ^
+Fix the below warning for hyperv and virtio sockets (vmci socket code
+doesn't have the issue) by using lock_sock_nested() when __vsock_release()
+is called recursively:
 
-Link: https://lore.kernel.org/r/20190826151436.4672-1-kw@linux.com
-Link: https://lore.kernel.org/r/20190828131733.5817-1-kw@linux.com
-Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+============================================
+WARNING: possible recursive locking detected
+5.3.0+ #1 Not tainted
+--------------------------------------------
+server/1795 is trying to acquire lock:
+ffff8880c5158990 (sk_lock-AF_VSOCK){+.+.}, at: hvs_release+0x10/0x120 [hv_sock]
+
+but task is already holding lock:
+ffff8880c5158150 (sk_lock-AF_VSOCK){+.+.}, at: __vsock_release+0x2e/0xf0 [vsock]
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(sk_lock-AF_VSOCK);
+  lock(sk_lock-AF_VSOCK);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by server/1795:
+ #0: ffff8880c5d05ff8 (&sb->s_type->i_mutex_key#10){+.+.}, at: __sock_release+0x2d/0xa0
+ #1: ffff8880c5158150 (sk_lock-AF_VSOCK){+.+.}, at: __vsock_release+0x2e/0xf0 [vsock]
+
+stack backtrace:
+CPU: 5 PID: 1795 Comm: server Not tainted 5.3.0+ #1
+Call Trace:
+ dump_stack+0x67/0x90
+ __lock_acquire.cold.67+0xd2/0x20b
+ lock_acquire+0xb5/0x1c0
+ lock_sock_nested+0x6d/0x90
+ hvs_release+0x10/0x120 [hv_sock]
+ __vsock_release+0x24/0xf0 [vsock]
+ __vsock_release+0xa0/0xf0 [vsock]
+ vsock_release+0x12/0x30 [vsock]
+ __sock_release+0x37/0xa0
+ sock_close+0x14/0x20
+ __fput+0xc1/0x250
+ task_work_run+0x98/0xc0
+ do_exit+0x344/0xc60
+ do_group_exit+0x47/0xb0
+ get_signal+0x15c/0xc50
+ do_signal+0x30/0x720
+ exit_to_usermode_loop+0x50/0xa0
+ do_syscall_64+0x24e/0x270
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f4184e85f31
+
+Tested-by: Stefano Garzarella <sgarzare@redhat.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/pci-bridge-emul.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/vmw_vsock/af_vsock.c                |   16 ++++++++++++----
+ net/vmw_vsock/hyperv_transport.c        |    2 +-
+ net/vmw_vsock/virtio_transport_common.c |    2 +-
+ 3 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pci/pci-bridge-emul.c b/drivers/pci/pci-bridge-emul.c
-index 83fb077d0b41f..702966e4fcaa4 100644
---- a/drivers/pci/pci-bridge-emul.c
-+++ b/drivers/pci/pci-bridge-emul.c
-@@ -38,7 +38,7 @@ struct pci_bridge_reg_behavior {
- 	u32 rsvd;
- };
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -641,7 +641,7 @@ struct sock *__vsock_create(struct net *
+ }
+ EXPORT_SYMBOL_GPL(__vsock_create);
  
--const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
-+static const struct pci_bridge_reg_behavior pci_regs_behavior[] = {
- 	[PCI_VENDOR_ID / 4] = { .ro = ~0 },
- 	[PCI_COMMAND / 4] = {
- 		.rw = (PCI_COMMAND_IO | PCI_COMMAND_MEMORY |
-@@ -173,7 +173,7 @@ const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
- 	},
- };
+-static void __vsock_release(struct sock *sk)
++static void __vsock_release(struct sock *sk, int level)
+ {
+ 	if (sk) {
+ 		struct sk_buff *skb;
+@@ -651,9 +651,17 @@ static void __vsock_release(struct sock
+ 		vsk = vsock_sk(sk);
+ 		pending = NULL;	/* Compiler warning. */
  
--const static struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
-+static const struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
- 	[PCI_CAP_LIST_ID / 4] = {
- 		/*
- 		 * Capability ID, Next Capability Pointer and
--- 
-2.20.1
-
++		/* The release call is supposed to use lock_sock_nested()
++		 * rather than lock_sock(), if a sock lock should be acquired.
++		 */
+ 		transport->release(vsk);
+ 
+-		lock_sock(sk);
++		/* When "level" is SINGLE_DEPTH_NESTING, use the nested
++		 * version to avoid the warning "possible recursive locking
++		 * detected". When "level" is 0, lock_sock_nested(sk, level)
++		 * is the same as lock_sock(sk).
++		 */
++		lock_sock_nested(sk, level);
+ 		sock_orphan(sk);
+ 		sk->sk_shutdown = SHUTDOWN_MASK;
+ 
+@@ -662,7 +670,7 @@ static void __vsock_release(struct sock
+ 
+ 		/* Clean up any sockets that never were accepted. */
+ 		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
+-			__vsock_release(pending);
++			__vsock_release(pending, SINGLE_DEPTH_NESTING);
+ 			sock_put(pending);
+ 		}
+ 
+@@ -711,7 +719,7 @@ EXPORT_SYMBOL_GPL(vsock_stream_has_space
+ 
+ static int vsock_release(struct socket *sock)
+ {
+-	__vsock_release(sock->sk);
++	__vsock_release(sock->sk, 0);
+ 	sock->sk = NULL;
+ 	sock->state = SS_FREE;
+ 
+--- a/net/vmw_vsock/hyperv_transport.c
++++ b/net/vmw_vsock/hyperv_transport.c
+@@ -538,7 +538,7 @@ static void hvs_release(struct vsock_soc
+ 	struct sock *sk = sk_vsock(vsk);
+ 	bool remove_sock;
+ 
+-	lock_sock(sk);
++	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
+ 	remove_sock = hvs_close_lock_held(vsk);
+ 	release_sock(sk);
+ 	if (remove_sock)
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -791,7 +791,7 @@ void virtio_transport_release(struct vso
+ 	struct sock *sk = &vsk->sk;
+ 	bool remove_sock = true;
+ 
+-	lock_sock(sk);
++	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
+ 	if (sk->sk_type == SOCK_STREAM)
+ 		remove_sock = virtio_transport_close(vsk);
+ 
 
 
