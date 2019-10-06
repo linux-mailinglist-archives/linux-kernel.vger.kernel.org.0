@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A51ECCEC2
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 07:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44250CCECA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 07:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbfJFFjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 01:39:43 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36198 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfJFFjm (ORCPT
+        id S1726313AbfJFFjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 01:39:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37262 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbfJFFjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 01:39:42 -0400
-Received: by mail-pl1-f195.google.com with SMTP id j11so5183092plk.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 22:39:40 -0700 (PDT)
+        Sun, 6 Oct 2019 01:39:44 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p1so4376763pgi.4
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Oct 2019 22:39:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Td3fuKxaZXUNRUL4lHP0H/YwhwCuhVUYKfFBUtY39ao=;
-        b=Xlf4SwJ/UUpArrEBuv2q1lJ6fn6ngckU4dU6VQwgyIknmlyuLoTxir6vza5SnMdgya
-         6L3q9t4Y0CDGCnaDx+MkM+maYPVTN7HPJbEnVvbR9fhHKt1BlvRx7LiPyNiEkaw8rug4
-         Y63rUInxA96AfaYRE6S0bdkNTKBB8hl6T3DVsPbZK/8zPI4+ZSQ8swdRLTteCmBXinvH
-         qg11ObRctXssuyhNu5+uu69TBXT5GC+PyUqG7zonqlwuRnKhFgCVst+U0Z8YV/lVltAc
-         6NLx5hoLgpeHjB4Q9ZdqLaCRuDSF9MTjX/m6ylu7cm20OsaHRyN2aCf/Q8IsO/0LTNt3
-         DayQ==
+        bh=S1RoqAjzF3G4A46AecyEHP/0DwVF1CG1yV8jnN1Ft9k=;
+        b=hyFNBkwR6pg4p2eP93SG+NV9NB6qex5OhttYUFQQ6YYwbqNCH7zkzB5piC0+tBTw48
+         F58jCN/ZpyGGindrO/Wc0hhpOxNWsEYHQAz9mj/oIXSdGHZbn4NQaqjSsmOs//W6DBQd
+         f+uDQ9TgGa/BNGOArhl170R7Wi/pIINMsXlu773pSyTG3QprqAU8PFA70O8EVEWdD7fP
+         hyHe+sLP/XXL+NRZkXXP+ck2ECaN0PxD8kWPDu5jMuWtIh+D7FcvJ4nvp9xmRQO1L65l
+         H4k9qxbUB7dTVWG4yk1nRknlTy/l6eW5frqYnukesY4vFAv5UkT54+0LptcnfywUiaIu
+         NxYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Td3fuKxaZXUNRUL4lHP0H/YwhwCuhVUYKfFBUtY39ao=;
-        b=n1blnxgZ8YybDCMVdDZckruJRKlGv8Ri3AKzBgZIMcOLa3XANB5SzRtUgZWq+00Bfs
-         9WsoxlRFFGtbrGmdODCqgcqCn6oFtGI1FuitlIUEZtSUjeg+JDXS6ukRTSaW8AOAdZ1Y
-         d3jEx26ilIh0yXmgnyvWz1SYQyi7suiuecU074Iz2AurWYPbfXD0KJjIDrZ6s2j/QD3y
-         /m4o49Vy/e2Faq5oTLlheXSVvrWWMupomllmh7Zx1Ho2Asrr4a+bSZSd+Soz2cEt0WVm
-         TKl1nHKc+XD2zVtSQDDLolMVsX6VObR9YnqGWH6+jJHy0m1LBxQqAReuV1XxGGRjDy3P
-         qnjw==
-X-Gm-Message-State: APjAAAXPBXBg4UnuyBwmOvwUzS8GUw4s23a/+HDxZK+13JyilgUh4wWt
-        6LmfBaODeyzyL0cNjbjgGl6PQg==
-X-Google-Smtp-Source: APXvYqzRvjgidKEx2Zc/pDIDjgvUy2QRhxqUBolQw4ccAIVPxh1mAjK2Mj0uZ4jzUmj3UKAs11rnew==
-X-Received: by 2002:a17:902:7244:: with SMTP id c4mr7596599pll.178.1570340379584;
-        Sat, 05 Oct 2019 22:39:39 -0700 (PDT)
+        bh=S1RoqAjzF3G4A46AecyEHP/0DwVF1CG1yV8jnN1Ft9k=;
+        b=Fngdp2rgobims0FCgWtYODREvkVBRZrRjTvuo/a/vXAAKVdqCnopKsr48WUp/H625E
+         1L2/PhdyJfXTFOdxIBq6+lyQepOpvNodK1JnMnpnhpJt2gszQG5qHQfjzhy7/AJUMuMK
+         D+0D2hAjRm5IVK26UYEh8Vl4SRG3VqjdaxpEGmZUu4DYKC0nyBfK3wRvrLiDBlI/XMHp
+         HeJaUH/kmDg2Fv1NtJX5qOAeRELH45PNQ8S5qWEK5q1S2t3mWgbgcwrW6125ht+0hw0x
+         NzdWE/6XAFeTyIK/QIdpAlxu/6CjcJgK1RjIQyibS0n1Yea47mggq+hpN9M64ZKkrCA0
+         wAtg==
+X-Gm-Message-State: APjAAAUuFYCcKKZ/ti9Ws6v+XjM3lqy3HBNtPoCSIUe22E2zgFwkqd0X
+        JMmINLerGVIu+ryRj9zLF+/KVA==
+X-Google-Smtp-Source: APXvYqzHcMrU1J/wYWP4lNtuoIic5NFXBS/1cEIovdr3sk+TlnhzhcSpbI9EoYFtfyNFlucLPo5HTg==
+X-Received: by 2002:a62:583:: with SMTP id 125mr27004540pff.69.1570340382559;
+        Sat, 05 Oct 2019 22:39:42 -0700 (PDT)
 Received: from debian-brgl.local (50-255-47-209-static.hfc.comcastbusiness.net. [50.255.47.209])
-        by smtp.gmail.com with ESMTPSA id q30sm10019320pja.18.2019.10.05.22.39.38
+        by smtp.gmail.com with ESMTPSA id q30sm10019320pja.18.2019.10.05.22.39.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2019 22:39:39 -0700 (PDT)
+        Sat, 05 Oct 2019 22:39:42 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -54,9 +54,9 @@ To:     Jonathan Corbet <corbet@lwn.net>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 2/8] lib: devres: prepare devm_ioremap_resource() for more variants
-Date:   Sun,  6 Oct 2019 07:39:10 +0200
-Message-Id: <20191006053916.8849-3-brgl@bgdev.pl>
+Subject: [PATCH v3 5/8] misc: sram: use devm_platform_ioremap_resource_wc()
+Date:   Sun,  6 Oct 2019 07:39:13 +0200
+Message-Id: <20191006053916.8849-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006053916.8849-1-brgl@bgdev.pl>
 References: <20191006053916.8849-1-brgl@bgdev.pl>
@@ -69,89 +69,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We want to add the write-combined variant of devm_ioremap_resource().
-Let's first implement __devm_ioremap_resource() which takes
-an additional argument type. The types are the same as for
-__devm_ioremap(). The existing devm_ioremap_resource() now simply
-calls __devm_ioremap_resource() with regular DEVM_IOREMAP type.
+Use the new devm_platform_ioremap_resource_wc() helper instead of
+devm_ioremap_wc() combinded with a call to platform_get_resource().
+Also use devm_platform_ioremap_resource() where applicable.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- lib/devres.c | 47 +++++++++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 20 deletions(-)
+ drivers/misc/sram.c | 28 ++++++++--------------------
+ 1 file changed, 8 insertions(+), 20 deletions(-)
 
-diff --git a/lib/devres.c b/lib/devres.c
-index 6a0e9bd6524a..a14c727128c1 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -114,25 +114,9 @@ void devm_iounmap(struct device *dev, void __iomem *addr)
- }
- EXPORT_SYMBOL(devm_iounmap);
- 
--/**
-- * devm_ioremap_resource() - check, request region, and ioremap resource
-- * @dev: generic device to handle the resource for
-- * @res: resource to be handled
-- *
-- * Checks that a resource is a valid memory region, requests the memory
-- * region and ioremaps it. All operations are managed and will be undone
-- * on driver detach.
-- *
-- * Returns a pointer to the remapped memory or an ERR_PTR() encoded error code
-- * on failure. Usage example:
-- *
-- *	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-- *	base = devm_ioremap_resource(&pdev->dev, res);
-- *	if (IS_ERR(base))
-- *		return PTR_ERR(base);
-- */
--void __iomem *devm_ioremap_resource(struct device *dev,
--				    const struct resource *res)
-+static void __iomem *
-+__devm_ioremap_resource(struct device *dev, const struct resource *res,
-+			enum devm_ioremap_type type)
+diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
+index f30448bf3a63..6c1a23cb3e8c 100644
+--- a/drivers/misc/sram.c
++++ b/drivers/misc/sram.c
+@@ -340,8 +340,6 @@ static const struct of_device_id sram_dt_ids[] = {
+ static int sram_probe(struct platform_device *pdev)
  {
- 	resource_size_t size;
- 	void __iomem *dest_ptr;
-@@ -151,7 +135,7 @@ void __iomem *devm_ioremap_resource(struct device *dev,
- 		return IOMEM_ERR_PTR(-EBUSY);
- 	}
+ 	struct sram_dev *sram;
+-	struct resource *res;
+-	size_t size;
+ 	int ret;
+ 	int (*init_func)(void);
  
--	dest_ptr = devm_ioremap(dev, res->start, size);
-+	dest_ptr = __devm_ioremap(dev, res->start, size, type);
- 	if (!dest_ptr) {
- 		dev_err(dev, "ioremap failed for resource %pR\n", res);
- 		devm_release_mem_region(dev, res->start, size);
-@@ -160,6 +144,29 @@ void __iomem *devm_ioremap_resource(struct device *dev,
+@@ -351,25 +349,14 @@ static int sram_probe(struct platform_device *pdev)
  
- 	return dest_ptr;
- }
-+
-+/**
-+ * devm_ioremap_resource() - check, request region, and ioremap resource
-+ * @dev: generic device to handle the resource for
-+ * @res: resource to be handled
-+ *
-+ * Checks that a resource is a valid memory region, requests the memory
-+ * region and ioremaps it. All operations are managed and will be undone
-+ * on driver detach.
-+ *
-+ * Returns a pointer to the remapped memory or an ERR_PTR() encoded error code
-+ * on failure. Usage example:
-+ *
-+ *	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+ *	base = devm_ioremap_resource(&pdev->dev, res);
-+ *	if (IS_ERR(base))
-+ *		return PTR_ERR(base);
-+ */
-+void __iomem *devm_ioremap_resource(struct device *dev,
-+				    const struct resource *res)
-+{
-+	return __devm_ioremap_resource(dev, res, DEVM_IOREMAP);
-+}
- EXPORT_SYMBOL(devm_ioremap_resource);
+ 	sram->dev = &pdev->dev;
  
- /*
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(sram->dev, "found no memory resource\n");
+-		return -EINVAL;
+-	}
+-
+-	size = resource_size(res);
+-
+-	if (!devm_request_mem_region(sram->dev, res->start, size, pdev->name)) {
+-		dev_err(sram->dev, "could not request region for resource\n");
+-		return -EBUSY;
+-	}
+-
+ 	if (of_property_read_bool(pdev->dev.of_node, "no-memory-wc"))
+-		sram->virt_base = devm_ioremap(sram->dev, res->start, size);
++		sram->virt_base = devm_platform_ioremap_resource(pdev, 0);
+ 	else
+-		sram->virt_base = devm_ioremap_wc(sram->dev, res->start, size);
+-	if (!sram->virt_base)
+-		return -ENOMEM;
++		sram->virt_base = devm_platform_ioremap_resource_wc(pdev, 0);
++	if (IS_ERR(sram->virt_base)) {
++		dev_err(&pdev->dev, "could not map SRAM registers\n");
++		return PTR_ERR(sram->virt_base);
++	}
+ 
+ 	sram->pool = devm_gen_pool_create(sram->dev, ilog2(SRAM_GRANULARITY),
+ 					  NUMA_NO_NODE, NULL);
+@@ -382,7 +369,8 @@ static int sram_probe(struct platform_device *pdev)
+ 	else
+ 		clk_prepare_enable(sram->clk);
+ 
+-	ret = sram_reserve_regions(sram, res);
++	ret = sram_reserve_regions(sram,
++			platform_get_resource(pdev, IORESOURCE_MEM, 0));
+ 	if (ret)
+ 		goto err_disable_clk;
+ 
 -- 
 2.23.0
 
