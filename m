@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6605CD4AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84711CD446
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbfJFR2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:28:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53648 "EHLO mail.kernel.org"
+        id S1727828AbfJFRYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:24:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728643AbfJFR2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:28:04 -0400
+        id S1727798AbfJFRYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:24:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C4E821479;
-        Sun,  6 Oct 2019 17:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EB5921479;
+        Sun,  6 Oct 2019 17:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382884;
-        bh=p/RHvbDV/1tIo8Or4RuVoQrBkcui4L3WwhNnxozAR/s=;
+        s=default; t=1570382648;
+        bh=F0AV2r5DMBlc+V5iWCahKWm3KkH3txRZ3r87QnIBRpA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D2/HNBvp65qQZgtu5OzqyQ7DzByWDByzznlQIbd52hje4JTWN7AD6IIWn3dn/blmC
-         OnXJu4hkQ+MBf7ClbJfikpJQWGfdPLAO2JKW671/2XURBbxJpzVfRM49/vuQox2o7G
-         kCcNjxBspyU6X+MDew9hJcV8vFDfrTMXhQLDA+1w=
+        b=iCOe0ZlmCuwltWSyfBr5jGfFHhB7UrwgPftk7XO5Gk/3QXQun6Gb6UHNYTVuztpPM
+         JXWq3nMBtH2bUVbYn9tHBJv5mGLjNVWqeDdkgzuJEGoWMLCepJ5xqiZbomEFDtuG3D
+         bwwihTVOOpSUV1XnuYf5aXpEt7NZ1hnvcbtquFxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Thelen <gthelen@google.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 45/68] kbuild: clean compressed initramfs image
-Date:   Sun,  6 Oct 2019 19:21:21 +0200
-Message-Id: <20191006171129.768138686@linuxfoundation.org>
+        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 35/47] net: ipv4: avoid mixed n_redirects and rate_tokens usage
+Date:   Sun,  6 Oct 2019 19:21:22 +0200
+Message-Id: <20191006172018.743249193@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
-References: <20191006171108.150129403@linuxfoundation.org>
+In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
+References: <20191006172016.873463083@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,56 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Thelen <gthelen@google.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 6279eb3dd7946c69346a3b98473ed13d3a44adb5 ]
+[ Upstream commit b406472b5ad79ede8d10077f0c8f05505ace8b6d ]
 
-Since 9e3596b0c653 ("kbuild: initramfs cleanup, set target from Kconfig")
-"make clean" leaves behind compressed initramfs images.  Example:
+Since commit c09551c6ff7f ("net: ipv4: use a dedicated counter
+for icmp_v4 redirect packets") we use 'n_redirects' to account
+for redirect packets, but we still use 'rate_tokens' to compute
+the redirect packets exponential backoff.
 
-  $ make defconfig
-  $ sed -i 's|CONFIG_INITRAMFS_SOURCE=""|CONFIG_INITRAMFS_SOURCE="/tmp/ir.cpio"|' .config
-  $ make olddefconfig
-  $ make -s
-  $ make -s clean
-  $ git clean -ndxf | grep initramfs
-  Would remove usr/initramfs_data.cpio.gz
+If the device sent to the relevant peer any ICMP error packet
+after sending a redirect, it will also update 'rate_token' according
+to the leaking bucket schema; typically 'rate_token' will raise
+above BITS_PER_LONG and the redirect packets backoff algorithm
+will produce undefined behavior.
 
-clean rules do not have CONFIG_* context so they do not know which
-compression format was used.  Thus they don't know which files to delete.
+Fix the issue using 'n_redirects' to compute the exponential backoff
+in ip_rt_send_redirect().
 
-Tell clean to delete all possible compression formats.
+Note that we still clear rate_tokens after a redirect silence period,
+to avoid changing an established behaviour.
 
-Once patched usr/initramfs_data.cpio.gz and friends are deleted by
-"make clean".
+The root cause predates git history; before the mentioned commit in
+the critical scenario, the kernel stopped sending redirects, after
+the mentioned commit the behavior more randomic.
 
-Link: http://lkml.kernel.org/r/20190722063251.55541-1-gthelen@google.com
-Fixes: 9e3596b0c653 ("kbuild: initramfs cleanup, set target from Kconfig")
-Signed-off-by: Greg Thelen <gthelen@google.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Fixes: c09551c6ff7f ("net: ipv4: use a dedicated counter for icmp_v4 redirect packets")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- usr/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/route.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/usr/Makefile b/usr/Makefile
-index 237a028693ce9..5f1bc5b23b14c 100644
---- a/usr/Makefile
-+++ b/usr/Makefile
-@@ -11,6 +11,9 @@ datafile_y = initramfs_data.cpio$(suffix_y)
- datafile_d_y = .$(datafile_y).d
- AFLAGS_initramfs_data.o += -DINITRAMFS_IMAGE="usr/$(datafile_y)"
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -903,16 +903,15 @@ void ip_rt_send_redirect(struct sk_buff
+ 	if (peer->rate_tokens == 0 ||
+ 	    time_after(jiffies,
+ 		       (peer->rate_last +
+-			(ip_rt_redirect_load << peer->rate_tokens)))) {
++			(ip_rt_redirect_load << peer->n_redirects)))) {
+ 		__be32 gw = rt_nexthop(rt, ip_hdr(skb)->daddr);
  
-+# clean rules do not have CONFIG_INITRAMFS_COMPRESSION.  So clean up after all
-+# possible compression formats.
-+clean-files += initramfs_data.cpio*
- 
- # Generate builtin.o based on initramfs_data.o
- obj-$(CONFIG_BLK_DEV_INITRD) := initramfs_data.o
--- 
-2.20.1
-
+ 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
+ 		peer->rate_last = jiffies;
+-		++peer->rate_tokens;
+ 		++peer->n_redirects;
+ #ifdef CONFIG_IP_ROUTE_VERBOSE
+ 		if (log_martians &&
+-		    peer->rate_tokens == ip_rt_redirect_number)
++		    peer->n_redirects == ip_rt_redirect_number)
+ 			net_warn_ratelimited("host %pI4/if%d ignores redirects for %pI4 to %pI4\n",
+ 					     &ip_hdr(skb)->saddr, inet_iif(skb),
+ 					     &ip_hdr(skb)->daddr, &gw);
 
 
