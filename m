@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF2DCD669
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D072CD6C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:50:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731783AbfJFRro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:47:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45698 "EHLO mail.kernel.org"
+        id S1728582AbfJFRuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:50:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731281AbfJFRpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:45:14 -0400
+        id S1731043AbfJFRke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:40:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B50A52080F;
-        Sun,  6 Oct 2019 17:45:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32A6520700;
+        Sun,  6 Oct 2019 17:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383914;
-        bh=V0IPKrrdUzrOKmKyU4GfV33KE6odZ0Zi5xhzLS4aIZY=;
+        s=default; t=1570383633;
+        bh=yIdKmJ39DVVEUZj5hSgUPNeERFOvo1IIZg0ZVTBclWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z1oLGhVaevEWxDC1il7RJa5pPVm/XHsJtWXPcBRsOFw08VExgcc3nFR5P9c3C2kQq
-         hJYnmhJqfqngqyX6Qcuf4xCDG7JizIDLdsq81llAmuW3VBDVcFMVfrDrEYPAbUZuQt
-         0YGLPCPZvyH+tzAweeLrwJZun8cyxydYDQKB/z38=
+        b=gXnJXWm+6IjOwphkK8wBzC12XOg5KeyY1PMu8iP7BlG+aQRGv0rvPlU2lED+v+DJG
+         b/aM+Vb33cZbjKnDSTpc3KHk8bv9rDzz0+eP5IymF5u267odwmbnl9fdliEgIzKcT7
+         6VDY7Ti6mKdAIqVM9/soEOeiwYLhbtPvXU5mNxb8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Hunt <johunt@akamai.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 143/166] udp: fix gso_segs calculations
-Date:   Sun,  6 Oct 2019 19:21:49 +0200
-Message-Id: <20191006171225.047363914@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 005/166] drm/panel: simple: fix AUO g185han01 horizontal blanking
+Date:   Sun,  6 Oct 2019 19:19:31 +0200
+Message-Id: <20191006171213.191099332@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -45,47 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Hunt <johunt@akamai.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit 44b321e5020d782ad6e8ae8183f09b163be6e6e2 ]
+[ Upstream commit f8c6bfc612b56f02e1b8fae699dff12738aaf889 ]
 
-Commit dfec0ee22c0a ("udp: Record gso_segs when supporting UDP segmentation offload")
-added gso_segs calculation, but incorrectly got sizeof() the pointer and
-not the underlying data type. In addition let's fix the v6 case.
+The horizontal blanking periods are too short, as the values are
+specified for a single LVDS channel. Since this panel is dual LVDS
+they need to be doubled. With this change the panel reaches its
+nominal vrefresh rate of 60Fps, instead of the 64Fps with the
+current wrong blanking.
 
-Fixes: bec1f6f69736 ("udp: generate gso with UDP_SEGMENT")
-Fixes: dfec0ee22c0a ("udp: Record gso_segs when supporting UDP segmentation offload")
-Signed-off-by: Josh Hunt <johunt@akamai.com>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Philipp Zabel added:
+The datasheet specifies 960 active clocks + 40/128/160 clocks blanking
+on each of the two LVDS channels (min/typical/max), so doubled this is
+now correct.
+
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/1562764060.23869.12.camel@pengutronix.de
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/udp.c |    2 +-
- net/ipv6/udp.c |    2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/panel/panel-simple.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -856,7 +856,7 @@ static int udp_send_skb(struct sk_buff *
- 
- 		skb_shinfo(skb)->gso_size = cork->gso_size;
- 		skb_shinfo(skb)->gso_type = SKB_GSO_UDP_L4;
--		skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(len - sizeof(uh),
-+		skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(len - sizeof(*uh),
- 							 cork->gso_size);
- 		goto csum_partial;
- 	}
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -1143,6 +1143,8 @@ static int udp_v6_send_skb(struct sk_buf
- 
- 		skb_shinfo(skb)->gso_size = cork->gso_size;
- 		skb_shinfo(skb)->gso_type = SKB_GSO_UDP_L4;
-+		skb_shinfo(skb)->gso_segs = DIV_ROUND_UP(len - sizeof(*uh),
-+							 cork->gso_size);
- 		goto csum_partial;
- 	}
- 
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 5a93c4edf1e43..ee6900eb39069 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -724,9 +724,9 @@ static const struct panel_desc auo_g133han01 = {
+ static const struct display_timing auo_g185han01_timings = {
+ 	.pixelclock = { 120000000, 144000000, 175000000 },
+ 	.hactive = { 1920, 1920, 1920 },
+-	.hfront_porch = { 18, 60, 74 },
+-	.hback_porch = { 12, 44, 54 },
+-	.hsync_len = { 10, 24, 32 },
++	.hfront_porch = { 36, 120, 148 },
++	.hback_porch = { 24, 88, 108 },
++	.hsync_len = { 20, 48, 64 },
+ 	.vactive = { 1080, 1080, 1080 },
+ 	.vfront_porch = { 6, 10, 40 },
+ 	.vback_porch = { 2, 5, 20 },
+-- 
+2.20.1
+
 
 
