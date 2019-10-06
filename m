@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A931ACD81B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93368CD77D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfJFR6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:58:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58010 "EHLO mail.kernel.org"
+        id S1729029AbfJFR36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:29:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729460AbfJFRbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:43 -0400
+        id S1729056AbfJFR3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:29:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 748C92133F;
-        Sun,  6 Oct 2019 17:31:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBAC92080F;
+        Sun,  6 Oct 2019 17:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383103;
-        bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
+        s=default; t=1570382989;
+        bh=xd9FKbZCNcSShJBGOLUkhgzrMnFgc/j0qXHYi6FfljA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XGMzrf+QwPoBbqyEAyNWT7R0ZN1yPdTB1je6RIt69uYTSCnTIKvmThtUdS+6OR4gv
-         85PlgqFaC92oiZJSE5G1YnkQRDY1IKH1/PjCqt6wah1Vaw7PW/X05J59UYpClG2+aW
-         46uIhRiHzIsSrT2/X3O6Q/hlFjH0A1820PtHIUWI=
+        b=D9TSdNp+VdDSA7qne2l80GgW+4cpfOAkAf9IHZcFdVFOLLqhwifKopILflvSlF1dE
+         WyVy3I9hoFcbfTyAy5kNmpsFmcSUGeKxCnr4kPhdxHFdRFBR/OLoUqLMwUK6ZfFJtN
+         h8R3WralV4LBL31KPgPeEiOe9yhQ4/ITbrEUhbPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 044/106] clk: sprd: add missing kfree
-Date:   Sun,  6 Oct 2019 19:20:50 +0200
-Message-Id: <20191006171142.943793763@linuxfoundation.org>
+Subject: [PATCH 4.19 046/106] dma-buf/sw_sync: Synchronize signal vs syncpt free
+Date:   Sun,  6 Oct 2019 19:20:52 +0200
+Message-Id: <20191006171143.424340388@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
 References: <20191006171124.641144086@linuxfoundation.org>
@@ -45,43 +47,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 5e75ea9c67433a065b0e8595ad3c91c7c0ca0d2d ]
+[ Upstream commit d3c6dd1fb30d3853c2012549affe75c930f4a2f9 ]
 
-The number of config registers for different pll clocks probably are not
-same, so we have to use malloc, and should free the memory before return.
+During release of the syncpt, we remove it from the list of syncpt and
+the tree, but only if it is not already been removed. However, during
+signaling, we first remove the syncpt from the list. So, if we
+concurrently free and signal the syncpt, the free may decide that it is
+not part of the tree and immediately free itself -- meanwhile the
+signaler goes on to use the now freed datastructure.
 
-Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
-Link: https://lkml.kernel.org/r/20190905103009.27166-1-zhang.lyra@gmail.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+In particular, we get struck by commit 0e2f733addbf ("dma-buf: make
+dma_fence structure a bit smaller v2") as the cb_list is immediately
+clobbered by the kfree_rcu.
+
+v2: Avoid calling into timeline_fence_release() from under the spinlock
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111381
+Fixes: d3862e44daa7 ("dma-buf/sw-sync: Fix locking around sync_timeline lists")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Sean Paul <seanpaul@chromium.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: <stable@vger.kernel.org> # v4.14+
+Acked-by: Christian König <christian.koenig@amd.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190812154247.20508-1-chris@chris-wilson.co.uk
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sprd/pll.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/dma-buf/sw_sync.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-index 36b4402bf09e3..640270f51aa56 100644
---- a/drivers/clk/sprd/pll.c
-+++ b/drivers/clk/sprd/pll.c
-@@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
- 					 k2 + refin * nint * CLK_PLL_1M;
+diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+index 53c1d6d36a642..81ba4eb348909 100644
+--- a/drivers/dma-buf/sw_sync.c
++++ b/drivers/dma-buf/sw_sync.c
+@@ -141,17 +141,14 @@ static void timeline_fence_release(struct dma_fence *fence)
+ {
+ 	struct sync_pt *pt = dma_fence_to_sync_pt(fence);
+ 	struct sync_timeline *parent = dma_fence_parent(fence);
++	unsigned long flags;
+ 
++	spin_lock_irqsave(fence->lock, flags);
+ 	if (!list_empty(&pt->link)) {
+-		unsigned long flags;
+-
+-		spin_lock_irqsave(fence->lock, flags);
+-		if (!list_empty(&pt->link)) {
+-			list_del(&pt->link);
+-			rb_erase(&pt->node, &parent->pt_tree);
+-		}
+-		spin_unlock_irqrestore(fence->lock, flags);
++		list_del(&pt->link);
++		rb_erase(&pt->node, &parent->pt_tree);
  	}
++	spin_unlock_irqrestore(fence->lock, flags);
  
-+	kfree(cfg);
- 	return rate;
- }
- 
-@@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
- 	if (!ret)
- 		udelay(pll->udelay);
- 
-+	kfree(cfg);
- 	return ret;
- }
- 
+ 	sync_timeline_put(parent);
+ 	dma_fence_free(fence);
+@@ -274,7 +271,8 @@ static struct sync_pt *sync_pt_create(struct sync_timeline *obj,
+ 				p = &parent->rb_left;
+ 			} else {
+ 				if (dma_fence_get_rcu(&other->base)) {
+-					dma_fence_put(&pt->base);
++					sync_timeline_put(obj);
++					kfree(pt);
+ 					pt = other;
+ 					goto unlock;
+ 				}
 -- 
 2.20.1
 
