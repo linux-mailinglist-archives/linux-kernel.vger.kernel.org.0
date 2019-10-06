@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 527B5CD78E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CF86CD790
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbfJFRbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:31:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57648 "EHLO mail.kernel.org"
+        id S1729453AbfJFRbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:31:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729412AbfJFRbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:31:25 -0400
+        id S1729421AbfJFRb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:31:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30A5E2080F;
-        Sun,  6 Oct 2019 17:31:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF8E121479;
+        Sun,  6 Oct 2019 17:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383083;
-        bh=6U0DUglx+sJiUGe4E43ESyfD7KbgwoFb8onbvz+2Zoc=;
+        s=default; t=1570383089;
+        bh=vTl9zJpljgQsfufSouxqoZf5478I80hsMeKWww/XdhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0kbSlWCwfua3AAwvHFO9OL1C2mob/2Pw3clOWS28w4Yrjq1Wz0NKjZfVpGW4Du7+u
-         Ln31YxhZQnGUejceKu1S7wT5VKDh8rKyQhTjFv2b7V7e/93R99EfX+OhL2Rxlyv2t5
-         uIp4VxyIUvx7Imbmks9zoQN7qMkf7fdpMC/qTNUI=
+        b=bTRypMmWEiZwC8cC+zvIlDKsC553M2exT4g/4Y8MhnDxi8IUDI/IQL9j0o9XJE/D0
+         3lnYfuAAqXqERMngh+bbeCIiXuSLEj3mWOeBWrcoHw2+U1soPzkSky/QcvQRjlYZfW
+         Kdc8CKgHEPMaunu1kGKU6rZLFQC/CXm+jeGZ5mPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Hans Holmberg <hans.holmberg@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 078/106] block: mq-deadline: Fix queue restart handling
-Date:   Sun,  6 Oct 2019 19:21:24 +0200
-Message-Id: <20191006171156.638428126@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Shahjada Abul Husain <shahjada@chelsio.com>,
+        Vishal Kulkarni <vishal@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 080/106] cxgb4:Fix out-of-bounds MSI-X info array access
+Date:   Sun,  6 Oct 2019 19:21:26 +0200
+Message-Id: <20191006171157.282892763@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
 References: <20191006171124.641144086@linuxfoundation.org>
@@ -46,115 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Vishal Kulkarni <vishal@chelsio.com>
 
-[ Upstream commit cb8acabbe33b110157955a7425ee876fb81e6bbc ]
+[ Upstream commit 6b517374f4ea5a3c6e307e1219ec5f35d42e6d00 ]
 
-Commit 7211aef86f79 ("block: mq-deadline: Fix write completion
-handling") added a call to blk_mq_sched_mark_restart_hctx() in
-dd_dispatch_request() to make sure that write request dispatching does
-not stall when all target zones are locked. This fix left a subtle race
-when a write completion happens during a dispatch execution on another
-CPU:
+When fetching free MSI-X vectors for ULDs, check for the error code
+before accessing MSI-X info array. Otherwise, an out-of-bounds access is
+attempted, which results in kernel panic.
 
-CPU 0: Dispatch			CPU1: write completion
-
-dd_dispatch_request()
-    lock(&dd->lock);
-    ...
-    lock(&dd->zone_lock);	dd_finish_request()
-    rq = find request		lock(&dd->zone_lock);
-    unlock(&dd->zone_lock);
-    				zone write unlock
-				unlock(&dd->zone_lock);
-				...
-				__blk_mq_free_request
-                                      check restart flag (not set)
-				      -> queue not run
-    ...
-    if (!rq && have writes)
-        blk_mq_sched_mark_restart_hctx()
-    unlock(&dd->lock)
-
-Since the dispatch context finishes after the write request completion
-handling, marking the queue as needing a restart is not seen from
-__blk_mq_free_request() and blk_mq_sched_restart() not executed leading
-to the dispatch stall under 100% write workloads.
-
-Fix this by moving the call to blk_mq_sched_mark_restart_hctx() from
-dd_dispatch_request() into dd_finish_request() under the zone lock to
-ensure full mutual exclusion between write request dispatch selection
-and zone unlock on write request completion.
-
-Fixes: 7211aef86f79 ("block: mq-deadline: Fix write completion handling")
-Cc: stable@vger.kernel.org
-Reported-by: Hans Holmberg <Hans.Holmberg@wdc.com>
-Reviewed-by: Hans Holmberg <hans.holmberg@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 94cdb8bb993a ("cxgb4: Add support for dynamic allocation of resources for ULD")
+Signed-off-by: Shahjada Abul Husain <shahjada@chelsio.com>
+Signed-off-by: Vishal Kulkarni <vishal@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/mq-deadline.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-index d5e21ce44d2cc..69094d6410623 100644
---- a/block/mq-deadline.c
-+++ b/block/mq-deadline.c
-@@ -376,13 +376,6 @@ static struct request *__dd_dispatch_request(struct deadline_data *dd)
-  * hardware queue, but we may return a request that is for a
-  * different hardware queue. This is because mq-deadline has shared
-  * state for all hardware queues, in terms of sorting, FIFOs, etc.
-- *
-- * For a zoned block device, __dd_dispatch_request() may return NULL
-- * if all the queued write requests are directed at zones that are already
-- * locked due to on-going write requests. In this case, make sure to mark
-- * the queue as needing a restart to ensure that the queue is run again
-- * and the pending writes dispatched once the target zones for the ongoing
-- * write requests are unlocked in dd_finish_request().
-  */
- static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
+@@ -137,13 +137,12 @@ static int uldrx_handler(struct sge_rspq
+ static int alloc_uld_rxqs(struct adapter *adap,
+ 			  struct sge_uld_rxq_info *rxq_info, bool lro)
  {
-@@ -391,9 +384,6 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+-	struct sge *s = &adap->sge;
+ 	unsigned int nq = rxq_info->nrxq + rxq_info->nciq;
++	int i, err, msi_idx, que_idx = 0, bmap_idx = 0;
+ 	struct sge_ofld_rxq *q = rxq_info->uldrxq;
+ 	unsigned short *ids = rxq_info->rspq_id;
+-	unsigned int bmap_idx = 0;
++	struct sge *s = &adap->sge;
+ 	unsigned int per_chan;
+-	int i, err, msi_idx, que_idx = 0;
  
- 	spin_lock(&dd->lock);
- 	rq = __dd_dispatch_request(dd);
--	if (!rq && blk_queue_is_zoned(hctx->queue) &&
--	    !list_empty(&dd->fifo_list[WRITE]))
--		blk_mq_sched_mark_restart_hctx(hctx);
- 	spin_unlock(&dd->lock);
+ 	per_chan = rxq_info->nrxq / adap->params.nports;
  
- 	return rq;
-@@ -559,6 +549,13 @@ static void dd_prepare_request(struct request *rq, struct bio *bio)
-  * spinlock so that the zone is never unlocked while deadline_fifo_request()
-  * or deadline_next_request() are executing. This function is called for
-  * all requests, whether or not these requests complete successfully.
-+ *
-+ * For a zoned block device, __dd_dispatch_request() may have stopped
-+ * dispatching requests if all the queued requests are write requests directed
-+ * at zones that are already locked due to on-going write requests. To ensure
-+ * write request dispatch progress in this case, mark the queue as needing a
-+ * restart to ensure that the queue is run again after completion of the
-+ * request and zones being unlocked.
-  */
- static void dd_finish_request(struct request *rq)
- {
-@@ -570,6 +567,12 @@ static void dd_finish_request(struct request *rq)
+@@ -161,6 +160,10 @@ static int alloc_uld_rxqs(struct adapter
  
- 		spin_lock_irqsave(&dd->zone_lock, flags);
- 		blk_req_zone_write_unlock(rq);
-+		if (!list_empty(&dd->fifo_list[WRITE])) {
-+			struct blk_mq_hw_ctx *hctx;
-+
-+			hctx = blk_mq_map_queue(q, rq->mq_ctx->cpu);
-+			blk_mq_sched_mark_restart_hctx(hctx);
-+		}
- 		spin_unlock_irqrestore(&dd->zone_lock, flags);
- 	}
- }
--- 
-2.20.1
-
+ 		if (msi_idx >= 0) {
+ 			bmap_idx = get_msix_idx_from_bmap(adap);
++			if (bmap_idx < 0) {
++				err = -ENOSPC;
++				goto freeout;
++			}
+ 			msi_idx = adap->msix_info_ulds[bmap_idx].idx;
+ 		}
+ 		err = t4_sge_alloc_rxq(adap, &q->rspq, false,
 
 
