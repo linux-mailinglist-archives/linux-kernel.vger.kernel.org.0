@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D524CD7EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24F1FCD7FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfJFRyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:54:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51362 "EHLO mail.kernel.org"
+        id S1727401AbfJFRzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:55:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728644AbfJFRya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:54:30 -0400
+        id S1727404AbfJFRy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:54:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D6FC22469;
-        Sun,  6 Oct 2019 17:46:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32E252246B;
+        Sun,  6 Oct 2019 17:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383971;
-        bh=QYuncw7U6eCu+v+lSMJpPfdq8LmiWt9sdzhJZ8oWmNQ=;
+        s=default; t=1570383973;
+        bh=2xcT+VGmJXBcuipPn6QtCUyE9RS/qI0oh11nGPw+dAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KYoTfUH5FBdrKW6tmkzt5awG6PavgbrPFyZVt0Zu/hcgx50Ty3qDuEL9Q+YPSsvFv
-         A1EI7vzGyyNJiwDetfKZBU9z2Hmheb96bo3Ze0/fM0/Zbb2H0EO9wbRr8sAfoSNrLk
-         jdk9SAIqY6Crqr6EFxqVQXlFBHu2/b5kUphapKLo=
+        b=ouCm3WsE5otx4NjaNk2/mVubec2abd6xE7Hapi8sFn0/WYDpF0FH7aU3bNOOr3G0f
+         OJ1Ys4Tlc6EIDcdbBmwO+5nbW+UMBMcXbXhLOxBdggp9y5xivugTGbuHb8Z/ntBEUH
+         3ydrUnGtXbmADV4H7x3hbnmEn2lOA6HYD3kXXBs0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 162/166] NFC: fix attrs checks in netlink interface
-Date:   Sun,  6 Oct 2019 19:22:08 +0200
-Message-Id: <20191006171226.494412163@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.3 163/166] kexec: bail out upon SIGKILL when allocating memory.
+Date:   Sun,  6 Oct 2019 19:22:09 +0200
+Message-Id: <20191006171226.582324852@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -44,49 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Konovalov <andreyknvl@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 18917d51472fe3b126a3a8f756c6b18085eb8130 upstream.
+commit 7c3a6aedcd6aae0a32a527e68669f7dd667492d1 upstream.
 
-nfc_genl_deactivate_target() relies on the NFC_ATTR_TARGET_INDEX
-attribute being present, but doesn't check whether it is actually
-provided by the user. Same goes for nfc_genl_fw_download() and
-NFC_ATTR_FIRMWARE_NAME.
+syzbot found that a thread can stall for minutes inside kexec_load() after
+that thread was killed by SIGKILL [1].  It turned out that the reproducer
+was trying to allocate 2408MB of memory using kimage_alloc_page() from
+kimage_load_normal_segment().  Let's check for SIGKILL before doing memory
+allocation.
 
-This patch adds appropriate checks.
+[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
 
-Found with syzkaller.
-
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/993c9185-d324-2640-d061-bed2dd18b1f7@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/nfc/netlink.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/kexec_core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -970,7 +970,8 @@ static int nfc_genl_dep_link_down(struct
- 	int rc;
- 	u32 idx;
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -300,6 +300,8 @@ static struct page *kimage_alloc_pages(g
+ {
+ 	struct page *pages;
  
--	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
-+	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
-+	    !info->attrs[NFC_ATTR_TARGET_INDEX])
- 		return -EINVAL;
- 
- 	idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
-@@ -1018,7 +1019,8 @@ static int nfc_genl_llc_get_params(struc
- 	struct sk_buff *msg = NULL;
- 	u32 idx;
- 
--	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
-+	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
-+	    !info->attrs[NFC_ATTR_FIRMWARE_NAME])
- 		return -EINVAL;
- 
- 	idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
++	if (fatal_signal_pending(current))
++		return NULL;
+ 	pages = alloc_pages(gfp_mask & ~__GFP_ZERO, order);
+ 	if (pages) {
+ 		unsigned int count, i;
 
 
