@@ -2,123 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C850ECD27A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:12:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F22CD2A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:12:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfJFPME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 11:12:04 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38086 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfJFPLx (ORCPT
+        id S1726699AbfJFPMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 11:12:42 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:46451 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726586AbfJFPMj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 11:11:53 -0400
-Received: by mail-yw1-f66.google.com with SMTP id s6so4177576ywe.5;
-        Sun, 06 Oct 2019 08:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+D/uU8MO7mShW9teASkMb7bJZjWkGz/G9NDBF9ekIAA=;
-        b=bSaBzvAm7KA+Z/RsiMdo7RdD6lPZanjxLUuwHA3WYW2PklPBygtPZwz4rImtHSmqZC
-         /HnjmIQeRebqFtRiVoceY8ds406L6UZJ1DYUz6ZGQMD3INfafFKEi+0wwYVbdhwnGQ4a
-         bvIxyiWv7HzbHyulJAhvUugTqHm1U7VG2ajipNGF3dnH3fIqjZ5QJTm2Oq5C2bvtG91u
-         mTeUEGBRdsPJ8krYvExNEWIcqP12Wr6LNuPVnkE9XcriRZf18Ct/5hZyXXXWy9yQF+98
-         l7ZGiLbhCnrhPU3yw8EGIF8ZkLWst53Ovm89jxBlqlzykMnTtxQIzw8KT+2DWIoapry4
-         NUhQ==
+        Sun, 6 Oct 2019 11:12:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570374756;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ayjqkd+6F5tmm8AS54Re2o3Pyp4pTiT6+zdlOJcfMbk=;
+        b=iMtXxQKu4JgplokUir2dhHC7o1lyg70GslKoON/BL9g0OqUEQxMALrl0Cu7BGc+Xg/vvLH
+        OzNzB2XT30c4kJnxz6BA9kR8HEa6H/E7yXXHl/yVmlyVv9sXa34GU+S8mqTyAs8+g8R3/i
+        +T5yV8JeATTbTRx/sdds/XpHaZ53cVU=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-282-q3AaKOdwNey05WLHfG21Ng-1; Sun, 06 Oct 2019 11:12:35 -0400
+Received: by mail-ed1-f70.google.com with SMTP id c23so7347241edb.14
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Oct 2019 08:12:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+D/uU8MO7mShW9teASkMb7bJZjWkGz/G9NDBF9ekIAA=;
-        b=k+0MYw7cIXj2dtmbQ/yij8ruuhW9E7PP+qr4WWNO57jwHn4eD4fejlxVddpbm8nRdy
-         JcPuQOmaqU7p0gy4oPAvsI2mgFN0a2NqcRXvlcv+xxt6jASUgc1fCcLU6p+jOAxpqX1T
-         6i3wFVOP4SFNDPFbBbbp2fjNPvh2JsTWfh6rB5PZEnm4XDuhlvMfXYHsn2VOwze1PH0D
-         TWsLtE+MPrx8i/GE1VQkGPGilJVUFXXTUPPzXrXk/J1f9JIUYhNxR0qN+LLtBcAVPjMM
-         +P0x5xHRJ6R+3MBlFo4laKcoqYbCNzPaDbI3FqcFU2I6KcCoS5adiUsIHD0TD+sg982v
-         nHng==
-X-Gm-Message-State: APjAAAXD2aqqQlEZK+0bDZ0bipt93MYxMQ0ag8nK2BN028hUB5PNlbRQ
-        KMskIxtHjmvUztWnAeXEC2o=
-X-Google-Smtp-Source: APXvYqwr2ooDXQQ6eqsusMVR7Kxn0E0w2B0g/QYDmlIZXMarPB9hGznNphE4oCV+6ROdcWSP24S/hQ==
-X-Received: by 2002:a81:6bc2:: with SMTP id g185mr16996224ywc.316.1570374712617;
-        Sun, 06 Oct 2019 08:11:52 -0700 (PDT)
-Received: from localhost.localdomain (072-189-084-142.res.spectrum.com. [72.189.84.142])
-        by smtp.gmail.com with ESMTPSA id e82sm2662434ywc.43.2019.10.06.08.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2019 08:11:52 -0700 (PDT)
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
-Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        yamada.masahiro@socionext.com,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de,
-        sean.nyekjaer@prevas.dk, morten.tiljeset@prevas.dk,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v16 14/14] gpio: pca953x: Utilize the for_each_set_clump8 macro
-Date:   Sun,  6 Oct 2019 11:11:11 -0400
-Message-Id: <e72393325e58778b7ba59c80c6b79c1f93b81d8d.1570374078.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1570374078.git.vilhelm.gray@gmail.com>
-References: <cover.1570374078.git.vilhelm.gray@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BuDpUhvI7aRpTgMipmKvy1072necfiHV1oVcWtdfdWk=;
+        b=cOJj7BykXk0HasjyAW9adBzcULC+8wfGpDVT46f0Gj342Jp27uEsrT/00VA6QlGiGB
+         qxYHas/9TGAX9I3xhFQnYXQDwAs/r/mHVgOqeswfiAQK0Xm1DTd9FZZPK3RDplnwh8UF
+         AXoatcTYTAima1DTkNEEszAHTwqwFsGLdlQcV2qbA0dybqBzen+Zf2mOLcWC7Fc9X6Bv
+         SJ+XhdVHCkx4V5qzSkubw/SkvUFnp1f5xcJTBcz1BrZloSumqymzHLCl47iUU0qBCgE8
+         IrteXS0waq7RbBg0PH2N9parUdno74czjYp2n10wltIJOKGKTnsHaa+qxPcyvrAKheRj
+         ariQ==
+X-Gm-Message-State: APjAAAXKjiwNQl7RWCuIzL3tPYsMOnB/EYAsJftkfiWmuK1LBjP3IUnJ
+        Kllb9Sy2rNbnXKdBkha/4dapUJMS8MvTiNIPBn/LOQw1ZeMRxHm47Rp0+BovZYLO/rypVZm2G29
+        pPZ003IT6M+bMnj4AacDGZtFM
+X-Received: by 2002:a50:d5c5:: with SMTP id g5mr25262077edj.57.1570374753789;
+        Sun, 06 Oct 2019 08:12:33 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqx8xuAN6JoJIhDgzdot8v327ojmhlD04wuzq2pbA3tEuFPmtIbMqOD0YWQ9GkC5Sgd5GtB9dw==
+X-Received: by 2002:a50:d5c5:: with SMTP id g5mr25262061edj.57.1570374753598;
+        Sun, 06 Oct 2019 08:12:33 -0700 (PDT)
+Received: from localhost.localdomain ([109.38.129.160])
+        by smtp.gmail.com with ESMTPSA id n10sm168731ejr.82.2019.10.06.08.12.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Oct 2019 08:12:32 -0700 (PDT)
+Subject: Re: [PATCH] hwmon: abituguru: make array probe_order static, makes
+ object smaller
+To:     Colin King <colin.king@canonical.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191006145231.24022-1-colin.king@canonical.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <1f7b29da-27f4-8dbb-c18b-e6cdc094d1dc@redhat.com>
+Date:   Sun, 6 Oct 2019 17:12:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191006145231.24022-1-colin.king@canonical.com>
+Content-Language: en-US
+X-MC-Unique: q3AaKOdwNey05WLHfG21Ng-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace verbose implementation in set_multiple callback with
-for_each_set_clump8 macro to simplify code and improve clarity.
+Hi,
 
-Cc: Phil Reid <preid@electromag.com.au>
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-pca953x.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+On 10/6/19 4:52 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Don't populate the array probe_order on the stack but instead make it
+> static. Makes the object code smaller by 94 bytes.
+>=20
+> Before:
+>     text=09   data=09    bss=09    dec=09    hex=09filename
+>    41473=09  13448=09    320=09  55241=09   d7c9=09drivers/hwmon/abitugur=
+u.o
+>=20
+> After:
+>     text=09   data=09    bss=09    dec=09    hex=09filename
+>    41315=09  13512=09    320=09  55147=09   d76b=09drivers/hwmon/abitugur=
+u.o
+>=20
+> (gcc version 9.2.1, amd64)
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index de5d1383f28d..10b669b8f27d 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/bits.h>
-+#include <linux/bitops.h>
- #include <linux/gpio/driver.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
-@@ -456,7 +457,8 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 				      unsigned long *mask, unsigned long *bits)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
--	unsigned int bank_mask, bank_val;
-+	unsigned long offset;
-+	unsigned long bank_mask;
- 	int bank;
- 	u8 reg_val[MAX_BANK];
- 	int ret;
-@@ -466,15 +468,10 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 	if (ret)
- 		goto exit;
- 
--	for (bank = 0; bank < NBANK(chip); bank++) {
--		bank_mask = mask[bank / sizeof(*mask)] >>
--			   ((bank % sizeof(*mask)) * 8);
--		if (bank_mask) {
--			bank_val = bits[bank / sizeof(*bits)] >>
--				  ((bank % sizeof(*bits)) * 8);
--			bank_val &= bank_mask;
--			reg_val[bank] = (reg_val[bank] & ~bank_mask) | bank_val;
--		}
-+	for_each_set_clump8(offset, bank_mask, mask, gc->ngpio) {
-+		bank = offset / 8;
-+		reg_val[bank] &= ~bank_mask;
-+		reg_val[bank] |= bitmap_get_value8(bits, offset) & bank_mask;
- 	}
- 
- 	pca953x_write_regs(chip, chip->regs->output, reg_val);
--- 
-2.23.0
+Looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>   drivers/hwmon/abituguru.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hwmon/abituguru.c b/drivers/hwmon/abituguru.c
+> index a5cf6b2a6e49..681f0623868f 100644
+> --- a/drivers/hwmon/abituguru.c
+> +++ b/drivers/hwmon/abituguru.c
+> @@ -1264,7 +1264,7 @@ static int abituguru_probe(struct platform_device *=
+pdev)
+>   =09 * El weirdo probe order, to keep the sysfs order identical to the
+>   =09 * BIOS and window-appliction listing order.
+>   =09 */
+> -=09const u8 probe_order[ABIT_UGURU_MAX_BANK1_SENSORS] =3D {
+> +=09static const u8 probe_order[ABIT_UGURU_MAX_BANK1_SENSORS] =3D {
+>   =09=090x00, 0x01, 0x03, 0x04, 0x0A, 0x08, 0x0E, 0x02,
+>   =09=090x09, 0x06, 0x05, 0x0B, 0x0F, 0x0D, 0x07, 0x0C };
+>  =20
+>=20
 
