@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BF5CCD58F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D746CD51E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730447AbfJFRh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:37:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36366 "EHLO mail.kernel.org"
+        id S1729624AbfJFRcj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:32:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729843AbfJFRhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:37:24 -0400
+        id S1729587AbfJFRch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:32:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D5672080F;
-        Sun,  6 Oct 2019 17:37:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 759A421479;
+        Sun,  6 Oct 2019 17:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383443;
-        bh=YDlb7eJfsCJYSe+W+bAGfQM6oR+1wKO4K2sY+007I9Y=;
+        s=default; t=1570383157;
+        bh=gdHNW3mAEvu4BnX73bfXuOIPRkCfTjZItelUJaGKSVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OTedgxhNjAYfCVyAZc7SlpfSXEyp507E5pz7ACzR0VlP60rEvOWMC8KEZT506w9WN
-         vuvsZ9qRCw6FSZUPYvgOc2Z1AgG4nJtwILE0JZb0IMfeBwoXoM/EKcRauFOtFnLiEk
-         sxHnE3vL4CYJqtYrWquYMLFeANALX22CaFKNTyjQ=
+        b=oXjpLcptemXeEC9SZPFM2O6SbAP9+bnzVQgKpjYjJCybfper5l1wMiy/EOz3vJQ3c
+         CWgsS/WR23KjMKGZLxg9FcXLMb+hc8B09+VaoDOpzaDzBzHKgwtjeEq2p2BF3yAkHO
+         Eedl5AoTZG6pPGGbrpQ6ALaZoEF4AmKXbiHB0ONk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Biwen Li <biwen.li@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 106/137] rtc: pcf85363/pcf85263: fix regmap error in set_time
-Date:   Sun,  6 Oct 2019 19:21:30 +0200
-Message-Id: <20191006171217.782857765@linuxfoundation.org>
+        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 085/106] net: ipv4: avoid mixed n_redirects and rate_tokens usage
+Date:   Sun,  6 Oct 2019 19:21:31 +0200
+Message-Id: <20191006171158.470390199@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
-References: <20191006171209.403038733@linuxfoundation.org>
+In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
+References: <20191006171124.641144086@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biwen Li <biwen.li@nxp.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 7ef66122bdb3b839e9f51b76d7e600b6e21ef648 ]
+[ Upstream commit b406472b5ad79ede8d10077f0c8f05505ace8b6d ]
 
-Issue:
-    - # hwclock -w
-      hwclock: RTC_SET_TIME: Invalid argument
+Since commit c09551c6ff7f ("net: ipv4: use a dedicated counter
+for icmp_v4 redirect packets") we use 'n_redirects' to account
+for redirect packets, but we still use 'rate_tokens' to compute
+the redirect packets exponential backoff.
 
-Why:
-    - Relative commit: 8b9f9d4dc511 ("regmap: verify if register is
-      writeable before writing operations"), this patch
-      will always check for unwritable registers, it will compare reg
-      with max_register in regmap_writeable.
+If the device sent to the relevant peer any ICMP error packet
+after sending a redirect, it will also update 'rate_token' according
+to the leaking bucket schema; typically 'rate_token' will raise
+above BITS_PER_LONG and the redirect packets backoff algorithm
+will produce undefined behavior.
 
-    - The pcf85363/pcf85263 has the capability of address wrapping
-      which means if you access an address outside the allowed range
-      (0x00-0x2f) hardware actually wraps the access to a lower address.
-      The rtc-pcf85363 driver will use this feature to configure the time
-      and execute 2 actions in the same i2c write operation (stopping the
-      clock and configure the time). However the driver has also
-      configured the `regmap maxregister` protection mechanism that will
-      block accessing addresses outside valid range (0x00-0x2f).
+Fix the issue using 'n_redirects' to compute the exponential backoff
+in ip_rt_send_redirect().
 
-How:
-    - Split of writing regs to two parts, first part writes control
-      registers about stop_enable and resets, second part writes
-      RTC time and date registers.
+Note that we still clear rate_tokens after a redirect silence period,
+to avoid changing an established behaviour.
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
-Link: https://lore.kernel.org/r/20190829021418.4607-1-biwen.li@nxp.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The root cause predates git history; before the mentioned commit in
+the critical scenario, the kernel stopped sending redirects, after
+the mentioned commit the behavior more randomic.
+
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Fixes: c09551c6ff7f ("net: ipv4: use a dedicated counter for icmp_v4 redirect packets")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-pcf85363.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/ipv4/route.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index a075e77617dcb..3450d615974d5 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -908,16 +908,15 @@ void ip_rt_send_redirect(struct sk_buff
+ 	if (peer->rate_tokens == 0 ||
+ 	    time_after(jiffies,
+ 		       (peer->rate_last +
+-			(ip_rt_redirect_load << peer->rate_tokens)))) {
++			(ip_rt_redirect_load << peer->n_redirects)))) {
+ 		__be32 gw = rt_nexthop(rt, ip_hdr(skb)->daddr);
  
- 	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
--				tmp, sizeof(tmp));
-+				tmp, 2);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_bulk_write(pcf85363->regmap, DT_100THS,
-+				buf, sizeof(tmp) - 2);
- 	if (ret)
- 		return ret;
- 
--- 
-2.20.1
-
+ 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
+ 		peer->rate_last = jiffies;
+-		++peer->rate_tokens;
+ 		++peer->n_redirects;
+ #ifdef CONFIG_IP_ROUTE_VERBOSE
+ 		if (log_martians &&
+-		    peer->rate_tokens == ip_rt_redirect_number)
++		    peer->n_redirects == ip_rt_redirect_number)
+ 			net_warn_ratelimited("host %pI4/if%d ignores redirects for %pI4 to %pI4\n",
+ 					     &ip_hdr(skb)->saddr, inet_iif(skb),
+ 					     &ip_hdr(skb)->daddr, &gw);
 
 
