@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48265CD45F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13F6ACD489
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbfJFRZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:25:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50030 "EHLO mail.kernel.org"
+        id S1728379AbfJFR0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:26:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbfJFRZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:25:01 -0400
+        id S1727486AbfJFR0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:26:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 738CF2077B;
-        Sun,  6 Oct 2019 17:25:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EB362070B;
+        Sun,  6 Oct 2019 17:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382701;
-        bh=hpE6EBFLQyLMUQrjkG8l6mH4CF7Sr3JcameIFPSw3pA=;
+        s=default; t=1570382810;
+        bh=vTl9zJpljgQsfufSouxqoZf5478I80hsMeKWww/XdhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FBZFfZBewU7HbjL9pHbXzlx9v7bXNhX+h92/GiNVuoj0D0WvIt2TJyPpvWSyu2puI
-         4tQBTBA5upZS60zPSDKjk00F4SO1aEdlmtKGV7ODJMnDN9o+XfBtoHfXY8ZSyLeZ81
-         qvSGtS6CQGuce8/er5824RHRXuSWSrGq9Op0bfvE=
+        b=c6rs/3JbU5Cy6V1Yw0SftxxmIiBaSnXfxN9RlYQTQ1bmglJxiQViFS5kDOhL8dmFM
+         OAIc7FxbAthFkM+F42pFiim9qHlUJ3NU2lpKtTdkq07MWBRNK69mgkaFj4AKWAxVmZ
+         HVYLfeL7GVf6DYK3KJ3jEEJbtzr7K7cze2Mn80uE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Shahjada Abul Husain <shahjada@chelsio.com>,
+        Vishal Kulkarni <vishal@chelsio.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 36/47] net: qlogic: Fix memory leak in ql_alloc_large_buffers
-Date:   Sun,  6 Oct 2019 19:21:23 +0200
-Message-Id: <20191006172018.794229150@linuxfoundation.org>
+Subject: [PATCH 4.14 49/68] cxgb4:Fix out-of-bounds MSI-X info array access
+Date:   Sun,  6 Oct 2019 19:21:25 +0200
+Message-Id: <20191006171131.302140886@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,30 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Vishal Kulkarni <vishal@chelsio.com>
 
-[ Upstream commit 1acb8f2a7a9f10543868ddd737e37424d5c36cf4 ]
+[ Upstream commit 6b517374f4ea5a3c6e307e1219ec5f35d42e6d00 ]
 
-In ql_alloc_large_buffers, a new skb is allocated via netdev_alloc_skb.
-This skb should be released if pci_dma_mapping_error fails.
+When fetching free MSI-X vectors for ULDs, check for the error code
+before accessing MSI-X info array. Otherwise, an out-of-bounds access is
+attempted, which results in kernel panic.
 
-Fixes: 0f8ab89e825f ("qla3xxx: Check return code from pci_map_single() in ql_release_to_lrg_buf_free_list(), ql_populate_free_queue(), ql_alloc_large_buffers(), and ql3xxx_send()")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Fixes: 94cdb8bb993a ("cxgb4: Add support for dynamic allocation of resources for ULD")
+Signed-off-by: Shahjada Abul Husain <shahjada@chelsio.com>
+Signed-off-by: Vishal Kulkarni <vishal@chelsio.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qla3xxx.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -2783,6 +2783,7 @@ static int ql_alloc_large_buffers(struct
- 				netdev_err(qdev->ndev,
- 					   "PCI mapping failed with error: %d\n",
- 					   err);
-+				dev_kfree_skb_irq(skb);
- 				ql_free_large_buffers(qdev);
- 				return -ENOMEM;
- 			}
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c
+@@ -137,13 +137,12 @@ static int uldrx_handler(struct sge_rspq
+ static int alloc_uld_rxqs(struct adapter *adap,
+ 			  struct sge_uld_rxq_info *rxq_info, bool lro)
+ {
+-	struct sge *s = &adap->sge;
+ 	unsigned int nq = rxq_info->nrxq + rxq_info->nciq;
++	int i, err, msi_idx, que_idx = 0, bmap_idx = 0;
+ 	struct sge_ofld_rxq *q = rxq_info->uldrxq;
+ 	unsigned short *ids = rxq_info->rspq_id;
+-	unsigned int bmap_idx = 0;
++	struct sge *s = &adap->sge;
+ 	unsigned int per_chan;
+-	int i, err, msi_idx, que_idx = 0;
+ 
+ 	per_chan = rxq_info->nrxq / adap->params.nports;
+ 
+@@ -161,6 +160,10 @@ static int alloc_uld_rxqs(struct adapter
+ 
+ 		if (msi_idx >= 0) {
+ 			bmap_idx = get_msix_idx_from_bmap(adap);
++			if (bmap_idx < 0) {
++				err = -ENOSPC;
++				goto freeout;
++			}
+ 			msi_idx = adap->msix_info_ulds[bmap_idx].idx;
+ 		}
+ 		err = t4_sge_alloc_rxq(adap, &q->rspq, false,
 
 
