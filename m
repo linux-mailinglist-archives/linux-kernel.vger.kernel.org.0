@@ -2,119 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6848FCD314
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70DD1CD2F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 17:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfJFPs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 11:48:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53642 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbfJFPsw (ORCPT
+        id S1726564AbfJFPrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 11:47:43 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55716 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfJFPrm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 11:48:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YrSIkJAZEX2PC4bhPUc4ArtWFXnLR/JwWtyPm3VgUHk=; b=GDO12pXqHo4n8DYufaCeViyJVS
-        1K4UxstgVHj049tTnlzYpTHkkiLfS6YqeYeZ0UWMzmcvvusxRWtPM2tBunXdlTizIIOWNkR8vf5RZ
-        WgzYxTCS6T3Gnaz7EU43yzG8JI+tySgeuaCPPkSxSL0/EM9WO1Uov+snS7zOu+DfsD5YPGAgyNdZM
-        FURxWnLtM0+O2CHFNNAbMrD8MjC5zJgSTyvh5dvc9gOOj4RW3gXdv+NnA4Sdbs52tCvrkJUMGkEDb
-        +gbM737pVLmDEXuH0fcRow2JdPl4dwlW7XefcYgaU+JBlzjVyRI0UF6hok+1+/ldn00T1ivRJhR34
-        DzFns0Tg==;
-Received: from [2001:4bb8:18c:4d4a:c70:4a89:bc61:3] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iH8mA-0008UV-1X; Sun, 06 Oct 2019 15:48:50 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Carlos Maiolino <cmaiolino@redhat.com>
-Subject: [PATCH 11/11] iomap: move struct iomap_page out of iomap.h
-Date:   Sun,  6 Oct 2019 17:46:08 +0200
-Message-Id: <20191006154608.24738-12-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191006154608.24738-1-hch@lst.de>
-References: <20191006154608.24738-1-hch@lst.de>
+        Sun, 6 Oct 2019 11:47:42 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a6so10044625wma.5;
+        Sun, 06 Oct 2019 08:47:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SBpRb6qd+48zQK5uPLn0YvEluIoUY9o3FhFhGA6TXtY=;
+        b=Z37+ICp7Y2QDT49t+AdNnVTJVt76pPZFd6B69eHRoUoNZlsdtFkBCYnSdEyhWhNbuK
+         XyETKrUDNSnLU0N40QS4exLwpNzCn3/7e6RprNKgM+Qgr2l5BRucGBLAeRfUBtKOQMJ/
+         5E9krxQL8OOHlalnke9FA7tibZzAe6GFB/E4Tjd1T8SsglrBwPlPGPzr8Yl+7Mdbg35j
+         IFXYmMzgkgcDjGXuUelcoGSjezWAQjoj/QavICNDeyyyRPhrYYOc89Nr353qflFxSsn4
+         1BvgZwAEXST7N03PUH5ali/fZNJcdatPFLpTHv6qfPMQra3BvYtNieDoXbXlpO+z1NTI
+         sjXw==
+X-Gm-Message-State: APjAAAUxUmMz14TPUm0Zi7j50psy10b7VPGg5JHEvkXkDaeqENUPDqXP
+        tPZ/Wxzu3jmyhFXsDcYOxAA=
+X-Google-Smtp-Source: APXvYqwiD5w33vuIYv9624AWG0k3vsCYtE8uO59mkpTJi1G/TZQDv7OS1UJvxH3zuwZ0w6XxIwuUIQ==
+X-Received: by 2002:a1c:9988:: with SMTP id b130mr18139392wme.164.1570376858781;
+        Sun, 06 Oct 2019 08:47:38 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id o22sm31539882wra.96.2019.10.06.08.47.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 06 Oct 2019 08:47:38 -0700 (PDT)
+Date:   Sun, 6 Oct 2019 17:47:34 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] ARM: dts: exynos: Rename power domain nodes to
+ "power-domain" in Exynos4
+Message-ID: <20191006154734.GA29365@kozik-lap>
+References: <20191002160632.11140-1-krzk@kernel.org>
+ <20191002160632.11140-3-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191002160632.11140-3-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all the writepage code is in the iomap code there is no
-need to keep this structure public.
+On Wed, Oct 02, 2019 at 06:06:32PM +0200, Krzysztof Kozlowski wrote:
+> The device node name should reflect generic class of a device so rename
+> power domain nodes to "power-domain".  No functional change.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi    | 14 +++++++-------
+>  arch/arm/boot/dts/exynos4210.dtsi |  2 +-
+>  arch/arm/boot/dts/exynos4412.dtsi |  2 +-
+>  3 files changed, 9 insertions(+), 9 deletions(-)
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/iomap/buffered-io.c | 17 +++++++++++++++++
- include/linux/iomap.h  | 17 -----------------
- 2 files changed, 17 insertions(+), 17 deletions(-)
+Applied.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4132c0cccb0a..35c93f72c172 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -21,6 +21,23 @@
- 
- #include "../internal.h"
- 
-+/*
-+ * Structure allocated for each page when block size < PAGE_SIZE to track
-+ * sub-page uptodate status and I/O completions.
-+ */
-+struct iomap_page {
-+	atomic_t		read_count;
-+	atomic_t		write_count;
-+	DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
-+};
-+
-+static inline struct iomap_page *to_iomap_page(struct page *page)
-+{
-+	if (page_has_private(page))
-+		return (struct iomap_page *)page_private(page);
-+	return NULL;
-+}
-+
- static struct bio_set iomap_ioend_bioset;
- 
- static struct iomap_page *
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 0b399718c387..46ce730b1590 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -134,23 +134,6 @@ loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
- 		unsigned flags, const struct iomap_ops *ops, void *data,
- 		iomap_actor_t actor);
- 
--/*
-- * Structure allocate for each page when block size < PAGE_SIZE to track
-- * sub-page uptodate status and I/O completions.
-- */
--struct iomap_page {
--	atomic_t		read_count;
--	atomic_t		write_count;
--	DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
--};
--
--static inline struct iomap_page *to_iomap_page(struct page *page)
--{
--	if (page_has_private(page))
--		return (struct iomap_page *)page_private(page);
--	return NULL;
--}
--
- ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- 		const struct iomap_ops *ops);
- int iomap_readpage(struct page *page, const struct iomap_ops *ops);
--- 
-2.20.1
-
+Best regards,
+Krzysztof
