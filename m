@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65F6DCD48C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED81ACD48E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfJFR1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:27:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52324 "EHLO mail.kernel.org"
+        id S1728435AbfJFR1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:27:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbfJFR07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:26:59 -0400
+        id S1728422AbfJFR1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:27:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A74A121479;
-        Sun,  6 Oct 2019 17:26:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F255F2077B;
+        Sun,  6 Oct 2019 17:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382819;
-        bh=OTW28PhRPioW4YJq8GClGBnYIu9bhhmZHGS0w6YRHpM=;
+        s=default; t=1570382824;
+        bh=ian+tWN6G0IstqirvWiqzGhkZLYP1MXNMkLKu3P74B8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nkgex+eJnHCOZAuqnZ1gtNCY2iNvb7iO4a4Jbk/3hvQhRFIEtzHG56b7l+84IfsIr
-         Swbqx2BuGoXTTzPYrwAsVoqHDL3aMofeo1pgtxVFc/tjaV7+EJNTZcs4jmjEJN5M5o
-         jNNTqeNk/1is3/jniVQdhTyHogsozRVrXM1TYRIc=
+        b=2m1qYlcCPmWTH73naGHBdCdDTPAtEahqm277imaQL2K1v7XN3c0W7XDrjWaesrHLZ
+         ZqDEtQOwGhWG9ALigCVUBtbuERjSWTXZ7OPDik9brN8PcB73T9LaWW1d86qMXtGMPO
+         e862ZDaxkOisfYbrCwIQSMKGxXhL9Bb71fnCqDCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 52/68] ipv6: drop incoming packets having a v4mapped source address
-Date:   Sun,  6 Oct 2019 19:21:28 +0200
-Message-Id: <20191006171132.203016558@linuxfoundation.org>
+Subject: [PATCH 4.14 54/68] net: qlogic: Fix memory leak in ql_alloc_large_buffers
+Date:   Sun,  6 Oct 2019 19:21:30 +0200
+Message-Id: <20191006171132.917617857@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
 References: <20191006171108.150129403@linuxfoundation.org>
@@ -46,67 +44,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 6af1799aaf3f1bc8defedddfa00df3192445bbf3 ]
+[ Upstream commit 1acb8f2a7a9f10543868ddd737e37424d5c36cf4 ]
 
-This began with a syzbot report. syzkaller was injecting
-IPv6 TCP SYN packets having a v4mapped source address.
+In ql_alloc_large_buffers, a new skb is allocated via netdev_alloc_skb.
+This skb should be released if pci_dma_mapping_error fails.
 
-After an unsuccessful 4-tuple lookup, TCP creates a request
-socket (SYN_RECV) and calls reqsk_queue_hash_req()
-
-reqsk_queue_hash_req() calls sk_ehashfn(sk)
-
-At this point we have AF_INET6 sockets, and the heuristic
-used by sk_ehashfn() to either hash the IPv4 or IPv6 addresses
-is to use ipv6_addr_v4mapped(&sk->sk_v6_daddr)
-
-For the particular spoofed packet, we end up hashing V4 addresses
-which were not initialized by the TCP IPv6 stack, so KMSAN fired
-a warning.
-
-I first fixed sk_ehashfn() to test both source and destination addresses,
-but then faced various problems, including user-space programs
-like packetdrill that had similar assumptions.
-
-Instead of trying to fix the whole ecosystem, it is better
-to admit that we have a dual stack behavior, and that we
-can not build linux kernels without V4 stack anyway.
-
-The dual stack API automatically forces the traffic to be IPv4
-if v4mapped addresses are used at bind() or connect(), so it makes
-no sense to allow IPv6 traffic to use the same v4mapped class.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 0f8ab89e825f ("qla3xxx: Check return code from pci_map_single() in ql_release_to_lrg_buf_free_list(), ql_populate_free_queue(), ql_alloc_large_buffers(), and ql3xxx_send()")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_input.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/ethernet/qlogic/qla3xxx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/ip6_input.c
-+++ b/net/ipv6/ip6_input.c
-@@ -173,6 +173,16 @@ int ipv6_rcv(struct sk_buff *skb, struct
- 	if (ipv6_addr_is_multicast(&hdr->saddr))
- 		goto err;
- 
-+	/* While RFC4291 is not explicit about v4mapped addresses
-+	 * in IPv6 headers, it seems clear linux dual-stack
-+	 * model can not deal properly with these.
-+	 * Security models could be fooled by ::ffff:127.0.0.1 for example.
-+	 *
-+	 * https://tools.ietf.org/html/draft-itojun-v6ops-v4mapped-harmful-02
-+	 */
-+	if (ipv6_addr_v4mapped(&hdr->saddr))
-+		goto err;
-+
- 	skb->transport_header = skb->network_header + sizeof(*hdr);
- 	IP6CB(skb)->nhoff = offsetof(struct ipv6hdr, nexthdr);
- 
+--- a/drivers/net/ethernet/qlogic/qla3xxx.c
++++ b/drivers/net/ethernet/qlogic/qla3xxx.c
+@@ -2787,6 +2787,7 @@ static int ql_alloc_large_buffers(struct
+ 				netdev_err(qdev->ndev,
+ 					   "PCI mapping failed with error: %d\n",
+ 					   err);
++				dev_kfree_skb_irq(skb);
+ 				ql_free_large_buffers(qdev);
+ 				return -ENOMEM;
+ 			}
 
 
