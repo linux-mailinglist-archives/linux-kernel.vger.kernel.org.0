@@ -2,122 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 231B4CD352
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 18:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A59F0CD358
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 18:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbfJFQDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 12:03:34 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:40549 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfJFQDc (ORCPT
+        id S1726789AbfJFQDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 12:03:41 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:35931 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfJFQDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 12:03:32 -0400
-Received: by mail-yb1-f196.google.com with SMTP id s7so235242ybq.7;
-        Sun, 06 Oct 2019 09:03:31 -0700 (PDT)
+        Sun, 6 Oct 2019 12:03:39 -0400
+Received: by mail-ua1-f67.google.com with SMTP id r25so3343584uam.3;
+        Sun, 06 Oct 2019 09:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=X0YlaBg0eWRFmg01LcYcEakBboU2udItKz/WvLmsstE=;
-        b=fyQ5xERCIVVSDumVC4ubV58r5dQvmSwwgM1gDnffp4c+23b97gjExIR2w5eKv7/8Jq
-         ziZYQoR+ekNbyGmg5MyCdRKQCpjPl96Gg05vwaXu+bKwftDmAqbbBSH5E6QwSe5Ye+LQ
-         xBUefkUGCXsIWAzl+r81TYehHx4jhYKp4zVdIT8iewLeyrco31I++sQZr0GkvC3qWrAI
-         ySzHJ9fVZA81+D7Pk/jT9oRRn9rbqPtPhS1BPMSDfCtq7jRYvKthUyl4YoB3plYqlI9i
-         4S/8SyDDMH2Wqfnrbl6M9RacL1dX7HAom4on1ZHwAGQZJQp1mHNTFfq/qMP0zFcmFZqo
-         4HYw==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Uq1yTMjJxVrrmQg6Vw7e0l/Q44DjBU8KLu0PbdRO8wI=;
+        b=MYntRpAxJBc9qfwO5jFNB2Rz3OUPm7O02jTeEk/WhoRH2ofkfVXizEKn4SWH/fn+4y
+         QBFL8iik/lLkae9rOMc9ucEat3XWFfGM89WHJ50Hgs93MkB6xSP6EzTN5Zy0jl/kZhpi
+         Yaoj58676bwka2qsBlHJHkHJkspiUQgZUs33todwhPxwWe+fy3Dyt5VuCJz1kAR4HsEy
+         mQtdslK8LtRglyh0VCZz5PMSMLq+HWEY6Jk/p5WfS+pArkIrkPHzfcfASHcihtYu3Flb
+         /UaxMrXBP8sE+kDibB3ylikNPOEW9bL2IKAv16vohJ9Qwna/McXhd+KSZeDeQnVHCLWu
+         NFIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=X0YlaBg0eWRFmg01LcYcEakBboU2udItKz/WvLmsstE=;
-        b=h2AqfsgfBUduBbMXjwZUowQ3JGqBftwq/eNBjkrrKGQFB1wha9OA6GF53dfWCSO3d+
-         ocKs1IWIb9k28/DsCZVtenLL6H7b0ichuXKmz8OQDOF2kVSh297Nt1JYnx5E+qk/YZ6I
-         OiY/1KN1e4/F1FeY6hQFa4VNL1deB40At1Jd6Vb1Ss/Qj8Jkhqo6TMPHTNn7eSy4kjOe
-         aMom5t2bOnC9PPprZ1vJEuKdebiHW1Y+QVOk8jnqYpoDfJhbU7f6J7JVLEqZ3n05UNv2
-         62ECRyrsGLOHAxdES//c+lMpFrrNDHt8AfZBkZTPm+alXbHxoEHxevyiLoNBMd8snNS+
-         8eCA==
-X-Gm-Message-State: APjAAAXnnZzAIHViLdxPfq/dLuxyd7IRUwoezMkZn4ZimylR+rbJbMLz
-        66jebKUPWUZJ3KYthUai5AY=
-X-Google-Smtp-Source: APXvYqxNW/YNL3A3scV1Qc1+vAzbrjym3yfhoINYZ8xNzXVB83HFsdfnpe2UcuggrPJqmHwKu7egzA==
-X-Received: by 2002:a25:ce08:: with SMTP id x8mr8866430ybe.177.1570377811262;
-        Sun, 06 Oct 2019 09:03:31 -0700 (PDT)
-Received: from localhost.localdomain (072-189-084-142.res.spectrum.com. [72.189.84.142])
-        by smtp.gmail.com with ESMTPSA id y129sm3341816ywy.41.2019.10.06.09.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Oct 2019 09:03:30 -0700 (PDT)
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     jic23@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        patrick.havelange@essensium.com, fabrice.gasnier@st.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, benjamin.gaignard@linaro.org,
-        david@lechnology.com,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 2/2] docs: driver-api: generic-counter: Update Count and Signal data types
-Date:   Sun,  6 Oct 2019 12:03:11 -0400
-Message-Id: <75a9ca9837f4d66cb4912cfa535176e27f7c219a.1570377521.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1570377521.git.vilhelm.gray@gmail.com>
-References: <cover.1570377521.git.vilhelm.gray@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Uq1yTMjJxVrrmQg6Vw7e0l/Q44DjBU8KLu0PbdRO8wI=;
+        b=PXPev3LIrLmx45SH1WILBRIIQjMPP1iiiSO4pFfV238vQH9CL2MR5fQKrkoh/TjQk3
+         FiQ071bAbILbmAaIobmSoPtYqNp8n2Pngna7a/mh4UNKi9bkawJu50bw9n9BUoKdGCgg
+         /7EhvtGiB962r8ldTseYRpkEFUqaiSdm4UVZMVex4Uh/fMjpH2fY3VwgV1A6e3dLar/4
+         kYodhphvNgbuxS9PGrPGQWfRlHkAv0G/JoDvHkfAtUXVmIHdma3yK74GlA+R+sh5MNrd
+         VCRJBrVXGDbMK2jSiES9FPFHEjrEhpGEYxfGHR51zHOfE1zKLmg1L9MAGG+L13zssNzm
+         ZU8g==
+X-Gm-Message-State: APjAAAUjutuWjv8vgVre9GvxiVXOQWWVPnEqc+RDLBtjqA6DteqCfdCl
+        9mngu19SC6xuzyPEHE95T6JE/sPghaCcR04wyJM=
+X-Google-Smtp-Source: APXvYqxYxmm18GiZo9LTURV0DeVetqvs2lC+HHaIrXaZmVBQdwcNQc1Zyo2qUwm0TfqQgza30ipGxvnE2PN8mWs1RMk=
+X-Received: by 2002:ab0:e10:: with SMTP id g16mr135473uak.42.1570377817752;
+ Sun, 06 Oct 2019 09:03:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191006023254.23841-1-aford173@gmail.com> <CAGm1_ksBaEN0OWR+dTwT9SgoybtnchcCKasjXf5ybP2fZfRF7A@mail.gmail.com>
+ <CAHCN7xLgTiXxLrW4njTT8Zaiib6+F4xo07wk0-sQp8h+j=E3yw@mail.gmail.com>
+ <CAGm1_kuPbOLYUfGBHp5TEf9wtF5fQOMcEfLTVCp6uSHJo-YKZQ@mail.gmail.com> <CAHCN7xKihTMqK537Kph-xkzdeovsOQQ1VR7t2fxfTgWjZJxFgQ@mail.gmail.com>
+In-Reply-To: <CAHCN7xKihTMqK537Kph-xkzdeovsOQQ1VR7t2fxfTgWjZJxFgQ@mail.gmail.com>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Sun, 6 Oct 2019 18:03:27 +0200
+Message-ID: <CAGm1_kum6070b_TWrajva8e9rBL1-1QX+k=pTqvZjoS2vKYF9A@mail.gmail.com>
+Subject: Re: [PATCH] serial: 8250_omap: Fix gpio check for auto RTS and CTS
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-serial@vger.kernel.org, Adam Ford <adam.ford@logicpd.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Vignesh R <vigneshr@ti.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Stefan Roese <sr@denx.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Count data is now always represented as an unsigned integer, while
-Signal data is either SIGNAL_LOW or SIGNAL_HIGH.
+On Sun, Oct 6, 2019 at 5:49 PM Adam Ford <aford173@gmail.com> wrote:
+>
+> On Sun, Oct 6, 2019 at 7:34 AM Yegor Yefremov
+> <yegorslists@googlemail.com> wrote:
+> >
+> > On Sun, Oct 6, 2019 at 1:38 PM Adam Ford <aford173@gmail.com> wrote:
+> > >
+> > > On Sun, Oct 6, 2019 at 6:21 AM Yegor Yefremov
+> > > <yegorslists@googlemail.com> wrote:
+> > > >
+> > > > Hi Adam,
+> > > >
+> > > > On Sun, Oct 6, 2019 at 4:33 AM Adam Ford <aford173@gmail.com> wrote:
+> > > > >
+> > > > > There are two checks to see if the manual gpio is configured, but
+> > > > > these the check is seeing if the structure is NULL instead it
+> > > > > should check to see if there are CTS and/or RTS pins defined.
+> > > > >
+> > > > > This patch uses checks for those individual pins instead of
+> > > > > checking for the structure itself.
+> > > diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+> > index e682390..d5fdb71 100644
+> > --- a/drivers/tty/serial/8250/8250_core.c
+> > +++ b/drivers/tty/serial/8250/8250_core.c
+> > @@ -1031,6 +1031,8 @@ int serial8250_register_8250_port(struct
+> > uart_8250_port *up)
+> >                         } else {
+> >                                 uart->gpios = gpios;
+> >                         }
+> > +               } else {
+> > +                       uart->gpios = NULL;
+> >                 }
+> >
+> >                 serial8250_set_defaults(uart);
+> > > >
+> > > > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > > > >
+> > > > > diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> > > > > index c68e2b3a1634..836e736ae188 100644
+> > > > > --- a/drivers/tty/serial/8250/8250_omap.c
+> > > > > +++ b/drivers/tty/serial/8250/8250_omap.c
+> > > > > @@ -141,7 +141,7 @@ static void omap8250_set_mctrl(struct uart_port *port, unsigned int mctrl)
+> > > > >
+> > > > >         serial8250_do_set_mctrl(port, mctrl);
+> > > > >
+> > > > > -       if (!up->gpios) {
+> > > > > +       if (!mctrl_gpio_to_gpiod(up->gpios, UART_GPIO_RTS)) {
+> > > > >                 /*
+> > > > >                  * Turn off autoRTS if RTS is lowered and restore autoRTS
+> > > > >                  * setting if RTS is raised
+> > > > > @@ -456,7 +456,8 @@ static void omap_8250_set_termios(struct uart_port *port,
+> > > > >         up->port.status &= ~(UPSTAT_AUTOCTS | UPSTAT_AUTORTS | UPSTAT_AUTOXOFF);
+> > > > >
+> > > > >         if (termios->c_cflag & CRTSCTS && up->port.flags & UPF_HARD_FLOW &&
+> > > > > -           !up->gpios) {
+> > > > > +           !mctrl_gpio_to_gpiod(up->gpios, UART_GPIO_RTS) &&
+> > > > > +           !mctrl_gpio_to_gpiod(up->gpios, UART_GPIO_CTS)) {
+> > > > >                 /* Enable AUTOCTS (autoRTS is enabled when RTS is raised) */
+> > > > >                 up->port.status |= UPSTAT_AUTOCTS | UPSTAT_AUTORTS;
+> > > > >                 priv->efr |= UART_EFR_CTS;
+> > > >
+> > > > Looks good to me but !up->gpios must remain as otherwise, we will get
+> > > > NULL pointer dereference. What do you think?
+>
+> What we if add a check to make sure we deference it?  I was thinking
+> something like:
+>
+> diff --git a/drivers/tty/serial/serial_mctrl_gpio.c
+> b/drivers/tty/serial/serial_mctrl_gpio.c
+> index d9074303c88e..fb4781292d40 100644
+> --- a/drivers/tty/serial/serial_mctrl_gpio.c
+> +++ b/drivers/tty/serial/serial_mctrl_gpio.c
+> @@ -66,6 +66,9 @@ EXPORT_SYMBOL_GPL(mctrl_gpio_set);
+>  struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
+>                                       enum mctrl_gpio_idx gidx)
+>  {
+> +       if (gpios == NULL)
+> +               return NULL;
+> +
+>         return gpios->gpio[gidx];
+>  }
+>  EXPORT_SYMBOL_GPL(mctrl_gpio_to_gpiod);
+>
+> This should make my previous patch tolerate situations where gpios is
+> NULL.  It also explictly looks for conditions where the gpios are
+> manually configured for RTS and/or CTS.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- Documentation/driver-api/generic-counter.rst | 22 +++++++-------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+I like this idea. This would solve my concern.
 
-diff --git a/Documentation/driver-api/generic-counter.rst b/Documentation/driver-api/generic-counter.rst
-index 8382f01a53e3..161652fc1025 100644
---- a/Documentation/driver-api/generic-counter.rst
-+++ b/Documentation/driver-api/generic-counter.rst
-@@ -39,10 +39,7 @@ There are three core components to a counter:
- COUNT
- -----
- A Count represents the count data for a set of Signals. The Generic
--Counter interface provides the following available count data types:
--
--* COUNT_POSITION:
--  Unsigned integer value representing position.
-+Counter interface represents the count data as an unsigned integer.
- 
- A Count has a count function mode which represents the update behavior
- for the count data. The Generic Counter interface provides the following
-@@ -93,19 +90,16 @@ SIGNAL
- A Signal represents a counter input data; this is the input data that is
- evaluated by the counter to determine the count data; e.g. a quadrature
- signal output line of a rotary encoder. Not all counter devices provide
--user access to the Signal data.
--
--The Generic Counter interface provides the following available signal
--data types for when the Signal data is available for user access:
-+user access to the Signal data, so exposure is optional for drivers.
- 
--* SIGNAL_LEVEL:
--  Signal line state level. The following states are possible:
-+When the Signal data is available for user access, the Generic Counter
-+interface provides the following available signal values:
- 
--  - SIGNAL_LEVEL_LOW:
--    Signal line is in a low state.
-+* SIGNAL_LOW:
-+  Signal line is in a low state.
- 
--  - SIGNAL_LEVEL_HIGH:
--    Signal line is in a high state.
-+* SIGNAL_HIGH:
-+  Signal line is in a high state.
- 
- A Signal may be associated with one or more Counts.
- 
--- 
-2.23.0
+Yegor
 
+> > >
+> > > I was not seeing up->gpios ever NULL so the contents inside the check
+> > > never was executed.  When I removed the check, the performance came
+> > > back.  I looked at examples on how other devices checked for RTS and
+> > > CTS, and I noticed that the Atmel serial driver did something like the
+> > > above.
+> > >
+> > > >
+> > > > Also adding some more people who can be interested in testing this approach.
+> > >
+> > > I am open for ideas.  If something is better, but something is either
+> > > incorrectly setting up->gpios to non-NULL or the check for non-NULL is
+> > > wrong.
+> >
+> > I wonder whether we forgot to add this assignment for the ACPI systems:
+> >
+>
+> I unwound my patch and applied your patch instead, but it is back to
+> having corrupt frames again.
+>
+> > diff --git a/drivers/tty/serial/8250/8250_core.c
+> > b/drivers/tty/serial/8250/8250_core.c
+> > index e682390..d5fdb71 100644
+> > --- a/drivers/tty/serial/8250/8250_core.c
+> > +++ b/drivers/tty/serial/8250/8250_core.c
+> > @@ -1031,6 +1031,8 @@ int serial8250_register_8250_port(struct
+> > uart_8250_port *up)
+> >                         } else {
+> >                                 uart->gpios = gpios;
+> >                         }
+> > +               } else {
+> > +                       uart->gpios = NULL;
+> >                 }
+> >
+> I did not check the value of uart->gpios after this patch, but since
+> the flow control code isn't executing, I am guessing it's still not
+> NULL.
+> >                 serial8250_set_defaults(uart);
+>
+> adam
