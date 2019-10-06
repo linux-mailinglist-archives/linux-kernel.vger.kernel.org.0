@@ -2,41 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03CD8CD871
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE1FCD838
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 20:03:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfJFRYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:24:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48966 "EHLO mail.kernel.org"
+        id S1728285AbfJFSBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 14:01:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727786AbfJFRYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:24:06 -0400
+        id S1728332AbfJFR0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:26:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C6EC2133F;
-        Sun,  6 Oct 2019 17:24:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D4722070B;
+        Sun,  6 Oct 2019 17:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382646;
-        bh=2R5UQKQCKUH14RTpSXnTUZ8jMC8VnrRarE+x3n4Ojzw=;
+        s=default; t=1570382802;
+        bh=+7ukwZYjRuqp0HaB2giqWF8t5YMps7LpkoRS2U8DhoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KfuBkaPx6cryVU2fy2Rra5JsvV8FVxxOnZ5JBxg3Ylf9teBAusfXRGFbgdTGefz14
-         VrUkqRpLqagChSTThNSj1Wq1TXSagw7Ms3LWi+igwZFrqbev0Uga/HiBIJzxMfwqvg
-         iXtc7i1yfMmffE58BoH11NpCb9qd1KsMXHs99Z/4=
+        b=LQ+OvHzKIlEE24Q67ypjMvrtpgw51FlO1Sv7laxX3qtkwyGTvWvq+5DGB1xYwLa5q
+         mNkWIofojJRdWQh2SA09wojxYY8pQHXEuYOXPW3kFgb0pDlsoLIP9mo1aiXLtfrgJN
+         dp2K5luKuarBRJsGW0z3cn4bLR3LV3QQh+o/3c4k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 34/47] ipv6: drop incoming packets having a v4mapped source address
-Date:   Sun,  6 Oct 2019 19:21:21 +0200
-Message-Id: <20191006172018.691078571@linuxfoundation.org>
+        stable@vger.kernel.org, Changwei Ge <gechangwei@live.cn>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 46/68] ocfs2: wait for recovering done after direct unlock request
+Date:   Sun,  6 Oct 2019 19:21:22 +0200
+Message-Id: <20191006171129.936624789@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006172016.873463083@linuxfoundation.org>
-References: <20191006172016.873463083@linuxfoundation.org>
+In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
+References: <20191006171108.150129403@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,67 +49,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Changwei Ge <gechangwei@live.cn>
 
-[ Upstream commit 6af1799aaf3f1bc8defedddfa00df3192445bbf3 ]
+[ Upstream commit 0a3775e4f883912944481cf2ef36eb6383a9cc74 ]
 
-This began with a syzbot report. syzkaller was injecting
-IPv6 TCP SYN packets having a v4mapped source address.
+There is a scenario causing ocfs2 umount hang when multiple hosts are
+rebooting at the same time.
 
-After an unsuccessful 4-tuple lookup, TCP creates a request
-socket (SYN_RECV) and calls reqsk_queue_hash_req()
+NODE1                           NODE2               NODE3
+send unlock requset to NODE2
+                                dies
+                                                    become recovery master
+                                                    recover NODE2
+find NODE2 dead
+mark resource RECOVERING
+directly remove lock from grant list
+calculate usage but RECOVERING marked
+**miss the window of purging
+clear RECOVERING
 
-reqsk_queue_hash_req() calls sk_ehashfn(sk)
+To reproduce this issue, crash a host and then umount ocfs2
+from another node.
 
-At this point we have AF_INET6 sockets, and the heuristic
-used by sk_ehashfn() to either hash the IPv4 or IPv6 addresses
-is to use ipv6_addr_v4mapped(&sk->sk_v6_daddr)
+To solve this, just let unlock progress wait for recovery done.
 
-For the particular spoofed packet, we end up hashing V4 addresses
-which were not initialized by the TCP IPv6 stack, so KMSAN fired
-a warning.
-
-I first fixed sk_ehashfn() to test both source and destination addresses,
-but then faced various problems, including user-space programs
-like packetdrill that had similar assumptions.
-
-Instead of trying to fix the whole ecosystem, it is better
-to admit that we have a dual stack behavior, and that we
-can not build linux kernels without V4 stack anyway.
-
-The dual stack API automatically forces the traffic to be IPv4
-if v4mapped addresses are used at bind() or connect(), so it makes
-no sense to allow IPv6 traffic to use the same v4mapped class.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/1550124866-20367-1-git-send-email-gechangwei@live.cn
+Signed-off-by: Changwei Ge <gechangwei@live.cn>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ip6_input.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/ocfs2/dlm/dlmunlock.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
---- a/net/ipv6/ip6_input.c
-+++ b/net/ipv6/ip6_input.c
-@@ -168,6 +168,16 @@ int ipv6_rcv(struct sk_buff *skb, struct
- 	if (ipv6_addr_is_multicast(&hdr->saddr))
- 		goto err;
+diff --git a/fs/ocfs2/dlm/dlmunlock.c b/fs/ocfs2/dlm/dlmunlock.c
+index 63d701cd1e2e7..c8e9b7031d9ad 100644
+--- a/fs/ocfs2/dlm/dlmunlock.c
++++ b/fs/ocfs2/dlm/dlmunlock.c
+@@ -105,7 +105,8 @@ static enum dlm_status dlmunlock_common(struct dlm_ctxt *dlm,
+ 	enum dlm_status status;
+ 	int actions = 0;
+ 	int in_use;
+-        u8 owner;
++	u8 owner;
++	int recovery_wait = 0;
  
-+	/* While RFC4291 is not explicit about v4mapped addresses
-+	 * in IPv6 headers, it seems clear linux dual-stack
-+	 * model can not deal properly with these.
-+	 * Security models could be fooled by ::ffff:127.0.0.1 for example.
-+	 *
-+	 * https://tools.ietf.org/html/draft-itojun-v6ops-v4mapped-harmful-02
-+	 */
-+	if (ipv6_addr_v4mapped(&hdr->saddr))
-+		goto err;
+ 	mlog(0, "master_node = %d, valblk = %d\n", master_node,
+ 	     flags & LKM_VALBLK);
+@@ -208,9 +209,12 @@ static enum dlm_status dlmunlock_common(struct dlm_ctxt *dlm,
+ 		}
+ 		if (flags & LKM_CANCEL)
+ 			lock->cancel_pending = 0;
+-		else
+-			lock->unlock_pending = 0;
+-
++		else {
++			if (!lock->unlock_pending)
++				recovery_wait = 1;
++			else
++				lock->unlock_pending = 0;
++		}
+ 	}
+ 
+ 	/* get an extra ref on lock.  if we are just switching
+@@ -244,6 +248,17 @@ leave:
+ 	spin_unlock(&res->spinlock);
+ 	wake_up(&res->wq);
+ 
++	if (recovery_wait) {
++		spin_lock(&res->spinlock);
++		/* Unlock request will directly succeed after owner dies,
++		 * and the lock is already removed from grant list. We have to
++		 * wait for RECOVERING done or we miss the chance to purge it
++		 * since the removement is much faster than RECOVERING proc.
++		 */
++		__dlm_wait_on_lockres_flags(res, DLM_LOCK_RES_RECOVERING);
++		spin_unlock(&res->spinlock);
++	}
 +
- 	skb->transport_header = skb->network_header + sizeof(*hdr);
- 	IP6CB(skb)->nhoff = offsetof(struct ipv6hdr, nexthdr);
- 
+ 	/* let the caller's final dlm_lock_put handle the actual kfree */
+ 	if (actions & DLM_UNLOCK_FREE_LOCK) {
+ 		/* this should always be coupled with list removal */
+-- 
+2.20.1
+
 
 
