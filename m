@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE45CD6B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6CACD6B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbfJFRlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:41:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40650 "EHLO mail.kernel.org"
+        id S1730525AbfJFRlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:41:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730449AbfJFRlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:41:01 -0400
+        id S1731149AbfJFRlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:41:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 622B12053B;
-        Sun,  6 Oct 2019 17:41:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00DF12053B;
+        Sun,  6 Oct 2019 17:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383660;
-        bh=c7zXr1QtC0TThWpH9wNCX5riuVJELFhrzHMZGgtypPA=;
+        s=default; t=1570383671;
+        bh=bSxSZR+V3L5L3KCQ7M6cYOUgKsuuT07h+lzgj35jKmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N5nXxBlqk0xFoawvu9ehNCAMmvnmqI80vub25oN1H29uQ/sH/1XhmfQkmT15JEGDQ
-         gs1egoFVsCU1nKfLgXusfjD8g8BaelOHNiY+PuXxMQlhlijwhTSuTdaDiawLc08901
-         FO5m3+Qg3hLVLsm8gH+b9jDT/4fOdLmR0EMOzEyk=
+        b=S1/Ad60D59IK8N2trQtB5YlNfgT8EmTEOdA8tJWE5c1CSJxJuSbidLuYzHHvd7efB
+         uufgzma94zLrF2Cd7Ix8k6oXI3I28Xu5RU4jx5zPufQRjiLJlnr2j5jffZVQZM4iCX
+         F2SD5sgWqPCqykny3ugLunfap7tuo4yR6iNRT8iQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaojie Yuan <xiaojie.yuan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 049/166] drm/amdgpu/sdma5: fix number of sdma5 trap irq types for navi1x
-Date:   Sun,  6 Oct 2019 19:20:15 +0200
-Message-Id: <20191006171217.160867940@linuxfoundation.org>
+Subject: [PATCH 5.3 053/166] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+Date:   Sun,  6 Oct 2019 19:20:19 +0200
+Message-Id: <20191006171217.530118796@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171212.850660298@linuxfoundation.org>
 References: <20191006171212.850660298@linuxfoundation.org>
@@ -44,46 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaojie Yuan <xiaojie.yuan@amd.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 9e48495017342c5d445b25eedd86d6fd884a6496 ]
+[ Upstream commit a459a184c978ca9ad538aab93aafdde873953f30 ]
 
-v2: set num_types based on num_instances
+The CPG/MSTP Clock Domain driver does not implement the
+generic_pm_domain.power_{on,off}() callbacks, as the domain itself
+cannot be powered down.  Hence the domain should be marked as always-on
+by setting the GENPD_FLAG_ALWAYS_ON flag, to prevent the core PM Domain
+code from considering it for power-off, and doing unnessary processing.
 
-navi1x has 2 sdma engines but commit
-"e7b58d03b678 drm/amdgpu: reorganize sdma v4 code to support more instances"
-changes the max number of sdma irq types (AMDGPU_SDMA_IRQ_LAST) from 2 to 8
-which causes amdgpu_irq_gpu_reset_resume_helper() to recover irq of sdma
-engines with following logic:
+This also gets rid of a boot warning when the Clock Domain contains an
+IRQ-safe device, e.g. on RZ/A1:
 
-(enable irq for sdma0) * 1 time
-(enable irq for sdma1) * 1 time
-(disable irq for sdma1) * 6 times
+    sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
 
-as a result, after gpu reset, interrupt for sdma1 is lost.
-
-Signed-off-by: Xiaojie Yuan <xiaojie.yuan@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c | 3 ++-
+ drivers/clk/renesas/clk-mstp.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-index 3747c3f1f0cc8..15c371fac469e 100644
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-@@ -1583,7 +1583,8 @@ static const struct amdgpu_irq_src_funcs sdma_v5_0_illegal_inst_irq_funcs = {
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 2db9093546c60..e326e6dc09fce 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -334,7 +334,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
  
- static void sdma_v5_0_set_irq_funcs(struct amdgpu_device *adev)
- {
--	adev->sdma.trap_irq.num_types = AMDGPU_SDMA_IRQ_LAST;
-+	adev->sdma.trap_irq.num_types = AMDGPU_SDMA_IRQ_INSTANCE0 +
-+					adev->sdma.num_instances;
- 	adev->sdma.trap_irq.funcs = &sdma_v5_0_trap_irq_funcs;
- 	adev->sdma.illegal_inst_irq.funcs = &sdma_v5_0_illegal_inst_irq_funcs;
- }
+ 	pd->name = np->name;
+-	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
++		    GENPD_FLAG_ACTIVE_WAKEUP;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
 2.20.1
 
