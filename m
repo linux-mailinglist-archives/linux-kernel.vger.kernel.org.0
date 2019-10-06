@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25546CD46E
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF8BCD47E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbfJFRZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:25:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50584 "EHLO mail.kernel.org"
+        id S1728280AbfJFR00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:26:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726775AbfJFRZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:25:34 -0400
+        id S1726514AbfJFR0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:26:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75F3F2077B;
-        Sun,  6 Oct 2019 17:25:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A70D2080F;
+        Sun,  6 Oct 2019 17:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570382733;
-        bh=+uE/jBQW2nAhPbZwmWhhKdEgpP4dh01GAwNZwEB0lmE=;
+        s=default; t=1570382783;
+        bh=6ns37Ob8BZRTnowWqkz997jdBf9E9CsNqMDuyBEwcRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P9NnQbK1h89l1ajeTHGGyD/Am+1Og1shPiCh8Fgo+DLuhEQKztxNeKHf8qt28LQHi
-         Zst0LODl9fhFcwpww+nmgp1g6ST+zCMb+gJf8ZsPNWOSZFJEu7i8TlanSnPGp/5z8S
-         cOYdDtPGa+np1V7i6NVsDiTwXkSWistnQg7uTYuc=
+        b=v4z/OxHEPO69EjKe4s+35K9431zLSYEP8M5DN+ULJyAwJ8yRWPNXxhY4dM+FyOuZq
+         oVwnhX5SuRZndVDztSSZenekjAw/FU3Xt+CvPQiZleN2Ob1ZsfxCCUlF88zlT7E1mM
+         bHsZROBEqttg+fpajDmI3Oy0WPCmDpK2CMDeVk7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 02/68] tpm: use tpm_try_get_ops() in tpm-sysfs.c.
-Date:   Sun,  6 Oct 2019 19:20:38 +0200
-Message-Id: <20191006171109.219132103@linuxfoundation.org>
+Subject: [PATCH 4.14 05/68] drm/panel: simple: fix AUO g185han01 horizontal blanking
+Date:   Sun,  6 Oct 2019 19:20:41 +0200
+Message-Id: <20191006171111.113263768@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191006171108.150129403@linuxfoundation.org>
 References: <20191006171108.150129403@linuxfoundation.org>
@@ -48,287 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit 2677ca98ae377517930c183248221f69f771c921 upstream
+[ Upstream commit f8c6bfc612b56f02e1b8fae699dff12738aaf889 ]
 
-Use tpm_try_get_ops() in tpm-sysfs.c so that we can consider moving
-other decorations (locking, localities, power management for example)
-inside it. This direction can be of course taken only after other call
-sites for tpm_transmit() have been treated in the same way.
+The horizontal blanking periods are too short, as the values are
+specified for a single LVDS channel. Since this panel is dual LVDS
+they need to be doubled. With this change the panel reaches its
+nominal vrefresh rate of 60Fps, instead of the 64Fps with the
+current wrong blanking.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Tested-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Philipp Zabel added:
+The datasheet specifies 960 active clocks + 40/128/160 clocks blanking
+on each of the two LVDS channels (min/typical/max), so doubled this is
+now correct.
+
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/1562764060.23869.12.camel@pengutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/tpm/tpm-sysfs.c | 134 ++++++++++++++++++++++-------------
- 1 file changed, 83 insertions(+), 51 deletions(-)
+ drivers/gpu/drm/panel/panel-simple.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 83a77a4455380..177a60e5c6ec9 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -39,7 +39,6 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct tpm_buf tpm_buf;
- 	struct tpm_readpubek_out *out;
--	ssize_t rc;
- 	int i;
- 	char *str = buf;
- 	struct tpm_chip *chip = to_tpm_chip(dev);
-@@ -47,19 +46,18 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
- 
- 	memset(&anti_replay, 0, sizeof(anti_replay));
- 
--	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
--	if (rc)
--		return rc;
-+	if (tpm_try_get_ops(chip))
-+		return 0;
-+
-+	if (tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK))
-+		goto out_ops;
- 
- 	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
- 
--	rc = tpm_transmit_cmd(chip, NULL, tpm_buf.data, PAGE_SIZE,
-+	if (tpm_transmit_cmd(chip, NULL, tpm_buf.data, PAGE_SIZE,
- 			      READ_PUBEK_RESULT_MIN_BODY_SIZE, 0,
--			      "attempting to read the PUBEK");
--	if (rc) {
--		tpm_buf_destroy(&tpm_buf);
--		return 0;
--	}
-+			      "attempting to read the PUBEK"))
-+		goto out_buf;
- 
- 	out = (struct tpm_readpubek_out *)&tpm_buf.data[10];
- 	str +=
-@@ -90,9 +88,11 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
- 			str += sprintf(str, "\n");
- 	}
- 
--	rc = str - buf;
-+out_buf:
- 	tpm_buf_destroy(&tpm_buf);
--	return rc;
-+out_ops:
-+	tpm_put_ops(chip);
-+	return str - buf;
- }
- static DEVICE_ATTR_RO(pubek);
- 
-@@ -106,12 +106,16 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
- 	char *str = buf;
- 	struct tpm_chip *chip = to_tpm_chip(dev);
- 
--	rc = tpm_getcap(chip, TPM_CAP_PROP_PCR, &cap,
--			"attempting to determine the number of PCRS",
--			sizeof(cap.num_pcrs));
--	if (rc)
-+	if (tpm_try_get_ops(chip))
- 		return 0;
- 
-+	if (tpm_getcap(chip, TPM_CAP_PROP_PCR, &cap,
-+		       "attempting to determine the number of PCRS",
-+		       sizeof(cap.num_pcrs))) {
-+		tpm_put_ops(chip);
-+		return 0;
-+	}
-+
- 	num_pcrs = be32_to_cpu(cap.num_pcrs);
- 	for (i = 0; i < num_pcrs; i++) {
- 		rc = tpm_pcr_read_dev(chip, i, digest);
-@@ -122,6 +126,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
- 			str += sprintf(str, "%02X ", digest[j]);
- 		str += sprintf(str, "\n");
- 	}
-+	tpm_put_ops(chip);
- 	return str - buf;
- }
- static DEVICE_ATTR_RO(pcrs);
-@@ -129,16 +134,21 @@ static DEVICE_ATTR_RO(pcrs);
- static ssize_t enabled_show(struct device *dev, struct device_attribute *attr,
- 		     char *buf)
- {
-+	struct tpm_chip *chip = to_tpm_chip(dev);
-+	ssize_t rc = 0;
- 	cap_t cap;
--	ssize_t rc;
- 
--	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
--			"attempting to determine the permanent enabled state",
--			sizeof(cap.perm_flags));
--	if (rc)
-+	if (tpm_try_get_ops(chip))
- 		return 0;
- 
-+	if (tpm_getcap(chip, TPM_CAP_FLAG_PERM, &cap,
-+		       "attempting to determine the permanent enabled state",
-+		       sizeof(cap.perm_flags)))
-+		goto out_ops;
-+
- 	rc = sprintf(buf, "%d\n", !cap.perm_flags.disable);
-+out_ops:
-+	tpm_put_ops(chip);
- 	return rc;
- }
- static DEVICE_ATTR_RO(enabled);
-@@ -146,16 +156,21 @@ static DEVICE_ATTR_RO(enabled);
- static ssize_t active_show(struct device *dev, struct device_attribute *attr,
- 		    char *buf)
- {
-+	struct tpm_chip *chip = to_tpm_chip(dev);
-+	ssize_t rc = 0;
- 	cap_t cap;
--	ssize_t rc;
- 
--	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
--			"attempting to determine the permanent active state",
--			sizeof(cap.perm_flags));
--	if (rc)
-+	if (tpm_try_get_ops(chip))
- 		return 0;
- 
-+	if (tpm_getcap(chip, TPM_CAP_FLAG_PERM, &cap,
-+		       "attempting to determine the permanent active state",
-+		       sizeof(cap.perm_flags)))
-+		goto out_ops;
-+
- 	rc = sprintf(buf, "%d\n", !cap.perm_flags.deactivated);
-+out_ops:
-+	tpm_put_ops(chip);
- 	return rc;
- }
- static DEVICE_ATTR_RO(active);
-@@ -163,16 +178,21 @@ static DEVICE_ATTR_RO(active);
- static ssize_t owned_show(struct device *dev, struct device_attribute *attr,
- 			  char *buf)
- {
-+	struct tpm_chip *chip = to_tpm_chip(dev);
-+	ssize_t rc = 0;
- 	cap_t cap;
--	ssize_t rc;
- 
--	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
--			"attempting to determine the owner state",
--			sizeof(cap.owned));
--	if (rc)
-+	if (tpm_try_get_ops(chip))
- 		return 0;
- 
-+	if (tpm_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
-+		       "attempting to determine the owner state",
-+		       sizeof(cap.owned)))
-+		goto out_ops;
-+
- 	rc = sprintf(buf, "%d\n", cap.owned);
-+out_ops:
-+	tpm_put_ops(chip);
- 	return rc;
- }
- static DEVICE_ATTR_RO(owned);
-@@ -180,16 +200,21 @@ static DEVICE_ATTR_RO(owned);
- static ssize_t temp_deactivated_show(struct device *dev,
- 				     struct device_attribute *attr, char *buf)
- {
-+	struct tpm_chip *chip = to_tpm_chip(dev);
-+	ssize_t rc = 0;
- 	cap_t cap;
--	ssize_t rc;
- 
--	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
--			"attempting to determine the temporary state",
--			sizeof(cap.stclear_flags));
--	if (rc)
-+	if (tpm_try_get_ops(chip))
- 		return 0;
- 
-+	if (tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
-+		       "attempting to determine the temporary state",
-+		       sizeof(cap.stclear_flags)))
-+		goto out_ops;
-+
- 	rc = sprintf(buf, "%d\n", cap.stclear_flags.deactivated);
-+out_ops:
-+	tpm_put_ops(chip);
- 	return rc;
- }
- static DEVICE_ATTR_RO(temp_deactivated);
-@@ -198,15 +223,18 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
- 			 char *buf)
- {
- 	struct tpm_chip *chip = to_tpm_chip(dev);
--	cap_t cap;
--	ssize_t rc;
-+	ssize_t rc = 0;
- 	char *str = buf;
-+	cap_t cap;
- 
--	rc = tpm_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
--			"attempting to determine the manufacturer",
--			sizeof(cap.manufacturer_id));
--	if (rc)
-+	if (tpm_try_get_ops(chip))
- 		return 0;
-+
-+	if (tpm_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
-+		       "attempting to determine the manufacturer",
-+		       sizeof(cap.manufacturer_id)))
-+		goto out_ops;
-+
- 	str += sprintf(str, "Manufacturer: 0x%x\n",
- 		       be32_to_cpu(cap.manufacturer_id));
- 
-@@ -223,20 +251,22 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
- 			       cap.tpm_version_1_2.revMinor);
- 	} else {
- 		/* Otherwise just use TPM_STRUCT_VER */
--		rc = tpm_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
--				"attempting to determine the 1.1 version",
--				sizeof(cap.tpm_version));
--		if (rc)
--			return 0;
-+		if (tpm_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
-+			       "attempting to determine the 1.1 version",
-+			       sizeof(cap.tpm_version)))
-+			goto out_ops;
-+
- 		str += sprintf(str,
- 			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
- 			       cap.tpm_version.Major,
- 			       cap.tpm_version.Minor,
- 			       cap.tpm_version.revMajor,
- 			       cap.tpm_version.revMinor);
--	}
--
--	return str - buf;
-+}
-+	rc = str - buf;
-+out_ops:
-+	tpm_put_ops(chip);
-+	return rc;
- }
- static DEVICE_ATTR_RO(caps);
- 
-@@ -244,10 +274,12 @@ static ssize_t cancel_store(struct device *dev, struct device_attribute *attr,
- 			    const char *buf, size_t count)
- {
- 	struct tpm_chip *chip = to_tpm_chip(dev);
--	if (chip == NULL)
-+
-+	if (tpm_try_get_ops(chip))
- 		return 0;
- 
- 	chip->ops->cancel(chip);
-+	tpm_put_ops(chip);
- 	return count;
- }
- static DEVICE_ATTR_WO(cancel);
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 7a0fd4e4e78d5..c1daed3fe8428 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -614,9 +614,9 @@ static const struct panel_desc auo_g133han01 = {
+ static const struct display_timing auo_g185han01_timings = {
+ 	.pixelclock = { 120000000, 144000000, 175000000 },
+ 	.hactive = { 1920, 1920, 1920 },
+-	.hfront_porch = { 18, 60, 74 },
+-	.hback_porch = { 12, 44, 54 },
+-	.hsync_len = { 10, 24, 32 },
++	.hfront_porch = { 36, 120, 148 },
++	.hback_porch = { 24, 88, 108 },
++	.hsync_len = { 20, 48, 64 },
+ 	.vactive = { 1080, 1080, 1080 },
+ 	.vfront_porch = { 6, 10, 40 },
+ 	.vback_porch = { 2, 5, 20 },
 -- 
 2.20.1
 
