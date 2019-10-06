@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1971CD514
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 256D9CD5A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Oct 2019 19:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbfJFRcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 13:32:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58542 "EHLO mail.kernel.org"
+        id S1730555AbfJFRiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 13:38:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727913AbfJFRcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 13:32:08 -0400
+        id S1729972AbfJFRiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 13:38:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3EC52080F;
-        Sun,  6 Oct 2019 17:32:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8A2B20700;
+        Sun,  6 Oct 2019 17:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570383127;
-        bh=Bm1UclkOx45qtVBZclt5j1TdU8SQShCvKyKPr67th30=;
+        s=default; t=1570383481;
+        bh=mqSyEFPTAyzBwMRSRdz3y61W0tMmYA/5+LdqDpAIF+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sqSf6fRGQ4yOwtw/3zNuoZKfj8YDYdbXi/o0hSoKkIyDSjStqElIAZLyjiK6+QyAL
-         NbfQbkE/DLgSY3hukveoXHU8zmF8SwFZZOOU3xrERJ4k1zYAuqvwqKuLn3OmgRcoc5
-         kCo/k6ANfFyvCdkmn+7Ra++MOuWf5yx3jy7MecBY=
+        b=OHL12JFBjNCFsJ32sXGAjCGbPzQU05La1TV9r5CG9NMr64UMqPSd+U5IzHR0GhnIb
+         Wi62B6+8RHuoysdRhALQrnKFRxZbpRZurZaQWx00VPKVfs2u+uuUchVyFA2lPjwDhR
+         Od3FAX2lPyAi9gbnKr+7SATwUTwmus4dV3wiC8wk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 097/106] xen-netfront: do not use ~0U as error return value for xennet_fill_frags()
+        stable@vger.kernel.org, Anatoly Pugachev <matorola@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 119/137] pktcdvd: remove warning on attempting to register non-passthrough dev
 Date:   Sun,  6 Oct 2019 19:21:43 +0200
-Message-Id: <20191006171202.125594832@linuxfoundation.org>
+Message-Id: <20191006171219.165851348@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191006171124.641144086@linuxfoundation.org>
-References: <20191006171124.641144086@linuxfoundation.org>
+In-Reply-To: <20191006171209.403038733@linuxfoundation.org>
+References: <20191006171209.403038733@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,95 +43,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongli Zhang <dongli.zhang@oracle.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit a761129e3625688310aecf26e1be9e98e85f8eb5 ]
+[ Upstream commit eb09b3cc464d2c3bbde9a6648603c8d599ea8582 ]
 
-xennet_fill_frags() uses ~0U as return value when the sk_buff is not able
-to cache extra fragments. This is incorrect because the return type of
-xennet_fill_frags() is RING_IDX and 0xffffffff is an expected value for
-ring buffer index.
+Anatoly reports that he gets the below warning when booting -git on
+a sparc64 box on debian unstable:
 
-In the situation when the rsp_cons is approaching 0xffffffff, the return
-value of xennet_fill_frags() may become 0xffffffff which xennet_poll() (the
-caller) would regard as error. As a result, queue->rx.rsp_cons is set
-incorrectly because it is updated only when there is error. If there is no
-error, xennet_poll() would be responsible to update queue->rx.rsp_cons.
-Finally, queue->rx.rsp_cons would point to the rx ring buffer entries whose
-queue->rx_skbs[i] and queue->grant_rx_ref[i] are already cleared to NULL.
-This leads to NULL pointer access in the next iteration to process rx ring
-buffer entries.
+...
+[   13.352975] aes_sparc64: Using sparc64 aes opcodes optimized AES
+implementation
+[   13.428002] ------------[ cut here ]------------
+[   13.428081] WARNING: CPU: 21 PID: 586 at
+drivers/block/pktcdvd.c:2597 pkt_setup_dev+0x2e4/0x5a0 [pktcdvd]
+[   13.428147] Attempt to register a non-SCSI queue
+[   13.428184] Modules linked in: pktcdvd libdes cdrom aes_sparc64
+n2_rng md5_sparc64 sha512_sparc64 rng_core sha256_sparc64 flash
+sha1_sparc64 ip_tables x_tables ipv6 crc_ccitt nf_defrag_ipv6 autofs4
+ext4 crc16 mbcache jbd2 raid10 raid456 async_raid6_recov async_memcpy
+async_pq async_xor xor async_tx raid6_pq raid1 raid0 multipath linear
+md_mod crc32c_sparc64
+[   13.428452] CPU: 21 PID: 586 Comm: pktsetup Not tainted
+5.3.0-10169-g574cc4539762 #1234
+[   13.428507] Call Trace:
+[   13.428542]  [00000000004635c0] __warn+0xc0/0x100
+[   13.428582]  [0000000000463634] warn_slowpath_fmt+0x34/0x60
+[   13.428626]  [000000001045b244] pkt_setup_dev+0x2e4/0x5a0 [pktcdvd]
+[   13.428674]  [000000001045ccf4] pkt_ctl_ioctl+0x94/0x220 [pktcdvd]
+[   13.428724]  [00000000006b95c8] do_vfs_ioctl+0x628/0x6e0
+[   13.428764]  [00000000006b96c8] ksys_ioctl+0x48/0x80
+[   13.428803]  [00000000006b9714] sys_ioctl+0x14/0x40
+[   13.428847]  [0000000000406294] linux_sparc_syscall+0x34/0x44
+[   13.428890] irq event stamp: 4181
+[   13.428924] hardirqs last  enabled at (4189): [<00000000004e0a74>]
+console_unlock+0x634/0x6c0
+[   13.428984] hardirqs last disabled at (4196): [<00000000004e0540>]
+console_unlock+0x100/0x6c0
+[   13.429048] softirqs last  enabled at (3978): [<0000000000b2e2d8>]
+__do_softirq+0x498/0x520
+[   13.429110] softirqs last disabled at (3967): [<000000000042cfb4>]
+do_softirq_own_stack+0x34/0x60
+[   13.429172] ---[ end trace 2220ca468f32967d ]---
+[   13.430018] pktcdvd: setup of pktcdvd device failed
+[   13.455589] des_sparc64: Using sparc64 des opcodes optimized DES
+implementation
+[   13.515334] camellia_sparc64: Using sparc64 camellia opcodes
+optimized CAMELLIA implementation
+[   13.522856] pktcdvd: setup of pktcdvd device failed
+[   13.529327] pktcdvd: setup of pktcdvd device failed
+[   13.532932] pktcdvd: setup of pktcdvd device failed
+[   13.536165] pktcdvd: setup of pktcdvd device failed
+[   13.539372] pktcdvd: setup of pktcdvd device failed
+[   13.542834] pktcdvd: setup of pktcdvd device failed
+[   13.546536] pktcdvd: setup of pktcdvd device failed
+[   15.431071] XFS (dm-0): Mounting V5 Filesystem
+...
 
-The symptom is similar to the one fixed in
-commit 00b368502d18 ("xen-netfront: do not assume sk_buff_head list is
-empty in error handling").
+Apparently debian auto-attaches any cdrom like device to pktcdvd, which
+can lead to the above warning. There's really no reason to warn for this
+situation, kill it.
 
-This patch changes the return type of xennet_fill_frags() to indicate
-whether it is successful or failed. The queue->rx.rsp_cons will be
-always updated inside this function.
-
-Fixes: ad4f15dc2c70 ("xen/netfront: don't bug in case of too many frags")
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Anatoly Pugachev <matorola@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/xen-netfront.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/block/pktcdvd.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -890,9 +890,9 @@ static int xennet_set_skb_gso(struct sk_
- 	return 0;
- }
- 
--static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
--				  struct sk_buff *skb,
--				  struct sk_buff_head *list)
-+static int xennet_fill_frags(struct netfront_queue *queue,
-+			     struct sk_buff *skb,
-+			     struct sk_buff_head *list)
- {
- 	RING_IDX cons = queue->rx.rsp_cons;
- 	struct sk_buff *nskb;
-@@ -911,7 +911,7 @@ static RING_IDX xennet_fill_frags(struct
- 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
- 			queue->rx.rsp_cons = ++cons + skb_queue_len(list);
- 			kfree_skb(nskb);
--			return ~0U;
-+			return -ENOENT;
- 		}
- 
- 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
-@@ -922,7 +922,9 @@ static RING_IDX xennet_fill_frags(struct
- 		kfree_skb(nskb);
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 024060165afa7..76457003f1406 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -2594,7 +2594,6 @@ static int pkt_new_dev(struct pktcdvd_device *pd, dev_t dev)
+ 	if (ret)
+ 		return ret;
+ 	if (!blk_queue_scsi_passthrough(bdev_get_queue(bdev))) {
+-		WARN_ONCE(true, "Attempt to register a non-SCSI queue\n");
+ 		blkdev_put(bdev, FMODE_READ | FMODE_NDELAY);
+ 		return -EINVAL;
  	}
- 
--	return cons;
-+	queue->rx.rsp_cons = cons;
-+
-+	return 0;
- }
- 
- static int checksum_setup(struct net_device *dev, struct sk_buff *skb)
-@@ -1048,8 +1050,7 @@ err:
- 		skb->data_len = rx->status;
- 		skb->len += rx->status;
- 
--		i = xennet_fill_frags(queue, skb, &tmpq);
--		if (unlikely(i == ~0U))
-+		if (unlikely(xennet_fill_frags(queue, skb, &tmpq)))
- 			goto err;
- 
- 		if (rx->flags & XEN_NETRXF_csum_blank)
-@@ -1059,7 +1060,7 @@ err:
- 
- 		__skb_queue_tail(&rxq, skb);
- 
--		queue->rx.rsp_cons = ++i;
-+		i = ++queue->rx.rsp_cons;
- 		work_done++;
- 	}
- 
+-- 
+2.20.1
+
 
 
