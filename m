@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3023FCE284
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7624CE283
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbfJGNDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:03:25 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49240 "EHLO
+        id S1728056AbfJGNDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:03:22 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49198 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbfJGNDV (ORCPT
+        with ESMTP id S1727935AbfJGNDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:03:21 -0400
+        Mon, 7 Oct 2019 09:03:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=JUv5W88r1SVcQDN6DZBdoB+smrYd96kwwVVcehVYOQw=; b=Mhn7P3d0v8OW
-        OgQuC64q+SUoXirzcYClIMYcsVo52SWMVbnQPVgYGSPTUxhYvtplJ3Oj3pzgZk5YG63nfeW8ROi+Q
-        JDMPGar2+NewTi8mhT85tZ/AOY9vwGyvX8btaUsM4WRv/jHw5fGt4pMfsXoz21ZB3ErEHhXAjQfbX
-        K+24U=;
+        List-Archive; bh=BLfhGvOms8vrkoruRjB0fNgC2H90ROBBYao9KV7E39s=; b=izXfN5kET+39
+        B3vd6YrUvFCVPf57meyeqCOopMIau0uGmBR1p9YtyghTJsK789mePStcS9OdSfdRMZ4subWHqzUNK
+        sFs6qUl5ZltlJyF5Pn5RQi+c+FNJsvv+3AVyyFO/pe7k9xksKMkY5qIz2G3g39eKhjiHDSXEDSEEw
+        2kW7c=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iHSfV-0003Rg-0O; Mon, 07 Oct 2019 13:03:17 +0000
+        id 1iHSfV-0003Rk-6B; Mon, 07 Oct 2019 13:03:17 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 7A7D9274162F; Mon,  7 Oct 2019 14:03:16 +0100 (BST)
+        id B1A012741D8E; Mon,  7 Oct 2019 14:03:16 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>
-Subject: Applied "regulator: s2mps11: switch to using devm_fwnode_gpiod_get" to the regulator tree
-In-Reply-To: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: tps65090: switch to using devm_fwnode_gpiod_get" to the regulator tree
+In-Reply-To: <20191004231017.130290-4-dmitry.torokhov@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191007130316.7A7D9274162F@ypsilon.sirena.org.uk>
+Message-Id: <20191007130316.B1A012741D8E@ypsilon.sirena.org.uk>
 Date:   Mon,  7 Oct 2019 14:03:16 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+   regulator: tps65090: switch to using devm_fwnode_gpiod_get
 
 has been applied to the regulator tree at
 
@@ -75,10 +71,10 @@ to this mail.
 Thanks,
 Mark
 
-From de2792b507675641885075bc99e283de861b1ce6 Mon Sep 17 00:00:00 2001
+From 51d98ff8616a3c46233bdd1b714b8f19537bc9a8 Mon Sep 17 00:00:00 2001
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 4 Oct 2019 16:10:14 -0700
-Subject: [PATCH] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+Date: Fri, 4 Oct 2019 16:10:13 -0700
+Subject: [PATCH] regulator: tps65090: switch to using devm_fwnode_gpiod_get
 
 devm_gpiod_get_from_of_node() is being retired in favor of
 devm_fwnode_gpiod_get_index(), that behaves similar to
@@ -88,31 +84,70 @@ will also be able to support secondary software nodes.
 Let's switch this driver over.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Link: https://lore.kernel.org/r/20191004231017.130290-5-dmitry.torokhov@gmail.com
+Link: https://lore.kernel.org/r/20191004231017.130290-4-dmitry.torokhov@gmail.com
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/s2mps11.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/regulator/tps65090-regulator.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 5bc00884cf51..4f2dc5ebffdc 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index 10ea4b5a0f55..f0b660e9f15f 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -346,16 +346,20 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 	for (idx = 0; idx < ARRAY_SIZE(tps65090_matches); idx++) {
+ 		struct regulator_init_data *ri_data;
+ 		struct tps65090_regulator_plat_data *rpdata;
++		struct device_node *np;
+ 
+ 		rpdata = &reg_pdata[idx];
+ 		ri_data = tps65090_matches[idx].init_data;
+-		if (!ri_data || !tps65090_matches[idx].of_node)
++		if (!ri_data)
++			continue;
++
++		np = tps65090_matches[idx].of_node;
++		if (!np)
  			continue;
  
--		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
--				rdata[reg].of_node,
--				"samsung,ext-control-gpios",
--				0,
-+		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
-+				of_fwnode_handle(rdata[reg].of_node),
-+				"samsung,ext-control",
- 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 				"s2mps11-regulator");
- 		if (PTR_ERR(gpio[reg]) == -ENOENT)
+ 		rpdata->reg_init_data = ri_data;
+-		rpdata->enable_ext_control = of_property_read_bool(
+-					tps65090_matches[idx].of_node,
+-					"ti,enable-ext-control");
++		rpdata->enable_ext_control = of_property_read_bool(np,
++						"ti,enable-ext-control");
+ 		if (rpdata->enable_ext_control) {
+ 			enum gpiod_flags gflags;
+ 
+@@ -366,11 +370,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 				gflags = GPIOD_OUT_LOW;
+ 			gflags |= GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+ 
+-			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
+-								    tps65090_matches[idx].of_node,
+-								    "dcdc-ext-control-gpios", 0,
+-								    gflags,
+-								    "tps65090");
++			rpdata->gpiod = devm_fwnode_gpiod_get(
++							&pdev->dev,
++							of_fwnode_handle(np),
++							"dcdc-ext-control",
++							gflags,
++							"tps65090");
+ 			if (PTR_ERR(rpdata->gpiod) == -ENOENT) {
+ 				dev_err(&pdev->dev,
+ 					"could not find DCDC external control GPIO\n");
+@@ -379,8 +384,7 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 				return ERR_CAST(rpdata->gpiod);
+ 		}
+ 
+-		if (of_property_read_u32(tps65090_matches[idx].of_node,
+-					 "ti,overcurrent-wait",
++		if (of_property_read_u32(np, "ti,overcurrent-wait",
+ 					 &rpdata->overcurrent_wait) == 0)
+ 			rpdata->overcurrent_wait_valid = true;
+ 
 -- 
 2.20.1
 
