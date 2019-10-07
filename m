@@ -2,59 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABEB7CEB3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B34CEB41
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfJGR4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:56:11 -0400
-Received: from mga18.intel.com ([134.134.136.126]:8786 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729442AbfJGR4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:56:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 10:56:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="344801586"
-Received: from unknown (HELO localhost) ([10.252.9.47])
-  by orsmga004.jf.intel.com with ESMTP; 07 Oct 2019 10:55:55 -0700
-Date:   Mon, 7 Oct 2019 20:55:55 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com
-Subject: Re: [PATCH v22 09/24] x86/sgx: Add functions to allocate and free
- EPC pages
-Message-ID: <20191007175555.GA5972@linux.intel.com>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-10-jarkko.sakkinen@linux.intel.com>
- <20191005164408.GB25699@zn.tnic>
+        id S1729491AbfJGR4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:56:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58632 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729189AbfJGR4c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 13:56:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6cJm3mXnu96oSCyEtClKGow4gq/ZNSvLzJ0zlA1dpF8=; b=foHrCerJqy+WcaZ34i5vWdP0z
+        JfR/2qjb1sXRAMZrkoViHNafxNIzaEY3k/KyzjsfKeaw01FHMq5GFpiDpU7RT050s20gTzb3/uzeZ
+        FqLVFZW8nx7C0g+jyAKzxbwfRSZhUVtRo1kWo8GrPRie2TfSpkKmVvBU9t9Lnor9SBmHJBQxQcO+W
+        7eGkA2VZxodwK1krZHQjmz2vAiPWC1/wqk6EhtceRb8z652uQk/u/wtNSFnsnlmHJfHUbLoezCDk1
+        Hq74K/xI8qc5ID2BXWz0rrzc4qkg0GGq1fOcBGbTk44/tpZaoa1xI94fhxyKRSAheDtXIThuyDFLd
+        rNlqRe77Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHXFG-0007bf-Ci; Mon, 07 Oct 2019 17:56:30 +0000
+Date:   Mon, 7 Oct 2019 10:56:30 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>, linux-kernel@vger.kernel.org
+Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
+Message-ID: <20191007175630.GA28861@infradead.org>
+References: <20191007022454.GA5270@rani.riverdale.lan>
+ <20191007073448.GA882@lst.de>
+ <20191007175430.GA32537@rani.riverdale.lan>
+ <20191007175528.GA21857@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191005164408.GB25699@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191007175528.GA21857@lst.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 05, 2019 at 06:44:08PM +0200, Borislav Petkov wrote:
-> > +static struct sgx_epc_page *sgx_section_get_page(
+On Mon, Oct 07, 2019 at 07:55:28PM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 07, 2019 at 01:54:32PM -0400, Arvind Sankar wrote:
+> > It doesn't boot with the patch. Won't it go
+> > 	dma_get_required_mask
+> > 	-> intel_get_required_mask
+> > 	-> iommu_need_mapping
+> > 	-> dma_get_required_mask
+> > ?
+> > 
+> > Should the call to dma_get_required_mask in iommu_need_mapping be
+> > replaced with dma_direct_get_required_mask on top of your patch?
 > 
-> That fits into 80 cols (oh well, 81) and even if not, a trailing opening
-> arg brace is ugly.
+> Yes, sorry.
 
-But checkpatch.pl will complain about it...
-
-/Jarkko
+Actually my patch already calls dma_direct_get_required_mask.
+How did you get the loop?
