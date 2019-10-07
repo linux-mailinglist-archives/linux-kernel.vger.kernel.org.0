@@ -2,53 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B784ECE5D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 166DCCE5F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:52:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbfJGOui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:50:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44554 "EHLO
+        id S1728416AbfJGOta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:49:30 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44286 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbfJGOue (ORCPT
+        with ESMTP id S1727970AbfJGOt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:50:34 -0400
+        Mon, 7 Oct 2019 10:49:28 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUK7-0005yK-NZ; Mon, 07 Oct 2019 16:49:19 +0200
+        id 1iHUKC-0005zx-4y; Mon, 07 Oct 2019 16:49:24 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 863B11C0DCA;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E5C871C0DCF;
         Mon,  7 Oct 2019 16:49:15 +0200 (CEST)
 Date:   Mon, 07 Oct 2019 14:49:15 -0000
-From:   "tip-bot2 for Steve MacLean" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Thomas Richter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf docs: Correct and clarify jitdump spec
-Cc:     Steve MacLean <Steve.MacLean@Microsoft.com>,
-        Stephane Eranian <eranian@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Brian Robbins <brianrob@microsoft.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Eric Saint-Etienne" <eric.saint.etienne@oracle.com>,
-        Jiri Olsa <jolsa@redhat.com>, John Keeping <john@metanate.com>,
-        John Salem <josalem@microsoft.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Tom McDonald <thomas.mcdonald@microsoft.com>,
+Subject: [tip: perf/urgent] perf vendor events s390: Add JSON transaction for
+ machine type 8561
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3CBN8PR21MB1362F63CDE7AC69736FC7F9EF7800=40BN8PR21MB?=
- =?utf-8?q?1362=2Enamprd21=2Eprod=2Eoutlook=2Ecom=3E?=
-References: =?utf-8?q?=3CBN8PR21MB1362F63CDE7AC69736FC7F9EF7800=40BN8PR21M?=
- =?utf-8?q?B1362=2Enamprd21=2Eprod=2Eoutlook=2Ecom=3E?=
+In-Reply-To: <20190927081147.18345-1-tmricht@linux.ibm.com>
+References: <20190927081147.18345-1-tmricht@linux.ibm.com>
 MIME-Version: 1.0
-Message-ID: <157045975551.9978.14513940078789578945.tip-bot2@tip-bot2>
+Message-ID: <157045975590.9978.13228099256714455251.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -64,60 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     2657983b4c0d81632c6a73bae469951b0d341251
-Gitweb:        https://git.kernel.org/tip/2657983b4c0d81632c6a73bae469951b0d341251
-Author:        Steve MacLean <Steve.MacLean@microsoft.com>
-AuthorDate:    Sat, 28 Sep 2019 01:53:08 
+Commit-ID:     02d084792273e8a5f1813dcad988229a45be96ea
+Gitweb:        https://git.kernel.org/tip/02d084792273e8a5f1813dcad988229a45be96ea
+Author:        Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate:    Fri, 27 Sep 2019 10:11:46 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 30 Sep 2019 17:29:51 -03:00
+CommitterDate: Mon, 30 Sep 2019 17:29:42 -03:00
 
-perf docs: Correct and clarify jitdump spec
+perf vendor events s390: Add JSON transaction for machine type 8561
 
-Specification claims latest version of jitdump file format is 2. Current
-jit dump reading code treats 1 as the latest version.
+Add s390 transaction counter definition for machine 8561. This is the
+same file as for the predecessor machine.
 
-Correct spec to match code.
-
-The original language made it unclear the value to be written in the
-magic field.
-
-Revise language that the writer always writes the same value. Specify
-that the reader uses the value to detect endian mismatches.
-
-Signed-off-by: Steve MacLean <Steve.MacLean@Microsoft.com>
-Acked-by: Stephane Eranian <eranian@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Brian Robbins <brianrob@microsoft.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: John Keeping <john@metanate.com>
-Cc: John Salem <josalem@microsoft.com>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Tom McDonald <thomas.mcdonald@microsoft.com>
-Link: http://lore.kernel.org/lkml/BN8PR21MB1362F63CDE7AC69736FC7F9EF7800@BN8PR21MB1362.namprd21.prod.outlook.com
+Fixes: 6e67d77d673d ("perf vendor events s390: Add JSON files for machine type 8561")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Link: http://lore.kernel.org/lkml/20190927081147.18345-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/jitdump-specification.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/pmu-events/arch/s390/cf_m8561/transaction.json | 7 +++++++-
+ 1 file changed, 7 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/s390/cf_m8561/transaction.json
 
-diff --git a/tools/perf/Documentation/jitdump-specification.txt b/tools/perf/Documentation/jitdump-specification.txt
-index 4c62b07..52152d1 100644
---- a/tools/perf/Documentation/jitdump-specification.txt
-+++ b/tools/perf/Documentation/jitdump-specification.txt
-@@ -36,8 +36,8 @@ III/ Jitdump file header format
- Each jitdump file starts with a fixed size header containing the following fields in order:
- 
- 
--* uint32_t magic     : a magic number tagging the file type. The value is 4-byte long and represents the string "JiTD" in ASCII form. It is 0x4A695444 or 0x4454694a depending on the endianness. The field can be used to detect the endianness of the file
--* uint32_t version   : a 4-byte value representing the format version. It is currently set to 2
-+* uint32_t magic     : a magic number tagging the file type. The value is 4-byte long and represents the string "JiTD" in ASCII form. It written is as 0x4A695444. The reader will detect an endian mismatch when it reads 0x4454694a.
-+* uint32_t version   : a 4-byte value representing the format version. It is currently set to 1
- * uint32_t total_size: size in bytes of file header
- * uint32_t elf_mach  : ELF architecture encoding (ELF e_machine value as specified in /usr/include/elf.h)
- * uint32_t pad1      : padding. Reserved for future use
+diff --git a/tools/perf/pmu-events/arch/s390/cf_m8561/transaction.json b/tools/perf/pmu-events/arch/s390/cf_m8561/transaction.json
+new file mode 100644
+index 0000000..1a0034f
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/s390/cf_m8561/transaction.json
+@@ -0,0 +1,7 @@
++[
++  {
++    "BriefDescription": "Transaction count",
++    "MetricName": "transaction",
++    "MetricExpr": "TX_C_TEND + TX_NC_TEND + TX_NC_TABORT + TX_C_TABORT_SPECIAL + TX_C_TABORT_NO_SPECIAL"
++  }
++]
