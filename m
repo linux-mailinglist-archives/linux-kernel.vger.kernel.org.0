@@ -2,106 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0F4CE75F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60CFCE76B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbfJGP0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:26:09 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39737 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbfJGP0I (ORCPT
+        id S1728696AbfJGP1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:27:24 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46659 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727835AbfJGP1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:26:08 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 4so12955364qki.6;
-        Mon, 07 Oct 2019 08:26:08 -0700 (PDT)
+        Mon, 7 Oct 2019 11:27:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id d1so14114751ljl.13
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RuSSAKxVjo4ULUMqCK9nbWGblBOBwgw2OMwaKqEWY1I=;
+        b=ki0dU7/QpkUKFEP+2XbFUIDoX367Pt75Dh80mCFt5AvFdgL/8/7vNypIrJBG84c7di
+         SbsVdaGEtaJi0h94Xr02vTz4icSDTbgbbBRW69ohW4kV5MtXUVBh/jcf+x7ka1eQLwwa
+         fGbdcZFrU4QmkWG+aXgViNVFsTDr8lWNkT61TNiQ1ssZR/XlF9oUXQP8lamVx2PLneQ/
+         UTkwnUnKkLSgXqfHyllNmngaQMSscB9ei/i8ti/yvOAz5Fo3sQF01Cbh6Dxc8sLBnG5x
+         1hEg0rq2hfbdrrX/VRaly7XDvOT2iCb7rCSZf/QtMm1sEHzz0/r5Vb/pXa4uhi0dRlZ2
+         X4Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hRmOGZNk0NYT+fMDvkYsRiFnwMnhVC+gnIUxAp3rxvA=;
-        b=cEa/slRgbL1KiavJbV3A2W5023VI3OILGpSU7kVa2yCrB+n9XKv4hBVTvZb4t2qfn9
-         nUZukODprRWZiJe8L5Shkd/LVcvf8tfKG3y7sKbQOgr9eKJoRSx+yX2Snf1Cejx9ionu
-         7Vxgp3ZEZ6nHMupqlIZBMXmZpBjN1f+Tzqc+kJrcftVmbdeHYh2l5d0/e5ACSQxCZbRK
-         ry2ydqN0E/v5d+HhBG3xUXWkTxYYfDRd+0xAQApm31Ue4TWgSMkWPVTl9BepxxX4YbDV
-         E3qPufOqyWd4Mc3cPerOTcar7M9Ohth0Xjow7vFKBf4FcNctd91lS53+KHanXpKh/Hjh
-         Cu8A==
-X-Gm-Message-State: APjAAAUf2UAHwmkI6l5jtiai4Ne56GRRtxRFnheN14hiXRxX1hBw0BBp
-        1MAqOwdlPmABcSv/B5JUXUEogs2YnuLnBufoTS8=
-X-Google-Smtp-Source: APXvYqx8CqljIh59ZpHzfr7qLshwyG8IAhJfuGpUA+FlV2i2zLh2cOLP3/3M60nyXKm3gmOxZ8L1hPEVku4m2H6b2Kk=
-X-Received: by 2002:ae9:c110:: with SMTP id z16mr24108618qki.352.1570461967381;
- Mon, 07 Oct 2019 08:26:07 -0700 (PDT)
+        bh=RuSSAKxVjo4ULUMqCK9nbWGblBOBwgw2OMwaKqEWY1I=;
+        b=AQwHsjZ1YkcI1Jf1ObBHa3LkpQG/TIkuOfbfew6H0fI6csvXGFwJH/cQ6+qdeT9ujW
+         Zo9+6N17l6AQjiZcw0jvik3/DABebJR83RdOr6SQgC95WOkc0aCizmBHiH7esZN2fY1F
+         BMoYJoN9XWjXgiX0WYU3o1M+Yw2MKEt34xST5VFukrCLA24Hspfh1mRft6y3dSC+wDj7
+         voFxVYnHY4nzQGJvR5kIbPY83zaHuVO/wRZgGxucE5kH2klmaMyXQpx9KmqlMi3Za/5N
+         fOi/16Wge7YhI5RK4G+iswIIzWKTHh5BBWIIz6AEc0kdrmuHbdV5KWthcjSUu6KhJdPQ
+         lUjQ==
+X-Gm-Message-State: APjAAAUHqJyzs7vZ4+BnOWtKM9LZUCz0bZtL4CSlXPq7zD4ncygJKHt8
+        QXWSOBrrTN6hoXV/uyNz+vaJYYCw8/jUCOzvZ4fX8A==
+X-Google-Smtp-Source: APXvYqy3Zrut0RO25qVsbR7qSjjP0G1xChVlgmy5xLOhudQGjrOEwFXYinEbrBfV2lyhq5mRzFV5jcrdKb5mbT5qfdY=
+X-Received: by 2002:a2e:551:: with SMTP id 78mr19319941ljf.48.1570462041808;
+ Mon, 07 Oct 2019 08:27:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191007040935.23436-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20191007040935.23436-1-yamada.masahiro@socionext.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 7 Oct 2019 17:25:51 +0200
-Message-ID: <CAK8P3a0g5iEtbFGk2BE6x3GrE5=zXngecLFUVFPWFqL3NZUwhg@mail.gmail.com>
-Subject: Re: [RFC PATCH] media: videodev2.h: include <linux/time.h> instead of <sys/time.h>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
+References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
+ <1568878421-12301-10-git-send-email-vincent.guittot@linaro.org> <bc879bcb34f089e5888f6721aa2365f0832b69da.camel@surriel.com>
+In-Reply-To: <bc879bcb34f089e5888f6721aa2365f0832b69da.camel@surriel.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 7 Oct 2019 17:27:10 +0200
+Message-ID: <CAKfTPtA763zLxToVJpOCKc8TAgD3aZwpwhMZbbzrKiok+UHFaA@mail.gmail.com>
+Subject: Re: [PATCH v3 09/10] sched/fair: use load instead of runnable load in
+ wakeup path
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 7, 2019 at 6:10 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, 7 Oct 2019 at 17:14, Rik van Riel <riel@surriel.com> wrote:
 >
-> Currently, linux/videodev.h is excluded from the UAPI header test since
-> it is not self-contained. Building it for user-space would fail.
+> On Thu, 2019-09-19 at 09:33 +0200, Vincent Guittot wrote:
+> > runnable load has been introduced to take into account the case where
+> > blocked load biases the wake up path which may end to select an
+> > overloaded
+> > CPU with a large number of runnable tasks instead of an underutilized
+> > CPU with a huge blocked load.
+> >
+> > Tha wake up path now starts to looks for idle CPUs before comparing
+> > runnable load and it's worth aligning the wake up path with the
+> > load_balance.
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 >
+> On a single socket system, patches 9 & 10 have the
+> result of driving a woken up task (when wake_wide is
+> true) to the CPU core with the lowest blocked load,
+> even when there is an idle core the task could run on
+> right now.
+>
+> With the whole series applied, I see a 1-2% regression
+> in CPU use due to that issue.
+>
+> With only patches 1-8 applied, I see a 1% improvement in
+> CPU use for that same workload.
+
+Thanks for testing.
+patch 8-9 have just replaced runnable load  by blocked load and then
+removed the duplicated metrics in find_idlest_group.
+I'm preparing an additional patch that reworks  find_idlest_group() to
+behave similarly to find_busiest_group(). It gathers statistics what
+it already does, then classifies the groups and finally selects the
+idlest one. This should fix the problem that you mentioned above when
+it selects a group with lowest blocked load whereas there are idle
+cpus in another group with high blocked load.
 
 >
-> Replacing <sys/time.h> with <linux/time.h> solves it, and allow more
-> headers to join the UAPI header test.
+> Given that it looks like select_idle_sibling and
+> find_idlest_group_cpu do roughly the same thing, I
+> wonder if it is enough to simply add an additional
+> test to find_idlest_group to have it return the
+> LLC sg, if it is called on the LLC sd on a single
+> socket system.
+
+That make sense to me
+
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+> That way find_idlest_group_cpu can still find an
+> idle core like it does today.
 >
-> I am not 100% sure about the compatibility
-> between <sys/time.h> and <linux/time.h>, hence RFC.
+> Does that seem like a reasonable thing?
+
+That's worth testing
+
 >
-> But, if they were not compatible,
-> I guess it would have broken already.
+> I can run tests with that :)
 >
-> I CCed Arnd Bergmann, who might have a better insight.
->
-> A related comment is here:
-> https://lkml.org/lkml/2019/6/4/1046
-
-I don't think this can work, there are multiple problems here:
-
-* linux/time.h is still incompatible with sys/time.h, so any application
-  tries to include both sys/time.h and linux/videodev2.h now also
-  gets the compile-time error.
-
-* The definition of 'struct timespec' in the kernel headers may in
-  fact be different from the one in the libc, and we do want to use
-  the one from the C library here, otherwise different parts of the
-  application may use incompatible struct layouts.
-
-Fixing this correctly depends on one of the remaining y2038
-patches that we still have to revisit. There are two aspects that
-we should address:
-
-1. The v4l subsystem needs to be changed to handle both the
-    old and the new 32-bit layout for timespec (and timeval). Both
-    Hans and I have created patches for this in the past, but they
-    were never completed and merged.
-
-2. The definition of 'struct timespec' in the kernel headers needs
-   to be removed after every user of this struct is gone from
-   the kernel. In internal kernel code, the replacement is
-   timespec64 or ktime_t, and in user space interfaces, the
-   correct replacement is one of __kernel_timespec (the 64-bit
-   version), __kernel_old_timespec (the traditional layout) or
-   timespec (from the libc headers).
-
-        Arnd
+> --
+> All Rights Reversed.
