@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC152CE021
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29871CE043
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfJGLXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:23:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50170 "EHLO
+        id S1728194AbfJGLZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:25:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50242 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbfJGLXi (ORCPT
+        with ESMTP id S1727795AbfJGLXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:23:38 -0400
+        Mon, 7 Oct 2019 07:23:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zVQ033DHYBrINJK02LYJoI4IG8nnnQgx+qACnvNJ5D0=; b=KY2kUs1Lx23xwJNyCy+RzDHrGZ
-        SbRDq6IsqgMK2skhTxieGYXTUjHJFRFn1dkVRwPCdAytCpKH/pdrZaGe9pW0ABl6xXDxX6k7MPe0j
-        afNnkhNXl8dAaBAX67D0t2lbslaFwQITbqLSd3hitF12wzGHuUrM4wrCm/dSjDELzw3mE4hbkQoP2
-        BEMW/R206NyckwFHJS89pX8zrK6DJCCE0Su73vRB46KJSkEPDp/pilzyL2k7HDboJ1OMsdLAjY5ei
-        iuSltO5N9ia5+PUBrufAJNXSmBskAi782CunGsOoWWb5nLemFFXTgMaVULb8L0vZ8FsyFRczu6Rw4
-        tIkRVYTQ==;
+        bh=2DP7SdddmBPCqTl/EX42Xv/iKdY/IVrkhlnqstt7XuU=; b=XbKDMWvbnvsAV/H/eZiu8yg+lp
+        qgXEq2x4REFjFVe6WtV9Ii7Mnl/dqpqv1s9H/ZYW8vbvCN5s581lC7tQvlD6iudnSJdeNpPQLlev+
+        w68udFUw4rZ+RhSEI7Sc4e+Sbyb0dA/ztS6UuO9B5kBM58KCzAjO97ijAZ3X6g8uFH/utRDynIYst
+        ExCv+PBe27TFH+pYcuqHkFOPZ/CgLjXVzKF9ysSe1Dva0+PYPq+y0VbrHXJz/UlZMYZbIhMuocnLO
+        l8R0be989o1MFScsC55yZE/jcntUZ8Ji4DsZr4gexMoKBvMwemodlqhAYpL/2T3ve/MDudslNBkYV
+        fk84iJMw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHR6z-0003Ht-Vn; Mon, 07 Oct 2019 11:23:34 +0000
+        id 1iHR6y-0003Gx-5J; Mon, 07 Oct 2019 11:23:32 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3A2FB3060EB;
-        Mon,  7 Oct 2019 13:22:41 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 38FDD30709E;
+        Mon,  7 Oct 2019 13:22:36 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id DB25820244E3A; Mon,  7 Oct 2019 13:23:26 +0200 (CEST)
-Message-Id: <20191007083831.09800500.5@infradead.org>
+        id DD155202A1952; Mon,  7 Oct 2019 13:23:26 +0200 (CEST)
+Message-Id: <20191007083831.15486812.0@infradead.org>
 User-Agent: quilt/0.65
-Date:   Mon, 07 Oct 2019 10:27:18 +0200
+Date:   Mon, 07 Oct 2019 10:27:19 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -45,7 +45,7 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com
-Subject: [PATCH v2 10/13] static_call: Add static_cond_call()
+Subject: [PATCH v2 11/13] static_call: Handle tail-calls
 References: <20191007082708.01393931.1@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,124 +54,216 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend the static_call infrastructure to optimize the following common
-pattern:
+GCC can turn our static_call(name)(args...) into a tail call, in which
+case we get a JMP.d32 into the trampoline (which then does a further
+tail-call).
 
-	if (func_ptr)
-		func_ptr(args...)
-
-For the trampoline (which is in effect a tail-call), we patch the
-JMP.d32 into a RET, which then directly consumes the trampoline call.
-
-For the in-line sites we replace the CALL with a NOP5.
+Teach objtool to recognise and mark these in .static_call_sites and
+adjust the code patching to deal with this.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/kernel/static_call.c |   42 ++++++++++++++++++++++++++++++++----------
- include/linux/static_call.h   |    7 +++++++
- 2 files changed, 39 insertions(+), 10 deletions(-)
+ arch/x86/kernel/static_call.c           |    4 ++--
+ include/linux/static_call.h             |    4 ++--
+ include/linux/static_call_types.h       |    7 +++++++
+ kernel/static_call.c                    |   21 +++++++++++++--------
+ tools/include/linux/static_call_types.h |    7 +++++++
+ tools/objtool/check.c                   |   18 +++++++++++++-----
+ 6 files changed, 44 insertions(+), 17 deletions(-)
 
 --- a/arch/x86/kernel/static_call.c
 +++ b/arch/x86/kernel/static_call.c
-@@ -4,19 +4,41 @@
- #include <linux/bug.h>
- #include <asm/text-patching.h>
- 
--static void __static_call_transform(void *insn, u8 opcode, void *func)
-+enum insn_type {
-+	call = 0, /* site call */
-+	nop = 1,  /* site cond-call */
-+	jmp = 2,  /* tramp / site tail-call */
-+	ret = 3,  /* tramp / site cond-tail-call */
-+};
-+
-+static void __static_call_transform(void *insn, enum insn_type type, void *func)
- {
--	const void *code = text_gen_insn(opcode, (long)insn, (long)func);
-+	int size = CALL_INSN_SIZE;
-+	const void *code;
- 
--	if (WARN_ONCE(*(u8 *)insn != opcode,
--		      "unexpected static call insn opcode 0x%x at %pS\n",
--		      opcode, insn))
--		return;
-+	switch (type) {
-+	case call:
-+		code = text_gen_insn(CALL_INSN_OPCODE, insn, func);
-+		break;
-+
-+	case nop:
-+		code = ideal_nops[NOP_ATOMIC5];
-+		break;
-+
-+	case jmp:
-+		code = text_gen_insn(JMP32_INSN_OPCODE, insn, func);
-+		break;
-+
-+	case ret:
-+		code = text_gen_insn(RET_INSN_OPCODE, insn, func);
-+		size = RET_INSN_SIZE;
-+		break;
-+	}
- 
--	if (memcmp(insn, code, CALL_INSN_SIZE) == 0)
-+	if (memcmp(insn, code, size) == 0)
- 		return;
- 
--	text_poke_bp(insn, code, CALL_INSN_SIZE, NULL);
-+	text_poke_bp(insn, code, size, NULL);
+@@ -41,7 +41,7 @@ static void __static_call_transform(void
+ 	text_poke_bp(insn, code, size, NULL);
  }
  
- void arch_static_call_transform(void *site, void *tramp, void *func)
-@@ -24,10 +46,10 @@ void arch_static_call_transform(void *si
+-void arch_static_call_transform(void *site, void *tramp, void *func)
++void arch_static_call_transform(void *site, void *tramp, void *func, bool tail)
+ {
  	mutex_lock(&text_mutex);
  
- 	if (tramp)
--		__static_call_transform(tramp, JMP32_INSN_OPCODE, func);
-+		__static_call_transform(tramp, jmp + !func, func);
+@@ -49,7 +49,7 @@ void arch_static_call_transform(void *si
+ 		__static_call_transform(tramp, jmp + !func, func);
  
  	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE) && site)
--		__static_call_transform(site, CALL_INSN_OPCODE, func);
-+		__static_call_transform(site, !func, func);
+-		__static_call_transform(site, !func, func);
++		__static_call_transform(site, 2*tail + !func, func);
  
  	mutex_unlock(&text_mutex);
  }
 --- a/include/linux/static_call.h
 +++ b/include/linux/static_call.h
-@@ -17,6 +17,7 @@
-  *   DECLARE_STATIC_CALL(name, func);
-  *   DEFINE_STATIC_CALL(name, func);
-  *   static_call(name)(args...);
-+ *   static_cond_call(name)(args...)
-  *   static_call_update(name, func);
-  *
-  * Usage example:
-@@ -105,6 +106,7 @@ extern int static_call_text_reserved(voi
- 	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
+@@ -64,7 +64,7 @@
+ /*
+  * Either @site or @tramp can be NULL.
+  */
+-extern void arch_static_call_transform(void *site, void *tramp, void *func);
++extern void arch_static_call_transform(void *site, void *tramp, void *func, bool tail);
+ #endif
  
- #define static_call(name)	STATIC_CALL_TRAMP(name)
-+#define static_cond_call(name)	STATIC_CALL_TRAMP(name)
  
- #define EXPORT_STATIC_CALL(name)					\
- 	EXPORT_SYMBOL(STATIC_CALL_NAME(name));				\
-@@ -128,6 +130,7 @@ struct static_call_key {
- 	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
- 
- #define static_call(name)	STATIC_CALL_TRAMP(name)
-+#define static_cond_call(name)	STATIC_CALL_TRAMP(name)
- 
- static inline
- void __static_call_update(struct static_call_key *key, void *tramp, void *func)
-@@ -161,6 +164,10 @@ struct static_call_key {
- #define static_call(name)						\
- 	((typeof(STATIC_CALL_TRAMP(name))*)(STATIC_CALL_NAME(name).func))
- 
-+#define static_cond_call(name)						\
-+	if (STATIC_CALL_NAME(name).func)				\
-+		((typeof(STATIC_CALL_TRAMP(name))*)(STATIC_CALL_NAME(name).func))
-+
- static inline
- void __static_call_update(struct static_call_key *key, void *tramp, void *func)
+@@ -137,7 +137,7 @@ void __static_call_update(struct static_
  {
+ 	cpus_read_lock();
+ 	WRITE_ONCE(key->func, func);
+-	arch_static_call_transform(NULL, tramp, func);
++	arch_static_call_transform(NULL, tramp, func, false);
+ 	cpus_read_unlock();
+ }
+ 
+--- a/include/linux/static_call_types.h
++++ b/include/linux/static_call_types.h
+@@ -13,6 +13,13 @@
+ #define STATIC_CALL_TRAMP_STR(name) __stringify(STATIC_CALL_TRAMP(name))
+ 
+ /*
++ * Flags in the low bits of static_call_site::key.
++ */
++#define STATIC_CALL_SITE_TAIL 1UL	/* tail call */
++#define STATIC_CALL_SITE_INIT 2UL	/* init section */
++#define STATIC_CALL_SITE_FLAGS 3UL
++
++/*
+  * The static call site table needs to be created by external tooling (objtool
+  * or a compiler plugin).
+  */
+--- a/kernel/static_call.c
++++ b/kernel/static_call.c
+@@ -15,8 +15,6 @@ extern struct static_call_site __start_s
+ 
+ static bool static_call_initialized;
+ 
+-#define STATIC_CALL_INIT 1UL
+-
+ /* mutex to protect key modules/sites */
+ static DEFINE_MUTEX(static_call_mutex);
+ 
+@@ -39,18 +37,23 @@ static inline void *static_call_addr(str
+ static inline struct static_call_key *static_call_key(const struct static_call_site *site)
+ {
+ 	return (struct static_call_key *)
+-		(((long)site->key + (long)&site->key) & ~STATIC_CALL_INIT);
++		(((long)site->key + (long)&site->key) & ~STATIC_CALL_SITE_FLAGS);
+ }
+ 
+ /* These assume the key is word-aligned. */
+ static inline bool static_call_is_init(struct static_call_site *site)
+ {
+-	return ((long)site->key + (long)&site->key) & STATIC_CALL_INIT;
++	return ((long)site->key + (long)&site->key) & STATIC_CALL_SITE_INIT;
++}
++
++static inline bool static_call_is_tail(struct static_call_site *site)
++{
++	return ((long)site->key + (long)&site->key) & STATIC_CALL_SITE_TAIL;
+ }
+ 
+ static inline void static_call_set_init(struct static_call_site *site)
+ {
+-	site->key = ((long)static_call_key(site) | STATIC_CALL_INIT) -
++	site->key = ((long)static_call_key(site) | STATIC_CALL_SITE_INIT) -
+ 		    (long)&site->key;
+ }
+ 
+@@ -104,7 +107,7 @@ void __static_call_update(struct static_
+ 
+ 	key->func = func;
+ 
+-	arch_static_call_transform(NULL, tramp, func);
++	arch_static_call_transform(NULL, tramp, func, false);
+ 
+ 	/*
+ 	 * If uninitialized, we'll not update the callsites, but they still
+@@ -153,7 +156,8 @@ void __static_call_update(struct static_
+ 				continue;
+ 			}
+ 
+-			arch_static_call_transform(site_addr, NULL, func);
++			arch_static_call_transform(site_addr, NULL, func,
++				static_call_is_tail(site));
+ 		}
+ 	}
+ 
+@@ -197,7 +201,8 @@ static int __static_call_init(struct mod
+ 			key->next = site_mod;
+ 		}
+ 
+-		arch_static_call_transform(site_addr, NULL, key->func);
++		arch_static_call_transform(site_addr, NULL, key->func,
++				static_call_is_tail(site));
+ 	}
+ 
+ 	return 0;
+--- a/tools/include/linux/static_call_types.h
++++ b/tools/include/linux/static_call_types.h
+@@ -13,6 +13,13 @@
+ #define STATIC_CALL_TRAMP_STR(name) __stringify(STATIC_CALL_TRAMP(name))
+ 
+ /*
++ * Flags in the low bits of static_call_site::key.
++ */
++#define STATIC_CALL_SITE_TAIL 1UL	/* tail call */
++#define STATIC_CALL_SITE_INIT 2UL	/* init section */
++#define STATIC_CALL_SITE_FLAGS 3UL
++
++/*
+  * The static call site table needs to be created by external tooling (objtool
+  * or a compiler plugin).
+  */
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -585,6 +585,10 @@ static int add_jump_destinations(struct
+ 		} else {
+ 			/* external sibling call */
+ 			insn->call_dest = rela->sym;
++			if (insn->call_dest->static_call_tramp) {
++				list_add_tail(&insn->static_call_node,
++					      &file->static_call_list);
++			}
+ 			continue;
+ 		}
+ 
+@@ -636,6 +640,10 @@ static int add_jump_destinations(struct
+ 
+ 				/* internal sibling call */
+ 				insn->call_dest = insn->jump_dest->func;
++				if (insn->call_dest->static_call_tramp) {
++					list_add_tail(&insn->static_call_node,
++						      &file->static_call_list);
++				}
+ 			}
+ 		}
+ 	}
+@@ -1348,6 +1356,10 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
+ 
++	ret = read_static_call_tramps(file);
++	if (ret)
++		return ret;
++
+ 	ret = add_jump_destinations(file);
+ 	if (ret)
+ 		return ret;
+@@ -1372,10 +1384,6 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = read_static_call_tramps(file);
+-	if (ret)
+-		return ret;
+-
+ 	return 0;
+ }
+ 
+@@ -2505,7 +2513,7 @@ static int create_static_call_sections(s
+ 		}
+ 		memset(rela, 0, sizeof(*rela));
+ 		rela->sym = key_sym;
+-		rela->addend = 0;
++		rela->addend = is_sibling_call(insn) ? STATIC_CALL_SITE_TAIL : 0;
+ 		rela->type = R_X86_64_PC32;
+ 		rela->offset = idx * sizeof(struct static_call_site) + 4;
+ 		list_add_tail(&rela->list, &rela_sec->rela_list);
 
 
