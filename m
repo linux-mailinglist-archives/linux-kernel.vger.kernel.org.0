@@ -2,109 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A09E2CEE40
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 094AFCEE44
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbfJGVRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 17:17:00 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55009 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728330AbfJGVQ7 (ORCPT
+        id S1729447AbfJGVRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 17:17:36 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36922 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728330AbfJGVRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 17:16:59 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p7so919214wmp.4;
-        Mon, 07 Oct 2019 14:16:58 -0700 (PDT)
+        Mon, 7 Oct 2019 17:17:35 -0400
+Received: by mail-oi1-f195.google.com with SMTP id i16so13010331oie.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 14:17:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r1Ds32p5O4ZcmTgQVgBnVXrwuxhYvcTzmMcSF3UJbRo=;
-        b=pbacVSdys0sLAittjH0pybL66qLXh6pGBO12S3ky7p4gVpkjbCMlX/rcLQGzII8A/1
-         q6wwsUbyYzohVk6/46fAIvyrXagObWvJUEQCWzNbKaCX3ubHaQba8eMQsputPLQ4xe8p
-         MzSkcNRdMaeOJKXiQu6gb8FaJRuKYZtmAQLMU/cV5I2Ac0lWGgtci7fxYNti8VrPba7I
-         bd003rqx7Wo3dq8wV6MWhU09yQU88XubqLmX59Xj3i+tRMp4glmW3mBt/PN6NgTdJfmC
-         /QRgRfgsDCPIkbSRTXOWPF0kdvudgL3J/cNQf/okrN9yVl2SeUFS1jLMpjIJlUHkdhvb
-         FI3g==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZSMyQ7xLH+GcRUXwNxgSuFrHvKm75AJR1R0SR7xGkU8=;
+        b=NhaXuRQ+1lwQRBvuCMxNTwsQOV5ZRV4A88SVR8jE0hYUdyhq2KjbbKhmGvDcxjoCWJ
+         TOdSuPR5UqU7YK2ka/NfsTqMPhIcY2g5J3waNtuzbd0ArlYc+oYBl9/hpCK6SAuVsYfH
+         Ibqr8uRhY7EpKpf5IA0MQEQW1KwD2rPPNZve9B3lIrrq8BofY7qxIQt3mPQk7mqNYBZy
+         e8QPoDYRduBhMprFzF87HPWDNQml1lwg2zj39ps+LQvLA+lR11L544bdISS20A9AXZh+
+         FeRlwBBorczhI9yQZLNAbXGW7ty8Y1DkberCHQUtgOk6/giVDL4cuuUkKeLfIyfp/vA+
+         A39A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r1Ds32p5O4ZcmTgQVgBnVXrwuxhYvcTzmMcSF3UJbRo=;
-        b=KOXYr+woaqUi95jj2XUMhNuJZe+DNWe/IZOpTF/78Dw40vBaa6lAHkuhVqHf4SnlM/
-         0hDcGwczGvkEFXJmLNG5663SoFZ7DwCRE1iajPOiO6R2whDyjQGm1GPRYBX1YPVgxrTl
-         OqJV1Cdhl4GVWyO7lJoo6o/oI/UxWmdQAupuQAhjuSzXYV32SJBWAtbL6wr5EeDQShqp
-         5FLJKzuj1D8C2/gRwt44QAQoxFnYuzMQfKvMX93LEe2CGiZXEQ69xd8vhlgKFL76TmH3
-         mQqQgQDZNMecRfRo9+11A+Ouj0RQDkU7m4mlU611vAFyWSOp//TFVHBM/f1gZuce2BbV
-         o3kQ==
-X-Gm-Message-State: APjAAAXF6YKfQevNyc6x1g0NC3WJQwkvErE3X548gbrR1GdJJX2WGUel
-        +yUzRG2chLbtWTr+ONRMsZE=
-X-Google-Smtp-Source: APXvYqxyivR8RyXxX3tcMgK5BYcWUcd9CTctKbWKKBO62erx5rad+Y21F+bpUo63vmbXA23tsKhW7g==
-X-Received: by 2002:a05:600c:1009:: with SMTP id c9mr933903wmc.64.1570483018061;
-        Mon, 07 Oct 2019 14:16:58 -0700 (PDT)
-Received: from localhost.localdomain ([109.126.133.195])
-        by smtp.gmail.com with ESMTPSA id v8sm22227375wra.79.2019.10.07.14.16.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 14:16:57 -0700 (PDT)
-From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>
-Subject: [PATCH] blk-stat: Optimise blk_stat_add()
-Date:   Tue,  8 Oct 2019 00:16:51 +0300
-Message-Id: <39dd33cc6f0264b2ec2f79f1dfe21466c2180851.1570482929.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZSMyQ7xLH+GcRUXwNxgSuFrHvKm75AJR1R0SR7xGkU8=;
+        b=bF7Fn9fCsAFWPQODMb3xb+5tTV/7/lNs+QmsqkPNJnri9uDIZWbJ3y8ETL/xYfYsN1
+         aOP9RTo1HRm20jLINk7P4aEWFg9B04aYiYhEdVOLIT17dNZCtKYOPseI13LdVOlJy0Ba
+         OBZxYJ8tWy2mYIfF9NSM5/3Z0ou/cyB0Qjkw7u/Qp1N/psd9Yzv5f4wI6l8ipQIhxrIU
+         B1YKMTL2DsGpL5lQe5NhSj/F9WhQUcM3HQSXcYcPr5+Kpg6pI9v24/ovwWQXvXVEXhcj
+         RYlujyG1aB1BNoOA7cLxlOlTyak9GZvp+2wXinHfnCo+U6ku6+/Bi5G6yCbrYObJ+kbk
+         2M9Q==
+X-Gm-Message-State: APjAAAUiJwZvLXPuO5zpA7RWBuXPnCjvAjpgNq9DBZCXdtHw24/8ttCh
+        ZJM1MUgL5IFKMO6sdp4yAEczBp+CDPOzlm6hWCX7iw==
+X-Google-Smtp-Source: APXvYqxUdaPg+YopXAfujEkqQp9wrGs8XF5tm/6/RYNVkpfv+iOOElNN6Vr/P6jdoomRjEiV9n1Zy5HGmcrNOxfXKVw=
+X-Received: by 2002:aca:f403:: with SMTP id s3mr1098471oih.23.1570483052799;
+ Mon, 07 Oct 2019 14:17:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAG48ez14Q0-F8LqsvcNbyR2o6gPW8SHXsm4u5jmD9MpsteM2Tw@mail.gmail.com>
+ <CAHRSSExnOcwWWPd9osH=MU_WGaqxL4+7aXkf9=srwYFRa7c2eQ@mail.gmail.com>
+In-Reply-To: <CAHRSSExnOcwWWPd9osH=MU_WGaqxL4+7aXkf9=srwYFRa7c2eQ@mail.gmail.com>
+From:   Hridya Valsaraju <hridya@google.com>
+Date:   Mon, 7 Oct 2019 14:16:56 -0700
+Message-ID: <CA+wgaPP7=NMy91P8JK6skSc9s3J1uFJJcmGLQ6RBdjH-OVpKNQ@mail.gmail.com>
+Subject: Re: UAF read in print_binder_transaction_log_entry() on
+ ANDROID_BINDERFS kernels
+To:     Todd Kjos <tkjos@google.com>
+Cc:     Jann Horn <jannh@google.com>, Martijn Coenen <maco@android.com>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+Thank you for letting us know about the issue Jann. I will work on a
+fix and send out the same for review once ready.
 
-blk_stat_add() calls {get,put}_cpu_ptr() in a loop, which entails
-overhead of disabling/enabling preemption. The loop is under RCU
-(i.e.short) anyway, so do get_cpu() in advance.
+Regards,
+Hridya
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- block/blk-stat.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/block/blk-stat.c b/block/blk-stat.c
-index d892ad2cb938..4239954b0bce 100644
---- a/block/blk-stat.c
-+++ b/block/blk-stat.c
-@@ -75,7 +75,7 @@ void blk_stat_add(struct request *rq, u64 now)
- 	struct request_queue *q = rq->q;
- 	struct blk_stat_callback *cb;
- 	struct blk_rq_stat_staging *stat;
--	int bucket;
-+	int bucket, cpu;
- 	u64 value;
- 
- 	value = (now >= rq->io_start_time_ns) ? now - rq->io_start_time_ns : 0;
-@@ -83,6 +83,7 @@ void blk_stat_add(struct request *rq, u64 now)
- 	blk_throtl_stat_add(rq, value);
- 
- 	rcu_read_lock();
-+	cpu = get_cpu();
- 	list_for_each_entry_rcu(cb, &q->stats->callbacks, list) {
- 		if (!blk_stat_is_active(cb))
- 			continue;
-@@ -91,10 +92,10 @@ void blk_stat_add(struct request *rq, u64 now)
- 		if (bucket < 0)
- 			continue;
- 
--		stat = &get_cpu_ptr(cb->cpu_stat)[bucket];
-+		stat = &per_cpu_ptr(cb->cpu_stat, cpu)[bucket];
- 		blk_rq_stat_add(stat, value);
--		put_cpu_ptr(cb->cpu_stat);
- 	}
-+	put_cpu();
- 	rcu_read_unlock();
- }
- 
--- 
-2.23.0
-
+On Mon, Oct 7, 2019 at 2:04 PM Todd Kjos <tkjos@google.com> wrote:
+>
+> +Hridya Valsaraju
+>
+>
+> On Mon, Oct 7, 2019 at 1:50 PM Jann Horn <jannh@google.com> wrote:
+> >
+> > Hi!
+> >
+> > There is a use-after-free read in print_binder_transaction_log_entry()
+> > on ANDROID_BINDERFS kernels because
+> > print_binder_transaction_log_entry() prints the char* e->context_name
+> > as string, and if the transaction occurred on a binder device from
+> > binderfs, e->context_name belongs to the binder device and is freed
+> > when the inode disappears.
+> >
+> > Luckily this shouldn't have security implications, since:
+> >
+> > a) reading the binder transaction log is already a pretty privileged op=
+eration
+> > b) I can't find any actual users of ANDROID_BINDERFS
+> >
+> > I guess there are three ways to fix it:
+> > 1) Create a new shared global spinlock for binderfs_evict_inode() and
+> > binder_transaction_log_show(), and let binderfs_evict_inode() scan the
+> > transaction log for pointers to its name and replace them with
+> > pointers to a statically-allocated string "{DELETED}" or something
+> > like that.
+> > 2) Let the transaction log contain non-reusable device identifiers
+> > instead of name pointers, and let print_binder_transaction_log_entry()
+> > look them up in something like a hashtable.
+> > 3) Just copy the name into the transaction log every time.
+> >
+> > I'm not sure which one is better, or whether there's a nicer fourth
+> > option, so I'm leaving writing a patch for this to y'all.
+> >
+> >
+> > Trigger instructions (requires you to have some helpers that can
+> > register a context manager and send some transaction to it):
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > root@test:/home/user# mkdir /tmp/binder
+> > root@test:/home/user# mount -t binder -o stats=3Dglobal /dev/null /tmp/=
+binder
+> > root@test:/home/user# ls -l /tmp/binder
+> > total 0
+> > crw------- 1 root root 248, 1 Oct  7 20:34 binder
+> > crw------- 1 root root 248, 0 Oct  7 20:34 binder-control
+> > drwxr-xr-x 3 root root      0 Oct  7 20:34 binder_logs
+> > crw------- 1 root root 248, 2 Oct  7 20:34 hwbinder
+> > crw------- 1 root root 248, 3 Oct  7 20:34 vndbinder
+> > root@test:/home/user# ln -s /tmp/binder/binder /dev/binder
+> > [run some simple binder demo code to temporarily register a context
+> > manager and send a binder transaction]
+> > root@test:/home/user# rm /tmp/binder/binder
+> > root@test:/home/user# cat /tmp/binder/binder_logs/transaction_log
+> > 2: call  from 2277:2277 to 2273:0 context @=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD node 1 handle 0
+> > size 24:8 ret 0/0 l=3D0
+> > 5: call  from 2273:2273 to 2277:2277 context @=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD node 3 handle 1
+> > size 0:0 ret 0/0 l=3D0
+> > 6: reply from 2277:2277 to 2273:2273 context @=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD node 0 handle 0
+> > size 4:0 ret 0/0 l=3D0
+> > 7: reply from 2273:2273 to 2277:2277 context @=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD node 0 handle 0
+> > size 4:0 ret 0/0 l=3D0
+> > root@test:/home/user#
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > ASAN splat:
+> > [  333.300753] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [  333.303197] BUG: KASAN: use-after-free in string_nocheck+0x9d/0x160
+> > [  333.305081] Read of size 1 at addr ffff8880b0981258 by task cat/2279
+> >
+> > [  333.307415] CPU: 1 PID: 2279 Comm: cat Not tainted 5.4.0-rc1+ #513
+> > [  333.309304] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS 1.12.0-1 04/01/2014
+> > [  333.310987] Call Trace:
+> > [  333.312032]  dump_stack+0x7c/0xc0
+> > [  333.312581]  ? string_nocheck+0x9d/0x160
+> > [  333.313157]  print_address_description.constprop.7+0x36/0x50
+> > [  333.314030]  ? string_nocheck+0x9d/0x160
+> > [  333.314603]  ? string_nocheck+0x9d/0x160
+> > [  333.315236]  __kasan_report.cold.10+0x1a/0x35
+> > [  333.315972]  ? string_nocheck+0x9d/0x160
+> > [  333.316545]  kasan_report+0xe/0x20
+> > [  333.317104]  string_nocheck+0x9d/0x160
+> > [  333.317652]  ? widen_string+0x160/0x160
+> > [  333.318270]  ? string_nocheck+0x160/0x160
+> > [  333.318857]  ? unwind_get_return_address+0x2a/0x40
+> > [  333.319636]  ? profile_setup.cold.9+0x96/0x96
+> > [  333.320359]  string+0xb6/0xc0
+> > [  333.320800]  ? hex_string+0x280/0x280
+> > [  333.321398]  vsnprintf+0x20c/0x780
+> > [  333.321898]  ? num_to_str+0x180/0x180
+> > [  333.322503]  ? __kasan_kmalloc.constprop.6+0xc1/0xd0
+> > [  333.323235]  ? vfs_read+0xbc/0x1e0
+> > [  333.323814]  ? ksys_read+0xb5/0x150
+> > [  333.324323]  ? do_syscall_64+0xb9/0x3b0
+> > [  333.324948]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > [  333.325756]  seq_vprintf+0x78/0xb0
+> > [  333.326253]  seq_printf+0x96/0xc0
+> > [  333.327132]  ? seq_vprintf+0xb0/0xb0
+> > [  333.327678]  ? match_held_lock+0x2e/0x240
+> > [  333.328450]  binder_transaction_log_show+0x237/0x2d0
+> > [  333.329163]  seq_read+0x266/0x690
+> > [  333.329705]  vfs_read+0xbc/0x1e0
+> > [  333.330178]  ksys_read+0xb5/0x150
+> > [  333.330724]  ? kernel_write+0xb0/0xb0
+> > [  333.331257]  ? trace_hardirqs_off_caller+0x57/0x130
+> > [  333.332045]  ? mark_held_locks+0x29/0xa0
+> > [  333.332678]  ? do_syscall_64+0x6b/0x3b0
+> > [  333.333235]  do_syscall_64+0xb9/0x3b0
+> > [  333.333856]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > [  333.334635] RIP: 0033:0x7fbbb95d4461
+> > [  333.335153] Code: fe ff ff 50 48 8d 3d fe d0 09 00 e8 e9 03 02 00
+> > 66 0f 1f 84 00 00 00 00 00 48 8d 05 99 62 0d 00 8b 00 85 c0 75 13 31
+> > c0 0f 05 <48> 3d 00 f0 ff ff 77 57 c3 66 0f 1f 44 00 00 41 54 49 89 d4
+> > 55 48
+> > [  333.337950] RSP: 002b:00007ffcbe6438e8 EFLAGS: 00000246 ORIG_RAX:
+> > 0000000000000000
+> > [  333.339072] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007fb=
+bb95d4461
+> > [  333.340157] RDX: 0000000000020000 RSI: 00007fbbb9324000 RDI: 0000000=
+000000003
+> > [  333.341320] RBP: 00007fbbb9324000 R08: 00000000ffffffff R09: 0000000=
+000000000
+> > [  333.342454] R10: fffffffffffffb9c R11: 0000000000000246 R12: 00007fb=
+bb9324000
+> > [  333.343550] R13: 0000000000000003 R14: 0000000000000fff R15: 0000000=
+000020000
+> >
+> > [  333.344845] Allocated by task 2259:
+> > [  333.345416]  save_stack+0x19/0x80
+> > [  333.345899]  __kasan_kmalloc.constprop.6+0xc1/0xd0
+> > [  333.346636]  __kmalloc_track_caller+0xf4/0x2e0
+> > [  333.347271]  kmemdup+0x17/0x40
+> > [  333.347796]  binderfs_binder_device_create.isra.6+0x217/0x530
+> > [  333.348674]  binderfs_fill_super+0x486/0x81e
+> > [  333.349309]  mount_nodev+0x41/0xb0
+> > [  333.349860]  legacy_get_tree+0x7b/0xc0
+> > [  333.350398]  vfs_get_tree+0x40/0x130
+> > [  333.350970]  do_mount+0xacb/0xea0
+> > [  333.351449]  ksys_mount+0xb1/0xd0
+> > [  333.352007]  __x64_sys_mount+0x5d/0x70
+> > [  333.352545]  do_syscall_64+0xb9/0x3b0
+> > [  333.353144]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > [  333.354144] Freed by task 2278:
+> > [  333.354598]  save_stack+0x19/0x80
+> > [  333.355135]  __kasan_slab_free+0x12e/0x180
+> > [  333.355734]  kfree+0xe6/0x310
+> > [  333.356234]  binderfs_evict_inode+0xb8/0xd0
+> > [  333.356831]  evict+0x16f/0x290
+> > [  333.358081]  do_unlinkat+0x2f6/0x420
+> > [  333.358593]  do_syscall_64+0xb9/0x3b0
+> > [  333.359176]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > [  333.360196] The buggy address belongs to the object at ffff8880b0981=
+258
+> >                 which belongs to the cache kmalloc-8 of size 8
+> > [  333.361991] The buggy address is located 0 bytes inside of
+> >                 8-byte region [ffff8880b0981258, ffff8880b0981260)
+> > [  333.363796] The buggy address belongs to the page:
+> > [  333.364538] page:ffffea0002c26040 refcount:1 mapcount:0
+> > mapping:ffff8880b6c03c80 index:0x0
+> > [  333.365765] flags: 0x1fffc0000000200(slab)
+> > [  333.366402] raw: 01fffc0000000200 ffffea0002cb1d80 0000001400000014
+> > ffff8880b6c03c80
+> > [  333.367546] raw: 0000000000000000 0000000000aa00aa 00000001ffffffff
+> > 0000000000000000
+> > [  333.369030] page dumped because: kasan: bad access detected
+> >
+> > [  333.370095] Memory state around the buggy address:
+> > [  333.370824]  ffff8880b0981100: fc fb fc fc fb fc fc fb fc fc fb fc
+> > fc fb fc fc
+> > [  333.371907]  ffff8880b0981180: fb fc fc fb fc fc fb fc fc fb fc fc
+> > fb fc fc fb
+> > [  333.372969] >ffff8880b0981200: fc fc fb fc fc fb fc fc fb fc fc fb
+> > fc fc fb fc
+> > [  333.374033]                                                     ^
+> > [  333.374884]  ffff8880b0981280: fc fb fc fc fb fc fc fb fc fc fb fc
+> > fc fb fc fc
+> > [  333.375957]  ffff8880b0981300: fb fc fc fb fc fc fb fc fc fb fc fc
+> > fb fc fc fb
+> > [  333.377013] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
