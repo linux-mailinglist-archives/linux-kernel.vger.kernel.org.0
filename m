@@ -2,128 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F3EECEB21
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5D4CEB28
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729397AbfJGRyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:54:11 -0400
-Received: from mail-eopbgr770132.outbound.protection.outlook.com ([40.107.77.132]:24134
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728031AbfJGRyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:54:09 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YKkYAo44WiLoj5h5g+IFj309k81gZTNh7OiO+u/pLO6JLXP2Mmv7HV7LE7596m6tKo9x7GxV/+Aw0zHmONETNgPIXjZTAp9ubOh7W/SXlqUvsU9GVw6hCnfEhAxcKppLsN8IAWyRm/k0kUYxAQ5CgnhVRXS+YEzOp/vUi0ffcR6U3ImXvI2s7FJ3FVRHcih15AW22wxLbR2dKJIUzGoaPmpR3QiqoQfBnmipiInpSwjwkKRWshTokSDOmkhUxXFuJ/uIPfTuwAu555kHo6yNNyLMsDMPe3IuW8XnpA5cjKqMqZCcT2APMfi9go0xcA6gOyK+N/5poHe4kvlm7M/tRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9RvPAO/fqVihpaIP37dSW4pf06JZ5G/EGSv7WbqSfuI=;
- b=BRcMoCGdwayLSQ5Z8Odv2rPWoX91tnCYrrIc1KRjxiYs+YFOq0Ov1IhRtoQ7X4ivwHU6FYW5+tSOu8gXEApRw69aONHyu9PCZn/4ZpFvcMlYThx1SQefO3RYIaTEhOVv4Sia4MEUdRDzIbI8/UvdkvlxbbHu/RIdUyEtXx/OzmLEALkEPocxoVJuUtAGX/9pjq0V2Q96cz/B99UDGcUqw/h0NWSAbfgyWogG0htbfwLgUlt68N8BbP1lyG35FtcVy1JIsp+wIfhNWb+P7neR2/MTkhAvunX6OcVCaMcdmrGKCzVeOm8ReqgdUMPj4Bvb1bF1x5L9lApyI45cBRWwMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9RvPAO/fqVihpaIP37dSW4pf06JZ5G/EGSv7WbqSfuI=;
- b=C5rq3Mi1hXMUER2AQutKMCcOUSd5Y2bhWRmeWWBLfKQsOuLaKE/ZFiUbOhpuRDlm7IxNldqXJFuEAazJFQZ0/Vg7lg7m641Ljp+aez5JIQrrI9WZMEm3RQ/6set+XC/V90EU25D+sb7IlQk4hdl1m/aqyojYCXOrJDW/kKTbJEk=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1549.namprd22.prod.outlook.com (10.174.170.162) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.24; Mon, 7 Oct 2019 17:54:07 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::3050:9a38:9d8e:8033]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::3050:9a38:9d8e:8033%5]) with mapi id 15.20.2327.025; Mon, 7 Oct 2019
- 17:54:07 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-CC:     Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        James Hogan <jhogan@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v7 2/5] MIPS: PCI: use information from 1-wire PROM for
- IOC3  detection
-Thread-Topic: [PATCH v7 2/5] MIPS: PCI: use information from 1-wire PROM for
- IOC3  detection
-Thread-Index: AQHVfTg24CyB7s+NSkO/VidtsBLaDA==
-Date:   Mon, 7 Oct 2019 17:54:07 +0000
-Message-ID: <MWHPR2201MB1277380FCFDEB8F78DD7742AC19B0@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20191003095235.5158-3-tbogendoerfer@suse.de>
-In-Reply-To: <20191003095235.5158-3-tbogendoerfer@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BY5PR13CA0003.namprd13.prod.outlook.com
- (2603:10b6:a03:180::16) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8d1fdfe8-200a-4efd-6325-08d74b4f5949
-x-ms-traffictypediagnostic: MWHPR2201MB1549:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB15491EDEEBDB34B777A87F54C19B0@MWHPR2201MB1549.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 01834E39B7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(396003)(366004)(39840400004)(189003)(199004)(52116002)(99286004)(476003)(7736002)(305945005)(54906003)(76176011)(25786009)(486006)(33656002)(42882007)(478600001)(2906002)(11346002)(446003)(52536014)(5660300002)(6246003)(7696005)(4744005)(71200400001)(71190400001)(66066001)(316002)(14454004)(229853002)(7416002)(102836004)(9686003)(81156014)(6436002)(81166006)(6116002)(55016002)(74316002)(3846002)(44832011)(4326008)(8676002)(186003)(6916009)(26005)(966005)(386003)(8936002)(6506007)(6306002)(5024004)(66946007)(66556008)(64756008)(66446008)(66476007)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1549;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Xl27fIRd2kYKARiSFl6U+R4ije02bxmrq1rjAKyEZhdoJ0dT1WOQH98Kgw4YCEOEggrKIzvEdJx4h8VB852vUR3ATOZr9swOnw9AmeE+S6aURLJZRondR41VimF8IyCts9kvy0LRJCLAIUKubT+2R3OgFh8NLyscBdSecJvpo6g+p7e8XiKc8sAdP2+PkIqWRAbjmoJD3G6x5GvDaeehs6kO4irgqSTq3ztn6yuX/fRgNlDCxc/4ts3uPdeU/3exnIaw/Ght45TXAyGZNZ+pq/3mUOVYwgnQIdQPfzbyNt90GFV1vQHhtTS+hX6wqj2EHxOyM+XXUjTvrKKDu5+V0btEejtkQW6dYLrzGXkPLlZKyl5CCGx4TXAFTmn5rhseggTsnXVZwOvw/tgw9SNLTaUgZyjdnr4khuTNp6bW0E2uZIdD/l3Kl17PCTD4yCELm4kH7WNEdwXeEa3X0NUFoA==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729372AbfJGRyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:54:37 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34961 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbfJGRyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 13:54:37 -0400
+Received: by mail-qk1-f195.google.com with SMTP id w2so13490508qkf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 10:54:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=chm4+pVZmsumVF0HJu/5iYzdACVCyceJBu876a91SHA=;
+        b=DDyOL8AfJ8mhpbpT+/dnBo73nA4Aq0nS3BtajVASoI1KcY0G7bbu6hrwgJuutTHcfZ
+         mIaznFLDOc69jxYOdRdo7o12FGIN4EQlM2/uVEdewuaqJ+Lns6tt9c2OhGJY6R5b10Ma
+         +0VoZfu1IFPUbCQPD0SIZVAKV9k/ePXRZcgSgkRrtU66lRzsvQnjocowjkMrkv5zFUjM
+         4/XJZs/oc5/dfv5TRkoFhQmr20n9Tx0a/ljynKW/OAuoH4E3a9VkcgIQbQDifjAImru2
+         b4RPjGFtaeF6TR1+svI76vQSYtf22NzJLBvJ/CpT8bbVgPKNs8zTQrKVZwRR5vpX/Ifv
+         PF5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=chm4+pVZmsumVF0HJu/5iYzdACVCyceJBu876a91SHA=;
+        b=teek1QpOmBB0toSctyMVddGb2KKwNRqfpIuZsd7pknAmYkXO01UhoK7dfrD5YAemeP
+         tpZSxAgDw9oQB1+9R/q3evtEc8tn1Secp5Spts3ldAtZg8ihkf4EvGb9o50UobqG6M7P
+         aRQWIVr/teLU0O7OG5bEW4kG+WOA+9uC/8WrUJk75Da6tcfuADqby/9lAS1oRVnisMNl
+         2WlDkDsatf8F97mKfsieILNdg00C047Sq2ouOv+24StNnLp78nqTQEPz8AP53kPoP0X3
+         +qUV9Bg5zrFIA70kUPopbMW7siBvM75unZLdS8FuXJMYQF3lPn35+Ca0rWvrNg4LhUxi
+         VH+g==
+X-Gm-Message-State: APjAAAUxiQAAvxSsyK2lwn7HuQHCHGFZ6F7gVzPKrqyUvZe6y02tvsNi
+        SV6HwKtN6/hh7AP10Bzf3mY=
+X-Google-Smtp-Source: APXvYqwVmJ4UlHQywYLNcrWm7aqbamCdkRWyXhoEauxVz0tc2kjehxlWXJ2MO+Z7TQttVGJUhS60Uw==
+X-Received: by 2002:a37:ad8:: with SMTP id 207mr25405804qkk.38.1570470874752;
+        Mon, 07 Oct 2019 10:54:34 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id f27sm7447938qtv.85.2019.10.07.10.54.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Oct 2019 10:54:34 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Mon, 7 Oct 2019 13:54:32 -0400
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>, linux-kernel@vger.kernel.org
+Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
+Message-ID: <20191007175430.GA32537@rani.riverdale.lan>
+References: <20191007022454.GA5270@rani.riverdale.lan>
+ <20191007073448.GA882@lst.de>
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d1fdfe8-200a-4efd-6325-08d74b4f5949
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2019 17:54:07.1604
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: z762+tNPLVXaw3/bbHz36e2rHevlxGAyorz+AaFqebpAkUYS8qxO0pLilOpCZqEXasw5CI0hqfMrUf0t1rO3/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1549
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191007073448.GA882@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Oct 07, 2019 at 09:34:48AM +0200, Christoph Hellwig wrote:
+> Hi Arvind,
+> 
+> can you try the patch below?
+> 
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 3f974919d3bd..52b709bf2b55 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -3775,6 +3775,13 @@ static int intel_map_sg(struct device *dev, struct scatterlist *sglist, int nele
+>  	return nelems;
+>  }
+>  
+> +static u64 intel_get_required_mask(struct device *dev)
+> +{
+> +	if (!iommu_need_mapping(dev))
+> +		return dma_direct_get_required_mask(dev);
+> +	return DMA_BIT_MASK(32);
+> +}
+> +
+>  static const struct dma_map_ops intel_dma_ops = {
+>  	.alloc = intel_alloc_coherent,
+>  	.free = intel_free_coherent,
+> @@ -3787,6 +3794,7 @@ static const struct dma_map_ops intel_dma_ops = {
+>  	.dma_supported = dma_direct_supported,
+>  	.mmap = dma_common_mmap,
+>  	.get_sgtable = dma_common_get_sgtable,
+> +	.get_required_mask = intel_get_required_mask,
+>  };
+>  
+>  static void
 
-Thomas Bogendoerfer wrote:
-> IOC3 chips in SGI system are conntected to a bridge ASIC, which has
-> a 1-wire prom attached with part number information. This changeset
-> uses this information to create PCI subsystem information, which
-> the MFD driver uses for further platform device setup.
+It doesn't boot with the patch. Won't it go
+	dma_get_required_mask
+	-> intel_get_required_mask
+	-> iommu_need_mapping
+	-> dma_get_required_mask
+?
 
-Applied to mips-next.
-
-> commit 5dc76a96e95a
-> https://git.kernel.org/mips/c/5dc76a96e95a
->=20
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
-
-Thanks,
-    Paul
-
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+Should the call to dma_get_required_mask in iommu_need_mapping be
+replaced with dma_direct_get_required_mask on top of your patch?
