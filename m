@@ -2,82 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C564ACE396
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:29:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 192E3CE394
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:28:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbfJGN3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:29:05 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37107 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728111AbfJGN3E (ORCPT
+        id S1727985AbfJGN24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:28:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49348 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbfJGN24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:29:04 -0400
-Received: by mail-lj1-f193.google.com with SMTP id l21so13664584lje.4;
-        Mon, 07 Oct 2019 06:29:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B0ycQG3+LMWmEUo25NF7us/Cn/ZyGvcKYuOKAcoY2Nw=;
-        b=ih8RvjSSN0e1gfuk9UFGxwtCPxmDxUUKXDR2j7kgAAXRMu4wgyGKseslzjlGxF0wnT
-         WwiJnrNiatMEKK3fSmGpPg9jBY1snDSVhvdV42HvqvlypytByGBtbFSh2EO4P31k/tb2
-         K/urQXA3yGwM5/V9hcoFtwF1WfkhGL8LPPifu6/5Ez6EnhGiMUFO/rRpG3GFh1xY7sqJ
-         rgWCfmjMEiPthf0g3GM/5GyjYiumyFzPYIIUOt8pt6TMon6DibQbPek6IWiSkCiqgpoF
-         fiJ5eMkhGNtUH6FA9Vl3TcpgvrfMY+M9IEnRsR35ea8/OO7Nn3LXBDng52zcQV/c36h0
-         xQ/A==
-X-Gm-Message-State: APjAAAVLXZKCI2BC5D50FfJevqxIKCCBi4O8S0Xu6js28BxpbtUR8rP8
-        VByyp4U02VdzbIB/2y+oHAg=
-X-Google-Smtp-Source: APXvYqwYE/qHSZrjxd+iO9pBzFs9U39Vypyg0q0Zx4khhNEmjEkbb3i4WAdrYnHnIE40X3FEVKiN4w==
-X-Received: by 2002:a2e:5b9a:: with SMTP id m26mr15272472lje.90.1570454942468;
-        Mon, 07 Oct 2019 06:29:02 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id f22sm2702245lfk.56.2019.10.07.06.29.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 06:29:01 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v8 1/6] media: ad5820: Define entity function
-Date:   Mon,  7 Oct 2019 15:28:51 +0200
-Message-Id: <20191007132856.27948-2-ribalda@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191007132856.27948-1-ribalda@kernel.org>
-References: <20191007132856.27948-1-ribalda@kernel.org>
+        Mon, 7 Oct 2019 09:28:56 -0400
+Received: from [185.66.195.251] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iHT4G-0007M9-S3; Mon, 07 Oct 2019 13:28:53 +0000
+Date:   Mon, 7 Oct 2019 15:28:51 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Andrea Parri <parri.andrea@gmail.com>
+Cc:     bsingharora@gmail.com, dvyukov@google.com, elver@google.com,
+        linux-kernel@vger.kernel.org,
+        syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2] taskstats: fix data-race
+Message-ID: <20191007132850.u4iwjh5c2or4p2dz@wittgenstein>
+References: <20191007104039.GA16085@andrea.guest.corp.microsoft.com>
+ <20191007110117.1096-1-christian.brauner@ubuntu.com>
+ <20191007131804.GA19242@andrea.guest.corp.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191007131804.GA19242@andrea.guest.corp.microsoft.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this patch, media_device_register_entity throws a warning:
+On Mon, Oct 07, 2019 at 03:18:04PM +0200, Andrea Parri wrote:
+> On Mon, Oct 07, 2019 at 01:01:17PM +0200, Christian Brauner wrote:
+> > When assiging and testing taskstats in taskstats_exit() there's a race
+> > when writing and reading sig->stats when a thread-group with more than
+> > one thread exits:
+> > 
+> > cpu0:
+> > thread catches fatal signal and whole thread-group gets taken down
+> >  do_exit()
+> >  do_group_exit()
+> >  taskstats_exit()
+> >  taskstats_tgid_alloc()
+> > The tasks reads sig->stats holding sighand lock seeing garbage.
+> 
+> You meant "without holding sighand lock" here, right?
 
-dev_warn(mdev->dev,
-	 "Entity type for entity %s was not initialized!\n",
-	 entity->name);
+Correct, thanks for noticing!
 
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/i2c/ad5820.c | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> 
+> > 
+> > cpu1:
+> > task calls exit_group()
+> >  do_exit()
+> >  do_group_exit()
+> >  taskstats_exit()
+> >  taskstats_tgid_alloc()
+> > The task takes sighand lock and assigns new stats to sig->stats.
+> > 
+> > Fix this by using READ_ONCE() and smp_store_release().
+> > 
+> > Reported-by: syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com
+> > Fixes: 34ec12349c8a ("taskstats: cleanup ->signal->stats allocation")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+> > Link: https://lore.kernel.org/r/20191006235216.7483-1-christian.brauner@ubuntu.com
+> > ---
+> > /* v1 */
+> > Link: https://lore.kernel.org/r/20191005112806.13960-1-christian.brauner@ubuntu.com
+> > 
+> > /* v2 */
+> > - Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>:
+> >   - fix the original double-checked locking using memory barriers
+> > 
+> > /* v3 */
+> > - Andrea Parri <parri.andrea@gmail.com>:
+> >   - document memory barriers to make checkpatch happy
+> > ---
+> >  kernel/taskstats.c | 21 ++++++++++++---------
+> >  1 file changed, 12 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/kernel/taskstats.c b/kernel/taskstats.c
+> > index 13a0f2e6ebc2..978d7931fb65 100644
+> > --- a/kernel/taskstats.c
+> > +++ b/kernel/taskstats.c
+> > @@ -554,24 +554,27 @@ static int taskstats_user_cmd(struct sk_buff *skb, struct genl_info *info)
+> >  static struct taskstats *taskstats_tgid_alloc(struct task_struct *tsk)
+> >  {
+> >  	struct signal_struct *sig = tsk->signal;
+> > -	struct taskstats *stats;
+> > +	struct taskstats *stats_new, *stats;
+> >  
+> > -	if (sig->stats || thread_group_empty(tsk))
+> > -		goto ret;
+> > +	/* Pairs with smp_store_release() below. */
+> > +	stats = READ_ONCE(sig->stats);
+> 
+> This pairing suggests that the READ_ONCE() is heading an address
+> dependency, but I fail to identify it: what is the target memory
+> access of such a (putative) dependency?
+> 
+> 
+> > +	if (stats || thread_group_empty(tsk))
+> > +		return stats;
+> >  
+> >  	/* No problem if kmem_cache_zalloc() fails */
+> > -	stats = kmem_cache_zalloc(taskstats_cache, GFP_KERNEL);
+> > +	stats_new = kmem_cache_zalloc(taskstats_cache, GFP_KERNEL);
+> >  
+> >  	spin_lock_irq(&tsk->sighand->siglock);
+> >  	if (!sig->stats) {
+> > -		sig->stats = stats;
+> > -		stats = NULL;
+> > +		/* Pairs with READ_ONCE() above. */
+> > +		smp_store_release(&sig->stats, stats_new);
+> 
+> This is intended to 'order' the _zalloc()  (zero initializazion)
+> before the update of sig->stats, right?  what else am I missing?
 
-diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
-index 925c171e7797..7a49651f4d1f 100644
---- a/drivers/media/i2c/ad5820.c
-+++ b/drivers/media/i2c/ad5820.c
-@@ -309,6 +309,7 @@ static int ad5820_probe(struct i2c_client *client,
- 	v4l2_i2c_subdev_init(&coil->subdev, client, &ad5820_ops);
- 	coil->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 	coil->subdev.internal_ops = &ad5820_internal_ops;
-+	coil->subdev.entity.function = MEDIA_ENT_F_LENS;
- 	strscpy(coil->subdev.name, "ad5820 focus", sizeof(coil->subdev.name));
- 
- 	ret = media_entity_pads_init(&coil->subdev.entity, 0, NULL);
--- 
-2.23.0
+Right, I should've mentioned that. I'll change the comment.
+But I thought this also paired with smp_read_barrier_depends() that's
+placed alongside READ_ONCE()?
 
+Christian
