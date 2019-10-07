@@ -2,46 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3279CE29A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3023FCE284
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfJGNEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:04:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49194 "EHLO
+        id S1728126AbfJGNDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:03:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49240 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727933AbfJGNDU (ORCPT
+        with ESMTP id S1727716AbfJGNDV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:03:20 -0400
+        Mon, 7 Oct 2019 09:03:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DU5fckPym4ukfja1ev2Ad3lC+NNCZz8yfpvWiknS2lI=; b=cVKn4po1AWEa
-        ChnLB6asEyOWGi5k1Az4gqQeYL+T4mofJsz86JwVTNCeimbbLbLm5rwesgdPY58zM/pCAfLyGlPNk
-        KxVvDPPeYcdl30Kh8vMnnvG4UYjfivf6my5Y2DvZyE/tS+KqnzdJc6t04mVQaQ+F8nNiWgOP7bqZH
-        WoADw=;
+        List-Archive; bh=JUv5W88r1SVcQDN6DZBdoB+smrYd96kwwVVcehVYOQw=; b=Mhn7P3d0v8OW
+        OgQuC64q+SUoXirzcYClIMYcsVo52SWMVbnQPVgYGSPTUxhYvtplJ3Oj3pzgZk5YG63nfeW8ROi+Q
+        JDMPGar2+NewTi8mhT85tZ/AOY9vwGyvX8btaUsM4WRv/jHw5fGt4pMfsXoz21ZB3ErEHhXAjQfbX
+        K+24U=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iHSfU-0003RS-8c; Mon, 07 Oct 2019 13:03:16 +0000
+        id 1iHSfV-0003Rg-0O; Mon, 07 Oct 2019 13:03:17 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id B0DB8274162F; Mon,  7 Oct 2019 14:03:15 +0100 (BST)
+        id 7A7D9274162F; Mon,  7 Oct 2019 14:03:16 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: max77686: switch to using fwnode_gpiod_get_index" to the regulator tree
-In-Reply-To: <20191004231017.130290-8-dmitry.torokhov@gmail.com>
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>
+Subject: Applied "regulator: s2mps11: switch to using devm_fwnode_gpiod_get" to the regulator tree
+In-Reply-To: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191007130315.B0DB8274162F@ypsilon.sirena.org.uk>
-Date:   Mon,  7 Oct 2019 14:03:15 +0100 (BST)
+Message-Id: <20191007130316.7A7D9274162F@ypsilon.sirena.org.uk>
+Date:   Mon,  7 Oct 2019 14:03:16 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: max77686: switch to using fwnode_gpiod_get_index
+   regulator: s2mps11: switch to using devm_fwnode_gpiod_get
 
 has been applied to the regulator tree at
 
@@ -74,42 +75,44 @@ to this mail.
 Thanks,
 Mark
 
-From 0b2ba815fb5cbfab253f175d0b0d0d93d7ab9b5d Mon Sep 17 00:00:00 2001
+From de2792b507675641885075bc99e283de861b1ce6 Mon Sep 17 00:00:00 2001
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 4 Oct 2019 16:10:17 -0700
-Subject: [PATCH] regulator: max77686: switch to using fwnode_gpiod_get_index
+Date: Fri, 4 Oct 2019 16:10:14 -0700
+Subject: [PATCH] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
 
-gpiod_get_from_of_node() is being retired in favor of
-fwnode_gpiod_get_index(), that behaves similar to gpiod_get_index(),
-but can work with arbitrary firmware node. It will also be able to
-support secondary software nodes.
+devm_gpiod_get_from_of_node() is being retired in favor of
+devm_fwnode_gpiod_get_index(), that behaves similar to
+devm_gpiod_get_index(), but can work with arbitrary firmware node. It
+will also be able to support secondary software nodes.
 
 Let's switch this driver over.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Link: https://lore.kernel.org/r/20191004231017.130290-8-dmitry.torokhov@gmail.com
+Link: https://lore.kernel.org/r/20191004231017.130290-5-dmitry.torokhov@gmail.com
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/max77686-regulator.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/regulator/s2mps11.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-index c8e579e99316..9089ec608fcc 100644
---- a/drivers/regulator/max77686-regulator.c
-+++ b/drivers/regulator/max77686-regulator.c
-@@ -256,8 +256,9 @@ static int max77686_of_parse_cb(struct device_node *np,
- 	case MAX77686_BUCK8:
- 	case MAX77686_BUCK9:
- 	case MAX77686_LDO20 ... MAX77686_LDO22:
--		config->ena_gpiod = gpiod_get_from_of_node(np,
--				"maxim,ena-gpios",
-+		config->ena_gpiod = fwnode_gpiod_get_index(
-+				of_fwnode_handle(np),
-+				"maxim,ena",
- 				0,
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 5bc00884cf51..4f2dc5ebffdc 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+ 			continue;
+ 
+-		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
+-				rdata[reg].of_node,
+-				"samsung,ext-control-gpios",
+-				0,
++		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
++				of_fwnode_handle(rdata[reg].of_node),
++				"samsung,ext-control",
  				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 				"max77686-regulator");
+ 				"s2mps11-regulator");
+ 		if (PTR_ERR(gpio[reg]) == -ENOENT)
 -- 
 2.20.1
 
