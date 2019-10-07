@@ -2,117 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16550CEAF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E27CEAFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbfJGRuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:50:20 -0400
-Received: from mail-eopbgr810117.outbound.protection.outlook.com ([40.107.81.117]:55471
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1729174AbfJGRwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:52:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42414 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728031AbfJGRuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:50:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iCdFT4u8DSuoXUxE08PxgIxXWrUpa6ecXnNXQCnJbFvIwdMwsTjZ5Hun+x/FC8Fr6UW5QJvxUiFjJiN98ccYre1pwId3+Jwld9AwjOb7RIp2+sB2NktSdSfq6SNsUfLfW/NYYq23oT7pxmLtxO4TXy/QD7BVsJ8c5C7bWawO68Qost5i8+epddfH7X8uzA1DnzQmKGWlufM7oKLlH7ihstDvX7Rj+2bQNfJl6fHudfk+lIvXCvl3Pq/CHMEOWmuvU/iisFAda7MO8WODM1slkY14o5nlMTjPCAXKSr35TcuOHH8Ge81R8fS9DZewGWAMJ/XDiVZPWDbbbRDm/utJWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cdUS2uy8hqham/FBwiqY9YbkBcPTFozDaoHZAeFrgWk=;
- b=dWmj/I/TsPX63AWD1ihuEnaVBYYzHF4dTqLB8+JaAs4DIBj2PClsHG/e+0Jushl66HGnw3CaZxsSQnViaH2h50LP+mLjaE89YqIgkTuBLxGe2r/Q0jlV7W0LArFyAc2aRPWus63UYwQGqg4NaeyfLMtL6F/u4wCGd/VfJ64rBIZxKCAAmAzdWQU4FOlomKuBK14j9AFV8uKb2r+Df6YRqA0qw3OLSJHBzVgg6LsY697Vid4iaCJMidQJj/RiwWz1JqXBn7AUCT3oDx1UpQ2yLTIAF4ZhFJlrfu+sW+xdGQvFjcafj7fY6+Grt9tzPHNDrZqmcoNkt1i4i1az54BKlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cdUS2uy8hqham/FBwiqY9YbkBcPTFozDaoHZAeFrgWk=;
- b=Q3UoDVHW5lbFAhjC4tJKoezfHGWHKg50XWUHsahDePjEkdvFkecIguHcxkKb+7wzPR5n29/qp0q5ZRyIXtQN7k72BpQ5CaQTYcgksBJt+tA+zwckDrHZW0aGeuyB5r0+ZWO7hzLV1FuXDxKAlv1rAGwsFHmPv/n/BxwSBI33LVo=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1232.namprd22.prod.outlook.com (10.174.160.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.24; Mon, 7 Oct 2019 17:50:18 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::3050:9a38:9d8e:8033]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::3050:9a38:9d8e:8033%5]) with mapi id 15.20.2327.025; Mon, 7 Oct 2019
- 17:50:18 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        James Hogan <jhogan@kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        id S1728187AbfJGRwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 13:52:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 194BFAE1A;
+        Mon,  7 Oct 2019 17:51:57 +0000 (UTC)
+Message-ID: <1f6089709ec8f77d12453f08730b0058345a352b.camel@suse.de>
+Subject: Re: [PATCH 05/11] of: Ratify of_dma_configure() interface
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>, PCI <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH] MIPS: include: Mark __cmpxchd as __always_inline
-Thread-Topic: [PATCH] MIPS: include: Mark __cmpxchd as __always_inline
-Thread-Index: AQHVfTeuJXsc/v2mykuJXQsGQB/faQ==
-Date:   Mon, 7 Oct 2019 17:50:17 +0000
-Message-ID: <MWHPR2201MB12771C8079057E34A26D334BC19B0@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20191006131232.12700-1-tbogendoerfer@suse.de>
-In-Reply-To: <20191006131232.12700-1-tbogendoerfer@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR21CA0021.namprd21.prod.outlook.com
- (2603:10b6:a03:114::31) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 73a728ba-d84e-47c4-d316-08d74b4ed0a3
-x-ms-traffictypediagnostic: MWHPR2201MB1232:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB1232E9DE3EF3EA729AED141FC19B0@MWHPR2201MB1232.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01834E39B7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(366004)(396003)(376002)(136003)(346002)(189003)(199004)(74316002)(386003)(966005)(71190400001)(44832011)(4326008)(4744005)(33656002)(102836004)(71200400001)(6506007)(5660300002)(256004)(6916009)(14454004)(6246003)(8936002)(55016002)(54906003)(305945005)(6116002)(11346002)(2906002)(446003)(186003)(26005)(3846002)(6306002)(486006)(66066001)(9686003)(476003)(6436002)(66946007)(316002)(229853002)(81166006)(42882007)(478600001)(7696005)(52536014)(25786009)(52116002)(99286004)(8676002)(66556008)(66476007)(64756008)(7736002)(66446008)(81156014)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1232;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lb9KhiXfGpobc4+YV7kEG8gwfhD5Mi3qZaR/O+IHyr4i2gSGewYjFgRB5zMnSsSioZ43JQrrFZ0vi7O/YImg2AytLcRKK3ZwCsRTAlYMk4ANFVNmVDc1NkeKruyZuwO29M91Iyuv3unmnX5UVcGqStG9xbA1vn4STZzS/iYalEBuKrmtAcRn4RfBAzQCQGjNmrj790bqyqFxAH1HpNofdkv5Muqwhum+0bhoEBmQyxStf8IiGWVdQKhIqItC52Rf1AS+rpoAoJ8dEOoSFGjE+ujkVG+yV2uGn+AGxRV9a4gtK/1A+2UKI73kgm/LoC2RmC9KxjSWNb3+ZFZdD2fte0gBiE9llXQb0tC0tnYCC4x3Ey1zPEzyjwXmRj5IHxY/nDjZZ9eT+EKfNxl/LPX7CTUWdFzpQg0kSbcF2rfEKN5j/f58o5NhdQXPkvim/f/eN0PGD4lEKyr0LS2Hmn0lzg==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Christoph Hellwig <hch@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Oza Pawandeep <oza.oza@broadcom.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Date:   Mon, 07 Oct 2019 19:51:13 +0200
+In-Reply-To: <CAL_JsqLo0jtDcCDf5VTc+_grO3fJ1MsDTE8Bj=B0J+eLk3hpZg@mail.gmail.com>
+References: <20190927002455.13169-1-robh@kernel.org>
+         <20190927002455.13169-6-robh@kernel.org>
+         <20190930125752.GD12051@infradead.org>
+         <95f8dabea99f104336491281b88c04b58d462258.camel@suse.de>
+         <CAL_JsqLnKxuQRR3sGGtXF3nwwDx7DOONPPYz37ROk7u_+cxRug@mail.gmail.com>
+         <0557c83bcb781724a284811fef7fdb122039f336.camel@suse.de>
+         <CAL_JsqLo0jtDcCDf5VTc+_grO3fJ1MsDTE8Bj=B0J+eLk3hpZg@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-RfW6mXnOY9RVgKryA6oE"
+User-Agent: Evolution 3.32.4 
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73a728ba-d84e-47c4-d316-08d74b4ed0a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2019 17:50:18.0332
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tKlj8UexRSt4Wjk0Xp9fdEOf5CzJRa99HmzXLYG30FQ6QalzfWXVE3/pnFSjFNeZnWiLnt0LblXxu9c878TUeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1232
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-Thomas Bogendoerfer wrote:
-> Commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-> forcibly") allows compiler to uninline functions marked as 'inline'.
-> In cace of cmpxchg this would cause to reference function
-> __cmpxchg_called_with_bad_pointer, which is a error case
-> for catching bugs and will not happen for correct code, if
-> __cmpxchg is inlined.
+--=-RfW6mXnOY9RVgKryA6oE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Applied to mips-fixes.
-
-> commit 88356d09904b
-> https://git.kernel.org/mips/c/88356d09904b
+On Thu, 2019-10-03 at 20:53 -0500, Rob Herring wrote:
+> > > > But I think that with this series, given the fact that we now treat=
+ the
+> > > > lack
+> > > > of
+> > > > dma-ranges as a 1:1 mapping instead of an error, we could rewrite t=
+he
+> > > > function
+> > > > like this:
+> > >=20
+> > > Now, I'm reconsidering allowing this abuse... It's better if the code
+> > > which understands the bus structure in DT for a specific bus passes i=
+n
+> > > the right thing. Maybe I should go back to Robin's version (below).
+> > > OTOH, the existing assumption that 'dma-ranges' was in the immediate
+> > > parent was an assumption on the bus structure which maybe doesn't
+> > > always apply.
+> > >=20
+> > > diff --git a/drivers/of/device.c b/drivers/of/device.c
+> > > index a45261e21144..6951450bb8f3 100644
+> > > --- a/drivers/of/device.c
+> > > +++ b/drivers/of/device.c
+> > > @@ -98,12 +98,15 @@ int of_dma_configure(struct device *dev, struct
+> > > device_node *parent, bool force_
+> > >         u64 mask;
+> > >=20
+> > >         np =3D dev->of_node;
+> > > -       if (!np)
+> > > -               np =3D parent;
+> > > +       if (np)
+> > > +               parent =3D of_get_dma_parent(np);
+> > > +       else
+> > > +               np =3D of_node_get(parent);
+> > >         if (!np)
+> > >                 return -ENODEV;
+> > >=20
+> > > -       ret =3D of_dma_get_range(np, &dma_addr, &paddr, &size);
+> > > +       ret =3D of_dma_get_range(parent, &dma_addr, &paddr, &size);
+> > > +       of_node_put(parent);
+> > >         if (ret < 0) {
+> > >                 /*
+> > >                  * For legacy reasons, we have to assume some devices=
+ need
+> >=20
+> > I spent some time thinking about your comments and researching. I came =
+to
+> > the
+> > realization that both these solutions break the usage in
+> > drivers/gpu/drm/sun4i/sun4i_backend.c:805. In that specific case both
+> > 'dev->of_node' and 'parent' exist yet the device receiving the configur=
+ation
+> > and 'parent' aren't related in any way.
 >=20
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> [paul.burton@mips.com: s/__cmpxchd/__cmpxchg in subject]
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
+> I knew there was some reason I didn't like those virtual DT nodes...
+>=20
+> That does seem to be the oddest case. Several of the others are just
+> non-DT child platform devices. Perhaps we need a "copy the DMA config
+> from another struct device (or parent struct device)" function to
+> avoid using a DT function on a non-DT device.
+>=20
+> > IOW we can't just use 'dev->of_node' as a starting point to walk upward=
+s the
+> > tree. We always have to respect whatever DT node the bus provided, and =
+start
+> > there. This clashes with the current solutions, as they are based on th=
+e
+> > fact
+> > that we can use dev->of_node when present.
+>=20
+> Yes, you are right.
+>=20
+> > My guess at this point, if we're forced to honor that behaviour, is tha=
+t we
+> > have to create a new API for the PCI use case. Something the likes of
+> > of_dma_configure_parent().
+>=20
+> I think of_dma_configure just has to work with the device_node of
+> either the device or the device parent and dev->of_node is never used
+> unless the caller sets it.
 
-Thanks,
-    Paul
+Fine, so given the following two distinct uses of
+of_dma_configure(struct device *dev, struct device_node *np, bool ...):
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+- dev->of_node =3D=3D np: Platform bus' typical use, we imperatively have t=
+o start
+  parsing dma-ranges from np's DMA parent, as the device we're configuring
+  might be a bus containing dma-ranges himself. For example a platform PCIe=
+ bus.
+
+- dev->of_node !=3D np: Here the bus is pulling some trick. The device migh=
+t or
+  might not be represented in DT and np might be a bus or a device. But one
+  thing I realised is that device being configured never represents a memor=
+y
+  mapped bus. Assuming this assumption is acceptable, we can traverse the D=
+T
+  tree starting from np and get a correct configuration as long as dma-rang=
+es
+  not being present is interpreted as a 1:1 mapping.
+
+The resulting code, which I tested on an RPi4, Freescale Layerscape and pas=
+ses
+OF's unit tests, looks like this:
+
+int of_dma_configure(struct device *dev, struct device_node *np, bool force=
+_dma)
+{
+	u64 dma_addr, paddr, size =3D 0;
+	struct device_node *parent;
+	u64 mask;
+	int ret;
+
+	if (!np)
+		return -ENODEV;
+
+	parent =3D of_node_get(np);
+	if (dev->of_node =3D=3D parent)
+		parent =3D of_get_next_dma_parent(np);
+
+	ret =3D of_dma_get_range(parent, &dma_addr, &paddr, &size);
+	of_node_put(parent);
+
+	[...]
+}
+
+Would that be acceptable?
+
+Regards,
+Nicolas
+
+
+--=-RfW6mXnOY9RVgKryA6oE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl2bexEACgkQlfZmHno8
+x/4bKAf+P/rR6qUNJNu0v4BM+BoxWKPz1uoSsKaXAf/WrbARW9vSD2R+aL23gwZX
+qtjjZK0SbTy8jfEBqgzDYFd6jmOCmPJdPU81w1mfJlNcj1asQnXMa5U6YKig1Vkw
+//dDLUR0eDFAvemXBO9u9xa0j4fWr8K5ewBogDsWR2VALGeJ+v8cX6X30KDKglH+
+k/NJ4JxfMHPfwygV1JQDX+0ypNdcgX9Gdy4DHoX2HXS0d5BSKntw2qB0P595VDOo
+a3J3M1wo4f6yyxHFmtm4SWvv6ipvHKx3R409xosuaUTjiu/8RaNWtF7aTNTAwy6I
+byrfMtJMaPVwSWxJNicSDC0wWwbuYA==
+=F4oK
+-----END PGP SIGNATURE-----
+
+--=-RfW6mXnOY9RVgKryA6oE--
+
