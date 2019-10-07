@@ -2,138 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3B58CECC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C39CECA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbfJGTaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 15:30:06 -0400
-Received: from barracuda2.shentel.net ([204.111.1.145]:53543 "EHLO
-        barracuda1.shentel.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728079AbfJGTaF (ORCPT
+        id S1729091AbfJGTVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 15:21:47 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42105 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbfJGTVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:30:05 -0400
-X-ASG-Debug-ID: 1570475405-0ea5be51261ee1dd0001-xx1T2L
-Received: from mta-out2.edbg.va.oss.shentel.net ([172.26.51.4]) by barracuda1.shentel.net with ESMTP id 4xtCxOTZaGdB0xN9; Mon, 07 Oct 2019 15:10:05 -0400 (EDT)
-X-Barracuda-Envelope-From: gheskett@shentel.net
-Received: from coyote.coyote.den (unknown [204.111.64.149])
-        by mta-out2.edbg.va.oss.shentel.net (Postfix) with ESMTPSA id 8D2961D;
-        Mon,  7 Oct 2019 15:10:05 -0400 (EDT)
-From:   Gene Heskett <gheskett@shentel.net>
-X-Barracuda-Effective-Source-IP: UNKNOWN[204.111.64.149]
-X-Barracuda-Apparent-Source-IP: 204.111.64.149
-Organization: none,nada,zip
-To:     LKML <linux-kernel@vger.kernel.org>,
-        "linux-rt-users" <linux-rt-users@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
-Subject: Re: [ANNOUNCE] 4.19.72-rt25
-Date:   Mon, 7 Oct 2019 15:10:05 -0400
-X-ASG-Orig-Subj: Re: [ANNOUNCE] 4.19.72-rt25
-User-Agent: KMail/1.9.10
-References: <20190916173921.6368cd62@gandalf.local.home>
-In-Reply-To: <20190916173921.6368cd62@gandalf.local.home>
-X-KMail-QuotePrefix: > 
+        Mon, 7 Oct 2019 15:21:46 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c195so10093648lfg.9
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 12:21:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VFolWvA8AaXdh9ZyhMpVCFlYfwdpykqAkgVuEEtjT4c=;
+        b=DGDxvoHLenwBiT3keA12cf3qIdtGE8JgVYthwpOS6Y91simLELViZ2X9F16Wk/CPut
+         BAEzKUfXIkWVWKJv76bYZYrGW05mS3cOGVy/wnB44wIxnCbAwtIfJjqV6sPfSQ3k4JjF
+         WU9fdfY7Scd5Iwr0B/lpOCalbTk3zgbY8AmbU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VFolWvA8AaXdh9ZyhMpVCFlYfwdpykqAkgVuEEtjT4c=;
+        b=B7KqH0NGnNII2rLlHSyJvG6+dmxIFzduMt91UOEs+NPFGG950r7f3fl1QrPVrGuAO4
+         xa4IT26eTKNrADupGWqRal6hBZFGMj+r5OLYZd58SAmM733Bi52yrTaxfXb9RmQaRcnw
+         Qkz+b6lfZfMwWOCb8vqEapTfpie1qkhUpqaO1EfdIdbS9qiviVOnAmAvNg2JFis/gnNf
+         sOmalj+KNPoHI+eSLm8NVvBYIvkWbujfo1wvNTxorRuyfd/rAkvL+NGJRXzKF7mU4/dQ
+         HL3LddIDRtAfht8rltY5p1/SRoNUNVcyXaJl8/aeGdR8R5usMsdZ6dHsDeXumljARfhQ
+         nLQQ==
+X-Gm-Message-State: APjAAAWvkFAeN9WRdCQnRigmBXNJL+NCuyTTJSTTdd2sXVbA6AArtbSL
+        PeD3EKfP68bm0e/15PIXvztiryf9j+Q=
+X-Google-Smtp-Source: APXvYqwhs8/E/tNZuH4Ryb2ar07pGSa+adYbcfrwEZ/410Xio5w2YRAfr45HEmRulHvMi+rEtkIsTw==
+X-Received: by 2002:ac2:5091:: with SMTP id f17mr18202398lfm.107.1570476103319;
+        Mon, 07 Oct 2019 12:21:43 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id q124sm3359721ljb.28.2019.10.07.12.21.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2019 12:21:42 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id u28so10086791lfc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 12:21:42 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr17554989lfh.29.1570476102121;
+ Mon, 07 Oct 2019 12:21:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-Message-Id: <201910071510.05101.gheskett@shentel.net>
-X-Barracuda-Connect: UNKNOWN[172.26.51.4]
-X-Barracuda-Start-Time: 1570475405
-X-Barracuda-URL: https://172.26.193.41:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at shentel.net
-X-Barracuda-Scan-Msg-Size: 2681
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Spam-Score: 0.50
-X-Barracuda-Spam-Status: No, SCORE=0.50 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=6.0 tests=WEIRD_PORT
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.77190
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.50 WEIRD_PORT             URI: Uses non-standard port number for HTTP
+References: <20191006222046.GA18027@roeck-us.net>
+In-Reply-To: <20191006222046.GA18027@roeck-us.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 7 Oct 2019 12:21:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgvz6k88hxY_G3=itbQ-iVz7Hc9fbF3kZ_nePA7XgvDTg@mail.gmail.com>
+Message-ID: <CAHk-=wgvz6k88hxY_G3=itbQ-iVz7Hc9fbF3kZ_nePA7XgvDTg@mail.gmail.com>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Michael Cree <mcree@orcon.net.nz>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000323800059456f6b9"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 16 September 2019 17:39:21 Steven Rostedt wrote:
+--000000000000323800059456f6b9
+Content-Type: text/plain; charset="UTF-8"
 
-> Dear RT Folks,
+On Sun, Oct 6, 2019 at 3:20 PM Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> I'm pleased to announce the 4.19.72-rt25 stable release.
->
-> **** <NOTE> ****
->
-> As you probably have noticed, it has been a long time since I released
-> a stable 4.19-rt. The reason for this delay is that one of my tests
-> failed after merging with the latest stable upstream. I refuse to push
-> releases with a known bug in it, so I figured I would find the bug
-> before releasing. I only spend around 4 to 6 hours a week on upstream
-> stable RT as I have other responsibilities, and I could not debug this
-> bug during that time (after several weeks of trying).
->
-> The bug is a random NULL pointer dereference that only happens with
-> lockdep enabled and on 32bit x86. I also found that this bug existed
-> before the latest stable pull release but now it is much easier to
-> trigger.
->
-> I have not been able to trigger this bug in the 64 bit kernel, and as
-> I rather do a release than waste more time on this bug and postpone
-> the release further, I am now doing that. As a consequence, I am no
-> longer supporting 32bit x86, as it is known to have this bug.
->
-> If you are interested in this, I am willing to send out the config I
-> am using and one of the dmesg crashes. Just ask.
->
-> **** </NOTE> ****
->
->
-> This release is just an update to the new stable 4.19.72 version
-> and no RT specific changes have been made.
->
->
-> You can get this release via the git tree at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
->
->   branch: v4.19-rt
->   Head SHA1: 9cd04ab6a9a162ac4189a80032261d243563ff45
->
-=====================================================================
-> Or to build 4.19.72-rt25 directly, the following patches should be
-> applied:
->
->   http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
->
->   http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.72.xz
->
->  
-> http://www.kernel.org/pub/linux/kernel/projects/rt/4.19/patch-4.19.72-
->rt25.patch.xz
->
-Unfortunately, this does not work for the pi3-4 family. When its all 
-pulled in and patched, there is no arch/arm/configs bcm2709_defconfig or 
-bcm2711_defconfig for either a pi3b or the new pi4b.
+> this patch causes all my sparc64 emulations to stall during boot. It causes
+> all alpha emulations to crash with [1a] and [1b] when booting from a virtual
+> disk, and one of the xtensa emulations to crash with [2].
 
-I'll go find the 5.2.14 announce and see if its any more complete.
->
->
->
-> Enjoy,
->
-> -- Steve
+So I think your alpha emulation environment may be broken, because
+Michael Cree reports that it works for him on real hardware, but he
+does see the kernel unaligned count being high.
 
+But regardless, this is my current fairly minimal patch that I think
+should fix the unaligned issue, while still giving the behavior we
+want on x86. I hope Al can do something nicer, but I think this is
+"acceptable".
 
-Cheers, Gene Heskett
--- 
-"There are four boxes to be used in defense of liberty:
- soap, ballot, jury, and ammo. Please use in that order."
--Ed Howdershelt (Author)
-If we desire respect for the law, we must first make the law respectable.
- - Louis D. Brandeis
-Genes Web page <http://geneslinuxbox.net:6309/gene>
+I'm running this now on x86, and I verified that x86-32 code
+generation looks sane too, but it woudl be good to verify that this
+makes the alignment issue go away on other architectures.
+
+                Linus
+
+--000000000000323800059456f6b9
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k1gswtlm0>
+X-Attachment-Id: f_k1gswtlm0
+
+IGFyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaCB8IDIzICsrKysrKysrKysrKysrKysrKysr
+KysKIGZzL3JlYWRkaXIuYyAgICAgICAgICAgICAgICAgICB8IDQ0ICsrLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogaW5jbHVkZS9saW51eC91YWNjZXNzLmggICAgICAg
+IHwgIDYgKysrKy0tCiAzIGZpbGVzIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDQ0IGRlbGV0
+aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaCBiL2Fy
+Y2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaAppbmRleCAzNWMyMjVlZGUwZTQuLjYxZDkzZjA2
+MmEzNiAxMDA2NDQKLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCisrKyBiL2Fy
+Y2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaApAQCAtNzM0LDUgKzczNCwyOCBAQCBkbyB7CQkJ
+CQkJCQkJCVwKIAlpZiAodW5saWtlbHkoX19ndV9lcnIpKSBnb3RvIGVycl9sYWJlbDsJCQkJCVwK
+IH0gd2hpbGUgKDApCiAKKy8qCisgKiBXZSB3YW50IHRoZSB1bnNhZmUgYWNjZXNzb3JzIHRvIGFs
+d2F5cyBiZSBpbmxpbmVkIGFuZCB1c2UKKyAqIHRoZSBlcnJvciBsYWJlbHMgLSB0aHVzIHRoZSBt
+YWNybyBnYW1lcy4KKyAqLworI2RlZmluZSB1bnNhZmVfY29weV9sb29wKGRzdCwgc3JjLCBsZW4s
+IHR5cGUsIGxhYmVsKQkJCVwKKwl3aGlsZSAobGVuID49IHNpemVvZih0eXBlKSkgewkJCQkJXAor
+CQl1bnNhZmVfcHV0X3VzZXIoKih0eXBlICopc3JjLCh0eXBlIF9fdXNlciAqKWRzdCxsYWJlbCk7
+CVwKKwkJZHN0ICs9IHNpemVvZih0eXBlKTsJCQkJCVwKKwkJc3JjICs9IHNpemVvZih0eXBlKTsJ
+CQkJCVwKKwkJbGVuIC09IHNpemVvZih0eXBlKTsJCQkJCVwKKwl9CisKKyNkZWZpbmUgdW5zYWZl
+X2NvcHlfdG9fdXNlcihfZHN0LF9zcmMsX2xlbixsYWJlbCkJCQlcCitkbyB7CQkJCQkJCQkJXAor
+CWNoYXIgX191c2VyICpfX3VjdV9kc3QgPSAoX2RzdCk7CQkJCVwKKwljb25zdCBjaGFyICpfX3Vj
+dV9zcmMgPSAoX3NyYyk7CQkJCQlcCisJc2l6ZV90IF9fdWN1X2xlbiA9IChfbGVuKTsJCQkJCVwK
+Kwl1bnNhZmVfY29weV9sb29wKF9fdWN1X2RzdCwgX191Y3Vfc3JjLCBfX3VjdV9sZW4sIHU2NCwg
+bGFiZWwpOwlcCisJdW5zYWZlX2NvcHlfbG9vcChfX3VjdV9kc3QsIF9fdWN1X3NyYywgX191Y3Vf
+bGVuLCB1MzIsIGxhYmVsKTsJXAorCXVuc2FmZV9jb3B5X2xvb3AoX191Y3VfZHN0LCBfX3VjdV9z
+cmMsIF9fdWN1X2xlbiwgdTE2LCBsYWJlbCk7CVwKKwl1bnNhZmVfY29weV9sb29wKF9fdWN1X2Rz
+dCwgX191Y3Vfc3JjLCBfX3VjdV9sZW4sIHU4LCBsYWJlbCk7CVwKK30gd2hpbGUgKDApCisKICNl
+bmRpZiAvKiBfQVNNX1g4Nl9VQUNDRVNTX0ggKi8KIApkaWZmIC0tZ2l0IGEvZnMvcmVhZGRpci5j
+IGIvZnMvcmVhZGRpci5jCmluZGV4IDE5YmVhNTkxYzNmMS4uNmUyNjIzZTU3YjJlIDEwMDY0NAot
+LS0gYS9mcy9yZWFkZGlyLmMKKysrIGIvZnMvcmVhZGRpci5jCkBAIC0yNyw1MyArMjcsMTMgQEAK
+IC8qCiAgKiBOb3RlIHRoZSAidW5zYWZlX3B1dF91c2VyKCkgc2VtYW50aWNzOiB3ZSBnb3RvIGEK
+ICAqIGxhYmVsIGZvciBlcnJvcnMuCi0gKgotICogQWxzbyBub3RlIGhvdyB3ZSB1c2UgYSAid2hp
+bGUoKSIgbG9vcCBoZXJlLCBldmVuIHRob3VnaAotICogb25seSB0aGUgYmlnZ2VzdCBzaXplIG5l
+ZWRzIHRvIGxvb3AuIFRoZSBjb21waWxlciAod2VsbCwKLSAqIGF0IGxlYXN0IGdjYykgaXMgc21h
+cnQgZW5vdWdoIHRvIHR1cm4gdGhlIHNtYWxsZXIgc2l6ZXMKLSAqIGludG8ganVzdCBpZi1zdGF0
+ZW1lbnRzLCBhbmQgdGhpcyB3YXkgd2UgZG9uJ3QgbmVlZCB0bwotICogY2FyZSB3aGV0aGVyICd1
+NjQnIG9yICd1MzInIGlzIHRoZSBiaWdnZXN0IHNpemUuCi0gKi8KLSNkZWZpbmUgdW5zYWZlX2Nv
+cHlfbG9vcChkc3QsIHNyYywgbGVuLCB0eXBlLCBsYWJlbCkgCQlcCi0Jd2hpbGUgKGxlbiA+PSBz
+aXplb2YodHlwZSkpIHsJCQkJXAotCQl1bnNhZmVfcHV0X3VzZXIoZ2V0X3VuYWxpZ25lZCgodHlw
+ZSAqKXNyYyksCVwKLQkJCSh0eXBlIF9fdXNlciAqKWRzdCwgbGFiZWwpOwkJXAotCQlkc3QgKz0g
+c2l6ZW9mKHR5cGUpOwkJCQlcCi0JCXNyYyArPSBzaXplb2YodHlwZSk7CQkJCVwKLQkJbGVuIC09
+IHNpemVvZih0eXBlKTsJCQkJXAotCX0KLQotLyoKLSAqIFdlIGF2b2lkIGRvaW5nIDY0LWJpdCBj
+b3BpZXMgb24gMzItYml0IGFyY2hpdGVjdHVyZXMuIFRoZXkKLSAqIG1pZ2h0IGJlIGJldHRlciwg
+YnV0IHRoZSBjb21wb25lbnQgbmFtZXMgYXJlIG1vc3RseSBzbWFsbCwKLSAqIGFuZCB0aGUgNjQt
+Yml0IGNhc2VzIGNhbiBlbmQgdXAgYmVpbmcgbXVjaCBtb3JlIGNvbXBsZXggYW5kCi0gKiBwdXQg
+bXVjaCBtb3JlIHJlZ2lzdGVyIHByZXNzdXJlIG9uIHRoZSBjb2RlLCBzbyBpdCdzIGxpa2VseQot
+ICogbm90IHdvcnRoIHRoZSBwYWluIG9mIHVuYWxpZ25lZCBhY2Nlc3NlcyBldGMuCi0gKgotICog
+U28gbGltaXQgdGhlIGNvcGllcyB0byAidW5zaWduZWQgbG9uZyIgc2l6ZS4gSSBkaWQgdmVyaWZ5
+Ci0gKiB0aGF0IGF0IGxlYXN0IHRoZSB4ODYtMzIgY2FzZSBpcyBvayB3aXRob3V0IHRoaXMgbGlt
+aXRpbmcsCi0gKiBidXQgSSB3b3JyeSBhYm91dCByYW5kb20gb3RoZXIgbGVnYWN5IDMyLWJpdCBj
+YXNlcyB0aGF0Ci0gKiBtaWdodCBub3QgZG8gYXMgd2VsbC4KLSAqLwotI2RlZmluZSB1bnNhZmVf
+Y29weV90eXBlKGRzdCwgc3JjLCBsZW4sIHR5cGUsIGxhYmVsKSBkbyB7CVwKLQlpZiAoc2l6ZW9m
+KHR5cGUpIDw9IHNpemVvZih1bnNpZ25lZCBsb25nKSkJCVwKLQkJdW5zYWZlX2NvcHlfbG9vcChk
+c3QsIHNyYywgbGVuLCB0eXBlLCBsYWJlbCk7CVwKLX0gd2hpbGUgKDApCi0KLS8qCi0gKiBDb3B5
+IHRoZSBkaXJlbnQgbmFtZSB0byB1c2VyIHNwYWNlLCBhbmQgTlVMLXRlcm1pbmF0ZQotICogaXQu
+IFRoaXMgc2hvdWxkIG5vdCBiZSBhIGZ1bmN0aW9uIGNhbGwsIHNpbmNlIHdlJ3JlIGRvaW5nCi0g
+KiB0aGUgY29weSBpbnNpZGUgYSAidXNlcl9hY2Nlc3NfYmVnaW4vZW5kKCkiIHNlY3Rpb24uCiAg
+Ki8KICNkZWZpbmUgdW5zYWZlX2NvcHlfZGlyZW50X25hbWUoX2RzdCwgX3NyYywgX2xlbiwgbGFi
+ZWwpIGRvIHsJXAogCWNoYXIgX191c2VyICpkc3QgPSAoX2RzdCk7CQkJCVwKIAljb25zdCBjaGFy
+ICpzcmMgPSAoX3NyYyk7CQkJCVwKIAlzaXplX3QgbGVuID0gKF9sZW4pOwkJCQkJXAotCXVuc2Fm
+ZV9jb3B5X3R5cGUoZHN0LCBzcmMsIGxlbiwgdTY0LCBsYWJlbCk7CSAJXAotCXVuc2FmZV9jb3B5
+X3R5cGUoZHN0LCBzcmMsIGxlbiwgdTMyLCBsYWJlbCk7CQlcCi0JdW5zYWZlX2NvcHlfdHlwZShk
+c3QsIHNyYywgbGVuLCB1MTYsIGxhYmVsKTsJCVwKLQl1bnNhZmVfY29weV90eXBlKGRzdCwgc3Jj
+LCBsZW4sIHU4LCAgbGFiZWwpOwkJXAotCXVuc2FmZV9wdXRfdXNlcigwLCBkc3QsIGxhYmVsKTsJ
+CQkJXAorCXVuc2FmZV9wdXRfdXNlcigwLCBkc3QrbGVuLCBsYWJlbCk7CQkJXAorCXVuc2FmZV9j
+b3B5X3RvX3VzZXIoZHN0LCBzcmMsIGxlbiwgbGFiZWwpOwkJXAogfSB3aGlsZSAoMCkKIAogCmRp
+ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3VhY2Nlc3MuaCBiL2luY2x1ZGUvbGludXgvdWFjY2Vz
+cy5oCmluZGV4IGU0N2QwNTIyYTFmNC4uZDRlZTZlOTQyNTYyIDEwMDY0NAotLS0gYS9pbmNsdWRl
+L2xpbnV4L3VhY2Nlc3MuaAorKysgYi9pbmNsdWRlL2xpbnV4L3VhY2Nlc3MuaApAQCAtMzU1LDgg
+KzM1NSwxMCBAQCBleHRlcm4gbG9uZyBzdHJubGVuX3Vuc2FmZV91c2VyKGNvbnN0IHZvaWQgX191
+c2VyICp1bnNhZmVfYWRkciwgbG9uZyBjb3VudCk7CiAjaWZuZGVmIHVzZXJfYWNjZXNzX2JlZ2lu
+CiAjZGVmaW5lIHVzZXJfYWNjZXNzX2JlZ2luKHB0cixsZW4pIGFjY2Vzc19vayhwdHIsIGxlbikK
+ICNkZWZpbmUgdXNlcl9hY2Nlc3NfZW5kKCkgZG8geyB9IHdoaWxlICgwKQotI2RlZmluZSB1bnNh
+ZmVfZ2V0X3VzZXIoeCwgcHRyLCBlcnIpIGRvIHsgaWYgKHVubGlrZWx5KF9fZ2V0X3VzZXIoeCwg
+cHRyKSkpIGdvdG8gZXJyOyB9IHdoaWxlICgwKQotI2RlZmluZSB1bnNhZmVfcHV0X3VzZXIoeCwg
+cHRyLCBlcnIpIGRvIHsgaWYgKHVubGlrZWx5KF9fcHV0X3VzZXIoeCwgcHRyKSkpIGdvdG8gZXJy
+OyB9IHdoaWxlICgwKQorI2RlZmluZSB1bnNhZmVfb3Bfd3JhcChvcCwgZXJyKSBkbyB7IGlmICh1
+bmxpa2VseShvcCkpIGdvdG8gZXJyOyB9IHdoaWxlICgwKQorI2RlZmluZSB1bnNhZmVfZ2V0X3Vz
+ZXIoeCxwLGUpIHVuc2FmZV9vcF93cmFwKF9fZ2V0X3VzZXIoeCxwKSxlKQorI2RlZmluZSB1bnNh
+ZmVfcHV0X3VzZXIoeCxwLGUpIHVuc2FmZV9vcF93cmFwKF9fcHV0X3VzZXIoeCxwKSxlKQorI2Rl
+ZmluZSB1bnNhZmVfY29weV90b191c2VyKGQscyxsLGUpIHVuc2FmZV9vcF93cmFwKF9fY29weV90
+b191c2VyKGQscyxsKSxlKQogc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIHVzZXJfYWNjZXNz
+X3NhdmUodm9pZCkgeyByZXR1cm4gMFVMOyB9CiBzdGF0aWMgaW5saW5lIHZvaWQgdXNlcl9hY2Nl
+c3NfcmVzdG9yZSh1bnNpZ25lZCBsb25nIGZsYWdzKSB7IH0KICNlbmRpZgo=
+--000000000000323800059456f6b9--
