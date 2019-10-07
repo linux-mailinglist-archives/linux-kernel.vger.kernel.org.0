@@ -2,151 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54C32CE73D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0278ECE765
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfJGPTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:19:22 -0400
-Received: from vps.xff.cz ([195.181.215.36]:56964 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727745AbfJGPTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:19:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1570461560; bh=OMxyikXfTnLOBqWm+QEP8j50cJcpiVKIgC8XLUKV570=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=m7g5UEjw7VFuKAAkFVCxO3wEHwsalXDMCOagem7pdBWKPdNT2aYudIhcBhI4kKSu0
-         GbYJuS+e2J+VDLiYmdNd6Ec36l6rKDbsQjjr3tw1qU9T+xZiDXsWrGIba54j8J3XVd
-         k3PKY59M3+VGq3LLOMSy3EowU+0nwjsLVz5VcsZw=
-Date:   Mon, 7 Oct 2019 17:19:19 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 3/3] Revert "drm/sun4i: dsi: Rework a bit
- the hblk calculation"
-Message-ID: <20191007151919.4uraoe374lui22gi@core.my.home>
-Mail-Followup-To: Icenowy Zheng <icenowy@aosc.io>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-References: <20191001080253.6135-1-icenowy@aosc.io>
- <20191001080253.6135-4-icenowy@aosc.io>
- <CAMty3ZDW4XHyW+6XL_RSVHqTSk79-r749pa0n5e6VbUzowAsiw@mail.gmail.com>
- <58dc94b6371ab2f5b11b13ab707d73ab3fc4cc64.camel@aosc.io>
- <14da3ae768c439e387f6609553bd465e945d4a33.camel@aosc.io>
+        id S1728619AbfJGP0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:26:37 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:22121 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbfJGP0g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 11:26:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1570461996; x=1601997996;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=xGLkeCy55JZslCZd5P+Gri+DOIbpI9xCoQlPZNd+zRA=;
+  b=A9tDf8x4QswhcvJ0h+UHn6zW3VjthQhyvecxGbCz6A45p/8fFpmPAzy5
+   vh1iHT+IbdoleALoOOhP+33siXxK27+qbtGxLAzSKGmg4oO9VpB5jkyAB
+   mTHyIfIv/awPgWrnvY6vcLbqZw8xwT5I5bygsIsEHQLEKDLwWzNuP8YKL
+   0=;
+X-IronPort-AV: E=Sophos;i="5.67,268,1566864000"; 
+   d="scan'208";a="707257350"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1a-807d4a99.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 07 Oct 2019 15:18:49 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-807d4a99.us-east-1.amazon.com (Postfix) with ESMTPS id BF3D6A1D9F;
+        Mon,  7 Oct 2019 15:18:13 +0000 (UTC)
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 7 Oct 2019 15:18:12 +0000
+Received: from ua9e4f3715fbc5f.ant.amazon.com (10.43.162.116) by
+ EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 7 Oct 2019 15:18:02 +0000
+From:   Hanna Hawa <hhhawa@amazon.com>
+To:     <bp@alien8.de>, <mchehab@kernel.org>, <mark.rutland@arm.com>,
+        <james.morse@arm.com>, <robh+dt@kernel.org>,
+        <frowand.list@gmail.com>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <linus.walleij@linaro.org>,
+        <daniel@iogearbox.net>, <paulmck@linux.ibm.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <dwmw@amazon.co.uk>,
+        <benh@amazon.com>, <ronenk@amazon.com>, <talel@amazon.com>,
+        <jonnyc@amazon.com>, <hanochu@amazon.com>, <hhhawa@amazon.com>
+Subject: [PATCH v6 2/3] of: EXPORT_SYMBOL_GPL of_find_next_cache_node
+Date:   Mon, 7 Oct 2019 16:17:29 +0100
+Message-ID: <20191007151730.7705-3-hhhawa@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191007151730.7705-1-hhhawa@amazon.com>
+References: <20191007151730.7705-1-hhhawa@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <14da3ae768c439e387f6609553bd465e945d4a33.camel@aosc.io>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.116]
+X-ClientProxiedBy: EX13D03UWC002.ant.amazon.com (10.43.162.160) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Icenowy,
+Make of_find_next_cache_node() available for modules.
 
-On Sun, Oct 06, 2019 at 11:12:43PM +0800, Icenowy Zheng wrote:
-> 在 2019-10-06日的 22:44 +0800，Icenowy Zheng写道：
-> > 在 2019-10-03四的 09:53 +0530，Jagan Teki写道：
-> > > Hi Wens,
-> > > 
-> > > On Tue, Oct 1, 2019 at 1:34 PM Icenowy Zheng <icenowy@aosc.io>
-> > > wrote:
-> > > > This reverts commit 62e7511a4f4dcf07f753893d3424decd9466c98b.
-> > > > 
-> > > > This commit, although claimed as a refactor, in fact changed the
-> > > > formula.
-> > > > 
-> > > > By expanding the original formula, we can find that the const 10
-> > > > is
-> > > > not
-> > > > substracted, instead it's added to the value (because 10 is
-> > > > negative
-> > > > when calculating hsa, and hsa itself is negative when calculating
-> > > > hblk).
-> > > > This breaks the similar pattern to other formulas, so restoring
-> > > > the
-> > > > original formula is more proper.
-> > > > 
-> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > ---
-> > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 9 ++-------
-> > > >  1 file changed, 2 insertions(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > index 2d3e822a7739..cb5fd19c0d0d 100644
-> > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > @@ -577,14 +577,9 @@ static void sun6i_dsi_setup_timings(struct
-> > > > sun6i_dsi *dsi,
-> > > >                           (mode->hsync_start - mode->hdisplay) *
-> > > > Bpp - HFP_PACKET_OVERHEAD);
-> > > > 
-> > > >                 /*
-> > > > -                * The blanking is set using a sync event (4
-> > > > bytes)
-> > > > -                * and a blanking packet (4 bytes + payload + 2
-> > > > -                * bytes). Its minimal size is therefore 10
-> > > > bytes.
-> > > > +                * hblk seems to be the line + porches length.
-> > > >                  */
-> > > > -#define HBLK_PACKET_OVERHEAD   10
-> > > > -               hblk = max((unsigned int)HBLK_PACKET_OVERHEAD,
-> > > > -                          (mode->htotal - (mode->hsync_end -
-> > > > mode-
-> > > > > hsync_start)) * Bpp -
-> > > > -                          HBLK_PACKET_OVERHEAD);
-> > > > +               hblk = mode->htotal * Bpp - hsa;
-> > > 
-> > > The original formula is correct according to BSP [1] and work with
-> > > my
-> > > panels which I have tested before. May be the horizontal timings on
-> > > panels you have leads to negative value.
-> > 
-> > Do you tested the same timing with BSP kernel?
-> > 
-> > It's quite difficult to get a negative value here, because the value
-> > is
-> > quite big (includes mode->hdisplay * Bpp).
-> 
-> By re-checking with the BSP source code, I found that the constant in
-> the HFP formula is indeed wrong -- it should be 16, not 6.
+Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
+---
+ drivers/of/base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I'm not sure if it's relevant to the discussion, but I've recently found
-a LCD configuration manual for A10, that may contain some useful info:
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 20e0e7ee4edf..fe22c7428958 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -2172,6 +2172,7 @@ struct device_node *of_find_next_cache_node(const struct device_node *np)
+ 
+ 	return NULL;
+ }
++EXPORT_SYMBOL_GPL(of_find_next_cache_node);
+ 
+ /**
+  * of_find_last_cache_level - Find the level at which the last cache is
+-- 
+2.17.1
 
-See this: https://github.com/pocketbook/Platform_A13/blob/master/Kernel/drivers/video/sun5i/lcd/a10_lcd_config_nanual_v1.0.pdf
-
-regards,
-	o.
-
-> > 
-> > Strangely, only change the formula here back makes the timing
-> > translated from FEX file works (tested on PineTab and PinePhone
-> > production ver). The translation rule is from [1].
-> > 
-> > So I still insist on the patch because it's needed by experiment.
-> > 
-> > [1] http://linux-sunxi.org/LCD
-> > 
-> > > [1] 
-> > > https://github.com/ayufan-pine64/linux-pine64/blob/my-hacks-1.2-with-drm/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L919
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/14da3ae768c439e387f6609553bd465e945d4a33.camel%40aosc.io.
