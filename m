@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C520CE38C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6EECE37F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfJGN13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:27:29 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:45017 "EHLO
+        id S1728579AbfJGN1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:27:07 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:51433 "EHLO
         relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728466AbfJGN1E (ORCPT
+        with ESMTP id S1728495AbfJGN1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:27:04 -0400
+        Mon, 7 Oct 2019 09:27:05 -0400
 X-Originating-IP: 86.250.200.211
 Received: from localhost.localdomain (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 9272A1C0003;
-        Mon,  7 Oct 2019 13:27:01 +0000 (UTC)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 9D4161C0015;
+        Mon,  7 Oct 2019 13:27:02 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -28,9 +28,9 @@ Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 3/8] iio: adc: max1027: Reset the device at probe time
-Date:   Mon,  7 Oct 2019 15:26:52 +0200
-Message-Id: <20191007132657.4190-4-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 4/8] iio: adc: max1027: Prepare the introduction of different resolutions
+Date:   Mon,  7 Oct 2019 15:26:53 +0200
+Message-Id: <20191007132657.4190-5-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191007132657.4190-1-miquel.raynal@bootlin.com>
 References: <20191007132657.4190-1-miquel.raynal@bootlin.com>
@@ -41,34 +41,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the registers are configured by the driver, let's reset the chip
-at probe time, avoiding any conflict with a possible earlier
-configuration.
+Maxim's max1027/29/31 series returns the measured voltages with a
+resolution of 10 bits. There is a very similar series, max1227/29/31
+which works identically but uses a resolution of 12 bits. Prepare the
+support for these chips by turning the 'depth' into a macro parameter
+instead of hardcoding it everywhere. Also reorganize just a bit the
+macros at the top to avoid repeating tens of lines when adding support
+for a new chip.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/iio/adc/max1027.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/iio/adc/max1027.c | 74 +++++++++++++++++----------------------
+ 1 file changed, 32 insertions(+), 42 deletions(-)
 
 diff --git a/drivers/iio/adc/max1027.c b/drivers/iio/adc/max1027.c
-index 823223b77a70..f9b473ee6711 100644
+index f9b473ee6711..8b449044bef5 100644
 --- a/drivers/iio/adc/max1027.c
 +++ b/drivers/iio/adc/max1027.c
-@@ -466,6 +466,14 @@ static int max1027_probe(struct spi_device *spi)
- 		}
+@@ -83,7 +83,7 @@ static const struct of_device_id max1027_adc_dt_ids[] = {
+ MODULE_DEVICE_TABLE(of, max1027_adc_dt_ids);
+ #endif
+ 
+-#define MAX1027_V_CHAN(index)						\
++#define MAX1027_V_CHAN(index, depth)					\
+ 	{								\
+ 		.type = IIO_VOLTAGE,					\
+ 		.indexed = 1,						\
+@@ -93,7 +93,7 @@ MODULE_DEVICE_TABLE(of, max1027_adc_dt_ids);
+ 		.scan_index = index + 1,				\
+ 		.scan_type = {						\
+ 			.sign = 'u',					\
+-			.realbits = 10,					\
++			.realbits = depth,				\
+ 			.storagebits = 16,				\
+ 			.shift = 2,					\
+ 			.endianness = IIO_BE,				\
+@@ -115,52 +115,42 @@ MODULE_DEVICE_TABLE(of, max1027_adc_dt_ids);
+ 		},							\
  	}
  
-+	/* Internal reset */
-+	st->reg = MAX1027_RST_REG;
-+	ret = spi_write(st->spi, &st->reg, 1);
-+	if (ret < 0) {
-+		dev_err(&indio_dev->dev, "Failed to reset the ADC\n");
-+		return ret;
-+	}
++#define MAX1X27_CHANNELS(depth)			\
++	MAX1027_T_CHAN,				\
++	MAX1027_V_CHAN(0, depth),		\
++	MAX1027_V_CHAN(1, depth),		\
++	MAX1027_V_CHAN(2, depth),		\
++	MAX1027_V_CHAN(3, depth),		\
++	MAX1027_V_CHAN(4, depth),		\
++	MAX1027_V_CHAN(5, depth),		\
++	MAX1027_V_CHAN(6, depth),		\
++	MAX1027_V_CHAN(7, depth)
 +
- 	/* Disable averaging */
- 	st->reg = MAX1027_AVG_REG;
- 	ret = spi_write(st->spi, &st->reg, 1);
++#define MAX1X29_CHANNELS(depth)			\
++	MAX1X27_CHANNELS(depth),		\
++	MAX1027_V_CHAN(8, depth),		\
++	MAX1027_V_CHAN(9, depth),		\
++	MAX1027_V_CHAN(10, depth),		\
++	MAX1027_V_CHAN(11, depth)
++
++#define MAX1X31_CHANNELS(depth)			\
++	MAX1X27_CHANNELS(depth),		\
++	MAX1X29_CHANNELS(depth),		\
++	MAX1027_V_CHAN(12, depth),		\
++	MAX1027_V_CHAN(13, depth),		\
++	MAX1027_V_CHAN(14, depth),		\
++	MAX1027_V_CHAN(15, depth)
++
+ static const struct iio_chan_spec max1027_channels[] = {
+-	MAX1027_T_CHAN,
+-	MAX1027_V_CHAN(0),
+-	MAX1027_V_CHAN(1),
+-	MAX1027_V_CHAN(2),
+-	MAX1027_V_CHAN(3),
+-	MAX1027_V_CHAN(4),
+-	MAX1027_V_CHAN(5),
+-	MAX1027_V_CHAN(6),
+-	MAX1027_V_CHAN(7)
++	MAX1X27_CHANNELS(10),
+ };
+ 
+ static const struct iio_chan_spec max1029_channels[] = {
+-	MAX1027_T_CHAN,
+-	MAX1027_V_CHAN(0),
+-	MAX1027_V_CHAN(1),
+-	MAX1027_V_CHAN(2),
+-	MAX1027_V_CHAN(3),
+-	MAX1027_V_CHAN(4),
+-	MAX1027_V_CHAN(5),
+-	MAX1027_V_CHAN(6),
+-	MAX1027_V_CHAN(7),
+-	MAX1027_V_CHAN(8),
+-	MAX1027_V_CHAN(9),
+-	MAX1027_V_CHAN(10),
+-	MAX1027_V_CHAN(11)
++	MAX1X29_CHANNELS(10),
+ };
+ 
+ static const struct iio_chan_spec max1031_channels[] = {
+-	MAX1027_T_CHAN,
+-	MAX1027_V_CHAN(0),
+-	MAX1027_V_CHAN(1),
+-	MAX1027_V_CHAN(2),
+-	MAX1027_V_CHAN(3),
+-	MAX1027_V_CHAN(4),
+-	MAX1027_V_CHAN(5),
+-	MAX1027_V_CHAN(6),
+-	MAX1027_V_CHAN(7),
+-	MAX1027_V_CHAN(8),
+-	MAX1027_V_CHAN(9),
+-	MAX1027_V_CHAN(10),
+-	MAX1027_V_CHAN(11),
+-	MAX1027_V_CHAN(12),
+-	MAX1027_V_CHAN(13),
+-	MAX1027_V_CHAN(14),
+-	MAX1027_V_CHAN(15)
++	MAX1X31_CHANNELS(10),
+ };
+ 
+ static const unsigned long max1027_available_scan_masks[] = {
+@@ -284,7 +274,7 @@ static int max1027_read_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		case IIO_VOLTAGE:
+ 			*val = 2500;
+-			*val2 = 10;
++			*val2 = chan->scan_type.realbits;
+ 			ret = IIO_VAL_FRACTIONAL_LOG2;
+ 			break;
+ 		default:
 -- 
 2.20.1
 
