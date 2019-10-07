@@ -2,88 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F258CEB8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13686CEB90
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:14:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbfJGSNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:13:48 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35893 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728723AbfJGSNr (ORCPT
+        id S1729402AbfJGSOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:14:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43462 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728916AbfJGSOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:13:47 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x80so9971898lff.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:13:45 -0700 (PDT)
+        Mon, 7 Oct 2019 14:14:44 -0400
+Received: by mail-pf1-f195.google.com with SMTP id a2so9146035pfo.10
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:14:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yMlh6GXN6QbpwC889qdv/mL2tKRwyhPfZJiqASBvKqo=;
-        b=h8vVKPc80ltfyFjjkk1eX3SsLDZsWpHSGP70shQML8lM+pQi5PD43ZLbNhTvHnnieH
-         3Pdsvi7u5yvEvu0mkBG36/MC6h2vZ5j/Ramv3pLra1nTcYqBd177SsSNYgfSw50OivjV
-         toQ4l5QhAqNdBrZzz/KNR6RQik0WFppq5OXBQ=
+        bh=Aof+lJ1lwyu9yLvpFaqVDdO/hGqaLFM0BeNng/kPgOo=;
+        b=IoDrXIhjNEAG2RInFnoSizq0RHLWn0fOQtMv+7VXhTyJ15To1BeDZ0bY7xQkMAz3j/
+         IaPFBf7ipuv+MOvtNcgfabFfHnincuNnCH9vN6qqzTqlHyu5J/Wa4jY+9iVsbpcg2Tgh
+         yNe9xFiJLdDdOUm8EAvwMVaVMOQe18FHWs9Ze2f0mroUDaQ7qv2p0k22ipUYEx9PAJlc
+         2BaERdgVnTEeIQgCADT2VU7HT1lGw1qHPZYxyUEK1LbOaxnntyid96coORp9DboU7xHD
+         6+YJkd7M2CsYfmge/HVOajtvEE70IQtD3vm93aYYKIZiyChgaY69wYgo9kkzYP3jzAWI
+         bWlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yMlh6GXN6QbpwC889qdv/mL2tKRwyhPfZJiqASBvKqo=;
-        b=j/T4yeiiFoc0IsMKOrJeO+62ZCibzJUWhAmFyXX1nLt4o+B5AVrROejh4+itNAHTv0
-         5lrNsL1MhY6Yo3lcff9ylZ1vpxpRdU8ynUiO3ThKn5nxQGGlsEY3FeXpaI80ic/hyQb0
-         XoWqgYCi7gmh1IhIQdrZnRHkAB8V/Lez3lIyfRX2HS3dYw6XbpmSMeQLlXh8hGsEloVR
-         +BHyUe0UHeS3IKS8lmoSp40hRlM/mL9og4JhRfuQlCkpDTHUGgU9pTYx9hSvyMubauAE
-         hnIebtW8jRBsES+oAj/vV6sTwJtz75s3KtsNIro+CKXmAboOycxKK+BHDpS5rpooCPiR
-         gJUw==
-X-Gm-Message-State: APjAAAV8c3zpwZWgNW30eCQMhhJefJZhThAymF7GdAtmJ4oJ/+xYNsHo
-        VFNJpRrj3159CrPUvxdh9m9SCn8O378=
-X-Google-Smtp-Source: APXvYqySM3sFYGWYUiKpsM1dV1p9HeLbFWb1d9c0vusYTRcWsRtdrDDeRRClKlNFXgZO/vywHeVLIA==
-X-Received: by 2002:a19:ae0b:: with SMTP id f11mr18175406lfc.28.1570472024330;
-        Mon, 07 Oct 2019 11:13:44 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 202sm3307827ljf.75.2019.10.07.11.13.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id u3so9931694lfl.10
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
-X-Received: by 2002:a19:f204:: with SMTP id q4mr17404487lfh.29.1570472023078;
- Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
+        bh=Aof+lJ1lwyu9yLvpFaqVDdO/hGqaLFM0BeNng/kPgOo=;
+        b=iQjrqiddPOaeuvKNYNU6TH/ZhhLFCRZvgjf/6tJMJhMXGNPLL3iAFx78pSwztFSrED
+         YKsNTZYNqK+RytjrTYqAkuLKKWcJs8YexvgWl1rWYoAI8nt/Eonqm5w87rCkUIQitB9/
+         w9jw/fFDyE5pU5lU2Px9sn4P/07oycymE/LIjgZny+KVobAO/tSGBZ4kBIzWoEuwH8yz
+         ahAA65dyYQ+w/8Va/mX+kVgBYbmWnu/V1eH+TYlDd8LLeSLwQGz5+g8zWKMqNI3XVJ54
+         etRxSg+eYqaoVtLhdLW87E0N/9OOUP1bF/ZIexuRHX8wyc8hK6ii70ZMxiudFdzeT30+
+         Mr8w==
+X-Gm-Message-State: APjAAAVeHlG3+hze4lm32m+Kz1BrWouFAXt7TA5wbNUDqA92rKlddosQ
+        codvWYainyW0uY45xsKpQyczKA8CsfNp2oQKE9wDYQ==
+X-Google-Smtp-Source: APXvYqwB59dVJaAZwLRfLfYs+uS31KhCGnVD38P9hIXrFI8HVTpOG/f4E3qXeUixe6OwDli7E8LzAAKvA+qjTL8k7uI=
+X-Received: by 2002:a17:90a:b285:: with SMTP id c5mr600582pjr.123.1570472082764;
+ Mon, 07 Oct 2019 11:14:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
- <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
- <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net> <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
- <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
- <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
- <20191007173432.GM26530@ZenIV.linux.org.uk>
-In-Reply-To: <20191007173432.GM26530@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 7 Oct 2019 11:13:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgSzPwzX0cHgTZ9SQrd8XWQcMnLkBCo_-710pLTEBFGYQ@mail.gmail.com>
-Message-ID: <CAHk-=wgSzPwzX0cHgTZ9SQrd8XWQcMnLkBCo_-710pLTEBFGYQ@mail.gmail.com>
-Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <cover.1570292505.git.joe@perches.com> <79237afe056af8d81662f183491e3589922b8ddd.1570292505.git.joe@perches.com>
+ <CANiq72kU2_s=58HqdN6VMGDAh_+G+dtns9xzoc4huSVwP+ZXUg@mail.gmail.com>
+In-Reply-To: <CANiq72kU2_s=58HqdN6VMGDAh_+G+dtns9xzoc4huSVwP+ZXUg@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 7 Oct 2019 11:14:31 -0700
+Message-ID: <CAKwvOdkVZ64sLppKxF1XRgarPmCbhw1WLsSq1VcV1tagPgWtUg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] compiler_attributes.h: Add 'fallthrough' pseudo
+ keyword for switch/case use
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Shawn Landden <shawn@git.icu>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 7, 2019 at 10:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Sat, Oct 5, 2019 at 10:17 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> Tangentially related: copy_regster_to_user() and copy_regset_from_user().
+> Hi Joe,
+>
+> On Sat, Oct 5, 2019 at 6:46 PM Joe Perches <joe@perches.com> wrote:
+> >
+> > Reserve the pseudo keyword 'fallthrough' for the ability to convert the
 
-Not a worry. It's not performance-critical code, and if it ever is, it
-needs to be rewritten anyway.
+Have we precedent already for "pseudo keywords?"  I kind of like the
+double underscore prefix we use for attributes (which this is one of),
+or at least making macro's ALLCAPS as some sort of convention.
+Otherwise, someone might be confused on seeing `fallthrough` sprinkled
+throughout the code without knowing how it works. `__fallthough` or
+`FALLTHROUGH` are maybe less surprising (and potentially easier to
+grep)?  Sorry if this has already been discussed; from Miguel's link
+below it looks like there used to be underscore prefixes before?
+
+> > various case block /* fallthrough */ style comments to appear to be an
+> > actual reserved word with the same gcc case block missing fallthrough
+> > warning capability.
+> >
+> > All switch/case blocks now must end in one of:
+> >
+> >         break;
+> >         fallthrough;
+> >         goto <label>;
+> >         return [expression];
+> >         continue;
+> >
+> > fallthough is gcc's __attribute__((__fallthrough__)) which was introduced
+> > in gcc version 7..
+>
+> Nits: double period, missing "r" in fallthough.
+>
+> > fallthrough devolves to an empty "do {} while (0)" if the compiler
+> > version (any version less than gcc 7) does not support the attribute.
+>
+> Perhaps add a short note why (empty statement warnings maybe? I don't
+> remember them but it was months ago so maybe it changed).
+>
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>
+> Please add Dan's Suggested-by and copy the things I wrote in the
+> commit message when I proposed this:
+>
+>   https://github.com/ojeda/linux/commit/668f011a2706ea555987e263f609a5deba9c7fc4
+>
+> > ---
+> >  include/linux/compiler_attributes.h | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> >
+> > diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+> > index 6b318efd8a74..cdf016596659 100644
+> > --- a/include/linux/compiler_attributes.h
+> > +++ b/include/linux/compiler_attributes.h
+> > @@ -40,6 +40,7 @@
+> >  # define __GCC4_has_attribute___noclone__             1
+> >  # define __GCC4_has_attribute___nonstring__           0
+> >  # define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >= 8)
+> > +# define __GCC4_has_attribute___fallthrough__         0
+>
+> This goes after __externally_visible__.
+>
+> >  #endif
+> >
+> >  /*
+> > @@ -185,6 +186,22 @@
+> >  # define __noclone
+> >  #endif
+> >
+> > +/*
+> > + * Add the pseudo keyword 'fallthrough' so case statement blocks
+> > + * must end with any of these keywords:
+> > + *   break;
+> > + *   fallthrough;
+> > + *   goto <label>;
+> > + *   return [expression];
+> > + *
+> > + *  gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#Statement-Attributes
+>
+> This also goes after __externally_visible__.
+>
+> Please add:
+>
+>   * Optional: only supported since gcc >= 7.1
+>   * Optional: only supported since clang >= 10
+>   * Optional: not supported by icc
+>
+> As well as:
+>
+>   clang: https://clang.llvm.org/docs/AttributeReference.html#fallthrough
+>
+> See how I did it in the link above:
+>
+>   https://github.com/ojeda/linux/commit/668f011a2706ea555987e263f609a5deba9c7fc4
+>
+> > + */
+> > +#if __has_attribute(__fallthrough__)
+> > +# define fallthrough                    __attribute__((__fallthrough__))
+> > +#else
+> > +# define fallthrough                    do {} while (0)  /* fallthrough */
+> > +#endif
+> > +
+> >  /*
+> >   * Note the missing underscores.
+> >   *
+> > --
+> > 2.15.0
+> >
+>
+> Cheers,
+> Miguel
 
 
-> The former variant tends to lead to few calls
-> of __copy_{to,from}_user(); the latter...  On x86 it ends up doing
-> this:
 
-Just replace the __put_user() with a put_user() and be done with it.
-That code isn't acceptable, and if somebody ever complains about
-performance it's not the lack of __put_user that is the problem.
-
-           Linus
+-- 
+Thanks,
+~Nick Desaulniers
