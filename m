@@ -2,158 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A98DACE293
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ECC4CE285
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728298AbfJGNDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:03:40 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36247 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbfJGNDi (ORCPT
+        id S1728162AbfJGND0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:03:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49284 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728031AbfJGNDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:03:38 -0400
-Received: by mail-ua1-f68.google.com with SMTP id r25so3999610uam.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 06:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ds8WznLX+NYi3ptkiUX0OCakAHSXETW90blbf1WdtvY=;
-        b=SeFZrK8gMg6fY4PxMOK0NPAoUBk5SKZP6Rm2RpMc1sRZKgJg2NDDLR9yH+ZTkFrojb
-         ECECpc6XwZXZYWrLpY3dkrOp1pLvCwRPEB3LV/Opy8prDkyQaXBI+0Em6seuvBwIpUf3
-         WSFX4glUQS905Oi7/4W2htI0p1s5RzgKNERk4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ds8WznLX+NYi3ptkiUX0OCakAHSXETW90blbf1WdtvY=;
-        b=BUhYbNhTkeHvO2qlf1ePV72Cuxuwkft5xMGmsnEUA6sWmgK/v063Ugok2d/VzLIyCY
-         ElRANH9FWDnFMbbLMzMgm7JQzPPeAyI8jW4TUuvNjBZR1//XJzGuVtnzgPQ6wuYAw/lv
-         xwlpFX6cY6/4gv4jP4tqDdG1AHPfCFKgO9TpFGtNIXSrYB4huOXwtvH5BowHJFtFLWPS
-         39oaK4hzx+f3kC5DJE1xaBhzB0fdznMGTWoSnQarBEHyffDI6ezKUcrI4QyZ4iQvKxX7
-         AlJEohYYaJx02EWaXIYLqEBYpkymYXBnGBskPUt4J6X9O/u+z+ndLRzyY8bkqCXNTH9w
-         Br1w==
-X-Gm-Message-State: APjAAAXgENsfSOJt9ml+449b2XCPDGmgszjvK+B33bzEddLNUU5U052y
-        9BoaAz9FQBwaf3bp5N8GGNTnFdFKgckFzdyE783p0A==
-X-Google-Smtp-Source: APXvYqyXRPLlM1sC+Qh9Y+U2YnUrT41/QnuLEzazUmqup77OPEOS8gKvErJCG8qbHkr6M+W+SZdp07y4EAEUpxg6cwg=
-X-Received: by 2002:a9f:2924:: with SMTP id t33mr11661088uat.69.1570453416905;
- Mon, 07 Oct 2019 06:03:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191003041438.194224-1-cychiang@chromium.org> <b8ad03db-b93f-44e0-ccd6-fc8bda1af223@baylibre.com>
-In-Reply-To: <b8ad03db-b93f-44e0-ccd6-fc8bda1af223@baylibre.com>
-From:   Cheng-yi Chiang <cychiang@chromium.org>
-Date:   Mon, 7 Oct 2019 21:03:10 +0800
-Message-ID: <CAFv8Nw+xfqzKC+x9m-Zd-dmPNayXxqTCeo8JsO7pQn8Uk1Ybsw@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND] drm/bridge: dw-hdmi: Restore audio when setting
- a mode
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mark Brown <broonie@kernel.org>,
+        Mon, 7 Oct 2019 09:03:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=qq8ZMRWiz8nkAQzcMQF3gjrXhlaP3cAYvdl4PKw/Bgw=; b=OgjLSj6WMEoj
+        SUQ9glLy16FT/oZ5dgcloEQ4VrEAbx3BtvFOG+f9WZlz2DEXQxUK2fKsmn3aoeTaKeSwhT+aQclDP
+        k2R4t5wc76GF5StvwGfSFfQzchw9iMtdFLuO7ThYokeP2on3Le/KdT6BAUJvHe9KIeExKmg/RBI7A
+        CI+P8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iHSfO-0003Qp-UE; Mon, 07 Oct 2019 13:03:10 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 3401B2743178; Mon,  7 Oct 2019 14:03:10 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     <alsa-devel@alsa-project.org>, alsa-devel@alsa-project.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Doug Anderson <dianders@chromium.org>,
-        Dylan Reid <dgreid@chromium.org>,
-        Tzung-Bi Shih <tzungbi@chromium.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Yakir Yang <ykk@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: jz4740: Use of_device_get_match_data()" to the asoc tree
+In-Reply-To: <20191004214334.149976-8-swboyd@chromium.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20191007130310.3401B2743178@ypsilon.sirena.org.uk>
+Date:   Mon,  7 Oct 2019 14:03:10 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 7, 2019 at 7:57 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Hi,
->
-> On 03/10/2019 06:14, Cheng-Yi Chiang wrote:
-> > From: Daniel Kurtz <djkurtz@chromium.org>
-> >
-> > When setting a new display mode, dw_hdmi_setup() calls
-> > dw_hdmi_enable_video_path(), which disables all hdmi clocks, including
-> > the audio clock.
-> >
-> > We should only (re-)enable the audio clock if audio was already enabled
-> > when setting the new mode.
-> >
-> > Without this patch, on RK3288, there will be HDMI audio on some monitors
-> > if i2s was played to headphone when the monitor was plugged.
-> > ACER H277HU and ASUS PB278 are two of the monitors showing this issue.
-> >
-> > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> > Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> > ---
-> >  Change from v1 to v2:
-> >   - Use audio_lock to protect audio clock.
-> >   - Fix the patch title.
-> >
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > index aa7efd4da1c8..749d8e4c535b 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > @@ -1982,6 +1982,17 @@ static void hdmi_disable_overflow_interrupts(struct dw_hdmi *hdmi)
-> >                   HDMI_IH_MUTE_FC_STAT2);
-> >  }
-> >
-> > +static void dw_hdmi_audio_restore(struct dw_hdmi *hdmi)
-> > +{
-> > +     unsigned long flags;
-> > +
-> > +     spin_lock_irqsave(&hdmi->audio_lock, flags);
-> > +
-> > +     hdmi_enable_audio_clk(hdmi, hdmi->audio_enable);
-> > +
-> > +     spin_unlock_irqrestore(&hdmi->audio_lock, flags);
->
-> Dumb question, why is this protected by a spinlock ?
->
-> Neil
->
+The patch
 
-Hi Neil,
-Thanks for the review.
-Good catch. I found that the spinlock audio_lock was introduced in
+   ASoC: jz4740: Use of_device_get_match_data()
 
-b90120a96608 drm: bridge/dw_hdmi: introduce interfaces to enable and
-disable audio
+has been applied to the asoc tree at
 
-to protect N/CTS value.
-Actually it was not used to protect audio clock.
-So we don't need this spinlock.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
 
-Hi Daniel Kurtz,
-If this rings any bell in your memory as for why this is protected,
-please let me know.
-I would like to remove this spinlock and simplify this patch in v3.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Thanks!
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> > +}
-> > +
-> >  static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
-> >  {
-> >       int ret;
-> > @@ -2045,7 +2056,7 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
-> >
-> >               /* HDMI Initialization Step E - Configure audio */
-> >               hdmi_clk_regenerator_update_pixel_clock(hdmi);
-> > -             hdmi_enable_audio_clk(hdmi, true);
-> > +             dw_hdmi_audio_restore(hdmi);
-> >       }
-> >
-> >       /* not for DVI mode */
-> >
->
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 67ad656bdd703157154d0db5bf1b35a5a86073b9 Mon Sep 17 00:00:00 2001
+From: Stephen Boyd <swboyd@chromium.org>
+Date: Fri, 4 Oct 2019 14:43:31 -0700
+Subject: [PATCH] ASoC: jz4740: Use of_device_get_match_data()
+
+This probe function is only called if the device is backed by a DT node,
+so switch this call to of_device_get_match_data() to reduce code size
+and simplify a bit. This also avoids needing to reference a potentially
+undefined variable because of_device_get_match_data() doesn't need to
+know anything beyond the struct device to find the match table.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: <alsa-devel@alsa-project.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lore.kernel.org/r/20191004214334.149976-8-swboyd@chromium.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/jz4740/jz4740-i2s.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/jz4740/jz4740-i2s.c b/sound/soc/jz4740/jz4740-i2s.c
+index 13408de34055..d2dab4d24b87 100644
+--- a/sound/soc/jz4740/jz4740-i2s.c
++++ b/sound/soc/jz4740/jz4740-i2s.c
+@@ -503,9 +503,8 @@ static int jz4740_i2s_dev_probe(struct platform_device *pdev)
+ 	if (!i2s)
+ 		return -ENOMEM;
+ 
+-	match = of_match_device(jz4740_of_matches, &pdev->dev);
+-	if (match)
+-		i2s->version = (enum jz47xx_i2s_version)match->data;
++	i2s->version =
++		(enum jz47xx_i2s_version)of_device_get_match_data(&pdev->dev);
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	i2s->base = devm_ioremap_resource(&pdev->dev, mem);
+-- 
+2.20.1
+
