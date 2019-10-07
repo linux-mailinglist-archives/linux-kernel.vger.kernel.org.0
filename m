@@ -2,124 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5B2CE780
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0121CE77E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbfJGPbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:31:02 -0400
-Received: from mga02.intel.com ([134.134.136.20]:65135 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726334AbfJGPbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:31:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 08:31:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,268,1566889200"; 
-   d="scan'208";a="197423117"
-Received: from jpoconno-mobl2.amr.corp.intel.com (HELO [10.251.1.116]) ([10.251.1.116])
-  by orsmga006.jf.intel.com with ESMTP; 07 Oct 2019 08:30:51 -0700
-Subject: Re: [PATCH] x86/mm: Split vmalloc_sync_all()
-To:     Joerg Roedel <joro@8bytes.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Cc:     hpa@zytor.com, x86@kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
-        james.morse@arm.com, tony.luck@intel.com,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org, Joerg Roedel <jroedel@suse.de>
-References: <20191007151618.11785-1-joro@8bytes.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <02e99987-10d2-203f-e6ba-e2568fa1af28@intel.com>
-Date:   Mon, 7 Oct 2019 08:30:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728528AbfJGPa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:30:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34783 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfJGPa4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 11:30:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y35so8457300pgl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:30:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:to:cc:subject:user-agent:date;
+        bh=5NSccauLcWUBoxjRIE34pua8mfG+v+wacX+TYVO7UnM=;
+        b=bJ+dwD0Fy8g/wGiO8/fTmd7yA+xnaPq6dmQxOt42FaNqRnqi4PB88wWKcch8UxhTpI
+         hudh4e0C51KQMKYdSDCW6qsTgFp1U/WqQG4Guh4qBVVVWK64bMGqZszPRErliLxVYPZa
+         A/Va+Faoh0EJU5sw2RllT/MucGZlkfS58qhCc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:to:cc:subject
+         :user-agent:date;
+        bh=5NSccauLcWUBoxjRIE34pua8mfG+v+wacX+TYVO7UnM=;
+        b=mojFgX0GnSJxUex+mzlIMw9hkwgpe1Xwac5xIsVCLADnbsMLPgm21vWqSXHCwkOh7A
+         xuYkHfbn2BZEs7MvH12+nJ0TQjNNcZRyOHAg29zBFF5r4bugWH7ky/Zv6sL/NnUqxDOA
+         B8Cyn0uUKtV5pmgowPTKTLAZNteqJX7FcK1akc7Hd1J62IJID7xUdyULWmeJH8HE0OmW
+         jLqEW7Q66x9/8tme8WvxVgHBDqQEjIz/kt06Z97ChHqnDhVg40MjMdtunJEz1gh5Ypky
+         X7DYsPdaLoSqVABoPjt1EvLA62x1KkDu01DrP9mcvF3aGhfeZwBvLIrPqVdQ+L1H+jw8
+         B7aA==
+X-Gm-Message-State: APjAAAXOwHqVgvFypBrXe9YXyMpylmyBBl/Go0+5MGSZlTTUd4qdlSpa
+        5RnUBOvuBVZ90H1Hf/WulpTTWA==
+X-Google-Smtp-Source: APXvYqyReDvh7dM/3GC9/NGVuLCTtl+kQAQr0uH3LOVAMLJICa5UI1YvrPS32/ceGNP4PRsF/i7HzA==
+X-Received: by 2002:a63:144e:: with SMTP id 14mr23706462pgu.408.1570462253961;
+        Mon, 07 Oct 2019 08:30:53 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id r2sm17254536pfq.60.2019.10.07.08.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 08:30:53 -0700 (PDT)
+Message-ID: <5d9b5a2d.1c69fb81.c81a9.459d@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191007151618.11785-1-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191005210449.3926-2-hdegoede@redhat.com>
+References: <20191005210449.3926-1-hdegoede@redhat.com> <20191005210449.3926-2-hdegoede@redhat.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] driver core: platform: Add platform_get_irq_byname_optional()
+User-Agent: alot/0.8.1
+Date:   Mon, 07 Oct 2019 08:30:52 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/7/19 8:16 AM, Joerg Roedel wrote:
-> @@ -318,7 +328,7 @@ static void dump_pagetable(unsigned long address)
->  
->  #else /* CONFIG_X86_64: */
->  
-> -void vmalloc_sync_all(void)
-> +void vmalloc_sync_mappings(void)
->  {
->  	sync_global_pgds(VMALLOC_START & PGDIR_MASK, VMALLOC_END);
->  }
+Quoting Hans de Goede (2019-10-05 14:04:47)
+> Some drivers (e.g dwc3) first try to get an IRQ byname and then fall
+> back to the one at index 0. In this case we do not want the error(s)
+> printed by platform_get_irq_byname(). This commit adds a new
+> platform_get_irq_byname_optional(), which does not print errors, for this.
+>=20
+> While at it also improve the kdoc text for platform_get_irq_byname() a bi=
+t.
+>=20
+> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=3D205037
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
 
-FWIW, I generally detest the use of __weak. :)
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-In this case, it ends up letting us gloss over the fact that we have a
-32/64-bit asymmetry.  It would probably be nice to actually have a
-64-bit implementation that comes along with a nice comment.  Maybe this
-in vmalloc_sync_mappings():
-
-	/*
-	 * 64-bit mappings might allocate new p4d/pud pages
-	 * that need to be propagated to all tasks' PGDs.
-	 */
-
-which would pair nicely with:
-
-void vmalloc_sync_unmappings(void)
-{
-	/*
-	 * Unmappings never allocate or free p4d/pud pages.
-	 * No work is required here.
-	 */
-}
