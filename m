@@ -2,138 +2,380 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70175CE21A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 777CDCE231
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:50:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbfJGMrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:47:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:33704 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727536AbfJGMrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:47:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 268591570;
-        Mon,  7 Oct 2019 05:47:34 -0700 (PDT)
-Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 051253F706;
-        Mon,  7 Oct 2019 05:47:32 -0700 (PDT)
-Subject: Re: drm_sched with panfrost crash on T820
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     Hillf Danton <hdanton@sina.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Erico Nunes <nunes.erico@gmail.com>
-References: <8e003dfd-2761-4941-8b5b-ecc186222229@email.android.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <cf6c7130-51ea-155b-cbe7-9f05281be360@arm.com>
-Date:   Mon, 7 Oct 2019 13:47:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727904AbfJGMuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:50:14 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46908 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbfJGMuO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:50:14 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x97CoC97010645;
+        Mon, 7 Oct 2019 07:50:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570452612;
+        bh=9IjfOP8gCGca/mlTC1I3oFYCzdJI7fhG+NZeTD0pUIs=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=mw1ZWcT08BC/AorG2DrXvwracfMbF27+AiLozRone9amKI19s72jm05huAB3nEnyF
+         2k07kHAVfptBoYWQDHQRoMBcQ3dv+8i63JdmK/Gjs4PcrziRoz8gqEyrndM08o+C15
+         cjBwthGUppsSdnFnm3GHlTcqprzXbnvgugaZmz+s=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x97CoCGd097628
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Oct 2019 07:50:12 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 7 Oct
+ 2019 07:50:11 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 7 Oct 2019 07:50:11 -0500
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x97CoBik101734;
+        Mon, 7 Oct 2019 07:50:11 -0500
+Date:   Mon, 7 Oct 2019 07:52:45 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch v2 19/21] media: v4l2-common: add pixel encoding support
+Message-ID: <20191007125245.zfysnop5xelitacf@ti.com>
+References: <20191004162952.4963-1-bparrot@ti.com>
+ <20191004162952.4963-20-bparrot@ti.com>
+ <0118836c-f6d9-dccf-4e90-ede802c8be33@xs4all.nl>
 MIME-Version: 1.0
-In-Reply-To: <8e003dfd-2761-4941-8b5b-ecc186222229@email.android.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <0118836c-f6d9-dccf-4e90-ede802c8be33@xs4all.nl>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2019 17:33, Koenig, Christian wrote:
+Hans Verkuil <hverkuil@xs4all.nl> wrote on Mon [2019-Oct-07 10:06:39 +0200]:
+> On 10/4/19 6:29 PM, Benoit Parrot wrote:
+> > It is often useful to figure out if a pixel_format is either YUV or RGB
+> > especially for driver who can perform the pixel encoding conversion.
+> > 
+> > Instead of having each driver implement its own "is_this_yuv/rgb"
+> > function based on a restricted set of pixel value, it is better to do
+> > this in centralized manner.
+> > 
+> > We therefore add a pix_enc member to the v4l2_format_info structure to
+> > quickly identify the related pixel encoding.
+> > And add helper function to find/check pixel encoding.
+> > 
+> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> > ---
+> >  drivers/media/v4l2-core/v4l2-common.c | 162 ++++++++++++++++----------
+> >  include/media/v4l2-common.h           |  20 ++++
+> >  2 files changed, 119 insertions(+), 63 deletions(-)
+> > 
+> > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> > index 62f7aa92ac29..474cdb5863f4 100644
+> > --- a/drivers/media/v4l2-core/v4l2-common.c
+> > +++ b/drivers/media/v4l2-core/v4l2-common.c
+> > @@ -236,77 +236,77 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
+> >  {
+> >  	static const struct v4l2_format_info formats[] = {
+> >  		/* RGB formats */
+> > -		{ .format = V4L2_PIX_FMT_BGR24,   .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_RGB24,   .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_HSV24,   .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_BGR32,   .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_XBGR32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_BGRX32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_RGB32,   .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_XRGB32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_RGBX32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_HSV32,   .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_ARGB32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_RGBA32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_ABGR32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_BGRA32,  .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_GREY,    .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_BGR24,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_RGB24,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_HSV24,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_BGR32,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_XBGR32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_BGRX32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_RGB32,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_XRGB32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_RGBX32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_HSV32,   .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_ARGB32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_RGBA32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_ABGR32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_BGRA32,  .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 4, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_GREY,    .pix_enc = V4L2_ENC_RGB, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> >  
+> >  		/* YUV packed formats */
+> > -		{ .format = V4L2_PIX_FMT_YUYV,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_YVYU,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_UYVY,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_VYUY,    .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_YUYV,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_YVYU,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_UYVY,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_VYUY,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> >  
+> >  		/* YUV planar formats */
+> > -		{ .format = V4L2_PIX_FMT_NV12,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_NV21,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_NV16,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_NV61,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_NV24,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_NV42,    .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -
+> > -		{ .format = V4L2_PIX_FMT_YUV410,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
+> > -		{ .format = V4L2_PIX_FMT_YVU410,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
+> > -		{ .format = V4L2_PIX_FMT_YUV411P, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_YUV420,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_YVU420,  .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_YUV422P, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_NV12,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_NV21,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_NV16,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_NV61,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_NV24,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_NV42,    .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +
+> > +		{ .format = V4L2_PIX_FMT_YUV410,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
+> > +		{ .format = V4L2_PIX_FMT_YVU410,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 4 },
+> > +		{ .format = V4L2_PIX_FMT_YUV411P, .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 4, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_YUV420,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_YVU420,  .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_YUV422P, .pix_enc = V4L2_ENC_YUV, .mem_planes = 1, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
+> >  
+> >  		/* YUV planar formats, non contiguous variant */
+> > -		{ .format = V4L2_PIX_FMT_YUV420M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_YVU420M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_YUV422M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_YVU422M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_YUV444M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_YVU444M, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -
+> > -		{ .format = V4L2_PIX_FMT_NV12M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_NV21M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > -		{ .format = V4L2_PIX_FMT_NV16M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_NV61M,   .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_YUV420M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_YVU420M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_YUV422M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_YVU422M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_YUV444M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_YVU444M, .pix_enc = V4L2_ENC_YUV, .mem_planes = 3, .comp_planes = 3, .bpp = { 1, 1, 1, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +
+> > +		{ .format = V4L2_PIX_FMT_NV12M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_NV21M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 2 },
+> > +		{ .format = V4L2_PIX_FMT_NV16M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_NV61M,   .pix_enc = V4L2_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .hdiv = 2, .vdiv = 1 },
+> >  
+> >  		/* Bayer RGB formats */
+> > -		{ .format = V4L2_PIX_FMT_SBGGR8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGBRG8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGRBG8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SRGGB8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SBGGR10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGBRG10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGRBG10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SRGGB10,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SBGGR10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGBRG10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGRBG10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SRGGB10ALAW8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SBGGR10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGBRG10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGRBG10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SRGGB10DPCM8,	.mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SBGGR12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGBRG12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SGRBG12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > -		{ .format = V4L2_PIX_FMT_SRGGB12,	.mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SBGGR8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGBRG8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGRBG8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SRGGB8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SBGGR10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGBRG10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGRBG10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SRGGB10,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SBGGR10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGBRG10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGRBG10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SRGGB10ALAW8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SBGGR10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGBRG10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGRBG10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SRGGB10DPCM8,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SBGGR12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGBRG12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SGRBG12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> > +		{ .format = V4L2_PIX_FMT_SRGGB12,	.pix_enc = V4L2_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .hdiv = 1, .vdiv = 1 },
+> >  	};
+> >  	unsigned int i;
+> >  
+> > @@ -317,6 +317,42 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
+> >  }
+> >  EXPORT_SYMBOL(v4l2_format_info);
+> >  
+> > +bool v4l2_is_format_rgb(u32 format)
+> > +{
+> > +	const struct v4l2_format_info *f;
+> > +
+> > +	f = v4l2_format_info(format);
+> > +	if (f && f->pix_enc == V4L2_ENC_RGB)
+> > +		return true;
+> > +
+> > +	return false;
 > 
+> This can be simplified to:
 > 
-> Am 04.10.2019 18:02 schrieb Steven Price <steven.price@arm.com>:
-> On 04/10/2019 16:34, Koenig, Christian wrote:
->> Am 04.10.19 um 17:27 schrieb Steven Price:
->>> On 04/10/2019 16:03, Neil Armstrong wrote:
->>>> On 04/10/2019 16:53, Grodzovsky, Andrey wrote:
->>>>> On 10/3/19 4:34 AM, Neil Armstrong wrote:
->>>>>> Hi Andrey,
->>>>>>
->>>>>> Le 02/10/2019 à 16:40, Grodzovsky, Andrey a écrit :
->>>>>>> On 9/30/19 10:52 AM, Hillf Danton wrote:
->>>>>>>> On Mon, 30 Sep 2019 11:17:45 +0200 Neil Armstrong wrote:
->>>>>>>>> Did a new run from 5.3:
->>>>>>>>>
->>>>>>>>> [   35.971972] Call trace:
->>>>>>>>> [   35.974391]  drm_sched_increase_karma+0x5c/0xf0
->>>>>>>>>                         ffff000010667f38        FFFF000010667F94
->>>>>>>>>                         drivers/gpu/drm/scheduler/sched_main.c:335
->>>>>>>>>
->>>>>>>>> The crashing line is :
->>>>>>>>>                                    if (bad->s_fence->scheduled.context ==
->>>>>>>>>                                        entity->fence_context) {
->>>>>>>>>
->>>>>>>>> Doesn't seem related to guilty job.
->>>>>>>> Bail out if s_fence is no longer fresh.
->>>>>>>>
->>>>>>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
->>>>>>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
->>>>>>>> @@ -333,6 +333,10 @@ void drm_sched_increase_karma(struct drm
->>>>>>>>
->>>>>>>>                          spin_lock(&rq->lock);
->>>>>>>>                          list_for_each_entry_safe(entity, tmp, &rq->entities, list) {
->>>>>>>> +                               if (!smp_load_acquire(&bad->s_fence)) {
->>>>>>>> +                                       spin_unlock(&rq->lock);
->>>>>>>> +                                       return;
->>>>>>>> +                               }
->>>>>>>>                                  if (bad->s_fence->scheduled.context ==
->>>>>>>>                                      entity->fence_context) {
->>>>>>>>                                          if (atomic_read(&bad->karma) >
->>>>>>>> @@ -543,7 +547,7 @@ EXPORT_SYMBOL(drm_sched_job_init);
->>>>>>>>     void drm_sched_job_cleanup(struct drm_sched_job *job)
->>>>>>>>     {
->>>>>>>>          dma_fence_put(&job->s_fence->finished);
->>>>>>>> -       job->s_fence = NULL;
->>>>>>>> +       smp_store_release(&job->s_fence, 0);
->>>>>>>>     }
->>>>>>>>     EXPORT_SYMBOL(drm_sched_job_cleanup);
->>>>>> This fixed the problem on the 10 CI runs.
->>>>>>
->>>>>> Neil
->>>>>
->>>>> These are good news but I still fail to see how this fixes the problem -
->>>>> Hillf, do you mind explaining how you came up with this particular fix -
->>>>> what was the bug you saw ?
->>>> As Steven explained, seems the same job was submitted on both HW slots,
->>>> and then when timeout occurs each thread calls panfrost_job_timedout
->>>> which leads to drm_sched_stop() on the first call and on the
->>>> second call the job was already freed.
->>>>
->>>> Steven proposed a working fix, and this one does the same but on
->>>> the drm_sched side. This one looks cleaner, but panfrost should
->>>> not call drm_sched_stop() twice for the same job.
->>> I'm not sure that Hillf's fix is sufficient. In particular in
->>> drm_sched_increase_karma() I don't understand how the smp_load_acquire()
->>> call prevents bad->s_fence becoming NULL immediately afterwards (but
->>> admittedly the window is much smaller). But really this is just a
->>> Panfrost bug (calling drm_sched_stop() twice on the same job).
->>>
->>> The part of my change that I'd welcome feedback on is changing
->>> cancel_delayed_work() to cancel_delayed_work_sync() in drm_sched_stop()
->>> when called on different scheduler to the bad job. It's not clear to me
->>> exactly what the semantics of the function should be, and I haven't
->>> tested the effect of the change on drivers other than Panfrost.
->>
->> Yeah, at least of hand that change doesn't seem to make sense to me.
+> 	return f && f->pix_enc == V4L2_ENC_RGB;
 > 
-> We need to ensure that any other timeouts that might have started
-> processing are complete before actually resetting the hardware.
-> Otherwise after the reset another thread could come along and attempt to
-> reset the hardware again (and cause a double free of a job).
-> 
-> This is intentional behaviour. If you don't want the double reset in Panfrost you should probably call the cancel_sync yourself.
+> Same for the other two functions below.
 
-It's less the double reset that is the problem, more that the job gets
-cleaned up twice: drm_sched_stop() will either free the job or mark it
-to be freed later. By having two threads both drm_sched_stop()ing all
-slots you end up with the guilty job(s) potentially being double freed.
+Ok I'll change that.
 
-I've move the call to cancel_delayed_work_sync() into Panfrost since I'm
-not sure whether this is generically useful to other drivers.
+> 
+> > +}
+> > +EXPORT_SYMBOL(v4l2_is_format_rgb);
+> > +
+> > +bool v4l2_is_format_yuv(u32 format)
+> > +{
+> > +	const struct v4l2_format_info *f;
+> > +
+> > +	f = v4l2_format_info(format);
+> > +	if (f && f->pix_enc == V4L2_ENC_YUV)
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+> > +EXPORT_SYMBOL(v4l2_is_format_yuv);
+> > +
+> > +bool v4l2_is_format_bayer(u32 format)
+> > +{
+> > +	const struct v4l2_format_info *f;
+> > +
+> > +	f = v4l2_format_info(format);
+> > +	if (f && f->pix_enc == V4L2_ENC_BAYER)
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+> > +EXPORT_SYMBOL(v4l2_is_format_bayer);
+> 
+> That said, I am not sure I like these three functions. It leads to
+> usage like this (from patch 21/21):
+> 
+> 	if (v4l2_is_format_yuv(src_fmt->fmt.pix_mp.pixelformat) &&
+> 	    v4l2_is_format_rgb(dst_fmt->fmt.pix_mp.pixelformat)) {
 
-Steve
+Well it is called twice here because we are checking two different format,
+so the loop are ineveitable, I am afraid.
+
+But I guess it is also called in the "else" part in case this fails so it
+might get called twice.
+
+> 
+> which is quite inefficient since v4l2_format_info() is called twice, so
+> the same for-loop there is also done twice.
+> 
+> I think the caller should just call v4l2_format_info(), then test f->pix_enc.
+> 
+> You can also add something like this to v4l2-common.h:
+> 
+> static inline bool v4l2_is_format_yuv(const struct v4l2_format_info *f)
+> {
+> 	return f && f->pix_enc == V4L2_ENC_YUV;
+> }
+> 
+> I'm fine with that.
+
+I can store the format_info result I guess and use that.
+
+> 
+> > +
+> >  static inline unsigned int v4l2_format_block_width(const struct v4l2_format_info *info, int plane)
+> >  {
+> >  	if (!info->block_w[plane])
+> > diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> > index c070d8ae11e5..27041cf2b818 100644
+> > --- a/include/media/v4l2-common.h
+> > +++ b/include/media/v4l2-common.h
+> > @@ -456,9 +456,25 @@ int v4l2_s_parm_cap(struct video_device *vdev,
+> >  
+> >  /* Pixel format and FourCC helpers */
+> >  
+> > +/**
+> > + * enum v4l2_pixel_encoding - specifies the pixel encoding value
+> > + *
+> > + * @V4L2_ENC_UNKNOWN:	Pixel encoding is unknown/un-initialized
+> > + * @V4L2_ENC_YUV:	Pixel encoding is YUV
+> > + * @V4L2_ENC_RGB:	Pixel encoding is RGB
+> > + * @V4L2_ENC_BAYER:	Pixel encoding is Bayer
+> > + */
+> > +enum v4l2_pixel_encoding {
+> > +	@V4L2_ENC_UNKNOWN = 0,
+> > +	V4L2_ENC_YUV = 1,
+> > +	V4L2_ENC_RGB = 2,
+> > +	V4L2_ENC_BAYER = 3,
+> > +};
+> 
+> Just plain _ENC_ is a bit too generic. I'd change this to _PIXEL_ENC_.
+
+No problem.
+
+> 
+> > +
+> >  /**
+> >   * struct v4l2_format_info - information about a V4L2 format
+> >   * @format: 4CC format identifier (V4L2_PIX_FMT_*)
+> > + * @pix_enc: Pixel format encoding (see enum v4l2_pixel_encoding above)
+> 
+> Drop the 'format' word.
+
+Agreed.
+
+> 
+> >   * @mem_planes: Number of memory planes, which includes the alpha plane (1 to 4).
+> >   * @comp_planes: Number of component planes, which includes the alpha plane (1 to 4).
+> >   * @bpp: Array of per-plane bytes per pixel
+> > @@ -469,6 +485,7 @@ int v4l2_s_parm_cap(struct video_device *vdev,
+> >   */
+> >  struct v4l2_format_info {
+> >  	u32 format;
+> > +	u8 pix_enc;
+> 
+> I would prefer pixel_enc instead of pix_enc.
+
+I'll fix that.
+
+Benoit
+
+> 
+> >  	u8 mem_planes;
+> >  	u8 comp_planes;
+> >  	u8 bpp[4];
+> > @@ -479,6 +496,9 @@ struct v4l2_format_info {
+> >  };
+> >  
+> >  const struct v4l2_format_info *v4l2_format_info(u32 format);
+> > +bool v4l2_is_format_rgb(u32 format);
+> > +bool v4l2_is_format_yuv(u32 format);
+> > +bool v4l2_is_format_bayer(u32 format);
+> >  
+> >  void v4l2_apply_frmsize_constraints(u32 *width, u32 *height,
+> >  				    const struct v4l2_frmsize_stepwise *frmsize);
+> > 
+> 
+> Regards,
+> 
+> 	Hans
