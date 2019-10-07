@@ -2,144 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B803CCE844
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8744CE83E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbfJGPtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:49:13 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:57640 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728553AbfJGPtL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:49:11 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from lsun@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 7 Oct 2019 17:49:05 +0200
-Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
-        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id x97Fn43U000955;
-        Mon, 7 Oct 2019 11:49:04 -0400
-Received: (from lsun@localhost)
-        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id x97Fn3lR032584;
-        Mon, 7 Oct 2019 11:49:03 -0400
-From:   Liming Sun <lsun@mellanox.com>
-To:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        David Woods <dwoods@mellanox.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Liming Sun <lsun@mellanox.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH v6 2/2] platform/mellanox/mlxbf-bootctl: Add the ABI definitions
-Date:   Mon,  7 Oct 2019 11:48:47 -0400
-Message-Id: <1570463327-32541-2-git-send-email-lsun@mellanox.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1570463327-32541-1-git-send-email-lsun@mellanox.com>
-References: <1570463327-32541-1-git-send-email-lsun@mellanox.com>
-In-Reply-To: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
-References: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
+        id S1728490AbfJGPs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:48:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59422 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727814AbfJGPs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 11:48:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7889CAFBE;
+        Mon,  7 Oct 2019 15:48:56 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 17:48:52 +0200
+From:   Joerg Roedel <jroedel@suse.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
+        james.morse@arm.com, tony.luck@intel.com,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] x86/mm: Split vmalloc_sync_all()
+Message-ID: <20191007154852.GE4636@suse.de>
+References: <20191007151618.11785-1-joro@8bytes.org>
+ <02e99987-10d2-203f-e6ba-e2568fa1af28@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02e99987-10d2-203f-e6ba-e2568fa1af28@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds the ABI definitions exposed to userspace for
-the platform/mellanox/mlxbf-bootctl driver.
+Hi Dave,
 
-Reviewed-by: Vadim Pasternak <vadimp@mellanox.com>
-Signed-off-by: Liming Sun <lsun@mellanox.com>
----
-v5->v6:
-    Fixes for comments from Mark:
-    - Changed to use device attributes (DEVICE_ATTR_xx) instead of
-      driver attributes (DRIVER_ATTR_xx) for the exported sysfs
-      attributes.
----
- .../ABI/testing/sysfs-platform-mellanox-bootctl    | 58 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 59 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
+thanks for your review!
 
-diff --git a/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
-new file mode 100644
-index 0000000..b60a46e
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
-@@ -0,0 +1,58 @@
-+What:		/sys/bus/platform/devices/MLNXBF04:00/driver/lifecycle_state
-+Date:		Oct 2019
-+KernelVersion:	5.4
-+Contact:	"Liming Sun <lsun@mellanox.com>"
-+Description:
-+		The Life-cycle state of the SoC, which could be one of the
-+		following values.
-+		  Production - Production state and can be updated to secure
-+		  GA Secured - Secure chip and not able to change state
-+		  GA Non-Secured - Non-Secure chip and not able to change state
-+		  RMA - Return Merchandise Authorization
-+
-+What:		/sys/bus/platform/devices/MLNXBF04:00/driver/post_reset_wdog
-+Date:		Oct 2019
-+KernelVersion:	5.4
-+Contact:	"Liming Sun <lsun@mellanox.com>"
-+Description:
-+		The watchdog setting in seconds for the next booting. It's used
-+		to reboot the chip and recover it to the old state if the new
-+		boot partition fails.
-+
-+What:		/sys/bus/platform/devices/MLNXBF04:00/driver/reset_action
-+Date:		Oct 2019
-+KernelVersion:	5.4
-+Contact:	"Liming Sun <lsun@mellanox.com>"
-+Description:
-+		The source of the boot stream for the next reset. It could be
-+		one of the following values.
-+		  external - boot from external source (USB or PCIe)
-+		  emmc - boot from the onchip eMMC
-+		  emmc_legacy - boot from the onchip eMMC in legacy (slow) mode
-+
-+What:		/sys/bus/platform/devices/MLNXBF04:00/driver/second_reset_action
-+Date:		Oct 2019
-+KernelVersion:	5.4
-+Contact:	"Liming Sun <lsun@mellanox.com>"
-+Description:
-+		Update the source of the boot stream after next reset. It could
-+		be one of the following values and will be applied after next
-+		reset.
-+		  external - boot from external source (USB or PCIe)
-+		  emmc - boot from the onchip eMMC
-+		  emmc_legacy - boot from the onchip eMMC in legacy (slow) mode
-+		  swap_emmc - swap the primary / secondary boot partition
-+		  none - cancel the action
-+
-+What:		/sys/bus/platform/devices/MLNXBF04:00/driver/secure_boot_fuse_state
-+Date:		Oct 2019
-+KernelVersion:	5.4
-+Contact:	"Liming Sun <lsun@mellanox.com>"
-+Description:
-+		The state of eFuse versions with the following values.
-+		  InUse - burnt, valid and currently in use
-+		  Used - burnt and valid
-+		  Free - not burnt and free to use
-+		  Skipped - not burnt but not free (skipped)
-+		  Wasted - burnt and invalid
-+		  Invalid - not burnt but marked as valid (error state).
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 55199ef..c2ff283 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10435,6 +10435,7 @@ M:	Darren Hart <dvhart@infradead.org>
- M:	Vadim Pasternak <vadimp@mellanox.com>
- L:	platform-driver-x86@vger.kernel.org
- S:	Supported
-+F:	Documentation/ABI/testing/sysfs-platform-mellanox-bootctl
- F:	drivers/platform/mellanox/
- F:	include/linux/platform_data/mlxreg.h
- 
--- 
-1.8.3.1
+On Mon, Oct 07, 2019 at 08:30:51AM -0700, Dave Hansen wrote:
+> On 10/7/19 8:16 AM, Joerg Roedel wrote:
+> > @@ -318,7 +328,7 @@ static void dump_pagetable(unsigned long address)
+> >  
+> >  #else /* CONFIG_X86_64: */
+> >  
+> > -void vmalloc_sync_all(void)
+> > +void vmalloc_sync_mappings(void)
+> >  {
+> >  	sync_global_pgds(VMALLOC_START & PGDIR_MASK, VMALLOC_END);
+> >  }
+> 
+> FWIW, I generally detest the use of __weak. :)
 
+Yeah, I don't like it either, but in this case it is probably better
+than empty stubs in all architectures besides x86 :)
+
+> In this case, it ends up letting us gloss over the fact that we have a
+> 32/64-bit asymmetry.  It would probably be nice to actually have a
+> 64-bit implementation that comes along with a nice comment.  Maybe this
+> in vmalloc_sync_mappings():
+> 
+> 	/*
+> 	 * 64-bit mappings might allocate new p4d/pud pages
+> 	 * that need to be propagated to all tasks' PGDs.
+> 	 */
+> 
+> which would pair nicely with:
+> 
+> void vmalloc_sync_unmappings(void)
+> {
+> 	/*
+> 	 * Unmappings never allocate or free p4d/pud pages.
+> 	 * No work is required here.
+> 	 */
+> }
+
+Yes, that makes, I will add these comments in V2.
+
+Thanks,
+
+	Joerg
