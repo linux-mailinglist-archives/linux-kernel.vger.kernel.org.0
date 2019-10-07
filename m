@@ -2,48 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62370CE5FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72F35CE5D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbfJGOvW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 7 Oct 2019 10:51:22 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44397 "EHLO
+        id S1728654AbfJGOtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:49:42 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44462 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbfJGOte (ORCPT
+        with ESMTP id S1728553AbfJGOtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:34 -0400
+        Mon, 7 Oct 2019 10:49:39 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUKH-000646-Lo; Mon, 07 Oct 2019 16:49:29 +0200
+        id 1iHUKG-00066K-C2; Mon, 07 Oct 2019 16:49:28 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 75F0B1C0DD5;
-        Mon,  7 Oct 2019 16:49:17 +0200 (CEST)
-Date:   Mon, 07 Oct 2019 14:49:17 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 285041C0DD8;
+        Mon,  7 Oct 2019 16:49:18 +0200 (CEST)
+Date:   Mon, 07 Oct 2019 14:49:18 -0000
+From:   "tip-bot2 for Ian Rogers" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] tools headers uapi: Sync asm-generic/mman-common.h
- with the kernel
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Minchan Kim <minchan@kernel.org>,
+Subject: [tip: perf/urgent] libsubcmd: Make _FORTIFY_SOURCE defines dependent
+ on the feature
+Cc:     Ian Rogers <irogers@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-n40y6c4sa49p29q6sl8w3ufx@git.kernel.org>
-References: <tip-n40y6c4sa49p29q6sl8w3ufx@git.kernel.org>
+In-Reply-To: <20190925195924.152834-1-irogers@google.com>
+References: <20190925195924.152834-1-irogers@google.com>
 MIME-Version: 1.0
-Message-ID: <157045975738.9978.17486571735826931174.tip-bot2@tip-bot2>
+Message-ID: <157045975810.9978.12496841458958178913.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 X-Linutronix-Spam-Score: -1.0
 X-Linutronix-Spam-Level: -
 X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
@@ -54,85 +55,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     b1ba55cf1cfb9f3e0e00d743534684a25bf66d28
-Gitweb:        https://git.kernel.org/tip/b1ba55cf1cfb9f3e0e00d743534684a25bf66d28
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 27 Sep 2019 11:30:30 -03:00
+Commit-ID:     4b0b2b096da9d296e0e5668cdfba8613bd6f5bc8
+Gitweb:        https://git.kernel.org/tip/4b0b2b096da9d296e0e5668cdfba8613bd6f5bc8
+Author:        Ian Rogers <irogers@google.com>
+AuthorDate:    Wed, 25 Sep 2019 12:59:23 -07:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 30 Sep 2019 17:28:44 -03:00
+CommitterDate: Fri, 27 Sep 2019 09:26:14 -03:00
 
-tools headers uapi: Sync asm-generic/mman-common.h with the kernel
+libsubcmd: Make _FORTIFY_SOURCE defines dependent on the feature
 
-To pick the changes from:
+Unconditionally defining _FORTIFY_SOURCE can break tools that don't work
+with it, such as memory sanitizers:
 
-  1a4e58cce84e ("mm: introduce MADV_PAGEOUT")
-  9c276cc65a58 ("mm: introduce MADV_COLD")
+  https://github.com/google/sanitizers/wiki/AddressSanitizer#faq
 
-That result in these changes in the tools:
-
-  $ tools/perf/trace/beauty/madvise_behavior.sh > before
-  $ cp include/uapi/asm-generic/mman-common.h tools/include/uapi/asm-generic/mman-common.h
-  $ git diff
-  diff --git a/tools/include/uapi/asm-generic/mman-common.h b/tools/include/uapi/asm-generic/mman-common.h
-  index 63b1f506ea67..c160a5354eb6 100644
-  --- a/tools/include/uapi/asm-generic/mman-common.h
-  +++ b/tools/include/uapi/asm-generic/mman-common.h
-  @@ -67,6 +67,9 @@
-   #define MADV_WIPEONFORK 18             /* Zero memory on fork, child only */
-   #define MADV_KEEPONFORK 19             /* Undo MADV_WIPEONFORK */
-
-  +#define MADV_COLD      20              /* deactivate these pages */
-  +#define MADV_PAGEOUT   21              /* reclaim these pages */
-  +
-   /* compatibility flags */
-   #define MAP_FILE       0
-
-  $ tools/perf/trace/beauty/madvise_behavior.sh > after
-  $ diff -u before after
-  --- before	2019-09-27 11:29:43.346320100 -0300
-  +++ after	2019-09-27 11:30:03.838570439 -0300
-  @@ -16,6 +16,8 @@
-   	[17] = "DODUMP",
-   	[18] = "WIPEONFORK",
-   	[19] = "KEEPONFORK",
-  +	[20] = "COLD",
-  +	[21] = "PAGEOUT",
-   	[100] = "HWPOISON",
-   	[101] = "SOFT_OFFLINE",
-   };
-  $
-
-I.e. now when madvise gets those behaviours as args, it will be able to
-translate from the number to a human readable string.
-
-This addresses the following perf build warning:
-
-  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/mman-common.h' differs from latest version at 'include/uapi/asm-generic/mman-common.h'
-  diff -u tools/include/uapi/asm-generic/mman-common.h include/uapi/asm-generic/mman-common.h
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Minchan Kim <minchan@kernel.org>
+Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
+Signed-off-by: Ian Rogers <irogers@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-n40y6c4sa49p29q6sl8w3ufx@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20190925195924.152834-1-irogers@google.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/asm-generic/mman-common.h | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/lib/subcmd/Makefile | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/asm-generic/mman-common.h b/tools/include/uapi/asm-generic/mman-common.h
-index 63b1f50..c160a53 100644
---- a/tools/include/uapi/asm-generic/mman-common.h
-+++ b/tools/include/uapi/asm-generic/mman-common.h
-@@ -67,6 +67,9 @@
- #define MADV_WIPEONFORK 18		/* Zero memory on fork, child only */
- #define MADV_KEEPONFORK 19		/* Undo MADV_WIPEONFORK */
+diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+index ed61fb3..5b2cd5e 100644
+--- a/tools/lib/subcmd/Makefile
++++ b/tools/lib/subcmd/Makefile
+@@ -20,7 +20,13 @@ MAKEFLAGS += --no-print-directory
+ LIBFILE = $(OUTPUT)libsubcmd.a
  
-+#define MADV_COLD	20		/* deactivate these pages */
-+#define MADV_PAGEOUT	21		/* reclaim these pages */
+ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+-CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fPIC
++CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -fPIC
 +
- /* compatibility flags */
- #define MAP_FILE	0
++ifeq ($(DEBUG),0)
++  ifeq ($(feature-fortify-source), 1)
++    CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
++  endif
++endif
  
+ ifeq ($(CC_NO_CLANG), 0)
+   CFLAGS += -O3
