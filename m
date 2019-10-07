@@ -2,100 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D38CE8A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:07:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35363CE8A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:08:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbfJGQHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:07:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41102 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727711AbfJGQHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:07:39 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92F211895A40;
-        Mon,  7 Oct 2019 16:07:38 +0000 (UTC)
-Received: from gondolin (ovpn-116-231.ams2.redhat.com [10.36.116.231])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DDC9B6012A;
-        Mon,  7 Oct 2019 16:07:35 +0000 (UTC)
-Date:   Mon, 7 Oct 2019 18:07:32 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>
-Subject: Re: [PATCH v2 1/1] s390/cio: fix virtio-ccw DMA without PV
-Message-ID: <20191007180732.7a38ff0b.cohuck@redhat.com>
-In-Reply-To: <20190930153803.7958-1-pasic@linux.ibm.com>
-References: <20190930153803.7958-1-pasic@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1728723AbfJGQIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:08:32 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54589 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbfJGQIc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 12:08:32 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p7so77815wmp.4;
+        Mon, 07 Oct 2019 09:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z1iEZfsz63+hFaflS3INWnySuglWD+I2yD90meQjneg=;
+        b=hc6iJa4GVuhNuWWKGTrUwO7QaLE2DMH8tSuKd1N7fa2ey63T4C3Sv79QBeWNYBbDYE
+         IBuGrRoyMSkcqqgjaMBcN2U+I5kYsOZmpfe25vJ4AO9sBXoWXaqq0f1F8XeJ3dN6nuCj
+         id/bC57fyx6raHUDxh1UvEP2H/ZuD8KWZfDyFRUUAHQRLL8MC+/7k8CaMDbuIb4lr6PY
+         r6FfQh4xBIcS0GPcIpDSGfh7pmn7rxiwEW0cgQeJWM//Ojfd1i58lKyL2uopQNa6BE01
+         bGR7j88/Vab0pw636IuaEb8mq9eqk79QlZKmvc2fRSb8e+GubGoRijjFLnyJsQATvW04
+         539Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z1iEZfsz63+hFaflS3INWnySuglWD+I2yD90meQjneg=;
+        b=ZCQPXqjBJlOCfdcK8eRbygK/RSfYKdmKZwp2KN4wCViQ6OB+cFZnhHKZE3VO6PRdJo
+         igolQgrNdutiRwTd10otapCpkSqsz82GjquV0zFYszjT42Ttg4yQalyiS4ayLIVkxHp7
+         MJqKIjBXrpuqnc0rODxVoRUn/NBOUOGIlmHsV2rRP8GcJP66hAuR7EB5+Bz9Z4fNQYu7
+         maEh4kQWVJp5VffVtiBjhQU4Y7Pz7Hay7ZP1qCMZW6KWMAGe9BPgjePYHJzzJLfvkKT5
+         hgwFLRDoPWOFt0jXh1QWwRKM/EoqdW5NUzTD0XunYcu1lJfVBxE/DOIaln7CA8d5hOt0
+         a47A==
+X-Gm-Message-State: APjAAAUoqjDp1OyIwvDEoDImpDDsCftmEV9jNR/AqRBkOcRzwviOIhiq
+        NOpCVzI1NHlWsdHy9l3aQGMClWDGH4eZCkokEnNU0A==
+X-Google-Smtp-Source: APXvYqyq4efJgRyiW1dhwc+BXSa/rMaGmKzS1bwzST3wnGDfySKyRkkUk67CpkWeFqq/cYJquUmsPhHAH94fVc4ULu0=
+X-Received: by 2002:a1c:3908:: with SMTP id g8mr64842wma.34.1570464509638;
+ Mon, 07 Oct 2019 09:08:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Mon, 07 Oct 2019 16:07:38 +0000 (UTC)
+References: <20191005175808.32018-1-colin.king@canonical.com>
+In-Reply-To: <20191005175808.32018-1-colin.king@canonical.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 7 Oct 2019 12:08:17 -0400
+Message-ID: <CADnq5_PkTbzqNfesJt29SaB7=R0x4BdoNmHiNDXrHwqj02JUGg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdkfd: add missing void argument to function kgd2kfd_init
+To:     Colin King <colin.king@canonical.com>
+Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Sep 2019 17:38:02 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
+On Sat, Oct 5, 2019 at 1:58 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Function kgd2kfd_init is missing a void argument, add it
+> to clean up the non-ANSI function declaration.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> Commit 37db8985b211 ("s390/cio: add basic protected virtualization
-> support") breaks virtio-ccw devices with VIRTIO_F_IOMMU_PLATFORM for non
-> Protected Virtualization (PV) guests. The problem is that the dma_mask
+Applied.  thanks!
 
-Hm, I should probably add that to my test configs.
+Alex
 
-> of the ccw device, which is used by virtio core, gets changed from 64 to
-> 31 bit, because some of the DMA allocations do require 31 bit
-> addressable memory. For PV the only drawback is that some of the virtio
-> structures must end up in ZONE_DMA because we have the bounce the
-> buffers mapped via DMA API anyway.
-> 
-> But for non PV guests we have a problem: because of the 31 bit mask
-> guests bigger than 2G are likely to try bouncing buffers. The swiotlb
-> however is only initialized for PV guests, because we don't want to
-> bounce anything for non PV guests. The first such map kills the guest.
-> 
-> Since the DMA API won't allow us to specify for each allocation whether
-> we need memory from ZONE_DMA (31 bit addressable) or any DMA capable
-> memory will do, let us use coherent_dma_mask (which is used for
-> allocations) to force allocating form ZONE_DMA while changing dma_mask
-> to DMA_BIT_MASK(64) so that at least the streaming API will regard
-> the whole memory DMA capable.
-> 
-> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-> Suggested-by: Robin Murphy <robin.murphy@arm.com>
-> Fixes: 37db8985b211 ("s390/cio: add basic protected virtualization support")
 > ---
-> 
-> v1 --> v2:
-> * Fixed comment: dropped the sentence with workaround.
-> 
-> The idea of enabling the client code to specify on s390 whether a chunk
-> of allocated DMA memory is to be allocated form ZONE_DMA for each
-> allocation was not well received [1]. 
-> 
-> Making the streaming API threat all addresses as DMA capable, while
-> restricting the DMA API allocations to  ZONE_DMA (regardless of needed
-> or not) is the next best thing we can do (from s390 perspective).
-> 
-> [1] https://lkml.org/lkml/2019/9/23/531 
-> ---
-> ---
->  drivers/s390/cio/cio.h    | 1 +
->  drivers/s390/cio/css.c    | 7 ++++++-
->  drivers/s390/cio/device.c | 2 +-
->  3 files changed, 8 insertions(+), 2 deletions(-)
-
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+>  drivers/gpu/drm/amd/amdkfd/kfd_module.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_module.c b/drivers/gpu/drm/amd/amdkfd/kfd_module.c
+> index 986ff52d5750..f4b7f7e6c40e 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_module.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_module.c
+> @@ -82,7 +82,7 @@ static void kfd_exit(void)
+>         kfd_chardev_exit();
+>  }
+>
+> -int kgd2kfd_init()
+> +int kgd2kfd_init(void)
+>  {
+>         return kfd_init();
+>  }
+> --
+> 2.20.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
