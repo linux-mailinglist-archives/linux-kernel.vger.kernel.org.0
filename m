@@ -2,49 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F6BCEA32
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B47C6CEA3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbfJGRJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:09:42 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49730 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728028AbfJGRJl (ORCPT
+        id S1729177AbfJGRJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:09:54 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:54526 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbfJGRJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:09:41 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x97H9HFp077194;
+        Mon, 7 Oct 2019 13:09:42 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x97H9HDV034666;
         Mon, 7 Oct 2019 12:09:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1570468157;
-        bh=oVMcBS9B51Vlj09LuDSqLmxgOK3U5xBBbOwYpJ+/9WQ=;
+        bh=qqvkpyb/zkfTPkxgRMnn6l/UTJ4GrNMbr9o3D9e32hE=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=TtaIHK/S8FEUT4UAj+g5dz/o5t5xQhmZEwiYlCHINILdBtQ2yg1T7WyjgwHQv8vXE
-         CRmWx+br6Kwxh3hAK/50nN29sE2hajNdaK4If9DRwBxWgAGRQs0tFemFUdv/kcj6BJ
-         kgyewPBVsncxsJXjAqhmWRu6IbUcQaXBf8Fo7TrU=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x97H9HNg055073
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        b=ss1qvHOtn/k3L5BBiwEn+HG2R0xjf3yJP3LNZiNpgbp7011gHXPKoYeQpIEPEt/6I
+         7Nz2VGN3FXe8mKAfXJQKpLZWH2wey5puHCybYHtBKCoyhvabHURK3STkStGToinHlJ
+         xdUnMlu+cIMwK7kFYBGG/8dfH5odZRTISmh3VeSA=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x97H9Hww083178;
         Mon, 7 Oct 2019 12:09:17 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 7 Oct
- 2019 12:09:14 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 12:09:17 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
  Frontend Transport; Mon, 7 Oct 2019 12:09:14 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x97H9GEF026321;
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x97H9G9s118747;
         Mon, 7 Oct 2019 12:09:16 -0500
 From:   Dan Murphy <dmurphy@ti.com>
 To:     <shifu0704@thundersoft.com>, <broonie@kernel.org>
 CC:     <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>,
         <linux-kernel@vger.kernel.org>, <navada@ti.com>, <perex@perex.cz>,
         <tiwai@suse.com>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 2/3] ASoC: tas2770: Remove unneeded read of the TDM_CFG3 register
-Date:   Mon, 7 Oct 2019 12:11:56 -0500
-Message-ID: <20191007171157.17813-2-dmurphy@ti.com>
+Subject: [PATCH v2 3/3] ASoc: tas2770: Remove unused defines and variables
+Date:   Mon, 7 Oct 2019 12:11:57 -0500
+Message-ID: <20191007171157.17813-3-dmurphy@ti.com>
 X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 In-Reply-To: <20191007171157.17813-1-dmurphy@ti.com>
 References: <20191007171157.17813-1-dmurphy@ti.com>
@@ -57,38 +56,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unneeded and incorrect read of the TDM_CFG3 register.
-The read is done but the value is never used.
+Remove unused defines and structure variables that are not
+referenced by the code.  If these are needed for future
+enhancements then they should be added at that time.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
 
 v2 - New patch no v1
 
- sound/soc/codecs/tas2770.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/soc/codecs/tas2770.h | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
-index 361d0bba72b3..c1e28dd0b73e 100644
---- a/sound/soc/codecs/tas2770.c
-+++ b/sound/soc/codecs/tas2770.c
-@@ -386,7 +386,6 @@ static int tas2770_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- {
- 	u8 tdm_rx_start_slot = 0, asi_cfg_1 = 0;
- 	int ret;
--	int value = 0;
- 	struct snd_soc_component *component = dai->component;
- 	struct tas2770_priv *tas2770 =
- 			snd_soc_component_get_drvdata(component);
-@@ -442,8 +441,6 @@ static int tas2770_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	if (ret < 0)
- 		return ret;
- 
--	value = snd_soc_component_read32(component, TAS2770_TDM_CFG_REG3);
+diff --git a/sound/soc/codecs/tas2770.h b/sound/soc/codecs/tas2770.h
+index d597a8280707..cbb858369fe6 100644
+--- a/sound/soc/codecs/tas2770.h
++++ b/sound/soc/codecs/tas2770.h
+@@ -125,40 +125,19 @@
+ #define ERROR_UNDER_VOLTAGE 0x0000008
+ #define ERROR_BROWNOUT      0x0000010
+ #define ERROR_CLASSD_PWR    0x0000020
+-#define TAS2770_SLOT_16BIT  16
+-#define TAS2770_SLOT_32BIT  32
+-#define TAS2770_I2C_RETRY_COUNT      3
 -
- 	tas2770->asi_format = fmt;
+-struct tas2770_register {
+-	int book;
+-	int page;
+-	int reg;
+-};
+-
+-struct tas2770_dai_cfg {
+-	unsigned int dai_fmt;
+-	unsigned int tdm_delay;
+-};
  
- 	return 0;
+ struct tas2770_priv {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+-	struct snd_soc_codec *codec;
+ 	struct snd_soc_component *component;
+-	struct mutex dev_lock;
+-	struct hrtimer mtimer;
+ 	int power_state;
+ 	int asi_format;
+ 	struct gpio_desc *reset_gpio;
+ 	int sampling_rate;
+-	int frame_size;
+ 	int channel_size;
+ 	int slot_width;
+ 	int v_sense_slot;
+ 	int i_sense_slot;
+-	bool runtime_suspend;
+-	unsigned int err_code;
+-	struct mutex codec_lock;
+ };
+ 
+ #endif /* __TAS2770__ */
 -- 
 2.22.0.214.g8dca754b1e
 
