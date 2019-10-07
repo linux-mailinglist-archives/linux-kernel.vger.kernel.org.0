@@ -2,102 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CADCCD9F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 02:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51A35CD9FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 02:51:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfJGApz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 6 Oct 2019 20:45:55 -0400
-Received: from mail-eopbgr20077.outbound.protection.outlook.com ([40.107.2.77]:41128
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726661AbfJGApy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 Oct 2019 20:45:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z2ApjYd/c5z0TxyBOocS2eRCJP56ZLGOHHksdmvHGh+11Xm2F2CuTIqokmtKXe0X5OJpe6XDG9egqxvjkpYOITqBnaQzrCZL8hP/vPJKZw6PI7Ufj8zzTsv6C/vdIUVvGJfC5ETAseYmQOiwXko7gzTe2IrvIuVsL8M5nhtsva/YCk9FTFqRiBrC5LVdYdT/4ADM9AY/GxqnsUnvVHX7IYkGMz1a01tWFAsj9H5v+iOAnHACMZnoVA7/ZWWAR36Iut+zq03m/057RRyzqoXFRGPD36jHwkLQ/8iYYX/J03UkcRi/3qxq8JcTRhhzPd1pHwe9NswdjJtA3M5TVn53/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vhhHQH6uVALXlP+dDGAM+lgnZ6issBrGnrxW7CsOvAM=;
- b=ZVhXNh6B88JMOlEQd4Pa+qp3EYqLHEMYctf/yrNRtu6ZplOQW4X00OFtJqaO5bhsePb+sU1AU5IwZi8p8Hu3Xyn6d2RY7wBrY3Rgz4vZpq1Z8Y48YuB4PRq4tF5R1IANGR85+gmJpNaGsBcmQXkOU6fUC0kieKLS2POfVmqhuREpQbG/zUorA+HlPNhHQ+UPDebmwXTtOE7ZkCNcB/a22c2S21SeZN/Dr1U11r2yZZGINm/fM8RXjC1ekFDQIsWyxGZr8/P9z84bxKGHMrECc16+4mGnkyVwi/zpJb0Zuu4nyzvRJ2T2bBc/G8ekJRA1mkKNem3ZeKrekcMY/4vIVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vhhHQH6uVALXlP+dDGAM+lgnZ6issBrGnrxW7CsOvAM=;
- b=k3Jq/RGSjtmLogpSmHsYNuDMklIlWGsXXZ5xP1QvJw6PEF4Yt0Wa2cptT0l+mcwx4nf9RioRn5PAFKMzB35jny2z09URa1F9+hyMy0aB2Ypy3Rn2tQYIJYaL3RcJK7AI37tdzvnkbN/DHmNhUXDWwLOPncNGWOj1wxgyYsJoENk=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3931.eurprd04.prod.outlook.com (52.134.65.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.20; Mon, 7 Oct 2019 00:45:51 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::d469:ad51:2bec:19f0]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::d469:ad51:2bec:19f0%6]) with mapi id 15.20.2305.023; Mon, 7 Oct 2019
- 00:45:50 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] ARM: dts: imx7s: Correct GPT's ipg clock source
-Thread-Topic: [PATCH] ARM: dts: imx7s: Correct GPT's ipg clock source
-Thread-Index: AQHVbGj9OePM1LgLKkuaNPfAjuopxKdNaGOAgAENZYA=
-Date:   Mon, 7 Oct 2019 00:45:50 +0000
-Message-ID: <DB3PR0402MB3916B8450581E6D3F9F8D566F59B0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1568622549-15819-1-git-send-email-Anson.Huang@nxp.com>
- <20191006083233.GB7150@dragon>
-In-Reply-To: <20191006083233.GB7150@dragon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 92a33d0f-ec11-499e-01c3-08d74abfb3a5
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: DB3PR0402MB3931:|DB3PR0402MB3931:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB39318FB968382E4C8C4B5802F59B0@DB3PR0402MB3931.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-forefront-prvs: 01834E39B7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(136003)(366004)(39860400002)(376002)(189003)(199004)(3846002)(54906003)(99286004)(229853002)(5660300002)(76176011)(2906002)(7696005)(14454004)(52536014)(6916009)(102836004)(4744005)(86362001)(6116002)(6436002)(25786009)(71190400001)(44832011)(55016002)(9686003)(71200400001)(11346002)(33656002)(486006)(446003)(26005)(186003)(7736002)(6506007)(476003)(66946007)(66476007)(8676002)(81166006)(81156014)(478600001)(4326008)(66066001)(66446008)(64756008)(66556008)(8936002)(76116006)(74316002)(256004)(6246003)(316002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3931;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ObNtBWuE6qnZTTP7UXMHKQWBSEDm5Lx2Jh4zmdQgire5vaVEYb1hiaT5fHfiXlnNiKdpGcVhmGPeFCpl/1Psy0mNLr4nqRznkgnPqLXICTqTcSUnVGRfR/U/9XoTk9KQVheiyObXXtuf3Qklhmtaejvaau22hmtNSb8T1mRCUVldg6Wcb8Y5KnjjBZIyqTGZsobpf0lTGvF0NBDcm0s5P7k6rJTN/rUJlz1uWiymoRx9CG+g16G45609wUuMXA7f0MRuzQAfs4tapIT+4occE3cBvSb///kDVBGm4oM8cgjeF4V5yPwPLWvMJlHomLnn1VAqLLO5FwA5vjHb9FzIf1eBDED67dfddPvYtk+lkSjF9CTkoGOpH+Rx0laPf1dvAn9No7Ct0uQWPOC0VnVJ/ohEk5GlBGWSRUYO1qxwzlQ=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726826AbfJGAvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 6 Oct 2019 20:51:08 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:56513 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726661AbfJGAvI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 Oct 2019 20:51:08 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id A352E20DC2;
+        Sun,  6 Oct 2019 20:51:06 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Sun, 06 Oct 2019 20:51:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:content-type:mime-version
+        :content-transfer-encoding; s=fm1; bh=AUCWi7dg8CtTdu5/plLNnp01CE
+        E4wJlXKJek4yB9CPI=; b=3HG4LrcTHN9Rt/xJv6OQOYG4uykAeci7ZaesvYVqtA
+        98SCnmKSFkIbvAvi5v8alch9hVABsNEtXKfagZipFoAX0JZr9F9sSKbGmv8DXSI1
+        IQB47gas/pvfledWYBMybbOYsgz6Ndvqu7RhnC+AUnFvKhSqSCw4TM9xwW/Y+y1Q
+        jFngz5AnMcvweIye+bF9HukBtI5ItKLd0npPgcvt6YJZm3ajXmT/JfNpcBfTYkSF
+        nE20fjgqeIoe8rvLZfzypeeAbPiIJGV6xNa4g76JCLMm9489sUQUtbkVPwyiUuD6
+        jW2Wp5tvWmeOWEVUsTXEku1IEBjTT1nmKfmqrpCBE6Lg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=AUCWi7
+        dg8CtTdu5/plLNnp01CEE4wJlXKJek4yB9CPI=; b=B1vpEkXfw6jp1jIhBihmsn
+        me06S9umVe0fiZYflrjG6CUdp3dzeZTS3DSaRbELikITq/w9eK7F0OcND0osxXmq
+        Le+7ICBdK+ZdevvU/o3/HvjyaB/xRxTgp6ge5Px03SqZh/O1Sv/doZXTFekc0Gbn
+        oUCl6TNpGgnYvVxsm84pQ7Hse1bqFCdEe+av6uPODpAIhzqnglgQzDxntJrVnpZQ
+        G50+JJIOM0LQI8M9uBFFL8OZpXREktXPNPUzbl21lDWmFSzXf2R/mm6oBdwYMGS2
+        Jqdm1timoX5QWzEoKg7XI99uo0jvXqnuckC+mTlS4iFVG6Gszzmm33zxkd6ePYHA
+        ==
+X-ME-Sender: <xms:-YuaXRdrZJ1Zb5cJZxFTeHSMQmwChPDyGgeeJFqpxhKmmZ3RqDyaFQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheeigdegudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepkffuhffvffgtfggggfesthejredttd
+    erjeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvght
+    qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduudekrddvtdelrdduke
+    efrdejudenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhn
+    vghtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:-ouaXTc4UYhOy_DMBme8dTXijB5zTjTrQ84A7iGsGqDONF9P9NMfdQ>
+    <xmx:-ouaXVhGdUmzTaS08x2SX7Ck7y3vRKRxDxjCYXa8CBFQiG3vg186wA>
+    <xmx:-ouaXfQMQdw9KnQctQja8oMpj3k0yzpEcIo89gpjEgoDRbwOuNcNHw>
+    <xmx:-ouaXco0bU1zHip3hDK6BK7KcXBrX7YqjNVAfyCt-891n-M1X4aoFw>
+Received: from mickey.themaw.net (unknown [118.209.183.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 66832D6005B;
+        Sun,  6 Oct 2019 20:51:04 -0400 (EDT)
+Message-ID: <199d4dd82398c5a2cc915525024a122ed73a6637.camel@themaw.net>
+Subject: [ANNOUNCE] autofs 5.1.6 release
+From:   Ian Kent <raven@themaw.net>
+To:     autofs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 07 Oct 2019 08:51:00 +0800
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92a33d0f-ec11-499e-01c3-08d74abfb3a5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2019 00:45:50.8669
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rtsIV4961zoFrYhELmo1rpFsExkIhjCmwc0DJYmWdSv9eyxvxNjiBdbcnPe5RHjjOFMN8v1UNQ4GbaGMBOUq9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3931
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFNoYXduDQoNCj4gT24gTW9uLCBTZXAgMTYsIDIwMTkgYXQgMDQ6Mjk6MDlQTSArMDgwMCwg
-QW5zb24gSHVhbmcgd3JvdGU6DQo+ID4gaS5NWDdTL0QncyBHUFQgaXBnIGNsb2NrIHNob3VsZCBi
-ZSBmcm9tIEdQVCBjbG9jayByb290IGFuZCBjb250cm9sbGVkDQo+ID4gYnkgQ0NNJ3MgR1BUIEND
-R1IsIHVzaW5nIGNvcnJlY3QgY2xvY2sgc291cmNlIGZvciBHUFQgaXBnIGNsb2NrDQo+ID4gaW5z
-dGVhZCBvZiBJTVg3RF9DTEtfRFVNTVkuDQo+IA0KPiBTbyBib3RoICdpcGcnIGFuZCAncGVyJyBj
-bG9jayBhcmUgY29taW5nIGZyb20gR1BUIHJvb3QgY2xvY2s/DQoNClllcy4NCg0KPiANCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gDQo+IEl0
-IGxvb2tzIGxpa2UgYSBmaXgsIHNvIGRvIHdlIG5lZWQgYSBGaXhlcyB0YWcgaGVyZT8NCg0KU3Vy
-ZSwgd2lsbCBhZGQgYSBmaXhlcyB0YWcgaW4gVjIuDQoNClRoYW5rcywNCkFuc29uLg0K
+Hi all,
+
+It's time for a release, autofs-5.1.6.
+
+This is an important release because it marks the beginning of
+work to be done torward resolving the very long standing problem
+of using very large direct mount maps in autofs, along with the
+needed mitigatigation of the effects of those large mount tables
+in user space.
+
+The first thing that needs to be done is for autofs to get back
+to what is was before the symlinking of the mount table to the
+proc file system. From experience having a large number of (largely
+not useful) autofs mount entries showing up in the mount table
+makes system administation frustrating and is quite annoying.
+
+To do this I'm using the same approach used in other SysV autofs
+implementations of providing an autofs pseudo mount option "ignore"
+that can be used by user space as a hint to ignore these mount
+entries.
+
+This will require fairly straight forward changes to glibc and
+libmount at least. The glibc change has been accepted and I plan
+on submitting a change for libmount when I get a chance.
+
+A configuration option, use_ignore_mount_option, has been added
+to autofs that is initially disabled to allow people to enable it
+when they are confident that there won't be unexpected problems.
+
+The side effects of very large mount tables in user space is
+somewhat difficult to mitigate.
+
+First, to acheive this autofs needs to not use the system mount
+table for expiration "at all". Not using the mount table for expires
+has proven very difficult to do and initial attempts resulted in
+changes that didn't fit in well at all.
+
+The changes to clean up the mount table listing amounted to making
+autofs use it's own genmntent(3) implementation (borrowed from glibc)
+but quite a bit of that change was re-factoring toward eliminating
+the need to use the mount table during expires. I had trouble getting
+that to work, let alone stable, but the approach will fit in well
+with the current design so it's progress.
+
+Then there's the affect of very large mount tables on other user
+space applications.
+
+For example, under rapid mount activity we see several user space
+process, systemd, udisk2, et. al., growing to consume all available
+CPU and a couple of others performing poorly simply because the
+mount table is large.
+
+I had planned on using the fsinfo() system call being proposed by
+David Howells for initial mount handing improvements in libmount,
+and later David's related kernel notifications proposal for further
+libmount mount table handling improvements but those propsals have
+seen some challenges being accepted so we will have to wait and see
+how things go before working out how to acheive this rather difficult
+goal.
+
+So there's a long way to go but progress is bieng made!
+
+Additionally there are a number of bug fixes and other minor
+improvements.
+
+autofs
+======
+
+The package can be found at:
+https://www.kernel.org/pub/linux/daemons/autofs/v5/
+
+It is autofs-5.1.6.tar.[gz|xz]
+
+No source rpm is there as it can be produced by using:
+
+rpmbuild -ts autofs-5.1.6.tar.gz
+
+and the binary rpm by using:
+
+rpmbuild -tb autofs-5.1.6.tar.gz
+
+Here are the entries from the CHANGELOG which outline the updates:
+
+07/10/2019 autofs-5.1.6
+- support strictexpire mount option.
+- fix hesiod string check in master_parse().
+- add NULL check for get_addr_string() return.
+- use malloc(3) in spawn.c.
+- add mount_verbose configuration option.
+- optionally log mount requestor process info.
+- log mount call arguments if mount_verbose is set.
+- Fix NFS mount from IPv6 addresses.
+- make expire remaining log level debug.
+- allow period following macro in selector value.
+- fix macro expansion in selector values.
+- fix typing errors.
+- Explain /etc/auto.master.d usage.
+- plus map includes are only allowed in file sources.
+- Update README.
+- fix additional typing errors.
+- update autofs(8) offset map entry update description.
+- increase group buffer size geometrically.
+- also use strictexpire for offsets.
+- remove unused function has_fstab_option().
+- remove unused function reverse_mnt_list().
+- remove a couple of old debug messages.
+- fix amd entry memory leak.
+- fix unlink_mount_tree() not umounting mounts.
+- use ignore option for offset mounts as well.
+- add config option for "ignore" mount option
+- use bit flags for autofs mount types in mnt_list.
+- use mp instead of path in mnt_list entries.
+- always use PROC_MOUNTS to make mount lists.
+- add glibc getmntent_r().
+- use local getmntent_r in table_is_mounted().
+- refactor unlink_active_mounts() in direct.c.
+- don't use tree_is_mounted() for mounted checks.
+- use single unlink_umount_tree() for both direct and indirect mounts.
+- move unlink_mount_tree() to lib/mounts.c.
+- use local_getmntent_r() for unlink_mount_tree().
+- use local getmntent_r() in get_mnt_list().
+- use local getmntent_r() in tree_make_mnt_list().
+- fix missing initialization of autofs_point flags.
+
+Ian
+
