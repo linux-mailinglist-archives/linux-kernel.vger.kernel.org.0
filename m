@@ -2,80 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 241A5CDBF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 08:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4989ACDBFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 08:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfJGGwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 02:52:05 -0400
-Received: from smtprelay0247.hostedemail.com ([216.40.44.247]:41828 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726960AbfJGGwF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 02:52:05 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id F2040182CED5B;
-        Mon,  7 Oct 2019 06:52:03 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:599:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2559:2563:2682:2685:2828:2859:2895:2911:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4425:4605:5007:6119:7974:9025:10004:10400:11232:11658:11914:12043:12297:12555:12740:12760:12895:13069:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21080:21433:21627:21740:30054:30060:30070:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: drain01_11f090bc8a144
-X-Filterd-Recvd-Size: 1962
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  7 Oct 2019 06:52:03 +0000 (UTC)
-Message-ID: <b5b363ef96a1bfad6965c4b01c8737990b8f4e91.camel@perches.com>
-Subject: Re: checkpatch: false positive "does MAINTAINERS need updating?"
- warning
-From:   Joe Perches <joe@perches.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Sun, 06 Oct 2019 23:52:02 -0700
-In-Reply-To: <CAK7LNARKUAoHDFzGJ3snAy2XeQshTqmzDMUC7qqU8=L-p=+LNg@mail.gmail.com>
-References: <CAK7LNARKUAoHDFzGJ3snAy2XeQshTqmzDMUC7qqU8=L-p=+LNg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        id S1727171AbfJGG5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 02:57:23 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3262 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726202AbfJGG5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 02:57:23 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 697CFF29AA39D751D815;
+        Mon,  7 Oct 2019 14:57:20 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 7 Oct 2019
+ 14:57:18 +0800
+Subject: [PATCH] mm/cma.c: Switch to bitmap_zalloc() for cma bitmap allocation
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+To:     <akpm@linux-foundation.org>, <rppt@linux.ibm.com>,
+        <huyue2@yulong.com>, <peng.fan@nxp.com>, <aryabinin@virtuozzo.com>,
+        <ryh.szk.cmnty@gmail.com>, <andreyknvl@google.com>,
+        <opendmb@gmail.com>, <tglx@linutronix.de>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <895d4627-f115-c77a-d454-c0a196116426@huawei.com>
+Message-ID: <2ab873b7-c754-0af9-f119-f6d435d84767@huawei.com>
+Date:   Mon, 7 Oct 2019 14:57:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <895d4627-f115-c77a-d454-c0a196116426@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-10-07 at 13:44 +0900, Masahiro Yamada wrote:
-> Hi Joe,
-> 
-> 
-> I ran checkpatch.pl against the following:
-> https://lore.kernel.org/patchwork/patch/1136334/
-> 
-> 
-> I did update MAINTAINERS, but I still get
-> "does MAINTAINERS need updating?" warning.
-> Why?
+kzalloc() is used for cma bitmap allocation in cma_activate_area(),
+switch to bitmap_zalloc() is more clearly.
 
-Because checkpatch is not able to determine
-that you updated MAINTAINERS correctly.
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+---
+ mm/cma.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Ignore checkpatch output when you know better.
+diff --git a/mm/cma.c b/mm/cma.c
+index 7fe0b83..be55d19 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -95,13 +95,11 @@ static void cma_clear_bitmap(struct cma *cma, unsigned long pfn,
 
-> 
-> 
-> $ scripts/checkpatch.pl
-> 0001-doc-move-namespaces.rst-out-of-kbuild-directory.patch
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #18:
->  Documentation/{kbuild => admin-guide}/namespaces.rst | 0
-> 
-> total: 0 errors, 1 warnings, 14 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace.
-> 
-> 0001-doc-move-namespaces.rst-out-of-kbuild-directory.patch has style
-> problems, please review.
-> 
-> NOTE: If any of the errors are false positives, please report
->       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> 
-> 
+ static int __init cma_activate_area(struct cma *cma)
+ {
+-	int bitmap_size = BITS_TO_LONGS(cma_bitmap_maxno(cma)) * sizeof(long);
+ 	unsigned long base_pfn = cma->base_pfn, pfn = base_pfn;
+ 	unsigned i = cma->count >> pageblock_order;
+ 	struct zone *zone;
+
+-	cma->bitmap = kzalloc(bitmap_size, GFP_KERNEL);
+-
++	cma->bitmap = bitmap_zalloc(cma_bitmap_maxno(cma), GFP_KERNEL);
+ 	if (!cma->bitmap) {
+ 		cma->count = 0;
+ 		return -ENOMEM;
+@@ -139,7 +137,7 @@ static int __init cma_activate_area(struct cma *cma)
+
+ not_in_zone:
+ 	pr_err("CMA area %s could not be activated\n", cma->name);
+-	kfree(cma->bitmap);
++	bitmap_free(cma->bitmap);
+ 	cma->count = 0;
+ 	return -EINVAL;
+ }
+-- 
+2.7.4
 
