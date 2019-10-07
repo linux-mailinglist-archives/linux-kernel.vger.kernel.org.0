@@ -2,172 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC377CECCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:31:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74035CECD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:32:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbfJGTbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 15:31:12 -0400
-Received: from mga09.intel.com ([134.134.136.24]:26156 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729091AbfJGTbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:31:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 12:31:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
-   d="scan'208";a="192372897"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Oct 2019 12:31:09 -0700
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     andriy.shevchenko@intel.com
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        prarit@redhat.com,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v3 6/6] tools/power/x86/intel-speed-select: Implement base-freq commands on CascadeLake-N
-Date:   Mon,  7 Oct 2019 12:31:00 -0700
-Message-Id: <20191007193100.36934-7-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20191007193100.36934-1-srinivas.pandruvada@linux.intel.com>
-References: <20191007193100.36934-1-srinivas.pandruvada@linux.intel.com>
+        id S1729426AbfJGTbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 15:31:48 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35257 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbfJGTbs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 15:31:48 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m7so14971965lji.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 12:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6janG/twynO5N6RLQTcAa8FnjT+uKYqGn399L8c11Xw=;
+        b=IKWapvpNRq1xHEY7GPQfDPs22GMw9wvc21ZN5KRGPv/xYt3khp+SeCRMoM/fSpVKpB
+         4tXNJ8F0RIfSv24JeUQuNX6XWMz8Y65ue+gViSckr3CFvIDPdF++OXJLaYQfPy9D2jh5
+         TcqoFXRmbAK5Im/RmfuUsP5p0U6Z1RC2fgyC/biZl9Ao8jKUK6AKUF7OQVtB4X+W/TNA
+         TMz2qnQlwqKynTBphxbH7vLfktSjT3VswEyLc57z+aX2gm6OMLZy6N3XV1Pf6cPRC9ew
+         Ht9mtRDe2oFMFBITKZqXJW9BGSw+6Sd/Rz1dFtOPX5RXGw1yID007FMGGshWsGwW7+RJ
+         lYXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6janG/twynO5N6RLQTcAa8FnjT+uKYqGn399L8c11Xw=;
+        b=a3K7NrlmQVUF46WRet2kL4FF5cZyIrLoc9jFO0QP/OVZY8SrKlEaokbKvTC3hONyNK
+         mJ/PMaswDGtx5HKJiQHHAfRQ1YbWkyzMoGtd2zNoTXLgaFNz3mjQy3bufJUZFuQ3Wdk6
+         5lwUMRV+ev+SW638UKVNUFcfz4O7kfxeFMxZn+lG95Yu15byEpG+Ahbl5w93enNdY4DN
+         y7+5s6o5HgBgP8zrptl2qAH0ivPAt/BuqygYGSpuyTVRIziZjTev0On+90o+o+INAHMz
+         QBRf6tOKZI3hvTBMOBBmNeAjeEOokgvQXRqs3fNpxO5lhyj4byyNJ64FNoZZmrf7PELI
+         3mYQ==
+X-Gm-Message-State: APjAAAWNZJWsrurMjiUpYB+zzH2DD+UzcKL1akt/zqXnKsz+yRDbokhZ
+        fHi9g1zqizDbli0GALErxm6injv9WkbK4Onvnt2a2A==
+X-Google-Smtp-Source: APXvYqxDDz2qJJc79lbL5ebXszVSYDWfg+4D6lLlqjAogPaHqCThU85XWA4j67TE/Cr1e90BP+LTMb2HvsWUYEQ9kmQ=
+X-Received: by 2002:a2e:2e13:: with SMTP id u19mr17510537lju.112.1570476704924;
+ Mon, 07 Oct 2019 12:31:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAL_quvRknSSVvXN3q_Se0hrziw2oTNS3ENNoeHYhvciCRq9Yww@mail.gmail.com>
+ <87h84rbile.fsf@intel.com> <20191002102428.zaid63hp6wpd7w34@holly.lan>
+ <8736gbbf2b.fsf@intel.com> <CAL_quvQkFjkBjJC5wH2t5XmyEq9OKWYSbAv39BJWT1hrKO7j8g@mail.gmail.com>
+ <87h84q9pcj.fsf@intel.com> <CAL_quvQoWnWqS5OQAqbLcBO-bR9_obr1FBc6f6mA1T00n1DJNQ@mail.gmail.com>
+ <CAOw6vbJ7XX8=nrJDENfn2pacf4MqQOkP+x8JV0wbqzoMfLvZWQ@mail.gmail.com> <CAL_quvTe_v9Vsbd0u4URitojmD-_VFeaOQ1BBYZ_UGwYWynjVA@mail.gmail.com>
+In-Reply-To: <CAL_quvTe_v9Vsbd0u4URitojmD-_VFeaOQ1BBYZ_UGwYWynjVA@mail.gmail.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Mon, 7 Oct 2019 12:31:08 -0700
+Message-ID: <CACK8Z6H+tBHproaH2hf59mYF406ohYhAWj8szYn=Fjao2SUZVA@mail.gmail.com>
+Subject: Re: New sysfs interface for privacy screens
+To:     Mat King <mathewk@google.com>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Ross Zwisler <zwisler@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        David Airlie <airlied@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Alexander Schremmer <alex@alexanderweb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prarit Bhargava <prarit@redhat.com>
+On Mon, Oct 7, 2019 at 9:19 AM Mat King <mathewk@google.com> wrote:
+>
+> On Mon, Oct 7, 2019 at 7:09 AM Sean Paul <seanpaul@chromium.org> wrote:
+> >
+> > On Thu, Oct 3, 2019 at 3:57 PM Mat King <mathewk@google.com> wrote:
+> > >
+> > > On Thu, Oct 3, 2019 at 2:59 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> > > >
+> > > > On Wed, 02 Oct 2019, Mat King <mathewk@google.com> wrote:
+> > > > > On Wed, Oct 2, 2019 at 4:46 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> > > > >>
+> > > > >> On Wed, 02 Oct 2019, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+> > > > >> > On Wed, Oct 02, 2019 at 12:30:05PM +0300, Jani Nikula wrote:
+> > > > >> >> On Tue, 01 Oct 2019, Mat King <mathewk@google.com> wrote:
+> > > > >> >> > Resending in plain text mode
+> >
+> > /snip
+> >
+> > >
+> > > So my proposal would now be to add a new standard property to
+> > > drm_connector called "privacy_screen" this property would be an enum
+> > > which can take one of three values.
+> > >
+> > > PRIVACY_UNSUPPORTED - Privacy is not available for this connector
+> > > PRIVACY_DISABLED - Privacy is available but turned off
+> > > PRIVACY_ENABLED - Privacy is available and turned on
+> >
+> > Agree with Jani, use the property presence to determine if it's supported
+>
+> That makes sense; just to confirm can a property be added or removed
+> after the connector is registered?
+>
+> >
+> > >
+> > > When the connector is initized the privacy screen property is set to
+> > > PRIVACY_UNSUPPORTED and cannot be changed unless a drm_privacy_screen
+> > > is registered to the connector. drm_privacy_screen will look something
+> > > like
+> > >
+> > > struct drm_privacy_screen_ops {
+> > >     int (*get_privacy_state)(struct drm_privacy_screen *);
+> > >     int (*set_privacy_state)(struct drm_privacy_screen *, int);
+> > > }
+> > >
+> > > struct drm_privacy_screen {
+> > >     /* The privacy screen device */
+> > >     struct device *dev;
+> > >
+> > >     /* The connector that the privacy screen is attached */
+> > >     struct drm_connector *connector;
+> > >
+> > >     /* Ops to get and set the privacy screen state */
+> > >     struct drm_privacy_screen_ops *ops;
+> > >
+> > >     /* The current state of the privacy screen */
+> > >     int state;
+> > > }
+> > >
+> > > Privacy screen device drivers will call a function to register the
+> > > privacy screen with the connector.
+> >
+> > Do we actually need dedicated drivers for privacy screen? It seems
+> > like something that is panel-specific hardware, so I'd suggest just
+> > using the panel driver.
+>
+> The privacy screen is physically part of the display but the control
+> interface, at least in all current use cases, is ACPI. Is there a way
+> to control an ACPI device with the panel driver?
 
-Add functionality for base-freq info|enable|disable info on CascadeLake-N.
+I feel that doing it in a dedicated driver has the advantage that if
+we can standardise the control interface, it can be used across
+different panels. So a new panel can be supported using the existing
+driver by merely instantiating the right ACPI HID "privacy screen"
+device as a child device of the parent display / panel device. This
+parent-child relation would also give the kernel the connection needed
+about "which display does this privacy screen attach to". In future,if
+non-x86 platforms need the feature using a different control interface
+(say via a GPIO driver), the privacy screen driver can be updated to
+support that also.
 
-Sample output:
-Intel(R) Speed Select Technology
-Executing on CPU model:85[0x55]
- package-0
-  die-0
-    cpu-0
-      speed-select-base-freq
-        high-priority-base-frequency(MHz):2700000
-        high-priority-cpu-mask:00000000,0000e8c0
-        high-priority-cpu-list:6,7,11,13,14,15
-        low-priority-base-frequency(MHz):2100000
- package-1
-  die-0
-    cpu-20
-      speed-select-base-freq
-        high-priority-base-frequency(MHz):2700000
-        high-priority-cpu-mask:0000000e,8c000000
-        high-priority-cpu-list:26,27,31,33,34,35
-        low-priority-base-frequency(MHz):2100000
+Thanks,
 
-The enable command always returns success, and the disable command always
-returns failed because SST-BF cannot be enabled or disabled from the OS on
-CascadeLake-N.
+Rajat
 
-Enable command also have support for --auto|-a option, which sets cpufreq
-scaling_min to max, so that the high priority base frequency can be the
-required minimum for high priority cores. Disable command with -a/--auto
-option reset the setting back to the min frequency.
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../x86/intel-speed-select/isst-config.c      | 51 +++++++++++++++++--
- 1 file changed, 47 insertions(+), 4 deletions(-)
-
-diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 3c0eb4240df4..1c20048b42e7 100644
---- a/tools/power/x86/intel-speed-select/isst-config.c
-+++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -1005,6 +1005,26 @@ static void set_tdp_level(int arg)
- 	isst_ctdp_display_information_end(outf);
- }
- 
-+static void clx_n_dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2,
-+				       void *arg3, void *arg4)
-+{
-+	int ret;
-+
-+	ret = clx_n_config(cpu);
-+	if (ret) {
-+		perror("isst_get_process_ctdp");
-+	} else {
-+		struct isst_pkg_ctdp_level_info *ctdp_level;
-+		struct isst_pbf_info *pbf_info;
-+
-+		ctdp_level = &clx_n_pkg_dev.ctdp_level[0];
-+		pbf_info = &ctdp_level->pbf_info;
-+		isst_pbf_display_information(cpu, outf, tdp_level, pbf_info);
-+		free_cpu_set(ctdp_level->core_cpumask);
-+		free_cpu_set(pbf_info->core_cpumask);
-+	}
-+}
-+
- static void dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 				    void *arg4)
- {
-@@ -1022,6 +1042,8 @@ static void dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 
- static void dump_pbf_config(int arg)
- {
-+	void *fn;
-+
- 	if (cmd_help) {
- 		fprintf(stderr,
- 			"Print Intel(R) Speed Select Technology base frequency configuration for a TDP level\n");
-@@ -1035,13 +1057,18 @@ static void dump_pbf_config(int arg)
- 		exit(1);
- 	}
- 
-+	if (!is_clx_n_platform())
-+		fn = dump_pbf_config_for_cpu;
-+	else
-+		fn = clx_n_dump_pbf_config_for_cpu;
-+
- 	isst_ctdp_display_information_start(outf);
-+
- 	if (max_target_cpus)
--		for_each_online_target_cpu_in_set(dump_pbf_config_for_cpu, NULL,
--						  NULL, NULL, NULL);
-+		for_each_online_target_cpu_in_set(fn, NULL, NULL, NULL, NULL);
- 	else
--		for_each_online_package_in_set(dump_pbf_config_for_cpu, NULL,
--					       NULL, NULL, NULL);
-+		for_each_online_package_in_set(fn, NULL, NULL, NULL, NULL);
-+
- 	isst_ctdp_display_information_end(outf);
- }
- 
-@@ -1235,6 +1262,19 @@ static void set_pbf_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 	int ret;
- 	int status = *(int *)arg4;
- 
-+	if (is_clx_n_platform()) {
-+		if (status == 0) {
-+			ret = -1;
-+			if (auto_mode)
-+				set_scaling_min_to_cpuinfo_min(cpu);
-+		} else {
-+			ret = 0;
-+			if (auto_mode)
-+				set_scaling_min_to_cpuinfo_max(cpu);
-+		}
-+		goto disp_result;
-+	}
-+
- 	if (auto_mode) {
- 		if (status) {
- 			ret = set_pbf_core_power(cpu);
-@@ -1763,6 +1803,9 @@ static void get_clos_assoc(int arg)
- 
- static struct process_cmd_struct clx_n_cmds[] = {
- 	{ "perf-profile", "info", dump_isst_config, 0 },
-+	{ "base-freq", "info", dump_pbf_config, 0 },
-+	{ "base-freq", "enable", set_pbf_enable, 1 },
-+	{ "base-freq", "disable", set_pbf_enable, 0 },
- 	{ NULL, NULL, NULL, 0 }
- };
- 
--- 
-2.17.2
-
+>
+> >
+> > Sean
+> >
+> > >
+> > > int drm_privacy_screen_register(struct drm_privacy_screen_ops *ops,
+> > > struct device *dev, struct drm_connector *);
+> > >
+> > > Calling this will set a new field on the connector "struct
+> > > drm_privacy_screen *privacy_screen" and change the value of the
+> > > property to ops->get_privacy_state(). When
+> > > drm_mode_connector_set_obj_prop() is called with the
+> > > privacy_screen_proptery if a privacy_screen is registered to the
+> > > connector the ops->set_privacy_state() will be called with the new
+> > > value.
+> > >
+> > > Setting of this property (and all drm properties) is done in user
+> > > space using ioctrl.
+> > >
+> > > Registering the privacy screen with a connector may be tricky because
+> > > the driver for the privacy screen will need to be able to identify
+> > > which connector it belongs to and we will have to deal with connectors
+> > > being added both before and after the privacy screen device is added
+> > > by it's driver.
+> > >
+> > > How does that sound? I will work on a patch if that all sounds about right.
+> > >
+> > > One question I still have is there a way to not accept a value that is
+> > > passed to drm_mode_connector_set_obj_prop()? In this case if a privacy
+> > > screen is not registered the property must stay PRIVACY_UNSUPPORTED
+> > > and if a privacy screen is registered then PRIVACY_UNSUPPORTED must
+> > > never be set.
