@@ -2,135 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192E3CE394
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49FD3CE397
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfJGN24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:28:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49348 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727324AbfJGN24 (ORCPT
+        id S1728583AbfJGN3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:29:07 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45942 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbfJGN3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:28:56 -0400
-Received: from [185.66.195.251] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iHT4G-0007M9-S3; Mon, 07 Oct 2019 13:28:53 +0000
-Date:   Mon, 7 Oct 2019 15:28:51 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Andrea Parri <parri.andrea@gmail.com>
-Cc:     bsingharora@gmail.com, dvyukov@google.com, elver@google.com,
-        linux-kernel@vger.kernel.org,
-        syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2] taskstats: fix data-race
-Message-ID: <20191007132850.u4iwjh5c2or4p2dz@wittgenstein>
-References: <20191007104039.GA16085@andrea.guest.corp.microsoft.com>
- <20191007110117.1096-1-christian.brauner@ubuntu.com>
- <20191007131804.GA19242@andrea.guest.corp.microsoft.com>
+        Mon, 7 Oct 2019 09:29:06 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r134so9243943lff.12;
+        Mon, 07 Oct 2019 06:29:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pqYD4jTL26Lkbsq1KtcLnT62csNab9jmgl1QSZGOUz0=;
+        b=HwpPyQy5MQQ/Wi7GTUG/tRb/7MfSNtVgjW7FTxduVp5StaSEnX3kkChL4bCxkOFUOd
+         6v4UcsmKAbmgwMzEkkdhYcDqIN0fNG4jyKgIv/quGZtZrCGbL1fz+sQMdT0n+2wwwHTh
+         1T9QsweUSpn+SbSkxkhjn25hez4OfMQkZKtzn47Bk3TrEsmRcGEu8rY4q8QyqxN9PShY
+         3Il2P1f6jARXhN/gVLf9dOGRJOhAbrR+O50NUAd7rJ5ZcfNtdfbnHT5pYR8SYjCAfbxU
+         QX7R2gouNpp7YGmO4JDHyTDsPB3jPRvgz9IFK0uxbs8ntIbIruHHeqIHE64wPzSIjSw6
+         XZGg==
+X-Gm-Message-State: APjAAAX9/uQgxe+za2aahXwcpQnKFQnROwYsmTJaTrBy6tSmTicw0y+E
+        LrCEmh3XH3sQmTww7ccBWU3R+UsEVRsYag==
+X-Google-Smtp-Source: APXvYqyNQpxEHd5z1D3Qz5m5IShyRZbwN+ND3vrGJDazyPxUYYpX8ZIHxfsV/SZf1y1JaBb9QFF/bA==
+X-Received: by 2002:ac2:4a8f:: with SMTP id l15mr17121965lfp.21.1570454944104;
+        Mon, 07 Oct 2019 06:29:04 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id f22sm2702245lfk.56.2019.10.07.06.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 06:29:02 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
+        devicetree@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v8 2/6] media: ad5820: DT new optional field enable-gpios
+Date:   Mon,  7 Oct 2019 15:28:52 +0200
+Message-Id: <20191007132856.27948-3-ribalda@kernel.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191007132856.27948-1-ribalda@kernel.org>
+References: <20191007132856.27948-1-ribalda@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191007131804.GA19242@andrea.guest.corp.microsoft.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 03:18:04PM +0200, Andrea Parri wrote:
-> On Mon, Oct 07, 2019 at 01:01:17PM +0200, Christian Brauner wrote:
-> > When assiging and testing taskstats in taskstats_exit() there's a race
-> > when writing and reading sig->stats when a thread-group with more than
-> > one thread exits:
-> > 
-> > cpu0:
-> > thread catches fatal signal and whole thread-group gets taken down
-> >  do_exit()
-> >  do_group_exit()
-> >  taskstats_exit()
-> >  taskstats_tgid_alloc()
-> > The tasks reads sig->stats holding sighand lock seeing garbage.
-> 
-> You meant "without holding sighand lock" here, right?
+Document new enable-gpio field. It can be used to disable the part
+without turning down its regulator.
 
-Correct, thanks for noticing!
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/media/i2c/ad5820.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> 
-> 
-> > 
-> > cpu1:
-> > task calls exit_group()
-> >  do_exit()
-> >  do_group_exit()
-> >  taskstats_exit()
-> >  taskstats_tgid_alloc()
-> > The task takes sighand lock and assigns new stats to sig->stats.
-> > 
-> > Fix this by using READ_ONCE() and smp_store_release().
-> > 
-> > Reported-by: syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com
-> > Fixes: 34ec12349c8a ("taskstats: cleanup ->signal->stats allocation")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
-> > Link: https://lore.kernel.org/r/20191006235216.7483-1-christian.brauner@ubuntu.com
-> > ---
-> > /* v1 */
-> > Link: https://lore.kernel.org/r/20191005112806.13960-1-christian.brauner@ubuntu.com
-> > 
-> > /* v2 */
-> > - Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>:
-> >   - fix the original double-checked locking using memory barriers
-> > 
-> > /* v3 */
-> > - Andrea Parri <parri.andrea@gmail.com>:
-> >   - document memory barriers to make checkpatch happy
-> > ---
-> >  kernel/taskstats.c | 21 ++++++++++++---------
-> >  1 file changed, 12 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/kernel/taskstats.c b/kernel/taskstats.c
-> > index 13a0f2e6ebc2..978d7931fb65 100644
-> > --- a/kernel/taskstats.c
-> > +++ b/kernel/taskstats.c
-> > @@ -554,24 +554,27 @@ static int taskstats_user_cmd(struct sk_buff *skb, struct genl_info *info)
-> >  static struct taskstats *taskstats_tgid_alloc(struct task_struct *tsk)
-> >  {
-> >  	struct signal_struct *sig = tsk->signal;
-> > -	struct taskstats *stats;
-> > +	struct taskstats *stats_new, *stats;
-> >  
-> > -	if (sig->stats || thread_group_empty(tsk))
-> > -		goto ret;
-> > +	/* Pairs with smp_store_release() below. */
-> > +	stats = READ_ONCE(sig->stats);
-> 
-> This pairing suggests that the READ_ONCE() is heading an address
-> dependency, but I fail to identify it: what is the target memory
-> access of such a (putative) dependency?
-> 
-> 
-> > +	if (stats || thread_group_empty(tsk))
-> > +		return stats;
-> >  
-> >  	/* No problem if kmem_cache_zalloc() fails */
-> > -	stats = kmem_cache_zalloc(taskstats_cache, GFP_KERNEL);
-> > +	stats_new = kmem_cache_zalloc(taskstats_cache, GFP_KERNEL);
-> >  
-> >  	spin_lock_irq(&tsk->sighand->siglock);
-> >  	if (!sig->stats) {
-> > -		sig->stats = stats;
-> > -		stats = NULL;
-> > +		/* Pairs with READ_ONCE() above. */
-> > +		smp_store_release(&sig->stats, stats_new);
-> 
-> This is intended to 'order' the _zalloc()  (zero initializazion)
-> before the update of sig->stats, right?  what else am I missing?
+diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+index 5940ca11c021..db596e8eb0ba 100644
+--- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
++++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+@@ -8,6 +8,11 @@ Required Properties:
+ 
+   - VANA-supply: supply of voltage for VANA pin
+ 
++Optional properties:
++
++   - enable-gpios : GPIO spec for the XSHUTDOWN pin. The XSHUTDOWN signal is
++active low, a high level on the pin enables the device.
++
+ Example:
+ 
+        ad5820: coil@c {
+@@ -15,5 +20,6 @@ Example:
+                reg = <0x0c>;
+ 
+                VANA-supply = <&vaux4>;
++               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+        };
+ 
+-- 
+2.23.0
 
-Right, I should've mentioned that. I'll change the comment.
-But I thought this also paired with smp_read_barrier_depends() that's
-placed alongside READ_ONCE()?
-
-Christian
