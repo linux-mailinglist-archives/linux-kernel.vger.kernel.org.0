@@ -2,226 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C54FCE95B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AAF9CE963
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:38:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbfJGQhF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:37:05 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34742 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbfJGQhF (ORCPT
+        id S1728702AbfJGQiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:38:25 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:38678 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbfJGQiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:37:05 -0400
-Received: by mail-ot1-f67.google.com with SMTP id m19so11572985otp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:37:04 -0700 (PDT)
+        Mon, 7 Oct 2019 12:38:25 -0400
+Received: by mail-yb1-f194.google.com with SMTP id k10so1689621ybs.5
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:38:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IZLWASCjbu6D/P+ZICftXZeMrq/yAGXEHUQsfndiqNQ=;
-        b=Ege9LyT2tOY9wE7hQ5zQr5KhCevVdL0L9EeqjZoxWdaoQsjwlJJr+fWYZ3MRouDy71
-         61qyMgC44wt82yrVC/gs1TyHwUYNKR/Cw86VN3P0UoPLjebaYTWCYUhV6K2+03wT5GLS
-         arUx/S5D6NAplPdNu+hk5Mg4jyJvKZTW0PlDfqChIp/3rKYI4ll7GOGvINjMWPSwigKo
-         9HdrLPhS10dq09/i8IlSmxVmkD1HPDUtwycEP9tAMqXZz9JprDLddCpCHJDQctVI1Yft
-         GJ6Z9uzoy1aZEvNIPsULUFPa1bQsYUwZGeDKQSnWvGAMG6oMgnRTgr22u04hsaNmeWeT
-         3RHg==
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FzqVNr7tcxlwpcYADlhda0qZOie+lz7LOX/589zfMus=;
+        b=fxB9cPqg4HqUGdYDivJJPdLacJmb3vp4VEHC//Z5ObTlsNu+ii6NbHEEOfwrQeRYHX
+         rk9Jb8c/1D5BKy/LV/oDJUA6MnC9WVmwmt3fSMpUNLRxWG7ZP3rRNW4/ClVWqlZbovZy
+         As3Gj9d4k//dQ6J9KSx8hENX+9aQYBCkzmyixVJHF7sf7hj6lmE9pUqAM43YZOgedk1y
+         eawFwM01quT63JTy3IF4txAahS6VVT4G3O1ZwheamhN+J4JnEqmVqpUwPmZxqwgvAOzM
+         I7psY1x+jCMxZFFJuHBb0X2S9SPae9WZjlXUS1+DbdH7W4YHGmcjuUR0yuC9HHwjsVvw
+         tZ8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IZLWASCjbu6D/P+ZICftXZeMrq/yAGXEHUQsfndiqNQ=;
-        b=I8tG4j3xORoqRXI6ZpIW0tNuu/J7nBvrTxxCLw0jCxIBuLX6WX6NNbV/4rjj/vdsG3
-         FdOVXMTAL9vAIq0nYcC3hdWYA5Bya8NkuM1zBkcViz6Q7kzaXGbmigiB1y102/0IYKgn
-         Qq5ILCmM/OO+y2m0yVl3UQJyUy/Qyqjy1EG7xd/YmICRCu106NaeM2mnQFo840nEypL2
-         DhcO3Fj0SuVSnZEZ26sRcUK5W20QNW0qGRcskrDc6ZNtFFrreBdUr/BUOuvGyJHJSsnL
-         oWYGeKu87kDECmGOtDotewEFmP4g2eCnadslCymEGuxpERPcXnKPRskqAn6bfkYyxIsX
-         mZWw==
-X-Gm-Message-State: APjAAAVvbkx9K4JHRoFktw2+Jvg/ico04ifd1XV2GS633XbIpbgIK0mR
-        S855AM9F6EMTwW7b1OBeO4ZgEQ==
-X-Google-Smtp-Source: APXvYqxeX+GkedQBIlrnuDolFQSEic6i804WIcVagavp2bVA6UvcVs7eXpXNMsjmwLuWElyQBf8Cfw==
-X-Received: by 2002:a05:6830:14d5:: with SMTP id t21mr13122141otq.352.1570466223690;
-        Mon, 07 Oct 2019 09:37:03 -0700 (PDT)
-Received: from [192.168.17.59] (CableLink-189-218-29-211.Hosts.InterCable.net. [189.218.29.211])
-        by smtp.gmail.com with ESMTPSA id m25sm4428432oie.39.2019.10.07.09.37.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 09:37:02 -0700 (PDT)
-Subject: Re: [PATCH 4.4 00/36] 4.4.196-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20191006171038.266461022@linuxfoundation.org>
-From:   =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>
-Message-ID: <785ba642-2e01-2a1c-dd33-8d39c18bb90b@linaro.org>
-Date:   Mon, 7 Oct 2019 11:37:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FzqVNr7tcxlwpcYADlhda0qZOie+lz7LOX/589zfMus=;
+        b=W9iOQQzIV4zc80zfX9ownULhNcVA6/ACfLt6JkewpEeYGhe13CL1pkHFVNZSUwwxTo
+         r8HqstXH5/0rudOaTxTmVX8vlEM8qIhlAO0bkrr1kESdEwePOhSAm3r0KqnoogMiMUMC
+         2nCAJeX4SRf34hNTodsCcghrgw43W1k1J9W0wR0ltAHO6OSNb+ba49mOjGaqScRUyIb7
+         D8kKKE6PixFcYLCiVXE2ZXgw4AHVUi0hKxTwGK8raL+ghYpbx1Ts8oD3YzTfan+CHGrH
+         fn+/Q7ruMVhwTmcSRpiYRhPLHMtKPVvV900IOuAZv4auBmlCrUHmy7BfIShcxfOoP+Gh
+         0QvA==
+X-Gm-Message-State: APjAAAXPtYOLlOQ1IbJ9Xqz/ydCgcO29Ce+u59MZQmaHkKimBpxDUwuZ
+        6mfTfx/F8ZbFbKPlyo2KcgXP4w==
+X-Google-Smtp-Source: APXvYqww9OLyqPatL8zc7IngE43C3NP4GfhRl0dthKOPI8ogAAGGRmA5omVo9qg/Jiq5DILIRaCmMg==
+X-Received: by 2002:a25:bfc3:: with SMTP id q3mr4652388ybm.507.1570466303991;
+        Mon, 07 Oct 2019 09:38:23 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id g20sm3932702ywe.98.2019.10.07.09.38.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 09:38:23 -0700 (PDT)
+Date:   Mon, 7 Oct 2019 12:38:22 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Derek Basehore <dbasehore@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v8 1/4] drm/panel: Add helper for reading DT rotation
+Message-ID: <20191007163822.GA126146@art_vandelay>
+References: <20190925225833.7310-1-dbasehore@chromium.org>
+ <20190925225833.7310-2-dbasehore@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20191006171038.266461022@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925225833.7310-2-dbasehore@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
-
-
-On 10/6/19 12:18 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.196 release.
-> There are 36 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Sep 25, 2019 at 03:58:30PM -0700, Derek Basehore wrote:
+> This adds a helper function for reading the rotation (panel
+> orientation) from the device tree.
 > 
-> Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
-> Anything received after that time might be too late.
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+
+The patch LGTM, but I don't see it used anywhere later in the patch? Is there a
+panel driver incoming?
+
+Sean
+
+> ---
+>  drivers/gpu/drm/drm_panel.c | 43 +++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_panel.h     |  9 ++++++++
+>  2 files changed, 52 insertions(+)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.196-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
+> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> index 6b0bf42039cf..0909b53b74e6 100644
+> --- a/drivers/gpu/drm/drm_panel.c
+> +++ b/drivers/gpu/drm/drm_panel.c
+> @@ -264,6 +264,49 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
+>  	return ERR_PTR(-EPROBE_DEFER);
+>  }
+>  EXPORT_SYMBOL(of_drm_find_panel);
+> +
+> +/**
+> + * of_drm_get_panel_orientation - look up the orientation of the panel through
+> + * the "rotation" binding from a device tree node
+> + * @np: device tree node of the panel
+> + * @orientation: orientation enum to be filled in
+> + *
+> + * Looks up the rotation of a panel in the device tree. The orientation of the
+> + * panel is expressed as a property name "rotation" in the device tree. The
+> + * rotation in the device tree is counter clockwise.
+> + *
+> + * Return: 0 when a valid rotation value (0, 90, 180, or 270) is read or the
+> + * rotation property doesn't exist. -EERROR otherwise.
+> + */
+> +int of_drm_get_panel_orientation(const struct device_node *np,
+> +				 enum drm_panel_orientation *orientation)
+> +{
+> +	int rotation, ret;
+> +
+> +	ret = of_property_read_u32(np, "rotation", &rotation);
+> +	if (ret == -EINVAL) {
+> +		/* Don't return an error if there's no rotation property. */
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
+> +		return 0;
+> +	}
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (rotation == 0)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_NORMAL;
+> +	else if (rotation == 90)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
+> +	else if (rotation == 180)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
+> +	else if (rotation == 270)
+> +		*orientation = DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
+> +	else
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(of_drm_get_panel_orientation);
+>  #endif
+>  
+>  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> index 624bd15ecfab..d16158deacdc 100644
+> --- a/include/drm/drm_panel.h
+> +++ b/include/drm/drm_panel.h
+> @@ -34,6 +34,8 @@ struct drm_device;
+>  struct drm_panel;
+>  struct display_timing;
+>  
+> +enum drm_panel_orientation;
+> +
+>  /**
+>   * struct drm_panel_funcs - perform operations on a given panel
+>   *
+> @@ -165,11 +167,18 @@ int drm_panel_get_modes(struct drm_panel *panel);
+>  
+>  #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
+>  struct drm_panel *of_drm_find_panel(const struct device_node *np);
+> +int of_drm_get_panel_orientation(const struct device_node *np,
+> +				 enum drm_panel_orientation *orientation);
+>  #else
+>  static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
+>  {
+>  	return ERR_PTR(-ENODEV);
+>  }
+> +static inline int of_drm_get_panel_orientation(const struct device_node *np,
+> +		enum drm_panel_orientation *orientation)
+> +{
+> +	return -ENODEV;
+> +}
+>  #endif
+>  
+>  #endif
+> -- 
+> 2.23.0.351.gc4317032e6-goog
 > 
-> thanks,
-> 
-> greg k-h
-
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.196-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.4.y
-git commit: 13cac61d31df3572c7a2c88f2f40c59e0a92baf2
-git describe: v4.4.195-37-g13cac61d31df
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.195-37-g13cac61d31df
-
-
-No regressions (compared to build v4.4.195)
-
-No fixes (compared to build v4.4.195)
-
-Ran 18597 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-timers-tests
-* network-basic-tests
-* prep-tmp-disk
-* spectre-meltdown-checker-test
-* kvm-unit-tests
-* ltp-syscalls-tests
-* perf
-* v4l2-compliance
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* ssuite
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.196-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.196-rc1-hikey-20191006-575
-git commit: 49d2751d5f3cdb81b162d5c1f7ffb0fe210f005c
-git describe: 4.4.196-rc1-hikey-20191006-575
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4-oe/build/4.4.196-rc1-hikey-20191006-575
-
-
-No regressions (compared to build 4.4.195-rc1-hikey-20191003-572)
-
-No fixes (compared to build 4.4.195-rc1-hikey-20191003-572)
-
-Ran 1520 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-
-
-Greetings!
-
-Daniel Díaz
-daniel.diaz@linaro.org
-
 
 -- 
-Linaro LKFT
-https://lkft.linaro.org
+Sean Paul, Software Engineer, Google / Chromium OS
