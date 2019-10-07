@@ -2,141 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6444CDED5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14227CDEEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:15:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbfJGKKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 06:10:49 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:53273 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfJGKKs (ORCPT
+        id S1727565AbfJGKPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 06:15:43 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39874 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfJGKPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 06:10:48 -0400
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 57274240012;
-        Mon,  7 Oct 2019 10:10:37 +0000 (UTC)
-Date:   Mon, 7 Oct 2019 12:10:37 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     a.zummo@towertech.it, joel@jms.id.au, andrew@aj.id.au,
-        nicolas.ferre@microchip.com, ludovic.desroches@microchip.com,
-        computersforpeace@gmail.com, gregory.0xf0@gmail.com,
-        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
-        linus.walleij@linaro.org, baruch@tkos.co.il, paul@crapouillou.net,
-        vz@mleia.com, slemieux.tyco@gmail.com, khilman@baylibre.com,
-        eddie.huang@mediatek.com, sean.wang@mediatek.com,
-        matthias.bgg@gmail.com, patrice.chotard@st.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        mripard@kernel.org, wens@csie.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux@prisktech.co.nz,
-        michal.simek@xilinx.com, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH -next 00/34] rtc: use devm_platform_ioremap_resource() to
- simplify code
-Message-ID: <20191007101037.GE4254@piout.net>
-References: <20191006102953.57536-1-yuehaibing@huawei.com>
+        Mon, 7 Oct 2019 06:15:41 -0400
+Received: by mail-qt1-f196.google.com with SMTP id n7so18329590qtb.6
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 03:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TPPLQMuSu6DR9UAe1OhqK+m80xjV6LV1hWWVroNGqFA=;
+        b=yB66vCs9Cik40sq835uj1MsY4wHAqv5W8JjN6PqW7YOH37xxQvXNWCYj41Pho4+PyR
+         Y8DPckhhbr65rHf2nq0tuBTpSkDiSelP9Ho4vmy4RNWO/f36hfoiiAi/rKqbVx4PxHqI
+         /aFTmZqUvm5vBF5P1HQSM4gD+dX0vfNdztWaw1JAzeanpTheKMOhh2JFMEQi13dSplrs
+         qBvxjE7VsF3lNz/2fz/R6DcQQ3QuOmUMKjViFgerYx35CBcfWsCmiBehrtLh7ScyCuAf
+         XhTUPuQvDaHL9Oht8yH+T0z4S7TWsiPlo6KbJQu85g9YSq8FQ5bo5vuxRpBTICJT+Ybn
+         8Hog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TPPLQMuSu6DR9UAe1OhqK+m80xjV6LV1hWWVroNGqFA=;
+        b=nfBO+lEzjM/q67xHTAu5+YbAwZt+DIW2R+b/JvJJ133IXc3o4/izwAQDiCASv4GIBR
+         RFL/oBSyaunoGesBHB+hzLibnLq93CG73PGbzEmE/GNdpvmd2CdOn/n60mBp433Nbfl1
+         jpBjaZVVS5xRW67uUci/QgyCWFhgm5j8P7ZNkLRsBw9hrcdCFtUDl/vW+buW0bIMuY+3
+         0/ZRowbKt8eFZd8W1cR84W9E0XW11DiVXBHpxhgl5R5WMyoRYcLVuTFFUiq1JH7OA4JS
+         AiioThZhDo/ayfaxAPSc5mYjiwmdeDiKj+UGnH9LI4fih1r26gPyEMLcz243Z7GXwV/W
+         gfHw==
+X-Gm-Message-State: APjAAAVREBIaCEm7Cmycso4gqagmaN0jKZTRrXS00zJ1M9caqkbyBK/m
+        gyqN5kgZ5BSST4jPOUdAIesRMi2AibSDDH9DokUwxvjTCMo=
+X-Google-Smtp-Source: APXvYqyZ4UyJ3t8dKx1SfpG2DFjuSl5vNOC9Zb/ShAXmbBH8Ty9mfsbxI21wvZIfUh7XqPmc4q6jEhWPHz5Zh8JLkxk=
+X-Received: by 2002:aed:2a3b:: with SMTP id c56mr29991747qtd.343.1570443340311;
+ Mon, 07 Oct 2019 03:15:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191006102953.57536-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <b47ec7088aa4b07458519ab151de92df552a9302.1570101510.git.amit.kucheria@linaro.org>
+ <20191003115154.6f2jgj3dnqsved2y@gilmour> <CAHLCerNoLyQ-e70=1VMPO_J_amA+-2vtHwfoUabo4dhUWj-H0A@mail.gmail.com>
+ <20191007100535.6gp6b3h6ueyeln3b@gilmour>
+In-Reply-To: <20191007100535.6gp6b3h6ueyeln3b@gilmour>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Mon, 7 Oct 2019 15:45:29 +0530
+Message-ID: <CAP245DXT=HL+m-LqoC25EBnOaPmF1pUW0fEZp6EZB-MdgOJoWw@mail.gmail.com>
+Subject: Re: [PATCH] media: dt-bindings: media: Fixup Allwinner A10 CSI binding
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/10/2019 18:29:19+0800, YueHaibing wrote:
-> devm_platform_ioremap_resource() internally have platform_get_resource()
-> and devm_ioremap_resource() in it. So instead of calling them separately
-> use devm_platform_ioremap_resource() directly.
-> 
-> YueHaibing (34):
->   rtc: asm9260: use devm_platform_ioremap_resource() to simplify code
->   rtc: rtc-aspeed: use devm_platform_ioremap_resource() to simplify code
->   rtc: brcmstb-waketimer: use devm_platform_ioremap_resource() to
->     simplify code
->   rtc: at91sam9: use devm_platform_ioremap_resource() to simplify code
->   rtc: cadence: use devm_platform_ioremap_resource() to simplify code
->   rtc: coh901331: use devm_platform_ioremap_resource() to simplify code
->   rtc: davinci: use devm_platform_ioremap_resource() to simplify code
->   rtc: digicolor: use devm_platform_ioremap_resource() to simplify code
->   rtc: ds1216: use devm_platform_ioremap_resource() to simplify code
->   rtc: ds1511: use devm_platform_ioremap_resource() to simplify code
->   rtc: ds1553: use devm_platform_ioremap_resource() to simplify code
->   rtc: ep93xx: use devm_platform_ioremap_resource() to simplify code
->   rtc: jz4740: use devm_platform_ioremap_resource() to simplify code
->   rtc: lpc24xx: use devm_platform_ioremap_resource() to simplify code
->   rtc: lpc32xx: use devm_platform_ioremap_resource() to simplify code
->   rtc: meson: use devm_platform_ioremap_resource() to simplify code
->   rtc: mt7622: use devm_platform_ioremap_resource() to simplify code
->   rtc: mv: use devm_platform_ioremap_resource() to simplify code
->   rtc: omap: use devm_platform_ioremap_resource() to simplify code
->   rtc: pic32: use devm_platform_ioremap_resource() to simplify code
->   rtc: rtd119x: use devm_platform_ioremap_resource() to simplify code
->   rtc: s3c: use devm_platform_ioremap_resource() to simplify code
->   rtc: sa1100: use devm_platform_ioremap_resource() to simplify code
->   rtc: spear: use devm_platform_ioremap_resource() to simplify code
->   rtc: stk17ta8: use devm_platform_ioremap_resource() to simplify code
->   rtc: ds1286: use devm_platform_ioremap_resource() to simplify code
->   rtc: st-lpc: use devm_platform_ioremap_resource() to simplify code
->   rtc: stm32: use devm_platform_ioremap_resource() to simplify code
->   rtc: sunxi: use devm_platform_ioremap_resource() to simplify code
->   rtc: tegra: use devm_platform_ioremap_resource() to simplify code
->   rtc: tx4939: use devm_platform_ioremap_resource() to simplify code
->   rtc: vt8500: use devm_platform_ioremap_resource() to simplify code
->   rtc: xgene: use devm_platform_ioremap_resource() to simplify code
->   rtc: zynqmp: use devm_platform_ioremap_resource() to simplify code
-> 
->  drivers/rtc/rtc-asm9260.c           | 4 +---
->  drivers/rtc/rtc-aspeed.c            | 4 +---
->  drivers/rtc/rtc-at91sam9.c          | 4 +---
->  drivers/rtc/rtc-brcmstb-waketimer.c | 4 +---
->  drivers/rtc/rtc-cadence.c           | 4 +---
->  drivers/rtc/rtc-coh901331.c         | 4 +---
->  drivers/rtc/rtc-davinci.c           | 4 +---
->  drivers/rtc/rtc-digicolor.c         | 4 +---
->  drivers/rtc/rtc-ds1216.c            | 4 +---
->  drivers/rtc/rtc-ds1286.c            | 4 +---
->  drivers/rtc/rtc-ds1511.c            | 4 +---
->  drivers/rtc/rtc-ds1553.c            | 4 +---
->  drivers/rtc/rtc-ep93xx.c            | 4 +---
->  drivers/rtc/rtc-jz4740.c            | 4 +---
->  drivers/rtc/rtc-lpc24xx.c           | 4 +---
->  drivers/rtc/rtc-lpc32xx.c           | 4 +---
->  drivers/rtc/rtc-meson.c             | 4 +---
->  drivers/rtc/rtc-mt7622.c            | 4 +---
->  drivers/rtc/rtc-mv.c                | 4 +---
->  drivers/rtc/rtc-omap.c              | 4 +---
->  drivers/rtc/rtc-pic32.c             | 4 +---
->  drivers/rtc/rtc-rtd119x.c           | 4 +---
->  drivers/rtc/rtc-s3c.c               | 4 +---
->  drivers/rtc/rtc-sa1100.c            | 4 +---
->  drivers/rtc/rtc-spear.c             | 4 +---
->  drivers/rtc/rtc-st-lpc.c            | 4 +---
->  drivers/rtc/rtc-stk17ta8.c          | 4 +---
->  drivers/rtc/rtc-stm32.c             | 4 +---
->  drivers/rtc/rtc-sunxi.c             | 4 +---
->  drivers/rtc/rtc-tegra.c             | 4 +---
->  drivers/rtc/rtc-tx4939.c            | 4 +---
->  drivers/rtc/rtc-vt8500.c            | 4 +---
->  drivers/rtc/rtc-xgene.c             | 4 +---
->  drivers/rtc/rtc-zynqmp.c            | 5 +----
->  34 files changed, 34 insertions(+), 103 deletions(-)
-> 
+On Mon, Oct 7, 2019 at 3:35 PM Maxime Ripard <mripard@kernel.org> wrote:
+>
+> On Sat, Oct 05, 2019 at 04:15:57PM +0530, Amit Kucheria wrote:
+> > On Thu, Oct 3, 2019 at 5:22 PM Maxime Ripard <mripard@kernel.org> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Thu, Oct 03, 2019 at 04:52:24PM +0530, Amit Kucheria wrote:
+> > > > This new binding fails dt_binding_check due to a typo. Fix it up.
+> > > >
+> > > > linux.git/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml: $id: path/filename 'arm/allwinner,sun4i-a10-csi.yaml' doesn't match actual filename
+> > > > linux.git/Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts' failed
+> > > > make[2]: *** [Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.example.dts] Error 1
+> > > > make[2]: *** Waiting for unfinished jobs....
+> > > > linux.git/Makefile:1284: recipe for target 'dt_binding_check' failed
+> > > > make[1]: *** [dt_binding_check] Error 2
+> > > >
+> > > > Fixes: c5e8f4ccd7750 ("media: dt-bindings: media: Add Allwinner A10 CSI binding")
+> > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > >
+> > > Thanks for your patch.
+> > >
+> > > It has already been submitted though:
+> > > https://lore.kernel.org/linux-arm-kernel/1568808060-17516-1-git-send-email-pragnesh.patel@sifive.com/
+> > >
+> > > I'm not sure why it hasn't been applied yet though :/
+> >
+> > Perhaps a Fixes tag will allow more attention to it?
+>
+> I've added a fixes tag and merged it through the sunxi tree.
+>
+> Sorry for the time it took, and thanks for sending that fix!
 
-I've quashed and applied.
-
-> -- 
-> 2.7.4
-> 
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Will it get merged for -rc2?
