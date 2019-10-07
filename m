@@ -2,249 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2D75CE4F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3833CCE4FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:18:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfJGORr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:17:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:36064 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726334AbfJGORr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:17:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6527D142F;
-        Mon,  7 Oct 2019 07:17:46 -0700 (PDT)
-Received: from E120351.arm.com (unknown [10.1.28.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC6CF3F703;
-        Mon,  7 Oct 2019 07:17:41 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 15:17:38 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-        will@kernel.org, mark.rutland@arm.com, mhocko@suse.com,
-        david@redhat.com, cai@lca.pw, logang@deltatee.com,
-        cpandya@codeaurora.org, arunks@codeaurora.org,
-        dan.j.williams@intel.com, mgorman@techsingularity.net,
-        osalvador@suse.de, ard.biesheuvel@arm.com, steve.capper@arm.com,
-        broonie@kernel.org, valentin.schneider@arm.com,
-        Robin.Murphy@arm.com, steven.price@arm.com, suzuki.poulose@arm.com,
-        ira.weiny@intel.com
-Subject: Re: [PATCH V8 2/2] arm64/mm: Enable memory hot remove
-Message-ID: <20191007141738.GA93112@E120351.arm.com>
-References: <1569217425-23777-1-git-send-email-anshuman.khandual@arm.com>
- <1569217425-23777-3-git-send-email-anshuman.khandual@arm.com>
+        id S1728376AbfJGOSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:18:53 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42556 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfJGOSx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 10:18:53 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97EEx9s096980;
+        Mon, 7 Oct 2019 14:18:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=o/aF5OGHe1WsAEZqjOizMyen7w4k90sGuDawVgOV3sM=;
+ b=cJQrpLpSFAKO4fpj+/pSzdLiNwZGROb7M93QOZslX+U1t15APVYR9xLlxfbRan6lZNTc
+ 75hjgwd5ouUoCqSRlGQSJYSJJLNOxV+a9L2zR9WYwVlG5QNdhd9OjL1oCBpkMEUa+YcM
+ 8edLsam4a1/afi22/SoFLSbu3sFVAdSuSFDaTHG9LYi6OBq9aP9668J0fVYerEO9ASDZ
+ DOYPGavA0FHsA6FdD0ydIRUnX5XxfImu/wQCloq2s/Gzd6r6oeQj/SQ5m8RZVFnxjvRA
+ PxUMVgj9Iv4GGyllbjwEF3c1n9LpOy3Mm36vuNNzSzudEToeEjXfmEYG/7X9NBmBGaz2 aA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2vejku71xn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 14:18:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97EI0Nf192570;
+        Mon, 7 Oct 2019 14:18:20 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2vf4phm9sy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 14:18:20 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x97EICHO005519;
+        Mon, 7 Oct 2019 14:18:12 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 07 Oct 2019 07:18:11 -0700
+Date:   Mon, 7 Oct 2019 17:18:03 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>
+Subject: Re: [PATCH] iio: imu: adis16480: clean up a condition
+Message-ID: <20191007141803.GZ22609@kadam>
+References: <20190926081016.GA2332@mwanda>
+ <9e40c550310d6f30e6481329e01061beb474bc33.camel@analog.com>
+ <20190926113630.GF27389@kadam>
+ <20191006095133.24fb89be@archlinux>
+ <20191006181439.GU22609@kadam>
+ <20191007102107.000067b6@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1569217425-23777-3-git-send-email-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191007102107.000067b6@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9402 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=930
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910070142
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9402 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910070142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 11:13:45AM +0530, Anshuman Khandual wrote:
-> The arch code for hot-remove must tear down portions of the linear map and
-> vmemmap corresponding to memory being removed. In both cases the page
-> tables mapping these regions must be freed, and when sparse vmemmap is in
-> use the memory backing the vmemmap must also be freed.
+On Mon, Oct 07, 2019 at 10:21:07AM +0100, Jonathan Cameron wrote:
+> On Sun, 6 Oct 2019 21:14:40 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
-> This patch adds unmap_hotplug_range() and free_empty_tables() helpers which
-> can be used to tear down either region and calls it from vmemmap_free() and
-> ___remove_pgd_mapping(). The sparse_vmap argument determines whether the
-> backing memory will be freed.
-
-Can you change the 'sparse_vmap' name to something more meaningful which
-would suggest freeing of the backing memory?
-
-> It makes two distinct passes over the kernel page table. In the first pass
-> with unmap_hotplug_range() it unmaps, invalidates applicable TLB cache and
-> frees backing memory if required (vmemmap) for each mapped leaf entry. In
-> the second pass with free_empty_tables() it looks for empty page table
-> sections whose page table page can be unmapped, TLB invalidated and freed.
+> > On Sun, Oct 06, 2019 at 09:51:33AM +0100, Jonathan Cameron wrote:
+> > > On Thu, 26 Sep 2019 14:36:30 +0300
+> > > Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > >   
+> > > > On Thu, Sep 26, 2019 at 11:06:39AM +0000, Ardelean, Alexandru wrote:  
+> > > > > On Thu, 2019-09-26 at 11:10 +0300, Dan Carpenter wrote:    
+> > > > > > [External]
+> > > > > > 
+> > > > > > The "t" variable is unsigned so it can't be less than zero.  We really
+> > > > > > are just trying to prevent divide by zero bugs so just checking against
+> > > > > > zero is sufficient.  
+> > > 
+> > > I'm not sure that true.  It if were signed we'd be detecting that the
+> > > input from userspace was negative.  
+> > 
+> > It does a really bad job of that though so it raises more questions than
+> > answers.  Maybe just one of the parameters is negative or maybe the
+> > multiply or the addition overflowed?  Should scenarios those be checked?
+> > 
+> > It turns out none of those situations matter, only divide by zero needs
+> > to be checked.
 > 
-> While freeing intermediate level page table pages bail out if any of its
-> entries are still valid. This can happen for partially filled kernel page
-> table either from a previously attempted failed memory hot add or while
-> removing an address range which does not span the entire page table page
-> range.
-> 
-> The vmemmap region may share levels of table with the vmalloc region.
-> There can be conflicts between hot remove freeing page table pages with
-> a concurrent vmalloc() walking the kernel page table. This conflict can
-> not just be solved by taking the init_mm ptl because of existing locking
-> scheme in vmalloc(). So free_empty_tables() implements a floor and ceiling
-> method which is borrowed from user page table tear with free_pgd_range()
-> which skips freeing page table pages if intermediate address range is not
-> aligned or maximum floor-ceiling might not own the entire page table page.
-> 
-> While here update arch_add_memory() to handle __add_pages() failures by
-> just unmapping recently added kernel linear mapping. Now enable memory hot
-> remove on arm64 platforms by default with ARCH_ENABLE_MEMORY_HOTREMOVE.
-> 
-> This implementation is overall inspired from kernel page table tear down
-> procedure on X86 architecture and user page table tear down method.
-> 
-> Acked-by: Steve Capper <steve.capper@arm.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> It isn't being nearly paranoid enough. Either val or val2 being
+> negative is a reason to fault out.  Divide by zero needs handling after
+> that.  Obviously divide by zero is the only one that causes a crash but
+> negatives are going to cause rather 'unexpected' results.
 
-Given the amount of changes since version 7, do the acks still stand?
+The result is that it gets capped at st->chip_info->max_dec_rate so it's
+not a horrible result.  :P  I don't know if it's unexpected or not.
 
-[...]
-> +static void free_pte_table(pmd_t *pmdp, unsigned long addr, unsigned long end,
-> +			   unsigned long floor, unsigned long ceiling)
-> +{
-> +	struct page *page;
-> +	pte_t *ptep;
-> +	int i;
-> +
-> +	if (!pgtable_range_aligned(addr, end, floor, ceiling, PMD_MASK))
-> +		return;
-> +
-> +	ptep = pte_offset_kernel(pmdp, 0UL);
-> +	for (i = 0; i < PTRS_PER_PTE; i++) {
-> +		if (!pte_none(READ_ONCE(ptep[i])))
-> +			return;
-> +	}
-> +
-> +	page = pmd_page(READ_ONCE(*pmdp));
+regards,
+dan carpenter
 
-Arguably, that's not the pmd page we are freeing here. Even if you get
-the same result, pmd_page() is normally used for huge pages pointed at
-by the pmd entry. Since you have the ptep already, why not use
-virt_to_page(ptep)?
-
-> +	pmd_clear(pmdp);
-> +	__flush_tlb_kernel_pgtable(addr);
-> +	free_hotplug_pgtable_page(page);
-> +}
-> +
-> +static void free_pmd_table(pud_t *pudp, unsigned long addr, unsigned long end,
-> +			   unsigned long floor, unsigned long ceiling)
-> +{
-> +	struct page *page;
-> +	pmd_t *pmdp;
-> +	int i;
-> +
-> +	if (CONFIG_PGTABLE_LEVELS <= 2)
-> +		return;
-> +
-> +	if (!pgtable_range_aligned(addr, end, floor, ceiling, PUD_MASK))
-> +		return;
-> +
-> +	pmdp = pmd_offset(pudp, 0UL);
-> +	for (i = 0; i < PTRS_PER_PMD; i++) {
-> +		if (!pmd_none(READ_ONCE(pmdp[i])))
-> +			return;
-> +	}
-> +
-> +	page = pud_page(READ_ONCE(*pudp));
-
-Same here, virt_to_page(pmdp).
-
-> +	pud_clear(pudp);
-> +	__flush_tlb_kernel_pgtable(addr);
-> +	free_hotplug_pgtable_page(page);
-> +}
-> +
-> +static void free_pud_table(pgd_t *pgdp, unsigned long addr, unsigned  long end,
-> +			   unsigned long floor, unsigned long ceiling)
-> +{
-> +	struct page *page;
-> +	pud_t *pudp;
-> +	int i;
-> +
-> +	if (CONFIG_PGTABLE_LEVELS <= 3)
-> +		return;
-> +
-> +	if (!pgtable_range_aligned(addr, end, floor, ceiling, PGDIR_MASK))
-> +		return;
-> +
-> +	pudp = pud_offset(pgdp, 0UL);
-> +	for (i = 0; i < PTRS_PER_PUD; i++) {
-> +		if (!pud_none(READ_ONCE(pudp[i])))
-> +			return;
-> +	}
-> +
-> +	page = pgd_page(READ_ONCE(*pgdp));
-
-As above.
-
-> +	pgd_clear(pgdp);
-> +	__flush_tlb_kernel_pgtable(addr);
-> +	free_hotplug_pgtable_page(page);
-> +}
-> +
-> +static void unmap_hotplug_pte_range(pmd_t *pmdp, unsigned long addr,
-> +				    unsigned long end, bool sparse_vmap)
-> +{
-> +	struct page *page;
-> +	pte_t *ptep, pte;
-> +
-> +	do {
-> +		ptep = pte_offset_kernel(pmdp, addr);
-> +		pte = READ_ONCE(*ptep);
-> +		if (pte_none(pte))
-> +			continue;
-> +
-> +		WARN_ON(!pte_present(pte));
-> +		page = sparse_vmap ? pte_page(pte) : NULL;
-> +		pte_clear(&init_mm, addr, ptep);
-> +		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
-> +		if (sparse_vmap)
-> +			free_hotplug_page_range(page, PAGE_SIZE);
-
-You could only set 'page' if sparse_vmap (or even drop 'page' entirely).
-The compiler is probably smart enough to optimise it but using a
-pointless ternary operator just makes the code harder to follow.
-
-> +	} while (addr += PAGE_SIZE, addr < end);
-> +}
-[...]
-> +static void free_empty_pte_table(pmd_t *pmdp, unsigned long addr,
-> +				 unsigned long end)
-> +{
-> +	pte_t *ptep, pte;
-> +
-> +	do {
-> +		ptep = pte_offset_kernel(pmdp, addr);
-> +		pte = READ_ONCE(*ptep);
-> +		WARN_ON(!pte_none(pte));
-> +	} while (addr += PAGE_SIZE, addr < end);
-> +}
-> +
-> +static void free_empty_pmd_table(pud_t *pudp, unsigned long addr,
-> +				 unsigned long end, unsigned long floor,
-> +				 unsigned long ceiling)
-> +{
-> +	unsigned long next;
-> +	pmd_t *pmdp, pmd;
-> +
-> +	do {
-> +		next = pmd_addr_end(addr, end);
-> +		pmdp = pmd_offset(pudp, addr);
-> +		pmd = READ_ONCE(*pmdp);
-> +		if (pmd_none(pmd))
-> +			continue;
-> +
-> +		WARN_ON(!pmd_present(pmd) || !pmd_table(pmd) || pmd_sect(pmd));
-> +		free_empty_pte_table(pmdp, addr, next);
-> +		free_pte_table(pmdp, addr, next, floor, ceiling);
-
-Do we need two closely named functions here? Can you not collapse
-free_empty_pud_table() and free_pte_table() into a single one? The same
-comment for the pmd/pud variants. I just find this confusing.
-
-> +	} while (addr = next, addr < end);
-
-You could make these function in two steps: first, as above, invoke the
-next level recursively; second, after the do..while loop, check whether
-it's empty and free the pmd page as in free_pmd_table().
-
-> +}
-[...]
-
--- 
-Catalin
