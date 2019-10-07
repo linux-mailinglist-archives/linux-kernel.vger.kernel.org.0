@@ -2,74 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB511CE9CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D549CE9D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:50:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbfJGQsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:48:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727830AbfJGQsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:48:31 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1309C20659;
-        Mon,  7 Oct 2019 16:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570466910;
-        bh=uaIHpF/If6uI3IN+EaDDFj03MPBFPdqVnFBMY29qMGs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ddOCTBEdXHAyA68qXDQg1cPJd2U6TPN/ueiBHFOS2sAin/7R1r95CI53SY/BM9D2u
-         rtvFzHTaMZu1OYD8a+6HO1+G/P8HuAhnvod8K2XAhGxqeTgo9JpYQ+YBcvedRjhMVU
-         effOd7lieWvzjVh5RlfcHubSgBKHrJc1xQFPQ8sA=
-Date:   Mon, 7 Oct 2019 18:48:28 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mark Salyzyn <salyzyn@android.com>
+        id S1728465AbfJGQue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:50:34 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44383 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727935AbfJGQue (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 12:50:34 -0400
+Received: by mail-pl1-f195.google.com with SMTP id q15so7119734pll.11
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:50:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=+w6HGwIeJz41HW0Pum9Qvdf3wavqkNbTaRf9Bcybxb4=;
+        b=lJsltAwBXOB7dzBNHRpXWNUxozcGk6hPiEnSnYGI2AGONfo3Tz+aNwgBqtQj8Hwk/1
+         AGAy6E+fMSLqf4xqAgfjfRQ0JJG1SD+7XAORxZzNsdSuFUVqP2Njj0W81UoVYxvKaoOi
+         Ch3KQ+MtptGeBccMUkJD1OkVksmM2nIzJjk3YK46o79KJ2tqlbT9YWIQgWXHdXNCOzLv
+         yWXkSTfWYSUqyMQCEQMWgBas7nGOZ+GURuYNGsOnD3j68YyyA+Qraj7xocqUO+ZfHwpT
+         hMdSXfvr+tfcnP/ZXXnEogDA8CxA6I7a7fAaQCG6vp/aCtsYpkd1NRX90yOTPZawQ17U
+         oYlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=+w6HGwIeJz41HW0Pum9Qvdf3wavqkNbTaRf9Bcybxb4=;
+        b=iefXarsJzgExRaEOvTjThVj4HIYrhH1Lh5oe5XKnUAveGNf+gloFlre8dcEDX3SmkY
+         vwGkFwkgl11jGiI670xq/w7fFP+aCyqWHaDnsWsyL+1fimLaHyVM1i9vA9YxXGBX6Yrs
+         OKJ5L+iFMvvmEUp9ZyUqVXfALHiH3PWesoMmL+AZttXqfoqFPuXEGGZS5D83bge5vXW+
+         e8IuvGG5M8eL6Otbx0u4jW0S0tliejrashMZewf/QVJusTfgM62lO9LzmEJZLq5BesBd
+         Ec2BUKLfJbIsaZgECVg5oXT9sgGrbC+37j0qun069ok+Lk2dufo/+ln+rWOnsRshSznm
+         1gNA==
+X-Gm-Message-State: APjAAAXaN++VE1P06vAt6Ss2xH5pF4ACB1SIPtCt4AOOILXt0Cm22Zre
+        oVkgtoo4TbrrzR2K3/ZnBmuy6/wk6RVbyQ==
+X-Google-Smtp-Source: APXvYqyqhgEmYg2SNMgR0qFTRxWnC5C0Pd3FzJLguS6YtT9AKzecBtSMeeO78IlNFu5TcTfGadfDhg==
+X-Received: by 2002:a17:902:9b84:: with SMTP id y4mr31341979plp.189.1570467033479;
+        Mon, 07 Oct 2019 09:50:33 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.googlemail.com with ESMTPSA id w11sm880349pgl.82.2019.10.07.09.50.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2019 09:50:32 -0700 (PDT)
+Subject: Re: [PATCH] mm: export cma alloc and release
+To:     Christoph Hellwig <hch@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH] ovl: filter of trusted xattr results in audit
-Message-ID: <20191007164828.GB1090238@kroah.com>
-References: <20191007160918.29504-1-salyzyn@android.com>
- <20191007161616.GA988623@kroah.com>
- <20191007161725.GB988623@kroah.com>
- <7c610f92-5e1f-32ef-0a60-ed47ea999fe3@android.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yue Hu <huyue2@yulong.com>, Mike Rapoport <rppt@linux.ibm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ryohei Suzuki <ryh.szk.cmnty@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Peng Fan <peng.fan@nxp.com>, linux-mm@kvack.org,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20191002212257.196849-1-salyzyn@android.com>
+ <20191003085528.GB21629@arrakis.emea.arm.com> <20191005083753.GA14691@lst.de>
+From:   Mark Salyzyn <salyzyn@android.com>
+Message-ID: <aa1c5b2f-fa90-4390-edc6-33b87fab5e09@android.com>
+Date:   Mon, 7 Oct 2019 09:50:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c610f92-5e1f-32ef-0a60-ed47ea999fe3@android.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191005083753.GA14691@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 09:42:08AM -0700, Mark Salyzyn wrote:
-> 
-> <sigh>
-> 
-> Now what is the playbook, we have three options in order of preference:
-> 
-> 1) #ifdef MODULE use capable() to preserve API, add a short comment about
-> the side effects if overlayfs is used as a module.
-> 
-> 2) export has_capability_nodaudit (proc and oom_kill use it, and are both
-> built-in only), but affect the 3.18 API at near EOL. AFAIK no one wants
-> that?
+On 10/5/19 1:37 AM, Christoph Hellwig wrote:
+> On Thu, Oct 03, 2019 at 09:55:28AM +0100, Catalin Marinas wrote:
+>> Aren't drivers supposed to use the DMA API for such allocations rather
+>> than invoking cma_*() directly?
+> Yes, they are.
 
-I'll just do this.  3.18 is EOL, this is only being done for a
-distro-specific tree (i.e. AOSP).
+We have an engineer assigned to rewriting the ion memory driver to use 
+dma_buf interfaces. Hopefully that effort will solve the problem of 
+requiring these interfaces to be exported so that that driver (and 
+others) can be modularized.
 
-> 3) Do nothing more. Make this a distro concern only. Leave this posted as a
-> back-port for the record, but never merged, for those that are _interested_
-> and declare 3.18 stable as noisy for sepolicy and overlayfs under some usage
-> patterns with few user space mitigation unless they explicitly take this
-> back-port into their tree (eg: android common kernel) if used built-in. This
-> way, in 3.18.y at least the module and built-in version behave the _same_ in
-> stable.
+Thanks for the reviews, drop this patch from the list and we will 
+regroup, and accept that standing code in the kernel can not be 
+modularized for the moment.
 
-I'll just add the export to the patch and check this into AOSP, thanks!
+Sincerely -- Mark Salyzyn
 
-greg k-h
