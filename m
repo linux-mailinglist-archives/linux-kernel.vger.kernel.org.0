@@ -2,66 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF36FCE0F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E888CE0FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfJGLyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:54:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33831 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfJGLyL (ORCPT
+        id S1727675AbfJGL56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:57:58 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36705 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727561AbfJGL56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:54:11 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j11so9145685wrp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 04:54:08 -0700 (PDT)
+        Mon, 7 Oct 2019 07:57:58 -0400
+Received: by mail-wm1-f66.google.com with SMTP id m18so12031588wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 04:57:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=pBhXm94gb2aC/i1aOImAreyb5IoDhmivCtLzEb4Bwrk=;
-        b=Lex3lcU6Um9qIdLI8D05BFzgN700xT6KeQ+sai8L9/9PQ4Dz27+taEn0OPo/AjfnMR
-         bruWJtk8Mo3EQ2r8Lh4cE0KKZxA4fBKqXqtB4Xtk9LR6kdLvEfgMsoKIsTnyD2HajMQz
-         n637u0kudXmQijzd1JFWvMvVTxqZ/XLztHgMmqNRaJIcbfvrRHey/RMIkPYRzVlKXK+K
-         qHfZToFgWBEWb5GkURR85QVFwL+zDTOlYY2PIvcr4CB5A5ExiCO9VEIqqqDxwOZJqdjo
-         YKE5zVvI6GsUeQ9ih3q/pBRqX35uzQwHabb4TkRWTWQIO2H9VLpmdvTeTIkpP02+uDim
-         v7Mw==
+        bh=B0q2SXnY7pAxin67ut4lnZBcx7ln61mIYC68maemLHk=;
+        b=rjkLkkBfq1GZvIV/uQvsk9JV2Zz1kiFmG1dxKOGmb0SVH5v84yHVq5twm54lHwGPMq
+         ypsFVEtkSTOlVNOiigDAFh+WRwAOZB0hnKoIjIItLgTVeT86p1cthIvvmPIR7TEJqlpy
+         YIAFzqVZqCblpE/ZHnXWV8DZ1KSJcuGGf6WzKk8Q7B1KSLpFoXO46NdkKXsAkSo7r20l
+         fX2Ou7tURT/zOJjDJdrXXV03fIIpIUHO5l9WUCNZjpbRJ8Ynw0RojjQPEj7zf5WVmNZf
+         aelNT5a45miFk3f2r635jaq83jCp1CH/AufihsdtzDNjqiLaIK/g05jDDzM9ei1Xsu/n
+         DiwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=pBhXm94gb2aC/i1aOImAreyb5IoDhmivCtLzEb4Bwrk=;
-        b=hUgpCXReFG8bf/1dx2NWlNRMze8QskNZ5D1gpvpZhEFttqGqjLEYYq13tWbNh2l5Vk
-         ihTo/3it+HI5Q0tiD6ltlZTYDc/Ry9hsThYhgEECPQXPkD7MY5YyMIJvkjiKVd7M4kfl
-         uvffCcALNjLHzpv+/kZNn/X91IRDnvl2Qg/IpdY3aQkpJe7vvgdXlh9fPlobYH8GxGZY
-         P9d/tRnK5ZkMC3S6e2chKmU8sLrwChzFHmlt5ET8VF1qyVQh4y2TcXw38GAbDKNnL9fh
-         jhPx9JGpMiAHmIUOFQazVQ4mguBn/2kkMNColYRg8tsOfIeeNBhOYZOQMk+iK/1EnoUv
-         rIXg==
-X-Gm-Message-State: APjAAAWzqpfudd+xrtR5q40WEZiMaZYrFUkP5t6xeHb3WPtIXM7g49fa
-        EjYPBXC18aRF8LQKdDxeeLFm6w==
-X-Google-Smtp-Source: APXvYqxnHuYDeHiGk0pb80Td6Eg1XjBr1SmhViheYgCD9/aZ86Wdmcox/0JSPXIuyMOCingwuFzQAQ==
-X-Received: by 2002:a5d:67cc:: with SMTP id n12mr21067761wrw.359.1570449247183;
-        Mon, 07 Oct 2019 04:54:07 -0700 (PDT)
+        bh=B0q2SXnY7pAxin67ut4lnZBcx7ln61mIYC68maemLHk=;
+        b=YcRYIVs/x47ikxeA64cw5oHdSMOITzYX/5lNY9+7KsHbHMaPs2c+TvCy2/R9NUPH7B
+         /qfJcC78SxwJVyUYrVbl6GAT8OdE8oCKyXs3n0Ekq5t98USH6Lb8SGWlQELGAf+W/IFC
+         tM7uN82PL/eQ1DUwMg18ogLb6fWxhL337zNNZG95k0srk5Kb/qBVXx2Z8p8FAebX6xM+
+         Y/ehWUcAfRUxLt6e/J9CS02OfEHhkN01b5YjoiyYXfdJ1vd58ZC6fStdQly3GHc6EmKF
+         VZLLG2KwldjUKdy3QHaDMco5a1LxuMXRCirCUGzbjAhF4YUEaUj8ZdMkojIuFoeHBP/K
+         ccPA==
+X-Gm-Message-State: APjAAAXrSJygwcXiH+TY/GSV+3+z2g28LqcQzToap3YIvRn0CRrgb1XB
+        /onhd4/aodWN9bfk9M0hsoE8EQ==
+X-Google-Smtp-Source: APXvYqyVfjnxAijw5tnWnJhbAh1DjXRsxqUt+4mtnh/TiJHJrIrqGcypYsybS4IyumRlrkVVJ8FLQA==
+X-Received: by 2002:a05:600c:248a:: with SMTP id 10mr20199658wms.97.1570449474109;
+        Mon, 07 Oct 2019 04:57:54 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 33sm22757591wra.41.2019.10.07.04.54.06
+        by smtp.gmail.com with ESMTPSA id s10sm24800791wmf.48.2019.10.07.04.57.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 04:54:06 -0700 (PDT)
-Subject: Re: [PATCH v2] drm/bridge: dw-hdmi: Refuse DDC/CI transfers on the
- internal I2C controller
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Sean Paul <sean@poorly.run>, Yakir Yang <kuankuan.y@gmail.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Tzung-Bi Shih <tzungbi@chromium.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        Mon, 07 Oct 2019 04:57:53 -0700 (PDT)
+Subject: Re: [PATCH v2 RESEND] drm/bridge: dw-hdmi: Restore audio when setting
+ a mode
+To:     Cheng-Yi Chiang <cychiang@chromium.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-References: <20191002124354.v2.1.I709dfec496f5f0b44a7b61dcd4937924da8d8382@changeid>
+        Jonas Karlman <jonas@kwiboo.se>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        dianders@chromium.org, dgreid@chromium.org, tzungbi@chromium.org,
+        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Yakir Yang <ykk@rock-chips.com>
+References: <20191003041438.194224-1-cychiang@chromium.org>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -114,12 +117,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <5640bf2f-a90f-d424-a0d7-1bd19602525d@baylibre.com>
-Date:   Mon, 7 Oct 2019 13:54:05 +0200
+Message-ID: <b8ad03db-b93f-44e0-ccd6-fc8bda1af223@baylibre.com>
+Date:   Mon, 7 Oct 2019 13:57:52 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191002124354.v2.1.I709dfec496f5f0b44a7b61dcd4937924da8d8382@changeid>
+In-Reply-To: <20191003041438.194224-1-cychiang@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -128,63 +131,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Hi,
 
-On 02/10/2019 21:44, Matthias Kaehlcke wrote:
-> The DDC/CI protocol involves sending a multi-byte request to the
-> display via I2C, which is typically followed by a multi-byte
-> response. The internal I2C controller only allows single byte
-> reads/writes or reads of 8 sequential bytes, hence DDC/CI is not
-> supported when the internal I2C controller is used. The I2C
-> transfers complete without errors, however the data in the response
-> is garbage. Abort transfers to/from slave address 0x37 (DDC) with
-> -EOPNOTSUPP, to make it evident that the communication is failing.
+On 03/10/2019 06:14, Cheng-Yi Chiang wrote:
+> From: Daniel Kurtz <djkurtz@chromium.org>
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Reviewed-by: Sean Paul <sean@poorly.run>
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> When setting a new display mode, dw_hdmi_setup() calls
+> dw_hdmi_enable_video_path(), which disables all hdmi clocks, including
+> the audio clock.
+> 
+> We should only (re-)enable the audio clock if audio was already enabled
+> when setting the new mode.
+> 
+> Without this patch, on RK3288, there will be HDMI audio on some monitors
+> if i2s was played to headphone when the monitor was plugged.
+> ACER H277HU and ASUS PB278 are two of the monitors showing this issue.
+> 
+> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 > ---
-> Sorry for the delay with sending v2, I completely forgot about this patch ...
+>  Change from v1 to v2:
+>   - Use audio_lock to protect audio clock.
+>   - Fix the patch title.
 > 
-> Changes in v2:
-> - updated comment with 'TOFIX' entry as requested by Neil
-> - added Neil's 'Acked-by' tag
-> 
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 52d220a70362..ac24bceaf415 100644
+> index aa7efd4da1c8..749d8e4c535b 100644
 > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -41,6 +41,7 @@
+> @@ -1982,6 +1982,17 @@ static void hdmi_disable_overflow_interrupts(struct dw_hdmi *hdmi)
+>  		    HDMI_IH_MUTE_FC_STAT2);
+>  }
 >  
->  #include <media/cec-notifier.h>
->  
-> +#define DDC_CI_ADDR		0x37
->  #define DDC_SEGMENT_ADDR	0x30
->  
->  #define HDMI_EDID_LEN		512
-> @@ -439,6 +440,15 @@ static int dw_hdmi_i2c_xfer(struct i2c_adapter *adap,
->  	u8 addr = msgs[0].addr;
->  	int i, ret = 0;
->  
-> +	if (addr == DDC_CI_ADDR)
-> +		/*
-> +		 * The internal I2C controller does not support the multi-byte
-> +		 * read and write operations needed for DDC/CI.
-> +		 * TOFIX: Blacklist the DDC/CI address until we filter out
-> +		 * unsupported I2C operations.
-> +		 */
-> +		return -EOPNOTSUPP;
+> +static void dw_hdmi_audio_restore(struct dw_hdmi *hdmi)
+> +{
+> +	unsigned long flags;
 > +
->  	dev_dbg(hdmi->dev, "xfer: num: %d, addr: %#x\n", num, addr);
+> +	spin_lock_irqsave(&hdmi->audio_lock, flags);
+> +
+> +	hdmi_enable_audio_clk(hdmi, hdmi->audio_enable);
+> +
+> +	spin_unlock_irqrestore(&hdmi->audio_lock, flags);
+
+Dumb question, why is this protected by a spinlock ?
+
+Neil
+
+> +}
+> +
+>  static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+>  {
+>  	int ret;
+> @@ -2045,7 +2056,7 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
 >  
->  	for (i = 0; i < num; i++) {
+>  		/* HDMI Initialization Step E - Configure audio */
+>  		hdmi_clk_regenerator_update_pixel_clock(hdmi);
+> -		hdmi_enable_audio_clk(hdmi, true);
+> +		dw_hdmi_audio_restore(hdmi);
+>  	}
+>  
+>  	/* not for DVI mode */
 > 
 
-Applying to drm-misc-next
-
-Thanks !
-Neil
