@@ -2,121 +2,470 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C023CCEC5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B56ACEC79
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:10:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbfJGTAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 15:00:25 -0400
-Received: from mail-eopbgr690067.outbound.protection.outlook.com ([40.107.69.67]:51427
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728465AbfJGTAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:00:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wc/PlKvKNzAP53aE8r+Z9pDCsDQSJamR+lv9/CCATwkNc6pOn19qmcb7cGaHXrOYJbc2LrGUzeW/Darc9frPtT/r4gz6M4tsJiS+PV+wMO7CfMYQITUJ8TBo+In5aUg9vAhbHDhBCPZzpjzHgXtGKjzrIt95FtutBXWVsqvhbUKH+xhSokEjmgAJ+I1OOh+CrmlGUsUzVpu0+BeJqCw5RltamIFfbkQjAQentL2aoOsVqSAHbmtbym1ANlULTE+Zshr7d1yZEr5my6CSuzW5YBFx8wlHcjrcsvGMwKkwe96vBOXlDRt7U+xMopdb3G8h7d0nScduE/ios/Y95vkQbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cm9qQMcLOLu0uyHSoAEZQEYzeYl5apmqXMzt47jXO1g=;
- b=N1Ln6i5KVJ2qxMeUQDYhs8lSb1xasnrxZMkaXkumZrCswboxA6vtgsnPw/IjLhGIGKwpLaTheXFoLEbheqJc+Whbc73cj7q5Kn0axfUb54oh4uPQLrTGk9ZiGsKtkx9JqNph2yPsu39+wXamBCYDaE41Iqu7LmoHGrY3BrmA87PLxF/UEeEX8OiCmjh6qkutJI1wBj8AsLYRjoxq53gZXDoCXaoveecGZQIt8Lg3WLDxFjjfEi/0QW+Fsl7nE4dv/B93VL0y/dPitr+h/EnIy5911BxNx2IzknKEHNFwVf/73BWHvYtpXOImDNWT3RSsHUujv78TAkOaz+tnYZilfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cm9qQMcLOLu0uyHSoAEZQEYzeYl5apmqXMzt47jXO1g=;
- b=fethwRHHzivN4AyvK+RwPV61D9Ferd26xo1RjtpFtlOKMmjYiEWcptttI6i5szxcp/J4r7BmddexUop/jDWBrGIe93Eje0xQ4wlrugowTv1v2iIF5dLHXlIta4YEPyHddk+mDmeyNBbaSe6TOJXNaAjBIreqCWRnb5V3+ty6E0o=
-Received: from SN6PR12MB2736.namprd12.prod.outlook.com (52.135.107.27) by
- SN6PR12MB2736.namprd12.prod.outlook.com (52.135.107.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.24; Mon, 7 Oct 2019 19:00:22 +0000
-Received: from SN6PR12MB2736.namprd12.prod.outlook.com
- ([fe80::b1e3:1867:e650:796c]) by SN6PR12MB2736.namprd12.prod.outlook.com
- ([fe80::b1e3:1867:e650:796c%6]) with mapi id 15.20.2327.023; Mon, 7 Oct 2019
- 19:00:22 +0000
-From:   "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>
-To:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Jon Masters <jcm@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>
-Subject: [PATCH] x86/asm: Fix MWAITX C-state hint value
-Thread-Topic: [PATCH] x86/asm: Fix MWAITX C-state hint value
-Thread-Index: AQHVfUF4wAEM81IrLUWesxXs7fzPCw==
-Date:   Mon, 7 Oct 2019 19:00:22 +0000
-Message-ID: <20191007190011.4859-1-Janakarajan.Natarajan@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR02CA0008.namprd02.prod.outlook.com
- (2603:10b6:805:a2::21) To SN6PR12MB2736.namprd12.prod.outlook.com
- (2603:10b6:805:77::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Janakarajan.Natarajan@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [165.204.78.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c90bb332-ccc1-42de-9015-08d74b589ac8
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: SN6PR12MB2736:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR12MB27363E0C01C45962BF3090A3E79B0@SN6PR12MB2736.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 01834E39B7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(366004)(136003)(39860400002)(396003)(189003)(199004)(86362001)(6116002)(478600001)(5660300002)(14444005)(256004)(3846002)(64756008)(66556008)(66476007)(71200400001)(66446008)(66946007)(1076003)(2906002)(71190400001)(4744005)(36756003)(8676002)(54906003)(81156014)(81166006)(66066001)(316002)(7736002)(305945005)(110136005)(99286004)(2616005)(6486002)(52116002)(6512007)(186003)(14454004)(26005)(102836004)(25786009)(8936002)(386003)(6506007)(4326008)(6436002)(486006)(2501003)(476003)(50226002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2736;H:SN6PR12MB2736.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: oO8TMC4dwJLIFE2LpNQBwEiXUWFsN8a7FLhOW3DJ7dEycUbLr9prJs+IEFLCkTlAQxGvNJwizHR+q55IzzlMLM+lKxs9HL7ftB1mzaEfk84erbto/PK8PIKRDTJK8/0kIm84wpQcD5e+1wZUcg19pmIcxsqZtU3iZ4xvKmli7SJ2Gl8CS0zLgiAhn/+tdb1UrrqR+76uk1oG5IUSpNxje2PiH4OcPfWOG3RE//F7px014lFVgsBk1e2Vet8dILGte88aRav1KmnpWrhcNnesfKUFk7cwwxPDNoZZkj1fddVCCWKp25ZKXeloHej7qYn77qUepY1uuAiuDSOVXYez7BpSD1cxvw3VFpwtOTtXEZO/uMiHKowMlmJ44Yv1H0XQcUjRcXiYTD9gOvknrR2Qe4wOTLmL6ImoYs4WdFHpoog=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1728968AbfJGTKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 15:10:09 -0400
+Received: from mailoutvs48.siol.net ([185.57.226.239]:59043 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728079AbfJGTKI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 15:10:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id EA424521E2F;
+        Mon,  7 Oct 2019 21:01:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id dW8YKP7WwunV; Mon,  7 Oct 2019 21:01:08 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id E446852208F;
+        Mon,  7 Oct 2019 21:01:07 +0200 (CEST)
+Received: from jernej-laptop.localnet (cpe-86-58-59-25.static.triera.net [86.58.59.25])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id C766E521E2F;
+        Mon,  7 Oct 2019 21:01:06 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     mchehab@kernel.org, paul.kocialkowski@bootlin.com,
+        mripard@kernel.org, pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, tfiga@chromium.org, wens@csie.org,
+        gregkh@linuxfoundation.org, boris.brezillon@collabora.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        ezequiel@collabora.com, jonas@kwiboo.se
+Subject: Re: [PATCH v2 0/6] media: cedrus: h264: Support multi-slice frames
+Date:   Mon, 07 Oct 2019 21:01:06 +0200
+Message-ID: <2785635.uIalc63MVP@jernej-laptop>
+In-Reply-To: <5ec43907-cb6f-1527-f6ec-9fffc768d9ef@xs4all.nl>
+References: <20190929200023.215831-1-jernej.skrabec@siol.net> <5ec43907-cb6f-1527-f6ec-9fffc768d9ef@xs4all.nl>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c90bb332-ccc1-42de-9015-08d74b589ac8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2019 19:00:22.4024
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UAhAxZg5vzTfxPyYQR55FwW8jJGL4WSZomqUBbcOZ+RuFL5WzlIcv8NNX2lEpYKHowRG5HrttKc/PQp5mRxd4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2736
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As per "AMD64 Architecture Programmer's Manual Volume 3: General-Purpose
-and System Instructions", MWAITX EAX[7:4]+1 specifies the optional hint
-of the optimized C-state. For C0 state, EAX[7:4] should be set to 0xf.
+Dne ponedeljek, 07. oktober 2019 ob 12:44:24 CEST je Hans Verkuil napisal(a):
+> Hi Jernej,
+> 
+> On 9/29/19 10:00 PM, Jernej Skrabec wrote:
+> > This series adds support for decoding multi-slice H264 frames along with
+> > support for V4L2_DEC_CMD_FLUSH and V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF.
+> > 
+> > Code was tested by modified ffmpeg, which can be found here:
+> > https://github.com/jernejsk/FFmpeg, branch mainline-test
+> > It has to be configured with at least following options:
+> > --enable-v4l2-request --enable-libudev --enable-libdrm
+> > 
+> > Samples used for testing:
+> > http://jernej.libreelec.tv/videos/h264/BA1_FT_C.mp4
+> > http://jernej.libreelec.tv/videos/h264/h264.mp4
+> > 
+> > Command line used for testing:
+> > ffmpeg -hwaccel drm -hwaccel_device /dev/dri/card0 -i h264.mp4 -pix_fmt
+> > bgra -f fbdev /dev/fb0
+> > 
+> > Please note that V4L2_DEC_CMD_FLUSH was not tested because I'm
+> > not sure how. ffmpeg follows exactly which slice is last in frame
+> > and sets hold flag accordingly. Improper usage of hold flag would
+> > corrupt ffmpeg assumptions and it would probably crash. Any ideas
+> > how to test this are welcome!
+> > 
+> > Thanks to Jonas for adjusting ffmpeg.
+> > 
+> > Please let me know what you think.
+> > 
+> > Best regards,
+> > Jernej
+> > 
+> > Changes from v1:
+> > - added Rb tags
+> > - updated V4L2_DEC_CMD_FLUSH documentation
+> > - updated first slice detection in Cedrus
+> > - hold capture buffer flag is set according to source format
+> > - added v4l m2m stateless_(try_)decoder_cmd ioctl helpers
+> > 
+> > Hans Verkuil (2):
+> >   vb2: add V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF
+> >   videodev2.h: add V4L2_DEC_CMD_FLUSH
+> > 
+> > Jernej Skrabec (4):
+> >   media: v4l2-mem2mem: add stateless_(try_)decoder_cmd ioctl helpers
+> >   media: cedrus: Detect first slice of a frame
+> >   media: cedrus: h264: Support multiple slices per frame
+> >   media: cedrus: Add support for holding capture buffer
+> >  
+> >  Documentation/media/uapi/v4l/buffer.rst       | 13 ++++++
+> >  .../media/uapi/v4l/vidioc-decoder-cmd.rst     | 10 +++-
+> >  .../media/uapi/v4l/vidioc-reqbufs.rst         |  6 +++
+> >  .../media/videodev2.h.rst.exceptions          |  1 +
+> >  .../media/common/videobuf2/videobuf2-v4l2.c   |  8 +++-
+> >  drivers/media/v4l2-core/v4l2-mem2mem.c        | 35 ++++++++++++++
+> >  drivers/staging/media/sunxi/cedrus/cedrus.h   |  1 +
+> >  .../staging/media/sunxi/cedrus/cedrus_dec.c   | 11 +++++
+> >  .../staging/media/sunxi/cedrus/cedrus_h264.c  | 11 ++++-
+> >  .../staging/media/sunxi/cedrus/cedrus_hw.c    |  8 ++--
+> >  .../staging/media/sunxi/cedrus/cedrus_video.c | 14 ++++++
+> >  include/media/v4l2-mem2mem.h                  | 46 +++++++++++++++++++
+> >  include/media/videobuf2-core.h                |  3 ++
+> >  include/media/videobuf2-v4l2.h                |  5 ++
+> >  include/uapi/linux/videodev2.h                | 14 ++++--
+> >  15 files changed, 175 insertions(+), 11 deletions(-)
+> 
+> I didn't want to make a v3 of this series, instead I hacked this patch that
+> will hopefully do all the locking right.
+> 
+> Basically I moved all the 'held' related code into v4l2-mem2mem under
+> job_spinlock. This simplifies the driver code as well.
+> 
+> But this is a hack that sits on top of this series. If your ffmpeg tests are
+> now successful, then I'll turn this into a proper series with correct
+> documentation (a lot of the comments are now wrong with this patch, so just
+> ignore that).
 
-Currently, a value of 0xf is set for EAX[3:0] instead of EAX[7:4]. Fix
-this by changing MWAITX_DISABLE_CSTATES from 0xf to 0xf0.
+Thanks for looking into this! With small fix mentioned below, it works! Note 
+that both scenarios I tested (flushing during decoding and flushing after 
+decoding is finished) are focused on capture queue. In order to trigger output 
+queue flush, ffmpeg would need to queue multiple jobs and call flush before they 
+are all processed. This is not something I can do at this time. Maybe Jonas 
+can help with modifying ffmpeg appropriately. However, code for case seems 
+correct to me.
 
-Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
----
- arch/x86/include/asm/mwait.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c
+> b/drivers/media/v4l2-core/v4l2-mem2mem.c index 2677a07e4c9b..f81a8f2465ab
+> 100644
+> --- a/drivers/media/v4l2-core/v4l2-mem2mem.c
+> +++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+> @@ -412,25 +412,24 @@ static void v4l2_m2m_cancel_job(struct v4l2_m2m_ctx
+> *m2m_ctx) }
+>  }
+> 
+> -void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
+> -			 struct v4l2_m2m_ctx *m2m_ctx)
+> +static bool _v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
+> +			  struct v4l2_m2m_ctx *m2m_ctx)
+>  {
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
+>  	if (!m2m_dev->curr_ctx || m2m_dev->curr_ctx != m2m_ctx) {
+> -		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+>  		dprintk("Called by an instance not currently 
+running\n");
+> -		return;
+> +		return false;
+>  	}
+> 
+>  	list_del(&m2m_dev->curr_ctx->queue);
+>  	m2m_dev->curr_ctx->job_flags &= ~(TRANS_QUEUED | TRANS_RUNNING);
+>  	wake_up(&m2m_dev->curr_ctx->finished);
+>  	m2m_dev->curr_ctx = NULL;
+> +	return true;
+> +}
+> 
+> -	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> -
+> +static void v4l2_m2m_job_next(struct v4l2_m2m_dev *m2m_dev,
+> +		       struct v4l2_m2m_ctx *m2m_ctx)
+> +{
+>  	/* This instance might have more buffers ready, but since we do not
+>  	 * allow more than one job on the job_queue per instance, each has
+>  	 * to be scheduled separately after the previous one finishes. */
+> @@ -441,8 +440,113 @@ void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
+> */
+>  	schedule_work(&m2m_dev->job_work);
+>  }
+> +
+> +void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
+> +			 struct v4l2_m2m_ctx *m2m_ctx)
+> +{
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
+> +	if (!_v4l2_m2m_job_finish(m2m_dev, m2m_ctx)) {
+> +		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> +		return;
+> +	}
+> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> +
+> +	v4l2_m2m_job_next(m2m_dev, m2m_ctx);
+> +}
+>  EXPORT_SYMBOL(v4l2_m2m_job_finish);
+> 
+> +void v4l2_m2m_job_finish_held(struct v4l2_m2m_dev *m2m_dev,
+> +			 struct v4l2_m2m_ctx *m2m_ctx,
+> +			 enum vb2_buffer_state state)
+> +{
+> +	struct vb2_v4l2_buffer *src_buf, *dst_buf;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
+> +	src_buf = v4l2_m2m_src_buf_remove(m2m_ctx);
+> +	dst_buf = v4l2_m2m_next_dst_buf(m2m_ctx);
+> +
+> +	if (!src_buf || !dst_buf) {
+> +		pr_err("Missing source and/or destination buffers\n");
+> +		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> +		return;
+> +	}
+> +	v4l2_m2m_buf_done(src_buf, state);
+> +	if (!dst_buf->is_held) {
+> +		v4l2_m2m_dst_buf_remove(m2m_ctx);
+> +		v4l2_m2m_buf_done(dst_buf, state);
+> +	}
+> +	if (!_v4l2_m2m_job_finish(m2m_dev, m2m_ctx)) {
+> +		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> +		return;
+> +	}
+> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> +
+> +	v4l2_m2m_job_next(m2m_dev, m2m_ctx);
+> +}
+> +EXPORT_SYMBOL(v4l2_m2m_job_finish_held);
+> +
+> +/**
+> + * v4l2_m2m_release_capture_buf() - check if the capture buffer should be
+> + * released
+> + *
+> + * @out_vb: the output buffer
+> + * @cap_vb: the capture buffer
+> + *
+> + * This helper function returns true if the current capture buffer should
+> + * be released to vb2. This is the case if the output buffer specified that
+> + * the capture buffer should be held (i.e. not returned to vb2) AND if the
+> + * timestamp of the capture buffer differs from the output buffer
+> timestamp. + *
+> + * This helper is to be called at the start of the device_run callback:
+> + *
+> + * .. code-block:: c
+> + *
+> + *	if (v4l2_m2m_release_capture_buf(out_vb, cap_vb)) {
+> + *		v4l2_m2m_dst_buf_remove(m2m_ctx);
+> + *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
+> + *		cap_vb = v4l2_m2m_next_dst_buf(m2m_ctx);
+> + *	}
+> + *	cap_vb->is_held = out_vb->flags & 
+V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
+> + *
+> + *	...
+> + *
+> + *	v4l2_m2m_buf_done(out_vb, VB2_BUF_STATE_DONE);
+> + *	if (!cap_vb->is_held) {
+> + *		v4l2_m2m_dst_buf_remove(m2m_ctx);
+> + *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
+> + *	}
+> + *
+> + * This allows for multiple output buffers to be used to fill in a single
+> + * capture buffer. This is typically used by stateless decoders where
+> + * multiple e.g. H.264 slices contribute to a single decoded frame.
+> + */
+> +struct vb2_v4l2_buffer *v4l2_m2m_release_capture_buf(struct v4l2_m2m_ctx
+> *m2m_ctx) +{
+> +	struct v4l2_m2m_dev *m2m_dev = m2m_ctx->m2m_dev;
+> +	struct vb2_v4l2_buffer *src, *dst;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
+> +	src = v4l2_m2m_next_src_buf(m2m_ctx);
+> +	dst = v4l2_m2m_next_dst_buf(m2m_ctx);
+> +
+> +	if (dst->is_held && dst->vb2_buf.copied_timestamp &&
+> +	    src->vb2_buf.timestamp != dst->vb2_buf.timestamp) {
+> +		dst->is_held = false;
+> +		v4l2_m2m_dst_buf_remove(m2m_ctx);
+> +		v4l2_m2m_buf_done(dst, VB2_BUF_STATE_DONE);
+> +		dst = v4l2_m2m_next_dst_buf(m2m_ctx);
+> +	}
+> +	dst->is_held = src->flags & V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
+> +	src->flags &= ~V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
+> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> +	return dst;
+> +}
+> +EXPORT_SYMBOL(v4l2_m2m_release_capture_buf);
+> +
+>  int v4l2_m2m_reqbufs(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+>  		     struct v4l2_requestbuffers *reqbufs)
+>  {
+> @@ -1171,19 +1275,28 @@ int v4l2_m2m_ioctl_stateless_decoder_cmd(struct file
+> *file, void *priv, {
+>  	struct v4l2_fh *fh = file->private_data;
+>  	struct vb2_v4l2_buffer *out_vb, *cap_vb;
+> +	struct v4l2_m2m_dev *m2m_dev = fh->m2m_ctx->m2m_dev;
+> +	unsigned long flags;
+>  	int ret;
+> 
+>  	ret = v4l2_m2m_ioctl_stateless_try_decoder_cmd(file, priv, dc);
+>  	if (ret < 0)
+>  		return ret;
+> 
+> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
+>  	out_vb = v4l2_m2m_last_src_buf(fh->m2m_ctx);
+>  	cap_vb = v4l2_m2m_last_dst_buf(fh->m2m_ctx);
+> 
+> -	if (out_vb)
+> +	if (out_vb && (out_vb->flags & V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF)) 
+{
+>  		out_vb->flags &= ~V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
+> -	else if (cap_vb && cap_vb->is_held)
+> -		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
+> +	} else if (cap_vb && cap_vb->is_held) {
+> +		cap_vb->is_held = false;
+> +		if (m2m_dev->curr_ctx) {
 
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index e28f8b723b5c..9d5252c9685c 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -21,7 +21,7 @@
- #define MWAIT_ECX_INTERRUPT_BREAK	0x1
- #define MWAITX_ECX_TIMER_ENABLE		BIT(1)
- #define MWAITX_MAX_LOOPS		((u32)-1)
--#define MWAITX_DISABLE_CSTATES		0xf
-+#define MWAITX_DISABLE_CSTATES		0xf0
-=20
- static inline void __monitor(const void *eax, unsigned long ecx,
- 			     unsigned long edx)
---=20
-2.17.1
+Above condition should be negated.
+
+Best regards,
+Jernej
+
+> +			v4l2_m2m_dst_buf_remove(fh->m2m_ctx);
+> +			v4l2_m2m_buf_done(cap_vb, 
+VB2_BUF_STATE_DONE);
+> +		}
+> +	}
+> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+> 
+>  	return 0;
+>  }
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c index
+> 67f7d4326fc1..4e30f263b427 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> @@ -30,14 +30,7 @@ void cedrus_device_run(void *priv)
+>  	struct media_request *src_req;
+> 
+>  	run.src = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
+> -	run.dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+> -
+> -	if (v4l2_m2m_release_capture_buf(run.src, run.dst)) {
+> -		v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+> -		v4l2_m2m_buf_done(run.dst, VB2_BUF_STATE_DONE);
+> -		run.dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+> -	}
+> -	run.dst->is_held = run.src->flags & 
+V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
+> +	run.dst = v4l2_m2m_release_capture_buf(ctx->fh.m2m_ctx);
+> 
+>  	run.first_slice = !run.dst->vb2_buf.copied_timestamp ||
+>  		run.src->vb2_buf.timestamp != run.dst-
+>vb2_buf.timestamp;
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+> b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c index
+> 99fedec80224..242cad82cc8c 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+> @@ -103,7 +103,6 @@ static irqreturn_t cedrus_irq(int irq, void *data)
+>  {
+>  	struct cedrus_dev *dev = data;
+>  	struct cedrus_ctx *ctx;
+> -	struct vb2_v4l2_buffer *src_buf, *dst_buf;
+>  	enum vb2_buffer_state state;
+>  	enum cedrus_irq_status status;
+> 
+> @@ -121,26 +120,12 @@ static irqreturn_t cedrus_irq(int irq, void *data)
+>  	dev->dec_ops[ctx->current_codec]->irq_disable(ctx);
+>  	dev->dec_ops[ctx->current_codec]->irq_clear(ctx);
+> 
+> -	src_buf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+> -	dst_buf = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+> -
+> -	if (!src_buf || !dst_buf) {
+> -		v4l2_err(&dev->v4l2_dev,
+> -			 "Missing source and/or destination 
+buffers\n");
+> -		return IRQ_HANDLED;
+> -	}
+> -
+>  	if (status == CEDRUS_IRQ_ERROR)
+>  		state = VB2_BUF_STATE_ERROR;
+>  	else
+>  		state = VB2_BUF_STATE_DONE;
+> 
+> -	v4l2_m2m_buf_done(src_buf, state);
+> -	if (!dst_buf->is_held) {
+> -		v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+> -		v4l2_m2m_buf_done(dst_buf, state);
+> -	}
+> -	v4l2_m2m_job_finish(ctx->dev->m2m_dev, ctx->fh.m2m_ctx);
+> +	v4l2_m2m_job_finish_held(ctx->dev->m2m_dev, ctx->fh.m2m_ctx, state);
+> 
+>  	return IRQ_HANDLED;
+>  }
+> diff --git a/include/media/v4l2-mem2mem.h b/include/media/v4l2-mem2mem.h
+> index 8ae2f56c7fa3..48ca7d3eaa3d 100644
+> --- a/include/media/v4l2-mem2mem.h
+> +++ b/include/media/v4l2-mem2mem.h
+> @@ -173,6 +173,10 @@ void v4l2_m2m_try_schedule(struct v4l2_m2m_ctx
+> *m2m_ctx); void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
+>  			 struct v4l2_m2m_ctx *m2m_ctx);
+> 
+> +void v4l2_m2m_job_finish_held(struct v4l2_m2m_dev *m2m_dev,
+> +			 struct v4l2_m2m_ctx *m2m_ctx,
+> +			 enum vb2_buffer_state state);
+> +
+>  static inline void
+>  v4l2_m2m_buf_done(struct vb2_v4l2_buffer *buf, enum vb2_buffer_state state)
+> {
+> @@ -644,47 +648,7 @@ void v4l2_m2m_buf_copy_metadata(const struct
+> vb2_v4l2_buffer *out_vb, struct vb2_v4l2_buffer *cap_vb,
+>  				bool copy_frame_flags);
+> 
+> -/**
+> - * v4l2_m2m_release_capture_buf() - check if the capture buffer should be
+> - * released
+> - *
+> - * @out_vb: the output buffer
+> - * @cap_vb: the capture buffer
+> - *
+> - * This helper function returns true if the current capture buffer should
+> - * be released to vb2. This is the case if the output buffer specified that
+> - * the capture buffer should be held (i.e. not returned to vb2) AND if the
+> - * timestamp of the capture buffer differs from the output buffer
+> timestamp. - *
+> - * This helper is to be called at the start of the device_run callback:
+> - *
+> - * .. code-block:: c
+> - *
+> - *	if (v4l2_m2m_release_capture_buf(out_vb, cap_vb)) {
+> - *		v4l2_m2m_dst_buf_remove(m2m_ctx);
+> - *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
+> - *		cap_vb = v4l2_m2m_next_dst_buf(m2m_ctx);
+> - *	}
+> - *	cap_vb->is_held = out_vb->flags & 
+V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
+> - *
+> - *	...
+> - *
+> - *	v4l2_m2m_buf_done(out_vb, VB2_BUF_STATE_DONE);
+> - *	if (!cap_vb->is_held) {
+> - *		v4l2_m2m_dst_buf_remove(m2m_ctx);
+> - *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
+> - *	}
+> - *
+> - * This allows for multiple output buffers to be used to fill in a single
+> - * capture buffer. This is typically used by stateless decoders where
+> - * multiple e.g. H.264 slices contribute to a single decoded frame.
+> - */
+> -static inline bool v4l2_m2m_release_capture_buf(const struct
+> vb2_v4l2_buffer *out_vb, -					
+	const struct vb2_v4l2_buffer *cap_vb)
+> -{
+> -	return cap_vb->is_held && cap_vb->vb2_buf.copied_timestamp &&
+> -	       out_vb->vb2_buf.timestamp != cap_vb->vb2_buf.timestamp;
+> -}
+> +struct vb2_v4l2_buffer *v4l2_m2m_release_capture_buf(struct v4l2_m2m_ctx
+> *m2m_ctx);
+> 
+>  /* v4l2 request helper */
+
+
+
 
