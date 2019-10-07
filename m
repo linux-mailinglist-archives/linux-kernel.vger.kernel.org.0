@@ -2,104 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4AACE130
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CBA2CE13B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfJGMGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:06:24 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:56085 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727467AbfJGMGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:06:23 -0400
-Received: from [IPv6:2001:983:e9a7:1:3d61:cdd2:8085:cc8] ([IPv6:2001:983:e9a7:1:3d61:cdd2:8085:cc8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id HRmOiMO4ljZ8vHRmPi6b1B; Mon, 07 Oct 2019 14:06:21 +0200
-Subject: Re: [PATCH v10 6/8] Documentation: media: Describe
- V4L2_CID_UNIT_CELL_SIZE
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191007113502.11746-1-ribalda@kernel.org>
- <20191007113502.11746-7-ribalda@kernel.org>
- <494e3061-985d-8b8e-7728-9e72442ad9f7@xs4all.nl>
- <CAPybu_2Qm+1MxQXCXXq4zzhvnjew5awRSofkqiPrc2bMav=Jkg@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <5934d1ce-fb9e-1965-cff2-1c3cc70006df@xs4all.nl>
-Date:   Mon, 7 Oct 2019 14:06:20 +0200
+        id S1727791AbfJGMHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:07:54 -0400
+Received: from mga06.intel.com ([134.134.136.31]:27590 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727467AbfJGMHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:07:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 05:07:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,268,1566889200"; 
+   d="scan'208";a="276771556"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
+  by orsmga001.jf.intel.com with ESMTP; 07 Oct 2019 05:07:52 -0700
+Subject: Re: [PATCH 4/5] perf tools: Support single perf.data file directory
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20191004083121.12182-1-adrian.hunter@intel.com>
+ <20191004083121.12182-5-adrian.hunter@intel.com>
+ <20191007112027.GD6919@krava>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <2340d60c-e8a6-2333-06ce-77076c912a1c@intel.com>
+Date:   Mon, 7 Oct 2019 15:06:30 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPybu_2Qm+1MxQXCXXq4zzhvnjew5awRSofkqiPrc2bMav=Jkg@mail.gmail.com>
+In-Reply-To: <20191007112027.GD6919@krava>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfImsdgBN2sNq3DcD0W9y9jdfVVd8Uu2jDdX6gK5t2AnJ41nIw6IZ1mUjo4QiCf5ZCpPyjWdX++jWCihUl0lakd5mQi9Q+6XlLFO7CL3posQVCF7Ky/Zv
- FF/8PEvM/0aNKM7hgA5vp3Aw6UCVyK00P/1DmbGLwg6Fe+Qd1Y6MUJxWrvLnHoccWdSxW69VQarNmFXUSF2kUEGkrSo0gzg31sRtHSEyy2mJIVBPSZAXkA+R
- wcS42veMdon1fQo7zLxq5/hFlu8W+aPbEfcg5lULrNARQc4saNwlLx/DIp8VH8w5fswVlR0oSIioH+S2AJrhILP/XUZlWfHixjlrLDQErrDcQr2SurQJyHTY
- EeRD6EDQlAUsMveDTCcf6UlEcyv09SlROiCt9wfiOyEahztrqO8j8g2u0MLu424pMkWdIwXe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/7/19 2:03 PM, Ricardo Ribalda Delgado wrote:
-> Hi Hans
+On 7/10/19 2:20 PM, Jiri Olsa wrote:
+> On Fri, Oct 04, 2019 at 11:31:20AM +0300, Adrian Hunter wrote:
 > 
+> SNIP
 > 
+>>  	u8 pad[8] = {0};
+>>  
+>> -	if (!perf_data__is_pipe(data) && !perf_data__is_dir(data)) {
+>> +	if (!perf_data__is_pipe(data) && perf_data__is_single_file(data)) {
+>>  		off_t file_offset;
+>>  		int fd = perf_data__fd(data);
+>>  		int err;
+>> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+>> index df173f0bf654..964ea101dba6 100644
+>> --- a/tools/perf/util/data.c
+>> +++ b/tools/perf/util/data.c
+>> @@ -76,6 +76,13 @@ int perf_data__open_dir(struct perf_data *data)
+>>  	DIR *dir;
+>>  	int nr = 0;
+>>  
+>> +	/*
+>> +	 * Directory containing a single regular perf data file which is already
+>> +	 * open, means there is nothing more to do here.
+>> +	 */
+>> +	if (perf_data__is_single_file(data))
+>> +		return 0;
+>> +
 > 
-> On Mon, Oct 7, 2019 at 2:01 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->>
->> On 10/7/19 1:35 PM, Ricardo Ribalda Delgado wrote:
->>> New control to pass to userspace the width/height of a pixel. Which is
->>> needed for calibration and lens selection.
->>>
->>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->>> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
->>> ---
->>>  Documentation/media/uapi/v4l/ext-ctrls-image-source.rst | 9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst b/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
->>> index 2c3ab5796d76..6388668855d0 100644
->>> --- a/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
->>> +++ b/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
->>> @@ -55,3 +55,12 @@ Image Source Control IDs
->>>
->>>  ``V4L2_CID_TEST_PATTERN_GREENB (integer)``
->>>      Test pattern green (next to blue) colour component.
->>> +
->>> +``V4L2_CID_UNIT_CELL_SIZE (struct)``
->>> +    This control returns the unit cell size in nanometers. The struct
->>> +    :c:type:`v4l2_area` provides the width and the height in separate
->>> +    fields to take into consideration asymmetric pixels and/or hardware
->>> +    binning.
->>
->> This still states that this control takes binning into account. I understood that
->> we decided not to do that?
->>
-> 
-> Good catch, seems that at some point I changed my mind :).
-> 
-> Will fix this doc.
-> 
-> Can I resend only this patch to avoid spamming the list?
+> cool, I like this approach much more than the previous flag
 
-Yes, that's fine.
-
-	Hans
+Yes it is much nicer.  Thanks for your direction on that.
 
 > 
+> any change you (if there's repost) or Arnaldo
+> could squeeze in indent change below?
+
+Sent a patch, to be applied before these.
+
 > 
->> Regards,
->>
->>         Hans
->>
->>> +    The unit cell consists of the whole area of the pixel, sensitive and
->>> +    non-sensitive.
->>> +    This control is required for automatic calibration of sensors/cameras.
->>>
->>
+> thanks,
+> jirka
+> 
+> 
+> ---
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index bfa80fe8d369..7f567a521cea 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -227,8 +227,8 @@ struct perf_session *perf_session__new(struct perf_data *data,
+>  			/* Open the directory data. */
+>  			if (data->is_dir) {
+>  				ret = perf_data__open_dir(data);
+> -			if (ret)
+> -				goto out_delete;
+> +				if (ret)
+> +					goto out_delete;
+>  			}
+>  
+>  			if (!symbol_conf.kallsyms_name &&
+> 
 
