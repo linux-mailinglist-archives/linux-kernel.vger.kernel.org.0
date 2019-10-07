@@ -2,80 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F517CE93E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7853CE945
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:32:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbfJGQbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:31:01 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36458 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbfJGQbB (ORCPT
+        id S1728506AbfJGQb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:31:59 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53534 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727801AbfJGQb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:31:01 -0400
-Received: by mail-io1-f66.google.com with SMTP id b136so29975038iof.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:31:00 -0700 (PDT)
+        Mon, 7 Oct 2019 12:31:58 -0400
+Received: by mail-wm1-f66.google.com with SMTP id i16so162217wmd.3;
+        Mon, 07 Oct 2019 09:31:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=UMUq0E3/yM6gzt+2eUBeAxMv0c8zmA9olT58MxNzCf4=;
-        b=TqBUntmK2QBZxPdl52tmQ1CH3bubuXA3aGv/7uJurB+oOFTrLd0+OMsPYlOtAJVxEe
-         ogaV8bF+iofd4SQogXiN6BHm3mqpl16VmHLga2A8t+smqY+S6JF2RJNntJV92/KkV5VT
-         ch6UVRZ/IhWuo2X4uJhW9gm2GJ6IjstIBRLWVMlRAu6dIiefTvxBWI1Bae+Zq0hin5QL
-         aiKOVxZt1ANCnkjth9NxrFAJAaUnfABOAOqBXv+gp8FY1qyLv0spJReqrFNACN4HHaku
-         87DtigPQlxUKBvKH589Nwq1htOEiy8HFoFrygHKS8Hbgko1LD2yqw3REtjhKAUChJb0f
-         r8QQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GlmF+oTM7RARaq9sK2TT+5ACFjhWCemrjzKwsF1f3G8=;
+        b=PklRWDAXNChgEGD/oZ8HSOdFqe1tCcZHNO12cFGrZNeHjQ/3hyhKtPXAJw8Y4pxFby
+         PfDyiaMy+gZQ5n8Nhfxk/f4Hk9+Gt9JFaUa3H9Bbg9URi8qYdQA3iYEw12ywIHp3r4ec
+         wr/4vW+Mgpr+gjhjut+gGtl0o20dwxuwtZUiPCxvmLOfgfM5VlFFQCm3Q871AccuZ+Xo
+         EhTMK/Yafi48TQIFjkJi3vN1PXtWaZFmiO57ObEnN9EryYZ+hzmyVvIWU0/+FlEF0F5o
+         X3JvhY6deVfDQ9ffHZj8OP5I1JVRMLCxt8LrqG+GqWle/6TrSwjMNLb6k0uWZ/Gfap1p
+         hNzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=UMUq0E3/yM6gzt+2eUBeAxMv0c8zmA9olT58MxNzCf4=;
-        b=Dy5/J5FTPpnyDl6bA98MkyRaLTo6qMLDWtQxPpzxKN0plOliNj0jRrAM3fVC+jRlb8
-         +YaehyUj/BHmcaDfZYk3+Qx8Ro9J4mWCg6ebLZpC7vQ3LRKyZ1i8J80kS53E6byLr+Im
-         mfmxopLLVkRWBps6cx3tJz+8OTOlhYNJPENXDm+cuMh9izzTLNBntm9Z04Y68Ot7Ut69
-         GrMeQQQ03U02uqAILESWz7aMMnaJoZ6YOZp3tkIct0mX7eOAZVSkNqFmtFTLQ7e1DM5Q
-         NhtP9iWaVokeWotUsWg9dUTmYJ8dXAyQc9csJll3jxwVZfI2uTmIIeKqRmOmUG74P/Kk
-         PY5g==
-X-Gm-Message-State: APjAAAWJ1Y0fMZzRHcL91ifnvdbyAbxkxlWyDdPKiVaWYssENl3rxykQ
-        Qk+WiPp12f1gUhQWEWXPVA1qVI74cqQ=
-X-Google-Smtp-Source: APXvYqyIj50zi9T4D7DSBrj4lwQDXM2+L6ujaji4sPoloVTJdqqvpCSohRbq3EGKz1CJAvFsfAjowQ==
-X-Received: by 2002:a02:7044:: with SMTP id f65mr13349434jac.37.1570465859146;
-        Mon, 07 Oct 2019 09:30:59 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id t4sm6535770iln.82.2019.10.07.09.30.58
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GlmF+oTM7RARaq9sK2TT+5ACFjhWCemrjzKwsF1f3G8=;
+        b=nu8hUjJGgjVKZweHGYjKOOTlxA5WZ26iWuSvyIvlvKUANV8Na+TpIPwNjtKfT4X/He
+         l9Gv81S2P/9putl0Wj9pGYcgwue860J15OfUGV/pQY3H3inhBsEXxBrDtchKp7vxlKYD
+         zOXAueP8EMESuWuNBthgFIQ3COrVBNc7J6WUllIwMDU258XNWqkY3srUoa7t0BdZo67/
+         xORNCVTuS1IjyxWar0AntgZc6vFQZzXVVfrbct2zOLM3rwXiSllNYetWhe6A8JVZ8dUr
+         ywUjFyKS1v8OdvJsRxF7CbBRf5YSFIRoFp2yM3Dro51PvdCaJHUT76LGo1hmqFxxUUYj
+         I+3w==
+X-Gm-Message-State: APjAAAWoRPx4lz7GYf6G+eO6gCS7g/nhNqYMsvRnYwQo3B9rwm/qd/X8
+        Q4TY3Cy+NO7Q+oL2ruQanuxhHD91nJEIXQ==
+X-Google-Smtp-Source: APXvYqwW5x36dcf1QgxFltvrhUk5N6IZtgO+Ok7naAT0W3ZkrorbJzoPSI7Gs2faRfMgpu3M15OhzA==
+X-Received: by 2002:a1c:5942:: with SMTP id n63mr107452wmb.65.1570465916205;
+        Mon, 07 Oct 2019 09:31:56 -0700 (PDT)
+Received: from localhost.localdomain (userh394.uk.uudial.com. [194.69.102.21])
+        by smtp.gmail.com with ESMTPSA id a9sm148524wmf.14.2019.10.07.09.31.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 09:30:58 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 09:30:57 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     Vincent Chen <vincent.chen@sifive.com>,
-        linux-riscv@lists.infradead.org, palmer@sifive.com,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu
-Subject: Re: [PATCH 4/4] riscv: remove the switch statement in
- do_trap_break()
-In-Reply-To: <20191007161050.GA20596@infradead.org>
-Message-ID: <alpine.DEB.2.21.9999.1910070930270.10936@viisi.sifive.com>
-References: <1569199517-5884-1-git-send-email-vincent.chen@sifive.com> <1569199517-5884-5-git-send-email-vincent.chen@sifive.com> <20190927224711.GI4700@infradead.org> <alpine.DEB.2.21.9999.1910070906570.10936@viisi.sifive.com>
- <20191007161050.GA20596@infradead.org>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Mon, 07 Oct 2019 09:31:55 -0700 (PDT)
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
+Cc:     "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: [PATCH 0/2] Drivers: hv: vmbus: Miscellaneous improvements
+Date:   Mon,  7 Oct 2019 18:31:13 +0200
+Message-Id: <20191007163115.26197-1-parri.andrea@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 Oct 2019, Christoph Hellwig wrote:
+Hi all,
 
-> On Mon, Oct 07, 2019 at 09:08:23AM -0700, Paul Walmsley wrote:
-> >  		force_sig_fault(SIGTRAP, TRAP_BRKPT,
-> >  				(void __user *)(regs->sepc));
-> 
-> No nee for the extra braces, which also means it all fits onto a single
-> line.  
+The patchset:
 
-Good point, will drop the extra parens and remove the braces.
+- simplifies/refactors the VMBus negotiation code by introducing
+  the table of VMBus protocol versions (patch 1/2),
 
+- enables VMBus protocol versions 5.1 and 5.2 (patch 2/2).
 
-- Paul
+Thanks,
+  Andrea
+
+Andrea Parri (2):
+  Drivers: hv: vmbus: Introduce table of VMBus protocol versions
+  Drivers: hv: vmbus: Enable VMBus protocol versions 5.1 and 5.2
+
+ drivers/hv/connection.c | 63 +++++++++++++++++------------------------
+ include/linux/hyperv.h  |  6 ++--
+ 2 files changed, 30 insertions(+), 39 deletions(-)
+
+-- 
+2.23.0
+
