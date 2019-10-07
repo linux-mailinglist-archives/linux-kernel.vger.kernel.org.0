@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D78DCE296
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F31CE294
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfJGNDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:03:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50140 "EHLO
+        id S1728325AbfJGNDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:03:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49968 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbfJGNDu (ORCPT
+        with ESMTP id S1728146AbfJGNDo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:03:50 -0400
+        Mon, 7 Oct 2019 09:03:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Cfep0rIWMWln/JuLOxx1Em6o0m/piiYjUQUP4jMHOv0=; b=DxajtVCIZ7TS
-        LUoA4FeiAcAzoPTrmWvtbEN1KtrYBEv1W9u2aZ7c252BXAw0zAjorz8kqWIqIWS228TtPZyt0OlxW
-        ypNHjM2RHffgNnU33MjcMIYZEikgtRvvIWjOYveK0Bd7yLHxEBw4HE4OlNyfCBKHboLT8B1KdT8jZ
-        dZuck=;
+        List-Archive; bh=+GKNSiDM449B7j26Qri6+MHaUubwgCu58aKPDyjCsX4=; b=vgbv/AXWUC0p
+        yKiGRaUI48LhhUO7h6WGJ7Pm3xcSLT7YuynHevPhoX8rnbDFEpIqn5cwH4uVk4VBvJuq7Xv6t8wuf
+        HyRrMhsAdz7x7YihiTs9VFfo5Ryv9kZSe4oj/5drHSbwyHlHAisL3Psb8sPJG4cClbqFdFPHCi5A0
+        +6+/o=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iHSfP-0003Qq-3C; Mon, 07 Oct 2019 13:03:11 +0000
+        id 1iHSfO-0003Qn-UP; Mon, 07 Oct 2019 13:03:10 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 5DBE7274162F; Mon,  7 Oct 2019 14:03:09 +0100 (BST)
+        id EAEBE2741EF0; Mon,  7 Oct 2019 14:03:09 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     alsa-devel@alsa-project.org, Fabio Estevam <festevam@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mark Brown <broonie@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
-        Xiubo Li <Xiubo.Lee@gmail.com>
-Subject: Applied "ASoC: fsl_mqs: Fix error handling in probe" to the asoc tree
-In-Reply-To: <20191004102208.GB823@mwanda>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, andradanciu1997@gmail.com,
+        broonie@kernel.org, ckeepax@opensource.cirrus.com,
+        enric.balletbo@collabora.com, Hulk Robot <hulkci@huawei.com>,
+        kuninori.morimoto.gx@renesas.com, ladis@linux-mips.org,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, m.felsch@pengutronix.de,
+        mirq-linux@rere.qmqm.pl, paul@crapouillou.net, perex@perex.cz,
+        piotrs@opensource.cirrus.com, rf@opensource.wolfsonmicro.com,
+        shifu0704@thundersoft.com, srinivas.kandagatla@linaro.org,
+        tiwai@suse.com
+Subject: Applied "ASoc: tas2770: Fix build error without GPIOLIB" to the asoc tree
+In-Reply-To: <20191006104631.60608-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191007130309.5DBE7274162F@ypsilon.sirena.org.uk>
+Message-Id: <20191007130309.EAEBE2741EF0@ypsilon.sirena.org.uk>
 Date:   Mon,  7 Oct 2019 14:03:09 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -53,7 +53,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fsl_mqs: Fix error handling in probe
+   ASoc: tas2770: Fix build error without GPIOLIB
 
 has been applied to the asoc tree at
 
@@ -78,105 +78,50 @@ to this mail.
 Thanks,
 Mark
 
-From a9d273671440c439c4f236123c59dd839c1a0eb7 Mon Sep 17 00:00:00 2001
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 4 Oct 2019 13:22:09 +0300
-Subject: [PATCH] ASoC: fsl_mqs: Fix error handling in probe
+From 03fe492e8346d3da59b6eb7ea306d46ebf22e9d5 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sun, 6 Oct 2019 18:46:31 +0800
+Subject: [PATCH] ASoc: tas2770: Fix build error without GPIOLIB
 
-There are several problems in the error handling in fsl_mqs_probe().
+If GPIOLIB is not set, building fails:
 
-1) "ret" isn't initialized on some paths.  GCC has a feature which
-   warns about uninitialized variables but the code initializes "ret"
-   to zero at the start of the function so the checking is turned off.
-2) "gpr_np" is a pointer so initializing it to zero is confusing and
-   generates a Sparse warning.
-3) of_parse_phandle() doesn't return error pointers on error, it returns
-   NULL.
-4) If devm_snd_soc_register_component() fails then the function should
-   free the "gpr_np".
+sound/soc/codecs/tas2770.c: In function tas2770_reset:
+sound/soc/codecs/tas2770.c:38:3: error: implicit declaration of function gpiod_set_value_cansleep; did you mean gpio_set_value_cansleep? [-Werror=implicit-function-declaration]
+   gpiod_set_value_cansleep(tas2770->reset_gpio, 0);
+   ^~~~~~~~~~~~~~~~~~~~~~~~
+   gpio_set_value_cansleep
+sound/soc/codecs/tas2770.c: In function tas2770_i2c_probe:
+sound/soc/codecs/tas2770.c:749:24: error: implicit declaration of function devm_gpiod_get_optional; did you mean devm_regulator_get_optional? [-Werror=implicit-function-declaration]
+  tas2770->reset_gpio = devm_gpiod_get_optional(tas2770->dev,
+                        ^~~~~~~~~~~~~~~~~~~~~~~
+                        devm_regulator_get_optional
+sound/soc/codecs/tas2770.c:751:13: error: GPIOD_OUT_HIGH undeclared (first use in this function); did you mean GPIOF_INIT_HIGH?
+             GPIOD_OUT_HIGH);
+             ^~~~~~~~~~~~~~
+             GPIOF_INIT_HIGH
 
-Fixes: 9e28f6532c61 ("ASoC: fsl_mqs: Add MQS component driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Link: https://lore.kernel.org/r/20191004102208.GB823@mwanda
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 1a476abc723e ("tas2770: add tas2770 smart PA kernel driver")
+Suggested-by: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20191006104631.60608-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/fsl_mqs.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ sound/soc/codecs/tas2770.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
-index 7b9cab3a62e7..f7fc44e8fb27 100644
---- a/sound/soc/fsl/fsl_mqs.c
-+++ b/sound/soc/fsl/fsl_mqs.c
-@@ -178,10 +178,10 @@ static const struct regmap_config fsl_mqs_regmap_config = {
- static int fsl_mqs_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct device_node *gpr_np = 0;
-+	struct device_node *gpr_np = NULL;
- 	struct fsl_mqs *mqs_priv;
- 	void __iomem *regs;
--	int ret = 0;
-+	int ret;
- 
- 	mqs_priv = devm_kzalloc(&pdev->dev, sizeof(*mqs_priv), GFP_KERNEL);
- 	if (!mqs_priv)
-@@ -198,17 +198,16 @@ static int fsl_mqs_probe(struct platform_device *pdev)
- 
- 	if (mqs_priv->use_gpr) {
- 		gpr_np = of_parse_phandle(np, "gpr", 0);
--		if (IS_ERR(gpr_np)) {
-+		if (!gpr_np) {
- 			dev_err(&pdev->dev, "failed to get gpr node by phandle\n");
--			ret = PTR_ERR(gpr_np);
--			goto out;
-+			return -EINVAL;
- 		}
- 
- 		mqs_priv->regmap = syscon_node_to_regmap(gpr_np);
- 		if (IS_ERR(mqs_priv->regmap)) {
- 			dev_err(&pdev->dev, "failed to get gpr regmap\n");
- 			ret = PTR_ERR(mqs_priv->regmap);
--			goto out;
-+			goto err_free_gpr_np;
- 		}
- 	} else {
- 		regs = devm_platform_ioremap_resource(pdev, 0);
-@@ -229,7 +228,7 @@ static int fsl_mqs_probe(struct platform_device *pdev)
- 		if (IS_ERR(mqs_priv->ipg)) {
- 			dev_err(&pdev->dev, "failed to get the clock: %ld\n",
- 				PTR_ERR(mqs_priv->ipg));
--			goto out;
-+			return PTR_ERR(mqs_priv->ipg);
- 		}
- 	}
- 
-@@ -237,17 +236,21 @@ static int fsl_mqs_probe(struct platform_device *pdev)
- 	if (IS_ERR(mqs_priv->mclk)) {
- 		dev_err(&pdev->dev, "failed to get the clock: %ld\n",
- 			PTR_ERR(mqs_priv->mclk));
--		goto out;
-+		ret = PTR_ERR(mqs_priv->mclk);
-+		goto err_free_gpr_np;
- 	}
- 
- 	dev_set_drvdata(&pdev->dev, mqs_priv);
- 	pm_runtime_enable(&pdev->dev);
- 
--	return devm_snd_soc_register_component(&pdev->dev, &soc_codec_fsl_mqs,
-+	ret = devm_snd_soc_register_component(&pdev->dev, &soc_codec_fsl_mqs,
- 			&fsl_mqs_dai, 1);
--out:
--	if (!IS_ERR(gpr_np))
--		of_node_put(gpr_np);
-+	if (ret)
-+		goto err_free_gpr_np;
-+	return 0;
-+
-+err_free_gpr_np:
-+	of_node_put(gpr_np);
- 
- 	return ret;
- }
+diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
+index dbbb21fe0548..15f6fcc6d87e 100644
+--- a/sound/soc/codecs/tas2770.c
++++ b/sound/soc/codecs/tas2770.c
+@@ -15,6 +15,7 @@
+ #include <linux/pm.h>
+ #include <linux/i2c.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/firmware.h>
 -- 
 2.20.1
 
