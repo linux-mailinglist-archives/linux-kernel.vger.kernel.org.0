@@ -2,81 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9022ECEF05
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 00:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CAA6CEF10
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 00:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbfJGWXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 18:23:36 -0400
-Received: from mail-io1-f44.google.com ([209.85.166.44]:43289 "EHLO
-        mail-io1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbfJGWXf (ORCPT
+        id S1729436AbfJGWbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 18:31:23 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:26490 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728654AbfJGWbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 18:23:35 -0400
-Received: by mail-io1-f44.google.com with SMTP id v2so32229135iob.10;
-        Mon, 07 Oct 2019 15:23:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=wtsrMTezMsMxm5sa/uRmr3aD6zhnFoeYnC8Qx+iHozI=;
-        b=s9Z3kxPAzg4e2b7LKdU6A/6PvpjB9pfD/dfRVUCCLMGY3OOt3Wrt4QAR3SlM5cP0+u
-         TC0axqez8A31MxpWEaAzfwztS7KKoJHvea0j+YQtuUMAg9fv3N0ASvM/PE0ROuqFGpqE
-         PxgJ4r86HBx0cV4LNfZuFeto+aQdRQ8KAV9zkE6HxG+myrDp3LBB7uQNIO/RFZDzYMtj
-         jGcCD16VxzSq5195XZFf5Z6NkIR8za6iood8R6d30hDmCF43bYukcjEOiDem5bcpZLYn
-         0QOQpWxVdCnCNPgfMQxU3woJjkkQ/uKE2oJoVEKptX2lRD8TJ58w/7Vm77g7+0EpxUuW
-         /I3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=wtsrMTezMsMxm5sa/uRmr3aD6zhnFoeYnC8Qx+iHozI=;
-        b=JIfz0OqjsV5r+nOEehPd47FK/0gu+af7C9TRn+kDilVQHfILDlyXX0zydvNa+5bixE
-         9fIUZQDoAlOaHAg4D1NOQHM8/Dnaw9TnkBPvX5cM7zaaYVAwoVCu88Ck8d6RR5oJObRx
-         igg3jFAvA6ASWlo+peWsAdRc6OmTwFDMuRfDqmNpMvSA0JgxyrX4BtmR+9HKeJ6lyKkV
-         GcOmLP16PzHkc/HhAcQZheuMl7aSLFZkWxqMRia+jEkJb7KuvUkV3QR+H8A3KrkoN2PE
-         KsyuZoWikFI0UProt5vPtTvszr9hYozvEL344x7+MAr6E3Q3bavJ34vhICkciD0MMUvS
-         egPg==
-X-Gm-Message-State: APjAAAWlp6Fnk6fxs8AfwZhYb8Gp1iRkp6Lv03cA4V/pLXVbhegrc7CB
-        OIsLmrtUwt3e3QfipOGHqhphRefbRSA//lrT7Ky0WaKTgCI=
-X-Google-Smtp-Source: APXvYqw9XZoqmiZpysY1ddWc+fFUEFWYK43wqt6qQry10TVDOw6zZx5HBOnoD6CXn8lmbAS6TYMOcHwO2t3U8gQIeKI=
-X-Received: by 2002:a92:c00d:: with SMTP id q13mr32522103ild.169.1570487014461;
- Mon, 07 Oct 2019 15:23:34 -0700 (PDT)
+        Mon, 7 Oct 2019 18:31:23 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x97MUhmt026214
+        for <linux-kernel@vger.kernel.org>; Mon, 7 Oct 2019 15:31:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=sKHnAQcxtum6ONsInEf680SEyJgUZWpnufG71Ge1ElM=;
+ b=DB4mnhWOuypUJMR2K6Cww9YB3PzPnRKVV4yH4nMP5IznHifTwtljRd82mSlxRADcQAON
+ 2zmAaFRXY9RvUpKj+M2dsrV75WIFrIcDKmTlMJ/M3Xcj0JS8BSrDfOdsOzEr7p2euUzY
+ /Hg31AWNKdhgF5RQtEIexuNHedZPo0CP3ZU= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2vg6nmj9he-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 15:31:22 -0700
+Received: from 2401:db00:12:909f:face:0:3:0 (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 7 Oct 2019 15:31:20 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id B53ED62E353C; Mon,  7 Oct 2019 15:31:18 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>
+CC:     <kernel-team@fb.com>, <dxu@fb.com>, <hall@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH] perf/kprobe: maxactive for fd-based kprobe (pmu perf_kprobe)
+Date:   Mon, 7 Oct 2019 15:31:11 -0700
+Message-ID: <20191007223111.1142454-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 7 Oct 2019 17:23:23 -0500
-Message-ID: <CAH2r5mtgXZNC5wiNGRV925jB0H_HJTc_-GzBFFMoytmuJ5i-LA@mail.gmail.com>
-Subject: 
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-10-07_04:2019-10-07,2019-10-07 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015 mlxscore=0
+ impostorscore=0 priorityscore=1501 adultscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1910070200
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I noticed that the commit below regressed cifs/smb3 xfstest 258 on
-5.4-rc1 and later.
+Enable specifying maxactive for fd based kretprobe. This will be useful
+for tracing tools like bcc and bpftrace. [1] discussed the need of this
+in bpftrace. Use highest highest 12 bit (bit 52-63) to allow maximal
+maxactive of 4095.
 
-"Testing for negative seconds since epoch"
-"Timestamp wrapped" ....
+[1] https://github.com/iovisor/bpftrace/issues/835
 
-Did xfstest 258 get updated to account for the new behavior with this patch?
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/trace_events.h    |  3 ++-
+ kernel/events/core.c            | 20 ++++++++++++++++----
+ kernel/trace/trace_event_perf.c |  5 +++--
+ kernel/trace/trace_kprobe.c     |  4 ++--
+ kernel/trace/trace_probe.h      |  2 +-
+ 5 files changed, 24 insertions(+), 10 deletions(-)
 
-commit cb7a69e605908c34aad47644afeb26a765ade8d7
-Author: Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Fri Mar 22 14:32:35 2019 -0700
-
-    fs: cifs: Initialize filesystem timestamp ranges
-
-    Fill in the appropriate limits to avoid inconsistencies
-    in the vfs cached inode times when timestamps are
-    outside the permitted range.
-
-    Also fixed cnvrtDosUnixTm calculations to avoid int overflow
-    while computing maximum date.
-
-
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 30a8cdcfd4a4..706d515d2b5e 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -581,7 +581,8 @@ extern void perf_trace_destroy(struct perf_event *event);
+ extern int  perf_trace_add(struct perf_event *event, int flags);
+ extern void perf_trace_del(struct perf_event *event, int flags);
+ #ifdef CONFIG_KPROBE_EVENTS
+-extern int  perf_kprobe_init(struct perf_event *event, bool is_retprobe);
++extern int  perf_kprobe_init(struct perf_event *event, bool is_retprobe,
++			     int max_active);
+ extern void perf_kprobe_destroy(struct perf_event *event);
+ extern int bpf_get_kprobe_info(const struct perf_event *event,
+ 			       u32 *fd_type, const char **symbol,
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3f0cb82e4fbc..f1b16cda5a9b 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8772,24 +8772,34 @@ static struct pmu perf_tracepoint = {
+  * PERF_PROBE_CONFIG_IS_RETPROBE if set, create kretprobe/uretprobe
+  *                               if not set, create kprobe/uprobe
+  *
+- * The following values specify a reference counter (or semaphore in the
+- * terminology of tools like dtrace, systemtap, etc.) Userspace Statically
+- * Defined Tracepoints (USDT). Currently, we use 40 bit for the offset.
++ * PERF_UPROBE_REF_CTR_OFFSET_* specify a reference counter (or semaphore
++ * in the terminology of tools like dtrace, systemtap, etc.) Userspace
++ * Statically Defined Tracepoints (USDT). Currently, we use 40 bit for the
++ * offset.
+  *
+  * PERF_UPROBE_REF_CTR_OFFSET_BITS	# of bits in config as th offset
+  * PERF_UPROBE_REF_CTR_OFFSET_SHIFT	# of bits to shift left
++ *
++ * PERF_KPROBE_MAX_ACTIVE_* defines max_active for kretprobe.
++ * KRETPROBE_MAXACTIVE_MAX is 4096. We allow 4095 here to save a bit.
+  */
+ enum perf_probe_config {
+ 	PERF_PROBE_CONFIG_IS_RETPROBE = 1U << 0,  /* [k,u]retprobe */
+ 	PERF_UPROBE_REF_CTR_OFFSET_BITS = 32,
+ 	PERF_UPROBE_REF_CTR_OFFSET_SHIFT = 64 - PERF_UPROBE_REF_CTR_OFFSET_BITS,
++	PERF_KPROBE_MAX_ACTIVE_BITS = 12,
++	PERF_KPROBE_MAX_ACTIVE_SHIFT = 64 - PERF_KPROBE_MAX_ACTIVE_BITS,
+ };
+ 
+ PMU_FORMAT_ATTR(retprobe, "config:0");
+ #endif
+ 
+ #ifdef CONFIG_KPROBE_EVENTS
++/* KRETPROBE_MAXACTIVE_MAX is 4096, only allow 4095 here to save a bit */
++PMU_FORMAT_ATTR(max_active, "config:52-63");
++
+ static struct attribute *kprobe_attrs[] = {
++	&format_attr_max_active.attr,
+ 	&format_attr_retprobe.attr,
+ 	NULL,
+ };
+@@ -8820,6 +8830,7 @@ static int perf_kprobe_event_init(struct perf_event *event)
+ {
+ 	int err;
+ 	bool is_retprobe;
++	int max_active;
+ 
+ 	if (event->attr.type != perf_kprobe.type)
+ 		return -ENOENT;
+@@ -8834,7 +8845,8 @@ static int perf_kprobe_event_init(struct perf_event *event)
+ 		return -EOPNOTSUPP;
+ 
+ 	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
+-	err = perf_kprobe_init(event, is_retprobe);
++	max_active = event->attr.config >> PERF_KPROBE_MAX_ACTIVE_SHIFT;
++	err = perf_kprobe_init(event, is_retprobe, max_active);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 0892e38ed6fb..da6744ac7bc9 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -240,7 +240,8 @@ void perf_trace_destroy(struct perf_event *p_event)
+ }
+ 
+ #ifdef CONFIG_KPROBE_EVENTS
+-int perf_kprobe_init(struct perf_event *p_event, bool is_retprobe)
++int perf_kprobe_init(struct perf_event *p_event, bool is_retprobe,
++		     int max_active)
+ {
+ 	int ret;
+ 	char *func = NULL;
+@@ -266,7 +267,7 @@ int perf_kprobe_init(struct perf_event *p_event, bool is_retprobe)
+ 
+ 	tp_event = create_local_trace_kprobe(
+ 		func, (void *)(unsigned long)(p_event->attr.kprobe_addr),
+-		p_event->attr.probe_offset, is_retprobe);
++		p_event->attr.probe_offset, is_retprobe, max_active);
+ 	if (IS_ERR(tp_event)) {
+ 		ret = PTR_ERR(tp_event);
+ 		goto out;
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 324ffbea3556..12088a76e7da 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -1556,7 +1556,7 @@ static int unregister_kprobe_event(struct trace_kprobe *tk)
+ /* create a trace_kprobe, but don't add it to global lists */
+ struct trace_event_call *
+ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+-			  bool is_return)
++			  bool is_return, int max_active)
+ {
+ 	struct trace_kprobe *tk;
+ 	int ret;
+@@ -1570,7 +1570,7 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+ 	event = func ? func : "DUMMY_EVENT";
+ 
+ 	tk = alloc_trace_kprobe(KPROBE_EVENT_SYSTEM, event, (void *)addr, func,
+-				offs, 0 /* maxactive */, 0 /* nargs */,
++				offs, max_active, 0 /* nargs */,
+ 				is_return);
+ 
+ 	if (IS_ERR(tk)) {
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 4ee703728aec..b4368c652749 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -373,7 +373,7 @@ extern int traceprobe_set_print_fmt(struct trace_probe *tp, bool is_return);
+ #ifdef CONFIG_PERF_EVENTS
+ extern struct trace_event_call *
+ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+-			  bool is_return);
++			  bool is_return, int max_active);
+ extern void destroy_local_trace_kprobe(struct trace_event_call *event_call);
+ 
+ extern struct trace_event_call *
 -- 
-Thanks,
+2.17.1
 
-Steve
