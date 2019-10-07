@@ -2,192 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A9DECE1F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CCF7CE1FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbfJGMmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:42:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727490AbfJGMmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:42:43 -0400
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D454921871;
-        Mon,  7 Oct 2019 12:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570452162;
-        bh=QlmGxXN75S6KDpXUeIecyQv5YkpxdOrHAZ4tfkFVv1Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=sFjDkU5fwAgfAsB2uKtjmiCRkx+xiCc8h2anG7iOYFA/BQP0MtQC85fQvcF9HjkYN
-         kouywKrhqR1d1WeS49TEmwtVwUCsw1OmlED96oFaX2Dg4YpPGvXkqDTVLtgVoubvh7
-         RkYmxCQvN1nmt4vMNgtCt3SsHmtj7ZSOzdTKgMWc=
-Received: by mail-qt1-f179.google.com with SMTP id u22so18821813qtq.13;
-        Mon, 07 Oct 2019 05:42:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAXtIv3ClJtQ53LeDkY9fnJ/jP6Jn9lVtEDs1qqIRCi93dbpyF0Y
-        zy+D3o1cRwuJn90hRM6TL++GC2NF9MLtt1W27w==
-X-Google-Smtp-Source: APXvYqzgZykjYM+K47WAdfZO6hL3Row4Olz5ZnINVgiZV8PaGcqQNLFCJ5CkCvyGRTvgjU8HbholqiAulEP7V4qx9kw=
-X-Received: by 2002:ac8:2fe5:: with SMTP id m34mr29115750qta.224.1570452160952;
- Mon, 07 Oct 2019 05:42:40 -0700 (PDT)
+        id S1727814AbfJGMn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:43:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38262 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727490AbfJGMn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:43:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 30072AB9B;
+        Mon,  7 Oct 2019 12:43:57 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 14:43:56 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
+        pmladek@suse.com, rostedt@goodmis.org, peterz@infradead.org,
+        david@redhat.com, john.ogness@linutronix.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+Message-ID: <20191007124356.GJ2381@dhcp22.suse.cz>
+References: <20191007080742.GD2381@dhcp22.suse.cz>
+ <FB72D947-A0F9-43E7-80D9-D7ACE33849C7@lca.pw>
+ <20191007113710.GH2381@dhcp22.suse.cz>
+ <1570450304.5576.283.camel@lca.pw>
 MIME-Version: 1.0
-References: <20191006142715.45k64cgw7mzlekm5@arbad>
-In-Reply-To: <20191006142715.45k64cgw7mzlekm5@arbad>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 7 Oct 2019 07:42:29 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+0SpRVmGJSm5Hw8bQ_zdeJy5wfTb9RM1r=crkiT2uM-Q@mail.gmail.com>
-Message-ID: <CAL_Jsq+0SpRVmGJSm5Hw8bQ_zdeJy5wfTb9RM1r=crkiT2uM-Q@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: iio: maxbotix,mb1232.yaml: transform to yaml
-To:     Andreas Klinger <ak@it-klinger.de>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1570450304.5576.283.camel@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 6, 2019 at 9:27 AM Andreas Klinger <ak@it-klinger.de> wrote:
->
-> transform existing documentation of maxbotix,mb1232 ultrasonic ranger
-> from text documentation format into yaml.
->
-> Changes in v2:
-> - removed description of reg property
-> - added a line:
->   additionalProperties: false
->
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> ---
->  .../bindings/iio/proximity/maxbotix,mb1232.txt     | 29 -----------
->  .../bindings/iio/proximity/maxbotix,mb1232.yaml    | 56 ++++++++++++++++++++++
->  2 files changed, 56 insertions(+), 29 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.txt
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.yaml
->
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.txt b/Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.txt
-> deleted file mode 100644
-> index dd1058fbe9c3..000000000000
-> --- a/Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.txt
-> +++ /dev/null
-> @@ -1,29 +0,0 @@
-> -* MaxBotix I2CXL-MaxSonar ultrasonic distance sensor of type  mb1202,
-> -  mb1212, mb1222, mb1232, mb1242, mb7040 or mb7137 using the i2c interface
-> -  for ranging
-> -
-> -Required properties:
-> - - compatible:         "maxbotix,mb1202",
-> -                       "maxbotix,mb1212",
-> -                       "maxbotix,mb1222",
-> -                       "maxbotix,mb1232",
-> -                       "maxbotix,mb1242",
-> -                       "maxbotix,mb7040" or
-> -                       "maxbotix,mb7137"
-> -
-> - - reg:                        i2c address of the device, see also i2c/i2c.txt
-> -
-> -Optional properties:
-> - - interrupts:         Interrupt used to announce the preceding reading
-> -                       request has finished and that data is available.
-> -                       If no interrupt is specified the device driver
-> -                       falls back to wait a fixed amount of time until
-> -                       data can be retrieved.
-> -
-> -Example:
-> -proximity@70 {
-> -       compatible = "maxbotix,mb1232";
-> -       reg = <0x70>;
-> -       interrupt-parent = <&gpio2>;
-> -       interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.yaml b/Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.yaml
-> new file mode 100644
-> index 000000000000..e2fb1f6d4dbe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.yaml
-> @@ -0,0 +1,56 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/proximity/maxbotix,mb1232.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MaxBotix I2CXL-MaxSonar ultrasonic distance sensor
-> +
-> +maintainers:
-> +  - Andreas Klinger <ak@it-klinger.de>
-> +
-> +description: |
-> +  MaxBotix I2CXL-MaxSonar ultrasonic distance sensor of type  mb1202,
-> +  mb1212, mb1222, mb1232, mb1242, mb7040 or mb7137 using the i2c interface
-> +  for ranging
-> +
-> +  Specifications about the devices can be found at:
-> +  https://www.maxbotix.com/documents/I2CXL-MaxSonar-EZ_Datasheet.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - maxbotix,mb1202
-> +      - maxbotix,mb1212
-> +      - maxbotix,mb1222
-> +      - maxbotix,mb1232
-> +      - maxbotix,mb1242
-> +      - maxbotix,mb7040
-> +      - maxbotix,mb7137
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description:
-> +      Interrupt used to announce the preceding reading request has finished
-> +      and that data is available.  If no interrupt is specified the device
-> +      driver falls back to wait a fixed amount of time until data can be
-> +      retrieved.
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    proximity@70 {
+On Mon 07-10-19 08:11:44, Qian Cai wrote:
+> On Mon, 2019-10-07 at 13:37 +0200, Michal Hocko wrote:
+> > On Mon 07-10-19 07:04:00, Qian Cai wrote:
+> > > 
+> > > 
+> > > > On Oct 7, 2019, at 4:07 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > > > 
+> > > > I do not think that removing the printk is the right long term solution.
+> > > > While I do agree that removing the debugging printk __offline_isolated_pages
+> > > > does make sense because it is essentially of a very limited use, this
+> > > > doesn't really solve the underlying problem.  There are likely other
+> > > > printks from zone->lock. It would be much more saner to actually
+> > > > disallow consoles to allocate any memory while printk is called from an
+> > > > atomic context.
+> > > 
+> > > No, there is only a handful of places called printk() from
+> > > zone->lock. It is normal that the callers will quietly process
+> > > “struct zone” modification in a short section with zone->lock
+> > > held.
+> > 
+> > It is extremely error prone to have any zone->lock vs. printk
+> > dependency. I do not want to play an endless whack a mole.
+> > 
+> > > No, it is not about “allocate any memory while printk is called from an
+> > > atomic context”. It is opposite lock chain  from different processors which has the same effect. For example,
+> > > 
+> > > CPU0:                 CPU1:         CPU2:
+> > > console_owner
+> > >                             sclp_lock
+> > > sclp_lock                                 zone_lock
+> > >                             zone_lock
+> > >                                                  console_owner
+> > 
+> > Why would sclp_lock ever take a zone->lock (apart from an allocation).
+> > So really if sclp_lock is a lock that might be taken from many contexts
+> > and generate very subtle lock dependencies then it should better be
+> > really careful what it is calling into.
+> > 
+> > In other words you are trying to fix a wrong end of the problem. Fix the
+> > console to not allocate or depend on MM by other means.
+> 
+> It looks there are way too many places that could generate those indirect lock
+> chains that are hard to eliminate them all. Here is anther example, where it
+> has,
 
-Fails to build with 'make dt_binding_check':
+Yeah and I strongly suspect they are consoles which are broken and need
+to be fixed rathert than the problem papered over.
 
-Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.example.dts:20.11-24:
-Warning (reg_format): /example-0/proximity@70:reg: property has
-invalid length (4 bytes) (#address-cells == 1, #size-cells == 1)
-Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.example.dt.yaml:
-Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.example.dt.yaml:
-Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/proximity/maxbotix,mb1232.example.dt.yaml:
-Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+I do realize how tempting it is to remove all printks from the
+zone->lock but do realize that as soon as the allocator starts using any
+other locks then we are back to square one and the problem is there
+again. We would have to drop _all_ printks from any locked section in
+the allocator and I do not think this is viable.
 
-You have to put this under an i2c bus node.
+Really, the only way forward is to make these consoles be more careful
+of external dependencies.
 
-i2c {
-  #address-cells = <1>;
-  #size-cells = <0>;
-  ...
-};
+I am also wondering, this code is there for a long time (or is there any
+recent change?), why are we seeing reports only now? Are those consoles
+rarely used or you are simply luck to hit those? Or are those really
+representing a deadlock? Maybe the lockdep is just confused? I am not
+familiar with the code but console_owner_lock is doing some complex
+stuff to hand over the context.
 
-> +      compatible = "maxbotix,mb1232";
-> +      reg = <0x70>;
-> +      interrupt-parent = <&gpio2>;
-> +      interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> +    };
-> --
-> 2.11.0
+> console_owner -> port_lock
+> port_lock -> zone_lock
+> 
+> [  297.425922] -> #3 (&(&zone->lock)->rlock){-.-.}:
+> [  297.425925]        __lock_acquire+0x5b3/0xb40
+> [  297.425925]        lock_acquire+0x126/0x280
+> [  297.425926]        _raw_spin_lock+0x2f/0x40
+> [  297.425927]        rmqueue_bulk.constprop.21+0xb6/0x1160
+> [  297.425928]        get_page_from_freelist+0x898/0x22c0
+> [  297.425928]        __alloc_pages_nodemask+0x2f3/0x1cd0
+> [  297.425929]        alloc_pages_current+0x9c/0x110
+> [  297.425930]        allocate_slab+0x4c6/0x19c0
+> [  297.425931]        new_slab+0x46/0x70
+> [  297.425931]        ___slab_alloc+0x58b/0x960
+> [  297.425932]        __slab_alloc+0x43/0x70
+> [  297.425933]        __kmalloc+0x3ad/0x4b0
+> [  297.425933]        __tty_buffer_request_room+0x100/0x250
+> [  297.425934]        tty_insert_flip_string_fixed_flag+0x67/0x110
+> [  297.425935]        pty_write+0xa2/0xf0
+> [  297.425936]        n_tty_write+0x36b/0x7b0
+> [  297.425936]        tty_write+0x284/0x4c0
+> [  297.425937]        __vfs_write+0x50/0xa0
+> [  297.425938]        vfs_write+0x105/0x290
+> [  297.425939]        redirected_tty_write+0x6a/0xc0
+> [  297.425939]        do_iter_write+0x248/0x2a0
+> [  297.425940]        vfs_writev+0x106/0x1e0
+> [  297.425941]        do_writev+0xd4/0x180
+> [  297.425941]        __x64_sys_writev+0x45/0x50
+> [  297.425942]        do_syscall_64+0xcc/0x76c
+> [  297.425943]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-- 
+Michal Hocko
+SUSE Labs
