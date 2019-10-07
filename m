@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 062CFCE5C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 746F8CE5BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbfJGOtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:49:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51726 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728592AbfJGOtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7523EAD45;
-        Mon,  7 Oct 2019 14:49:38 +0000 (UTC)
-Date:   Mon, 7 Oct 2019 16:49:37 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org,
-        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
-        peterz@infradead.org, linux-mm@kvack.org,
-        john.ogness@linutronix.de, david@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
-Message-ID: <20191007144937.GO2381@dhcp22.suse.cz>
-References: <1570228005-24979-1-git-send-email-cai@lca.pw>
- <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
+        id S1728888AbfJGOuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:50:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728827AbfJGOtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 10:49:55 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 795EB21721;
+        Mon,  7 Oct 2019 14:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570459794;
+        bh=r4K7HAwLnCeGJFkWlb4lenJOAqclCLAOXkLixnCX080=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D52K+4pPEnFckx8ZJgeQB5pQg9bw/NPoVMCLRzoJC/bFTaCjswMxxBhdMP2PqRmNX
+         MXB9/A1fV1FaZ8fb8tfslbeiQR+vEv2T9gP+0vyMEr5b7n/nBALrofKtuhOozThz28
+         mYWblVLt26i79NTfFjiVgatl2Jswp0V47JYfdWhI=
+Date:   Mon, 7 Oct 2019 16:49:51 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/36] 4.4.196-stable review
+Message-ID: <20191007144951.GB966828@kroah.com>
+References: <20191006171038.266461022@linuxfoundation.org>
+ <d3e1e6ae-8ca4-a43b-d30d-9a9a9a7e5752@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d3e1e6ae-8ca4-a43b-d30d-9a9a9a7e5752@roeck-us.net>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc s390 maintainers - the lockdep is http://lkml.kernel.org/r/1570228005-24979-1-git-send-email-cai@lca.pw
- Petr has explained it is a false positive
- http://lkml.kernel.org/r/20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz]
-On Mon 07-10-19 16:30:02, Petr Mladek wrote:
-[...]
-> I believe that it cannot really happen because:
+On Mon, Oct 07, 2019 at 05:53:55AM -0700, Guenter Roeck wrote:
+> On 10/6/19 10:18 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.4.196 release.
+> > There are 36 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
+> > Anything received after that time might be too late.
+> > 
 > 
-> 	static int __init
-> 	sclp_console_init(void)
-> 	{
-> 	[...]
-> 		rc = sclp_rw_init();
-> 	[...]
-> 		register_console(&sclp_console);
-> 		return 0;
-> 	}
+> powerpc:defconfig fails to build.
 > 
-> sclp_rw_init() is called before register_console(). And
-> console_unlock() will never call sclp_console_write() before
-> the console is registered.
+> arch/powerpc/kernel/eeh_driver.c: In function ‘eeh_handle_normal_event’:
+> arch/powerpc/kernel/eeh_driver.c:678:2: error: implicit declaration of function ‘eeh_for_each_pe’; did you mean ‘bus_for_each_dev’?
 > 
-> AFAIK, lockdep only compares existing chain of locks. It does
-> not know about console registration that would make some
-> code paths mutually exclusive.
+> It has a point:
 > 
-> I believe that it is a false positive. I do not know how to
-> avoid this lockdep report. I hope that it will disappear
-> by deferring all printk() calls rather soon.
+> ... HEAD is now at 13cac61d31df Linux 4.4.196-rc1
+> $ git grep eeh_for_each_pe
+> arch/powerpc/kernel/eeh_driver.c:       eeh_for_each_pe(pe, tmp_pe)
+> arch/powerpc/kernel/eeh_driver.c:                               eeh_for_each_pe(pe, tmp_pe)
+> 
+> Caused by commit 3fb431be8de3a ("powerpc/eeh: Clear stale EEH_DEV_NO_HANDLER flag").
+> Full report will follow later.
 
-Thanks a lot for looking into this Petr. I have also checked the code
-and I really fail to see why the allocation has to be done under the
-lock in the first place. sclp_read_sccb and sclp_init_sccb are global
-variables but I strongly suspect that they need a synchronization during
-early init, callbacks are registered only later IIUC:
+Thanks for letting me know, I've dropped this from the queue now and
+pushed out a -rc2 with that removed.
 
-diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
-index d2ab3f07c008..4b1c033e3255 100644
---- a/drivers/s390/char/sclp.c
-+++ b/drivers/s390/char/sclp.c
-@@ -1169,13 +1169,13 @@ sclp_init(void)
- 	unsigned long flags;
- 	int rc = 0;
- 
-+	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
-+	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
- 	spin_lock_irqsave(&sclp_lock, flags);
- 	/* Check for previous or running initialization */
- 	if (sclp_init_state != sclp_init_state_uninitialized)
- 		goto fail_unlock;
- 	sclp_init_state = sclp_init_state_initializing;
--	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
--	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
- 	BUG_ON(!sclp_read_sccb || !sclp_init_sccb);
- 	/* Set up variables */
- 	INIT_LIST_HEAD(&sclp_req_queue);
--- 
-Michal Hocko
-SUSE Labs
+Sasha, I thought your builder would have caught stuff like this?
+
+thanks,
+
+greg k-h
