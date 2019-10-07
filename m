@@ -2,146 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53FDCCE363
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4796BCE374
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbfJGN0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:26:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36192 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727923AbfJGN0L (ORCPT
+        id S1728448AbfJGN1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:27:01 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35771 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727635AbfJGN1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:26:11 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h2so12435645edn.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 06:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gzC3+Ai/BcUPGOo2+frzMx33cRF/lu4IW7bk4buzvfY=;
-        b=LuKZCLEks+pxri1fZImZ8aWZNoPyA0k53cdFVsuHb5MDqAN5knWAMDy0wPUsgUxBCF
-         gQcbOYCIkTqaNbsMxo5RKNjpP0d8lQMy7pguGPtgJSh9DP3B9YIN2mS8bmQvpx9hwj+h
-         f1Slcuf8Kzh1JBnKhidomUrXDTUHxpZKdm+qSnztmiyYersQcoVvJ/ohhpzjG+T7kfj/
-         les5EAK/LmmoySH+aJWZ1XdWfqQwdMTB2W4ogQ6nBwrh8QCxg6VIpsZnYghJaIlVBMwA
-         tZPwZXA0ICwRWfFHd+u/u3DYHya4aQ5yYd1iqfinaPiyxKvPuAJePigymhWXfsmqSyff
-         W1oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gzC3+Ai/BcUPGOo2+frzMx33cRF/lu4IW7bk4buzvfY=;
-        b=cXPOqTtL4ukQRim84I8qMjaYbumDwS6uf8int8pGfACzwV8keb+xwKbrkpbdB3PTnk
-         uXeJhGT0OZyibWUduHtp58VDrQe2Q5AQU4+c9M20A2slSFstwFcac5sHmJKGqvv+h54F
-         AJD6gGOouqkpwj8lcAdULwVQTBvMQfRRG0dgilHpB28dvCTBl5qR3/QSQSj7C+vnQpn+
-         zQYefq9D9hPGHh+gpnLiFELNO4bgZ52SHWw61x+HfcZN1Yay/evzlvVKN9Rx5k4Gm/SH
-         Bj4W+94rh3WQ0ox+VISz8SeNNWFlxh9yg0NgKAAOOmM8SbwV8yTdWfaMzP6wEy+Run1c
-         FUgA==
-X-Gm-Message-State: APjAAAXiUOVnJCNuIQBj/zDNGWHH66u9D3QHXTYcA6KioGKLhR4rplOY
-        SZjFLKrU5/gd703o9FR8JEbi4Q==
-X-Google-Smtp-Source: APXvYqzElnCPZjbODoQl3J/SFOw2KfpCAczFpMms9cACkFS6giHuVTdY1dFFe29OUP7N4OGq9tG9dw==
-X-Received: by 2002:a05:6402:7c1:: with SMTP id u1mr29121094edy.198.1570454769090;
-        Mon, 07 Oct 2019 06:26:09 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id t30sm3414834edt.91.2019.10.07.06.26.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 06:26:08 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 4DF0F10027F; Mon,  7 Oct 2019 16:26:07 +0300 (+03)
-Date:   Mon, 7 Oct 2019 16:26:07 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 2/2] mm/pgtable/debug: Add test validating
- architecture page table helpers
-Message-ID: <20191007132607.4q537nauwfn5thol@box>
-References: <1570427124-21887-1-git-send-email-anshuman.khandual@arm.com>
- <1570427124-21887-3-git-send-email-anshuman.khandual@arm.com>
- <20191007130617.GB56546@gmail.com>
+        Mon, 7 Oct 2019 09:27:00 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost.localdomain (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id B24261C000C;
+        Mon,  7 Oct 2019 13:26:58 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v3 0/8] Introduce max12xx ADC support
+Date:   Mon,  7 Oct 2019 15:26:49 +0200
+Message-Id: <20191007132657.4190-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191007130617.GB56546@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 03:06:17PM +0200, Ingo Molnar wrote:
-> 
-> * Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> > This adds a test module which will validate architecture page table helpers
-> > and accessors regarding compliance with generic MM semantics expectations.
-> > This will help various architectures in validating changes to the existing
-> > page table helpers or addition of new ones.
-> > 
-> > Test page table and memory pages creating it's entries at various level are
-> > all allocated from system memory with required alignments. If memory pages
-> > with required size and alignment could not be allocated, then all depending
-> > individual tests are skipped.
-> 
-> > diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-> > index 52e5f5f2240d..b882792a3999 100644
-> > --- a/arch/x86/include/asm/pgtable_64_types.h
-> > +++ b/arch/x86/include/asm/pgtable_64_types.h
-> > @@ -40,6 +40,8 @@ static inline bool pgtable_l5_enabled(void)
-> >  #define pgtable_l5_enabled() 0
-> >  #endif /* CONFIG_X86_5LEVEL */
-> >  
-> > +#define mm_p4d_folded(mm) (!pgtable_l5_enabled())
-> > +
-> >  extern unsigned int pgdir_shift;
-> >  extern unsigned int ptrs_per_p4d;
-> 
-> Any deep reason this has to be a macro instead of proper C?
+Hello, here is a patchset updating the existing max1027.c driver (for
+10-bit max1027/29/31 ADCs) with a few corrections/improvements and
+then introducing their 12-bit cousins named max1227/29/31.
 
-It's a way to override the generic mm_p4d_folded(). It can be rewritten
-as inline function + define. Something like:
+As on my hardware setup the "start conversion" and "end of conversion"
+pin are not wired (which is absolutely fine for this chip), I also
+updated the driver and the bindings to support optional interrupts. In
+this case, triggered buffers are not available and the user must poll
+the value from sysfs.
 
-#define mm_p4d_folded mm_p4d_folded
-static inline bool mm_p4d_folded(struct mm_struct *mm)
-{
-	return !pgtable_l5_enabled();
-}
+Thanks,
+Miquèl
 
-But I don't see much reason to be more verbose here than needed.
+
+Changes in v3:
+==============
+* Updated the commit message of the patch adding debugfs read access
+  to better explain why I decided to limit the number of bytes read to
+  two.
+* Updated the macros to define the number of channels per device as
+  proposed by Jonathan.
+* Re-used the realbits entry instead of adding my own (called .depth).
+* Started doing DT-bindings yaml conversion, but realized that after
+  the first patch offering the interrupt as optional, the
+  documentation was fitting pretty well the trivial devices
+  representation. Dropped the specific bindings files and updated the
+  trivial devices list instead.
+
+Changes in v2:
+==============
+* Removed the addition of three compatibles from patch 4 (the
+  preparation patch) to add these lines back in patch 5 (the actual
+  introduction).
+
+
+Miquel Raynal (8):
+  iio: adc: max1027: Add debugfs register read support
+  iio: adc: max1027: Make it optional to use interrupts
+  iio: adc: max1027: Reset the device at probe time
+  iio: adc: max1027: Prepare the introduction of different resolutions
+  iio: adc: max1027: Introduce 12-bit devices support
+  dt-bindings: iio: adc: max1027: Mark interrupts as optional
+  dt-bindings: Add 1027/1029/1031 SPI ADCs as trivial devices
+  dt-bindings: Add max12xx SPI ADC series as trivial devices
+
+ .../bindings/iio/adc/max1027-adc.txt          |  12 +-
+ .../devicetree/bindings/trivial-devices.yaml  |  12 ++
+ drivers/iio/adc/Kconfig                       |   4 +-
+ drivers/iio/adc/max1027.c                     | 180 +++++++++++-------
+ 4 files changed, 135 insertions(+), 73 deletions(-)
 
 -- 
- Kirill A. Shutemov
+2.20.1
+
