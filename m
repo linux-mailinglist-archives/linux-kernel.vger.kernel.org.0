@@ -2,160 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80619CEB83
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C7ECEB89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:13:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbfJGSLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:11:17 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45354 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbfJGSLQ (ORCPT
+        id S1728856AbfJGSNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:13:40 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34400 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbfJGSNk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:11:16 -0400
-Received: by mail-qt1-f195.google.com with SMTP id c21so20502330qtj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=C57iBY/lvItZ8Dqp104KcV48DHmLXeJ/LePjUooFql4=;
-        b=odoQ7M8lZTXPwtj2RJPv2C8GWiSQ45ucrBmbyh0P2/mlbgsNcJUIwzaa7xEwsEmuWe
-         VoAXrW5x9cKaMLoIIkJilzd90Mk1JXXHSbPj7ov9vndjFMp8ADFphm+nCyh+SUsCm6WC
-         Y40nYduS+oPDc+jPEf1lzHng3lYe55Cx0SNWM0Xf5ctYIJioYMkKCRdq8eWqAwt8XMZY
-         NBdrzvC1OYY1866f4zNS4PgTcy/My02fgMqlKqCjvMbd6+jFPph8UmPP99sJoRWqhnH1
-         BCIokZu+eebMIm5PhJcv7SGkEHQbOPaGItz1ogvWFvGa9EB7UuVFfDG9lQhQuDam/P1Z
-         mk8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C57iBY/lvItZ8Dqp104KcV48DHmLXeJ/LePjUooFql4=;
-        b=G2992uDcXKNKL+wFW1BvLIy3ubQLGMPWxPR5tEHUsaiEFFupFGUhOz217G/3G+KC2C
-         On5Ml5YclvzwdcZ8QV9x2LuRHLTut8DVqfNxSkpJEeX5cMVqY/fZ4Z/d+PtWCHBGaIyw
-         dTlg0ZdbKBc7FuAXh4YHc2qWpP4Akdap2pNFltXjDbYY6XP1RXAQsIJBsYamonmt96Xi
-         easaivjZ1Z9W7BwybIAgYAmdoPCQ1hqITERhhQWE7ZI6viUHUqzmxjvnzPh3VAWMlzBL
-         iqrmirwO8tVq2nEOLL0Y8dkRZ3VoRI6lB29wIg7AjNUv9zRjh5fy2h5K26Ug0bCl1nCB
-         F/cg==
-X-Gm-Message-State: APjAAAXtoBs4kl5B/mLENUyzSR/xR857hyZqrlf9H+fTc9y/NO3wMiWO
-        cOy4F9nh70J2SuMrEnXAV//ENA==
-X-Google-Smtp-Source: APXvYqzfloaIHtCD4grmgryCyyJiy1Vl45sjxwGuBPDO16urH8mhT+QtavoYJkIRRAEqLiwuwRR7Cg==
-X-Received: by 2002:ac8:2d2c:: with SMTP id n41mr31355650qta.335.1570471875205;
-        Mon, 07 Oct 2019 11:11:15 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
-        by smtp.gmail.com with ESMTPSA id s17sm7755821qkg.79.2019.10.07.11.11.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Oct 2019 11:11:14 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1iHXTV-0007lh-Lt; Mon, 07 Oct 2019 15:11:13 -0300
-Date:   Mon, 7 Oct 2019 15:11:13 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Mark Rutland <Mark.Rutland@arm.com>, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <james.morse@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH v11 14/22] mm: pagewalk: Add 'depth' parameter to pte_hole
-Message-ID: <20191007181113.GC13229@ziepe.ca>
-References: <20191007153822.16518-1-steven.price@arm.com>
- <20191007153822.16518-15-steven.price@arm.com>
- <20191007161049.GA13229@ziepe.ca>
- <6e570d6d-b29f-f4cb-1eb9-6ff6cab15a2e@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e570d6d-b29f-f4cb-1eb9-6ff6cab15a2e@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 7 Oct 2019 14:13:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=YszzIRRq8+HMe+uWy5lgHyDF5uj3GQ+Jn/wpF3eKyO4=; b=GaYXeXG9/kZA
+        xoRoklbcb21LauF4f0MDmub9bJdPkJYpgJBMBQpQ/Vkmbh288FFFllOjhsaDZtDi/71KJJK9qjauh
+        iFkLS8na+vM6ThtkF/TlQYWmNR/KxtMd0ROzrP7t4v6ZxfoF3LwTl9i37LSqEDt/bCSE3ESIF0waa
+        EpZ0w=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iHXVe-0004GD-1J; Mon, 07 Oct 2019 18:13:26 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 42DD6274162F; Mon,  7 Oct 2019 19:13:25 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, navada@ti.com, perex@perex.cz,
+        shifu0704@thundersoft.com, tiwai@suse.com
+Subject: Applied "ASoC: tas2770: Fix snd_soc_update_bits error handling" to the asoc tree
+In-Reply-To: <20191007171157.17813-1-dmurphy@ti.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191007181325.42DD6274162F@ypsilon.sirena.org.uk>
+Date:   Mon,  7 Oct 2019 19:13:25 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 05:20:30PM +0100, Steven Price wrote:
-> On 07/10/2019 17:10, Jason Gunthorpe wrote:
-> > On Mon, Oct 07, 2019 at 04:38:14PM +0100, Steven Price wrote:
-> >> diff --git a/mm/hmm.c b/mm/hmm.c
-> >> index 902f5fa6bf93..34fe904dd417 100644
-> >> +++ b/mm/hmm.c
-> >> @@ -376,7 +376,7 @@ static void hmm_range_need_fault(const struct hmm_vma_walk *hmm_vma_walk,
-> >>  }
-> >>  
-> >>  static int hmm_vma_walk_hole(unsigned long addr, unsigned long end,
-> >> -			     struct mm_walk *walk)
-> >> +			     __always_unused int depth, struct mm_walk *walk)
-> > 
-> > It this __always_unused on function arguments something we are doing
-> > now?
-> 
-> $ git grep __always_unused | wc -l
-> 191
-> 
-> It's elsewhere in the kernel tree. It seems like a good way of both
-> documenting and silencing compiler warnings. But I'm open to other
-> suggestions.
+The patch
 
-The normal kernel build doesn't generate warnings for unused function
-parameters because there are alot of false positives, IIRC. So, seems
-weird to see things like this.
+   ASoC: tas2770: Fix snd_soc_update_bits error handling
 
-> > Can we have negative depth? Should it be unsigned?
-> 
-> As per the documentation added in this patch:
-> 
->  * @pte_hole:	if set, called for each hole at all levels,
->  *		depth is -1 if not known, 0:PGD, 1:P4D, 2:PUD, 3:PMD
->  *		4:PTE. Any folded depths (where PTRS_PER_P?D is equal
->  *		to 1) are skipped.
-> 
-> So it's signed to allow "-1" in the cases where pte_hole is called
-> without knowing the actual depth. This is used in the function
-> walk_page_test() because it don't walk the actual page tables, but is
-> called on a VMA instead. This means that there may not be a single depth
-> for the range provided.
+has been applied to the asoc tree at
 
-So are the depth values below OK? I would have expected -1 by this
-definition
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
 
-> >>  {
-> >>  	struct hmm_vma_walk *hmm_vma_walk = walk->private;
-> >>  	struct hmm_range *range = hmm_vma_walk->range;
-> >> @@ -564,7 +564,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
-> >>  again:
-> >>  	pmd = READ_ONCE(*pmdp);
-> >>  	if (pmd_none(pmd))
-> >> -		return hmm_vma_walk_hole(start, end, walk);
-> >> +		return hmm_vma_walk_hole(start, end, 0, walk);
-> >>  
-> >>  	if (thp_migration_supported() && is_pmd_migration_entry(pmd)) {
-> >>  		bool fault, write_fault;
-> >> @@ -666,7 +666,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
-> >>  again:
-> >>  	pud = READ_ONCE(*pudp);
-> >>  	if (pud_none(pud))
-> >> -		return hmm_vma_walk_hole(start, end, walk);
-> >> +		return hmm_vma_walk_hole(start, end, 0, walk);
-> >>  
-> >>  	if (pud_huge(pud) && pud_devmap(pud)) {
-> >>  		unsigned long i, npages, pfn;
-> >> @@ -674,7 +674,7 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
-> >>  		bool fault, write_fault;
-> >>  
-> >>  		if (!pud_present(pud))
-> >> -			return hmm_vma_walk_hole(start, end, walk);
-> >> +			return hmm_vma_walk_hole(start, end, 0, walk);
-> >>  
-> >>  		i = (addr - range->start) >> PAGE_SHIFT;
-> >>  		npages = (end - addr) >> PAGE_SHIFT;
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From edd6d5393206ec9bfc74776f6f20a57f11327e1b Mon Sep 17 00:00:00 2001
+From: Dan Murphy <dmurphy@ti.com>
+Date: Mon, 7 Oct 2019 12:11:55 -0500
+Subject: [PATCH] ASoC: tas2770: Fix snd_soc_update_bits error handling
+
+According the documentation for snd_soc_update_bits the API
+will return a 1 if the update was successful with a value change,
+a 0 if the update was successful with no value change or a negative
+if the command just failed.
+
+So the value of return in the driver needs to be checked for being less
+then 0 or the caller may indicate failure when the value actually
+changed.
+
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Link: https://lore.kernel.org/r/20191007171157.17813-1-dmurphy@ti.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/tas2770.c | 46 +++++++++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
+
+diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
+index f3a665b64fd6..ad76f22fcfac 100644
+--- a/sound/soc/codecs/tas2770.c
++++ b/sound/soc/codecs/tas2770.c
+@@ -83,7 +83,8 @@ static int tas2770_codec_suspend(struct snd_soc_component *component)
+ 		TAS2770_PWR_CTRL,
+ 		TAS2770_PWR_CTRL_MASK,
+ 		TAS2770_PWR_CTRL_SHUTDOWN);
+-	if (ret)
++
++	if (ret < 0)
+ 		return ret;
+ 
+ 	return 0;
+@@ -97,8 +98,9 @@ static int tas2770_codec_resume(struct snd_soc_component *component)
+ 		TAS2770_PWR_CTRL,
+ 		TAS2770_PWR_CTRL_MASK,
+ 		TAS2770_PWR_CTRL_ACTIVE);
+-	if (ret)
+-		return -EINVAL;
++
++	if (ret < 0)
++		return ret;
+ 
+ 	return 0;
+ }
+@@ -150,7 +152,10 @@ static int tas2770_dac_event(struct snd_soc_dapm_widget *w,
+ 	}
+ 
+ end:
+-	return ret;
++	if (ret < 0)
++		return ret;
++
++	return 0;
+ }
+ 
+ static const struct snd_kcontrol_new isense_switch =
+@@ -200,7 +205,10 @@ static int tas2770_mute(struct snd_soc_dai *dai, int mute)
+ 			TAS2770_PWR_CTRL_MASK,
+ 			TAS2770_PWR_CTRL_ACTIVE);
+ 
+-	return ret;
++	if (ret < 0)
++		return ret;
++
++	return 0;
+ }
+ 
+ static int tas2770_set_bitwidth(struct tas2770_priv *tas2770, int bitwidth)
+@@ -253,7 +261,10 @@ static int tas2770_set_bitwidth(struct tas2770_priv *tas2770, int bitwidth)
+ 		tas2770->i_sense_slot);
+ 
+ end:
+-	return ret;
++	if (ret < 0)
++		return ret;
++
++	return 0;
+ }
+ 
+ static int tas2770_set_samplerate(struct tas2770_priv *tas2770, int samplerate)
+@@ -345,9 +356,11 @@ static int tas2770_set_samplerate(struct tas2770_priv *tas2770, int samplerate)
+ 	}
+ 
+ end:
+-	if (!ret)
+-		tas2770->sampling_rate = samplerate;
+-	return ret;
++	if (ret < 0)
++		return ret;
++
++	tas2770->sampling_rate = samplerate;
++	return 0;
+ }
+ 
+ static int tas2770_hw_params(struct snd_pcm_substream *substream,
+@@ -401,7 +414,7 @@ static int tas2770_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG1,
+ 		TAS2770_TDM_CFG_REG1_RX_MASK,
+ 		asi_cfg_1);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+@@ -426,7 +439,7 @@ static int tas2770_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG1,
+ 		TAS2770_TDM_CFG_REG1_MASK,
+ 	(tdm_rx_start_slot << TAS2770_TDM_CFG_REG1_51_SHIFT));
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	tas2770->asi_format = fmt;
+@@ -470,12 +483,12 @@ static int tas2770_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ 	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG3,
+ 		TAS2770_TDM_CFG_REG3_30_MASK,
+ 		(left_slot << TAS2770_TDM_CFG_REG3_30_SHIFT));
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 	ret = snd_soc_component_update_bits(component, TAS2770_TDM_CFG_REG3,
+ 		TAS2770_TDM_CFG_REG3_RXS_MASK,
+ 	(right_slot << TAS2770_TDM_CFG_REG3_RXS_SHIFT));
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	switch (slot_width) {
+@@ -509,10 +522,11 @@ static int tas2770_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ 		ret = -EINVAL;
+ 	}
+ 
+-	if (!ret)
+-		tas2770->slot_width = slot_width;
++	if (ret < 0)
++		return ret;
+ 
+-	return ret;
++	tas2770->slot_width = slot_width;
++	return 0;
+ }
+ 
+ static struct snd_soc_dai_ops tas2770_dai_ops = {
+-- 
+2.20.1
+
