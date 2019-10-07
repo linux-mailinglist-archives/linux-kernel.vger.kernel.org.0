@@ -2,95 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEAD4CE4F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2634BCE501
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfJGOSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:18:39 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:32821 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfJGOSj (ORCPT
+        id S1728390AbfJGOTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:19:11 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:48937 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfJGOTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:18:39 -0400
-Received: by mail-qt1-f193.google.com with SMTP id r5so19412994qtd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 07:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L0aGd5iGzy7oTR3viDB2jBKpSZXW/T11Qmx88FocAp0=;
-        b=BLIJFSTB/G0hTxSyuUcChHQTUG4TktVTAMCyTFc/UM7op4sD0B69rpMXeOIiGf6kRI
-         Z1zzsxjlfbahk/UR802rSVa+3rdsfua1CFa44/pN48dPKOoNoEx8PZVnmS4QBu1yA53o
-         4HvslXk7uZ8b75qpxBOGtgVZLEuVRfY1ZoBu/2z3PxABOv3H3/r0ZIqoMMaJr85jAPxI
-         al7Mm3ECcO+MVagXddXp6mQFUludyxrKGHF6IqEhA5qe8VwsK5a/NOOUtYcl+Hv6KVAl
-         6gvDtZsTbtfIH7ZBl5+HUZtwiwVEjYu6kSq9BRnUvKZzNcRksoDGCvQBYI/dJkAulJjV
-         6z1Q==
+        Mon, 7 Oct 2019 10:19:10 -0400
+Received: by mail-io1-f71.google.com with SMTP id w16so26986685ioc.15
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 07:19:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L0aGd5iGzy7oTR3viDB2jBKpSZXW/T11Qmx88FocAp0=;
-        b=qjZl+wDd4gVTW5Xs0DEe+6eNl0YelRVEhZgLWXu1WY23m62zt165Yum75xuVBG+W1D
-         cmzSL3Lczi2jSpVqBKJJgYRa4ZPS8D4iVE4OrAVj7+Tr88pIb01P12j+IJDW8vp+1yVI
-         G0XG7YzEuVd369M7qrEYOWf104sSXBmUnkzToD7T4dBMmMthJgNeECtLCgVQF19GvDvW
-         ebQGer8ko5Nqk9HG7nPDZXwOlVK+Tx5ubosiSpHDhCHlwcvDJcVYNKnzRD0WqpoIF7fY
-         EL7ua1zwrq1E2jDXDrGNKHzTet2FfvMoz5/sHPXHiDAFS7pLVc2cXU/KgiFSV3npI1Ar
-         TXcQ==
-X-Gm-Message-State: APjAAAX6+SaU9/X1nkwcXCRsAUG5BW23aBp22zaGDezj7yuJsYUmc303
-        uVoL8rUxNwwywDmvkim71dsJU9Ka4vAGyeL0wlvAcw==
-X-Google-Smtp-Source: APXvYqyCkMof+lfWuP5KA6qlI2H3Fjv46/wLvsY4rIyhiAcrcHG0FOMjuLe5Y/7mZugp/EJEMPLLjieK3rPinWTysy4=
-X-Received: by 2002:ac8:7646:: with SMTP id i6mr30548962qtr.50.1570457917819;
- Mon, 07 Oct 2019 07:18:37 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=plYEj++ipHdBTXQ1PUYl3/fHMsbt8QG4MrJRzJt4AcU=;
+        b=QNY0HSvTFfZnjw6L5lBOZOfG76ncnOrX5zvvxCmFM8MijBQNz4OQmVqnszpH29TxUx
+         51vxqVszpOSR+4mTrZpMKh8RHBhGAgGjYVpzu8itdIWia9i5lZH/cw0eMZvgL8ySL+sr
+         TUFvovqkx1rtlGJGB541wIw3uEYQ3vfp5oyRWQmoJcR1rIva0f2ON2hRSfwTErtMviM3
+         kPbRdu1ekPM0ssh/HiPefWgeWsSBzeHHszfnm0Joqa2QNworOYASaae0bA2XDjjhyQJM
+         3NnKDCFLkGx1AePj4MhD3yYS0rUxjez2ShvNdT5/P6Zn6zdKCB/Mzb7lvwjK6D1pRQAf
+         ySnA==
+X-Gm-Message-State: APjAAAWbPtbLj1q+12Bb52XU6sFlQXdFcKCYt7b2qClpPhJl1Og6ZPgA
+        kqoyLJQ0mmTy6VijmQnagcGBAU7Yr1ys5YnaeGUNxykq9hLJ
+X-Google-Smtp-Source: APXvYqzxBnC5RCPnSQ5/pF44nS7nXBPwsSmkX2qzK2kUoW4qYR4mFul4YWwIiZUKU1Z4bmIZ5BYNdwf712u1iLyBvOfZ8T5PB4oD
 MIME-Version: 1.0
-References: <20191007104039.GA16085@andrea.guest.corp.microsoft.com>
- <20191007110117.1096-1-christian.brauner@ubuntu.com> <20191007131804.GA19242@andrea.guest.corp.microsoft.com>
- <CACT4Y+YG23qbL16MYH3GTK4hOPsM9tDfbLzrTZ7k_ocR2ABa6A@mail.gmail.com> <20191007141432.GA22083@andrea.guest.corp.microsoft.com>
-In-Reply-To: <20191007141432.GA22083@andrea.guest.corp.microsoft.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 7 Oct 2019 16:18:26 +0200
-Message-ID: <CACT4Y+avbYvtF9mHiX=R8Y2=YsP1_QsN6i_FpjLM7UxCKv6vxA@mail.gmail.com>
-Subject: Re: [PATCH v2] taskstats: fix data-race
-To:     Andrea Parri <parri.andrea@gmail.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        bsingharora@gmail.com, Marco Elver <elver@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a92:844f:: with SMTP id l76mr28163018ild.218.1570457949409;
+ Mon, 07 Oct 2019 07:19:09 -0700 (PDT)
+Date:   Mon, 07 Oct 2019 07:19:09 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000035a04b059452bc21@google.com>
+Subject: KASAN: use-after-free Read in __cfg8NUM_wpan_dev_from_attrs
+From:   syzbot <syzbot+9cb7edb2906ea1e83006@syzkaller.appspotmail.com>
+To:     alex.aring@gmail.com, davem@davemloft.net, jiri@mellanox.com,
+        linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org, stefan@datenfreihafen.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 7, 2019 at 4:14 PM Andrea Parri <parri.andrea@gmail.com> wrote:
->
-> > > >  static struct taskstats *taskstats_tgid_alloc(struct task_struct *tsk)
-> > > >  {
-> > > >       struct signal_struct *sig = tsk->signal;
-> > > > -     struct taskstats *stats;
-> > > > +     struct taskstats *stats_new, *stats;
-> > > >
-> > > > -     if (sig->stats || thread_group_empty(tsk))
-> > > > -             goto ret;
-> > > > +     /* Pairs with smp_store_release() below. */
-> > > > +     stats = READ_ONCE(sig->stats);
-> > >
-> > > This pairing suggests that the READ_ONCE() is heading an address
-> > > dependency, but I fail to identify it: what is the target memory
-> > > access of such a (putative) dependency?
-> >
-> > I would assume callers of this function access *stats. So the
-> > dependency is between loading stats and accessing *stats.
->
-> AFAICT, the only caller of the function in 5.4-rc2 is taskstats_exit(),
-> which 'casts' the return value to a boolean (so I really don't see how
-> any address dependency could be carried over/relied upon here).
+Hello,
 
-This does not make sense.
+syzbot found the following crash on:
 
-But later taskstats_exit does:
+HEAD commit:    056ddc38 Merge branch 'stmmac-next'
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=125aaafd600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9be300620399522
+dashboard link: https://syzkaller.appspot.com/bug?extid=9cb7edb2906ea1e83006
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1232bb3f600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162d0d0b600000
 
-memcpy(stats, tsk->signal->stats, sizeof(*stats));
+The bug was bisected to:
 
-Perhaps it's supposed to use stats returned by taskstats_tgid_alloc?
+commit 75cdbdd089003cd53560ff87b690ae911fa7df8e
+Author: Jiri Pirko <jiri@mellanox.com>
+Date:   Sat Oct 5 18:04:37 2019 +0000
+
+     net: ieee802154: have genetlink code to parse the attrs during dumpit
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11be5d0b600000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=13be5d0b600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15be5d0b600000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9cb7edb2906ea1e83006@syzkaller.appspotmail.com
+Fixes: 75cdbdd08900 ("net: ieee802154: have genetlink code to parse the  
+attrs during dumpit")
+
+netlink: 'syz-executor134': attribute type 6 has an invalid length.
+==================================================================
+BUG: KASAN: use-after-free in nla_memcpy+0xa2/0xb0 lib/nlattr.c:572
+Read of size 2 at addr ffff8880a74fba94 by task syz-executor134/8714
+
+CPU: 1 PID: 8714 Comm: syz-executor134 Not tainted 5.4.0-rc1+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:634
+  __asan_report_load2_noabort+0x14/0x20 mm/kasan/generic_report.c:130
+  nla_memcpy+0xa2/0xb0 lib/nlattr.c:572
+  nla_get_u64 include/net/netlink.h:1539 [inline]
+  __cfg802154_wpan_dev_from_attrs+0x41b/0x550 net/ieee802154/nl802154.c:55
+  nl802154_prepare_wpan_dev_dump.isra.0.constprop.0+0xf7/0x4b0  
+net/ieee802154/nl802154.c:245
+  nl802154_dump_llsec_seclevel+0xb9/0xae0 net/ieee802154/nl802154.c:1985
+  genl_lock_dumpit+0x86/0xc0 net/netlink/genetlink.c:529
+  netlink_dump+0x558/0xfb0 net/netlink/af_netlink.c:2244
+  __netlink_dump_start+0x5b1/0x7d0 net/netlink/af_netlink.c:2352
+  genl_family_rcv_msg_dumpit net/netlink/genetlink.c:614 [inline]
+  genl_family_rcv_msg net/netlink/genetlink.c:710 [inline]
+  genl_rcv_msg+0xc9b/0x1000 net/netlink/genetlink.c:730
+  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
+  genl_rcv+0x29/0x40 net/netlink/genetlink.c:741
+  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+  netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
+  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg+0xd7/0x130 net/socket.c:657
+  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
+  __do_sys_sendmsg net/socket.c:2365 [inline]
+  __se_sys_sendmsg net/socket.c:2363 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441399
+Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe350885d8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441399
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000402110
+R13: 00000000004021a0 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 8716:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:510 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
+  __do_kmalloc_node mm/slab.c:3615 [inline]
+  __kmalloc_node_track_caller+0x4e/0x70 mm/slab.c:3629
+  __kmalloc_reserve.isra.0+0x40/0xf0 net/core/skbuff.c:141
+  __alloc_skb+0x10b/0x5e0 net/core/skbuff.c:209
+  alloc_skb include/linux/skbuff.h:1049 [inline]
+  netlink_alloc_large_skb net/netlink/af_netlink.c:1174 [inline]
+  netlink_sendmsg+0x972/0xd60 net/netlink/af_netlink.c:1892
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg+0xd7/0x130 net/socket.c:657
+  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
+  __do_sys_sendmsg net/socket.c:2365 [inline]
+  __se_sys_sendmsg net/socket.c:2363 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 8716:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  kasan_set_free_info mm/kasan/common.c:332 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+  __cache_free mm/slab.c:3425 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3756
+  skb_free_head+0x93/0xb0 net/core/skbuff.c:591
+  skb_release_data+0x42d/0x7c0 net/core/skbuff.c:611
+  skb_release_all+0x4d/0x60 net/core/skbuff.c:665
+  __kfree_skb net/core/skbuff.c:679 [inline]
+  consume_skb net/core/skbuff.c:838 [inline]
+  consume_skb+0xfb/0x3b0 net/core/skbuff.c:832
+  netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+  netlink_unicast+0x539/0x710 net/netlink/af_netlink.c:1328
+  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg+0xd7/0x130 net/socket.c:657
+  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
+  __do_sys_sendmsg net/socket.c:2365 [inline]
+  __se_sys_sendmsg net/socket.c:2363 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
+  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8880a74fba80
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 20 bytes inside of
+  512-byte region [ffff8880a74fba80, ffff8880a74fbc80)
+The buggy address belongs to the page:
+page:ffffea00029d3ec0 refcount:1 mapcount:0 mapping:ffff8880aa400a80  
+index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea000232e1c8 ffffea00028722c8 ffff8880aa400a80
+raw: 0000000000000000 ffff8880a74fb080 0000000100000006 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8880a74fb980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8880a74fba00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8880a74fba80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                          ^
+  ffff8880a74fbb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880a74fbb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
