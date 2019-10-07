@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2D5CE604
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62370CE5FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:52:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbfJGOvi convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 7 Oct 2019 10:51:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44383 "EHLO
+        id S1729109AbfJGOvW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 7 Oct 2019 10:51:22 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44397 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728212AbfJGOtd (ORCPT
+        with ESMTP id S1728465AbfJGOte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:33 -0400
+        Mon, 7 Oct 2019 10:49:34 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUKD-00063y-Bx; Mon, 07 Oct 2019 16:49:25 +0200
+        id 1iHUKH-000646-Lo; Mon, 07 Oct 2019 16:49:29 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4A24A1C0DD2;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 75F0B1C0DD5;
         Mon,  7 Oct 2019 16:49:17 +0200 (CEST)
 Date:   Mon, 07 Oct 2019 14:49:17 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] tools headers uapi: Sync linux/usbdevice_fs.h with
- the kernel sources
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+Subject: [tip: perf/urgent] tools headers uapi: Sync asm-generic/mman-common.h
+ with the kernel
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Brendan Gregg <brendan.d.gregg@gmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         Jiri Olsa <jolsa@kernel.org>,
         Luis =?utf-8?q?Cl=C3=A1udio_Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        <lclaudio@redhat.com>, Minchan Kim <minchan@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-x1rb109b9nfi7pukota82xhj@git.kernel.org>
-References: <tip-x1rb109b9nfi7pukota82xhj@git.kernel.org>
+In-Reply-To: <tip-n40y6c4sa49p29q6sl8w3ufx@git.kernel.org>
+References: <tip-n40y6c4sa49p29q6sl8w3ufx@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157045975718.9978.14795938261468093833.tip-bot2@tip-bot2>
+Message-ID: <157045975738.9978.17486571735826931174.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -55,105 +54,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     05f371f8c55d69e4c04db4473085303291e4e734
-Gitweb:        https://git.kernel.org/tip/05f371f8c55d69e4c04db4473085303291e4e734
+Commit-ID:     b1ba55cf1cfb9f3e0e00d743534684a25bf66d28
+Gitweb:        https://git.kernel.org/tip/b1ba55cf1cfb9f3e0e00d743534684a25bf66d28
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 27 Sep 2019 11:42:26 -03:00
+AuthorDate:    Fri, 27 Sep 2019 11:30:30 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 30 Sep 2019 17:29:02 -03:00
+CommitterDate: Mon, 30 Sep 2019 17:28:44 -03:00
 
-tools headers uapi: Sync linux/usbdevice_fs.h with the kernel sources
+tools headers uapi: Sync asm-generic/mman-common.h with the kernel
 
-To pick up the changes from:
+To pick the changes from:
 
-  4ed3350539aa ("USB: usbfs: Add a capability flag for runtime suspend")
-  7794f486ed0b ("usbfs: Add ioctls for runtime power management")
+  1a4e58cce84e ("mm: introduce MADV_PAGEOUT")
+  9c276cc65a58 ("mm: introduce MADV_COLD")
 
-This triggers these changes in the kernel sources, automagically
-supporting these new ioctls in the 'perf trace' beautifiers.
+That result in these changes in the tools:
 
-Soon this will be used in things like filter expressions for tracepoints
-in 'perf record', 'perf trace', 'perf top', i.e. filter expressions will
-do a lookup to turn things like USBDEVFS_WAIT_FOR_RESUME into _IO('U',
-35) before associating the tracepoint expression to tracepoint perf
-event.
-
-  $ tools/perf/trace/beauty/usbdevfs_ioctl.sh  > before
-  $ cp include/uapi/linux/usbdevice_fs.h tools/include/uapi/linux/usbdevice_fs.h
+  $ tools/perf/trace/beauty/madvise_behavior.sh > before
+  $ cp include/uapi/asm-generic/mman-common.h tools/include/uapi/asm-generic/mman-common.h
   $ git diff
-  diff --git a/tools/include/uapi/linux/usbdevice_fs.h b/tools/include/uapi/linux/usbdevice_fs.h
-  index 78efe870c2b7..cf525cddeb94 100644
-  --- a/tools/include/uapi/linux/usbdevice_fs.h
-  +++ b/tools/include/uapi/linux/usbdevice_fs.h
-  @@ -158,6 +158,7 @@ struct usbdevfs_hub_portinfo {
-   #define USBDEVFS_CAP_MMAP                      0x20
-   #define USBDEVFS_CAP_DROP_PRIVILEGES           0x40
-   #define USBDEVFS_CAP_CONNINFO_EX               0x80
-  +#define USBDEVFS_CAP_SUSPEND                   0x100
+  diff --git a/tools/include/uapi/asm-generic/mman-common.h b/tools/include/uapi/asm-generic/mman-common.h
+  index 63b1f506ea67..c160a5354eb6 100644
+  --- a/tools/include/uapi/asm-generic/mman-common.h
+  +++ b/tools/include/uapi/asm-generic/mman-common.h
+  @@ -67,6 +67,9 @@
+   #define MADV_WIPEONFORK 18             /* Zero memory on fork, child only */
+   #define MADV_KEEPONFORK 19             /* Undo MADV_WIPEONFORK */
 
-   /* USBDEVFS_DISCONNECT_CLAIM flags & struct */
+  +#define MADV_COLD      20              /* deactivate these pages */
+  +#define MADV_PAGEOUT   21              /* reclaim these pages */
+  +
+   /* compatibility flags */
+   #define MAP_FILE       0
 
-  @@ -223,5 +224,8 @@ struct usbdevfs_streams {
-    * extending size of the data returned.
-    */
-   #define USBDEVFS_CONNINFO_EX(len)  _IOC(_IOC_READ, 'U', 32, len)
-  +#define USBDEVFS_FORBID_SUSPEND    _IO('U', 33)
-  +#define USBDEVFS_ALLOW_SUSPEND     _IO('U', 34)
-  +#define USBDEVFS_WAIT_FOR_RESUME   _IO('U', 35)
-
-   #endif /* _UAPI_LINUX_USBDEVICE_FS_H */
-  $ tools/perf/trace/beauty/usbdevfs_ioctl.sh  > after
+  $ tools/perf/trace/beauty/madvise_behavior.sh > after
   $ diff -u before after
-  --- before	2019-09-27 11:41:50.634867620 -0300
-  +++ after	2019-09-27 11:42:07.453102978 -0300
-  @@ -24,6 +24,9 @@
-   	[30] = "DROP_PRIVILEGES",
-   	[31] = "GET_SPEED",
-   	[32] = "CONNINFO_EX",
-  +	[33] = "FORBID_SUSPEND",
-  +	[34] = "ALLOW_SUSPEND",
-  +	[35] = "WAIT_FOR_RESUME",
-   	[3] = "RESETEP",
-   	[4] = "SETINTERFACE",
-   	[5] = "SETCONFIGURATION",
+  --- before	2019-09-27 11:29:43.346320100 -0300
+  +++ after	2019-09-27 11:30:03.838570439 -0300
+  @@ -16,6 +16,8 @@
+   	[17] = "DODUMP",
+   	[18] = "WIPEONFORK",
+   	[19] = "KEEPONFORK",
+  +	[20] = "COLD",
+  +	[21] = "PAGEOUT",
+   	[100] = "HWPOISON",
+   	[101] = "SOFT_OFFLINE",
+   };
   $
+
+I.e. now when madvise gets those behaviours as args, it will be able to
+translate from the number to a human readable string.
 
 This addresses the following perf build warning:
 
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/usbdevice_fs.h' differs from latest version at 'include/uapi/linux/usbdevice_fs.h'
-  diff -u tools/include/uapi/linux/usbdevice_fs.h include/uapi/linux/usbdevice_fs.h
+  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/mman-common.h' differs from latest version at 'include/uapi/asm-generic/mman-common.h'
+  diff -u tools/include/uapi/asm-generic/mman-common.h include/uapi/asm-generic/mman-common.h
 
-Cc: Alan Stern <stern@rowland.harvard.edu>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Minchan Kim <minchan@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-x1rb109b9nfi7pukota82xhj@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-n40y6c4sa49p29q6sl8w3ufx@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/linux/usbdevice_fs.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/include/uapi/asm-generic/mman-common.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/include/uapi/linux/usbdevice_fs.h b/tools/include/uapi/linux/usbdevice_fs.h
-index 78efe87..cf525cd 100644
---- a/tools/include/uapi/linux/usbdevice_fs.h
-+++ b/tools/include/uapi/linux/usbdevice_fs.h
-@@ -158,6 +158,7 @@ struct usbdevfs_hub_portinfo {
- #define USBDEVFS_CAP_MMAP			0x20
- #define USBDEVFS_CAP_DROP_PRIVILEGES		0x40
- #define USBDEVFS_CAP_CONNINFO_EX		0x80
-+#define USBDEVFS_CAP_SUSPEND			0x100
+diff --git a/tools/include/uapi/asm-generic/mman-common.h b/tools/include/uapi/asm-generic/mman-common.h
+index 63b1f50..c160a53 100644
+--- a/tools/include/uapi/asm-generic/mman-common.h
++++ b/tools/include/uapi/asm-generic/mman-common.h
+@@ -67,6 +67,9 @@
+ #define MADV_WIPEONFORK 18		/* Zero memory on fork, child only */
+ #define MADV_KEEPONFORK 19		/* Undo MADV_WIPEONFORK */
  
- /* USBDEVFS_DISCONNECT_CLAIM flags & struct */
++#define MADV_COLD	20		/* deactivate these pages */
++#define MADV_PAGEOUT	21		/* reclaim these pages */
++
+ /* compatibility flags */
+ #define MAP_FILE	0
  
-@@ -223,5 +224,8 @@ struct usbdevfs_streams {
-  * extending size of the data returned.
-  */
- #define USBDEVFS_CONNINFO_EX(len)  _IOC(_IOC_READ, 'U', 32, len)
-+#define USBDEVFS_FORBID_SUSPEND    _IO('U', 33)
-+#define USBDEVFS_ALLOW_SUSPEND     _IO('U', 34)
-+#define USBDEVFS_WAIT_FOR_RESUME   _IO('U', 35)
- 
- #endif /* _UAPI_LINUX_USBDEVICE_FS_H */
