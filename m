@@ -2,221 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19BC1CE6B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:09:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E5F8CE6AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbfJGPJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:09:12 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:40504 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728037AbfJGPJK (ORCPT
+        id S1729235AbfJGPIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:08:53 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40518 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbfJGPHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:09:10 -0400
-Received: by mail-io1-f70.google.com with SMTP id r20so27193773ioh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:09:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=mZ+MUmj5Y4NwRKu1oTpZySF67A1su90ulVRCdWT9+V4=;
-        b=P8PXukapneRe4ShMh8hBlx3F9i4uosWwH1pt11V6IZPE1Hq5V/BTsy/diUgoN6Dek7
-         86IQTgrEW7xDx7nS8RSi5R2bKyI2bhpyqu7f9G6AJd+bND0ZI3cEIYgnjcBce+uttBiO
-         mEFIXFgZklcNffay7l5suC1yhPmVC6PTjTK6fbjt1Q9nDwHTqw6YHMZ4liSrHk1eCTXO
-         XMFiWalu2oE9sYAAINIs2ieQXaYQ1JIGMNFYNFND2VrOdwSXN09oAlCNTd25CUzt5A+c
-         Krnd6xQpX9V23jBZIcjQHX/3+lFazLqWmwxzi5SaVqM24Dnf4RVx8jcMgMVhmbvAqZi/
-         cQzg==
-X-Gm-Message-State: APjAAAXoZqE7CSx27wS4tG5gJIKyXLdPJpavVn7Oh7yzOyETtRuJEcEj
-        RtYkRwE8rdgXE8Zbq/KRRutf/MVnniG036ft0NLsIZnZrbY9
-X-Google-Smtp-Source: APXvYqwMNB1ZOWSO4vAI3skZ3eF86r8lwC0lJfcTfyHb0AyjwW/XTrkiA7TU4Xk0Jo72r3G3rD43MTzLiGFF9PxpDenGuj8f6p5H
+        Mon, 7 Oct 2019 11:07:47 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x97F7bXo004145;
+        Mon, 7 Oct 2019 10:07:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570460857;
+        bh=AANL6dhtcM/ZhXE+HydbDtW2kXOWUAgsERUnaK7AKrk=;
+        h=From:To:CC:Subject:Date;
+        b=gUPIw9Nlh5/08D5VbW2vb+AP4MU/5k4iLrA4p/KfRVdg/IcNaF6IL/gZI3J5IpFwd
+         nimd1a4C5GxRgbnwKlV40zqUSONyb6Ap2bc3xZtcm/JGSGIWlBnJLsv6WFoUI1shdw
+         PUyW+JUu3n54dLHeagwl6mDkgyghs1y81thfh4zU=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x97F7btv023625
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 7 Oct 2019 10:07:37 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 7 Oct
+ 2019 10:07:34 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 7 Oct 2019 10:07:36 -0500
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x97F7aF6055156;
+        Mon, 7 Oct 2019 10:07:36 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v3 00/21] media: vpe: maintenance
+Date:   Mon, 7 Oct 2019 10:09:48 -0500
+Message-ID: <20191007151009.22095-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:2c97:: with SMTP id s145mr13659271ios.256.1570460948024;
- Mon, 07 Oct 2019 08:09:08 -0700 (PDT)
-Date:   Mon, 07 Oct 2019 08:09:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f0d74d0594536e2c@google.com>
-Subject: KASAN: use-after-free Read in pn533_send_complete
-From:   syzbot <syzbot+cb035c75c03dbe34b796@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, andreyknvl@google.com,
-        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, opensource@jilayne.com, swinslow@gmail.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This a collection of backlog patches I have been carrying for the VPE
+driver.
 
-syzbot found the following crash on:
+It adds supports for SEQ_BT as well as NV21.
+And fixes a number of issues both through v4l2-compliance and normal
+usage.
 
-HEAD commit:    58d5f26a usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=129c7463600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=aa5dac3cda4ffd58
-dashboard link: https://syzkaller.appspot.com/bug?extid=cb035c75c03dbe34b796
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101fb55d600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117f7885600000
+Changes since v2:
+- Fix a type causing a compile error
+- Address Hans' comment on the v4l2_common patches
+- Rework patch 16 a bit to limit the expanded use of fmt.pix_mp and use
+  a local pointer whenever possible.
+- Reworked csc_set_coeff() to use the updated format_info helper and
+  also to properly handle the v4l2_format type passed as arguments
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+cb035c75c03dbe34b796@syzkaller.appspotmail.com
+Changes since v1:
+- Added a missing from my first set fixing a Makefile issue
+- Added a csc table fix to match the technical specification
+- Base on Hans' comment I reworked the last two patches which
+  yielded one more patch
+- This also led me to create additional patches to the
+  v4l2_format_info table to simplify pixel encoding lookup
 
-usb 1-1: NFC: Urb failure (status -71)
-==================================================================
-BUG: KASAN: use-after-free in pn533_send_complete.cold+0x47/0x6c  
-drivers/nfc/pn533/usb.c:430
-Read of size 8 at addr ffff8881d411fca8 by task swapper/1/0
+======================================
+v4l2-compliance SHA: 5b168dc8473911227890526bad26553d9e8ff81b, 32 bits
 
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.4.0-rc1+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description.constprop.0+0x36/0x50 mm/kasan/report.c:374
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:506
-  kasan_report+0xe/0x20 mm/kasan/common.c:634
-  pn533_send_complete.cold+0x47/0x6c drivers/nfc/pn533/usb.c:430
-  __usb_hcd_giveback_urb+0x1f2/0x470 drivers/usb/core/hcd.c:1654
-  usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1719
-  dummy_timer+0x120f/0x2fa2 drivers/usb/gadget/udc/dummy_hcd.c:1965
-  call_timer_fn+0x179/0x650 kernel/time/timer.c:1404
-  expire_timers kernel/time/timer.c:1449 [inline]
-  __run_timers kernel/time/timer.c:1773 [inline]
-  __run_timers kernel/time/timer.c:1740 [inline]
-  run_timer_softirq+0x5e3/0x1490 kernel/time/timer.c:1786
-  __do_softirq+0x221/0x912 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x178/0x1a0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x12f/0x500 arch/x86/kernel/apic/apic.c:1137
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-  </IRQ>
-RIP: 0010:default_idle+0x28/0x2e0 arch/x86/kernel/process.c:581
-Code: 90 90 41 56 41 55 65 44 8b 2d 44 3a 8f 7a 41 54 55 53 0f 1f 44 00 00  
-e8 36 ee d0 fb e9 07 00 00 00 0f 00 2d fa dd 4f 00 fb f4 <65> 44 8b 2d 20  
-3a 8f 7a 0f 1f 44 00 00 5b 5d 41 5c 41 5d 41 5e c3
-RSP: 0018:ffff8881da217dc8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000007 RBX: ffff8881da1fb000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffff8881da1fb84c
-RBP: ffffed103b43f600 R08: ffff8881da1fb000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
-  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
-  do_idle+0x3b6/0x500 kernel/sched/idle.c:263
-  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:355
-  start_secondary+0x27d/0x330 arch/x86/kernel/smpboot.c:264
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
+Compliance test for vpe device /dev/video0:
 
-Allocated by task 22:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:510 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:483
-  slab_post_alloc_hook mm/slab.h:584 [inline]
-  slab_alloc_node mm/slub.c:2772 [inline]
-  __kmalloc_node_track_caller+0xfc/0x3d0 mm/slub.c:4367
-  alloc_dr drivers/base/devres.c:103 [inline]
-  devm_kmalloc+0x87/0x190 drivers/base/devres.c:815
-  devm_kzalloc include/linux/device.h:919 [inline]
-  pn533_usb_probe+0x3b/0xd75 drivers/nfc/pn533/usb.c:461
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2201
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2201
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Driver Info:
+	Driver name      : vpe
+	Card type        : vpe
+	Bus info         : platform:vpe
+	Driver version   : 5.4.0
+	Capabilities     : 0x84204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
 
-Freed by task 22:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  kasan_set_free_info mm/kasan/common.c:332 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:471
-  slab_free_hook mm/slub.c:1424 [inline]
-  slab_free_freelist_hook mm/slub.c:1475 [inline]
-  slab_free mm/slub.c:3018 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3959
-  release_nodes+0x4a1/0x910 drivers/base/devres.c:508
-  devres_release_all+0x74/0xc3 drivers/base/devres.c:529
-  really_probe+0x42f/0x6d0 drivers/base/dd.c:605
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2201
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2201
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
 
-The buggy address belongs to the object at ffff8881d411fc80
-  which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 40 bytes inside of
-  96-byte region [ffff8881d411fc80, ffff8881d411fce0)
-The buggy address belongs to the page:
-page:ffffea00075047c0 refcount:1 mapcount:0 mapping:ffff8881da002f00  
-index:0x0
-flags: 0x200000000000200(slab)
-raw: 0200000000000200 ffffea000754b380 0000001500000015 ffff8881da002f00
-raw: 0000000000000000 0000000080200020 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
 
-Memory state around the buggy address:
-  ffff8881d411fb80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-  ffff8881d411fc00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
-> ffff8881d411fc80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                                   ^
-  ffff8881d411fd00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-  ffff8881d411fd80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
 
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 1 Private Controls: 1
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK
+	test Composing: OK
+	test Scaling: OK
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+		warn: v4l2-test-buffers.cpp(683): VIDIOC_CREATE_BUFS not supported
+		warn: v4l2-test-buffers.cpp(683): VIDIOC_CREATE_BUFS not supported
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK (Not Supported)
+	test blocking wait: OK
+	Video Capture Multiplanar: Captured 58 buffers    
+	test MMAP (no poll): OK
+	Video Capture Multiplanar: Captured 58 buffers    
+	test MMAP (select): OK
+	Video Capture Multiplanar: Captured 58 buffers    
+	test MMAP (epoll): OK
+	test USERPTR (no poll): OK (Not Supported)
+	test USERPTR (select): OK (Not Supported)
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total for vpe device /dev/video0: 51, Succeeded: 51, Failed: 0, Warnings: 2
+======================================
+
+Benoit Parrot (18):
+  media: ti-vpe: Fix a parallel build issue
+  media: ti-vpe: vpe: Fix Motion Vector vpdma stride
+  media: ti-vpe: vpe: Add missing null pointer checks
+  media: ti-vpe: vpe: Remove unnecessary use of container_of
+  media: ti-vpe: vpe: fix a v4l2-compliance failure causing a kernel
+    panic
+  media: ti-vpe: vpe: fix a v4l2-compliance warning about invalid pixel
+    format
+  media: ti-vpe: vpe: Make sure YUYV is set as default format
+  media: ti-vpe: vpe: fix a v4l2-compliance failure about invalid
+    sizeimage
+  media: ti-vpe: vpe: fix a v4l2-compliance failure about frame sequence
+    number
+  media: ti-vpe: vpe: ensure buffers are cleaned up properly in abort
+    cases
+  media: ti-vpe: vpdma: Use fixed type for address in descriptor
+  media: ti-vpe: Set the DMA mask and coherent mask
+  media: ti-vpe: vpe: use standard struct instead of duplicating fields
+  media: ti-vpe: vpe: fix v4l2_compliance issue related to xfer_func
+  media: ti-vpe: csc: rgb-to-yuv HD full range coeff are wrong
+  media: v4l2-common: add pixel encoding support
+  media: v4l2-common: add RGB565 and RGB55 to v4l2_format_info
+  media: ti-vpe: vpe: don't rely on colorspace member for conversion
+
+Nikhil Devshatwar (2):
+  media: ti-vpe: Add support for SEQ_BT
+  media: ti-vpe: Add support for NV21 format
+
+Ram Prasad (1):
+  media: ti-vpe: Set MAX height supported to 2048 pixels
+
+ drivers/media/platform/Makefile            |   4 +-
+ drivers/media/platform/ti-vpe/csc.c        | 254 ++++++++-----
+ drivers/media/platform/ti-vpe/csc.h        |   4 +-
+ drivers/media/platform/ti-vpe/vpdma.c      |  11 +-
+ drivers/media/platform/ti-vpe/vpdma.h      |   2 +
+ drivers/media/platform/ti-vpe/vpdma_priv.h |   5 +-
+ drivers/media/platform/ti-vpe/vpe.c        | 394 ++++++++++++---------
+ drivers/media/v4l2-core/v4l2-common.c      | 128 +++----
+ include/media/v4l2-common.h                |  33 +-
+ 9 files changed, 520 insertions(+), 315 deletions(-)
+
+-- 
+2.17.1
+
