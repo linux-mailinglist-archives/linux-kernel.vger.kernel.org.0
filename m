@@ -2,77 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E96EECE389
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57995CE372
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbfJGN1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:27:22 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:33925 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728562AbfJGN1I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:27:08 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost.localdomain (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 9277C1C0010;
-        Mon,  7 Oct 2019 13:27:04 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 6/8] dt-bindings: iio: adc: max1027: Mark interrupts as optional
-Date:   Mon,  7 Oct 2019 15:26:55 +0200
-Message-Id: <20191007132657.4190-7-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191007132657.4190-1-miquel.raynal@bootlin.com>
-References: <20191007132657.4190-1-miquel.raynal@bootlin.com>
+        id S1728402AbfJGN07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:26:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49496 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728003AbfJGN06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 09:26:58 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BE5C830842AF;
+        Mon,  7 Oct 2019 13:26:58 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.34.244.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C512D60127;
+        Mon,  7 Oct 2019 13:26:57 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH] selftests: kvm: synchronize .gitignore to Makefile
+Date:   Mon,  7 Oct 2019 15:26:56 +0200
+Message-Id: <20191007132656.19544-1-vkuznets@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 07 Oct 2019 13:26:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The chips have a 'start conversion' and a 'end of conversion' pair of
-pins. They can be used but this is absolutely not mandatory as regular
-polling is supported by the chip depending on its internal clocking
-setup.
+Because "Untracked files:" are annoying.
 
-There is no physical reason to force the use of interrupts so turn
-them optional.
-
-Also, once the interrupt turned optional, these devices fit perfectly
-the "trivial devices" described in the generic (yaml) bindings file, so
-instead of converting this text file to json schema, we can just add
-the relevant compatibles in:
-Documentation/devicetree/bindings/trivial-devices.yaml.
-
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- Documentation/devicetree/bindings/iio/adc/max1027-adc.txt | 2 ++
+ tools/testing/selftests/kvm/.gitignore | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt b/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-index e680c61dfb84..7b23d68f655c 100644
---- a/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/max1027-adc.txt
-@@ -3,6 +3,8 @@
- Required properties:
-   - compatible: Should be "maxim,max1027" or "maxim,max1029" or "maxim,max1031"
-   - reg: SPI chip select number for the device
-+
-+Optional properties:
-   - interrupts: IRQ line for the ADC
-   see: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
- 
+diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
+index b35da375530a..409c1fa75e03 100644
+--- a/tools/testing/selftests/kvm/.gitignore
++++ b/tools/testing/selftests/kvm/.gitignore
+@@ -1,4 +1,5 @@
+ /s390x/sync_regs_test
++/s390x/memop
+ /x86_64/cr4_cpuid_sync_test
+ /x86_64/evmcs_test
+ /x86_64/hyperv_cpuid
+@@ -9,6 +10,7 @@
+ /x86_64/state_test
+ /x86_64/sync_regs_test
+ /x86_64/vmx_close_while_nested_test
++/x86_64/vmx_dirty_log_test
+ /x86_64/vmx_set_nested_state_test
+ /x86_64/vmx_tsc_adjust_test
+ /clear_dirty_log_test
 -- 
 2.20.1
 
