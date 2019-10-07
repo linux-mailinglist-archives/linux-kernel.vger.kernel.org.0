@@ -2,80 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746F8CE5BD
+	by mail.lfdr.de (Postfix) with ESMTP id ECC4ACE5BE
 	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbfJGOuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:50:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728827AbfJGOtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 795EB21721;
-        Mon,  7 Oct 2019 14:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570459794;
-        bh=r4K7HAwLnCeGJFkWlb4lenJOAqclCLAOXkLixnCX080=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D52K+4pPEnFckx8ZJgeQB5pQg9bw/NPoVMCLRzoJC/bFTaCjswMxxBhdMP2PqRmNX
-         MXB9/A1fV1FaZ8fb8tfslbeiQR+vEv2T9gP+0vyMEr5b7n/nBALrofKtuhOozThz28
-         mYWblVLt26i79NTfFjiVgatl2Jswp0V47JYfdWhI=
-Date:   Mon, 7 Oct 2019 16:49:51 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/36] 4.4.196-stable review
-Message-ID: <20191007144951.GB966828@kroah.com>
-References: <20191006171038.266461022@linuxfoundation.org>
- <d3e1e6ae-8ca4-a43b-d30d-9a9a9a7e5752@roeck-us.net>
+        id S1728900AbfJGOuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:50:05 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46834 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728853AbfJGOt6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 10:49:58 -0400
+Received: by mail-wr1-f67.google.com with SMTP id o18so15622754wrv.13
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 07:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1dSA+SmdtisGu5FvnubDfiZYtTOdvCNLpWjAeop5PWM=;
+        b=NY8Xdb2ENlkzoJiW5PfDLGVYgGYdgNXK+IbonkVtqUPW/pzgaekJMC0r9d1t9BRglK
+         ZkLuJZknhOk7P8pwkwxjiLjYPXtP8xcTXdkF+8jCVX7w+H/2Vgwp1ynXNJT1cTOfESPT
+         GlxUW1wVfpPTCZc77iP2oFYsrKHJofNIUyVcf+XQW4LW7OQnDNuinCCVjzmZtg6iths7
+         YdN6n+XP4ZWSS+gngqtK1i+IjCHuPYCOX7EdYh/IPt+b7Jo0qniQx8XsK1LKToS1W2Ya
+         OaIiLyaedb5+UbjEAdh9MCCE4qnzyQFW8kPxslW/Yv5bk5tWUH9mfowPKvYp6E/sG3u1
+         Vddg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1dSA+SmdtisGu5FvnubDfiZYtTOdvCNLpWjAeop5PWM=;
+        b=ROv0eVEKUWLess2APpjgvEgplpkwjS7EV2ycSG+7Z/lz/RR28Qd2G9tasoHCmlYW+V
+         E5JZ+/EMcakHA5FGES8q6A+w2SM7yNiGeQ4tHyImaydsYmAH/eAxSngaVT2oCMrXNy4d
+         NazO3HclM6GHDeV3MvWDYm/eCbd3xNlQXgaddMJpLmtyuD2ZJzZDKhGi7rKPKuOPZmTr
+         BNFGRKDdTw59oRLoPsUdmuuwIcRX/gMVAM1OURqlvBAAsltYW78ObTWo1G6M6bsSLjod
+         +8Vq4Ys77w9ABZXOXyKDH5HEpiLxV/Okrt3sSUz8GL6k2U+sIhNHTOJkb65LkTpJuq0H
+         bTWQ==
+X-Gm-Message-State: APjAAAUYBHVKQds8BBtVlP6CYo7skVjZym8FXbn3KjKt/6QxiCKLf5id
+        ++QR8o1/RndOALoNqGReOso=
+X-Google-Smtp-Source: APXvYqxnjVycBya9OcagKu5r/lYVAHREqMIN0OHFlE91rLh+HzE+DyCFddjRTujDUYIyZ/CViOk83Q==
+X-Received: by 2002:adf:ef0d:: with SMTP id e13mr23871392wro.300.1570459796728;
+        Mon, 07 Oct 2019 07:49:56 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id q124sm26948893wma.5.2019.10.07.07.49.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 07:49:56 -0700 (PDT)
+Date:   Mon, 7 Oct 2019 16:49:54 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: Fix inheritance of aux_output groups
+Message-ID: <20191007144954.GA88143@gmail.com>
+References: <20191004125729.32397-1-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d3e1e6ae-8ca4-a43b-d30d-9a9a9a7e5752@roeck-us.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191004125729.32397-1-alexander.shishkin@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 05:53:55AM -0700, Guenter Roeck wrote:
-> On 10/6/19 10:18 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.196 release.
-> > There are 36 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> 
-> powerpc:defconfig fails to build.
-> 
-> arch/powerpc/kernel/eeh_driver.c: In function ‘eeh_handle_normal_event’:
-> arch/powerpc/kernel/eeh_driver.c:678:2: error: implicit declaration of function ‘eeh_for_each_pe’; did you mean ‘bus_for_each_dev’?
-> 
-> It has a point:
-> 
-> ... HEAD is now at 13cac61d31df Linux 4.4.196-rc1
-> $ git grep eeh_for_each_pe
-> arch/powerpc/kernel/eeh_driver.c:       eeh_for_each_pe(pe, tmp_pe)
-> arch/powerpc/kernel/eeh_driver.c:                               eeh_for_each_pe(pe, tmp_pe)
-> 
-> Caused by commit 3fb431be8de3a ("powerpc/eeh: Clear stale EEH_DEV_NO_HANDLER flag").
-> Full report will follow later.
 
-Thanks for letting me know, I've dropped this from the queue now and
-pushed out a -rc2 with that removed.
+* Alexander Shishkin <alexander.shishkin@linux.intel.com> wrote:
 
-Sasha, I thought your builder would have caught stuff like this?
+> Commit
+> 
+>   b43762ef010 ("perf: Allow normal events to output AUX data")
 
-thanks,
+Missing 'a', the proper SHA1 is:
 
-greg k-h
+    ab43762ef010 ("perf: Allow normal events to output AUX data")
+
+:-)
+
+> forgets to configure aux_output relation in the inherited groups, which
+> results in child PEBS events forever failing to schedule.
+> 
+> Fix this by setting up the AUX output link in the inheritance path.
+> 
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> ---
+>  kernel/events/core.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index f5bb2557d5f6..761995f21b30 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12024,6 +12024,10 @@ static int inherit_group(struct perf_event *parent_event,
+>  					    child, leader, child_ctx);
+>  		if (IS_ERR(child_ctr))
+>  			return PTR_ERR(child_ctr);
+> +
+> +		if (sub->aux_event == parent_event &&
+> +		    !perf_get_aux_event(child_ctr, leader))
+> +			return -EINVAL;
+
+Could this explain weird 'perf top' failures I'm seeing on my desktop, 
+which I was just about to debug and report?
+
+Thanks,
+
+	Ingo
