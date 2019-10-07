@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89BEDCE255
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9643CE258
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfJGMzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:55:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55698 "EHLO mx1.redhat.com"
+        id S1728516AbfJGMzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:55:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:5750 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728484AbfJGMzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:55:02 -0400
+        id S1728495AbfJGMzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:55:05 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3AEA35AFF8;
-        Mon,  7 Oct 2019 12:55:02 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 081E211A1F;
+        Mon,  7 Oct 2019 12:55:05 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 96B725D9CC;
-        Mon,  7 Oct 2019 12:54:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 86B585D9CC;
+        Mon,  7 Oct 2019 12:55:02 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,77 +27,61 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 32/36] libperf: Add tests_mmap_thread test
-Date:   Mon,  7 Oct 2019 14:53:40 +0200
-Message-Id: <20191007125344.14268-33-jolsa@kernel.org>
+Subject: [PATCH 33/36] libperf: Add tests_mmap_cpus test
+Date:   Mon,  7 Oct 2019 14:53:41 +0200
+Message-Id: <20191007125344.14268-34-jolsa@kernel.org>
 In-Reply-To: <20191007125344.14268-1-jolsa@kernel.org>
 References: <20191007125344.14268-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 07 Oct 2019 12:55:02 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 07 Oct 2019 12:55:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding mmaping tests that generates 100 prctl calls
-in monitored child process and validates it gets
-100 events in ring buffer.
+Adding mmaping tests that generates prctl call on
+every cpu validates it gets all the related events
+in ring buffer.
 
-Link: http://lkml.kernel.org/n/tip-5qzuxnmde9x6uojkysp3rldn@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-9qdckblmgjm42ofd7haflso0@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/tests/test-evlist.c | 119 +++++++++++++++++++++++++++++
- 1 file changed, 119 insertions(+)
+ tools/perf/lib/tests/test-evlist.c | 97 ++++++++++++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
 
 diff --git a/tools/perf/lib/tests/test-evlist.c b/tools/perf/lib/tests/test-evlist.c
-index e6b2ab2e2bde..90a1869ba4b1 100644
+index 90a1869ba4b1..d8c52ebfa53a 100644
 --- a/tools/perf/lib/tests/test-evlist.c
 +++ b/tools/perf/lib/tests/test-evlist.c
-@@ -1,12 +1,21 @@
+@@ -1,5 +1,6 @@
  // SPDX-License-Identifier: GPL-2.0
  #include <stdio.h>
++#include <sched.h>
  #include <stdarg.h>
-+#include <unistd.h>
-+#include <stdlib.h>
- #include <linux/perf_event.h>
-+#include <linux/limits.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <sys/prctl.h>
- #include <perf/cpumap.h>
- #include <perf/threadmap.h>
- #include <perf/evlist.h>
- #include <perf/evsel.h>
-+#include <perf/mmap.h>
-+#include <perf/event.h>
- #include <internal/tests.h>
-+#include <api/fs/fs.h>
- 
- static int libperf_print(enum libperf_print_level level,
- 			 const char *fmt, va_list ap)
-@@ -181,6 +190,115 @@ static int test_stat_thread_enable(void)
+ #include <unistd.h>
+ #include <stdlib.h>
+@@ -299,6 +300,101 @@ static int test_mmap_thread(void)
  	return 0;
  }
  
-+static int test_mmap_thread(void)
++static int test_mmap_cpus(void)
 +{
 +	struct perf_evlist *evlist;
 +	struct perf_evsel *evsel;
 +	struct perf_mmap *map;
 +	struct perf_cpu_map *cpus;
-+	struct perf_thread_map *threads;
 +	struct perf_event_attr attr = {
 +		.type             = PERF_TYPE_TRACEPOINT,
 +		.sample_period    = 1,
 +		.wakeup_watermark = 1,
 +		.disabled         = 1,
 +	};
++	cpu_set_t saved_mask;
 +	char path[PATH_MAX];
-+	int id, err, pid, go_pipe[2];
++	int id, err, cpu, tmp;
 +	union perf_event *event;
-+	char bf;
 +	int count = 0;
 +
 +	snprintf(path, PATH_MAX, "%s/kernel/debug/tracing/events/syscalls/sys_enter_prctl/id",
@@ -110,31 +94,8 @@ index e6b2ab2e2bde..90a1869ba4b1 100644
 +
 +	attr.config = id;
 +
-+	err = pipe(go_pipe);
-+	__T("failed to create pipe", err == 0);
-+
-+	fflush(NULL);
-+
-+	pid = fork();
-+	if (!pid) {
-+		int i;
-+
-+		read(go_pipe[0], &bf, 1);
-+
-+		/* Generate 100 prctl calls. */
-+		for (i = 0; i < 100; i++)
-+			prctl(0, 0, 0, 0, 0);
-+
-+		exit(0);
-+	}
-+
-+	threads = perf_thread_map__new_dummy();
-+	__T("failed to create threads", threads);
-+
-+	cpus = perf_cpu_map__dummy_new();
++	cpus = perf_cpu_map__new(NULL);
 +	__T("failed to create cpus", cpus);
-+
-+	perf_thread_map__set_pid(threads, 0, pid);
 +
 +	evlist = perf_evlist__new();
 +	__T("failed to create evlist", evlist);
@@ -144,7 +105,7 @@ index e6b2ab2e2bde..90a1869ba4b1 100644
 +
 +	perf_evlist__add(evlist, evsel);
 +
-+	perf_evlist__set_maps(evlist, cpus, threads);
++	perf_evlist__set_maps(evlist, cpus, NULL);
 +
 +	err = perf_evlist__open(evlist);
 +	__T("failed to open evlist", err == 0);
@@ -154,14 +115,25 @@ index e6b2ab2e2bde..90a1869ba4b1 100644
 +
 +	perf_evlist__enable(evlist);
 +
-+	/* kick the child and wait for it to finish */
-+	write(go_pipe[1], &bf, 1);
-+	waitpid(pid, NULL, 0);
++	err = sched_getaffinity(0, sizeof(saved_mask), &saved_mask);
++	__T("sched_getaffinity failed", err == 0);
 +
-+	/*
-+	 * There's no need to call perf_evlist__disable,
-+	 * monitored process is dead now.
-+	 */
++	perf_cpu_map__for_each_cpu(cpu, tmp, cpus) {
++		cpu_set_t mask;
++
++		CPU_ZERO(&mask);
++		CPU_SET(cpu, &mask);
++
++		err = sched_setaffinity(0, sizeof(mask), &mask);
++		__T("sched_setaffinity failed", err == 0);
++
++		prctl(0, 0, 0, 0, 0);
++	}
++
++	err = sched_setaffinity(0, sizeof(saved_mask), &saved_mask);
++	__T("sched_setaffinity failed", err == 0);
++
++	perf_evlist__disable(evlist);
 +
 +	perf_evlist__for_each_mmap(evlist, map, false) {
 +		if (perf_mmap__read_init(map) < 0)
@@ -178,14 +150,13 @@ index e6b2ab2e2bde..90a1869ba4b1 100644
 +	/* calls perf_evlist__munmap/perf_evlist__close */
 +	perf_evlist__delete(evlist);
 +
-+	perf_thread_map__put(threads);
-+	perf_cpu_map__put(cpus);
-+
 +	/*
-+	 * The generated prctl calls should match the
-+	 * number of events in the buffer.
++	 * The generated prctl events should match the
++	 * number of cpus or be bigger (we are system-wide).
 +	 */
-+	__T("failed count", count == 100);
++	__T("failed count", count >= perf_cpu_map__nr(cpus));
++
++	perf_cpu_map__put(cpus);
 +
 +	return 0;
 +}
@@ -193,11 +164,11 @@ index e6b2ab2e2bde..90a1869ba4b1 100644
  int main(int argc, char **argv)
  {
  	__T_START;
-@@ -190,6 +308,7 @@ int main(int argc, char **argv)
- 	test_stat_cpu();
+@@ -309,6 +405,7 @@ int main(int argc, char **argv)
  	test_stat_thread();
  	test_stat_thread_enable();
-+	test_mmap_thread();
+ 	test_mmap_thread();
++	test_mmap_cpus();
  
  	__T_OK;
  	return 0;
