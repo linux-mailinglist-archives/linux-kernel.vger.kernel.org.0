@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96BE2CE046
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39356CE032
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbfJGLZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:25:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58230 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbfJGLXj (ORCPT
+        id S1727911AbfJGLXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:23:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50204 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727766AbfJGLXj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 Oct 2019 07:23:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QO8e7mRWuY5KwaTgHvL34GvY00BplKjP8cDqEP1Ilak=; b=IFipmywM9cQhZo8aqG1HiYdiUr
-        InNnf9nA9+qO4sDoZKzmRCu0mzzzKUk0OkFtogTxWQna7xUzogbvNjn42of5oqOzVL2eq2Hm+QMqz
-        cC0nz6mOcEv3fmuSfJQ4u1hEpLVrAHfq0yB+xt+9wLTgzJLNeJO7PWzir6i1NTTnP7PU5cle0GIzO
-        dgG9TmBnIrN63TzsS2dU2lR0O1CVuLfyQOVs9cKSTqmC5PYFKS+ACGg/Xmd3PNe7qmcSxV7j4HOVc
-        DX80RFWZyhweo/2qQ7J02xLdo33mGsNzUWHOvkjy2m5dtPCAkGh4+AiWo20YOyrgbXgDxVkixd++M
-        mb61QWoA==;
+        d=infradead.org; s=bombadil.20170209; h=References:Subject:Cc:To:From:Date:
+        Message-Id:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=a9Cv1nGAHOO+s2E/xDw1mfOkJtSraarhm/8/mekMRkk=; b=F+hfDSLbLjTQ
+        CenBI2h+b39TQtKVzTbrmAX+DRhqRxUJQxrXZNP5eCoKsM1hPT7T12rpijH3go71H+0cjX+u5BC0v
+        u4ASUbgPmuD/xk336544te3kUPwqM6UOtiTSlv0w7Pbc7br8wJ+l+xCqNSG3it1B89DhVZFANEl8j
+        BaKk+7dVtstONbbTQYCg9DST4PknhvpH6xWlydxr8Q7Vdctx+xT8z4YSraWWcjAY+xOyEpXR9ewXO
+        j+6Z6G+cnrSonnM05UZyGyHApjh9zqaYrw6sci2jJzp0X7Rp1I7LorZYDrNFDAkc5WRN88FCaRU77
+        KIzy+snRqXD8zh/8vju3Lg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHR6v-0002B0-AI; Mon, 07 Oct 2019 11:23:29 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHR6u-0003Fz-O7; Mon, 07 Oct 2019 11:23:28 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E23793062B5;
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E4E3130655C;
         Mon,  7 Oct 2019 13:22:35 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 804D720244FAD; Mon,  7 Oct 2019 13:23:26 +0200 (CEST)
-Message-Id: <20191007081945.16603540.3@infradead.org>
+        id 8271020244F8E; Mon,  7 Oct 2019 13:23:26 +0200 (CEST)
+Message-Id: <20191007082541.64146933.7@infradead.org>
 User-Agent: quilt/0.65
-Date:   Mon, 07 Oct 2019 10:17:22 +0200
+Date:   Mon, 07 Oct 2019 10:25:41 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
@@ -45,117 +45,20 @@ Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
         hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
         jpoimboe@redhat.com
-Subject: [PATCH v3 6/6] x86/mm: Remove set_kernel_text_r[ow]()
-References: <20191007081716.07616230.8@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v2 0/4] Propagate module notifier errors
+References: <20191007090225.44108711.6@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the last and only user of these functions gone (ftrace) remove
-them as well to avoid ever growing new users.
+These patches came from the desire to propagate MODULE_STATE_COMING errors.
+While looking at that I spotted fail with a number of module notifiers
+themselves and with the whole notification business.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/set_memory.h |    2 --
- arch/x86/mm/init_32.c             |   28 ----------------------------
- arch/x86/mm/init_64.c             |   36 ------------------------------------
- 3 files changed, 66 deletions(-)
+I will probably add a notifier for MODULE_STATE_UNFORMED, but that is later.
 
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -80,8 +80,6 @@ int set_direct_map_invalid_noflush(struc
- int set_direct_map_default_noflush(struct page *page);
- 
- extern int kernel_set_to_readonly;
--void set_kernel_text_rw(void);
--void set_kernel_text_ro(void);
- 
- #ifdef CONFIG_X86_64
- static inline int set_mce_nospec(unsigned long pfn)
---- a/arch/x86/mm/init_32.c
-+++ b/arch/x86/mm/init_32.c
-@@ -874,34 +874,6 @@ void arch_remove_memory(int nid, u64 sta
- 
- int kernel_set_to_readonly __read_mostly;
- 
--void set_kernel_text_rw(void)
--{
--	unsigned long start = PFN_ALIGN(_text);
--	unsigned long size = PFN_ALIGN(_etext) - start;
--
--	if (!kernel_set_to_readonly)
--		return;
--
--	pr_debug("Set kernel text: %lx - %lx for read write\n",
--		 start, start+size);
--
--	set_pages_rw(virt_to_page(start), size >> PAGE_SHIFT);
--}
--
--void set_kernel_text_ro(void)
--{
--	unsigned long start = PFN_ALIGN(_text);
--	unsigned long size = PFN_ALIGN(_etext) - start;
--
--	if (!kernel_set_to_readonly)
--		return;
--
--	pr_debug("Set kernel text: %lx - %lx for read only\n",
--		 start, start+size);
--
--	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
--}
--
- static void mark_nxdata_nx(void)
- {
- 	/*
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1260,42 +1260,6 @@ void __init mem_init(void)
- 
- int kernel_set_to_readonly;
- 
--void set_kernel_text_rw(void)
--{
--	unsigned long start = PFN_ALIGN(_text);
--	unsigned long end = PFN_ALIGN(__stop___ex_table);
--
--	if (!kernel_set_to_readonly)
--		return;
--
--	pr_debug("Set kernel text: %lx - %lx for read write\n",
--		 start, end);
--
--	/*
--	 * Make the kernel identity mapping for text RW. Kernel text
--	 * mapping will always be RO. Refer to the comment in
--	 * static_protections() in pageattr.c
--	 */
--	set_memory_rw(start, (end - start) >> PAGE_SHIFT);
--}
--
--void set_kernel_text_ro(void)
--{
--	unsigned long start = PFN_ALIGN(_text);
--	unsigned long end = PFN_ALIGN(__stop___ex_table);
--
--	if (!kernel_set_to_readonly)
--		return;
--
--	pr_debug("Set kernel text: %lx - %lx for read only\n",
--		 start, end);
--
--	/*
--	 * Set the kernel identity mapping for text RO.
--	 */
--	set_memory_ro(start, (end - start) >> PAGE_SHIFT);
--}
--
- void mark_rodata_ro(void)
- {
- 	unsigned long start = PFN_ALIGN(_text);
-
+Fixing this error propagation fixes a fairly serious (but really uncommon) bug
+when memory allocation fails for jump-labels while loading a module. And since
+we're going to be introducing more of that (static_call), fix it now.
 
