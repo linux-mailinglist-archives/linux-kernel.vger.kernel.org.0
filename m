@@ -2,78 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2C77CE35E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB5ADCE369
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfJGNZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:25:15 -0400
-Received: from mga17.intel.com ([192.55.52.151]:55469 "EHLO mga17.intel.com"
+        id S1728373AbfJGN0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:26:15 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:57050 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbfJGNZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:25:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 06:25:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.67,268,1566889200"; 
-   d="scan'208";a="206409797"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 07 Oct 2019 06:25:13 -0700
-Received: from [10.251.30.58] (kliang2-mobl.ccr.corp.intel.com [10.251.30.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 9C5EF5803E4;
-        Mon,  7 Oct 2019 06:25:11 -0700 (PDT)
-Subject: Re: [PATCH 1/3] perf/core: Provide a kernel-internal interface to
- recalibrate event period
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Like Xu <like.xu@linux.intel.com>, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        vkuznets@redhat.com, peterz@infradead.org,
-        Jim Mattson <jmattson@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        ak@linux.intel.com, wei.w.wang@intel.com, kan.liang@intel.com,
-        like.xu@intel.com, ehankland@google.com, arbel.moshe@oracle.com,
-        linux-kernel@vger.kernel.org
-References: <20190930072257.43352-1-like.xu@linux.intel.com>
- <20190930072257.43352-2-like.xu@linux.intel.com>
- <6439df1c-df4a-9820-edb2-0ff41b581d37@redhat.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <e2b00b05-a95a-3d03-7238-267c642a1fa0@linux.intel.com>
-Date:   Mon, 7 Oct 2019 09:25:10 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727923AbfJGN0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 09:26:13 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iHT1c-0003CU-B8; Mon, 07 Oct 2019 15:26:08 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        christoph.muellner@theobroma-systems.com
+Subject: Re: [PATCH 1/2] dt-bindings: nvmem: add binding for Rockchip OTP controller
+Date:   Mon, 07 Oct 2019 15:26:07 +0200
+Message-ID: <2431603.e1tpym8sWD@diego>
+In-Reply-To: <20190925184957.14338-1-heiko@sntech.de>
+References: <20190925184957.14338-1-heiko@sntech.de>
 MIME-Version: 1.0
-In-Reply-To: <6439df1c-df4a-9820-edb2-0ff41b581d37@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
 
-
-On 10/7/2019 8:01 AM, Paolo Bonzini wrote:
-> On 30/09/19 09:22, Like Xu wrote:
->> -static int perf_event_period(struct perf_event *event, u64 __user *arg)
->> +static int _perf_event_period(struct perf_event *event, u64 value)
+Am Mittwoch, 25. September 2019, 20:49:56 CEST schrieb Heiko Stuebner:
+> Newer Rockchip SoCs use a different IP for accessing special one-
+> time-programmable memory, so add a binding for these controllers.
 > 
-> __perf_event_period or perf_event_period_locked would be more consistent
-> with other code in Linux.
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+
+Srinivas seems to wait for an Ack on the DT-Patch - see comment on patch2.
+As this all looks pretty standard, any objections to the binding?
+
+Thanks
+Heiko
+
+> ---
+>  .../bindings/nvmem/rockchip-otp.txt           | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/rockchip-otp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/nvmem/rockchip-otp.txt b/Documentation/devicetree/bindings/nvmem/rockchip-otp.txt
+> new file mode 100644
+> index 000000000000..40f649f7c2e5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/rockchip-otp.txt
+> @@ -0,0 +1,25 @@
+> +Rockchip internal OTP (One Time Programmable) memory device tree bindings
+> +
+> +Required properties:
+> +- compatible: Should be one of the following.
+> +  - "rockchip,px30-otp" - for PX30 SoCs.
+> +  - "rockchip,rk3308-otp" - for RK3308 SoCs.
+> +- reg: Should contain the registers location and size
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +- clock-names: Should be "otp", "apb_pclk" and "phy".
+> +- resets: Must contain an entry for each entry in reset-names.
+> +  See ../../reset/reset.txt for details.
+> +- reset-names: Should be "phy".
+> +
+> +See nvmem.txt for more information.
+> +
+> +Example:
+> +	otp: otp@ff290000 {
+> +		compatible = "rockchip,px30-otp";
+> +		reg = <0x0 0xff290000 0x0 0x4000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		clocks = <&cru SCLK_OTP_USR>, <&cru PCLK_OTP_NS>,
+> +			 <&cru PCLK_OTP_PHY>;
+> +		clock-names = "otp", "apb_pclk", "phy";
+> +	};
 > 
 
-But that will be not consistent with current perf code. For example, 
-_perf_event_enable(), _perf_event_disable(), _perf_event_reset() and 
-_perf_event_refresh().
-Currently, The function name without '_' prefix is the one exported and 
-with lock. The function name with '_' prefix is the main body.
 
-If we have to use the "_locked" or "__", I think we'd better change the 
-name for other functions as well.
 
-Thanks,
-Kan
+
