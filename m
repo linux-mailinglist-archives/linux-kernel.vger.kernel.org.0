@@ -2,164 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D9F0CEC18
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2783CEC13
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729020AbfJGSnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:43:46 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34787 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbfJGSnp (ORCPT
+        id S1728654AbfJGSml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:42:41 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42423 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbfJGSml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:43:45 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b128so9237588pfa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:43:45 -0700 (PDT)
+        Mon, 7 Oct 2019 14:42:41 -0400
+Received: by mail-qt1-f193.google.com with SMTP id w14so20665585qto.9;
+        Mon, 07 Oct 2019 11:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eSk9ZIII9ve+HiZZ6aR0Kr7ZvXDd9PcgJdMXThbLDKc=;
-        b=T02r3JlnR5A9zBHffoLJAhEzk+CLKFfdUTn5mp8hEla7H46AUtBI+004AY753G7dIn
-         zoWcbusVGDnUG5inQ3VA//l62HxTBJpzQII2+DkFvlmdIyZVaHg/jxlby3gTXTJVKgkb
-         1oXoiquwK19L24ZJQI9hTH9tZHef7i5h5EltdgEVMitWEnagC5Qb3e2t15cFQ0XN1cDf
-         BZUSt8pXhDNUbSsigTCO/j7Z3TA1GWbOtTqTi/JVrLXQNyTznaVG/Y2vdc4QUlvaPnUA
-         xCdm/6T05hIGgLi47nuECLwaGYaK99GF9XN2btulVwrfl00AiDoFar+a1wfLBgu2oEF7
-         oWWg==
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7eEfovKGT46NPkty4JePi34eFTOmFxf7gPHZxEXtsdU=;
+        b=IBXC2WwKi3QN6sBAJ4L5gDIFg5ktB2q/zo2DunyriDZv+n6ba3AO8GILev10cvpUmc
+         GCns9+0/8VqT/aE0c31pKZOF1HX8ww/6RQeg8CCpOggrROsRwvL0LdhyQ99PelDY86dZ
+         zSYRlTxKU+Pza259j89of/6t+yrHKOkP2dN1FKi4S5/8bxSxfvAib3sr6WfU5DrDw2bx
+         A3n40ODFVKqYcPP08aDweYEv3XYow3AwkA6rvuU73RWjVdzYDaRY0gS+8gagEnNFPFl2
+         vGFgB3WNO8DFmKny0/PbUskjIboj8ZjGn+S4Nn6kGmD18iLA8kzodx7d8xy6XXXfxtsL
+         yCrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eSk9ZIII9ve+HiZZ6aR0Kr7ZvXDd9PcgJdMXThbLDKc=;
-        b=j7QqsbVArp1O4cnIzZafzVvsYzrcFQdrw0GQEtNBnX4xgAOBugABKceTM0y9OTVHpJ
-         hd/ssMLQWXrKyQjFp0C1mGfSFkU47IGuOmFmLBvooqigSF9ld4lbYpw7qvCqiFf66CoG
-         ZHDQD6LyjOUuAOM8SgMmJXQKX1CnnlOkGsuvzpBRXDiCs1+R5PLU+siaXeZrW062oYXT
-         eK1WNPckVYaLuoIyb2cOf8ZmlpIz1YLmwp1eUXl9C1PvH9iywDwcBdgZNmvpbYcqtHrc
-         rX/jXxKw52bX0Ae6iD7VjAXtcysRsw8+Mc7S4cH3hNMHVJV18VAMWTZw/2mAj5yCSFcV
-         kwXA==
-X-Gm-Message-State: APjAAAUFoLkBVSgJ46Xc1YhWSCH/DToriGjoYpyEHpvTx/PJ0wBs+fUR
-        KEGcHOuFX54/yW7M871iuXU=
-X-Google-Smtp-Source: APXvYqy/KOdUUpK+G2ttnM3H+QsQNYluyrEqwVfe0LPSKv922VM/I02YlFIRNKGTRApAqfTZa1yt+w==
-X-Received: by 2002:a63:2943:: with SMTP id p64mr17066195pgp.98.1570473824669;
-        Mon, 07 Oct 2019 11:43:44 -0700 (PDT)
-Received: from localhost.localdomain (155-97-232-235.usahousing.utah.edu. [155.97.232.235])
-        by smtp.googlemail.com with ESMTPSA id e10sm19201271pfh.77.2019.10.07.11.43.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 11:43:44 -0700 (PDT)
-From:   Tuowen Zhao <ztuowen@gmail.com>
-To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc:     andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
-        acelan.kao@canonical.com, bhelgaas@google.com,
-        kai.heng.feng@canonical.com, mcgrof@kernel.org,
-        Tuowen Zhao <ztuowen@gmail.com>
-Subject: [PATCH v2] mfd: intel-lpss: use devm_ioremap_uc for MMIO
-Date:   Mon,  7 Oct 2019 12:42:31 -0600
-Message-Id: <20191007184231.13256-1-ztuowen@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7eEfovKGT46NPkty4JePi34eFTOmFxf7gPHZxEXtsdU=;
+        b=tF/SXJveKLf8zqj/xwGp12fHoASvHvFldKz/7LIN0EyAQY59cmFg+W+3nfBpjt4dZL
+         k1BC6Kf7chmN2TAqw8mmP2GygdOLDXotsi6mCRrFwC4csiDyPYOkRRvfpQjJpOwGW2Ts
+         qeJ9qf/EBeWrOr/E3/fP8BGp3NDq0jX8yjS3BPdI/YzHEU79oicH8u77kJbn1p9Y9LG9
+         GLWmKVDS6hOduU/GZsuYlAOvn8OwapBDJJ8MDf/OC5GkyOSd3htxxTU06LWLBsKXFJ28
+         VzjYFJOM6Y+MFSGIuQcj2f9G44p86fhLEA/l+eziroL8ZFs05+qvfw3LXRuL0jufCjiZ
+         FzPg==
+X-Gm-Message-State: APjAAAXPWP4chCR1iXI43IPcTuRgsqA3RJtSPzw7WaacyuaWz/9gqg10
+        zDuUjd/NtBIvQKCAB904xGM=
+X-Google-Smtp-Source: APXvYqzbbgBi/bv0ZZ7NWkBJeVKwGJFA/yXvlLTha+iFhjktc/Zk/+4t9LOdiKeNsu18ePInaRnizg==
+X-Received: by 2002:aed:3522:: with SMTP id a31mr32079589qte.69.1570473759713;
+        Mon, 07 Oct 2019 11:42:39 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id 200sm8302542qkf.65.2019.10.07.11.42.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Oct 2019 11:42:39 -0700 (PDT)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Mon, 7 Oct 2019 14:42:37 -0400
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-crypto@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Stephan Mueller <smueller@chronox.de>,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2 5.4 regression fix] x86/boot: Provide memzero_explicit
+Message-ID: <20191007184237.GB13589@rani.riverdale.lan>
+References: <20191007134724.4019-1-hdegoede@redhat.com>
+ <20191007140022.GA29008@gmail.com>
+ <1dc3c53d-785e-f9a4-1b4c-3374c94ae0a7@redhat.com>
+ <20191007142230.GA117630@gmail.com>
+ <2982b666-e310-afb7-40eb-e536ce95e23d@redhat.com>
+ <20191007144600.GB59713@gmail.com>
+ <20191007152049.GA384920@rani.riverdale.lan>
+ <20191007154007.GA96929@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="H+4ONPRPur6+Ovig"
+Content-Disposition: inline
+In-Reply-To: <20191007154007.GA96929@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some BIOS erroneously specifies write-combining BAR for intel-lpss-pci
-in MTRR. This will cause the system to hang during boot. If possible,
-this bug could be corrected with a firmware update.
 
-This patch adds devm_ioremap_uc as a new managed wrapper to ioremap_uc
-and with it overwrite the MTRR settings to force the use of strongly
-uncachable pages for intel-lpss.
+--H+4ONPRPur6+Ovig
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-The BIOS bug is present on Dell XPS 13 7390 2-in-1:
+On Mon, Oct 07, 2019 at 05:40:07PM +0200, Ingo Molnar wrote:
+> 
+> * Arvind Sankar <nivedita@alum.mit.edu> wrote:
+> 
+> > With the barrier in there, is there any reason to *not* inline the
+> > function? barrier_data() is an asm statement that tells the compiler
+> > that the asm uses the memory that was set to zero, thus preventing it
+> > from removing the memset even if nothing else uses that memory later. A
+> > more detailed comment is there in compiler-gcc.h. I can't see why it
+> > wouldn't work even if it were inlined.
+> > 
+> > If the function can indeed be inlined, we could just make the common
+> > implementation a macro and avoid duplicating it? As mentioned in another
+> > mail, we otherwise will likely need another duplicate implementation for
+> > arch/s390/purgatory as well.
+> 
+> I suspect macro would be justified in this case. Mind sending a v3 patch 
+> to demonstrate how it would all look like?
+> 
+> I'll zap v2 if the macro solution looks better.
+> 
+> Thanks,
+> 
+> 	Ingo
 
-[    0.001734]   5 base 4000000000 mask 6000000000 write-combining
+Patch attached to turn memzero_explicit into inline function.
 
-4000000000-7fffffffff : PCI Bus 0000:00
-  4000000000-400fffffff : 0000:00:02.0 (i915)
-  4010000000-4010000fff : 0000:00:15.0 (intel-lpss-pci)
+--H+4ONPRPur6+Ovig
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment; filename="0001-lib-string-make-memzero_explicit-inline-instead-of-e.patch"
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203485
-Signed-off-by: Tuowen Zhao <ztuowen@gmail.com>
+From 25834b8040eff72478489be0bd8a2ff549af7f94 Mon Sep 17 00:00:00 2001
+From: Arvind Sankar <nivedita@alum.mit.edu>
+Date: Mon, 7 Oct 2019 14:34:24 -0400
+Subject: [PATCH] lib/string: make memzero_explicit inline instead of external
+
+With the use of the barrier implied by barrier_data(), there is no need
+for memzero_explicit to be extern. Making it inline saves the overhead
+of a function call, and allows the code to be reused in arch/*/purgatory
+without having to duplicate the implementation.
+
+Fixes: 906a4bb97f5d ("crypto: sha256 - Use get/put_unaligned_be32 to get input, memzero_explicit")
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
-Changes from previous version:
+ include/linux/string.h | 21 ++++++++++++++++++++-
+ lib/string.c           | 21 ---------------------
+ 2 files changed, 20 insertions(+), 22 deletions(-)
 
-  * changed commit message
-
- drivers/mfd/intel-lpss.c |  2 +-
- include/linux/io.h       |  2 ++
- lib/devres.c             | 19 +++++++++++++++++++
- 3 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
-index bfe4ff337581..b0f0781a6b9c 100644
---- a/drivers/mfd/intel-lpss.c
-+++ b/drivers/mfd/intel-lpss.c
-@@ -384,7 +384,7 @@ int intel_lpss_probe(struct device *dev,
- 	if (!lpss)
- 		return -ENOMEM;
- 
--	lpss->priv = devm_ioremap(dev, info->mem->start + LPSS_PRIV_OFFSET,
-+	lpss->priv = devm_ioremap_uc(dev, info->mem->start + LPSS_PRIV_OFFSET,
- 				  LPSS_PRIV_SIZE);
- 	if (!lpss->priv)
- 		return -ENOMEM;
-diff --git a/include/linux/io.h b/include/linux/io.h
-index accac822336a..a59834bc0a11 100644
---- a/include/linux/io.h
-+++ b/include/linux/io.h
-@@ -64,6 +64,8 @@ static inline void devm_ioport_unmap(struct device *dev, void __iomem *addr)
- 
- void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
- 			   resource_size_t size);
-+void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-+				   resource_size_t size);
- void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
- 				   resource_size_t size);
- void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
-diff --git a/lib/devres.c b/lib/devres.c
-index 6a0e9bd6524a..beb0a064b891 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -9,6 +9,7 @@
- enum devm_ioremap_type {
- 	DEVM_IOREMAP = 0,
- 	DEVM_IOREMAP_NC,
-+	DEVM_IOREMAP_UC,
- 	DEVM_IOREMAP_WC,
- };
- 
-@@ -39,6 +40,9 @@ static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
- 	case DEVM_IOREMAP_NC:
- 		addr = ioremap_nocache(offset, size);
- 		break;
-+	case DEVM_IOREMAP_UC:
-+		addr = ioremap_uc(offset, size);
-+		break;
- 	case DEVM_IOREMAP_WC:
- 		addr = ioremap_wc(offset, size);
- 		break;
-@@ -68,6 +72,21 @@ void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+diff --git a/include/linux/string.h b/include/linux/string.h
+index b2f9df7f0761..b6ccdc2c7f02 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -227,7 +227,26 @@ static inline bool strstarts(const char *str, const char *prefix)
  }
- EXPORT_SYMBOL(devm_ioremap);
  
-+/**
-+ * devm_ioremap_uc - Managed ioremap_uc()
-+ * @dev: Generic device to remap IO address for
-+ * @offset: Resource address to map
-+ * @size: Size of map
-+ *
-+ * Managed ioremap_uc().  Map is automatically unmapped on driver detach.
-+ */
-+void __iomem *devm_ioremap_uc(struct device *dev, resource_size_t offset,
-+			      resource_size_t size)
-+{
-+	return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_UC);
-+}
-+EXPORT_SYMBOL(devm_ioremap_uc);
+ size_t memweight(const void *ptr, size_t bytes);
+-void memzero_explicit(void *s, size_t count);
 +
++/**
++ * memzero_explicit - Fill a region of memory (e.g. sensitive
++ *		      keying data) with 0s.
++ * @s: Pointer to the start of the area.
++ * @count: The size of the area.
++ *
++ * Note: usually using memset() is just fine (!), but in cases
++ * where clearing out _local_ data at the end of a scope is
++ * necessary, memzero_explicit() should be used instead in
++ * order to prevent the compiler from optimising away zeroing.
++ *
++ * memzero_explicit() doesn't need an arch-specific version as
++ * it just invokes the one of memset() implicitly.
++ */
++static inline void memzero_explicit(void *s, size_t count)
++{
++	memset(s, 0, count);
++	barrier_data(s);
++}
+ 
  /**
-  * devm_ioremap_nocache - Managed ioremap_nocache()
-  * @dev: Generic device to remap IO address for
+  * kbasename - return the last part of a pathname.
+diff --git a/lib/string.c b/lib/string.c
+index cd7a10c19210..08ec58cc673b 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -748,27 +748,6 @@ void *memset(void *s, int c, size_t count)
+ EXPORT_SYMBOL(memset);
+ #endif
+ 
+-/**
+- * memzero_explicit - Fill a region of memory (e.g. sensitive
+- *		      keying data) with 0s.
+- * @s: Pointer to the start of the area.
+- * @count: The size of the area.
+- *
+- * Note: usually using memset() is just fine (!), but in cases
+- * where clearing out _local_ data at the end of a scope is
+- * necessary, memzero_explicit() should be used instead in
+- * order to prevent the compiler from optimising away zeroing.
+- *
+- * memzero_explicit() doesn't need an arch-specific version as
+- * it just invokes the one of memset() implicitly.
+- */
+-void memzero_explicit(void *s, size_t count)
+-{
+-	memset(s, 0, count);
+-	barrier_data(s);
+-}
+-EXPORT_SYMBOL(memzero_explicit);
+-
+ #ifndef __HAVE_ARCH_MEMSET16
+ /**
+  * memset16() - Fill a memory area with a uint16_t
 -- 
-2.23.0
+2.21.0
 
+
+--H+4ONPRPur6+Ovig--
