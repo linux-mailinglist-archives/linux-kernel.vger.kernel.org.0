@@ -2,90 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1520CECA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:21:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E07E7CECB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfJGTVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 15:21:36 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:50641 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728187AbfJGTVf (ORCPT
+        id S1729397AbfJGTV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 15:21:56 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:44970 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729133AbfJGTVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:21:35 -0400
-Received: by mail-pl1-f201.google.com with SMTP id y13so9214118plr.17
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 12:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=1VVXgUvR9hWEet6YOYgZ2IeUcSu3A+eaEhovhtmPmIo=;
-        b=U+yUAqFYeHHpdnN4YEdLlFF1AhG1b7N+2naMp7QDH4pwQHeswCujHlHYYJCUbyrG+3
-         9T0y0iiz5pN9qNjelyooOAuvKV7Z+QqWeAZbFBDSaSfElxWf8R6rRlw0RWXd26JAonXm
-         ejc1zRq4FBawp3Kpi5HNu5C82KsGULvUdeBYLbeRBscMRIn1/VClkN2DWU+eSsIGHOEi
-         xlauBgsLhXw75OORMdN/3lIo9lGaK39bBLq9BrZX6rH1SOnNbhhqG/2SJcr6YnzlBk7o
-         zvVrXRz6FryXXWr1urkVzWbt8K2cfzowghhrMpjsJ+4ymyOmMTlFGlK3/AHNJ7twW9ux
-         4fRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=1VVXgUvR9hWEet6YOYgZ2IeUcSu3A+eaEhovhtmPmIo=;
-        b=FmACHStvZ8jDyJkwlsb0SI+HXTG3sdE8xcGYYsNj06iaqOeqRyIxmLw5EwziRmdo9J
-         zfL8MrttKIYS8ioLfdzPY5kSCVrlcpy3U0cobLI3TTwaKT123IzO8QGV+qGUFrzxkRPc
-         kPsiERvwmzbPAlhIkjsSUMGZlaHfCpchlZMapucY1GC+VFFm6s/vlH+ONxB5sviTPoXL
-         wt9hB0DuWHYWOJGby78xoNyZ4mRme25Ezp3MIyuB6WmxxVbmVwgDsQZQmukItHpHv2zn
-         qBI2FKPLy1VarXSB90Bule4I7vtwZGToKXsR+S0HkHqUzGzqsrLlEfzXaWcbIpJqb7fl
-         P42g==
-X-Gm-Message-State: APjAAAWQxT3BAGCshPyGzSwWcUI0PSrdntX4R2px50+AwOVWIqXbUpnu
-        tGQik+iTk/w/nDaEDVOrMd4BnZytUN1EpVoIQWs=
-X-Google-Smtp-Source: APXvYqxTl7q50f9e4Q7HvkTPiDHc+nE01KQDZLPBvfC0BpelR9V3gPGtcdxezE39V9fsz82yJ/1RS5ad8AOHbeLdDis=
-X-Received: by 2002:a63:1a53:: with SMTP id a19mr32165157pgm.58.1570476093401;
- Mon, 07 Oct 2019 12:21:33 -0700 (PDT)
-Date:   Mon,  7 Oct 2019 12:21:29 -0700
-Message-Id: <20191007192129.104336-1-samitolvanen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-Subject: [PATCH] x86/cpu/vmware: use the full form of inl in VMWARE_PORT
-From:   Sami Tolvanen <samitolvanen@google.com>
-To:     Thomas Hellstrom <thellstrom@vmware.com>, pv-drivers@vmware.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Cc:     hpa@zytor.com, Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Sami Tolvanen <samitolvanen@google.com>
+        Mon, 7 Oct 2019 15:21:53 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.92.2)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1iHYZk-0007Vs-Ar; Mon, 07 Oct 2019 21:21:44 +0200
+Message-ID: <c257bdfd1fc816367f5aad28953d7d100e75810d.camel@sipsolutions.net>
+Subject: Re: Potential NULL pointer deference in iwlwifi: mvm
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Yizhuo Zhai <yzhai003@ucr.edu>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ayala Beker <ayala.beker@intel.com>,
+        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
+        Sara Sharon <sara.sharon@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
+        Chengyu Song <csong@cs.ucr.edu>
+Date:   Mon, 07 Oct 2019 21:21:42 +0200
+In-Reply-To: <CABvMjLRhqCAs-r3LA4nX_5tBj=hQeUfb4g5gHf8ghRdwWqKuPA@mail.gmail.com> (sfid-20191007_211937_883436_3262816D)
+References: <CABvMjLRhqCAs-r3LA4nX_5tBj=hQeUfb4g5gHf8ghRdwWqKuPA@mail.gmail.com>
+         (sfid-20191007_211937_883436_3262816D)
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LLVM's assembler doesn't accept the short form inl (%%dx) instruction,
-but instead insists on the output register to be explicitly specified:
+On Mon, 2019-10-07 at 12:19 -0700, Yizhuo Zhai wrote:
+> Hi All:
+> 
+> drivers/net/wireless/intel/iwlwifi/mvm/scan.c:
+> 
+> Inside function iwl_mvm_power_ps_disabled_iterator(),
+> iwl_mvm_vif_from_mac80211()
+> could return NULL
 
-  <inline asm>:1:7: error: invalid operand for instruction
-          inl (%dx)
-             ^
-  LLVM ERROR: Error parsing inline asm
+No, it can not.
 
-Use the full form of the instruction to fix the build.
+Whatever tool you've used to find this - you should fix it.
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- arch/x86/kernel/cpu/vmware.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index 9735139cfdf8..46d732696c1c 100644
---- a/arch/x86/kernel/cpu/vmware.c
-+++ b/arch/x86/kernel/cpu/vmware.c
-@@ -49,7 +49,7 @@
- #define VMWARE_CMD_VCPU_RESERVED 31
- 
- #define VMWARE_PORT(cmd, eax, ebx, ecx, edx)				\
--	__asm__("inl (%%dx)" :						\
-+	__asm__("inl (%%dx), %%eax" :					\
- 		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
- 		"a"(VMWARE_HYPERVISOR_MAGIC),				\
- 		"c"(VMWARE_CMD_##cmd),					\
--- 
-2.23.0.581.g78d2f28ef7-goog
+johannes
 
