@@ -2,30 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBB6CE5D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 721D6CE5E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbfJGOug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:50:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44515 "EHLO
+        id S1729036AbfJGOvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:51:04 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44461 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728680AbfJGOtp (ORCPT
+        with ESMTP id S1728546AbfJGOtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:45 -0400
+        Mon, 7 Oct 2019 10:49:39 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUKP-0006Aa-KH; Mon, 07 Oct 2019 16:49:37 +0200
+        id 1iHUKJ-0006AK-TQ; Mon, 07 Oct 2019 16:49:32 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E67071C08B3;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8D16A1C079B;
         Mon,  7 Oct 2019 16:49:31 +0200 (CEST)
 Date:   Mon, 07 Oct 2019 14:49:31 -0000
 From:   "tip-bot2 for Mike Travis" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/platform] x86/platform/uv: Setup UV functions for Hubless
- UV Systems
+Subject: [tip: x86/platform] x86/platform/uv: Check EFI Boot to set reboot type
 Cc:     Mike Travis <mike.travis@hpe.com>, Steve Wahl <steve.wahl@hpe.com>,
         Dimitri Sivanich <dimitri.sivanich@hpe.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -39,10 +38,10 @@ Cc:     Mike Travis <mike.travis@hpe.com>, Steve Wahl <steve.wahl@hpe.com>,
         Russ Anderson <russ.anderson@hpe.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20190910145839.975787119@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190910145839.975787119@stormcage.eag.rdlabs.hpecorp.net>
+In-Reply-To: <20190910145840.215091717@stormcage.eag.rdlabs.hpecorp.net>
+References: <20190910145840.215091717@stormcage.eag.rdlabs.hpecorp.net>
 MIME-Version: 1.0
-Message-ID: <157045977188.9978.2863356948920530670.tip-bot2@tip-bot2>
+Message-ID: <157045977153.9978.11327097635396647421.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -58,22 +57,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/platform branch of tip:
 
-Commit-ID:     2bcf26528787d92333ed0dfd6abc9835b8e97eab
-Gitweb:        https://git.kernel.org/tip/2bcf26528787d92333ed0dfd6abc9835b8e97eab
+Commit-ID:     df55029f7ea65d8c653a79dd728918dfe25b1356
+Gitweb:        https://git.kernel.org/tip/df55029f7ea65d8c653a79dd728918dfe25b1356
 Author:        Mike Travis <mike.travis@hpe.com>
-AuthorDate:    Tue, 10 Sep 2019 09:58:43 -05:00
+AuthorDate:    Tue, 10 Sep 2019 09:58:46 -05:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 07 Oct 2019 13:42:10 +02:00
+CommitterDate: Mon, 07 Oct 2019 13:42:11 +02:00
 
-x86/platform/uv: Setup UV functions for Hubless UV Systems
+x86/platform/uv: Check EFI Boot to set reboot type
 
-Add more support for UV systems that do not contain a UV Hub (AKA
-"hubless").  This update adds support for additional functions required:
-
-    Use PCH NMI handler instead of a UV Hub NMI handler.
-
-    Initialize the UV BIOS callback interface used to support specific
-    UV functions.
+Change to checking for EFI Boot type from previous check on if this
+is a KDUMP kernel.  This allows for KDUMP kernels that can handle
+EFI reboots.
 
 Signed-off-by: Mike Travis <mike.travis@hpe.com>
 Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
@@ -88,54 +83,59 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Russ Anderson <russ.anderson@hpe.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190910145839.975787119@stormcage.eag.rdlabs.hpecorp.net
+Link: https://lkml.kernel.org/r/20190910145840.215091717@stormcage.eag.rdlabs.hpecorp.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/apic/x2apic_uv_x.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ arch/x86/kernel/apic/x2apic_uv_x.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index 43fad61..14554a3 100644
+index ec940ad..d5b51a7 100644
 --- a/arch/x86/kernel/apic/x2apic_uv_x.c
 +++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -1457,6 +1457,20 @@ static void __init build_socket_tables(void)
+@@ -15,6 +15,7 @@
+ #include <linux/export.h>
+ #include <linux/pci.h>
+ #include <linux/acpi.h>
++#include <linux/efi.h>
+ 
+ #include <asm/e820/api.h>
+ #include <asm/uv/uv_mmrs.h>
+@@ -1483,6 +1484,14 @@ static void __init build_socket_tables(void)
  	}
  }
  
-+/* Initialize UV hubless systems */
-+static __init int uv_system_init_hubless(void)
++/* Check which reboot to use */
++static void check_efi_reboot(void)
 +{
-+	int rc;
-+
-+	/* Setup PCH NMI handler */
-+	uv_nmi_setup_hubless();
-+
-+	/* Init kernel/BIOS interface */
-+	rc = uv_bios_init();
-+
-+	return rc;
++	/* If EFI reboot not available, use ACPI reboot */
++	if (!efi_enabled(EFI_BOOT))
++		reboot_type = BOOT_ACPI;
 +}
 +
- static void __init uv_system_init_hub(void)
+ /* Setup user proc fs files */
+ static int proc_hubbed_show(struct seq_file *file, void *data)
  {
- 	struct uv_hub_info_s hub_info = {0};
-@@ -1596,8 +1610,8 @@ static void __init uv_system_init_hub(void)
+@@ -1567,6 +1576,8 @@ static __init int uv_system_init_hubless(void)
+ 	if (rc >= 0)
+ 		uv_setup_proc_files(1);
+ 
++	check_efi_reboot();
++
+ 	return rc;
+ }
+ 
+@@ -1700,12 +1711,7 @@ static void __init uv_system_init_hub(void)
+ 	/* Register Legacy VGA I/O redirection handler: */
+ 	pci_register_set_vga_state(uv_set_vga_state);
+ 
+-	/*
+-	 * For a kdump kernel the reset must be BOOT_ACPI, not BOOT_EFI, as
+-	 * EFI is not enabled in the kdump kernel:
+-	 */
+-	if (is_kdump_kernel())
+-		reboot_type = BOOT_ACPI;
++	check_efi_reboot();
  }
  
  /*
-- * There is a small amount of UV specific code needed to initialize a
-- * UV system that does not have a "UV HUB" (referred to as "hubless").
-+ * There is a different code path needed to initialize a UV system that does
-+ * not have a "UV HUB" (referred to as "hubless").
-  */
- void __init uv_system_init(void)
- {
-@@ -1607,7 +1621,7 @@ void __init uv_system_init(void)
- 	if (is_uv_system())
- 		uv_system_init_hub();
- 	else
--		uv_nmi_setup_hubless();
-+		uv_system_init_hubless();
- }
- 
- apic_driver(apic_x2apic_uv_x);
