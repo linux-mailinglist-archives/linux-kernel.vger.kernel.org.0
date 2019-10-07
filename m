@@ -2,87 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D1DCE044
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3EB9CE01A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:20:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbfJGLZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:25:12 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58244 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727782AbfJGLXk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:23:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JXE0dKTAZ/7/GCs33tkCyc03FqW8wVQf8nnAiBE01gQ=; b=cqDn87BkgaddKj3WAebbQbdpf
-        INushnx6fW5+ARBvfq+dJQW+VDXos9edqDBCBtb20SX+C3sB3UDuhT4eaghh1GcSlgx1RdC+n2Gj/
-        BAgHg1Y4c09rKKAHkiF1jwOseBJg64JTyOVQMvk3AGS+UWnGoBzEhNAODAO8vPpx5Wvr1zJGcnKNz
-        RkBA5T1JkieGoU2PH7DooIaV5byvh8y12KvFF1rzMzbT+RMC3nYJ00kfmfelF3tW/Bs7ysHhDSm7P
-        0+KyuSezviEWwaiXx/vmWexYGtK8+G+S0aK26rXluqL11U35G+QbddPUIBY26sztT6fUu+pXhBLUo
-        8/dOCRKWg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHR6v-0002Az-AB; Mon, 07 Oct 2019 11:23:29 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 911F0305FEB;
-        Mon,  7 Oct 2019 13:22:35 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 64D8F202A1952; Mon,  7 Oct 2019 13:23:26 +0200 (CEST)
-Message-Id: <20191007090225.44108711.6@infradead.org>
-User-Agent: quilt/0.65
-Date:   Mon, 07 Oct 2019 11:02:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     x86@kernel.org
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, bristot@redhat.com,
-        jbaron@akamai.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, mingo@kernel.org, namit@vmware.com,
-        hpa@zytor.com, luto@kernel.org, ard.biesheuvel@linaro.org,
-        jpoimboe@redhat.com
-Subject: [RESEND] everything text-poke: ftrace, modules, static_call and jump_label
+        id S1727536AbfJGLU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:20:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43870 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727317AbfJGLU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 07:20:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7920E30833C1;
+        Mon,  7 Oct 2019 11:20:29 +0000 (UTC)
+Received: from krava (unknown [10.43.17.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A5C7C5C1D4;
+        Mon,  7 Oct 2019 11:20:28 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 13:20:27 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] perf tools: Support single perf.data file directory
+Message-ID: <20191007112027.GD6919@krava>
+References: <20191004083121.12182-1-adrian.hunter@intel.com>
+ <20191004083121.12182-5-adrian.hunter@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191004083121.12182-5-adrian.hunter@intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 07 Oct 2019 11:20:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 04, 2019 at 11:31:20AM +0300, Adrian Hunter wrote:
 
-Because typing on a Monday is hard, here's a resend with the LKML address
-corrected.
+SNIP
+
+>  	u8 pad[8] = {0};
+>  
+> -	if (!perf_data__is_pipe(data) && !perf_data__is_dir(data)) {
+> +	if (!perf_data__is_pipe(data) && perf_data__is_single_file(data)) {
+>  		off_t file_offset;
+>  		int fd = perf_data__fd(data);
+>  		int err;
+> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+> index df173f0bf654..964ea101dba6 100644
+> --- a/tools/perf/util/data.c
+> +++ b/tools/perf/util/data.c
+> @@ -76,6 +76,13 @@ int perf_data__open_dir(struct perf_data *data)
+>  	DIR *dir;
+>  	int nr = 0;
+>  
+> +	/*
+> +	 * Directory containing a single regular perf data file which is already
+> +	 * open, means there is nothing more to do here.
+> +	 */
+> +	if (perf_data__is_single_file(data))
+> +		return 0;
+> +
+
+cool, I like this approach much more than the previous flag
+
+any change you (if there's repost) or Arnaldo
+could squeeze in indent change below?
+
+thanks,
+jirka
+
 
 ---
-
-Hi All,
-
-Here are 4 series that have accumulated in my queue for a while and I
-figured I'd 'finish' and send out again.
-
-The first series is rewriting x86/ftrace to use the normal text_poke()
-interfaces we have, which rids us of the last major W^X violation and a
-whole second implementation of the INT3 breakpoint code patching
-infrastructure.
-
-The second series cleans up various module stuff.
-
-The third series is a refresh of the static_call() implementation.  I've
-been meaning to use that to get rid of a number of indirect calls in the
-x86 pmu implementation (RETPOLINE made them so much more painful), but
-also other people have been asking for it. This series has a lot of new
-patches since last time, most all a result of me trying to actually use
-it.
-
-The fourth series is something that has been languishing in my queue for
-a long while and I figure I'd send it out to see if anybody has any
-clever ideas on how to proceed with it.
-
-They're all related, and the 3rd and 4rd series depend on the first two.
-But instead of sending a giant 30+ patch series, I figured I'd send you 4
-smaller series instead ;-)
-
-Enjoy!
-
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index bfa80fe8d369..7f567a521cea 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -227,8 +227,8 @@ struct perf_session *perf_session__new(struct perf_data *data,
+ 			/* Open the directory data. */
+ 			if (data->is_dir) {
+ 				ret = perf_data__open_dir(data);
+-			if (ret)
+-				goto out_delete;
++				if (ret)
++					goto out_delete;
+ 			}
+ 
+ 			if (!symbol_conf.kallsyms_name &&
