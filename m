@@ -2,103 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80C39CE7EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E85ABCE7E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbfJGPj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:39:56 -0400
-Received: from foss.arm.com ([217.140.110.172]:38910 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729289AbfJGPjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:39:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78DD9142F;
-        Mon,  7 Oct 2019 08:39:45 -0700 (PDT)
-Received: from e112269-lin.arm.com (unknown [10.1.197.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEB933F6C4;
-        Mon,  7 Oct 2019 08:39:42 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     linux-mm@kvack.org
-Cc:     Steven Price <steven.price@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v11 22/22] arm64: mm: Display non-present entries in ptdump
-Date:   Mon,  7 Oct 2019 16:38:22 +0100
-Message-Id: <20191007153822.16518-23-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191007153822.16518-1-steven.price@arm.com>
-References: <20191007153822.16518-1-steven.price@arm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729226AbfJGPjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:39:36 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39769 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729199AbfJGPje (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 11:39:34 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e1so8443831pgj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 08:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=aqxBeTv+Uaor0p8Sdaehy27crOZap/vMuOdocajh3K8=;
+        b=Eo44T3ue9PTyK90zuRJpURaKwjZEippo0XCcpL1sQTu3b1SYC11r0oG760/AMone7/
+         oxxU5fvuJmJkaGMzctM59CMsVLzNd4+bj0Mzrbk2Od7v8bD70h+Oh+6hiipr411VftEC
+         otDSZD7sKX3dtf9n1t2MFjO5mgkWp6Sy5roRv0+oJkJ3eYFZFqeCQYRpCW1ik6E60ERo
+         3If7rHRQ9V6/H4YVOofEu5Tm/4LA1NSZ3SbzL3XeS8RBAkVf5y1fejGv52F2Z9Dkvf3C
+         mNGExhBVcDTxPQxsS+49oK+vxFenxEAOGJX476kAHo6Gu1PoesP+rukD6pXkstRuzzy2
+         u3Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aqxBeTv+Uaor0p8Sdaehy27crOZap/vMuOdocajh3K8=;
+        b=R1vsidcpRA/at8oorf83CaJPswIdSzLbxNlWaXkwKKQWti6cR0d03PqtKFEjarlygi
+         AGfHhgJGYzbxXl0ovWK1ldN/maSH81v9ZzZqE1RX+NAjxr6zNzLyxBraqdQ/pKehrE31
+         lXs+HhP5GsyCzv3zku/dEO/95kTm/LLz5PBw1Al+zo9oufpi4x/Homk3QisEP3KN0JCP
+         UKGBR4/5uqnpmYsTPNkTCDY4pgw8pNMjmZdVmRipilCCV0dFBQGb92IpBHb5pwkJq4SF
+         Zg5IhrtYudfNc1bSwyTUrNslY+oPqRcMyxu0qSHlF8uIGnS9q6wU9OG/FJekaInzyb9h
+         k4xQ==
+X-Gm-Message-State: APjAAAX+zGytb2Q8WsdAjbd8nJvquLkUcUjRHkaX77ZfdlaPgkApLdoj
+        o/KFuT5EDcr4BbKu4mIhy/Ya
+X-Google-Smtp-Source: APXvYqxp9EVNuIxWAF4JhI63OtaIYOBD0UTnkXJOxhywvLLiF23kdWSzZs3AK8N9xrT/wgs6bfQNFw==
+X-Received: by 2002:a63:350f:: with SMTP id c15mr31560380pga.225.1570462773734;
+        Mon, 07 Oct 2019 08:39:33 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:7088:cb7f:1889:38a3:2d:5880])
+        by smtp.gmail.com with ESMTPSA id d69sm15945077pfd.175.2019.10.07.08.39.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 08:39:32 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     ars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, robh+dt@kernel.org
+Cc:     alexandru.Ardelean@analog.com, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/2] Add support for ADUX1020 sensor
+Date:   Mon,  7 Oct 2019 21:09:15 +0530
+Message-Id: <20191007153917.13611-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously the /sys/kernel/debug/kernel_page_tables file would only show
-lines for entries present in the page tables. However it is useful to
-also show non-present entries as this makes the size and level of the
-holes more visible. This aligns the behaviour with x86 which also shows
-holes.
+Hello,
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/mm/dump.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+This patchset adds initial IIO driver support for ADUX1020 Photometric
+sensor from Analog Devices. This sensor is usable for multiple optical
+measurement applications, including gesture control and proximity sensing.
 
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 9d9b740a86d2..3203dd8e6d0a 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -269,21 +269,22 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 		if (st->current_prot) {
- 			note_prot_uxn(st, addr);
- 			note_prot_wx(st, addr);
--			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
-+		}
-+
-+		pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
- 				   st->start_address, addr);
- 
--			delta = (addr - st->start_address) >> 10;
--			while (!(delta & 1023) && unit[1]) {
--				delta >>= 10;
--				unit++;
--			}
--			pt_dump_seq_printf(st->seq, "%9lu%c %s", delta, *unit,
--				   pg_level[st->level].name);
--			if (pg_level[st->level].bits)
--				dump_prot(st, pg_level[st->level].bits,
--					  pg_level[st->level].num);
--			pt_dump_seq_puts(st->seq, "\n");
-+		delta = (addr - st->start_address) >> 10;
-+		while (!(delta & 1023) && unit[1]) {
-+			delta >>= 10;
-+			unit++;
- 		}
-+		pt_dump_seq_printf(st->seq, "%9lu%c %s", delta, *unit,
-+				   pg_level[st->level].name);
-+		if (st->current_prot && pg_level[st->level].bits)
-+			dump_prot(st, pg_level[st->level].bits,
-+				  pg_level[st->level].num);
-+		pt_dump_seq_puts(st->seq, "\n");
- 
- 		if (addr >= st->marker[1].start_address) {
- 			st->marker++;
+This initial driver includes support for only proximity mode with event
+based interrupt. The driver validation has been performed using Shiratech
+LTE mezzanine [1] connected to 96Boards Dragonboard410c [2].
+
+Thanks,
+Mani
+
+[1] https://www.96boards.org/product/shiratech-lte/
+[2] https://www.96boards.org/product/dragonboard410c/
+
+Changes in v2:
+
+* Converted the devicetree binding to YAML
+
+Manivannan Sadhasivam (2):
+  dt-bindings: iio: light: Add binding for ADUX1020
+  iio: light: Add support for ADUX1020 sensor
+
+ .../bindings/iio/light/adux1020.yaml          |  47 ++
+ drivers/iio/light/Kconfig                     |  11 +
+ drivers/iio/light/Makefile                    |   1 +
+ drivers/iio/light/adux1020.c                  | 783 ++++++++++++++++++
+ 4 files changed, 842 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/adux1020.yaml
+ create mode 100644 drivers/iio/light/adux1020.c
+
 -- 
-2.20.1
+2.17.1
 
