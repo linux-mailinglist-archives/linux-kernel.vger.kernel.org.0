@@ -2,123 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC1ACE9C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB511CE9CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:48:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbfJGQsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:48:04 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:34270 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727830AbfJGQsE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:48:04 -0400
-Received: by mail-yw1-f65.google.com with SMTP id d192so5371948ywa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bQ7t0YfEyUi6/XxzSzzzJPgkBy/Y1npqi1QHUBdAdjs=;
-        b=W3fLoSUrj8yJnZCMtZp+3Z2XubKePSGiIXKCTJtf8NgGqe6YfhNrC9bveRjZw6wpmF
-         v9jzQ5j1VQP3GRAx44r0Jhgc8TJPiEB7XTnjchviKgXZI8nD3yG7I/WgoHu3YEtryVvz
-         fG4rdsgZxIXFthOSjMaybVSlmOow3T3ljx0qxNCFJpkpmiiGPJBCNNOiY057IySo7EGV
-         2yf1Zh1r/t+Q8vdPk8hNVF6FtTOalBTihx2aE1PTwc4qPBruNr0J8+YNM4KwX9C1BzCc
-         g8jWzB0LOr31wuXEGyYlQ9E7EGPr+FHjDYwtdXdDlFUFtbYFK+7Ic2bLdoPaPMQMlzMz
-         oOCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bQ7t0YfEyUi6/XxzSzzzJPgkBy/Y1npqi1QHUBdAdjs=;
-        b=KnFgyBNZjezk3lpu/ok9k3yn5qv9HfWeFv6umWZBIvlLse8GcfGN4CrHTktJ8elnbX
-         IACwopcCeeY/YSuFGRWzVu3b5lyLxVCDufAcXW7gEYMKg/sW00lKyBX//iKOi1zeyDQc
-         tyTlQ4UqgvY4FoXSZcrR/cYm5gchKHQ3k0q+a8aV4hLNAE2iep2mAlVEFXjW4xc9ToMA
-         lPkAMJWB4ActhPRIHt8NNbf8bJ8OmaXzqwTen5h5cR0V6siPHhYoE0NVC1cYDNXT8KpA
-         ZERjplEyiYULEo9cYJDzk8aC3B5MW9kQBStJU6QK5nVzbO16xWGkeqdlb1otAKPNsC2e
-         HsZg==
-X-Gm-Message-State: APjAAAVqwadYIKYIVv1GP5lzOzH1y4G+oKIkAjJnwT1zbZp8nhhgvBP1
-        Qeb/oBQr06HeCTiEc6voGUKYHA==
-X-Google-Smtp-Source: APXvYqzqFE/kG9F8NYrqeqGMnEJIHroH1DGoJ5wHOm/YlpjWwk8tZNWrYg1M2OA9pEzzh3ILFWBkWg==
-X-Received: by 2002:a81:7b05:: with SMTP id w5mr20591060ywc.15.1570466883457;
-        Mon, 07 Oct 2019 09:48:03 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id y129sm4181437ywy.41.2019.10.07.09.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 09:48:02 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 12:48:02 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Derek Basehore <dbasehore@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v8 4/4] drm/mtk: add panel orientation property
-Message-ID: <20191007164802.GD126146@art_vandelay>
-References: <20190925225833.7310-1-dbasehore@chromium.org>
- <20190925225833.7310-5-dbasehore@chromium.org>
+        id S1729000AbfJGQsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:48:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727830AbfJGQsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 12:48:31 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1309C20659;
+        Mon,  7 Oct 2019 16:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570466910;
+        bh=uaIHpF/If6uI3IN+EaDDFj03MPBFPdqVnFBMY29qMGs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ddOCTBEdXHAyA68qXDQg1cPJd2U6TPN/ueiBHFOS2sAin/7R1r95CI53SY/BM9D2u
+         rtvFzHTaMZu1OYD8a+6HO1+G/P8HuAhnvod8K2XAhGxqeTgo9JpYQ+YBcvedRjhMVU
+         effOd7lieWvzjVh5RlfcHubSgBKHrJc1xQFPQ8sA=
+Date:   Mon, 7 Oct 2019 18:48:28 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH] ovl: filter of trusted xattr results in audit
+Message-ID: <20191007164828.GB1090238@kroah.com>
+References: <20191007160918.29504-1-salyzyn@android.com>
+ <20191007161616.GA988623@kroah.com>
+ <20191007161725.GB988623@kroah.com>
+ <7c610f92-5e1f-32ef-0a60-ed47ea999fe3@android.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190925225833.7310-5-dbasehore@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7c610f92-5e1f-32ef-0a60-ed47ea999fe3@android.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 03:58:33PM -0700, Derek Basehore wrote:
-> This inits the panel orientation property for the mediatek dsi driver
-> if the panel orientation (connector.display_info.panel_orientation) is
-> not DRM_MODE_PANEL_ORIENTATION_UNKNOWN.
+On Mon, Oct 07, 2019 at 09:42:08AM -0700, Mark Salyzyn wrote:
 > 
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> Acked-by: Sam Ravnborg <sam@ravnborg.org>
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> <sigh>
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index 224afb666881..2936932344eb 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -792,10 +792,18 @@ static int mtk_dsi_create_connector(struct drm_device *drm, struct mtk_dsi *dsi)
->  			DRM_ERROR("Failed to attach panel to drm\n");
->  			goto err_connector_cleanup;
->  		}
-> +
-> +		ret = drm_connector_init_panel_orientation_property(&dsi->conn);
-> +		if (ret) {
-> +			DRM_ERROR("Failed to init panel orientation\n");
-> +			goto err_panel_detach;
-> +		}
->  	}
->  
->  	return 0;
->  
-> +err_panel_detach:
-> +	drm_panel_detach(dsi->panel);
->  err_connector_cleanup:
->  	drm_connector_cleanup(&dsi->conn);
->  	return ret;
-> -- 
-> 2.23.0.351.gc4317032e6-goog
+> Now what is the playbook, we have three options in order of preference:
 > 
+> 1) #ifdef MODULE use capable() to preserve API, add a short comment about
+> the side effects if overlayfs is used as a module.
+> 
+> 2) export has_capability_nodaudit (proc and oom_kill use it, and are both
+> built-in only), but affect the 3.18 API at near EOL. AFAIK no one wants
+> that?
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+I'll just do this.  3.18 is EOL, this is only being done for a
+distro-specific tree (i.e. AOSP).
+
+> 3) Do nothing more. Make this a distro concern only. Leave this posted as a
+> back-port for the record, but never merged, for those that are _interested_
+> and declare 3.18 stable as noisy for sepolicy and overlayfs under some usage
+> patterns with few user space mitigation unless they explicitly take this
+> back-port into their tree (eg: android common kernel) if used built-in. This
+> way, in 3.18.y at least the module and built-in version behave the _same_ in
+> stable.
+
+I'll just add the export to the patch and check this into AOSP, thanks!
+
+greg k-h
