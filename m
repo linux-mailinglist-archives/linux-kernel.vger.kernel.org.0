@@ -2,76 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D94A2CE0EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFFBECE0F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:54:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfJGLwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:52:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46688 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfJGLwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:52:47 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iHRZA-0008VF-4y; Mon, 07 Oct 2019 11:52:40 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        oss-drivers@netronome.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nfp: bpf: make array exp_mask static, makes object smaller
-Date:   Mon,  7 Oct 2019 12:52:39 +0100
-Message-Id: <20191007115239.1742-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727824AbfJGLyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:54:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51096 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727467AbfJGLyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 07:54:17 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 39A447BDAB;
+        Mon,  7 Oct 2019 11:54:17 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-87.pek2.redhat.com [10.72.12.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EBF14600C1;
+        Mon,  7 Oct 2019 11:54:01 +0000 (UTC)
+Subject: Re: [PATCH v2] x86/kdump: Fix 'kmem -s' reported an invalid
+ freepointer when SME was active
+To:     Dave Young <dyoung@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org, bhe@redhat.com,
+        jgross@suse.com, dhowells@redhat.com, Thomas.Lendacky@amd.com,
+        ebiederm@xmission.com, vgoyal@redhat.com, kexec@lists.infradead.org
+References: <20191007070844.15935-1-lijiang@redhat.com>
+ <20191007093338.GA4710@dhcp-128-65.nay.redhat.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <e179c616-f427-769f-aa5b-058c63040015@redhat.com>
+Date:   Mon, 7 Oct 2019 19:53:57 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20191007093338.GA4710@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 07 Oct 2019 11:54:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+在 2019年10月07日 17:33, Dave Young 写道:
+> Hi Lianbo,
+> On 10/07/19 at 03:08pm, Lianbo Jiang wrote:
+>> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204793
+>>
+>> Kdump kernel will reuse the first 640k region because of some reasons,
+>> for example: the trampline and conventional PC system BIOS region may
+>> require to allocate memory in this area. Obviously, kdump kernel will
+>> also overwrite the first 640k region, therefore, kernel has to copy
+>> the contents of the first 640k area to a backup area, which is done in
+>> purgatory(), because vmcore may need the old memory. When vmcore is
+>> dumped, kdump kernel will read the old memory from the backup area of
+>> the first 640k area.
+>>
+>> Basically, the main reason should be clear, kernel does not correctly
+>> handle the first 640k region when SME is active, which causes that
+>> kernel does not properly copy these old memory to the backup area in
+>> purgatory(). Therefore, kdump kernel reads out the incorrect contents
+>> from the backup area when dumping vmcore. Finally, the phenomenon is
+>> as follow:
+>>
+>> [root linux]$ crash vmlinux /var/crash/127.0.0.1-2019-09-19-08\:31\:27/vmcore
+>> WARNING: kernel relocated [240MB]: patching 97110 gdb minimal_symbol values
+>>
+>>       KERNEL: /var/crash/127.0.0.1-2019-09-19-08:31:27/vmlinux
+>>     DUMPFILE: /var/crash/127.0.0.1-2019-09-19-08:31:27/vmcore  [PARTIAL DUMP]
+>>         CPUS: 128
+>>         DATE: Thu Sep 19 08:31:18 2019
+>>       UPTIME: 00:01:21
+>> LOAD AVERAGE: 0.16, 0.07, 0.02
+>>        TASKS: 1343
+>>     NODENAME: amd-ethanol
+>>      RELEASE: 5.3.0-rc7+
+>>      VERSION: #4 SMP Thu Sep 19 08:14:00 EDT 2019
+>>      MACHINE: x86_64  (2195 Mhz)
+>>       MEMORY: 127.9 GB
+>>        PANIC: "Kernel panic - not syncing: sysrq triggered crash"
+>>          PID: 9789
+>>      COMMAND: "bash"
+>>         TASK: "ffff89711894ae80  [THREAD_INFO: ffff89711894ae80]"
+>>          CPU: 83
+>>        STATE: TASK_RUNNING (PANIC)
+>>
+>> crash> kmem -s|grep -i invalid
+>> kmem: dma-kmalloc-512: slab:ffffd77680001c00 invalid freepointer:a6086ac099f0c5a4
+>> kmem: dma-kmalloc-512: slab:ffffd77680001c00 invalid freepointer:a6086ac099f0c5a4
+>> crash>
+>>
+>> BTW: I also tried to fix the above problem in purgatory(), but there
+>> are too many restricts in purgatory() context, for example: i can't
+>> allocate new memory to create the identity mapping page table for SME
+>> situation.
+>>
+>> Currently, there are two places where the first 640k area is needed,
+>> the first one is in the find_trampoline_placement(), another one is
+>> in the reserve_real_mode(), and their content doesn't matter. To avoid
+>> the above error, lets occupy the remain memory of the first 640k region
+>> (expect for the trampoline and real mode) so that the allocated memory
+>> does not fall into the first 640k area when SME is active, which makes
+>> us not to worry about whether kernel can correctly copy the contents of
+>> the first 640k area to a backup region in the purgatory().
+>>
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>> Changes since v1:
+>> 1. Improve patch log
+>> 2. Change the checking condition from sme_active() to sme_active()
+>>    && strstr(boot_command_line, "crashkernel=")
+>>
+>>  arch/x86/kernel/setup.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+>> index 77ea96b794bd..bdb1a02a84fd 100644
+>> --- a/arch/x86/kernel/setup.c
+>> +++ b/arch/x86/kernel/setup.c
+>> @@ -1148,6 +1148,9 @@ void __init setup_arch(char **cmdline_p)
+>>  
+>>  	reserve_real_mode();
+>>  
+>> +	if (sme_active() && strstr(boot_command_line, "crashkernel="))
+>> +		memblock_reserve(0, 640*1024);
+>> +
+> 
+> Seems you missed the comment about "unconditionally do it", only check
+> crashkernel param looks better.
+> 
+If so, it means that copying the first 640k to a backup region is no longer needed, and
+i should post a patch series to remove the copy_backup_region(). Any idea?
 
-Don't populate the array exp_mask on the stack but instead make it
-static. Makes the object code smaller by 224 bytes.
+> Also I noticed reserve_crashkernel is called after initmem_init, I'm not
+> sure if memblock_reserve is good enough in early code before
+> initmem_init. 
+>
+The first zero page and real mode are also reserved before the initmem_init(),
+and seems that they work well until now.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  77832	   2290	      0	  80122	  138fa	ethernet/netronome/nfp/bpf/jit.o
+Thanks.
+Lianbo
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  77544	   2354	      0	  79898	  1381a	ethernet/netronome/nfp/bpf/jit.o
-
-(gcc version 9.2.1, amd64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/netronome/nfp/bpf/jit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/netronome/nfp/bpf/jit.c b/drivers/net/ethernet/netronome/nfp/bpf/jit.c
-index 5afcb3c4c2ef..c80bb83c8ac9 100644
---- a/drivers/net/ethernet/netronome/nfp/bpf/jit.c
-+++ b/drivers/net/ethernet/netronome/nfp/bpf/jit.c
-@@ -3952,7 +3952,7 @@ static void nfp_bpf_opt_neg_add_sub(struct nfp_prog *nfp_prog)
- static void nfp_bpf_opt_ld_mask(struct nfp_prog *nfp_prog)
- {
- 	struct nfp_insn_meta *meta1, *meta2;
--	const s32 exp_mask[] = {
-+	static const s32 exp_mask[] = {
- 		[BPF_B] = 0x000000ffU,
- 		[BPF_H] = 0x0000ffffU,
- 		[BPF_W] = 0xffffffffU,
--- 
-2.20.1
-
+>>  	trim_platform_memory_ranges();
+>>  	trim_low_memory_range();
+>>  
+>> -- 
+>> 2.17.1
+>>
+> 
+> Thanks
+> Dave
+> 
