@@ -2,161 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C388CEE59
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D77CEE5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbfJGVVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 17:21:03 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39916 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728753AbfJGVVD (ORCPT
+        id S1729502AbfJGVVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 17:21:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41042 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728753AbfJGVVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 17:21:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e1so8974914pgj.6
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 14:21:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ne+gjpSAsSZCPqyjaVRLIU8NFITcOF/zLKSCkYOILvY=;
-        b=jKabTA9ZmREbBLR0KQDUOLmiAJjZBIHO+LCmxMbUGyzq2HsQz8TjSYD+FASTIc4FjV
-         FQNWhK2S/PElaEML3Mh2nhh6ni3z8e2QylDCmmDU6zjwS0vjzfMVqUdKYiH9/GX1yiUq
-         kMhSCdW4vg4M+UurWGV8x8dbKOg5VcI30UOX68iTDpJNuk3GlfN2/nWm4GNsCrtXxawf
-         36sPMNox5llyuqktPL/25b6bsHOcrHihk14ypzaCGa/cFcueDOct1HgxZyOma/NF18xg
-         cGhwpcnvr/teNL3L1H5q00u1QVNwHTytpSEuUd6J6pLaOmIR/5RyVEaZZgD3z6G3swoZ
-         P6LA==
-X-Gm-Message-State: APjAAAXjtuIKejsU5PVlH6KuS4WSeQBLEeCoQ0PGqz8N6UwYRpnENfQt
-        ha6mHPVAQOyc3HiIu5RsmcJJqg==
-X-Google-Smtp-Source: APXvYqzhWLAcy5V9e5bo7GU00koo3J4gXnU61zWPnEE/o6/QkWloI2yUxtBc3CIVy9mThC1pr8ubbg==
-X-Received: by 2002:a63:9144:: with SMTP id l65mr33107157pge.148.1570483260688;
-        Mon, 07 Oct 2019 14:21:00 -0700 (PDT)
-Received: from localhost ([2601:647:5b00:424:4354:8908:1ef2:1e9f])
-        by smtp.gmail.com with ESMTPSA id w2sm14662672pfn.57.2019.10.07.14.20.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 14:20:59 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 14:20:58 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Thor Thayer <thor.thayer@linux.intel.com>
-Cc:     Moritz Fischer <mdf@kernel.org>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        Alan Tull <atull@kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "kedare06@gmail.com" <kedare06@gmail.com>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nava kishore Manne <navam@xilinx.com>,
-        Siva Durga Prasad Paladugu <sivadur@xilinx.com>,
-        Richard Gong <richard.gong@linux.intel.com>,
-        Dinh Nguyen <dinguyen@kernel.org>, agust@denx.de
-Subject: Re: [PATCH v4 1/2] fpga: fpga-mgr: Add readback support
-Message-ID: <20191007212058.GA2929169@archbox>
-References: <1532672551-22146-1-git-send-email-appana.durga.rao@xilinx.com>
- <CANk1AXSEWcZ7Oqv5pgpwvJRyyFWk5gPtniXa7T+oe6-uywqEqA@mail.gmail.com>
- <MN2PR02MB6400CD5312983443A67DCC4EDC810@MN2PR02MB6400.namprd02.prod.outlook.com>
- <4476bf39-b665-50d8-fecd-d50687d10ca2@linux.intel.com>
- <20190927182308.GA6797@archbox>
- <f8a9bc07-0705-1318-eba2-8878e839d696@linux.intel.com>
+        Mon, 7 Oct 2019 17:21:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=N5EcAmKjzPUXozCqPG1kX/cDR4yO/jPB64zcL2DCNeY=; b=ANrNw1ikjbWO3futfL+1WVHL8
+        QSJs5oZujkWlghJJ0qq4RQ00Kcw0cYIf0SqEoB5kiNDn6Bf6Nwy/l0I/+ur7XrHSxwxf8veOgmrgR
+        8FwsrZuHma7vRG2EVwkJOB5f7mGzFbxCs/5EbtGw4SEzrQ9tq1Q3caFBgvSCxF4kvn1Pkv2KHKocU
+        Dgolk7MNOh+vVKSSsjYVUg+5FA9ms9FpQKk9a9jIz7QP/C2AQuMcTcXnuc5sIW0hqdkJQMaGe5Ei+
+        viHJi22wWdlZvi8SRLmQ6CYZgmM0RrCt78sUJiontCuaTXRzjpfMLufs6Fb+e/XuWQGdalJ2tK3j9
+        P5xK5v2Rg==;
+Received: from [2601:1c0:6280:3f0::9ef4]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iHaRg-0007ca-D6; Mon, 07 Oct 2019 21:21:32 +0000
+Subject: Re: [PATCH v10 1/5] dma-buf: Add dma-buf heaps framework
+To:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     "Andrew F. Davis" <afd@ti.com>, Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Hridya Valsaraju <hridya@google.com>,
+        Hillf Danton <hdanton@sina.com>,
+        dri-devel@lists.freedesktop.org
+References: <20191007211830.42838-1-john.stultz@linaro.org>
+ <20191007211830.42838-2-john.stultz@linaro.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ad064efe-4d86-3b81-ace2-152e90c72e94@infradead.org>
+Date:   Mon, 7 Oct 2019 14:21:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8a9bc07-0705-1318-eba2-8878e839d696@linux.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191007211830.42838-2-john.stultz@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thor,
+On 10/7/19 2:18 PM, John Stultz wrote:
+> diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
+> index a23b6752d11a..6e9c7c4d7447 100644
+> --- a/drivers/dma-buf/Kconfig
+> +++ b/drivers/dma-buf/Kconfig
+> @@ -44,4 +44,13 @@ config DMABUF_SELFTESTS
+>  	default n
+>  	depends on DMA_SHARED_BUFFER
+>  
+> +menuconfig DMABUF_HEAPS
+> +	bool "DMA-BUF Userland Memory Heaps"
+> +	select DMA_SHARED_BUFFER
+> +	help
+> +	  Choose this option to enable the DMA-BUF userland memory heaps,
 
-On Mon, Oct 07, 2019 at 01:06:51PM -0500, Thor Thayer wrote:
-> Hi Moritz,
-> 
-> On 9/27/19 1:23 PM, Moritz Fischer wrote:
-> > Thor,
-> > 
-> > On Fri, Sep 27, 2019 at 09:32:11AM -0500, Thor Thayer wrote:
-> > > Hi Kedar & Moritz,
-> > > 
-> > > On 9/27/19 12:13 AM, Appana Durga Kedareswara Rao wrote:
-> > > > Hi Alan,
-> > > > 
-> > > > Did you get a chance to send your framework changes to upstream?
-> > No they weren't upstreamed.
-> > 
-> > > > @Moritz Fischer: If Alan couldn't send his patch series, Can we take this patch series??
-> > > > Please let me know your thoughts on this.
-> > 
-> > Alan had some comments RE: #defines, I'll have to take another look.
-> > > > 
-> > > > Regards,
-> > > > Kedar.
-> > > 
-> > > 
-> > > I'd like to see some mechanism added as well. Our CvP driver needs a way to
-> > > load images to the FPGA over the PCIe bus.
-> > 
-> > Can you elaborate a bit on the CvP use-case and how that would work? Who
-> > would use the device how after loading the bitstream?
-> > 
-> > Generally there are several use cases that I have collected mentally
-> > over the years:
-> > 
-> > I) DFL use case:
-> >    - Mixed-set of drivers: Kernel and Userspace
-> >    - FPGA logic is discoverable through DFL
-> >    - Userspace application wants to reprogram FPGA
-> > 
-> > II) DT configfs use case:
-> >    - Mixed-set of drivers: Kernel and Userspace
-> >    - FPGA logic is *not* discoverable (hence DT overlay)
-> >    - Userspace application wants to reprogram FPGA
-> > 
-> > III) Thomas' case:
-> >    - Kernel only drivers (pcie bridge, pcie drivers, ...)
-> >    - FPGA logic is fully discoverable (i.e. PCIe endpoint
-> >      implemented in FPGA, connected to SoC via PCIe)
-> >    - Userspace application wants to reprogram FPGA
-> > 
-> > IV) VFIO case:
-> >    - Usually exposes either entire device via vfio-pci or part via
-> >      vfio-mdev
-> >    - Loading (basic) bitstream at boot from flash
-> >    - vfio-mdev case can use FPGA region interface + ioctl
-> >    - Full VFIO case is similar to III)
-> > 
-> > How does your CvP use case fit in? Collecting all the use-cases would
-> > help with moving forward on coming up with an API :)
-> > 
-> The CvP case is the same as III) Thomas' case. The FPGA configuration
-> bitstream is downloaded over the PCIe.
-> 
-> The one difference in my case is that there isn't an SoC. This is a Intel
-> host processor connecting to a non-SoC Stratix10/Arria10. The non-SoC
-> A10/S10, boots a minimal image (CvP) setting up the peripheral pins and
-> enabling the PCIe endpoint for CvP downloads.
-> 
-> The host can then download bitstreams using the FPGA Manager through debugFS
-> and when the bitstream finishes downloading and the FPGA enters User Mode,
-> the functionality is available for the host to use.
+	                                                           heaps.
 
-I am generally confused by this driver. How does it work exactly? What
-happens after altera-cvp binds a PCI device?
+> +	  this options creates per heap chardevs in /dev/dma_heap/ which
 
-You can use it to download a bitstream (say we had the debugfs
-interface), and then what happens next? How do I use the device? It
-already has a PCI driver bound to it at that point?
+	  This
 
-What happens next?
+> +	  allows userspace to use to allocate dma-bufs that can be shared
 
-Please tell me that not the only use-case for this is /dev/mem :)
+??	                   to allocate & use
 
-Thomas' use-case is different in that behind the FPGA device there are
-actual other *discoverable* PCI devices that will get enumerated and
-bind to separate drivers.
+> +	  between drivers.
+> +
+>  endmenu
 
-Thanks,
-Moritz
 
-PS: I'll be out this week on vacation starting tmr so responses might be delayed
+-- 
+~Randy
