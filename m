@@ -2,87 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07AB1CEE57
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C530CEE5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbfJGVUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 17:20:25 -0400
-Received: from mail-pg1-f173.google.com ([209.85.215.173]:33256 "EHLO
-        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728702AbfJGVUY (ORCPT
+        id S1729482AbfJGVV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 17:21:28 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46054 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729412AbfJGVV2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 17:20:24 -0400
-Received: by mail-pg1-f173.google.com with SMTP id i76so1819785pgc.0;
-        Mon, 07 Oct 2019 14:20:24 -0700 (PDT)
+        Mon, 7 Oct 2019 17:21:28 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q64so15248145ljb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 14:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=sycFjW76TPrYh+EZFOry3N94dzhDeaSje8SkQ8MSXvA=;
-        b=fQg6xW+UFVl4P5jrJBH5q5AbD5KcDxnKN1kXTZpWdgzKMqmmuTYG2xLAJDsaA3/w0x
-         /zsYlRlbB/HYh6y5zOevSg0qAa7wdD6h5Q8WsM9tTdgt599iFljrwg/54zrfgNiwBVKR
-         DTe4JzulD6AZoHnqjJJZqY7uUmWt3N+10ivfsbf74Iuyp+MlAkiRMMULp/7QFMs0eBwu
-         GuROimN69l6vkT8EhSYpzSg2rgMFXfcHggNwpe8KwHz7aqmqBt+EFYle/0Sc8UtQRmzT
-         Yh5rXs+KMKZo0L+LynbLdKQ7oR8XTdcIlOsIVFNGgRvK/Cp+broBsSgWlF20A7O96EbB
-         OB/A==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5VLA+DypLeafYgMw73YxMrbPmQsxALingE4Zwjp+3ro=;
+        b=AWhFRV0UXf0UR44y+lps7DWiRDgcwTAKSPuFnQuRcaRad76GF2KfIOGkxzP0TbPSFN
+         Slzj7O4yTkaekbF+DQG8a7x9UcPNvTsVlvXCvxLxKORld/I0xD2pNfPkT9lUG8BfX3+z
+         ra21vWXRFvFnLWfftuIS9k4vqQbXMx5UVJm4c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sycFjW76TPrYh+EZFOry3N94dzhDeaSje8SkQ8MSXvA=;
-        b=RLvL3Cbp+kd0CcYhMdzNj5VtgaxIMuG8tp+WzM3l56ivRkhsT2oAoYlNSafMLfXhJv
-         RYg671VdIL/5gUohq84JcS0/65Z/+uvUVYcX2R8vEx8eoUAJWs/AswaWXuBoChdc6I+c
-         TbchmTxjUerVGgkEB+4zzSk79esOMpRWlS59I5IVd9mlyol3BCt1AfgajlZ8pQ1bh0cp
-         LkPMEh4AV0mUWzr6+tcgUL5GjRxMUcPiv+OmjATdyxUHA7JGNVAgT4oGf2rlp/STgdJz
-         0w29/ovYKwLC8dknyglvAz+0/K7Xreaylh7NIxN9hVh+B8jpCM5BpOnNqLP4P015qJ/E
-         CcVw==
-X-Gm-Message-State: APjAAAUAtIb5d0egA7dmhJDXrqMYSq6GHLFjdcBkmA2aTHxXGEwOSG9M
-        OnU59dyAwKObz7KFHZ5X3CQeaTPV
-X-Google-Smtp-Source: APXvYqyIN2WyX2O/LtktWbQBDxOmrCtq3FQCtQmqRN0tsPHmd49xQZm2L1P3TBbGfx6R85XTdNkOhw==
-X-Received: by 2002:a63:33c4:: with SMTP id z187mr10304868pgz.30.1570483223810;
-        Mon, 07 Oct 2019 14:20:23 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id q76sm27325812pfc.86.2019.10.07.14.20.21
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5VLA+DypLeafYgMw73YxMrbPmQsxALingE4Zwjp+3ro=;
+        b=gqtjdL5SB8XmssKVrYLx57BaaI6aX5PX7IYtbzLmB/DOcCw4GaMmaoUveZjF32QZJb
+         qVwbkMigm2MOsYcXV6p8Tnu978yx5NafnVv9OjgBNftuDTjFmUEg2wzHsV+ITiQh7P1C
+         bjeHjftDCs3y0VAiIHjvJEPjROOz3DJG6Ljcj0aYV/h62NFnFCkoyQjRjdAX3tsL0wBe
+         i8PuxpHqIfXlAs/0gkpP6YNpelUmfAhVMK83L3N8HI3zhJ7gaVhbRNhYhJU4dm3fhU3h
+         jBW5aVTpE30W5UFljMCGoWgC2JsolC58173r4NZbEDPZim9pgDauNtKRf5IyI4FPo9fk
+         uTxw==
+X-Gm-Message-State: APjAAAWUUMJnRZjCzONPj4DCKSyMNZ38c4HCG94C1ILEYp5SdYjye0hX
+        L6/7OaSgciVe70gtKuFREAzlvZx0RxI=
+X-Google-Smtp-Source: APXvYqzddEXhfBcPaBcbff1TLf4okqUlvJS//S18S/IrDRNFOox7t1RX4XxNEb1+sdRh64dhu84f1w==
+X-Received: by 2002:a2e:904c:: with SMTP id n12mr19105133ljg.139.1570483284959;
+        Mon, 07 Oct 2019 14:21:24 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id q5sm3073974lfm.93.2019.10.07.14.21.23
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2019 14:20:22 -0700 (PDT)
-Subject: Re: Potential NULL pointer deference in net: sched
-To:     Yizhuo Zhai <yzhai003@ucr.edu>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
-        Chengyu Song <csong@cs.ucr.edu>
-References: <CABvMjLRuGnatUxBEMKpXWGNJnAjNMiCXQ7Ce88ejuuJJnENR+g@mail.gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <b2997ffb-728a-b4ee-abfa-2c9fe9869d8b@gmail.com>
-Date:   Mon, 7 Oct 2019 14:20:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 07 Oct 2019 14:21:24 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id b20so15268440ljj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 14:21:23 -0700 (PDT)
+X-Received: by 2002:a2e:878b:: with SMTP id n11mr18063490lji.13.1570483283303;
+ Mon, 07 Oct 2019 14:21:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CABvMjLRuGnatUxBEMKpXWGNJnAjNMiCXQ7Ce88ejuuJJnENR+g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191004233132.194336-1-swboyd@chromium.org>
+In-Reply-To: <20191004233132.194336-1-swboyd@chromium.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 7 Oct 2019 14:20:47 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4Rp_GmoVc1iRFH3tiu_taC=i72_Y+xXzk6eU6J80YhQw@mail.gmail.com>
+Message-ID: <CAE=gft4Rp_GmoVc1iRFH3tiu_taC=i72_Y+xXzk6eU6J80YhQw@mail.gmail.com>
+Subject: Re: [PATCH] soc: qcom: llcc: Name regmaps to avoid collisions
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 4, 2019 at 4:31 PM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> We'll end up with debugfs collisions if we don't give names to the
+> regmaps created inside this driver. Copy the template config over into
+> this function and give the regmap the same name as the resource name.
+>
+> Fixes: 7f9c136216c7 ("soc: qcom: Add broadcast base for Last Level Cache Controller (LLCC)")
+> Cc: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+> Cc: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/soc/qcom/llcc-slice.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
+> index 9090ea12eaf3..aa342938c403 100644
+> --- a/drivers/soc/qcom/llcc-slice.c
+> +++ b/drivers/soc/qcom/llcc-slice.c
+> @@ -48,13 +48,6 @@
+>
+>  static struct llcc_drv_data *drv_data = (void *) -EPROBE_DEFER;
+>
+> -static const struct regmap_config llcc_regmap_config = {
+> -       .reg_bits = 32,
+> -       .reg_stride = 4,
+> -       .val_bits = 32,
+> -       .fast_io = true,
+> -};
+> -
+>  /**
+>   * llcc_slice_getd - get llcc slice descriptor
+>   * @uid: usecase_id for the client
+> @@ -314,6 +307,12 @@ static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
+>  {
+>         struct resource *res;
+>         void __iomem *base;
+> +       static struct regmap_config llcc_regmap_config = {
+> +               .reg_bits = 32,
+> +               .reg_stride = 4,
+> +               .val_bits = 32,
+> +               .fast_io = true,
+> +       };
 
-
-On 10/7/19 2:08 PM, Yizhuo Zhai wrote:
-> Hi All:
-> 
-> net/sched/sch_mq.c:
-> Inside function mq_dump_class(), mq_queue_get() could return NULL,
-> however, the return value of dev_queue is not checked  and get used.
-> This could potentially be unsafe.
-> 
-> 
-
-Not really.
-
-mq_dump_class() is called by a layer that made sure the @cl argument
-was not complete garbage.
-
+Why did you move this to be a static local? I think it works, but it
+makes it look like this is a local variable that's possibly used out
+of scope. Maybe leave it as a global?
