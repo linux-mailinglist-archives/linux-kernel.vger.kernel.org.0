@@ -2,102 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2A7CE127
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7509CE12C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbfJGMDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:03:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58910 "EHLO mail.kernel.org"
+        id S1728001AbfJGMEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:04:25 -0400
+Received: from mga07.intel.com ([134.134.136.100]:41701 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727490AbfJGMDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:03:45 -0400
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD02221721;
-        Mon,  7 Oct 2019 12:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570449824;
-        bh=YN/JDzAHCMJ/e/tv+TeADCITLgu70dRqullL+zBfzRI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=h2ARMmStLRBbfeCRMjGFhE/t8aggvk+hAsD5O2K/dvaTwriGK3ZFyQpAiMGmWaASD
-         xC8qqJSv5/mLI1DFQaQgfSeMcXPphZpOMQbDarc8+8wAr2OsnO3799AueEQgZjtez4
-         FQLh76Gylo7JormMMkhat0fLHRtR4RkPEBzr9Yqo=
-Received: by mail-lj1-f175.google.com with SMTP id b20so13344269ljj.5;
-        Mon, 07 Oct 2019 05:03:43 -0700 (PDT)
-X-Gm-Message-State: APjAAAUbFBs13NYEtN+PJOWmAeFMEy2bucVBjDdUkEe6fOGWXeywY65y
-        i3r8FKH62rm4Uqm0lacoLGz92sqSW9HJlSbo/Tg=
-X-Google-Smtp-Source: APXvYqz+5o0y+Lcliaxl0zhfcnGA29V1xk5EIyxYl1tl8ZiZNti7nhFKHrlHADM/iioHNG3U3FFhZAdr3QfcoST7Ldc=
-X-Received: by 2002:a2e:9a89:: with SMTP id p9mr18679419lji.131.1570449822085;
- Mon, 07 Oct 2019 05:03:42 -0700 (PDT)
+        id S1727561AbfJGMEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:04:24 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 05:04:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,268,1566889200"; 
+   d="scan'208";a="186965410"
+Received: from bplackle-mobl.ger.corp.intel.com (HELO localhost) ([10.252.6.229])
+  by orsmga008.jf.intel.com with ESMTP; 07 Oct 2019 05:04:13 -0700
+Date:   Mon, 7 Oct 2019 15:04:12 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
+        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
+        rientjes@google.com, cedric.xing@intel.com,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v22 16/24] x86/vdso: Add support for exception fixup in
+ vDSO functions
+Message-ID: <20191007120412.GB20830@linux.intel.com>
+References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
+ <20190903142655.21943-17-jarkko.sakkinen@linux.intel.com>
+ <20191002231804.GA14315@linux.intel.com>
+ <20191004001459.GD14325@linux.intel.com>
+ <20191004185221.GI6945@linux.intel.com>
+ <20191005155412.GA9159@linux.intel.com>
+ <20191007075712.GA5466@linux.intel.com>
+ <20191007081024.GA5962@linux.intel.com>
 MIME-Version: 1.0
-References: <20191007113502.11746-1-ribalda@kernel.org> <20191007113502.11746-7-ribalda@kernel.org>
- <494e3061-985d-8b8e-7728-9e72442ad9f7@xs4all.nl>
-In-Reply-To: <494e3061-985d-8b8e-7728-9e72442ad9f7@xs4all.nl>
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date:   Mon, 7 Oct 2019 14:03:25 +0200
-X-Gmail-Original-Message-ID: <CAPybu_2Qm+1MxQXCXXq4zzhvnjew5awRSofkqiPrc2bMav=Jkg@mail.gmail.com>
-Message-ID: <CAPybu_2Qm+1MxQXCXXq4zzhvnjew5awRSofkqiPrc2bMav=Jkg@mail.gmail.com>
-Subject: Re: [PATCH v10 6/8] Documentation: media: Describe V4L2_CID_UNIT_CELL_SIZE
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007081024.GA5962@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans
+On Mon, Oct 07, 2019 at 11:10:24AM +0300, Jarkko Sakkinen wrote:
+> Actually, maybe like this:
+> 
+> struct sgx_enclave_add_page_desc {
+> 	__u64	addr;
+> 	__u64	offset;
+> 	__u64	secinfo;
+> 	__u16	mrmask;
+> 	__u8	reserved[6];
+> };
+> 
+> struct sgx_enclave_add_page {
+> 	__u64	src;
+> 	__u64	nr_pages;
+> 	__u64	pages;
+> };
 
+Of course we should remove @addr:
 
+struct sgx_enclave_add_page_desc {
+	__u64	offset;
+	__u16	mrmask;
+	__u8	reserved[6];
+};
 
-On Mon, Oct 7, 2019 at 2:01 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->
-> On 10/7/19 1:35 PM, Ricardo Ribalda Delgado wrote:
-> > New control to pass to userspace the width/height of a pixel. Which is
-> > needed for calibration and lens selection.
-> >
-> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> > ---
-> >  Documentation/media/uapi/v4l/ext-ctrls-image-source.rst | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst b/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
-> > index 2c3ab5796d76..6388668855d0 100644
-> > --- a/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
-> > +++ b/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
-> > @@ -55,3 +55,12 @@ Image Source Control IDs
-> >
-> >  ``V4L2_CID_TEST_PATTERN_GREENB (integer)``
-> >      Test pattern green (next to blue) colour component.
-> > +
-> > +``V4L2_CID_UNIT_CELL_SIZE (struct)``
-> > +    This control returns the unit cell size in nanometers. The struct
-> > +    :c:type:`v4l2_area` provides the width and the height in separate
-> > +    fields to take into consideration asymmetric pixels and/or hardware
-> > +    binning.
->
-> This still states that this control takes binning into account. I understood that
-> we decided not to do that?
->
+struct sgx_enclave_add_page {
+	__u64	src;
+	__u64	secinfo;
+	__u64	nr_pages;
+	__u64	pages;
+};
 
-Good catch, seems that at some point I changed my mind :).
+That is something we have forgot to do. We should have started to use
+offset instead of address when we moved to fd based API. Anyway I think
+this kind of API where you give array of descriptors from one source
+would be optimal.
 
-Will fix this doc.
+Also, @secinfo is better to be out of the descriptor so that let say
+LSM checks could be done with a single callback.
 
-Can I resend only this patch to avoid spamming the list?
-
-
-> Regards,
->
->         Hans
->
-> > +    The unit cell consists of the whole area of the pixel, sensitive and
-> > +    non-sensitive.
-> > +    This control is required for automatic calibration of sensors/cameras.
-> >
->
+/Jarkko
