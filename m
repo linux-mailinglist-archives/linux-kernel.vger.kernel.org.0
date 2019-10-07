@@ -2,265 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29008CE969
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0E4CE99A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:45:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbfJGQjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:39:31 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:33749 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727801AbfJGQja (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:39:30 -0400
-Received: from [IPv6:2001:983:e9a7:1:3d61:cdd2:8085:cc8] ([IPv6:2001:983:e9a7:1:3d61:cdd2:8085:cc8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id HW2eiOSEUjZ8vHW2gi7zin; Mon, 07 Oct 2019 18:39:26 +0200
-Subject: Re: [PATCH 0/2] media: meson: vdec: Add compliant H264 support
-To:     Maxime Jourdan <mjourdan@baylibre.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-References: <20191007145909.29979-1-mjourdan@baylibre.com>
- <8563127e-fe2c-a633-556b-8a883cebb171@xs4all.nl>
- <977c48e8-8275-c96a-688b-ccfbb873eb79@baylibre.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <65a88bfc-d82b-1487-7983-507149b11673@xs4all.nl>
-Date:   Mon, 7 Oct 2019 18:39:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <977c48e8-8275-c96a-688b-ccfbb873eb79@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfAYWwkY21vUQ4hMBzTqUalGNECuzHryLQUgGuC+6WIiNO/bIa1y2BCfZm5QxVI/sD0uCN7Q6YC/GGX6sb7ctrGb3Xbg+szGIikN+9j/u0zky7NZHc4Nu
- gqf485fh7XN7sBR0uTJP9XsTT94pL69JP+Dnwm0V3YxDbAG1KzC50rKk6zyyBlILMnsLkiXcAohKI+P6CNEZA9HyTcrSOLaJdYRjwC4CQO4fceijo1BGpcj3
- 3UCKu9Ov5FzvewmjwxOosEOhyC1XKXGMBI4wiFjNYbE/vp7nn3U6g1AeNlaFVgImph2sz5a/0lD6Li2Jxwj5RNj7gOUj1WkrmYmTLVKtJaUxFTsrwgQ8Dfz7
- dXsZaNIjkT4q4p4vqUzg7SE+cvYARCrQDkZgw/e08UuGSwsARzxnWgj9yIzY+Svtp2pcKv34siAUrttKrSrMJzhgx/9rBH0PVvAafmbXFt8jkU/uAutNNQmi
- MV4qLCboblApxNj7b6OHEUQvvD2IJM9UPbfYSDFCXfHHdqzbNwL82PuDreyyhxF5djJoaKWuXE6gLlZTpefqbYQQ+hjm70JS9EEOPvhCSNH6sJ/nasu1nauq
- QWAUwElfB8oZlSFy4hiz4Qwifvw5u4FZz5pLg/VV1D/410BTfXm30iE/A+rpoBLMlQwmeP/GW1J+JA1fGoiKPWzz
+        id S1729087AbfJGQpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:45:13 -0400
+Received: from mail.blih.net ([212.83.177.182]:51390 "EHLO mail.blih.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728031AbfJGQpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 12:45:13 -0400
+X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Oct 2019 12:45:12 EDT
+Received: from mail.blih.net (mail.blih.net [212.83.177.182])
+        by mail.blih.net (OpenSMTPD) with ESMTP id c5fe113e;
+        Mon, 7 Oct 2019 18:38:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=mail;
+         bh=x8Fb8EJYC8DBijQk39x8YH5AULw=; b=kSCt9zRMRkRXIBi7Jle6eJm45QFm
+        0rHpyhYEZ/UGz7DLPG5fqEuAMDu21cHZJNxV8NGayqyJt/YmaXSbVnWdeqWdFr/F
+        k/ThBug0HPc9kTUvqEW/fs/WLAW93pbcwpIPExl0jiY6eJqLOf9jETMJy3uC+rF3
+        X5d5z/c7GEM3qfo=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=bidouilliste.com; h=date
+        :from:to:cc:subject:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; q=dns; s=
+        mail; b=SsqDpYzYXtI8Tul7fI3I19ADwfqgOwakPKW9p6pkQqIcb24K3RKdmTT1
+        Nf8IwNs3tMDR3LC7Em3IISZDQZ+3U3Bm34owITo5s3FwSgYugS41gBZdqC30acWj
+        QY+MePjw64aoVjFmfRvqj0XS8020tQwMuQz92b9/emyGIwXS1ns=
+Received: from sonic.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        by mail.blih.net (OpenSMTPD) with ESMTPSA id 1b727bdc
+        TLS version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO;
+        Mon, 7 Oct 2019 18:38:31 +0200 (CEST)
+Date:   Mon, 7 Oct 2019 18:38:30 +0200
+From:   Emmanuel Vadot <manu@bidouilliste.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Emmanuel Vadot <manu@freebsd.org>, bcousson@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: Set status to disable for MMC3
+Message-Id: <20191007183830.71e1303d6bd713014dc36710@bidouilliste.com>
+In-Reply-To: <20191007161634.GS5610@atomide.com>
+References: <20191007080339.57209-1-manu@freebsd.org>
+        <20191007161634.GS5610@atomide.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd13.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/7/19 6:24 PM, Maxime Jourdan wrote:
-> On 07/10/2019 17:12, Hans Verkuil wrote:
->> On 10/7/19 4:59 PM, Maxime Jourdan wrote:
->>> Hello,
->>>
->>> This patch series aims to bring H.264 support as well as compliance update
->>> to the amlogic stateful video decoder driver.
->>>
->>> There is 1 issue that remains currently:
->>>
->>>   - The following codepath had to be commented out from v4l2-compliance as
->>> it led to stalling:
->>>
->>> if (node->codec_mask & STATEFUL_DECODER) {
->>>     struct v4l2_decoder_cmd cmd;
->>>     buffer buf_cap(m2m_q);
->>>
->>>     memset(&cmd, 0, sizeof(cmd));
->>>     cmd.cmd = V4L2_DEC_CMD_STOP;
->>>
->>>     /* No buffers are queued, call STREAMON, then STOP */
->>>     fail_on_test(node->streamon(q.g_type()));
->>>     fail_on_test(node->streamon(m2m_q.g_type()));
->>>     fail_on_test(doioctl(node, VIDIOC_DECODER_CMD, &cmd));
->>>
->>>     fail_on_test(buf_cap.querybuf(node, 0));
->>>     fail_on_test(buf_cap.qbuf(node));
->>>     fail_on_test(buf_cap.dqbuf(node));
->>>     fail_on_test(!(buf_cap.g_flags() & V4L2_BUF_FLAG_LAST));
->>>     for (unsigned p = 0; p < buf_cap.g_num_planes(); p++)
->>>         fail_on_test(buf_cap.g_bytesused(p));
->>>     fail_on_test(node->streamoff(q.g_type()));
->>>     fail_on_test(node->streamoff(m2m_q.g_type()));
->>>
->>>     /* Call STREAMON, queue one CAPTURE buffer, then STOP */
->>>     fail_on_test(node->streamon(q.g_type()));
->>>     fail_on_test(node->streamon(m2m_q.g_type()));
->>>     fail_on_test(buf_cap.querybuf(node, 0));
->>>     fail_on_test(buf_cap.qbuf(node));
->>>     fail_on_test(doioctl(node, VIDIOC_DECODER_CMD, &cmd));
->>>
->>>     fail_on_test(buf_cap.dqbuf(node));
->>>     fail_on_test(!(buf_cap.g_flags() & V4L2_BUF_FLAG_LAST));
->>>     for (unsigned p = 0; p < buf_cap.g_num_planes(); p++)
->>>         fail_on_test(buf_cap.g_bytesused(p));
->>>     fail_on_test(node->streamoff(q.g_type()));
->>>     fail_on_test(node->streamoff(m2m_q.g_type()));
->>> }
->>>
->>> The reason for this is because the driver has a limitation where all
->>> capturebuffers must be queued to the driver before STREAMON is effective.
->>> The firmware needs to know in advance what all the buffers are before
->>> starting to decode.
->>> This limitation is enforced via q->min_buffers_needed.
->>> As such, in this compliance codepath, STREAMON is never actually called
->>> driver-side and there is a stall on fail_on_test(buf_cap.dqbuf(node));
->>
->> That's interesting. I will have to look more closely at this.
->>
->>>
->>>
->>> One last detail: V4L2_FMT_FLAG_DYN_RESOLUTION is currently not recognized
->>> by v4l2-compliance, so it was left out for the test. However, it is
->>> present in the patch series.
->>
->> It is definitely recognized by v4l2-compliance.
->>
->>>
->>> The second patch has 3 "Alignment should match open parenthesis" lines
->>> where I preferred to keep them that way.
->>>
->>> Thanks Stanimir for sharing your HDR file creation tools, this was very
->>> helpful :).
->>>
->>> Maxime
->>>
->>> # v4l2-compliance --stream-from-hdr test-25fps.h264.hdr -s250
->>> v4l2-compliance SHA: a162244d47d4bb01d0692da879dce5a070f118e7, 64 bits
->>
->> But this SHA isn't in the v4l-utils repo, so this makes me wonder where you
->> got this repo from.
->>
-> 
-> I am based off the hverkuil/vicodec branch. The SHA I am on is actually 05387265053bc6f9 ("test-media: add vicodec tests"), but it wasn't updated as I found out it requires a new bootstrap to refresh
-> the SHA. Maybe some rebasing at some point got rid of a162244d.
+On Mon, 7 Oct 2019 09:16:34 -0700
+Tony Lindgren <tony@atomide.com> wrote:
 
-Don't use the hverkuil/vicodec branch. Everything there has been merged into the
-regular v4l-utils repo some time ago. So just clone git://linuxtv.org/v4l-utils.git
-and use that.
+> Hi,
+> 
+> * Emmanuel Vadot <manu@freebsd.org> [191007 08:04]:
+> > Commit 5b63fb90adb95 ("ARM: dts: Fix incomplete dts data for am3 and am4 mmc")
+> > fixed the mmc instances on the l3 interconnect but removed the disabled status.
+> > Fix this and let boards properly define it if it have it.
+> 
+> The dts default is "okay", and should be fine for all the
+> internal devices even if not pinned out on the board. This
+> way the devices get properly idled during boot, and we
+> avoid repeating status = "enabled" over and over again in
+> the board specific dts files.
 
-Regards,
+ That is not correct, if a status != "disabled" then pinmuxing will be
+configured for this device and if multiple devices share the same pin
+then you have a problem. Note that I have (almost) no knowledge on Ti
+SoC but I doubt that this is not the case on them.
+ Also every other boards that I work with use the standard of setting
+every node to disabled in the dtsi and let the board enable them at
+will. Is there something different happening in the TI world ?
 
-	Hans
+> Then the board specific dts files might want to configure
+> devices with status = "disabled" if really needed. But this
+> should be only done for devices that Linux must not use,
+> such as crypto acclerators on secure devices if claimed by
+> the secure mode.
+> 
+> So if this fixes something, it's almost certainly a sign
+> of something else being broken?
 
-> 
-> I started fresh and ran it again. As you can see, V4L2_FMT_FLAG_DYN_RESOLUTION is still problematic (removing it makes all the checks pass):
-> 
-> -------------------------------
-> # v4l2-compliance --stream-from-hdr test-25fps.h264.hdr -s250
-> v4l2-compliance SHA: 05387265053bc6f9c8c98e112543adb28ae39cfa, 64 bits
-> 
-> Compliance test for meson-vdec device /dev/video0:
-> 
-> Driver Info:
->     Driver name      : meson-vdec
->     Card type        : Amlogic Video Decoder
->     Bus info         : platform:meson-vdec
->     Driver version   : 5.4.0
->     Capabilities     : 0x84204000
->         Video Memory-to-Memory Multiplanar
->         Streaming
->         Extended Pix Format
->         Device Capabilities
->     Device Caps      : 0x04204000
->         Video Memory-to-Memory Multiplanar
->         Streaming
->         Extended Pix Format
->     Detected Stateful Decoder
-> 
-> Required ioctls:
->     test VIDIOC_QUERYCAP: OK
-> 
-> Allow for multiple opens:
->     test second /dev/video0 open: OK
->     test VIDIOC_QUERYCAP: OK
->     test VIDIOC_G/S_PRIORITY: OK
->     test for unlimited opens: OK
-> 
-> Debug ioctls:
->     test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
->     test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
->     test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->     test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->     test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->     test VIDIOC_ENUMAUDIO: OK (Not Supported)
->     test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
->     test VIDIOC_G/S_AUDIO: OK (Not Supported)
->     Inputs: 0 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
->     test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->     test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->     test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->     test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->     test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->     Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
->     test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->     test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->     test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
->     test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls:
->     test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
->     test VIDIOC_QUERYCTRL: OK
->     test VIDIOC_G/S_CTRL: OK
->     test VIDIOC_G/S/TRY_EXT_CTRLS: OK
->     test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
->     test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->     Standard Controls: 2 Private Controls: 0
-> 
-> Format ioctls:
->         fail: v4l2-test-formats.cpp(263): unknown flag 00000009 returned
->     test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: FAIL
->     test VIDIOC_G/S_PARM: OK (Not Supported)
->     test VIDIOC_G_FBUF: OK (Not Supported)
->         fail: v4l2-test-formats.cpp(457): pixelformat 34363248 (H264) for buftype 10 not reported by ENUM_FMT
->     test VIDIOC_G_FMT: FAIL
->         fail: v4l2-test-formats.cpp(457): pixelformat 34363248 (H264) for buftype 10 not reported by ENUM_FMT
->     test VIDIOC_TRY_FMT: FAIL
->         fail: v4l2-test-formats.cpp(457): pixelformat 3247504d (MPG2) for buftype 10 not reported by ENUM_FMT
->     test VIDIOC_S_FMT: FAIL
->     test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->     test Cropping: OK (Not Supported)
->     test Composing: OK (Not Supported)
->     test Scaling: OK
-> 
-> Codec ioctls:
->     test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->     test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->     test VIDIOC_(TRY_)DECODER_CMD: OK
-> 
-> Buffer ioctls:
->     test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->     test VIDIOC_EXPBUF: OK
->     test Requests: OK (Not Supported)
-> 
-> Test input 0:
-> 
-> Streaming ioctls:
->     test read/write: OK (Not Supported)
->     test blocking wait: OK
->     Video Capture Multiplanar: Captured 250 buffers
->     test MMAP (select): OK
->     Video Capture Multiplanar: Captured 250 buffers
->     test MMAP (epoll): OK
->     test USERPTR (select): OK (Not Supported)
->     test DMABUF: Cannot test, specify --expbuf-device
-> 
-> Total for meson-vdec device /dev/video0: 49, Succeeded: 45, Failed: 4, Warnings: 0
-> 
-> -------------------------------
-> 
-> Should I be using another branch than vicodec ?
-> 
-> 
->> Regards,
->>
->>     Hans
->>
+ In this case it's FreeBSD being  because (I think) we have bad support
+for the clocks for this module so we panic when we read from it as the
+module isn't clocked. And since I find it wrong to have device enabled
+while it isn't present I've sent this patch.
 
+ Cheers,
+
+> Regards,
+> 
+> Tony
+> 
+> 
+> > Fixes: 5b63fb90adb95 ("ARM: dts: Fix incomplete dts data for am3 and am4 mmc")
+> > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+> > ---
+> >  arch/arm/boot/dts/am33xx.dtsi | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+> > index fb6b8aa12cc5..b3a1fd9e39fa 100644
+> > --- a/arch/arm/boot/dts/am33xx.dtsi
+> > +++ b/arch/arm/boot/dts/am33xx.dtsi
+> > @@ -260,6 +260,7 @@
+> >  				ti,needs-special-reset;
+> >  				interrupts = <29>;
+> >  				reg = <0x0 0x1000>;
+> > +				status = "disabled";
+> >  			};
+> >  		};
+> >  
+> > -- 
+> > 2.22.0
+> > 
+
+
+-- 
+Emmanuel Vadot <manu@bidouilliste.com>
