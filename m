@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51958CE5AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDECBCE5B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbfJGOtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:49:47 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44487 "EHLO
+        id S1728806AbfJGOtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:49:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44524 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728603AbfJGOtm (ORCPT
+        with ESMTP id S1728692AbfJGOtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:42 -0400
+        Mon, 7 Oct 2019 10:49:46 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUKN-0006AS-5S; Mon, 07 Oct 2019 16:49:35 +0200
+        id 1iHUKP-0006Ag-MD; Mon, 07 Oct 2019 16:49:37 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C6FD91C08B0;
-        Mon,  7 Oct 2019 16:49:31 +0200 (CEST)
-Date:   Mon, 07 Oct 2019 14:49:31 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1269B1C0DC9;
+        Mon,  7 Oct 2019 16:49:32 +0200 (CEST)
+Date:   Mon, 07 Oct 2019 14:49:32 -0000
 From:   "tip-bot2 for Mike Travis" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/platform] x86/platform/uv: Add UV Hubbed/Hubless Proc FS Files
+Subject: [tip: x86/platform] x86/platform/uv: Add return code to UV BIOS Init function
 Cc:     Mike Travis <mike.travis@hpe.com>, Steve Wahl <steve.wahl@hpe.com>,
         Dimitri Sivanich <dimitri.sivanich@hpe.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -38,10 +38,10 @@ Cc:     Mike Travis <mike.travis@hpe.com>, Steve Wahl <steve.wahl@hpe.com>,
         Russ Anderson <russ.anderson@hpe.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20190910145840.055590900@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190910145840.055590900@stormcage.eag.rdlabs.hpecorp.net>
+In-Reply-To: <20190910145839.895739629@stormcage.eag.rdlabs.hpecorp.net>
+References: <20190910145839.895739629@stormcage.eag.rdlabs.hpecorp.net>
 MIME-Version: 1.0
-Message-ID: <157045977175.9978.7357984896554313600.tip-bot2@tip-bot2>
+Message-ID: <157045977203.9978.7836033501229160408.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -57,19 +57,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/platform branch of tip:
 
-Commit-ID:     8785968bce1cc7368ea95c3e1e5b9210f56f6667
-Gitweb:        https://git.kernel.org/tip/8785968bce1cc7368ea95c3e1e5b9210f56f6667
+Commit-ID:     9743cb68f736d986481edba4d00de454d2faa0ec
+Gitweb:        https://git.kernel.org/tip/9743cb68f736d986481edba4d00de454d2faa0ec
 Author:        Mike Travis <mike.travis@hpe.com>
-AuthorDate:    Tue, 10 Sep 2019 09:58:44 -05:00
+AuthorDate:    Tue, 10 Sep 2019 09:58:42 -05:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Mon, 07 Oct 2019 13:42:10 +02:00
 
-x86/platform/uv: Add UV Hubbed/Hubless Proc FS Files
+x86/platform/uv: Add return code to UV BIOS Init function
 
-Indicate to UV user utilities that UV hubless support is available on
-this system via the existing /proc infterface.  The current interface is
-maintained with the addition of new /proc leaves ("hubbed", "hubless",
-and "oemid") that contain the specific type of UV arch this one is.
+Add a return code to the UV BIOS init function that indicates the
+successful initialization of the kernel/BIOS callback interface.
 
 Signed-off-by: Mike Travis <mike.travis@hpe.com>
 Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
@@ -84,178 +82,62 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Russ Anderson <russ.anderson@hpe.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190910145840.055590900@stormcage.eag.rdlabs.hpecorp.net
+Link: https://lkml.kernel.org/r/20190910145839.895739629@stormcage.eag.rdlabs.hpecorp.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/uv/uv.h       |  4 +-
- arch/x86/kernel/apic/x2apic_uv_x.c | 93 ++++++++++++++++++++++++++++-
- 2 files changed, 96 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/uv/bios.h |  2 +-
+ arch/x86/platform/uv/bios_uv.c |  9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/uv/uv.h b/arch/x86/include/asm/uv/uv.h
-index 792faab..45ea95c 100644
---- a/arch/x86/include/asm/uv/uv.h
-+++ b/arch/x86/include/asm/uv/uv.h
-@@ -12,6 +12,8 @@ struct mm_struct;
- #ifdef CONFIG_X86_UV
- #include <linux/efi.h>
+diff --git a/arch/x86/include/asm/uv/bios.h b/arch/x86/include/asm/uv/bios.h
+index 6e7caf6..389174e 100644
+--- a/arch/x86/include/asm/uv/bios.h
++++ b/arch/x86/include/asm/uv/bios.h
+@@ -138,7 +138,7 @@ extern s64 uv_bios_change_memprotect(u64, u64, enum uv_memprotect);
+ extern s64 uv_bios_reserved_page_pa(u64, u64 *, u64 *, u64 *);
+ extern int uv_bios_set_legacy_vga_target(bool decode, int domain, int bus);
  
-+#define	UV_PROC_NODE	"sgi_uv"
-+
- static inline int uv(int uvtype)
- {
- 	/* uv(0) is "any" */
-@@ -28,6 +30,7 @@ static inline bool is_early_uv_system(void)
- 	return uv_systab_phys && uv_systab_phys != EFI_INVALID_TABLE_ADDR;
+-extern void uv_bios_init(void);
++extern int uv_bios_init(void);
+ 
+ extern unsigned long sn_rtc_cycles_per_second;
+ extern int uv_type;
+diff --git a/arch/x86/platform/uv/bios_uv.c b/arch/x86/platform/uv/bios_uv.c
+index c2ee319..ece9cb9 100644
+--- a/arch/x86/platform/uv/bios_uv.c
++++ b/arch/x86/platform/uv/bios_uv.c
+@@ -184,20 +184,20 @@ int uv_bios_set_legacy_vga_target(bool decode, int domain, int bus)
  }
- extern int is_uv_system(void);
-+extern int is_uv_hubbed(int uvtype);
- extern int is_uv_hubless(int uvtype);
- extern void uv_cpu_init(void);
- extern void uv_nmi_init(void);
-@@ -40,6 +43,7 @@ extern const struct cpumask *uv_flush_tlb_others(const struct cpumask *cpumask,
- static inline enum uv_system_type get_uv_system_type(void) { return UV_NONE; }
- static inline bool is_early_uv_system(void)	{ return 0; }
- static inline int is_uv_system(void)	{ return 0; }
-+static inline int is_uv_hubbed(int uv)	{ return 0; }
- static inline int is_uv_hubless(int uv) { return 0; }
- static inline void uv_cpu_init(void)	{ }
- static inline void uv_system_init(void)	{ }
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index 14554a3..b505905 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -26,6 +26,7 @@
- static DEFINE_PER_CPU(int, x2apic_extra_bits);
+ EXPORT_SYMBOL_GPL(uv_bios_set_legacy_vga_target);
  
- static enum uv_system_type	uv_system_type;
-+static int			uv_hubbed_system;
- static int			uv_hubless_system;
- static u64			gru_start_paddr, gru_end_paddr;
- static u64			gru_dist_base, gru_first_node_paddr = -1LL, gru_last_node_paddr;
-@@ -309,6 +310,24 @@ static int __init uv_acpi_madt_oem_check(char *_oem_id, char *_oem_table_id)
- 	if (uv_hub_info->hub_revision == 0)
- 		goto badbios;
- 
-+	switch (uv_hub_info->hub_revision) {
-+	case UV4_HUB_REVISION_BASE:
-+		uv_hubbed_system = 0x11;
-+		break;
-+
-+	case UV3_HUB_REVISION_BASE:
-+		uv_hubbed_system = 0x9;
-+		break;
-+
-+	case UV2_HUB_REVISION_BASE:
-+		uv_hubbed_system = 0x5;
-+		break;
-+
-+	case UV1_HUB_REVISION_BASE:
-+		uv_hubbed_system = 0x3;
-+		break;
-+	}
-+
- 	pnodeid = early_get_pnodeid();
- 	early_get_apic_socketid_shift();
- 
-@@ -359,6 +378,12 @@ int is_uv_system(void)
- }
- EXPORT_SYMBOL_GPL(is_uv_system);
- 
-+int is_uv_hubbed(int uvtype)
-+{
-+	return (uv_hubbed_system & uvtype);
-+}
-+EXPORT_SYMBOL_GPL(is_uv_hubbed);
-+
- int is_uv_hubless(int uvtype)
+-void uv_bios_init(void)
++int uv_bios_init(void)
  {
- 	return (uv_hubless_system & uvtype);
-@@ -1457,6 +1482,68 @@ static void __init build_socket_tables(void)
+ 	uv_systab = NULL;
+ 	if ((uv_systab_phys == EFI_INVALID_TABLE_ADDR) ||
+ 	    !uv_systab_phys || efi_runtime_disabled()) {
+ 		pr_crit("UV: UVsystab: missing\n");
+-		return;
++		return -EEXIST;
  	}
+ 
+ 	uv_systab = ioremap(uv_systab_phys, sizeof(struct uv_systab));
+ 	if (!uv_systab || strncmp(uv_systab->signature, UV_SYSTAB_SIG, 4)) {
+ 		pr_err("UV: UVsystab: bad signature!\n");
+ 		iounmap(uv_systab);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	/* Starting with UV4 the UV systab size is variable */
+@@ -208,8 +208,9 @@ void uv_bios_init(void)
+ 		uv_systab = ioremap(uv_systab_phys, size);
+ 		if (!uv_systab) {
+ 			pr_err("UV: UVsystab: ioremap(%d) failed!\n", size);
+-			return;
++			return -EFAULT;
+ 		}
+ 	}
+ 	pr_info("UV: UVsystab: Revision:%x\n", uv_systab->revision);
++	return 0;
  }
- 
-+/* Setup user proc fs files */
-+static int proc_hubbed_show(struct seq_file *file, void *data)
-+{
-+	seq_printf(file, "0x%x\n", uv_hubbed_system);
-+	return 0;
-+}
-+
-+static int proc_hubless_show(struct seq_file *file, void *data)
-+{
-+	seq_printf(file, "0x%x\n", uv_hubless_system);
-+	return 0;
-+}
-+
-+static int proc_oemid_show(struct seq_file *file, void *data)
-+{
-+	seq_printf(file, "%s/%s\n", oem_id, oem_table_id);
-+	return 0;
-+}
-+
-+static int proc_hubbed_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, proc_hubbed_show, (void *)NULL);
-+}
-+
-+static int proc_hubless_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, proc_hubless_show, (void *)NULL);
-+}
-+
-+static int proc_oemid_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, proc_oemid_show, (void *)NULL);
-+}
-+
-+/* (struct is "non-const" as open function is set at runtime) */
-+static struct file_operations proc_version_fops = {
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static const struct file_operations proc_oemid_fops = {
-+	.open		= proc_oemid_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static __init void uv_setup_proc_files(int hubless)
-+{
-+	struct proc_dir_entry *pde;
-+	char *name = hubless ? "hubless" : "hubbed";
-+
-+	pde = proc_mkdir(UV_PROC_NODE, NULL);
-+	proc_create("oemid", 0, pde, &proc_oemid_fops);
-+	proc_create(name, 0, pde, &proc_version_fops);
-+	if (hubless)
-+		proc_version_fops.open = proc_hubless_open;
-+	else
-+		proc_version_fops.open = proc_hubbed_open;
-+}
-+
- /* Initialize UV hubless systems */
- static __init int uv_system_init_hubless(void)
- {
-@@ -1468,6 +1555,10 @@ static __init int uv_system_init_hubless(void)
- 	/* Init kernel/BIOS interface */
- 	rc = uv_bios_init();
- 
-+	/* Create user access node if UVsystab available */
-+	if (rc >= 0)
-+		uv_setup_proc_files(1);
-+
- 	return rc;
- }
- 
-@@ -1596,7 +1687,7 @@ static void __init uv_system_init_hub(void)
- 	uv_nmi_setup();
- 	uv_cpu_init();
- 	uv_scir_register_cpu_notifier();
--	proc_mkdir("sgi_uv", NULL);
-+	uv_setup_proc_files(0);
- 
- 	/* Register Legacy VGA I/O redirection handler: */
- 	pci_register_set_vga_state(uv_set_vga_state);
