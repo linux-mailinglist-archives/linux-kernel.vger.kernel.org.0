@@ -2,137 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B520CCEB8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F258CEB8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbfJGSNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:13:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34574 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728079AbfJGSNp (ORCPT
+        id S1729346AbfJGSNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:13:48 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35893 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728723AbfJGSNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:13:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=dlfa46lGCXB+/J0deOqs/W09rBlwYzs099ZfVzI+9RM=; b=JNe81tPrJrrH
-        VkighFnutBYOUCjjUr2NKOzNc0lmT86d6oIAdhojEKNGH6z8dbbOsLJ5mFn9Nm+g3M6VF8sC0etWz
-        GcyY17vAMPbIvUUh4iVmR7pRxyvbajIEnv7mSlVWF1oS/owSLzCbazZQoRkWIlXXbtG6sT9r35a/e
-        hNl4c=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iHXVe-0004GE-2f; Mon, 07 Oct 2019 18:13:26 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 7EAD52741D8E; Mon,  7 Oct 2019 19:13:25 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, navada@ti.com, perex@perex.cz,
-        shifu0704@thundersoft.com, tiwai@suse.com
-Subject: Applied "ASoc: tas2770: Remove unused defines and variables" to the asoc tree
-In-Reply-To: <20191007171157.17813-3-dmurphy@ti.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191007181325.7EAD52741D8E@ypsilon.sirena.org.uk>
-Date:   Mon,  7 Oct 2019 19:13:25 +0100 (BST)
+        Mon, 7 Oct 2019 14:13:47 -0400
+Received: by mail-lf1-f68.google.com with SMTP id x80so9971898lff.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:13:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yMlh6GXN6QbpwC889qdv/mL2tKRwyhPfZJiqASBvKqo=;
+        b=h8vVKPc80ltfyFjjkk1eX3SsLDZsWpHSGP70shQML8lM+pQi5PD43ZLbNhTvHnnieH
+         3Pdsvi7u5yvEvu0mkBG36/MC6h2vZ5j/Ramv3pLra1nTcYqBd177SsSNYgfSw50OivjV
+         toQ4l5QhAqNdBrZzz/KNR6RQik0WFppq5OXBQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yMlh6GXN6QbpwC889qdv/mL2tKRwyhPfZJiqASBvKqo=;
+        b=j/T4yeiiFoc0IsMKOrJeO+62ZCibzJUWhAmFyXX1nLt4o+B5AVrROejh4+itNAHTv0
+         5lrNsL1MhY6Yo3lcff9ylZ1vpxpRdU8ynUiO3ThKn5nxQGGlsEY3FeXpaI80ic/hyQb0
+         XoWqgYCi7gmh1IhIQdrZnRHkAB8V/Lez3lIyfRX2HS3dYw6XbpmSMeQLlXh8hGsEloVR
+         +BHyUe0UHeS3IKS8lmoSp40hRlM/mL9og4JhRfuQlCkpDTHUGgU9pTYx9hSvyMubauAE
+         hnIebtW8jRBsES+oAj/vV6sTwJtz75s3KtsNIro+CKXmAboOycxKK+BHDpS5rpooCPiR
+         gJUw==
+X-Gm-Message-State: APjAAAV8c3zpwZWgNW30eCQMhhJefJZhThAymF7GdAtmJ4oJ/+xYNsHo
+        VFNJpRrj3159CrPUvxdh9m9SCn8O378=
+X-Google-Smtp-Source: APXvYqySM3sFYGWYUiKpsM1dV1p9HeLbFWb1d9c0vusYTRcWsRtdrDDeRRClKlNFXgZO/vywHeVLIA==
+X-Received: by 2002:a19:ae0b:: with SMTP id f11mr18175406lfc.28.1570472024330;
+        Mon, 07 Oct 2019 11:13:44 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id 202sm3307827ljf.75.2019.10.07.11.13.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id u3so9931694lfl.10
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr17404487lfh.29.1570472023078;
+ Mon, 07 Oct 2019 11:13:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <20191006222046.GA18027@roeck-us.net> <CAHk-=wgrqwuZJmwbrjhjCFeSUu2i57unaGOnP4qZAmSyuGwMZA@mail.gmail.com>
+ <CAHk-=wjRPerXedTDoBbJL=tHBpH+=sP6pX_9NfgWxpnmHC5RtQ@mail.gmail.com>
+ <5f06c138-d59a-d811-c886-9e73ce51924c@roeck-us.net> <CAHk-=whAQWEMADgxb_qAw=nEY4OnuDn6HU4UCSDMNT5ULKvg3g@mail.gmail.com>
+ <20191007012437.GK26530@ZenIV.linux.org.uk> <CAHk-=whKJfX579+2f-CHc4_YmEmwvMe_Csr0+CPfLAsSAdfDoA@mail.gmail.com>
+ <20191007025046.GL26530@ZenIV.linux.org.uk> <CAHk-=whraNSys_Lj=Ut1EA=CJEfw2Uothh+5-WL+7nDJBegWcQ@mail.gmail.com>
+ <20191007173432.GM26530@ZenIV.linux.org.uk>
+In-Reply-To: <20191007173432.GM26530@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 7 Oct 2019 11:13:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgSzPwzX0cHgTZ9SQrd8XWQcMnLkBCo_-710pLTEBFGYQ@mail.gmail.com>
+Message-ID: <CAHk-=wgSzPwzX0cHgTZ9SQrd8XWQcMnLkBCo_-710pLTEBFGYQ@mail.gmail.com>
+Subject: Re: [PATCH] Convert filldir[64]() from __put_user() to unsafe_put_user()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, Oct 7, 2019 at 10:34 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Tangentially related: copy_regster_to_user() and copy_regset_from_user().
 
-   ASoc: tas2770: Remove unused defines and variables
+Not a worry. It's not performance-critical code, and if it ever is, it
+needs to be rewritten anyway.
 
-has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+> The former variant tends to lead to few calls
+> of __copy_{to,from}_user(); the latter...  On x86 it ends up doing
+> this:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Just replace the __put_user() with a put_user() and be done with it.
+That code isn't acceptable, and if somebody ever complains about
+performance it's not the lack of __put_user that is the problem.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 40f90ef0a77bab65c8f959ba1d264bb674f7234b Mon Sep 17 00:00:00 2001
-From: Dan Murphy <dmurphy@ti.com>
-Date: Mon, 7 Oct 2019 12:11:57 -0500
-Subject: [PATCH] ASoc: tas2770: Remove unused defines and variables
-
-Remove unused defines and structure variables that are not
-referenced by the code.  If these are needed for future
-enhancements then they should be added at that time.
-
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Link: https://lore.kernel.org/r/20191007171157.17813-3-dmurphy@ti.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/tas2770.h | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/sound/soc/codecs/tas2770.h b/sound/soc/codecs/tas2770.h
-index d597a8280707..cbb858369fe6 100644
---- a/sound/soc/codecs/tas2770.h
-+++ b/sound/soc/codecs/tas2770.h
-@@ -125,40 +125,19 @@
- #define ERROR_UNDER_VOLTAGE 0x0000008
- #define ERROR_BROWNOUT      0x0000010
- #define ERROR_CLASSD_PWR    0x0000020
--#define TAS2770_SLOT_16BIT  16
--#define TAS2770_SLOT_32BIT  32
--#define TAS2770_I2C_RETRY_COUNT      3
--
--struct tas2770_register {
--	int book;
--	int page;
--	int reg;
--};
--
--struct tas2770_dai_cfg {
--	unsigned int dai_fmt;
--	unsigned int tdm_delay;
--};
- 
- struct tas2770_priv {
- 	struct device *dev;
- 	struct regmap *regmap;
--	struct snd_soc_codec *codec;
- 	struct snd_soc_component *component;
--	struct mutex dev_lock;
--	struct hrtimer mtimer;
- 	int power_state;
- 	int asi_format;
- 	struct gpio_desc *reset_gpio;
- 	int sampling_rate;
--	int frame_size;
- 	int channel_size;
- 	int slot_width;
- 	int v_sense_slot;
- 	int i_sense_slot;
--	bool runtime_suspend;
--	unsigned int err_code;
--	struct mutex codec_lock;
- };
- 
- #endif /* __TAS2770__ */
--- 
-2.20.1
-
+           Linus
