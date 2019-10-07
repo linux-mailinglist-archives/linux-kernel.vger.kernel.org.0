@@ -2,120 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A873DCEB53
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 19:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B96CCCEB5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:00:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfJGR7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 13:59:20 -0400
-Received: from mail-eopbgr710135.outbound.protection.outlook.com ([40.107.71.135]:35603
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728079AbfJGR7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 13:59:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H9oUNSm8wAr8U4FKsnyjQQcpo9hf83F7ac+/bDqnC1SYDxDDH4+cW0exlLnF3GFR8V6VUV8C4EF8zu6CPpodV6OOn6oeBSrCvdfdLUDpPl0BR2K7erqlT5ICE4fag77G2NWAXdei/PkN+JaE45tz9SDjy2aqHFEnsk2tcVXuErHMx0IsWTmQyCSCNUxEvf9ilpXKl3KhNSzET+xgO3SaSJFLhXsahsYqI267ww4xebZw2gscgfXRem9uDu/MGePj48t9W3p/gJUsAY2GzZ8dwLpSz08i9vW6IcAtjzRLcGb31ROqcdT8XOGVKslMRnTQ9AKWgk3Izcws5uPiDsC56A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YpugprrxkpYyCFw31flchiDPUSvNqCsv1FxjbiTbckE=;
- b=ZXNm3aK67PYosKiNxq8eEX5jS5a018BQ7ZNADFo2oUWQtkcbMK49e552AAmdOu5go3KnOlsN9uZcMrDhpmxnL1lQF8ZyFF/Q4Hy0GArXxyG+hsRgDR/+Gx4be6rOL6NpAphSHm0z1n/AGxcVyZZopvWpb7BiHGwT1YqT98Tpr6nLalAQvp4wva/8BUKtVhht8EgIFhS9VUpDri0nAyMZlOlm+F53kwRuNFeh2LMvfvVTRIRIqLaqEeXS6AkUbqK/yz3Xz1B+pOfFfk6fFLu7TLYEVWETgOmvbc4VJsgtyVMfgwYNVBwV8tFI4LOzMnWCQdZhP8dNBa+wk0/2VE69BQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YpugprrxkpYyCFw31flchiDPUSvNqCsv1FxjbiTbckE=;
- b=F2owVDi7Ep01desXvKu6V0T9Ii8Wy4dIZLgNPwk8GLzK3dZ9AhN1hx7K9RlIRS988lljt1WbaWPNgocLXh5QounfcWC3QDCxBq6SxwSMuwIU0SxZTkrBXgJ73yz8SVZj6zEjc50kFEsc5Fazs5AH6o04MMBOE7+N3Bx4w/dmNT8=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1470.namprd22.prod.outlook.com (10.174.170.143) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.24; Mon, 7 Oct 2019 17:59:18 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::3050:9a38:9d8e:8033]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::3050:9a38:9d8e:8033%5]) with mapi id 15.20.2327.025; Mon, 7 Oct 2019
- 17:59:18 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Aurabindo Jayamohanan <mail@aurabindo.in>
-CC:     "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "armijn@tjaldur.nl" <armijn@tjaldur.nl>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH] mips: check for dsp presence only once before
- save/restore
-Thread-Topic: [PATCH] mips: check for dsp presence only once before
- save/restore
-Thread-Index: AQHVfTjwGrGVHbSFvECLy1pIiGJbFw==
-Date:   Mon, 7 Oct 2019 17:59:18 +0000
-Message-ID: <MWHPR2201MB1277E7B787B02B8ADB37E2D9C19B0@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20190913120206.9234-1-mail@aurabindo.in>
-In-Reply-To: <20190913120206.9234-1-mail@aurabindo.in>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR03CA0016.namprd03.prod.outlook.com
- (2603:10b6:a02:a8::29) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 57346c07-708f-4d0c-3e87-08d74b5012a6
-x-ms-traffictypediagnostic: MWHPR2201MB1470:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB1470EC7A15495F3FC0802255C19B0@MWHPR2201MB1470.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 01834E39B7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39840400004)(396003)(376002)(366004)(136003)(199004)(189003)(52116002)(33656002)(7416002)(7696005)(76176011)(99286004)(6436002)(256004)(14444005)(476003)(74316002)(42882007)(11346002)(4326008)(446003)(229853002)(7736002)(305945005)(44832011)(486006)(102836004)(6116002)(3846002)(6246003)(71190400001)(71200400001)(6506007)(386003)(26005)(2906002)(186003)(1250700005)(52536014)(9686003)(4744005)(6916009)(54906003)(316002)(5660300002)(25786009)(66066001)(6306002)(14454004)(66446008)(55016002)(478600001)(8936002)(81156014)(66946007)(64756008)(66476007)(81166006)(966005)(8676002)(66556008);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1470;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 1alN3vTzsY3RTyU0nGRudf5JMTk8sZm1JsEorVs7MmuNFoTnSYF8Nd4H9NbvnYZiS7zX3t8OKZMu+3jKVTvvXUCxQqFitkhmZhkin8hP4uG34MK/Ks8t5Ib1xRPBuSF5VhOXq96qmnPvKIQet9wBgLcfvtxkHpwsLKirlWpzgnauPp5VkmCV9J5+/45Dl/Elx5kTqU1JWg5MT+RbkI5ykZrBy4Ukgz+Ef48fybuldVAyknlL6lOpWpFmW01VyNaSetrEuzB+Lqp7Ao2i+Wouoj5+DJdFZZyN9KQd66cOcdbAnj2uAkRONfHw++rJIWBYGBbWDdwK/AtdkxDP5Wj12Oh0LRcjRjdYe8OCXj4arxpTSgBfka3yPdJS4BVoH1RqPtnjVgFuYhmTyG/iXkSNYBQCy8AgN44Bsblpg9Cm3xB/0x/Zb2c7pAcSJE86LFfEakmsGHuzBvP92cLv/Y6QYg==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57346c07-708f-4d0c-3e87-08d74b5012a6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2019 17:59:18.0935
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SzzS65YKhm6dYiHdazvzdXi9Ly8mJHJ5V8YXO0NITXGCY0MohgmEaV9wCj3Jp0znVfa9zp+AK3ICTTfy5rImfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1470
+        id S1729378AbfJGR75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 13:59:57 -0400
+Received: from mga11.intel.com ([192.55.52.93]:33635 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729356AbfJGR74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 13:59:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 10:59:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
+   d="scan'208";a="193161263"
+Received: from unknown (HELO labuser-Ice-Lake-Client-Platform.jf.intel.com) ([10.54.55.65])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Oct 2019 10:59:55 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@kernel.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     jolsa@kernel.org, namhyung@kernel.org, ak@linux.intel.com,
+        vitaly.slobodskoy@intel.com, pavel.gerasimov@intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 02/10] perf tools: Support PERF_SAMPLE_LBR_TOS
+Date:   Mon,  7 Oct 2019 10:59:02 -0700
+Message-Id: <20191007175910.2805-3-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191007175910.2805-1-kan.liang@linux.intel.com>
+References: <20191007175910.2805-1-kan.liang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Aurabindo Jayamohanan wrote:
-> {save,restore}_dsp() internally checks if the cpu has dsp support.
-> Therefore, explicit check is not required before calling them in
-> {save,restore}_processor_state()
+Support new sample type PERF_SAMPLE_LBR_TOS.
 
-Applied to mips-next.
+Enable LBR_TOS by default in LBR call stack mode.
+If kernel doesn't support the sample type, switching it off.
 
-> commit 9662dd752c14
-> https://git.kernel.org/mips/c/9662dd752c14
->=20
-> Signed-off-by: Aurabindo Jayamohanan <mail@aurabindo.in>
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ tools/include/uapi/linux/perf_event.h     |  4 +++-
+ tools/perf/util/event.h                   |  1 +
+ tools/perf/util/evsel.c                   | 16 +++++++++++++++-
+ tools/perf/util/evsel.h                   |  1 +
+ tools/perf/util/perf_event_attr_fprintf.c |  2 +-
+ tools/perf/util/synthetic-events.c        |  8 ++++++++
+ 6 files changed, 29 insertions(+), 3 deletions(-)
 
-Thanks,
-    Paul
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index bb7b271397a6..fe36ebb7dc2e 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -141,8 +141,9 @@ enum perf_event_sample_format {
+ 	PERF_SAMPLE_TRANSACTION			= 1U << 17,
+ 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
+ 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
++	PERF_SAMPLE_LBR_TOS			= 1U << 20,
+ 
+-	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
++	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
+ 
+ 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
+ };
+@@ -864,6 +865,7 @@ enum perf_event_type {
+ 	 *	{ u64			abi; # enum perf_sample_regs_abi
+ 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
+ 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
++	 *	{ u64			tos;} && PERF_SAMPLE_LBR_TOS
+ 	 * };
+ 	 */
+ 	PERF_RECORD_SAMPLE			= 9,
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index a0a0c91cde4a..268c1715e032 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -130,6 +130,7 @@ struct perf_sample {
+ 	u32 raw_size;
+ 	u64 data_src;
+ 	u64 phys_addr;
++	u64 tos;
+ 	u32 flags;
+ 	u16 insn_len;
+ 	u8  cpumode;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index abc7fda4a0fe..0752417bbc45 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -709,6 +709,7 @@ static void __perf_evsel__config_callchain(struct evsel *evsel,
+ 					   "Falling back to framepointers.\n");
+ 			} else {
+ 				perf_evsel__set_sample_bit(evsel, BRANCH_STACK);
++				perf_evsel__set_sample_bit(evsel, LBR_TOS);
+ 				attr->branch_sample_type = PERF_SAMPLE_BRANCH_USER |
+ 							PERF_SAMPLE_BRANCH_CALL_STACK |
+ 							PERF_SAMPLE_BRANCH_NO_CYCLES |
+@@ -762,6 +763,7 @@ perf_evsel__reset_callgraph(struct evsel *evsel,
+ 	perf_evsel__reset_sample_bit(evsel, CALLCHAIN);
+ 	if (param->record_mode == CALLCHAIN_LBR) {
+ 		perf_evsel__reset_sample_bit(evsel, BRANCH_STACK);
++		perf_evsel__reset_sample_bit(evsel, LBR_TOS);
+ 		attr->branch_sample_type &= ~(PERF_SAMPLE_BRANCH_USER |
+ 					      PERF_SAMPLE_BRANCH_CALL_STACK);
+ 	}
+@@ -1641,6 +1643,8 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 		evsel->core.attr.ksymbol = 0;
+ 	if (perf_missing_features.bpf)
+ 		evsel->core.attr.bpf_event = 0;
++	if (perf_missing_features.lbr_tos)
++		perf_evsel__reset_sample_bit(evsel, LBR_TOS);
+ retry_sample_id:
+ 	if (perf_missing_features.sample_id_all)
+ 		evsel->core.attr.sample_id_all = 0;
+@@ -1752,7 +1756,11 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 	 * Must probe features in the order they were added to the
+ 	 * perf_event_attr interface.
+ 	 */
+-	if (!perf_missing_features.aux_output && evsel->core.attr.aux_output) {
++	if (!perf_missing_features.lbr_tos && (evsel->core.attr.sample_type & PERF_SAMPLE_LBR_TOS)) {
++		perf_missing_features.lbr_tos = true;
++		pr_debug2("switching off LBR TOS support\n");
++		goto fallback_missing_features;
++	} else if (!perf_missing_features.aux_output && evsel->core.attr.aux_output) {
+ 		perf_missing_features.aux_output = true;
+ 		pr_debug2("Kernel has no attr.aux_output support, bailing out\n");
+ 		goto out_close;
+@@ -2206,6 +2214,12 @@ int perf_evsel__parse_sample(struct evsel *evsel, union perf_event *event,
+ 		array++;
+ 	}
+ 
++	data->tos = -1ULL;
++	if (type & PERF_SAMPLE_LBR_TOS) {
++		data->tos = *array;
++		array++;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index ddc5ee6f6592..e4768c60da93 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -115,6 +115,7 @@ struct perf_missing_features {
+ 	bool ksymbol;
+ 	bool bpf;
+ 	bool aux_output;
++	bool lbr_tos;
+ };
+ 
+ extern struct perf_missing_features perf_missing_features;
+diff --git a/tools/perf/util/perf_event_attr_fprintf.c b/tools/perf/util/perf_event_attr_fprintf.c
+index d4ad3f04923a..254f1bf8dcae 100644
+--- a/tools/perf/util/perf_event_attr_fprintf.c
++++ b/tools/perf/util/perf_event_attr_fprintf.c
+@@ -34,7 +34,7 @@ static void __p_sample_type(char *buf, size_t size, u64 value)
+ 		bit_name(PERIOD), bit_name(STREAM_ID), bit_name(RAW),
+ 		bit_name(BRANCH_STACK), bit_name(REGS_USER), bit_name(STACK_USER),
+ 		bit_name(IDENTIFIER), bit_name(REGS_INTR), bit_name(DATA_SRC),
+-		bit_name(WEIGHT), bit_name(PHYS_ADDR),
++		bit_name(WEIGHT), bit_name(PHYS_ADDR), bit_name(LBR_TOS),
+ 		{ .name = NULL, }
+ 	};
+ #undef bit_name
+diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+index 807cbca403a7..a7d02e81defe 100644
+--- a/tools/perf/util/synthetic-events.c
++++ b/tools/perf/util/synthetic-events.c
+@@ -1228,6 +1228,9 @@ size_t perf_event__sample_event_size(const struct perf_sample *sample, u64 type,
+ 	if (type & PERF_SAMPLE_PHYS_ADDR)
+ 		result += sizeof(u64);
+ 
++	if (type & PERF_SAMPLE_LBR_TOS)
++		result += sizeof(u64);
++
+ 	return result;
+ }
+ 
+@@ -1396,6 +1399,11 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type, u64 read_fo
+ 		array++;
+ 	}
+ 
++	if (type & PERF_SAMPLE_LBR_TOS) {
++		*array = sample->tos;
++		array++;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
