@@ -2,75 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFB8CCE1E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A80DCE20F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:45:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfJGMjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:39:13 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59130 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbfJGMjN (ORCPT
+        id S1727931AbfJGMpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:45:03 -0400
+Received: from mtaout.hs-regensburg.de ([194.95.104.10]:60530 "EHLO
+        mtaout.hs-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727787AbfJGMpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:39:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NmMxgOpk+zChObqScgErQUa8ovA4vZzqiyXm38cl5PM=; b=dapvP4cEpBpOPnz4+8wMTFWU2
-        tg0xy4QsH/C4AMgI4jzyAD7dCIuyUQHtzQmFJ4DAMuk5WX0ZOzv0V7YTpsZS/vRD3QSoGf13mtgOd
-        OUszb7ntAAQ6pIWJAcnoDGkdxBCl7BTupQivTgOiygB8ujTaKa8OppxvqEYu3djL6HvVWMinTU2ZS
-        uDoj/kzq+RM1VFsomoPvi2FRnP9/WTbvf6umMhS5ezww1FcLRdHxhceK9l5KneLkDR7idA1JR4FuN
-        BwEjov1MRT86zn1e6UzP+1uqDUZwUEO1UVdvFmeY2cb3OxjcYTfDvt3E4wGCiDH+rviOV9GZofxUu
-        jXZpO5CvQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHSIA-0003IL-97; Mon, 07 Oct 2019 12:39:10 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 181E130034F;
-        Mon,  7 Oct 2019 14:38:18 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1221E202A1952; Mon,  7 Oct 2019 14:39:09 +0200 (CEST)
-Date:   Mon, 7 Oct 2019 14:39:09 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Juri Lelli <jlelli@redhat.com>
-Subject: Re: [PATCH v2] lib/smp_processor_id: Don't use cpumask_equal()
-Message-ID: <20191007123909.GE2294@hirez.programming.kicks-ass.net>
-References: <20191003203608.21881-1-longman@redhat.com>
+        Mon, 7 Oct 2019 08:45:03 -0400
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Oct 2019 08:45:01 EDT
+Received: from pluto.lfdr (im-mob-039.hs-regensburg.de [172.20.37.154])
+        by mtaout.hs-regensburg.de (Postfix) with ESMTP id 46n0Q44Z2Zzy16;
+        Mon,  7 Oct 2019 14:38:20 +0200 (CEST)
+From:   Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+To:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        jailhouse-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+Subject: [PATCH v5 0/2] x86/jailhouse: improve probing of platform UARTs
+Date:   Mon,  7 Oct 2019 14:38:17 +0200
+Message-Id: <20191007123819.161432-1-ralf.ramsauer@oth-regensburg.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191003203608.21881-1-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-PMX-Version: 6.3.3.2656215, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2019.10.7.123317, AntiVirus-Engine: 5.65.0, AntiVirus-Data: 2019.10.7.5650001
+X-PMX-Spam: Gauge=IIIIIIII, Probability=8%, Report='
+ MULTIPLE_RCPTS 0.1, HTML_00_01 0.05, HTML_00_10 0.05, BODYTEXTP_SIZE_3000_LESS 0, BODY_SIZE_1900_1999 0, BODY_SIZE_2000_LESS 0, BODY_SIZE_5000_LESS 0, BODY_SIZE_7000_LESS 0, LEGITIMATE_SIGNS 0, MULTIPLE_REAL_RCPTS 0, URI_ENDS_IN_HTML 0, URI_WITH_PATH_ONLY 0, __ANY_URI 0, __BODY_NO_MAILTO 0, __CC_NAME 0, __CC_NAME_DIFF_FROM_ACC 0, __CC_REAL_NAMES 0, __CP_URI_IN_BODY 0, __CTE 0, __FROM_DOMAIN_IN_ANY_CC1 0, __FROM_DOMAIN_IN_RCPT 0, __HAS_CC_HDR 0, __HAS_FROM 0, __HAS_MSGID 0, __HAS_X_MAILER 0, __HTTPS_URI 0, __INVOICE_MULTILINGUAL 0, __MIME_TEXT_ONLY 0, __MIME_TEXT_P 0, __MIME_TEXT_P1 0, __MIME_VERSION 0, __MULTIPLE_RCPTS_CC_X2 0, __MULTIPLE_RCPTS_TO_X5 0, __MULTIPLE_URI_TEXT 0, __NO_HTML_TAG_RAW 0, __SANE_MSGID 0, __SUBJ_ALPHA_END 0, __TO_MALFORMED_2 0, __TO_NAME 0, __TO_NAME_DIFF_FROM_ACC 0, __TO_REAL_NAMES 0, __URI_IN_BODY 0, __URI_NOT_IMG 0, __URI_NS , __URI_WITH_PATH 0'
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2019 at 04:36:08PM -0400, Waiman Long wrote:
-> The check_preemption_disabled() function uses cpumask_equal() to see
-> if the task is bounded to the current CPU only. cpumask_equal() calls
-> memcmp() to do the comparison. As x86 doesn't have __HAVE_ARCH_MEMCMP,
-> the slow memcmp() function in lib/string.c is used.
-> 
-> On a RT kernel that call check_preemption_disabled() very frequently,
-> below is the perf-record output of a certain microbenchmark:
-> 
->   42.75%  2.45%  testpmd [kernel.kallsyms] [k] check_preemption_disabled
->   40.01% 39.97%  testpmd [kernel.kallsyms] [k] memcmp
-> 
-> We should avoid calling memcmp() in performance critical path. So the
-> cpumask_equal() call is now replaced with an equivalent simpler check.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+Hi,
 
-Thanks!
+probing of platform UARTs is a problem for x86 jailhouse non-root
+cells: Linux doesn't know which UARTs belong to the cell and will probe
+for all platform UARTs. This crashes the guest if access isn't
+permitted. Current workarounds (tuning via 8250.nr_uarts) are hacky and
+limited.
+
+But we do have some flags inside setup_data that indicate availability
+of UARTs, so simply use it.
+
+  Ralf
+
+since v4:
+  - Link: https://lore.kernel.org/r/20190909151030.152012-1-ralf.ramsauer@oth-regensburg.de
+          alt: https://www.mail-archive.com/jailhouse-dev@googlegroups.com/msg07483.html
+  - rebase and test on latest master and resolve conflicts
+  - Add linux-kernel ML
+
+since v3:
+  - Link: https://lore.kernel.org/r/20190819183408.988013-1-ralf.ramsauer@oth-regensburg.de
+          alt: https://www.mail-archive.com/jailhouse-dev@googlegroups.com/msg07365.html
+  - Address Thomas' comments (and it really looks nicer)
+  - Address Jan's comment on patch 1 and add his Reviewed-by tag
+
+since v2:
+  - Link: https://lore.kernel.org/r/20190812110650.631305-1-ralf.ramsauer@oth-regensburg.de
+          alt: https://www.mail-archive.com/jailhouse-dev@googlegroups.com/msg07334.html
+  - avoid imbalances of early_memremap and early_memunmap
+
+since v1:
+  - Link: https://lore.kernel.org/r/20190802123333.4008-1-ralf.ramsauer@oth-regensburg.de
+  -       alt: https://www.mail-archive.com/jailhouse-dev@googlegroups.com/msg07283.html
+  - setup data version check wasn't really prepared for extensions of
+    the structure. Add a patch that improves the checks.
+
+
+Ralf Ramsauer (2):
+  x86/jailhouse: improve setup data version comparison
+  x86/jailhouse: Only enable platform UARTs if available
+
+ arch/x86/include/uapi/asm/bootparam.h |  25 +++--
+ arch/x86/kernel/jailhouse.c           | 131 ++++++++++++++++++++------
+ 2 files changed, 117 insertions(+), 39 deletions(-)
+
+-- 
+2.23.0
+
