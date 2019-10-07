@@ -2,117 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0930ACDCEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 10:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA87CCDCEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 10:12:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbfJGINn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 04:13:43 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54976 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbfJGINm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 04:13:42 -0400
-Received: from dhcp-172-31-174-146.wireless.concordia.ca (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 6C49628AF35;
-        Mon,  7 Oct 2019 09:13:40 +0100 (BST)
-Date:   Mon, 7 Oct 2019 10:13:37 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        liaoweixiong <liaoweixiong@allwinnertech.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Jeff Kletsky <git-commits@allycomm.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [EXT] Re: [PATCH 6/8] mtd: spinand: micron: Turn driver
- implementation generic
-Message-ID: <20191007101337.647300e2@dhcp-172-31-174-146.wireless.concordia.ca>
-In-Reply-To: <MN2PR08MB5951F13BC1D1D111681CCB4BB8A80@MN2PR08MB5951.namprd08.prod.outlook.com>
-References: <20190722055621.23526-1-sshivamurthy@micron.com>
-        <20190722055621.23526-7-sshivamurthy@micron.com>
-        <20190807120408.031b8d1b@xps13>
-        <MN2PR08MB5951F13BC1D1D111681CCB4BB8A80@MN2PR08MB5951.namprd08.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727469AbfJGIMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 04:12:01 -0400
+Received: from mga18.intel.com ([134.134.136.126]:26507 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726889AbfJGIMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 04:12:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 01:11:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,265,1566889200"; 
+   d="scan'208";a="196220046"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by orsmga003.jf.intel.com with ESMTP; 07 Oct 2019 01:11:56 -0700
+Subject: Re: [BISECTED] Suspend / USB broken on XPS 9370 + TB16
+To:     Carlo Caione <carlo.caione@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     andrew.smirnov@gmail.com, rrangel@chromium.org,
+        gregkh@linuxfoundation.org, kamal@canonical.com,
+        khalid.elmously@canonical.com
+References: <2f2f62bc-558f-70d1-44bf-a95334453f8a@gmail.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <294a9515-962a-d64b-c113-b73e9fe85fa8@linux.intel.com>
+Date:   Mon, 7 Oct 2019 11:13:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <2f2f62bc-558f-70d1-44bf-a95334453f8a@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019 09:03:38 +0000
-"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote:
-
-> >   
-> > >  static int micron_spinand_detect(struct spinand_device *spinand)
-> > >  {
-> > > +	const struct spi_mem_op *op;
-> > >  	u8 *id = spinand->id.data;
-> > > -	int ret;
-> > >
-> > >  	/*
-> > >  	 * Micron SPI NAND read ID need a dummy byte,
-> > > @@ -114,16 +102,55 @@ static int micron_spinand_detect(struct  
-> > spinand_device *spinand)  
-> > >  	if (id[1] != SPINAND_MFR_MICRON)
-> > >  		return 0;
-> > >
-> > > -	ret = spinand_match_and_init(spinand, micron_spinand_table,
-> > > -				     ARRAY_SIZE(micron_spinand_table),  
-> > id[2]);
-> > 
-> > I am not sure this is the right solution. I would keep this call and
-> > overwrite what you need to overwrite with the fixup hook.
-> >   
-
-I'm definitely not comfortable with this whole "rely on ONFi
-param-page" thing. Vendors have proven to get it wrong from time to
-time, so before we do that, I'd like to make sure all currently
-supported Micron NANDs (looks like we only support MT29F2G01ABAGD, so
-that shouldn't be hard) expose the right thing there. For instance, are
-we sure the ECC layout is always the same, and if not, do we have a
-reliable way to extract that?
-
+On 7.10.2019 10.21, Carlo Caione wrote:
+> Hi,
+> I bisected an issue down to commit f7fac17ca925 "xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()".
 > 
-> Then, I will have dummy structure like below.
+> Setup:
+> XPS 9370 + Thunderbolt dock Dell TB16
 > 
-> static const struct spinand_info micron_spinand_table[] = {                      
->         SPINAND_INFO(NULL, 0,                                                                    
->                      NAND_MEMORG(0, 0, 0, 0, 0, 0, 0, 0, 0),           
->                      NAND_ECCREQ(0, 0),                                                                       
->                      SPINAND_INFO_OP_VARIANTS(&read_cache_variants,              
->                                               &write_cache_variants,             
->                                               &update_cache_variants),           
->                      0,                                                                                         
->                      SPINAND_ECCINFO(&micron_ooblayout_ops,                      
->                                      micron_ecc_get_status)),                    
-> };   
-
+> Issue:
+> The laptop is unable to go to sleep. It never really goes to sleep and after a few seconds the USB dies.
 > 
-> Let me know if you are thinking for different approach.
+> Log:
+> https://termbin.com/icix
+> 
+> Cheers!
+> 
 
-Exposing dummy entries is useless. If you're entirely sure all Micron
-SPI NANDs have a valid ONFi param page, then no need to use the
-ID-based detection. But as I said above, I feel param-page-based
-detection is going to be as messy as SFDP-based detection is for SPI
-NORs. Vendors tend to make mistakes which we have to fix to make
-things work. ID-based detection is much more reliable in this regard,
-as long as we don't have ID collisions :P.
-Plus, it looks like only a few manufacturers decided to use ONFi param
-pages to expose SPI NAND info (AFAICT, only Micron and Macronix do
-that), which is not surprising since the ONFi param page has been
-created to describe parallel NANDs not SPI NANDs (if you look closely
-enough, you'll notice that some fields are meaningless for SPI NANDs).
+Does the below patch help?  Greg just applied it to his usb-linus branch.
+
+ac343366846a xhci: Increase STS_SAVE timeout in xhci_suspend()
+Link: https://lore.kernel.org/r/1570190373-30684-8-git-send-email-mathias.nyman@linux.intel.com
+
+-Mathias
