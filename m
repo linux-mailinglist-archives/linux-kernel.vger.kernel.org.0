@@ -2,44 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0A58CE5C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DBB6CE5D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbfJGOu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:50:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44529 "EHLO
+        id S1728079AbfJGOug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:50:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44515 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728708AbfJGOtr (ORCPT
+        with ESMTP id S1728680AbfJGOtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:47 -0400
+        Mon, 7 Oct 2019 10:49:45 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUKI-00066Y-PO; Mon, 07 Oct 2019 16:49:30 +0200
+        id 1iHUKP-0006Aa-KH; Mon, 07 Oct 2019 16:49:37 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0FE711C032F;
-        Mon,  7 Oct 2019 16:49:26 +0200 (CEST)
-Date:   Mon, 07 Oct 2019 14:49:25 -0000
-From:   "tip-bot2 for Hans de Goede" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E67071C08B3;
+        Mon,  7 Oct 2019 16:49:31 +0200 (CEST)
+Date:   Mon, 07 Oct 2019 14:49:31 -0000
+From:   "tip-bot2 for Mike Travis" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/boot: Provide memzero_explicit()
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Subject: [tip: x86/platform] x86/platform/uv: Setup UV functions for Hubless
+ UV Systems
+Cc:     Mike Travis <mike.travis@hpe.com>, Steve Wahl <steve.wahl@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Christoph Hellwig <hch@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Hedi Berriche <hedi.berriche@hpe.com>,
+        Justin Ernst <justin.ernst@hpe.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Russ Anderson <russ.anderson@hpe.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-crypto@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191007134724.4019-1-hdegoede@redhat.com>
-References: <20191007134724.4019-1-hdegoede@redhat.com>
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20190910145839.975787119@stormcage.eag.rdlabs.hpecorp.net>
+References: <20190910145839.975787119@stormcage.eag.rdlabs.hpecorp.net>
 MIME-Version: 1.0
-Message-ID: <157045976599.9978.16157507866106024022.tip-bot2@tip-bot2>
+Message-ID: <157045977188.9978.2863356948920530670.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,60 +56,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+The following commit has been merged into the x86/platform branch of tip:
 
-Commit-ID:     ee008a19f1c72c37ffa54326a592035dddb66fd6
-Gitweb:        https://git.kernel.org/tip/ee008a19f1c72c37ffa54326a592035dddb66fd6
-Author:        Hans de Goede <hdegoede@redhat.com>
-AuthorDate:    Mon, 07 Oct 2019 15:47:24 +02:00
+Commit-ID:     2bcf26528787d92333ed0dfd6abc9835b8e97eab
+Gitweb:        https://git.kernel.org/tip/2bcf26528787d92333ed0dfd6abc9835b8e97eab
+Author:        Mike Travis <mike.travis@hpe.com>
+AuthorDate:    Tue, 10 Sep 2019 09:58:43 -05:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 07 Oct 2019 16:47:35 +02:00
+CommitterDate: Mon, 07 Oct 2019 13:42:10 +02:00
 
-x86/boot: Provide memzero_explicit()
+x86/platform/uv: Setup UV functions for Hubless UV Systems
 
-The purgatory code now uses the shared lib/crypto/sha256.c sha256
-implementation. This needs memzero_explicit(), implement this.
+Add more support for UV systems that do not contain a UV Hub (AKA
+"hubless").  This update adds support for additional functions required:
 
-We also have barrier_data() call after the memset, making sure
-neither the compiler nor the linker optimizes out this seemingly
-unused function.
+    Use PCH NMI handler instead of a UV Hub NMI handler.
 
-Reported-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    Initialize the UV BIOS callback interface used to support specific
+    UV functions.
+
+Signed-off-by: Mike Travis <mike.travis@hpe.com>
+Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
+Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: H . Peter Anvin <hpa@zytor.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Hedi Berriche <hedi.berriche@hpe.com>
+Cc: Justin Ernst <justin.ernst@hpe.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Russ Anderson <russ.anderson@hpe.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-crypto@vger.kernel.org
-Fixes: 906a4bb97f5d ("crypto: sha256 - Use get/put_unaligned_be32 to get input, memzero_explicit")
-Link: https://lkml.kernel.org/r/20191007134724.4019-1-hdegoede@redhat.com
-[ Added comment. ]
+Link: https://lkml.kernel.org/r/20190910145839.975787119@stormcage.eag.rdlabs.hpecorp.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/boot/compressed/string.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/kernel/apic/x2apic_uv_x.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/string.c b/arch/x86/boot/compressed/string.c
-index 81fc1ea..dd30e63 100644
---- a/arch/x86/boot/compressed/string.c
-+++ b/arch/x86/boot/compressed/string.c
-@@ -50,6 +50,16 @@ void *memset(void *s, int c, size_t n)
- 	return s;
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index 43fad61..14554a3 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -1457,6 +1457,20 @@ static void __init build_socket_tables(void)
+ 	}
  }
  
-+void memzero_explicit(void *s, size_t count)
++/* Initialize UV hubless systems */
++static __init int uv_system_init_hubless(void)
 +{
-+	memset(s, 0, count);
-+	/*
-+	 * Make sure this function never gets inlined and
-+	 * the memset() never gets optimized away:
-+	 */
-+	barrier_data(s);
++	int rc;
++
++	/* Setup PCH NMI handler */
++	uv_nmi_setup_hubless();
++
++	/* Init kernel/BIOS interface */
++	rc = uv_bios_init();
++
++	return rc;
 +}
 +
- void *memmove(void *dest, const void *src, size_t n)
+ static void __init uv_system_init_hub(void)
  {
- 	unsigned char *d = dest;
+ 	struct uv_hub_info_s hub_info = {0};
+@@ -1596,8 +1610,8 @@ static void __init uv_system_init_hub(void)
+ }
+ 
+ /*
+- * There is a small amount of UV specific code needed to initialize a
+- * UV system that does not have a "UV HUB" (referred to as "hubless").
++ * There is a different code path needed to initialize a UV system that does
++ * not have a "UV HUB" (referred to as "hubless").
+  */
+ void __init uv_system_init(void)
+ {
+@@ -1607,7 +1621,7 @@ void __init uv_system_init(void)
+ 	if (is_uv_system())
+ 		uv_system_init_hub();
+ 	else
+-		uv_nmi_setup_hubless();
++		uv_system_init_hubless();
+ }
+ 
+ apic_driver(apic_x2apic_uv_x);
