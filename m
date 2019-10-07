@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94932CE2E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12F00CE2EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbfJGNQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:16:59 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35068 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbfJGNQ7 (ORCPT
+        id S1728186AbfJGNRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:17:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41742 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727490AbfJGNRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:16:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 205so8670851pfw.2;
-        Mon, 07 Oct 2019 06:16:58 -0700 (PDT)
+        Mon, 7 Oct 2019 09:17:14 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q7so8637922pfh.8;
+        Mon, 07 Oct 2019 06:17:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PwiaLPNEero/RDkqXHKNpda6jyXODSLqhlH8GfScxo4=;
-        b=U93WlJGywOW4GYdmFpjLSbINCeD5e5GpJ2UlnKRkpeLbKA45F/xZjIQjq0CqmxWaRc
-         rYF0hBu+qMVKCBEvYbVAEykbc/A21OMZHembtBRw3nR29KuAVu8WLk1p3euuN3vDw0H9
-         h9tzVebTCZgobqlu8/sjCsg9Pq9stdW/1AYzLxTmNBLHnRJ6srFQrpw44A3TgwUHnbwt
-         W7YQJpxSa4WvSTanPX6pG+mVVKLdr9OdP5PqhKoVXp8VbPAg2FRoSFb5qRayfQisyMf7
-         iEnYEWz46FCUjnTIM1/pUI9OHquzBjIVoNtejSSZckTud93bBGD7/TqoMDuFTzu3QbWI
-         ThEw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aQptgICcCtWSSBgk772ZatoxsYgICaTNG3vZM+tN2JI=;
+        b=fBinECWVUCIqe34f6Zm6eVHxOd/IF8rHVCJXk63l1nCydtUcpyb2geWtuN+s+Ay4gU
+         IYQjoki5Gx0y7dqhznL3n+0H0tkinm2T/CN9NHGCk9vudJJxYJdUrpB0OwWS/qXUivMC
+         xB0CuWqI5T8ka+YYVaSXrrfA/WjJHKvkNImhg79hHxu6RaHhy0FIW0y6uYG1MoVnIbkP
+         1b2C0xnlTfa8ddknz2jCcTmGEUPTAeITZ6YjXFfbjR/Emrtso122HF7IOeC6DiU9zUFv
+         q30VrZtsw3M1yntt8ev2mhejPd5LRVFYqomJYMnX0ryYMAV8zu2Po9vZJOdttW1LnNHL
+         Mxlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PwiaLPNEero/RDkqXHKNpda6jyXODSLqhlH8GfScxo4=;
-        b=KMXQK9+B9oc/ffZjEJiiY73Y5/hhxdum83mbnwCPjfzqBCzgE0gIARs+vqBJIrYtN/
-         GYRXq8e/a4MtYaEGCHTp4RwN3owcZx82vKUOfO1KNV8V9nVAHQQVAt/p/HRynGI8V85D
-         yNnz8v0SZqfPbco0MvaNLroIXuEZI+mO85jEc5KmXFJcImjUNKClVZF4SFQJQ31NgQeF
-         8pWdANYCpSek3HjhD9LJTGCYU0s5NXHgvs6BbwwsJwr6l52A1LuzZvsZjShp+MNBKgqO
-         J+xmozQ+CZ9jJVvhVWzqQ+mU4pYsOjbyoq0gRQCjRkoLm34UAcRi99mIwattrPGw8YqK
-         k7HA==
-X-Gm-Message-State: APjAAAXzznkImC31cFEcji3D1B8TGyl81JwOdPMK3dP0GOIkkRX2bu/f
-        P398uFx131ST+IV5UYfd/AE=
-X-Google-Smtp-Source: APXvYqyvHEaEyr+JjSbY/h5Ukr9XMbNo6ALxq6sKOkJD/pII8Vb1ifPUfHXL2MqvRnu0ESu3/zKdCA==
-X-Received: by 2002:a62:82c8:: with SMTP id w191mr31574553pfd.99.1570454218199;
-        Mon, 07 Oct 2019 06:16:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aQptgICcCtWSSBgk772ZatoxsYgICaTNG3vZM+tN2JI=;
+        b=YHhJE5Qio5UlBTmAUdbRLyHo87e5LPyyn3Q4KGjPkSq0O0c/wwLzHELT6l7150ywTJ
+         14y1EjzMzCSbZ7Pi11YtxxHHRzKvgZLnlKqwU7gN0wvT6g9+4MGLJ9PEI3T7n/JiJpPL
+         Ea4kTTrIhbnfhIbvN6dbi4SgAbj9t/KvK5bQSYldDe8bNk/VSCcnrnpwixPKYeB+Cmto
+         Fe3VUBZv+DpRR3CixkI9o5WPmI1NKUkbNH5xqBZ8R7n7lbIQZyr1eqt8kI6E3jM/dfXa
+         qsfZ/QTNZas2RnDO1ZS712TKU7msKPafru3MkBJWgrWXDSgS4JAl0UKXkce/5AadR5kr
+         X4Xw==
+X-Gm-Message-State: APjAAAUpUKChweDBPvoW5BGJGcUcC8VcSEvYFX0hzlcj8891pSvkneJG
+        bfpOXrl3TR1KYmtyln0ptBE=
+X-Google-Smtp-Source: APXvYqzfY9skP87J/Jepml3CjVgEOVUZCdNt5zbuEYhEafhjGqPWB7v6/VCcFrt0DeUtkWOl/eN25Q==
+X-Received: by 2002:a17:90a:380a:: with SMTP id w10mr33937550pjb.104.1570454232768;
+        Mon, 07 Oct 2019 06:17:12 -0700 (PDT)
 Received: from localhost.localdomain ([103.51.74.138])
-        by smtp.gmail.com with ESMTPSA id r186sm16938650pfr.40.2019.10.07.06.16.54
+        by smtp.gmail.com with ESMTPSA id r186sm16938650pfr.40.2019.10.07.06.17.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2019 06:16:57 -0700 (PDT)
+        Mon, 07 Oct 2019 06:17:12 -0700 (PDT)
 From:   Anand Moon <linux.amoon@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -56,10 +56,12 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Will Deacon <will@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFCv1 0/5] Odroid N2 failes to boot using upstream kernel & u-boot
-Date:   Mon,  7 Oct 2019 13:16:44 +0000
-Message-Id: <20191007131649.1768-1-linux.amoon@gmail.com>
+Subject: [RFCv1 1/5] arm64: dts: meson: Add missing 5V_EN gpio signal for VCC5V regulator
+Date:   Mon,  7 Oct 2019 13:16:45 +0000
+Message-Id: <20191007131649.1768-2-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191007131649.1768-1-linux.amoon@gmail.com>
+References: <20191007131649.1768-1-linux.amoon@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,42 +69,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We am trying to build the upstream u-boot and upstream kernel,
-but it fails to pass the initialization of PWM_MESON driver.
-So these patches help boot the kernel on microSD card.
+As per schematics add missing 5V_EN gpio signal to enable
+VCC5V regulator node.
 
-Patchs based on Linux 5.4-rc2
+Fixes: c35f6dc5c377 (arm64: dts: meson: Add minimal support for Odroid-N2)
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Boot log failed are shown below.
-[0] https://pastebin.com/cEtWq2iX
-
-[    1.569240] meson-gx-mmc ffe05000.sd: Got CD GPIO
-[    1.599227] pwm-regulator regulator-vddcpu-a: Failed to get PWM: -517
-[    1.600605] pwm-regulator regulator-vddcpu-b: Failed to get PWM: -517
-[    1.607166] pwm-regulator regulator-vddcpu-a: Failed to get PWM: -517
-[    1.613273] pwm-regulator regulator-vddcpu-b: Failed to get PWM: -517
-[    1.619931] hctosys: unable to open rtc device (rtc0)
-
-My guess their is not much issue with eMMC module, if their is
-other approach to resolve this issue, I will give this a try.
-
-Best Regards
--Anand
-
-Anand Moon (5):
-  arm64: dts: meson: Add missing 5V_EN gpio signal for VCC5V regulator
-  arm64: dts: meson: Add missing pwm control gpio signal for
-    pwm-regulator
-  arm64: dts: meson: Add missing regulator linked to VDDAO_3V3 regulator
-    to FLASH_VDD
-  arm64: dts: meson: Add missing regulator linked to VCCV5 regulator to
-    VDDIO_C/TF_IO
-  arm64/ARM: configs: Change CONFIG_PWM_MESON from m to y
-
- .../arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 13 +++++++++++++
- arch/arm64/configs/defconfig                        |  2 +-
- 2 files changed, 14 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+index 42f15405750c..a9a661258886 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+@@ -94,6 +94,9 @@
+ 		regulator-max-microvolt = <5000000>;
+ 		regulator-always-on;
+ 		vin-supply = <&main_12v>;
++		/* U12 NB679GD 5V_EN */
++		gpio = <&gpio GPIOH_8 GPIO_OPEN_DRAIN>;
++		enable-active-high;
+ 	};
+ 
+ 	vcc_1v8: regulator-vcc_1v8 {
 -- 
 2.23.0
 
