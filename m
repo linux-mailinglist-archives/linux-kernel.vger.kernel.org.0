@@ -2,105 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3101ACE1FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4A4CE21B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfJGMm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:42:56 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38204 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbfJGMm4 (ORCPT
+        id S1727884AbfJGMrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:47:36 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37452 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727490AbfJGMrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:42:56 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x97Cgt7K030000;
-        Mon, 7 Oct 2019 07:42:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570452175;
-        bh=2Itw8HwAZSNj5kRKXPjiCE0nUkmlTynlNsoxiQueKDE=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=r8yQnoKwg3wCL+iF9cQTbag5JVO7eOK7HC1VQZFzW+IH2c2un1NBGg2VaDquRARq9
-         7GyaHYEebGOOeaHc1V6HeRdVokxIVPfkKx1ANRho66zoWN4zQHNZCOKB5iAphi7RS9
-         hzt0gCMdRBY0pN+k7G8GDu2Tcs+MNzN2zVwe5kvw=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x97Cgt8C106348
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Oct 2019 07:42:55 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 7 Oct
- 2019 07:42:52 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 7 Oct 2019 07:42:54 -0500
-Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x97CgsWM089465;
-        Mon, 7 Oct 2019 07:42:54 -0500
-Date:   Mon, 7 Oct 2019 07:45:29 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Patch v2 16/21] media: ti-vpe: vpe: use standard struct instead
- of duplicating fields
-Message-ID: <20191007124529.nnrzx2btnraimivq@ti.com>
-References: <20191004162952.4963-1-bparrot@ti.com>
- <20191004162952.4963-17-bparrot@ti.com>
- <cb01914f-3bca-2558-2b07-86ddbfc9626e@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cb01914f-3bca-2558-2b07-86ddbfc9626e@xs4all.nl>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 7 Oct 2019 08:47:35 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f22so12199786wmc.2;
+        Mon, 07 Oct 2019 05:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=AT90Kg/zRUtjsdvlXig6kf61Re1a9yGlOxg7dRhOahY=;
+        b=dy8coq+B4djgG7XoW0kM31x7L8/pkrlMXAm4QcJzT3GxJGdjcRPIG8+AJd8nECgQ+m
+         pSv6qL03Ct01Prjfha2nrDm+//O/Xxuu2wWq4ThMnWXx1Fcsb/tsCr+qHJJ73ciHlxeL
+         miOXgGdtx3D/f0d/2vDBi7g7Z5EwX8EJF13O1BbGy0q5pBYKp3qbnQVc/HQ8tGBhJC79
+         y2loQusNna46w9WS6FdAPFLne8ruSPAa7iegJZibz1rftSxs3Dgo0amkY1/6q0krKuCx
+         3KO/NMJkdjfk02iNAo82YI38MYqQIPbEBwq9CTrMTCEL3dT+ykzJWXGBfR1lfDu0tFXP
+         chIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AT90Kg/zRUtjsdvlXig6kf61Re1a9yGlOxg7dRhOahY=;
+        b=EXmJvk/WT0w+b9ZvWGzb4agDLRSMFCi/dUKQxmlbQH/N4KTF8BEH3v702qlpkTeWKa
+         hSh0QmvR6aO7hCFT2Ph1z03AsgSyZ09bZwg3VYWcBd3HyyXqGP74UKjv1DNKCcOtuSOW
+         /BdrRAVDMNONNq6nI947AkbjSiQz9uyaWqfxTIQLj8lefs74BaaiWovlQ710ULbMVI9X
+         I24G/EJ6m36QIzzzeXkL8Fv8XamMG+I2CA3TbIx3yi7KfxbvWuL/XWPKpiPx6IcEYfPl
+         OPsKxKUb++czYAOrIWl2q1Fwe1AXrscE+mcYjwLTR4CHR36FgQIVY4sH4/+6GXYf38tI
+         dscw==
+X-Gm-Message-State: APjAAAW5OCfFceF2nLVxNSTkQemhr+9oa5StTAE4SgCq92dwbaXFqaEa
+        z0OKjSKFKIySiVF+SxE90db8Qau2S+U=
+X-Google-Smtp-Source: APXvYqx70mWEwFEmfHG43cYeL+pn2QE7GLbM4OthUvaC2hktxXvef6MBklkVuZdXGxUiqauM7QgMTQ==
+X-Received: by 2002:a7b:cbc5:: with SMTP id n5mr21592790wmi.31.1570452452161;
+        Mon, 07 Oct 2019 05:47:32 -0700 (PDT)
+Received: from localhost ([194.105.145.90])
+        by smtp.gmail.com with ESMTPSA id w5sm15870495wrs.34.2019.10.07.05.47.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Oct 2019 05:47:31 -0700 (PDT)
+From:   Igor Opaniuk <igor.opaniuk@gmail.com>
+To:     linux-usb@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Li Jun <jun.li@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v1 1/3] usb: phy: add usb mode for usb_phy
+Date:   Mon,  7 Oct 2019 15:46:05 +0300
+Message-Id: <20191007124607.20618-1-igor.opaniuk@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans Verkuil <hverkuil@xs4all.nl> wrote on Mon [2019-Oct-07 09:57:26 +0200]:
-> On 10/4/19 6:29 PM, Benoit Parrot wrote:
-> > For each queue we need to maintain resolutions, pixel format,
-> > bytesperline, sizeimage, colorspace, etc.
-> > 
-> > Instead of manually adding more entries in the vpe_q_data struct, it is
-> > better to just add a "struct v4l2_format" member and use that to store
-> > all needed information.
-> > 
-> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
-> > ---
-> >  drivers/media/platform/ti-vpe/vpe.c | 185 ++++++++++++++--------------
-> >  1 file changed, 91 insertions(+), 94 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-> > index d7f8eb901475..5b1e9908fff2 100644
-> > --- a/drivers/media/platform/ti-vpe/vpe.c
-> > +++ b/drivers/media/platform/ti-vpe/vpe.c
-> > @@ -319,14 +319,9 @@ static struct vpe_fmt vpe_formats[] = {
-> >   * there is one source queue and one destination queue for each m2m context.
-> >   */
-> >  struct vpe_q_data {
-> > -	unsigned int		width;				/* frame width */
-> > -	unsigned int		height;				/* frame height */
-> > -	unsigned int		nplanes;			/* Current number of planes */
-> > -	unsigned int		bytesperline[VPE_MAX_PLANES];	/* bytes per line in memory */
-> > -	enum v4l2_colorspace	colorspace;
-> > -	enum v4l2_field		field;				/* supported field value */
-> > +	/* current v4l2 format info */
-> > +	struct v4l2_format	format;
-> 
-> Wouldn't it make more sense to use struct v4l2_pix_format_mplane? That avoid having to
-> use the '.fmt.pix_mp' sequence every time you need to access it.
+From: Igor Opaniuk <igor.opaniuk@toradex.com>
 
-Maybe, I chose "struct v4l2_format" because that is the parameter type used
-in all related IOCTL. But I guess I can change it, if it make the code
-cleaner :).
+USB phy driver may need to know the current working mode of
+the controller, and can provide different settings according to
+host mode or device mode.
 
-Benoit
+Signed-off-by: Li Jun <jun.li@nxp.com>
+Signed-off-by: Igor Opaniuk <igor.opaniuk@toradex.com>
+---
 
-> 
-> Regards,
-> 
-> 	Hans
-> 
+ include/linux/usb/phy.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
+index e4de6bc1f69b..774941be77d7 100644
+--- a/include/linux/usb/phy.h
++++ b/include/linux/usb/phy.h
+@@ -63,6 +63,13 @@ enum usb_otg_state {
+ 	OTG_STATE_A_VBUS_ERR,
+ };
+ 
++/* The usb role of phy to be working with */
++enum usb_current_mode {
++	USB_MODE_NONE,
++	USB_MODE_HOST,
++	USB_MODE_DEVICE,
++};
++
+ struct usb_phy;
+ struct usb_otg;
+ 
+@@ -155,6 +162,13 @@ struct usb_phy {
+ 	 * manually detect the charger type.
+ 	 */
+ 	enum usb_charger_type (*charger_detect)(struct usb_phy *x);
++
++	/*
++	 * Set current working mode of the USB controller
++	 * (device, host)
++	 */
++	int	(*set_mode)(struct usb_phy *x,
++			enum usb_current_mode mode);
+ };
+ 
+ /* for board-specific init logic */
+@@ -213,6 +227,15 @@ usb_phy_vbus_off(struct usb_phy *x)
+ 	return x->set_vbus(x, false);
+ }
+ 
++static inline int
++usb_phy_set_mode(struct usb_phy *x, enum usb_current_mode mode)
++{
++	if (!x || !x->set_mode)
++		return 0;
++
++	return x->set_mode(x, mode);
++}
++
+ /* for usb host and peripheral controller drivers */
+ #if IS_ENABLED(CONFIG_USB_PHY)
+ extern struct usb_phy *usb_get_phy(enum usb_phy_type type);
+-- 
+2.17.1
+
