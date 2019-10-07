@@ -2,84 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F69CE4D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC3BBCE4D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbfJGOM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:12:28 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37476 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfJGOM1 (ORCPT
+        id S1728182AbfJGONz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:13:55 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:47874 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfJGONy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:12:27 -0400
-Received: by mail-qt1-f194.google.com with SMTP id e15so4444294qtr.4;
-        Mon, 07 Oct 2019 07:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PJgpiGwK2u8oGo+/mbFwzQEWjjSrhtsq1rT3sToNXug=;
-        b=D3EPjAtHnXMj06oi4eFAESMOwlvhVr1brLGRpLfMw3+ot0vTbafp3rijEo/vvXOHKw
-         +U+I2Hk8Xv50JgEYWP5pi/6IaHdw/2NxvBdBbt5UOu9GDay5d01B6eNobiwqKgRq16ZX
-         yp/F2nHltzuMp1iDStX+sTlD/mtz+REv6t8jnMZhDRvyrTUd6KvD0t4UJaUEt8z72+Oc
-         9dAZsozshBuhPj3MaI6l+tJZrVAsVw4S/HYF4Dc9bVRDW7lMorMffRtRBNgnyrBQC8XR
-         j8/UB1qKysjRxb4ep6pE6FUAP4Yf146BcIX+PX03d7LaMAGxHxJRfaskU4nWftebkEZk
-         GPHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=PJgpiGwK2u8oGo+/mbFwzQEWjjSrhtsq1rT3sToNXug=;
-        b=c6f4VNuaj0xCV5qQGwjwb3l62LqXlEkQHPPyh7RBh1KCe8vPZ3Fb0LB19YRkS/b5k/
-         6qaJ7t06KP66XGtR2ahajmObMfoqYZXUmfkLNkK8L7T6aGZZXo3ghqT+QKWu9T2vBubB
-         vXRaIDeZVwcsbK4dZa+8wSM/nAFY3XIUewm7iqF9wyrDfgPQBqytICGYUTluKJjOAV6l
-         6VoeHOeC2YPrzzuZ/6O4LivVFgF2IzhLYItHINYzuwq/v6uUOktfqp+FluU1k7kOJUFc
-         ABKYHwXwpfVgNN+rk8lgvMcsxh8/9dRL49SRU7RnsYNIks5N1r/aEtLbRwrJkrB/gDFI
-         VVxQ==
-X-Gm-Message-State: APjAAAUrQ41EWrTlkINZHawnKkc3UZdG04MyPmtG9ofizAsSdDAjO/se
-        MoxE2YCEntDXXzdE2cO73z4=
-X-Google-Smtp-Source: APXvYqxR7Yg87n3v/5vSn/Ca99fLLepq2rMzrW0vC/GXY5GmAZ4bdqWcQ6/bkP8hzVX9xBz5jaWe+w==
-X-Received: by 2002:ac8:2d2c:: with SMTP id n41mr29962785qta.335.1570457546226;
-        Mon, 07 Oct 2019 07:12:26 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:a536])
-        by smtp.gmail.com with ESMTPSA id x33sm7764954qtd.79.2019.10.07.07.12.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 07:12:25 -0700 (PDT)
-Date:   Mon, 7 Oct 2019 07:12:24 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 0/5] Optimize single thread migration
-Message-ID: <20191007141224.GD3404308@devbig004.ftw2.facebook.com>
-References: <20191004105743.363-1-mkoutny@suse.com>
+        Mon, 7 Oct 2019 10:13:54 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97EDTKv054047;
+        Mon, 7 Oct 2019 14:13:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=v/JPj74F9S3rIumlrnm9CbKkIEwYEENjPGMUC3qkKHg=;
+ b=EedQIAKStPQCo+m5mvlaq6W72DaCQsQgRXLQ6UMSh49lf4oA3aGG6pHVG0pn504CuUoe
+ iAqcDGL8UVr261SlkrWS39EXVIEHnSXZXQvLIy4iwBpDHN2n/f3Wo2jAN6dgskmXNPuz
+ xWbkeWoPiqraedRhgPluUjwa9G6khJCVtpPyN/2QJnjocZG5SSmVG6TZ7BtlPxa90eEt
+ kHQCPEYoRATe2jeDVAqB+kqwqLT/Q59RZ7Vcv582T5ozjR6UB7TcNUEfaZkIYtRxMX02
+ AZA7YHOmOdfCBMZuf7qXfjJJyPiceIUs6gTkD6sILqjNqOVxMK1gKmcxBheKAFfV99OK Fw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2vek4q6yee-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 14:13:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97ECdXj012729;
+        Mon, 7 Oct 2019 14:13:41 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2vf4n99tck-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 14:13:41 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x97EDdsv026177;
+        Mon, 7 Oct 2019 14:13:39 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 07 Oct 2019 07:13:38 -0700
+Date:   Mon, 7 Oct 2019 17:13:27 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com, Larry.Finger@lwfinger.net,
+        florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
+        payal.s.kshirsagar.98@gmail.com, himadri18.07@gmail.com,
+        colin.king@canonical.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org,
+        trivial@kernel.org
+Subject: Re: [PATCH] staging: rtl8712: align arguments with open parenthesis
+ in file rtl8712_led.c
+Message-ID: <20191007141327.GY22609@kadam>
+References: <20191007003902.21911-1-gabrielabittencourt00@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191004105743.363-1-mkoutny@suse.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20191007003902.21911-1-gabrielabittencourt00@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9402 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910070141
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9402 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910070140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 12:57:38PM +0200, Michal Koutný wrote:
-> Hello.
+On Sun, Oct 06, 2019 at 09:39:02PM -0300, Gabriela Bittencourt wrote:
+> Cleans up checks of "Alignment should match open parenthesis"
 > 
-> The important part is the patch 02 where the reasoning is.
+> Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+> ---
+>  drivers/staging/rtl8712/rtl8712_led.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The rest is mostly auxiliar and split out into separate commits for
-> better readability.
-> 
-> The patches are based on v5.3. 
+> diff --git a/drivers/staging/rtl8712/rtl8712_led.c b/drivers/staging/rtl8712/rtl8712_led.c
+> index db99129d3169..5901026949f2 100644
+> --- a/drivers/staging/rtl8712/rtl8712_led.c
+> +++ b/drivers/staging/rtl8712/rtl8712_led.c
+> @@ -75,7 +75,7 @@ static void BlinkWorkItemCallback(struct work_struct *work);
+>   *		Initialize an LED_871x object.
+>   */
+>  static void InitLed871x(struct _adapter *padapter, struct LED_871x *pLed,
+> -		 enum LED_PIN_871x	LedPin)
+> +			enum LED_PIN_871x	LedPin)
+                                         ^^^^^^
+Delete these extra spaces.
 
-This is great.  Applied to the series to cgroup/for-5.5
+regards,
+dan carpenter
 
-Thanks!
-
--- 
-tejun
