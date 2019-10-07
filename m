@@ -2,470 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B56ACEC79
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00617CEC68
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 21:03:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfJGTKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 15:10:09 -0400
-Received: from mailoutvs48.siol.net ([185.57.226.239]:59043 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728079AbfJGTKI (ORCPT
+        id S1728654AbfJGTDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 15:03:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33296 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbfJGTDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 15:10:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id EA424521E2F;
-        Mon,  7 Oct 2019 21:01:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id dW8YKP7WwunV; Mon,  7 Oct 2019 21:01:08 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id E446852208F;
-        Mon,  7 Oct 2019 21:01:07 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-86-58-59-25.static.triera.net [86.58.59.25])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id C766E521E2F;
-        Mon,  7 Oct 2019 21:01:06 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     mchehab@kernel.org, paul.kocialkowski@bootlin.com,
-        mripard@kernel.org, pawel@osciak.com, m.szyprowski@samsung.com,
-        kyungmin.park@samsung.com, tfiga@chromium.org, wens@csie.org,
-        gregkh@linuxfoundation.org, boris.brezillon@collabora.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        ezequiel@collabora.com, jonas@kwiboo.se
-Subject: Re: [PATCH v2 0/6] media: cedrus: h264: Support multi-slice frames
-Date:   Mon, 07 Oct 2019 21:01:06 +0200
-Message-ID: <2785635.uIalc63MVP@jernej-laptop>
-In-Reply-To: <5ec43907-cb6f-1527-f6ec-9fffc768d9ef@xs4all.nl>
-References: <20190929200023.215831-1-jernej.skrabec@siol.net> <5ec43907-cb6f-1527-f6ec-9fffc768d9ef@xs4all.nl>
+        Mon, 7 Oct 2019 15:03:46 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97InZkX109522;
+        Mon, 7 Oct 2019 19:03:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=vqjFRmkzoX1rAt9xalycqM22xrgbSL0OjpcVDq1Gfu4=;
+ b=adRZqoe5+YBdH61hYUJz5kymPytFqJ9tkCyFVfEfAOUOehyQyxllkfOW4m0PqTbnWyOU
+ 3zKy40TYgcy6ftyAp8aMssiAUBpwoN9nHzzvh2Qxbhn5M+95JEzwameC4P3Yd2ETm+hn
+ C/r9HlSnlTd4xP0QcKz4pt1dtWa6dBYNxrIIQNMZx9wrqIUG9eqQGxFl7gDvt0ewyB5s
+ qgUmhylYQ0V+jhLjBlidNhG7a9uCel8/Q1repl342xD+rbgStfzCKqKQAoHwn0d1MYr4
+ korxadd8livwDvSMdqB+7EShtYqJcCmyYEt9448F9KHxyiI1ji+xUQcJo9veHuysTj6b Ig== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2vek4q8tp2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 19:03:35 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x97IrdoH062548;
+        Mon, 7 Oct 2019 19:03:34 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2vg204dujs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Oct 2019 19:03:34 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x97J3Vpr026483;
+        Mon, 7 Oct 2019 19:03:32 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 07 Oct 2019 12:03:31 -0700
+Subject: Re: [PATCH] mm, hugetlb: allow hugepage allocations to excessively
+ reclaim
+To:     Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>
+References: <20191007075548.12456-1-mhocko@kernel.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <312f4447-a260-8876-2f9d-f300c5c99dc3@oracle.com>
+Date:   Mon, 7 Oct 2019 12:03:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20191007075548.12456-1-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910070164
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9403 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910070164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 07. oktober 2019 ob 12:44:24 CEST je Hans Verkuil napisal(a):
-> Hi Jernej,
+On 10/7/19 12:55 AM, Michal Hocko wrote:
+> From: David Rientjes <rientjes@google.com>
 > 
-> On 9/29/19 10:00 PM, Jernej Skrabec wrote:
-> > This series adds support for decoding multi-slice H264 frames along with
-> > support for V4L2_DEC_CMD_FLUSH and V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF.
-> > 
-> > Code was tested by modified ffmpeg, which can be found here:
-> > https://github.com/jernejsk/FFmpeg, branch mainline-test
-> > It has to be configured with at least following options:
-> > --enable-v4l2-request --enable-libudev --enable-libdrm
-> > 
-> > Samples used for testing:
-> > http://jernej.libreelec.tv/videos/h264/BA1_FT_C.mp4
-> > http://jernej.libreelec.tv/videos/h264/h264.mp4
-> > 
-> > Command line used for testing:
-> > ffmpeg -hwaccel drm -hwaccel_device /dev/dri/card0 -i h264.mp4 -pix_fmt
-> > bgra -f fbdev /dev/fb0
-> > 
-> > Please note that V4L2_DEC_CMD_FLUSH was not tested because I'm
-> > not sure how. ffmpeg follows exactly which slice is last in frame
-> > and sets hold flag accordingly. Improper usage of hold flag would
-> > corrupt ffmpeg assumptions and it would probably crash. Any ideas
-> > how to test this are welcome!
-> > 
-> > Thanks to Jonas for adjusting ffmpeg.
-> > 
-> > Please let me know what you think.
-> > 
-> > Best regards,
-> > Jernej
-> > 
-> > Changes from v1:
-> > - added Rb tags
-> > - updated V4L2_DEC_CMD_FLUSH documentation
-> > - updated first slice detection in Cedrus
-> > - hold capture buffer flag is set according to source format
-> > - added v4l m2m stateless_(try_)decoder_cmd ioctl helpers
-> > 
-> > Hans Verkuil (2):
-> >   vb2: add V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF
-> >   videodev2.h: add V4L2_DEC_CMD_FLUSH
-> > 
-> > Jernej Skrabec (4):
-> >   media: v4l2-mem2mem: add stateless_(try_)decoder_cmd ioctl helpers
-> >   media: cedrus: Detect first slice of a frame
-> >   media: cedrus: h264: Support multiple slices per frame
-> >   media: cedrus: Add support for holding capture buffer
-> >  
-> >  Documentation/media/uapi/v4l/buffer.rst       | 13 ++++++
-> >  .../media/uapi/v4l/vidioc-decoder-cmd.rst     | 10 +++-
-> >  .../media/uapi/v4l/vidioc-reqbufs.rst         |  6 +++
-> >  .../media/videodev2.h.rst.exceptions          |  1 +
-> >  .../media/common/videobuf2/videobuf2-v4l2.c   |  8 +++-
-> >  drivers/media/v4l2-core/v4l2-mem2mem.c        | 35 ++++++++++++++
-> >  drivers/staging/media/sunxi/cedrus/cedrus.h   |  1 +
-> >  .../staging/media/sunxi/cedrus/cedrus_dec.c   | 11 +++++
-> >  .../staging/media/sunxi/cedrus/cedrus_h264.c  | 11 ++++-
-> >  .../staging/media/sunxi/cedrus/cedrus_hw.c    |  8 ++--
-> >  .../staging/media/sunxi/cedrus/cedrus_video.c | 14 ++++++
-> >  include/media/v4l2-mem2mem.h                  | 46 +++++++++++++++++++
-> >  include/media/videobuf2-core.h                |  3 ++
-> >  include/media/videobuf2-v4l2.h                |  5 ++
-> >  include/uapi/linux/videodev2.h                | 14 ++++--
-> >  15 files changed, 175 insertions(+), 11 deletions(-)
+> b39d0ee2632d ("mm, page_alloc: avoid expensive reclaim when compaction
+> may not succeed") has chnaged the allocator to bail out from the
+> allocator early to prevent from a potentially excessive memory
+> reclaim. __GFP_RETRY_MAYFAIL is designed to retry the allocation,
+> reclaim and compaction loop as long as there is a reasonable chance to
+> make a forward progress. Neither COMPACT_SKIPPED nor COMPACT_DEFERRED
+> at the INIT_COMPACT_PRIORITY compaction attempt gives this feedback.
 > 
-> I didn't want to make a v3 of this series, instead I hacked this patch that
-> will hopefully do all the locking right.
+> The most obvious affected subsystem is hugetlbfs which allocates huge
+> pages based on an admin request (or via admin configured overcommit).
+> I have done a simple test which tries to allocate half of the memory
+> for hugetlb pages while the memory is full of a clean page cache. This
+> is not an unusual situation because we try to cache as much of the
+> memory as possible and sysctl/sysfs interface to allocate huge pages is
+> there for flexibility to allocate hugetlb pages at any time.
 > 
-> Basically I moved all the 'held' related code into v4l2-mem2mem under
-> job_spinlock. This simplifies the driver code as well.
+> System has 1GB of RAM and we are requesting 515MB worth of hugetlb pages
+> after the memory is prefilled by a clean page cache:
+> root@test1:~# cat hugetlb_test.sh
 > 
-> But this is a hack that sits on top of this series. If your ffmpeg tests are
-> now successful, then I'll turn this into a proper series with correct
-> documentation (a lot of the comments are now wrong with this patch, so just
-> ignore that).
+> set -x
+> echo 0 > /proc/sys/vm/nr_hugepages
+> echo 3 > /proc/sys/vm/drop_caches
+> echo 1 > /proc/sys/vm/compact_memory
+> dd if=/mnt/data/file-1G of=/dev/null bs=$((4<<10))
+> TS=$(date +%s)
+> echo 256 > /proc/sys/vm/nr_hugepages
+> cat /proc/sys/vm/nr_hugepages
+> 
+> The results for 2 consecutive runs on clean 5.3
+> root@test1:~# sh hugetlb_test.sh
+> + echo 0
+> + echo 3
+> + echo 1
+> + dd if=/mnt/data/file-1G of=/dev/null bs=4096
+> 262144+0 records in
+> 262144+0 records out
+> 1073741824 bytes (1.1 GB) copied, 21.0694 s, 51.0 MB/s
+> + date +%s
+> + TS=1569905284
+> + echo 256
+> + cat /proc/sys/vm/nr_hugepages
+> 256
+> root@test1:~# sh hugetlb_test.sh
+> + echo 0
+> + echo 3
+> + echo 1
+> + dd if=/mnt/data/file-1G of=/dev/null bs=4096
+> 262144+0 records in
+> 262144+0 records out
+> 1073741824 bytes (1.1 GB) copied, 21.7548 s, 49.4 MB/s
+> + date +%s
+> + TS=1569905311
+> + echo 256
+> + cat /proc/sys/vm/nr_hugepages
+> 256
+> 
+> Now with b39d0ee2632d applied
+> root@test1:~# sh hugetlb_test.sh
+> + echo 0
+> + echo 3
+> + echo 1
+> + dd if=/mnt/data/file-1G of=/dev/null bs=4096
+> 262144+0 records in
+> 262144+0 records out
+> 1073741824 bytes (1.1 GB) copied, 20.1815 s, 53.2 MB/s
+> + date +%s
+> + TS=1569905516
+> + echo 256
+> + cat /proc/sys/vm/nr_hugepages
+> 11
+> root@test1:~# sh hugetlb_test.sh
+> + echo 0
+> + echo 3
+> + echo 1
+> + dd if=/mnt/data/file-1G of=/dev/null bs=4096
+> 262144+0 records in
+> 262144+0 records out
+> 1073741824 bytes (1.1 GB) copied, 21.9485 s, 48.9 MB/s
+> + date +%s
+> + TS=1569905541
+> + echo 256
+> + cat /proc/sys/vm/nr_hugepages
+> 12
+> 
+> The success rate went down by factor of 20!
+> 
+> Although hugetlb allocation requests might fail and it is reasonable to
+> expect them to under extremely fragmented memory or when the memory is
+> under a heavy pressure but the above situation is not that case.
+> 
+> Fix the regression by reverting back to the previous behavior for
+> __GFP_RETRY_MAYFAIL requests and disable the beail out heuristic for
+> those requests.
 
-Thanks for looking into this! With small fix mentioned below, it works! Note 
-that both scenarios I tested (flushing during decoding and flushing after 
-decoding is finished) are focused on capture queue. In order to trigger output 
-queue flush, ffmpeg would need to queue multiple jobs and call flush before they 
-are all processed. This is not something I can do at this time. Maybe Jonas 
-can help with modifying ffmpeg appropriately. However, code for case seems 
-correct to me.
+Thank you Michal for doing this.
+
+hugetlbfs allocations are commonly done via sysctl/sysfs shortly after boot
+where this may not be as much of an issue.  However, I am aware of at least
+three use cases where allocations are made after the system has been up and
+running for quite some time:
+- DB reconfiguration.  If sysctl/sysfs fails to get required number of huge
+  pages, system is rebooted to perform allocation after boot.
+- VM provisioning.  If unable get required number of huge pages, fall back
+  to base pages.
+- An application that does not preallocate pool, but rather allocates pages
+  at fault time for optimal NUMA locality.
+In all cases, I would expect b39d0ee2632d to cause regressions and noticable
+behavior changes.
+
+My quick/limited testing in [1] was insufficient.  It was also mentioned that
+if something like b39d0ee2632d went forward, I would like exemptions for
+__GFP_RETRY_MAYFAIL requests as in this patch.
 
 > 
-> Regards,
-> 
-> 	Hans
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c
-> b/drivers/media/v4l2-core/v4l2-mem2mem.c index 2677a07e4c9b..f81a8f2465ab
-> 100644
-> --- a/drivers/media/v4l2-core/v4l2-mem2mem.c
-> +++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
-> @@ -412,25 +412,24 @@ static void v4l2_m2m_cancel_job(struct v4l2_m2m_ctx
-> *m2m_ctx) }
->  }
-> 
-> -void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
-> -			 struct v4l2_m2m_ctx *m2m_ctx)
-> +static bool _v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
-> +			  struct v4l2_m2m_ctx *m2m_ctx)
->  {
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
->  	if (!m2m_dev->curr_ctx || m2m_dev->curr_ctx != m2m_ctx) {
-> -		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
->  		dprintk("Called by an instance not currently 
-running\n");
-> -		return;
-> +		return false;
->  	}
-> 
->  	list_del(&m2m_dev->curr_ctx->queue);
->  	m2m_dev->curr_ctx->job_flags &= ~(TRANS_QUEUED | TRANS_RUNNING);
->  	wake_up(&m2m_dev->curr_ctx->finished);
->  	m2m_dev->curr_ctx = NULL;
-> +	return true;
-> +}
-> 
-> -	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> -
-> +static void v4l2_m2m_job_next(struct v4l2_m2m_dev *m2m_dev,
-> +		       struct v4l2_m2m_ctx *m2m_ctx)
-> +{
->  	/* This instance might have more buffers ready, but since we do not
->  	 * allow more than one job on the job_queue per instance, each has
->  	 * to be scheduled separately after the previous one finishes. */
-> @@ -441,8 +440,113 @@ void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
-> */
->  	schedule_work(&m2m_dev->job_work);
->  }
-> +
-> +void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
-> +			 struct v4l2_m2m_ctx *m2m_ctx)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
-> +	if (!_v4l2_m2m_job_finish(m2m_dev, m2m_ctx)) {
-> +		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> +		return;
-> +	}
-> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> +
-> +	v4l2_m2m_job_next(m2m_dev, m2m_ctx);
-> +}
->  EXPORT_SYMBOL(v4l2_m2m_job_finish);
-> 
-> +void v4l2_m2m_job_finish_held(struct v4l2_m2m_dev *m2m_dev,
-> +			 struct v4l2_m2m_ctx *m2m_ctx,
-> +			 enum vb2_buffer_state state)
-> +{
-> +	struct vb2_v4l2_buffer *src_buf, *dst_buf;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
-> +	src_buf = v4l2_m2m_src_buf_remove(m2m_ctx);
-> +	dst_buf = v4l2_m2m_next_dst_buf(m2m_ctx);
-> +
-> +	if (!src_buf || !dst_buf) {
-> +		pr_err("Missing source and/or destination buffers\n");
-> +		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> +		return;
-> +	}
-> +	v4l2_m2m_buf_done(src_buf, state);
-> +	if (!dst_buf->is_held) {
-> +		v4l2_m2m_dst_buf_remove(m2m_ctx);
-> +		v4l2_m2m_buf_done(dst_buf, state);
-> +	}
-> +	if (!_v4l2_m2m_job_finish(m2m_dev, m2m_ctx)) {
-> +		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> +		return;
-> +	}
-> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> +
-> +	v4l2_m2m_job_next(m2m_dev, m2m_ctx);
-> +}
-> +EXPORT_SYMBOL(v4l2_m2m_job_finish_held);
-> +
-> +/**
-> + * v4l2_m2m_release_capture_buf() - check if the capture buffer should be
-> + * released
-> + *
-> + * @out_vb: the output buffer
-> + * @cap_vb: the capture buffer
-> + *
-> + * This helper function returns true if the current capture buffer should
-> + * be released to vb2. This is the case if the output buffer specified that
-> + * the capture buffer should be held (i.e. not returned to vb2) AND if the
-> + * timestamp of the capture buffer differs from the output buffer
-> timestamp. + *
-> + * This helper is to be called at the start of the device_run callback:
-> + *
-> + * .. code-block:: c
-> + *
-> + *	if (v4l2_m2m_release_capture_buf(out_vb, cap_vb)) {
-> + *		v4l2_m2m_dst_buf_remove(m2m_ctx);
-> + *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
-> + *		cap_vb = v4l2_m2m_next_dst_buf(m2m_ctx);
-> + *	}
-> + *	cap_vb->is_held = out_vb->flags & 
-V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
-> + *
-> + *	...
-> + *
-> + *	v4l2_m2m_buf_done(out_vb, VB2_BUF_STATE_DONE);
-> + *	if (!cap_vb->is_held) {
-> + *		v4l2_m2m_dst_buf_remove(m2m_ctx);
-> + *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
-> + *	}
-> + *
-> + * This allows for multiple output buffers to be used to fill in a single
-> + * capture buffer. This is typically used by stateless decoders where
-> + * multiple e.g. H.264 slices contribute to a single decoded frame.
-> + */
-> +struct vb2_v4l2_buffer *v4l2_m2m_release_capture_buf(struct v4l2_m2m_ctx
-> *m2m_ctx) +{
-> +	struct v4l2_m2m_dev *m2m_dev = m2m_ctx->m2m_dev;
-> +	struct vb2_v4l2_buffer *src, *dst;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
-> +	src = v4l2_m2m_next_src_buf(m2m_ctx);
-> +	dst = v4l2_m2m_next_dst_buf(m2m_ctx);
-> +
-> +	if (dst->is_held && dst->vb2_buf.copied_timestamp &&
-> +	    src->vb2_buf.timestamp != dst->vb2_buf.timestamp) {
-> +		dst->is_held = false;
-> +		v4l2_m2m_dst_buf_remove(m2m_ctx);
-> +		v4l2_m2m_buf_done(dst, VB2_BUF_STATE_DONE);
-> +		dst = v4l2_m2m_next_dst_buf(m2m_ctx);
-> +	}
-> +	dst->is_held = src->flags & V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
-> +	src->flags &= ~V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
-> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> +	return dst;
-> +}
-> +EXPORT_SYMBOL(v4l2_m2m_release_capture_buf);
-> +
->  int v4l2_m2m_reqbufs(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
->  		     struct v4l2_requestbuffers *reqbufs)
->  {
-> @@ -1171,19 +1275,28 @@ int v4l2_m2m_ioctl_stateless_decoder_cmd(struct file
-> *file, void *priv, {
->  	struct v4l2_fh *fh = file->private_data;
->  	struct vb2_v4l2_buffer *out_vb, *cap_vb;
-> +	struct v4l2_m2m_dev *m2m_dev = fh->m2m_ctx->m2m_dev;
-> +	unsigned long flags;
->  	int ret;
-> 
->  	ret = v4l2_m2m_ioctl_stateless_try_decoder_cmd(file, priv, dc);
->  	if (ret < 0)
->  		return ret;
-> 
-> +	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
->  	out_vb = v4l2_m2m_last_src_buf(fh->m2m_ctx);
->  	cap_vb = v4l2_m2m_last_dst_buf(fh->m2m_ctx);
-> 
-> -	if (out_vb)
-> +	if (out_vb && (out_vb->flags & V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF)) 
-{
->  		out_vb->flags &= ~V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
-> -	else if (cap_vb && cap_vb->is_held)
-> -		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
-> +	} else if (cap_vb && cap_vb->is_held) {
-> +		cap_vb->is_held = false;
-> +		if (m2m_dev->curr_ctx) {
+> [mhocko@suse.com: reworded changelog]
+> Fixes: b39d0ee2632d ("mm, page_alloc: avoid expensive reclaim when compaction may not succeed")
+> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+> Signed-off-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Above condition should be negated.
+FWIW,
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-Best regards,
-Jernej
-
-> +			v4l2_m2m_dst_buf_remove(fh->m2m_ctx);
-> +			v4l2_m2m_buf_done(cap_vb, 
-VB2_BUF_STATE_DONE);
-> +		}
-> +	}
-> +	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
-> 
->  	return 0;
->  }
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-> b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c index
-> 67f7d4326fc1..4e30f263b427 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-> @@ -30,14 +30,7 @@ void cedrus_device_run(void *priv)
->  	struct media_request *src_req;
-> 
->  	run.src = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
-> -	run.dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
-> -
-> -	if (v4l2_m2m_release_capture_buf(run.src, run.dst)) {
-> -		v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
-> -		v4l2_m2m_buf_done(run.dst, VB2_BUF_STATE_DONE);
-> -		run.dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
-> -	}
-> -	run.dst->is_held = run.src->flags & 
-V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
-> +	run.dst = v4l2_m2m_release_capture_buf(ctx->fh.m2m_ctx);
-> 
->  	run.first_slice = !run.dst->vb2_buf.copied_timestamp ||
->  		run.src->vb2_buf.timestamp != run.dst-
->vb2_buf.timestamp;
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c index
-> 99fedec80224..242cad82cc8c 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> @@ -103,7 +103,6 @@ static irqreturn_t cedrus_irq(int irq, void *data)
->  {
->  	struct cedrus_dev *dev = data;
->  	struct cedrus_ctx *ctx;
-> -	struct vb2_v4l2_buffer *src_buf, *dst_buf;
->  	enum vb2_buffer_state state;
->  	enum cedrus_irq_status status;
-> 
-> @@ -121,26 +120,12 @@ static irqreturn_t cedrus_irq(int irq, void *data)
->  	dev->dec_ops[ctx->current_codec]->irq_disable(ctx);
->  	dev->dec_ops[ctx->current_codec]->irq_clear(ctx);
-> 
-> -	src_buf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-> -	dst_buf = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
-> -
-> -	if (!src_buf || !dst_buf) {
-> -		v4l2_err(&dev->v4l2_dev,
-> -			 "Missing source and/or destination 
-buffers\n");
-> -		return IRQ_HANDLED;
-> -	}
-> -
->  	if (status == CEDRUS_IRQ_ERROR)
->  		state = VB2_BUF_STATE_ERROR;
->  	else
->  		state = VB2_BUF_STATE_DONE;
-> 
-> -	v4l2_m2m_buf_done(src_buf, state);
-> -	if (!dst_buf->is_held) {
-> -		v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
-> -		v4l2_m2m_buf_done(dst_buf, state);
-> -	}
-> -	v4l2_m2m_job_finish(ctx->dev->m2m_dev, ctx->fh.m2m_ctx);
-> +	v4l2_m2m_job_finish_held(ctx->dev->m2m_dev, ctx->fh.m2m_ctx, state);
-> 
->  	return IRQ_HANDLED;
->  }
-> diff --git a/include/media/v4l2-mem2mem.h b/include/media/v4l2-mem2mem.h
-> index 8ae2f56c7fa3..48ca7d3eaa3d 100644
-> --- a/include/media/v4l2-mem2mem.h
-> +++ b/include/media/v4l2-mem2mem.h
-> @@ -173,6 +173,10 @@ void v4l2_m2m_try_schedule(struct v4l2_m2m_ctx
-> *m2m_ctx); void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
->  			 struct v4l2_m2m_ctx *m2m_ctx);
-> 
-> +void v4l2_m2m_job_finish_held(struct v4l2_m2m_dev *m2m_dev,
-> +			 struct v4l2_m2m_ctx *m2m_ctx,
-> +			 enum vb2_buffer_state state);
-> +
->  static inline void
->  v4l2_m2m_buf_done(struct vb2_v4l2_buffer *buf, enum vb2_buffer_state state)
-> {
-> @@ -644,47 +648,7 @@ void v4l2_m2m_buf_copy_metadata(const struct
-> vb2_v4l2_buffer *out_vb, struct vb2_v4l2_buffer *cap_vb,
->  				bool copy_frame_flags);
-> 
-> -/**
-> - * v4l2_m2m_release_capture_buf() - check if the capture buffer should be
-> - * released
-> - *
-> - * @out_vb: the output buffer
-> - * @cap_vb: the capture buffer
-> - *
-> - * This helper function returns true if the current capture buffer should
-> - * be released to vb2. This is the case if the output buffer specified that
-> - * the capture buffer should be held (i.e. not returned to vb2) AND if the
-> - * timestamp of the capture buffer differs from the output buffer
-> timestamp. - *
-> - * This helper is to be called at the start of the device_run callback:
-> - *
-> - * .. code-block:: c
-> - *
-> - *	if (v4l2_m2m_release_capture_buf(out_vb, cap_vb)) {
-> - *		v4l2_m2m_dst_buf_remove(m2m_ctx);
-> - *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
-> - *		cap_vb = v4l2_m2m_next_dst_buf(m2m_ctx);
-> - *	}
-> - *	cap_vb->is_held = out_vb->flags & 
-V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
-> - *
-> - *	...
-> - *
-> - *	v4l2_m2m_buf_done(out_vb, VB2_BUF_STATE_DONE);
-> - *	if (!cap_vb->is_held) {
-> - *		v4l2_m2m_dst_buf_remove(m2m_ctx);
-> - *		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
-> - *	}
-> - *
-> - * This allows for multiple output buffers to be used to fill in a single
-> - * capture buffer. This is typically used by stateless decoders where
-> - * multiple e.g. H.264 slices contribute to a single decoded frame.
-> - */
-> -static inline bool v4l2_m2m_release_capture_buf(const struct
-> vb2_v4l2_buffer *out_vb, -					
-	const struct vb2_v4l2_buffer *cap_vb)
-> -{
-> -	return cap_vb->is_held && cap_vb->vb2_buf.copied_timestamp &&
-> -	       out_vb->vb2_buf.timestamp != cap_vb->vb2_buf.timestamp;
-> -}
-> +struct vb2_v4l2_buffer *v4l2_m2m_release_capture_buf(struct v4l2_m2m_ctx
-> *m2m_ctx);
-> 
->  /* v4l2 request helper */
-
-
-
-
+[1] https://lkml.kernel.org/r/3468b605-a3a9-6978-9699-57c52a90bd7e@oracle.com
+-- 
+Mike Kravetz
