@@ -2,124 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5BBCCE997
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C37E5CE995
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:45:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbfJGQot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:44:49 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34943 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729050AbfJGQos (ORCPT
+        id S1729044AbfJGQoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:44:44 -0400
+Received: from mta01.hs-regensburg.de ([194.95.104.11]:51660 "EHLO
+        mta01.hs-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727830AbfJGQoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:44:48 -0400
-Received: by mail-lf1-f67.google.com with SMTP id w6so9771637lfl.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 09:44:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uGS436HRux8Qi7+bTLo6awpzRjQ2y9zvJJmtOyjTy/k=;
-        b=m4QDHaY9wDH4anvI3npqUIjOWHwZwVW9tFDgDtWfAkgb2tRUbHrib/Hfh3GsBfV6xI
-         8XGs3WyeKiX7I+C5+2+8Cimoy7SwINY2CQjJNAbQT7A/B+otoNHjyn8YoRdPxdCBvgTy
-         Rc1Zgal0G06EAMaNutfcGukP1UXn6JsZRqi8a9ScvO3UL7xH/8gF/CznKXx0cY0ZFwyF
-         C6tkrvLh+Oqk5Rxl97h1DU/XhFIBKYDe6ef+HKAwzSeDBnmi7goNkdvGrFFaSCzPFs1P
-         bP6Xhq+Yi05Kx9v4P6tQgq+McVUpcC+AN7y7WY0Vt/4IvEleG80GW86mPcOeZNvYBRMJ
-         Hq2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uGS436HRux8Qi7+bTLo6awpzRjQ2y9zvJJmtOyjTy/k=;
-        b=fyX28NCaaDAzUbCOCCsIDiplaBcuKGiXm7URRP/0MijPcFKbQOOz5KnFCwRTZVEmK4
-         3Aii97Ylkxwr4fwK478orEXxyTMXBklSYZHf2XLNDF9A+sX5hTW8HfFFIWUPi5AC/q0Z
-         owIdpobio8KqyahQDEXAVd0DfMRXRcfIDy6iFkVA+KJ64mzmYpkSlCj0LBndCglqPH9r
-         iWJ+Uxr/3d3lOjlWwG/DEBLSeNlKF7Ih1QYjfZ+SQDGtqSCZOyjpf1rlJH/WfLYb5xap
-         pi9cBuF1xyXTVsx68J49cedIBTpx6KN4keE/Vq72UUmsEjpcSIFF2CVvp+uWBVoicas0
-         aIBw==
-X-Gm-Message-State: APjAAAWt5R5V28WXbzMFS5j8Gm8eM200ZF8GZ41MNezXmFzTUd0cRAiX
-        WRPuLm/FWyFby1LP5HFUVfv9WFMA5/+OZSK285v+zw==
-X-Google-Smtp-Source: APXvYqyD8xebRWeDAhv/SXKGNKe39rkLCr9IKa58cOL5jGUyw5j1ilBYyphmOtOiQeF6Sb9unlTDSdpPR5KU2T4pSbc=
-X-Received: by 2002:a19:8a0b:: with SMTP id m11mr17305439lfd.4.1570466685517;
- Mon, 07 Oct 2019 09:44:45 -0700 (PDT)
+        Mon, 7 Oct 2019 12:44:44 -0400
+Received: from E16S02.hs-regensburg.de (e16s02.hs-regensburg.de [IPv6:2001:638:a01:8013::92])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client CN "E16S02", Issuer "E16S02" (not verified))
+        by mta01.hs-regensburg.de (Postfix) with ESMTPS id 46n5tK0C7vzy7G;
+        Mon,  7 Oct 2019 18:44:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oth-regensburg.de;
+        s=mta01-20160622; t=1570466681;
+        bh=LI14XXmY5N0/ZKqBuiM/47tXsF6+5WROUnMT6MIIpM4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=W0z8xUomVrZ+IpEX4Z82fLeVCh+uQdL52gYkIL+ab1TAzEdkYVCXJLCGAADUtXmrK
+         ee4saD8P/F1UKHyHmGzIbsE12poGLenyxvZcdgaoL4d/90tTm+luVDlilcIhKYUBYt
+         F0MhGjhGEQb2jYvoAZgJLEc9LvBTtnDYEOt1GpD1ZoIpyP/UKhZPo0C226CagIhaPh
+         +rovYiuN35bGFR7cybkR7O9w65YRyoQ6yYPM/jpajDQ1rNBVVYcKs9a078glw6jNY5
+         zamLN3cZ8Lj/e1znOkTLWnJGxuWggUq04dgJYkHYCQddr+2unGGKvxvhEfOhH+OtVp
+         sDY1p0R4pS9Dw==
+Received: from [IPv6:2a01:598:b900:3f4c:904e:cc61:5355:8726]
+ (2001:638:a01:8013::138) by E16S02.hs-regensburg.de (2001:638:a01:8013::92)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1847.3; Mon, 7 Oct 2019
+ 18:44:40 +0200
+Subject: Re: [PATCH v5 2/2] x86/jailhouse: Only enable platform UARTs if
+ available
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Jan Kiszka <jan.kiszka@siemens.com>, <x86@kernel.org>,
+        <jailhouse-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>
+References: <20191007123819.161432-1-ralf.ramsauer@oth-regensburg.de>
+ <20191007123819.161432-3-ralf.ramsauer@oth-regensburg.de>
+ <20191007162636.GD24289@zn.tnic>
+From:   Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+Autocrypt: addr=ralf.ramsauer@oth-regensburg.de; keydata=
+ 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
+ RncIIYr0LjXAAzY=
+Message-ID: <85502467-d13b-084e-cdb8-d891178e97d8@oth-regensburg.de>
+Date:   Mon, 7 Oct 2019 18:44:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <1569885755-10947-1-git-send-email-alan.mikhak@sifive.com> <20191007061324.GB17978@infradead.org>
-In-Reply-To: <20191007061324.GB17978@infradead.org>
-From:   Alan Mikhak <alan.mikhak@sifive.com>
-Date:   Mon, 7 Oct 2019 09:44:33 -0700
-Message-ID: <CABEDWGyovfKuXsNpfhsSCJ0sryg3EpAsaqRTHxBGC9LFM+=dww@mail.gmail.com>
-Subject: Re: [PATCH] scatterlist: Validate page before calling PageSlab()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
-        alexios.zavras@intel.com, ming.lei@redhat.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        Jason Gunthorpe <jgg@ziepe.ca>, christophe.leroy@c-s.fr,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191007162636.GD24289@zn.tnic>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-PH
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [2001:638:a01:8013::138]
+X-ClientProxiedBy: E16S01.hs-regensburg.de (2001:638:a01:8013::91) To
+ E16S02.hs-regensburg.de (2001:638:a01:8013::92)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 6, 2019 at 11:13 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Mon, Sep 30, 2019 at 04:22:35PM -0700, Alan Mikhak wrote:
-> > From: Alan Mikhak <alan.mikhak@sifive.com>
-> >
-> > Modify sg_miter_stop() to validate the page pointer
-> > before calling PageSlab(). This check prevents a crash
-> > that will occur if PageSlab() gets called with a page
-> > pointer that is not backed by page struct.
-> >
-> > A virtual address obtained from ioremap() for a physical
-> > address in PCI address space can be assigned to a
-> > scatterlist segment using the public scatterlist API
-> > as in the following example:
->
-> As Jason pointed out that is not a valid use of scatterlist.  What
-> are you trying to do here at a higher level?
 
-I am developing a PCI endpoint framework function driver to bring-up
-an NVMe device over PCIe. The NVMe endpoint function driver connects
-to an x86_64 or other root-complex host over PCIe. Internally, the
-NVMe endpoint function driver connects to the unmodified Linux NVMe
-target driver running on the embedded CPU. The Linux NVMe target
-operates an NVMe namespace as determined for the application.
-Currently, the Linux NVMe target code operates a file-based namespace
-which is backed by the loop device. However, the application can be
-expanded to operate on non-volatile storage such as flash or
-battery-backed RAM. Currently, I am able to mount such an NVMe
-namespace from the x86_64 Debian Linux host across PCIe using the
-Disks App and perform Partition Benchmarking. I am also able to save
-and load files, such as trace files for debugging the NVMe endpoint
-with KernelShark, on the NVMe namespace partition nvme0n1p1.
 
-My goal is to not modify the Linux NVMe target code at all. The NVMe
-endpoint function driver currently does the work that is required. It
-maps NVMe PRPs and PRP Lists from the host, formats a scatterlist that
-NVMe target driver can consume, and executes the NVMe command with the
-scatterlist on the NVMe target controller on behalf of the host. The
-NVMe target controller can therefore read and write directly to host
-buffers using the scatterlist as it does if the scatterlist had
-arrived over the NVMe fabric.
+On 10/7/19 6:26 PM, Borislav Petkov wrote:
+> On Mon, Oct 07, 2019 at 02:38:19PM +0200, Ralf Ramsauer wrote:
+>> ACPI tables aren't available if Linux runs as guest of the hypervisor
+>> Jailhouse. This makes the 8250 driver probe for all platform UARTs as
+>> it assumes that all platform are present in case of !ACPI. Jailhouse
+> 
+> I think you mean s/platform/UARTs/ here.
+> 
+>> will stop execution of Linux guest due to port access violation.
+>>
+>> So far, these access violations could be solved by tuning the
+>> 8250.nr_uarts parameter but it has limitations: We can, e.g., only map
+> 
+> Another "We" you can get rid of.
+> 
+>> consecutive platform UARTs to Linux, and only in the sequence 0x3f8,
+>> 0x2f8, 0x3e8, 0x2e8.
+>>
+>> Beginning from setup_data version 2, Jailhouse will place information of
+>> available platform UARTs in setup_data. This allows for selective
+>> activation of platform UARTs.
+>>
+>> This patch queries the setup_data version and activates only available
+> 
+> s/This patch queries/Query/
+> 
+>> UARTS. It comes with backward compatibility, and will still support
+>> older setup_data versions. In this case, Linux falls back to the old
+>> behaviour.
+>>
+>> Signed-off-by: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+>> ---
+>>  arch/x86/include/uapi/asm/bootparam.h |  3 +
+>>  arch/x86/kernel/jailhouse.c           | 83 +++++++++++++++++++++++----
+>>  2 files changed, 74 insertions(+), 12 deletions(-)
+> 
+> ...
+> 
+>> @@ -138,6 +147,53 @@ static int __init jailhouse_pci_arch_init(void)
+>>  	return 0;
+>>  }
+>>  
+>> +#ifdef CONFIG_SERIAL_8250
+>> +static bool jailhouse_uart_enabled(unsigned int uart_nr)
+>> +{
+>> +	return setup_data.v2.flags & BIT(uart_nr);
+>> +}
+>> +
+>> +static void jailhouse_serial_fixup(int port, struct uart_port *up,
+>> +				   u32 *capabilities)
+>> +{
+>> +	static const u16 pcuart_base[] = {0x3f8, 0x2f8, 0x3e8, 0x2e8};
+>> +	unsigned int n;
+>> +
+>> +	for (n = 0; n < ARRAY_SIZE(pcuart_base); n++) {
+>> +		if (pcuart_base[n] != up->iobase)
+>> +			continue;
+>> +
+>> +		if (jailhouse_uart_enabled(n)) {
+>> +			pr_info("Enabling UART%u (port 0x%lx)\n", n,
+>> +				up->iobase);
+>> +			jailhouse_setup_irq(up->irq);
+>> +		} else {
+>> +			/* Deactivate UART if access isn't allowed */
+>> +			up->iobase = 0;
+>> +		}
+>> +		break;
+>> +	}
+>> +}
+> 
+> WARNING: vmlinux.o(.text+0x4fdb0): Section mismatch in reference from the function jailhouse_serial_fixup() to the variable .init.data:can_use_brk_pgt
+> The function jailhouse_serial_fixup() references
+> the variable __initdata can_use_brk_pgt.
+> This is often because jailhouse_serial_fixup lacks a __initdata 
+> annotation or the annotation of can_use_brk_pgt is wrong.
+> 
 
-In my current platform, there are no page struct backing for the PCIe
-memory address space. Nevertheless, I am able to feed the virtual
-addresses I obtain from ioremap() to the scatterlist as shown in my
-example earlier. The scatterlist code has no problem traversing the
-scatterlist that is formed from such addresses that were obtained from
-ioremap(). The only place the scatterlist code prevents such usage is
-in sg_miter_stop() when it calls PageSlab() to decide if it should
-flush the page. I added a check to see if the page is valid and not
-call PageSlab() if it is not a page struct backed page. That is all I
-had to do to be able to pass scatterlists to the NVMe target.
+Yep, jailhouse_serial_fixup can become __init, I didn't see that, but
+you're right, thanks. I'm curious, how did you find that? "We" didn't
+notice yet. :-)
 
-Given that the PCIe memory address space is large, the cost of adding
-page structs for that region is substantial enough for me to ask that
-it be considered here to modify scatterlist code to support such
-memory pointers that were obtained from ioremap(). If not acceptable,
-the solution would be to pay to price and add page structs for the
-PCIe memory address space.
+BTW, we refers to the Jailhouse folks, but I will rewrite that.
 
-Regards,
-Alan
+Thanks
+  Ralf
