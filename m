@@ -2,164 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D4EECEE3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A09E2CEE40
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 23:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbfJGVOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 17:14:24 -0400
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:46284 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728702AbfJGVOY (ORCPT
+        id S1729300AbfJGVRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 17:17:00 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55009 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728330AbfJGVQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 17:14:24 -0400
-Received: by mail-vk1-f201.google.com with SMTP id n124so7328820vkg.13
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 14:14:23 -0700 (PDT)
+        Mon, 7 Oct 2019 17:16:59 -0400
+Received: by mail-wm1-f65.google.com with SMTP id p7so919214wmp.4;
+        Mon, 07 Oct 2019 14:16:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=fBfJjWCRhUxG21Ng89HEbOaecnd7jMgx3odQFdBCxJ0=;
-        b=LCERyyEkhTVAeNgqdkbiDeOz17qS0c6prgo+IvWGSyIjN8hlkJkU4bQhVGDLEkrtt/
-         9OL9NgQsbq9SBZUzrNmTqIsk7KMbjS2osBcrPpAD7ZuIqgqpzDPWuGVaZQsQHtjm34+0
-         /K3CKdKSNK+SxDcnbtLwnZRbwKLxrTVfQUjkcEWQcwKZQwH6A8t73p44wUFGJA89Vkvv
-         /cMpjXtjzgqNIhBnYpUe9ZUO5yChcsmOGIxU8VIpVzlPzwL4nkzgZ/VkY8kIqJbC8G6Q
-         iFyskXJpjfzO0ifcz1tB7LWzOMwxadjuaVOwwfpv9GZsbjwIL+05pwr/ypfjwDcmW5Qm
-         xB2Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r1Ds32p5O4ZcmTgQVgBnVXrwuxhYvcTzmMcSF3UJbRo=;
+        b=pbacVSdys0sLAittjH0pybL66qLXh6pGBO12S3ky7p4gVpkjbCMlX/rcLQGzII8A/1
+         q6wwsUbyYzohVk6/46fAIvyrXagObWvJUEQCWzNbKaCX3ubHaQba8eMQsputPLQ4xe8p
+         MzSkcNRdMaeOJKXiQu6gb8FaJRuKYZtmAQLMU/cV5I2Ac0lWGgtci7fxYNti8VrPba7I
+         bd003rqx7Wo3dq8wV6MWhU09yQU88XubqLmX59Xj3i+tRMp4glmW3mBt/PN6NgTdJfmC
+         /QRgRfgsDCPIkbSRTXOWPF0kdvudgL3J/cNQf/okrN9yVl2SeUFS1jLMpjIJlUHkdhvb
+         FI3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=fBfJjWCRhUxG21Ng89HEbOaecnd7jMgx3odQFdBCxJ0=;
-        b=bM7q4JjsXdcqdkmDzj9GHjHxqRUaMqju5BrGc6aD1+ZhWhpG+DXC5+cXa8iWJMWZSs
-         bkYb+md9qehX4NGtvhYcS4x/PulNTaQcPQ527uNm6nVaMPw/KqlTiMNum01O79vd5twI
-         lixy23nkAVkdos5kaH7JolE3uET2rWfm1gdsqJDNq/ooMZJuuO10GEfdqKpsGwdWRhgm
-         dhjGAXZmPo+ySv886k9Mwkk4we0sn9z/CjGQHnW5H914htY9CblaMq5JYmoXOTR9gVj1
-         e4rrOpSQQrfc/Cd7Ye1N1aviXAr4cUl0DUtINFdY1XUZIgTJhDiwH6zvm+ct01qWp562
-         eKtA==
-X-Gm-Message-State: APjAAAX7b0zOD4cYYvVVG1d32jx7obiYr0sL9Ds0R31EfZuHQ+f6UrI8
-        oUyNPz46IAcexTS0Y7Wng41kj+UYygorWPj/AWs=
-X-Google-Smtp-Source: APXvYqxF+3FXrWI0F1JhQsVjGtNovxca74xNOx0v6Tym1VjSkx5iVmESuRaQIaxUUjlmnakmGlvpseIpPCngOR9kjVw=
-X-Received: by 2002:a67:2e01:: with SMTP id u1mr17012140vsu.44.1570482862813;
- Mon, 07 Oct 2019 14:14:22 -0700 (PDT)
-Date:   Mon,  7 Oct 2019 14:14:18 -0700
-Message-Id: <20191007211418.30321-1-samitolvanen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-Subject: [PATCH] arm64: fix alternatives with LLVM's integrated assembler
-From:   Sami Tolvanen <samitolvanen@google.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r1Ds32p5O4ZcmTgQVgBnVXrwuxhYvcTzmMcSF3UJbRo=;
+        b=KOXYr+woaqUi95jj2XUMhNuJZe+DNWe/IZOpTF/78Dw40vBaa6lAHkuhVqHf4SnlM/
+         0hDcGwczGvkEFXJmLNG5663SoFZ7DwCRE1iajPOiO6R2whDyjQGm1GPRYBX1YPVgxrTl
+         OqJV1Cdhl4GVWyO7lJoo6o/oI/UxWmdQAupuQAhjuSzXYV32SJBWAtbL6wr5EeDQShqp
+         5FLJKzuj1D8C2/gRwt44QAQoxFnYuzMQfKvMX93LEe2CGiZXEQ69xd8vhlgKFL76TmH3
+         mQqQgQDZNMecRfRo9+11A+Ouj0RQDkU7m4mlU611vAFyWSOp//TFVHBM/f1gZuce2BbV
+         o3kQ==
+X-Gm-Message-State: APjAAAXF6YKfQevNyc6x1g0NC3WJQwkvErE3X548gbrR1GdJJX2WGUel
+        +yUzRG2chLbtWTr+ONRMsZE=
+X-Google-Smtp-Source: APXvYqxyivR8RyXxX3tcMgK5BYcWUcd9CTctKbWKKBO62erx5rad+Y21F+bpUo63vmbXA23tsKhW7g==
+X-Received: by 2002:a05:600c:1009:: with SMTP id c9mr933903wmc.64.1570483018061;
+        Mon, 07 Oct 2019 14:16:58 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.133.195])
+        by smtp.gmail.com with ESMTPSA id v8sm22227375wra.79.2019.10.07.14.16.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 14:16:57 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH] blk-stat: Optimise blk_stat_add()
+Date:   Tue,  8 Oct 2019 00:16:51 +0300
+Message-Id: <39dd33cc6f0264b2ec2f79f1dfe21466c2180851.1570482929.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LLVM's integrated assembler fails with the following error when
-building KVM:
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-  <inline asm>:12:6: error: expected absolute expression
-   .if kvm_update_va_mask == 0
-       ^
-  <inline asm>:21:6: error: expected absolute expression
-   .if kvm_update_va_mask == 0
-       ^
-  <inline asm>:24:2: error: unrecognized instruction mnemonic
-          NOT_AN_INSTRUCTION
-          ^
-  LLVM ERROR: Error parsing inline asm
+blk_stat_add() calls {get,put}_cpu_ptr() in a loop, which entails
+overhead of disabling/enabling preemption. The loop is under RCU
+(i.e.short) anyway, so do get_cpu() in advance.
 
-These errors come from ALTERNATIVE_CB and __ALTERNATIVE_CFG,
-which test for the existence of the callback parameter in inline
-assembly using the following expression:
-
-  " .if " __stringify(cb) " == 0\n"
-
-This works with GNU as, but isn't supported by LLVM. This change
-splits __ALTERNATIVE_CFG and ALTINSTR_ENTRY into separate macros
-to fix the LLVM build.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/472
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- arch/arm64/include/asm/alternative.h | 32 ++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ block/blk-stat.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
-index b9f8d787eea9..324e7d5ab37e 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -35,13 +35,16 @@ void apply_alternatives_module(void *start, size_t length);
- static inline void apply_alternatives_module(void *start, size_t length) { }
- #endif
+diff --git a/block/blk-stat.c b/block/blk-stat.c
+index d892ad2cb938..4239954b0bce 100644
+--- a/block/blk-stat.c
++++ b/block/blk-stat.c
+@@ -75,7 +75,7 @@ void blk_stat_add(struct request *rq, u64 now)
+ 	struct request_queue *q = rq->q;
+ 	struct blk_stat_callback *cb;
+ 	struct blk_rq_stat_staging *stat;
+-	int bucket;
++	int bucket, cpu;
+ 	u64 value;
  
--#define ALTINSTR_ENTRY(feature,cb)					      \
-+#define ALTINSTR_ENTRY(feature)					              \
- 	" .word 661b - .\n"				/* label           */ \
--	" .if " __stringify(cb) " == 0\n"				      \
- 	" .word 663f - .\n"				/* new instruction */ \
--	" .else\n"							      \
-+	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
-+	" .byte 662b-661b\n"				/* source len      */ \
-+	" .byte 664f-663f\n"				/* replacement len */
-+
-+#define ALTINSTR_ENTRY_CB(feature, cb)					      \
-+	" .word 661b - .\n"				/* label           */ \
- 	" .word " __stringify(cb) "- .\n"		/* callback */	      \
--	" .endif\n"							      \
- 	" .hword " __stringify(feature) "\n"		/* feature bit     */ \
- 	" .byte 662b-661b\n"				/* source len      */ \
- 	" .byte 664f-663f\n"				/* replacement len */
-@@ -62,15 +65,14 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
-  *
-  * Alternatives with callbacks do not generate replacement instructions.
-  */
--#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled, cb)	\
-+#define __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled)	\
- 	".if "__stringify(cfg_enabled)" == 1\n"				\
- 	"661:\n\t"							\
- 	oldinstr "\n"							\
- 	"662:\n"							\
- 	".pushsection .altinstructions,\"a\"\n"				\
--	ALTINSTR_ENTRY(feature,cb)					\
-+	ALTINSTR_ENTRY(feature)						\
- 	".popsection\n"							\
--	" .if " __stringify(cb) " == 0\n"				\
- 	".pushsection .altinstr_replacement, \"a\"\n"			\
- 	"663:\n\t"							\
- 	newinstr "\n"							\
-@@ -78,17 +80,25 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
- 	".popsection\n\t"						\
- 	".org	. - (664b-663b) + (662b-661b)\n\t"			\
- 	".org	. - (662b-661b) + (664b-663b)\n"			\
--	".else\n\t"							\
-+	".endif\n"
-+
-+#define __ALTERNATIVE_CFG_CB(oldinstr, feature, cfg_enabled, cb)	\
-+	".if "__stringify(cfg_enabled)" == 1\n"				\
-+	"661:\n\t"							\
-+	oldinstr "\n"							\
-+	"662:\n"							\
-+	".pushsection .altinstructions,\"a\"\n"				\
-+	ALTINSTR_ENTRY_CB(feature, cb)					\
-+	".popsection\n"							\
- 	"663:\n\t"							\
- 	"664:\n\t"							\
--	".endif\n"							\
- 	".endif\n"
+ 	value = (now >= rq->io_start_time_ns) ? now - rq->io_start_time_ns : 0;
+@@ -83,6 +83,7 @@ void blk_stat_add(struct request *rq, u64 now)
+ 	blk_throtl_stat_add(rq, value);
  
- #define _ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg, ...)	\
--	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
-+	__ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg))
+ 	rcu_read_lock();
++	cpu = get_cpu();
+ 	list_for_each_entry_rcu(cb, &q->stats->callbacks, list) {
+ 		if (!blk_stat_is_active(cb))
+ 			continue;
+@@ -91,10 +92,10 @@ void blk_stat_add(struct request *rq, u64 now)
+ 		if (bucket < 0)
+ 			continue;
  
- #define ALTERNATIVE_CB(oldinstr, cb) \
--	__ALTERNATIVE_CFG(oldinstr, "NOT_AN_INSTRUCTION", ARM64_CB_PATCH, 1, cb)
-+	__ALTERNATIVE_CFG_CB(oldinstr, ARM64_CB_PATCH, 1, cb)
- #else
+-		stat = &get_cpu_ptr(cb->cpu_stat)[bucket];
++		stat = &per_cpu_ptr(cb->cpu_stat, cpu)[bucket];
+ 		blk_rq_stat_add(stat, value);
+-		put_cpu_ptr(cb->cpu_stat);
+ 	}
++	put_cpu();
+ 	rcu_read_unlock();
+ }
  
- #include <asm/assembler.h>
 -- 
-2.23.0.581.g78d2f28ef7-goog
+2.23.0
 
