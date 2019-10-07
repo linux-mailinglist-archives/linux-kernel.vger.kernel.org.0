@@ -2,119 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 279FACE225
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70175CE21A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfJGMrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:47:52 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:43910 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbfJGMru (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:47:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1570452469; x=1601988469;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=iFphmDVWG0qSLbmVu83gV0dPQ/BYDB46DDk1hmRpluc=;
-  b=qWGd9RjGbB8j6qdCuOZlDKuCRrpz7SkOwyLPhofIIDhnDSQeAOQcPz4R
-   e8HI1ucI6D4E0GO333/rXDen7q41HlevQUHvt8jg6iPJnbLIk5ZLKQgDv
-   Uia6ZqxXP7HggFWbB91jnCRNGMOgb8fxQXksdOAIOfWg5vR26d6RLUNK0
-   g=;
-X-IronPort-AV: E=Sophos;i="5.67,268,1566864000"; 
-   d="scan'208";a="756171455"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-53356bf6.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 07 Oct 2019 12:47:48 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-53356bf6.us-west-2.amazon.com (Postfix) with ESMTPS id 0AE89A1C2F;
-        Mon,  7 Oct 2019 12:47:46 +0000 (UTC)
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 7 Oct 2019 12:47:46 +0000
-Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.162.245) by
- EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 7 Oct 2019 12:47:37 +0000
-From:   Talel Shenhar <talel@amazon.com>
-To:     <robh+dt@kernel.org>, <maz@kernel.org>, <mark.rutland@arm.com>,
-        <arnd@arndb.de>, <bp@alien8.de>, <mchehab@kernel.org>,
-        <james.morse@arm.com>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <paulmck@linux.ibm.com>,
-        <talel@amazon.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>
-CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
-        <hhhawa@amazon.com>, <ronenk@amazon.com>, <jonnyc@amazon.com>,
-        <hanochu@amazon.com>, <amirkl@amazon.com>, <barakw@amazon.com>
-Subject: [PATCH v5 1/2] dt-bindings: soc: al-pos: Amazon's Annapurna Labs POS
-Date:   Mon, 7 Oct 2019 15:47:14 +0300
-Message-ID: <1570452435-8505-2-git-send-email-talel@amazon.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570452435-8505-1-git-send-email-talel@amazon.com>
-References: <1570452435-8505-1-git-send-email-talel@amazon.com>
+        id S1727824AbfJGMrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:47:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:33704 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727536AbfJGMrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 08:47:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 268591570;
+        Mon,  7 Oct 2019 05:47:34 -0700 (PDT)
+Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 051253F706;
+        Mon,  7 Oct 2019 05:47:32 -0700 (PDT)
+Subject: Re: drm_sched with panfrost crash on T820
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     Hillf Danton <hdanton@sina.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Erico Nunes <nunes.erico@gmail.com>
+References: <8e003dfd-2761-4941-8b5b-ecc186222229@email.android.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <cf6c7130-51ea-155b-cbe7-9f05281be360@arm.com>
+Date:   Mon, 7 Oct 2019 13:47:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.245]
-X-ClientProxiedBy: EX13D05UWB004.ant.amazon.com (10.43.161.208) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+In-Reply-To: <8e003dfd-2761-4941-8b5b-ecc186222229@email.android.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document Amazon's Annapurna Labs POS SoC binding.
+On 04/10/2019 17:33, Koenig, Christian wrote:
+> 
+> 
+> Am 04.10.2019 18:02 schrieb Steven Price <steven.price@arm.com>:
+> On 04/10/2019 16:34, Koenig, Christian wrote:
+>> Am 04.10.19 um 17:27 schrieb Steven Price:
+>>> On 04/10/2019 16:03, Neil Armstrong wrote:
+>>>> On 04/10/2019 16:53, Grodzovsky, Andrey wrote:
+>>>>> On 10/3/19 4:34 AM, Neil Armstrong wrote:
+>>>>>> Hi Andrey,
+>>>>>>
+>>>>>> Le 02/10/2019 à 16:40, Grodzovsky, Andrey a écrit :
+>>>>>>> On 9/30/19 10:52 AM, Hillf Danton wrote:
+>>>>>>>> On Mon, 30 Sep 2019 11:17:45 +0200 Neil Armstrong wrote:
+>>>>>>>>> Did a new run from 5.3:
+>>>>>>>>>
+>>>>>>>>> [   35.971972] Call trace:
+>>>>>>>>> [   35.974391]  drm_sched_increase_karma+0x5c/0xf0
+>>>>>>>>>                         ffff000010667f38        FFFF000010667F94
+>>>>>>>>>                         drivers/gpu/drm/scheduler/sched_main.c:335
+>>>>>>>>>
+>>>>>>>>> The crashing line is :
+>>>>>>>>>                                    if (bad->s_fence->scheduled.context ==
+>>>>>>>>>                                        entity->fence_context) {
+>>>>>>>>>
+>>>>>>>>> Doesn't seem related to guilty job.
+>>>>>>>> Bail out if s_fence is no longer fresh.
+>>>>>>>>
+>>>>>>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
+>>>>>>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+>>>>>>>> @@ -333,6 +333,10 @@ void drm_sched_increase_karma(struct drm
+>>>>>>>>
+>>>>>>>>                          spin_lock(&rq->lock);
+>>>>>>>>                          list_for_each_entry_safe(entity, tmp, &rq->entities, list) {
+>>>>>>>> +                               if (!smp_load_acquire(&bad->s_fence)) {
+>>>>>>>> +                                       spin_unlock(&rq->lock);
+>>>>>>>> +                                       return;
+>>>>>>>> +                               }
+>>>>>>>>                                  if (bad->s_fence->scheduled.context ==
+>>>>>>>>                                      entity->fence_context) {
+>>>>>>>>                                          if (atomic_read(&bad->karma) >
+>>>>>>>> @@ -543,7 +547,7 @@ EXPORT_SYMBOL(drm_sched_job_init);
+>>>>>>>>     void drm_sched_job_cleanup(struct drm_sched_job *job)
+>>>>>>>>     {
+>>>>>>>>          dma_fence_put(&job->s_fence->finished);
+>>>>>>>> -       job->s_fence = NULL;
+>>>>>>>> +       smp_store_release(&job->s_fence, 0);
+>>>>>>>>     }
+>>>>>>>>     EXPORT_SYMBOL(drm_sched_job_cleanup);
+>>>>>> This fixed the problem on the 10 CI runs.
+>>>>>>
+>>>>>> Neil
+>>>>>
+>>>>> These are good news but I still fail to see how this fixes the problem -
+>>>>> Hillf, do you mind explaining how you came up with this particular fix -
+>>>>> what was the bug you saw ?
+>>>> As Steven explained, seems the same job was submitted on both HW slots,
+>>>> and then when timeout occurs each thread calls panfrost_job_timedout
+>>>> which leads to drm_sched_stop() on the first call and on the
+>>>> second call the job was already freed.
+>>>>
+>>>> Steven proposed a working fix, and this one does the same but on
+>>>> the drm_sched side. This one looks cleaner, but panfrost should
+>>>> not call drm_sched_stop() twice for the same job.
+>>> I'm not sure that Hillf's fix is sufficient. In particular in
+>>> drm_sched_increase_karma() I don't understand how the smp_load_acquire()
+>>> call prevents bad->s_fence becoming NULL immediately afterwards (but
+>>> admittedly the window is much smaller). But really this is just a
+>>> Panfrost bug (calling drm_sched_stop() twice on the same job).
+>>>
+>>> The part of my change that I'd welcome feedback on is changing
+>>> cancel_delayed_work() to cancel_delayed_work_sync() in drm_sched_stop()
+>>> when called on different scheduler to the bad job. It's not clear to me
+>>> exactly what the semantics of the function should be, and I haven't
+>>> tested the effect of the change on drivers other than Panfrost.
+>>
+>> Yeah, at least of hand that change doesn't seem to make sense to me.
+> 
+> We need to ensure that any other timeouts that might have started
+> processing are complete before actually resetting the hardware.
+> Otherwise after the reset another thread could come along and attempt to
+> reset the hardware again (and cause a double free of a job).
+> 
+> This is intentional behaviour. If you don't want the double reset in Panfrost you should probably call the cancel_sync yourself.
 
-Signed-off-by: Talel Shenhar <talel@amazon.com>
----
- .../bindings/edac/amazon,al-pos-edac.yaml          | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/edac/amazon,al-pos-edac.yaml
+It's less the double reset that is the problem, more that the job gets
+cleaned up twice: drm_sched_stop() will either free the job or mark it
+to be freed later. By having two threads both drm_sched_stop()ing all
+slots you end up with the guilty job(s) potentially being double freed.
 
-diff --git a/Documentation/devicetree/bindings/edac/amazon,al-pos-edac.yaml b/Documentation/devicetree/bindings/edac/amazon,al-pos-edac.yaml
-new file mode 100644
-index 00000000..048c2e9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/edac/amazon,al-pos-edac.yaml
-@@ -0,0 +1,40 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/edac/amazon,al-pos-edac.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amazon's Annapurna Labs POS
-+
-+maintainers:
-+  - Talel Shenhar <talel@amazon.com>
-+  - Talel Shenhar <talelshenhar@gmail.com>
-+
-+description: |
-+  POS node is defined to describe the Point Of Serialization (POS) error
-+  detection capability.
-+
-+properties:
-+
-+  compatible:
-+    const: "amazon,al-pos-edac"
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    description: Interrupt for the error event.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    edac@f0070084 {
-+      compatible = "amazon,al-pos-edac";
-+      reg = <0x0 0xf0070084 0x0 0x00000008>;
-+      interrupt-parent = <&amazon_system_fabric>;
-+      interrupts = <24 IRQ_TYPE_LEVEL_HIGH>;
-+    };
--- 
-2.7.4
+I've move the call to cancel_delayed_work_sync() into Panfrost since I'm
+not sure whether this is generically useful to other drivers.
 
+Steve
