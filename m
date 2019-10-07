@@ -2,142 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D13FBCE742
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DEB3CE738
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 17:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbfJGPTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 11:19:40 -0400
-Received: from mx1.riseup.net ([198.252.153.129]:37102 "EHLO mx1.riseup.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727589AbfJGPTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 11:19:39 -0400
-Received: from capuchin.riseup.net (capuchin-pn.riseup.net [10.0.1.176])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "*.riseup.net", Issuer "Sectigo RSA Domain Validation Secure Server CA" (not verified))
-        by mx1.riseup.net (Postfix) with ESMTPS id 46n40B1fMKzFbVf;
-        Mon,  7 Oct 2019 08:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-        t=1570461578; bh=B/wjUazqCOSjbEbddfs83rC4QMZYfe6E9mjutAgJbTw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SNYlfR67zrjSwWfDNagWhNpxLUuE/cTL+DCPqTqBi2KH3yYZcvpvtHiwDDYnWco06
-         bvH4yt688AfPguCMWO19d9cbVT6wucesA2r6dfkYIbEgrKzH6IV7SLB5p8BR265xIm
-         5SG8lS7hr+2oZncM3H3XjhuIzve34rnInNwpA3Q0=
-X-Riseup-User-ID: 01931AB61FBB974FA3DBE2730C8CD81BFFB103CBB3E31D7C10E68AB6336803B7
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-         by capuchin.riseup.net (Postfix) with ESMTPSA id 46n3zz2mt8z8tqM;
-        Mon,  7 Oct 2019 08:19:26 -0700 (PDT)
-Subject: Re: [Lkcamp] [RFC PATCH] media: vimc: vimc_pix_map_fmt_info() can be
- static
-To:     Helen Koike <helen.koike@collabora.com>,
-        kbuild test robot <lkp@intel.com>,
-        "Carlos E. C. Barbosa" <climacobarbosacee@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org,
-        kbuild-all@01.org, Shuah Khan <skhan@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-References: <20191005211136.552305-1-carlosecb@tutanota.com>
- <20191006002805.i2gbquub7egjczhx@332d0cec05f4>
- <28ba4406-c231-e589-2eeb-bca5da5d3245@collabora.com>
-From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeida@riseup.net>
-Autocrypt: addr=andrealmeida@riseup.net; keydata=
- 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 mNGb
-Message-ID: <28f23bab-4284-cb45-579f-32fd6b78c3e1@riseup.net>
-Date:   Mon, 7 Oct 2019 12:18:04 -0300
+        id S1728598AbfJGPTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 11:19:10 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46340 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727745AbfJGPTK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 11:19:10 -0400
+Received: by mail-yw1-f66.google.com with SMTP id h10so2241160ywm.13;
+        Mon, 07 Oct 2019 08:19:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wiNFdskpw4yBMm9nyiqt5ftRnxZo6W3oQSMb5hEf9N0=;
+        b=lb4bWWehvLkfbpod5kZF+pZetwwjP/Hl4QHssFZCruTsJ2+da6Y7y2IT76QjtCuIXY
+         jcHRPM3UIIntO35bKebInFUzmiuZ2fCLpF9l2UqODiQa1nhnut99+IDTo02WkZee0Lqh
+         HaVANCKIYksMAT+SUbHNB3LY2GtLN+X5ySty1pg7Pmm8erKDW95qj3gyiMeA/DPeDzUS
+         gc8Ydvc7F24bWkxsLrDXbS6GVid127WHhbmMJ9GrMm/PXNMxymwLPg5f7X4KaMM2N72b
+         YxuI3iw/0sU7ng+V57pPA2LWXWEFfEl4atDnE1D+y74Gm0Rpw27+7LS1nUaz/haerXsE
+         hF+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wiNFdskpw4yBMm9nyiqt5ftRnxZo6W3oQSMb5hEf9N0=;
+        b=DqDPZwncuBvDYND5AsN/v9nDW+UcLlf9IjTOSKbvyZkkPz+MU8uNCx3kbPdqX8ukrP
+         73hkHfFUIS/mFYclNDa8wk9g/6l/618A8/ArjKiEfW66uMGwDWE1lxqLMSh2rnozSpdd
+         MH680plw7azMwcsnMhOCingLr2aCbpCgeOh5EEt8jjl75mYPa4EzBzWkjjHLl3EeNoG4
+         XQBHLUNqO/2reJ708df+V0OSZmRCLBN6+DiVC+5EliSkpgizf30vzqTL2l/1i3M1GqEt
+         WxZpzjVMHk7UNXnSPpp68bHrhYZz5Z15wAsCCFRQsi583Og1P0p5TGP1ahVdlcC+QZnI
+         5nBw==
+X-Gm-Message-State: APjAAAWZQmxKOZ2kf5j3iVr+SUKorQQCNsW0snBVf/eWGF8xvgwKVEpK
+        R62dmlinDD3aoQpj9otIZgk=
+X-Google-Smtp-Source: APXvYqzRFRpv7XJTv8PKNwl6Ppt8cG35jqRtYU+F/E4Oee5d9CbO3gFPtNFJXNPBhZtX6QAVzod2Qw==
+X-Received: by 2002:a0d:cccc:: with SMTP id o195mr18912544ywd.44.1570461547530;
+        Mon, 07 Oct 2019 08:19:07 -0700 (PDT)
+Received: from icarus (072-189-084-142.res.spectrum.com. [72.189.84.142])
+        by smtp.gmail.com with ESMTPSA id g128sm3727806ywb.13.2019.10.07.08.19.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2019 08:19:06 -0700 (PDT)
+Date:   Mon, 7 Oct 2019 11:18:51 -0400
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux@rasmusvillemoes.dk, yamada.masahiro@socionext.com,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        geert@linux-m68k.org, preid@electromag.com.au, lukas@wunner.de,
+        sean.nyekjaer@prevas.dk, morten.tiljeset@prevas.dk,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v16 01/14] bitops: Introduce the for_each_set_clump8 macro
+Message-ID: <20191007151851.GA3494@icarus>
+References: <cover.1570374078.git.vilhelm.gray@gmail.com>
+ <c0830858f19c852f6d124395a32410bc645ecd15.1570374078.git.vilhelm.gray@gmail.com>
+ <20191007082156.GL32742@smile.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <28ba4406-c231-e589-2eeb-bca5da5d3245@collabora.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20191007082156.GL32742@smile.fi.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helen,
+On Mon, Oct 07, 2019 at 11:21:56AM +0300, Andy Shevchenko wrote:
+> On Sun, Oct 06, 2019 at 11:10:58AM -0400, William Breathitt Gray wrote:
+> > This macro iterates for each 8-bit group of bits (clump) with set bits,
+> > within a bitmap memory region. For each iteration, "start" is set to the
+> > bit offset of the found clump, while the respective clump value is
+> > stored to the location pointed by "clump". Additionally, the
+> > bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> > respectively get and set an 8-bit value in a bitmap memory region.
+> 
+> Very much thank you for an update!
+> I have comments below.
+> 
+> > +/**
+> > + * bitmap_get_value8 - get an 8-bit value within a memory region
+> 
+> Since it's in find.h I would not collide with bitmap namespace.
+> How about
+> 
+> 	find_and_get_value8()
 
-On 10/5/19 10:36 PM, Helen Koike wrote:
-> Hi Carlos,
->
-> On 10/5/19 9:28 PM, kbuild test robot wrote:
->> Fixes: 4d124d159dff ("media: vimc: get pixformat info from v4l2_format_info to avoid code repetition")
-> Usually, the Fixes flag is used for something that is already accepted in mainline.
-> If you want to fix anything in the previous version of the patch you sent, you should update the last patch
-> and re-send it as a new version, i.e. [PATCH v2], adding a change log just after the 3 dashes to explain
-> what you changed.
+We modeled the interface for these on the existing bitmap functions, so
+perhaps it would be better to move bitmap_get_value8 and
+bitmap_set_value8 to include/linux/bitmap.h so that they are with the
+rest of the bitmap functions -- afterall, they are operating on bitmaps.
 
-The author of this commit is the "kbuild test robot" rather than Carlos,
-it was generated automatically to fix a warning the robot found at
-Carlos commit :)
+> > + * @addr: address to the bitmap memory region
+> > + * @start: bit offset of the 8-bit value; must be a multiple of 8
+> > + *
+> > + * Returns the 8-bit value located at the @start bit offset within the @addr
+> > + * memory region.
+> > + */
+> > +static inline unsigned long bitmap_get_value8(const unsigned long *addr,
+> > +					      unsigned long start)
+> > +{
+> > +	const size_t index = BIT_WORD(start);
+> > +	const unsigned long offset = start % BITS_PER_LONG;
+> > +
+> > +	return (addr[index] >> offset) & 0xFF;
+> > +}
+> > +
+> > +/**
+> > + * bitmap_set_value8 - set an 8-bit value within a memory region
+> 
+> 	find_and_set_value8()
+> 
+> ?
+> 
+> > + * @addr: address to the bitmap memory region
+> > + * @value: the 8-bit value; values wider than 8 bits may clobber bitmap
+> > + * @start: bit offset of the 8-bit value; must be a multiple of 8
+> > + */
+> > +static inline void bitmap_set_value8(unsigned long *addr, unsigned long value,
+> > +				     unsigned long start)
+> > +{
+> > +	const size_t index = BIT_WORD(start);
+> > +	const unsigned long offset = start % BITS_PER_LONG;
+> > +
+> > +	addr[index] &= ~(0xFF << offset);
+> > +	addr[index] |= value << offset;
+> > +}
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
-> Check this example:
->
-> https://www.spinics.net/lists/linux-media/msg158251.html
->
-> Let me know if you need help!
-> And thanks for working on this :)
-> Helen
->
->> Signed-off-by: kbuild test robot <lkp@intel.com>
->> ---
->>  vimc-common.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/vimc/vimc-common.c b/drivers/media/platform/vimc/vimc-common.c
->> index 9ea698810e1a1..c37442aba70b1 100644
->> --- a/drivers/media/platform/vimc/vimc-common.c
->> +++ b/drivers/media/platform/vimc/vimc-common.c
->> @@ -118,7 +118,7 @@ static struct vimc_pix_map_fmt vimc_pix_map_fmt_list[] = {
->>  	},
->>  };
->>  
->> -struct vimc_pix_map vimc_pix_map_fmt_info(struct vimc_pix_map_fmt *vfmt)
->> +static struct vimc_pix_map vimc_pix_map_fmt_info(struct vimc_pix_map_fmt *vfmt)
->>  {
->>  
->>  	struct vimc_pix_map vpix = {
->>
-> _______________________________________________
-> Lkcamp mailing list
-> Lkcamp@lists.libreplanetbr.org
-> https://lists.libreplanetbr.org/mailman/listinfo/lkcamp
+The find_next_clump8 function can remain exposed via
+include/linux/find.h since it fits in with the rest of the functions
+there.
+
+The reason I moved the definition to lib/find_bit.c is due to the
+circular dependency that arose from the round_down macro. Should I try
+to move the definition back to include/linux/find.h and reimplement it
+without the round_down macro; or is it best to keep this simpler
+implementation here in lib/find_bit.c?
+
+William Breathitt Gray
