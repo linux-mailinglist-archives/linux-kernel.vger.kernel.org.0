@@ -2,81 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AECBCE422
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 077CFCE415
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbfJGNrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:47:53 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:37187 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728303AbfJGNrg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:47:36 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 5A7F41C0007;
-        Mon,  7 Oct 2019 13:47:34 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 09/10] rtc: ds1347: use regmap_update_bits
-Date:   Mon,  7 Oct 2019 15:47:23 +0200
-Message-Id: <20191007134724.15505-9-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191007134724.15505-1-alexandre.belloni@bootlin.com>
-References: <20191007134724.15505-1-alexandre.belloni@bootlin.com>
+        id S1727903AbfJGNr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:47:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44574 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727324AbfJGNr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 09:47:28 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CAF594FCDA;
+        Mon,  7 Oct 2019 13:47:27 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-197.ams2.redhat.com [10.36.116.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B71AF66A06;
+        Mon,  7 Oct 2019 13:47:25 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-crypto@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Arvind Sankar <nivedita@alum.mit.edu>
+Subject: [PATCH v2 5.4 regression fix] x86/boot: Provide memzero_explicit
+Date:   Mon,  7 Oct 2019 15:47:24 +0200
+Message-Id: <20191007134724.4019-1-hdegoede@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 07 Oct 2019 13:47:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use regmap_update_bits instead of open coding. Also add proper error
-handling.
+The purgatory code now uses the shared lib/crypto/sha256.c sha256
+implementation. This needs memzero_explicit, implement this.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reported-by: Arvind Sankar <nivedita@alum.mit.edu>
+Fixes: 906a4bb97f5d ("crypto: sha256 - Use get/put_unaligned_be32 to get input, memzero_explicit")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/rtc/rtc-ds1347.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Changes in v2:
+- Add barrier_data() call after the memset, making the function really
+  explicit. Using barrier_data() works fine in the purgatory (build)
+  environment.
+---
+ arch/x86/boot/compressed/string.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/rtc/rtc-ds1347.c b/drivers/rtc/rtc-ds1347.c
-index eeaf43586bce..a49ce9991916 100644
---- a/drivers/rtc/rtc-ds1347.c
-+++ b/drivers/rtc/rtc-ds1347.c
-@@ -29,6 +29,8 @@
- #define DS1347_STATUS_REG	0x17
- #define DS1347_CLOCK_BURST	0x3F
+diff --git a/arch/x86/boot/compressed/string.c b/arch/x86/boot/compressed/string.c
+index 81fc1eaa3229..654a7164a702 100644
+--- a/arch/x86/boot/compressed/string.c
++++ b/arch/x86/boot/compressed/string.c
+@@ -50,6 +50,12 @@ void *memset(void *s, int c, size_t n)
+ 	return s;
+ }
  
-+#define DS1347_WP_BIT		BIT(7)
++void memzero_explicit(void *s, size_t count)
++{
++	memset(s, 0, count);
++	barrier_data(s);
++}
 +
- #define DS1347_NEOSC_BIT	BIT(7)
- #define DS1347_OSF_BIT		BIT(2)
- 
-@@ -117,7 +119,7 @@ static int ds1347_probe(struct spi_device *spi)
- 	struct rtc_device *rtc;
- 	struct regmap_config config;
- 	struct regmap *map;
--	unsigned int data;
-+	int err;
- 
- 	memset(&config, 0, sizeof(config));
- 	config.reg_bits = 8;
-@@ -141,9 +143,9 @@ static int ds1347_probe(struct spi_device *spi)
- 	spi_set_drvdata(spi, map);
- 
- 	/* Disable the write protect of rtc */
--	regmap_read(map, DS1347_CONTROL_REG, &data);
--	data = data & ~(1<<7);
--	regmap_write(map, DS1347_CONTROL_REG, data);
-+	err = regmap_update_bits(map, DS1347_CONTROL_REG, DS1347_WP_BIT, 0);
-+	if (err)
-+		return err;
- 
- 	rtc = devm_rtc_allocate_device(&spi->dev);
- 	if (IS_ERR(rtc))
+ void *memmove(void *dest, const void *src, size_t n)
+ {
+ 	unsigned char *d = dest;
 -- 
-2.21.0
+2.23.0
 
