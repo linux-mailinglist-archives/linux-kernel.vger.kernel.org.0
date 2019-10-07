@@ -2,57 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF3BACE8C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5DECE8C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfJGQKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:10:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40220 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbfJGQKu (ORCPT
+        id S1728340AbfJGQMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:12:35 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:65271 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727711AbfJGQMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:10:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PCyJU3ca+Mvj8pvXxRNRagxt2UUiR2tcaN+o+wNoM1I=; b=gVXVPGWWNjl+DQBYIVZaAPCX4
-        gs4vwnNTSXsln1yaqRNfV+c9OpcyVzd0Io28aILYClbv/gBULKL7naX0icjbkeE/QIQpVzTJLBiG/
-        sKkUeLl5CJlJl7ojDYqfh2PJGIELyJ+M6GcYvkRfT8cxwDK3MHkLF8ZTxSG6Ax0rcTgarVYeuIOFz
-        43f/6B/6QmOk5CT7Xy1ISDgou+oTLGnWLdZWgSZ5TFz1yUW8A+y7t7Wr7i5ohmZibg0FL5ERLVLHD
-        dFhk163tmtM4HlUWV7cYIY7eL8cTsGGGVFtqkaRQstWw4tFNxOXXWEXmtk+WL1U1/MR2e/E7BH1/N
-        6xu4oNIxQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHVb0-00079G-4w; Mon, 07 Oct 2019 16:10:50 +0000
-Date:   Mon, 7 Oct 2019 09:10:50 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Vincent Chen <vincent.chen@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, palmer@sifive.com,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu
-Subject: Re: [PATCH 4/4] riscv: remove the switch statement in do_trap_break()
-Message-ID: <20191007161050.GA20596@infradead.org>
-References: <1569199517-5884-1-git-send-email-vincent.chen@sifive.com>
- <1569199517-5884-5-git-send-email-vincent.chen@sifive.com>
- <20190927224711.GI4700@infradead.org>
- <alpine.DEB.2.21.9999.1910070906570.10936@viisi.sifive.com>
+        Mon, 7 Oct 2019 12:12:35 -0400
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x97GCH8x026939;
+        Tue, 8 Oct 2019 01:12:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x97GCH8x026939
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1570464738;
+        bh=NPa8YpRQHzD38z1zgTrtNvaEwRdTmAWhu5DjV8yIWJA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=uE3pcn6OyjahUmYjOcGsgJs2vr47HmpyZKQVcOJ15qr2Nr3UO7DM4np2skn86bjJx
+         3XagAJt7WUMLTR2IsraMM4NscvJk4LxmN2HOg7ruxmPtk0NJXpekwZdNwnkTSzSc5k
+         Uv2CQz2mtNdR2m0zmuBwa8TaTEUlNAyOmvZza+/a4BjLd99C6lSqeY0hCfput55h/V
+         7v8f0omrhZlw27TW2WMTon3ONd9dUpgKqATmyaDF8ArZPfI8WopwYPNrSvxfYSsLc9
+         8xZ43CRTDtegXIULL0LvNzx/Hk4fBBArZhYz57f4Tr3YoIQycTpPW8eKIN58zsYdmc
+         doLxj8qu/elkw==
+X-Nifty-SrcIP: [209.85.221.182]
+Received: by mail-vk1-f182.google.com with SMTP id f1so3085831vkh.9;
+        Mon, 07 Oct 2019 09:12:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAVA2nn/0VN5pGp+yPQ+Hxm5jC0BPuhp/nH/f7/ej+cJmFlNnswy
+        9epRHrDvSUkHB0S/yh/gPDbkzXpOvCXwm1WLkqY=
+X-Google-Smtp-Source: APXvYqz8jDbBaSAALL0wkk3X5+X0AhSNNwJCs33YMBPBKD4Ivvh0dvzxyjv6ORdCfCNeR1NlqrA9KGzvYYCWEUUho/k=
+X-Received: by 2002:a1f:9344:: with SMTP id v65mr10019860vkd.96.1570464736366;
+ Mon, 07 Oct 2019 09:12:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.9999.1910070906570.10936@viisi.sifive.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <f5cb4272-4cb8-4253-77fd-56aaf73a0dbc@infradead.org>
+In-Reply-To: <f5cb4272-4cb8-4253-77fd-56aaf73a0dbc@infradead.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 8 Oct 2019 01:11:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARCzEQNAJa1-ub6Ga1VcC6pQHtqc8P1dutscyfQZFzTmQ@mail.gmail.com>
+Message-ID: <CAK7LNARCzEQNAJa1-ub6Ga1VcC6pQHtqc8P1dutscyfQZFzTmQ@mail.gmail.com>
+Subject: Re: [PATCH] scripts: setlocalversion: fix a bashism
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Mike Crowe <mcrowe@zipitwireless.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 09:08:23AM -0700, Paul Walmsley wrote:
->  		force_sig_fault(SIGTRAP, TRAP_BRKPT,
->  				(void __user *)(regs->sepc));
+On Sun, Oct 6, 2019 at 12:02 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix bashism reported by checkbashisms by using only one '=':
+>
+> possible bashism in scripts/setlocalversion line 96 (should be 'b = a'):
+>         if [ "`hg log -r . --template '{latesttagdistance}'`" == "1" ]; then
+>
+> Fixes: 38b3439d84f4 ("setlocalversion: update mercurial tag parsing")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Mike Crowe <mcrowe@zipitwireless.com>
 
-No nee for the extra braces, which also means it all fits onto a single
-line.  You could have just copied what I pasted..
+Applied to linux-kbuild. Thanks.
+
+> ---
+> Does anyone still use hg for kernel development?
+
+I have also been wondering in which situation
+this code is used...
+
+
+>
+>  scripts/setlocalversion |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- lnx-54-rc1.orig/scripts/setlocalversion
+> +++ lnx-54-rc1/scripts/setlocalversion
+> @@ -93,7 +93,7 @@ scm_version()
+>         # Check for mercurial and a mercurial repo.
+>         if test -d .hg && hgid=`hg id 2>/dev/null`; then
+>                 # Do we have an tagged version?  If so, latesttagdistance == 1
+> -               if [ "`hg log -r . --template '{latesttagdistance}'`" == "1" ]; then
+> +               if [ "`hg log -r . --template '{latesttagdistance}'`" = "1" ]; then
+>                         id=`hg log -r . --template '{latesttag}'`
+>                         printf '%s%s' -hg "$id"
+>                 else
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
