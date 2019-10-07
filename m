@@ -2,84 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01737CE9A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64BB3CE9CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 18:48:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfJGQqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 12:46:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38842 "EHLO mail.kernel.org"
+        id S1728930AbfJGQsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 12:48:17 -0400
+Received: from mga14.intel.com ([192.55.52.115]:44422 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfJGQqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 12:46:18 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 351A020659;
-        Mon,  7 Oct 2019 16:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570466777;
-        bh=ImESnMo6BCmGdrP/rT424mhKjNAkOdoXsDT8bNd3LHk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kQpaMl8QKUUxcp9ukMApHTPtM72hB26fCmFcM9FSixKUp1Kj91wyzeuwSYVpsx4L9
-         bvZuk6qpu46G6df6D8tVXkgI2KVz4n+SqrHI774ox0hEn5v2SE/meDJzAKIel+Jx7/
-         IRxiQu0QU/823HoByDxRdLe56b4cWLGXeb2jRbPM=
-Date:   Mon, 7 Oct 2019 18:46:15 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-Subject: Re: [PATCH 5.3 000/166] 5.3.5-stable review
-Message-ID: <20191007164615.GA1090238@kroah.com>
-References: <20191006171212.850660298@linuxfoundation.org>
- <7148ff93-bac0-f78a-df3a-b9dbbee3db1a@linaro.org>
- <20191007164411.GA1054518@kroah.com>
+        id S1727830AbfJGQsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 12:48:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 09:48:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,268,1566889200"; 
+   d="scan'208";a="199566289"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Oct 2019 09:48:15 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     andriy.shevchenko@intel.com
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        prarit@redhat.com,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] tools/power/x86/intel-speed-select: Remove warning for unused result
+Date:   Mon,  7 Oct 2019 09:47:54 -0700
+Message-Id: <20191007164754.21125-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191007164411.GA1054518@kroah.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 06:44:11PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Oct 07, 2019 at 11:25:35AM -0500, Daniel Díaz wrote:
-> > Hello!
-> > 
-> > 
-> > On 10/6/19 12:19 PM, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 5.3.5 release.
-> > > There are 166 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Tue 08 Oct 2019 05:07:10 PM UTC.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.5-rc1.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > Results from Linaro’s test farm.
-> > Regressions detected.
-> 
-> Thanks for testing all of these and letting me know.
+Fix warning for:
+isst-config.c: In function ‘set_cpu_online_offline’:
+isst-config.c:221:3: warning: ignoring return value of ‘write’,
+declared with attribute warn_unused_result [-Wunused-result]
+   write(fd, "1\n", 2);
 
-Ugh, I read that wrong.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ tools/power/x86/intel-speed-select/isst-config.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Oh wait, you typed it wrong!
+diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
+index 2a9890c8395a..21fcfe621d3a 100644
+--- a/tools/power/x86/intel-speed-select/isst-config.c
++++ b/tools/power/x86/intel-speed-select/isst-config.c
+@@ -169,7 +169,7 @@ int get_topo_max_cpus(void)
+ static void set_cpu_online_offline(int cpu, int state)
+ {
+ 	char buffer[128];
+-	int fd;
++	int fd, ret;
+ 
+ 	snprintf(buffer, sizeof(buffer),
+ 		 "/sys/devices/system/cpu/cpu%d/online", cpu);
+@@ -179,9 +179,12 @@ static void set_cpu_online_offline(int cpu, int state)
+ 		err(-1, "%s open failed", buffer);
+ 
+ 	if (state)
+-		write(fd, "1\n", 2);
++		ret = write(fd, "1\n", 2);
+ 	else
+-		write(fd, "0\n", 2);
++		ret = write(fd, "0\n", 2);
++
++	if (ret == -1)
++		perror("Online/Offline: Operation failed\n");
+ 
+ 	close(fd);
+ }
+-- 
+2.17.2
 
-it's monday...
-
-greg k-h
