@@ -2,49 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ECC4CE285
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63773CE280
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 15:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfJGND0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 09:03:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49284 "EHLO
+        id S1727984AbfJGNDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 09:03:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49140 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbfJGNDW (ORCPT
+        with ESMTP id S1727716AbfJGNDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 09:03:22 -0400
+        Mon, 7 Oct 2019 09:03:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=qq8ZMRWiz8nkAQzcMQF3gjrXhlaP3cAYvdl4PKw/Bgw=; b=OgjLSj6WMEoj
-        SUQ9glLy16FT/oZ5dgcloEQ4VrEAbx3BtvFOG+f9WZlz2DEXQxUK2fKsmn3aoeTaKeSwhT+aQclDP
-        k2R4t5wc76GF5StvwGfSFfQzchw9iMtdFLuO7ThYokeP2on3Le/KdT6BAUJvHe9KIeExKmg/RBI7A
-        CI+P8=;
+        List-Archive; bh=Dp1YOPGrxNOCFaSYQ3ZFbTLziPXi1S1+97nmW8XjcNI=; b=P64obnjHlyTz
+        B5N8xNoJ5K7/vMBsoRAqIPzYgzQVY8BlrqM3Aa7cN/CHGB6VKUV0mN59NAXlkpYrjCwWYy4ABgE4B
+        RYbWYkg1/Dav7QHuvHfGxnbmeGbzJcJe7MAZFphTjkwiyDfJvtP4mp62HKJpQ3ECxuLsApEkIgOOU
+        Xcp3s=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iHSfO-0003Qp-UE; Mon, 07 Oct 2019 13:03:10 +0000
+        id 1iHSfU-0003RV-G9; Mon, 07 Oct 2019 13:03:16 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 3401B2743178; Mon,  7 Oct 2019 14:03:10 +0100 (BST)
+        id 041DD2741D8E; Mon,  7 Oct 2019 14:03:15 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     <alsa-devel@alsa-project.org>, alsa-devel@alsa-project.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: jz4740: Use of_device_get_match_data()" to the asoc tree
-In-Reply-To: <20191004214334.149976-8-swboyd@chromium.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: tps65132: switch to using devm_fwnode_gpiod_get()" to the regulator tree
+In-Reply-To: <20191004231017.130290-7-dmitry.torokhov@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191007130310.3401B2743178@ypsilon.sirena.org.uk>
-Date:   Mon,  7 Oct 2019 14:03:10 +0100 (BST)
+Message-Id: <20191007130316.041DD2741D8E@ypsilon.sirena.org.uk>
+Date:   Mon,  7 Oct 2019 14:03:15 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -52,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: jz4740: Use of_device_get_match_data()
+   regulator: tps65132: switch to using devm_fwnode_gpiod_get()
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -77,50 +71,60 @@ to this mail.
 Thanks,
 Mark
 
-From 67ad656bdd703157154d0db5bf1b35a5a86073b9 Mon Sep 17 00:00:00 2001
-From: Stephen Boyd <swboyd@chromium.org>
-Date: Fri, 4 Oct 2019 14:43:31 -0700
-Subject: [PATCH] ASoC: jz4740: Use of_device_get_match_data()
+From 22803ca3c56b02e5bb8a4eb14104114009fd1c65 Mon Sep 17 00:00:00 2001
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Fri, 4 Oct 2019 16:10:16 -0700
+Subject: [PATCH] regulator: tps65132: switch to using devm_fwnode_gpiod_get()
 
-This probe function is only called if the device is backed by a DT node,
-so switch this call to of_device_get_match_data() to reduce code size
-and simplify a bit. This also avoids needing to reference a potentially
-undefined variable because of_device_get_match_data() doesn't need to
-know anything beyond the struct device to find the match table.
+devm_fwnode_get_index_gpiod_from_child() is going away as the name is
+too unwieldy, let's switch to using the new devm_fwnode_gpiod_get().
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: <alsa-devel@alsa-project.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lore.kernel.org/r/20191004214334.149976-8-swboyd@chromium.org
+Note that we no longer need to check for NULL as devm_fwnode_gpiod_get()
+will return -ENOENT if GPIO is missing.
+
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://lore.kernel.org/r/20191004231017.130290-7-dmitry.torokhov@gmail.com
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/jz4740/jz4740-i2s.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/regulator/tps65132-regulator.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/jz4740/jz4740-i2s.c b/sound/soc/jz4740/jz4740-i2s.c
-index 13408de34055..d2dab4d24b87 100644
---- a/sound/soc/jz4740/jz4740-i2s.c
-+++ b/sound/soc/jz4740/jz4740-i2s.c
-@@ -503,9 +503,8 @@ static int jz4740_i2s_dev_probe(struct platform_device *pdev)
- 	if (!i2s)
- 		return -ENOMEM;
+diff --git a/drivers/regulator/tps65132-regulator.c b/drivers/regulator/tps65132-regulator.c
+index e302bd01a084..7b0e38f8d627 100644
+--- a/drivers/regulator/tps65132-regulator.c
++++ b/drivers/regulator/tps65132-regulator.c
+@@ -136,9 +136,10 @@ static int tps65132_of_parse_cb(struct device_node *np,
+ 	struct tps65132_reg_pdata *rpdata = &tps->reg_pdata[desc->id];
+ 	int ret;
  
--	match = of_match_device(jz4740_of_matches, &pdev->dev);
--	if (match)
--		i2s->version = (enum jz47xx_i2s_version)match->data;
-+	i2s->version =
-+		(enum jz47xx_i2s_version)of_device_get_match_data(&pdev->dev);
+-	rpdata->en_gpiod = devm_fwnode_get_index_gpiod_from_child(tps->dev,
+-					"enable", 0, &np->fwnode, 0, "enable");
+-	if (IS_ERR_OR_NULL(rpdata->en_gpiod)) {
++	rpdata->en_gpiod = devm_fwnode_gpiod_get(tps->dev, of_fwnode_handle(np),
++						 "enable", GPIOD_ASIS,
++						 "enable");
++	if (IS_ERR(rpdata->en_gpiod)) {
+ 		ret = PTR_ERR(rpdata->en_gpiod);
  
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	i2s->base = devm_ioremap_resource(&pdev->dev, mem);
+ 		/* Ignore the error other than probe defer */
+@@ -147,10 +148,12 @@ static int tps65132_of_parse_cb(struct device_node *np,
+ 		return 0;
+ 	}
+ 
+-	rpdata->act_dis_gpiod = devm_fwnode_get_index_gpiod_from_child(
+-					tps->dev, "active-discharge", 0,
+-					&np->fwnode, 0, "active-discharge");
+-	if (IS_ERR_OR_NULL(rpdata->act_dis_gpiod)) {
++	rpdata->act_dis_gpiod = devm_fwnode_gpiod_get(tps->dev,
++						      of_fwnode_handle(np),
++						      "active-discharge",
++						      GPIOD_ASIS,
++						      "active-discharge");
++	if (IS_ERR(rpdata->act_dis_gpiod)) {
+ 		ret = PTR_ERR(rpdata->act_dis_gpiod);
+ 
+ 		/* Ignore the error other than probe defer */
 -- 
 2.20.1
 
