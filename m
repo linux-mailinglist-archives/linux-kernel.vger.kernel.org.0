@@ -2,127 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC2DCEF9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 01:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F6DECEFA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 01:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbfJGXau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 19:30:50 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54035 "EHLO ozlabs.org"
+        id S1729677AbfJGXfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 19:35:10 -0400
+Received: from mga09.intel.com ([134.134.136.24]:50779 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729285AbfJGXau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 19:30:50 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46nGtt3d32z9sPV;
-        Tue,  8 Oct 2019 10:30:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1570491047;
-        bh=FqTVaMNpyDmrDdMdI+Cv2npWAUeElfvrLKibIVX2eRk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=F6RCjFFUQnXIXS0mo1v9QyVwKYhPK9xTtviKtKXg+IJj1QqCHGYVSTDvuPbC3ISLx
-         5LusfVEGxeIws5YsBfIwUbyLZxbOhCbxeNUV6mG88DbRq5Q55ucc1/AFcqC94oUt9r
-         sNxkle53D4q6pCJNPpEFzkYtDezb2CQXzh4WkncEvleIllVQwY2BioJBPV5IlcIL+R
-         CQx+0N/ImdzoazF8nUjrRwpsJ/bQd9y6nLadYwNBPf6j49NFa9B+CYYXi1rC3834ZW
-         sBGfT//TyDwGtcXgEZO2OHxwdBe05z07p6cxPpuGqO6GzSYs/ZcuMyUF7yhuvVtzVQ
-         QJmqSvEufvoRw==
-Date:   Tue, 8 Oct 2019 10:30:45 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20191008103045.2d4711e2@canb.auug.org.au>
+        id S1729145AbfJGXfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 19:35:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 16:35:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,269,1566889200"; 
+   d="scan'208";a="199661906"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Oct 2019 16:35:09 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v1 1/1] PCI/ATS: Optimize pci_prg_resp_pasid_required() function
+Date:   Mon,  7 Oct 2019 16:32:42 -0700
+Message-Id: <f594928de550e151d3537fdd64099de34ffa30da.1570490792.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0D2d4UAAjmMRaNL4JgY7dQR";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0D2d4UAAjmMRaNL4JgY7dQR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Hi all,
+Currently, pci_prg_resp_pasid_required() function reads the
+PASID Required bit status from register every time we call
+the function. Since PASID Required bit is a read-only value,
+instead of reading it from register every time, read it once and
+cache it in struct pci_dev.
 
-After merging the drm-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Also, since we are caching PASID Required bit in pci_pri_init()
+function, move the caching of PRI Capability check result to the same
+function. This will group all PRI related caching at one place.
 
+Since "pasid_required" structure member is protected by CONFIG_PRI,
+its users should also be protected by same #ifdef. So correct the #ifdef
+dependency of pci_prg_resp_pasid_required() function.
 
-Caused by commit
-
-  10d8f308ba3e ("cec: add cec_adapter to cec_notifier_cec_adap_unregister()=
-")
-
-interacting with commit
-
-  7e86efa2ff03 ("media: cec-gpio: add notifier support")
-
-form the v4l-dvb tree.
-
-I have applied the following merge fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 8 Oct 2019 10:26:05 +1100
-Subject: [PATCH] cec: fix up for "cec: add cec_adapter to
- cec_notifier_cec_adap_unregister()"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Keith Busch <keith.busch@intel.com>
 ---
- drivers/media/platform/cec-gpio/cec-gpio.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/ats.c   | 50 ++++++++++++++++++++++++---------------------
+ include/linux/pci.h |  1 +
+ 2 files changed, 28 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/media/platform/cec-gpio/cec-gpio.c b/drivers/media/pla=
-tform/cec-gpio/cec-gpio.c
-index 7be91e712c4a..42d2c2cd9a78 100644
---- a/drivers/media/platform/cec-gpio/cec-gpio.c
-+++ b/drivers/media/platform/cec-gpio/cec-gpio.c
-@@ -259,7 +259,7 @@ static int cec_gpio_probe(struct platform_device *pdev)
- 	return 0;
-=20
- unreg_notifier:
--	cec_notifier_cec_adap_unregister(cec->notifier);
-+	cec_notifier_cec_adap_unregister(cec->notifier, cec->adap);
- del_adap:
- 	cec_delete_adapter(cec->adap);
- 	return ret;
-@@ -269,7 +269,7 @@ static int cec_gpio_remove(struct platform_device *pdev)
+diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+index cb4f62da7b8a..2b5df5ea208f 100644
+--- a/drivers/pci/ats.c
++++ b/drivers/pci/ats.c
+@@ -16,6 +16,24 @@
+ 
+ #include "pci.h"
+ 
++static void pci_pri_init(struct pci_dev *pdev)
++{
++#ifdef CONFIG_PCI_PRI
++	int pos;
++	u16 status;
++
++	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
++	if (!pos)
++		return;
++
++	pdev->pri_cap = pos;
++
++	pci_read_config_word(pdev, pos + PCI_PRI_STATUS, &status);
++	if (status & PCI_PRI_STATUS_PASID)
++		pdev->pasid_required = 1;
++#endif
++}
++
+ void pci_ats_init(struct pci_dev *dev)
  {
- 	struct cec_gpio *cec =3D platform_get_drvdata(pdev);
-=20
--	cec_notifier_cec_adap_unregister(cec->notifier);
-+	cec_notifier_cec_adap_unregister(cec->notifier, cec->adap);
- 	cec_unregister_adapter(cec->adap);
- 	return 0;
+ 	int pos;
+@@ -28,6 +46,8 @@ void pci_ats_init(struct pci_dev *dev)
+ 		return;
+ 
+ 	dev->ats_cap = pos;
++
++	pci_pri_init(dev);
  }
---=20
-2.23.0.rc1
+ 
+ /**
+@@ -185,12 +205,8 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs)
+ 	if (WARN_ON(pdev->pri_enabled))
+ 		return -EBUSY;
+ 
+-	if (!pri) {
+-		pri = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
+-		if (!pri)
+-			return -EINVAL;
+-		pdev->pri_cap = pri;
+-	}
++	if (!pri)
++		return -EINVAL;
+ 
+ 	pci_read_config_word(pdev, pri + PCI_PRI_STATUS, &status);
+ 	if (!(status & PCI_PRI_STATUS_STOPPED))
+@@ -425,6 +441,7 @@ int pci_pasid_features(struct pci_dev *pdev)
+ }
+ EXPORT_SYMBOL_GPL(pci_pasid_features);
+ 
++#ifdef CONFIG_PCI_PRI
+ /**
+  * pci_prg_resp_pasid_required - Return PRG Response PASID Required bit
+  *				 status.
+@@ -432,31 +449,18 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
+  *
+  * Returns 1 if PASID is required in PRG Response Message, 0 otherwise.
+  *
+- * Even though the PRG response PASID status is read from PRI Status
+- * Register, since this API will mainly be used by PASID users, this
+- * function is defined within #ifdef CONFIG_PCI_PASID instead of
+- * CONFIG_PCI_PRI.
++ * Since this API has dependency on both PRI and PASID, protect it
++ * with both CONFIG_PCI_PRI and CONFIG_PCI_PASID.
+  */
+ int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+ {
+-	u16 status;
+-	int pri;
+-
+ 	if (pdev->is_virtfn)
+ 		pdev = pci_physfn(pdev);
+ 
+-	pri = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
+-	if (!pri)
+-		return 0;
+-
+-	pci_read_config_word(pdev, pri + PCI_PRI_STATUS, &status);
+-
+-	if (status & PCI_PRI_STATUS_PASID)
+-		return 1;
+-
+-	return 0;
++	return pdev->pasid_required;
+ }
+ EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
++#endif /* CONFIG_PCI_PRI */
+ 
+ #define PASID_NUMBER_SHIFT	8
+ #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 6542100bd2dd..f1131fee7fcd 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -456,6 +456,7 @@ struct pci_dev {
+ #ifdef CONFIG_PCI_PRI
+ 	u16		pri_cap;	/* PRI Capability offset */
+ 	u32		pri_reqs_alloc; /* Number of PRI requests allocated */
++	unsigned int	pasid_required:1; /* PRG Response PASID Required bit status */
+ #endif
+ #ifdef CONFIG_PCI_PASID
+ 	u16		pasid_cap;	/* PASID Capability offset */
+-- 
+2.21.0
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0D2d4UAAjmMRaNL4JgY7dQR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl2byqUACgkQAVBC80lX
-0GypWwf/aWdoFi2MyJ5QKk3TnpqQcsnMcocA7U079No8epLXeXB+/ATUQPYDRB+W
-sIoM4fXcaZpx0Wtp7so8DsXgu9XpMDDpMHTTC2EnVeXnNDAOX4jFORuvfYuL9fEb
-G04YbvyWzBSma1fz2h/LOzu2VWTGRfATJ2KRQ+KgqwjtZM4vrPKw/EkV62hxEalh
-/JXc4sQ+C2/hbDq5GPFejcmlqc4VOOQFLWnS6lqcd2a+42jBOcoGE7t1gL62lv01
-97U9EpbvGCTF418zBreHc0BlMMtiBwRfoGZA7JkdXLReZjP6Rm7LrOLuDaC2WRAA
-1fw+7HZucGNuhoyAzv3TdXw6e9UjAw==
-=y+O9
------END PGP SIGNATURE-----
-
---Sig_/0D2d4UAAjmMRaNL4JgY7dQR--
