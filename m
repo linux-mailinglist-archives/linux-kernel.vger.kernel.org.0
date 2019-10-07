@@ -2,157 +2,302 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B14CCE129
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:04:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23FC5CE126
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfJGMEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:04:02 -0400
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:45528 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727490AbfJGMEB (ORCPT
+        id S1727957AbfJGMDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:03:33 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:52818 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727490AbfJGMDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:04:01 -0400
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x97C3o9O002479;
-        Mon, 7 Oct 2019 05:03:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=proofpoint;
- bh=0uIp/AhWIWGVgvND+Fwu1dAZVZUhbMBbuX2ojfPD5qY=;
- b=mCcAMhc/UnHwJyLFWXc2+Sg11D46O4MaqQRcFRnlUc4f7NeIc3hUeRZsNDtjjUWbfIbt
- 8wnFn8ovY7fZlRW6iffUPpB34UdelipVsmK3XNQICA1I5IvmGsPkX3pcB+b9OrelWas1
- sx62g1+bbkgPAA+pNQ+Wpm5oAu9jxx5inlikbdbsELC6LjkvZCBx+Z7vGKfg3R5XRAAb
- Hy8yBz7Z9ojcJFzfjrUvWXiClveXCXe/ZIis77xy1wpe0QEzGkPn4SgHFHmk/XJaA8Yp
- zZuhi6K2I0QCxo8QbxPzRtBPKi1XBZb8LeJPLsvexOxyKbi/2hvHM5ZTCnnF4yoxKXn7 Iw== 
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2058.outbound.protection.outlook.com [104.47.42.58])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2vepry680b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Oct 2019 05:03:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GoZ9Jn0Hhw+u3bZlCmRbs3W3VDfGR9GEXLBkclMMmiKhhcdoJ0dOrEdqBHa+4niX/Bhw1VmUjq9FgnwPwyCMEJ2yXAT+503ti8gsvblFDN6ZYVv7+VgntOYml2m0p8oYdJ+rRBUK5SjpQ7KH28KRKXibCnwg+L7PX81cMV2VsWr6dJVRS8VN7BrFhEIjemdNeAOkXMR0oo5WMwHZKCy5DI8QHtq9a7HUorOozqMwcqDmazhl6ioGXYSPmXiG8C1HpwSnylkm44PdDUH9hh/Ji/8w8/xD4LiDb9F+nXnq48m3l8IuDAq99qtbvYZsRKKIvAIOXiX/FBFjqysYx21SDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0uIp/AhWIWGVgvND+Fwu1dAZVZUhbMBbuX2ojfPD5qY=;
- b=FL8nznCUtY5f34R5WkR8AAbg4bfo2TGEEyv6nO7evu4W42+nXksZZEHXf73l8BA983Bxz1EGBGn0A3rR7rWJkKfpKhCgU4/SY0cPHNk1sc6IvAhModBpm4I4jq3Hku3PhyvfdQJIEarVaKl3oF0E/q/fJPepGcdqp/evUoNMrg2TYc1Ii3nlSmoTq2wIsLxj8PRtd9Hyup+IHIMaFfjkLxwwJ9CjOUoDgwF/TKgNFJI6ffuJhEFlCufphtmMYjVCdcOD9YD+a7C9XX1pOn+obZ/S8RafthVsXafLr0hsWJ5GY8s2lKlyae4w0WNHdsL6ai1p1nGoeitnm9DCSPzkRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 158.140.1.28) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=cadence.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=cadence.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0uIp/AhWIWGVgvND+Fwu1dAZVZUhbMBbuX2ojfPD5qY=;
- b=wIQUFRQFtKWO85nngLKy3PuOEUaezo3ENxXDKqSyd2sbvJiMp/0HL24T6DPddP5gtHmADmLpE5x9JLPP/ldzZ5+LCxJRj57/7ciznbNWPp977Z7S1pdawxo4tDeUxtq/3aVCZE2G5CIYK+GmE7faPuEd4p6bg/y3idRg019Uk9Y=
-Received: from DM5PR07CA0044.namprd07.prod.outlook.com (2603:10b6:3:16::30) by
- BN6PR07MB3203.namprd07.prod.outlook.com (2603:10b6:404:a6::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.24; Mon, 7 Oct 2019 12:03:48 +0000
-Received: from CO1NAM05FT034.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::200) by DM5PR07CA0044.outlook.office365.com
- (2603:10b6:3:16::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2327.24 via Frontend
- Transport; Mon, 7 Oct 2019 12:03:48 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- CO1NAM05FT034.mail.protection.outlook.com (10.152.96.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.8 via Frontend Transport; Mon, 7 Oct 2019 12:03:48 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x97C3j1u012849
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Mon, 7 Oct 2019 05:03:47 -0700
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Mon, 7 Oct 2019 14:03:45 +0200
-Received: from lvlogina.cadence.com (10.165.176.102) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Mon, 7 Oct 2019 14:03:45 +0200
-Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x97C3i6w015716;
-        Mon, 7 Oct 2019 13:03:44 +0100
-Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x97C3hGa015702;
-        Mon, 7 Oct 2019 13:03:43 +0100
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     <felipe.balbi@linux.intel.com>
-CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <rogerq@ti.com>, <linux-kernel@vger.kernel.org>,
-        <jbergsagel@ti.com>, <nsekhar@ti.com>, <nm@ti.com>,
-        <sureshp@cadence.com>, <peter.chen@nxp.com>, <kurahul@cadence.com>,
-        Pawel Laszczak <pawell@cadence.com>
-Subject: [PATCH] usb: cdns3: Fix for incorrect DMA mask.
-Date:   Mon, 7 Oct 2019 13:03:23 +0100
-Message-ID: <1570449803-15299-1-git-send-email-pawell@cadence.com>
-X-Mailer: git-send-email 1.7.11.2
+        Mon, 7 Oct 2019 08:03:33 -0400
+X-UUID: d56359e6fd78464abe7d41d9d6483b81-20191007
+X-UUID: d56359e6fd78464abe7d41d9d6483b81-20191007
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 906935450; Mon, 07 Oct 2019 20:03:25 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 7 Oct 2019 20:03:22 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 7 Oct 2019 20:03:22 +0800
+Message-ID: <1570449804.4686.79.camel@mtksdccf07>
+Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy
+ with CONFIG_KASAN_GENERIC=y
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+CC:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Date:   Mon, 7 Oct 2019 20:03:24 +0800
+In-Reply-To: <CACT4Y+Z0A=Zi4AxEjn4jpHk0xG9+Nh2Q-OYEnOmooW0wN-_vfQ@mail.gmail.com>
+References: <20190927034338.15813-1-walter-zh.wu@mediatek.com>
+         <CACT4Y+Zxz+R=qQxSMoipXoLjRqyApD3O0eYpK0nyrfGHE4NNPw@mail.gmail.com>
+         <1569594142.9045.24.camel@mtksdccf07>
+         <CACT4Y+YuAxhKtL7ho7jpVAPkjG-JcGyczMXmw8qae2iaZjTh_w@mail.gmail.com>
+         <1569818173.17361.19.camel@mtksdccf07>
+         <1570018513.19702.36.camel@mtksdccf07>
+         <CACT4Y+bbZhvz9ZpHtgL8rCCsV=ybU5jA6zFnJBL7gY2cNXDLyQ@mail.gmail.com>
+         <1570069078.19702.57.camel@mtksdccf07>
+         <CACT4Y+ZwNv2-QBrvuR2JvemovmKPQ9Ggrr=ZkdTg6xy_Ki6UAg@mail.gmail.com>
+         <1570095525.19702.59.camel@mtksdccf07>
+         <1570110681.19702.64.camel@mtksdccf07>
+         <CACT4Y+aKrC8mtcDTVhM-So-TTLjOyFCD7r6jryWFH6i2he1WJA@mail.gmail.com>
+         <1570164140.19702.97.camel@mtksdccf07>
+         <1570176131.19702.105.camel@mtksdccf07>
+         <CACT4Y+ZvhomaeXFKr4za6MJi=fW2SpPaCFP=fk06CMRhNcmFvQ@mail.gmail.com>
+         <1570182257.19702.109.camel@mtksdccf07>
+         <CACT4Y+ZnWPEO-9DkE6C3MX-Wo+8pdS6Gr6-2a8LzqBS=2fe84w@mail.gmail.com>
+         <1570190718.19702.125.camel@mtksdccf07>
+         <CACT4Y+YbkjuW3_WQJ4BB8YHWvxgHJyZYxFbDJpnPzfTMxYs60g@mail.gmail.com>
+         <1570418576.4686.30.camel@mtksdccf07>
+         <CACT4Y+aho7BEvQstd2+a2be-jJ0dEsjGebH7bcUFhYp-PoRDxQ@mail.gmail.com>
+         <1570436289.4686.40.camel@mtksdccf07>
+         <CACT4Y+Z6QObZ2fvVxSmvv16YQAu4GswOqfOVQK_1_Ncz0eir_g@mail.gmail.com>
+         <1570438317.4686.44.camel@mtksdccf07>
+         <CACT4Y+Yc86bKxDp4ST8+49rzLOWkTXLkjs0eyFtohCi_uSjmLQ@mail.gmail.com>
+         <1570439032.4686.50.camel@mtksdccf07>
+         <CACT4Y+YL=8jFXrj2LOuQV7ZyDe-am4W8y1WHEDJJ0-mVNJ3_Cw@mail.gmail.com>
+         <1570440492.4686.59.camel@mtksdccf07> <1570441833.4686.66.camel@mtksdccf07>
+         <CACT4Y+Z0A=Zi4AxEjn4jpHk0xG9+Nh2Q-OYEnOmooW0wN-_vfQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(136003)(39850400004)(36092001)(199004)(189003)(4326008)(36756003)(26826003)(478600001)(5660300002)(87636003)(2351001)(2906002)(4720700003)(6666004)(356004)(48376002)(47776003)(107886003)(76130400001)(70206006)(305945005)(50226002)(50466002)(16586007)(186003)(26005)(86362001)(6916009)(246002)(7636002)(70586007)(336012)(126002)(486006)(8676002)(54906003)(42186006)(426003)(8936002)(2616005)(476003)(316002)(51416003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB3203;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e5a37f07-b8cd-4abd-45af-08d74b1e694d
-X-MS-TrafficTypeDiagnostic: BN6PR07MB3203:
-X-Microsoft-Antispam-PRVS: <BN6PR07MB32030E083F9B51BFBA5AE0F2DD9B0@BN6PR07MB3203.namprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
-X-Forefront-PRVS: 01834E39B7
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: odupIDn9czqeBRVasxrg8tktpsANJcuY+MwC06RyIhsLlucO0j2cCsGdUBP5x8BNe8BhAoWW9xSnxbFKtmo3ZfGpyuZOIdhVTemPl1P13sReRoNw4w4flLknO0gHVuCjcCEp4iEtjBBfOOe3w3sMjkhfZJV/WSw0mzrffxOQIUUitjDMS+v1vW7TMV0Ywy/CDkuO7yYcGQROPHWI06QebMRWsyG8x9kp0XJULgz1rU0tmrCFAoRFo7VqHUHCpLjiWxGMx35CfqFau/j6f+ZQCdBapLQ6ZMuaI93YwxHZJTT4AGxd9ay2ctKZZilC7I57tqalCD5/ge2O1SGMzuUB6633qwHOUdrTCp3s/TK9i7qDlUB9sM8UoRwAnb/bXgEZShMh4EGDhlB0J/PSLT3npwsQUoysXGoW7mQIFWGEdTE=
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2019 12:03:48.2947
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5a37f07-b8cd-4abd-45af-08d74b1e694d
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB3203
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-07_02:2019-10-07,2019-10-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 malwarescore=0
- adultscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=918 phishscore=0 suspectscore=1
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1910070120
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch restores the correct DMA mask after switching back to device
-mode.
-The issue occurred because Device part of controller use 32 bits DMA and
-Host side use 64 bits DMA. During loading XHCI driver the DMA mask
-used by driver is overwritten by XHCI driver so it must be restored
-to 32 bits.
+On Mon, 2019-10-07 at 12:51 +0200, Dmitry Vyukov wrote:
+> On Mon, Oct 7, 2019 at 11:50 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> >
+> > On Mon, 2019-10-07 at 17:28 +0800, Walter Wu wrote:
+> > > On Mon, 2019-10-07 at 11:10 +0200, Dmitry Vyukov wrote:
+> > > > On Mon, Oct 7, 2019 at 11:03 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > > > >
+> > > > > On Mon, 2019-10-07 at 10:54 +0200, Dmitry Vyukov wrote:
+> > > > > > On Mon, Oct 7, 2019 at 10:52 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > > > > > >
+> > > > > > > On Mon, 2019-10-07 at 10:24 +0200, Dmitry Vyukov wrote:
+> > > > > > > > On Mon, Oct 7, 2019 at 10:18 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
+> > > > > > > > > The patchsets help to produce KASAN report when size is negative numbers
+> > > > > > > > > in memory operation function. It is helpful for programmer to solve the
+> > > > > > > > > undefined behavior issue. Patch 1 based on Dmitry's review and
+> > > > > > > > > suggestion, patch 2 is a test in order to verify the patch 1.
+> > > > > > > > >
+> > > > > > > > > [1]https://bugzilla.kernel.org/show_bug.cgi?id=199341
+> > > > > > > > > [2]https://lore.kernel.org/linux-arm-kernel/20190927034338.15813-1-walter-zh.wu@mediatek.com/
+> > > > > > > > >
+> > > > > > > > > Walter Wu (2):
+> > > > > > > > > kasan: detect invalid size in memory operation function
+> > > > > > > > > kasan: add test for invalid size in memmove
+> > > > > > > > >
+> > > > > > > > >  lib/test_kasan.c          | 18 ++++++++++++++++++
+> > > > > > > > >  mm/kasan/common.c         | 13 ++++++++-----
+> > > > > > > > >  mm/kasan/generic.c        |  5 +++++
+> > > > > > > > >  mm/kasan/generic_report.c | 12 ++++++++++++
+> > > > > > > > >  mm/kasan/tags.c           |  5 +++++
+> > > > > > > > >  mm/kasan/tags_report.c    | 12 ++++++++++++
+> > > > > > > > >  6 files changed, 60 insertions(+), 5 deletions(-)
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > commit 5b3b68660b3d420fd2bd792f2d9fd3ccb8877ef7
+> > > > > > > > > Author: Walter-zh Wu <walter-zh.wu@mediatek.com>
+> > > > > > > > > Date:   Fri Oct 4 18:38:31 2019 +0800
+> > > > > > > > >
+> > > > > > > > >     kasan: detect invalid size in memory operation function
+> > > > > > > > >
+> > > > > > > > >     It is an undefined behavior to pass a negative numbers to
+> > > > > > > > > memset()/memcpy()/memmove()
+> > > > > > > > >     , so need to be detected by KASAN.
+> > > > > > > > >
+> > > > > > > > >     If size is negative numbers, then it has two reasons to be defined
+> > > > > > > > > as out-of-bounds bug type.
+> > > > > > > > >     1) Casting negative numbers to size_t would indeed turn up as a
+> > > > > > > > > large
+> > > > > > > > >     size_t and its value will be larger than ULONG_MAX/2, so that this
+> > > > > > > > > can
+> > > > > > > > >     qualify as out-of-bounds.
+> > > > > > > > >     2) Don't generate new bug type in order to prevent duplicate reports
+> > > > > > > > > by
+> > > > > > > > >     some systems, e.g. syzbot.
+> > > > > > > > >
+> > > > > > > > >     KASAN report:
+> > > > > > > > >
+> > > > > > > > >      BUG: KASAN: out-of-bounds in kmalloc_memmove_invalid_size+0x70/0xa0
+> > > > > > > > >      Read of size 18446744073709551608 at addr ffffff8069660904 by task
+> > > > > > > > > cat/72
+> > > > > > > > >
+> > > > > > > > >      CPU: 2 PID: 72 Comm: cat Not tainted
+> > > > > > > > > 5.4.0-rc1-next-20191004ajb-00001-gdb8af2f372b2-dirty #1
+> > > > > > > > >      Hardware name: linux,dummy-virt (DT)
+> > > > > > > > >      Call trace:
+> > > > > > > > >       dump_backtrace+0x0/0x288
+> > > > > > > > >       show_stack+0x14/0x20
+> > > > > > > > >       dump_stack+0x10c/0x164
+> > > > > > > > >       print_address_description.isra.9+0x68/0x378
+> > > > > > > > >       __kasan_report+0x164/0x1a0
+> > > > > > > > >       kasan_report+0xc/0x18
+> > > > > > > > >       check_memory_region+0x174/0x1d0
+> > > > > > > > >       memmove+0x34/0x88
+> > > > > > > > >       kmalloc_memmove_invalid_size+0x70/0xa0
+> > > > > > > > >
+> > > > > > > > >     [1] https://bugzilla.kernel.org/show_bug.cgi?id=199341
+> > > > > > > > >
+> > > > > > > > >     Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
+> > > > > > > > >     Reported -by: Dmitry Vyukov <dvyukov@google.com>
+> > > > > > > > >     Suggested-by: Dmitry Vyukov <dvyukov@google.com>
+> > > > > > > > >
+> > > > > > > > > diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> > > > > > > > > index 6814d6d6a023..6ef0abd27f06 100644
+> > > > > > > > > --- a/mm/kasan/common.c
+> > > > > > > > > +++ b/mm/kasan/common.c
+> > > > > > > > > @@ -102,7 +102,8 @@ EXPORT_SYMBOL(__kasan_check_write);
+> > > > > > > > >  #undef memset
+> > > > > > > > >  void *memset(void *addr, int c, size_t len)
+> > > > > > > > >  {
+> > > > > > > > > -       check_memory_region((unsigned long)addr, len, true, _RET_IP_);
+> > > > > > > > > +       if (!check_memory_region((unsigned long)addr, len, true, _RET_IP_))
+> > > > > > > > > +               return NULL;
+> > > > > > > > >
+> > > > > > > > >         return __memset(addr, c, len);
+> > > > > > > > >  }
+> > > > > > > > > @@ -110,8 +111,9 @@ void *memset(void *addr, int c, size_t len)
+> > > > > > > > >  #undef memmove
+> > > > > > > > >  void *memmove(void *dest, const void *src, size_t len)
+> > > > > > > > >  {
+> > > > > > > > > -       check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> > > > > > > > > -       check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> > > > > > > > > +       if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
+> > > > > > > > > +       !check_memory_region((unsigned long)dest, len, true, _RET_IP_))
+> > > > > > > > > +               return NULL;
+> > > > > > > > >
+> > > > > > > > >         return __memmove(dest, src, len);
+> > > > > > > > >  }
+> > > > > > > > > @@ -119,8 +121,9 @@ void *memmove(void *dest, const void *src, size_t
+> > > > > > > > > len)
+> > > > > > > > >  #undef memcpy
+> > > > > > > > >  void *memcpy(void *dest, const void *src, size_t len)
+> > > > > > > > >  {
+> > > > > > > > > -       check_memory_region((unsigned long)src, len, false, _RET_IP_);
+> > > > > > > > > -       check_memory_region((unsigned long)dest, len, true, _RET_IP_);
+> > > > > > > > > +       if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
+> > > > > > > > > +       !check_memory_region((unsigned long)dest, len, true, _RET_IP_))
+> > > > > > > > > +               return NULL;
+> > > > > > > > >
+> > > > > > > > >         return __memcpy(dest, src, len);
+> > > > > > > > >  }
+> > > > > > > > > diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> > > > > > > > > index 616f9dd82d12..02148a317d27 100644
+> > > > > > > > > --- a/mm/kasan/generic.c
+> > > > > > > > > +++ b/mm/kasan/generic.c
+> > > > > > > > > @@ -173,6 +173,11 @@ static __always_inline bool
+> > > > > > > > > check_memory_region_inline(unsigned long addr,
+> > > > > > > > >         if (unlikely(size == 0))
+> > > > > > > > >                 return true;
+> > > > > > > > >
+> > > > > > > > > +       if (unlikely((long)size < 0)) {
+> > > > > > > > > +               kasan_report(addr, size, write, ret_ip);
+> > > > > > > > > +               return false;
+> > > > > > > > > +       }
+> > > > > > > > > +
+> > > > > > > > >         if (unlikely((void *)addr <
+> > > > > > > > >                 kasan_shadow_to_mem((void *)KASAN_SHADOW_START))) {
+> > > > > > > > >                 kasan_report(addr, size, write, ret_ip);
+> > > > > > > > > diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+> > > > > > > > > index 36c645939bc9..ed0eb94cb811 100644
+> > > > > > > > > --- a/mm/kasan/generic_report.c
+> > > > > > > > > +++ b/mm/kasan/generic_report.c
+> > > > > > > > > @@ -107,6 +107,18 @@ static const char *get_wild_bug_type(struct
+> > > > > > > > > kasan_access_info *info)
+> > > > > > > > >
+> > > > > > > > >  const char *get_bug_type(struct kasan_access_info *info)
+> > > > > > > > >  {
+> > > > > > > > > +       /*
+> > > > > > > > > +        * If access_size is negative numbers, then it has two reasons
+> > > > > > > > > +        * to be defined as out-of-bounds bug type.
+> > > > > > > > > +        * 1) Casting negative numbers to size_t would indeed turn up as
+> > > > > > > > > +        * a 'large' size_t and its value will be larger than ULONG_MAX/2,
+> > > > > > > > > +        * so that this can qualify as out-of-bounds.
+> > > > > > > > > +        * 2) Don't generate new bug type in order to prevent duplicate
+> > > > > > > > > reports
+> > > > > > > > > +        * by some systems, e.g. syzbot.
+> > > > > > > > > +        */
+> > > > > > > > > +       if ((long)info->access_size < 0)
+> > > > > > > > > +               return "out-of-bounds";
+> > > > > > > >
+> > > > > > > > "out-of-bounds" is the _least_ frequent KASAN bug type. It won't
+> > > > > > > > prevent duplicates. "heap-out-of-bounds" is the frequent one.
+> > > > > > >
+> > > > > > >
+> > > > > > >     /*
+> > > > > > >      * If access_size is negative numbers, then it has two reasons
+> > > > > > >      * to be defined as out-of-bounds bug type.
+> > > > > > >      * 1) Casting negative numbers to size_t would indeed turn up as
+> > > > > > >      * a  "large" size_t and its value will be larger than ULONG_MAX/2,
+> > > > > > >      *    so that this can qualify as out-of-bounds.
+> > > > > > >      * 2) Don't generate new bug type in order to prevent duplicate
+> > > > > > > reports
+> > > > > > >      *    by some systems, e.g. syzbot. "out-of-bounds" is the _least_
+> > > > > > > frequent KASAN bug type.
+> > > > > > >      *    It won't prevent duplicates. "heap-out-of-bounds" is the
+> > > > > > > frequent one.
+> > > > > > >      */
+> > > > > > >
+> > > > > > > We directly add it into the comment.
+> > > > > >
+> > > > > >
+> > > > > > OK, let's start from the beginning: why do you return "out-of-bounds" here?
+> > > > > >
+> > > > > Uh, comment 1 and 2 should explain it. :)
+> > > >
+> > > > The comment says it will cause duplicate reports. It does not explain
+> > > > why you want syzbot to produce duplicate reports and spam kernel
+> > > > developers... So why do you want that?
+> > > >
+> > > We don't generate new bug type in order to prevent duplicate by some
+> > > systems, e.g. syzbot. Is it right? If yes, then it should not have
+> > > duplicate report.
+> > >
+> > Sorry, because we don't generate new bug type. it should be duplicate
+> > report(only one report which may be oob or size invlid),
+> > the duplicate report goal is that invalid size is oob issue, too.
+> >
+> > I would not introduce a new bug type.
+> > These are parsed and used by some systems, e.g. syzbot. If size is
+> > user-controllable, then a new bug type for this will mean 2 bug
+> > reports.
+> 
+> To prevent duplicates, the new crash title must not just match _any_
+> crash title that kernel can potentially produce. It must match exactly
+> the crash that kernel produces for this bug on other input data.
+> 
+> Consider, userspace passes size=123, KASAN produces "heap-out-of-bounds in foo".
+> Now userspace passes size=-1 and KASAN produces "invalid-size in foo".
+> This will be a duplicate bug report.
+> Now if KASAN will produce "out-of-bounds in foo", it will also lead to
+> a duplicate report.
+> Only iff KASAN will produce "heap-out-of-bounds in foo" for size=-1,
+> it will not lead to a duplicate report.
 
-Reported-by: Pawel Laszczak <pawell@cadence.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Pawel Laszczak <pawell@cadence.com>
-Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
----
- drivers/usb/cdns3/gadget.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+I think it is not easy to avoid the duplicate report(mentioned above).
+As far as my knowledge is concerned, KASAN is memory corruption detector
+in kernel space, it should only detect memory corruption and don't 
+distinguish whether it is passed by userspace. if we want to do, then we
+may need to parse backtrace to check if it has copy_form_user() or other
+function?
 
-diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-index 157536753b8c..2ca280f4c054 100644
---- a/drivers/usb/cdns3/gadget.c
-+++ b/drivers/usb/cdns3/gadget.c
-@@ -2663,6 +2663,13 @@ static int __cdns3_gadget_init(struct cdns3 *cdns)
- {
- 	int ret = 0;
- 
-+	/* Ensure 32-bit DMA Mask in case we switched back from Host mode */
-+	ret = dma_set_mask_and_coherent(cdns->dev, DMA_BIT_MASK(32));
-+	if (ret) {
-+		dev_err(cdns->dev, "Failed to set dma mask: %d\n", ret);
-+		return ret;
-+	}
-+
- 	cdns3_drd_switch_gadget(cdns, 1);
- 	pm_runtime_get_sync(cdns->dev);
- 
--- 
-2.17.1
 
