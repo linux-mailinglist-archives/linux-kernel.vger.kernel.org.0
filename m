@@ -2,110 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51279CEEE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 00:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59C20CEEE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 00:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbfJGWK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 18:10:59 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39076 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbfJGWK6 (ORCPT
+        id S1729587AbfJGWLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 18:11:31 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:22513 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728654AbfJGWLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 18:10:58 -0400
-Received: by mail-qk1-f194.google.com with SMTP id 4so14289248qki.6
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 15:10:57 -0700 (PDT)
+        Mon, 7 Oct 2019 18:11:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pcIqZVzzISfUOTvLwugKEQa/SxdaQBJkIfYZLHL/HF8=;
-        b=hkUljmTtezaGiXDvCEpABges9PQ04lb1jl/pWzD7hrvrGgVrBiswTbVNzqQbt322st
-         0dIiB/BCPErsZ5VdjFnFSmYJesABlwbW842qH2uJORqmP2HGdmbICUfZfLRR3ZWhL7pT
-         KPAhC9LWoW50vXlbugWAaOvvyjJ7Ps9qXkbyIwQxogVYME7wNTCNlcYUpV4q8PPnqxej
-         lyCvt/qfdryfwe6fOFneKWwvl+dNYW639iS6rt069Nf9j0rkPM5ohOaTUGnJuTrMHMRi
-         tSxo1DZdd9OvzK5m5IsNtpFujoNR+hwjN4cvRhE3dJRg9uxGX8VJIJro1bBetMiFiHpu
-         8cBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pcIqZVzzISfUOTvLwugKEQa/SxdaQBJkIfYZLHL/HF8=;
-        b=eFs35MTbK+uIXTAmx73xqLbK9c9DJA6YlItXCcdPYALKv2nNz7QRCMPgj4cXTYmr7t
-         TUXN3sdcRnn3OCMK0qYgnrkIgVhWTeRLx7IuJ1SE0NjM3nb2/w/BSIsh4jgdoP0weu2s
-         D8+adkLwn+AQVn/vmUEmAqy2URVyqsZdgPuLI+hDY8YAxk64klxVk3YSfa56Zzq6fZZM
-         B+0rB9Pr5YzhHfXlTrsldyTF3WsINbEzb5HCmOLsVkU+LkZmd/JdCSF2yzp/K129vIoK
-         yHppVmPwdrmNDM3doBj1yuPEFAV+43EIW9akLE4oAZf2cBWt4PMAOnU6Y8OdkhINthPj
-         kSew==
-X-Gm-Message-State: APjAAAVPz1zXe7v/2iNxp5sIOuHEVhNG5MWkXdm8bwJxGBzJV3pLJP/P
-        7L2L81qdMfrpPmrkNuP9I8A=
-X-Google-Smtp-Source: APXvYqyntoOsd5Gz3HmizY5GlMxzA5EyX9iJZMYy4k1q+XyrqrvB7W8XbfUtdObMnPC30OT8J4IHeg==
-X-Received: by 2002:a37:6789:: with SMTP id b131mr7902286qkc.314.1570486257212;
-        Mon, 07 Oct 2019 15:10:57 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id v7sm7896432qte.29.2019.10.07.15.10.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2019 15:10:56 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 7 Oct 2019 18:10:55 -0400
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: ehci-pci breakage with dma-mapping changes in 5.4-rc2
-Message-ID: <20191007221054.GA409402@rani.riverdale.lan>
-References: <20191007022454.GA5270@rani.riverdale.lan>
- <20191007073448.GA882@lst.de>
- <20191007175430.GA32537@rani.riverdale.lan>
- <20191007175528.GA21857@lst.de>
- <20191007175630.GA28861@infradead.org>
- <20191007175856.GA42018@rani.riverdale.lan>
- <20191007183206.GA13589@rani.riverdale.lan>
- <20191007184754.GB31345@lst.de>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1570486290; x=1602022290;
+  h=from:to:subject:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version;
+  bh=fwumaDoNR8/M5OTVKavfEmL4UPE4WrZDuS1OgsLehDw=;
+  b=QiiJnrk0fnzI2yvM3AprnDHnufkkjl7+zdvn3NTS01JG+nglO6uaZ3Em
+   nlqJVfHGyUzhhPC7VqYYojE9u8MU9TDdyYC81BRv4GdB6GFaqvUVicoUV
+   9dJtyXHTJsn/knupXouhKuDFqfrsKa6V9n9iZ2IpLTQbpnDQj7Uo1hH7a
+   E=;
+X-IronPort-AV: E=Sophos;i="5.67,269,1566864000"; 
+   d="scan'208";a="420684493"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 07 Oct 2019 22:11:28 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (Postfix) with ESMTPS id ACA92A212F;
+        Mon,  7 Oct 2019 22:11:27 +0000 (UTC)
+Received: from EX13D01UWB001.ant.amazon.com (10.43.161.75) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 7 Oct 2019 22:11:27 +0000
+Received: from EX13D01UWB003.ant.amazon.com (10.43.161.94) by
+ EX13d01UWB001.ant.amazon.com (10.43.161.75) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 7 Oct 2019 22:11:26 +0000
+Received: from EX13D01UWB003.ant.amazon.com ([10.43.161.94]) by
+ EX13d01UWB003.ant.amazon.com ([10.43.161.94]) with mapi id 15.00.1367.000;
+ Mon, 7 Oct 2019 22:11:26 +0000
+From:   "Singh, Balbir" <sblbir@amazon.com>
+To:     "kbusch@kernel.org" <kbusch@kernel.org>, "hch@lst.de" <hch@lst.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "tyaramer@gmail.com" <tyaramer@gmail.com>,
+        "axboe@fb.com" <axboe@fb.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>
+Subject: Re: [PATCH] nvme-pci: Shutdown when removing dead controller
+Thread-Topic: [PATCH] nvme-pci: Shutdown when removing dead controller
+Thread-Index: AQHVfVwpGhwUwA6X9kWpqedn8pc+zg==
+Date:   Mon, 7 Oct 2019 22:11:26 +0000
+Message-ID: <7042458bf65523747514c98db36ceaa5fa390679.camel@amazon.com>
+References: <20191003191354.GA4481@Serenity>
+In-Reply-To: <20191003191354.GA4481@Serenity>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.161.7]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <95C8F61E4CD0D44AAB11CB3984C122A6@amazon.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191007184754.GB31345@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 07, 2019 at 08:47:54PM +0200, Christoph Hellwig wrote:
-> On Mon, Oct 07, 2019 at 02:32:07PM -0400, Arvind Sankar wrote:
-> > On Mon, Oct 07, 2019 at 01:58:57PM -0400, Arvind Sankar wrote:
-> > > On Mon, Oct 07, 2019 at 10:56:30AM -0700, Christoph Hellwig wrote:
-> > > > On Mon, Oct 07, 2019 at 07:55:28PM +0200, Christoph Hellwig wrote:
-> > > > > On Mon, Oct 07, 2019 at 01:54:32PM -0400, Arvind Sankar wrote:
-> > > > > > It doesn't boot with the patch. Won't it go
-> > > > > > 	dma_get_required_mask
-> > > > > > 	-> intel_get_required_mask
-> > > > > > 	-> iommu_need_mapping
-> > > > > > 	-> dma_get_required_mask
-> > > > > > ?
-> > > > > > 
-> > > > > > Should the call to dma_get_required_mask in iommu_need_mapping be
-> > > > > > replaced with dma_direct_get_required_mask on top of your patch?
-> > > > > 
-> > > > > Yes, sorry.
-> > > > 
-> > > > Actually my patch already calls dma_direct_get_required_mask.
-> > > > How did you get the loop?
-> > > 
-> > > The function iommu_need_mapping (not changed by your patch) calls
-> > > dma_get_required_mask internally, to check whether the device's dma_mask
-> > > is big enough or not. That's the call I was asking whether it needs to
-> > > be changed.
-> > 
-> > Yeah the attached patch seems to fix it.
-> 
-> That looks fine to me:
-> 
-> Acked-by: Christoph Hellwig <hch@lst.de>
-
-Do you want me to resend the patch as its own mail, or do you just take
-it with a Tested-by: from me? If the former, I assume you're ok with me
-adding your Signed-off-by?
-
-Thanks
+T24gVGh1LCAyMDE5LTEwLTAzIGF0IDE1OjEzIC0wNDAwLCBUeWxlciBSYW1lciB3cm90ZToNCj4g
+QWx3YXlzIHNodXRkb3duIHRoZSBjb250cm9sbGVyIHdoZW4gbnZtZV9yZW1vdmVfZGVhZF9jb250
+cm9sbGVyIGlzDQo+IHJlYWNoZWQuDQo+IA0KPiBJdCdzIHBvc3NpYmxlIGZvciBudm1lX3JlbW92
+ZV9kZWFkX2NvbnRyb2xsZXIgdG8gYmUgY2FsbGVkIGFzIHBhcnQgb2YgYQ0KPiBmYWlsZWQgcmVz
+ZXQsIHdoZW4gdGhlcmUgaXMgYSBiYWQgTlZNRV9DU1RTLiBUaGUgY29udHJvbGxlciB3b24ndA0K
+PiBiZSBjb21taW5nIGJhY2sgb25saW5lLCBzbyB3ZSBzaG91bGQgc2h1dCBpdCBkb3duIHJhdGhl
+ciB0aGFuIGp1c3QNCj4gZGlzYWJsaW5nLg0KPiANCg0KSSB3b3VsZCBhZGQgdGhhdCBudm1lX3Rp
+bWVvdXQoKSB3b3VsZCBnbyB0aHJvdWdoIHRoZSBudm1lX3Nob3VsZF9yZXNldCgpIHBhdGgNCndo
+ZXJlIHdlIGRvbid0IHNodXRkb3duIHRoZSBkZXZpY2UgZHVyaW5nIG52bWVfZGV2X2Rpc2FibGUs
+IGl0IG1ha2VzIHNlbnNlIHRvDQpkbyBhIGZ1bGwgc2h1dGRvd24gZHVyaW5nIG52bWVfcmVtb3Zl
+X2RlYWxfY3RybCB3b3JrKCkgd2hlbiByZXNldCBmYWlscy4NCg0KDQoNCj4gU2lnbmVkLW9mZi1i
+eTogVHlsZXIgUmFtZXIgPHR5YXJhbWVyQGdtYWlsLmNvbT4NCj4gLS0tDQoNClJldmlld2VkLWJ5
+OiBCYWxiaXIgU2luZ2ggPHNibGJpckBhbWF6b24uY29tPg0KDQo+ICBkcml2ZXJzL252bWUvaG9z
+dC9wY2kuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
+dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbnZtZS9ob3N0L3BjaS5jIGIvZHJp
+dmVycy9udm1lL2hvc3QvcGNpLmMNCj4gaW5kZXggYzA4MDhmOWViOGFiLi5jM2Y1YmEyMmM2MjUg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbnZtZS9ob3N0L3BjaS5jDQo+ICsrKyBiL2RyaXZlcnMv
+bnZtZS9ob3N0L3BjaS5jDQo+IEBAIC0yNTA5LDcgKzI1MDksNyBAQCBzdGF0aWMgdm9pZCBudm1l
+X3BjaV9mcmVlX2N0cmwoc3RydWN0IG52bWVfY3RybCAqY3RybCkNCj4gIHN0YXRpYyB2b2lkIG52
+bWVfcmVtb3ZlX2RlYWRfY3RybChzdHJ1Y3QgbnZtZV9kZXYgKmRldikNCj4gIHsNCj4gIAludm1l
+X2dldF9jdHJsKCZkZXYtPmN0cmwpOw0KPiAtCW52bWVfZGV2X2Rpc2FibGUoZGV2LCBmYWxzZSk7
+DQo+ICsJbnZtZV9kZXZfZGlzYWJsZShkZXYsIHRydWUpOw0KPiAgCW52bWVfa2lsbF9xdWV1ZXMo
+JmRldi0+Y3RybCk7DQo+ICAJaWYgKCFxdWV1ZV93b3JrKG52bWVfd3EsICZkZXYtPnJlbW92ZV93
+b3JrKSkNCj4gIAkJbnZtZV9wdXRfY3RybCgmZGV2LT5jdHJsKTsNCg==
