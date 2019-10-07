@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 173F7CEB8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B520CCEB8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 20:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfJGSNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 14:13:49 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34632 "EHLO
+        id S1729291AbfJGSNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 14:13:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34574 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728079AbfJGSNs (ORCPT
+        with ESMTP id S1728079AbfJGSNp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 14:13:48 -0400
+        Mon, 7 Oct 2019 14:13:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=F/519QCZ2cPEiTPBsN/gfjftRPvGaCJLTY4nnrMZONU=; b=xAoCDiDeBOBg
-        +yP/gYICl4E0AJFQbECVzr+VI3P783zvguMUugFprIVgZnMp+zQ0wgxOjCeRrJHL5xZLyFJvXmce4
-        ovZUxARgZunEn1df47fHhCNwKGpozH+DyUQT69MvI7xYyg4U02b0hNHmJYgnVUNS3ygEGJwJhhOQ1
-        69Lxc=;
+        List-Archive; bh=dlfa46lGCXB+/J0deOqs/W09rBlwYzs099ZfVzI+9RM=; b=JNe81tPrJrrH
+        VkighFnutBYOUCjjUr2NKOzNc0lmT86d6oIAdhojEKNGH6z8dbbOsLJ5mFn9Nm+g3M6VF8sC0etWz
+        GcyY17vAMPbIvUUh4iVmR7pRxyvbajIEnv7mSlVWF1oS/owSLzCbazZQoRkWIlXXbtG6sT9r35a/e
+        hNl4c=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1iHXVe-0004GF-8B; Mon, 07 Oct 2019 18:13:26 +0000
+        id 1iHXVe-0004GE-2f; Mon, 07 Oct 2019 18:13:26 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id B7D8E2741EF0; Mon,  7 Oct 2019 19:13:25 +0100 (BST)
+        id 7EAD52741D8E; Mon,  7 Oct 2019 19:13:25 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Dan Murphy <dmurphy@ti.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>, navada@ti.com, perex@perex.cz,
         shifu0704@thundersoft.com, tiwai@suse.com
-Subject: Applied "ASoC: tas2770: Remove unneeded read of the TDM_CFG3 register" to the asoc tree
-In-Reply-To: <20191007171157.17813-2-dmurphy@ti.com>
+Subject: Applied "ASoc: tas2770: Remove unused defines and variables" to the asoc tree
+In-Reply-To: <20191007171157.17813-3-dmurphy@ti.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20191007181325.B7D8E2741EF0@ypsilon.sirena.org.uk>
+Message-Id: <20191007181325.7EAD52741D8E@ypsilon.sirena.org.uk>
 Date:   Mon,  7 Oct 2019 19:13:25 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tas2770: Remove unneeded read of the TDM_CFG3 register
+   ASoc: tas2770: Remove unused defines and variables
 
 has been applied to the asoc tree at
 
@@ -72,42 +72,67 @@ to this mail.
 Thanks,
 Mark
 
-From 5911e6729e0886a3fb00b897b73892134d37158a Mon Sep 17 00:00:00 2001
+From 40f90ef0a77bab65c8f959ba1d264bb674f7234b Mon Sep 17 00:00:00 2001
 From: Dan Murphy <dmurphy@ti.com>
-Date: Mon, 7 Oct 2019 12:11:56 -0500
-Subject: [PATCH] ASoC: tas2770: Remove unneeded read of the TDM_CFG3 register
+Date: Mon, 7 Oct 2019 12:11:57 -0500
+Subject: [PATCH] ASoc: tas2770: Remove unused defines and variables
 
-Remove the unneeded and incorrect read of the TDM_CFG3 register.
-The read is done but the value is never used.
+Remove unused defines and structure variables that are not
+referenced by the code.  If these are needed for future
+enhancements then they should be added at that time.
 
 Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Link: https://lore.kernel.org/r/20191007171157.17813-2-dmurphy@ti.com
+Link: https://lore.kernel.org/r/20191007171157.17813-3-dmurphy@ti.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tas2770.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/soc/codecs/tas2770.h | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-diff --git a/sound/soc/codecs/tas2770.c b/sound/soc/codecs/tas2770.c
-index 15f6fcc6d87e..f3a665b64fd6 100644
---- a/sound/soc/codecs/tas2770.c
-+++ b/sound/soc/codecs/tas2770.c
-@@ -374,7 +374,6 @@ static int tas2770_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- {
- 	u8 tdm_rx_start_slot = 0, asi_cfg_1 = 0;
- 	int ret;
--	int value = 0;
- 	struct snd_soc_component *component = dai->component;
- 	struct tas2770_priv *tas2770 =
- 			snd_soc_component_get_drvdata(component);
-@@ -430,8 +429,6 @@ static int tas2770_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	if (ret)
- 		return ret;
- 
--	value = snd_soc_component_read32(component, TAS2770_TDM_CFG_REG3);
+diff --git a/sound/soc/codecs/tas2770.h b/sound/soc/codecs/tas2770.h
+index d597a8280707..cbb858369fe6 100644
+--- a/sound/soc/codecs/tas2770.h
++++ b/sound/soc/codecs/tas2770.h
+@@ -125,40 +125,19 @@
+ #define ERROR_UNDER_VOLTAGE 0x0000008
+ #define ERROR_BROWNOUT      0x0000010
+ #define ERROR_CLASSD_PWR    0x0000020
+-#define TAS2770_SLOT_16BIT  16
+-#define TAS2770_SLOT_32BIT  32
+-#define TAS2770_I2C_RETRY_COUNT      3
 -
- 	tas2770->asi_format = fmt;
+-struct tas2770_register {
+-	int book;
+-	int page;
+-	int reg;
+-};
+-
+-struct tas2770_dai_cfg {
+-	unsigned int dai_fmt;
+-	unsigned int tdm_delay;
+-};
  
- 	return 0;
+ struct tas2770_priv {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+-	struct snd_soc_codec *codec;
+ 	struct snd_soc_component *component;
+-	struct mutex dev_lock;
+-	struct hrtimer mtimer;
+ 	int power_state;
+ 	int asi_format;
+ 	struct gpio_desc *reset_gpio;
+ 	int sampling_rate;
+-	int frame_size;
+ 	int channel_size;
+ 	int slot_width;
+ 	int v_sense_slot;
+ 	int i_sense_slot;
+-	bool runtime_suspend;
+-	unsigned int err_code;
+-	struct mutex codec_lock;
+ };
+ 
+ #endif /* __TAS2770__ */
 -- 
 2.20.1
 
