@@ -2,114 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48CC2CDF42
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754FCCDF51
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 12:27:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbfJGK0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 06:26:19 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41413 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727262AbfJGK0R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 06:26:17 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x97AKml6026153;
-        Mon, 7 Oct 2019 12:25:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=cIh/B+QlT5Ufq0muAI8MFIZVmvtKiiVeIQjxYFeHv4U=;
- b=LqwFvsFeAgqwBt7UYWHD+Wuf+stCjxWldXnL+ZqqyTjv9PukoK6gjeJKuhHN9HtbFVk/
- qINdmJ8SJp4VZEqHmX8HX/OR77VCCUuep5iwlHbpCQWiz6LmXWlQaz8SRLbONPSU5q7f
- u5QLwVf799PJGBZoVV6fPP6+SEP+pv9mUyv98wqICqgKGn2A94yONlyyI7KdQFyNqdG8
- 9zLr5o5ct1m4k2jtoSx/F0kDFB2tW9EcrQESlnfGgWY3iqekCks4uvtZvOsjgzpa0Zb9
- cyZF3E7mbm2nk9Ev6T7CqfrdURgjwdJhs5igOpnTtDmBAgj0UPQO5hiatsex1g1i1Gjl /g== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2vegxvhrn6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Oct 2019 12:25:57 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EB15210002A;
-        Mon,  7 Oct 2019 12:25:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DC7722BFE0A;
-        Mon,  7 Oct 2019 12:25:56 +0200 (CEST)
-Received: from localhost (10.75.127.50) by SFHDAG3NODE2.st.com (10.75.127.8)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 7 Oct 2019 12:25:56
- +0200
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Alexandru Ardelean <alexaundru.ardelean@analog.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-media@vger.kernel.org>, <netdev@vger.kernel.org>
-Subject: [PATCH 3/3] dt-bindings: regulator: Fix yaml verification for fixed-regulator schema
-Date:   Mon, 7 Oct 2019 12:25:52 +0200
-Message-ID: <20191007102552.19808-4-alexandre.torgue@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191007102552.19808-1-alexandre.torgue@st.com>
-References: <20191007102552.19808-1-alexandre.torgue@st.com>
+        id S1727708AbfJGK1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 06:27:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbfJGK1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 06:27:38 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 026F7206BB;
+        Mon,  7 Oct 2019 10:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570444057;
+        bh=o/3HX+sqnNh7vr3SYYCutqGAasG1AMtER1h8gM4+CBo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jVyox7Ty4EgYsSneZb3KoxWcLIsY8yooYV1lyMOfV5nrrDlBzcueVtqupZbxCNCoB
+         iisw6VDNuCnOHbvJg6o76eKW+Q9obYfeXL7yMqsyt0RFDHSewKV8iK+mhdQ+Zy5fOl
+         LtLtslBBAFup2HpSDXzURN8U6U4Zc7S962nKSHMc=
+Date:   Mon, 7 Oct 2019 12:27:35 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+Cc:     outreachy-kernel@googlegroups.com, Larry.Finger@lwfinger.net,
+        florian.c.schilhabel@googlemail.com, nishkadg.linux@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        lkcamp@lists.libreplanetbr.org, trivial@kernel.org
+Subject: Re: [PATCH] staging: rtl8712: align block comments
+Message-ID: <20191007102735.GA345628@kroah.com>
+References: <20191006203420.11202-1-gabrielabittencourt00@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-10-07_02:2019-10-07,2019-10-07 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191006203420.11202-1-gabrielabittencourt00@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit fixes an issue seen during yaml check ("make dt_binding_check").
-Compatible didn't seem to be seen as a string.
+On Sun, Oct 06, 2019 at 05:34:20PM -0300, Gabriela Bittencourt wrote:
+> Cleans up warnings of "Block comments should align the * on each line"
+> 
+> Signed-off-by: Gabriela Bittencourt <gabrielabittencourt00@gmail.com>
+> ---
+>  drivers/staging/rtl8712/recv_linux.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8712/recv_linux.c b/drivers/staging/rtl8712/recv_linux.c
+> index 84c4c8580f9a..70a4dcd4a1e5 100644
+> --- a/drivers/staging/rtl8712/recv_linux.c
+> +++ b/drivers/staging/rtl8712/recv_linux.c
+> @@ -115,8 +115,8 @@ void r8712_recv_indicatepkt(struct _adapter *adapter,
+>  	skb->protocol = eth_type_trans(skb, adapter->pnetdev);
+>  	netif_rx(skb);
+>  	recvframe->u.hdr.pkt = NULL; /* pointers to NULL before
+> -					* r8712_free_recvframe()
+> -					*/
+> +				      * r8712_free_recvframe()
+> +				      */
+>  	r8712_free_recvframe(recvframe, free_recv_queue);
+>  	return;
+>  _recv_indicatepkt_drop:
 
-Reported issue:
-"properties:compatible:enum:0: {'const': 'regulator-fixed'}
-is not of type 'string'"
-And
-"properties:compatible:enum:1: {'const': 'regulator-fixed-clock'}
-is not of type 'string'"
+This patch did not apply to my tree at all.  Be sure you are working
+against the staging-next branch of the staging.git tree, or off of
+linux-next which includes this branch as well.
 
-Fixes: 9c86d003d620 ("dt-bindings: regulator: add regulator-fixed-clock binding")
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+thanks,
 
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-index a78150c47aa2..7725cedf1538 100644
---- a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-@@ -22,16 +22,20 @@ allOf:
- if:
-   properties:
-     compatible:
-+      allOf:
-+        - $ref: "/schemas/types.yaml#/definitions/string"
-       contains:
--        const: regulator-fixed-clock
-+        const: "regulator-fixed-clock"
-   required:
-     - clocks
- 
- properties:
-   compatible:
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/string"
-     enum:
--      - const: regulator-fixed
--      - const: regulator-fixed-clock
-+      - "regulator-fixed"
-+      - "regulator-fixed-clock"
- 
-   regulator-name: true
- 
--- 
-2.17.1
-
+greg k-h
