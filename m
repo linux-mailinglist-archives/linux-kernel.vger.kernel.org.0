@@ -2,301 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C437FCE1C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8D4CE1D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbfJGMdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:33:04 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:21086 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727467AbfJGMdD (ORCPT
+        id S1727935AbfJGMeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:34:15 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46508 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbfJGMeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:33:03 -0400
-X-UUID: dc1c58b589214748a8568a22798e19f1-20191007
-X-UUID: dc1c58b589214748a8568a22798e19f1-20191007
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 730812572; Mon, 07 Oct 2019 20:32:56 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 7 Oct 2019 20:32:53 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 7 Oct 2019 20:32:53 +0800
-Message-ID: <1570451575.4686.83.camel@mtksdccf07>
-Subject: Re: [PATCH] kasan: fix the missing underflow in memmove and memcpy
- with CONFIG_KASAN_GENERIC=y
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-CC:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>
-Date:   Mon, 7 Oct 2019 20:32:55 +0800
-In-Reply-To: <CACT4Y+b4VX5cW3WhP6o3zyKxHjNZRo1Lokxr0+MwDcB5hV5K+A@mail.gmail.com>
-References: <20190927034338.15813-1-walter-zh.wu@mediatek.com>
-         <CACT4Y+Zxz+R=qQxSMoipXoLjRqyApD3O0eYpK0nyrfGHE4NNPw@mail.gmail.com>
-         <1569594142.9045.24.camel@mtksdccf07>
-         <CACT4Y+YuAxhKtL7ho7jpVAPkjG-JcGyczMXmw8qae2iaZjTh_w@mail.gmail.com>
-         <1569818173.17361.19.camel@mtksdccf07>
-         <1570018513.19702.36.camel@mtksdccf07>
-         <CACT4Y+bbZhvz9ZpHtgL8rCCsV=ybU5jA6zFnJBL7gY2cNXDLyQ@mail.gmail.com>
-         <1570069078.19702.57.camel@mtksdccf07>
-         <CACT4Y+ZwNv2-QBrvuR2JvemovmKPQ9Ggrr=ZkdTg6xy_Ki6UAg@mail.gmail.com>
-         <1570095525.19702.59.camel@mtksdccf07>
-         <1570110681.19702.64.camel@mtksdccf07>
-         <CACT4Y+aKrC8mtcDTVhM-So-TTLjOyFCD7r6jryWFH6i2he1WJA@mail.gmail.com>
-         <1570164140.19702.97.camel@mtksdccf07>
-         <1570176131.19702.105.camel@mtksdccf07>
-         <CACT4Y+ZvhomaeXFKr4za6MJi=fW2SpPaCFP=fk06CMRhNcmFvQ@mail.gmail.com>
-         <1570182257.19702.109.camel@mtksdccf07>
-         <CACT4Y+ZnWPEO-9DkE6C3MX-Wo+8pdS6Gr6-2a8LzqBS=2fe84w@mail.gmail.com>
-         <1570190718.19702.125.camel@mtksdccf07>
-         <CACT4Y+YbkjuW3_WQJ4BB8YHWvxgHJyZYxFbDJpnPzfTMxYs60g@mail.gmail.com>
-         <1570418576.4686.30.camel@mtksdccf07>
-         <CACT4Y+aho7BEvQstd2+a2be-jJ0dEsjGebH7bcUFhYp-PoRDxQ@mail.gmail.com>
-         <1570436289.4686.40.camel@mtksdccf07>
-         <CACT4Y+Z6QObZ2fvVxSmvv16YQAu4GswOqfOVQK_1_Ncz0eir_g@mail.gmail.com>
-         <1570438317.4686.44.camel@mtksdccf07>
-         <CACT4Y+Yc86bKxDp4ST8+49rzLOWkTXLkjs0eyFtohCi_uSjmLQ@mail.gmail.com>
-         <1570439032.4686.50.camel@mtksdccf07>
-         <CACT4Y+YL=8jFXrj2LOuQV7ZyDe-am4W8y1WHEDJJ0-mVNJ3_Cw@mail.gmail.com>
-         <1570440492.4686.59.camel@mtksdccf07> <1570441833.4686.66.camel@mtksdccf07>
-         <CACT4Y+Z0A=Zi4AxEjn4jpHk0xG9+Nh2Q-OYEnOmooW0wN-_vfQ@mail.gmail.com>
-         <1570449804.4686.79.camel@mtksdccf07>
-         <CACT4Y+b4VX5cW3WhP6o3zyKxHjNZRo1Lokxr0+MwDcB5hV5K+A@mail.gmail.com>
+        Mon, 7 Oct 2019 08:34:15 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 201so12307360qkd.13
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 05:34:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aX38mKathL6hGZ5wfaJ4tWyTc6Mqm9Kf3jmqSU2okVY=;
+        b=CYId0mddJCKrzR+XxA8vZFoMDfRmBJN4cg6/EGWNPs1i+kPhJ/sX9AzAmx3RLkeXzB
+         8YcNqrXJS8EkuxWD+8NwJfLHk7DoxzE6+l3omsx7SkSouFC8IPFuhuEjC9xxPjWYAsAt
+         mo7W+yyA9a/kzO6m3VSFgP1Z2lPwPhhGohSfyc1SOVlgd0HrWUJLp2ANkUgrYEOty3JM
+         T0E5FJG5/dt6rlidSPEWKwgYcbYlF6ldGlqEfKHq0V5zR1stftyQT25Pkzmt/PSwGqt/
+         iNUZ+ngQ8MBGrO9ttUTELD7J5VxNRu9jBeuAP9YrCvUNpmTvmVrmt5TfVurPLTuEIrDE
+         WUQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aX38mKathL6hGZ5wfaJ4tWyTc6Mqm9Kf3jmqSU2okVY=;
+        b=p2B0Sd1lK2JFa/6lQ6EIbIKsVO1dovcQIIgXFrVuhs5HE2WG0xEsvTOGtcWSuyDeMA
+         nUpyAr9hpx/3qXLEzH3YfrATIuvXvYxvD/+p06M+TyuzmN5/XBf8OU8BpADPz1utK3qG
+         s80oGC069gnYZSFNtl8+KASPbhD2vtyu8VY2E7K/m5ZD2bOdrHFo41mefSe6Wwt4EEmJ
+         02yLSAGYqff+LK25Om8ZEnW+4rY9w812i+bFWDWOfHMdVyQzeM+dmSCLk7daqrChhog+
+         tuCcRsRMvWzogYKGEZ0GhR6XK7PvZgvFOkNBh45gy2Asr4Lddu/aIz07smTDYu1Tsvz4
+         RnAQ==
+X-Gm-Message-State: APjAAAWMCfEZ/4WdDcT5S17WJv9Qx6M8w51JhzJSH4cnYhTMIeVUM9EB
+        h37ygkwjLPt/8K685FXo+gLbGQ==
+X-Google-Smtp-Source: APXvYqx98soN4TJOR6EqsnHUBrwxgT/pxlU3w83u9j9CkrR0R48FZdRdWl1D11WSUnw1Xm3cnPuPDQ==
+X-Received: by 2002:ae9:ebcc:: with SMTP id b195mr21560825qkg.387.1570451654081;
+        Mon, 07 Oct 2019 05:34:14 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id i30sm10406440qte.27.2019.10.07.05.34.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Oct 2019 05:34:13 -0700 (PDT)
+Message-ID: <1570451651.5576.285.camel@lca.pw>
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+From:   Qian Cai <cai@lca.pw>
+To:     Petr Mladek <pmladek@suse.com>, Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
+        rostedt@goodmis.org, peterz@infradead.org, david@redhat.com,
+        john.ogness@linutronix.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 07 Oct 2019 08:34:11 -0400
+In-Reply-To: <20191007090553.g5cq7qa4tj5yrtaa@pathway.suse.cz>
+References: <1570228005-24979-1-git-send-email-cai@lca.pw>
+         <20191007080742.GD2381@dhcp22.suse.cz>
+         <20191007090553.g5cq7qa4tj5yrtaa@pathway.suse.cz>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-10-07 at 14:19 +0200, Dmitry Vyukov wrote:
-> On Mon, Oct 7, 2019 at 2:03 PM Walter Wu <walter-zh.wu@mediatek.com> wrote:
-> > > > > > > > > > On Mon, Oct 7, 2019 at 10:18 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
-> > > > > > > > > > > The patchsets help to produce KASAN report when size is negative numbers
-> > > > > > > > > > > in memory operation function. It is helpful for programmer to solve the
-> > > > > > > > > > > undefined behavior issue. Patch 1 based on Dmitry's review and
-> > > > > > > > > > > suggestion, patch 2 is a test in order to verify the patch 1.
-> > > > > > > > > > >
-> > > > > > > > > > > [1]https://bugzilla.kernel.org/show_bug.cgi?id=199341
-> > > > > > > > > > > [2]https://lore.kernel.org/linux-arm-kernel/20190927034338.15813-1-walter-zh.wu@mediatek.com/
-> > > > > > > > > > >
-> > > > > > > > > > > Walter Wu (2):
-> > > > > > > > > > > kasan: detect invalid size in memory operation function
-> > > > > > > > > > > kasan: add test for invalid size in memmove
-> > > > > > > > > > >
-> > > > > > > > > > >  lib/test_kasan.c          | 18 ++++++++++++++++++
-> > > > > > > > > > >  mm/kasan/common.c         | 13 ++++++++-----
-> > > > > > > > > > >  mm/kasan/generic.c        |  5 +++++
-> > > > > > > > > > >  mm/kasan/generic_report.c | 12 ++++++++++++
-> > > > > > > > > > >  mm/kasan/tags.c           |  5 +++++
-> > > > > > > > > > >  mm/kasan/tags_report.c    | 12 ++++++++++++
-> > > > > > > > > > >  6 files changed, 60 insertions(+), 5 deletions(-)
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > commit 5b3b68660b3d420fd2bd792f2d9fd3ccb8877ef7
-> > > > > > > > > > > Author: Walter-zh Wu <walter-zh.wu@mediatek.com>
-> > > > > > > > > > > Date:   Fri Oct 4 18:38:31 2019 +0800
-> > > > > > > > > > >
-> > > > > > > > > > >     kasan: detect invalid size in memory operation function
-> > > > > > > > > > >
-> > > > > > > > > > >     It is an undefined behavior to pass a negative numbers to
-> > > > > > > > > > > memset()/memcpy()/memmove()
-> > > > > > > > > > >     , so need to be detected by KASAN.
-> > > > > > > > > > >
-> > > > > > > > > > >     If size is negative numbers, then it has two reasons to be defined
-> > > > > > > > > > > as out-of-bounds bug type.
-> > > > > > > > > > >     1) Casting negative numbers to size_t would indeed turn up as a
-> > > > > > > > > > > large
-> > > > > > > > > > >     size_t and its value will be larger than ULONG_MAX/2, so that this
-> > > > > > > > > > > can
-> > > > > > > > > > >     qualify as out-of-bounds.
-> > > > > > > > > > >     2) Don't generate new bug type in order to prevent duplicate reports
-> > > > > > > > > > > by
-> > > > > > > > > > >     some systems, e.g. syzbot.
-> > > > > > > > > > >
-> > > > > > > > > > >     KASAN report:
-> > > > > > > > > > >
-> > > > > > > > > > >      BUG: KASAN: out-of-bounds in kmalloc_memmove_invalid_size+0x70/0xa0
-> > > > > > > > > > >      Read of size 18446744073709551608 at addr ffffff8069660904 by task
-> > > > > > > > > > > cat/72
-> > > > > > > > > > >
-> > > > > > > > > > >      CPU: 2 PID: 72 Comm: cat Not tainted
-> > > > > > > > > > > 5.4.0-rc1-next-20191004ajb-00001-gdb8af2f372b2-dirty #1
-> > > > > > > > > > >      Hardware name: linux,dummy-virt (DT)
-> > > > > > > > > > >      Call trace:
-> > > > > > > > > > >       dump_backtrace+0x0/0x288
-> > > > > > > > > > >       show_stack+0x14/0x20
-> > > > > > > > > > >       dump_stack+0x10c/0x164
-> > > > > > > > > > >       print_address_description.isra.9+0x68/0x378
-> > > > > > > > > > >       __kasan_report+0x164/0x1a0
-> > > > > > > > > > >       kasan_report+0xc/0x18
-> > > > > > > > > > >       check_memory_region+0x174/0x1d0
-> > > > > > > > > > >       memmove+0x34/0x88
-> > > > > > > > > > >       kmalloc_memmove_invalid_size+0x70/0xa0
-> > > > > > > > > > >
-> > > > > > > > > > >     [1] https://bugzilla.kernel.org/show_bug.cgi?id=199341
-> > > > > > > > > > >
-> > > > > > > > > > >     Signed-off-by: Walter Wu <walter-zh.wu@mediatek.com>
-> > > > > > > > > > >     Reported -by: Dmitry Vyukov <dvyukov@google.com>
-> > > > > > > > > > >     Suggested-by: Dmitry Vyukov <dvyukov@google.com>
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> > > > > > > > > > > index 6814d6d6a023..6ef0abd27f06 100644
-> > > > > > > > > > > --- a/mm/kasan/common.c
-> > > > > > > > > > > +++ b/mm/kasan/common.c
-> > > > > > > > > > > @@ -102,7 +102,8 @@ EXPORT_SYMBOL(__kasan_check_write);
-> > > > > > > > > > >  #undef memset
-> > > > > > > > > > >  void *memset(void *addr, int c, size_t len)
-> > > > > > > > > > >  {
-> > > > > > > > > > > -       check_memory_region((unsigned long)addr, len, true, _RET_IP_);
-> > > > > > > > > > > +       if (!check_memory_region((unsigned long)addr, len, true, _RET_IP_))
-> > > > > > > > > > > +               return NULL;
-> > > > > > > > > > >
-> > > > > > > > > > >         return __memset(addr, c, len);
-> > > > > > > > > > >  }
-> > > > > > > > > > > @@ -110,8 +111,9 @@ void *memset(void *addr, int c, size_t len)
-> > > > > > > > > > >  #undef memmove
-> > > > > > > > > > >  void *memmove(void *dest, const void *src, size_t len)
-> > > > > > > > > > >  {
-> > > > > > > > > > > -       check_memory_region((unsigned long)src, len, false, _RET_IP_);
-> > > > > > > > > > > -       check_memory_region((unsigned long)dest, len, true, _RET_IP_);
-> > > > > > > > > > > +       if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
-> > > > > > > > > > > +       !check_memory_region((unsigned long)dest, len, true, _RET_IP_))
-> > > > > > > > > > > +               return NULL;
-> > > > > > > > > > >
-> > > > > > > > > > >         return __memmove(dest, src, len);
-> > > > > > > > > > >  }
-> > > > > > > > > > > @@ -119,8 +121,9 @@ void *memmove(void *dest, const void *src, size_t
-> > > > > > > > > > > len)
-> > > > > > > > > > >  #undef memcpy
-> > > > > > > > > > >  void *memcpy(void *dest, const void *src, size_t len)
-> > > > > > > > > > >  {
-> > > > > > > > > > > -       check_memory_region((unsigned long)src, len, false, _RET_IP_);
-> > > > > > > > > > > -       check_memory_region((unsigned long)dest, len, true, _RET_IP_);
-> > > > > > > > > > > +       if (!check_memory_region((unsigned long)src, len, false, _RET_IP_) ||
-> > > > > > > > > > > +       !check_memory_region((unsigned long)dest, len, true, _RET_IP_))
-> > > > > > > > > > > +               return NULL;
-> > > > > > > > > > >
-> > > > > > > > > > >         return __memcpy(dest, src, len);
-> > > > > > > > > > >  }
-> > > > > > > > > > > diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-> > > > > > > > > > > index 616f9dd82d12..02148a317d27 100644
-> > > > > > > > > > > --- a/mm/kasan/generic.c
-> > > > > > > > > > > +++ b/mm/kasan/generic.c
-> > > > > > > > > > > @@ -173,6 +173,11 @@ static __always_inline bool
-> > > > > > > > > > > check_memory_region_inline(unsigned long addr,
-> > > > > > > > > > >         if (unlikely(size == 0))
-> > > > > > > > > > >                 return true;
-> > > > > > > > > > >
-> > > > > > > > > > > +       if (unlikely((long)size < 0)) {
-> > > > > > > > > > > +               kasan_report(addr, size, write, ret_ip);
-> > > > > > > > > > > +               return false;
-> > > > > > > > > > > +       }
-> > > > > > > > > > > +
-> > > > > > > > > > >         if (unlikely((void *)addr <
-> > > > > > > > > > >                 kasan_shadow_to_mem((void *)KASAN_SHADOW_START))) {
-> > > > > > > > > > >                 kasan_report(addr, size, write, ret_ip);
-> > > > > > > > > > > diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
-> > > > > > > > > > > index 36c645939bc9..ed0eb94cb811 100644
-> > > > > > > > > > > --- a/mm/kasan/generic_report.c
-> > > > > > > > > > > +++ b/mm/kasan/generic_report.c
-> > > > > > > > > > > @@ -107,6 +107,18 @@ static const char *get_wild_bug_type(struct
-> > > > > > > > > > > kasan_access_info *info)
-> > > > > > > > > > >
-> > > > > > > > > > >  const char *get_bug_type(struct kasan_access_info *info)
-> > > > > > > > > > >  {
-> > > > > > > > > > > +       /*
-> > > > > > > > > > > +        * If access_size is negative numbers, then it has two reasons
-> > > > > > > > > > > +        * to be defined as out-of-bounds bug type.
-> > > > > > > > > > > +        * 1) Casting negative numbers to size_t would indeed turn up as
-> > > > > > > > > > > +        * a 'large' size_t and its value will be larger than ULONG_MAX/2,
-> > > > > > > > > > > +        * so that this can qualify as out-of-bounds.
-> > > > > > > > > > > +        * 2) Don't generate new bug type in order to prevent duplicate
-> > > > > > > > > > > reports
-> > > > > > > > > > > +        * by some systems, e.g. syzbot.
-> > > > > > > > > > > +        */
-> > > > > > > > > > > +       if ((long)info->access_size < 0)
-> > > > > > > > > > > +               return "out-of-bounds";
-> > > > > > > > > >
-> > > > > > > > > > "out-of-bounds" is the _least_ frequent KASAN bug type. It won't
-> > > > > > > > > > prevent duplicates. "heap-out-of-bounds" is the frequent one.
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > >     /*
-> > > > > > > > >      * If access_size is negative numbers, then it has two reasons
-> > > > > > > > >      * to be defined as out-of-bounds bug type.
-> > > > > > > > >      * 1) Casting negative numbers to size_t would indeed turn up as
-> > > > > > > > >      * a  "large" size_t and its value will be larger than ULONG_MAX/2,
-> > > > > > > > >      *    so that this can qualify as out-of-bounds.
-> > > > > > > > >      * 2) Don't generate new bug type in order to prevent duplicate
-> > > > > > > > > reports
-> > > > > > > > >      *    by some systems, e.g. syzbot. "out-of-bounds" is the _least_
-> > > > > > > > > frequent KASAN bug type.
-> > > > > > > > >      *    It won't prevent duplicates. "heap-out-of-bounds" is the
-> > > > > > > > > frequent one.
-> > > > > > > > >      */
-> > > > > > > > >
-> > > > > > > > > We directly add it into the comment.
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > OK, let's start from the beginning: why do you return "out-of-bounds" here?
-> > > > > > > >
-> > > > > > > Uh, comment 1 and 2 should explain it. :)
-> > > > > >
-> > > > > > The comment says it will cause duplicate reports. It does not explain
-> > > > > > why you want syzbot to produce duplicate reports and spam kernel
-> > > > > > developers... So why do you want that?
-> > > > > >
-> > > > > We don't generate new bug type in order to prevent duplicate by some
-> > > > > systems, e.g. syzbot. Is it right? If yes, then it should not have
-> > > > > duplicate report.
-> > > > >
-> > > > Sorry, because we don't generate new bug type. it should be duplicate
-> > > > report(only one report which may be oob or size invlid),
-> > > > the duplicate report goal is that invalid size is oob issue, too.
-> > > >
-> > > > I would not introduce a new bug type.
-> > > > These are parsed and used by some systems, e.g. syzbot. If size is
-> > > > user-controllable, then a new bug type for this will mean 2 bug
-> > > > reports.
-> > >
-> > > To prevent duplicates, the new crash title must not just match _any_
-> > > crash title that kernel can potentially produce. It must match exactly
-> > > the crash that kernel produces for this bug on other input data.
-> > >
-> > > Consider, userspace passes size=123, KASAN produces "heap-out-of-bounds in foo".
-> > > Now userspace passes size=-1 and KASAN produces "invalid-size in foo".
-> > > This will be a duplicate bug report.
-> > > Now if KASAN will produce "out-of-bounds in foo", it will also lead to
-> > > a duplicate report.
-> > > Only iff KASAN will produce "heap-out-of-bounds in foo" for size=-1,
-> > > it will not lead to a duplicate report.
-> >
-> > I think it is not easy to avoid the duplicate report(mentioned above).
-> > As far as my knowledge is concerned, KASAN is memory corruption detector
-> > in kernel space, it should only detect memory corruption and don't
-> > distinguish whether it is passed by userspace. if we want to do, then we
-> > may need to parse backtrace to check if it has copy_form_user() or other
-> > function?
+On Mon, 2019-10-07 at 11:05 +0200, Petr Mladek wrote:
+> On Mon 2019-10-07 10:07:42, Michal Hocko wrote:
+> > On Fri 04-10-19 18:26:45, Qian Cai wrote:
+> > > It is unsafe to call printk() while zone->lock was held, i.e.,
+> > > 
+> > > zone->lock --> console_lock
+> > > 
+> > > because the console could always allocate some memory in different code
+> > > paths and form locking chains in an opposite order,
+> > > 
+> > > console_lock --> * --> zone->lock
+> > > 
+> > > As the result, it triggers lockdep splats like below and in different
+> > > code paths in this thread [1]. Since has_unmovable_pages() was only used
+> > > in set_migratetype_isolate() and is_pageblock_removable_nolock(). Only
+> > > the former will set the REPORT_FAILURE flag which will call printk().
+> > > Hence, unlock the zone->lock just before the dump_page() there where
+> > > when has_unmovable_pages() returns true, there is no need to hold the
+> > > lock anyway in the rest of set_migratetype_isolate().
+> > > 
+> > > While at it, remove a problematic printk() in __offline_isolated_pages()
+> > > only for debugging as well which will always disable lockdep on debug
+> > > kernels.
+> > 
+> > I do not think that removing the printk is the right long term solution.
+> > While I do agree that removing the debugging printk __offline_isolated_pages
+> > does make sense because it is essentially of a very limited use, this
+> > doesn't really solve the underlying problem.  There are likely other
+> > printks from zone->lock. It would be much more saner to actually
+> > disallow consoles to allocate any memory while printk is called from an
+> > atomic context.
 > 
-> My idea was just to always print "heap-out-of-bounds" and don't
-> differentiate if the size come from userspace or not.
+> The current "standard" solution for these situations is to replace
+> the problematic printk() with printk_deferred(). It would deffer
+> the console handling.
+> 
+> Of course, this is a whack a mole approach. The long term solution
+> is to deffer printk() by default. We have finally agreed on this
+> few weeks ago on Plumbers conference. It is going to be added
+> together with fully lockless log buffer hopefully soon. It will
+> be part of upstreaming Real-Time related code.
 
-Got it.
-Would you have any other concern about this patch?
+Does this guarantee that if,
 
+lock(zone->lock)
+printk_deferred()
+unlock(zone->lock)
 
+that the locks (console_owner and console_sem) in printk_deferred() will always
+be processed by the unlock(zone->lock)?
+
+If it is more of timing thing where klogd wakes up, it could still end up with,
+
+zone_lock -> console_owner/console_sem
+
+that causes a deadlock.
