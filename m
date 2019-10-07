@@ -2,125 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B71CDE19
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 11:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6A5CDE24
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 11:21:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfJGJSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 05:18:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44500 "EHLO mx1.suse.de"
+        id S1727486AbfJGJVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 05:21:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3214 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727262AbfJGJSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 05:18:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 20F32AC28;
-        Mon,  7 Oct 2019 09:18:34 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com, Qian Cai <cai@lca.pw>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>
-Subject: [PATCH v3 3/3] mm, page_owner: rename flag indicating that page is allocated
-Date:   Mon,  7 Oct 2019 11:18:08 +0200
-Message-Id: <20191007091808.7096-4-vbabka@suse.cz>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191007091808.7096-1-vbabka@suse.cz>
-References: <20191007091808.7096-1-vbabka@suse.cz>
+        id S1727278AbfJGJVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 05:21:25 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EE3E5EBCD1E71597C0C;
+        Mon,  7 Oct 2019 17:21:21 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Mon, 7 Oct 2019
+ 17:21:19 +0800
+Date:   Mon, 7 Oct 2019 10:21:07 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>
+Subject: Re: [PATCH] iio: imu: adis16480: clean up a condition
+Message-ID: <20191007102107.000067b6@huawei.com>
+In-Reply-To: <20191006181439.GU22609@kadam>
+References: <20190926081016.GA2332@mwanda>
+        <9e40c550310d6f30e6481329e01061beb474bc33.camel@analog.com>
+        <20190926113630.GF27389@kadam>
+        <20191006095133.24fb89be@archlinux>
+        <20191006181439.GU22609@kadam>
+Organization: Huawei
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 37389167a281 ("mm, page_owner: keep owner info when freeing the page")
-has introduced a flag PAGE_EXT_OWNER_ACTIVE to indicate that page is tracked as
-being allocated.  Kirill suggested naming it PAGE_EXT_OWNER_ALLOCATED to make it
-more clear, as "active is somewhat loaded term for a page".
+On Sun, 6 Oct 2019 21:14:40 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Suggested-by: Kirill A. Shutemov <kirill@shutemov.name>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- include/linux/page_ext.h |  2 +-
- mm/page_owner.c          | 12 ++++++------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+> On Sun, Oct 06, 2019 at 09:51:33AM +0100, Jonathan Cameron wrote:
+> > On Thu, 26 Sep 2019 14:36:30 +0300
+> > Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >   
+> > > On Thu, Sep 26, 2019 at 11:06:39AM +0000, Ardelean, Alexandru wrote:  
+> > > > On Thu, 2019-09-26 at 11:10 +0300, Dan Carpenter wrote:    
+> > > > > [External]
+> > > > > 
+> > > > > The "t" variable is unsigned so it can't be less than zero.  We really
+> > > > > are just trying to prevent divide by zero bugs so just checking against
+> > > > > zero is sufficient.  
+> > 
+> > I'm not sure that true.  It if were signed we'd be detecting that the
+> > input from userspace was negative.  
+> 
+> It does a really bad job of that though so it raises more questions than
+> answers.  Maybe just one of the parameters is negative or maybe the
+> multiply or the addition overflowed?  Should scenarios those be checked?
+> 
+> It turns out none of those situations matter, only divide by zero needs
+> to be checked.
 
-diff --git a/include/linux/page_ext.h b/include/linux/page_ext.h
-index 5e856512bafb..cfce186f0c4e 100644
---- a/include/linux/page_ext.h
-+++ b/include/linux/page_ext.h
-@@ -18,7 +18,7 @@ struct page_ext_operations {
- 
- enum page_ext_flags {
- 	PAGE_EXT_OWNER,
--	PAGE_EXT_OWNER_ACTIVE,
-+	PAGE_EXT_OWNER_ALLOCATED,
- #if defined(CONFIG_IDLE_PAGE_TRACKING) && !defined(CONFIG_64BIT)
- 	PAGE_EXT_YOUNG,
- 	PAGE_EXT_IDLE,
-diff --git a/mm/page_owner.c b/mm/page_owner.c
-index de1916ac3e24..e327bcd0380e 100644
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -152,7 +152,7 @@ void __reset_page_owner(struct page *page, unsigned int order)
- 	if (unlikely(!page_ext))
- 		return;
- 	for (i = 0; i < (1 << order); i++) {
--		__clear_bit(PAGE_EXT_OWNER_ACTIVE, &page_ext->flags);
-+		__clear_bit(PAGE_EXT_OWNER_ALLOCATED, &page_ext->flags);
- 		page_owner = get_page_owner(page_ext);
- 		page_owner->free_handle = handle;
- 		page_ext = page_ext_next(page_ext);
-@@ -173,7 +173,7 @@ static inline void __set_page_owner_handle(struct page *page,
- 		page_owner->gfp_mask = gfp_mask;
- 		page_owner->last_migrate_reason = -1;
- 		__set_bit(PAGE_EXT_OWNER, &page_ext->flags);
--		__set_bit(PAGE_EXT_OWNER_ACTIVE, &page_ext->flags);
-+		__set_bit(PAGE_EXT_OWNER_ALLOCATED, &page_ext->flags);
- 
- 		page_ext = page_ext_next(page_ext);
- 	}
-@@ -247,7 +247,7 @@ void __copy_page_owner(struct page *oldpage, struct page *newpage)
- 	 * the new page, which will be freed.
- 	 */
- 	__set_bit(PAGE_EXT_OWNER, &new_ext->flags);
--	__set_bit(PAGE_EXT_OWNER_ACTIVE, &new_ext->flags);
-+	__set_bit(PAGE_EXT_OWNER_ALLOCATED, &new_ext->flags);
- }
- 
- void pagetypeinfo_showmixedcount_print(struct seq_file *m,
-@@ -307,7 +307,7 @@ void pagetypeinfo_showmixedcount_print(struct seq_file *m,
- 			if (unlikely(!page_ext))
- 				continue;
- 
--			if (!test_bit(PAGE_EXT_OWNER_ACTIVE, &page_ext->flags))
-+			if (!test_bit(PAGE_EXT_OWNER_ALLOCATED, &page_ext->flags))
- 				continue;
- 
- 			page_owner = get_page_owner(page_ext);
-@@ -422,7 +422,7 @@ void __dump_page_owner(struct page *page)
- 		return;
- 	}
- 
--	if (test_bit(PAGE_EXT_OWNER_ACTIVE, &page_ext->flags))
-+	if (test_bit(PAGE_EXT_OWNER_ALLOCATED, &page_ext->flags))
- 		pr_alert("page_owner tracks the page as allocated\n");
- 	else
- 		pr_alert("page_owner tracks the page as freed\n");
-@@ -512,7 +512,7 @@ read_page_owner(struct file *file, char __user *buf, size_t count, loff_t *ppos)
- 		 * Although we do have the info about past allocation of free
- 		 * pages, it's not relevant for current memory usage.
- 		 */
--		if (!test_bit(PAGE_EXT_OWNER_ACTIVE, &page_ext->flags))
-+		if (!test_bit(PAGE_EXT_OWNER_ALLOCATED, &page_ext->flags))
- 			continue;
- 
- 		page_owner = get_page_owner(page_ext);
--- 
-2.23.0
+It isn't being nearly paranoid enough. Either val or val2 being
+negative is a reason to fault out.  Divide by zero needs handling after
+that.  Obviously divide by zero is the only one that causes a crash but
+negatives are going to cause rather 'unexpected' results.
+
+What fun.
+
+Jonathan
 
