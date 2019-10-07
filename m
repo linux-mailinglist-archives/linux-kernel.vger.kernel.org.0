@@ -2,66 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CFD5CDCC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 10:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC27CDCC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 10:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfJGIC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 04:02:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35222 "EHLO mail.kernel.org"
+        id S1727481AbfJGIDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 04:03:25 -0400
+Received: from mga01.intel.com ([192.55.52.88]:38910 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727224AbfJGIC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 04:02:29 -0400
-Received: from [10.33.87.18] (twin.jikos.cz [91.219.245.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CECD20867;
-        Mon,  7 Oct 2019 08:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570435348;
-        bh=DbrpAfomurrCCdFD0IJeUwRw1yWRYID3uypVq0D8MQw=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=ILBNzhemPwPmbQnaC2LVrUnAx54C/R93wfWv1G86UaG8h1UKlITDQ2NQj8Y09JZjM
-         B6xS9BAgcVSnQ/aOy+/+snNJS3s0TNmJiUt4QkMuI+50OcVJ03oqyCnztKugeo0x4g
-         R+lPPA2M1btyA+m1tgijqbN/px5ni5HfUoG7g40Q=
-Date:   Mon, 7 Oct 2019 10:02:11 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Will Deacon <will@kernel.org>
-cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Feng Tang <feng.tang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, contact@xogium.me
-Subject: Re: [PATCH] panic: Ensure preemption is disabled during panic()
-In-Reply-To: <20191004104947.vbxe5kv3nbjxqs55@willie-the-truck>
-Message-ID: <nycvar.YEU.7.76.1910071000170.15186@gjva.wvxbf.pm>
-References: <20191002123538.22609-1-will@kernel.org> <201910021355.E578D2FFAF@keescook> <20191003205633.w26geqhq67u4ysit@willie-the-truck> <20191004091142.57iylai22aqpu6lu@pathway.suse.cz> <20191004092917.GY25745@shell.armlinux.org.uk>
- <20191004104947.vbxe5kv3nbjxqs55@willie-the-truck>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726889AbfJGIDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 04:03:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 01:03:24 -0700
+X-IronPort-AV: E=Sophos;i="5.67,265,1566889200"; 
+   d="scan'208";a="344666799"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Oct 2019 01:03:22 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 46DD920B1D; Mon,  7 Oct 2019 11:03:20 +0300 (EEST)
+Date:   Mon, 7 Oct 2019 11:03:20 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v3 1/3] media: ov5640: add PIXEL_RATE control
+Message-ID: <20191007080320.GG14917@paasikivi.fi.intel.com>
+References: <20191004172418.2339-1-bparrot@ti.com>
+ <20191004172418.2339-2-bparrot@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191004172418.2339-2-bparrot@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 Oct 2019, Will Deacon wrote:
+On Fri, Oct 04, 2019 at 12:24:16PM -0500, Benoit Parrot wrote:
+> @@ -2657,6 +2669,12 @@ static int ov5640_init_controls(struct ov5640_dev *sensor)
+>  	/* we can use our own mutex for the ctrl lock */
+>  	hdl->lock = &sensor->lock;
+>  
+> +	/* Clock related controls */
+> +	ctrls->pixel_rate = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_PIXEL_RATE,
+> +					      0, INT_MAX, 1,
+> +					      ov5640_calc_pixel_rate(sensor));
+> +	ctrls->pixel_rate->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
-> Indeed, and I think the LED blinking is already unreliable if the
-> brightness operation needs to sleep. 
+Please check ctrls->pixel_rate first; it may be NULL here.
 
-One thing is that led_set_brightness() can probably be forced to avoid the 
-workqueue scheduling, by setting LED_BLINK_SW on the device (e.g. by 
-issuing led_set_software_blink() during panic).
-
-But I am afraid this still won't solve the issue completely, as USB 
-keyboards need workqueues for blinking the LEDs in for URB management.
+> +
+>  	/* Auto/manual white balance */
+>  	ctrls->auto_wb = v4l2_ctrl_new_std(hdl, ops,
+>  					   V4L2_CID_AUTO_WHITE_BALANCE,
 
 -- 
-Jiri Kosina
-SUSE Labs
+Sakari Ailus
+sakari.ailus@linux.intel.com
