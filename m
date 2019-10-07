@@ -2,92 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD5BCEF00
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 00:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9022ECEF05
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Oct 2019 00:23:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbfJGWUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 18:20:31 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:56772 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbfJGWUb (ORCPT
+        id S1729541AbfJGWXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 18:23:36 -0400
+Received: from mail-io1-f44.google.com ([209.85.166.44]:43289 "EHLO
+        mail-io1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728654AbfJGWXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 18:20:31 -0400
-Received: by mail-qt1-f201.google.com with SMTP id m6so16798753qtk.23
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 15:20:30 -0700 (PDT)
+        Mon, 7 Oct 2019 18:23:35 -0400
+Received: by mail-io1-f44.google.com with SMTP id v2so32229135iob.10;
+        Mon, 07 Oct 2019 15:23:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=wlN9EjPdJPL0a4w0W+nF7Wogpcxb94Am0mW1KAsykOM=;
-        b=gf1eiBROFqGGBLV0FzXqK9MYWbtPPBdxeGnpQjM1C66U4p86VdFxYBTz+IVfG3s5V+
-         L4nb7hKYq03E3JsliAmA4/dyN6ozjOaa0RYoxfo/fFw9U0MlrRxwGu1YtzslO2zTJ/Mj
-         q9T05C55NJMQN3oy93Dlhegk7j760rnimMVFSagdk+pMEFR6sGcUYLcx6pLO9+56ekY2
-         acQ5SR5lXz7jLrYwWoKlFbnmK5ObS7Im/t3whYKxY1qicRLXTm+5V4h/JhloHdCkMh9s
-         7qwm6Eu+Clk46L90xVZ1dlWHSaoT4iqg53z3mAGqBiurLOa1ayIooPjJdQ8XWU0um6BI
-         B4IA==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=wtsrMTezMsMxm5sa/uRmr3aD6zhnFoeYnC8Qx+iHozI=;
+        b=s9Z3kxPAzg4e2b7LKdU6A/6PvpjB9pfD/dfRVUCCLMGY3OOt3Wrt4QAR3SlM5cP0+u
+         TC0axqez8A31MxpWEaAzfwztS7KKoJHvea0j+YQtuUMAg9fv3N0ASvM/PE0ROuqFGpqE
+         PxgJ4r86HBx0cV4LNfZuFeto+aQdRQ8KAV9zkE6HxG+myrDp3LBB7uQNIO/RFZDzYMtj
+         jGcCD16VxzSq5195XZFf5Z6NkIR8za6iood8R6d30hDmCF43bYukcjEOiDem5bcpZLYn
+         0QOQpWxVdCnCNPgfMQxU3woJjkkQ/uKE2oJoVEKptX2lRD8TJ58w/7Vm77g7+0EpxUuW
+         /I3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=wlN9EjPdJPL0a4w0W+nF7Wogpcxb94Am0mW1KAsykOM=;
-        b=c68OTRMwBVGWBtv2RizBO2wathmy0RDckvmzdx/jU48RWpIxVO2Aq3BDRz6s2r4XzJ
-         eRuziW75S1mYQJW2GufoWMR3w59uShhMGFBtkavgKBau9wSTR6cfpGd1+Ft4lGBVOIhy
-         yb+leHOxrVamfmyDMkdWIi35d4ikWTKwbwmiPmSaxzPujx2jyFe426Ra/tbgpqk1XQTE
-         s3IJB9/ECKpa1nFZze9fBv6MyOL/dtv1Hpm1jzF7Jg1MKyxF4rj7DT8NlBRrRjXfdMiV
-         erD9PqYU/5vJhpnx45AY9hKDSzhO6Pe4x9ZcKmK1xLyDucyXeF7Lz7P2wal+CdAWoaYC
-         NCpQ==
-X-Gm-Message-State: APjAAAUoWB8aLMWuW9M0rQqSrhqW6hI9y8yLzTlRKsvEJJBqywMlcfd3
-        JtS3za8NiYYKLS0j0PyWNk9AUdlMkEU=
-X-Google-Smtp-Source: APXvYqxna5U/YbHXLmtzy893qlEj+JXOevUDENdZ3H84rjZemNR7AiPksdRy1bMwRjorvUp6vdO/EIMuJaw=
-X-Received: by 2002:ac8:27d9:: with SMTP id x25mr30930141qtx.321.1570486830137;
- Mon, 07 Oct 2019 15:20:30 -0700 (PDT)
-Date:   Mon,  7 Oct 2019 16:20:23 -0600
-Message-Id: <20191007222023.162256-1-yuzhao@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-Subject: [PATCH] mm: update comments in slub.c
-From:   Yu Zhao <yuzhao@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=wtsrMTezMsMxm5sa/uRmr3aD6zhnFoeYnC8Qx+iHozI=;
+        b=JIfz0OqjsV5r+nOEehPd47FK/0gu+af7C9TRn+kDilVQHfILDlyXX0zydvNa+5bixE
+         9fIUZQDoAlOaHAg4D1NOQHM8/Dnaw9TnkBPvX5cM7zaaYVAwoVCu88Ck8d6RR5oJObRx
+         igg3jFAvA6ASWlo+peWsAdRc6OmTwFDMuRfDqmNpMvSA0JgxyrX4BtmR+9HKeJ6lyKkV
+         GcOmLP16PzHkc/HhAcQZheuMl7aSLFZkWxqMRia+jEkJb7KuvUkV3QR+H8A3KrkoN2PE
+         KsyuZoWikFI0UProt5vPtTvszr9hYozvEL344x7+MAr6E3Q3bavJ34vhICkciD0MMUvS
+         egPg==
+X-Gm-Message-State: APjAAAWlp6Fnk6fxs8AfwZhYb8Gp1iRkp6Lv03cA4V/pLXVbhegrc7CB
+        OIsLmrtUwt3e3QfipOGHqhphRefbRSA//lrT7Ky0WaKTgCI=
+X-Google-Smtp-Source: APXvYqw9XZoqmiZpysY1ddWc+fFUEFWYK43wqt6qQry10TVDOw6zZx5HBOnoD6CXn8lmbAS6TYMOcHwO2t3U8gQIeKI=
+X-Received: by 2002:a92:c00d:: with SMTP id q13mr32522103ild.169.1570487014461;
+ Mon, 07 Oct 2019 15:23:34 -0700 (PDT)
+MIME-Version: 1.0
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 7 Oct 2019 17:23:23 -0500
+Message-ID: <CAH2r5mtgXZNC5wiNGRV925jB0H_HJTc_-GzBFFMoytmuJ5i-LA@mail.gmail.com>
+Subject: 
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Slub doesn't use PG_active and PG_error anymore.
+I noticed that the commit below regressed cifs/smb3 xfstest 258 on
+5.4-rc1 and later.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- mm/slub.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+"Testing for negative seconds since epoch"
+"Timestamp wrapped" ....
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 320a1c375e1b..cfbc839dc2ea 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -93,9 +93,7 @@
-  * minimal so we rely on the page allocators per cpu caches for
-  * fast frees and allocs.
-  *
-- * Overloading of page flags that are otherwise used for LRU management.
-- *
-- * PageActive 		The slab is frozen and exempt from list processing.
-+ * page->frozen		The slab is frozen and exempt from list processing.
-  * 			This means that the slab is dedicated to a purpose
-  * 			such as satisfying allocations for a specific
-  * 			processor. Objects may be freed in the slab while
-@@ -111,7 +109,7 @@
-  * 			free objects in addition to the regular freelist
-  * 			that requires the slab lock.
-  *
-- * PageError		Slab requires special handling due to debug
-+ * SLAB_DEBUG_FLAGS	Slab requires special handling due to debug
-  * 			options set. This moves	slab handling out of
-  * 			the fast path and disables lockless freelists.
-  */
+Did xfstest 258 get updated to account for the new behavior with this patch?
+
+commit cb7a69e605908c34aad47644afeb26a765ade8d7
+Author: Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Fri Mar 22 14:32:35 2019 -0700
+
+    fs: cifs: Initialize filesystem timestamp ranges
+
+    Fill in the appropriate limits to avoid inconsistencies
+    in the vfs cached inode times when timestamps are
+    outside the permitted range.
+
+    Also fixed cnvrtDosUnixTm calculations to avoid int overflow
+    while computing maximum date.
+
+
 -- 
-2.23.0.581.g78d2f28ef7-goog
+Thanks,
 
+Steve
