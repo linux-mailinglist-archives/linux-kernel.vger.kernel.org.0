@@ -2,100 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67DC3CE13C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB95CE13E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:08:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfJGMIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:08:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48912 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfJGMIF (ORCPT
+        id S1728003AbfJGMIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:08:35 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:42405 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727467AbfJGMIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:08:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rqI/O0G3FNLk7QEjU1ZgKHZVA7miIjxPx4qhFuLG5ms=; b=u5bgzcz1Yyc9JonlH763GgK++
-        gPpG9IciMIzvfFK8WjWg8lCuH2YmrajM2OjNY6JlDK6OF5X59m3L8w4xpcgThuuicVmvyeUmgfXxw
-        ZG9NuTab8+l9LDfq7xhg4LuzjmYMDKHQW4/Tlj92oDEXhg+IqTFtzRLhR2Dh1nuKE3anIM2u2CAX4
-        b5AVWg5HYWnW+CzRyaHePKObIgxiZhbsFzHAHUxmPcB+txRrC/1KrY8D2FqjgdXugEbyp3xVB9U1K
-        7GjElNEguNtJNKhnjwYXnhSa7DccCaiOnHnp5+9+BA8ER3K3YTwDVFc3lCZmqT9BDCm58RSRCos0q
-        ezk4eKsJw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iHRny-00050E-Ua; Mon, 07 Oct 2019 12:07:59 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0661A305E32;
-        Mon,  7 Oct 2019 14:07:06 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E586F20247CA6; Mon,  7 Oct 2019 14:07:56 +0200 (CEST)
-Date:   Mon, 7 Oct 2019 14:07:56 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, jpoimboe@redhat.com, hjl.tools@gmail.com
-Subject: Re: [RFC][PATCH 0/9] Variable size jump_label support
-Message-ID: <20191007120756.GE2311@hirez.programming.kicks-ass.net>
-References: <20191007090225.44108711.6@infradead.org>
- <20191007084443.79370128.1@infradead.org>
+        Mon, 7 Oct 2019 08:08:35 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id D421921B74;
+        Mon,  7 Oct 2019 08:08:33 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 07 Oct 2019 08:08:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=j
+        0BA7cW3BlyI/BnVP4//2CDS/zymIhVMHBQUSMqPWhA=; b=2tdq2mgq2K1eOhx8b
+        i6OW7UjwuXnpW/dMThcZ0zG8FFgI+yH0djTC6n4OZV/QzewPZA2AWu1bYgzsU7VZ
+        3JT4pmVihxmh4AplRMneRSJP2lp4LTmBTwAIGJnzk08y4pp3WOtumWexYDAI1bq5
+        igPiboT6Un0vLPNVd0haezt34JOfEM6Wn/Pu2MKXWnbDjICDggnU6WVlY20PKSX2
+        yahrX3Ji9mYR07bEHnylbJQasWGDrCSPhCHh7qc0s7EYRgfcptEeWxhsoxmLv5we
+        +9k9YT7knHUnW2x9gzkv+6i8A2xYYppQUQdDHUK7Z0svs/7vyJQaHUSgVQEIKEbq
+        GCgsQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=j0BA7cW3BlyI/BnVP4//2CDS/zymIhVMHBQUSMqPW
+        hA=; b=tQnr7GXwy8TROrHoOc5qffk+yD5hd2czOsNxxuiFccJz21XmVRRsSPt8n
+        cEUKXcyKAMfybQ9lc4wYRCmKoTyDvTveHYpo4xEolvZ4ABzCr35uVuSDaS9L1asN
+        hn6uc6hlhtRIoe3rODFlmzGq12/R9xEUq8ms6E8LKH4Eo+T/NUnFfAF7q1ve0GsT
+        uM/vBmw4M9Jju1eP5cVQL3UMnV3YtY9O9c32ZAH9qRRrXqBgijxvJm9DI37D8Wa7
+        +WyOnAIMAub4ikEiPvWweSBCfQgFOGU/6LhD/V7dAccnK8oMiSas/PTGZlqontRR
+        +RljymTkn0m71FSP6qZZC0kJUFzmQ==
+X-ME-Sender: <xms:wSqbXffhKneAAD3jRejaHmvsHckxJI1XnVXnkytvJMbIf6-4OKpdCQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrheejgdefhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghmuhgv
+    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
+    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
+    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:wSqbXWVj88odH4aydt5bAsQroJKWph-FZ627SiFYOwOkmnZ9P7fP3Q>
+    <xmx:wSqbXZfVT_YMCtzLadrUzQnz4qWaLRncK-9oqdSAUpJtmzqErbWWjg>
+    <xmx:wSqbXcA_y6XoBdWc0kO9vOk-8lEwKRAJF0gmVHcs6UkckpRE-RVpjA>
+    <xmx:wSqbXW3iJ-SC3gmYGi3eZ69b8UEnPfSfF1CWWWtvdHvwMHPr3-f8NA>
+Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0F46FD60057;
+        Mon,  7 Oct 2019 08:08:33 -0400 (EDT)
+Subject: Re: [PATCH] bus: sunxi-rsb: Make interrupt handling more robust
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@chromium.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+References: <20190824175013.28840-1-samuel@sholland.org>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <8d4415f3-c0d2-d351-2221-2e86bd0d6673@sholland.org>
+Date:   Mon, 7 Oct 2019 07:08:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191007084443.79370128.1@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190824175013.28840-1-samuel@sholland.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-In the failed thread Ingo posted:
-
->On Mon, Oct 07, 2019 at 01:26:06PM +0200, Ingo Molnar wrote:
-> * Peter Zijlstra <peterz@infradead.org> wrote:
+On 8/24/19 12:50 PM, Samuel Holland wrote:
+> The RSB controller has two registers for controlling interrupt inputs:
+> RSB_INTE, which has bits for each possible interrupt, and the global
+> interrupt enable bit in RSB_CTRL.
 > 
-> > These here patches are something I've been poking at for a while, 
-> > enabling jump_label to use 2 byte jumps/nops.
-> > 
-> > It _almost_ works :-/
-> > 
-> > That is, you can build some kernels with it (x86_64-defconfig for 
-> > example works just fine).
-> > 
-> > The problem comes when GCC generates a branch into another section, 
-> > mostly .text.unlikely. At that point GAS just gives up and throws a fit 
-> > (more details in the last patch).
-> > 
-> > Aside from anyone coming up with a really clever GAS trick, I don't see 
-> > how we can do this other than:
+> Currently, we enable the bits in RSB_INTE before each transfer, but this
+> is unnecessary because we never disable them. Move the initialization of
+> RSB_INTE so it is done only once.
 > 
-> >  - use 'jmp' and get objtool to rewrite the text. Steven has earlier proposed
-> >    something like that (using recordmcount) and Linus hated that.
+> We also set the global interrupt enable bit before each transfer. Unlike
+> other bits in RSB_CTRL, this bit is cleared by writing a zero. Thus, we
+> clear the bit in the post-timeout cleanup code, so I note that in the
+> comment.
 > 
-> As long as GCC+GAS correctly generates a 2-byte or 5-byte JMP depending 
-> on the target distance, the objtool solution should work fine, shouldn't 
-> it?
+> However, if we do receive an interrupt, we do not clear the bit. Nor do
+> we clear interrupt statuses before starting a transfer. Thus, if some
+> other driver uses the RSB bus while Linux is suspended (as both Trusted
+> Firmware and SCP firmware do to control the PMIC), we receive spurious
+> interrupts upon resume. This causes false completion of a transfer, and
+> the next transfer starts prematurely, causing a LOAD_BSY condition. The
+> end result is that some transfers at resume fail with -EBUSY.
 > 
-> I can see the recordmcount solution sucking, it would depend on early 
-> kernel patchery. But build time patchery is something we already depend 
-> on, so assuming some objtool catastrophy it's a more robust solution, 
-> isn't it?
+> With this patch, all transfers reliably succeed during/after resume.
+> 
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-IIRC the recordmcount variant from Steve was also rewriting JMP8 to NOP2
-at build time.
+Ping? Any comments?
 
-I dug this here link out of my IRC logs:
-
-  https://lore.kernel.org/lkml/1318007374.4729.58.camel@gandalf.stny.rr.com/
-
-Looking at that, part of the reason might've been running yet another
-tool, instead of having one tool do everything.
+> ---
+>  drivers/bus/sunxi-rsb.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bus/sunxi-rsb.c b/drivers/bus/sunxi-rsb.c
+> index be79d6c6a4e4..b8043b58568a 100644
+> --- a/drivers/bus/sunxi-rsb.c
+> +++ b/drivers/bus/sunxi-rsb.c
+> @@ -274,7 +274,7 @@ static int _sunxi_rsb_run_xfer(struct sunxi_rsb *rsb)
+>  	reinit_completion(&rsb->complete);
+>  
+>  	writel(RSB_INTS_LOAD_BSY | RSB_INTS_TRANS_ERR | RSB_INTS_TRANS_OVER,
+> -	       rsb->regs + RSB_INTE);
+> +	       rsb->regs + RSB_INTS);
+>  	writel(RSB_CTRL_START_TRANS | RSB_CTRL_GLOBAL_INT_ENB,
+>  	       rsb->regs + RSB_CTRL);
+>  
+> @@ -282,7 +282,7 @@ static int _sunxi_rsb_run_xfer(struct sunxi_rsb *rsb)
+>  					    msecs_to_jiffies(100))) {
+>  		dev_dbg(rsb->dev, "RSB timeout\n");
+>  
+> -		/* abort the transfer */
+> +		/* abort the transfer and disable interrupts */
+>  		writel(RSB_CTRL_ABORT_TRANS, rsb->regs + RSB_CTRL);
+>  
+>  		/* clear any interrupt flags */
+> @@ -480,6 +480,9 @@ static irqreturn_t sunxi_rsb_irq(int irq, void *dev_id)
+>  	status = readl(rsb->regs + RSB_INTS);
+>  	rsb->status = status;
+>  
+> +	/* Disable any further interrupts */
+> +	writel(0, rsb->regs + RSB_CTRL);
+> +
+>  	/* Clear interrupts */
+>  	status &= (RSB_INTS_LOAD_BSY | RSB_INTS_TRANS_ERR |
+>  		   RSB_INTS_TRANS_OVER);
+> @@ -718,6 +721,9 @@ static int sunxi_rsb_probe(struct platform_device *pdev)
+>  		goto err_reset_assert;
+>  	}
+>  
+> +	writel(RSB_INTS_LOAD_BSY | RSB_INTS_TRANS_ERR | RSB_INTS_TRANS_OVER,
+> +	       rsb->regs + RSB_INTE);
+> +
+>  	/* initialize all devices on the bus into RSB mode */
+>  	ret = sunxi_rsb_init_device_mode(rsb);
+>  	if (ret)
+> 
 
