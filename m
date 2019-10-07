@@ -2,59 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47950CDFD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5195ECDFE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 13:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfJGLDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 07:03:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727317AbfJGLDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 07:03:14 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F0A4206BB;
-        Mon,  7 Oct 2019 11:03:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570446194;
-        bh=VDBJ4s2BZaKphj3RNMld+/VgIar3sIhB0/Ql1nq99ys=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xVEmyDOU6lbwHpoqzNTAWCRu/nc4m0xpnDXn5bJnROx1XOCO7yl1BrWzg+4JP9viy
-         AASXTopzobJ0XHc/IyKtsdm1eomZjMc2IAaAyKGoZhSrKRLFpMgPlA0lwKO3TJpuv7
-         kPSUsy0QLUxxm1rriVZO5QODDivsbRjvOSlBEgFo=
-Date:   Mon, 7 Oct 2019 13:03:11 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     JC Kuo <jckuo@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        nkristam@nvidia.com, skomatineni@nvidia.com
-Subject: Re: [PATCH v3 0/7] add Tegra194 XUSB host and pad controller support
-Message-ID: <20191007110311.GA614644@kroah.com>
-References: <20191004162906.4818-1-jckuo@nvidia.com>
+        id S1727588AbfJGLJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 07:09:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44881 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727317AbfJGLJl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 07:09:41 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iHQtU-0005Nj-0p; Mon, 07 Oct 2019 11:09:36 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: hns3: make array tick_array static, makes object smaller
+Date:   Mon,  7 Oct 2019 12:09:35 +0100
+Message-Id: <20191007110935.32607-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004162906.4818-1-jckuo@nvidia.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 05, 2019 at 12:28:59AM +0800, JC Kuo wrote:
-> Hi,
-> 
-> This series introduces support for Tegra194 XUSB host and pad
-> controller. Tegra194 XUSB host and pad controller are highly
-> similar to the controllers found on Tegra186. Therefore, it's
-> possible to resue xhci-tegra.c and xusb-tegra186.c for Tegra194.
+From: Colin Ian King <colin.king@canonical.com>
 
-I've taken patches 1 and 2 through my USB tree.  If you want/need me to
-take the others, please get acks from those maintainers on them so I can
-do so.
+Don't populate the array tick_array on the stack but instead make it
+static. Makes the object code smaller by 29 bytes.
 
-thanks,
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  19191	    432	      0	  19623	   4ca7	hisilicon/hns3/hns3pf/hclge_tm.o
 
-greg k-h
+After:
+   text	   data	    bss	    dec	    hex	filename
+  19098	    496	      0	  19594	   4c8a	hisilicon/hns3/hns3pf/hclge_tm.o
+
+(gcc version 9.2.1, amd64)
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 9f0e35f27789..5cce9b7f1d3d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -46,7 +46,7 @@ static int hclge_shaper_para_calc(u32 ir, u8 shaper_level,
+ #define DIVISOR_CLK		(1000 * 8)
+ #define DIVISOR_IR_B_126	(126 * DIVISOR_CLK)
+ 
+-	const u16 tick_array[HCLGE_SHAPER_LVL_CNT] = {
++	static const u16 tick_array[HCLGE_SHAPER_LVL_CNT] = {
+ 		6 * 256,        /* Prioriy level */
+ 		6 * 32,         /* Prioriy group level */
+ 		6 * 8,          /* Port level */
+-- 
+2.20.1
+
