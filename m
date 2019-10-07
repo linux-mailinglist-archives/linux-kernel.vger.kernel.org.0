@@ -2,219 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 444E6CE207
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFE81CE1EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 14:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfJGMpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 08:45:05 -0400
-Received: from mtaout.hs-regensburg.de ([194.95.104.10]:60534 "EHLO
-        mtaout.hs-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727793AbfJGMpD (ORCPT
+        id S1727789AbfJGMkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 08:40:41 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40651 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727490AbfJGMkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 08:45:03 -0400
-Received: from pluto.lfdr (im-mob-039.hs-regensburg.de [172.20.37.154])
-        by mtaout.hs-regensburg.de (Postfix) with ESMTP id 46n0Q50mWtzy85;
-        Mon,  7 Oct 2019 14:38:21 +0200 (CEST)
-From:   Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
-To:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        jailhouse-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
-Subject: [PATCH v5 2/2] x86/jailhouse: Only enable platform UARTs if available
-Date:   Mon,  7 Oct 2019 14:38:19 +0200
-Message-Id: <20191007123819.161432-3-ralf.ramsauer@oth-regensburg.de>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191007123819.161432-1-ralf.ramsauer@oth-regensburg.de>
-References: <20191007123819.161432-1-ralf.ramsauer@oth-regensburg.de>
+        Mon, 7 Oct 2019 08:40:40 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k9so11477374oib.7
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Oct 2019 05:40:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4omqkgEsOa3d7dDrSHEj0fGIcb4u6Z71IZA7jxrxpXA=;
+        b=dDiR8orVa3DeLfGPRt48FE0G85MRTPusWnInVoCHTm00UIfVXwiV/+Te1Locr2IaNc
+         MzWbl8tv0imbIGqQtxu0ALEcZC1N9Or2EThj5AmzPSVpmoDMVs1i8SsmJ9wVcwlzZkYN
+         qBxVgOHEYzZGQe/JFirWQ3b6bW9Kri0w3T2G2dSxfyxekUK0in8Zjncbv0YSi1etbce0
+         JUNEKfAP/FqN5fdqbNVuyaE9cVFfymuJwKGB1Puf/w4zhnazPVVK+ecB9rVjdHkGy5Kq
+         ofuDjgblAoF8uO+Q0NR67UqHDMKQh/+YhcweREO6rBJatoR9tulV3qfPcv/ObTO73w60
+         Slmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4omqkgEsOa3d7dDrSHEj0fGIcb4u6Z71IZA7jxrxpXA=;
+        b=SwOOazgxvRZhepu7MlcFcBPlhn0ByXBugKRVi83VB+1zaBrmDeXUqVEj4qCFA8xPMU
+         IWK3sIA1c4ZNd6XTtvQb10FqQJ3EjNioieyzrqszQj4kh4Y7KocxUdSdKvxI0ozdvE5l
+         HI8XQDnnICYuAxqDjqDJoouyjsUfnnIAXdmpDgVhUSjVmWI1faJY/Dbs5stdzvqG5hIl
+         9BbAWaOoVJIArooEd/l+H9gO/joTdsMTxfG3e9aedW7t5SEO8X2o3MU7Uge3KX8Vbaet
+         k0jppyQdLE+76xvcCyahHCJNzjrotf/T4wL/WuGAierL1lMqU2Mdggj3tkTDw/Z6nqNQ
+         8l5A==
+X-Gm-Message-State: APjAAAVO8z/YXlzXYaa9ZfO+NwpeVbH92ZUmRQixWzg3yJu4g8mLD9pI
+        f+Gy1iF5gbyBQxy3zVuexabK5q9GXbRx0rrunmuEX8sprkQ=
+X-Google-Smtp-Source: APXvYqwhR+z+UIZ4jgopakgOCjtQfQIV/2FB/mG9OzRVEd9xbqmcvQS251+v4BMhDWqCxWTMsQGJ/FkT4gtdl54+U4k=
+X-Received: by 2002:aca:ed52:: with SMTP id l79mr17312662oih.47.1570452039482;
+ Mon, 07 Oct 2019 05:40:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PMX-Version: 6.3.3.2656215, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2019.10.7.123317, AntiVirus-Engine: 5.65.0, AntiVirus-Data: 2019.10.7.5650001
-X-PMX-Spam: Gauge=IIIIIIII, Probability=8%, Report='
- MULTIPLE_RCPTS 0.1, HTML_00_01 0.05, HTML_00_10 0.05, BODY_SIZE_5000_5999 0, BODY_SIZE_7000_LESS 0, IN_REP_TO 0, LEGITIMATE_SIGNS 0, MSG_THREAD 0, MULTIPLE_REAL_RCPTS 0, NO_URI_HTTPS 0, REFERENCES 0, __ANY_URI 0, __BODY_NO_MAILTO 0, __CC_NAME 0, __CC_NAME_DIFF_FROM_ACC 0, __CC_REAL_NAMES 0, __CTE 0, __FROM_DOMAIN_IN_ANY_CC1 0, __FROM_DOMAIN_IN_RCPT 0, __HAS_CC_HDR 0, __HAS_FROM 0, __HAS_MSGID 0, __HAS_REFERENCES 0, __HAS_X_MAILER 0, __IN_REP_TO 0, __MIME_TEXT_ONLY 0, __MIME_TEXT_P 0, __MIME_TEXT_P1 0, __MIME_VERSION 0, __MULTIPLE_RCPTS_CC_X2 0, __MULTIPLE_RCPTS_TO_X5 0, __NO_HTML_TAG_RAW 0, __PHISH_PHRASE2 0, __REFERENCES 0, __SANE_MSGID 0, __SUBJ_ALPHA_END 0, __TO_MALFORMED_2 0, __TO_NAME 0, __TO_NAME_DIFF_FROM_ACC 0, __TO_REAL_NAMES 0, __URI_NO_WWW 0, __URI_NS '
+References: <1562410493-8661-1-git-send-email-s.mesoraca16@gmail.com>
+ <1562410493-8661-5-git-send-email-s.mesoraca16@gmail.com> <CAG48ez35oJhey5WNzMQR14ko6RPJUJp+nCuAHVUJqX7EPPPokA@mail.gmail.com>
+ <CAJHCu1+35GhGJY8jDMPEU8meYhJTVgvzY5sJgVCuLrxCoGgHEg@mail.gmail.com> <CAJHCu1JobL7aj51=4gvaoXPfWH8aNdYXgcBDq90wV4_jN2iUfw@mail.gmail.com>
+In-Reply-To: <CAJHCu1JobL7aj51=4gvaoXPfWH8aNdYXgcBDq90wV4_jN2iUfw@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 7 Oct 2019 14:40:13 +0200
+Message-ID: <CAG48ez3v4dpCGBUc16FQDbGEAXtnDDvTq2GQpVax0rLgHEM3_g@mail.gmail.com>
+Subject: Re: [PATCH v5 04/12] S.A.R.A.: generic DFA for string matching
+To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Brad Spengler <spender@grsecurity.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        PaX Team <pageexec@freemail.hu>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI tables aren't available if Linux runs as guest of the hypervisor
-Jailhouse. This makes the 8250 driver probe for all platform UARTs as
-it assumes that all platform are present in case of !ACPI. Jailhouse
-will stop execution of Linux guest due to port access violation.
+On Sun, Oct 6, 2019 at 6:49 PM Salvatore Mesoraca
+<s.mesoraca16@gmail.com> wrote:
+> Salvatore Mesoraca <s.mesoraca16@gmail.com> wrote:
+> > Jann Horn <jannh@google.com> wrote:
+> > > On Sat, Jul 6, 2019 at 12:55 PM Salvatore Mesoraca
+> > > <s.mesoraca16@gmail.com> wrote:
+> > > > Creation of a generic Discrete Finite Automata implementation
+> > > > for string matching. The transition tables have to be produced
+> > > > in user-space.
+> > > > This allows us to possibly support advanced string matching
+> > > > patterns like regular expressions, but they need to be supported
+> > > > by user-space tools.
+> > >
+> > > AppArmor already has a DFA implementation that takes a DFA machine
+> > > from userspace and runs it against file paths; see e.g.
+> > > aa_dfa_match(). Did you look into whether you could move their DFA to
+> > > some place like lib/ and reuse it instead of adding yet another
+> > > generic rule interface to the kernel?
+> >
+> > Yes, using AppArmor DFA cloud be a possibility.
+> > Though, I didn't know how AppArmor's maintainers feel about this.
+> > I thought that was easier to just implement my own.
+> > Anyway I understand that re-using that code would be the optimal solution.
+> > I'm adding in CC AppArmor's maintainers, let's see what they think about this.
+>
+> I don't want this to prevent SARA from being up-streamed.
+> Do you think that having another DFA here could be acceptable anyway?
+> Would it be better if I just drop the DFA an go back to simple string
+> matching to speed up things?
 
-So far, these access violations could be solved by tuning the
-8250.nr_uarts parameter but it has limitations: We can, e.g., only map
-consecutive platform UARTs to Linux, and only in the sequence 0x3f8,
-0x2f8, 0x3e8, 0x2e8.
-
-Beginning from setup_data version 2, Jailhouse will place information of
-available platform UARTs in setup_data. This allows for selective
-activation of platform UARTs.
-
-This patch queries the setup_data version and activates only available
-UARTS. It comes with backward compatibility, and will still support
-older setup_data versions. In this case, Linux falls back to the old
-behaviour.
-
-Signed-off-by: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
----
- arch/x86/include/uapi/asm/bootparam.h |  3 +
- arch/x86/kernel/jailhouse.c           | 83 +++++++++++++++++++++++----
- 2 files changed, 74 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index 43be437c9c71..db1e24e56e94 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -152,6 +152,9 @@ struct jailhouse_setup_data {
- 		__u8	standard_ioapic;
- 		__u8	cpu_ids[255];
- 	} __attribute__((packed)) v1;
-+	struct {
-+		__u32	flags;
-+	} __attribute__((packed)) v2;
- } __attribute__((packed));
- 
- /* The so-called "zeropage" */
-diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
-index b9647add0063..95550c08ab23 100644
---- a/arch/x86/kernel/jailhouse.c
-+++ b/arch/x86/kernel/jailhouse.c
-@@ -11,6 +11,7 @@
- #include <linux/acpi_pmtmr.h>
- #include <linux/kernel.h>
- #include <linux/reboot.h>
-+#include <linux/serial_8250.h>
- #include <asm/apic.h>
- #include <asm/cpu.h>
- #include <asm/hypervisor.h>
-@@ -23,9 +24,22 @@
- 
- static __initdata struct jailhouse_setup_data setup_data;
- #define SETUP_DATA_V1_LEN	(sizeof(setup_data.hdr) + sizeof(setup_data.v1))
-+#define SETUP_DATA_V2_LEN	(SETUP_DATA_V1_LEN + sizeof(setup_data.v2))
- 
- static unsigned int precalibrated_tsc_khz;
- 
-+static void jailhouse_setup_irq(unsigned int irq)
-+{
-+	struct mpc_intsrc mp_irq = {
-+		.type		= MP_INTSRC,
-+		.irqtype	= mp_INT,
-+		.irqflag	= MP_IRQPOL_ACTIVE_HIGH | MP_IRQTRIG_EDGE,
-+		.srcbusirq	= irq,
-+		.dstirq		= irq,
-+	};
-+	mp_save_irq(&mp_irq);
-+}
-+
- static uint32_t jailhouse_cpuid_base(void)
- {
- 	if (boot_cpu_data.cpuid_level < 0 ||
-@@ -79,11 +93,6 @@ static void __init jailhouse_get_smp_config(unsigned int early)
- 		.type = IOAPIC_DOMAIN_STRICT,
- 		.ops = &mp_ioapic_irqdomain_ops,
- 	};
--	struct mpc_intsrc mp_irq = {
--		.type = MP_INTSRC,
--		.irqtype = mp_INT,
--		.irqflag = MP_IRQPOL_ACTIVE_HIGH | MP_IRQTRIG_EDGE,
--	};
- 	unsigned int cpu;
- 
- 	jailhouse_x2apic_init();
-@@ -100,12 +109,12 @@ static void __init jailhouse_get_smp_config(unsigned int early)
- 	if (setup_data.v1.standard_ioapic) {
- 		mp_register_ioapic(0, 0xfec00000, gsi_top, &ioapic_cfg);
- 
--		/* Register 1:1 mapping for legacy UART IRQs 3 and 4 */
--		mp_irq.srcbusirq = mp_irq.dstirq = 3;
--		mp_save_irq(&mp_irq);
--
--		mp_irq.srcbusirq = mp_irq.dstirq = 4;
--		mp_save_irq(&mp_irq);
-+		if (IS_ENABLED(CONFIG_SERIAL_8250) &&
-+		    setup_data.hdr.version < 2) {
-+			/* Register 1:1 mapping for legacy UART IRQs 3 and 4 */
-+			jailhouse_setup_irq(3);
-+			jailhouse_setup_irq(4);
-+		}
- 	}
- }
- 
-@@ -138,6 +147,53 @@ static int __init jailhouse_pci_arch_init(void)
- 	return 0;
- }
- 
-+#ifdef CONFIG_SERIAL_8250
-+static bool jailhouse_uart_enabled(unsigned int uart_nr)
-+{
-+	return setup_data.v2.flags & BIT(uart_nr);
-+}
-+
-+static void jailhouse_serial_fixup(int port, struct uart_port *up,
-+				   u32 *capabilities)
-+{
-+	static const u16 pcuart_base[] = {0x3f8, 0x2f8, 0x3e8, 0x2e8};
-+	unsigned int n;
-+
-+	for (n = 0; n < ARRAY_SIZE(pcuart_base); n++) {
-+		if (pcuart_base[n] != up->iobase)
-+			continue;
-+
-+		if (jailhouse_uart_enabled(n)) {
-+			pr_info("Enabling UART%u (port 0x%lx)\n", n,
-+				up->iobase);
-+			jailhouse_setup_irq(up->irq);
-+		} else {
-+			/* Deactivate UART if access isn't allowed */
-+			up->iobase = 0;
-+		}
-+		break;
-+	}
-+}
-+
-+static void jailhouse_serial_workaround(void)
-+{
-+	/*
-+	 * There are flags inside setup_data that indicate availability of
-+	 * platform UARTs since setup data version 2.
-+	 *
-+	 * In case of version 1, we don't know which UARTs belong Linux. In
-+	 * this case, unconditionally register 1:1 mapping for legacy UART IRQs
-+	 * 3 and 4.
-+	 */
-+	if (setup_data.hdr.version > 1)
-+		serial8250_set_isa_configurator(jailhouse_serial_fixup);
-+}
-+#else /* !CONFIG_SERIAL_8250 */
-+static inline void jailhouse_serial_workaround(void)
-+{
-+}
-+#endif /* CONFIG_SERIAL_8250 */
-+
- static void __init jailhouse_init_platform(void)
- {
- 	u64 pa_data = boot_params.hdr.setup_data;
-@@ -188,7 +244,8 @@ static void __init jailhouse_init_platform(void)
- 	if (setup_data.hdr.version == 0 ||
- 	    setup_data.hdr.compatible_version !=
- 		JAILHOUSE_SETUP_REQUIRED_VERSION ||
--	    (setup_data.hdr.version >= 1 && header.len < SETUP_DATA_V1_LEN))
-+	    (setup_data.hdr.version == 1 && header.len < SETUP_DATA_V1_LEN) ||
-+	    (setup_data.hdr.version >= 2 && header.len < SETUP_DATA_V2_LEN))
- 		goto unsupported;
- 
- 	pmtmr_ioport = setup_data.v1.pm_timer_address;
-@@ -204,6 +261,8 @@ static void __init jailhouse_init_platform(void)
- 	 * are none in a non-root cell.
- 	 */
- 	disable_acpi();
-+
-+	jailhouse_serial_workaround();
- 	return;
- 
- unsupported:
--- 
-2.23.0
-
+While I think that it would be nicer not to have yet another
+implementation of the same thing, I don't feel strongly about it.
