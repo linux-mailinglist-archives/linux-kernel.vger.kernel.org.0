@@ -2,111 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2904CE5B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:50:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 062CFCE5C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Oct 2019 16:50:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfJGOty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 7 Oct 2019 10:49:54 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44534 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728718AbfJGOts (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Oct 2019 10:49:48 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iHUKQ-0006Ep-Qt; Mon, 07 Oct 2019 16:49:38 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8B87E1C0895;
-        Mon,  7 Oct 2019 16:49:34 +0200 (CEST)
-Date:   Mon, 07 Oct 2019 14:49:34 -0000
-From:   "tip-bot2 for Hans de Goede" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/boot: Provide memzero_explicit()
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-crypto@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191007134724.4019-1-hdegoede@redhat.com>
-References: <20191007134724.4019-1-hdegoede@redhat.com>
+        id S1728706AbfJGOtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 7 Oct 2019 10:49:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51726 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728592AbfJGOtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Oct 2019 10:49:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7523EAD45;
+        Mon,  7 Oct 2019 14:49:38 +0000 (UTC)
+Date:   Mon, 7 Oct 2019 16:49:37 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org,
+        sergey.senozhatsky.work@gmail.com, rostedt@goodmis.org,
+        peterz@infradead.org, linux-mm@kvack.org,
+        john.ogness@linutronix.de, david@redhat.com,
+        linux-kernel@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v2] mm/page_isolation: fix a deadlock with printk()
+Message-ID: <20191007144937.GO2381@dhcp22.suse.cz>
+References: <1570228005-24979-1-git-send-email-cai@lca.pw>
+ <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
 MIME-Version: 1.0
-Message-ID: <157045977450.9978.18318761982949903126.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+[Cc s390 maintainers - the lockdep is http://lkml.kernel.org/r/1570228005-24979-1-git-send-email-cai@lca.pw
+ Petr has explained it is a false positive
+ http://lkml.kernel.org/r/20191007143002.l37bt2lzqtnqjqxu@pathway.suse.cz]
+On Mon 07-10-19 16:30:02, Petr Mladek wrote:
+[...]
+> I believe that it cannot really happen because:
+> 
+> 	static int __init
+> 	sclp_console_init(void)
+> 	{
+> 	[...]
+> 		rc = sclp_rw_init();
+> 	[...]
+> 		register_console(&sclp_console);
+> 		return 0;
+> 	}
+> 
+> sclp_rw_init() is called before register_console(). And
+> console_unlock() will never call sclp_console_write() before
+> the console is registered.
+> 
+> AFAIK, lockdep only compares existing chain of locks. It does
+> not know about console registration that would make some
+> code paths mutually exclusive.
+> 
+> I believe that it is a false positive. I do not know how to
+> avoid this lockdep report. I hope that it will disappear
+> by deferring all printk() calls rather soon.
 
-Commit-ID:     ee008a19f1c72c37ffa54326a592035dddb66fd6
-Gitweb:        https://git.kernel.org/tip/ee008a19f1c72c37ffa54326a592035dddb66fd6
-Author:        Hans de Goede <hdegoede@redhat.com>
-AuthorDate:    Mon, 07 Oct 2019 15:47:24 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 07 Oct 2019 16:47:35 +02:00
+Thanks a lot for looking into this Petr. I have also checked the code
+and I really fail to see why the allocation has to be done under the
+lock in the first place. sclp_read_sccb and sclp_init_sccb are global
+variables but I strongly suspect that they need a synchronization during
+early init, callbacks are registered only later IIUC:
 
-x86/boot: Provide memzero_explicit()
-
-The purgatory code now uses the shared lib/crypto/sha256.c sha256
-implementation. This needs memzero_explicit(), implement this.
-
-We also have barrier_data() call after the memset, making sure
-neither the compiler nor the linker optimizes out this seemingly
-unused function.
-
-Reported-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H . Peter Anvin <hpa@zytor.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-crypto@vger.kernel.org
-Fixes: 906a4bb97f5d ("crypto: sha256 - Use get/put_unaligned_be32 to get input, memzero_explicit")
-Link: https://lkml.kernel.org/r/20191007134724.4019-1-hdegoede@redhat.com
-[ Added comment. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/boot/compressed/string.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/x86/boot/compressed/string.c b/arch/x86/boot/compressed/string.c
-index 81fc1ea..dd30e63 100644
---- a/arch/x86/boot/compressed/string.c
-+++ b/arch/x86/boot/compressed/string.c
-@@ -50,6 +50,16 @@ void *memset(void *s, int c, size_t n)
- 	return s;
- }
+diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
+index d2ab3f07c008..4b1c033e3255 100644
+--- a/drivers/s390/char/sclp.c
++++ b/drivers/s390/char/sclp.c
+@@ -1169,13 +1169,13 @@ sclp_init(void)
+ 	unsigned long flags;
+ 	int rc = 0;
  
-+void memzero_explicit(void *s, size_t count)
-+{
-+	memset(s, 0, count);
-+	/*
-+	 * Make sure this function never gets inlined and
-+	 * the memset() never gets optimized away:
-+	 */
-+	barrier_data(s);
-+}
-+
- void *memmove(void *dest, const void *src, size_t n)
- {
- 	unsigned char *d = dest;
++	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
++	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+ 	spin_lock_irqsave(&sclp_lock, flags);
+ 	/* Check for previous or running initialization */
+ 	if (sclp_init_state != sclp_init_state_uninitialized)
+ 		goto fail_unlock;
+ 	sclp_init_state = sclp_init_state_initializing;
+-	sclp_read_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+-	sclp_init_sccb = (void *) __get_free_page(GFP_ATOMIC | GFP_DMA);
+ 	BUG_ON(!sclp_read_sccb || !sclp_init_sccb);
+ 	/* Set up variables */
+ 	INIT_LIST_HEAD(&sclp_req_queue);
+-- 
+Michal Hocko
+SUSE Labs
